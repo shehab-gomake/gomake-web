@@ -40,7 +40,7 @@ const AccordionTable = ({
       </div>
       {checked && (
         <Fade in={checked}>
-          <div style={classes.chidrenTableContainer}>{children}</div>
+          <div className="custom-scrollbar" style={classes.chidrenTableContainer}>{children}</div>
         </Fade>
       )}
     </div>

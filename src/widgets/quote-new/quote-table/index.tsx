@@ -6,7 +6,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   styled,
   tableCellClasses,
 } from "@mui/material";
@@ -14,8 +13,7 @@ import { useStyle } from "./style";
 import { RowMappingWidget } from "./row-mapping";
 import { RowMappingChildWidget } from "../quote-child-table/row-mapping";
 import { TotalPriceComp } from "../total-price";
-import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const QuoteForPriceTable = ({
   documentItems,
@@ -34,10 +32,10 @@ const QuoteForPriceTable = ({
   getQuote,
   isQuoteConfirmation = false,
   isPrePaymentPage,
-  onChangeSelectedItemRowForQoute
+  onChangeSelectedItemRowForQoute,
 }) => {
+  let indexs = 0;
   const { classes } = useStyle({ headerHeight });
-  const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const PrimaryTableCell = styled(TableCell)(() => {
     return {
       [`&.${tableCellClasses.head}`]: {
@@ -48,8 +46,15 @@ const QuoteForPriceTable = ({
       },
     };
   });
-
-  let indexs = 0;
+  const adjustedColumnWidths = quoteItems?.isShowDetails
+    ? columnWidths
+    : ["2%", "8%", "12%", "8%", "8%", "8%", "8%", "8%"];
+  const isDeliveryNote =
+    documentType === DOCUMENT_TYPE.deliveryNote ||
+    documentType === DOCUMENT_TYPE.deliveryNoteRefund;
+  const isInvoice =
+    documentType === DOCUMENT_TYPE.invoice ||
+    documentType === DOCUMENT_TYPE.invoiceRefund;
 
   return (
     <div>
@@ -63,19 +68,25 @@ const QuoteForPriceTable = ({
         <Table stickyHeader={true}>
           <TableHead>
             <TableRow style={classes.tableRowStyle}>
-              {tableHeaders.map((header, index) => (
-                !(isQuoteConfirmation && index === tableHeaders.length - 1) && (
-                  <PrimaryTableCell
-                    key={index}
-                    style={{
-                      width: columnWidths[index],
-                      ...classes.tableHeaderStyle,
-                    }}
-                  >
-                    {header}
-                  </PrimaryTableCell>
-                )
-              ))}
+              {tableHeaders.map(
+                (header, index) =>
+                  !(
+                    isQuoteConfirmation && index === tableHeaders.length - 1
+                  ) && (
+                    <PrimaryTableCell
+                      key={index}
+                      style={{
+                        width:
+                          (isInvoice || isDeliveryNote) && index === 3
+                            ? adjustedColumnWidths[index - 1]
+                            : adjustedColumnWidths[index],
+                        ...classes.tableHeaderStyle,
+                      }}
+                    >
+                      {header}
+                    </PrimaryTableCell>
+                  )
+              )}
             </TableRow>
           </TableHead>
           <TableBody style={{ border: "1px solid #EAECF0" }}>
@@ -89,7 +100,7 @@ const QuoteForPriceTable = ({
                     item={item}
                     index={index}
                     parentIndex={parentIndex}
-                    columnWidths={columnWidths}
+                    columnWidths={adjustedColumnWidths}
                     headerHeight={headerHeight}
                     changedocumentItems={changedocumentItems}
                     getCalculateQuoteItem={getCalculateQuoteItem}
@@ -101,7 +112,9 @@ const QuoteForPriceTable = ({
                     getQuote={getQuote}
                     isQuoteConfirmation={isQuoteConfirmation}
                     isPrePaymentPage={isPrePaymentPage}
-                    onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
+                    onChangeSelectedItemRowForQoute={
+                      onChangeSelectedItemRowForQoute
+                    }
                     quoteItems={quoteItems}
                   />
                   {item?.childsDocumentItems &&
@@ -113,7 +126,7 @@ const QuoteForPriceTable = ({
                             key={childItem.id}
                             item={childItem}
                             index={indexs}
-                            columnWidths={columnWidths}
+                            columnWidths={adjustedColumnWidths}
                             headerHeight={headerHeight}
                             parentIndex={index}
                             childInex={childIndex}
@@ -133,16 +146,15 @@ const QuoteForPriceTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      {quoteItems?.isShowPrice &&
+      {quoteItems?.isShowPrice && (
         <TotalPriceComp
           documentType={documentType}
           getCalculateQuote={getCalculateQuote}
           quoteItems={quoteItems}
           changeQuoteItems={changeQuoteItems}
           isQuoteConfirmation={isQuoteConfirmation}
-        />}
-
-
+        />
+      )}
     </div>
   );
 };

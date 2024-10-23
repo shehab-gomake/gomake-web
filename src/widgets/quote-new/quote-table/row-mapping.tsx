@@ -3,7 +3,7 @@ import { Checkbox, TableRow } from "@mui/material";
 import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { CharacterDetails } from "./character-details";
+import { CharacterDetails } from "./row-details/character-details";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
 import { useState } from "react";
@@ -177,7 +177,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {item?.code ? item?.code : "000"}
+        {item?.code || item?.productCode || "000"}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -188,7 +188,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {item.productName}
+        {item?.productName}
       </PrimaryTableCell>
       {quoteItems?.isShowDetails && (
         <PrimaryTableCell
@@ -199,7 +199,7 @@ const RowMappingWidget = ({
           }}
         >
           <CharacterDetails
-            details={item.details}
+            details={item?.details}
             getQuote={getQuote}
             documentItemId={item?.id}
             canUpdate={canUpdate}

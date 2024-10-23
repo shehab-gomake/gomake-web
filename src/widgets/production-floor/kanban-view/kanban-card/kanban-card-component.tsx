@@ -1,15 +1,16 @@
 import { useDrag } from "react-dnd";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
-import { Stack } from "@mui/material";
+import { Popover, Stack } from "@mui/material";
 import { DateFormatter } from "@/utils/adapter";
 import { useStyle } from "@/widgets/production-floor/kanban-view/kanban-card/style";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { OrderJObNumbersComponent } from "./order-job-num-coponent";
 import { toRgba } from "@/utils/helpers";
-import { useTranslation } from "react-i18next";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { ChangeColorMenu } from "./change-color-menu";
+import { useKanbanCard } from "./use-kanban-card";
+import { SketchPicker } from "react-color";
+import { useRef } from "react";
 
 interface IProp {
   board: IBoardMissions;
@@ -20,13 +21,25 @@ const ItemTypes = {
   TASK: "task",
 };
 
-const KanbanCardComponent = ({ board, status }: IProp) => {
+const KanbanCardComponent = ({ board }: IProp) => {
   const { classes } = useStyle();
-  const { t } = useTranslation();
-
-  const CardColor = board?.productionFloorJobColor ?? "";
-
   const { CheckPermission } = useUserPermission();
+  const colorPickerRef = useRef<HTMLDivElement>(null);
+  const {
+    t,
+    dir,
+    isRTL,
+    contextMenuPosition,
+    handleContextMenu,
+    handleCloseContextMenu,
+    handleOpenMission,
+    contextMenuOptions,
+    handleColorChange,
+    color,
+    showColorPicker,
+    handleColorPickerClose,
+  } = useKanbanCard(board);
+
   const canDrag = CheckPermission(
     Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
   );
@@ -43,13 +56,6 @@ const KanbanCardComponent = ({ board, status }: IProp) => {
     [canDrag]
   );
 
-  const { push } = useRouter();
-  const handleOpenMission = () => {
-    push(
-      `/production-floor?boardMissionsId=${board?.id}&productType=${board?.productType}&step=stations`
-    ).then();
-  };
-
   return (
     <Stack
       direction={"column"}
@@ -63,11 +69,12 @@ const KanbanCardComponent = ({ board, status }: IProp) => {
         opacity: isDragging ? 0.8 : 1,
         cursor: isDragging ? "grabbing" : "pointer",
         borderRadius: "8px",
-        border: `1px solid var(--Colors-Yellow-600,${CardColor})`,
-        background: toRgba(CardColor, 0.1),
+        border: `1px solid var(--Colors-Yellow-600,${color})`,
+        background: toRgba(color, 0.1),
         boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.08)",
       }}
       onClick={handleOpenMission}
+      onContextMenu={handleContextMenu}
     >
       <Stack
         direction={"row"}
@@ -80,8 +87,8 @@ const KanbanCardComponent = ({ board, status }: IProp) => {
         </span>
         <OrderJObNumbersComponent
           boardMission={board}
-          textColor={CardColor}
-          bgColor={toRgba(CardColor, 0.2)}
+          textColor={color}
+          bgColor={toRgba(color, 0.2)}
         />
       </Stack>
       <Stack>
@@ -105,6 +112,47 @@ const KanbanCardComponent = ({ board, status }: IProp) => {
           </span>
         </Stack>
       </Stack>
+      {contextMenuPosition && (
+        <ChangeColorMenu
+          options={contextMenuOptions}
+          position={contextMenuPosition}
+          onClose={handleCloseContextMenu}
+          dir={dir}
+          colorPickerRef={colorPickerRef}
+        />
+      )}
+      <Popover
+        key={`popover-${board?.id}`}
+        open={showColorPicker}
+        onClose={handleColorPickerClose}
+        anchorReference="anchorPosition"
+        anchorPosition={{
+          top:
+            showColorPicker && contextMenuPosition
+              ? contextMenuPosition?.y
+              : undefined,
+          left:
+            showColorPicker && contextMenuPosition
+              ? contextMenuPosition?.x
+              : undefined,
+        }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: isRTL ? "right" : "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: isRTL ? "right" : "center",
+        }}
+      >
+        <div ref={colorPickerRef}>
+          <SketchPicker
+            key={`SketchPicker-${board?.id}`}
+            color={color}
+            onChange={handleColorChange}
+          />
+        </div>
+      </Popover>
     </Stack>
   );
 };

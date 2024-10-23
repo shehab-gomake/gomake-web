@@ -1,22 +1,15 @@
 import Stack from "@mui/material/Stack";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  boardMissionsDetailsState,
-  boardsMissionsState,
-} from "@/widgets/production-floor/state/boards";
 import { Avatar, Divider, IconButton, Skeleton, Tooltip } from "@mui/material";
 import { useStyle } from "@/widgets/production-floor/views/board-missions-view/header/style";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import TocIcon from "@mui/icons-material/Toc";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
-import { useRouter } from "next/router";
-import {
-  IBoardMissions,
-  IBoardMissionsDetails,
-} from "@/widgets/production-floor/interfaces/board-missions";
+import { IBoardMissionsDetails } from "@/widgets/production-floor/interfaces/board-missions";
+import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
+import { useBoardMissionsDetailsHeader } from "./use-board-nissions-details-header";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
@@ -34,17 +27,23 @@ const BoardMissionsDetailsHeader = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const direction = t("direction");
-  const [boardFromTable, setBoardFromTable] = useState<IBoardMissions>(
-    {} as IBoardMissions
-  );
-  const { push, query, pathname } = useRouter();
-  const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(
-    boardMissionsDetailsState
-  );
+
+  const {
+    boards,
+    boardFromTable,
+    setBoardFromTable,
+    boardMissionsDetails,
+    setBoardMissionsDetails,
+    onNavigateBoardMissions,
+    handleStatusChange,
+    isLoadingStatus,
+  } = useBoardMissionsDetailsHeader();
+  const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
+
   useEffect(() => {
     setBoardMissionsDetails({} as IBoardMissionsDetails);
   }, []);
-  const boards = useRecoilValue(boardsMissionsState);
+
   useEffect(() => {
     if (!!boardMissionsDetails?.boardMissionId && boards.length > 0) {
       const statusBoards = boards?.find(
@@ -59,18 +58,6 @@ const BoardMissionsDetailsHeader = () => {
       );
     }
   }, [boards, boardMissionsDetails]);
-
-  const onNavigateBoardMissions = (boardId, productType) => {
-    push(
-      {
-        pathname: pathname,
-        query: { ...query, boardMissionsId: boardId, productType: productType },
-      },
-      undefined,
-      { shallow: true }
-    ).then();
-  };
-  const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
 
   return (
     <>
@@ -142,8 +129,7 @@ const BoardMissionsDetailsHeader = () => {
                     style={{
                       backgroundColor: boardMissionsDetails?.isReady
                         ? doneBoardMissionsColors.bfColor
-                        : boardMissionsDetails?.boardMissionStatus
-                            ?.backgroundColor,
+                        : "transparent",
                     }}
                     padding={"0 5px"}
                     direction={"row"}
@@ -154,18 +140,33 @@ const BoardMissionsDetailsHeader = () => {
                         : boardMissionsDetails?.boardMissionStatus?.textColor
                     }
                   >
-                    {boardMissionsDetails?.isReady ? (
+                    {isLoadingStatus ? (
+                      <Skeleton
+                        variant="rectangular"
+                        width={120}
+                        height={40}
+                        sx={{ borderRadius: "5px" }}
+                      />
+                    ) : boardMissionsDetails?.isReady ? (
                       <span>{t("boardMissions.done")}</span>
                     ) : (
-                      <>
-                        <span>
-                          {t(
-                            `productionStatuses.${boardMissionsDetails.boardMissionStatus?.name}`
-                          )}
-                        </span>
-                        <span>/</span>
-                        <span>{boardMissionsDetails.currentActionName}</span>
-                      </>
+                      <BoardStatusComponent
+                        statusId={boardMissionsDetails.boardMissionStatus?.id}
+                        id={boardMissionsDetails?.boardMissionId}
+                        onChange={handleStatusChange}
+                        isFromMissionView={true}
+                        currentStation={boardMissionsDetails?.currentActionName}
+                        statusColorBg={
+                          boardMissionsDetails?.boardMissionStatus
+                            ?.backgroundColor
+                        }
+                        statusColorText={
+                          boardMissionsDetails?.boardMissionStatus?.textColor
+                        }
+                        statusText={t(
+                          `productionStatuses.${boardMissionsDetails.boardMissionStatus?.name}`
+                        )}
+                      />
                     )}
                   </Stack>
                 </Stack>
@@ -258,4 +259,5 @@ const BoardMissionsDetailsHeader = () => {
     </>
   );
 };
+
 export { BoardMissionsDetailsHeader };

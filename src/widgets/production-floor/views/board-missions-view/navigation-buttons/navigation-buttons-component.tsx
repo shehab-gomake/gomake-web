@@ -16,10 +16,13 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
+import {
+    ApprovalFileStatusComponent
+} from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
 
 const NavigationButtonsComponent = () => {
     const { handleViewChange, step, boardMissionsViews } = useBoardMissionsNavigationButtons();
-    const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(boardMissionsDetailsState);
+    const [boardMissionsDetails] = useRecoilState(boardMissionsDetailsState);
     const isLoading = !boardMissionsDetails?.boardMissionId;
 
     const { t } = useTranslation();
@@ -49,6 +52,7 @@ const NavigationButtonsComponent = () => {
                 </Stack>
             ) : (
                 <Stack direction={'row'} alignItems={'center'} gap={'12px'}>
+                    <ApprovalFileStatusComponent height={'40px'} width={'50px'} fileStatus={boardMissionsDetails.showGraphicsApprovalAlert}/>
                     <DocumentsButton />
                     <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
                         <MoreActionsButton />

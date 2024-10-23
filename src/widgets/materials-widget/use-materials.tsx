@@ -14,7 +14,7 @@ import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
 import { Checkbox } from "@mui/material";
 import { getCurrencies } from "@/services/api-service/general/enums";
-import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   currenciesState,
@@ -42,6 +42,8 @@ import cloneDeep from "lodash.clonedeep";
 import { SideLeftMenuWidget } from "./components/side-list-menu";
 import { EMaterialActiveFilter } from "@/widgets/materials-widget/enums";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
+import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
+import { useMaterialsCategories } from "./use-materials-categories";
 import { NumberStringInput } from "./components/table-cell-data/number-string-input";
 
 const useMaterials = (isAdmin: boolean) => {
@@ -82,8 +84,8 @@ const useMaterials = (isAdmin: boolean) => {
     setSelectedCategory(category);
     setOpenDeleteRowModal(true);
   };
-  const [openDeleteTableRowModal, setOpenDeleteTableRowModal] =
-    useState<boolean>(false);
+  const [openDeleteTableRowModal, setOpenDeleteTableRowModal] = useState<boolean>(false);
+  const [openDeleteTableRowWhenHaveMoreSupplierModal, setOpenDeleteTableRowWhenHaveMoreSupplierModal] = useState<boolean>(false);
   const onClickCloseDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(false);
   };
@@ -92,9 +94,31 @@ const useMaterials = (isAdmin: boolean) => {
     setSelectedTableRow(dataRow)
     setOpenDeleteTableRowModal(true);
   };
+
+  const onClickCloseDeleteTableRowWhenHaveMoreSupplierModal = () => {
+    setOpenDeleteTableRowWhenHaveMoreSupplierModal(false);
+  };
+
+  const onClickOpenDeleteTableRowWhenHaveMoreSupplierModal = (dataRow) => {
+    setSelectedTableRow(dataRow)
+    setOpenDeleteTableRowWhenHaveMoreSupplierModal(true);
+  };
+
   const setMaterialCategorySuppliers = useSetRecoilState(
     materialCategorySuppliersState
   );
+  const { updateCellData } = useTableCellData(isAdmin);
+  const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
+  const supplierId = useRecoilValue(selectedSupplierIdState);
+  const toggleIsActive = async (id, parameterKey, value) => {
+    await updateCellData(id, parameterKey, !value);
+    getMaterialCategoryData(
+      materialType?.toString(),
+      materialCategory?.toString(),
+      materialFilter,
+      supplierId
+    ).then();
+  };
 
   const [materialName, setMaterialName] = useState<string>();
   const setMaterialActions = useSetRecoilState(materialActionState);
@@ -114,7 +138,7 @@ const useMaterials = (isAdmin: boolean) => {
     const path = isAdmin ? "/materials-admin" : "/materials";
     push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
-    setActiveFilter(EMaterialActiveFilter.ACTIVE);
+    // setActiveFilter(EMaterialActiveFilter.ACTIVE);
     setIsAllMaterialsChecked(false)
     setMaterialFilter([])
   };
@@ -254,6 +278,7 @@ const useMaterials = (isAdmin: boolean) => {
           header.value
         )
       ),
+      t("usersSettings.isActive"),
       t("properties.more"),
     ];
   }, [materialHeaders, materialCategoryData]);
@@ -280,6 +305,8 @@ const useMaterials = (isAdmin: boolean) => {
           isAdmin={isAdmin}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
           onChangeRowCheckBox={onChangeRowCheckBox}
+          onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={onClickOpenDeleteTableRowWhenHaveMoreSupplierModal}
+          toggleIsActive={toggleIsActive}
         />,
       ];
     });
@@ -314,11 +341,16 @@ const useMaterials = (isAdmin: boolean) => {
             onChangeRowCheckBox={onChangeRowCheckBox}
           />
         )),
+
+
+        dataRow?.isActive ? t("usersSettings.active") : t("usersSettings.inactive"),
         <MaterialMenuWidget
           dataRow={dataRow}
           isAdmin={isAdmin}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
           onChangeRowCheckBox={onChangeRowCheckBox}
+          onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={onClickOpenDeleteTableRowWhenHaveMoreSupplierModal}
+          toggleIsActive={toggleIsActive}
         />,
       ];
     });
@@ -376,6 +408,7 @@ const useMaterials = (isAdmin: boolean) => {
     });
   }, []);
 
+
   return {
     materialCategory,
     materialType,
@@ -399,12 +432,15 @@ const useMaterials = (isAdmin: boolean) => {
     onDeleteCategory,
     selectedCategory,
     openDeleteTableRowModal,
+    openDeleteTableRowWhenHaveMoreSupplierModal,
     onClickCloseDeleteTableRowModal,
     onDeleteCategoryRow,
     selectedTableRow,
     materialName,
     getClientsMaterials,
-    productList
+    productList,
+    onClickCloseDeleteTableRowWhenHaveMoreSupplierModal,
+    toggleIsActive
   };
 };
 

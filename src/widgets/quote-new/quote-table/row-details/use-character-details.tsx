@@ -3,25 +3,27 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { updateDocumentItemContentApi } from "@/services/api-service/generic-doc/documents-api";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, } from "recoil";
+import { useRecoilState } from "recoil";
 
 const useCharacterDetails = ({ details, getQuote, documentItemId }) => {
-  const router = useRouter()
+  const router = useRouter();
+  const { t } = useTranslation();
+  const dir = t("direction");
+  const isRTL = dir === "rtl";
+  const { callApi } = useGomakeAxios();
+  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [showAll, setShowAll] = useState(false);
-  const [originalValue,] = useState(details);
+  const [originalValue, setOriginalValue] = useState(details);
+  const [data, setData] = useState(details);
   const [isValueChanged, setIsValueChanged] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
-  const [data, setData] = useState(details)
-  const { callApi } = useGomakeAxios();
-  const {
-    alertSuccessUpdate,
-    alertFaultUpdate,
-  } = useSnackBar();
-  const { t } = useTranslation();
+  const [quoteItemValue, setQuoteItemValue] =
+    useRecoilState<any>(quoteItemState);
+
   const truncatedDetails = showAll ? details : details?.slice(0, 90);
-  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+
   const handleShowMore = () => {
     setShowAll(true);
   };
@@ -33,61 +35,87 @@ const useCharacterDetails = ({ details, getQuote, documentItemId }) => {
   const updateDocumentItemContent = async () => {
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
-      const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(item => item.id === documentItemId);
+      const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(
+        (item) => item.id === documentItemId
+      );
 
       if (documentItemIndex !== -1) {
         // Create a new object with the updated content
         const updatedDocumentItem = {
           ...updatedQuoteItemValue.documentItems[documentItemIndex],
-          details: data
+          details: data,
         };
 
         // Create a new array with the updated document item
         const updatedDocumentItems = [
           ...updatedQuoteItemValue.documentItems.slice(0, documentItemIndex),
           updatedDocumentItem,
-          ...updatedQuoteItemValue.documentItems.slice(documentItemIndex + 1)
+          ...updatedQuoteItemValue.documentItems.slice(documentItemIndex + 1),
         ];
 
         // Update the state with the new document items array
         setQuoteItemValue({
           ...updatedQuoteItemValue,
-          documentItems: updatedDocumentItems
+          documentItems: updatedDocumentItems,
         });
       }
-    }
-    else {
+    } else {
       const callBack = (res) => {
         if (res?.success) {
           alertSuccessUpdate();
-          getQuote()
+          getQuote();
         } else {
           alertFaultUpdate();
         }
-      }
+      };
       await updateDocumentItemContentApi(callApi, callBack, {
         documentType: DOCUMENT_TYPE.quote,
-        contact:
-        {
+        contact: {
           documentItemId: documentItemId,
-          content: data
-        }
-      })
+          content: data,
+        },
+      });
     }
+  };
 
-  }
-  const handleChange = (e) => {
-    setData(e.target.value);
-    setIsValueChanged(e.target.value !== originalValue);
-  }
-  const handleBlur = () => {
+  const handleClose = () => {
     if (isValueChanged) {
-      updateDocumentItemContent();
+      setData(originalValue);
     }
     setIsEdit(false);
-  }
+  };
+
+  const handleSave = () => {
+    if (isValueChanged) {
+      updateDocumentItemContent();
+      setOriginalValue(data);
+    }
+    setIsEdit(false);
+  };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setIsValueChanged(data !== originalValue);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [data, originalValue]);
+
   return {
-    isEdit, showAll, truncatedDetails, data, handleShowLess, handleShowMore, t, setIsEdit, handleChange, handleBlur
+    t,
+    isRTL,
+    isEdit,
+    showAll,
+    truncatedDetails,
+    data,
+    handleShowLess,
+    handleShowMore,
+    setIsEdit,
+    setData,
+    handleClose,
+    handleSave,
   };
 };
 

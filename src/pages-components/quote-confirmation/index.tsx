@@ -5,21 +5,23 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import { QuoteNewPageWidget } from "../quote-new/quote";
 import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 import { useQuoteConfirmation } from "./use-quote-confirmation";
+import { updateTokenStorage } from "@/services/storage-data";
 
 interface IProps {
   isPrePaymentPage?: boolean;
 }
 
-const QuoteConfirmationPageWidget = ({isPrePaymentPage = false }: IProps)  => {
+const QuoteConfirmationPageWidget = ({ isPrePaymentPage = false }: IProps) => {
   const { classes } = useStyle();
   const [isMobile, setIsMobile] = useState(false);
-  const { getPrePaymentById , getQuoteConfirmation } = useQuoteConfirmation();
+  const { getTempUserToken, getPrePaymentById, getQuoteConfirmation } =
+    useQuoteConfirmation();
 
   useEffect(() => {
     updateScreenWidth();
-    window.addEventListener('resize', updateScreenWidth);
+    window.addEventListener("resize", updateScreenWidth);
     return () => {
-      window.removeEventListener('resize', updateScreenWidth);
+      window.removeEventListener("resize", updateScreenWidth);
     };
   }, []);
 
@@ -28,18 +30,40 @@ const QuoteConfirmationPageWidget = ({isPrePaymentPage = false }: IProps)  => {
   };
 
   useEffect(() => {
-    if(isPrePaymentPage) 
-      getPrePaymentById();
-    else
-     getQuoteConfirmation();
-  }, [])
+    const handlePrePaymentPage = async () => {
+      if (isPrePaymentPage) {
+        const userToken = await getTempUserToken();
+        if (userToken) {
+          updateTokenStorage(userToken);
+          await getPrePaymentById();
+        }
+      } else {
+        getQuoteConfirmation();
+      }
+    };
+
+    handlePrePaymentPage();
+  }, [isPrePaymentPage, getTempUserToken]);
 
   return (
     <div style={classes.firstContainer}>
       <div style={isMobile ? classes.iconMobileStyle : classes.iconStyle}>
         <GoMakeIcon />
       </div>
-      {isMobile ? <QuoteConfirmationMobileWidget isMobile={isMobile} isPrePaymentPage={isPrePaymentPage} /> : <QuoteNewPageWidget documentType={ isPrePaymentPage ?  DOCUMENT_TYPE.order :  DOCUMENT_TYPE.quote} isQuoteConfirmation={true} isPrePaymentPage={isPrePaymentPage}/>}
+      {isMobile ? (
+        <QuoteConfirmationMobileWidget
+          isMobile={isMobile}
+          isPrePaymentPage={isPrePaymentPage}
+        />
+      ) : (
+        <QuoteNewPageWidget
+          documentType={
+            isPrePaymentPage ? DOCUMENT_TYPE.order : DOCUMENT_TYPE.quote
+          }
+          isQuoteConfirmation={true}
+          isPrePaymentPage={isPrePaymentPage}
+        />
+      )}
     </div>
   );
 };

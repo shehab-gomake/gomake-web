@@ -14,10 +14,10 @@ export interface JustmentsModalProps {
   customerId: string;
 }
 
-const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList , customerId}: JustmentsModalProps) => {
+const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList, customerId }: JustmentsModalProps) => {
   const { t } = useTranslation();
-  const direction = t('direction');
-  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
+  const direction = t("direction");
+  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange, isFetching } = useCustomerDropDownList();
   const { alertFaultUpdate, alertFaultDelete, alertFault, alertSuccess } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
@@ -28,8 +28,7 @@ const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList , custo
   const onClickOpenDeleteModal = () => {
     if (selectedItems?.length > 0) {
       setOpenDeleteModal(true);
-    }
-    else {
+    } else {
       alertFault("reports.pleaseSelectOneItem");
     }
   };
@@ -41,8 +40,7 @@ const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList , custo
   const onClickOpenTransferModal = () => {
     if (selectedItems?.length > 0) {
       setOpenTransferModal(true);
-    }
-    else {
+    } else {
       alertFault("reports.pleaseSelectOneItem");
     }
   };
@@ -56,33 +54,26 @@ const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList , custo
     t("reports.documentNumber"),
     t("reports.documentType"),
     t("reports.documentDate"),
-    t("reports.price"),
+    t("reports.totalPrice"),
     t("reports.adjustablePrice"),
   ];
 
-  const internalReconciliationApi = useCallback(
-    async () => {
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/receipts/internal-reconciliation`,
-        {
-          data: [...selectedItems]
-        }
-      );
-      if (res?.success) {
-        getClientPaymentItems()
-      } else {
-        alertFaultUpdate()
-      }
-    },
-    [selectedItems]
-  );
+  const internalReconciliationApi = useCallback(async () => {
+    const res = await callApi(EHttpMethod.POST, `/v1/erp-service/receipts/internal-reconciliation`, {
+      data: [...selectedItems],
+    });
+    if (res?.success) {
+      getClientPaymentItems();
+    } else {
+      alertFaultUpdate();
+    }
+  }, [selectedItems]);
 
   // Function to toggle selection of an item
   const toggleSelection = (index) => {
     const newList = [...clientPaymentsList];
     newList[index].isSelected = !newList[index].isSelected;
-    setSelectedItems(newList.filter(item => item.isSelected));
+    setSelectedItems(newList.filter((item) => item.isSelected));
   };
 
   // Function to calculate the total price of selected items
@@ -92,14 +83,14 @@ const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList , custo
 
   useEffect(() => {
     if (clientPaymentsList.length > 0) {
-      setInputErrors(Array(clientPaymentsList.length).fill(false))
+      setInputErrors(Array(clientPaymentsList.length).fill(false));
     }
-  }, [clientPaymentsList])
+  }, [clientPaymentsList]);
 
   const handlePriceChange = (index, newValue) => {
     const newList = [...clientPaymentsList];
     const currentItem = newList[index];
-    setSelectedItems(newList.filter(item => item.isSelected));
+    setSelectedItems(newList.filter((item) => item.isSelected));
 
     // Check conditions based on the sign of the fixed price
     let error = false;
@@ -139,7 +130,7 @@ const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList , custo
       <div key={inputErrors[index]}>
         <GomakeTextInput
           key={inputErrors[index]}
-          style={{ height: 40, ...adaptPaddingRight(direction, 20), }}
+          style={{ height: 40, ...adaptPaddingRight(direction, 20) }}
           id={`priceInput-${index}`}
           type="number"
           InputProps={{ inputProps: { min: 0, max: 100 } }}
@@ -153,72 +144,56 @@ const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList , custo
 
   const onClickMatchItems = () => {
     if (selectedItems.length > 0 && calculateTotalPrice() === 0) {
-      internalReconciliationApi()
-    }
-    else if (selectedItems.length > 0 && calculateTotalPrice() !== 0) {
-      alertFault("reports.matchTotalZeroErrorMsg")
-    }
-    else {
+      internalReconciliationApi();
+    } else if (selectedItems.length > 0 && calculateTotalPrice() !== 0) {
+      alertFault("reports.matchTotalZeroErrorMsg");
+    } else {
       alertFault("reports.matchErrorMsg");
     }
-  }
+  };
 
   const btns = [
     {
       name: t("reports.match"),
-      onclick: onClickMatchItems
+      onclick: onClickMatchItems,
     },
     {
       name: t("reports.balanceCancellation"),
-      onclick: onClickOpenDeleteModal
+      onclick: onClickOpenDeleteModal,
     },
     {
       name: t("reports.transferBalance"),
-      onclick: onClickOpenTransferModal
+      onclick: onClickOpenTransferModal,
     },
-  ]
+  ];
 
-  const cancelTransactionsApi = useCallback(
-    async () => {
-      const res = await callApi(
-        EHttpMethod.PUT,
-        `/v1/erp-service/receipts/cancel-balance`,
-        {
-            clientId: customerId ?? "", 
-            total: calculateTotalPrice(),  
-            openTrans: selectedItems
-        }
-      );
-      if (res?.success) {
-        getClientPaymentItems()
-      } else {
-        alertFaultDelete()
-      }
-    },
-    [selectedItems]
-  );
+  const cancelTransactionsApi = useCallback(async () => {
+    const res = await callApi(EHttpMethod.PUT, `/v1/erp-service/receipts/cancel-balance`, {
+      clientId: customerId ?? "",
+      total: calculateTotalPrice(),
+      openTrans: selectedItems,
+    });
+    if (res?.success) {
+      getClientPaymentItems();
+    } else {
+      alertFaultDelete();
+    }
+  }, [selectedItems]);
 
-  const transferBalanceApi = useCallback(
-    async () => {
-      const res = await callApi(
-        EHttpMethod.PUT,
-        `/v1/erp-service/receipts/move-balance`,
-        {
-          clientId: customerId ?? "", 
-          total: calculateTotalPrice(),  
-          clientIdToMove:customer.id,
-          openTrans: selectedItems
-      }
-      );
-      if (res?.success) {
-        alertSuccess(`reports.successfullyMovedTransaction`)
-        getClientPaymentItems()
-      } else {
-        alertFault("reports.failedMoveTransaction");
-      }
-    },
-    [selectedItems, customer]
-  );
+  const transferBalanceApi = useCallback(async () => {
+    const res = await callApi(EHttpMethod.PUT, `/v1/erp-service/receipts/move-balance`, {
+      clientId: customerId ?? "",
+      total: calculateTotalPrice(),
+      clientIdToMove: customer.id,
+      openTrans: selectedItems,
+    });
+    if (res?.success) {
+      alertSuccess(`reports.successfullyMovedTransaction`);
+      getClientPaymentItems();
+    } else {
+      alertFault("reports.failedMoveTransaction");
+    }
+  }, [selectedItems, customer]);
 
   return {
     getTableDataRows,
@@ -236,6 +211,7 @@ const useAdjustmentsModal = ({ getClientPaymentItems, clientPaymentsList , custo
     openDeleteModal,
     openTransferModal,
     customer,
+    isFetching,
   };
 };
 

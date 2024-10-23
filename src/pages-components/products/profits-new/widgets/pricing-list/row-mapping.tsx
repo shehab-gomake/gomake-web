@@ -151,21 +151,7 @@ const RowMappingWidget = ({
         </PrimaryTableCell>
       )}
 
-      {selectedAdditionalProfitRow?.id && (
-        <PrimaryTableCell style={clasess.cellContainerStyle}>
-          <div style={clasess.cellTextInputStyle}>
-            <InputUpdatedValues
-              value={selectedAdditionalProfitRow.profitValue}
-              onBlur={() => setIsUpdateProfitValue(0)}
-              isUpdate={false}
-              setIsUpdate={setIsUpdateProfitValue}
-              onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
-                onInputChangeTotalPrice(e)
-              }
-            />
-          </div>
-        </PrimaryTableCell>
-      )}
+
       {router?.query?.draftId && (
         <PrimaryTableCell style={clasess.cellContainerStyle}>
           <div style={clasess.cellTextInputStyle}>
@@ -195,6 +181,21 @@ const RowMappingWidget = ({
           />
         </div>
       </PrimaryTableCell>
+      {selectedAdditionalProfitRow?.id && (
+        <PrimaryTableCell style={clasess.cellContainerStyle}>
+          <div style={clasess.cellTextInputStyle}>
+            <InputUpdatedValues
+              value={item?.totalPriceWithAdditionProfit}
+              onBlur={() => setIsUpdateProfitValue(0)}
+              isUpdate={false}
+              setIsUpdate={setIsUpdateProfitValue}
+              onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
+                onInputChangeTotalPrice(e)
+              }
+            />
+          </div>
+        </PrimaryTableCell>
+      )}
 
       <PrimaryTableCell style={clasess.cellContainerStyle}>
         <div

@@ -176,6 +176,7 @@ const QuoteNewPageWidget = ({
     onClickCancelOffer,
     updateCancelQuote,
     onClickSendQuoteToClient,
+    onClickSendReceiptToClient,
     onChangeSelectBusiness,
     onClickDeleteAddress,
     onOpenDeliveryModal,
@@ -209,6 +210,7 @@ const QuoteNewPageWidget = ({
     updateIsShowDetails,
     updateIsShowPrices,
     getWhatsAppMessage,
+    getWhatsAppMessageForReceipt,
     whatsappMassage,
     openAddNewContactModal,
     onCloseNewContact,
@@ -243,9 +245,19 @@ const QuoteNewPageWidget = ({
     setIsUpdateDocumentTitle,
     isWhatsAppWeb,
     setIsWhatsAppWeb,
+    isShowSettingIcon,
+    isInvoice,
+    onClickOpenChangeProductionStatusModal,
+    openChangeProductionStatusModal,
+    onClickCloseChangeProductionStatusModal,
+    selectedDocument,
+    isSelectedCLoseAsDeleveryNote,
+    moveOrderToReady,
+    navigate
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
+    isPrePaymentPage: isPrePaymentPage,
   });
 
   const handleChangeCreationDate = (event) => {
@@ -300,10 +312,6 @@ const QuoteNewPageWidget = ({
   ];
 
   const { } = useGoMakeTour(quoteSteps, []);
-
-  const isInvoice =
-    documentType === DOCUMENT_TYPE.invoice ||
-    documentType === DOCUMENT_TYPE.invoiceRefund;
 
   useEffect(() => {
     if (isInvoice) {
@@ -407,12 +415,14 @@ const QuoteNewPageWidget = ({
                         </>
                       )}
                     </>
-                    <IconButton
-                      style={{ marginRight: 4 }}
-                      onClick={handleSettingMenuClick}
-                    >
-                      <SettingNewIcon />
-                    </IconButton>
+                    {isShowSettingIcon && (
+                      <IconButton
+                        style={{ marginRight: 4 }}
+                        onClick={handleSettingMenuClick}
+                      >
+                        <SettingNewIcon />
+                      </IconButton>
+                    )}
                   </div>
                 )}
               </div>
@@ -504,7 +514,6 @@ const QuoteNewPageWidget = ({
                   setIsUpdateDocumentTitle={setIsUpdateDocumentTitle}
                 />
                 <ContactNewWidget
-                  documentState={quoteState}
                   handleShowLess={handleShowLess}
                   items={items}
                   displayedItems={displayedItems}
@@ -615,6 +624,7 @@ const QuoteNewPageWidget = ({
                 onClickOpenNewItemNotesModal={onClickOpenNewItemNotesModal}
                 handleRejectBtnClick={handleRejectBtnClick}
                 handleAcceptBtnClick={handleAcceptBtnClick}
+                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
               />
             </div>
           )}
@@ -641,11 +651,13 @@ const QuoteNewPageWidget = ({
         getAllClientContacts={getAllClientContacts}
         documentType={documentType}
       />
-      <AddDeliveryModal
-        openModal={openAddDeliveryModal}
-        onClose={onCloseDeliveryModal}
-        onClickAdd={onAddDelivery}
-      />
+      {!isPrePaymentPage && (
+        <AddDeliveryModal
+          openModal={openAddDeliveryModal}
+          onClose={onCloseDeliveryModal}
+          onClickAdd={onAddDelivery}
+        />
+      )}
       <CopyFromOrderModal
         openModal={openCopyFromOrderModal}
         onClose={onCloseCopyFromOrder}
@@ -673,17 +685,21 @@ const QuoteNewPageWidget = ({
         open={openSendBtn}
         anchorEl={anchorElSendBtn}
         onClickSendQuoteToClient={onClickSendQuoteToClient}
+        onClickSendReceiptToClient={onClickSendReceiptToClient}
         onClickOpenWhatsAppModal={onClickOpenWhatsAppModal}
         documentState={quoteItemValue}
         setIsWhatsAppWeb={setIsWhatsAppWeb}
+        documentType={documentType}
       />
       <WhatsAppWebModal
         openModal={openWhatsAppModal}
         onClose={onClickCloseWhatsAppModal}
         clientContactsValue={clientContactsValue}
         getWhatsAppMessage={getWhatsAppMessage}
+        getWhatsAppMessageForReceipt={getWhatsAppMessageForReceipt}
         whatsappMassage={whatsappMassage}
         isWhatsAppWeb={isWhatsAppWeb}
+        documentType={documentType}
       />
       <SettingQuoteMenu
         handleClose={handleSettingMenuClose}
@@ -773,6 +789,27 @@ const QuoteNewPageWidget = ({
             "_blank"
           );
           onClickClosLoginModal();
+        }}
+      />
+      <GoMakeDeleteModal
+        hideIcon
+        title={"sales.moveOrderToReadyWhenCloseOrderTitle"}
+        yesBtn={t("sales.moveToReadyAndCloseOrder")}
+        cancelBtn={t("sales.closeOrderWithoutMoveToReady")}
+        openModal={openChangeProductionStatusModal}
+        onClose={onClickCloseChangeProductionStatusModal}
+        onClickDelete={moveOrderToReady}
+        onClickCancel={() => {
+          if (isSelectedCLoseAsDeleveryNote) {
+            navigate(`/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`)
+
+          }
+          else {
+            const path = documentType === DOCUMENT_TYPE.order
+              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+            navigate(path);
+          }
         }}
       />
       <NewItemNotesModal

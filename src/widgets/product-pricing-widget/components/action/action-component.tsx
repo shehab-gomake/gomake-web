@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { IWorkFlowAction } from "@/widgets/product-pricing-widget/interface";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { Collapse, Fade, IconButton, Tooltip } from "@mui/material";
@@ -106,13 +106,20 @@ const ActionContainerComponent = ({
   widgetType,
   totalCostValue,
   totalPriceValue,
-  profitValue
+  profitValue,
+  isNeedFolds,
+  foldOptionValueId
 }: IActionContainerComponentProps) => {
+
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
+  const [chooseFold, setChooseFold] = useState<boolean>(false);
+  const [selectedfold, setSelectedFold] = useState<any>()
+
+
 
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
@@ -141,7 +148,9 @@ const ActionContainerComponent = ({
     onClickGetMaterialsForAction,
     employeesList,
     machinesList,
-    materialsList
+    materialsList,
+    updateWorkFlowForFold,
+    foldOptions
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(isActionEmployeeUpdatedState);
@@ -227,7 +236,14 @@ const ActionContainerComponent = ({
   }, [supplierId, suppliers, suppliersState]);
 
 
-
+  useEffect(() => {
+    if (foldOptionValueId) {
+      const selectedFoldOptionName = foldOptions?.find((option) => option.id == foldOptionValueId)
+      if (selectedFoldOptionName) {
+        setSelectedFold(selectedFoldOptionName)
+      }
+    }
+  }, [foldOptionValueId, foldOptions])
 
 
   return (
@@ -410,6 +426,8 @@ const ActionContainerComponent = ({
               isNeedEmployee && <Divider orientation={"vertical"} flexItem />
             }
 
+
+
             <Stack
               style={classes.sectionTitle}
               direction={"row"}
@@ -486,6 +504,62 @@ const ActionContainerComponent = ({
               isNeedMaterial && <Divider orientation={"vertical"} flexItem />
             }
 
+            <Stack
+              style={classes.sectionTitle}
+              direction={"row"}
+              alignItems={"center"}
+              gap={"10px"}
+            >
+              {
+                isNeedFolds && (
+                  <>
+                    {!chooseFold ? (
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setChooseFold(true);
+                        }}
+                        variant={"text"}
+                        style={classes.sectionTitle}
+                      >
+                        {foldOptionValueId ? selectedfold?.name : <>Select New Folds</>}
+                      </Button>
+                    ) : (
+                      <Stack
+                        direction={"row"}
+                        gap={"5px"}
+                        alignItems={"center"}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <GoMakeAutoComplate
+                          onChange={(e, v) => {
+                            updateWorkFlowForFold(actionId, productType, actionIndex, v?.id, id)
+                            setChooseFold(false);
+                          }}
+                          style={{ width: "200px" }}
+                          options={foldOptions}
+                          placeholder={"Choose Fold option"}
+                          getOptionLabel={(option) => option.name}
+                          value={selectedfold}
+                        />
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setChooseFold(false);
+                          }}
+                        >
+                          <ClearRoundedIcon />
+                        </IconButton>
+                      </Stack>
+                    )}
+                  </>
+                )
+              }
+            </Stack>
+            {
+              isNeedFolds && <Divider orientation={"vertical"} flexItem />
+            }
+
             <EditableKeyValueViewComponent
               onUpdate={handleDeliveryTimeUpdate}
               {...totalProductionTime}
@@ -558,7 +632,7 @@ const ActionContainerComponent = ({
                     {...totalCost}
                     values={totalCostValue}
                     source={source}
-                    name="Cost"
+                    name={t("machineAttributes.cost")}
                   />
                   <Divider
                     orientation={"vertical"}
@@ -571,7 +645,7 @@ const ActionContainerComponent = ({
                       {...profit}
                       values={profitValue}
                       source={source}
-                      name="Profit"
+                      name={t("products.profits.pricingListWidget.profit")}
                     />
                     <span>
                       {`(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
@@ -590,7 +664,7 @@ const ActionContainerComponent = ({
                     values={totalPriceValue}
                     source={source}
                     valueColor={secondColor(500)}
-                    name="Price"
+                    name={t("sales.quote.price")}
                   />
                 </>
               }

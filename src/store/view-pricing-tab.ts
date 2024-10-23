@@ -10,3 +10,8 @@ export const actionListForWorkFlow = atom({
   key: "actionListForWorkFlow",
   default: [],
 });
+
+export const foldOptionsState = atom({
+  key: "foldOptionsState",
+  default: [],
+});

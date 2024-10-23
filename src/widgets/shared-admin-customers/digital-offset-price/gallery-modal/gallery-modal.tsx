@@ -105,6 +105,7 @@ const GalleryModal = ({
                     background: card.backgroundColor,
                   }}
                   onClick={card.onclick}
+                  onDoubleClick={card.onDoubleClick}
                 >
                   <div style={clasess.cardItemStyle}>
                     <div style={clasess.cardIconStyle}>{card.icon}</div>
@@ -130,6 +131,7 @@ const GalleryModal = ({
                         createParameterForCalculation={
                           createParameterForCalculation
                         }
+                        onClickChoosParameter={onClickChoosParameter}
                       />
                     );
                   })
@@ -142,6 +144,7 @@ const GalleryModal = ({
                         createParameterForCalculation={
                           createParameterForCalculation
                         }
+                        onClickChoosParameter={onClickChoosParameter}
                       />
                     );
                   })}

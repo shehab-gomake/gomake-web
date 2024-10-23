@@ -39,13 +39,18 @@ const AgingReportWidget = () => {
     setShowCustomerModal,
     customerForEdit,
     setCustomerForEdit,
-    onClickOpenCustomerModal // New handler
+    onClickOpenCustomerModal, // New handler
+    isFetching,
   } = useAgingReport();
   const { classes } = useStyle();
 
   return (
     <div style={classes.mainContainer}>
-      <HeaderTitle title={t("tabs.agingReport")} marginTop={"0px"} marginBottom={"0px"} />
+      <HeaderTitle
+        title={t("tabs.agingReport")}
+        marginTop={"0px"}
+        marginBottom={"0px"}
+      />
 
       <AgingReportHeaderWidget
         handleClickSelectDate={handleClickSelectDate}
@@ -56,6 +61,7 @@ const AgingReportWidget = () => {
         agentsCategories={agentsCategories}
         handleAgentChange={handleAgentChange}
         customer={customer}
+        isFetchingCustomers={isFetching}
         renderOptions={renderOptions}
         checkWhatRenderArray={checkWhatRenderArray}
         handleCustomerChange={handleCustomerChange}

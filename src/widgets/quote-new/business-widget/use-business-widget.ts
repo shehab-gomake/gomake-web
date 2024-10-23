@@ -1,19 +1,20 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
-import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { addressModalState } from "./address-widget/state";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
+import { useCustomerDropDownList } from "@/hooks";
 
 const useBusinessWidget = ({ values, documentType }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const [isConfirmation, setIsConfirmation] = useState();
-  const { renderOptions, checkWhatRenderArray } = useQuoteWidget();
+  const { renderOptions, checkWhatRenderArray, isFetching } =
+    useCustomerDropDownList();
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(
     values?.purchaseNumber || t("sales.quote.noPurchaseNumber")
@@ -74,6 +75,10 @@ const useBusinessWidget = ({ values, documentType }) => {
     : quoteStateValue?.isEditable &&
       CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
 
+  const canEditAddress = router.query.isNewCreation
+    ? true
+    : CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+
   const canEditPurchaseNumber = CheckDocumentPermission(
     documentType,
     DocumentPermission.EDIT_DOCUMENT
@@ -98,16 +103,16 @@ const useBusinessWidget = ({ values, documentType }) => {
 
   const onClickOpenChangeClientModal = (value) => {
     setSelectedClient(value);
-    if (
-      (router.query.orderId || router.query.deliveryNoteId) &&
-      documentType === DOCUMENT_TYPE.invoice
-    ) {
-      setOpenChangeClientModalFromInvoice(true);
-    } else if (
-      quoteStateValue?.documentItems &&
-      quoteStateValue?.documentItems?.length > 0
-    ) {
-      setOpenChangeClientModalFromInvoice(true);
+
+    if (documentType === DOCUMENT_TYPE.invoice) {
+      if (
+        quoteStateValue?.documentItems &&
+        quoteStateValue.documentItems.length > 0
+      ) {
+        setOpenChangeClientModalFromInvoice(true);
+      } else {
+        setOpenChangeClientModal(true);
+      }
     } else {
       setOpenChangeClientModal(true);
     }
@@ -158,6 +163,8 @@ const useBusinessWidget = ({ values, documentType }) => {
     isQuote,
     documentTitle,
     setDocumentTitle,
+    isFetching,
+    canEditAddress,
   };
 };
 

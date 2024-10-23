@@ -228,7 +228,7 @@ const useStyle = () => {
         gap: 10,
         width: "100%",
         minWidth: 220,
-        maxWidth: 220,
+        // maxWidth: 220,
       },
       parameterRowContainer: {
         display: "flex",
@@ -283,14 +283,26 @@ const useStyle = () => {
         width: "100%",
         padding: "8px 16px", 
         borderRadius: "4px",
-        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
         backgroundColor:  "#fff", 
         color: "inherit", 
+        display: "flex",
+        // boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+      },
+      clientTypographyStyle: {
+        height: 40,
+        border: "0px",
+        ...FONT_FAMILY.Lexend(500, 14),
+        width: "100%",
+        padding: "8px 16px", 
+        borderRadius: "4px",
+        backgroundColor:  "#fff", 
+        color: "inherit", 
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
       },
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
-        maxWidth: "220px",
+        // maxWidth: "220px",
         borderRadius: 4,
       },
 
@@ -718,6 +730,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 4,
+        // minWidth:250
       },
       duplicateSubSectionBtn: {
         backgroundColor: "#FFFF",
@@ -872,6 +885,69 @@ const useStyle = () => {
         lineHeight: "30px",
         marginBottom:"5px"
       },
+      btnsContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 11,
+        width: "100%",
+        marginTop: 15
+      },
+      confirmBtn: {
+       // width: "50%",
+       height: 35,
+       lineHeight:"10px",
+        borderRadius: "10px",
+        ...FONT_FAMILY.Lexend(500, 10),
+        color:"#FFFFFF",
+        
+      },
+      cancelBtn: {
+      //  width: "50%",
+        height: 35,
+        borderRadius: "10px",
+        ...FONT_FAMILY.Lexend(500, 10),
+        color:"#FFFFFF",
+       
+      },
+      modalTitleForMission:{
+        margin: 15, 
+        marginTop: 0,
+        color: primaryColor(500),
+         ...FONT_FAMILY.Lexend(700, 16),
+      },
+      modalCloseForMission:{ position: "absolute", right: 0, top: 0 },
+      mainContainerForMission:{ display: "flex", flexDirection: "column", gap: 10 },
+      missionItemContainer:{
+        ...FONT_FAMILY.Lexend(500, 14),
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: "100%",
+      },
+      missionText:{ width: "fit-content", minWidth: 100 },
+      missionText1:{ width: "fit-content", minWidth: 80 },
+      missionText2:{
+        width: "fit-content",
+        maxWidth: "fit-content",
+        minWidth: 100,
+        whiteSpace: "nowrap",
+      },
+      deviderContainer:{ paddingLeft: 5, paddingRight: 5 },
+      checkboxModalContainer:{ 
+        display: "flex", 
+        flexDirection: "row", 
+        justifyContent: "flex-start", 
+        alignItems: "center" ,
+        marginTop: 15,
+        cursor: "pointer"
+      },
+      checkboxLabelStyle:{
+        ...FONT_FAMILY.Lexend(600,14),
+        
+      }
     };
   }, [i18next.language, t, direction,screenWidth]);
   return {

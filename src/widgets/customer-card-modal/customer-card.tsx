@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { GoMakeAutoComplate, GoMakeModal } from "@/components";
 import { TextareaAutosize } from "@mui/base";
@@ -12,10 +12,7 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs } from "./inputs/customer-inputs";
 import { generalInputs, lastOrderInputs } from "./inputs/general-inputs";
 import { Stack } from "@mui/material";
-import {
-  CLIENT_TYPE,
-  CUSTOMER_ACTIONS,
-} from "@/pages/customers/enums";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
 import { ClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal";
 import { SettingIcon } from "../shared-admin-customers/add-product/icons/setting";
@@ -76,7 +73,7 @@ const CustomerCardWidget = ({
   setOpenOfferModal,
   userQuote,
   isFromCartPage = false,
-  onChangeSelectBusiness
+  onChangeSelectBusiness,
 }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -120,24 +117,52 @@ const CustomerCardWidget = ({
     onClickOpenClientType,
     handleShowTable,
     onUpdatePass,
-    onChangeInputs
+    onChangeInputs,
+    dlientGroupList,
+    addGroupName,
+    newGroupId,
+    setNewGroupId
   } = useCustomerCard({
-    t, customer, setCustomer, onClose, setOpenOfferModal, userQuote, typeClient,
+    t,
+    customer,
+    setCustomer,
+    onClose,
+    setOpenOfferModal,
+    userQuote,
+    typeClient,
     isValidCustomer,
     getAllCustomers,
     onCustomerAdd,
     isgetAllCustomers,
     isFromCartPage,
-    onChangeSelectBusiness
+    onChangeSelectBusiness,
   });
+  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
-    if (customer) {
-      setContacts(customer.contacts)
-      setAddresses(customer.addresses)
-      setUsers(customer.users)
+    if (newGroupId) {
+      const newlyAddedGroup = dlientGroupList.find(
+        (option: any) => option?.id === newGroupId
+      );
+      if (newlyAddedGroup) {
+        onChangeInputs("clientGroupId", newGroupId);
+        setNewGroupId(null);
+      }
     }
-  }, [customer])
+  }, [newGroupId, dlientGroupList, onChangeInputs]);
+  useEffect(() => {
+    if (customer) {
+      customer?.contacts &&
+        customer?.contacts?.length > 0 &&
+        setContacts(customer?.contacts);
+      customer?.addresses &&
+        customer?.addresses?.length > 0 &&
+        setAddresses(customer?.addresses);
+      customer?.users &&
+        customer?.users?.length > 0 &&
+        setUsers(customer?.users);
+    }
+  }, [customer]);
 
   useEffect(() => {
     addInitContact();
@@ -172,17 +197,21 @@ const CustomerCardWidget = ({
     </div>
   );
 
-  const renderTableSearch = <>{(isFromHomePage && showTable) &&
-    <Stack>
-      <TableFilter onChangeShowInActive={onShowInActiveCustomers} />
-      <PrimaryTable
-        rows={getAllSimilarCustomersData().map(mapCustomerData)}
-        headers={customerTableHeaders}
-        maxHeight={300}
-        stickyHeader={true}
-      />
-    </Stack>
-  }</>
+  const renderTableSearch = (
+    <>
+      {isFromHomePage && showTable && (
+        <Stack>
+          <TableFilter onChangeShowInActive={onShowInActiveCustomers} />
+          <PrimaryTable
+            rows={getAllSimilarCustomersData().map(mapCustomerData)}
+            headers={customerTableHeaders}
+            maxHeight={300}
+            stickyHeader={true}
+          />
+        </Stack>
+      )}
+    </>
+  );
 
   const tabs: ITab[] = [
     {
@@ -196,7 +225,8 @@ const CustomerCardWidget = ({
           typeClient={typeClient}
           renderTabPanelTextArea={renderTabPanelTextArea}
           languagesOptions={languagesOptions}
-          renderTableSearch={renderTableSearch} />
+          renderTableSearch={renderTableSearch}
+        />
       ),
     },
     {
@@ -206,7 +236,7 @@ const CustomerCardWidget = ({
           {renderAddButton(addEmptyContact, "customers.buttons.addContact")}
           <Stack direction={"column"}>
             {contacts
-              ?.filter((contact) => !contact.isMainContact)
+              ?.filter((contact, index) => !contact.isMainContact)
               ?.map((x) => (
                 <ContactForm
                   key={x.index}
@@ -244,7 +274,11 @@ const CustomerCardWidget = ({
     {
       title: t("customers.modal.accounting"),
       component: (
-        <AccountingTab clientType={typeClient} onChangeInputs={onChangeInputs} state={customer} />
+        <AccountingTab
+          clientType={typeClient}
+          onChangeInputs={onChangeInputs}
+          state={customer}
+        />
       ),
     },
     typeClient === CLIENT_TYPE.CUSTOMER && {
@@ -270,7 +304,10 @@ const CustomerCardWidget = ({
     {
       title: t("tabs.ledgerReport"),
       component: (
-        <LedgerReportWidget customerId={customer?.id} />
+        <LedgerReportWidget
+          customerId={customer?.id}
+          isFromCustomerCard={true}
+        />
       ),
     },
   ].filter(Boolean);
@@ -282,8 +319,17 @@ const CustomerCardWidget = ({
       onClose={handleClose}
       insideStyle={classes.insideStyle}
     >
-      <div style={{ display: "flex", flexDirection: "column", width: "100%", height: "100%", overflow: "hidden", justifyContent: "flex-end" }}>
-        <div style={classes.mainContainerStyle} >
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "100%",
+          height: "100%",
+          overflow: "hidden",
+          justifyContent: "flex-end",
+        }}
+      >
+        <div style={classes.mainContainerStyle}>
           <Stack direction={"row"}>
             <span style={classes.subTitleStyle}>
               {typeClient == "C"
@@ -316,25 +362,79 @@ const CustomerCardWidget = ({
                     gap={"7px"}
                     alignItems={"flex-end"}
                     padding={"0 5px"}
-                  >{clientTypeLabel}</Stack>
+                  >
+                    {clientTypeLabel}
+                  </Stack>
                   <span style={classes.required}>*</span>
                 </div>
                 <span onClick={onClickOpenClientType} style={classes.plusInput}>
-                  <SettingIcon
-                    width={20}
-                    height={20}
-                  />
+                  <SettingIcon width={20} height={20} />
                 </span>
               </div>
               <div style={{ width: "180px" }}>
                 <GoMakeAutoComplate
                   key={customer}
                   options={clientTypesCategories}
-                  placeholder={typeClient === "C" ? t("customers.modal.clientType") : t("suppliers.supplierType")}
+                  placeholder={
+                    typeClient === "C"
+                      ? t("customers.modal.clientType")
+                      : t("suppliers.supplierType")
+                  }
                   style={classes.dropDownListStyle}
                   getOptionLabel={(option: any) => option.label}
-                  value={clientTypesCategories?.find((option: any) => option?.id === customer?.clientTypeId)}
-                  onChange={(e: any, value: any) => onChangeInputs("clientTypeId", value?.id)}
+                  value={clientTypesCategories?.find(
+                    (option: any) => option?.id === customer?.clientTypeId
+                  )}
+                  onChange={(e: any, value: any) =>
+                    onChangeInputs("clientTypeId", value?.id)
+                  }
+                />
+              </div>
+            </div>
+            <div style={classes.itemOnFirstContainer}>
+              <div style={classes.labelTitleStyle}>
+                <div style={classes.inputLbl}>
+                  <Stack
+                    direction={"row"}
+                    gap={"7px"}
+                    alignItems={"flex-end"}
+                    padding={"0 5px"}
+                  >
+                    group by
+                  </Stack>
+                </div>
+              </div>
+              <div style={{ width: "180px" }}>
+                <GoMakeAutoComplate
+                  key={customer}
+                  options={
+                    dlientGroupList.find(
+                      (option: any) => option.groupName === inputValue
+                    ) || inputValue === ""
+                      ? dlientGroupList
+                      : [{ groupName: `Add "${inputValue}" as a new group`, id: 'new' }, ...dlientGroupList]
+                  }
+                  placeholder={"group by"}
+                  style={classes.dropDownListStyle}
+                  getOptionLabel={(option: any) => option.groupName}
+                  value={dlientGroupList?.find(
+                    (option: any) => option?.id === customer?.clientGroupId
+                  )}
+                  onChange={(e: any, value: any) => {
+                    if (value?.id === "new") {
+                      addGroupName(inputValue)
+                      setInputValue("")
+                    }
+                    else {
+                      onChangeInputs("clientGroupId", value?.id)
+                      setInputValue("")
+                    }
+
+                  }
+                  }
+                  onInputChange={(event: any, newInputValue: string) => {
+                    setInputValue(newInputValue)
+                  }}
                 />
               </div>
             </div>
@@ -343,14 +443,26 @@ const CustomerCardWidget = ({
 
         {/* bottom section */}
         <div style={classes.bottomSectionStyle}>
-          <PrimaryTabsComponent variant="ButtonedTabs" tabs={tabs} withBackGround={true} />
+          <PrimaryTabsComponent
+            variant="ButtonedTabs"
+            tabs={tabs}
+            withBackGround={true}
+          />
         </div>
         <div style={classes.footerStyle}>
-          {isFromHomePage && !showTable ?
-            <SecondaryButton variant="contained" style={{ width: "fit-content" }} onClick={handleShowTable} >{t("customers.buttons.search")}</SecondaryButton>
-            :
+          {isFromHomePage && !showTable ? (
+            <SecondaryButton
+              variant="contained"
+              style={{ width: "fit-content" }}
+              onClick={handleShowTable}
+            >
+              {t("customers.buttons.search")}
+            </SecondaryButton>
+          ) : (
             showAddButton && (
-              <SecondaryButton variant="contained" style={{ width: "fit-content" }}
+              <SecondaryButton
+                variant="contained"
+                style={{ width: "fit-content" }}
                 onClick={handleAddCustomer}
               >
                 {typeClient == "C"
@@ -358,10 +470,11 @@ const CustomerCardWidget = ({
                   : t("suppliers.buttons.addSupplier")}
               </SecondaryButton>
             )
-          }
+          )}
           <PermissionCheck userPermission={Permissions.EDIT_CLIENT}>
             {showUpdateButton && (
-              <SecondaryButton variant="contained"
+              <SecondaryButton
+                variant="contained"
                 style={{ width: "fit-content" }}
                 onClick={handleEditCustomer}
               >
@@ -385,9 +498,11 @@ const CustomerCardWidget = ({
       <ClientTypeModal
         openModal={isClientType}
         onClose={onClickCloseClientType}
-        modalTitle={typeClient === "C"
-          ? t("customers.customerTypes")
-          : t("suppliers.supplierTypes")}
+        modalTitle={
+          typeClient === "C"
+            ? t("customers.customerTypes")
+            : t("suppliers.supplierTypes")
+        }
         clientTypeId={clientTypeId}
       />
     </GoMakeModal>

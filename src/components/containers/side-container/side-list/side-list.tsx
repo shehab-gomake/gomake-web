@@ -163,6 +163,7 @@ const SideList = ({
                                     aria-label="main mailbox folders"
                                     {...provided.droppableProps}
                                     ref={provided.innerRef}
+                                    className="custom-scrollbar"
                                 >
                                     {filteredList().map((item, index) => (
                                         <Draggable
@@ -240,6 +241,7 @@ const SideList = ({
                             style={classes.listContainer}
                             component="nav"
                             aria-label="main mailbox folders"
+                            className="custom-scrollbar"
                         >
                             {filteredList().map((item) => {
                                 return (

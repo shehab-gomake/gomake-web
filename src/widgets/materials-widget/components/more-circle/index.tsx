@@ -11,7 +11,7 @@ import { DuplicateIcon } from "@/components/icons/duplicate-icon";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { filterState, selectedMaterialIdForUpdateState, selectedSupplierIdState } from "../../state";
+import { filterState, materialCategorySuppliersState, selectedMaterialIdForUpdateState, selectedSupplierIdState } from "../../state";
 import { EMaterialsActions } from "../../enums";
 import { actionMenuState } from "@/store";
 
@@ -20,6 +20,8 @@ const MaterialMenuWidget = ({
   isAdmin,
   onClickOpenDeleteTableRowModal,
   onChangeRowCheckBox,
+  onClickOpenDeleteTableRowWhenHaveMoreSupplierModal,
+  toggleIsActive
 }) => {
   const { clasess } = useStyle();
   const { open, anchorEl, handleClose, handleClick } = useMoreCircle({
@@ -27,23 +29,15 @@ const MaterialMenuWidget = ({
     dataRow,
   });
   const { t } = useTranslation();
-  const { updateCellData } = useTableCellData(isAdmin);
-  const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
+
   const { query } = useRouter();
   const { materialType, materialCategory } = query;
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const materialFilter = useRecoilValue(filterState);
   const setSelectedMaterialIdForUpdate = useSetRecoilState(selectedMaterialIdForUpdateState);
+  const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
 
-  const toggleIsActive = async (id, parameterKey, value) => {
-    await updateCellData(id, parameterKey, !value);
-    getMaterialCategoryData(
-      materialType?.toString(),
-      materialCategory?.toString(),
-      materialFilter,
-      supplierId
-    ).then();
-  };
+
   const [action, setAction] = useRecoilState<{
     action: EMaterialsActions;
     key: string;
@@ -98,8 +92,16 @@ const MaterialMenuWidget = ({
         <MenuItem
           style={clasess.menuItemContainer}
           onClick={() => {
-            onClickOpenDeleteTableRowModal(dataRow);
-            handleClose();
+            const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
+            if (isHaveMorethanMaterialSuppliers) {
+              onClickOpenDeleteTableRowWhenHaveMoreSupplierModal(dataRow)
+              handleClose();
+            }
+            else {
+              onClickOpenDeleteTableRowModal(dataRow);
+              handleClose();
+            }
+
           }}
         >
           <DeleteIcon />

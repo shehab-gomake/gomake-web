@@ -2,6 +2,7 @@ export const hasToken = () => {
   if (getUserToken()) return true;
   return false;
 };
+
 export const getItem = (key: string, parse = false) => {
   if (typeof localStorage !== "undefined") {
     let item: any = null;
@@ -16,6 +17,7 @@ export const getItem = (key: string, parse = false) => {
 export const setItem = (key: string, value: any) => {
   localStorage.setItem(key, value);
 };
+
 export const getUserToken = () => {
   return getItem("auth-token");
 };

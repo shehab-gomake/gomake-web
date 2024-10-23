@@ -45,18 +45,22 @@ const ActionMenu = (props: IActionMenuProps) => {
     handleChange,
     deleteProperty,
     addProperty,
-    updateModalCurrency
+    updateModalCurrency,
+    openUpdatedTableRowModal,
+    onClickCloseUpdatedTableRowModal,
+    updatedTableRowModal
   } = useMaterialsActions(props.isAdmin);
   const getMaterialActions = () => {
     if (props.isAdmin) {
       return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive && x.action !== EMaterialsActions.CreatePurchaseOrder);
     } else {
-      return [...materialActions, {
+      /*return [...materialActions, {
         "key": "UpdateNumbering",
         "isUnderLine": false,
         "icon": "purchaseOrderIcon",
         "action": 16
-      }];
+      }];*/
+      return materialActions;
     }
     /*else {
       return materialActions.filter(x => x.action !== EMaterialsActions.DownLoadExcel && x.action !== EMaterialsActions.UploadExcel);
@@ -211,6 +215,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                         {properties[index].key &&
                           rowInputs(
                             properties[index].key,
+                            false,
                             materialHeaders,
                             currencies,
                             [],
@@ -265,9 +270,17 @@ const ActionMenu = (props: IActionMenuProps) => {
           </Stack>
         </GoMakeModal>
       }
-
+      <GoMakeDeleteModal
+        openModal={openUpdatedTableRowModal}
+        onClose={onClickCloseUpdatedTableRowModal}
+        hideIcon
+        title={t("materials.modals.updateModalTitle")}
+        yesBtn={t("documentingSettings.update")}
+        onClickDelete={updatedTableRowModal}
+      />
     </>
   );
 };
+
 
 export { ActionMenu };

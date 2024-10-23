@@ -1,19 +1,37 @@
 import { useEffect, useRef, useState } from "react";
-import { useAgentsList, useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
+import {
+  useAgentsList,
+  useCustomerDropDownList,
+  useGomakeAxios,
+  useSnackBar,
+} from "@/hooks";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
-import { getCreditCardTransactionsApi, changeTransactionClientApi, makeRefundApi } from "@/services/api-service/credit-card-transactions/credit-card-transaction-api";
+import {
+  getCreditCardTransactionsApi,
+  changeTransactionClientApi,
+  makeRefundApi,
+} from "@/services/api-service/credit-card-transactions/credit-card-transaction-api";
 import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "./widgets/more-circle";
-import { format, endOfToday, startOfYear } from 'date-fns';
+import { format, endOfToday, startOfYear } from "date-fns";
 
 const useCreditCardTransactions = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData } = useSnackBar();
-  const { customer, setCustomer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList();
+  const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData } =
+    useSnackBar();
+  const {
+    customer,
+    setCustomer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+  } = useCustomerDropDownList();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
-  const [allCreditCardTransaction, setAllCreditCardTransaction] = useState<any>();
+  const [allCreditCardTransaction, setAllCreditCardTransaction] =
+    useState<any>();
   const [allPureTransaction, setAllPureTransaction] = useState<any>();
   const [page, setPage] = useState(1);
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -33,7 +51,7 @@ const useCreditCardTransactions = () => {
     t("creditCardTransactions.Customer"),
     t("creditCardTransactions.ReceiptNumber"),
     t("creditCardTransactions.Sum"),
-    t("properties.more")
+    t("properties.more"),
   ];
 
   const handlePageSizeChange = (event) => {
@@ -45,28 +63,27 @@ const useCreditCardTransactions = () => {
     setOpenModal(false);
   };
   const onClickOpenModal = (transaction) => {
-    setSelectedTransaction(transaction)
+    setSelectedTransaction(transaction);
     setOpenModal(true);
   };
 
   const onClickOpenRefundModal = (transaction) => {
-    setSelectedTransaction(transaction)
+    setSelectedTransaction(transaction);
     setOpenRefundModal(true);
-  }
+  };
 
   const onClickCloseRefundModal = () => {
     setOpenRefundModal(false);
-  }
+  };
 
   const onClickSearchFilter = () => {
     setPage(1);
     getAllCreditCardTransactions();
   };
 
-
   const getAllCreditCardTransactions = async (isClear: boolean = false) => {
-    const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
-    const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
     const callBack = (res) => {
       if (res?.success) {
@@ -78,44 +95,49 @@ const useCreditCardTransactions = () => {
           item?.clientName,
           item?.receiptNumber,
           item?.sum,
-          item?.isEditable ? <MoreMenuWidget
-            transaction={item}
-            onClickOpenModal={onClickOpenModal}
-            onClickSecondModal={onClickOpenRefundModal}
-
-          />
-            : t(`creditCardTransactions.${item?.status}`),
+          item?.isEditable ? (
+            <MoreMenuWidget
+              transaction={item}
+              onClickOpenModal={onClickOpenModal}
+              onClickSecondModal={onClickOpenRefundModal}
+            />
+          ) : (
+            t(`creditCardTransactions.${item?.status}`)
+          ),
         ]);
         setAllCreditCardTransaction(mapData);
-        setPagesCount(Math.ceil(totalItems / (pageSize)));
-      }
-      else {
+        setPagesCount(Math.ceil(totalItems / pageSize));
+      } else {
         alertFaultGetData();
       }
-    }
-    await getCreditCardTransactionsApi(callApi, callBack,
-      isClear ?
-        {
-          pageNumber: page,
-          pageSize: pageSize,
-        }
-        :
-        {
-          clientId: customer?.id,
-          receiptNumber: receiptNumber,
-          sum: transactionAmount && transactionAmount,
-          startDate: formattedStartDate,
-          endDate: formattedEndDate,
-          pageNumber: page,
-          pageSize: pageSize,
-        });
-  }
+    };
+    await getCreditCardTransactionsApi(
+      callApi,
+      callBack,
+      isClear
+        ? {
+            pageNumber: page,
+            pageSize: pageSize,
+          }
+        : {
+            clientId: customer?.id,
+            receiptNumber: receiptNumber,
+            sum: transactionAmount && transactionAmount,
+            startDate: formattedStartDate,
+            endDate: formattedEndDate,
+            pageNumber: page,
+            pageSize: pageSize,
+          }
+    );
+  };
 
   const onClickChangeTransactionClient = async (clientID) => {
     const callBack = (res) => {
       if (res?.success) {
         const updatedTransaction = res.data;
-        const updatedIndex = allPureTransaction.findIndex(item => item?.id === updatedTransaction?.id);
+        const updatedIndex = allPureTransaction.findIndex(
+          (item) => item?.id === updatedTransaction?.id
+        );
         if (updatedIndex !== -1) {
           const updatedTransactions = [...allCreditCardTransaction];
           const updatedRow = [
@@ -130,29 +152,32 @@ const useCreditCardTransactions = () => {
                 onClickOpenModal={onClickOpenModal}
                 onClickSecondModal={onClickOpenRefundModal}
               />
-            ) : t(`creditCardTransactions.${updatedTransaction.status}`),
+            ) : (
+              t(`creditCardTransactions.${updatedTransaction.status}`)
+            ),
           ];
           updatedTransactions[updatedIndex] = updatedRow;
           setAllCreditCardTransaction(updatedTransactions);
         }
         onClickClosModal();
         alertSuccessUpdate();
-      }
-      else {
+      } else {
         alertFaultUpdate();
       }
-    }
+    };
     await changeTransactionClientApi(callApi, callBack, {
       id: selectedTransaction?.id,
       clientId: clientID,
     });
-  }
+  };
 
   const onClickMakeRefund = async () => {
     const callBack = (res) => {
       if (res?.success) {
         const updatedTransaction = res.data;
-        const updatedIndex = allPureTransaction.findIndex(item => item?.id === updatedTransaction?.id);
+        const updatedIndex = allPureTransaction.findIndex(
+          (item) => item?.id === updatedTransaction?.id
+        );
         if (updatedIndex !== -1) {
           const updatedTransactions = [...allCreditCardTransaction];
           const updatedRow = [
@@ -167,21 +192,23 @@ const useCreditCardTransactions = () => {
                 onClickOpenModal={onClickOpenModal}
                 onClickSecondModal={onClickOpenRefundModal}
               />
-            ) : t(`creditCardTransactions.${updatedTransaction.status}`),
+            ) : (
+              t(`creditCardTransactions.${updatedTransaction.status}`)
+            ),
           ];
           updatedTransactions[updatedIndex] = updatedRow;
           setAllCreditCardTransaction(updatedTransactions);
         }
         onClickCloseRefundModal();
         alertSuccessUpdate();
-      }
-      else {
+      } else {
         alertFaultUpdate();
-
       }
-    }
-    await makeRefundApi(callApi, callBack, { transactionId: selectedTransaction?.id });
-  }
+    };
+    await makeRefundApi(callApi, callBack, {
+      transactionId: selectedTransaction?.id,
+    });
+  };
 
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
@@ -202,8 +229,6 @@ const useCreditCardTransactions = () => {
   useEffect(() => {
     getAllCreditCardTransactions();
   }, [page, pageSize]);
-
-
 
   const handleTransactionAmountChange = (event) => {
     setTransactionAmount(event.target.value);
@@ -253,6 +278,7 @@ const useCreditCardTransactions = () => {
     handleDateChange,
     fromDate,
     toDate,
+    isFetching,
   };
 };
 

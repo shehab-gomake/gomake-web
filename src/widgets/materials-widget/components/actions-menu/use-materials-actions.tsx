@@ -7,6 +7,7 @@ import {
   isAllMaterialsCheckedState,
   materialActionState,
   materialCategoryDataState,
+  materialCategorySuppliersState,
   materialHeadersState,
   materialsUnCheckedState,
   openAddRowModalState, openUpdatedNumburingModalState, selectedMaterialIdForUpdateState,
@@ -186,6 +187,73 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const onInputChange = (key: string, v: any) => {
     setUpdatedValue(v);
   };
+  const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
+  const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
+
+  const [openUpdatedTableRowModal, setOpenUpdatedTableRowModal] = useState<boolean>(false);
+  const onClickCloseUpdatedTableRowModal = () => {
+    setOpenUpdatedTableRowModal(false);
+  };
+
+  const onClickOpenUpdatedTableRowModal = () => {
+    setOpenUpdatedTableRowModal(true);
+  };
+
+  const updateMaterials = async (action, callApi, onUpdateCallBack, {
+    materialType,
+    materialCategory,
+    isAllMaterialsChecked,
+    selectedMaterialsIds,
+    updatedValue,
+    uncheckedMaterials,
+    rate,
+    activeFilter,
+    materialFilter,
+    supplierId
+  }) => {
+    return await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
+      materialTypeKey: materialType.toString(),
+      categoryKey: materialCategory.toString(),
+      ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
+      action: action.action,
+      priceIndex: 0,
+      updatedValue,
+      isAllMaterialsChecked: isAllMaterialsChecked,
+      uncheckedMaterials: uncheckedMaterials,
+      tableFilters: {
+        materialKey: materialType,
+        categoryKey: materialCategory,
+        supplierId,
+        pageNumber: null,
+        pageSize: null,
+        isActive:
+          activeFilter === EMaterialActiveFilter.ACTIVE
+            ? true
+            : activeFilter === EMaterialActiveFilter.INACTIVE
+              ? false
+              : null,
+        customFiltersKeyValueList: materialFilter,
+      },
+      exchangeRate: rate,
+    });
+  };
+
+  const updatedTableRowModal = async () => {
+    await updateMaterials(action, callApi, onUpdateCallBack, {
+      materialType,
+      materialCategory,
+      isAllMaterialsChecked,
+      selectedMaterialsIds,
+      updatedValue,
+      uncheckedMaterials,
+      rate,
+      activeFilter,
+      materialFilter,
+      supplierId
+    });
+  }
+
+
 
   const onUpdate = async () => {
     if (action !== null) {
@@ -196,31 +264,21 @@ const useMaterialsActions = (isAdmin: boolean) => {
         else if (action.key === "CreatePurchaseOrder") {
           CreatePurchaseOrder().then();
         }
+        // else if (isHaveMorethanMaterialSuppliers) {
+        //   onClickOpenUpdatedTableRowModal()
+        // }
         else {
-          await updateMaterialsPropApi(callApi, onUpdateCallBack, {
-            materialTypeKey: materialType.toString(),
-            categoryKey: materialCategory.toString(),
-            ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
-            action: action.action,
+          await updateMaterials(action, callApi, onUpdateCallBack, {
+            materialType,
+            materialCategory,
+            isAllMaterialsChecked,
+            selectedMaterialsIds,
             updatedValue,
-            priceIndex: 0,
-            isAllMaterialsChecked: isAllMaterialsChecked,
-            uncheckedMaterials: uncheckedMaterials,
-            tableFilters: {
-              materialKey: materialType,
-              categoryKey: materialCategory,
-              supplierId: null,
-              pageNumber: null,
-              pageSize: null,
-              isActive:
-                activeFilter === EMaterialActiveFilter.ACTIVE
-                  ? true
-                  : activeFilter === EMaterialActiveFilter.INACTIVE
-                    ? false
-                    : null,
-              customFiltersKeyValueList: materialFilter,
-            },
-            exchangeRate: rate,
+            uncheckedMaterials,
+            rate,
+            activeFilter,
+            materialFilter,
+            supplierId: null
           });
         }
       } else {
@@ -230,31 +288,21 @@ const useMaterialsActions = (isAdmin: boolean) => {
         else if (action.key === "CreatePurchaseOrder") {
           CreatePurchaseOrder().then();
         }
+        else if (isHaveMorethanMaterialSuppliers) {
+          onClickOpenUpdatedTableRowModal()
+        }
         else {
-          await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
-            materialTypeKey: materialType.toString(),
-            categoryKey: materialCategory.toString(),
-            ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
-            action: action.action,
-            priceIndex: 0,
+          await updateMaterials(action, callApi, onUpdateCallBack, {
+            materialType,
+            materialCategory,
+            isAllMaterialsChecked,
+            selectedMaterialsIds,
             updatedValue,
-            isAllMaterialsChecked: isAllMaterialsChecked,
-            uncheckedMaterials: uncheckedMaterials,
-            tableFilters: {
-              materialKey: materialType,
-              categoryKey: materialCategory,
-              supplierId,
-              pageNumber: null,
-              pageSize: null,
-              isActive:
-                activeFilter === EMaterialActiveFilter.ACTIVE
-                  ? true
-                  : activeFilter === EMaterialActiveFilter.INACTIVE
-                    ? false
-                    : null,
-              customFiltersKeyValueList: materialFilter,
-            },
-            exchangeRate: rate,
+            uncheckedMaterials,
+            rate,
+            activeFilter,
+            materialFilter,
+            supplierId
           });
         }
       }
@@ -722,7 +770,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
     deleteProperty,
     addProperty,
     updateModalCurrency,
-    CreatePurchaseOrder
+    CreatePurchaseOrder,
+    openUpdatedTableRowModal,
+    onClickCloseUpdatedTableRowModal,
+    updatedTableRowModal
   };
 };
 

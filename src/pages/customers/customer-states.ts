@@ -9,3 +9,9 @@ export const agentsCategoriesState = atom<[]>({
     key: 'agentsCategoriesState',
     default: [],
 });
+
+
+export const isSelectedCLoseAsDeleveryNoteState = atom<boolean>({
+    key: 'isSelectedCLoseAsDeleveryNoteState',
+    default: false,
+});

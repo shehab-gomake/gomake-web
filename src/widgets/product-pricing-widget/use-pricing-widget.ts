@@ -4,13 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 
 import { updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
-import { actionListForWorkFlow, currentCalculationConnectionId, productItemValueByEditState, viewPricingTab } from "@/store";
+import { actionListForWorkFlow, currentCalculationConnectionId, foldOptionsState, productItemValueByEditState, viewPricingTab } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 import { calculationResultState, currentProductItemValueDraftId, currentProductItemValuePriceState, currentProductItemValueState, selectedWorkFlowState } from "./state";
 import { EPricingViews, EWorkSource } from "./enums";
 import { getWorkFlowsActionsApi, getWorkFlowsApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
+import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-outputs";
 
 const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType}) => {
 
@@ -20,6 +21,7 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType}) =>
   const { t } = useTranslation();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState)
+
   const [pageSize, setPageSize] = useState(10)
   const [heightScrolling, setHeightScrolling] = useState(50)
   const [isChangeView, setIsChangeView] = useState(true)
@@ -217,6 +219,9 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType}) =>
     }
     await getWorkFlowsActionsApi(callApi, callBack, { signalRConnectionId: connectionId, workFlowId })
   }
+
+
+
 
   return {
     view,
