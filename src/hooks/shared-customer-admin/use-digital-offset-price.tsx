@@ -2925,6 +2925,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         if (relatedParameter) {
           let valueToAdd = null;
+          let valueIds = null;
 
           // Handle the case where parameterType is 5
           if (
@@ -2940,15 +2941,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               defaultConfig.values.length > 0
             ) {
               valueToAdd = defaultConfig.values[0];
+              valueIds = defaultConfig.values[0];
             } else if (
               relatedParameter.valuesConfigs &&
               relatedParameter.valuesConfigs.length === 1 &&
               relatedParameter.valuesConfigs[0]?.values?.length > 0
             ) {
               valueToAdd = relatedParameter.valuesConfigs[0]?.updateName;
+              valueIds = relatedParameter.valuesConfigs[0]?.values[0];
+
             }
           } else if (relatedParameter.defaultValue) {
             valueToAdd = relatedParameter.defaultValue;
+            valueIds = relatedParameter.defaultValue
           }
 
           if (valueToAdd !== null) {
@@ -2968,7 +2973,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameterName: relatedParameter.name,
                 actionId: relatedParameter.actionId,
                 values: [valueToAdd],
-                valueIds: [null], // Adjust if necessary
+                valueIds: [valueIds], // Adjust if necessary
                 actionIndex: relatedParameter.actionIndex,
                 parameterCode: relatedParameter.code,
                 valuesConfigs: relatedParameter?.valuesConfigs,
