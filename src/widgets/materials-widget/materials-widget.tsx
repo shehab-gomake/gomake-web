@@ -30,6 +30,7 @@ import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { Stack } from "@mui/material";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { UpdatedNumburingModal } from "./components/updated-numbering/updated-numbering-modal";
+import { CreatePurchaseOrderModal } from "./components/create-purchase-order-modal/create-purchase-order-modal";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -277,6 +278,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       <AddCategoryModal isAdmin={props.isAdmin} productList={productList} />
       <AddRowModal isAdmin={props.isAdmin} />
       <UpdatedNumburingModal isAdmin={props.isAdmin} />
+      <CreatePurchaseOrderModal isAdmin={props.isAdmin} />
       <GoMakeDeleteModal
         openModal={openDeleteRowModal}
         onClose={onClickCloseDeleteRowModal}

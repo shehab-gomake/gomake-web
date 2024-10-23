@@ -116,6 +116,11 @@ export const openUpdatedNumburingModalState = atom<boolean>({
   default: false,
 });
 
+export const openCreatePurchaseOrderModalState = atom<boolean>({
+  key: "openCreatePurchaseOrderModalState",
+  default: false,
+});
+
 export const materialsMachinesState = atom<[]>({
   key: "materialsMachinesState",
   default: [],
