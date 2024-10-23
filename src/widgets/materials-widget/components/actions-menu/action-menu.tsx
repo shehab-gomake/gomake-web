@@ -50,11 +50,16 @@ const ActionMenu = (props: IActionMenuProps) => {
     onClickCloseUpdatedTableRowModal,
     updatedTableRowModal
   } = useMaterialsActions(props.isAdmin);
-
   const getMaterialActions = () => {
     if (props.isAdmin) {
       return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive && x.action !== EMaterialsActions.CreatePurchaseOrder);
     } else {
+      /*return [...materialActions, {
+        "key": "UpdateNumbering",
+        "isUnderLine": false,
+        "icon": "purchaseOrderIcon",
+        "action": 16
+      }];*/
       return materialActions;
     }
     /*else {
@@ -89,23 +94,26 @@ const ActionMenu = (props: IActionMenuProps) => {
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
         onClick={handleCloseMenu}
       >
-        {getMaterialActions()?.map((action) => (
-          <>
-            <MenuItem
-              style={clasess.menuItemContainer}
-              key={action.action}
-              onClick={() => onChooseAction(action)}
-            >
-              <div style={clasess.actionIconStyle}>
-                {_renderIcons(action.icon)}
-              </div>
-              <div style={clasess.rowTextStyle}>
-                {t("materialsActions." + action.key)}
-              </div>
-            </MenuItem>
-            {action?.isUnderLine && <Divider />}
-          </>
-        ))}
+        {getMaterialActions()?.map((action) => {
+
+          return (
+            <>
+              <MenuItem
+                style={clasess.menuItemContainer}
+                key={action.action}
+                onClick={() => onChooseAction(action)}
+              >
+                <div style={clasess.actionIconStyle}>
+                  {_renderIcons(action.icon)}
+                </div>
+                <div style={clasess.rowTextStyle}>
+                  {t("materialsActions." + action.key)}
+                </div>
+              </MenuItem>
+              {action?.isUnderLine && <Divider />}
+            </>
+          )
+        })}
       </Menu>
       {action?.action === EMaterialsActions.Delete ?
         <GoMakeDeleteModal

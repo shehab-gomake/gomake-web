@@ -44,6 +44,7 @@ import { EMaterialActiveFilter } from "@/widgets/materials-widget/enums";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { useMaterialsCategories } from "./use-materials-categories";
+import { NumberStringInput } from "./components/table-cell-data/number-string-input";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -265,7 +266,7 @@ const useMaterials = (isAdmin: boolean) => {
         onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
         checked={isAllSelected()}
       />,
-      // t("login.code"),
+      t("properties.sku"),
       ...(isAdmin ? materialHeaders.filter(x => x.key !== "stock") : materialHeaders.filter((header) => !header.isForAdmin)
       ).map((header) =>
         header.unit ? (
@@ -313,6 +314,7 @@ const useMaterials = (isAdmin: boolean) => {
 
   const tableRowsNew = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
+      console.log("dataRow", dataRow)
       const filteredHeaders = isAdmin
         ? materialHeaders.filter((x) => x.key !== "stock")
         : materialHeaders.filter((header) => !header.isForAdmin);
@@ -320,6 +322,14 @@ const useMaterials = (isAdmin: boolean) => {
         <Checkbox
           onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
           checked={dataRow.checked}
+        />,
+        <NumberStringInput
+          type={0}
+          isEditable={true}
+          parameterKey={"sku"}
+          id={dataRow.id}
+          value={dataRow?.code}
+          isAdmin={isAdmin}
         />,
         // dataRow?.code,
         ...filteredHeaders.map((header) => (

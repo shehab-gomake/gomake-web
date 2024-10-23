@@ -51,9 +51,28 @@ const AddRowModal = (props: IAddRowModalProps) => {
     useRecoilValue<
       { key: string; value: string; inputType: number; values: any[] }[]
     >(materialHeadersState);
-  const notebookTypesObj = materialHeaders?.find(
+    const [materialHeadersWithSku, setMaterialHeadersWithSku] = useState([])
+
+    const notebookTypesObj = materialHeaders?.find(
     (item) => item.key === "notebookTypes"
   );
+    useEffect(() => {
+        if (materialHeaders?.length > 0) {
+            setMaterialHeadersWithSku([{
+                "key": "sku",
+                "value": "SKU",
+                "unit": null,
+                "isFilter": false,
+                "isForAdmin": null,
+                "isHideInDuplicate": null,
+                "parameterId": null,
+                "inputType": 0,
+                "filterType": null,
+                "values": []
+            }, ...materialHeaders,])
+        }
+    
+    }, [materialHeaders])
 
   const getParameterValuesById = async (data: any) => {
     const callBack = (res) => {
@@ -90,8 +109,8 @@ const AddRowModal = (props: IAddRowModalProps) => {
         <Stack style={classes.inputsDivStyle}>
           {rowInputs(
             rowData,
-            isFetching,
-            materialHeaders,
+            isFetching, 
+            materialHeadersWithSku,
             currencies,
             machinesCategories,
             clientsCategories

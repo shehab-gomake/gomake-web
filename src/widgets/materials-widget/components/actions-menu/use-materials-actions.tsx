@@ -10,7 +10,7 @@ import {
   materialCategorySuppliersState,
   materialHeadersState,
   materialsUnCheckedState,
-  openAddRowModalState, selectedMaterialIdForUpdateState,
+  openAddRowModalState, openUpdatedNumburingModalState, selectedMaterialIdForUpdateState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -90,6 +90,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
+  const setOpenUpdatedNumburingModal = useSetRecoilState<boolean>(openUpdatedNumburingModalState);
   const [selectedMaterialsIds, setSelectedMaterialsIds] = useState([]);
 
   useEffect(() => {
@@ -119,6 +120,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
     setUpdatedValue("")
     if (action?.action === EMaterialsActions.AddNew) {
       setOpenAddRowModal(true);
+      return;
+    }
+    if (action?.action === EMaterialsActions.sku) {
+      setOpenUpdatedNumburingModal(true);
       return;
     }
     if (action?.action === EMaterialsActions.DownLoadExcel) {
