@@ -65,7 +65,11 @@ import {
   isSelectedCLoseAsDeleveryNoteState,
 } from "@/pages/customers/customer-states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
-import { checkArrayNotEmptyOrEmailNotEmpty, checkArrayNotEmptyOrPhoneNotEmpty, isAtLeastOneSelected } from "@/utils/helpers";
+import {
+  checkArrayNotEmptyOrEmailNotEmpty,
+  checkArrayNotEmptyOrPhoneNotEmpty,
+  isAtLeastOneSelected,
+} from "@/utils/helpers";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -281,8 +285,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -957,7 +961,6 @@ const useQuoteNew = ({
     setOpenDeleteItemModal(true);
   };
 
-  //!here
   const deleteQuoteItem = async () => {
     if (router.query.isNewCreation) {
       const updatedDocumentItems = quoteItemValue.documentItems.filter(
@@ -1013,7 +1016,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1281,7 +1284,6 @@ const useQuoteNew = ({
       },
     });
   };
-
 
   const onClickSendQuoteToClient = async (messageType: number) => {
     if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
