@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const digitalEnhancementMachine = (state: Record<string, any>) => {
     return [
         {
@@ -33,6 +35,25 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
                 parameterKey: '',
                 disabled: true
             },
+        {
+            name: 'machineAttributes.heightLevels',
+            parameterKey: 'heightLevels',
+            value: state?.attributes?.heightLevels ? state?.attributes?.heightLevels : [],
+            machineInputType: 'multiArrayInput',
+            isValid: state?.attributes?.heightLevels?.length > 0,
+            inputs: [
+                {
+                    name: "",
+                    label: "machineAttributes.heightLevel",
+                    type: "text",
+                    placeholder: "machineAttributes.heightLevel",
+                    required: true,
+                    parameterKey: "value",
+                    options: [],
+                    unit: EMeasurementUnits.MM
+                },
+            ]
+        },
     ]
 };
 
