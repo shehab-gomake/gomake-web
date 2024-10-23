@@ -54,12 +54,12 @@ const ActionMenu = (props: IActionMenuProps) => {
     if (props.isAdmin) {
       return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive && x.action !== EMaterialsActions.CreatePurchaseOrder);
     } else {
-      /*return [...materialActions, {
-        "key": "UpdateNumbering",
-        "isUnderLine": false,
-        "icon": "purchaseOrderIcon",
-        "action": 16
-      }];*/
+      // return [...materialActions, {
+      //   "key": "UpdateNumbering",
+      //   "isUnderLine": false,
+      //   "icon": "purchaseOrderIcon",
+      //   "action": 16
+      // }];
       return materialActions;
     }
     /*else {
@@ -126,7 +126,7 @@ const ActionMenu = (props: IActionMenuProps) => {
           onClose={handleCloseModal}
           insideStyle={{ width: 500, height: "auto" }}
           openModal={action !== null}
-          modalTitle={action?.action === EMaterialsActions.CreatePurchaseOrder ? t("materials.modals.quantityPerMaterial") : t("materialsActions." + action?.key)}
+          modalTitle={t("materialsActions." + action?.key)}
         >
           <Stack
             gap={3}
