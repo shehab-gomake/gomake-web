@@ -24,7 +24,6 @@ const BoardMissionsComponent = ({
   step,
   productType,
   connectionId,
-  updateStatus,
 }: IProps) => {
   const { getBoardMissions, initStates, boardMissionsDetails } =
     useBoardMissions();
@@ -46,7 +45,7 @@ const BoardMissionsComponent = ({
       padding={"34px 24px"}
       borderRadius={"24px, 24px, 0px, 0px"}
     >
-      <BoardMissionsDetailsHeader updateStatus={updateStatus} />
+      <BoardMissionsDetailsHeader />
       <Divider orientation={"horizontal"} flexItem />
       <NavigationButtonsComponent />
       <Stack overflow={"auto"} flex={1}>
