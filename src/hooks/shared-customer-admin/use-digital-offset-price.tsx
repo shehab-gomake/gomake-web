@@ -3843,7 +3843,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           if (!parameter.isHidden && parameter.isRequired) {
             const index = allParameters.findIndex(
               (par) =>
-                par.parameterId === parameter.id &&
+                par.parameterId === parameter.id && par?.sectionId === section?.id && par?.subSectionId === subSection?.id &&
                 ((par?.values && par?.values[0]?.length) ||
                   (par?.valueIds && par?.valueIds[0]?.length))
             );
@@ -3864,7 +3864,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             if (!parameter.isHidden && parameter.isRequired) {
               const index = allParameters.findIndex(
                 (par) =>
-                  par.parameterId === parameter.id &&
+                  par.parameterId === parameter.id && par?.sectionId === section?.id && par?.subSectionId === subSection?.id &&
                   ((par?.values && par?.values[0]?.length) ||
                     (par?.valueIds && par?.valueIds[0]?.length))
               );
