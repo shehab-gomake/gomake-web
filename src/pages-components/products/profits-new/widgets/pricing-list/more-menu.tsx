@@ -10,12 +10,12 @@ const MoreMenuWidget = ({
   selectedActionProfitRow,
   onClickOpenDeleteRowModal,
 }) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   return (
     <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
       <MenuItem
-        style={clasess.menuItemStyle}
+        style={classes.menuItemStyle}
         onClick={() => {
           onClickOpenDeleteRowModal();
           handleClose();

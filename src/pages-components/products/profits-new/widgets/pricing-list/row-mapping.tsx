@@ -19,7 +19,7 @@ const RowMappingWidget = ({
   setSelectedActionProfit,
   selectedAdditionalProfitRow,
 }: PricingListTableRowProps) => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const router = useRouter();
   const {
     isUpdateCost,
@@ -59,8 +59,8 @@ const RowMappingWidget = ({
     <TableRow key={item.id}>
       {router?.query?.draftId &&
         selectedPricingBy?.value === EPricingBy.COST && (
-          <PrimaryTableCell style={clasess.cellContainerStyle}>
-            <div style={clasess.cellTextInputStyle}>
+          <PrimaryTableCell style={classes.cellContainerStyle}>
+            <div style={classes.cellTextInputStyle}>
               <InputUpdatedValues
                 value={item?.caseQuantity}
                 onBlur={() => onBlurCaseQuantity(item)}
@@ -74,8 +74,8 @@ const RowMappingWidget = ({
           </PrimaryTableCell>
         )}
 
-      <PrimaryTableCell style={clasess.cellContainerStyle}>
-        <div style={clasess.cellTextInputStyle}>
+      <PrimaryTableCell style={classes.cellContainerStyle}>
+        <div style={classes.cellTextInputStyle}>
           <InputUpdatedValues
             value={item?.value}
             onBlur={() => onBlurCost(item)}
@@ -89,8 +89,8 @@ const RowMappingWidget = ({
       </PrimaryTableCell>
       {router?.query?.draftId &&
         selectedPricingBy?.value != EPricingBy.COST && (
-          <PrimaryTableCell style={clasess.cellContainerStyle}>
-            <div style={clasess.cellTextInputStyle}>
+          <PrimaryTableCell style={classes.cellContainerStyle}>
+            <div style={classes.cellTextInputStyle}>
               <InputUpdatedValues
                 value={item?.caseCost}
                 onBlur={() => onBlurCaseCost(item)}
@@ -104,8 +104,8 @@ const RowMappingWidget = ({
           </PrimaryTableCell>
         )}
       {!router.query.draftId && (
-        <PrimaryTableCell style={clasess.cellContainerStyle}>
-          <div style={clasess.cellTextInputStyle}>
+        <PrimaryTableCell style={classes.cellContainerStyle}>
+          <div style={classes.cellTextInputStyle}>
             {selectedPricingBy?.value === EPricingBy.COST ? (
               <InputUpdatedValues
                 value={profit}
@@ -134,8 +134,8 @@ const RowMappingWidget = ({
         </PrimaryTableCell>
       )}
       {router.query.draftId && (
-        <PrimaryTableCell style={clasess.cellContainerStyle}>
-          <div style={clasess.cellTextInputStyle}>
+        <PrimaryTableCell style={classes.cellContainerStyle}>
+          <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
               value={profit}
               sign={"%"}
@@ -151,10 +151,9 @@ const RowMappingWidget = ({
         </PrimaryTableCell>
       )}
 
-
       {router?.query?.draftId && (
-        <PrimaryTableCell style={clasess.cellContainerStyle}>
-          <div style={clasess.cellTextInputStyle}>
+        <PrimaryTableCell style={classes.cellContainerStyle}>
+          <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
               value={unitPrice}
               isTwoDigit={true}
@@ -168,8 +167,8 @@ const RowMappingWidget = ({
           </div>
         </PrimaryTableCell>
       )}
-      <PrimaryTableCell style={clasess.cellContainerStyle}>
-        <div style={clasess.cellTextInputStyle}>
+      <PrimaryTableCell style={classes.cellContainerStyle}>
+        <div style={classes.cellTextInputStyle}>
           <InputUpdatedValues
             value={item?.totalPrice}
             onBlur={() => onBlurTotalPrice(item)}
@@ -182,8 +181,8 @@ const RowMappingWidget = ({
         </div>
       </PrimaryTableCell>
       {selectedAdditionalProfitRow?.id && (
-        <PrimaryTableCell style={clasess.cellContainerStyle}>
-          <div style={clasess.cellTextInputStyle}>
+        <PrimaryTableCell style={classes.cellContainerStyle}>
+          <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
               value={item?.totalPriceWithAdditionProfit}
               onBlur={() => setIsUpdateProfitValue(0)}
@@ -197,7 +196,7 @@ const RowMappingWidget = ({
         </PrimaryTableCell>
       )}
 
-      <PrimaryTableCell style={clasess.cellContainerStyle}>
+      <PrimaryTableCell style={classes.cellContainerStyle}>
         <div
           onClick={(e) => {
             handleClickMorePriceTable(e);
