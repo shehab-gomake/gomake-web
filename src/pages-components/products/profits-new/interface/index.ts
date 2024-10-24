@@ -36,11 +36,10 @@ export type ProfitsPricingTables = {
   profitValue: number;
   pricingBy: number;
   transitionType: number;
-
 };
 
 export type ActionProfitRowChartData = {
-  label?:string;
+  label?: string;
   costAxis: number[];
   quantityAxis: number[];
   profitAxis: number[];
@@ -72,7 +71,8 @@ export type PricingListProps = {
   setSelectedActionProfit?: (value: any) => void;
   deleteActionProfitRow?: (id: string) => void;
   selectedAdditionalProfitRow?: ProfitsPricingTables;
-  selectedPricingTableItems?:any
+  selectedPricingTableItems?: any;
+  getAllActionProfitRowsByActionId?: (value: any) => void;
 };
 export type PricingListTableProps = {
   tableHeaders: string[];
@@ -186,7 +186,8 @@ export type ProfitLeftSideProps = {
   setSelectedActionProfit?: (value: any) => void;
   deleteActionProfitRow?: (id: string) => void;
   selectedAdditionalProfitRow?: ProfitsPricingTables;
-  selectedPricingTableItems?:any
+  selectedPricingTableItems?: any;
+  getAllActionProfitRowsByActionId?: (value: any) => void;
 };
 
 export type selectedOutputsProps = {
