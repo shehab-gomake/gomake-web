@@ -197,7 +197,6 @@ const useNewProfits = () => {
     }
   }, [selectedPricingTableItems, router]);
 
-  //!here
   const getActionProfitByActionId = useCallback(async () => {
     if (router.query.productId) {
       await getAndSetProductProfitByProductId(
