@@ -10,7 +10,7 @@ import {
   materialCategorySuppliersState,
   materialHeadersState,
   materialsUnCheckedState,
-  openAddRowModalState, selectedMaterialIdForUpdateState,
+  openAddRowModalState, openCreatePurchaseOrderModalState, openUpdatedNumburingModalState, selectedMaterialIdForUpdateState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -90,6 +90,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
+  const setOpenUpdatedNumburingModal = useSetRecoilState<boolean>(openUpdatedNumburingModalState);
+  const setOpenCreatePurchaseOrderModal = useSetRecoilState<boolean>(openCreatePurchaseOrderModalState);
+
   const [selectedMaterialsIds, setSelectedMaterialsIds] = useState([]);
 
   useEffect(() => {
@@ -120,6 +123,25 @@ const useMaterialsActions = (isAdmin: boolean) => {
     if (action?.action === EMaterialsActions.AddNew) {
       setOpenAddRowModal(true);
       return;
+    }
+    if (action?.action === EMaterialsActions.sku) {
+      setOpenUpdatedNumburingModal(true);
+      return;
+    }
+    if (action?.action === EMaterialsActions.CreatePurchaseOrder) {
+      if (selectedMaterialsIds.length === 0) {
+        setSnackbarStateValue({
+          state: true,
+          message: t("modal.noMaterialsSelected"),
+          type: "error",
+        });
+        return;
+      }
+      else {
+        setOpenCreatePurchaseOrderModal(true);
+        return;
+      }
+
     }
     if (action?.action === EMaterialsActions.DownLoadExcel) {
       downloadExcelFile().then();
@@ -446,7 +468,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
               : null,
         customFiltersKeyValueList: materialFilter,
       },
-      quantity: updatedValue,
+      quantity: updatedValue || null,
       priceIndex: 0,
     });
   };

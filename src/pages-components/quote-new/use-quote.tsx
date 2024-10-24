@@ -65,7 +65,11 @@ import {
   isSelectedCLoseAsDeleveryNoteState,
 } from "@/pages/customers/customer-states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
-import { isAtLeastOneSelected } from "@/utils/helpers";
+import {
+  checkArrayNotEmptyOrEmailNotEmpty,
+  checkArrayNotEmptyOrPhoneNotEmpty,
+  isAtLeastOneSelected,
+} from "@/utils/helpers";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -290,7 +294,8 @@ const useQuoteNew = ({
     t("products.profits.more"),
   ].filter(Boolean);
 
-  const columnWidths = ["5%", "8%", "12%", "30%", "8%", "8%", "8%", "8%"];
+  // const columnWidths = ["5%", "8%", "12%", "20%", "8%", "8%", "8%", "8%"];
+  const columnWidths = ["5%", "10%", "12%", "25%", "10%", "10%", "10%", "10%"];
   const headerHeight = "44px";
 
   const updateDueDate = async () => {
@@ -956,7 +961,6 @@ const useQuoteNew = ({
     setOpenDeleteItemModal(true);
   };
 
-  //!here
   const deleteQuoteItem = async () => {
     if (router.query.isNewCreation) {
       const updatedDocumentItems = quoteItemValue.documentItems.filter(
@@ -1279,30 +1283,6 @@ const useQuoteNew = ({
         quoteStatus: quoteStatus,
       },
     });
-  };
-  const checkArrayNotEmptyOrPhoneNotEmpty = (array) => {
-    if (array.length === 0) {
-      return false;
-    }
-    for (let i = 0; i < array.length; i++) {
-      if (array[i].contactPhone && array[i].contactPhone.trim() !== "") {
-        return true;
-      }
-    }
-
-    return false;
-  };
-  const checkArrayNotEmptyOrEmailNotEmpty = (array) => {
-    if (array.length === 0) {
-      return false;
-    }
-    for (let i = 0; i < array.length; i++) {
-      if (array[i].contactMail && array[i].contactMail.trim() !== "") {
-        return true;
-      }
-    }
-
-    return false;
   };
 
   const onClickSendQuoteToClient = async (messageType: number) => {

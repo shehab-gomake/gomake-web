@@ -101,12 +101,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [approvalStatusId, setApprovalStatusId] = useState<any>();
   const [quoteStatusId, setQuoteStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
-  const [isCanceledState, setIsCanceledState] = useState(null);
+  const [isCanceledState, setIsCanceledState] = useState(false);
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
   const [allQuotes, setAllQuotes] = useState();
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-  const [customersListCreateOrder, setCustomersListCreateOrder] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [openLogsModal, setOpenLogsModal] = useState(false);
   const [logsModalTitle, setLogsModalTitle] = useState<string>();
@@ -156,8 +155,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState<any>();
   const [documentCloseNumber, setDocumentCloseNumber] = useState("");
 
-  const isSelectedCLoseAsDeleveryNote = useRecoilValue(isSelectedCLoseAsDeleveryNoteState);
-
+  const isSelectedCLoseAsDeleveryNote = useRecoilValue(
+    isSelectedCLoseAsDeleveryNoteState
+  );
 
   const handleDocumentNumberChange = (event) => {
     setDocumentCloseNumber(event.target.value);
@@ -370,7 +370,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+                onClickOpenChangeProductionStatusModal={
+                  onClickOpenChangeProductionStatusModal
+                }
               />,
             ];
           } else if (
@@ -407,7 +409,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+                onClickOpenChangeProductionStatusModal={
+                  onClickOpenChangeProductionStatusModal
+                }
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
@@ -438,7 +442,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+                onClickOpenChangeProductionStatusModal={
+                  onClickOpenChangeProductionStatusModal
+                }
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
@@ -454,7 +460,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   color: "inherit",
                   textDecoration: "unset",
                 }}
-                href={`/jobs?orderNumber=${quote?.number}`}
+                href={`/jobs?finalPatternSearch=${quote?.number}`}
               >
                 {quote?.jobs}
               </a>
@@ -524,7 +530,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickCloseAndTrack={onClickOpenTrackModal}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
                 onClickOpenDocument={OpenDocument}
-                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+                onClickOpenChangeProductionStatusModal={
+                  onClickOpenChangeProductionStatusModal
+                }
               />,
             ];
           } else {
@@ -587,7 +595,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenCloseOrderNotesModal
                 }
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+                onClickOpenChangeProductionStatusModal={
+                  onClickOpenChangeProductionStatusModal
+                }
               />,
             ];
           }
@@ -618,7 +628,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
             onOpenCancelReceiptModal={onOpenCancelReceiptModal}
             onOpenCancelReceiptModalRefund={onOpenCancelReceiptModalRefund}
-            onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+            onClickOpenChangeProductionStatusModal={
+              onClickOpenChangeProductionStatusModal
+            }
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -665,7 +677,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       await getAllReceiptsApi(callApi, callBack, {
         clientId: currentCustomerId || customerId?.id,
         agentId: currentAgentId || agentId?.id,
-        patternSearch: finalPatternSearch || currentFinalPatternSearch,
+        patternSearch:
+          finalPatternSearch !== null && finalPatternSearch !== undefined
+            ? finalPatternSearch
+            : currentFinalPatternSearch,
         fromDate: currentFromDate && GetDateFormat(currentFromDate),
         toDate: currentToDate && GetDateFormat(currentToDate),
         status: currentStatusId || statusId?.value,
@@ -691,7 +706,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             currentAccountingStatus?.value || accountingStatus?.value,
           productionStatus:
             currentProductionStatus?.value || productionStatus?.value,
-          patternSearch: finalPatternSearch || currentFinalPatternSearch,
+          patternSearch:
+            finalPatternSearch !== null && finalPatternSearch !== undefined
+              ? finalPatternSearch
+              : currentFinalPatternSearch,
           customerId: currentCustomerId || customerId?.id,
           dateRange,
           agentId: currentAgentId || agentId?.id,
@@ -768,7 +786,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+                onClickOpenChangeProductionStatusModal={
+                  onClickOpenChangeProductionStatusModal
+                }
               />,
             ];
           } else if (
@@ -805,7 +825,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+                onClickOpenChangeProductionStatusModal={
+                  onClickOpenChangeProductionStatusModal
+                }
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
@@ -836,7 +858,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickDuplicate={onClickQuoteDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+                onClickOpenChangeProductionStatusModal={
+                  onClickOpenChangeProductionStatusModal
+                }
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
@@ -852,7 +876,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   color: "inherit",
                   textDecoration: "unset",
                 }}
-                href={`/jobs?orderNumber=${quote?.number}`}
+                href={`/jobs?finalPatternSearch=${quote?.number}`}
               >
                 {quote?.jobs}
               </a>
@@ -921,8 +945,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickMakePayment={onClickMakePayment}
                 onClickCloseAndTrack={onClickOpenTrackModal}
                 onClickOpenDocument={OpenDocument}
-                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
-
+                onClickOpenChangeProductionStatusModal={
+                  onClickOpenChangeProductionStatusModal
+                }
               />,
             ];
           } else {
@@ -984,7 +1009,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenCloseOrderNotesModal
                 }
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+                onClickOpenChangeProductionStatusModal={
+                  onClickOpenChangeProductionStatusModal
+                }
               />,
             ];
           }
@@ -1014,7 +1041,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
             onOpenCancelReceiptModal={onOpenCancelReceiptModal}
             onOpenCancelReceiptModalRefund={onOpenCancelReceiptModalRefund}
-            onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+            onClickOpenChangeProductionStatusModal={
+              onClickOpenChangeProductionStatusModal
+            }
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -1043,34 +1072,63 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   };
 
-  const onClickSearchFilter = () => {
-    const query: Query = {};
+  const onClickSearchFilter = async () => {
+    const query: Query = { ...router.query };
+
     if (customerId?.id) query.customerId = customerId.id;
+    else delete query.customerId;
+
     if (customerId?.name) query.customerName = customerId.name;
+    else delete query.customerName;
+
     if (agentId?.id) query.agentId = agentId.id;
+    else delete query.agentId;
+
     if (statusId?.value) query.statusId = statusId.value;
+    else delete query.statusId;
+
     if (approvalStatusId?.value)
       query.approvalStatusId = approvalStatusId.value;
+    else delete query.approvalStatusId;
+
     if (minPrice) query.minPrice = minPrice;
+    else delete query.minPrice;
+
     if (maxPrice) query.maxPrice = maxPrice;
+    else delete query.maxPrice;
+
     if (page) query.pageNumber = page;
-    if (fromDate) query.fromDate = fromDate.toISOString();
-    if (toDate) query.toDate = toDate.toISOString();
+    else delete query.pageNumber;
+
+    if (fromDate instanceof Date) query.fromDate = fromDate.toISOString();
+    else delete query.fromDate;
+
+    if (toDate instanceof Date) query.toDate = toDate.toISOString();
+    else delete query.toDate;
+
     if (accountingStatus)
       query.accountingStatus = accountingStatus.value.toString();
+    else delete query.accountingStatus;
+
     if (productionStatus)
       query.productionStatus = productionStatus.value.toString();
+    else delete query.productionStatus;
+
     query.isCanceled = isCanceledState;
 
     handleClose();
     setPage(1);
+
     if (statusId !== null && statusId !== undefined) {
       handleSecondCardClick();
     }
-    router.push({
+
+    await router.push({
       pathname: router.pathname,
-      query: { ...router.query, ...query },
+      query: { ...query },
     });
+
+    // await getAllQuotes(); // move to useEffect
   };
 
   const onClickClearFilter = () => {
@@ -1092,13 +1150,22 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setProductIds([]);
     setFinalPatternSearch("");
     setPatternSearch("");
-    // getAllQuotesInitial();
     const query = {};
     router.push({
       pathname: router.pathname,
       query: query,
     });
+    // getAllQuotesInitial(); // move to useEffect
   };
+
+  useEffect(() => {
+    const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
+    if (!isFromHomePage) {
+      if (isNotFilteredData) getAllQuotesInitial();
+      else getAllQuotes();
+    }
+    // }, [page, pageSize, router]);
+  }, [pageSize, router]);
 
   const tableHeaders =
     docType === DOCUMENT_TYPE.purchaseOrder
@@ -1383,7 +1450,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickSendPayment={onClickSendPayment}
             onClickMakePayment={onClickMakePayment}
             onClickCloseAndTrack={onClickOpenTrackModal}
-            onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+            onClickOpenChangeProductionStatusModal={
+              onClickOpenChangeProductionStatusModal
+            }
           />,
         ]);
         setAllDocuments(mapData);
@@ -1550,9 +1619,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       case LogActionType[20]:
         return `${t("logs.APPROVAL_BY_CLIENT")}`;
       case LogActionType[21]:
-        return `${t("logs.ADD")} "${values[0]}`;
+        return `${t("logs.ADD")}`;
       case LogActionType[22]:
-        return `${t("logs.CLOSE")} "${values[0]}`;
+        return `${t("logs.CLOSE")}`;
 
       default:
         return "";
@@ -1626,38 +1695,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       setFinalPatternSearch(pattern);
     }
   }, [quoteNumber, query]);
-
-  useEffect(() => {
-    const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
-    if (!isFromHomePage) {
-      if (isNotFilteredData) getAllQuotesInitial();
-      else getAllQuotes();
-    }
-  }, [page, pageSize, router]);
-
-  const debouncePatternSearch = useDebounce(patternSearch, 1000);
-  useEffect(() => {
-    setFinalPatternSearch(debouncePatternSearch.trim());
-
-    if (debouncePatternSearch === null || debouncePatternSearch.trim() === "") {
-      const { finalPatternSearch, ...remainingQuery } = router.query;
-      router.push({
-        pathname: router.pathname,
-        query: {
-          ...remainingQuery,
-        },
-      });
-      return;
-    }
-    router.push({
-      pathname: router.pathname,
-      query: {
-        ...router.query,
-        finalPatternSearch: debouncePatternSearch,
-      },
-    });
-
-  }, [debouncePatternSearch]);
 
   // For HomeTableWidget
   useEffect(() => {
@@ -1999,8 +2036,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [openCloseAndTrackOrderModal, setOpenCloseAndTrackOrderModal] =
     useState(false);
   const [openPrintPDFModal, setOpenPrintPDFModal] = useState(false);
-  const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] = useState(false);
-
+  const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] =
+    useState(false);
 
   const onClickCloseChangeProductionStatusModal = () => {
     setOpenChangeProductionStatusModal(false);
@@ -2009,8 +2046,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setSelectedDocument(order);
     setOpenChangeProductionStatusModal(true);
   };
-
-
 
   const onClickClosePrintPDFModal = () => {
     setOpenPrintPDFModal(false);
@@ -2084,6 +2119,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
+  /*   Most Important   */
+
   useEffect(() => {
     const {
       customerId,
@@ -2101,10 +2138,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       isCanceled,
       pageNumber,
     } = router.query;
+
     if (customerId) {
-      // const customerIdSelect = renderOptions().find(
-      //   (c1) => c1.id === customerId
-      // );
       setCustomerId({ id: customerId, name: customerName });
     }
     if (agentId) {
@@ -2121,8 +2156,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (fromDate && typeof fromDate === "string")
       setFromDate(new Date(fromDate));
     if (toDate && typeof toDate === "string") setToDate(new Date(toDate));
-    if (finalPatternSearch && typeof finalPatternSearch === "string")
+
+    if (finalPatternSearch && typeof finalPatternSearch === "string") {
       setPatternSearch(finalPatternSearch);
+      setFinalPatternSearch(finalPatternSearch);
+    }
+
     if (accountingStatus) {
       const statusToSet = accountingStatuses.find(
         (status) => status.value === Number(accountingStatus)
@@ -2144,21 +2183,27 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       }
     }
     if (isCanceled) {
-      setIsCanceledState(isCanceledState);
+      setIsCanceledState(
+        Array.isArray(isCanceled)
+          ? isCanceled[0] === "true"
+          : isCanceled === "true"
+      );
     }
-  }, [router, renderOptions(), agentsCategories]);
+    // }, [router, renderOptions(), agentsCategories]);
+  }, [router, agentsCategories]);
 
   const moveOrderToReady = async () => {
     const callBack = (res) => {
       if (res?.success) {
         if (isSelectedCLoseAsDeleveryNote) {
-          navigate(`/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`)
-
-        }
-        else {
-          const path = docType === DOCUMENT_TYPE.order
-            ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-            : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+          navigate(
+            `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+          );
+        } else {
+          const path =
+            docType === DOCUMENT_TYPE.order
+              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
           navigate(path);
         }
       } else {
@@ -2170,6 +2215,36 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       isSendMessage: false,
     });
   };
+
+  const onChangeDocumentSearch = (value: string) => {
+    setPatternSearch(value);
+  };
+
+  const debouncePatternSearch = useDebounce(patternSearch, 1000);
+  useEffect(() => {
+    const trimmedSearch = debouncePatternSearch?.trim() || "";
+    setFinalPatternSearch(trimmedSearch);
+    if (trimmedSearch === "") {
+      const { finalPatternSearch, ...remainingQuery } = router.query;
+      router.push({
+        pathname: router.pathname,
+        query: {
+          ...remainingQuery,
+          pageNumber: 1, // Optional: reset page on clear
+        },
+      });
+      return;
+    }
+
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...router.query,
+        finalPatternSearch: trimmedSearch,
+        pageNumber: 1,
+      },
+    });
+  }, [debouncePatternSearch]);
 
   return {
     showCustomerModal,
@@ -2297,7 +2372,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openChangeProductionStatusModal,
     isSelectedCLoseAsDeleveryNote,
     onClickCloseChangeProductionStatusModal,
-    moveOrderToReady
+    moveOrderToReady,
+    onChangeDocumentSearch,
   };
 };
 

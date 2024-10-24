@@ -431,7 +431,7 @@ const SettingsWidget = ({
           </div>
         </div>
       </div>
-      <div style={clasess.categoryNameStyle}>
+      {/* <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.graphicsRequired")}
       </div>
       <div style={clasess.firstContainer}>
@@ -465,7 +465,7 @@ const SettingsWidget = ({
             />
           </div>
         </div>
-      </div>
+      </div> */}
       {isUpdate ? (
         <div style={clasess.btnsContainer}>
           <div style={clasess.addNwBtn} onClick={updatedProduct}>

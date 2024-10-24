@@ -68,6 +68,8 @@ const ProfitsNewPageWidget = () => {
     deleteActionProfitRow,
     deleteExceptionProfit,
     getProfitsPricingTables,
+    getAllActionProfitRowsByActionId,
+    getCalculateCaseProfits
   } = useNewProfits();
   const profitsSteps: StepType[] = [
     {
@@ -215,6 +217,8 @@ const ProfitsNewPageWidget = () => {
           handleCloseAdditionalProfitMenu={handleCloseAdditionalProfitMenu}
           handleClickAdditionalProfitMenu={handleClickAdditionalProfitMenu}
           ProfitCurrency={ProfitCurrency}
+          getAllActionProfitRowsByActionId={getAllActionProfitRowsByActionId}
+          getCalculateCaseProfits={getCalculateCaseProfits}
         />
       </div>
     </div>

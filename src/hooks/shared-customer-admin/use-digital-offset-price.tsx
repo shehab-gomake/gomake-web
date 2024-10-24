@@ -107,11 +107,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [foldOptions, setFoldOptions] = useRecoilState(foldOptionsState);
 
   const [workTypes, setWorkTypes] = useState<any>([]);
-  const [samlleType, setSamlleType] = useState();
+  const [missionsListForEdit, setMissionsListForEdit] = useState<any>([]);
+  const [sampleType, setSampleType] = useState();
   const [isRequiredParameters, setIsRequiredParameters] = useState<any>([]);
   const [activeSectionRequiredParameters, setActiveSectionRequiredParameters] =
     useState([]);
-  const [docmentItemByEdit, setDocmentItemByEdit] = useState<any>({});
+  const [documentItemByEdit, setdocumentItemByEdit] = useState<any>({});
   const [productItemValueByEdit, setProductItemValueByEdit] =
     useRecoilState<any>(productItemValueByEditState);
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
@@ -141,6 +142,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setAdditionalProductItems = useSetRecoilState<any>(
     additionalProductItemsState
   );
+  const [isFlowChanged, stIsFlowChanged] = useState(false);
   const [
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
@@ -315,7 +317,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const documentItemId = router?.query?.documentItemId;
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
     if (documentItemId) {
-      url += `&documentItemId=${documentItemId}&docType=${docType}`;
+      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${priceRecovery}`;
     }
     const res: any = await callApi("GET", url, {}, false);
     if (!res.success) {
@@ -332,6 +334,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const result = res?.data?.data?.data;
     setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
     setCurrentProductItemValueDraftId(result.productItemValueDraftId);
+    stIsFlowChanged(result.isFlowChanged);
     setAdditionalProductItems(result.additionalProductItems);
     setCalculationProgress({
       totalWorkFlowsCount: 0,
@@ -424,13 +427,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (
       signalRPricingResult &&
       signalRPricingResult.productItemValueDraftId ===
-      currentCalculationSessionId
+        currentCalculationSessionId
     ) {
       setLoading(false);
       const totalWorkFlowsCount = signalRPricingResult.totalWorkFlows;
       const currentWorkFlowsCount =
         signalRPricingResult.currentWorkFlowIndex >
-          calculationProgress.currentWorkFlowsCount
+        calculationProgress.currentWorkFlowsCount
           ? signalRPricingResult.currentWorkFlowIndex
           : calculationProgress.currentWorkFlowsCount + 1;
       if (
@@ -485,9 +488,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             flow.id === updatedSelectedWorkFlow?.id
               ? updatedSelectedWorkFlow
               : {
-                ...flow,
-                selected: false,
-              }
+                  ...flow,
+                  selected: false,
+                }
           )
         );
       } else {
@@ -875,11 +878,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
                 } else if (
                   parameter?.parameterType ===
-                  EParameterTypes.SELECT_MATERIALS ||
+                    EParameterTypes.SELECT_MATERIALS ||
                   parameter?.parameterType ===
-                  EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                   parameter?.parameterType ===
-                  EParameterTypes.ADVERTISING_PRODUCT_NAME ||
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME ||
                   parameter?.parameterType === EParameterTypes.BUTTON
                 ) {
                   const value = parameter?.valuesConfigs?.find(
@@ -1297,11 +1300,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   (parameter?.parameterType ===
                     EParameterTypes.DROP_DOWN_LIST ||
                     parameter?.parameterType ===
-                    EParameterTypes.SELECT_MATERIALS ||
+                      EParameterTypes.SELECT_MATERIALS ||
                     parameter?.parameterType ===
-                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                     parameter?.parameterType ===
-                    EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
+                      EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
                   (!parameter?.valuesConfigs ||
                     parameter?.valuesConfigs.length === 0)
                 ) {
@@ -1357,25 +1360,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         );
                         return existingConfig
                           ? {
-                            ...existingConfig,
-                            isDefault: true,
-                            additionalAttribute: data.additionalAttribute,
-                            currency: data.currency,
-                          }
+                              ...existingConfig,
+                              isDefault: true,
+                              additionalAttribute: data.additionalAttribute,
+                              currency: data.currency,
+                            }
                           : {
-                            id: data.valueId,
-                            isHidden: false,
-                            isDefault: false,
-                            updateName: null,
-                            activateAction: false,
-                            isDeleted: false,
-                            materialValueIds: null,
-                            values: null,
-                            selectedParameterValues: null,
-                            code: null, // Add code if needed
-                            additionalAttribute: data.additionalAttribute,
-                            currency: data.currency,
-                          };
+                              id: data.valueId,
+                              isHidden: false,
+                              isDefault: false,
+                              updateName: null,
+                              activateAction: false,
+                              isDeleted: false,
+                              materialValueIds: null,
+                              values: null,
+                              selectedParameterValues: null,
+                              code: null, // Add code if needed
+                              additionalAttribute: data.additionalAttribute,
+                              currency: data.currency,
+                            };
                       });
                     }
                   } else {
@@ -1632,6 +1635,54 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setIsChangePriceForEdit(false);
         setIsJobNameValue(false);
         setIsActionEmployeeUpdated(false);
+
+        // Set default values for your states
+        setIsChargeForNewDie(false);
+        setFoldOptions([]);
+        setMissionsListForEdit([]);
+        setSampleType(null);
+        setIsRequiredParameters([]);
+        setActiveSectionRequiredParameters([]);
+        setdocumentItemByEdit({});
+        setProductItemValueByEdit(null);
+        setGalleryModalOpen(false);
+        setMultiParameterModal(false);
+        setMakeShapeOpen(false);
+        setPrintingNotes("");
+        setGraphicNotes("");
+        setErrorMsg("");
+        setProductTemplate([]);
+        setupdatedProductTemplate(null);
+        setDefaultProductTemplate([]);
+        setSubProductsColorsModal([]);
+        setIsSetTemplete(false);
+        setCurrentProductItemValueDraftId("");
+        setAdditionalProductItems([]);
+        stIsFlowChanged(false);
+        setCurrentProductItemValueTotalWorkFlows(0);
+        setExpanded("");
+        setActiveIndex(0);
+        setActiveTab(t("products.offsetPrice.admin.logs"));
+        setPricingDefaultValue(null);
+        setCalculationExceptionsLogs(null);
+        setQuantityTypes([]);
+        setCalculationResult(null);
+        setOutSuppliers(null);
+        setLoading(false);
+        setLoadingWithLockScreen(false);
+        setPriceRecovery(true);
+        setCanCalculation(false);
+        setSelectParameterButton(null);
+        setDeviceCategory("");
+        setDeviceSize("");
+        setSaveCurrentStation(false);
+        setcalculationServerErrorState(false);
+        // setCurrentSignalRConnectionId(null);
+        setCurrentCalculationSessionId("");
+        setRequestAbortController(null);
+        setBillingMethod(null);
+        setGraphicDesigner(null);
+        setIncludeVAT(null);
         if (
           widgetType === EWidgetProductType.EDIT ||
           widgetType === EWidgetProductType.DUPLICATE
@@ -1658,39 +1709,41 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       return billingMethodValues.find((item) => item.value === "fixedPrice");
     }
   };
-  const getSamlleTypeValue = (samlleType?: SampleTypeParm) => {
-    if (samlleType && samlleType === SampleTypeParm.Full) {
+  const getSampleTypeValue = (sampleType?: SampleTypeParm) => {
+    if (sampleType && sampleType === SampleTypeParm.Full) {
       return exampleTypeValues.find((item) => item.value === "Full");
     } else {
       return exampleTypeValues.find((item) => item.value === "PrintOnly");
     }
   };
+
   useEffect(() => {
     if (
       widgetType === EWidgetProductType.EDIT ||
       widgetType === EWidgetProductType.DUPLICATE
     ) {
-      if (docmentItemByEdit) {
-        setGraphicNotes(docmentItemByEdit.graphicNotes);
-        setPrintingNotes(docmentItemByEdit.printingNotes);
-        if (docmentItemByEdit?.exampleType) {
-          setSamlleType(getSamlleTypeValue(docmentItemByEdit?.exampleType));
+      if (documentItemByEdit) {
+        setGraphicNotes(documentItemByEdit.graphicNotes);
+        setPrintingNotes(documentItemByEdit.printingNotes);
+        if (documentItemByEdit?.exampleType) {
+          setSampleType(getSampleTypeValue(documentItemByEdit?.exampleType));
         }
-        if (docmentItemByEdit?.graphicsTypes) {
+        if (documentItemByEdit?.graphicsTypes) {
           setBillingMethod(
-            getGraphicsTypeValue(docmentItemByEdit?.graphicsTypes)
+            getGraphicsTypeValue(documentItemByEdit?.graphicsTypes)
           );
         }
-        if (docmentItemByEdit?.graphicsEmployeeId) {
+        if (documentItemByEdit?.graphicsEmployeeId) {
           setGraphicDesigner(
             listEmployeesValues?.find(
-              (item) => item.id === docmentItemByEdit?.graphicsEmployeeId
+              (item) => item.id === documentItemByEdit?.graphicsEmployeeId
             )
           );
         }
       }
     }
-  }, [widgetType, docmentItemByEdit]);
+  }, [widgetType, documentItemByEdit]);
+
   useEffect(() => {
     if (canCalculation) {
       calculationProduct(subProducts);
@@ -1711,8 +1764,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       return GraphicsTypesParam.PriceRegularHour;
     }
   };
-  const getSamlleType = (samlleType?: BillingMethod): SampleTypeParm => {
-    if (samlleType && samlleType.value === "Full") {
+
+  const getSampleType = (sampleType?: BillingMethod): SampleTypeParm => {
+    if (sampleType && sampleType.value === "Full") {
       return SampleTypeParm.Full;
     } else {
       return SampleTypeParm.PrintOnly;
@@ -1749,7 +1803,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         graphicsTypes: billingMethod && getGraphicsType(billingMethod),
         duplicateType: router?.query?.duplicateType,
         documentId: router?.query?.documentId,
-        exampleType: samlleType && getSamlleType(samlleType),
+        exampleType: sampleType && getSampleType(sampleType),
       };
       setCurrentProductItemValue(productItemValue);
     }
@@ -1765,7 +1819,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     printingNotes,
     graphicNotes,
     billingMethod,
-    samlleType,
+    sampleType,
   ]);
 
   const handleChange =
@@ -1916,7 +1970,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             dieCutSizeSubProductParameter.values = [parameter.value];
             dieCutSizeSubProductParameter.isDisabled =
               res?.data?.printedMaterialWidth === null &&
-                res?.data?.printedMaterialLength === null
+              res?.data?.printedMaterialLength === null
                 ? false
                 : true;
           } else {
@@ -2021,7 +2075,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             widgetType={widgetType}
             setIsJobNameValue={setIsJobNameValue}
           />
-          <QuantityParameter subSection={subSection} section={section} validateParameters={validateParameters} setCanCalculation={setCanCalculation} />
+          <QuantityParameter
+            subSection={subSection}
+            section={section}
+            validateParameters={validateParameters}
+            setCanCalculation={setCanCalculation}
+          />
         </React.Fragment>
       );
     } else if (
@@ -2263,12 +2322,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               errorText && parameter?.isRequired && !value?.values?.[0]
                 ? clasess.parameterRequierdLabelStyle
                 : value?.values?.[0] === "true"
-                  ? inunderParameter
-                    ? clasess.parameterunderParameterStyle
-                    : clasess.parameterType3ActiveLabelStyle
-                  : inunderParameter
-                    ? clasess.underParameterLabelStyle
-                    : clasess.parameterLabelStyle
+                ? inunderParameter
+                  ? clasess.parameterunderParameterStyle
+                  : clasess.parameterType3ActiveLabelStyle
+                : inunderParameter
+                ? clasess.underParameterLabelStyle
+                : clasess.parameterLabelStyle
             }
           >
             {parameter?.name}
@@ -2367,9 +2426,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       setProductTemplate(productCopy);
                     } else if (
                       parameter?.parameterType ===
-                      EParameterTypes.DROP_DOWN_LIST ||
+                        EParameterTypes.DROP_DOWN_LIST ||
                       parameter?.parameterType ===
-                      EParameterTypes.SELECT_MATERIALS
+                        EParameterTypes.SELECT_MATERIALS
                     ) {
                       const valueInArray =
                         relatedParameter.selectedValueIds?.find(
@@ -2557,7 +2616,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     productTemplate,
     subProducts
   ) => {
-
     if (subSection.optionToDuplicateContent) {
       return;
     }
@@ -2580,7 +2638,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       const myParameter = subSection?.parameters?.find(
         (p) =>
-          p.id === relatedParameter.parameterId && p.actionIndex === actionIndex && p.sectionId === section?.id && p.subSectionId === subSection?.id
+          p.id === relatedParameter.parameterId && p.actionIndex === actionIndex
       );
       if (!myParameter) {
         return;
@@ -2874,6 +2932,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         if (relatedParameter) {
           let valueToAdd = null;
+          let valueIds = null;
 
           // Handle the case where parameterType is 5
           if (
@@ -2889,15 +2948,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               defaultConfig.values.length > 0
             ) {
               valueToAdd = defaultConfig.values[0];
+              valueIds = defaultConfig.values[0];
             } else if (
               relatedParameter.valuesConfigs &&
               relatedParameter.valuesConfigs.length === 1 &&
               relatedParameter.valuesConfigs[0]?.values?.length > 0
             ) {
               valueToAdd = relatedParameter.valuesConfigs[0]?.updateName;
+              valueIds = relatedParameter.valuesConfigs[0]?.values[0];
             }
           } else if (relatedParameter.defaultValue) {
             valueToAdd = relatedParameter.defaultValue;
+            valueIds = relatedParameter.defaultValue;
           }
 
           if (valueToAdd !== null) {
@@ -2917,7 +2979,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 parameterName: relatedParameter.name,
                 actionId: relatedParameter.actionId,
                 values: [valueToAdd],
-                valueIds: [null], // Adjust if necessary
+                valueIds: [valueIds], // Adjust if necessary
                 actionIndex: relatedParameter.actionIndex,
                 parameterCode: relatedParameter.code,
                 valuesConfigs: relatedParameter?.valuesConfigs,
@@ -3198,7 +3260,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         ) {
           const materialPath =
             subSectionParameter.materialPath[
-            subSectionParameter.materialPath.length - 1
+              subSectionParameter.materialPath.length - 1
             ];
           const materialRelatedParameters = subSection.parameters.filter(
             (x) =>
@@ -3391,7 +3453,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     sectionId: sectionId,
                     subSectionId: subSectionId,
                     ParameterType: ParameterType,
-                    isQuantityParameter: subSectionParameter?.isQuantityParameter,
+                    isQuantityParameter:
+                      subSectionParameter?.isQuantityParameter,
                     parameterName: parameterName,
                     actionId: actionId,
                     values: [dieCutSizeParameter.value],
@@ -3662,12 +3725,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const onClickDetailsTab = () => {
     setActiveTab(t("reports.details"));
   };
+
   const onClickLogsTab = () => {
     setActiveTab(t("products.offsetPrice.admin.logs"));
     setBillingMethod(null);
     setGraphicDesigner(null);
-    setSamlleType(null);
   };
+
   const isShowDetailsTab = productTemplate?.isShowDetailsTab;
   const tabs = [
     {
@@ -3676,15 +3740,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     },
     ...(isShowDetailsTab
       ? [
-        {
-          name: t("reports.details"),
-          onclick: () => onClickDetailsTab,
-        },
-      ]
+          {
+            name: t("reports.details"),
+            onclick: () => onClickDetailsTab,
+          },
+        ]
       : []),
     {
       name: t("quality.production"),
       onclick: () => onClickProductionTab,
+      showIndicator: printingNotes !== "" || sampleType,
     },
   ];
 
@@ -3728,18 +3793,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   };
   const getProductQuoteItemById = async (materials) => {
-
     if (connectionId) {
       const callBack = (res) => {
         if (res?.success) {
           const updatedTemplate = updateIsHidden(res?.data, subProducts);
           setDefaultProductTemplate(updatedTemplate);
           initQuoteItemProduct(updatedTemplate, materials);
-          setDocmentItemByEdit(res?.data.docmentItem);
+          setdocumentItemByEdit(res?.data.docmentItem);
           setCalculationResult({ ...calculationResult, tabs: res?.data?.tabs });
           setProductItemValueByEdit(res?.data.productItemValue);
           setValuesState(res?.data?.productItemValue?.workTypes);
           setWorkTypes(res?.data?.productItemValue?.workTypes);
+          setMissionsListForEdit(res?.data?.missions);
         } else {
           alertFaultUpdate();
         }
@@ -3792,6 +3857,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             const index = allParameters.findIndex(
               (par) =>
                 par.parameterId === parameter.id &&
+                par?.sectionId === section?.id &&
+                par?.subSectionId === subSection?.id &&
                 ((par?.values && par?.values[0]?.length) ||
                   (par?.valueIds && par?.valueIds[0]?.length))
             );
@@ -3813,6 +3880,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               const index = allParameters.findIndex(
                 (par) =>
                   par.parameterId === parameter.id &&
+                  par?.sectionId === section?.id &&
+                  par?.subSectionId === subSection?.id &&
                   ((par?.values && par?.values[0]?.length) ||
                     (par?.valueIds && par?.valueIds[0]?.length))
               );
@@ -3921,10 +3990,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const newCalculationSessionId = uuidv4();
           setCurrentCalculationSessionId(newCalculationSessionId);
           const itemParmetersValues = getItemParameterValues();
-          const updatedGeneralParameters = removeHiddenParametersFromSubProductsParameters(
-            generalParameters,
-            productTemplate
-          );
+          const updatedGeneralParameters =
+            removeHiddenParametersFromSubProductsParameters(
+              generalParameters,
+              productTemplate
+            );
           const res: any = await callApi(
             "POST",
             `/v1/calculation-service/calculations/calculate-productV2`,
@@ -4127,7 +4197,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           isUrgentWork: urgentOrder,
           printingNotes,
           graphicNotes,
-          exampleType: samlleType && getSamlleType(samlleType),
+          exampleType: sampleType && getSampleType(sampleType),
           isNeedExample: false,
           isDuplicatedWithAnotherQuantity: false,
           ...(isSaveCurrentStation !== undefined && {
@@ -4290,7 +4360,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       return { ...subProduct, parameters: filteredParameters };
     });
   }
-  function removeHiddenParametersFromSubProductsParameters(parameters, productTemplate) {
+  function removeHiddenParametersFromSubProductsParameters(
+    parameters,
+    productTemplate
+  ) {
     return parameters.filter((param) => {
       const matchingTemplateParam = productTemplate.sections
         .flatMap((section) => section.subSections)
@@ -4373,7 +4446,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const validateWorkflows = (data) => {
     const errors = [];
-    /*const errors = [];
     if (!data.actions || data.actions.length === 0) {
       errors.push(t("validateWorkflows.noAction"));
       return { isValid: false, errors };
@@ -4382,20 +4454,35 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const action = data.actions[i];
 
       if (action.isNeedEmployee && !action.employeeId) {
-        errors.push(`${action.actionName}: ${t("validateWorkflows.noEmployee")}`);
+        errors.push(
+          `${action.actionName}: ${t("validateWorkflows.noEmployee")}`
+        );
       }
-      if (action.isNeedMachine && !action.mongoDBMachineId && action.source === 0) {
-        errors.push(`${action.actionName}: ${t("validateWorkflows.noMavhine")}`);
+      if (
+        action.isNeedMachine &&
+        !action.mongoDBMachineId &&
+        action.source === 0
+      ) {
+        errors.push(
+          `${action.actionName}: ${t("validateWorkflows.noMavhine")}`
+        );
       }
-      if (action.isNeedMaterial && (!action.materials || Object.keys(action.materials).length === 0)) {
-        errors.push(`${action.actionName}: ${t("validateWorkflows.noMaterilas")}`);
+      if (
+        action.isNeedMaterial &&
+        (!action.materials || Object.keys(action.materials).length === 0)
+      ) {
+        errors.push(
+          `${action.actionName}: ${t("validateWorkflows.noMaterilas")}`
+        );
       }
       if ((action.source === 1 || action.source === 2) && !action.supplierId) {
-        errors.push(`${action.actionName}: ${t("validateWorkflows.noSuppliers")}`);
+        errors.push(
+          `${action.actionName}: ${t("validateWorkflows.noSuppliers")}`
+        );
       }
-    }*/
+    }
     return {
-      isValid: true,
+      isValid: errors.length === 0,
       errors,
     };
   };
@@ -4412,7 +4499,43 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     getAllFoldOptionsApi();
   }, []);
+  const getJobStatus = (mission) => {
+    if (mission?.isReady) {
+      return t("boardMissions.done"); // For completed missions
+    }
 
+    if (mission?.boardMissionStatus && mission?.station) {
+      const machineName = mission.station.machineName; // Get machine name
+      const employeeName = mission.station.employeeName; // Get employee name
+
+      // Initialize the job status string
+      let statusString = `${mission.boardMissionStatus.name} | ${mission.station.actionName}`;
+
+      // Check if both names exist and append them
+      if (machineName && employeeName) {
+        statusString += ` | ${employeeName} | ${machineName}`;
+      } else if (employeeName) {
+        statusString += ` | ${employeeName}`;
+      } else if (machineName) {
+        statusString += ` | ${machineName}`;
+      }
+
+      return statusString; // Return the formatted job status
+    }
+
+    return ""; // Return empty if no valid status or station
+  };
+  const formatMissions = (missions) => {
+    return missions
+      .map((mission) => {
+        const jobNumber = mission.number;
+        const productType = mission.productType;
+        const currentStation = getJobStatus(mission); // Use getJobStatus here
+
+        return `${jobNumber}/${productType}. ${currentStation}`;
+      })
+      .join(",\n"); // Joins with newline characters
+  };
   return {
     t,
     router,
@@ -4454,8 +4577,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     jobActions,
     workFlows,
     underParameterIds,
-    samlleType,
-    setSamlleType,
+    sampleType,
+    setSampleType,
     getOutSourcingSuppliers,
     onChangeSubProductsForPrice,
     includeVAT,
@@ -4471,6 +4594,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     saveCurrentStation,
     onClickCloseCurrentStationModal,
     onClickOpenCurrentStationModal,
+    missionsListForEdit,
+    formatMissions,
+    isFlowChanged,
   };
 };
+
 export { useDigitalOffsetPrice };

@@ -180,3 +180,28 @@ export  const checkIfDieCutOrDieKissCutExists = (subProducts) => {
   }
   return false;
 };
+
+export const checkArrayNotEmptyOrPhoneNotEmpty = (array) => {
+  if (array.length === 0) {
+    return false;
+  }
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].contactPhone && array[i].contactPhone.trim() !== "") {
+      return true;
+    }
+  }
+
+  return false;
+};
+export const checkArrayNotEmptyOrEmailNotEmpty = (array) => {
+  if (array.length === 0) {
+    return false;
+  }
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].contactMail && array[i].contactMail.trim() !== "") {
+      return true;
+    }
+  }
+
+  return false;
+};
