@@ -56,6 +56,24 @@ const roundingCornersMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxCorners,
         },
+        {
+            name: 'machineAttributes.roundingCornersRadius',
+            parameterKey: 'roundingCornersRadius',
+            value: state?.attributes?.roundingCornersRadius ? state?.attributes?.roundingCornersRadius : [],
+            machineInputType: 'multiArrayInput',
+            isValid: state?.attributes?.roundingCornersRadius?.length > 0,
+            inputs: [
+                {
+                    name: "",
+                    label: "machineAttributes.radius",
+                    type: "text",
+                    placeholder: "machineAttributes.radius",
+                    required: true,
+                    parameterKey: "value",
+                    options: []
+                },
+            ]
+        },
     ]
 }
 
