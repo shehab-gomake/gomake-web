@@ -15,7 +15,7 @@ interface EAction {
   isActive: boolean;
   index: number | null; // index can be a number or null
 }
-const useCopyAction = () => {
+const useCopyAction = ({ getAllActionProfitRowsByActionId }) => {
   const router = useRouter();
   const { callApi } = useGomakeAxios();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -81,6 +81,8 @@ const useCopyAction = () => {
     );
     if (res?.success) {
       onCloseProfitModal();
+      //?
+      getAllActionProfitRowsByActionId();
     } else {
       alertFaultUpdate();
     }
