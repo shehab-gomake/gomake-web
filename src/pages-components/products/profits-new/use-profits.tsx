@@ -35,7 +35,6 @@ const useNewProfits = () => {
     alertFaultAdded,
     alertSuccessDelete,
     alertFaultDelete,
-
   } = useSnackBar();
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
@@ -81,17 +80,16 @@ const useNewProfits = () => {
       value: EPricingBy.CUBIC_METER,
     },
   ];
-  const [PricingBy, setPricingBy] = useState([])
+  const [PricingBy, setPricingBy] = useState([]);
   const modifiedPricingBy = PricingByList.slice(1);
 
   useEffect(() => {
     if (router.query.isOutSource) {
-      setPricingBy(modifiedPricingBy)
+      setPricingBy(modifiedPricingBy);
+    } else {
+      setPricingBy(PricingByList);
     }
-    else {
-      setPricingBy(PricingByList)
-    }
-  }, [router])
+  }, [router]);
 
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currenciesUnits = useRecoilValue<any>(currencyUnitState);
@@ -144,49 +142,52 @@ const useNewProfits = () => {
     t("products.profits.pricingListWidget.totalPrice"),
     t("products.profits.pricingListWidget.more"),
   ]);
-  const getAllActionProfitRowsByActionId = useCallback(async (additionId?: any) => {
-    setIsLoading(true);
-    if (actionProfitByActionId?.id) {
-      const requestBody: any = {
-        actionIdOrProductId: router.query.actionId
-          ? router.query.actionId
-          : router.query.productId,
-        isOutSource: router.query.isOutSource ? true : false,
-      };
+  const getAllActionProfitRowsByActionId = useCallback(
+    async (additionId?: any) => {
+      setIsLoading(true);
+      if (actionProfitByActionId?.id) {
+        const requestBody: any = {
+          actionIdOrProductId: router.query.actionId
+            ? router.query.actionId
+            : router.query.productId,
+          isOutSource: router.query.isOutSource ? true : false,
+        };
 
-      if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
-        if (router.query.signalRConnectionId) {
-          requestBody.exceptionId = selectedPricingTableItems?.id;
+        if (
+          selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT
+        ) {
+          if (router.query.signalRConnectionId) {
+            requestBody.exceptionId = selectedPricingTableItems?.id;
+          } else {
+            requestBody.exceptionId = selectedPricingTableItems?.id;
+          }
+        }
+        if (additionId) {
+          requestBody.additionId = additionId?.id;
+        }
+
+        const res = await getAndSetAllActionProfitRowsByActionId(
+          callApi,
+          setAllActionProfitRowsByActionId,
+          requestBody
+        );
+        if (res?.length > 0) {
+          getActionProfitRowChartData();
+          setIsLoading(false);
         } else {
-          requestBody.exceptionId = selectedPricingTableItems?.id;
+          setActionProfitRowsList([]);
+          setIsLoading(false);
         }
       }
-      if (additionId) {
-        requestBody.additionId = additionId?.id;
-      }
-
-      const res = await getAndSetAllActionProfitRowsByActionId(
-        callApi,
-        setAllActionProfitRowsByActionId,
-        requestBody
-      );
-      if (res?.length > 0) {
-
-        getActionProfitRowChartData();
-        setIsLoading(false);
-      }
-      else {
-        setActionProfitRowsList([])
-        setIsLoading(false);
-      }
-    }
-  }, [
-    router,
-    selectedPricingTableItems,
-    actionProfitByActionId,
-    selectedAdditionalProfitRow,
-    ETypeException,
-  ]);
+    },
+    [
+      router,
+      selectedPricingTableItems,
+      actionProfitByActionId,
+      selectedAdditionalProfitRow,
+      ETypeException,
+    ]
+  );
 
   useEffect(() => {
     if (router.query.signalRConnectionId) {
@@ -195,6 +196,8 @@ const useNewProfits = () => {
       getAllActionProfitRowsByActionId();
     }
   }, [selectedPricingTableItems, router]);
+
+  //!here
   const getActionProfitByActionId = useCallback(async () => {
     if (router.query.productId) {
       await getAndSetProductProfitByProductId(
@@ -215,30 +218,34 @@ const useNewProfits = () => {
       );
     }
   }, [router]);
-  const getCalculateCaseProfits = useCallback(async (additionId?: any) => {
-    setIsLoading(true);
-    const requestBody: any = {
-      actionId: router.query.actionId,
-      signalRConnectionId: router.query.signalRConnectionId,
-      isOutSource: router.query.isOutSource ? true : false,
-    };
-    if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
-      requestBody.exceptionId = selectedPricingTableItems?.id;
-    }
-    if (additionId) {
-      requestBody.additionId = additionId?.id;
-    }
-    const res = await getAndSetCalculateCaseProfits(
-      callApi,
-      setSalculateCaseValue,
-      requestBody,
-      setIsLoading
-    );
-    if (res) {
-      getActionProfitRowChartData();
-      setIsLoading(false);
-    }
-  }, [router, selectedPricingTableItems]);
+
+  const getCalculateCaseProfits = useCallback(
+    async (additionId?: any) => {
+      setIsLoading(true);
+      const requestBody: any = {
+        actionId: router.query.actionId,
+        signalRConnectionId: router.query.signalRConnectionId,
+        isOutSource: router.query.isOutSource ? true : false,
+      };
+      if (selectedPricingTableItems?.exceptionType != ETypeException.DEFAULT) {
+        requestBody.exceptionId = selectedPricingTableItems?.id;
+      }
+      if (additionId) {
+        requestBody.additionId = additionId?.id;
+      }
+      const res = await getAndSetCalculateCaseProfits(
+        callApi,
+        setSalculateCaseValue,
+        requestBody,
+        setIsLoading
+      );
+      if (res) {
+        getActionProfitRowChartData();
+        setIsLoading(false);
+      }
+    },
+    [router, selectedPricingTableItems]
+  );
   const getProfitsPricingTables = useCallback(async () => {
     if (actionProfitByActionId?.id) {
       await getAndSetProfitsPricingTables(callApi, setProfitsPricingTables, {
@@ -284,7 +291,7 @@ const useNewProfits = () => {
     const isOutSource = router.query.isOutSource;
     const signalRConnectionId = router.query.signalRConnectionId;
     const selectedPricingType = selectedPricingBy?.value;
-    const profitValue = selectedAdditionalProfitRow?.profitValue
+    const profitValue = selectedAdditionalProfitRow?.profitValue;
 
     const unitPriceLabel = isOutSource
       ? t("products.profits.pricingListWidget.unitCost")
@@ -297,10 +304,13 @@ const useNewProfits = () => {
     const profitHeader = t("products.profits.pricingListWidget.profit");
     const quantityHeader = t("products.profits.pricingListWidget.quantity");
     const moreHeader = t("products.profits.pricingListWidget.more");
-    const totalPriceWithAdditionProfit = t("products.profits.pricingListWidget.totalPriceWithAdditionProfit");
+    const totalPriceWithAdditionProfit = t(
+      "products.profits.pricingListWidget.totalPriceWithAdditionProfit"
+    );
 
-    const pricingLabel = `${selectedPricingBy?.label}${selectedPricingType === EPricingBy.COST ? ` ${ProfitCurrency}` : ""
-      }`;
+    const pricingLabel = `${selectedPricingBy?.label}${
+      selectedPricingType === EPricingBy.COST ? ` ${ProfitCurrency}` : ""
+    }`;
 
     const defaultHeaders = [
       pricingLabel,
@@ -323,8 +333,19 @@ const useNewProfits = () => {
     switch (true) {
       case signalRConnectionId && !isOutSource:
         headers = selectedAdditionalProfitRow?.id
-          ? [pricingLabel, profitHeader, `${totalPriceLabel} ${ProfitCurrency}`, `${totalPriceWithAdditionProfit} (${profitValue})`, moreHeader]
-          : [pricingLabel, profitHeader, `${totalPriceLabel} ${ProfitCurrency}`, moreHeader];
+          ? [
+              pricingLabel,
+              profitHeader,
+              `${totalPriceLabel} ${ProfitCurrency}`,
+              `${totalPriceWithAdditionProfit} (${profitValue})`,
+              moreHeader,
+            ]
+          : [
+              pricingLabel,
+              profitHeader,
+              `${totalPriceLabel} ${ProfitCurrency}`,
+              moreHeader,
+            ];
         break;
 
       case selectedPricingType === EPricingBy.COST:
@@ -336,12 +357,23 @@ const useNewProfits = () => {
       default:
         headers = selectedAdditionalProfitRow?.id
           ? additionalProfitHeaders
-          : [pricingLabel, unitPriceLabel, `${totalPriceLabel} ${ProfitCurrency}`, moreHeader];
+          : [
+              pricingLabel,
+              unitPriceLabel,
+              `${totalPriceLabel} ${ProfitCurrency}`,
+              moreHeader,
+            ];
         break;
     }
 
     setTableHeaders(headers);
-  }, [selectedPricingBy, selectedAdditionalProfitRow, router, ProfitCurrency, t]);
+  }, [
+    selectedPricingBy,
+    selectedAdditionalProfitRow,
+    router,
+    ProfitCurrency,
+    t,
+  ]);
   // useEffect(() => {
   //   const unitPriceLabel = router.query.isOutSource
   //     ? t("products.profits.pricingListWidget.unitCost")
@@ -444,7 +476,10 @@ const useNewProfits = () => {
         actionExpections: [],
         productId: router.query.productId,
         isOutSource: router.query.isOutSource ? true : false,
-        exceptionId: selectedPricingTableItems?.index == 0 ? null : selectedPricingTableItems?.id
+        exceptionId:
+          selectedPricingTableItems?.index == 0
+            ? null
+            : selectedPricingTableItems?.id,
       };
       if (router.query.productId) {
         requestBody.productId = router.query.productId;
@@ -460,9 +495,8 @@ const useNewProfits = () => {
         if (router.query.signalRConnectionId) {
           getCalculateCaseProfits();
         } else {
-          getProfitsPricingTables()
+          getProfitsPricingTables();
           getAllActionProfitRowsByActionId();
-
         }
       } else {
         alertFaultUpdate();
@@ -483,7 +517,10 @@ const useNewProfits = () => {
         actionProfitRows: [],
         actionExpections: [],
         isOutSource: router.query.isOutSource ? true : false,
-        exceptionId: selectedPricingTableItems?.index == 0 ? null : selectedPricingTableItems?.id
+        exceptionId:
+          selectedPricingTableItems?.index == 0
+            ? null
+            : selectedPricingTableItems?.id,
       };
       if (router.query.productId) {
         requestBody.productId = router.query.productId;
@@ -499,9 +536,8 @@ const useNewProfits = () => {
         if (router.query.signalRConnectionId) {
           getCalculateCaseProfits();
         } else {
-          getProfitsPricingTables()
+          getProfitsPricingTables();
           getAllActionProfitRowsByActionId();
-
         }
       } else {
         alertFaultUpdate();
@@ -700,7 +736,6 @@ const useNewProfits = () => {
     setAnchorElAdditionalProfitMenu(null);
   };
 
-
   useEffect(() => {
     if (selectedPricingTableItems?.exceptionType === ETypeException.DEFAULT) {
       setProfitRowType(EProfitRowType.NORMAL_PROFIT_ROW);
@@ -714,8 +749,8 @@ const useNewProfits = () => {
     useState<ProfitsPricingTables[]>();
   const [dataForExceptions, setDataForExceptions] =
     useState<ProfitsPricingTables[]>();
-  const [oneTime, setOneTime] = useState(true)
-  const [firstRender, setFirstRender] = useState(false)
+  const [oneTime, setOneTime] = useState(true);
+  const [firstRender, setFirstRender] = useState(false);
   useEffect(() => {
     if (oneTime) {
       if (firstRender) {
@@ -724,38 +759,32 @@ const useNewProfits = () => {
             return item.exceptionType === ETypeException.DEFAULT;
           });
           setSelectedPricingTableItems(defaultRow);
-          setOneTime(false)
-
+          setOneTime(false);
         } else {
           const maxIndexItem = profitsPricingTables?.reduce((prev, current) => {
-            return (prev.index > current.index) ? prev : current;
+            return prev.index > current.index ? prev : current;
           });
           setSelectedPricingTableItems(maxIndexItem);
-          setOneTime(false)
-
+          setOneTime(false);
         }
-      }
-      else {
+      } else {
         const defaultRow = profitsPricingTables?.find((item) => {
           return item.exceptionType === ETypeException.DEFAULT;
         });
         if (defaultRow) {
-          setFirstRender(true)
+          setFirstRender(true);
           setSelectedPricingTableItems(defaultRow);
-          setOneTime(false)
-
-
+          setOneTime(false);
         }
       }
     }
-
-
   }, [dataForPricing]);
 
   const reOrderPricingTables = useCallback(async (data: any) => {
     const res = await callApi(
       EHttpMethod.PUT,
-      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionIdOrProductId=${router.query.actionId
+      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionIdOrProductId=${
+        router.query.actionId
       }?isOutSourc=${router.query.isOutSource ? true : false}`,
       {
         data,
@@ -920,7 +949,7 @@ const useNewProfits = () => {
     deleteExceptionProfit,
     getProfitsPricingTables,
     getAllActionProfitRowsByActionId,
-    getCalculateCaseProfits
+    getCalculateCaseProfits,
   };
 };
 

@@ -180,30 +180,30 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 10),
         color: primaryColor(300),
       },
-      menuContainer:{
+      menuContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
-        gap:8
+        gap: 8,
       },
-      rowTextStyle:{
-        ...FONT_FAMILY.Lexend(500,14),
-        color:primaryColor(500)
+      rowTextStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: primaryColor(500),
       },
-      modalMainContainer:{
+      modalMainContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
-        alignItems:"flex-start",
-        padding:"15px 0px",
-        gap:15
+        alignItems: "flex-start",
+        padding: "15px 0px",
+        gap: 15,
       },
-      btnContainer:{
+      btnContainer: {
         width: "100%",
         height: 40,
-        backgroundColor:secondColor(500),
+        backgroundColor: secondColor(500),
         borderRadius: 4,
       },
       autoCompleteStyle: {
@@ -212,6 +212,11 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 14),
         borderBottom: "none",
         width: "100%",
+      },
+      multiLineTextInputStyle: {
+        width: "100%",
+        borderRadius: 4,
+        height: 40,
       },
     };
   }, []);

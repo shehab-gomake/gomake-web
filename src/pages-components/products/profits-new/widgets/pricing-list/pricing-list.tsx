@@ -1,15 +1,18 @@
-import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeModal,
+  GomakePrimaryButton,
+  GomakeTextInput,
+} from "@/components";
 import { useTranslation } from "react-i18next";
 import { LineChart } from "@/pages-components/products/profits/widgets/line-chart";
 import { PricingListTable } from "./pricing-list-table";
 import { useStyle } from "./style";
 import { PricingListProps } from "../../interface";
-import { IconButton, Menu, MenuItem } from "@mui/material";
+import { Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import { SettingsIcon } from "@/icons/settings";
-import { DuplicateMaterial } from "@/icons";
-
+import { DuplicateMaterial, PercentageMaterial } from "@/icons";
 import { useCopyAction } from "./use-copy-action";
-
 
 const PricingList = ({
   tableHeaders,
@@ -32,10 +35,11 @@ const PricingList = ({
   setSelectedActionProfit,
   deleteActionProfitRow,
   selectedAdditionalProfitRow,
-  selectedPricingTableItems
+  selectedPricingTableItems,
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
+
   const {
     router,
     anchorEl,
@@ -46,17 +50,27 @@ const PricingList = ({
     onOpenModal,
     CopyActionProfitsToOtherActionApi,
     handleCloseMenu,
-    onCloseModal
-  } = useCopyAction()
+    onCloseModal,
+    setPercentageProfit,
+    percentageProfit,
+    openProfitModal,
+    onCloseProfitModal,
+    onOpenProfitModal,
+    AddNewProfitForActionProfitsApi,
+  } = useCopyAction();
 
   return (
     <div style={clasess.pricListWidgetMainContainer}>
       <div style={clasess.headerMainCointaner}>
         <div style={clasess.listTitle}>
-          {t("products.profits.pricingListWidget.pricingListTitle")} ({`${router?.query?.actionName}`})
+          {t("products.profits.pricingListWidget.pricingListTitle")} (
+          {`${router?.query?.actionName}`})
         </div>
         <div style={clasess.filtersCointaner}>
-          <IconButton onClick={handleMoreOptionIconClick} style={{ marginRight: -18 }} >
+          <IconButton
+            onClick={handleMoreOptionIconClick}
+            style={{ marginRight: -18 }}
+          >
             <SettingsIcon stroke={"#000000"} width={24} height={24} />
           </IconButton>
           <div style={clasess.autoCompleteContainer}>
@@ -77,7 +91,6 @@ const PricingList = ({
               key={selectedPricingTableItems}
             />
           </div>
-
         </div>
       </div>
       <PricingListTable
@@ -113,10 +126,20 @@ const PricingList = ({
             {t("products.profits.admin.copyActionProfit")}
           </div>
         </MenuItem>
-        {/* <Divider /> */}
-
+        <Divider />
+        <MenuItem style={clasess.menuContainer} onClick={onOpenProfitModal}>
+          <PercentageMaterial />
+          <div style={clasess.rowTextStyle}>
+            {t("products.profits.admin.updateProfitPercentage")}
+          </div>
+        </MenuItem>
       </Menu>
-      <GoMakeModal modalTitle={t("products.profits.admin.copyActionProfit")} insideStyle={{ height: 'fit-content', width: "30%" }} openModal={openModal} onClose={onCloseModal}>
+      <GoMakeModal
+        modalTitle={t("products.profits.admin.copyActionProfit")}
+        insideStyle={{ height: "fit-content", width: "30%" }}
+        openModal={openModal}
+        onClose={onCloseModal}
+      >
         <div style={clasess.modalMainContainer}>
           <GoMakeAutoComplate
             options={allActions}
@@ -130,6 +153,27 @@ const PricingList = ({
             onClick={CopyActionProfitsToOtherActionApi}
           >
             {t("products.profits.admin.copy")}
+          </GomakePrimaryButton>
+        </div>
+      </GoMakeModal>
+      <GoMakeModal
+        modalTitle={t("products.profits.admin.updateProfitPercentage")}
+        insideStyle={{ height: "fit-content", width: "30%" }}
+        openModal={openProfitModal}
+        onClose={onCloseProfitModal}
+      >
+        <div style={clasess.modalMainContainer}>
+          <GomakeTextInput
+            style={clasess.multiLineTextInputStyle}
+            onChange={(e) => setPercentageProfit(e.target.value)}
+            value={percentageProfit}
+            placeholder={t("products.profits.admin.profitByPercentage")}
+          />
+          <GomakePrimaryButton
+            style={clasess.btnContainer}
+            onClick={AddNewProfitForActionProfitsApi}
+          >
+            {t("documentingSettings.update")}
           </GomakePrimaryButton>
         </div>
       </GoMakeModal>
