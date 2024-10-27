@@ -9,7 +9,7 @@ import { Button, Stack } from "@mui/material";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { gomakeUserState } from "./gomakeUserState";
 import { resetPassModalState } from "../../state";
-import { languagesState } from "@/store/languages";
+import { languageOptionsState, languagesState } from "@/store/languages";
 
 interface IProps {
   user: {
@@ -26,9 +26,11 @@ interface IProps {
 }
 
 const UserForm = ({ user, onDelete, setUser }: IProps) => {
-  const setOpenModal =useSetRecoilState<boolean>(resetPassModalState);
+  const setOpenModal = useSetRecoilState<boolean>(resetPassModalState);
   const setGomakeUser = useSetRecoilState<{}>(gomakeUserState);
-  const languagesOptions = useRecoilValue(languagesState);
+  // const languagesOptions = useRecoilValue(languagesState);
+  const languagesOptions = useRecoilValue(languageOptionsState);
+
   const { classes } = useStyle();
   const { t } = useTranslation();
 
@@ -45,7 +47,7 @@ const UserForm = ({ user, onDelete, setUser }: IProps) => {
   return (
     <div>
       <div style={classes.customerInfoStyle}>
-        {userInputs(user, showPassFiled , languagesOptions).map((item) => (
+        {userInputs(user, showPassFiled, languagesOptions).map((item) => (
           <FormInput
             input={item as IInput}
             changeState={onChangeInputs}

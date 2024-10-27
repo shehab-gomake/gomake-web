@@ -491,7 +491,7 @@ export const languagesState = atom({
     },
     {
       value: "lu",
-      text: "",
+      text: "Luba-Katanga",
       supported: false,
     },
     {
@@ -931,8 +931,29 @@ export const languageOptionsState = selector({
   key: "languageOptionsState",
   get: ({ get }) => {
     const state = get(languagesState);
+
     return state
       .map((language) => ({ ...language, label: language.text }))
-      .sort((a, b) => a.text.localeCompare(b.text));
+      .sort((a, b) => {
+        const isAEnglishText = /^[A-Za-z]+$/.test(a.text); // Check if `a.text` is English letters
+        const isBEnglishText = /^[A-Za-z]+$/.test(b.text); // Check if `b.text` is English letters
+
+        // Sort logic
+        if (isAEnglishText && !isBEnglishText) return -1; // `a` is English text, comes first
+        if (!isAEnglishText && isBEnglishText) return 1; // `b` is English text, comes first
+
+        // If both are either English or non-English, sort alphabetically
+        return a.text.localeCompare(b.text, "en", { sensitivity: "base" });
+      });
   },
 });
+
+// export const languageOptionsState = selector({
+//   key: "languageOptionsState",
+//   get: ({ get }) => {
+//       const state = get(languagesState);
+//       return state
+//           .map((language) => ({ ...language, label: language.text }))
+//           .sort((a, b) => a.text.localeCompare(b.text));
+//   },
+// });
