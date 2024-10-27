@@ -8,6 +8,7 @@ import {
   GomakePrimaryButton,
   GomakeTextInput,
   SecondSwitch,
+  ThreeOptionsModal,
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -180,6 +181,9 @@ const QuotesListPageWidget = ({
     onClickCloseChangeProductionStatusModal,
     moveOrderToReady,
     onChangeDocumentSearch,
+    openDuplicateModal,
+    onCloseDuplicateModal,
+    onClickDocumentDuplicate,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -809,6 +813,15 @@ const QuotesListPageWidget = ({
         openModal={openCancelReceiptModalRefund}
         handleModalClose={onCloseCancelReceiptModalRefund}
         onClickCancel={onClickCancelReceipt}
+      />
+      <ThreeOptionsModal
+        title={t("boardMissions.duplicateModalTitle")}
+        yesBtn={"boardMissions.duplicateModalYes"}
+        noBtn={"boardMissions.duplicateModalNo"}
+        openModal={openDuplicateModal}
+        onClose={onCloseDuplicateModal}
+        onClickYes={() => onClickDocumentDuplicate(selectedDocument?.id, true)}
+        onClickNo={() => onClickDocumentDuplicate(selectedDocument?.id, false)}
       />
     </>
   );
