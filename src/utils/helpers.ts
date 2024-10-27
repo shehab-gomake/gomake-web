@@ -31,7 +31,9 @@ export const findParameterByCode = (template, targetCode) => {
       }
 
       for (const subSection of section.subSections || []) {
-        const parameter = subSection.parameters.find(param => param.code === targetCode);
+        const parameter = subSection.parameters.find(
+          (param) => param.code === targetCode
+        );
         if (parameter) {
           return parameter;
         }
@@ -49,9 +51,9 @@ export function detectLanguage(text) {
   const arabicRegex = /^[\u0600-\u06FF\s]+$/;
 
   if (englishRegex.test(text)) {
-    return 'English';
+    return "English";
   } else if (arabicRegex.test(text)) {
-    return 'Arabic';
+    return "Arabic";
   }
 }
 
@@ -70,9 +72,8 @@ export const isValidEmail = (email) => {
 export const hasValues = (obj) => {
   if (obj) {
     return Object?.keys(obj?.values)?.length !== 0;
-
   }
-}
+};
 
 export const isValidCustomer = (
   customer,
@@ -80,14 +81,7 @@ export const isValidCustomer = (
   filteredAddresses,
   filteredUsers
 ) => {
-  if (
-    !(
-      customer &&
-      customer.name &&
-      customer.clientTypeId
-  
-    )
-  ) {
+  if (!(customer && customer.name && customer.clientTypeId)) {
     return false;
   }
   for (const contact of filteredContacts) {
@@ -114,7 +108,7 @@ export const isValidCustomer = (
   return true;
 };
 
-export   const downloadPdf = (url) => {
+export const downloadPdf = (url) => {
   const anchor = document.createElement("a");
   anchor.href = url;
   anchor.target = "_blank";
@@ -126,26 +120,23 @@ export   const downloadPdf = (url) => {
   anchor.click();
 };
 
-export  const isAtLeastOneSelected = (items) => {
+export const isAtLeastOneSelected = (items) => {
   if (items && items?.length > 0) {
-    return items.some(item => item.isSelected === true);
-
+    return items.some((item) => item.isSelected === true);
   }
-}
+};
 
 export function removeTags(str) {
-  if ((str === null) || (str === ''))
-      return false;
-  else
-      str = str.toString();
-  return str.replace(/(<([^>]+)>)/ig, '');
+  if (str === null || str === "") return false;
+  else str = str.toString();
+  return str.replace(/(<([^>]+)>)/gi, "");
 }
 
 export function getCurrencySymbol(currencyCode) {
   const currencySymbols = {
-    'USD': '$',
-    'EUR': '€',
-    'ILS': '₪'
+    USD: "$",
+    EUR: "€",
+    ILS: "₪",
   };
 
   return currencySymbols[currencyCode] || null;
@@ -155,23 +146,26 @@ export const toRgba = (color: string, opacity: number) => {
   // Assuming primaryColor returns a hex color like '#ffcc00' or any color string
   let rgbaColor = color;
 
-  if (color.startsWith('#')) {
-      const hex = color.replace('#', '');
-      const bigint = parseInt(hex, 16);
-      const r = (bigint >> 16) & 255;
-      const g = (bigint >> 8) & 255;
-      const b = bigint & 255;
-      rgbaColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  if (color.startsWith("#")) {
+    const hex = color.replace("#", "");
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    rgbaColor = `rgba(${r}, ${g}, ${b}, ${opacity})`;
   }
 
   return rgbaColor;
 };
 
-export  const checkIfDieCutOrDieKissCutExists = (subProducts) => {
+export const checkIfDieCutOrDieKissCutExists = (subProducts) => {
   for (const subProduct of subProducts) {
     if (subProduct.parameters) {
       const dieCutParam = subProduct.parameters.find(
-        param => param.parameterCode === "DieCut" || param.parameterCode === "DieKissCut"|| param.parameterCode === "DieStamp"
+        (param) =>
+          param.parameterCode === "DieCut" ||
+          param.parameterCode === "DieKissCut" ||
+          param.parameterCode === "DieStamp"
       );
       if (dieCutParam) {
         return true;
@@ -179,4 +173,34 @@ export  const checkIfDieCutOrDieKissCutExists = (subProducts) => {
     }
   }
   return false;
+};
+
+export const checkArrayNotEmptyOrPhoneNotEmpty = (array) => {
+  if (array.length === 0) {
+    return false;
+  }
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].contactPhone && array[i].contactPhone.trim() !== "") {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+export const checkArrayNotEmptyOrEmailNotEmpty = (array) => {
+  if (array.length === 0) {
+    return false;
+  }
+  for (let i = 0; i < array.length; i++) {
+    if (array[i].contactMail && array[i].contactMail.trim() !== "") {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+export const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };

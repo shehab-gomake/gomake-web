@@ -2,11 +2,10 @@ import { OptionsButton } from "@/components/options-button/options-button";
 import { MenuItem } from "@mui/material";
 import { GoMakeAutoComplate, GoMakeModal } from "@/components";
 import { useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { printHousesState } from "@/pages-components/company-reports/components/types/state";
 import { PrimaryButton } from "@/components/button/primary-button";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
+  importDocumentsApi,
   importMachinesApi,
   importMaterialsApi,
   importOutputsApi,
@@ -14,9 +13,12 @@ import {
   importProfitsApi,
 } from "@/services/api-service/import-data/import-data-endpoints";
 import Stack from "@mui/material/Stack";
+import { PaymentHistoryComponent } from "@/pages-components/company-reports/payment-history/payment-history";
+import { IPrintHouse } from "@/pages-components/company-reports/components/types/interfaces";
 import { useTranslation } from "react-i18next";
-import { IPrintHouse } from "./types/interfaces";
-import { useStyle } from "../style";
+import { useRecoilValue } from "recoil";
+import { printHousesState } from "@/pages-components/company-reports/components/types/state";
+import { useStyle } from "@/pages-components/company-reports/style";
 
 interface IProps {
   printHouse: IPrintHouse;
@@ -50,9 +52,14 @@ const OptionsComponent = ({
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
+  const { alertFault } = useSnackBar();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [actionState, setActionState] = useState<EAction>();
   const [sourcePrintHouseId, setSourcePrintHouseId] = useState<string>("");
+  const [openPaymentModal, setOpenPaymentModal] = useState<boolean>(false);
+  const [openUploadModal, setOpenUploadModal] = useState<boolean>(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
   const printHouses =
     useRecoilValue<{ id: string; name: string }[]>(printHousesState);
 
@@ -118,6 +125,52 @@ const OptionsComponent = ({
     });
   };
 
+  const handleUploadModalClose = () => {
+    setOpenUploadModal(false);
+    setSelectedFile(null);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
+  };
+
+  const handleUploadClick = async () => {
+    if (!selectedFile) {
+      alertFault("importData.noFileSelected");
+      return;
+    }
+    setIsUploading(true);
+    const fileBase64 = await convertFileToBase64(selectedFile);
+
+    const callBack = (res) => {
+      if (res.success) {
+        alertFault("importData.fileUploadedSuccessfully");
+        handleUploadModalClose();
+      } else {
+        alertFault("importData.fileUploadFailed");
+      }
+    };
+
+    await importDocumentsApi(callApi, callBack, {
+      fileBase64,
+      printHouseId: printHouse?.id,
+    });
+
+    setIsUploading(false);
+  };
+
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   return (
     <>
       <OptionsButton>
@@ -166,6 +219,16 @@ const OptionsComponent = ({
             {t("importData.importOutputs")}
           </div>
         </MenuItem>
+        <MenuItem onClick={() => setOpenUploadModal(true)}>
+          <div style={classes.rowTextStyle}>
+            {t("importData.uploadDocument")}
+          </div>
+        </MenuItem>
+        <MenuItem onClick={() => setOpenPaymentModal(true)}>
+          <div style={classes.rowTextStyle}>
+            {t("importData.paymentHistory")}
+          </div>
+        </MenuItem>
       </OptionsButton>
       <GoMakeModal
         modalTitle={t("importData.selectPrintHouse")}
@@ -182,6 +245,33 @@ const OptionsComponent = ({
           />
           <PrimaryButton variant={"contained"} onClick={handelImportClick}>
             {t("importData.import")}
+          </PrimaryButton>
+        </Stack>
+      </GoMakeModal>
+      <GoMakeModal
+        modalTitle={t("importData.paymentHistory")}
+        insideStyle={{ width: "70%", height: "fit-content" }}
+        openModal={openPaymentModal}
+        onClose={() => setOpenPaymentModal(false)}
+      >
+        <PaymentHistoryComponent printHouseId={printHouse?.id} />
+      </GoMakeModal>
+
+      <GoMakeModal
+        modalTitle={t("importData.uploadDocument")}
+        insideStyle={{ width: "400px", height: "fit-content" }}
+        openModal={openUploadModal}
+        onClose={handleUploadModalClose}
+      >
+        <Stack gap={"10px"}>
+          <h5>{t("importData.uploadYourDocument")}</h5>
+          <input onChange={handleFileUpload} type="file" accept=".xlsx" />
+          <PrimaryButton
+            variant={"contained"}
+            onClick={handleUploadClick}
+            disabled={isUploading}
+          >
+            {isUploading ? t("sales.uploading") : t("sales.quote.upload")}
           </PrimaryButton>
         </Stack>
       </GoMakeModal>

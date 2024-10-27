@@ -11,7 +11,7 @@ import { systemCurrencyState } from "@/store/user";
 import { resetPassModalState } from "./state";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { gomakeUserState } from "./components/gomakeUser-tab/gomakeUserState";
-import { languagesState } from "@/store/languages";
+import { languageOptionsState, languagesState } from "@/store/languages";
 import { useEditCustomer } from "@/pages/customers/edit-customer/use-edit-customer";
 import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
@@ -48,7 +48,8 @@ const useCustomerCard = ({
     useRecoilState<boolean>(resetPassModalState);
   const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
   const gomakeUser = useRecoilValue<any>(gomakeUserState);
-  const languagesOptions = useRecoilValue(languagesState);
+  // const languagesOptions = useRecoilValue(languagesState);
+  const languagesOptions = useRecoilValue(languageOptionsState);
 
   const customerTableHeaders = [
     t("customers.customerCode"),
@@ -491,7 +492,7 @@ const useCustomerCard = ({
       setShowTable(true);
     });
   };
-  const [dlientGroupList, setClientGroupList] = useState([])
+  const [dlientGroupList, setClientGroupList] = useState([]);
   const getClientsGroups = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -504,10 +505,10 @@ const useCustomerCard = ({
   };
 
   useEffect(() => {
-    getClientsGroups()
-  }, [])
+    getClientsGroups();
+  }, []);
 
-  const [newGroupId, setNewGroupId] = useState("")
+  const [newGroupId, setNewGroupId] = useState("");
   const addGroupName = useCallback(async (data: string) => {
     const res: any = await callApi(
       "POST",
@@ -517,8 +518,8 @@ const useCustomerCard = ({
       }
     );
     if (res?.success) {
-      getClientsGroups()
-      setNewGroupId(res?.data?.data?.data)
+      getClientsGroups();
+      setNewGroupId(res?.data?.data?.data);
     } else {
     }
   }, []);
@@ -578,7 +579,7 @@ const useCustomerCard = ({
     dlientGroupList,
     addGroupName,
     newGroupId,
-    setNewGroupId
+    setNewGroupId,
   };
 };
 

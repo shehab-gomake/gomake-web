@@ -81,10 +81,10 @@ const useCreateNewTransaction = ({ onCloseModal, customerId }) => {
   const createTransactionsApi = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
-      `/v1/erp-service/receipts/cancel-transactions`,
+      `/v1/erp-service/Receipts/create-transaction`,
       {
         clientId: customerId ? customerId : customer.id,
-        accountCode: selectErpAccount.name,
+        accountCode: selectErpAccount.code,
         amount: price,
         reference: reference,
         referenceDate: selectDate,

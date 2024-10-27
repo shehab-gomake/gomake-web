@@ -26,6 +26,8 @@ const TableCellData = ({
   isAdmin,
   onChangeRowCheckBox,
 }: IRowData) => {
+  console.log("type", { type, isEditable, parameterKey, id, value, isAdmin })
+
   const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin);
   const machinesCategories = useRecoilValue(machineCategoriesState);
   const parameterCategories = useRecoilValue<any>(materialsParametersState);

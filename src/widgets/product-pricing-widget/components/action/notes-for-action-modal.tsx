@@ -1,11 +1,20 @@
 import { GoMakeModal, GomakePrimaryButton } from "@/components";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../../style";
-import { CSSProperties, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { CSSProperties, Suspense, useEffect, useMemo, useState } from "react";
 import { debounce } from "@mui/material";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+interface NotesForActionModalProps {
+  onClose: () => void;
+  openModal: boolean;
+  onSend: (value: string) => void;
+  containerStyle?: CSSProperties;
+  value: string;
+  setValue: (value: string) => void;
+  modalTitle?: string;
+}
 
 const NotesForActionModal = ({
   onClose,
@@ -13,8 +22,9 @@ const NotesForActionModal = ({
   onSend,
   containerStyle,
   value,
-  setValue
-}: any) => {
+  setValue,
+  modalTitle,
+}: NotesForActionModalProps) => {
   const { classes } = useStyle();
   const [myValue, setMyValue] = useState<string>("");
   const { t } = useTranslation();
@@ -25,30 +35,43 @@ const NotesForActionModal = ({
     setMyValue(value);
   }, [value]);
 
-  const handleTextChange = useMemo(() => debounce(value => {
-    setMyValue(value);
-  }, 300), [setValue]);
-
+  const handleTextChange = useMemo(
+    () =>
+      debounce((value) => {
+        setMyValue(value);
+        setValue(value);
+      }, 300),
+    [setValue]
+  );
 
   const style: CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column-reverse',
-    width: '100%',
+    display: "flex",
+    flexDirection: "column-reverse",
+    width: "100%",
     borderColor: "#9695C7",
     direction: dir,
-    textAlign: isRTL ? 'right' : 'left'
+    textAlign: isRTL ? "right" : "left",
   };
 
-
-  const formats = [
-    'header', 'bold', 'italic', 'underline', 'blockquote',
-    'list', 'bullet', 'link', 'image'
-  ];
+  const formats = useMemo(
+    () => [
+      "header",
+      "bold",
+      "italic",
+      "underline",
+      "blockquote",
+      "list",
+      "bullet",
+      "link",
+      "image",
+    ],
+    []
+  );
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const style = document.createElement('style');
-      style.type = 'text/css';
+    if (typeof window !== "undefined") {
+      const style = document.createElement("style");
+      style.type = "text/css";
       style.innerHTML = `
         .ql-editor {
           min-height: 80px;
@@ -70,22 +93,42 @@ const NotesForActionModal = ({
     <GoMakeModal
       openModal={openModal}
       onClose={onClose}
-      modalTitle={t("sales.notesForAction")}
+      modalTitle={modalTitle || t("sales.notesForAction")}
       insideStyle={classes.modalStyle}
       style={{ zIndex: 999999 }}
     >
-      <div style={{ width: "100%", height: '100%', position: "relative", ...containerStyle }}>
-        {typeof window !== 'undefined' && (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "relative",
+          ...containerStyle,
+        }}
+      >
+        {typeof window !== "undefined" && (
           <Suspense>
             <ReactQuill
               formats={formats}
               style={style}
               value={myValue}
               onChange={handleTextChange}
-              id='editor'
-              placeholder={t('textEditor.placeholder')}
+              id="editor"
+              placeholder={t("textEditor.placeholder")}
             />
-            <GomakePrimaryButton onClick={() => { onSend(myValue) }} style={{ width: "fit-content", height: 35, position: "absolute", bottom: 4, [isRTL ? 'left' : 'right']: 15 }}>{t("mailingSettings.save")}</GomakePrimaryButton>
+            <GomakePrimaryButton
+              onClick={() => {
+                onSend(myValue);
+              }}
+              style={{
+                width: "fit-content",
+                height: 35,
+                position: "absolute",
+                bottom: 4,
+                [isRTL ? "left" : "right"]: 15,
+              }}
+            >
+              {t("mailingSettings.save")}
+            </GomakePrimaryButton>
           </Suspense>
         )}
       </div>

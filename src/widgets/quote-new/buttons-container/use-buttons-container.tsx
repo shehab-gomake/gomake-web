@@ -16,7 +16,7 @@ import {
   getReceiptPdfApi,
 } from "@/services/api-service/generic-doc/receipts-api";
 import { checkedItemsIdsState, finalTotalPaymentState } from "./states";
-import { isAtLeastOneSelected } from "@/utils/helpers";
+import { checkArrayNotEmptyOrEmailNotEmpty, checkArrayNotEmptyOrPhoneNotEmpty, isAtLeastOneSelected } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
@@ -64,8 +64,22 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     if (!isSelectedAtLeastOne) {
       alertFault("reports.pleaseSelectOneItem");
     } else {
+      let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
+        quoteItemValue?.documentContacts
+      );
+      let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(
+        quoteItemValue?.documentContacts
+      );
+
       if (quoteItemValue?.client?.isCreateOrder) {
-        setOpenOrderNowModal(true);
+
+        if (!checkPhones && !checkEmails) {
+          alertFault("home.admin.pleaseSelectPhoneOrEmail");
+        }
+        else {
+          setOpenOrderNowModal(true);
+        }
+
       } else {
         alertFault("home.admin.pleaseSelectClient");
       }
@@ -307,8 +321,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         docType === DOCUMENT_TYPE.order
           ? navigate("/orders")
           : docType === DOCUMENT_TYPE.deliveryNote
-          ? navigate("/deliveryNotes")
-          : navigate("/invoices");
+            ? navigate("/deliveryNotes")
+            : navigate("/invoices");
       } else {
         alertFaultUpdate();
       }

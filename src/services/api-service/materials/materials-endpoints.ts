@@ -18,6 +18,7 @@ const UPDATE_MATERIAL_PROPS_URL = "/v1/materials/updateMaterial";
 const UPDATE_MATERIALS_PROPS_URL = "/v1/materials/updateMaterials";
 const ADD_MATERIAL_CATEGORY_URL = "/v1/materials/add-material-category";
 const ADD_MATERIAL_CATEGORY_ROW_URL = "/v1/materials/add-material-category-row";
+const UPDATE_MATERIAL_CATEGORY_NUMBERING_URL = "/v1/materials/update-material-category-numbering";
 const DELETE_MATERIAL_CATEGORY_URL = "/v1/materials/delete-material-category";
 const DELETE_MATERIAL_CATEGORY_Row_URL = "/v1/materials/delete-material-category-row";
 const CREATE_PURCHASE_ORDER_URL = "/v1/materials/create-purchase-order";
@@ -198,6 +199,21 @@ const addMaterialCategoryRowApi: ICallAndSetData = async (
   );
 };
 
+
+const updateMaterialCategoryNumberingApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_MATERIAL_CATEGORY_NUMBERING_URL,
+    callBack,
+    data
+  );
+};
+
 const deleteMaterialCategoryApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -303,5 +319,6 @@ export {
   createPurchaseOrderApi,
   uploadPrintHouseMaterialApi,
   addDocumentItemFromMaterialApi,
-  getDocumentItemDataFromMaterialApi
+  getDocumentItemDataFromMaterialApi,
+  updateMaterialCategoryNumberingApi
 };

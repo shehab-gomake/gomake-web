@@ -36,7 +36,11 @@ const ContactMapping = ({
   };
 
   const onBlurContactEmail = async (item) => {
-    if (!item.contactMail || !isValidEmail(item.contactMail)) {
+    if (item.contactMail === "") {
+      updateClientContact(item);
+      setIsUpdateContactEmail(null);
+    }
+    else if (!isValidEmail(item.contactMail)) {
       alertFault("Invalid email address format or missing contact email")
     }
     else {
@@ -46,9 +50,14 @@ const ContactMapping = ({
 
   };
   const onBlurContactMobile = async (item) => {
-    if (!item.contactPhone || !isValidPhoneNumber(item.contactPhone)) {
+    if (item.contactPhone === "") {
+      updateClientContact(item);
+      setIsUpdateContactMobile(null);
+    }
+    else if (!isValidPhoneNumber(item.contactPhone)) {
       alertFault("Phone number must be in the format +1234567890 and have a minimum length of 10 digits")
     }
+
     else {
       updateClientContact(item);
       setIsUpdateContactMobile(null);
