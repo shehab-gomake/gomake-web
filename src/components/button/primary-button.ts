@@ -3,8 +3,13 @@ import Button, { ButtonProps } from "@mui/material/Button";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 
-const PrimaryButton = styled(Button)((props: ButtonProps) => {
+interface PrimaryButtonProps extends ButtonProps {
+  hoverStyle?: boolean; // Optional prop to toggle custom hover styles
+}
+
+const PrimaryButton = styled(Button)<PrimaryButtonProps>((props) => {
   const { primaryColor } = useGomakeTheme();
+
   return {
     boxShadow: "none",
     textTransform: "capitalize",
@@ -25,6 +30,15 @@ const PrimaryButton = styled(Button)((props: ButtonProps) => {
         props.variant === "contained" ? primaryColor(500) : "#FFF",
       borderColor: primaryColor(500),
     },
+    ...(props.hoverStyle &&
+      props.variant === "contained" && {
+        "&:hover": {
+          backgroundColor: primaryColor(100),
+          borderColor: primaryColor(500),
+          opacity: 0.8,
+          color: primaryColor(500),
+        },
+      }),
     "&.MuiButton-text": {
       backgroundColor: "inherit",
       color: primaryColor(500),

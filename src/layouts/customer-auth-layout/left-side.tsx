@@ -40,8 +40,8 @@ const LeftSideLayout = (customGap) => {
     const currentURL = window.location.href;
 
     const isTargetURL =
-      currentURL.startsWith("https://goautomation.gomake.net/") ||
-      currentURL.includes("goautomation.gomake.net");
+      currentURL.startsWith("https://goautomation.dev.gomake.net/") ||
+      currentURL.includes("goautomation.dev.gomake.net");
 
     if (isTargetURL) {
       setIsHover(true);

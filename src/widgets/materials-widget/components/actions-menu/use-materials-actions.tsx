@@ -128,21 +128,21 @@ const useMaterialsActions = (isAdmin: boolean) => {
       setOpenUpdatedNumburingModal(true);
       return;
     }
-    if (action?.action === EMaterialsActions.CreatePurchaseOrder) {
-      if (selectedMaterialsIds.length === 0) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.noMaterialsSelected"),
-          type: "error",
-        });
-        return;
-      }
-      else {
-        setOpenCreatePurchaseOrderModal(true);
-        return;
-      }
+    // if (action?.action === EMaterialsActions.CreatePurchaseOrder) {
+    //   if (selectedMaterialsIds.length === 0) {
+    //     setSnackbarStateValue({
+    //       state: true,
+    //       message: t("modal.noMaterialsSelected"),
+    //       type: "error",
+    //     });
+    //     return;
+    //   }
+    //   else {
+    //     setOpenCreatePurchaseOrderModal(true);
+    //     return;
+    //   }
 
-    }
+    // }
     if (action?.action === EMaterialsActions.DownLoadExcel) {
       downloadExcelFile().then();
       return;
@@ -468,7 +468,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
               : null,
         customFiltersKeyValueList: materialFilter,
       },
-      quantity: updatedValue || null,
+      quantity: null,
+      package: updatedValue,
       priceIndex: 0,
     });
   };

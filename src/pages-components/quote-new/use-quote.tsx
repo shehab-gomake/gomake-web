@@ -245,9 +245,11 @@ const useQuoteNew = ({
   const handleCancelBtnClose = () => {
     setAnchorElCancelBtn(null);
   };
+
   const handleSendBtnClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElSendBtn(event.currentTarget);
   };
+
   const handleSendBtnClose = () => {
     setAnchorElSendBtn(null);
   };
@@ -1613,12 +1615,36 @@ const useQuoteNew = ({
     );
   }, [quoteItemValue, quoteConfirm]);
 
+  //!important
+  const prevRouterQueryRef = useRef(router.query);
+  const hasMountedRef = useRef(false);
   useEffect(() => {
     if (!isQuoteConfirmation) {
-      getQuote();
-      getAllEmployees();
+      if (!hasMountedRef.current) {
+        getQuote();
+        getAllEmployees();
+        hasMountedRef.current = true;
+      } else {
+        // Check if the router query has changed (to avoid redundant calls)
+        const hasQueryChanged =
+          JSON.stringify(prevRouterQueryRef.current) !==
+          JSON.stringify(router.query);
+
+        if (hasQueryChanged) {
+          getQuote();
+          getAllEmployees();
+          prevRouterQueryRef.current = router.query;
+        }
+      }
     }
-  }, [isQuoteConfirmation]);
+  }, [isQuoteConfirmation, router.query]);
+
+  // useEffect(() => {
+  //   if (!isQuoteConfirmation) {
+  //     getQuote();
+  //     getAllEmployees();
+  //   }
+  // }, [isQuoteConfirmation]);
 
   const documentsTitles = [
     {

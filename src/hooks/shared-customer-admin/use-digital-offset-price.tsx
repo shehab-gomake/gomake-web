@@ -2178,7 +2178,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setIsJobNameValue={setIsJobNameValue}
         />
       );
-    } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+    } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.MACHINES_SELECT) {
       Comp = (
         <DropDownListParameterWidget
           parameter={parameter}
@@ -3044,6 +3044,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const subSectionParameter = subSection.parameters.find(
         (param) => param.id === parameterId && param.actionIndex === actionIndex
       );
+      subSectionParameter.isHidden = false;
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
         temp[findIndex] = {
