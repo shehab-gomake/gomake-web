@@ -78,14 +78,14 @@ const StyledTableContainer = styled(TableContainer)(() => ({
   overflowX: 'auto',
 
   '&::-webkit-scrollbar': {
-    width: '10px', 
+    width: '10px',
     height: '10px', // For horizontal scrollbar height
   },
   '&::-webkit-scrollbar-track': {
     background: '#f1f1f1',
   },
   '&::-webkit-scrollbar-thumb': {
-    background: '#CCCDCF', 
+    background: '#CCCDCF',
     borderRadius: '10px',
   },
   '&::-webkit-scrollbar-thumb:hover': {
@@ -113,7 +113,7 @@ const PrimaryTable = ({
   const TableRow =
     variant === "ClassicTable" ? ClassicTableRow : PrimaryTableRow;
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden", boxShadow: withoutShadow && "none" }}>
+    <Paper sx={{ width: "100%", overflow: "hidden", boxShadow: withoutShadow && "none", height: "100%" }}>
       <StyledTableContainer
         style={classes.tableContainer}>
         <Table data-tour={dataTour} stickyHeader={stickyHeader}>

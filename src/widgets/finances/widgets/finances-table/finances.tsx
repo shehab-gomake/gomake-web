@@ -8,7 +8,7 @@ const FinancesTableWidget = ({ getAccountRows }) => {
     <PrimaryTable
       rows={getAccountRows()}
       headers={[t("financesWidget.accountCode"), t("reports.accountName"), t("financesWidget.cpaAccountCode")]}
-      maxHeight={600}
+      maxHeight={"calc(100vh - 280px)"}
       stickyHeader={true}
     />
   );

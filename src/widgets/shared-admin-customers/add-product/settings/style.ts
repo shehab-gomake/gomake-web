@@ -19,7 +19,7 @@ const useStyle = () => {
         alignItems: "flex-start",
         width: "100%",
         backgroundColor: "transparent",
-        height: "65vh",
+        height: "calc(100vh - 100px)",
         overflow: "auto",
       },
       categoryNameStyle: {

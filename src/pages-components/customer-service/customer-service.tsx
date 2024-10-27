@@ -86,16 +86,14 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
             statusKey={statusKey}
           />
         )}
-        <Stack>
-          <PrimaryTable
-            // stickyFirstCol={true}
-            stickyHeader={true}
-            columnWidths={columnWidths}
-            rows={filteredIssues}
-            headers={tableHeaders}
-            maxHeight={700}
-          />
-        </Stack>
+        <PrimaryTable
+          // stickyFirstCol={true}
+          stickyHeader={true}
+          columnWidths={columnWidths}
+          rows={filteredIssues}
+          headers={tableHeaders}
+          maxHeight={"calc(100vh - 280px)"}
+        />
         <CreateIssueModal
           setTicketState={setTicketState}
           openModal={openModal}

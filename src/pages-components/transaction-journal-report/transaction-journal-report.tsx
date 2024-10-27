@@ -67,7 +67,7 @@ const TransactionJournalReportWidget = ({ isPayment }: TransactionJournalReportW
                   <PrimaryTable
                     rows={getTableDataRows(item?.data, onClickOpenCustomerModal)}
                     headers={tableHeaders}
-                    maxHeight={650}
+                    maxHeight={"calc(100vh - 300px)"}
                     stickyHeader={true}
                   />
                 );
