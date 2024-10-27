@@ -4182,7 +4182,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setLoadingWithLockScreen(false);
         }
       };
-
       await updateDocumentItemApi(callApi, callBack, {
         Item: {
           signalRConnectionId: connectionId,
@@ -4201,9 +4200,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           exampleType: sampleType && getSampleType(sampleType),
           isNeedExample: false,
           isDuplicatedWithAnotherQuantity: false,
-          ...(isSaveCurrentStation !== undefined && {
-            saveCurrentStation: isSaveCurrentStation,
-          }),
+          saveCurrentStation: isFlowChanged ? isSaveCurrentStation : true,
         },
         DocumentType: router?.query?.documentType,
       });
