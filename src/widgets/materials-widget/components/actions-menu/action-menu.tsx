@@ -254,11 +254,19 @@ const ActionMenu = (props: IActionMenuProps) => {
                 </div>
               </div>
             ) : (
-              <GomakeTextInput
-                onChange={(e) => onTextInputChange(e.target.value)}
-                value={updatedValue}
-                type={action?.action === EMaterialsActions.CreatePurchaseOrder ? "number" : undefined}
-              />
+              <div style={{
+                display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start",
+                alignContent: "flex-start", width: "100%",
+              }}>
+                {action?.action === EMaterialsActions.CreatePurchaseOrder && <div style={{ marginBottom: 10, marginTop: 15 }}>{t("boardMissions.package")}</div>}
+                <GomakeTextInput
+                  onChange={(e) => onTextInputChange(e.target.value)}
+                  value={updatedValue}
+                  type={action?.action === EMaterialsActions.CreatePurchaseOrder ? "number" : undefined}
+                  style={{ height: 40 }}
+                />
+              </div>
+
             )}
             <SecondaryButton
               onClick={onUpdate}
