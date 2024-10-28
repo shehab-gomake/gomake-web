@@ -15,6 +15,7 @@ import { systemCurrencyState } from "@/store";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { calculationResultState, currentProductItemValuePriceState } from "../../state";
 import { UpdateValueAutoComplete } from "@/components";
+import { useSnackBar } from "@/hooks";
 
 interface IProps {
     value: number;
@@ -41,8 +42,9 @@ const OutSourceSuppliersRowComponent = ({
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
+    const { alertFault } = useSnackBar();
     const [supplier, setSupplier] = useState<IOutSourceSupplier | null>();
-    const { updatePrice, updateWorkHours, updateProfit, updateCost, productItemValueByEdit } = useOutsourceSupplier({ supplier, setSupplier , options});
+    const { updatePrice, updateWorkHours, updateProfit, updateCost, productItemValueByEdit } = useOutsourceSupplier({ supplier, setSupplier, options });
     const systemCurrency = useRecoilValue<any>(systemCurrencyState);
     const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(currentProductItemValuePriceState);
     const calculationResult = useRecoilValue(calculationResultState);
@@ -65,6 +67,7 @@ const OutSourceSuppliersRowComponent = ({
             }
         }
     }, []);
+    console.log("supplier", supplier)
 
     const handleDeliveryTimeUpdate = (newValue: number) => {
         updateWorkHours(supplier?.supplierId, +newValue);
@@ -76,7 +79,11 @@ const OutSourceSuppliersRowComponent = ({
         updateProfit(supplier?.supplierId, +profit)
     }
     const handleUpdatePrice = (price: number) => {
-        updatePrice(supplier?.supplierId, price);
+        if (supplier?.cost === 0) {
+            alertFault(t("pricingWidget.costCannotBeZero"));
+        } else {
+            updatePrice(supplier?.supplierId, price);
+        }
     }
 
     const handleSupplierUpdate = (value) => {
@@ -109,7 +116,7 @@ const OutSourceSuppliersRowComponent = ({
                     <EditableValue unit={'%'} isEditable={supplier?.status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.profit')}
                         value={supplier?.profit} onUpdate={handleProfitUpdate} />
                     <Divider orientation={'vertical'} flexItem />
-                    <EditableValue unit={systemCurrency} isEditable={supplier?.status === EOutsourceSupplierStatus.Manually}
+                    <EditableValue unit={systemCurrency} isEditable={supplier?.status === EOutsourceSupplierStatus.Manually && supplier?.cost !== 0}
                         valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={supplier?.finalPrice}
                         onUpdate={handleUpdatePrice} />
                 </Stack>
