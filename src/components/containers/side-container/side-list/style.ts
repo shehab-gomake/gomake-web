@@ -21,7 +21,7 @@ const useStyle = () => {
       listContainer: {
         backgroundColor: "inherit",
         overflow: "auto",
-        height: "65vh",
+        height: "calc(100vh - 235px)",
       },
       buttonWrapper: {
         padding: "3px 14px",

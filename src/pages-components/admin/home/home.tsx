@@ -98,7 +98,9 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
                             / {selectedClient?.name}
                         </span>
                     </div>
-                    <HomeTableWidget />
+                    <div style={{ marginBottom: 20 }}>
+                        <HomeTableWidget />
+                    </div>
                 </div>
             )}
         </div>

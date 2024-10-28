@@ -65,7 +65,7 @@ const CreditCardTransactionsWidget = () => {
           <PrimaryTable
             stickyFirstCol={false}
             stickyHeader={true}
-            maxHeight={650}
+            maxHeight={"100vh"}
             rows={allCreditCardTransaction}
             headers={tableHeaders}
           />

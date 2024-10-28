@@ -64,7 +64,8 @@ const SalesReportWidget = () => {
         <PrimaryTable
           rows={[...getTableDataRows(), ...getTotalTableDataRows()]}
           headers={tableHeaders}
-          maxHeight={650}
+          // maxHeight={650}
+          maxHeight={"calc(100vh - 318px)"}
           isLastItemTotal={true}
           stickyHeader={true}
         />
