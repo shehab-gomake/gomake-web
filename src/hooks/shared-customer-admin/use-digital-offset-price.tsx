@@ -104,7 +104,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     selectedValueConfigState
   );
   const productTypesNumber = useRecoilValue<number>(productTypesNumberState);
-  const [foldOptions, setFoldOptions] = useRecoilState(foldOptionsState);
+  const setFoldOptions = useSetRecoilState(foldOptionsState);
 
   const [workTypes, setWorkTypes] = useState<any>([]);
   const [missionsListForEdit, setMissionsListForEdit] = useState<any>([]);
@@ -1638,7 +1638,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         // Set default values for your states
         setIsChargeForNewDie(false);
-        setFoldOptions([]);
         setMissionsListForEdit([]);
         setSampleType(null);
         setIsRequiredParameters([]);
