@@ -427,13 +427,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (
       signalRPricingResult &&
       signalRPricingResult.productItemValueDraftId ===
-        currentCalculationSessionId
+      currentCalculationSessionId
     ) {
       setLoading(false);
       const totalWorkFlowsCount = signalRPricingResult.totalWorkFlows;
       const currentWorkFlowsCount =
         signalRPricingResult.currentWorkFlowIndex >
-        calculationProgress.currentWorkFlowsCount
+          calculationProgress.currentWorkFlowsCount
           ? signalRPricingResult.currentWorkFlowIndex
           : calculationProgress.currentWorkFlowsCount + 1;
       if (
@@ -488,9 +488,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             flow.id === updatedSelectedWorkFlow?.id
               ? updatedSelectedWorkFlow
               : {
-                  ...flow,
-                  selected: false,
-                }
+                ...flow,
+                selected: false,
+              }
           )
         );
       } else {
@@ -878,11 +878,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
                 } else if (
                   parameter?.parameterType ===
-                    EParameterTypes.SELECT_MATERIALS ||
+                  EParameterTypes.SELECT_MATERIALS ||
                   parameter?.parameterType ===
-                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                  EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                   parameter?.parameterType ===
-                    EParameterTypes.ADVERTISING_PRODUCT_NAME ||
+                  EParameterTypes.ADVERTISING_PRODUCT_NAME ||
                   parameter?.parameterType === EParameterTypes.BUTTON
                 ) {
                   const value = parameter?.valuesConfigs?.find(
@@ -1300,11 +1300,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   (parameter?.parameterType ===
                     EParameterTypes.DROP_DOWN_LIST ||
                     parameter?.parameterType ===
-                      EParameterTypes.SELECT_MATERIALS ||
+                    EParameterTypes.SELECT_MATERIALS ||
                     parameter?.parameterType ===
-                      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                     parameter?.parameterType ===
-                      EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
                   (!parameter?.valuesConfigs ||
                     parameter?.valuesConfigs.length === 0)
                 ) {
@@ -1360,25 +1360,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         );
                         return existingConfig
                           ? {
-                              ...existingConfig,
-                              isDefault: true,
-                              additionalAttribute: data.additionalAttribute,
-                              currency: data.currency,
-                            }
+                            ...existingConfig,
+                            isDefault: true,
+                            additionalAttribute: data.additionalAttribute,
+                            currency: data.currency,
+                          }
                           : {
-                              id: data.valueId,
-                              isHidden: false,
-                              isDefault: false,
-                              updateName: null,
-                              activateAction: false,
-                              isDeleted: false,
-                              materialValueIds: null,
-                              values: null,
-                              selectedParameterValues: null,
-                              code: null, // Add code if needed
-                              additionalAttribute: data.additionalAttribute,
-                              currency: data.currency,
-                            };
+                            id: data.valueId,
+                            isHidden: false,
+                            isDefault: false,
+                            updateName: null,
+                            activateAction: false,
+                            isDeleted: false,
+                            materialValueIds: null,
+                            values: null,
+                            selectedParameterValues: null,
+                            code: null, // Add code if needed
+                            additionalAttribute: data.additionalAttribute,
+                            currency: data.currency,
+                          };
                       });
                     }
                   } else {
@@ -1970,7 +1970,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             dieCutSizeSubProductParameter.values = [parameter.value];
             dieCutSizeSubProductParameter.isDisabled =
               res?.data?.printedMaterialWidth === null &&
-              res?.data?.printedMaterialLength === null
+                res?.data?.printedMaterialLength === null
                 ? false
                 : true;
           } else {
@@ -2322,12 +2322,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               errorText && parameter?.isRequired && !value?.values?.[0]
                 ? clasess.parameterRequierdLabelStyle
                 : value?.values?.[0] === "true"
-                ? inunderParameter
-                  ? clasess.parameterunderParameterStyle
-                  : clasess.parameterType3ActiveLabelStyle
-                : inunderParameter
-                ? clasess.underParameterLabelStyle
-                : clasess.parameterLabelStyle
+                  ? inunderParameter
+                    ? clasess.parameterunderParameterStyle
+                    : clasess.parameterType3ActiveLabelStyle
+                  : inunderParameter
+                    ? clasess.underParameterLabelStyle
+                    : clasess.parameterLabelStyle
             }
           >
             {parameter?.name}
@@ -2426,9 +2426,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       setProductTemplate(productCopy);
                     } else if (
                       parameter?.parameterType ===
-                        EParameterTypes.DROP_DOWN_LIST ||
+                      EParameterTypes.DROP_DOWN_LIST ||
                       parameter?.parameterType ===
-                        EParameterTypes.SELECT_MATERIALS
+                      EParameterTypes.SELECT_MATERIALS
                     ) {
                       const valueInArray =
                         relatedParameter.selectedValueIds?.find(
@@ -3261,7 +3261,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         ) {
           const materialPath =
             subSectionParameter.materialPath[
-              subSectionParameter.materialPath.length - 1
+            subSectionParameter.materialPath.length - 1
             ];
           const materialRelatedParameters = subSection.parameters.filter(
             (x) =>
@@ -3456,7 +3456,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     ParameterType: ParameterType,
                     isQuantityParameter:
                       subSectionParameter?.isQuantityParameter,
-                    parameterName: parameterName,
+                    parameterName: subSectionParameter?.name,
                     actionId: actionId,
                     values: [dieCutSizeParameter.value],
                     valueIds: [],
@@ -3503,7 +3503,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   subSectionId: subSectionId,
                   ParameterType: ParameterType,
                   isQuantityParameter: subSectionParameter?.isQuantityParameter,
-                  parameterName: parameterName,
+                  parameterName: subSectionParameter?.name,
                   actionId: actionId,
                   values: [dieCutSizeParameter.value],
                   valueIds: [],
@@ -3555,7 +3555,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   subSectionId: subSectionId,
                   ParameterType: ParameterType,
                   isQuantityParameter: subSectionParameter?.isQuantityParameter,
-                  parameterName: parameterName,
+                  parameterName: subSectionParameter?.name,
                   actionId: actionId,
                   values: [dieCutSizeParameter.value],
                   valueIds: [],
@@ -3741,11 +3741,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     },
     ...(isShowDetailsTab
       ? [
-          {
-            name: t("reports.details"),
-            onclick: () => onClickDetailsTab,
-          },
-        ]
+        {
+          name: t("reports.details"),
+          onclick: () => onClickDetailsTab,
+        },
+      ]
       : []),
     {
       name: t("quality.production"),
