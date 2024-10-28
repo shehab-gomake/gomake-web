@@ -230,7 +230,7 @@ const updateWorkFlowForFold = (actionId,productType,actionIndex,FoldOptionValueI
       const [employeesList,setemployeesList]=useState([])
       const [machinesList,setMachinesList]=useState([])
       const [materialsList,setMaterialsList]=useState([])
-      const [foldOptions,setFoldOptions]=useRecoilState(foldOptionsState)
+      const foldOptions =useRecoilValue(foldOptionsState)
 
     
 
