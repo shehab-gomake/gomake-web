@@ -11,6 +11,8 @@ const IMPORT_OUTPUTS_URL =
   "/v1/print-house-config/graphics-products-migration/import-outputs";
 const IMPORT_DOCUMENT_EXCEL_FILE_URL =
   "/v1/erp-service/documents/import-documents-excel-file";
+const IMPORT_SMS_TEMPLATES_EXCEL_FILE_URL =
+  "/v1/communication-service/sms-templates/copy-print-house-sms-templates-to-another-one";
 
 const importMachinesApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -68,6 +70,20 @@ const importDocumentsApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
+const importSMSTemplatesApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    IMPORT_SMS_TEMPLATES_EXCEL_FILE_URL,
+    setState,
+    data
+  );
+};
+
 export {
   importMachinesApi,
   importProfitsApi,
@@ -75,4 +91,5 @@ export {
   importProductsApi,
   importOutputsApi,
   importDocumentsApi,
+  importSMSTemplatesApi,
 };
