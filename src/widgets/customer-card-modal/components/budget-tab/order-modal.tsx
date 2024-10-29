@@ -14,17 +14,17 @@ const OrdersModal = ({ isOpen, onClose, orders }) => {
     const ordersTableHeaders = ["Order Number", "Total Price Without VAT", "Total Price", "Status", "More"];
 
     // Table headers for client's orders selection modal
-    const clientOrdersTableHeaders = ["#", "Order Number", "Total Price Without VAT", "Total Price", "Status"];
+    const clientOrdersTableHeaders = ["#", "Order Number", "Total Price Without VAT", "Total Price"];
 
     // Simulated client orders data
     const clientOrders = [
-        { orderNumber: "ORD-101", totalPriceWithoutVat: "$8,000", totalPrice: "$9,600", status: "Completed" },
-        { orderNumber: "ORD-102", totalPriceWithoutVat: "$4,000", totalPrice: "$4,800", status: "In Progress" },
-        { orderNumber: "ORD-103", totalPriceWithoutVat: "$2,000", totalPrice: "$2,400", status: "Pending" },
+        { orderNumber: "ORD-101", totalPriceWithoutVat: "$8,000", totalPrice: "$9,600" },
+        { orderNumber: "ORD-102", totalPriceWithoutVat: "$4,000", totalPrice: "$4,800" },
+        { orderNumber: "ORD-103", totalPriceWithoutVat: "$2,000", totalPrice: "$2,400" },
     ];
 
     // Mapping orders for the current budget modal
-    const mapOrdersData = () => orders.map(order => [
+    const mapOrdersData = () => orders?.map(order => [
         order.orderNumber,
         order.totalPriceWithoutVat,
         order.totalPrice,
@@ -43,7 +43,6 @@ const OrdersModal = ({ isOpen, onClose, orders }) => {
         order.orderNumber,
         order.totalPriceWithoutVat,
         order.totalPrice,
-        order.status
     ]);
 
     // Handling selection of orders
@@ -69,7 +68,12 @@ const OrdersModal = ({ isOpen, onClose, orders }) => {
     return (
         <>
             {/* Orders in the current budget modal */}
-            <GoMakeModal open={isOpen && !isClientOrdersModalOpen} onClose={handleClose} insideStyle={{ width: 800, height: "fit-content" }} modalTitle={"The Orders in the Budget"}>
+            <GoMakeModal
+                open={isOpen && !isClientOrdersModalOpen}
+                onClose={handleClose}
+                insideStyle={{ width: 800, height: "fit-content" }}
+                modalTitle={"The Documents in the Budget"}
+            >
                 <div style={{ marginTop: 25 }}>
                     <GomakePrimaryButton
                         style={{ width: "fit-content", marginBottom: 25, height: 40, backgroundColor: "#EC038D" }}
@@ -88,7 +92,12 @@ const OrdersModal = ({ isOpen, onClose, orders }) => {
             </GoMakeModal>
 
             {/* Orders of this client modal */}
-            <GoMakeModal open={isClientOrdersModalOpen} onClose={handleClose} insideStyle={{ width: 800, height: "fit-content" }} modalTitle={"Orders of This Client"}>
+            <GoMakeModal
+                open={isClientOrdersModalOpen}
+                onClose={handleClose}
+                insideStyle={{ width: 800, height: "fit-content" }}
+                modalTitle={"Documents of This Client"}
+            >
                 <div style={{ marginTop: 25 }}>
                     <PrimaryTable
                         stickyFirstCol={true}

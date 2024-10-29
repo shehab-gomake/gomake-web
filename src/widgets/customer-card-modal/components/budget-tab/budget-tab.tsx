@@ -6,11 +6,12 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { PlusIcon } from "@/icons";
 import { BudgetModal } from "./budget-modal";
 import { OrdersModal } from "./order-modal";
+import { Skeleton } from "@mui/material";
 
 const BudgetTab = ({ state }) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
-    const { tableHeaders, mapData, addBudget, editBudget } = useBudgetTab(state);
+    const { tableHeaders, mapData, addBudget, editBudget, setBudgets, budgets } = useBudgetTab(state);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);
@@ -27,8 +28,7 @@ const BudgetTab = ({ state }) => {
         setIsModalOpen(true);
     };
 
-    const handleViewOrders = (orders) => {
-        setCurrentOrders(orders);
+    const handleViewOrders = () => {
         setIsOrdersModalOpen(true);
     };
 
@@ -38,18 +38,23 @@ const BudgetTab = ({ state }) => {
                 {t("New Budget")}
                 <PlusIcon />
             </div>
-            <PrimaryTable
-                stickyFirstCol={true}
-                stickyHeader={true}
-                rows={mapData(handleEditBudget, handleViewOrders)}
-                headers={tableHeaders}
-                maxHeight={420}
-            />
+            {budgets.length === 0 ? (
+                <Skeleton variant="rectangular" width={"100%"} height={250} />
+            ) : (
+                <PrimaryTable
+                    stickyFirstCol={true}
+                    stickyHeader={true}
+                    rows={mapData(handleEditBudget, handleViewOrders)}
+                    headers={tableHeaders}
+                    maxHeight={420}
+                />
+            )}
             {isModalOpen && (
                 <BudgetModal
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     onSave={(budget) => {
+                        setBudgets([])
                         if (currentBudget) {
                             editBudget(budget);
                         } else {

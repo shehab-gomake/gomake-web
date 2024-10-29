@@ -2,20 +2,23 @@ import { useCallback, useEffect, useState } from "react";
 import { EditIcon } from "@/icons";
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import { getAllBudgetsForClientApi } from "@/services/api-service/generic-doc/documents-api";
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getBudgetStatusText, getPaymentStatusText } from "./helpers-budget";
 import { EHttpMethod } from "@/services/api-service/enums";
 
 
 const useBudgetTab = (state) => {
   const { callApi } = useGomakeAxios();
+  const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData, alertSuccessGetData, alertSuccessAdded, alertFaultAdded } = useSnackBar();
+  const [budgets, setBudgets] = useState([]);
+
   const getClientOrderItems = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        console.log("res.data", res.data)
         setBudgets(res.data);
+        alertSuccessGetData();
       } else {
-
+        alertFaultGetData();
       }
     };
     await getAllBudgetsForClientApi(callApi, callBack, {
@@ -27,7 +30,6 @@ const useBudgetTab = (state) => {
   useEffect(() => {
     getClientOrderItems()
   }, [])
-  const [budgets, setBudgets] = useState([]);
   const tableHeaders = [
     "Budget Name",
     "VAT Included",
@@ -51,7 +53,10 @@ const useBudgetTab = (state) => {
       }
     );
     if (res?.success) {
-      getClientOrderItems()
+      alertSuccessAdded();
+      getClientOrderItems();
+    } else {
+      alertFaultAdded();
     }
   }, [state]);
 
@@ -64,14 +69,12 @@ const useBudgetTab = (state) => {
       }
     );
     if (res?.success) {
-      getClientOrderItems()
+      alertSuccessUpdate();
+      getClientOrderItems();
+    } else {
+      alertFaultUpdate();
     }
   }, [state]);
-
-  // const editBudget = (updatedBudget) => {
-
-  //   // setBudgets(budgets.map(budget => budget.id === updatedBudget.id ? updatedBudget : budget));
-  // };
 
   const mapData = (handleEditBudget, handleViewOrders) => budgets.map((row) => [
     row.name,
@@ -88,11 +91,11 @@ const useBudgetTab = (state) => {
     getBudgetStatusText(row.status),
     <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 10 }}>
       <div onClick={() => handleEditBudget(row)} style={{ cursor: "pointer" }}><EditIcon /></div>
-      <div onClick={() => handleViewOrders(row.orders)} style={{ cursor: "pointer" }}><AccountTreeIcon /></div>
+      <div onClick={handleViewOrders} style={{ cursor: "pointer" }}><AccountTreeIcon /></div>
     </div>
   ]);
 
-  return { tableHeaders, mapData, addBudget, editBudget, getPaymentStatusText };
+  return { tableHeaders, mapData, addBudget, editBudget, getPaymentStatusText, setBudgets, budgets };
 };
 
 export { useBudgetTab };
