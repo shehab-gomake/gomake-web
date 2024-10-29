@@ -3043,7 +3043,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const subSectionParameter = subSection.parameters.find(
         (param) => param.id === parameterId && param.actionIndex === actionIndex
       );
-      subSectionParameter.isHidden = false;
+      if(subSectionParameter){
+        subSectionParameter.isHidden = false;
+      }
+      
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
         temp[findIndex] = {
