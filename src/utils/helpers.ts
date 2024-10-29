@@ -188,6 +188,7 @@ export const checkArrayNotEmptyOrPhoneNotEmpty = (array) => {
   return false;
 };
 
+//!here
 export const checkArrayNotEmptyOrEmailNotEmpty = (array) => {
   if (array.length === 0) {
     return false;

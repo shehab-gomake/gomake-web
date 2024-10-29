@@ -37,20 +37,22 @@ const GomakePrimaryButton = ({ ...props }) => {
       primaryColor={primaryColor}
     >
       <div
-        style={(props.leftIcon || props.rightIcon) &&{
-          display: "flex",
-          flexDirection: "row",
-          width: "100%",
-          justifyContent: "flex-start",
-          alignItems: "center",
-          gap: 8,
-        }}
+        style={
+          (props.leftIcon || props.rightIcon) && {
+            display: "flex",
+            flexDirection: "row",
+            width: "100%",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            gap: 8,
+          }
+        }
       >
         {props.leftIcon && (
           <span
             style={{
               display: "flex",
-              justifyContent: "center ",
+              justifyContent: "center",
               alignItems: "center",
             }}
           >
