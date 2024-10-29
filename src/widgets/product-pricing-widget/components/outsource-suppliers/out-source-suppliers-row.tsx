@@ -67,8 +67,6 @@ const OutSourceSuppliersRowComponent = ({
             }
         }
     }, []);
-    console.log("supplier", supplier)
-
     const handleDeliveryTimeUpdate = (newValue: number) => {
         updateWorkHours(supplier?.supplierId, +newValue);
     }
