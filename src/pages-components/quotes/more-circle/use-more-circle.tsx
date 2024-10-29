@@ -44,6 +44,7 @@ const useMoreCircle = () => {
     onOpenCancelReceiptModalRefund,
     onClickOpenDocument,
     onClickOpenChangeProductionStatusModal,
+    onOpenDuplicateModal,
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
@@ -130,7 +131,9 @@ const useMoreCircle = () => {
       },
       {
         condition: isOrder || isQuote,
-        onClick: () => onClickDuplicate(quote?.id),
+        onClick: () => {
+          isOrder ? onOpenDuplicateModal(quote) : onClickDuplicate(quote?.id);
+        },
         icon: <DuplicateIcon />,
         name: t("sales.quote.duplicate"),
       },
