@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
-// Import your custom components
 import { GoMakeModal, GomakeTextInput, GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
 import { Checkbox, FormControlLabel } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-
+import { BudgetStatus, getBudgetStatusText, getPaymentStatusText, PaymentStatus } from "./helpers-budget";
+import { DateRangePicker } from "rsuite";
+3
 const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
+    console.log("budget", budget)
     const [formData, setFormData] = useState({
-        budgetName: "",
-        vatIncluded: false,
-        total: "",
-        period: "",
+        name: "",
+        isAmountWithVat: false,
+        amount: "",
+        fromDate: new Date(),
+        toDate: new Date(),
         paymentStatus: "",
         invoiceNumber: "",
         status: ""
@@ -20,10 +23,11 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
             setFormData(budget);
         } else {
             setFormData({
-                budgetName: "",
-                vatIncluded: false,
-                total: "",
-                period: "",
+                name: "",
+                isAmountWithVat: false,
+                amount: "",
+                fromDate: new Date(),
+                toDate: new Date(),
                 paymentStatus: "",
                 invoiceNumber: "",
                 status: ""
@@ -45,53 +49,73 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
             [name]: value
         });
     };
-
-    const handleSubmit = () => {
-        onSave(formData);
+    const handleDateRangeChange = (dates) => {
+        if (dates && dates.length === 2) {
+            setFormData({
+                ...formData,
+                fromDate: new Date(dates[0]), // Save as new Date
+                toDate: new Date(dates[1]),
+                // Adjust as needed
+            });
+        }
     };
 
+    const handleSubmit = () => {
+        console.log("formData", formData)
+        onSave(formData);
+    };
+    const BudgetStatusList: any = [
+        { label: getBudgetStatusText(BudgetStatus.Active), value: BudgetStatus.Active },
+        { label: getBudgetStatusText(BudgetStatus.InActive), value: BudgetStatus.InActive }
+    ]
+    const paymentStatusList: any = [
+        { label: getPaymentStatusText(PaymentStatus.FullyPaid), value: PaymentStatus.FullyPaid },
+        { label: getPaymentStatusText(PaymentStatus.PayWhenOrderCreation), value: PaymentStatus.PayWhenOrderCreation },
+        { label: getPaymentStatusText(PaymentStatus.PayWhenOrderFinished), value: PaymentStatus.PayWhenOrderFinished },
+        { label: getPaymentStatusText(PaymentStatus.ByClientPaymentTerms), value: PaymentStatus.ByClientPaymentTerms }
+    ]
     return (
         <GoMakeModal open={isOpen} onClose={onClose} insideStyle={{ width: 500, height: "fit-contact" }} modalTitle={budget ? "Edit Budget" : "New Budget"}>
             <div style={{ display: "flex", flexDirection: "column", padding: 20, width: "100%", gap: 20 }}>
                 <GomakeTextInput
                     placeholder="Budget Name"
-                    value={formData.budgetName}
-                    onChange={(e) => handleTextInputChange("budgetName", e.target.value)}
+                    value={formData.name}
+                    onChange={(e) => handleTextInputChange("name", e.target.value)}
+                    style={{ height: 40 }}
                 />
                 <GomakeTextInput
                     placeholder="Total"
-                    value={formData.total}
-                    onChange={(e) => handleTextInputChange("total", e.target.value)}
+                    value={formData.amount}
+                    onChange={(e) => handleTextInputChange("amount", e.target.value)}
+                    style={{ height: 40 }}
                 />
-                <GomakeTextInput
-                    placeholder="Period"
-                    type="text"
-                    value={formData.period}
-                    onChange={(e) => handleTextInputChange("period", e.target.value)}
+                <DateRangePicker
+                    onChange={handleDateRangeChange}
+                    value={formData.fromDate ? [new Date(formData.fromDate), new Date(formData.toDate)] : null}
                 />
+
                 <GomakeTextInput
                     placeholder="Invoice Number"
                     value={formData.invoiceNumber}
                     onChange={(e) => handleTextInputChange("invoiceNumber", e.target.value)}
+                    style={{ height: 40 }}
                 />
                 <GoMakeAutoComplate
-                    key={`paymentStatus-${formData.paymentStatus}`}
-                    options={[{ label: "Paid", value: "Paid" }, { label: "Pending", value: "Pending" }]}
-                    value={formData.paymentStatus}
+                    options={paymentStatusList}
+                    defaultValue={paymentStatusList.find(option => option.value === budget?.paymentStatus)}
                     onChange={(e, item) => {
-                        handleTextInputChange("paymentStatus", item.value)
+                        handleTextInputChange("paymentStatus", item?.value)
                     }}
-                    style={{ border: "none" }}
+                    style={{ border: "none", height: 40 }}
                     placeholder="Payment Status"
                 />
                 <GoMakeAutoComplate
-                    key={`status-${formData.status}`}
-                    options={[{ label: "Approved", value: "Approved" }, { label: "Pending Approval", value: "Pending Approval" }]}
-                    value={formData.status}
+                    options={BudgetStatusList}
+                    defaultValue={BudgetStatusList.find(option => option.value === budget?.status)}
                     onChange={(e, item) => {
-                        handleTextInputChange("status", item.value)
+                        handleTextInputChange("status", item?.value)
                     }}
-                    style={{ border: "none" }}
+                    style={{ border: "none", height: 40 }}
                     placeholder="Status"
                 />
                 <FormControlLabel
@@ -99,15 +123,15 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
                         <Checkbox
                             icon={<CheckboxIcon />}
                             checkedIcon={<CheckboxCheckedIcon />}
-                            checked={formData.vatIncluded}
+                            checked={formData.isAmountWithVat}
                             onChange={handleChange}
-                            name="vatIncluded"
+                            name="isAmountWithVat"
                         />
                     }
                     label="VAT Included"
                 />
                 <GomakePrimaryButton onClick={handleSubmit} color="primary" variant="contained" >
-                    Save
+                    {budget ? "Edit" : "Save"}
                 </GomakePrimaryButton>
             </div>
         </GoMakeModal >

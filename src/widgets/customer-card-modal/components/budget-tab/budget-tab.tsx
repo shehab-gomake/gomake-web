@@ -7,10 +7,10 @@ import { PlusIcon } from "@/icons";
 import { BudgetModal } from "./budget-modal";
 import { OrdersModal } from "./order-modal";
 
-const BudgetTab = () => {
+const BudgetTab = ({ state }) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
-    const { tableHeaders, mapData, addBudget, editBudget } = useBudgetTab();
+    const { tableHeaders, mapData, addBudget, editBudget } = useBudgetTab(state);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);

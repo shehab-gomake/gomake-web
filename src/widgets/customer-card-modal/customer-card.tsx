@@ -10,7 +10,6 @@ import { useTranslation } from "react-i18next";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs } from "./inputs/customer-inputs";
-import { generalInputs, lastOrderInputs } from "./inputs/general-inputs";
 import { Stack } from "@mui/material";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
@@ -76,6 +75,7 @@ const CustomerCardWidget = ({
   isFromCartPage = false,
   onChangeSelectBusiness,
 }: IProps) => {
+  console.log("customer", customer)
   const { classes } = useStyle();
   const { t } = useTranslation();
   const {
@@ -285,7 +285,7 @@ const CustomerCardWidget = ({
     {
       title: t("budget"),
       component: (
-        <BudgetTab />
+        <BudgetTab state={customer} />
       ),
     },
     typeClient === CLIENT_TYPE.CUSTOMER && {
