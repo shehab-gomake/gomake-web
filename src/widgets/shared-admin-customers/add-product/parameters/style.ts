@@ -269,7 +269,7 @@ const useStyle = () => {
       detailsIconStyle: {
         strokeWidth: "1",
         width: "23px",
-        height: "23px"
+        height: "23px",
       },
       btnSelectedStyle: {
         display: "flex",
@@ -278,6 +278,32 @@ const useStyle = () => {
         alignItems: "center",
         gap: 6,
         padding: "8px 0px",
+      },
+      optionsTitle: {
+        ...FONT_FAMILY.Inter(500, 16),
+        color: "#344054",
+      },
+      insideStyle: {
+        width: "544px",
+        minWidth: "400px",
+        borderRadius: "12px",
+        height: "auto",
+        maxHeight: 600,
+        zIndex: 999999,
+        padding: "20px",
+      },
+      cancelButton: {
+        ...FONT_FAMILY.Inter(600, 16),
+        width: "50%",
+        borderRadius: "8px",
+        height: "44px",
+        backgroundColor: "#FFFFFF",
+        color: "#344054",
+        border: "1px solid #D0D5DD",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textTransform: "capitalize" as "capitalize",
       },
     };
   }, [i18next.language, t]);

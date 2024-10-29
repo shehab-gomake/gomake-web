@@ -28,6 +28,7 @@ import { selectParameterButtonState, selectedValueConfigState } from "@/store";
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { findParameterByCode } from "@/utils/helpers";
 import { SettingsIcon } from "@/icons/settings";
+import { UpdateTypes } from "@/widgets/shared-admin-customers/add-product/parameters/widgets/section-mapping";
 
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
@@ -44,7 +45,9 @@ const useAddProduct = ({ clasess }) => {
   const [changeDefaultValue, setChangeDefaultValue] = useState("");
   const { allMaterials, getAllMaterial } = useMaterials();
   const [GalleryModalOpen, setGalleryModalOpen] = useState(false);
-  const setSelectParameterButton = useSetRecoilState(selectParameterButtonState);
+  const setSelectParameterButton = useSetRecoilState(
+    selectParameterButtonState
+  );
   const straightKnife = findParameterByCode(productState, "IsStraightKnife");
   const [multiParameterModal, setMultiParameterModal] = useState(false);
   const [settingParameters, setSettingParameters] = useState({});
@@ -57,10 +60,10 @@ const useAddProduct = ({ clasess }) => {
     paameters,
     subSection,
     section,
-    subSectionParameters,
+    subSectionParameters
   ) => {
     setMultiParameterModal(true);
-    const value = paameters?.valuesConfigs?.find((value) => value?.isDefault)
+    const value = paameters?.valuesConfigs?.find((value) => value?.isDefault);
     setSettingParameters({
       parameter: paameters,
       subSection: subSection,
@@ -180,6 +183,7 @@ const useAddProduct = ({ clasess }) => {
       getProductById();
     });
   }, [router]);
+
   const updateProductParameterEndPoint = async (
     sectionId: string,
     subSectionId: string,
@@ -197,17 +201,25 @@ const useAddProduct = ({ clasess }) => {
       }
     );
     if (res?.success) {
-      alertSuccessAdded()
+      alertSuccessAdded();
       getProductById();
     } else {
-      alertFaultAdded()
+      alertFaultAdded();
     }
   };
+
   const updatedProductParameterShowToClient = useCallback(
-    async (sectionId: string, subSectionId: string, parameter: any) => {
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      updateType: UpdateTypes
+    ) => {
+      debugger;
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
+          updateType,
           isShowToClient: !parameter?.isShowToClient,
         },
       });
@@ -216,10 +228,16 @@ const useAddProduct = ({ clasess }) => {
   );
 
   const updatedProductParameterHidden = useCallback(
-    async (sectionId: string, subSectionId: string, parameter: any) => {
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      updateType: UpdateTypes
+    ) => {
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
+          updateType,
           isHidden: !parameter?.isHidden,
         },
       });
@@ -228,10 +246,16 @@ const useAddProduct = ({ clasess }) => {
   );
 
   const updatedProductParameteRequierd = useCallback(
-    async (sectionId: string, subSectionId: string, parameter: any) => {
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      updateType: UpdateTypes
+    ) => {
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
+          updateType,
           isRequired: !parameter?.isRequired,
         },
       });
@@ -240,10 +264,16 @@ const useAddProduct = ({ clasess }) => {
   );
 
   const updatedProductParameteLocked = useCallback(
-    async (sectionId: string, subSectionId: string, parameter: any) => {
+    async (
+      sectionId: string,
+      subSectionId: string,
+      parameter: any,
+      updateType: UpdateTypes
+    ) => {
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
+          updateType,
           isLock: !parameter?.isLock,
         },
       });
@@ -271,7 +301,7 @@ const useAddProduct = ({ clasess }) => {
         await updateProductParameterEndPoint(sectionId, subSectionId, {
           parameter: {
             ...parameter,
-            defaultValue: changeDefaultValue
+            defaultValue: changeDefaultValue,
           },
         });
         setChangeDefaultValue("");
@@ -304,7 +334,6 @@ const useAddProduct = ({ clasess }) => {
       parameter: any,
       option: any
     ) => {
-
       let temp = [...parameter?.valuesConfigs];
 
       let objectIdToUpdate = option?.id;
@@ -331,7 +360,6 @@ const useAddProduct = ({ clasess }) => {
       parameter: any,
       option: any
     ) => {
-
       let temp = [...parameter?.valuesConfigs];
 
       let objectIdToUpdate = option?.id;
@@ -357,9 +385,8 @@ const useAddProduct = ({ clasess }) => {
       sectionId: string,
       subSectionId: string,
       parameter: any,
-      option: any,
+      option: any
     ) => {
-
       let temp = [...parameter?.valuesConfigs];
       if (temp?.length <= 0) {
         temp.push({
@@ -384,7 +411,10 @@ const useAddProduct = ({ clasess }) => {
         let objectIdToUpdate = option?.valueId;
         if (!objectIdToUpdate) {
           // Case where the option is deleted and no new option is selected
-          const updatedArray = temp.map(obj => ({ ...obj, isDefault: false }));
+          const updatedArray = temp.map((obj) => ({
+            ...obj,
+            isDefault: false,
+          }));
           await updateProductParameterEndPoint(sectionId, subSectionId, {
             parameter: {
               ...parameter,
@@ -394,8 +424,7 @@ const useAddProduct = ({ clasess }) => {
         } else {
           if (
             temp.findIndex(
-              (item) =>
-                item?.materialValueIds[0]?.valueId === objectIdToUpdate
+              (item) => item?.materialValueIds[0]?.valueId === objectIdToUpdate
             ) !== -1
           ) {
             const updatedArray = temp.map((obj) => {
@@ -536,10 +565,10 @@ const useAddProduct = ({ clasess }) => {
         }
       );
       if (res?.success) {
-        alertSuccessAdded()
+        alertSuccessAdded();
         getProductById();
       } else {
-        alertFaultAdded()
+        alertFaultAdded();
       }
     },
     [router]
@@ -569,7 +598,7 @@ const useAddProduct = ({ clasess }) => {
     subSectionParameters,
     index,
     section,
-    subSection,
+    subSection
   ) => {
     if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
       return (
@@ -607,13 +636,21 @@ const useAddProduct = ({ clasess }) => {
           disabled={parameter?.isHidden}
         />
       );
-    }
-    else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+    } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
       );
       return (
-        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", width: "100%", gap: "8px" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            gap: "8px",
+          }}
+        >
           <GoMakeAutoComplate
             options={parameter?.valuesConfigs}
             disabled={parameter?.isHidden}
@@ -632,7 +669,10 @@ const useAddProduct = ({ clasess }) => {
             renderOption={(props: any, option: any) => {
               return (
                 <div style={clasess.optionsContainer}>
-                  <div {...props} style={{ width: "100%", alignSelf: "center", marginTop: 5 }}>
+                  <div
+                    {...props}
+                    style={{ width: "100%", alignSelf: "center", marginTop: 5 }}
+                  >
                     {option.updateName}
                   </div>
                   <div>
@@ -678,7 +718,7 @@ const useAddProduct = ({ clasess }) => {
                   parameter,
                   subSection,
                   section,
-                  subSectionParameters,
+                  subSectionParameters
                 );
               }}
             >
@@ -691,8 +731,7 @@ const useAddProduct = ({ clasess }) => {
           )}
         </div>
       );
-    }
-    else if (parameter?.parameterType === EParameterTypes.SWITCH) {
+    } else if (parameter?.parameterType === EParameterTypes.SWITCH) {
       return (
         <SecondSwitch
           disabled={parameter?.isHidden}
@@ -707,8 +746,7 @@ const useAddProduct = ({ clasess }) => {
           }}
         />
       );
-    }
-    else if (
+    } else if (
       parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS
     ) {
       const defaultObject = parameter.valuesConfigs.find(
@@ -772,58 +810,73 @@ const useAddProduct = ({ clasess }) => {
           }}
         />
       );
-    }
-    else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME) {
+    } else if (
+      parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
+      parameter?.parameterType ===
+        EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+      parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
+    ) {
       if (allMaterials?.length > 0) {
-        const defailtObjectValue = parameter?.valuesConfigs?.find((item) => item.isDefault === true);
+        const defailtObjectValue = parameter?.valuesConfigs?.find(
+          (item) => item.isDefault === true
+        );
         let options = [];
-        let selectedOption
+        let selectedOption;
         const materialPath = parameter.materialPath;
         const currentMaterialPath = materialPath[materialPath.length - 1];
         const parentMaterialPath = materialPath.slice(0, -1);
         let allMaterialsCopy = cloneDeep(allMaterials);
         if (parentMaterialPath && parentMaterialPath.length > 0) {
-          allMaterialsCopy = allMaterialsCopy?.find(material =>
+          allMaterialsCopy = allMaterialsCopy?.find((material) =>
             compareStrings(material.pathName, parentMaterialPath[0])
           );
           for (let i = 0; i < parentMaterialPath.length; i++) {
             const currentPath = parentMaterialPath.slice(0, i + 1).toString();
-            const parentParameter = subSectionParameters.find(x => x.materialPath && x.materialPath.toString() == currentPath)
+            const parentParameter = subSectionParameters.find(
+              (x) => x.materialPath && x.materialPath.toString() == currentPath
+            );
             if (parentParameter) {
               /*allMaterialsCopy = allMaterialsCopy?.data?.find(material =>
                   compareStrings(material.pathName, parentMaterialPath[i])
               )?.data;*/
-              const parentParameterDefaultValueConfig = parentParameter?.valuesConfigs?.find((item) => item.isDefault === true);
+              const parentParameterDefaultValueConfig =
+                parentParameter?.valuesConfigs?.find(
+                  (item) => item.isDefault === true
+                );
               if (parentParameterDefaultValueConfig) {
-                const parentParameterValue = parentParameterDefaultValueConfig.materialValueIds[0].valueId;
-                allMaterialsCopy = allMaterialsCopy?.data.find(x => x.valueId === parentParameterValue);
-
+                const parentParameterValue =
+                  parentParameterDefaultValueConfig.materialValueIds[0].valueId;
+                allMaterialsCopy = allMaterialsCopy?.data.find(
+                  (x) => x.valueId === parentParameterValue
+                );
               } else {
                 allMaterialsCopy = {
-                  data: []
-                }
+                  data: [],
+                };
               }
-
             }
-
           }
           if (allMaterialsCopy) {
-            options = []
-            options.push(...allMaterialsCopy.data)
+            options = [];
+            options.push(...allMaterialsCopy.data);
           }
         } else {
-          allMaterialsCopy = allMaterialsCopy?.find(material =>
+          allMaterialsCopy = allMaterialsCopy?.find((material) =>
             compareStrings(material.pathName, currentMaterialPath)
           );
-          if (allMaterialsCopy && allMaterialsCopy.data && allMaterialsCopy.data.length > 0) {
-            options.push(...allMaterialsCopy?.data)
+          if (
+            allMaterialsCopy &&
+            allMaterialsCopy.data &&
+            allMaterialsCopy.data.length > 0
+          ) {
+            options.push(...allMaterialsCopy?.data);
           }
-
-
         }
         if (defailtObjectValue) {
-          selectedOption = options.find(option =>
-            option.valueId === defailtObjectValue?.materialValueIds[0]?.valueId
+          selectedOption = options.find(
+            (option) =>
+              option.valueId ===
+              defailtObjectValue?.materialValueIds[0]?.valueId
           );
         }
         return (
@@ -839,10 +892,9 @@ const useAddProduct = ({ clasess }) => {
                 sectionId,
                 subSectionId,
                 parameter,
-                value,
+                value
               );
             }}
-
             renderOption={(props: any, option: any) => {
               function checkValueIdAndHidden(valueId) {
                 const matchedConfig = parameter?.valuesConfigs.find((config) =>
@@ -893,9 +945,7 @@ const useAddProduct = ({ clasess }) => {
           />
         );
       }
-    }
-    else if (parameter?.parameterType === EParameterTypes.BUTTON) {
-
+    } else if (parameter?.parameterType === EParameterTypes.BUTTON) {
       return (
         <ButtonParameterWidget
           clasess={clasess}
@@ -908,8 +958,7 @@ const useAddProduct = ({ clasess }) => {
           isParameterSettings={true}
           allMaterials={allMaterials}
         />
-      )
-
+      );
     }
   };
 
@@ -981,7 +1030,7 @@ const useAddProduct = ({ clasess }) => {
     onCloseMultiParameterModal,
     onOpeneMultiParameterModal,
     settingParameters,
-    setSettingParameters
+    setSettingParameters,
   };
 };
 
