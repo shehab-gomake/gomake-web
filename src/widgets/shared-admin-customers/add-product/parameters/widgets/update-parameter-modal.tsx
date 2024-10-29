@@ -69,7 +69,7 @@ const UpdateParameterModal = ({
             </span>
           </Stack>
         </Stack>
-        <Stack direction={"row"} spacing={2}>
+        <Stack direction={"row"} gap={"10px"}>
           <Button style={clasess.cancelButton} onClick={onClose}>
             {t("modal.cancel")}
           </Button>
