@@ -1,23 +1,37 @@
 import { useCallback, useEffect, useState } from "react";
-import { format } from 'date-fns';
-import { useAgentsList, useCustomerDropDownList, useDocumentsType, useGomakeAxios, useSnackBar } from "@/hooks";
+import { format } from "date-fns";
+import {
+  useAgentsList,
+  useCustomerDropDownList,
+  useDocumentsType,
+  useGomakeAxios,
+  useSnackBar,
+} from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useTranslation } from "react-i18next";
+import { endOfToday, startOfYear } from "date-fns";
 
 const useSalesReport = () => {
   const { callApi } = useGomakeAxios();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
-  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange } = useCustomerDropDownList()
-  const { agent, agentsCategories, handleAgentChange } = useAgentsList()
-  const { documentsTypeList, documentType, handleDocumentTypeChange } = useDocumentsType()
+  const {
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+  } = useCustomerDropDownList();
+  const { agent, agentsCategories, handleAgentChange } = useAgentsList();
+  const { documentsTypeList, documentType, handleDocumentTypeChange } =
+    useDocumentsType();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [displayByGroups, setDisplayByGroups] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [tableData, setTableData] = useState<any>([])
-  const [fromDate, setFromDate] = useState<Date>(new Date());
-  const [toDate, setToDate] = useState<Date>(new Date());
+  const [tableData, setTableData] = useState<any>([]);
+  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dateList, setDateList] = useState<string[]>([]);
 
   function getMonthsArray(date: Date): string[] {
@@ -30,8 +44,7 @@ const useSalesReport = () => {
       const year = currentYear - Math.floor((currentMonth - i + 12) / 12);
       if (i === 4) {
         result.push(t("reports.before"));
-      }
-      else {
+      } else {
         if (month === 11) {
           result.push(`${month + 1}/${year - 1}`);
         } else {
@@ -45,11 +58,11 @@ const useSalesReport = () => {
 
   useEffect(() => {
     if (toDate) {
-      let getMonthes = getMonthsArray(toDate)
+      let getMonthes = getMonthsArray(toDate);
 
-      setDateList(getMonthes)
+      setDateList(getMonthes);
     }
-  }, [toDate])
+  }, [toDate]);
 
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
     setResetDatePicker(false);
@@ -58,8 +71,8 @@ const useSalesReport = () => {
   };
 
   const onChangeDisplayByGroups = () => {
-    setDisplayByGroups(!displayByGroups)
-  }
+    setDisplayByGroups(!displayByGroups);
+  };
 
   const tableHeaders = [
     t("reports.clientCode"),
@@ -68,13 +81,12 @@ const useSalesReport = () => {
     t("reports.refunds amount"),
     ...dateList,
     t("reports.totalPrice"),
-
   ];
 
   function sumAllItems(salesReports) {
     return salesReports?.reduce((total, report) => {
       for (const key in report) {
-        if (typeof report[key] === 'number') {
+        if (typeof report[key] === "number") {
           total[key] = (total[key] || 0) + report[key];
         }
       }
@@ -98,7 +110,6 @@ const useSalesReport = () => {
         data?.totalSales.toFixed(2),
       ]);
     }
-
   }, [tableData]);
 
   const getTotalTableDataRows = useCallback(() => {
@@ -116,50 +127,54 @@ const useSalesReport = () => {
         data?.totalSales.toFixed(2),
       ]);
     }
-
   }, [tableData]);
 
   const onClickBtn1 = () => {
     setShowTable(false);
     getAgingReportFilter();
-  }
+  };
 
-  const getAgingReportFilter = useCallback(
-    async () => {
-      if (!fromDate || !toDate) {
-        alertFault(("alerts.pleaseEnsureDatesSelected"))
-        return;
+  const getAgingReportFilter = useCallback(async () => {
+    if (!fromDate || !toDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/get-sales-report`,
+      {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        clientId: customer?.id,
+        agentId: agent?.id,
+        documentsType: documentType,
+        displayByGroup: displayByGroups,
       }
+    );
+    if (res?.success) {
+      setTableData(res?.data?.data?.data?.salesReports);
 
-      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
-      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
+      alertSuccessGetData();
+      setShowTable(true);
+    } else {
+      alertFaultGetData();
+      setShowTable(false);
+    }
+  }, [fromDate, toDate, agent, customer, documentType, displayByGroups]);
 
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/reports/get-sales-report`,
-        {
-          startDate: formattedStartDate,
-          endDate: formattedEndDate,
-          clientId: customer?.id,
-          agentId: agent?.id,
-          documentsType: documentType,
-          displayByGroup: displayByGroups
-        }
-      );
-      if (res?.success) {
-        setTableData(res?.data?.data?.data?.salesReports)
-
-        alertSuccessGetData();
-        setShowTable(true)
-      } else {
-        alertFaultGetData();
-        setShowTable(false)
-      }
-    },
-    [fromDate, toDate, agent, customer, documentType, displayByGroups]
-  );
-
-
+  const handleDateChange = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
+  };
   return {
     t,
     onSelectDeliveryTimeDates,
@@ -180,7 +195,11 @@ const useSalesReport = () => {
     handleDocumentTypeChange,
     documentsTypeList,
     tableHeaders,
-    getTotalTableDataRows
+    getTotalTableDataRows,
+    handleDateChange,
+    fromDate,
+    toDate,
+    isFetching,
   };
 };
 

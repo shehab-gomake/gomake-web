@@ -29,7 +29,7 @@ const EditRulesModal = ({
         selectedProperties?.ruleType,
         ruleId
       );
-    } catch (error) {}
+    } catch (error) { }
   };
   const ReOrderPropertyRule = async (data: any) => {
     try {
@@ -38,7 +38,7 @@ const EditRulesModal = ({
         selectedProperties?.ruleType,
         data
       );
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const onDragEnd = (result) => {

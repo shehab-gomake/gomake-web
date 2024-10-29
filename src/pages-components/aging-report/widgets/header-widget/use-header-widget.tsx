@@ -3,8 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 
 export interface AgingReportHeaderWidgetProps {
-  onSelectDeliveryTimeDates: any;
-  resetDatePicker: any;
   handleClickSelectDate: () => void;
   selectDate: string | null;
   setSelectDate: (date: string) => void;
@@ -16,15 +14,20 @@ export interface AgingReportHeaderWidgetProps {
   renderOptions: () => any[];
   checkWhatRenderArray: (arg: any) => void;
   handleCustomerChange: any;
-  detailedReport: boolean,
+  detailedReport: boolean;
   onChangeDetailedReport: any;
-  onChangeByReferenceDate: any
+  onChangeByReferenceDate: any;
+  handleDateChange?: any;
+  fromDate?: Date | null;
+  toDate?: Date | null;
+  isFetchingCustomers?: boolean;
 }
 const useAgingReportHeader = () => {
   const { classes } = useStyle();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return {
-    classes, t
+    classes,
+    t,
   };
 };
 

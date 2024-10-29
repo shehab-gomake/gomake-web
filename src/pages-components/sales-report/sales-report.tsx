@@ -10,8 +10,6 @@ const SalesReportWidget = () => {
   const { classes } = useStyle();
   const {
     t,
-    onSelectDeliveryTimeDates,
-    resetDatePicker,
     agent,
     agentsCategories,
     handleAgentChange,
@@ -28,15 +26,21 @@ const SalesReportWidget = () => {
     documentsTypeList,
     displayByGroups,
     tableHeaders,
-    getTotalTableDataRows
+    getTotalTableDataRows,
+    handleDateChange,
+    fromDate,
+    toDate,
+    isFetching,
   } = useSalesReport();
 
   return (
     <div style={classes.mainContainer}>
-      <HeaderTitle title={t("tabs.salesReport")} marginTop={"0px"} marginBottom={"0px"} />
+      <HeaderTitle
+        title={t("tabs.salesReport")}
+        marginTop={"0px"}
+        marginBottom={"0px"}
+      />
       <SalesReportHeaderWidget
-        onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
-        resetDatePicker={resetDatePicker}
         agent={agent}
         agentsCategories={agentsCategories}
         handleAgentChange={handleAgentChange}
@@ -49,25 +53,25 @@ const SalesReportWidget = () => {
         documentsTypeList={documentsTypeList}
         handleDocumentTypeChange={handleDocumentTypeChange}
         documentType={documentType}
-
+        handleDateChange={handleDateChange}
+        fromDate={fromDate}
+        toDate={toDate}
+        isFetchingCustomers={isFetching}
       />
       <Divider />
-      <SalesReportButtonWidget
-        onClickBtn1={onClickBtn1}
-      />
-      {
-        showTable &&
+      <SalesReportButtonWidget onClickBtn1={onClickBtn1} />
+      {showTable && (
         <PrimaryTable
           rows={[...getTableDataRows(), ...getTotalTableDataRows()]}
           headers={tableHeaders}
-          maxHeight={650}
+          // maxHeight={650}
+          maxHeight={"calc(100vh - 318px)"}
           isLastItemTotal={true}
           stickyHeader={true}
         />
-      }
+      )}
     </div>
   );
 };
-
 
 export { SalesReportWidget };

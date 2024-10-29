@@ -12,8 +12,16 @@ const MoreMenuWidget = ({
   onClickDuplicate,
   onClickLoggers,
   onClickOpenIrrelevantModal,
+  onClickSendPayment,
   onClickOpenCloseOrderModal,
-  onClickOpenCloseOrderNotesModal
+  onClickOpenCloseOrderNotesModal,
+  onClickMakePayment,
+  onClickCloseAndTrack,
+  onClickOpenPrintPDFModal,
+  onOpenCancelReceiptModal,
+  onOpenCancelReceiptModalRefund,
+  onClickOpenDocument,
+  onClickOpenChangeProductionStatusModal
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -27,20 +35,33 @@ const MoreMenuWidget = ({
     onClickDuplicate,
     onClickLoggers,
     onClickOpenIrrelevantModal,
+    onClickSendPayment,
     onClickOpenCloseOrderModal,
-    onClickOpenCloseOrderNotesModal
+    onClickOpenCloseOrderNotesModal,
+    onClickMakePayment,
+    onClickCloseAndTrack,
+    onClickOpenPrintPDFModal,
+    onOpenCancelReceiptModal,
+    onOpenCancelReceiptModalRefund,
+    onClickOpenDocument,
+    onClickOpenChangeProductionStatusModal
   });
 
   return (
-    <OptionsButton >
-      {menuList.map((item, index) => (
-        item.condition && (
-          <MenuItem style={classes.menuRowStyle} key={index} onClick={item.onClick}>
-            {item.icon}
-            <div style={classes.rowTextStyle}>{item.name}</div>
-          </MenuItem>
-        )
-      ))}
+    <OptionsButton>
+      {menuList.map(
+        (item, index) =>
+          item?.condition && (
+            <MenuItem
+              style={classes.menuRowStyle}
+              key={index}
+              onClick={item.onClick}
+            >
+              {item.icon}
+              <div style={classes.rowTextStyle}>{item.name}</div>
+            </MenuItem>
+          )
+      )}
     </OptionsButton>
   );
 };

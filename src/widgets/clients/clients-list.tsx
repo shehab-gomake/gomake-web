@@ -56,7 +56,7 @@ const ClientsList = () => {
 
     const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
         await getAndSetAllCustomers(callApi, setClients, {
-            ClientType: "C",
+            clientType: "C",
             onlyCreateOrderClients: false,
         });
     }, []);

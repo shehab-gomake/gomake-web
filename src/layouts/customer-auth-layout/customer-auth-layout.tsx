@@ -11,7 +11,8 @@ import { GoMakeModal } from "@/components";
 import { useHtmlTour } from "@/layouts/customer-auth-layout/use-html-tour";
 import { useFilesUploaderSignalr } from "@/hooks/signalr/use-files-uploader-signalr";
 import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-uploader-widget";
-import {useMessengerSignalr} from "@/hooks/signalr/use-messenger-signalr";
+import { useMessengerSignalr } from "@/hooks/signalr/use-messenger-signalr";
+import { useEffect } from "react";
 
 const CustomerAuthLayout = ({
     children,
@@ -30,8 +31,16 @@ const CustomerAuthLayout = ({
     const setNavStatus = useSetRecoilState(navStatusState);
     const isHover = useRecoilValue(hoverStatusState);
     const { htmlTour, openModal, onCloseModal } = useHtmlTour();
-    const { } = useFilesUploaderSignalr();
-    const {} = useMessengerSignalr();
+
+    const fileUploaderStream = useFilesUploaderSignalr();
+    const messengerStream = useMessengerSignalr();
+    useEffect(() => {
+
+        return () => {
+            fileUploaderStream.closeConnection();
+            messengerStream.closeConnection();
+        }
+    }, [])
     return (
         disableHeaderSideMenu ?
             <>
@@ -56,7 +65,7 @@ const CustomerAuthLayout = ({
                     }
                 </div>
                 <FilesUploaderWidget />
-                <GoMakeModal insideStyle={{ height: 'fit-content' }} openModal={openModal} onClose={onCloseModal} >
+                <GoMakeModal insideStyle={{ height: 'fit-content' }} openModal={openModal} onClose={onCloseModal}>
                     <div
                         dangerouslySetInnerHTML={{ __html: htmlTour }}
                         style={{ padding: '10px' }}

@@ -1,46 +1,122 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
-import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
-import { useSetRecoilState, useRecoilValue } from "recoil";
+import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { addressModalState } from "./address-widget/state";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
+import { useCustomerDropDownList } from "@/hooks";
 
 const useBusinessWidget = ({ values, documentType }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const [isConfirmation, setIsConfirmation] = useState();
-  const { renderOptions, checkWhatRenderArray } = useQuoteWidget({ documentType });
+  const { renderOptions, checkWhatRenderArray, isFetching } =
+    useCustomerDropDownList();
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
-  const [purchaseNumber, setPurchaseNumber] = useState(values?.purchaseNumber || t("sales.quote.noPurchaseNumber"));
-  const quoteStateValue = useRecoilValue<any>(quoteItemState);
+  const [purchaseNumber, setPurchaseNumber] = useState(
+    values?.purchaseNumber || t("sales.quote.noPurchaseNumber")
+  );
+
+  const [documentTitle, setDocumentTitle] = useState(
+    values?.title || t("sales.quote.noTitle")
+  );
+
+  const [quoteStateValue, setQuoteItemValue] =
+    useRecoilState<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
+  const isQuote = documentType === DOCUMENT_TYPE.quote;
+  const isOrder = documentType === DOCUMENT_TYPE.order;
   const isExistReceipt = isReceipt && !router?.query?.isNewCreation;
-  const [taxConfirmationNumber, setTaxConfirmationNumber] = useState(values?.taxConfirmationNumber || t("sales.quote.noTaxConfirmationNumber"));
-  const isInvoice = documentType === DOCUMENT_TYPE.invoice || documentType === DOCUMENT_TYPE.invoiceRefund;
+  const [taxConfirmationNumber, setTaxConfirmationNumber] = useState(
+    values?.taxConfirmationNumber || t("sales.quote.noTaxConfirmationNumber")
+  );
+  const [manuaLInvoiceNum, setManuaLInvoiceNum] = useState(
+    values?.manualInvoiceNumber || null
+  );
+
+  const isInvoice =
+    documentType === DOCUMENT_TYPE.invoice ||
+    documentType === DOCUMENT_TYPE.invoiceRefund;
   const [openCustomerModal, setOpenCustomerModal] = useState(false);
   const [customer, setCustomer] = useState([]);
-  const [isUpdateTaxNumber, setIsUpdateTaxNumber] = useState<number | null>(null);
+  const [isUpdateTaxNumber, setIsUpdateTaxNumber] = useState<number | null>(
+    null
+  );
+  const [isUpdateManuaLInvoiceNum, setIsUpdateManuaLInvoiceNum] = useState<
+    number | null
+  >(null);
+
   const onBlurTaxNumber = async () => {
     setIsUpdateTaxNumber(null);
   };
-  const onCustomerAdd=(customer)=>{
-    setOpenCustomerModal(false)
-  }
+  const onCustomerAdd = (customer) => {
+    setOpenCustomerModal(false);
+  };
+  const onBlurManualInvoiceNum = async (value) => {
+    const updatedQuoteItemValue = { ...quoteStateValue };
+    updatedQuoteItemValue.manualInvoiceNumber = value;
+    setQuoteItemValue(updatedQuoteItemValue);
+    setIsUpdateManuaLInvoiceNum(null);
+  };
 
-  const mappedCustomers = renderOptions().map(customer => ({
+  const mappedCustomers = renderOptions().map((customer) => ({
     text: customer?.name,
     id: customer?.id,
-    ...customer
+    ...customer,
   }));
 
-  const {CheckDocumentPermission } = useUserPermission();
-  const canEditDocument = router.query.isNewCreation ? true  : 
-  quoteStateValue?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+  const { CheckDocumentPermission } = useUserPermission();
+  const canEditDocument = router.query.isNewCreation
+    ? true
+    : quoteStateValue?.isEditable &&
+      CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+
+  const canEditAddress = router.query.isNewCreation
+    ? true
+    : CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+
+  const canEditPurchaseNumber = CheckDocumentPermission(
+    documentType,
+    DocumentPermission.EDIT_DOCUMENT
+  );
+
+  const canEditInvoiceNumber = router.query.isNewCreation ? true : false;
+  const [openChangeClientModal, setOpenChangeClientModal] = useState(false);
+  const [
+    openChangeClientModalFromInvoice,
+    setOpenChangeClientModalFromInvoice,
+  ] = useState(false);
+
+  const [selectedClient, setSelectedClient] = useState({});
+
+  const onClickCloseChangeClientModal = () => {
+    setOpenChangeClientModal(false);
+  };
+
+  const onClickCloseChangeClientModalFromInvoice = () => {
+    setOpenChangeClientModalFromInvoice(false);
+  };
+
+  const onClickOpenChangeClientModal = (value) => {
+    setSelectedClient(value);
+
+    if (documentType === DOCUMENT_TYPE.invoice) {
+      if (
+        quoteStateValue?.documentItems &&
+        quoteStateValue.documentItems.length > 0
+      ) {
+        setOpenChangeClientModalFromInvoice(true);
+      } else {
+        setOpenChangeClientModal(true);
+      }
+    } else {
+      setOpenChangeClientModal(true);
+    }
+  };
 
   return {
     t,
@@ -63,12 +139,32 @@ const useBusinessWidget = ({ values, documentType }) => {
     setIsUpdateTaxNumber,
     onBlurTaxNumber,
     mappedCustomers,
-    openCustomerModal, 
+    openCustomerModal,
     setOpenCustomerModal,
-    customer, 
+    customer,
     setCustomer,
     onCustomerAdd,
-    canEditDocument
+    canEditDocument,
+    canEditPurchaseNumber,
+    setQuoteItemValue,
+    onClickOpenChangeClientModal,
+    onClickCloseChangeClientModal,
+    onClickCloseChangeClientModalFromInvoice,
+    openChangeClientModalFromInvoice,
+    openChangeClientModal,
+    selectedClient,
+    manuaLInvoiceNum,
+    setManuaLInvoiceNum,
+    isUpdateManuaLInvoiceNum,
+    setIsUpdateManuaLInvoiceNum,
+    onBlurManualInvoiceNum,
+    canEditInvoiceNumber,
+    isOrder,
+    isQuote,
+    documentTitle,
+    setDocumentTitle,
+    isFetching,
+    canEditAddress,
   };
 };
 

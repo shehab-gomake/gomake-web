@@ -231,7 +231,6 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         alignItems: "center",
-        marginBottom: 50,
         width: "100%",
         gap: 16,
       },
@@ -247,11 +246,6 @@ const useStyle = () => {
         border: `1px solid ${secondColor(500)}`,
         color: secondColor(500),
       },
-      // activeTabContainer: {
-      //   backgroundColor: "#EBECFF",
-      //   minHeight: 48,
-      //   marginTop: 20,
-      // },
       activeTabContainer: {
         backgroundColor: "#EBECFF",
         minHeight: 48,

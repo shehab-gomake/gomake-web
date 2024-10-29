@@ -5,6 +5,7 @@ import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useUserPermission } from "@/hooks/use-permission";
 import { EditIcon } from "@/icons";
+import { EHttpMethod } from "@/services/api-service/enums";
 import { getAllPrintHouseActions } from "@/services/hooks";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { matchSorter } from "match-sorter";
@@ -20,7 +21,25 @@ const useActions = () => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
   const [allActions, setAllActions] = useState<any>();
-  const PRINTING_ACTION_ID = '52b26bea-82ef-4eb6-a031-ea7a9f856cbe';
+  const PRINTING_ACTION_ID = "52b26bea-82ef-4eb6-a031-ea7a9f856cbe";
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [percentageProfit, setPercentageProfit] = useState("");
+
+  const handleMoreOptionIconClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
+  const onCloseModal = () => {
+    setOpenModal(false);
+  };
+  const onOpenModal = () => {
+    setOpenModal(true);
+  };
+
   const getActions = useCallback(async () => {
     const data = await getAllPrintHouseActions(callApi, setAllActions);
     const mapData = data?.map((action) => [
@@ -48,7 +67,9 @@ const useActions = () => {
       ),
       <PermissionCheck userPermission={Permissions.EDIT_MACHINE}>
         <PrimaryButton
-            data-tour={action?.id === PRINTING_ACTION_ID ? 'editPrintingAction' : undefined}
+          data-tour={
+            action?.id === PRINTING_ACTION_ID ? "editPrintingAction" : undefined
+          }
           startIcon={
             <EditIcon color={primaryColor(500)} width={20} height={20} />
           }
@@ -121,7 +142,39 @@ const useActions = () => {
       setMaterilasSearched(temp);
     }
   }, [term]);
-  return { tableHeaders, allActions, materilasSearched, term, setTerm, t };
+
+  const AddNewProfitForActionProfitsApi = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/profits/add-new-profit-for-action-profits`,
+      {
+        profit: percentageProfit,
+      }
+    );
+    if (res?.success) {
+      onCloseModal();
+    } else {
+      // Handle error response here
+    }
+  }, [percentageProfit]);
+
+  return {
+    tableHeaders,
+    allActions,
+    materilasSearched,
+    term,
+    anchorEl,
+    openModal,
+    percentageProfit,
+    setTerm,
+    t,
+    handleMoreOptionIconClick,
+    handleCloseMenu,
+    onOpenModal,
+    onCloseModal,
+    setPercentageProfit,
+    AddNewProfitForActionProfitsApi,
+  };
 };
 
 export { useActions };

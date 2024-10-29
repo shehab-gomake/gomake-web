@@ -1,5 +1,6 @@
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
+    calculationResultState,
     currentProductItemValueDraftId,
     currentProductItemValueState,
     outsourceSuppliersState,
@@ -11,22 +12,40 @@ import { addItemApi, updateDocumentItemApi } from "@/services/api-service/generi
 import { updateProductItemValueOutsourceSupplierCost } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { EOutSoucrceUpdateKey } from "@/enums";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 interface IProps {
     supplier?: any,
     setSupplier?: any;
+    options?:any;
 }
 
-const useOutsourceSupplier = ({ supplier, setSupplier }: IProps) => {
+const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
     const router = useRouter();
     const [suppliers, setSuppliers] = useRecoilState(outsourceSuppliersState);
     const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState);
     const currentProductItemValue = useRecoilValue<any>(currentProductItemValueState);
     const productItemValueDraftId = useRecoilValue<string>(currentProductItemValueDraftId);
     const connectionId = useRecoilValue(currentCalculationConnectionId);
+    const calculationResult = useRecoilValue(calculationResultState);
     const { navigate } = useGomakeRouter();
     const { callApi } = useGomakeAxios();
     const { alertSuccessUpdate, alertFaultAdded, alertFaultUpdate } = useSnackBar();
+
+    useEffect(() => {
+        if (calculationResult) {
+            const foundSupplier = options.find(x => x.supplierId == calculationResult?.productItemValue?.supplierId) || options[0];
+            const productItemValue = calculationResult?.productItemValue;
+
+            setSupplier({
+                ...foundSupplier,
+                finalPrice: productItemValue?.outSourceTotalPrice ? productItemValue?.outSourceTotalPrice : 0,
+                cost: productItemValue?.outSourceCost ? productItemValue?.outSourceCost : 0,
+                profit: productItemValue?.outSourceProfits ? productItemValue?.outSourceProfits : 0,
+                //workHours: productItemValue?.outSourceTotalRealProductionTime ? productItemValue?.outSourceTotalRealProductionTime : 0,
+            });
+        }
+    }, [calculationResult])
 
     const resetOtherSuppliers = (supplierId) => {
         return suppliers.map(supplier => {
@@ -68,7 +87,7 @@ const useOutsourceSupplier = ({ supplier, setSupplier }: IProps) => {
                 return {
                     ...supplier,
                     cost: cost,
-                    finalPrice: cost + cost * supplier.profit / 100
+                    //finalPrice: cost + cost * supplier.profit / 100
                 };
             }
             return supplier;
@@ -84,9 +103,8 @@ const useOutsourceSupplier = ({ supplier, setSupplier }: IProps) => {
         setSupplier({
             ...supplier,
             cost: cost,
-            finalPrice: cost + cost * supplier.profit / 100
+            //finalPrice: cost + cost * supplier.profit / 100
         });
-
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalCost, cost);
     };
 
@@ -112,7 +130,6 @@ const useOutsourceSupplier = ({ supplier, setSupplier }: IProps) => {
             ...supplier,
             workHours: workHours
         });
-
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalRealProductionTime, workHours);
     };
 
@@ -122,10 +139,8 @@ const useOutsourceSupplier = ({ supplier, setSupplier }: IProps) => {
                 return {
                     ...supplier,
                     profit: profit,
-                    finalPrice: supplier.cost + supplier.cost * profit / 100
-
+                    //finalPrice: supplier.cost + supplier.cost * profit / 100
                 };
-
             }
             return supplier;
         });
@@ -140,9 +155,8 @@ const useOutsourceSupplier = ({ supplier, setSupplier }: IProps) => {
         setSupplier({
             ...supplier,
             profit: profit,
-            finalPrice: supplier.cost + supplier.cost * profit / 100
+            //finalPrice: supplier.cost + supplier.cost * profit / 100
         });
-
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.Profit, profit);
     };
 
@@ -152,8 +166,8 @@ const useOutsourceSupplier = ({ supplier, setSupplier }: IProps) => {
                 return {
                     ...supplier,
                     finalPrice: price,
-                    cost: price,
-                    profit: 0
+                    // cost: price,
+                    // profit: 0
                 };
             }
             return supplier;
@@ -169,10 +183,9 @@ const useOutsourceSupplier = ({ supplier, setSupplier }: IProps) => {
         setSupplier({
             ...supplier,
             finalPrice: price,
-            cost: price,
-            profit: 0
+            // cost: price,
+            // profit: 0
         });
-
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalPrice, price);
     };
 

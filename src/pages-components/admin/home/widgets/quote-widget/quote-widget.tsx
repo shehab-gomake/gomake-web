@@ -24,8 +24,6 @@ import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
- 
-
 
 const QuoteWidget = ({ isAdmin = true }) => {
   const { classes } = useStyle();
@@ -70,8 +68,9 @@ const QuoteWidget = ({ isAdmin = true }) => {
     getAllClientTypes,
     combinedData,
     selectedProduct,
-    handleProductChange
-    } = useQuoteWidget(DOCUMENT_TYPE.quote);
+    handleProductChange,
+    isFetching,
+  } = useQuoteWidget();
 
   useEffect(() => {
     if (userQuote) {
@@ -100,10 +99,9 @@ const QuoteWidget = ({ isAdmin = true }) => {
   }, []);
 
   useEffect(() => {
+    // it for customer card
     getClientTypesCategories();
   }, []);
-  
-
 
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>
@@ -120,6 +118,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
               }
               onChangeTextField={checkWhatRenderArray}
               value={selectedClient}
+              loading={isFetching}
               onChange={(e: any, value: any) => {
                 handleClickToSelectedCustomer(
                   userQuote?.client?.id,
@@ -133,7 +132,9 @@ const QuoteWidget = ({ isAdmin = true }) => {
               options={clientTypesValue}
               placeholder={t("home.admin.selectType")}
               style={classes.selectTypeContainer}
-              getOptionLabel={(option: any) => (option?.name ? option.name : "")}
+              getOptionLabel={(option: any) =>
+                option?.name ? option.name : ""
+              }
               onChange={(e: any, value: any) => {
                 setSelectedClientType(value);
               }}
@@ -142,7 +143,9 @@ const QuoteWidget = ({ isAdmin = true }) => {
           </div>
         </div>
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
-          <button style={classes.autoButtonStyle} onClick={onClickAddCustomer} >{t("customers.buttons.AddOrSearch")}</button>
+          <button style={classes.autoButtonStyle} onClick={onClickAddCustomer}>
+            {t("customers.buttons.AddOrSearch")}
+          </button>
         </PermissionCheck>
       </div>
       <div style={classes.autoComplateRowContainer}>
@@ -164,8 +167,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
                   isDisabled
                     ? handleClick
                     : isAdmin
-                      ? onClickCreateQuote
-                      : onClickCreateQuoteForCustomer
+                    ? onClickCreateQuote
+                    : onClickCreateQuoteForCustomer
                 }
                 variant="contained"
                 style={{ width: "100%", height: 40 }}
@@ -195,8 +198,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
               isDisabled
                 ? handleClick
                 : isAdmin
-                  ? onClickCreateQuote
-                  : onClickCreateQuoteForCustomer
+                ? onClickCreateQuote
+                : onClickCreateQuoteForCustomer
             }
             variant="contained"
             style={{ width: "100%", height: 40 }}

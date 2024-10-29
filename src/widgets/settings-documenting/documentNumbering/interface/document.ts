@@ -32,3 +32,28 @@ export enum DocumentsTypeEnum
     Client,
     Supplier
 }
+
+export enum DocumentTypesListEnum
+{
+    Order = 1,
+    Invoice,
+    DeliveryNotes,
+    Purchase,
+    InvoiceRefund,
+    Receipt,
+    JournalEntry,
+    Deposits,
+    PurchaseInvoice,
+    PurchaseInvoiceRefund,
+    ForeignJournalEntry,
+    DeliveryNoteRefund,
+    Quote,
+    ExternalInvoice,
+    All,
+    ExternalPayment,
+    BoardMission,
+    AgingReport,
+    SalesReport,
+    Client,
+    Supplier
+}

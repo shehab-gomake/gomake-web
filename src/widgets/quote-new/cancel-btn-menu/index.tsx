@@ -1,9 +1,6 @@
-import React from "react";
 import { GoMakeMenu } from "@/components";
-import { Box, MenuItem } from "@mui/material";
+import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
-
-
 
 interface CancelBtnMenuProps {
   handleClose: () => void;
@@ -27,14 +24,18 @@ const CancelBtnMenu = ({
 }: CancelBtnMenuProps) => {
   const { t } = useTranslation();
 
-
-
   return (
     <GoMakeMenu
       handleClose={handleClose}
       open={open}
       anchorEl={anchorEl}
       style={{ marginTop: -45 }}
+      sx={{
+        '& .MuiPaper-root': {
+          border: '1px solid #cbcbe4',
+          borderRadius: "8px"
+        }
+      }}
     >
       <MenuItem
         onClick={() => {

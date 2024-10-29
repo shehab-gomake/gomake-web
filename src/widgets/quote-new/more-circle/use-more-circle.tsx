@@ -11,21 +11,21 @@ import { quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
 import { DuplicateType } from "@/enums";
-import { DocumentPermission, Permissions } from "@/components/CheckPermission/enum";
+import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 
 const useMoreCircle = ({
   quoteItem,
   onClickDuplicateWithDifferentQTY,
   onClickDeleteQouteItem,
-  documentType
+  documentType,
 }) => {
   const router = useRouter();
   const { navigate } = useGomakeRouter();
   const quoteItemValue: any = useRecoilValue(quoteItemState);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const { CheckPermission, CheckDocumentPermission } = useUserPermission();
+  const { CheckDocumentPermission } = useUserPermission();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -35,76 +35,107 @@ const useMoreCircle = ({
     setAnchorEl(null);
   };
 
-  const onClickEditQuoteItem = (quoteItem, documentType) => {
-    navigate(
-      `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
-    );
-  };
+  // Construct the href for editing a quote item
+  const getEditDocumentItemHref = (quoteItem, documentType) =>
+    `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${
+      quoteItemValue?.customerID
+    }&customerName=${quoteItemValue?.client?.name}&productId=${
+      quoteItem?.productID
+    }&documentItemId=${
+      quoteItem?.id
+    }&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${
+      router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""
+    }`;
 
-  const onClickDuplicateQuoteItem = (quoteItem, documentType) => {
-    navigate(
-      `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}&duplicateType=${DuplicateType.SameOrder}`
-    );
-  };
+  // Construct the href for duplicating a quote item
+  const getDuplicateDocumentItemHref = (quoteItem, documentType) =>
+    `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${
+      quoteItemValue?.customerID
+    }&customerName=${quoteItemValue?.client?.name}&productId=${
+      quoteItem?.productID
+    }&documentItemId=${
+      quoteItem?.id
+    }&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${
+      router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""
+    }&duplicateType=${DuplicateType.SameOrder}`;
 
-  const onClickAnalysisQuoteItem = (quoteItem, documentType) => {
-    navigate(
-      `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${quoteItem?.productID}&documentItemId=${quoteItem?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}&isAnalysis=true`
-    );
-  };
+  // Construct the href for analysis
+  const getAnalysisDocumentItemHref = (quoteItem, documentType) =>
+    `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${
+      quoteItemValue?.customerID
+    }&customerName=${quoteItemValue?.client?.name}&productId=${
+      quoteItem?.productID
+    }&documentItemId=${
+      quoteItem?.id
+    }&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${
+      router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""
+    }&isAnalysis=true`;
 
   const menuList = [
     {
       name: "edit",
       icon: <EditMenuIcon />,
-      onclick: () => onClickEditQuoteItem(quoteItem, documentType),
+      onclick: () => navigate(getEditDocumentItemHref(quoteItem, documentType)),
+      href: getEditDocumentItemHref(quoteItem, documentType),
       condition:
-        quoteItem.productType === 0 && !router.query.isNewCreation &&
-        CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM)
+        quoteItem?.isShowEdit &&
+        !router.query.isNewCreation &&
+        CheckDocumentPermission(
+          documentType,
+          DocumentPermission.UPDATE_DOCUMENT_ITEM
+        ),
     },
     {
       name: "duplicate",
       icon: <DuplicateMenuIcon />,
-      onclick: () => onClickDuplicateQuoteItem(quoteItem, documentType),
-      condition: quoteItem.productType === 0 && !router.query.isNewCreation && documentType !== DOCUMENT_TYPE.purchaseInvoice && documentType !== DOCUMENT_TYPE.purchaseOrder && documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund
+      onclick: () =>
+        navigate(getDuplicateDocumentItemHref(quoteItem, documentType)),
+      href: getDuplicateDocumentItemHref(quoteItem, documentType),
+      condition:
+        quoteItem.productType === 0 &&
+        !router.query.isNewCreation &&
+        documentType !== DOCUMENT_TYPE.purchaseInvoice &&
+        documentType !== DOCUMENT_TYPE.purchaseOrder &&
+        documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund,
     },
     {
       name: "duplicateItemWithDifferentQTY",
       icon: <DuplicateWithDifferentMenuIcon />,
       onclick: () => onClickDuplicateWithDifferentQTY(quoteItem),
       condition: false,
-      //condition:quoteItem.productType === 0 && documentType === DOCUMENT_TYPE.quote && !router.query.isNewCreation
     },
     {
       name: "negotiateRequest",
       icon: <NegotiateRequestIcon />,
       //onclick: () => onOpenNegotiateRequest(),
       condition: false,
-      //condition:!router.query.isNewCreation
     },
     {
       name: "analysis",
       icon: <AnalysisIcon />,
-      onclick: () => onClickAnalysisQuoteItem(quoteItem, documentType),
-      //condition: !router.query.isNewCreation && quoteItem.productType === 0,
-      condition: (
-        documentType === DOCUMENT_TYPE.quote &&
-        quoteItem.productType === 0 &&
-        quoteItem?.isEditable &&
-        CheckPermission(Permissions.UPDATE_QUOTE_ITEM)
-      )
+      onclick: () =>
+        navigate(getAnalysisDocumentItemHref(quoteItem, documentType)),
+      href: getAnalysisDocumentItemHref(quoteItem, documentType),
+      condition:
+        quoteItem?.isShowAnalytics &&
+        CheckDocumentPermission(
+          documentType,
+          DocumentPermission.UPDATE_DOCUMENT_ITEM
+        ),
     },
     {
       name: "delete",
       icon: <DeleteMenuIcon />,
       onclick: () => onClickDeleteQouteItem(quoteItem),
-      //  condition: router.query.isNewCreation || quoteItem?.isDeletable 
       condition:
         router.query.isNewCreation ||
         (quoteItem?.isDeletable &&
-          CheckDocumentPermission(documentType, DocumentPermission.DELETE_DOCUMENT_ITEM))
-    }
-  ].filter(item => item.condition);
+          CheckDocumentPermission(
+            documentType,
+            DocumentPermission.DELETE_DOCUMENT_ITEM
+          )),
+    },
+  ].filter((item) => item.condition);
 
   return {
     open,

@@ -24,11 +24,13 @@ import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
 import Pagination from "@mui/material/Pagination";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { Stack } from "@mui/material";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
+import { UpdatedNumburingModal } from "./components/updated-numbering/updated-numbering-modal";
+import { CreatePurchaseOrderModal } from "./components/create-purchase-order-modal/create-purchase-order-modal";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -71,8 +73,11 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     openDeleteTableRowModal,
     onClickCloseDeleteTableRowModal,
     onDeleteCategoryRow,
+    onClickCloseDeleteTableRowWhenHaveMoreSupplierModal,
+    openDeleteTableRowWhenHaveMoreSupplierModal,
     selectedTableRow,
     materialName,
+    toggleIsActive,
   } = useMaterials(props.isAdmin);
 
   const subCategory = materialCategories.find(
@@ -225,7 +230,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         {materialCategory && (
           <Stack justifyContent={"space-between"} gap={2} display={"flex"} height={"100%"}>
             <div >
-              
+
               {materialCategoryData.length > 0 ? (
                 <Stack display={"grid"}>
                   <PrimaryTable
@@ -272,6 +277,8 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       <AddSupplierModal />
       <AddCategoryModal isAdmin={props.isAdmin} productList={productList} />
       <AddRowModal isAdmin={props.isAdmin} />
+      <UpdatedNumburingModal isAdmin={props.isAdmin} />
+      <CreatePurchaseOrderModal isAdmin={props.isAdmin} />
       <GoMakeDeleteModal
         openModal={openDeleteRowModal}
         onClose={onClickCloseDeleteRowModal}
@@ -281,6 +288,18 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         openModal={openDeleteTableRowModal}
         onClose={onClickCloseDeleteTableRowModal}
         onClickDelete={() => onDeleteCategoryRow(selectedTableRow?.id)}
+      />
+      <ThreeOptionsModal
+        hideIcon
+        title={t("materials.modals.deleteModalTitle")}
+        yesBtn={t("navigationButtons.delete")}
+        noBtn={selectedTableRow?.isActive
+          ? t("remainWords.convertToInactive")
+          : t("remainWords.convertToActive")}
+        openModal={openDeleteTableRowWhenHaveMoreSupplierModal}
+        onClose={onClickCloseDeleteTableRowWhenHaveMoreSupplierModal}
+        onClickYes={() => onDeleteCategoryRow(selectedTableRow?.id)}
+        onClickNo={() => toggleIsActive(selectedTableRow?.id, "Active", selectedTableRow?.isActive)}
       />
     </div>
   );

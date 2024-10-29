@@ -1,12 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Button } from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
+import { Button, IconButton } from '@mui/material';
 import { useStyle } from './style';
 import { GarlleryIcon } from '../icons/gallery-icon';
 import { useTranslation } from 'react-i18next';
+import FormatColorResetIcon from '@mui/icons-material/FormatColorReset';
 
 export const GoMakeImageFiled = ({ selectedNameFile , onChange }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const dir = t('direction');
+  const isLtr = dir === 'ltr';
   const [selectedFileNameInGoMakeFiled, setSelectedFileNameInGoMakeFiled] = useState(selectedNameFile || '');
   const [imagePreview, setImagePreview] = useState('');
   const fileInputRef = useRef(null);
@@ -17,12 +20,21 @@ export const GoMakeImageFiled = ({ selectedNameFile , onChange }) => {
     }
   };
 
+  const handleClearFile = () => {
+    setSelectedFileNameInGoMakeFiled('');
+    setImagePreview('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+    onChange(null); 
+  };
+
   useEffect(() => {
     setSelectedFileNameInGoMakeFiled(selectedNameFile || '');
     setImagePreview(selectedNameFile);
   }, [selectedNameFile]);
 
- 
+
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     setSelectedFileNameInGoMakeFiled(file?.name);
@@ -60,7 +72,19 @@ export const GoMakeImageFiled = ({ selectedNameFile , onChange }) => {
           type="file"
           style={{ display: 'none' }}
         />
-        <Button variant="contained" onClick={handleButtonClick} style={{ backgroundColor: '#ED028C', height:"30px"}}>{t("general.uploadLogo")}</Button>
+        <div>
+        <Button 
+        variant="contained" 
+        onClick={handleButtonClick} 
+        style={{ backgroundColor: '#ED028C', height: "30px",   marginRight: isLtr ? "3px" : "0", 
+          marginLeft: !isLtr ? "3px" : "0"  }}
+        >
+          {t("general.uploadLogo")}
+        </Button>
+          <IconButton  onClick={handleClearFile} sx={{ fontSize: '1rem'}}>
+            <FormatColorResetIcon sx={{color:"#a1a0cc"}}/>
+          </IconButton>
+        </div>
       </div>
     </div>
   );

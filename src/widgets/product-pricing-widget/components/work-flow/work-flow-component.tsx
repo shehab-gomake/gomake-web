@@ -20,6 +20,7 @@ import { useRecoilState } from "recoil";
 import { actionListForWorkFlow } from "@/store";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 
 interface IWorkFlowComponentProps extends ICalculatedWorkFlow {
     delay: number;
@@ -30,6 +31,7 @@ interface IWorkFlowComponentProps extends ICalculatedWorkFlow {
     setSelectedWorkFlowId?: any
     isOpen?: boolean;
     toggleOpen?: (id: string) => void;
+    widgetType: EWidgetProductType;
 }
 
 interface IWorksFlowsProps {
@@ -38,6 +40,7 @@ interface IWorksFlowsProps {
     getWorkFlowsActions?: any
     selectedWorkFlowId?: any,
     setSelectedWorkFlowId?: any
+    widgetType: EWidgetProductType;
 }
 
 const WorkFlowComponent = ({
@@ -57,7 +60,8 @@ const WorkFlowComponent = ({
     selectedWorkFlowId,
     setSelectedWorkFlowId,
     isOpen,
-    toggleOpen
+    toggleOpen,
+    widgetType
 }: IWorkFlowComponentProps) => {
     const { t } = useTranslation();
     // const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -90,7 +94,7 @@ const WorkFlowComponent = ({
             key: "totalPrice",
             valueColor: secondColor(500),
         },
-    ]
+    ].filter((item) => selected || !['totalPrice', 'profit'].includes(item.key));
     return (
         <>
             <Fade in={true} timeout={delay}>
@@ -108,7 +112,7 @@ const WorkFlowComponent = ({
                         </PermissionCheck>
                         <Stack direction={'row'} flexWrap={"wrap"} alignItems={'center'} gap={'10px'}>
                             <WorkflowRateComponent label={t('pricingWidget.price')} value={recommendationRang?.price} />
-                            <WorkflowRateComponent label={t('pricingWidget.profit')} value={recommendationRang?.profit} />
+                            {/* <WorkflowRateComponent label={t('pricingWidget.profit')} value={recommendationRang?.profit} /> */}
                             <WorkflowRateComponent label={t('pricingWidget.endTime')} value={recommendationRang?.deliveryTime} />
                         </Stack>
                     </Stack>
@@ -129,7 +133,7 @@ const WorkFlowComponent = ({
             <Collapse in={isOpen && selectedWorkFlowId === id} collapsedSize={0} orientation={'vertical'}>
                 <Stack padding={'10px 0'} gap={'10px'} paddingLeft={'30px'}>
                     {
-                        <SubWorkFlowsComponent isEditableActions={false} workflows={subWorkFlows || []} />
+                        <SubWorkFlowsComponent widgetType={widgetType} isEditableActions={false} workflows={subWorkFlows || []} />
                     }
                     {
                         actionList.map(action => <ActionComponent {...action} />)
@@ -140,14 +144,14 @@ const WorkFlowComponent = ({
     )
 };
 
-const WorkFlowsComponent = ({ workflows, showSelected, getWorkFlowsActions, selectedWorkFlowId, setSelectedWorkFlowId }: IWorksFlowsProps) => {
+const WorkFlowsComponent = ({ workflows, showSelected, getWorkFlowsActions, selectedWorkFlowId, setSelectedWorkFlowId, widgetType }: IWorksFlowsProps) => {
     const [openWorkFlowId, setOpenWorkFlowId] = useState<string | null>(null);
     const toggleOpen = (id: string) => {
         setOpenWorkFlowId(prevId => (prevId === id ? null : id));
     };
     const totalPageDelay = 1000 * 5;
     const elementDelay = totalPageDelay / workflows.length;
-    return <Stack gap={'10px'}>{workflows.map((flow, index) => <WorkFlowComponent getWorkFlowsActions={getWorkFlowsActions} showSelected={showSelected}
+    return <Stack gap={'10px'}>{workflows.map((flow, index) => <WorkFlowComponent widgetType={widgetType} getWorkFlowsActions={getWorkFlowsActions} showSelected={showSelected}
         isOpen={openWorkFlowId === flow.id}
         toggleOpen={toggleOpen}
         selectedWorkFlowId={selectedWorkFlowId}

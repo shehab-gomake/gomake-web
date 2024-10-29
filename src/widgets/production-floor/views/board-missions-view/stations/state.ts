@@ -11,6 +11,11 @@ export const stationGeneralInformationState = atom<{name: string; values: string
     key: 'stationGeneralInformationState'
 });
 
+export const stationGeneralInformationProductionFloorState = atom({
+    default: {},
+    key: 'stationGeneralInformationProductionFloorState'
+});
+
 export const boardMissionsSubWorkFlowsState = atom({
     key: 'boardMissionsSubWorkFlowsState',
     default: []
@@ -18,5 +23,10 @@ export const boardMissionsSubWorkFlowsState = atom({
 
 export const isReadyBoardMissionsState = atom<boolean>({
     key: '',
+    default: false
+})
+
+export const isOrderCompletedState = atom<boolean>({
+    key: 'boardMissionsIsOrderCompletedState',
     default: false
 })

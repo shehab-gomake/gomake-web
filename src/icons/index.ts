@@ -29,7 +29,7 @@ export * from "./re-order-icon";
 export * from "./left-arrow-icon";
 export * from "./constant-tabs";
 export * from "./add-new-icon";
-export * from "./rechoose-icon";
+export * from "./re-choose-icon";
 export * from "./arrow-up";
 export * from "./plus-icon";
 export * from "./wastebasket-new";
@@ -49,10 +49,12 @@ export * from "./directbox-send"
 export * from "./production-tracking"
 export * from "./new-loog"
 export * from "./hand-quick-setup"
-export * from "./tick-icon-close"
+export * from "./tick-icon-cancel"
 export * from "./tick-icon-move"
 export * from "./error-icon"
 export * from "./success-icon"
 export * from "./warning-icon"
 export * from "./message-icon"
 export * from "./check-box"
+export * from "./filter-has-value"
+export * from "./dot-icon"

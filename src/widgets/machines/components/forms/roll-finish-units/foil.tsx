@@ -41,7 +41,7 @@ const inputs = (state) => {
                     required: true,
                     parameterKey: "setupTime",
                     options: [{value: 1, text: 'Digital'}, {value: 2, text: 'Analog'}],
-                    value: state.attributes?.foilUnit?.setupTime ? state.attributes?.foilUnit?.varnishTypes : '',
+                    value: state.attributes?.foilUnit?.setupTime ? state.attributes?.foilUnit?.setupTime : '',
                     disabled: !state.attributes?.foilUnit?.isAvailable || state.attributes?.foilUnit?.digitalAnalog === 1
                 },
                 {

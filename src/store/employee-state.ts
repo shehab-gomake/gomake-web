@@ -30,7 +30,8 @@ export const initState: IUserData = {
     quotePriceLimit: null,
     mailProvider: null,
     pinCodeForLoginWithApplication: null,
-    actionIds:[]
+    actionIds:[],
+    stationsFilter: []
   }
 };
 export const employeeState = atom<IUserData>({

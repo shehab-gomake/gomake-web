@@ -29,7 +29,8 @@ const useStyle = () => {
       filtersContainer:{
         display: "flex",
         flexDirection: "row" as "row",
-        justifyContent: "space-between",
+        // justifyContent: "space-between",
+        gap:"10px",
         alignItems: "flex-start",
         width: "100%",
       },
@@ -125,6 +126,22 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         marginBottom:5
+      },
+      switchContainer:{
+        alignSelf:"flex-end",
+      },
+      switchLabel: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: primaryColor(9800),
+        minWidth: 'fit-content' as 'fit-content',
+      },
+      skeletonheaderTable:{
+        display: 'flex',
+        flexDirection: "row" as "row",
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        marginTop:20
       }
     };
   }, [t]);

@@ -1,52 +1,73 @@
-import { useTranslation } from "react-i18next";
-import { IInput } from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
-import { useRecoilState } from "recoil";
-import { employeeState } from "@/store/employee-state";
-import { useStyle } from "@/widgets/settings-users/users/components/add-employee/components/general-form/style";
+import {useTranslation} from "react-i18next";
+import {IInput} from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
+import {useRecoilState} from "recoil";
+import {employeeState} from "@/store/employee-state";
+import {useStyle} from "@/widgets/settings-users/users/components/add-employee/components/general-form/style";
 import {
     employeeInfoInputs
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/employee-info-inputs";
 import {
-    agentInputs,
+    agentInputs
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/agent-inputs";
-import { 
+import {
     ipAddressesInputs
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/ip-addresses-inputs";
 import {
     accountInputs
 } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/account-inputs";
-import { useCallback, useEffect, useState } from "react";
-import { EmployeeActions, EmployeeQuoteLimitationType } from "@/widgets/settings-users/users/enums/employee-actions";
-import { AllowedIP, IUserData } from "@/widgets/settings-users/users/interface/employee";
-import { SecondSwitch } from "@/components";
-import { FormArrayInput } from "@/components/form-inputs/form-array-input";
-import { FormInput } from "@/components/form-inputs/form-input";
-import { getAllActionsRequireEmployeeApi } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { useGomakeAxios } from "@/hooks";
-import { Checkbox, styled, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
-import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import NewReleasesOutlinedIcon from '@mui/icons-material/NewReleasesOutlined';
+import {useCallback, useEffect, useState} from "react";
+import {
+    EmployeeActions,
+    EmployeeQuoteLimitationType,
+} from "@/widgets/settings-users/users/enums/employee-actions";
+import {
+    AllowedIP,
+    IUserData,
+} from "@/widgets/settings-users/users/interface/employee";
+import {SecondSwitch} from "@/components";
+import {FormArrayInput} from "@/components/form-inputs/form-array-input";
+import {FormInput} from "@/components/form-inputs/form-input";
+import {getAllActionsRequireEmployeeApi} from "@/services/api-service/production-floor/production-floor-endpoints";
+import {useGomakeAxios} from "@/hooks";
+import {
+    Checkbox,
+    styled,
+    Tooltip,
+    tooltipClasses,
+    TooltipProps,
+} from "@mui/material";
+import {CheckboxCheckedIcon, CheckboxIcon} from "@/icons";
+import NewReleasesOutlinedIcon from "@mui/icons-material/NewReleasesOutlined";
+import {
+    ActionsListComponent
+} from "@/widgets/production-floor/filters/select/actions-select/action-list-select-component";
+import {Source} from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
+import {
+    printNodeInputs
+} from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/print-node-inputs";
+import {usePrintNodePrinters} from "@/hooks/use-print-node-printers";
 
-const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
-    const { t } = useTranslation();
-    const dir: 'rtl' | 'ltr' = t('direction');
-    const RTL = dir === 'rtl';
-    const { classes } = useStyle();
+const EmployeeGeneralForm = ({action}: { action: EmployeeActions }) => {
+    const {t} = useTranslation();
+    const dir: "rtl" | "ltr" = t("direction");
+    const RTL = dir === "rtl";
+    const {classes} = useStyle();
     const [state, setState] = useRecoilState<IUserData>(employeeState);
-    const [actionRequierdForEmployee, setActionRequierdForEmployee] = useState([])
-    const { callApi } = useGomakeAxios();
+    const [actionRequierdForEmployee, setActionRequierdForEmployee] = useState([]);
+    const {callApi} = useGomakeAxios();
+    const {printers, isPrintHouseUsePrintNode, getPrinterBins} = usePrintNodePrinters();
 
     const getActions = async () => {
-        const callBack = res => {
+        const callBack = (res) => {
             if (res.success) {
                 setActionRequierdForEmployee(res?.data);
             }
-        }
-        await getAllActionsRequireEmployeeApi(callApi, callBack)
-    }
+        };
+        await getAllActionsRequireEmployeeApi(callApi, callBack);
+    };
     useEffect(() => {
-        getActions()
-    }, [])
+        getActions();
+    }, []);
 
     const updateEmployeeState = (key, value) => {
         if (key === "quoteLimitationType") {
@@ -56,36 +77,35 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
                 employee: {
                     ...state.employee,
                     quotePriceLimit: 0,
-                    [key]: newValue
-                }
+                    [key]: newValue,
+                },
             });
-        }
-        else
+        } else
             setState({
                 ...state,
                 employee: {
                     ...state.employee,
-                    [key]: value
-                }
+                    [key]: value,
+                },
             });
     };
 
     const updateActionIdsEmployeeState = (key, id, checked) => {
-        setState(prevState => {
+        setState((prevState) => {
             // Get the current list of actionIds
             const currentActionIds = prevState.employee[key] || [];
 
             // Update the list based on the checked state
             const updatedActionIds = checked
                 ? [...currentActionIds, id]
-                : currentActionIds.filter(actionId => actionId !== id);
+                : currentActionIds.filter((actionId) => actionId !== id);
 
             return {
                 ...prevState,
                 employee: {
                     ...prevState.employee,
-                    [key]: updatedActionIds
-                }
+                    [key]: updatedActionIds,
+                },
             };
         });
     };
@@ -93,16 +113,18 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     const updateUserState = (key, value) => {
         setState({
             ...state,
-            [key]: value
+            [key]: value,
         });
     };
 
     const updateIpState = (key, value: AllowedIP[]) => {
-        const updatedValue = value?.map(row => row.isActive === undefined ? ({ ...row, isActive: true }) : row);
+        const updatedValue = value?.map((row) =>
+            row.isActive === undefined ? {...row, isActive: true} : row
+        );
         setState({
             ...state,
-            allowedIPs: updatedValue
-        })
+            allowedIPs: updatedValue,
+        });
     };
 
     const handelIsAgentChange = () => {
@@ -110,16 +132,16 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
             ...state,
             employee: {
                 ...state.employee,
-                isAgent: !state.employee.isAgent
-            }
-        })
-    }
+                isAgent: !state.employee.isAgent,
+            },
+        });
+    };
 
     const quoteLimitationOptions = Object.keys(EmployeeQuoteLimitationType)
-        .filter(key => isNaN(Number(key)))
-        .map(key => ({
+        .filter((key) => isNaN(Number(key)))
+        .map((key) => ({
             value: EmployeeQuoteLimitationType[key],
-            text: t(`usersSettings.${key}`)
+            text: t(`usersSettings.${key}`),
         }));
 
     const inputs = useCallback(() => {
@@ -127,12 +149,17 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
             employee: employeeInfoInputs(state.employee, quoteLimitationOptions),
             account: accountInputs(state, action),
             agent: agentInputs(state.employee),
-            ips: ipAddressesInputs(state)
-        }
-    }, [state]);
+            ips: ipAddressesInputs(state),
+            printNode: printNodeInputs(state.employee, printers.map(printer => ({
+                ...printer,
+                text: printer.printerName,
+                value: printer.printerId.toString()
+            })), getPrinterBins(state.employee.printerId).map(bin => ({text: bin, value: bin})))
+        };
+    }, [state, printers]);
 
-    const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
-        <Tooltip {...props} classes={{ popper: className }} />
+    const CustomWidthTooltip = styled(({className, ...props}: TooltipProps) => (
+        <Tooltip {...props} classes={{popper: className}}/>
     ))({
         [`& .${tooltipClasses.tooltip}`]: {
             maxWidth: 600,
@@ -142,52 +169,60 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     return (
         <div style={classes.container}>
             <div style={classes.subSection}>
-                <h3 style={classes.subSectionHeader}>{t('usersSettings.employeeInfo')}</h3>
+                <h3 style={classes.subSectionHeader}>
+                    {t("usersSettings.employeeInfo")}
+                </h3>
                 <div style={classes.inputsContainer}>
-                    {
-                        inputs().employee.map(employee => <FormInput key={employee.parameterKey}
+                    {inputs().employee.map((employee) => (
+                        <FormInput
+                            key={employee.parameterKey}
                             input={employee as IInput}
                             changeState={updateEmployeeState}
-                            error={employee.required && !state.employee[employee.parameterKey]} />)
-                    }
+                            error={
+                                employee.required && !state.employee[employee.parameterKey]
+                            }
+                        />
+                    ))}
                 </div>
             </div>
             <div style={classes.subSection}>
-                <h3 style={classes.subSectionHeader}>{t('usersSettings.account')}</h3>
+                <h3 style={classes.subSectionHeader}>{t("usersSettings.account")}</h3>
                 <div style={classes.inputsContainer}>
-                    {
-                        inputs().account.map(employee => (
-                            <div
-                                key={employee.parameterKey}
-                                style={{ display: 'flex' }}
-                            >
-                                <FormInput
-                                    input={employee as IInput}
-                                    changeState={updateUserState}
-                                    error={employee.required && !state[employee.parameterKey]}
-                                />
+                    {inputs().account.map((employee) => (
+                        <div key={employee.parameterKey} style={{display: "flex"}}>
+                            <FormInput
+                                input={employee as IInput}
+                                changeState={updateUserState}
+                                error={employee.required && !state[employee.parameterKey]}
+                            />
 
-                                {action === EmployeeActions.UPDATE &&
-                                    !!state.employee.isAgent &&
-                                    !state?.isMailVerified &&
-                                    employee.parameterKey === "email" && (
-                                        <div style={{ display: 'flex', alignSelf: "end" }}>
-                                            <CustomWidthTooltip title={t("usersSettings.emailNotVerified")} placement={RTL ? "bottom-start" : "bottom-end"} style={{ maxWidth: "fit-content" }}>
-                                                <NewReleasesOutlinedIcon sx={{ color: "#007bff", fontSize: 20 }} />
-                                            </CustomWidthTooltip>
-                                        </div>
-                                    )
-                                }
-                            </div>
-                        ))
-                    }
-
+                            {action === EmployeeActions.UPDATE &&
+                                !!state.employee.isAgent &&
+                                !state?.isMailVerified &&
+                                employee.parameterKey === "email" && (
+                                    <div style={{display: "flex", alignSelf: "end"}}>
+                                        <CustomWidthTooltip
+                                            title={t("usersSettings.emailNotVerified")}
+                                            placement={RTL ? "bottom-start" : "bottom-end"}
+                                            style={{maxWidth: "fit-content"}}
+                                        >
+                                            <NewReleasesOutlinedIcon
+                                                sx={{color: "#007bff", fontSize: 20}}
+                                            />
+                                        </CustomWidthTooltip>
+                                    </div>
+                                )}
+                        </div>
+                    ))}
                 </div>
             </div>
             <div style={classes.subSection}>
                 <div>
                     <span>{t("usersSettings.isAgent")}</span>
-                    <SecondSwitch checked={!!state.employee.isAgent} onChange={handelIsAgentChange} />
+                    <SecondSwitch
+                        checked={!!state.employee.isAgent}
+                        onChange={handelIsAgentChange}
+                    />
                 </div>
                 {/* {
                     !!state.employee.isAgent && <>
@@ -205,44 +240,84 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
             </div>
             <div style={classes.subSection}>
                 <div style={classes.inputsContainer}>
-                    {
-                        inputs().ips.map(employee => <FormArrayInput name={employee.name}
+                    {inputs().ips.map((employee) => (
+                        <FormArrayInput
+                            name={employee.name}
                             key={employee.parameterKey}
                             parameterKey={employee.parameterKey}
                             value={employee.value}
                             inputs={employee.inputs ? employee.inputs : []}
                             updateState={updateIpState}
                             isValid={true}
-                        />)
-                    }
+                        />
+                    ))}
                 </div>
             </div>
             <div style={classes.subSection}>
-                <h3 style={classes.subSectionHeader}>{t('usersSettings.employeeActions')}</h3>
-                <h1 style={classes.subSectionActionHeader}>{t('usersSettings.actions')}</h1>
+                <h3 style={classes.subSectionHeader}>
+                    {t("usersSettings.employeeActions")}
+                </h3>
+                <h1 style={classes.subSectionActionHeader}>
+                    {t("usersSettings.actions")}
+                </h1>
                 <div style={classes.inputsContainer}>
-                    {
-                        actionRequierdForEmployee?.map((action) => {
-                            return (
-                                <div>
-                                    <Checkbox
-                                        onChange={(e, checked) => { updateActionIdsEmployeeState("actionIds", action.id, checked) }}
-                                        icon={<CheckboxIcon />}
-                                        checkedIcon={<CheckboxCheckedIcon />}
-                                        checked={state?.employee?.actionIds?.includes(action?.id)}
-                                    />
-                                    {action?.name}
-                                </div>
-                            )
-                        })
-                    }
-
+                    {actionRequierdForEmployee?.map((action) => {
+                        return (
+                            <div>
+                                <Checkbox
+                                    onChange={(e, checked) => {
+                                        updateActionIdsEmployeeState(
+                                            "actionIds",
+                                            action.id,
+                                            checked
+                                        );
+                                    }}
+                                    icon={<CheckboxIcon/>}
+                                    checkedIcon={<CheckboxCheckedIcon/>}
+                                    checked={state?.employee?.actionIds?.includes(action?.id)}
+                                />
+                                {action?.name}
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
-
-
+            <div style={classes.subSection}>
+                <h3 style={classes.subSectionHeader}>
+                    {t("usersSettings.employeeActions")}
+                </h3>
+                <h1 style={classes.subSectionActionHeader}>
+                    {t("usersSettings.actions")}
+                </h1>
+                <div style={classes.inputsContainer}>
+                    <ActionsListComponent
+                        onClickApply={(v) => updateEmployeeState("stationsFilter", v)}
+                        source={Source.USERS}
+                    />
+                </div>
+            </div>
+            {
+                isPrintHouseUsePrintNode &&
+                <div style={classes.subSection}>
+                    <h3 style={classes.subSectionHeader}>
+                        {t("usersSettings.printNode")}
+                    </h3>
+                    <div style={classes.inputsContainer}>
+                        {inputs().printNode.map((employee) => (
+                            <FormInput
+                                key={employee.parameterKey}
+                                input={employee as IInput}
+                                changeState={updateEmployeeState}
+                                error={
+                                    employee.required && !state.employee[employee.parameterKey]
+                                }
+                            />
+                        ))}
+                    </div>
+                </div>
+            }
         </div>
     );
-}
+};
 
-export { EmployeeGeneralForm };
+export {EmployeeGeneralForm};

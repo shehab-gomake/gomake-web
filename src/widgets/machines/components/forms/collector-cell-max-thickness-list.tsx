@@ -72,13 +72,13 @@ const useCollectorCellsMaxThickness = (controlled: boolean) => {
         show
     }
 }
-const CollectorCellsMaxThickness = ({controlled}: {controlled?: boolean}) => {
+const CollectorCellsMaxThickness = ({controlled, disabled}: {controlled?: boolean; disabled?: boolean}) => {
     const {classes} = useStyle();
     const {listInput, show} = useCollectorCellsMaxThickness(!!controlled);
     const {changeMachineAttributes, errors} = useMachineAttributes();
 
     return (
-        show && <div style={classes.container}>
+        !disabled && show && <div style={classes.container}>
             <div style={classes.inputsContainer}>
 
                 <InputContainer key={listInput.parameterKey} attribute={listInput}

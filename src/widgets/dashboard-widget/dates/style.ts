@@ -13,7 +13,6 @@ const useStyle = () => {
                 flexDirection: "row" as "row",
                 justifyContent: "flex-start",
                 alignItems:"center",
-                flexWrap: "wrap" as "wrap",
                 gap: '16px'
             },
             button: {

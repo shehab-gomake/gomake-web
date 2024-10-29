@@ -1,33 +1,15 @@
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import { useQuoteWidget } from "@/pages-components/admin/home/widgets/quote-widget/use-quote-widget";
+import { useState } from "react";
 import { useRecoilValue } from "recoil";
-import { businessListsState, quoteConfirmationState } from "@/store";
+import { quoteConfirmationState } from "@/store";
 import { InputUpdatedValues } from "@/widgets/quote-new/input-updated-values";
-import {DOCUMENT_TYPE} from "@/pages-components/quotes/enums";
 
 const BusinessWidget = () => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-    const [selectBusiness, setSelectBusiness] = useState<any>({});
-    const customersListValue = useRecoilValue<any>(businessListsState);
     const [isConfirmation, setIsConfirmation] = useState();
-    const { renderOptions } = useQuoteWidget(DOCUMENT_TYPE.quote);
-
-    const mappedCustomers = renderOptions().map(customer => ({
-        text: customer?.name,
-        id: customer?.id
-    }));
-
-    useEffect(() => {
-        const foundItem = customersListValue.find(
-            (item: any) => item.id === quoteConfirm?.customerID
-        );
-        setSelectBusiness(foundItem);
-    }, [quoteConfirm, customersListValue]);
-
 
     return (
         <>

@@ -1,25 +1,28 @@
-import { IBoardMissions, IDashboardStatistic, IDashboardWidget, } from "@/widgets/dashboard-widget/interfaces";
-import { useStyle } from "@/widgets/dashboard-widget/style";
-import { useCallback, useEffect, useState } from "react";
-import { Cards } from "@/widgets/dashboard-widget/cards/cards";
-import { IDateRange } from "@/shared/interfaces";
-import { BoardMissionsTable } from "@/widgets/dashboard-widget/table";
-import { DashboardDates } from "@/widgets/dashboard-widget/dates/dates";
-import { useGomakeDateRange, useGomakeMachines } from "@/hooks";
-import { useBoardMissions } from "@/widgets/dashboard-widget/use-board-missions";
-import { useRecoilValue } from "recoil";
-import { DashboardActions } from "@/store";
-import { selectedAgentsState } from "@/store/agents-state";
-import { dashboardClientsState } from "@/widgets/dashboard-widget/clients/clients-state";
+import {IBoardMissions, IDashboardStatistic, IDashboardWidget,} from "@/widgets/dashboard-widget/interfaces";
+import {useStyle} from "@/widgets/dashboard-widget/style";
+import {useCallback, useEffect, useState} from "react";
+import {Cards} from "@/widgets/dashboard-widget/cards/cards";
+import {IDateRange} from "@/shared/interfaces";
+import {BoardMissionsTable} from "@/widgets/dashboard-widget/table";
+import {useGomakeDateRange, useGomakeMachines} from "@/hooks";
+import {useBoardMissions} from "@/widgets/dashboard-widget/use-board-missions";
+import {useRecoilValue} from "recoil";
+import {DashboardActions} from "@/store";
+import {selectedAgentsState} from "@/store/agents-state";
+import {dashboardClientsState} from "@/widgets/dashboard-widget/clients/clients-state";
+import {useDashboardSignalr} from "@/hooks/signalr/use-dashboard-signalr";
+import {Skeleton} from "@mui/material";
+import {DashboardDates} from "@/widgets/dashboard-widget/dates";
+import Stack from "@mui/material/Stack";
 
-const DashboardWidget = ({ }: IDashboardWidget) => {
-    const INTERVAL_TIMEOUT = 2 * 60 * 1000;
-    const { machines, addMachineProgress, addEmployeeProgress, getCheckedMachines, employeesList } = useGomakeMachines();
+const DashboardWidget = ({}: IDashboardWidget) => {
+    const {machines, addMachineProgress, addEmployeeProgress, getCheckedMachines} = useGomakeMachines();
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClients = useRecoilValue(dashboardClientsState);
-    const { classes } = useStyle();
-    const { dates, action } = useGomakeDateRange();
+    const {classes} = useStyle();
+    const {dates, action} = useGomakeDateRange();
     const selectedAgents = useRecoilValue(selectedAgentsState);
+    const {} = useDashboardSignalr(() => actions(action, dates));
 
     const {
         getBoardsMissionsByDateRange,
@@ -30,7 +33,9 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
         getLateBoardsMissions,
         getLateTodayBoardsMissions,
         getAllBoardsMissions,
-        dashboardColumns
+        dashboardColumns,
+        setBoardsMissions,
+        setStatistics
     } = useBoardMissions();
     const actions = (action: DashboardActions, dateRange: IDateRange) => {
         switch (action) {
@@ -49,6 +54,8 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
     }
 
     useEffect(() => {
+        setBoardsMissions([]);
+        setStatistics(null);
         actions(action, dates);
     }, [action, dates, selectedAgents])
 
@@ -57,12 +64,12 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
         addEmployeeProgress(machinesProgress)
     }, [boardsMissions])
 
-    useEffect(() => {
-        const interval = setInterval(async () => {
-            actions(action, dates);
-        }, INTERVAL_TIMEOUT);
-        return () => clearInterval(interval);
-    }, [dates, action, selectedAgents]);
+    // useEffect(() => {
+    //     const interval = setInterval(async () => {
+    //         actions(action, dates);
+    //     }, INTERVAL_TIMEOUT);
+    //     return () => clearInterval(interval);
+    // }, [dates, action, selectedAgents]);
 
     const handelSearchValueChange = (event) => {
         setTasksFilter(event);
@@ -70,6 +77,7 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
 
     const usedMachines = useCallback(() => {
         const checkedMachines = getCheckedMachines();
+        const orderMap = dashboardColumns.map(c => c.id);
         const filteredBoardsMissions = getFilteredBoardsMissions();
         if (!Array.isArray(filteredBoardsMissions)) {
             console.error("getFilteredBoardsMissions did not return an array:", filteredBoardsMissions);
@@ -82,8 +90,10 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
                 }
             }
             return false;
+        }).sort((a, b) => {
+            return orderMap.indexOf(a.id) - orderMap.indexOf(b.id);
         });
-    }, [machines]);
+    }, [machines, getCheckedMachines(), getFilteredBoardsMissions(), dashboardColumns]);
 
     const tasks = useCallback(() => {
         const selectedClientsIds = selectedClients?.filter(client => client?.checked)?.map(client => client?.id)
@@ -97,36 +107,41 @@ const DashboardWidget = ({ }: IDashboardWidget) => {
             : tasksArray;
     }, [tasksFilter, getFilteredBoardsMissions(), selectedClients])
 
-    const cleanedDataForEmployeesList = useCallback(() => {
-        return employeesList?.filter(item => item !== false) || [];
-    }, [employeesList])
-
-    const mergedLists = useCallback(() => {
-        const mergedList = [...usedMachines(), ...cleanedDataForEmployeesList()]
-        return mergedList
-    }, [usedMachines(), cleanedDataForEmployeesList()])
-
-    const orderMap = {};
-    dashboardColumns?.forEach((item, index) => {
-        orderMap[item.id] = index;
-    });
-    const sortedMergedLists = mergedLists().sort((a, b) => {
-        return orderMap[a.id] - orderMap[b.id];
-    });
-
     return (
         <div style={classes.container}>
-            <Cards data={statistics ? statistics : {} as IDashboardStatistic} />
-            <DashboardDates handelSearchValueChange={handelSearchValueChange} />
-            <div>
-                {usedMachines() && getFilteredBoardsMissions() &&
-                    <BoardMissionsTable boardsMissions={tasks()}
-                        usedMachines={sortedMergedLists}
-                    />}
-            </div>
+            {
+                statistics ? <Cards data={statistics ? statistics : {} as IDashboardStatistic}/> :
+                    <Stack style={{...classes.SkeletonCardsContainer}} gap={'15px'}>
+                        <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
+                            {
+                                new Array(6).fill(null).map(_ => <Skeleton variant="rectangular" width={215} height={80}
+                                                                           style={{borderRadius: 16}}/>)
+                            }
+                        </Stack>
+                    </Stack>
+            }
+
+            <DashboardDates handelSearchValueChange={handelSearchValueChange}/>
+            <Stack style={{height: '100%'}}>
+                {
+                    tasks()?.length > 0 ? <div>
+                            {usedMachines() && getFilteredBoardsMissions() &&
+                                <BoardMissionsTable boardsMissions={tasks()}
+                                                    usedMachines={usedMachines()}
+                                />}</div> :
+                        <Skeleton
+                            variant="rectangular"
+                            width={"100%"}
+                            height={400}
+                            style={{borderRadius: 16}}
+
+                        />
+                }
+
+            </Stack>
         </div>
     );
 }
-export { DashboardWidget }
+export {DashboardWidget}
 
 

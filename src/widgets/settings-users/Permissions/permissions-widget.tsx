@@ -39,8 +39,13 @@ const PermissionsWidget = () => {
                 <SecondaryTabsComponent tabs={tabs()} onSelectTab={onSelectTab} withBackGround={false} />
             </Stack>
             <Stack display={'grid'} padding={'5px'}>
-                <PrimaryTable stickyFirstCol={true} stickyHeader={true} maxHeight={550}
-                    headers={tableHeaders()} rows={permissionsTable()} />
+                <PrimaryTable
+                    stickyFirstCol={true}
+                    stickyHeader={true}
+                    maxHeight={"calc(100vh - 375px)"}
+                    headers={tableHeaders()}
+                    rows={permissionsTable()}
+                />
             </Stack>
             <GoMakeModal insideStyle={{ paddingLeft: 0, paddingRight: 0, width: 500, height: 250 }}
                 headerPadding={20}

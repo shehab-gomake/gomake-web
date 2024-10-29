@@ -3,8 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 
 export interface SalesReportHeaderWidgetProps {
-  onSelectDeliveryTimeDates: any;
-  resetDatePicker: any;
   agent: any;
   agentsCategories: any[];
   handleAgentChange: any;
@@ -12,17 +10,22 @@ export interface SalesReportHeaderWidgetProps {
   renderOptions: () => any[];
   checkWhatRenderArray: (arg: any) => void;
   handleCustomerChange: any;
-  displayByGroups: boolean,
+  displayByGroups: boolean;
   onChangeDisplayByGroups: any;
-  documentsTypeList: any,
-  handleDocumentTypeChange: any,
-  documentType: any,
+  documentsTypeList: any;
+  handleDocumentTypeChange: any;
+  documentType: any;
+  handleDateChange?: any;
+  fromDate?: Date | null;
+  toDate?: Date | null;
+  isFetchingCustomers?: boolean;
 }
 const useSalesReportHeader = () => {
   const { classes } = useStyle();
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   return {
-    classes, t
+    classes,
+    t,
   };
 };
 

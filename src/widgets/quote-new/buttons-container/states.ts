@@ -92,7 +92,7 @@ export const creditCardState = atom<CreditCardData>({
     lastName:"",
     phoneNumber:"",
     customerEmail:"",
-    transactionType:null,
+    transactionType:1,
     numberOfPayments:0,
   },
 });
@@ -202,7 +202,7 @@ export const prevStateState = atom<prevStateStateData>({
       },
     ],
     taxDeduction: 0,
-    cardWidget:1,
+    cardWidget:3,
     selectedCreditTransaction:null
   },
 });

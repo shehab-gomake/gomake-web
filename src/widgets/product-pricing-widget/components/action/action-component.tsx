@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { IWorkFlowAction } from "@/widgets/product-pricing-widget/interface";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { Collapse, Fade, IconButton, Tooltip } from "@mui/material";
@@ -20,139 +20,60 @@ import {
   RuleType,
 } from "@/widgets/product-pricing-widget/enums";
 import { useActionUpdateValues } from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   currentProductItemValueState,
   outsourceSuppliersState,
 } from "@/widgets/product-pricing-widget/state";
-import { GoMakeAutoComplate, GoMakeDeleteModal, GoMakeModal } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import { SettingsIcon } from "@/icons/settings";
 import { SettingsMenu } from "./settings-menu";
-import { PlusIcon, WarningIcon } from "@/icons";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { NotesForActionModal } from "./notes-for-action-modal";
 import { _renderIconLogs } from "@/utils/constants";
 import { TableOutPutComponent } from "../table-output/table-output-component";
+import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
+import { isActionEmployeeUpdatedState } from "@/store";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
-  productType: string | null;
-
+  productType?: string | null;
+  widgetType?: EWidgetProductType,
 }
 
 interface IActionsComponentProps {
   actions: IWorkFlowAction[];
   workFlowId?: string;
   productType: string | null;
+  widgetType: EWidgetProductType,
 }
 
 const Actions = ({
   actions,
   workFlowId,
   productType,
+  widgetType
 }: IActionsComponentProps) => {
   return (
     <Stack gap={"10px"}>
       {actions?.map((action, index) => {
-        if (!action.isCalculated && action.profit === null) {
-          // Create a new object with updated profit property
-          const updatedAction = {
-            ...action,
-            profit: {
-              id: '00000000-0000-0000-0000-000000000000',
-              name: 'Profit',
-              values: ['----'],
-              outSourceValues: ['0'],
-              index: null,
-              rectangles: null,
-              materialWidth: 0,
-              materialLength: 0,
-              unitType: 6,
-              defaultUnit: '%',
-              displayInOutputId: null,
-              propertyType: 0,
-              htmlElementType: 1,
-              isEditable: true
-            },
-            totalCost: {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "name": "Cost",
-              "values": ["----"],
-              "outSourceValues": null,
-              "index": null,
-              "rectangles": null,
-              "materialWidth": 0,
-              "materialLength": 0,
-              "unitType": 2,
-              "defaultUnit": "₪",
-              "displayInOutputId": null,
-              "propertyType": 0,
-              "htmlElementType": 1,
-              "isEditable": false
-            },
-            totalPrice: {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "name": "Price",
-              "values": ["----"],
-              "outSourceValues": [
-                "0"
-              ],
-              "index": null,
-              "rectangles": null,
-              "materialWidth": 0,
-              "materialLength": 0,
-              "unitType": 2,
-              "defaultUnit": "₪",
-              "displayInOutputId": null,
-              "propertyType": 0,
-              "htmlElementType": 1,
-              "isEditable": true
-            },
-            totalProductionTime: {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "name": "Delivery Time",
-              "values": ["----"],
-              "outSourceValues": null,
-              "index": null,
-              "rectangles": null,
-              "materialWidth": 0,
-              "materialLength": 0,
-              "unitType": 5,
-              "defaultUnit": "min",
-              "displayInOutputId": null,
-              "propertyType": 0,
-              "htmlElementType": 1,
-              "isEditable": false
-            }
-          };
-          return (
-            <ActionContainerComponent
-              key={action.id}
-              data-toure={'action'}
-              productType={productType}
-              workFlowId={workFlowId}
-              delay={index * 800}
-              {...updatedAction}
-            />
-          );
-        } else {
-          return (
-            <ActionContainerComponent
-              key={action.id}
-              data-toure={'action'}
-              productType={productType}
-              workFlowId={workFlowId}
-              delay={index * 800}
-              {...action}
-            />
+        return (
+          <ActionContainerComponent
+            key={action.id}
+            data-toure={'action'}
+            widgetType={widgetType}
+            productType={productType}
+            workFlowId={workFlowId}
+            delay={index * 800}
+            {...action}
+          />
 
-          );
-        }
+        );
+
       })}
     </Stack>
   );
@@ -182,12 +103,23 @@ const ActionContainerComponent = ({
   isNeedEmployee,
   isNeedMachine,
   isNeedMaterial,
+  widgetType,
+  totalCostValue,
+  totalPriceValue,
+  profitValue,
+  isNeedFolds,
+  foldOptionValueId
 }: IActionContainerComponentProps) => {
+
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
+  const [chooseFold, setChooseFold] = useState<boolean>(false);
+  const [selectedfold, setSelectedFold] = useState<any>()
+
+
 
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
@@ -216,9 +148,13 @@ const ActionContainerComponent = ({
     onClickGetMaterialsForAction,
     employeesList,
     machinesList,
-    materialsList
+    materialsList,
+    updateWorkFlowForFold,
+    foldOptions
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
+  const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(isActionEmployeeUpdatedState);
+
   const suppliers = useMemo(() => {
     return suppliersState?.map((s) => ({
       value: s.supplierId,
@@ -229,31 +165,31 @@ const ActionContainerComponent = ({
   const { secondColor } = useGomakeTheme();
   const inputsParameters = outputs?.filter(
     (parameter) =>
-      parameter.propertyType === RuleType.PARAMETER &&
-      parameter.htmlElementType === HtmlElementType.TEXT
+      parameter && parameter?.propertyType === RuleType.PARAMETER &&
+      parameter?.htmlElementType === HtmlElementType.TEXT
   );
   const outputsParameters = outputs?.filter(
     (parameter) =>
-      parameter.propertyType === RuleType.OUTPUT &&
-      parameter.htmlElementType === HtmlElementType.TEXT
+      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter?.htmlElementType === HtmlElementType.TEXT
   );
   const imageOutputs = outputs?.filter(
     (parameter) =>
-      parameter.propertyType === RuleType.OUTPUT &&
-      parameter.htmlElementType === HtmlElementType.IMAGE
+      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter?.htmlElementType === HtmlElementType.IMAGE
   );
 
   const textAreaOutputs = outputs?.filter(
     (parameter) =>
-      parameter.propertyType === RuleType.OUTPUT &&
-      parameter.htmlElementType === HtmlElementType.TEXT_AREA
+      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter?.htmlElementType === HtmlElementType.TEXT_AREA
   );
 
 
   const tableOutputs = outputs?.filter(
     (parameter) =>
-      parameter.propertyType === RuleType.OUTPUT &&
-      parameter.htmlElementType === HtmlElementType.TABLE
+      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter?.htmlElementType === HtmlElementType.TABLE
   );
   const handleDeliveryTimeUpdate = (newValue: string) => {
     updateActionData(
@@ -282,14 +218,14 @@ const ActionContainerComponent = ({
     updateActionData(id, value?.value, "supplierId", productType).then();
   };
   const calculateProfitInMoney = () => {
-    const totalPriceValue = totalPrice && totalPrice.values && totalPrice.values.length > 0 ? +totalPrice.values[0] : 0;
-    const totalCostValue = totalCost && totalCost.values && totalCost.values.length > 0 ? +totalCost.values[0] : 0;
-    return (totalPriceValue - totalCostValue).toFixed(2);
+    const totalPriceValues = totalPriceValue ? totalPriceValue : 0;
+    const totalCostValues = totalCostValue ? totalCostValue : 0;
+    return (totalPriceValues - totalCostValues).toFixed(2);
   }
   const calculateOutSourceProfitInMoney = () => {
-    const totalPriceValue = totalPrice && totalPrice.outSourceValues && totalPrice.outSourceValues.length > 0 ? +totalPrice.outSourceValues[0] : 0;
-    const totalCostValue = totalCost && totalCost.outSourceValues && totalCost.outSourceValues.length > 0 ? +totalCost.outSourceValues[0] : 0;
-    return (totalPriceValue - totalCostValue).toFixed(2);
+    const totalPriceValues = totalPriceValue ? totalPriceValue : 0;
+    const totalCostValues = totalCostValue ? totalCostValue : 0;
+    return (totalPriceValues - totalCostValues).toFixed(2);
   }
   const getSupplierId = useCallback(() => {
     if (supplierId) {
@@ -297,10 +233,17 @@ const ActionContainerComponent = ({
       return !!supplier ? supplier.label : "";
     }
     return "";
-  }, [supplierId, suppliers]);
+  }, [supplierId, suppliers, suppliersState]);
 
 
-
+  useEffect(() => {
+    if (foldOptionValueId) {
+      const selectedFoldOptionName = foldOptions?.find((option) => option.id == foldOptionValueId)
+      if (selectedFoldOptionName) {
+        setSelectedFold(selectedFoldOptionName)
+      }
+    }
+  }, [foldOptionValueId, foldOptions])
 
 
   return (
@@ -396,7 +339,7 @@ const ActionContainerComponent = ({
                               actionId,
                               productType,
                               actionIndex,
-                              machineName: v.label,
+                              machineName: v?.label,
                               machineId: v?.value,
                               printingActionId: id,
 
@@ -423,7 +366,7 @@ const ActionContainerComponent = ({
               )}
             </Stack>
 
-            <Divider orientation={"vertical"} flexItem />
+            {source != EWorkSource.OUT && <Divider orientation={"vertical"} flexItem />}
             <Stack
               style={classes.sectionTitle}
               direction={"row"}
@@ -431,7 +374,7 @@ const ActionContainerComponent = ({
               gap={"10px"}
             >
               {
-                isNeedEmployee && (
+                isNeedEmployee && source != EWorkSource.OUT && (
                   <>
                     {!chooseEmployee ? (
                       <Button
@@ -454,6 +397,9 @@ const ActionContainerComponent = ({
                       >
                         <GoMakeAutoComplate
                           onChange={(e, v) => {
+                            if (widgetType === EWidgetProductType.EDIT) {
+                              setIsActionEmployeeUpdated(true);
+                            }
                             updateWorkFlowForEmployees(actionId, productType, actionIndex, v?.label, v?.value, id)
                             setChooseEmployee(false);
                           }}
@@ -479,6 +425,8 @@ const ActionContainerComponent = ({
             {
               isNeedEmployee && <Divider orientation={"vertical"} flexItem />
             }
+
+
 
             <Stack
               style={classes.sectionTitle}
@@ -526,7 +474,7 @@ const ActionContainerComponent = ({
                               actionId,
                               productType,
                               actionIndex,
-                              printHouseMaterialSizeName: v.label,
+                              printHouseMaterialSizeName: v?.label,
                               printHouseMaterialSizeId: v?.value,
                               printingActionId: id,
                             })
@@ -556,53 +504,170 @@ const ActionContainerComponent = ({
               isNeedMaterial && <Divider orientation={"vertical"} flexItem />
             }
 
+            <Stack
+              style={classes.sectionTitle}
+              direction={"row"}
+              alignItems={"center"}
+              gap={"10px"}
+            >
+              {
+                isNeedFolds && (
+                  <>
+                    {!chooseFold ? (
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setChooseFold(true);
+                        }}
+                        variant={"text"}
+                        style={classes.sectionTitle}
+                      >
+                        {foldOptionValueId ? selectedfold?.name : <>Select New Folds</>}
+                      </Button>
+                    ) : (
+                      <Stack
+                        direction={"row"}
+                        gap={"5px"}
+                        alignItems={"center"}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <GoMakeAutoComplate
+                          onChange={(e, v) => {
+                            updateWorkFlowForFold(actionId, productType, actionIndex, v?.id, id)
+                            setChooseFold(false);
+                          }}
+                          style={{ width: "200px" }}
+                          options={foldOptions}
+                          placeholder={"Choose Fold option"}
+                          getOptionLabel={(option) => option.name}
+                          value={selectedfold}
+                        />
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setChooseFold(false);
+                          }}
+                        >
+                          <ClearRoundedIcon />
+                        </IconButton>
+                      </Stack>
+                    )}
+                  </>
+                )
+              }
+            </Stack>
+            {
+              isNeedFolds && <Divider orientation={"vertical"} flexItem />
+            }
+
             <EditableKeyValueViewComponent
               onUpdate={handleDeliveryTimeUpdate}
               {...totalProductionTime}
               source={source}
+              name={t("home.headers.productDate")}
             />
-            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
-              <Divider
-                orientation={"vertical"}
-                style={{ height: "50%", margin: "auto 0" }}
-                flexItem
-              />
-              <EditableKeyValueViewComponent
-                onUpdate={handleCostUpdate}
-                {...totalCost}
-                source={source}
-              />
-              <Divider
-                orientation={"vertical"}
-                style={{ height: "50%", margin: "auto 0" }}
-                flexItem
-              />
-              <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
-                <EditableKeyValueViewComponent
-                  onUpdate={handleProfitUpdate}
-                  {...profit}
-                  source={source}
+            {
+              source === EWorkSource.OUT &&
+              <>
+                <Divider
+                  orientation={"vertical"}
+                  style={{ height: "50%", margin: "auto 0" }}
+                  flexItem
                 />
-                <span>
-                  {source === EWorkSource.OUT
-                    ? `(${calculateOutSourceProfitInMoney()
-                    } ${totalPrice ? totalPrice.defaultUnit : ""})`
-                    : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
-                    })`}
-                </span>
-              </Stack>
-              <Divider
-                orientation={"vertical"}
-                style={{ height: "50%", margin: "auto 0" }}
-                flexItem
-              />
+                <EditableKeyValueViewComponent
+                  onUpdate={handleCostUpdate}
+                  {...totalCost}
+                  values={totalCostValue}
+                  source={source}
+                  name={t("machineAttributes.cost")}
+                />
+                <Divider
+                  orientation={"vertical"}
+                  style={{ height: "50%", margin: "auto 0" }}
+                  flexItem
+                />
+                <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+                  <EditableKeyValueViewComponent
+                    onUpdate={handleProfitUpdate}
+                    {...profit}
+                    values={profitValue}
+                    source={source}
+                    name={t("products.profits.pricingListWidget.profit")}
+                  />
+                  <span>
+                    {source === EWorkSource.OUT
+                      ? `(${calculateOutSourceProfitInMoney()
+                      } ${totalPrice ? totalPrice.defaultUnit : ""})`
+                      : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
+                      })`}
+                  </span>
+                </Stack>
+                <Divider
+                  orientation={"vertical"}
+                  style={{ height: "50%", margin: "auto 0" }}
+                  flexItem
+                />
 
-              <EditableKeyValueViewComponent
-                onUpdate={handleUpdatePrice}
-                {...totalPrice}
-                source={source}
-                valueColor={secondColor(500)}
-              />
+                <EditableKeyValueViewComponent
+                  onUpdate={handleUpdatePrice}
+                  {...totalPrice}
+                  values={totalPriceValue}
+                  source={source}
+                  valueColor={secondColor(500)}
+                  name={t("sales.quote.price")}
+                />
+              </>
+            }
+            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
+              {
+                source !== EWorkSource.OUT &&
+                <>
+                  <Divider
+                    orientation={"vertical"}
+                    style={{ height: "50%", margin: "auto 0" }}
+                    flexItem
+                  />
+                  <EditableKeyValueViewComponent
+                    onUpdate={handleCostUpdate}
+                    {...totalCost}
+                    values={totalCostValue}
+                    source={source}
+                    name={t("machineAttributes.cost")}
+                  />
+                  <Divider
+                    orientation={"vertical"}
+                    style={{ height: "50%", margin: "auto 0" }}
+                    flexItem
+                  />
+                  <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+                    <EditableKeyValueViewComponent
+                      onUpdate={handleProfitUpdate}
+                      {...profit}
+                      values={profitValue}
+                      source={source}
+                      name={t("products.profits.pricingListWidget.profit")}
+                    />
+                    <span>
+                      {`(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
+                        })`}
+                    </span>
+                  </Stack>
+                  <Divider
+                    orientation={"vertical"}
+                    style={{ height: "50%", margin: "auto 0" }}
+                    flexItem
+                  />
+
+                  <EditableKeyValueViewComponent
+                    onUpdate={handleUpdatePrice}
+                    {...totalPrice}
+                    values={totalPriceValue}
+                    source={source}
+                    valueColor={secondColor(500)}
+                    name={t("sales.quote.price")}
+                  />
+                </>
+              }
             </PermissionCheck>
 
             <Divider orientation={"vertical"} flexItem />
@@ -767,7 +832,7 @@ const ActionComponent = ({
     },
   ]
   const getSupplierId = useCallback(() => {
-    if (supplierId) {
+    if (supplierId && suppliers?.length > 0) {
       const supplier = suppliers?.find((sup) => sup.supplierId === supplierId);
       return !!supplier ? supplier.supplierName : "";
     }

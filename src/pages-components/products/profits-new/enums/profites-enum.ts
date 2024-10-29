@@ -38,5 +38,6 @@ export enum EValueType {
   INPUTNUMBER = 3,
   INPUTTEXT = 4,
   BOOLEAN = 5,
-  PROFIT
+  PROFIT ,
+  EMPLOYEE
 }

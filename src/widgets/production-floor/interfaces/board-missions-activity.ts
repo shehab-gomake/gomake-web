@@ -9,4 +9,5 @@ export interface IBoardMissionsActivity {
     text: string;
     logType: EActivityLogType;
     values: {source: string; current: string;};
+    activityDate?:string;
 }

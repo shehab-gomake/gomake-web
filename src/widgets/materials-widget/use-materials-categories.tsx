@@ -6,7 +6,7 @@ import {
 } from "@/widgets/materials-widget/interface";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
-  activeFilterState, isAllMaterialsCheckedState,
+  activeFilterState, categoryNumberingState, isAllMaterialsCheckedState,
   materialCategoryDataState, materialsTablePageState, materialTableFiltersState,
 } from "@/widgets/materials-widget/state";
 import { EMaterialActiveFilter } from "./enums";
@@ -32,6 +32,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
   }, [inActiveFilter])
   const [pagesCount, setPagesCount] = useState(0);
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
+  const [categoryNumbering, setCategoryNumbering] = useRecoilState(categoryNumberingState);
   const isAllMaterialsChecked = useRecoilValue<boolean>(isAllMaterialsCheckedState);
 
   const getMaterialCategoryData = async (
@@ -45,7 +46,6 @@ const useMaterialsCategories = (isAdmin: boolean) => {
   ) => {
     const callBack = (res) => {
       if (res.success) {
-
         setMaterialCategoryData(
           res.data?.result?.data?.map((row) => ({ ...row, checked: false }))
         );
@@ -53,6 +53,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
         const filters = res.data?.filters;
         setMaterialTableFilters(filters);
         setInActiveFilter(res.data?.setInActiveFilter)
+        setCategoryNumbering(res.data?.categoryNumbering)
 
       }
     };

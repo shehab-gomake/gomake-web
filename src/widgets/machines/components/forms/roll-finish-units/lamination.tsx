@@ -23,6 +23,17 @@ const inputs = (state) => {
                     value: state.attributes?.laminationUnit?.isAvailable ? state.attributes?.laminationUnit?.isAvailable : ''
                 },
                 {
+                    name: "setupTime",
+                    label: "machineAttributes.setupTime",
+                    type: "text",
+                    placeholder: "machineAttributes.setupTime",
+                    required: true,
+                    parameterKey: "setupTime",
+                    options: [{value: 1, text: 'Digital'}, {value: 2, text: 'Analog'}],
+                    value: state.attributes?.laminationUnit?.setupTime ? state.attributes?.laminationUnit?.setupTime : '',
+                    disabled: !state.attributes?.laminationUnit?.isAvailable
+                },
+                {
                     name: "glueNeeded",
                     label: "machineAttributes.glueNeeded",
                     type: "switch",

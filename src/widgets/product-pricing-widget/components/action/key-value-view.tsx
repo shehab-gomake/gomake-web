@@ -8,7 +8,6 @@ import Button from "@mui/material/Button";
 import { EWorkSource, HtmlElementType } from "@/widgets/product-pricing-widget/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { isCurrency } from "@/utils/is-currency";
 import { EditIcon, PlusIcon } from "@/icons";
 import { NotesForActionModal } from "./notes-for-action-modal";
 import { updateBoardMissionActionOutputApi, updateProductItemDraftActionData } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
@@ -140,7 +139,15 @@ const KeyValueViewComponent = ({
     const [openModal, setOpenModal] = useState<boolean>(false);
     useEffect(() => {
         if (values && values.length > 0) {
-            setValue(values[0])
+            if (values.length > 1) {
+                const formattedValues = values
+                    .map(item => item.replace(/\s+/g, '')) // Remove spaces within each item
+                    .join(' '); // Join items with a space between them
+                setValue(formattedValues)
+            }
+            else {
+                setValue(values[0])
+            }
         }
     }, [values])
     const handleOnClose = () => {
@@ -182,22 +189,31 @@ const KeyValueViewComponent = ({
         })
     };
     const { classes } = useStyle();
-    const curValues = source === EWorkSource.OUT ? !!outSourceValues ? outSourceValues : ['0'] : values;
-    // const formattedValue = removeTags(value).length > 8 ? `${removeTags(value).substring(0, 4)}...` : removeTags(value);
-
+    const truncateText = (text, maxLength = 30) => {
+        if (text.length > 100 && htmlElementType === HtmlElementType.TEXT_AREA) {
+            return `${text.substring(0, maxLength)} ......`;
+        }
+        return text;
+    };
     return (
         <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{name}</span>
 
             <span style={valueColor ? { ...classes.detailValue, color: valueColor } : classes.detailValue}>
-                {!!defaultUnit ? `${removeTags(value)} ${defaultUnit}` : removeTags(value)}
-
+                {!!defaultUnit ? `${truncateText(removeTags(value))} ${defaultUnit}` : truncateText(removeTags(value))}
             </span>
-            {htmlElementType === HtmlElementType.TEXT_AREA && !value && isEditable && <IconButton onClick={handleOnOpen}>
-                <PlusIcon />
-            </IconButton>}
-            {htmlElementType === HtmlElementType.TEXT_AREA && value && isEditable && <IconButton onClick={handleOnOpen}>
-                <EditIcon /></IconButton>}
+            {
+                htmlElementType === HtmlElementType.TEXT_AREA && !value && isEditable &&
+                <IconButton onClick={handleOnOpen}>
+                    <PlusIcon />
+                </IconButton>
+            }
+            {
+                htmlElementType === HtmlElementType.TEXT_AREA && value && isEditable &&
+                <IconButton onClick={handleOnOpen}>
+                    <EditIcon />
+                </IconButton>
+            }
 
             {
                 openModal && <NotesForActionModal
@@ -225,15 +241,23 @@ const EditableKeyValueViewComponent = ({
     const { classes } = useStyle();
     let value = '0';
     //source === EWorkSource.OUT ? !!outSourceValues && outSourceValues[0] ? outSourceValues[0] : '0' : values[0]
-    if (source === EWorkSource.OUT && outSourceValues && outSourceValues.length > 0) {
-        value = outSourceValues[0];
-    } else if (values && values.length > 0) {
-        value = values[0];
+    if (Array.isArray(values)) {
+        if (source === EWorkSource.OUT && outSourceValues && outSourceValues.length > 0) {
+            value = outSourceValues[0];
+        } else if (values && values.length > 0) {
+            value = values[0];
+        }
+
     }
+    else {
+        value = isNaN(values) ? '0.00' : values?.toFixed(2);
+    }
+
     const [edit, setEdit] = useState<boolean>(false);
     const [editValue, setEditValue] = useState<string>(value);
     const handleValueClick = (e) => {
         e.stopPropagation();
+        setEditValue(value);
         setEdit(true);
     }
 

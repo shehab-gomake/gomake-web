@@ -11,7 +11,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         width: "100%",
-        gap:10,
+        gap:20,
         
       },
       date1FilterContainer: {
@@ -20,7 +20,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: "18%",
+        // width: "18%",
       },
       date2FilterContainer: {
         display: "flex",
@@ -66,8 +66,9 @@ const useStyle = () => {
        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)", 
        height: 40, 
        width: "100%", 
-       paddingLeft: 10,
-       cursor: "pointer"
+       padding: 10,
+       cursor: "pointer",
+       borderRadius:5
        },
        checkboxStyle:{
         display: "flex",

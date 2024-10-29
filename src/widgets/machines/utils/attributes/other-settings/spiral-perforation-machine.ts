@@ -1,5 +1,10 @@
+import {
+    spiralTypeCategoriesInputs
+} from "@/widgets/machines/utils/attributes/other-settings/spiral-type-categories-inputs";
+
 const spiralPerforationMachine = (state: Record<string, any>) => {
     return [
+        ...spiralTypeCategoriesInputs(state),
         {
             name: "pitch",
             label: "machineAttributes.pitch",

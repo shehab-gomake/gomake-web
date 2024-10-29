@@ -2,7 +2,6 @@ import { MenuItem } from "@mui/material";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
 import { OptionsButton } from "@/components/options-button/options-button";
-import { useRouter } from "next/router";
 
 interface IBoardMissionsProps {
   mission?: any;
@@ -17,9 +16,9 @@ interface IBoardMissionsProps {
 }
 const MoreMenuWidget = ({ mission, onClickDuplicate, onClickLoggers, onClickMarksAsDone, onClickReturnToProduction, onClickOrderSummeryPdf, onClickWorkMissionPdf, onClickPrintPackagingSlip, onOpenModal }: IBoardMissionsProps) => {
   const { classes } = useStyle();
-  const { push } = useRouter();
+
   const handleClickEdit = (boardMissions) => {
-    push(`/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${boardMissions.customerID}&productId=${boardMissions.productID}&documentItemId=${boardMissions.orderItemId}&documentType=${1}&documentId=${boardMissions.id}`).then()
+    return `/products/edit?clientTypeId=${boardMissions.clientTypeId}&customerId=${boardMissions.customerID}&customerName=${boardMissions.clientName}&productId=${boardMissions.productID}&documentItemId=${boardMissions.orderItemId}&documentType=${1}&documentNumber=${boardMissions?.orderNumber}&documentId=${boardMissions.orderID}`;
   }
   const { t, menuList } = useMoreCircle({
     mission,
@@ -45,7 +44,7 @@ const MoreMenuWidget = ({ mission, onClickDuplicate, onClickLoggers, onClickMark
               onClick={item?.onclick}
             >
               {item?.icon}
-              <div style={classes.menuTitleStyle}>{t(item?.name)}</div>
+              <div style={classes.menuTitleStyle}>{item?.name}</div>
             </MenuItem>
           )
         ))}

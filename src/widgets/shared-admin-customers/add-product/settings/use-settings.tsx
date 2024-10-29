@@ -24,22 +24,28 @@ const useSettings = ({
   const { query } = useRouter();
   const { id } = query;
   const { t } = useTranslation();
-  const { setSnackbarStateValue, alertFaultAdded, alertSuccessAdded, alertSuccessDelete, alertFault,
-    alertFaultDelete, } =
-    useSnackBar();
+  const {
+    setSnackbarStateValue,
+    alertFaultAdded,
+    alertSuccessAdded,
+    alertSuccessDelete,
+    alertFault,
+    alertFaultDelete,
+  } = useSnackBar();
   const [RandomId, setRandomId] = useState();
-  const [selectedProductId, setSelectedProductId] = useState<string>("")
+  const [selectedProductId, setSelectedProductId] = useState<string>("");
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
-  const [openPricingTypeModal, setOpenPricingTypeModal] = useState<boolean>(false);
-  const [selectPricingType, setPricingType] = useState({})
+  const [openPricingTypeModal, setOpenPricingTypeModal] =
+    useState<boolean>(false);
+  const [selectPricingType, setPricingType] = useState({});
 
   const onClickOpenPricingType = (value) => {
-    setPricingType(value)
-    setOpenPricingTypeModal(true)
-  }
+    setPricingType(value);
+    setOpenPricingTypeModal(true);
+  };
   const onClickClosePricingType = () => {
-    setOpenPricingTypeModal(false)
-  }
+    setOpenPricingTypeModal(false);
+  };
 
   useEffect(() => {
     setRandomId(uuidv4());
@@ -47,6 +53,7 @@ const useSettings = ({
   const [allProductSKU, setAllProductSKU] = useState<any>();
   const [allTemplate, setAllTemplate] = useState<any>();
   const [allGroups, setAllGroups] = useState<any>();
+
   const getAllProductsSKU = useCallback(async () => {
     await getAlltProductSKU(callApi, setAllProductSKU);
   }, []);
@@ -68,53 +75,53 @@ const useSettings = ({
   const [isProductSKU, setIsProductSKU] = useState(false);
   const onClickCloseProductSKU = () => {
     setIsProductSKU(false);
-    setErrorName(false)
-    setErrorCode(false)
+    setErrorName(false);
+    setErrorCode(false);
+    setProductSKU(INIT_PRODUCT_SKU_STATE)
   };
+
   const onClickOpenProductSKU = () => {
     setIsProductSKU(true);
   };
 
-  const [productSKU, setProductSKU] = useState<any>([]);
+  // const [productSKU, setProductSKU] = useState<any>([]);
+  const INIT_PRODUCT_SKU_STATE = {
+    name: "",
+    code: "",
+    productionFloorJobColor: "#2e3092",
+    printerId: 0,
+    printerBin: ''
+  }
+  const [productSKU, setProductSKU] = useState(INIT_PRODUCT_SKU_STATE);
   const [errorName, setErrorName] = useState(false);
   const [errorCode, setErrorCode] = useState(false);
+
   const onChangeStateProductSKU = useCallback(
-    (filedName: string, value: any) => {
-      setProductSKU((prev) => {
-        return {
-          ...prev,
-          [filedName]: value,
-        };
-      });
+    (fieldName: string, value: any) => {
+      setProductSKU((prev) => ({
+        ...prev,
+        [fieldName]: value,
+      }));
     },
-    [productSKU]
+    []
   );
+
   const createNewProductSKU = useCallback(async () => {
     if (productSKU?.name?.length > 0 && productSKU?.code?.length > 0) {
       const res = await callApi(
         "POST",
         `/v1/printhouse-config/productsSKU/create-product-sku`,
         {
-          name: productSKU?.name,
-          code: productSKU?.code,
+          ...productSKU,
+          productionFloorJobColor: productSKU?.productionFloorJobColor
         }
       );
       if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
+        alertSuccessAdded();
         getAllProductsSKU();
-        // onClickCloseProductSKU();
-        onChangeStateProductSKU("name", "");
-        onChangeStateProductSKU("code", "");
+        setProductSKU(INIT_PRODUCT_SKU_STATE)
       } else {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedfailed"),
-          type: "error",
-        });
+        alertFaultAdded();
       }
     } else {
       if (productSKU?.name?.length > 0) {
@@ -130,10 +137,12 @@ const useSettings = ({
     }
   }, [productSKU, errorName, errorCode]);
 
-
-
   const createNewProduct = useCallback(async () => {
-    if (!productState.name || !productState.productSKUId || !productState.templateId) {
+    if (
+      !productState.name ||
+      !productState.productSKUId ||
+      !productState.templateId
+    ) {
       setSnackbarStateValue({
         state: true,
         message: t("products.addProduct.admin.requiredField"),
@@ -155,6 +164,7 @@ const useSettings = ({
           additionPrice: productState?.additionPrice,
           noteColor: productState?.noteColor,
           textColor: productState?.textColor,
+          productionFloorJobColor: productState?.productionFloorJobColor,
           productSKUId: productState?.productSKUId?.id,
           templateId: productState?.templateId?.id,
           clients: productState?.clients,
@@ -171,15 +181,19 @@ const useSettings = ({
       } else {
         if (res?.errors?.statusCode === 2627) {
           alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
-        }
-        else {
-          alertFaultAdded()
+        } else {
+          alertFaultAdded();
         }
       }
     }
   }, [productState, RandomId]);
+
   const createNewProductAndGoToParameterList = useCallback(async () => {
-    if (!productState.name || !productState.productSKUId || !productState.templateId) {
+    if (
+      !productState.name ||
+      !productState.productSKUId ||
+      !productState.templateId
+    ) {
       setSnackbarStateValue({
         state: true,
         message: t("products.addProduct.admin.requiredField"),
@@ -201,6 +215,7 @@ const useSettings = ({
           additionPrice: productState?.additionPrice,
           noteColor: productState?.noteColor,
           textColor: productState?.textColor,
+          productionFloorJobColor: productState?.productionFloorJobColor,
           productSKUId: productState?.productSKUId?.id,
           templateId: productState?.templateId?.id,
           clients: productState?.clients,
@@ -219,17 +234,19 @@ const useSettings = ({
       } else {
         if (res?.errors?.statusCode === 2627) {
           alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
+        } else {
+          alertFaultAdded();
         }
-        else {
-          alertFaultAdded()
-        }
-
       }
     }
   }, [productState, RandomId]);
 
   const updatedProduct = useCallback(async () => {
-    if (!productState?.name || !productState?.productSKUId || !productState?.templateId) {
+    if (
+      !productState?.name ||
+      !productState?.productSKUId ||
+      !productState?.templateId
+    ) {
       setSnackbarStateValue({
         state: true,
         message: t("products.offsetPrice.admin.errorReq"),
@@ -251,6 +268,7 @@ const useSettings = ({
           additionPrice: productState?.additionPrice,
           noteColor: productState?.noteColor,
           textColor: productState?.textColor,
+          productionFloorJobColor: productState?.productionFloorJobColor,
           productSKUId:
             typeof productState?.productSKUId === "string"
               ? productState?.productSKUId
@@ -281,6 +299,7 @@ const useSettings = ({
       }
     }
   }, [productState, RandomId]);
+
   const [SelectproductClient, setSelectProductClient] =
     useState<ProductClient>();
   const [customersList, setCustomersList] = useState([]);
@@ -305,14 +324,18 @@ const useSettings = ({
 
   const getAllClients = useCallback(async (SearchTerm?) => {
     await getAndSetAllCustomers(callApi, setCustomersList, {
-      ClientType: "C",
+      clientType: "C",
       onlyCreateOrderClients: false,
       searchTerm: SearchTerm,
     });
   }, []);
+
   const getAllClientTypes = useCallback(async () => {
-    await getAndSetClientTypes(callApi, setClientTypesList, { cardType: CLIENT_TYPE_Id.CUSTOMER });
+    await getAndSetClientTypes(callApi, setClientTypesList, {
+      cardType: CLIENT_TYPE_Id.CUSTOMER,
+    });
   }, []);
+
   useEffect(() => {
     getAllClients();
     getAllClientTypes();
@@ -336,27 +359,28 @@ const useSettings = ({
   }, []);
 
   const onClickOpenDeleteRowModal = (id: string) => {
-    setSelectedProductId(id)
+    setSelectedProductId(id);
     setOpenDeleteRowModal(true);
   };
+
   const onClickCloseDeleteRowModal = () => {
     setOpenDeleteRowModal(false);
   };
+
   const deleteProductSKURow = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.DELETE,
       `/v1/printhouse-config/productsSKU/delete-product-sku-by-id`,
       {
-        Id: selectedProductId
-
+        Id: selectedProductId,
       }
     );
     if (res?.success) {
-      alertSuccessDelete()
+      alertSuccessDelete();
       getAllProductsSKU();
-      onClickCloseDeleteRowModal()
+      onClickCloseDeleteRowModal();
     } else {
-      alertFaultDelete()
+      alertFaultDelete();
     }
   }, [selectedProductId]);
 
@@ -391,7 +415,8 @@ const useSettings = ({
     openPricingTypeModal,
     onClickOpenPricingType,
     onClickClosePricingType,
-    selectPricingType
+    selectPricingType,
+    productSKU,
   };
 };
 

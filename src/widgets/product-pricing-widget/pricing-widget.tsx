@@ -13,7 +13,7 @@ import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { usePricingWidget } from "./use-pricing-widget";
 import { useRecoilValue } from "recoil";
 import { calculationResultState } from "./state";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { FONT_FAMILY } from "@/utils/font-family";
 
@@ -35,12 +35,9 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
     handleScroll,
     allCountSelectedTabWorkFlow,
     t
-  } = usePricingWidget({ workFlows, getOutSourcingSuppliers , widgetType});
-
+  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType });
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
-
-
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack direction={"row"} justifyContent={"space-between"}>
@@ -78,7 +75,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
                       : 'outlined'
                   }
                 >
-                  {section.name} ({section.count + 1})
+                  {section.isNeedTranslation ? t("workFlowTabs." + section.name) : section.name} ({section.count + 1})
                 </PrimaryButton>
               ))}
 
@@ -110,6 +107,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
       {selectedWorkFlow && (
         <GeneralInformationComponent
           details={selectedWorkFlow?.generalInformation}
+          details2={selectedWorkFlow?.generalInformationProductionFloor}
         />
       )}
       <Divider />
@@ -117,12 +115,14 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
       {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && (
         <div data-tour={'actions-container'}>
           <SubWorkFlowsComponent
+            widgetType={widgetType}
             isEditableActions={true}
             workflows={selectedWorkFlow?.subWorkFlows || []}
           />
           <Actions
             actions={selectedWorkFlow?.actions}
             productType={selectedWorkFlow.productType}
+            widgetType={widgetType}
           />
         </div>
       )}
@@ -134,6 +134,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
             getWorkFlowsActions={getWorkFlowsActions}
             selectedWorkFlowId={selectedWorkFlowId}
             setSelectedWorkFlowId={setSelectedWorkFlowId}
+            widgetType={widgetType}
           />
           {
             pageSize < allCountSelectedTabWorkFlow &&

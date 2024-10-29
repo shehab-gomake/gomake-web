@@ -1,27 +1,13 @@
 import { QuantityTypesComponent } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-types/quantity-types-component";
 import { useQuantityParameter } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/use-quantity-parameter";
-import { SettingsIcon } from "@/icons/settings";
 import { GoMakeModal } from "@/components";
-import { IconButton } from "@mui/material";
 import Stack from "@mui/material/Stack";
 
-const QuantityParameter = ({ subSection, section }) => {
-  const { openModal, setOpenModal, productTypesNumber, productSetsParam, t } = useQuantityParameter();
+const QuantityParameter = ({ subSection, section, validateParameters, setCanCalculation }) => {
+  const { openModal, setOpenModal, t } = useQuantityParameter();
   return (
     <Stack direction={"row"}>
-      {productTypesNumber > 1 && productSetsParam != "true" && (
-        <IconButton
-          onClick={() => {
-            setOpenModal(true);
-          }}
-        >
-          <SettingsIcon
-            stroke={"rgba(237, 2, 140, 1)"}
-            width={24}
-            height={24}
-          />
-        </IconButton>
-      )}
+
       {<GoMakeModal
         insideStyle={{
           width: 420,
@@ -31,7 +17,7 @@ const QuantityParameter = ({ subSection, section }) => {
         openModal={openModal}
         onClose={() => setOpenModal(false)}
       >
-        <QuantityTypesComponent subSection={subSection} section={section} />
+        <QuantityTypesComponent subSection={subSection} section={section} validateParameters={validateParameters} setCanCalculation={setCanCalculation} />
       </GoMakeModal>}
     </Stack>
   );

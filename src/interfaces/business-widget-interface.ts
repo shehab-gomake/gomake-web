@@ -11,11 +11,12 @@ export interface IBusinessWidget {
   onInputChange?: any;
   setInputData?: any;
   speicalStyle?: any;
-  onChangeTextField?:any;
-  onClickFlag?:any;
-  flag?:any;
+  onChangeTextField?: any;
+  onClickFlag?: any;
+  flag?: any;
   sign?: string;
   isTwoDigit?: boolean;
-  inputMainContainerStyle?:React.CSSProperties;
-  placeholder?:string
+  inputMainContainerStyle?: React.CSSProperties;
+  placeholder?: string;
+  isFetching?: boolean;
 }

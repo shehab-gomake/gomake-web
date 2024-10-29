@@ -99,7 +99,7 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
                     parameterKey: "categories",
                     options: [],
                     value: state?.attributes?.sheetCategories?.categories,
-                    optionsUrl: '/v1/materials/get-material-categories-list?materialKey=sheets',
+                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=sheets',
                     multiple: true,
                     disabled: !state.attributes?.sheetCategories?.isAvailable
                 },
@@ -131,7 +131,7 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
                     parameterKey: "categories",
                     options: [],
                     value: state?.attributes?.wideFormatCategories?.categories,
-                    optionsUrl: '/v1/materials/get-material-categories-list?materialKey=wideFormatMaterial',
+                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=wideFormatMaterial',
                     multiple: true,
                     disabled: !state.attributes?.wideFormatCategories?.isAvailable
                 },
@@ -163,7 +163,7 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
                     parameterKey: "categories",
                     options: [],
                     value: state?.attributes?.flatbedsCategories?.categories,
-                    optionsUrl: '/v1/materials/get-material-categories-list?materialKey=flatbeds',
+                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=flatbeds',
                     multiple: true,
                     disabled: !state.attributes?.flatbedsCategories?.isAvailable
                 },

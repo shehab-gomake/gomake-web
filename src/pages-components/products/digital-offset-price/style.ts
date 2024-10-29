@@ -12,7 +12,6 @@ const useStyle = () => {
   const { primaryColor, secondColor, errorColor, neutralColor, successColor } =
     useGomakeTheme();
     const [screenWidth, setScreenWidth] = useState<number | null>(null);
-  console.log("screenWidth",screenWidth)
     useEffect(() => {
       // Function to update screen width
       const updateScreenWidth = () => {
@@ -70,6 +69,26 @@ const useStyle = () => {
         boxShadow: "0px 0px 3px 0px rgba(129, 129, 129, 0.12)",
         padding: 15,
         marginTop: -53,
+        borderRadius: 5,
+        position: "fixed" as "fixed",
+        ...adaptLeft(t("direction"), 0),
+        overflow: "scroll",
+        paddingBottom: 150,
+      },
+
+      rightSideMainContainerSkelton:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: 330,
+        minWidth: 330,
+        maxWidth: 330,
+        height: "100%",
+        backgroundColor: "white",
+        boxShadow: "0px 0px 3px 0px rgba(129, 129, 129, 0.12)",
+        padding: 15,
+        marginTop: -20,
         borderRadius: 5,
         position: "fixed" as "fixed",
         ...adaptLeft(t("direction"), 0),
@@ -209,7 +228,7 @@ const useStyle = () => {
         gap: 10,
         width: "100%",
         minWidth: 220,
-        maxWidth: 220,
+        // maxWidth: 220,
       },
       parameterRowContainer: {
         display: "flex",
@@ -257,10 +276,33 @@ const useStyle = () => {
         border: "0px",
         ...FONT_FAMILY.Lexend(500, 14),
       },
+      clientDropDownListStyle: {
+        height: 40,
+        border: "0px",
+        ...FONT_FAMILY.Lexend(500, 14),
+        width: "100%",
+        padding: "8px 16px", 
+        borderRadius: "4px",
+        backgroundColor:  "#fff", 
+        color: "inherit", 
+        display: "flex",
+        // boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+      },
+      clientTypographyStyle: {
+        height: 40,
+        border: "0px",
+        ...FONT_FAMILY.Lexend(500, 14),
+        width: "100%",
+        padding: "8px 16px", 
+        borderRadius: "4px",
+        backgroundColor:  "#fff", 
+        color: "inherit", 
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+      },
       renderParameterTypeContainer: {
         display: "flex",
         width: "100%",
-        maxWidth: "220px",
+        // maxWidth: "220px",
         borderRadius: 4,
       },
 
@@ -299,7 +341,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "62%",
+        width: "55%",
       },
       labelTextStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -311,7 +353,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "35%",
+        width: "40%",
       },
       flyerText: {
         color: primaryColor(900),
@@ -325,8 +367,8 @@ const useStyle = () => {
         marginBottom: 15,
       },
       secondText: {
-        color: primaryColor(200),
-        ...FONT_FAMILY.Lexend(400, 12),
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(500, 14),
       },
       urgentContainer: {
         display: "flex",
@@ -341,6 +383,32 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         marginBottom: 18,
+      },
+      additionalProductItems:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        marginTop: 10
+      },
+      additionalProductItemsContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        marginBottom: 10,
+      },
+      additionalProductItem:{
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(700, 16),
+      },
+      additionalPrices:{
+        display:"flex",
+        flexDirection:"row" as "row",
+        justifyContent:"flex-start",
+        alignItems: "center",
+        gap:10
       },
       orderContainer: {
         display: "flex",
@@ -416,7 +484,8 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        marginLeft: -8,
+        marginLeft: direction==="ltr" ? -8 : 0,
+        marginRight: direction==="ltr" ? 0 : -8,
         marginBottom: 0,
       },
       switchAdditionsContainer: {
@@ -450,7 +519,8 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
         cursor: "pointer",
-        width:145,
+        width:"100%",
+        minWidth:"fit-content",
         height:40
       },
       activeLogsTabStyle: {
@@ -463,7 +533,8 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
         cursor: "pointer",
-        width:145,
+        width:"100%",
+        minWidth:"fit-content",
         height:40
       },
       unActiveTabStyle: {
@@ -477,11 +548,17 @@ const useStyle = () => {
         border: `1px solid ${primaryColor(500)}`,
         borderRadius: 4,
         cursor: "pointer",
-        width:145,
+        width:"100%",
+        minWidth:"fit-content",
         height:40
       },
       addOrderBtn: {
         backgroundColor: secondColor(500),
+        height: 40,
+        padding: 20,
+      },
+      addOrderDisabledBtn:{
+        backgroundColor: "#ccc",
         height: 40,
         padding: 20,
       },
@@ -653,6 +730,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 4,
+        // minWidth:250
       },
       duplicateSubSectionBtn: {
         backgroundColor: "#FFFF",
@@ -697,6 +775,9 @@ const useStyle = () => {
         overflowY: "scroll",
         overflowX: "hidden",
         gap: 10,
+      },
+      detailsContainer:{
+        ...FONT_FAMILY.Lexend(500, 16),
       },
       generalMsgTextStyle: {
         display: "flex",
@@ -789,8 +870,84 @@ const useStyle = () => {
         position: "absolute",
         top: 0,
         right: 0,
+      },
+      skeletonContainer: {
+        padding: '16px',
+        display: 'flex',
+        flexDirection: 'column' as "column",
+        gap: '16px',  
+      },
+      titleStyle: {
+        display: "flex",
+        ...FONT_FAMILY.Lexend(600, 18),
+        color:  primaryColor(500),
+       // color:  "black",
+        lineHeight: "30px",
+        marginBottom:"5px"
+      },
+      btnsContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: 11,
+        width: "100%",
+        marginTop: 15
+      },
+      confirmBtn: {
+       // width: "50%",
+       height: 35,
+       lineHeight:"10px",
+        borderRadius: "10px",
+        ...FONT_FAMILY.Lexend(500, 10),
+        color:"#FFFFFF",
+        
+      },
+      cancelBtn: {
+      //  width: "50%",
+        height: 35,
+        borderRadius: "10px",
+        ...FONT_FAMILY.Lexend(500, 10),
+        color:"#FFFFFF",
+       
+      },
+      modalTitleForMission:{
+        margin: 15, 
+        marginTop: 0,
+        color: primaryColor(500),
+         ...FONT_FAMILY.Lexend(700, 16),
+      },
+      modalCloseForMission:{ position: "absolute", right: 0, top: 0 },
+      mainContainerForMission:{ display: "flex", flexDirection: "column", gap: 10 },
+      missionItemContainer:{
+        ...FONT_FAMILY.Lexend(500, 14),
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: "100%",
+      },
+      missionText:{ width: "fit-content", minWidth: 100 },
+      missionText1:{ width: "fit-content", minWidth: 80 },
+      missionText2:{
+        width: "fit-content",
+        maxWidth: "fit-content",
+        minWidth: 100,
+        whiteSpace: "nowrap",
+      },
+      deviderContainer:{ paddingLeft: 5, paddingRight: 5 },
+      checkboxModalContainer:{ 
+        display: "flex", 
+        flexDirection: "row", 
+        justifyContent: "flex-start", 
+        alignItems: "center" ,
+        marginTop: 15,
+        cursor: "pointer"
+      },
+      checkboxLabelStyle:{
+        ...FONT_FAMILY.Lexend(600,14),
+        
       }
-
     };
   }, [i18next.language, t, direction,screenWidth]);
   return {

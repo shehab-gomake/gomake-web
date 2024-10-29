@@ -42,7 +42,7 @@ import {pressingMachineSteps} from "@/widgets/machines/utils/steps/pressing-mach
 import {shrinkPackingMachineSteps} from "@/widgets/machines/utils/steps/shrink-packing-machine-steps";
 import {packageTyingMachineSteps} from "@/widgets/machines/utils/steps/package-tying-machine-steps";
 import {cartoonPackagingMachineSteps} from "@/widgets/machines/utils/steps/cartoon-packaging-machine-steps";
-import {rollLaserCutMachineSteps} from "@/widgets/machines/utils/steps/roll-laser-cut-machine-steps";
+import {rollFinishMachineSteps} from "@/widgets/machines/utils/steps/roll-finish-machine-steps";
 import {rollLaminationMachineSteps} from "@/widgets/machines/utils/steps/roll-lamination-machine-steps";
 import {rollSheeterMachineSteps} from "@/widgets/machines/utils/steps/roll-sheeter-machine-steps";
 import {rollVarnishMachineSteps} from "@/widgets/machines/utils/steps/roll-varnish-machine-steps";
@@ -190,7 +190,7 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:a
             steps = cartoonPackagingMachineSteps;
             break;
         case ECategoryId.ROLL_FINISH_MACHINE:
-            steps = rollLaserCutMachineSteps(isAdmin);
+            steps = rollFinishMachineSteps(isAdmin);
             break;
         case ECategoryId.ROLL_LAMINATION_MACHINE:
             steps = rollLaminationMachineSteps(isAdmin);

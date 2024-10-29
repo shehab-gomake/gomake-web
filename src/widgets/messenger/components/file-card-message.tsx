@@ -1,4 +1,4 @@
-import {Button, Card, CardActions, CardContent, IconButton, Typography} from "@mui/material";
+import {Button, IconButton} from "@mui/material";
 import CardMedia from "@mui/material/CardMedia";
 import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
 import {EFileStatus} from "@/widgets/messenger/enums";
@@ -7,6 +7,10 @@ import {useEffect, useState} from "react";
 import {FileStatusNameComponent} from "@/widgets/messenger/components/file-status-name-component";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import {GoMakeModal} from "@/components";
+import {useRecoilState} from "recoil";
+import {messengerMobileViewState} from "@/widgets/messenger/state";
+
 interface IProps extends IChatMessage {
     isCurrentUserSentMsg: boolean;
     onUpdateApprovalFile: (requestId: string, updatedStatus: string, senderId: number, type: number) => void;
@@ -26,12 +30,13 @@ const FileCardMessageComponent = ({
                                       file_approval_Request_id,
                                       getApprovalStatus,
                                       sender_id,
-                                      direction,
                                       updatedApprovalRequest,
                                       onDeleteMessage
                                   }: IProps) => {
     const [status, setStatus] = useState<EFileStatus>(EFileStatus.PENDING);
-    const {successColor, errorColor, primaryColor, grayColor, secondColor} = useGomakeTheme();
+    const {primaryColor, secondColor, errorColor} = useGomakeTheme();
+    const [openImageModal, setOpenImageModal] = useState<boolean>(false);
+    const [isMobile] = useRecoilState(messengerMobileViewState);
 
     const downloadFile = async () => {
         try {
@@ -79,19 +84,30 @@ const FileCardMessageComponent = ({
 
     return <Stack sx={{
         width: 165,
-        height: '240px',
         position: 'relative',
         border: 0
     }}>
         <CardMedia
             component="img"
-            style={{borderRadius: '10px'}}
+            style={{borderRadius: '10px', cursor: 'pointer'}}
             height={"165px"}
             image={attachments[0].imageUrl}
             alt=""
+            onClick={() => setOpenImageModal(isMobile)}
         />
-            <IconButton style={{position: 'absolute', top: 5, right: 5, padding: '5px', color: '#FFF', borderRadius: '4px', backgroundColor: 'rgba(256,256,256,0.3)'}}
-                    onClick={()=> onDeleteMessage(_id)}><DeleteOutlineOutlinedIcon/></IconButton>
+        {
+            isCurrentUserSentMsg &&
+            <IconButton style={{
+                position: 'absolute',
+                top: 5,
+                right: 5,
+                padding: '5px',
+                color: errorColor(500),
+                borderRadius: '4px',
+                backgroundColor: '#FFF'
+            }}
+                        onClick={() => onDeleteMessage(_id)}><DeleteOutlineOutlinedIcon/></IconButton>
+        }
         <Stack gap={'5px'}
                style={{position: 'absolute', top: '40%', left: '-20px', right: '-20px', border: 0, display: 'static'}}>
             <Button variant={'contained'} style={{backgroundColor: '#00AEEF'}}
@@ -111,6 +127,15 @@ const FileCardMessageComponent = ({
                     </Stack> : <FileStatusNameComponent status={status}/>)
             }
         </Stack>
+        <GoMakeModal insideStyle={{width: '90%'}} openModal={openImageModal} onClose={() => setOpenImageModal(false)}>
+            <CardMedia
+                component="img"
+                style={{borderRadius: '10px'}}
+                height={"100%"}
+                image={attachments[0].imageUrl}
+                alt=""
+            />
+        </GoMakeModal>
     </Stack>
 }
 

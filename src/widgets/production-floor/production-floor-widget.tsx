@@ -1,61 +1,132 @@
-import {IconButton, Stack} from "@mui/material";
-import {ProductionFloorFilters} from "@/widgets/production-floor/filters/production-floor-filters";
-import {ProductionFloorHeader} from "@/widgets/production-floor/header/production-floor-header";
-import {useRecoilState} from "recoil";
-import {EProductionFloorView, productionFloorViewState} from "@/widgets/production-floor/state/production-floor-view";
-import {useEffect, useState} from "react";
-import {GroupsTable} from "@/widgets/production-floor/views/groups-view/groups-table";
-import {useRouter} from "next/router";
+import { IconButton, Stack } from "@mui/material";
+import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
+import { useRecoilState } from "recoil";
 import {
-    ProductionFloorBoardMissionsViews
-} from "@/widgets/production-floor/views/boards-view/production-floor-board-missions-views";
+  EProductionFloorView,
+  productionFloorViewState,
+} from "@/widgets/production-floor/state/production-floor-view";
+import { useEffect } from "react";
+import { GroupsTable } from "@/widgets/production-floor/views/groups-view/groups-table";
+import { useRouter } from "next/router";
+import { ProductionFloorBoardMissionsViews } from "@/widgets/production-floor/views/boards-view/production-floor-board-missions-views";
 import Drawer from "@mui/material/Drawer";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
-import {BoardMissionsComponent} from "@/widgets/production-floor/views/board-missions-view/board-missions-component";
-import {DashboardWidget} from "@/widgets/dashboard-widget";
-import {FilesUploaderWidget} from "@/widgets/file-uploader-widget/files-uploader-widget";
+import { BoardMissionsComponent } from "@/widgets/production-floor/views/board-missions-view/board-missions-component";
+import { DashboardWidget } from "@/widgets/dashboard-widget";
+import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-uploader-widget";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
+import { useProductionFloorSignalr } from "@/hooks/signalr/use-production-floor-signalr";
+import { ProductionFloorFilters } from "./filters/production-floor-filters";
+import { useProductionFloorData } from "./use-production-floor-data";
 
 const ProductionFloorWidget = () => {
-    const [view, setView] = useRecoilState(productionFloorViewState);
-    const [openBoardMissionsDrawer, setOpenBoardMissionsDarawer] = useState<boolean>(false);
-    const {query, replace, pathname} = useRouter();
-    const {groupsId, boardMissionsId, step, productType} = query;
+  const [view, setView] = useRecoilState(productionFloorViewState);
+  const { query, replace, pathname, push } = useRouter();
+  const { connectionId, closeConnection } = useProductionFloorSignalr();
+  const { groupsId, boardMissionsId, step, productType } = query;
 
-    useEffect(() => {
-        setOpenBoardMissionsDarawer(!!boardMissionsId)
-        if (!!boardMissionsId && !step) {
-            replace({ pathname: pathname, query: {...query, step: 'stations'}}, undefined, { shallow: true }).then();
-        }
-        if (!!groupsId) {
-            setView(EProductionFloorView.GROUPS);
-        }
+  const {
+    filterGroups,
+    setFilterGroups,
+    getStationFilterGroups,
+    updateStatus,
+  } = useProductionFloorData();
 
-    }, [groupsId, boardMissionsId, step]);
+  useEffect(() => {
+    getStationFilterGroups();
+  }, []);
 
-    return <Stack padding={'0 20px'} gap={'10px'} height={'100%'} maxHeight={'100%'} overflow={'hidden'}>
-        <ProductionFloorHeader/>
-        {view !== EProductionFloorView.DASHBOARD && <ProductionFloorFilters/>}
-        <Stack overflow={'auto'} maxHeight={'100%'}>
+  useEffect(() => {
+    if (!!boardMissionsId && !step) {
+      replace(
+        { pathname: pathname, query: { ...query, step: "stations" } },
+        undefined,
+        { shallow: true }
+      ).then();
+    }
+    if (!!groupsId) {
+      setView(EProductionFloorView.GROUPS);
+    }
+  }, [groupsId, boardMissionsId, step]);
 
-            {
-                view === EProductionFloorView.DASHBOARD ? <DashboardWidget/> : view === EProductionFloorView.GROUPS ? <GroupsTable/> : <ProductionFloorBoardMissionsViews/>
-            }
-        <QrListenerWidget listening={!boardMissionsId}/>
+  useEffect(() => {
+    return () => {
+      closeConnection();
+    };
+  }, []);
+
+  return (
+    <Stack
+      padding={"0 20px"}
+      gap={"10px"}
+      height={"100%"}
+      maxHeight={"100%"}
+      overflow={"hidden"}
+    >
+      <ProductionFloorHeader
+        filterGroups={filterGroups}
+        setFilterGroups={setFilterGroups}
+      />
+      {view !== EProductionFloorView.DASHBOARD && (
+        <ProductionFloorFilters
+          filterGroups={filterGroups}
+          getStationFilterGroups={getStationFilterGroups}
+        />
+      )}
+      <Stack overflow={"auto"} maxHeight={"100%"}>
+        {view === EProductionFloorView.DASHBOARD ? (
+          <DashboardWidget />
+        ) : view === EProductionFloorView.GROUPS ? (
+          <GroupsTable />
+        ) : (
+          <ProductionFloorBoardMissionsViews connectionId={connectionId} />
+        )}
+        <QrListenerWidget listening={!boardMissionsId} />
+      </Stack>
+      {/* here */}
+      <Drawer
+        sx={{ zIndex: 999999 }}
+        open={!!boardMissionsId}
+        anchor={"bottom"}
+        onClose={() => {
+          push("/production-floor", undefined, { shallow: true });
+        }}
+      >
+        <Stack
+          paddingBottom={"10px"}
+          width={"100vw"}
+          height={"calc(100vh - 50px)"}
+        >
+          <IconButton
+            onClick={() => {
+              push("/production-floor", undefined, { shallow: true });
+            }}
+            sx={{
+              width: "fit-content",
+              height: "fit-content",
+              padding: 1,
+              color: "white",
+              position: "fixed",
+              top: 10,
+              right: 10,
+            }}
+          >
+            <ClearRoundedIcon width={48} height={48} />
+          </IconButton>
+          {!!boardMissionsId && (
+            <BoardMissionsComponent
+              connectionId={connectionId}
+              productType={!!productType ? productType.toString() : ""}
+              step={step?.toString()}
+              boardMissionsId={boardMissionsId?.toString()}
+            />
+          )}
         </Stack>
-        <Drawer sx={{zIndex: 999999}} open={openBoardMissionsDrawer} anchor={'bottom'}>
-            <Stack paddingBottom={'10px'} width={'100vw'} height={'calc(100vh - 50px)'}>
-                <IconButton onClick={() => {
-                    replace('/production-floor', undefined, {shallow: true}).then();
-                }} sx={{width: 'fit-content', height: 'fit-content', padding: 1, color: 'white', position: 'fixed', top: 10, right: 10}}>
-                    <ClearRoundedIcon width={48} height={48}/>
-                </IconButton>
-                {openBoardMissionsDrawer && <BoardMissionsComponent productType={!!productType ? productType.toString() : ''} step={step?.toString()} boardMissionsId={boardMissionsId?.toString()}/>}
-            </Stack>
-            <FilesUploaderWidget/>
-            <QrListenerWidget listening={!!boardMissionsId}/>
-        </Drawer>
+        <FilesUploaderWidget />
+        <QrListenerWidget listening={!!boardMissionsId} />
+      </Drawer>
     </Stack>
-}
+  );
+};
 
-export {ProductionFloorWidget}
+export { ProductionFloorWidget };

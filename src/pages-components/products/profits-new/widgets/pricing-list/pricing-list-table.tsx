@@ -45,7 +45,7 @@ const PricingListTable = ({
   selectedAdditionalProfitRow,
 }: PricingListTableProps) => {
   const { t } = useTranslation();
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
   const onClickOpenDeleteRowModal = () => {
     setOpenDeleteRowModal(true);
@@ -64,14 +64,14 @@ const PricingListTable = ({
       >
         <Table stickyHeader={true}>
           <TableHead>
-            <TableRow style={clasess.tableRowStyle}>
+            <TableRow style={classes.tableRowStyle}>
               {tableHeaders.map((header, index) => (
                 <PrimaryTableCell
                   key={index}
                   style={
                     header === "Total price"
-                      ? clasess.tableHeaderStyle2
-                      : clasess.tableHeaderStyle
+                      ? classes.tableHeaderStyle2
+                      : classes.tableHeaderStyle
                   }
                 >
                   {header}
@@ -80,8 +80,7 @@ const PricingListTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {
-              tableBodyList &&
+            {tableBodyList &&
               tableBodyList?.map((item: any, index: number) => {
                 return (
                   <RowMappingWidget
@@ -100,7 +99,7 @@ const PricingListTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      <div style={clasess.addNewQuantity} onClick={() => onOpenAddStepModal()}>
+      <div style={classes.addNewQuantity} onClick={() => onOpenAddStepModal()}>
         <Plus />
         {t("products.profits.pricingListWidget.addNewStep")}
       </div>

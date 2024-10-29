@@ -2,9 +2,8 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = () => {
+const useStyle = ({isRTL}) => {
   const { grayColor, secondColor , theme} = useGomakeTheme();
-
   const classes = useMemo(() => {
     return {
       businessContainerStyle: {
@@ -15,11 +14,13 @@ const useStyle = () => {
         width: "100%",
         gap: 24,
         marginBottom: 14,
+        flexWrap: "wrap" as "wrap"
       },
-      plusStyle:{
-        color:secondColor(500),
-        marginLeft:-23,
-        ...FONT_FAMILY.Lexend(400,20),
+      plusStyle: {
+        color: secondColor(500),
+        marginLeft: isRTL ? "0" : "-23px",
+        marginRight: isRTL ? "-23px" : "0",
+        ...FONT_FAMILY.Lexend(400, 20),
         cursor: "pointer"
 
       },

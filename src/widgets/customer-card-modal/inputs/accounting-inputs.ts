@@ -1,4 +1,4 @@
-import { DebitLimitTypes, EnumTermsPayment, EnumVATStatus } from "@/enums/accounting-enums";
+import { DebitLimitTypes, EnumInvoiceClosureMethod, EnumTermsPayment, EnumVATStatus } from "@/enums/accounting-enums";
 
 const accountingInputs = (state, isSupplier,t) => {
 
@@ -46,6 +46,17 @@ const accountingInputs = (state, isSupplier,t) => {
         text: t(`accounting.${DebitLimitTypes[value]}`) 
     }));
 
+    const invoiceClosureMethodList: { value: boolean; text: string }[] = [
+        {
+            value: false,
+            text: t(`accounting.${EnumInvoiceClosureMethod[EnumInvoiceClosureMethod.accounting]}`) 
+        },
+        {
+            value: true,
+            text: t(`accounting.${EnumInvoiceClosureMethod[EnumInvoiceClosureMethod.internalAndAccounting]}`) 
+        }
+    ];
+
     return [
         {
             name: "PaymentTerms",
@@ -88,6 +99,17 @@ const accountingInputs = (state, isSupplier,t) => {
             parameterKey: "deductedAtSource",
             options: [],
              value: state?.deductedAtSource,
+            isValid: true,
+        },
+        {
+            name: "invoiceClosureMethod",
+            label: "accounting.invoiceClosureMethod",
+            type: "select",
+            placeholder: "accounting.invoiceClosureMethod",
+            required: false,
+            parameterKey: "isOptionalClosingOrder",
+            options: invoiceClosureMethodList,
+            value: state?.isOptionalClosingOrder,
             isValid: true,
         },
         {

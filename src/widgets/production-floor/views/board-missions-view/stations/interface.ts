@@ -17,6 +17,12 @@ export interface IBoardMissionsStation {
     source: EWorkSource;
     index: number;
     id: string;
+    isEditable: boolean;
+    isNeedEmployee?:boolean,
+    isNeedMachine?:boolean,
+    isNeedMaterial?:boolean,
+    productType?: string | null;
+    subActions?:any
 }
 
 export interface IBoardMissionsStationTimer {

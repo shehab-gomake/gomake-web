@@ -6,12 +6,14 @@ import {useRecoilState} from "recoil";
 import {isUpdateDialogsState, unreadMessagesCountState} from "@/store/unread-messages-count";
 import {getUserUnreadMessagesCountApi} from "@/services/api-service/chat/quick-blox-chat-endpoints";
 import {useGomakeAxios} from "@/hooks";
+import {systemNotificationsState} from "@/store/system-notifications";
 
 const useMessengerSignalr = () => {
     const [, setUnreadMessages] = useRecoilState(unreadMessagesCountState);
+    const [, setNotifications] = useRecoilState(systemNotificationsState);
     const {callApi} = useGomakeAxios();
     const [updateState, setUpdateState] = useRecoilState<boolean>(isUpdateDialogsState);
-    const {connection} = useGoMakeSignalr<any[]>({
+    const {connection, closeConnection} = useGoMakeSignalr<any[]>({
         url: config.erp_server + '/hubs/messenger',
         accessToken: getUserToken(),
         methodName: ""
@@ -25,11 +27,14 @@ const useMessengerSignalr = () => {
                         setUnreadMessages(res.data?.total);
                     }
                 }).then()
+            });
+            connection.on('SendNotification', (newNotification) => {
+              setNotifications(prev => [...prev, newNotification]);
             })
         }
     }, [connection])
     return {
-        updateState, setUpdateState
+        updateState, setUpdateState, closeConnection
     }
 }
 

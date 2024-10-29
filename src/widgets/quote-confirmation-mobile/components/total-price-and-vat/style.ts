@@ -15,6 +15,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         width: "70%",
         marginTop: "10px",
+        marginBottom: "10px",
         borderRadius: "8px"
       },
       tableHeader: {

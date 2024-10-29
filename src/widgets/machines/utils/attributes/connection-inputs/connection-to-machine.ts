@@ -7,7 +7,7 @@ const connectionToMachine = (state: Record<string, any>, parameterKey: string, c
             name: `machineAttributes.${label}`,
             parameterKey: parameterKey,
             isValid: true,
-            value: state[parameterKey],
+            value: state.attributes[parameterKey],
             inputs: [
                 {
                     name: "",

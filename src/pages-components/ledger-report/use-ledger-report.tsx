@@ -1,20 +1,31 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { format } from 'date-fns';
-import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
+import { format } from "date-fns";
+import { useCustomerDropDownList, useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { endOfToday, startOfYear } from "date-fns";
+import { ERPDocumentsTypesEnum } from "@/enums";
+import { getAndSetClientContacts } from "@/services/hooks";
 
-const useLedgerReport = () => {
+const useLedgerReport = ({ customerId }: any) => {
   const { alertFaultGetData, alertSuccessGetData, alertFault, alertSuccess } = useSnackBar();
   const { callApi } = useGomakeAxios();
-  const { t } = useTranslation()
-  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange, getAllClientContacts, clientContactsValue } = useCustomerDropDownList()
+  const { t } = useTranslation();
+  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange, isFetching } = useCustomerDropDownList();
+  const [clientContactsValue, setClientContactsValue] = useState<any>([]);
 
+  const getAllClientContacts = useCallback(async () => {
+    await getAndSetClientContacts(callApi, setClientContactsValue, {
+      ClientId: customerId ? customerId : customer?.id,
+    });
+  }, [customer, customerId]);
+
+  const { navigate } = useGomakeRouter();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [isExtended, setIsExtended] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>(new Date());
-  const [toDate, setToDate] = useState<Date>(new Date());
+  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [isopenEmailModal, setIsOpenEmailModal] = useState<boolean>(false);
@@ -23,20 +34,19 @@ const useLedgerReport = () => {
   const [clientPaymentsList, setClientPaymentsList] = useState<any>([]);
 
   const onClickCloseCreateTransactionModal = () => {
-    setIsCreateTransactionModal(false)
+    setIsCreateTransactionModal(false);
   };
   const onClickOpenCreateTransactionModal = () => {
-    setIsCreateTransactionModal(true)
+    setIsCreateTransactionModal(true);
   };
 
   const onClickCloseEmailModal = () => {
     setIsOpenEmailModal(false);
   };
   const onClickOpenEmailModal = () => {
-    if (customer?.id) {
+    if (customer?.id || customerId) {
       setIsOpenEmailModal(true);
-    }
-    else {
+    } else {
       alertFault("reports.pleaseSelectCustomer");
     }
   };
@@ -44,10 +54,9 @@ const useLedgerReport = () => {
     setIsOpenAdjustmentsModal(false);
   };
   const onClickOpenAdjustmentsModal = () => {
-    if (customer?.id) {
+    if (customer?.id || customerId) {
       setIsOpenAdjustmentsModal(true);
-    }
-    else {
+    } else {
       alertFault("reports.pleaseSelectCustomer");
     }
   };
@@ -65,20 +74,53 @@ const useLedgerReport = () => {
   );
   const getTableDataRows = useCallback(() => {
     if (dataTable?.length) {
-      return dataTable?.map((data) => [
-        data?.docDate?.split("T")[0],
-        data?.dueDate?.split("T")[0],
-        data?.accountName,
-        data?.docNumber,
-        data?.accountCode,
-        data?.remarks,
-        data?.transNumber,
-        data?.credit.toFixed(2),
-        data?.debit.toFixed(2),
-        data?.balance.toFixed(2),
-      ]);
-    }
+      return dataTable?.map((data) => {
+        let documentPath;
 
+        // Determine documentPath based on docType
+        switch (data?.docType) {
+          case ERPDocumentsTypesEnum.invoice:
+            documentPath = "invoices";
+            break;
+          case ERPDocumentsTypesEnum.invoiceRefund:
+            documentPath = "invoiceRefunds";
+            break;
+          case ERPDocumentsTypesEnum.receipt:
+            documentPath = "receipts";
+            break;
+          case ERPDocumentsTypesEnum.journalEntry:
+            documentPath = "receipts";
+            break;
+          default:
+            documentPath = null; // or you can use an empty string ''
+        }
+        return [
+          data?.docDate?.split("T")[0],
+          data?.dueDate?.split("T")[0],
+          data?.accountName,
+          documentPath ? (
+            <a
+              style={{
+                cursor: "pointer",
+                color: "inherit",
+                textDecoration: "unset",
+              }}
+              href={`/${documentPath}?documentNumber=${data?.docNumber}`}
+            >
+              {data?.docNumber}
+            </a>
+          ) : (
+            <span>{data?.docNumber}</span>
+          ),
+          data?.accountCode,
+          data?.remarks,
+          data?.transNumber,
+          data?.debit.toFixed(2),
+          data?.credit.toFixed(2),
+          data?.balance.toFixed(2),
+        ];
+      });
+    }
   }, [dataTable]);
 
   const tableHeaders = [
@@ -89,8 +131,8 @@ const useLedgerReport = () => {
     t("reports.AccountCode"),
     t("reports.details"),
     t("reports.TransNumber"),
-    t("reports.credit"),
     t("reports.debit"),
+    t("reports.credit"),
     t("reports.balance"),
   ];
   const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
@@ -99,157 +141,147 @@ const useLedgerReport = () => {
     setToDate(toDate);
   };
   const onChangeIsExtended = () => {
-    setIsExtended(!isExtended)
-  }
+    setIsExtended(!isExtended);
+  };
   const onClickCreateNewTransaction = () => {
-    onClickOpenCreateTransactionModal()
-  }
+    onClickOpenCreateTransactionModal();
+  };
   const onClickSendingTicketByEmail = () => {
-    onClickOpenEmailModal()
-  }
+    onClickOpenEmailModal();
+  };
   const onClickPrintCard = () => {
-    ExportLedgerReportPDF()
-  }
+    ExportLedgerReportPDF();
+  };
   const onClickAdjustments = () => {
-    onClickOpenAdjustmentsModal()
-  }
+    onClickOpenAdjustmentsModal();
+  };
   const onClickShowCard = () => {
-    if (customer?.id) {
+    if (customer?.id || customerId) {
       setShowTable(false);
-      getAgingReportFilter()
-    }
-    else {
+      getAgingReportFilter();
+    } else {
       alertFault("reports.pleaseSelectCustomer");
     }
-  }
-  const ExportLedgerReportPDF = useCallback(
-    async () => {
-      if (!fromDate || !toDate) {
-        alertFault(("alerts.pleaseEnsureDatesSelected"))
-        return;
-      }
-
-      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
-      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/reports/export-ledger-report-pdf`,
-        {
-          "clientId": customer?.id,
-          "startDate": formattedStartDate,
-          "endDate": formattedEndDate,
-          "isExtended": isExtended
-        },
-        true,
-        null,
-        "blob"
-      );
-
-
-      const downloadLink = document.createElement('a');
-      const link = URL?.createObjectURL(res.data);
-      downloadLink.href = link
-      downloadLink.download = `aging report.pdf`;
-      downloadLink.click();
-    },
-    [fromDate, toDate, customer, isExtended]
-  );
-
-  const getAgingReportFilter = useCallback(
-    async () => {
-      if (!fromDate || !toDate) {
-        alertFault(("alerts.pleaseEnsureDatesSelected"))
-        return;
-      }
-      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
-      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
-
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/reports/get-customer-ledger-report`,
-        {
-          startDate: formattedStartDate,
-          endDate: formattedEndDate,
-          clientId: customer?.id,
-          isExtended: isExtended
-        }
-      );
-      if (res?.success) {
-        setDataTable(res.data?.data?.data)
-        alertSuccessGetData();
-        setShowTable(true)
-      } else {
-        alertFaultGetData();
-        setShowTable(false)
-      }
-    },
-    [fromDate, toDate, isExtended, customer]
-  );
-
-  const getClientPaymentItems = useCallback(
-    async () => {
-      const res = await callApi(
-        EHttpMethod.GET,
-        `/v1/erp-service/receipts/get-client-payment-items`,
-        {
-          clientId: customer?.id,
-        }
-      );
-      if (res?.success) {
-        let data = res.data?.data?.data
-        if (data?.length > 0) {
-          const newData = data?.map(item => ({ ...item, fixedPrice: item.price }));
-          setClientPaymentsList(newData);
-          alertSuccessGetData();
-        }
-
-      } else {
-        alertFaultGetData();
-      }
-    },
-    [customer]
-  );
-  useEffect(() => {
-    if (customer?.id && isopenAdjustmentsModal) {
-      getClientPaymentItems()
+  };
+  const ExportLedgerReportPDF = useCallback(async () => {
+    if (!fromDate || !toDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
     }
-  }, [customer, isopenAdjustmentsModal])
+
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/export-ledger-report-pdf`,
+      {
+        clientId: customerId ? customerId : customer?.id,
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        isExtended: isExtended,
+      },
+      true,
+      null
+    );
+    const pdfLink = res?.data?.data?.data;
+    downloadPdf(pdfLink);
+  }, [fromDate, toDate, customer, isExtended, customerId]);
+  const downloadPdf = (url) => {
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.target = "_blank";
+    anchor.addEventListener("click", () => {
+      setTimeout(() => {
+        anchor.remove();
+      }, 100);
+    });
+    anchor.click();
+  };
+  const getAgingReportFilter = useCallback(async () => {
+    if (!fromDate || !toDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+    const res = await callApi(EHttpMethod.POST, `/v1/erp-service/reports/get-customer-ledger-report`, {
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+      clientId: customerId ? customerId : customer?.id,
+      isExtended: isExtended,
+    });
+    if (res?.success) {
+      setDataTable(res.data?.data?.data);
+      alertSuccessGetData();
+      setShowTable(true);
+    } else {
+      alertFaultGetData();
+      setShowTable(false);
+    }
+  }, [fromDate, toDate, isExtended, customer, customerId]);
+
+  const getClientPaymentItems = useCallback(async () => {
+    const res = await callApi(EHttpMethod.GET, `/v1/erp-service/receipts/get-client-payment-items`, {
+      clientId: customerId ? customerId : customer?.id,
+    });
+    if (res?.success) {
+      let data = res.data?.data?.data;
+      if (data?.length > 0) {
+        const newData = data?.map((item) => ({
+          ...item,
+          fixedPrice: item?.totalPrice?.toFixed(2) ?? item?.price?.toFixed(2),
+        }));
+        setClientPaymentsList(newData);
+        alertSuccessGetData();
+      }
+    } else {
+      alertFaultGetData();
+    }
+  }, [customer, customerId]);
+  useEffect(() => {
+    if ((customer?.id || customerId) && isopenAdjustmentsModal) {
+      getClientPaymentItems();
+    }
+  }, [customer, isopenAdjustmentsModal, customerId]);
 
   useEffect(() => {
-    if (customer?.id) {
+    if (customer?.id || customerId) {
       getAllClientContacts();
     }
-  }, [customer]);
+  }, [customer, customerId]);
 
-  const SendCustomerLedgerToMailApi = useCallback(
-    async () => {
-      if (!fromDate || !toDate) {
-        alertFault(("alerts.pleaseEnsureDatesSelected"))
-        return;
-      }
-      const formattedStartDate = format(fromDate, 'yyyy-MM-dd');
-      const formattedEndDate = format(toDate, 'yyyy-MM-dd');
-      
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/reports/send-customer-ledger-to-mail`,
-        {
-          clientId: customer?.id,
-          startDate: formattedStartDate,
-          endDate: formattedEndDate,
-          isExtended: isExtended,
-          mail: selectedContactById?.mail
-        }
-      );
-      if (res?.success) {
-        alertSuccess("reports.sendEmailSuccess")
-        onClickCloseEmailModal()
-      } else {
-        alertFault("reports.sendEmailFailed");
-      }
-    },
-    [fromDate, toDate, isExtended, customer, selectedContactById]
-  );
+  const SendCustomerLedgerToMailApi = useCallback(async () => {
+    if (!fromDate || !toDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+    const res = await callApi(EHttpMethod.POST, `/v1/erp-service/reports/send-customer-ledger-to-mail`, {
+      clientId: customerId ? customerId : customer?.id,
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+      isExtended: isExtended,
+      mail: selectedContactById?.mail,
+    });
+    if (res?.success) {
+      alertSuccess("reports.sendEmailSuccess");
+      onClickCloseEmailModal();
+    } else {
+      alertFault("reports.sendEmailFailed");
+    }
+  }, [fromDate, toDate, isExtended, customer, selectedContactById]);
+  const handleDateChange = (value) => {
+    if (value && value.length === 2) {
+      setFromDate(value[0]);
+      setToDate(value[1]);
+    } else {
+      setFromDate(null);
+      setToDate(null);
+    }
+  };
 
   return {
     t,
@@ -282,7 +314,12 @@ const useLedgerReport = () => {
     selectedContactById,
     isopenAdjustmentsModal,
     clientPaymentsList,
-
+    setClientPaymentsList,
+    handleDateChange,
+    fromDate,
+    toDate,
+    customerId,
+    isFetching,
   };
 };
 

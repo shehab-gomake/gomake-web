@@ -2,6 +2,7 @@ import React from "react";
 import { GoMakeMenu } from "@/components";
 import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const SendBtnMenu = ({
   handleClose,
@@ -9,7 +10,10 @@ const SendBtnMenu = ({
   anchorEl,
   onClickSendQuoteToClient,
   onClickOpenWhatsAppModal,
-  documentState
+  documentState,
+  setIsWhatsAppWeb,
+  documentType,
+  onClickSendReceiptToClient
 }) => {
   const { t } = useTranslation();
 
@@ -19,11 +23,22 @@ const SendBtnMenu = ({
       open={open}
       anchorEl={anchorEl}
       style={{ marginTop: -45 }}
+      sx={{
+        "& .MuiPaper-root": {
+          border: "1px solid #cbcbe4",
+          borderRadius: "8px",
+        },
+      }}
     >
       {documentState.isSendMails && (
         <MenuItem
           onClick={() => {
-            onClickSendQuoteToClient(0);
+            if (documentType === DOCUMENT_TYPE.receipt) {
+              onClickSendReceiptToClient(0)
+            }
+            else {
+              onClickSendQuoteToClient(0);
+            }
             handleClose();
           }}
         >
@@ -33,7 +48,12 @@ const SendBtnMenu = ({
       {documentState.isSendSMS && (
         <MenuItem
           onClick={() => {
-            onClickSendQuoteToClient(1);
+            if (documentType === DOCUMENT_TYPE.receipt) {
+              onClickSendReceiptToClient(1)
+            }
+            else {
+              onClickSendQuoteToClient(1);
+            }
             handleClose();
           }}
         >
@@ -42,10 +62,11 @@ const SendBtnMenu = ({
       )}
       {documentState.isSendWhatsapp && (
         <MenuItem
-        // onClick={() => {
-        //   onClickOpenWhatsAppModal();
-        //   handleClose();
-        // }}
+          onClick={() => {
+            onClickOpenWhatsAppModal();
+            setIsWhatsAppWeb(false);
+            handleClose();
+          }}
         >
           {t("sales.quote.whatsApp")}
         </MenuItem>
@@ -54,6 +75,7 @@ const SendBtnMenu = ({
         <MenuItem
           onClick={() => {
             onClickOpenWhatsAppModal();
+            setIsWhatsAppWeb(true);
             handleClose();
           }}
         >

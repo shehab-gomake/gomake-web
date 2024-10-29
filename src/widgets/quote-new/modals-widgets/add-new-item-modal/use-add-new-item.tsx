@@ -27,39 +27,51 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
       if (res?.success) {
         const transformProducts = (products) => {
           return {
-            key: 'products',
-            label: t('tabs.products'),
+            value: 'products',
+            selectable:false,
+            title: t('tabs.products'),
+            text: t('tabs.products'),
             level: 0,
             children: products.map(product => ({
-              key: product.id, // Using product id as the key
-              label: product.name, // Using product name as the label
-              category: ProductCategoryType.PRODUCT,
-              code: product.code
+              value: product.id, // Using product id as the key
+              title: product.name, // Using product name as the label,
+              text: product.name,
+              code: product.code,
+              level: 1,
+              category: ProductCategoryType.PRODUCT
             }))
           };
         };
         const transformMaterials = (materials) => {
           return {
-            key: 'materials',
-            label: t('tabs.materials'),
+            value: 'materials',
+            title: t('tabs.materials'),
+            text: t('tabs.materials'),
             level: 0,
+            selectable:false,
             children: materials.map(material => ({
-              key: material.materialTypeName, // Using materialTypeName as the key
-              label: material.materialTypeName, // Using materialTypeName as the label
+              value: material.materialTypeName,
+              title: material.materialTypeName,
+              text: material.materialTypeName,
+              level: 1, // Material Types are level 1
+              selectable:false,
               children: material.categories.map(category => ({
-                key: `${material.materialTypeName}-${category.categoryName}`, // Generate a unique key
-                label: category.categoryName, // Using categoryName as the label
+                value: `${material.materialTypeName}-${category.categoryName}`,
+                title: category.categoryName,
+                text: category.categoryName,
+                selectable:false,
+                level: 2, // Categories are level 2
                 children: category.rows.map(row => ({
-                  key: row.id, // Using row id as the key
-                  label: row.value, // Using row value as the label,
-                  category: ProductCategoryType.MATERIAL,
-                  // Ensure category is present
+                  value: row.id,
+                  title: row.value,
+                  text: row.value,
+                  level: 3, // Rows are level 3
+                  category: ProductCategoryType.MATERIAL
                 }))
               }))
             }))
           };
         };
-
 
         const transformedProducts = transformProducts(res?.data?.products);
         const transformedMaterials = transformMaterials((res?.data?.materials));
@@ -77,10 +89,10 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
 
 
   const handleProductChange = (e) => {
-    const selectedValue = e?.value;
+    const selectedValue = e;
     const findNodeByKey = (key, nodes) => {
       for (const node of nodes) {
-        if (node.key === key) {
+        if (node.value === key) {
           return node;
         }
         if (node.children) {
@@ -93,9 +105,10 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
       return null;
     };
 
+
     const selectedNode = findNodeByKey(selectedValue, combinedData);
     if (selectedNode && !selectedNode.children) {
-      setSelectedProduct({ id: selectedValue, category: selectedNode?.category, name: selectedNode?.label, code: selectedNode?.code });
+      setSelectedProduct({ id: selectedValue, category: selectedNode?.category, name: selectedNode?.text, code: selectedNode?.code });
     } else {
       setSelectedProduct(null);
     }
@@ -260,7 +273,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
           addDocumentItemFromMaterial()
         }
         else navigate(
-          `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId}&customerId=${quoteItemValue?.customerID}&productId=${selectedProduct?.id}&documentType=${documentType}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
+          `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId}&customerId=${quoteItemValue?.customerID}&customerName=${quoteItemValue?.client?.name}&productId=${selectedProduct?.id}&documentType=${documentType}${quoteItemValue?.number ? `&documentNumber=${quoteItemValue?.number}` : ""}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
         );
       }
     }

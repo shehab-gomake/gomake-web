@@ -1,79 +1,160 @@
-import {useDrag} from 'react-dnd';
-import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missions";
-import {Stack} from "@mui/material";
-import { DateFormatter} from "@/utils/adapter";
-import {LabelComponent} from "@/widgets/production-floor/label-component/label-component";
-import {useStyle} from "@/widgets/production-floor/kanban-view/kanban-card/style";
-import { useUserPermission } from '@/hooks/use-permission';
+import { useDrag } from "react-dnd";
+import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
+import { Popover, Stack } from "@mui/material";
+import { DateFormatter } from "@/utils/adapter";
+import { useStyle } from "@/widgets/production-floor/kanban-view/kanban-card/style";
+import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { t } from 'i18next';
+import { OrderJObNumbersComponent } from "./order-job-num-coponent";
+import { toRgba } from "@/utils/helpers";
+import { ChangeColorMenu } from "./change-color-menu";
+import { useKanbanCard } from "./use-kanban-card";
+import { SketchPicker } from "react-color";
+import { useRef } from "react";
 
 interface IProp {
-    board: IBoardMissions
-} 
-
-const ItemTypes = {
-    TASK: 'task',
-};
-
-const KanbanCardComponent = ({board}: IProp) => {
-
-    const {classes} = useStyle();
-    const { CheckPermission } = useUserPermission();
-    const canDrag = CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR); 
-
-    const [{ isDragging }, drag] = useDrag(() => ({
-        type: ItemTypes.TASK,
-        item: board,
-        canDrag: canDrag,
-        collect: (monitor) => ({
-            isDragging: !!monitor.isDragging(),
-        }),
-    }), [canDrag]);
-
-
-    return (
-        <Stack
-            direction={'column'}
-            gap={'10px'}
-            padding={'10px'}
-            borderRadius={'12px'}
-            width={'100%'}
-            maxHeight={'fit-content'}
-            ref={canDrag ? drag : null}
-            style={{
-                opacity: isDragging ? 0.8 : 1,
-                backgroundColor: 'white',
-                cursor: canDrag ? 'move' : 'not-allowed',
-            }}
-        >
-            <div>
-                <table style={{borderSpacing: '5px',}}>
-                    <tbody>
-                    <tr>
-                        <td><span style={classes.jobTitle}>{board.jobName || t("productionFloor.jobTitle")}</span></td>
-                        <td><LabelComponent label={board.productName}/></td>
-                    </tr>
-                    <tr>
-                        <td><span style={classes.secondLabel}>{`${t("productionFloor.workOrder")} :`}</span></td>
-                        <td><span style={classes.primaryLabel}>{board.workOrder || board.boardMissionNumber}</span></td>
-                    </tr>
-                    <tr>
-                        <td><span style={classes.secondLabel}>{`${t("productionFloor.machine")} :`}</span></td>
-                        <td><span
-                            style={classes.primaryLabel}>{board.currentStation.machineName || board.currentStation.actionName}</span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <Stack direction={'row'} justifyContent={'space-between'}>
-                <Stack direction={'row'} gap={'2px'}>{board.automatedTags.map(tag => <span
-                    style={classes.primaryLabel}>{tag}</span>)}</Stack>
-                <span style={classes.primaryLabel}>{DateFormatter(board?.dueDate)}</span>
-            </Stack>
-        </Stack>
-    );
+  board: IBoardMissions;
+  status?: any;
 }
 
-export {KanbanCardComponent};
+const ItemTypes = {
+  TASK: "task",
+};
+
+const KanbanCardComponent = ({ board }: IProp) => {
+  const { classes } = useStyle();
+  const { CheckPermission } = useUserPermission();
+  const colorPickerRef = useRef<HTMLDivElement>(null);
+  const {
+    t,
+    dir,
+    isRTL,
+    contextMenuPosition,
+    handleContextMenu,
+    handleCloseContextMenu,
+    handleOpenMission,
+    contextMenuOptions,
+    handleColorChange,
+    color,
+    showColorPicker,
+    handleColorPickerClose,
+  } = useKanbanCard(board);
+
+  const canDrag = CheckPermission(
+    Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
+  );
+
+  const [{ isDragging }, drag] = useDrag(
+    () => ({
+      type: ItemTypes.TASK,
+      item: board,
+      canDrag: canDrag,
+      collect: (monitor) => ({
+        isDragging: !!monitor.isDragging(),
+      }),
+    }),
+    [canDrag]
+  );
+
+  return (
+    <Stack
+      direction={"column"}
+      gap={"15px"}
+      padding={"10px"}
+      borderRadius={"12px"}
+      width={"100%"}
+      maxHeight={"fit-content"}
+      ref={canDrag ? drag : null}
+      style={{
+        opacity: isDragging ? 0.8 : 1,
+        cursor: isDragging ? "grabbing" : "pointer",
+        borderRadius: "8px",
+        border: `1px solid var(--Colors-Yellow-600,${color})`,
+        background: toRgba(color, 0.1),
+        boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.08)",
+      }}
+      onClick={handleOpenMission}
+      onContextMenu={handleContextMenu}
+    >
+      <Stack
+        direction={"row"}
+        justifyContent={"space-between"}
+        display={"flex"}
+        flexWrap={"wrap"}
+      >
+        <span style={classes.jobTitle}>
+          {board.jobName || t("boardMissions.jobName")}
+        </span>
+        <OrderJObNumbersComponent
+          boardMission={board}
+          textColor={color}
+          bgColor={toRgba(color, 0.2)}
+        />
+      </Stack>
+      <Stack>
+        <Stack direction={"row"} justifyContent={"space-between"} gap={"5px"}>
+          <span style={classes.productTitle}>{board?.productName}</span>
+          <span style={classes.productTitle}>{board?.clientName}</span>
+        </Stack>
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          display={"flex"}
+          flexWrap={"wrap"}
+        >
+          <span style={classes.secondLabel}>
+            {`${board?.numberOfJobsInOrder} ${t(
+              "boardMissions.numberOfBoardMissionsInOrder"
+            )}`}
+          </span>
+          <span style={classes.secondLabel}>
+            {DateFormatter(board?.dueDate)}
+          </span>
+        </Stack>
+      </Stack>
+      {contextMenuPosition && (
+        <ChangeColorMenu
+          options={contextMenuOptions}
+          position={contextMenuPosition}
+          onClose={handleCloseContextMenu}
+          dir={dir}
+          colorPickerRef={colorPickerRef}
+        />
+      )}
+      <Popover
+        key={`popover-${board?.id}`}
+        open={showColorPicker}
+        onClose={handleColorPickerClose}
+        anchorReference="anchorPosition"
+        anchorPosition={{
+          top:
+            showColorPicker && contextMenuPosition
+              ? contextMenuPosition?.y
+              : undefined,
+          left:
+            showColorPicker && contextMenuPosition
+              ? contextMenuPosition?.x
+              : undefined,
+        }}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: isRTL ? "right" : "center",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: isRTL ? "right" : "center",
+        }}
+      >
+        <div ref={colorPickerRef}>
+          <SketchPicker
+            key={`SketchPicker-${board?.id}`}
+            color={color}
+            onChange={handleColorChange}
+          />
+        </div>
+      </Popover>
+    </Stack>
+  );
+};
+
+export { KanbanCardComponent };

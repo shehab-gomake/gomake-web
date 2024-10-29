@@ -3,7 +3,7 @@ import { Checkbox, TableRow } from "@mui/material";
 import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { CharacterDetails } from "../../quote-table/character-details";
+import { CharacterDetails } from "../../quote-table/row-details/character-details";
 
 const RowMappingWidget = ({
   item,
@@ -11,7 +11,7 @@ const RowMappingWidget = ({
   columnWidths,
   parentIndex,
   handleItemSelect,
-  isSelected
+  isSelected,
 }) => {
   const handleCheckboxChange = () => {
     handleItemSelect(item);
@@ -76,7 +76,11 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <CharacterDetails details={item.details} documentItemId={item?.id} canUpdate={false} />
+        <CharacterDetails
+          details={item.details}
+          documentItemId={item?.id}
+          canUpdate={false}
+        />
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -85,9 +89,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <div style={classes.cellTextInputStyle}>
-          {item.quantity}
-        </div>
+        <div style={classes.cellTextInputStyle}>{item.quantity}</div>
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -107,9 +109,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <div style={classes.cellTextInputStyle}>
-          {item.price}
-        </div>
+        <div style={classes.cellTextInputStyle}>{item.price}</div>
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -118,9 +118,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        <div style={classes.cellTextInputStyle}>
-          {item.finalPrice}
-        </div>
+        <div style={classes.cellTextInputStyle}>{item.finalPrice}</div>
       </PrimaryTableCell>
     </TableRow>
   );

@@ -4,7 +4,7 @@ import {boardsMissionsState} from "@/widgets/production-floor/state/boards";
 const useProductionFloorTable = () => {
     const data = useRecoilValue(boardsMissionsState);
 
-    return{
+    return {
         data
     }
 }

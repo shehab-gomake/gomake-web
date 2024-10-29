@@ -2,6 +2,8 @@ import { GoMakeAutoComplate } from "@/components";
 import { SettingsIcon } from "@/icons/settings";
 import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
+import { useEffect, useState } from "react";
+import {EParameterTypes} from "@/enums";
 
 // Custom tooltip component for long text options
 const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -45,46 +47,63 @@ const DropDownListParameterWidget = ({
   setDeviceSize,
   multiParameterModal
 }: any) => {
-  const defaultObject = parameter.valuesConfigs.find(
-    (item) => item.isDefault === true
+  const [selectedValue, setSelectedValue] = useState(
+    index !== -1 ? { updateName: temp[index].values } : parameter.valuesConfigs.find(item => item.isDefault)
   );
+
+  useEffect(() => {
+    // If the parameter changes, update the selectedValue accordingly
+    setSelectedValue(
+      index !== -1 && temp[index]?.values
+        ? { updateName: temp[index].values }
+        : null
+    );
+  }, [index, temp]);
+
+  const handleValueChange = (e, value) => {
+    setSelectedValue(value); // Update the selected value in state
+
+    // Handle category or size changes
+    if (parameter?.code === "devicecategory") {
+      setDeviceCategory(value?.id);
+    } else if (parameter?.code === "devicesize") {
+      setDeviceSize(value?.id);
+    }
+    let valueId = null;
+    if(parameter?.parameterType == EParameterTypes.MACHINES_SELECT){
+      valueId = value?.updateName;
+    }
+    else{
+      valueId = value?.id;
+    }
+    // Update the subProducts for pricing
+    onChangeSubProductsForPrice(
+      parameter?.id,
+      subSection?.id,
+      section?.id,
+      parameter?.parameterType,
+      parameter?.name,
+      parameter?.actionId,
+      value ? { valueIds: valueId, values: value?.updateName } : { valueIds: null, values: null }, // Handle cleared state
+      subSection?.type,
+      index,
+      parameter?.actionIndex,
+      parameter?.code
+    );
+  };
+
   return (
 
-    <div data-tour={parameter?.id} style={clasess.dropDownListWithSettingIcon}>
+    <div data-tour={parameter?.id} style={parameter?.setSettingIcon && inModal ? { ...clasess.dropDownListWithSettingIcon, minWidth: '250px' } : clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
         options={parameter?.valuesConfigs?.filter(value => {
           return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
         })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
-        key={multiParameterModal && parameter?.code === "PrintingColors" ? parameter?.valuesConfigs + temp[index]?.values : parameter?.valuesConfigs}
         placeholder={parameter.name}
         style={clasess.dropDownListStyle}
-        getOptionLabel={(option: any) => option.updateName}
-        defaultValue={
-          index !== -1 ? { updateName: temp[index].values } : defaultObject
-        }
-        disabled={parameter?.isLock ? parameter?.isLock : false}
-        onChange={(e: any, value: any) => {
-
-          if (parameter?.code === "devicecategory") {
-            setDeviceCategory(value?.id)
-          }
-          else if (parameter?.code === "devicesize") {
-            setDeviceSize(value?.id)
-          }
-          onChangeSubProductsForPrice(
-            parameter?.id,
-            subSection?.id,
-            section?.id,
-            parameter?.parameterType,
-            parameter?.name,
-            parameter?.actionId,
-            { valueIds: value?.id, values: value?.updateName },
-            subSection?.type,
-            index,
-            parameter?.actionIndex,
-            parameter?.code
-          );
-        }}
+        getOptionLabel={(option) => option.updateName}
+        value={selectedValue} // Controlled value, reflecting the current state
+        onChange={handleValueChange}
         renderOption={(props, option) => (
           <li {...props}>
             {getLabelWithTooltip(option.updateName)}

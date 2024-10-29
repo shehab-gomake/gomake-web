@@ -56,7 +56,7 @@ const useUploadFiles = (orderItemId, filesPath) => {
         formData.append("signalRConnectId", connectionId);
 
         try {
-            const response = await fetch(companyProfile.filesApiAddress + '/api/Files/UploadOrderItemFile', {
+            const response = await fetch( companyProfile.filesApiAddress + '/api/Files/UploadOrderItemFile', {
                 method: 'POST',
                 body: formData,
                 headers: {

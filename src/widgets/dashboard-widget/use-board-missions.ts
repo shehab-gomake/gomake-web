@@ -13,15 +13,22 @@ const useBoardMissions = () => {
     const [dashboardColumns, setDashboardColumns] = useState<IDashboardColumns[]>([])
     const [statistics, setStatistics] = useState<IDashboardStatistic>();
     const selectedAgents = useRecoilValue(selectedAgentsState);
+    const [abortController, setAbortController] = useState(null);
+
 
     const {callApi} = useGomakeAxios();
 
     const getBoardsMissionsByDateRange = async (dateRange: IDateRange) => {
+        if (abortController) {
+            abortController.abort();
+        }
+        const newRequestAbortController = new AbortController();
+        setAbortController(newRequestAbortController);
         const res = await callApi("POST", '/v1/erp-service/board-missions/get-board-missions-for-dashboard', {
             startDate: dateRange?.startDate?.toISOString(),
             endDate: dateRange?.endDate?.toISOString(),
             agents: selectedAgents,
-        },true);
+        },true, newRequestAbortController);
         if(res?.success){
         setBoardsMissions(res?.data?.data?.data?.boardsMissions);
         setMachinesProgress(res?.data?.data?.data?.machinesProgress);
@@ -31,9 +38,14 @@ const useBoardMissions = () => {
     };
 
     const getLateBoardsMissions = async () => {
+        if (abortController) {
+            abortController.abort();
+        }
+        const newRequestAbortController = new AbortController();
+        setAbortController(newRequestAbortController);
         const res = await callApi("POST", '/v1/erp-service/board-missions/get-board-missions-for-dashboard', {
             isLate:true
-        },true);
+        },true, newRequestAbortController);
         if(res?.success){
         setBoardsMissions(res?.data?.data?.data?.boardsMissions);
         setMachinesProgress(res?.data?.data?.data?.machinesProgress);
@@ -44,12 +56,17 @@ const useBoardMissions = () => {
 
 
     const getLateTodayBoardsMissions = async () => {
+        if (abortController) {
+            abortController.abort();
+        }
+        const newRequestAbortController = new AbortController();
+        setAbortController(newRequestAbortController);
         const res = await callApi("POST", '/v1/erp-service/board-missions/get-board-missions-for-dashboard', {
             startDate: TODAY_DATE_RANGE.startDate?.toISOString(),
             endDate: TODAY_DATE_RANGE.endDate?.toISOString(),
             agents: selectedAgents,
             isLate:true
-        },true);
+        },true, newRequestAbortController);
         if(res?.success){
         setBoardsMissions(res?.data?.data?.data?.boardsMissions);
         setMachinesProgress(res?.data?.data?.data?.machinesProgress);
@@ -58,7 +75,12 @@ const useBoardMissions = () => {
         }
     }
     const getAllBoardsMissions = async () => {
-        const res = await callApi("POST", '/v1/erp-service/board-missions/get-board-missions-for-dashboard', {}, true);
+        if (abortController) {
+            abortController.abort();
+        }
+        const newRequestAbortController = new AbortController();
+        setAbortController(newRequestAbortController);
+        const res = await callApi("POST", '/v1/erp-service/board-missions/get-board-missions-for-dashboard', {}, true, newRequestAbortController);
         setBoardsMissions(res?.data?.data?.data?.boardsMissions);
         setMachinesProgress(res?.data?.data?.data?.machinesProgress);
         setDashboardColumns(res?.data?.data?.data?.dashboardColumns);
@@ -133,7 +155,9 @@ const useBoardMissions = () => {
         boardsMissions,
         getLateTodayBoardsMissions,
         getAllBoardsMissions,
-        dashboardColumns
+        dashboardColumns,
+        setBoardsMissions,
+        setStatistics
     }
 }
 

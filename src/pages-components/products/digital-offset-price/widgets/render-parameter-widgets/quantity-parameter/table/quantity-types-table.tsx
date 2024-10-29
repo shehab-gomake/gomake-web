@@ -24,9 +24,9 @@ interface RowProps {
 const Row = memo(({ index, style, data }: RowProps) => {
   const { values, onQuantityTypeChange } = data;
   const value = values[index];
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const dir: 'rtl' | 'ltr' = t('direction');
-
+  const isRTL = i18n.dir() === 'rtl';
   const handleNameChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       onQuantityTypeChange(index, "name", event.target.value);
@@ -44,22 +44,45 @@ const Row = memo(({ index, style, data }: RowProps) => {
   return (
     <div style={style} key={index}>
       <TableRow>
-        <TableCell>
-          <GomakeTextInput
-            onChange={handleNameChange}
-            style={{ height: "40px", width: "160px" }}
-            value={value.name}
-            direction={dir}
-          />
-        </TableCell>
-        <TableCell style={{ textAlign: "center" }}>
-          <GomakeTextInput
-            onChange={handleQuantityChange}
-            style={{ height: "40px", width: "160px" }}
-            value={value.quantity}
-            direction={dir}
-          />
-        </TableCell>
+        {isRTL ? (
+          <>
+            <TableCell style={{ textAlign: "center" }}>
+              <GomakeTextInput
+                onChange={handleQuantityChange}
+                style={{ height: "40px", width: "160px" }}
+                value={value.quantity}
+                direction={dir}
+              />
+            </TableCell>
+            <TableCell>
+              <GomakeTextInput
+                onChange={handleNameChange}
+                style={{ height: "40px", width: "160px" }}
+                value={value.name}
+                direction={dir}
+              />
+            </TableCell>
+          </>
+        ) : (
+          <>
+            <TableCell>
+              <GomakeTextInput
+                onChange={handleNameChange}
+                style={{ height: "40px", width: "160px" }}
+                value={value.name}
+                direction={dir}
+              />
+            </TableCell>
+            <TableCell style={{ textAlign: "center" }}>
+              <GomakeTextInput
+                onChange={handleQuantityChange}
+                style={{ height: "40px", width: "160px" }}
+                value={value.quantity}
+                direction={dir}
+              />
+            </TableCell>
+          </>
+        )}
       </TableRow>
     </div>
   );
@@ -69,7 +92,6 @@ const QuantityTypesTable = ({ save }: IQuantityTypesTableProps) => {
   const { values, onQuantityTypeChange } = useQuantityTypesTable(save);
   const { t, i18n } = useTranslation();
   const isRTL = i18n.dir() === 'rtl';
-
   const itemData = {
     values,
     onQuantityTypeChange,
@@ -80,6 +102,7 @@ const QuantityTypesTable = ({ save }: IQuantityTypesTableProps) => {
       <TableBody>
         <List
           height={295} // Ensure this is a number
+          width={390} // Add the width property
           itemCount={values.length}
           itemSize={70}
           itemData={itemData} // Pass data explicitly to avoid unnecessary re-renders
@@ -96,12 +119,27 @@ const QuantityTypesTable = ({ save }: IQuantityTypesTableProps) => {
         <Table stickyHeader={true}>
           <TableHead>
             <TableRow>
-              <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "center", width: "50%" }}>
-                {isRTL ? t("quantityTypes.quantity") : t("quantityTypes.typeName")}
-              </TableCell>
-              <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "center", width: "50%" }}>
-                {isRTL ? t("quantityTypes.typeName") : t("quantityTypes.quantity")}
-              </TableCell>
+              {isRTL ? (
+                <>
+                  <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "center", width: "50%" }}>
+                    {t("quantityTypes.typeName")} {/* Show type name second in RTL */}
+                  </TableCell>
+                  <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "center", width: "50%" }}>
+                    {t("quantityTypes.quantity")} {/* Show quantity first in RTL */}
+                  </TableCell>
+
+                </>
+              ) : (
+                <>
+                  <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "center", width: "50%" }}>
+                    {t("quantityTypes.typeName")} {/* Show type name first in LTR */}
+                  </TableCell>
+                  <TableCell style={{ backgroundColor: "#EAECF0", textAlign: "center", width: "50%" }}>
+                    {t("quantityTypes.quantity")} {/* Show quantity second in LTR */}
+                  </TableCell>
+
+                </>
+              )}
             </TableRow>
           </TableHead>
         </Table>

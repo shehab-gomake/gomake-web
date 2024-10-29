@@ -12,6 +12,7 @@ const useGomakeMachines = () => {
     const setMachines = useSetRecoilState(machinesListState);
     const [employeesList,setEmployeesList] =useState([])
     const {employeesCategories}= useEmployeeList()
+
     const getMachinesList = async () => {
         const callBack = (res) => {
             if (res.success) {
@@ -71,12 +72,12 @@ const useGomakeMachines = () => {
         }));
     }
     const checkAllMachines = () => {
-        const isChecked = machines.every(machine => machine.checked);
+        const isChecked = machines?.every(machine => machine.checked);
         const updatedMachines = machines.map(machine => ({...machine, checked: !isChecked}));
         setMachines(updatedMachines);
     }
 
-    return {getMachinesList, getCheckedMachines, setMachineChecked, machines, addMachineProgress, checkAllMachines,addEmployeeProgress,employeesList};
+    return {getMachinesList, getCheckedMachines, setMachineChecked, machines, addMachineProgress, checkAllMachines,addEmployeeProgress,employeesList, setMachines};
 }
 
 export {useGomakeMachines};

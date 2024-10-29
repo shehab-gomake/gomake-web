@@ -4,7 +4,6 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { styled } from "@mui/material";
 
 const StyledTextField = styled(TextField, {
-
   shouldForwardProp: (propName: any) =>
     propName !== "secondColor" &&
     propName !== "primaryColor" &&
@@ -14,7 +13,7 @@ const StyledTextField = styled(TextField, {
   input: {
     boxSizing: "border-box",
     borderRadius: props?.style?.borderRadius || 4,
-    height: 56,
+    height: props?.style?.height || 56,
     fontFamily: "Heebo",
     fontStyle: "normal",
     fontWeight: 500,
@@ -32,7 +31,6 @@ const StyledTextField = styled(TextField, {
     direction: props.direction,
     ...props.style,
   },
-
   "& .MuiOutlinedInput-root": {
     "&:hover fieldset": {
       border: props.error
@@ -61,7 +59,7 @@ const StyledTextField = styled(TextField, {
     fontWeight: 500,
   },
 }));
- 
+
 const GomakeTextInput = ({
   value,
   onChange,
@@ -81,7 +79,8 @@ const GomakeTextInput = ({
   onFocus,
   id,
   helperText,
-  direction
+  direction,
+  sx,
 }: {
   labelText?: string;
   value?: any;
@@ -101,8 +100,9 @@ const GomakeTextInput = ({
   onClick?: any;
   onFocus?: any;
   id?: any;
-  helperText?:string;
-  direction?:any;
+  helperText?: string;
+  direction?: any;
+  sx?: any;
 }) => {
   const { primaryColor, secondColor, errorColor } = useGomakeTheme();
 
@@ -120,10 +120,12 @@ const GomakeTextInput = ({
 
   return (
     <StyledTextField
+      autoComplete="off"
       autoFocus={autoFocus}
       value={value}
       onChange={handleChange}
       style={style}
+      sx={sx}
       error={error}
       type={type}
       disabled={disabled}

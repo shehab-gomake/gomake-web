@@ -10,27 +10,45 @@ import { hoverStatusState } from "@/store";
 import LockIcon from "@mui/icons-material/Lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 const LeftSideLayout = (customGap) => {
   const { t } = useTranslation();
-  const { tabs1, tabs2, tabs3 } = useAuthLayoutHook();
+  const router = useRouter();
+  const { tabs1, tabs2, tabs3 } = useAuthLayoutHook(null, true);
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
   const { CheckPermission } = useUserPermission();
   const { classes } = useStyle({ navStatus, customGap });
-  const [myProfileLogo, setMyProfileLogo] = useState("")
+  const [myProfileLogo, setMyProfileLogo] = useState("");
 
   useEffect(() => {
-    setMyProfileLogo(localStorage.getItem("systemLogo"))
-  }, [])
+    setMyProfileLogo(localStorage.getItem("systemLogo"));
+  }, []);
+
+  // useEffect(() => {
+  //   const isHover = localStorage.getItem("isHover");
+  //   if (isHover && isHover == "true") {
+  //     setIsHover(true);
+  //     setNavStatus({ isClosed: false });
+  //   }
+  // }, []);
 
   useEffect(() => {
     const isHover = localStorage.getItem("isHover");
-    if (isHover && isHover == "true") {
+    const currentURL = window.location.href;
+
+    const isTargetURL = currentURL.includes("goautomation.");
+
+    if (isTargetURL) {
+      setIsHover(true);
+      setNavStatus({ isClosed: false });
+    } else if (isHover && isHover === "true") {
       setIsHover(true);
       setNavStatus({ isClosed: false });
     }
-  }, []);
+  }, [router.asPath]);
 
   const checkTabPermissions = (tab) => {
     if (tab.isList && tab.list) {
@@ -43,12 +61,11 @@ const LeftSideLayout = (customGap) => {
         }
       }
       return false;
-    }
-    else if (tab.Permission && !CheckPermission(tab.Permission)) {
+    } else if (tab.Permission && !CheckPermission(tab.Permission)) {
       return false;
     }
     return true;
-  }
+  };
 
   return (
     <div
@@ -82,17 +99,20 @@ const LeftSideLayout = (customGap) => {
           <LockIcon style={{ color: "#FFF", width: 20, height: 20 }} />
         </div>
       )}
-      <div style={classes.logoContainer}>
-        {myProfileLogo &&
-          <Image
-            src={myProfileLogo}
-            alt="logo"
-            style={{ objectFit: 'contain' }}
-            width={80}
-            height={80}
-          />
-        }
-      </div>
+      <Link href="/" passHref>
+        <div style={classes.logoContainer}>
+          {myProfileLogo && (
+            <Image
+              src={myProfileLogo}
+              alt="logo"
+              style={{ objectFit: "contain" }}
+              width={80}
+              height={80}
+            />
+          )}
+        </div>
+      </Link>
+
       {/* <div style={classes.logoContainer}>
         <Image
           src={
@@ -114,7 +134,11 @@ const LeftSideLayout = (customGap) => {
               </div>
             );
           } else if (checkTabPermissions(tab)) {
-            return <div data-tour={`${tab?.tourData}`}><Tab key={tab.key} tab={tab} customGap={customGap} /></div>;
+            return (
+              <div data-tour={`${tab?.tourData}`}>
+                <Tab key={tab.key} tab={tab} customGap={customGap} />
+              </div>
+            );
           }
         })}
       </div>
@@ -139,7 +163,11 @@ const LeftSideLayout = (customGap) => {
                 </div>
               );
             } else if (checkTabPermissions(tab)) {
-              return <div data-tour={`${tab?.tourData}`}><Tab key={tab.key} tab={tab} /></div>;
+              return (
+                <div data-tour={`${tab?.tourData}`}>
+                  <Tab key={tab.key} tab={tab} />
+                </div>
+              );
             }
           })
         )}

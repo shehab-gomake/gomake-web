@@ -1,11 +1,12 @@
-import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, SecondSwitch } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton } from "@/components";
 
 import { useGalleryModal } from "./use-gallery-modal";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { RechooseIcon } from "@/icons";
+import { ReChooseIcon } from "@/icons";
 import { GalleryModalMapping } from "./gallery-modal-mapping";
+import { Skeleton } from "@mui/material";
 
 const GalleryModal = ({
   openModal,
@@ -16,7 +17,9 @@ const GalleryModal = ({
   straightKnife,
   isParameterSettings,
   getProductById,
-  template
+  template,
+  _renderParameterType,
+  _getParameter
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -32,7 +35,14 @@ const GalleryModal = ({
     searchResult,
     materialDataFilter,
     materialTableFilters,
-    setMaterialTableFilters
+    setMaterialTableFilters,
+    addChargeForNewDieParameter,
+    subSectionId,
+    sectionId,
+    value,
+    isLoading,
+    selectParameterButton,
+    setMaterialData
   } = useGalleryModal({
     onClose,
     onChangeSubProductsForPrice,
@@ -40,9 +50,9 @@ const GalleryModal = ({
     straightKnife,
     isParameterSettings,
     getProductById,
-    template
+    template,
+    _getParameter
   });
-
 
   return (
     <>
@@ -53,6 +63,7 @@ const GalleryModal = ({
         })}
         onClose={() => {
           setMaterialTableFilters([])
+          setMaterialData([])
           onClose()
 
         }}
@@ -64,7 +75,7 @@ const GalleryModal = ({
             style={{ cursor: "pointer" }}
             onClick={getProductQuoteItemById}
           >
-            <RechooseIcon />
+            <ReChooseIcon />
           </div>
 
 
@@ -94,6 +105,7 @@ const GalleryModal = ({
                     background: card.backgroundColor,
                   }}
                   onClick={card.onclick}
+                  onDoubleClick={card.onDoubleClick}
                 >
                   <div style={clasess.cardItemStyle}>
                     <div style={clasess.cardIconStyle}>{card.icon}</div>
@@ -102,46 +114,66 @@ const GalleryModal = ({
                 </div>
               );
             })}
+            <>
+              {isLoading && materialData?.length === 0 ? Array(11) // Adjust the number based on how many skeletons you want to show
+                .fill(null)
+                .map((_, index) => (
+                  <Skeleton height={375} width={250} variant="rectangular"
+                  />
+                )) : <>
+                {materialDataFilter
+                  ? searchResult?.map((item, index) => {
+                    return (
+                      <GalleryModalMapping
+                        index={index}
+                        item={item}
+                        selectedShape={selectedShape}
+                        createParameterForCalculation={
+                          createParameterForCalculation
+                        }
+                        onClickChoosParameter={onClickChoosParameter}
+                      />
+                    );
+                  })
+                  : materialData?.data?.map((item, index) => {
+                    return (
+                      <GalleryModalMapping
+                        index={index}
+                        item={item}
+                        selectedShape={selectedShape}
+                        createParameterForCalculation={
+                          createParameterForCalculation
+                        }
+                        onClickChoosParameter={onClickChoosParameter}
+                      />
+                    );
+                  })}
+              </>
+              }
+            </>
 
-            {materialDataFilter
-              ? searchResult?.map((item, index) => {
-                return (
-                  <GalleryModalMapping
-                    index={index}
-                    item={item}
-                    selectedShape={selectedShape}
-                    createParameterForCalculation={
-                      createParameterForCalculation
-                    }
-                  />
-                );
-              })
-              : materialData?.data?.map((item, index) => {
-                return (
-                  <GalleryModalMapping
-                    index={index}
-                    item={item}
-                    selectedShape={selectedShape}
-                    createParameterForCalculation={
-                      createParameterForCalculation
-                    }
-                  />
-                );
-              })}
           </div>
         </div>
         <div style={clasess.footerContainer}>
           <div style={clasess.switchContainer}>
-            <SecondSwitch
 
-              checked={isChargeForNewDie}
-              onChange={() => {
-                setIsChargeForNewDie(
-                  !isChargeForNewDie
-                );
-              }}
-            />
-            <div style={isChargeForNewDie ? clasess.switchlabelSelected : clasess.switchlabel}>Add a charge for new Die</div>
+            {
+              !isParameterSettings && selectParameterButton?.sectionId === sectionId?.section?.id && selectParameterButton?.subSectionId == subSectionId?.id && <>
+                {_renderParameterType(
+                  addChargeForNewDieParameter[0],
+                  subSectionId,
+                  sectionId?.section,
+                  subSectionId?.parameters,
+                  value,
+                  subSectionId?.parameters,
+                  true,
+                  true,
+                  false
+                )}
+              </>
+            }
+
+
           </div>
           <GomakePrimaryButton
             style={clasess.chooseBtnStyle}

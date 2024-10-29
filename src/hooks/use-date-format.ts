@@ -1,42 +1,65 @@
 import moment from "moment-timezone";
-import {useTranslation} from "react-i18next";
-
-
+import { useTranslation } from "react-i18next";
 
 const useDateFormat = () => {
-    const {t} = useTranslation();
-    const dir: "rtl" | "ltr" = t("direction");
-    
-    const GetDateFormat = (date: Date) => {
-      const utcDate = moment.utc(date,"DD-MM-YYYY h:mm");
-      let format = "YYYY-MM-DD HH:mm";
-      if(dir == "rtl"){
-          format = "HH:mm YYYY-MM-DD"
-      }
-      return utcDate.local().format(format);
-  }
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
 
+  const GetDateFormat = (date: Date) => {
+    const utcDate = moment.utc(date, "DD-MM-YYYY h:mm");
+    let format = "YYYY-MM-DD HH:mm";
+    if (dir == "rtl") {
+      format = "HH:mm YYYY-MM-DD";
+    }
+    return utcDate.local().format(format);
+  };
 
-      const GetShortDateFormat = (date : Date) => {
-        if (date) {
-        const formattedDate = new Date(date).toLocaleDateString('en-GB', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-          });
+  // Convert to UTC first, then to local time
+  const getFormattedLocalDate = (date: Date | string) => {
+    const localDate = moment.utc(date).local();
+    let format = "DD/MM/YYYY HH:mm";
 
-          return formattedDate
-        }
-        return "N/A";
-      };
+    if (dir === "rtl") {
+      format = "HH:mm YYYY-MM-DD";
+    }
+    return localDate.format(format);
+  };
 
-    return {
-        GetDateFormat,
-        GetShortDateFormat 
-    };
+  const GetShortDateFormat = (date: Date) => {
+    if (date) {
+      const formattedDate = new Date(date).toLocaleDateString("en-GB", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
+
+      return formattedDate;
+    }
+    return "N/A";
+  };
+
+  const GetDateWithoutHoursFormat = (date: Date) => {
+    if (date) {
+      const formattedDate = new Date(date).toLocaleDateString("en-GB", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+
+      return formattedDate;
+    }
+    return "N/A";
+  };
+
+  return {
+    GetDateFormat,
+    GetShortDateFormat,
+    GetDateWithoutHoursFormat,
+    getFormattedLocalDate,
+  };
 };
 
-export {useDateFormat};
+export { useDateFormat };

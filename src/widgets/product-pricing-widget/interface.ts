@@ -6,6 +6,7 @@ import {
   RuleType,
   UnitType,
 } from "@/widgets/product-pricing-widget/enums";
+import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
 
 export interface IPricingWidgetProps {
   jobDetails?: string;
@@ -13,7 +14,7 @@ export interface IPricingWidgetProps {
   workFlows: ICalculatedWorkFlow[];
   onSelectNewWorkFlow?: (id: string) => void;
   getOutSourcingSuppliers: () => void;
-  widgetType:string;
+  widgetType:EWidgetProductType;
 }
 
 export interface IPricingAction {
@@ -53,6 +54,7 @@ export interface ICalculatedWorkFlow {
   exceptions: any[];
   isCompleteWorkFlow:boolean;
   orginalBookPartId:string;
+  generalInformationProductionFloor?:any;
 }
 
 export interface IPrintActionType {
@@ -94,11 +96,13 @@ export interface IWorkFlowAction {
   isNeedEmployee?:boolean,
   isNeedMachine?:boolean,
   isNeedMaterial?:boolean,
+  isNeedFolds?:boolean,
+  foldOptionValueId?:string,
 }
 
 export interface IOutput {
   name: string;
-  values: string[];
+  values: any;
   id: string;
   unitType: UnitType;
   defaultUnit: string;

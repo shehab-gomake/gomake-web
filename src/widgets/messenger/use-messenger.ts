@@ -13,35 +13,43 @@ import {QBChatNewMessage} from "quickblox";
 import {useRouter} from "next/router";
 import {useMessengerSignalr} from "@/hooks/signalr/use-messenger-signalr";
 import {useMediaQuery} from "@mui/material";
+import {useRecoilState} from "recoil";
+import {unreadMessagesCountState} from "@/store/unread-messages-count";
+import {messengerMobileViewState} from "@/widgets/messenger/state";
 
 const useMessenger = () => {
     const [selectedDialog, setSelectedDialog] = useState<IChatDialog | null>(null);
     const [dialogs, setDialogs] = useState<IChatDialog[]>([]);
     const [messages, setMessages] = useState<IChatMessage[]>([]);
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setInputValue] = useState<string>('');
     const [uploadingFiles, setUploadingFiles] = useState<boolean>(false);
     const [updatedApprovalRequestId, setUpdatedApprovalRequestId] = useState<{ approvalRequestId: string, newStatus: EFileStatus }>();
     const [usersMetaData, setUsersMetaDta] = useState<IUserMetaData[]>([]);
     const {updateState, setUpdateState} = useMessengerSignalr();
     const {alertFaultUpdate} = useSnackBar();
-    const {query} = useRouter();
+    const {query, pathname, push} = useRouter();
     const {dialogId, clientId} = query;
     const mobileMediaQuery = useMediaQuery('(max-width:800px)');
+    const [, setUnreadMessagesCount] = useRecoilState(unreadMessagesCountState);
+    const [isMobile, setIsMobile] = useRecoilState(messengerMobileViewState);
 
-    const isMobile = useCallback(() => {
-      return  !!clientId && mobileMediaQuery
+
+    useEffect(() => {
+        setIsMobile(!!clientId && mobileMediaQuery);
     }, [clientId, mobileMediaQuery]);
 
-    const unreadMessages = useCallback(() => {
+
+    const getUnreadMessagesCount = (dialogs) => {
         return dialogs?.reduce((partialSum, dialog) => partialSum + dialog.unread_messages_count, 0);
-    }, [dialogs]);
+    }
 
     const files = useCallback(() => {
         return messages.filter(msg => !!msg.file_approval_Request_id);
     }, [messages]);
 
     const getUsersNames = useCallback(() => {
-        return usersMetaData?.filter(user => +user.userId !== messenger.sessionUser.userId)
+        return usersMetaData
+            ?.filter(user => +user.userId !== messenger.sessionUser.userId)
             .map(user => user.fullName)
     }, [usersMetaData]);
     const {callApi} = useGomakeAxios();
@@ -64,23 +72,34 @@ const useMessenger = () => {
     }
 
     const getDialogs = async () => {
-        const dialogs = await messenger.dialogs.getDialogs();
-        setDialogs(dialogs)
-
+        let dialogs = await messenger.dialogs.getDialogs();
+        dialogs = dialogs?.map(dialog => ({
+            ...dialog,
+            unread_messages_count: selectedDialog?._id === dialog._id ? 0 : dialog.unread_messages_count,
+            users: dialog?.occupants_ids?.map((userId, index) => ({
+                id: userId,
+                name: dialog?.data?.users?.length > 0 ? dialog?.data?.users[index] : ''
+            }))
+                ?.filter(user => user.id === messenger.sessionUser.userId)
+        }))
+        setDialogs(dialogs);
+        setUnreadMessagesCount(getUnreadMessagesCount(dialogs))
     }
 
     const onMessage = (userId, message) => {
+        getDialogs().then();
         if (message.dialog_id === selectedDialog?._id) {
             setMessages(prevState => ([
                 ...prevState,
                 {
                     ...message,
+                    _id: message.id,
                     sender_id: +message.extension?.sender_id,
                     attachments: message.extension?.attachments,
                     file_approval_Request_id: message.extension?.file_approval_Request_id,
                     quote_approval_Request_id: message.extension?.qoute_approval_Request_id,
                     message: message.body,
-                    date: new Date(message.date_sent * 1000),
+                    date_sent: +message?.extension.date_sent,
                 }
             ]))
         }
@@ -252,7 +271,7 @@ const useMessenger = () => {
             updatedStatus,
             messageId: 'message id',
             chatDialogId: selectedDialog._id,
-            SenderUserId: senderId,
+            senderUserId: senderId,
             documentType: type,
             token: messenger.sessionUser.password
         })
@@ -286,10 +305,15 @@ const useMessenger = () => {
 
         }
     }
+
+    const onSelectDialog = dialog => {
+        !!clientId ? push({pathname, query: {clientId, dialogId: dialog._id}}) :
+            push(`${pathname}?dialogId=${dialog._id}`).then();
+    }
+
     useEffect(() => {
         if (messenger.isChatConnected) {
             getDialogs().then();
-            messenger.listeners.onDialogUpdate((a) => alert(a))
         }
     }, [messenger.isChatConnected])
 
@@ -303,7 +327,7 @@ const useMessenger = () => {
                     //get users meta data
                     getUsersMetaDta(selectedDialog.occupants_ids?.map(id => id.toString())).then();
                     //get dialog messages
-                    getDialogMessages().then();
+                    getDialogMessages().then(() => getDialogs());
                     //add listeners
                     messenger.listeners.onMessage(onMessage);
                     messenger.listeners.onSystemMessage(onSystemMessage);
@@ -331,11 +355,15 @@ const useMessenger = () => {
     }, [usersMetaData, messages])
 
     useEffect(() => {
-        if (!!dialogId) {
+        if (!dialogId) {
+            setSelectedDialog(null);
+        } else if (!!dialogId && selectedDialog?._id !== dialogId) {
             const dialog = dialogs?.find(dialog => dialog._id === dialogId);
             setSelectedDialog(dialog);
         }
-    }, [dialogId, dialogs]);
+    }, [dialogId, dialogs, selectedDialog]);
+
+
     useEffect(() => {
         if (updateState && messenger.isChatConnected) {
             getDialogs().then();
@@ -343,12 +371,12 @@ const useMessenger = () => {
         }
     }, [updateState, messenger])
 
+
     return {
         selectedDialog,
         setSelectedDialog,
         dialogs,
         messages,
-        unreadMessages,
         updateApprovalFile: updateApprovalRequest,
         getApprovalFileStatus,
         sendApprovalFileMessage,
@@ -366,7 +394,12 @@ const useMessenger = () => {
         users: getUsersNames,
         sendFileMessage,
         deleteMessage,
-        isMobile
+        isMobile,
+        getDialogs,
+        onSelectDialog,
+        pathname,
+        push,
+        clientId,
     }
 }
 

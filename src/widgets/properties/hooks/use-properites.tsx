@@ -10,11 +10,15 @@ import { IconButton } from "@mui/material";
 import { MoreCircleIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import { getAndSetMachincesByActionId } from "@/services/hooks";
+import { EValueType } from "@/pages-components/products/profits-new/enums/profites-enum";
+import { useRecoilState } from "recoil";
+import { actionEmployeesState } from "@/store/action-employees-state";
 
 const useProperites = ({ classes }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const tableHeaders = [
+    "",
     t("properties.parameter"),
     t("properties.unit"),
     t("properties.rule"),
@@ -30,11 +34,14 @@ const useProperites = ({ classes }) => {
   const [term, setTerm] = useState("");
   const { Outputs } = useOutputs();
   const { parameters } = useParameters();
-  const [selectedProperties, setSelectedProperites] = useState();
+  const [selectedProperties, setSelectedProperites] = useState<any>();
   const [allProperties, setAllProperites] = useState([]);
   const [propertiesData, setProperitesData] = useState([]);
+  const [hiddenData, setHiddenData] = useState([]);
   const [propertiesDataSearched, setProperitesDataSearched] = useState([]);
   const [actionId, setActionId] = useState("");
+  const [actionEmployeeList, setActionEmployeeList] = useRecoilState<any>(actionEmployeesState)
+
   const { callApi } = useGomakeAxios();
   useEffect(() => {
     if (router.query.actionId) {
@@ -58,60 +65,81 @@ const useProperites = ({ classes }) => {
   useEffect(() => {
     getMachincesByActionId()
   }, [])
+  const getSuccessEvent = (property, rule) => {
+    if (property.ruleType === 1) {
+      const params = parameters.find(
+        (param) => param?.id === property?.propertyId
+      )?.values;
+      return params?.find((value) => value?.id === rule.successEvent)?.name
+    }
+    switch (property?.valueType) {
+      case EValueType.MATERIAL:
+        const params = parameters.find(
+          (param) => param?.id === property?.propertyId
+        )?.values;
+        return params?.find((value) => value?.id === rule.successEvent)?.name
+      case EValueType.MACHINE:
+        return allMachincesList?.machines?.find(
+          (item) => item?.machineId === rule.successEvent
+        )?.machineName
+      case EValueType.EMPLOYEE:
+        return actionEmployeeList.find(
+          (item) => item?.id === rule.successEvent
+        )?.label
+      default:
+        return rule.successEvent;
+    }
+  }
   useEffect(() => {
     const updatedProperties = updateProperties(
       allProperties,
       parameters,
       Outputs
     );
-    const mapData = updatedProperties?.map((property) => [
-      property.propertyName,
-      property.defaultUnit || "-",
-      <div style={classes.rowItem} className="scrollBlue">
-        {property.actionRules
-          ?.sort((a, b) => a.priority - b.priority)
-          ?.map((rule, index) => {
-            const successEvent =
-              property?.propertyId === "9e8115f2-1ae9-4350-986e-a089af9183be"
-                ? allMachincesList?.machines?.find(
-                  (item) => item?.machineId === rule.successEvent
-                )?.machineName
-                : property?.ruleType === 1
-                  ? (() => {
-                    const params = parameters.find(
-                      (param) => param?.id === property?.propertyId
-                    )?.values;
-                    const value = params?.find((value) => value?.id === rule.successEvent)?.name
-                    return value;
-                  })()
-                  : rule.successEvent;
-            return (
-              <div style={classes.item}>
-                {successEvent ? (
-                  <>
-                    {index + 1}- {rule.expression} value=
-                    {successEvent}
-                  </>
-                ) : (
-                  <>
-                    {index + 1}- {rule.expression}
-                  </>
-                )}
-              </div>
-            );
-          })}
-      </div>,
-      property.ruleType == 0 ? t("properties.output") : t("properties.input"),
-      <IconButton
-        onClick={(e) => {
-          handleClick(e);
-          setSelectedProperites(property);
-        }}
-      >
-        <MoreCircleIcon />
-      </IconButton>,
-    ]);
+    const mapData = updatedProperties?.map((property, index) =>
+      [
+        property.propertyName,
+        property.defaultUnit || "-",
+        <div style={classes.rowItem} className="scrollBlue">
+          {property.actionRules
+            ?.sort((a, b) => a.priority - b.priority)
+            ?.map((rule, index) => {
+              const successEvent = getSuccessEvent(property, rule)
+              return (
+                <div style={classes.item}>
+                  {successEvent ? (
+                    <>
+                      {index + 1}- {rule.expression} value=
+                      {successEvent}
+                    </>
+                  ) : (
+                    <>
+                      {index + 1}- {rule.expression}
+                    </>
+                  )}
+                </div>
+              );
+            })}
+        </div>,
+        property.ruleType == 0 ? t("properties.output") : t("properties.input"),
+        <IconButton
+          onClick={(e) => {
+            handleClick(e);
+            setSelectedProperites(property);
+          }}
+        >
+          <MoreCircleIcon />
+        </IconButton>,
+      ]
+    );
     setProperitesData(mapData);
+    const hiddenData = updatedProperties?.map((property, index) => ({
+      propertyId: property.propertyId,
+      ruleType: property.ruleType,
+      index: index
+    }));
+
+    setHiddenData(hiddenData);
   }, [parameters, Outputs, allProperties, allMachincesList]);
 
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
@@ -174,6 +202,57 @@ const useProperites = ({ classes }) => {
     []
   );
 
+
+  const reOrderPropertiesTables = useCallback(
+    async (data: any) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/printhouse-config/print-house-action/update-action-properties/${router.query.actionId}`,
+        {
+          data,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        getProperitesService();
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    []
+  );
+
+  const updateIsHiddenFromWorkFlow = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/print-house-action/toggle-is-hidden-from-work-flow/${router.query.actionId}/${selectedProperties?.ruleType}/${selectedProperties?.propertyId}`,
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+      getProperitesService();
+    } else {
+      alertFaultUpdate();
+    }
+  },
+    [selectedProperties]
+  );
+
+  const updateIsHiddenFromCalculation = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/print-house-action/toggle-is-hidden-from-calculation/${router.query.actionId}/${selectedProperties?.ruleType}/${selectedProperties?.propertyId}`,
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+      getProperitesService();
+    } else {
+      alertFaultUpdate();
+    }
+  },
+    [selectedProperties]
+  );
+
+
   function updateProperties(allProperties, inputs, outputs) {
     allProperties.forEach((property) => {
       if (property.ruleType === 0) {
@@ -234,6 +313,12 @@ const useProperites = ({ classes }) => {
     getProperitesService,
     deleteRule,
     reOrderPricingTables,
+    setProperitesData,
+    hiddenData,
+    setHiddenData,
+    reOrderPropertiesTables,
+    updateIsHiddenFromWorkFlow,
+    updateIsHiddenFromCalculation
   };
 };
 

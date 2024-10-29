@@ -20,12 +20,12 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        padding: "20px 0px",
+        marginTop:"10px",
         gap:10
       },
       btnContainer:{
         minWidth:"fit-content",
-        width:"240px",
+        width:"33%",
         height:40,
       },
       btnsContainer:{
@@ -33,7 +33,8 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent:"space-around",
         alignItems:"center",
-        width:"100%"
+        width:"100%",
+        gap:"10px"
       },
       totalPriceContainer:{ alignSelf: "flex-end", textAlign: "center"as "center",...FONT_FAMILY.Lexend(600,18), ...adaptPaddingLeft(direction, 20), }
     };

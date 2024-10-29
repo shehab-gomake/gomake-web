@@ -7,9 +7,10 @@ import {
   isAllMaterialsCheckedState,
   materialActionState,
   materialCategoryDataState,
+  materialCategorySuppliersState,
   materialHeadersState,
   materialsUnCheckedState,
-  openAddRowModalState, selectedMaterialIdForUpdateState,
+  openAddRowModalState, openCreatePurchaseOrderModalState, openUpdatedNumburingModalState, selectedMaterialIdForUpdateState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -89,6 +90,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const { setSnackbarStateValue } = useSnackBar();
   const { t } = useTranslation();
   const setOpenAddRowModal = useSetRecoilState<boolean>(openAddRowModalState);
+  const setOpenUpdatedNumburingModal = useSetRecoilState<boolean>(openUpdatedNumburingModalState);
+  const setOpenCreatePurchaseOrderModal = useSetRecoilState<boolean>(openCreatePurchaseOrderModalState);
+
   const [selectedMaterialsIds, setSelectedMaterialsIds] = useState([]);
 
   useEffect(() => {
@@ -120,6 +124,25 @@ const useMaterialsActions = (isAdmin: boolean) => {
       setOpenAddRowModal(true);
       return;
     }
+    if (action?.action === EMaterialsActions.sku) {
+      setOpenUpdatedNumburingModal(true);
+      return;
+    }
+    // if (action?.action === EMaterialsActions.CreatePurchaseOrder) {
+    //   if (selectedMaterialsIds.length === 0) {
+    //     setSnackbarStateValue({
+    //       state: true,
+    //       message: t("modal.noMaterialsSelected"),
+    //       type: "error",
+    //     });
+    //     return;
+    //   }
+    //   else {
+    //     setOpenCreatePurchaseOrderModal(true);
+    //     return;
+    //   }
+
+    // }
     if (action?.action === EMaterialsActions.DownLoadExcel) {
       downloadExcelFile().then();
       return;
@@ -181,6 +204,73 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const onInputChange = (key: string, v: any) => {
     setUpdatedValue(v);
   };
+  const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
+  const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
+
+  const [openUpdatedTableRowModal, setOpenUpdatedTableRowModal] = useState<boolean>(false);
+  const onClickCloseUpdatedTableRowModal = () => {
+    setOpenUpdatedTableRowModal(false);
+  };
+
+  const onClickOpenUpdatedTableRowModal = () => {
+    setOpenUpdatedTableRowModal(true);
+  };
+
+  const updateMaterials = async (action, callApi, onUpdateCallBack, {
+    materialType,
+    materialCategory,
+    isAllMaterialsChecked,
+    selectedMaterialsIds,
+    updatedValue,
+    uncheckedMaterials,
+    rate,
+    activeFilter,
+    materialFilter,
+    supplierId
+  }) => {
+    return await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
+      materialTypeKey: materialType.toString(),
+      categoryKey: materialCategory.toString(),
+      ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
+      action: action.action,
+      priceIndex: 0,
+      updatedValue,
+      isAllMaterialsChecked: isAllMaterialsChecked,
+      uncheckedMaterials: uncheckedMaterials,
+      tableFilters: {
+        materialKey: materialType,
+        categoryKey: materialCategory,
+        supplierId,
+        pageNumber: null,
+        pageSize: null,
+        isActive:
+          activeFilter === EMaterialActiveFilter.ACTIVE
+            ? true
+            : activeFilter === EMaterialActiveFilter.INACTIVE
+              ? false
+              : null,
+        customFiltersKeyValueList: materialFilter,
+      },
+      exchangeRate: rate,
+    });
+  };
+
+  const updatedTableRowModal = async () => {
+    await updateMaterials(action, callApi, onUpdateCallBack, {
+      materialType,
+      materialCategory,
+      isAllMaterialsChecked,
+      selectedMaterialsIds,
+      updatedValue,
+      uncheckedMaterials,
+      rate,
+      activeFilter,
+      materialFilter,
+      supplierId
+    });
+  }
+
+
 
   const onUpdate = async () => {
     if (action !== null) {
@@ -191,31 +281,21 @@ const useMaterialsActions = (isAdmin: boolean) => {
         else if (action.key === "CreatePurchaseOrder") {
           CreatePurchaseOrder().then();
         }
+        // else if (isHaveMorethanMaterialSuppliers) {
+        //   onClickOpenUpdatedTableRowModal()
+        // }
         else {
-          await updateMaterialsPropApi(callApi, onUpdateCallBack, {
-            materialTypeKey: materialType.toString(),
-            categoryKey: materialCategory.toString(),
-            ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
-            action: action.action,
+          await updateMaterials(action, callApi, onUpdateCallBack, {
+            materialType,
+            materialCategory,
+            isAllMaterialsChecked,
+            selectedMaterialsIds,
             updatedValue,
-            priceIndex: 0,
-            isAllMaterialsChecked: isAllMaterialsChecked,
-            uncheckedMaterials: uncheckedMaterials,
-            tableFilters: {
-              materialKey: materialType,
-              categoryKey: materialCategory,
-              supplierId: null,
-              pageNumber: null,
-              pageSize: null,
-              isActive:
-                activeFilter === EMaterialActiveFilter.ACTIVE
-                  ? true
-                  : activeFilter === EMaterialActiveFilter.INACTIVE
-                    ? false
-                    : null,
-              customFiltersKeyValueList: materialFilter,
-            },
-            exchangeRate: rate,
+            uncheckedMaterials,
+            rate,
+            activeFilter,
+            materialFilter,
+            supplierId: null
           });
         }
       } else {
@@ -225,31 +305,21 @@ const useMaterialsActions = (isAdmin: boolean) => {
         else if (action.key === "CreatePurchaseOrder") {
           CreatePurchaseOrder().then();
         }
+        else if (isHaveMorethanMaterialSuppliers) {
+          onClickOpenUpdatedTableRowModal()
+        }
         else {
-          await updatePrintHouseMaterialsPropApi(callApi, onUpdateCallBack, {
-            materialTypeKey: materialType.toString(),
-            categoryKey: materialCategory.toString(),
-            ids: isAllMaterialsChecked ? [] : selectedMaterialsIds,
-            action: action.action,
-            priceIndex: 0,
+          await updateMaterials(action, callApi, onUpdateCallBack, {
+            materialType,
+            materialCategory,
+            isAllMaterialsChecked,
+            selectedMaterialsIds,
             updatedValue,
-            isAllMaterialsChecked: isAllMaterialsChecked,
-            uncheckedMaterials: uncheckedMaterials,
-            tableFilters: {
-              materialKey: materialType,
-              categoryKey: materialCategory,
-              supplierId,
-              pageNumber: null,
-              pageSize: null,
-              isActive:
-                activeFilter === EMaterialActiveFilter.ACTIVE
-                  ? true
-                  : activeFilter === EMaterialActiveFilter.INACTIVE
-                    ? false
-                    : null,
-              customFiltersKeyValueList: materialFilter,
-            },
-            exchangeRate: rate,
+            uncheckedMaterials,
+            rate,
+            activeFilter,
+            materialFilter,
+            supplierId
           });
         }
       }
@@ -359,9 +429,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
         downloadLink.click();
       }
     };
-    if(isAdmin){
+    if (isAdmin) {
       await getMaterialExcelFileApi(callApi, callBack, materialType);
-    }else{
+    } else {
       await getPrintHouseMaterialExcelFileApi(callApi, callBack, materialType);
     }
   };
@@ -398,7 +468,8 @@ const useMaterialsActions = (isAdmin: boolean) => {
               : null,
         customFiltersKeyValueList: materialFilter,
       },
-      quantity: updatedValue,
+      quantity: null,
+      package: updatedValue,
       priceIndex: 0,
     });
   };
@@ -427,19 +498,19 @@ const useMaterialsActions = (isAdmin: boolean) => {
           });
 
         }
-        if(isAdmin){
+        if (isAdmin) {
           uploadMaterialExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
             base64: base64String,
           });
-        }else{
+        } else {
           uploadPrintHouseMaterialExcelFileApi(callApi, callBack, {
             key: materialType.toString(),
-            supplierId:supplierId,
+            supplierId: supplierId,
             base64: base64String,
           });
         }
-        
+
       };
       reader.readAsArrayBuffer(file);
     }
@@ -717,7 +788,10 @@ const useMaterialsActions = (isAdmin: boolean) => {
     deleteProperty,
     addProperty,
     updateModalCurrency,
-    CreatePurchaseOrder
+    CreatePurchaseOrder,
+    openUpdatedTableRowModal,
+    onClickCloseUpdatedTableRowModal,
+    updatedTableRowModal
   };
 };
 

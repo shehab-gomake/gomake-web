@@ -1,18 +1,34 @@
-import {IRowData} from "@/widgets/materials-widget/interface";
-import { useCallback, useState} from "react";
-import {useTableCellData} from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
-import {UpdateValueInput} from "@/components/text-input/update-value-input";
-import {PrimaryButton} from "@/components/button/primary-button";
-import {useStyle} from "@/widgets/materials-widget/style";
-import {DotsLoader} from "@/components/dots-loader/dots-Loader";
+import { IRowData } from "@/widgets/materials-widget/interface";
+import { useCallback, useState } from "react";
+import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
+import { UpdateValueInput } from "@/components/text-input/update-value-input";
+import { PrimaryButton } from "@/components/button/primary-button";
+import { useStyle } from "@/widgets/materials-widget/style";
+import { DotsLoader } from "@/components/dots-loader/dots-Loader";
+import { useRecoilValue } from "recoil";
+import { materialCategorySuppliersState } from "../../state";
+import { GoMakeDeleteModal } from "@/components";
+import { useTranslation } from "react-i18next";
 
 
-const NumberStringInput = ({value, isEditable, parameterKey, id,isAdmin}: IRowData) => {
-    const {classes} = useStyle();
+const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRowData) => {
+    const { classes } = useStyle();
+    const { t } = useTranslation();
     const [isUpdate, setIsUpdate] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [updateValue, setUpdateValue] = useState('');
-    const {updateCellData} = useTableCellData(isAdmin);
+    const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
+    const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
+
+    const [openDeleteTableRowModal, setOpenDeleteTableRowModal] = useState<boolean>(false);
+    const onClickCloseDeleteTableRowModal = () => {
+        setOpenDeleteTableRowModal(false);
+    };
+
+    const onClickOpenDeleteTableRowModal = () => {
+        setOpenDeleteTableRowModal(true);
+    };
+    const { updateCellData } = useTableCellData(isAdmin);
     const onClick = () => {
         if (isEditable) {
             setIsUpdate(true);
@@ -25,16 +41,21 @@ const NumberStringInput = ({value, isEditable, parameterKey, id,isAdmin}: IRowDa
 
     const onBlur = () => {
         if (updateValue !== value) {
-            setIsLoading(true)
-            updateCellData(id, parameterKey, updateValue).then(
-                () => {
-                    setIsLoading(false);
-                    setIsUpdate(false);
+            if (isHaveMorethanMaterialSuppliers) {
+                onClickOpenDeleteTableRowModal()
+            }
+            else {
+                setIsLoading(true)
+                updateCellData(id, parameterKey, updateValue).then(
+                    () => {
+                        setIsLoading(false);
+                        setIsUpdate(false);
 
-                }
-            );
+                    }
+                );
+            }
         } else {
-        setIsUpdate(false);
+            setIsUpdate(false);
         }
     }
 
@@ -43,10 +64,30 @@ const NumberStringInput = ({value, isEditable, parameterKey, id,isAdmin}: IRowDa
     }, [updateValue])
 
     return (
-        isUpdate ? isLoading ? <DotsLoader/> : <UpdateValueInput clickedOut={onClickOut()} onInputChange={onInputChange} value={updateValue as string} onUpdate={onBlur}
-                                  onCancel={() => setIsUpdate(false)}/> :
-            isEditable ? <PrimaryButton sx={classes.clickableData} onClick={onClick} variant={'text'}>{value}</PrimaryButton> :  <span>{value}</span>
+        <>
+            {isUpdate ? isLoading ? <DotsLoader /> : <UpdateValueInput clickedOut={onClickOut()} onInputChange={onInputChange} value={updateValue as string} onUpdate={onBlur}
+                onCancel={() => setIsUpdate(false)} /> :
+                isEditable ? <PrimaryButton sx={classes.clickableData} onClick={onClick} variant={'text'}>{value}</PrimaryButton> : <span>{value}</span>
+            }
+            <GoMakeDeleteModal
+                openModal={openDeleteTableRowModal}
+                onClose={onClickCloseDeleteTableRowModal}
+                hideIcon
+                title={t("materials.modals.updateModalTitle")}
+                yesBtn={t("documentingSettings.update")}
+                onClickDelete={() => {
+                    setIsLoading(true)
+                    updateCellData(id, parameterKey, updateValue).then(
+                        () => {
+                            setIsLoading(false);
+                            setIsUpdate(false);
+
+                        }
+                    );
+                }}
+            />
+        </>
     )
 }
 
-export {NumberStringInput}
+export { NumberStringInput }

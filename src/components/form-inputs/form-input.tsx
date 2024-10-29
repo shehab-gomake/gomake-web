@@ -1,9 +1,4 @@
-import React, {
-  ChangeEvent,
-  SyntheticEvent,
-  useEffect,
-  useState,
-} from "react";
+import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios } from "@/hooks";
 import { useStyle } from "@/components/form-inputs/style";
@@ -21,11 +16,22 @@ import { Checkbox, Paper } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { PhoneInputComponent } from "./phone-input";
 import { useRecoilValue } from "recoil";
-import { materialsClientsState, materialsMachinesState, materialsParametersState } from "@/widgets/materials-widget/state";
+import {
+  materialsClientsState,
+  materialsMachinesState,
+  materialsParametersState,
+} from "@/widgets/materials-widget/state";
 import { productsForDropDownList } from "@/store";
 import { GoMakeImageFiled } from "../image-filed/image-filed";
 
-const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }: IFormInput) => {
+const FormInput = ({
+  input,
+  error,
+  changeState,
+  readonly,
+  checkWhatRenderArray,
+  loading,
+}: IFormInput) => {
   const [options, setOptions] = useState([]);
   const [dataLoaded, setDataLoaded] = useState<boolean>(false);
   const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
@@ -39,7 +45,7 @@ const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }
   const clientsCategories = useRecoilValue<any>(materialsClientsState);
   const parametersCategories = useRecoilValue<any>(materialsParametersState);
 
-  const productValue = useRecoilValue(productsForDropDownList)
+  const productValue = useRecoilValue(productsForDropDownList);
   const machinesCategoriesList = machinesCategories.map((machine) => ({
     ...machine,
     value: machine.id,
@@ -76,14 +82,13 @@ const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }
 
   const selectChange = (event: SyntheticEvent, value): void => {
     setSelectedLabel(value?.label ? value.label : "");
-    const newValue = value?.value !== undefined && value?.value !== null
-      ? value.value
-      : "";
+    const newValue =
+      value?.value !== undefined && value?.value !== null ? value.value : "";
     changeState(input.parameterKey, newValue);
   };
 
   const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
-    setSwitchValue(event.target.checked)
+    setSwitchValue(event.target.checked);
     changeState(input.parameterKey, event.target.checked);
   };
 
@@ -106,7 +111,7 @@ const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }
     );
     isChecked
       ? setValues([...values, option?.value])
-      : setValues(values.filter((v) => v !== option?.value))
+      : setValues(values.filter((v) => v !== option?.value));
   };
 
   useEffect(() => {
@@ -133,24 +138,30 @@ const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }
         }
         setDataLoaded(true);
       });
-    }
-    else if (input.options && input.options.length > 0) {
+    } else if (input.options && input.options.length > 0) {
       setOptions(
         input.options.map(({ value, text }) => ({ label: text, value }))
       );
-    }
-    else if (input.options?.length === 0 && input.parameterKey === "machines") {
-      setOptions(machinesCategoriesList)
-    }
-    else if (input.options?.length === 0 && input.parameterKey === "clients") {
-
-      setOptions(clientsOptions)
-    }
-    else if (input.options?.length === 0 && input.parameterKey === "notebookTypes") {
-      setOptions(parameterOptions)
-    }
-    else if (input.options?.length === 0 && input.parameterKey === "printed product") {
-      setOptions(productsOption)
+    } else if (
+      input.options?.length === 0 &&
+      input.parameterKey === "machines"
+    ) {
+      setOptions(machinesCategoriesList);
+    } else if (
+      input.options?.length === 0 &&
+      input.parameterKey === "clients"
+    ) {
+      setOptions(clientsOptions);
+    } else if (
+      input.options?.length === 0 &&
+      input.parameterKey === "notebookTypes"
+    ) {
+      setOptions(parameterOptions);
+    } else if (
+      input.options?.length === 0 &&
+      input.parameterKey === "printed product"
+    ) {
+      setOptions(productsOption);
     }
     if (input.type === "color") {
       setColor(input.value);
@@ -166,24 +177,27 @@ const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }
     }
   }, [input]);
 
-
   useEffect(() => {
     setValues(Array.isArray(input.value) ? input.value : []);
-  }, [input.value])
+  }, [input.value]);
 
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   useEffect(() => {
-    if (typeof input?.value === 'string') {
-      const selectedValues = input.value.split(',').map(val => val.trim());
-      const selected = options.filter(option => selectedValues.includes(option.value.toString()));
+    if (typeof input?.value === "string") {
+      const selectedValues = input.value.split(",").map((val) => val.trim());
+      const selected = options.filter((option) =>
+        selectedValues.includes(option.value.toString())
+      );
       setSelectedOptions(selected);
     }
   }, [input.value, options]);
 
   useEffect(() => {
     if (Array.isArray(input?.value)) {
-      const selected = options.filter(option => input.value.includes(option.value));
+      const selected = options.filter((option) =>
+        input.value.includes(option.value)
+      );
       setSelectedOptions(selected);
     }
   }, [input.value, options]);
@@ -217,11 +231,19 @@ const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }
           </div>
           <div style={classes.inputs}>
             {input.type === "imageFile" ? (
-              <GoMakeImageFiled selectedNameFile={selectedNameFile} onChange={(value) => changeState(input.parameterKey, value)} />
+              <GoMakeImageFiled
+                selectedNameFile={selectedNameFile}
+                onChange={(value) => changeState(input.parameterKey, value)}
+              />
             ) : input.type === "select" || input?.type === "products_list" ? (
               <GoMakeAutoComplate
                 key={`${input.value}`}
-                style={{ minWidth: 180, border: 0, height: 40, overflow: "scroll" }}
+                style={{
+                  minWidth: 180,
+                  border: 0,
+                  height: 40,
+                  overflow: "scroll",
+                }}
                 onChange={input.multiple ? () => null : selectChange}
                 // value={input.multiple ? selectedOptions?.length > 0 ? selectedOptions?.map((item: any) => {
                 //   return {
@@ -229,50 +251,61 @@ const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }
                 //     id: item?.id,
                 //   };
                 // }) : selectedOptions : selectedLabel}
+                loading={loading}
                 value={input.multiple ? selectedOptions : selectedLabel}
                 error={error}
                 disabled={!!readonly}
                 placeholder={t(input.placeholder)}
                 options={options}
-                onChangeTextField={input.parameterKey === "clients" ? checkWhatRenderArray : undefined}
+                onChangeTextField={
+                  input.parameterKey === "clients"
+                    ? checkWhatRenderArray
+                    : undefined
+                }
                 multiple={input.multiple ? true : false}
                 disableClearable={input?.disableClearable || false}
                 renderOption={
                   input.multiple
                     ? (props: any, option: any) => {
-                      return (
-                        <Stack style={classes.multiSelectOption}>
-                          <div>
-
-                            <Checkbox
-                              onChange={(e, checked) => {
-                                if (checked) {
-                                  setSelectedOptions((prevValues) => [
-                                    ...prevValues,
-                                    { label: option.label, value: option.value }
-                                  ]);
-                                } else {
-                                  setSelectedOptions((prevValues) =>
-                                    prevValues.filter((item) => item.value !== option.value)
+                        return (
+                          <Stack style={classes.multiSelectOption}>
+                            <div>
+                              <Checkbox
+                                onChange={(e, checked) => {
+                                  if (checked) {
+                                    setSelectedOptions((prevValues) => [
+                                      ...prevValues,
+                                      {
+                                        label: option.label,
+                                        value: option.value,
+                                      },
+                                    ]);
+                                  } else {
+                                    setSelectedOptions((prevValues) =>
+                                      prevValues.filter(
+                                        (item) => item.value !== option.value
+                                      )
+                                    );
+                                  }
+                                  handleSelectCheck(
+                                    input.parameterKey,
+                                    checked,
+                                    option
                                   );
+                                }}
+                                icon={<CheckboxIcon />}
+                                checkedIcon={<CheckboxCheckedIcon />}
+                                checked={
+                                  values?.length > 0
+                                    ? values?.includes(option?.value)
+                                    : input?.value?.includes(option?.value)
                                 }
-                                handleSelectCheck(
-                                  input.parameterKey,
-                                  checked,
-                                  option
-                                )
-                              }
-
-                              }
-                              icon={<CheckboxIcon />}
-                              checkedIcon={<CheckboxCheckedIcon />}
-                              checked={values?.length > 0 ? values?.includes(option?.value) : input?.value?.includes(option?.value)}
-                            />
-                          </div>
-                          <div>{option.label}</div>
-                        </Stack>
-                      );
-                    }
+                              />
+                            </div>
+                            <div>{option.label}</div>
+                          </Stack>
+                        );
+                      }
                     : undefined
                 }
                 PaperComponent={(props: any) => (
@@ -316,7 +349,10 @@ const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }
                 style={{ height: "40px", minWidth: 180 }}
                 onChange={onChangeState}
                 type={input.type}
-                error={error || (input?.value?.length > 0 && input?.value?.length < 9)}
+                error={
+                  error ||
+                  (input?.value?.length > 0 && input?.value?.length < 9)
+                }
                 helperText={
                   input?.value?.length > 0 && input?.value?.length < 9
                     ? t("alerts.passTooShort")
@@ -326,21 +362,20 @@ const FormInput = ({ input, error, changeState, readonly, checkWhatRenderArray }
                 disabled={!!readonly}
                 value={input.value}
               />
-            ) :
-              (
-                <GomakeTextInput
-                  style={{ height: "40px", minWidth: 180 }}
-                  onChange={onChangeState}
-                  type={input.type}
-                  error={
-                    error ||
-                    (input.value && input.regex && !input.regex.test(input.value))
-                  }
-                  placeholder={t(input.placeholder)}
-                  disabled={!!readonly}
-                  value={input.value}
-                />
-              )}
+            ) : (
+              <GomakeTextInput
+                style={{ height: "40px", minWidth: 180 }}
+                onChange={onChangeState}
+                type={input.type}
+                error={
+                  error ||
+                  (input.value && input.regex && !input.regex.test(input.value))
+                }
+                placeholder={t(input.placeholder)}
+                disabled={!!readonly}
+                value={input.value}
+              />
+            )}
           </div>
         </div>
       )}

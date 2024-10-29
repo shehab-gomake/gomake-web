@@ -43,13 +43,17 @@ const useStatusTable = () => {
                 }} />,
             ' ',
             t('productionFloor.jobs'),
-            t('productionFloor.taskCategory'),
-            t('productionFloor.station'),
-            t('productionFloor.status'),
+            ' ',
             t('productionFloor.customer'),
+            t('productionFloor.taskCategory'),
+            t('productionFloor.status'),
+            t('productionFloor.currentStation'),
+            t('productionFloor.nextStation'),
+            t('productionFloor.createdDate'),
             t("productionFloor.stationDeliveryTime"),
             t('productionFloor.deliveryTime'),
-            t('productionFloor.tags')
+            t('productionFloor.tags'),
+            ' '
         ].filter(Boolean);
     }
 

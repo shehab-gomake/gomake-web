@@ -4,38 +4,52 @@ import { useSnackBar } from "@/hooks/use-snack-bar";
 import { selectedClientState } from "@/pages-components/quotes/states";
 import { getAllSimilarCustomerApi } from "@/services/api-service/customers/customers-api";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { prevSelectedClientState } from "@/pages-components/admin/home/widgets/quote-widget/states";
 import { systemCurrencyState } from "@/store/user";
 import { resetPassModalState } from "./state";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { gomakeUserState } from "./components/gomakeUser-tab/gomakeUserState";
-import { languagesState } from "@/store/languages";
+import { languageOptionsState, languagesState } from "@/store/languages";
 import { useEditCustomer } from "@/pages/customers/edit-customer/use-edit-customer";
 import { useAddCustomer } from "@/pages/customers/add-customer/use-add-customer";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { emailRegex } from "@/utils/regex";
 import { useUserProfile } from "@/hooks/use-user-profile";
+import { getClientsGroupstApi } from "@/services/api-service/suppliers/suppliers-endpoints";
 
-const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal, userQuote, typeClient, isValidCustomer,
+const useCustomerCard = ({
+  t,
+  customer,
+  setCustomer,
+  onClose,
+  setOpenOfferModal,
+  userQuote,
+  typeClient,
+  isValidCustomer,
   getAllCustomers,
   onCustomerAdd,
   isgetAllCustomers,
   isFromCartPage,
-  onChangeSelectBusiness }) => {
+  onChangeSelectBusiness,
+}) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData } = useSnackBar();
   const [showTable, setShowTable] = useState(false);
   const [customerTableRows, setCustomerTableRows] = useState([]);
-  const [showInActiveCustomers, setShowInActiveCustomers] = useState<boolean>(false);
-  const [selectedClient, setSelectedClient] = useRecoilState(selectedClientState);
+  const [showInActiveCustomers, setShowInActiveCustomers] =
+    useState<boolean>(false);
+  const [selectedClient, setSelectedClient] =
+    useRecoilState(selectedClientState);
   const { alertRequiredFields, alertFault } = useSnackBar();
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
-  const [resetPassModal, setResetPassModalModal] = useRecoilState<boolean>(resetPassModalState);
+  const [resetPassModal, setResetPassModalModal] =
+    useRecoilState<boolean>(resetPassModalState);
   const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
   const gomakeUser = useRecoilValue<any>(gomakeUserState);
-  const languagesOptions = useRecoilValue(languagesState);
+  // const languagesOptions = useRecoilValue(languagesState);
+  const languagesOptions = useRecoilValue(languageOptionsState);
 
   const customerTableHeaders = [
     t("customers.customerCode"),
@@ -48,7 +62,9 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   const handleHideTable = () => setShowTable(false);
 
-  const [previousClient, setPreviousClient] = useRecoilState<any>(prevSelectedClientState);
+  const [previousClient, setPreviousClient] = useRecoilState<any>(
+    prevSelectedClientState
+  );
 
   const handleOpenModal = (newClient) => {
     //setPreviousClient(selectedClient ? selectedClient : previousClient );
@@ -58,17 +74,19 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
   };
 
   const handleChooseCustomer = (customer) => {
-    if (userQuote?.client?.id != null && customer?.id != null && userQuote?.client?.id !== customer?.id) {
+    if (
+      userQuote?.client?.id != null &&
+      customer?.id != null &&
+      userQuote?.client?.id !== customer?.id
+    ) {
       handleOpenModal(customer);
-    }
-    else {
-      setSelectedClient(customer)
+    } else {
+      setSelectedClient(customer);
     }
     onClose();
     handleHideTable();
     setCustomer(null);
-
-  }
+  };
 
   const getAllSimilarCustomer = async (customer) => {
     const handleResponse = (res) => {
@@ -85,7 +103,9 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   const mapCustomerData = (customer) => {
     const { code, name, mail, phone, isActive } = customer;
-    const statusText = isActive ? t("usersSettings.active") : t("usersSettings.inactive");
+    const statusText = isActive
+      ? t("usersSettings.active")
+      : t("usersSettings.inactive");
     const statusColor = isActive ? "#40CC4E" : "#D92C2C";
 
     return [
@@ -93,10 +113,20 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
       name,
       mail,
       phone,
-      <div style={{ display: "inline-flex", ...FONT_FAMILY.Lexend(500, 14), color: statusColor }}>
+      <div
+        style={{
+          display: "inline-flex",
+          ...FONT_FAMILY.Lexend(500, 14),
+          color: statusColor,
+        }}
+      >
         {statusText}
       </div>,
-      <PrimaryButton onClick={() => handleChooseCustomer(customer)} variant="outlined" style={{ width: "fit-content", height: "fit-content" }}>
+      <PrimaryButton
+        onClick={() => handleChooseCustomer(customer)}
+        variant="outlined"
+        style={{ width: "fit-content", height: "fit-content" }}
+      >
         {t("datepicker.choose")}
       </PrimaryButton>,
     ];
@@ -105,18 +135,20 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
   const getAllSimilarCustomersData = useCallback(() => {
     let customersArray = [...customerTableRows];
     if (customersArray?.length > 0) {
-      return showInActiveCustomers ? customersArray : customersArray.filter((user: any) => user.isActive);
+      return showInActiveCustomers
+        ? customersArray
+        : customersArray?.filter((user: any) => user.isActive);
     }
-    return customersArray
-  }, [customerTableRows, showInActiveCustomers])
+    return customersArray;
+  }, [customerTableRows, showInActiveCustomers]);
 
   const onShowInActiveCustomers = (value: boolean) => {
     setShowInActiveCustomers(value);
-  }
-
+  };
 
   const [open, setOpen] = useState(false);
-  const validateEmail = (state: any, fieldName: string) => !!state?.[fieldName] ? emailRegex.test(state?.[fieldName]) : true;
+  const validateEmail = (state: any, fieldName: string) =>
+    !!state?.[fieldName] ? emailRegex.test(state?.[fieldName]) : true;
   const { addNewCustomer } = useAddCustomer();
   const { editCustomer } = useEditCustomer();
   const { updateUserPassword } = useUserProfile();
@@ -124,7 +156,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
   // in order to avoid sending an empty object that include just name & index
   const isNameIndexOnly = (dataObject) => {
     const { name, index, ...otherProps } = dataObject;
-    const emptyProps = Object.values(otherProps).every(
+    const emptyProps = Object.values(otherProps)?.every(
       (prop) => prop === null || prop === "" || prop === " "
     );
     return emptyProps;
@@ -139,46 +171,46 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     setShowInActiveCustomers(false);
   };
 
+  const clientTypeLabel =
+    typeClient === "C"
+      ? t("customers.modal.clientType")
+      : t("suppliers.supplierType");
 
-  const clientTypeLabel = typeClient === "C"
-    ? t("customers.modal.clientType")
-    : t("suppliers.supplierType");
-
-  const clientTypeId = typeClient === "C"
-    ? CLIENT_TYPE_Id.CUSTOMER
-    : CLIENT_TYPE_Id.SUPPLIER;
+  const clientTypeId =
+    typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
 
   const handleAddCustomer = async () => {
-    const filteredContacts = contacts.filter(
+    const filteredContacts = contacts?.filter(
       (contact) => !isNameIndexOnly(contact)
     );
-    const filteredAddresses = addresses.filter(
+    const filteredAddresses = addresses?.filter(
       (address) => !isNameIndexOnly(address)
     );
-    const filteredUsers = users.filter((user) => !isNameIndexOnly(user));
-    const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
+    const filteredUsers = users?.filter((user) => !isNameIndexOnly(user));
+    const cardTypeId =
+      typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
       addresses: filteredAddresses,
       users: filteredUsers,
       cardTypeId: cardTypeId,
-      currency: customer?.currency ? customer?.currency : systemCurrency
+      currency: customer?.currency ? customer?.currency : systemCurrency,
     };
 
     // Check if email is valid
-    const areEmailsValid = filteredUsers.every(user => validateEmail(user, "email"));
-    if (!areEmailsValid) {
-      alertFault("customers.invalidEmail");
-      return;
+    if (filteredUsers && filteredUsers?.length > 0) {
+      const areEmailsValid = filteredUsers?.every((user) =>
+        validateEmail(user, "email")
+      );
+      if (!areEmailsValid) {
+        alertFault("customers.invalidEmail");
+        return;
+      }
     }
 
-    const isEmailValid = validateEmail(customer, "mail");
-    if (!isEmailValid) {
-      alertFault("customers.invalidEmail");
-      return;
-    }
     setCustomer(updatedCustomer);
+
     if (
       isValidCustomer(
         updatedCustomer,
@@ -199,13 +231,13 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   // edit customer button
   const handleEditCustomer = () => {
-    const filteredContacts = contacts.filter(
+    const filteredContacts = contacts?.filter(
       (contact) => !isNameIndexOnly(contact)
     );
-    const filteredAddresses = addresses.filter(
+    const filteredAddresses = addresses?.filter(
       (address) => !isNameIndexOnly(address)
     );
-    const filteredUsers = users.filter((user) => !isNameIndexOnly(user));
+    const filteredUsers = users?.filter((user) => !isNameIndexOnly(user));
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
@@ -214,7 +246,9 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     };
 
     // Check if email is valid
-    const areEmailsValid = filteredUsers.every(user => validateEmail(user, "email"));
+    const areEmailsValid = filteredUsers?.every((user) =>
+      validateEmail(user, "email")
+    );
     if (!areEmailsValid) {
       alertFault("customers.invalidEmail");
       return;
@@ -256,13 +290,16 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     customer && customer.users ? customer.users : []
   );
 
-
   // Contact info
   const addEmptyContact = () => {
-    var temp = [...contacts];
-    const index = temp.length + 1;
-    temp.push({ name: "", index: index });
-    setContacts(temp);
+    if (!contacts || contacts === undefined) {
+      addInitContact();
+    } else {
+      var temp = [...contacts];
+      const index = temp.length + 1;
+      temp.push({ name: "", index: index });
+      setContacts(temp);
+    }
   };
 
   const addInitContact = () => {
@@ -278,7 +315,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   const deleteContactForm = (index) => {
     var temp = [...contacts];
-    temp = temp.filter((x) => x.index != index);
+    temp = temp?.filter((x) => x.index != index);
 
     temp.forEach((contact, i) => {
       if (contact?.index > index) {
@@ -300,11 +337,15 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   // Address info
   const addEmptyAddress = () => {
-    var temp = [...addresses];
-    const index = temp.length + 1;
-    //  temp.push({ name: "", index: index, city: " ", street: " " });
-    temp.push({ name: "", index: index });
-    setAddresses(temp);
+    if (!addresses || addresses === undefined) {
+      addInitAddress();
+    } else {
+      var temp = [...addresses];
+      const index = temp.length + 1;
+      //  temp.push({ name: "", index: index, city: " ", street: " " });
+      temp.push({ name: "", index: index });
+      setAddresses(temp);
+    }
   };
 
   const addInitAddress = () => {
@@ -321,7 +362,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   const deleteAddressForm = (index) => {
     var temp = [...addresses];
-    temp = temp.filter((x) => x.index != index);
+    temp = temp?.filter((x) => x.index != index);
     temp.forEach((address, i) => {
       if (address.index > index) {
         address.index -= 1;
@@ -361,7 +402,7 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
 
   const deleteUserForm = (index) => {
     var temp = [...users];
-    temp = temp.filter((x) => x.index != index);
+    temp = temp?.filter((x) => x.index != index);
     temp.forEach((user, i) => {
       if (user.index > index) {
         user.index -= 1;
@@ -377,7 +418,6 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
       )
     );
   };
-
 
   const onChangeInputs = (key, value) => {
     setCustomer({ ...customer, [key]: value });
@@ -413,14 +453,15 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
   };
 
   const handleShowTable = async () => {
-    const filteredContacts = contacts.filter(
+    const filteredContacts = contacts?.filter(
       (contact) => !isNameIndexOnly(contact)
     );
-    const filteredAddresses = addresses.filter(
+    const filteredAddresses = addresses?.filter(
       (address) => !isNameIndexOnly(address)
     );
-    const filteredUsers = users.filter((user) => !isNameIndexOnly(user));
-    const cardTypeId = typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
+    const filteredUsers = users?.filter((user) => !isNameIndexOnly(user));
+    const cardTypeId =
+      typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
     const updatedCustomer = {
       ...customer,
       contacts: filteredContacts,
@@ -430,10 +471,14 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     };
 
     // Check if email is valid
-    const areEmailsValid = filteredUsers.every(user => validateEmail(user, "email"));
-    if (!areEmailsValid) {
-      alertFault("customers.invalidEmail");
-      return;
+    if (filteredUsers && filteredUsers?.length > 0) {
+      const areEmailsValid = filteredUsers?.every((user) =>
+        validateEmail(user, "email")
+      );
+      if (!areEmailsValid) {
+        alertFault("customers.invalidEmail");
+        return;
+      }
     }
 
     const isValidCustomerName = validCustomerName(customer);
@@ -446,8 +491,38 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     getAllSimilarCustomer(updatedCustomer).then((x) => {
       setShowTable(true);
     });
-
   };
+  const [dlientGroupList, setClientGroupList] = useState([]);
+  const getClientsGroups = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setClientGroupList(res?.data);
+      } else {
+        // alertFaultUpdate();
+      }
+    };
+    await getClientsGroupstApi(callApi, callBack);
+  };
+
+  useEffect(() => {
+    getClientsGroups();
+  }, []);
+
+  const [newGroupId, setNewGroupId] = useState("");
+  const addGroupName = useCallback(async (data: string) => {
+    const res: any = await callApi(
+      "POST",
+      "/v1/crm-service/customer/add-client-group",
+      {
+        groupName: data,
+      }
+    );
+    if (res?.success) {
+      getClientsGroups();
+      setNewGroupId(res?.data?.data?.data);
+    } else {
+    }
+  }, []);
 
   return {
     customerTableHeaders,
@@ -500,7 +575,11 @@ const useCustomerCard = ({ t, customer, setCustomer, onClose, setOpenOfferModal,
     handleShowTable,
     updateUserPassword,
     onUpdatePass,
-    onChangeInputs
+    onChangeInputs,
+    dlientGroupList,
+    addGroupName,
+    newGroupId,
+    setNewGroupId,
   };
 };
 

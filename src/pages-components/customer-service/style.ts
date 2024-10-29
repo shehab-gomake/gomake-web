@@ -66,7 +66,6 @@ const useStyle = (onUpload?: boolean) => {
         paddingLeft: 20,
         paddingRight: 20,
         position: "relative" as "relative",
-        paddingBottom: 40,
       },
       btnContainer: {
         display: "flex",

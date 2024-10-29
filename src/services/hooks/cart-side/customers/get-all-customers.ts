@@ -5,11 +5,9 @@ const getAndSetAllCustomers = async (
   callApi: ICallApi,
   setState?: ISetState,
   data?: any
-
 ) => {
- 
   const result: any = await callApi(
-    "GET",
+    "POST",
     "/v1/crm-service/customer/get-all-customers",
     data,
     false

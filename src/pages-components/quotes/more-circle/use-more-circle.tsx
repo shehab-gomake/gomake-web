@@ -3,7 +3,7 @@ import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
-import { TickCloseIcon, TickIcon, TickMoveIcon } from "@/icons";
+import { TickCancelIcon, TickIcon, TickMoveIcon } from "@/icons";
 import { DuplicateIcon } from "@/components/icons/icons";
 import { downloadPdf } from "@/utils/helpers";
 import { getOrderBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
@@ -12,6 +12,13 @@ import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PayIcon } from "./icons/pay";
+import { PaymentIcon } from "./icons/payment";
+import { useStyle } from "@/pages-components/quotes/more-circle/style";
+import { useRouter } from "next/router";
+import { TrackingIcon } from "./icons/tracking";
+import { UnLockIcon } from "./icons/unlock";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isSelectedCLoseAsDeleveryNoteState } from "@/pages/customers/customer-states";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -19,184 +26,272 @@ const useMoreCircle = () => {
   const { CheckPermission } = useUserPermission();
 
   const getMenuList = ({
+    t,
     quote,
     documentType,
     onClickOpenModal,
     onClickPdf,
     onClickDuplicate,
     onClickLoggers,
-    t,
     onClickOpenIrrelevantModal,
+    onClickSendPayment,
     onClickOpenCloseOrderModal,
-    onClickOpenCloseOrderNotesModal
+    onClickOpenCloseOrderNotesModal,
+    onClickMakePayment,
+    onClickCloseAndTrack,
+    onClickOpenPrintPDFModal,
+    onOpenCancelReceiptModal,
+    onOpenCancelReceiptModalRefund,
+    onClickOpenDocument,
+    onClickOpenChangeProductionStatusModal,
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
+    const { pathname } = useRouter();
 
     const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
       const callBack = (res) => {
         if (res?.success) {
           const pdfLink = res.data;
-          downloadPdf(pdfLink)
+          downloadPdf(pdfLink);
         } else {
         }
       };
-      await getOrderBoardMissionPDF(callApi, callBack, { documentId: quoteItem?.id });
+      await getOrderBoardMissionPDF(callApi, callBack, {
+        documentId: quoteItem?.id,
+      });
     };
-
+    const { classes } = useStyle();
+    const setIsSelectedCLoseAsDeleveryNote = useSetRecoilState(
+      isSelectedCLoseAsDeleveryNoteState
+    );
+    const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
     const isQuote = documentType === DOCUMENT_TYPE.quote;
     const isOrder = documentType === DOCUMENT_TYPE.order;
     const isDeliveryNote = documentType === DOCUMENT_TYPE.deliveryNote;
-    const isDeliveryNoteRefund = documentType === DOCUMENT_TYPE.deliveryNoteRefund;
+    const isDeliveryNoteRefund =
+      documentType === DOCUMENT_TYPE.deliveryNoteRefund;
     const isInvoice = documentType === DOCUMENT_TYPE.invoice;
     const isInvoiceRefund = documentType === DOCUMENT_TYPE.invoiceRefund;
     const isPurchaseInvoice = documentType === DOCUMENT_TYPE.purchaseInvoice;
     const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
-    const showNewDuplicate = isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
+    const isReceipt = documentType === DOCUMENT_TYPE.receipt;
+    const showNewDuplicate =
+      isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
+    const isOrdersTracking = pathname === "/ordersTracking";
 
     return [
       {
         condition: isQuote && quote?.isEditable,
         onClick: () => {
-          const isCreateStatus = quote?.documentStatus === QUOTE_STATUSES.Create;
+          const isCreateStatus =
+            quote?.documentStatus === QUOTE_STATUSES.Create;
           isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote);
         },
         icon: <EditingIcon />,
-        name: t("sales.quote.edit")
+        name: t("sales.quote.edit"),
       },
       {
         condition: documentType !== DOCUMENT_TYPE.quote,
         onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
         icon: <EditingIcon />,
-        name: t("sales.quote.edit")
+        name: (
+          <a
+            style={classes.rowTextStyle}
+            href={`/${documentPath}?Id=${quote?.id}`}
+          >
+            {t("sales.quote.edit")}
+          </a>
+        ),
       },
       {
         condition: true,
         onClick: () => onClickLoggers(quote),
         icon: <LoggerIcon />,
-        name: t("sales.quote.loggers")
+        name: t("sales.quote.loggers"),
       },
       {
-        condition: true,
+        condition: isDeliveryNote,
+        onClick: () => onClickOpenPrintPDFModal(quote),
+        icon: <PDFIcon />,
+        name: t("sales.quote.pdf"),
+      },
+      {
+        condition: !isDeliveryNote,
         onClick: () => onClickPdf(quote?.id),
         icon: <PDFIcon />,
-        name: t("sales.quote.pdf")
+        name: t("sales.quote.pdf"),
       },
       {
-        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        condition: isOrder && quote?.isCanClose && !isCanceledOrder,
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <PDFIcon />,
-        name: t("sales.quote.boardMissionsPdf")
+        name: t("sales.quote.boardMissionsPdf"),
       },
       {
         condition: isOrder || isQuote,
         onClick: () => onClickDuplicate(quote?.id),
         icon: <DuplicateIcon />,
-        name: t("sales.quote.duplicate")
+        name: t("sales.quote.duplicate"),
       },
       {
         condition: showNewDuplicate,
-        onClick: () => navigate(`/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`),
+        onClick: () =>
+          navigate(
+            `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`
+          ),
         icon: <DuplicateIcon />,
-        name: t("sales.quote.duplicate")
+        name: t("sales.quote.duplicate"),
       },
       {
-        condition: isOrder && quote?.isCanClose && CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
-        onClick: () => navigate(`/jobs?orderNumber=${quote?.number}`),
+        condition:
+          isOrder &&
+          quote?.isCanClose &&
+          CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
+        onClick: () => navigate(`/jobs?finalPatternSearch=${quote?.number}`),
         icon: <JobsIcon />,
-        name: t("sales.quote.jobs")
+        name: (
+          <a
+            style={classes.rowTextStyle}
+            href={`/jobs?finalPatternSearch=${quote?.number}`}
+          >
+            {t("sales.quote.jobs")}
+          </a>
+        ),
       },
       {
-        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
-        onClick: () => navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`),
-        icon: <TickIcon />,
-        name: t("sales.quote.closeAsDeliveryNote")
-      },
-      {
-        condition: (isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled") ||
-          (isDeliveryNote && quote?.isCanClose),
+        condition: isOrder && quote?.isCanClose && !isCanceledOrder,
         onClick: () => {
-          const path = isOrder
-            ? `/invoice?isNewCreation=true&orderId=${quote?.id}`
-            : `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`;
-          navigate(path);
+          quote?.productionStatus
+            ? navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`)
+            : onClickOpenChangeProductionStatusModal(quote);
+          setIsSelectedCLoseAsDeleveryNote(true);
         },
         icon: <TickIcon />,
-        name: t("sales.quote.closeAsInvoice")
+        name: t("sales.quote.closeAsDeliveryNote"),
       },
       {
-        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
+        condition:
+          (isOrder && quote?.isCanClose && !isCanceledOrder) ||
+          (isDeliveryNote && quote?.isCanClose),
+        onClick: () => {
+          if (isOrder) {
+            if (quote?.productionStatus) {
+              navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`);
+            } else {
+              onClickOpenChangeProductionStatusModal(quote);
+              setIsSelectedCLoseAsDeleveryNote(false);
+            }
+          } else {
+            navigate(`/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`);
+          }
+        },
+        icon: <TickIcon />,
+        name: t("sales.quote.closeAsInvoice"),
+      },
+      {
+        condition: isOrder && quote?.isCanClose && !isCanceledOrder,
         onClick: () => navigate(`/purchaseOrders?orderNumber=${quote?.number}`),
         icon: <TickMoveIcon />,
-        name: t("sales.quote.purchaseOrders")
+        name: t("sales.quote.purchaseOrders"),
       },
       {
         condition: isDeliveryNote && quote?.isCanClose,
-        onClick: () => navigate(`/deliveryNoteRefund?isNewCreation=true&documentId=${quote?.id}`),
+        onClick: () =>
+          navigate(
+            `/deliveryNoteRefund?isNewCreation=true&documentId=${quote?.id}`
+          ),
         icon: <TickIcon />,
-        name: t("sales.quote.createDeliveryNoteRefund")
+        name: t("sales.quote.createDeliveryNoteRefund"),
       },
       {
         condition: isInvoice && quote?.isCanClose,
-        onClick: () => navigate(`/invoiceRefund?isNewCreation=true&documentId=${quote?.id}`),
+        onClick: () =>
+          navigate(`/invoiceRefund?isNewCreation=true&documentId=${quote?.id}`),
         icon: <TickIcon />,
-        name: t("sales.quote.createInvoiceRefund")
+        name: t("sales.quote.createInvoiceRefund"),
       },
       {
         condition: isPurchaseInvoice && quote?.isCanClose,
-        onClick: () => navigate(`/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`),
+        onClick: () =>
+          navigate(
+            `/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`
+          ),
         icon: <TickIcon />,
-        name: t("sales.quote.createPurchaseInvoiceRefund")
+        name: t("sales.quote.createPurchaseInvoiceRefund"),
       },
       {
         condition: isPurchaseOrder && quote?.isCanClose,
-        onClick: () => navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
+        onClick: () =>
+          navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
-        name: t("sales.quote.closeAsPurchaseInvoice")
+        name: t("sales.quote.closeAsPurchaseInvoice"),
       },
       {
-        condition:( isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled") || ( isDeliveryNote && quote?.isCanClose )|| ( isInvoice && quote?.isCanClose ),
-        onClick: () => quote?.closeOrderNotes && quote?.closeOrderNotes.tirm !== "" ? onClickOpenCloseOrderNotesModal(quote) : onClickOpenCloseOrderModal(quote),
+        condition:
+          (isOrder && quote?.isCanClose && !isCanceledOrder) ||
+          (isDeliveryNote && quote?.isCanClose) ||
+          (isInvoice && quote?.isCanClose),
+        onClick: () =>
+          quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
+            ? onClickOpenCloseOrderNotesModal(quote)
+            : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
-        name: t("sales.quote.close")
+        name: t("sales.quote.close"),
       },
       {
-        condition: isOrder && quote?.isCanClose && quote?.statusTitleText !== "Order.Canceled",
-        onClick: () => onClickOpenIrrelevantModal(quote),
-        icon: <TickCloseIcon />,
-        name: t("sales.quote.cancel")
+        condition:
+          isOrder && (quote?.isCanCancelManualClose || isCanceledOrder),
+        onClick: () => onClickOpenDocument(quote),
+        icon: <UnLockIcon />,
+        name: t("sales.quote.open"),
       },
       {
-        condition: isInvoice && quote?.isCanClose ,
-        onClick: () => navigate(`/receipt?isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`),
-        icon: <PayIcon />,
-        name: t("sales.quote.pay")
+        condition: isOrder && quote?.isCanCloseForTracking && !isCanceledOrder,
+        onClick: () => onClickCloseAndTrack(quote),
+        icon: <TrackingIcon />,
+        name: t("sales.quote.closeAndTrack"),
+      },
+      {
+        condition:
+          (isOrder && quote?.isCanClose && !isCanceledOrder) ||
+          (isReceipt && quote?.status !== "Receipt.Canceled"),
+        onClick: () =>
+          isOrder
+            ? onClickOpenIrrelevantModal(quote)
+            : quote?.creditCardTotal > 0
+            ? onOpenCancelReceiptModalRefund(quote)
+            : onOpenCancelReceiptModal(quote),
+        icon: <TickCancelIcon />,
+        name: t("sales.quote.cancel"),
       },
       // {
-      //   condition: !isCancel,
-      //   onClick: () => onClickOpenIrrelevantModal(quote),
-      //   icon: <TickCloceIcon />,
-      //   name: t("sales.quote.irrelevant")
+      //   condition: isInvoice && quote?.isCanClose,
+      //   onClick: () => navigate(`/receipt?isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`),
+      //   icon: <PayIcon />,
+      //   name: t("sales.quote.pay")
       // },
-      // {
-      //   condition: !isCancel,
-      //   onClick: () => onClickOpenPriceModal(quote),
-      //   icon: <TickCloceIcon />,
-      //   name: t("sales.quote.price")
-      // },
-      // {
-      //   condition: !isCancel,
-      //   onClick: () => onClickOpenDeliveryTimeModal(quote),
-      //   icon: <TickCloceIcon />,
-      //   name: t("sales.quote.deliveryTime")
-      // },
+      {
+        condition: isOrder && quote?.isCanClose && !isCanceledOrder,
+        onClick: () => onClickSendPayment(quote),
+        icon: <PaymentIcon />,
+        name: t("sales.quote.sendPayment"),
+      },
+      {
+        condition:
+          isOrdersTracking &&
+          parseFloat(quote?.totalPrice) !== parseFloat(quote?.sumApplied),
+        onClick: () => onClickMakePayment(quote),
+        icon: <PaymentIcon />,
+        name: t("sales.quote.makePayment"),
+      },
     ];
   };
 
   return {
     user,
     navigate,
-    getMenuList
+    getMenuList,
   };
 };
 

@@ -4,6 +4,7 @@ import { GoMakeMenu } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { EditMenuIcon } from "./icons/edit-menu";
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 
 const MoreMenuWidget = ({
   onCOpenEditModal,
@@ -11,6 +12,9 @@ const MoreMenuWidget = ({
   handleClose,
   anchorEl,
   open,
+  selectedProperties,
+  updateIsHiddenFromWorkFlow,
+  updateIsHiddenFromCalculation
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -36,6 +40,37 @@ const MoreMenuWidget = ({
       >
         <AddPlusIcon />
         <div style={clasess.menuTitleStyle}>{t("properties.addRule")}</div>
+      </MenuItem>
+      <MenuItem
+        style={clasess.menuItemContainer}
+        onClick={() => {
+          updateIsHiddenFromWorkFlow();
+          handleClose();
+        }}
+      >
+
+        <VisibilityOutlinedIcon style={{
+          width: "18px",
+          height: "18px",
+          color: "#8283BE"
+        }} />
+        <div style={clasess.menuTitleStyle}>{selectedProperties?.isHiddenFromWorkFlow ? t("properties.showPropertyFromWorkFlow") : t("properties.hidePropertyFromWorkFlow")}</div>
+      </MenuItem>
+
+      <MenuItem
+        style={clasess.menuItemContainer}
+        onClick={() => {
+          updateIsHiddenFromCalculation();
+          handleClose();
+        }}
+      >
+
+        <VisibilityOutlinedIcon style={{
+          width: "18px",
+          height: "18px",
+          color: "#8283BE"
+        }} />
+        <div style={clasess.menuTitleStyle}>{selectedProperties?.isHiddenFromCalculation ? t("properties.showPropertyFromCalculation") : t("properties.hidePropertyFromCalculation")}</div>
       </MenuItem>
     </GoMakeMenu>
   );

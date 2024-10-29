@@ -1,6 +1,6 @@
 import { GomakePrimaryButton } from "@/components";
 import { EButtonTypes } from "@/enums";
-import { RechooseIcon } from "@/icons";
+import { ReChooseIcon } from "@/icons";
 import { materialBtnDataState, subProductsParametersState } from "@/store";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useCallback, useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import { useRecoilState } from "recoil";
 import lodashClonedeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { checkIfDieCutOrDieKissCutExists } from "@/utils/helpers";
 const ButtonParameterWidget = ({
   clasess,
   parameter,
@@ -24,12 +25,8 @@ const ButtonParameterWidget = ({
   const router = useRouter()
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const { callApi } = useGomakeAxios();
-  const [subProducts, setProducts] = useRecoilState<any>(
-    subProductsParametersState
-  );
-  const subProductsParameters = subProducts?.find(
-    (x) => x.type === subSection?.type
-  )?.parameters;
+  const [subProducts, setProducts] = useRecoilState<any>(subProductsParametersState);
+  const subProductsParameters = subProducts?.find((x) => x.type === subSection?.type)?.parameters;
   const [isSelectedShape, setIsSelectedShape] = useState<any>();
   const [selectedShape, setSelectedShape] = useState<any>();
   const [isStraightKnife, setIsStraightKnife] = useState(false);
@@ -178,7 +175,12 @@ const ButtonParameterWidget = ({
           if (subProduct.type === subSection.type) {
             const updatedParameters = subProduct.parameters.filter(
               (param) =>
-                !(param.parameterCode === "Width" || param.parameterCode === "Height")
+                !(
+                  param.parameterCode === "Width" && param.actionIndex === isSelectedShape.actionIndex ||
+                  param.parameterCode === "Height" && param.actionIndex === isSelectedShape.actionIndex ||
+                  param.parameterCode === "EnhancementLength" && param.actionIndex === isSelectedShape.actionIndex ||
+                  param.parameterCode === "EnhancementWidth" && param.actionIndex === isSelectedShape.actionIndex
+                )
             );
             return { ...subProduct, parameters: updatedParameters };
           }
@@ -322,7 +324,9 @@ const ButtonParameterWidget = ({
           param?.actionIndex === parameter?.actionIndex
         );
       });
-      setIsSelectedShape(isSelectedShape);
+      if (isSelectedShape) {
+        setIsSelectedShape(isSelectedShape);
+      }
     }
 
   }, [subProductsParameters, isParameterSettings, parameter]);
@@ -341,118 +345,20 @@ const ButtonParameterWidget = ({
 
   }, [materialData, isSelectedShape, isParameterSettings]);
   useEffect(() => {
-    if (isParameterSettings) {
-      if (materialData?.length === 0 && isSelectedShape) {
-        let materialPath = parameter?.materialPath[0];
-        let materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
-        const selectedShapeId = isParameterSettings ? isSelectedShape[0]?.id : isSelectedShape?.valueIds[0];
-        const selectedMaterial = materialDataPath?.find(material => material.valueId === selectedShapeId);
-        const transformedShape: any = transformSelectedShape(selectedMaterial);
-        setSelectedShape(transformedShape);
-      }
-    }
-    else {
-      if (materialData?.length === 0 && isSelectedShape && !parameter?.isHidden) {
-        let materialPath = parameter?.materialPath[0];
-        let materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
-        const selectedShapeId = isParameterSettings ? isSelectedShape[0]?.id : isSelectedShape?.valueIds[0];
-        const selectedMaterial = materialDataPath?.find(material => material.valueId === selectedShapeId);
-        const transformedShape: any = transformSelectedShape(selectedMaterial);
-        setSelectedShape(transformedShape);
-        const dieCutSizesParametersArray = [];
-        let dieUnitWidth = parameter?.code === "DieKissCut" ? transformedShape?.rowData?.unitWidth?.value + "" : transformedShape?.rowData?.width?.value + "";
-        let dieUnitLength = parameter?.code === "DieKissCut" ? transformedShape?.rowData?.unitLength?.value + "" : transformedShape?.rowData?.length?.value + "";
-        dieCutSizesParametersArray.push({ parameterCode: "Width", value: dieUnitWidth });
-        dieCutSizesParametersArray.push({ parameterCode: "Height", value: dieUnitLength });
+    if (materialData?.length > 0 || !isSelectedShape) return;
 
-        let temp = subProductsParameters.map(subProductParam => {
-          const dieCutSizeParameter = dieCutSizesParametersArray.find(param => param.parameterCode === subProductParam.parameterCode);
-          if (dieCutSizeParameter) {
-            return {
-              ...subProductParam,
-              values: [dieCutSizeParameter.value],
-              isDisabled: true
-            };
-          }
-          return subProductParam;
-        });
+    const materialPath = parameter?.materialPath?.[0];
+    const materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
 
-        dieCutSizesParametersArray.forEach(dieCutSizeParameter => {
-          const subSectionParameter = subSection.parameters.find(param => param.code === dieCutSizeParameter.parameterCode);
-          if (!temp.find(x => x.parameterCode === dieCutSizeParameter.parameterCode) && subSectionParameter) {
-            temp.push({
-              parameterId: subSectionParameter.id,
-              sectionId: section?.id,
-              subSectionId: subSection?.id,
-              ParameterType: parameter?.ParameterType,
-              parameterName: parameter?.name,
-              actionId: parameter?.actionId,
-              values: [dieCutSizeParameter.value],
-              valueIds: [],
-              actionIndex: subSectionParameter.actionIndex,
-              parameterCode: subSectionParameter.code,
-              valuesConfigs: subSectionParameter?.valuesConfigs,
-              unitKey: subSectionParameter?.unitKey,
-              unitType: subSectionParameter?.unitType,
-              isDisabled: true,
-            });
-          }
-        });
-        let sizeParameter = subSection.parameters.find(
-          (param) => param.code === "size"
-        );
-        if (sizeParameter) {
-          let sizeSubProductParameter = temp.find(x => x.parameterCode == "size");
-          let customValue = sizeParameter.valuesConfigs.find(x => !x.values || (Object.keys(x.values).length === 0));
-          if (customValue) {
-            if (sizeSubProductParameter) {
-              // Create a new object with updated properties
-              sizeSubProductParameter = {
-                ...sizeSubProductParameter,
-                valueIds: [customValue.id],
-                values: [customValue.updateName],
-                isDisabled: true
-              };
-              // Replace the old parameter with the new one in temp array
-              temp = temp.map(param => param.parameterCode === "size" ? sizeSubProductParameter : param);
-            } else {
-              temp.push({
-                parameterId: sizeParameter.id,
-                sectionId: section?.id,
-                subSectionId: subSection?.id,
-                ParameterType: sizeParameter.parameterType,
-                parameterName: sizeParameter.name,
-                actionId: sizeParameter.actionId,
-                values: [customValue.updateName],
-                valueIds: [customValue.id],
-                actionIndex: sizeParameter.actionIndex,
-                parameterCode: sizeParameter.code,
-                valuesConfigs: sizeParameter?.valuesConfigs,
-                unitKey: sizeParameter?.unitKey,
-                unitType: sizeParameter?.unitType,
-                isDisabled: true,
-              });
-            }
-          }
-        }
+    if (!materialDataPath) return;
 
-        // Update the subProducts state
-        const updatedSubProducts = subProducts.map((subProduct) => {
-          if (subProduct.type === subSection?.type) {
-            return {
-              ...subProduct,
-              parameters: temp,
-            };
-          }
-          return subProduct;
-        });
-
-        setProducts(updatedSubProducts);
-      }
-    }
-
+    const selectedShapeId = isParameterSettings ? isSelectedShape?.[0]?.id : isSelectedShape?.valueIds?.[0];
+    const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
+    const transformedShape: any = transformSelectedShape(selectedMaterial);
+    if (!transformedShape) return;
+    setSelectedShape(transformedShape);
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
-
+  const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts);
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
     if (isStraightKnife) {
       Comp = (
@@ -468,7 +374,8 @@ const ButtonParameterWidget = ({
                 section?.id,
                 subSection?.id,
                 index,
-                subSection?.type
+                subSection?.type,
+                parameter?.actionIndex
               )
               deleteStraightKnifeParameter()
               setIsStraightKnife(false)
@@ -477,7 +384,7 @@ const ButtonParameterWidget = ({
 
             }
           >
-            <RechooseIcon />
+            <ReChooseIcon />
           </div>
           <div
             style={clasess.btnSelectedIconReChoose}
@@ -488,7 +395,7 @@ const ButtonParameterWidget = ({
         </div>
       );
     }
-    else if (isSelectedShape && selectedShape) {
+    else if (isSelectedShape && selectedShape && hasDieCutOrDieKissCut) {
       Comp = (
         <div style={clasess.btnSelectedStyle}>
           <img
@@ -506,11 +413,12 @@ const ButtonParameterWidget = ({
                 section?.id,
                 subSection?.id,
                 index,
-                subSection?.type
+                subSection?.type,
+                parameter?.actionIndex
               )
             }
           >
-            <RechooseIcon />
+            <ReChooseIcon />
           </div>
           <div
             style={clasess.btnSelectedIconReChoose}
@@ -530,7 +438,8 @@ const ButtonParameterWidget = ({
               section?.id,
               subSection?.id,
               index,
-              subSection?.type
+              subSection?.type,
+              parameter?.actionIndex
             )
           }
         >
@@ -548,7 +457,8 @@ const ButtonParameterWidget = ({
             section?.id,
             subSection?.id,
             index,
-            subSection?.type
+            subSection?.type,
+            parameter?.actionIndex
           )
         }
       >

@@ -1,11 +1,12 @@
 import { useTranslation } from "react-i18next";
-import { TableCell, styled, tableCellClasses } from "@mui/material";
+import { Stack, TableCell, styled, tableCellClasses } from "@mui/material";
 import { useState } from "react";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import { totalDocumentsState, totalPaymentState, finalTotalPaymentState, totalCashState, totalBitState, totalTransferState, totalChecksState, checksRowState, CheckData, checkedItemsIdsState, transferTabState, prevStateState, prevStateStateData, taxDeductionState, checksAccountCodeState, totalCreditCardState, CreditCardData, creditCardState, ReceiptCreditCardData, receiptCreditCardState, selectedCreditTransactionState, transactionOptionsData, cashAccountCodeState } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
 import { firstWidgetState, isTransactedState, secondWidgetState, thirdWidgetState } from "./states";
+import CustomMethodsTable from "./Payment-methods-details/methods-table";
 
 const usePaymentsTable = () => {
     const { t } = useTranslation();
@@ -100,8 +101,8 @@ const usePaymentsTable = () => {
     });
 
     const handleCheckboxChange = (index, itemId) => {
-        const newTableRow = tableRows.map(row=>row.id===itemId ? {...row,isChecked: false} : row) 
-        setDocumentItemValue({...documentItemValue , receiptItems : newTableRow})
+        const newTableRow = tableRows.map(row => row.id === itemId ? { ...row, isChecked: false } : row)
+        setDocumentItemValue({ ...documentItemValue, receiptItems: newTableRow })
         setCheckedItems((prevCheckedItems) => {
             const updatedCheckedItems = {
                 ...prevCheckedItems,
@@ -161,6 +162,7 @@ const usePaymentsTable = () => {
     // Previous State // 
 
     const [previousState, setPreviousState] = useRecoilState<prevStateStateData>(prevStateState);
+    const resetPreviousState = useResetRecoilState(prevStateState);
 
     const savePreviousState = () => {
         let cardWidgetValue;
@@ -210,7 +212,11 @@ const usePaymentsTable = () => {
     };
 
     const resetReceiptState = () => {
-        setCheckedItems(null);
+        // Clear the previous state as it’s not needed when changing the client 
+        resetPreviousState();
+        // Clear the previous state as it’s not needed when changing the client 
+
+        setCheckedItems([]);
         resetCheckedItemsIds();
         resetTotalPayment();
         resetFinalTotalPayment();
@@ -235,7 +241,6 @@ const usePaymentsTable = () => {
 
 
     // Credit card widgets // 
-
     const [firstWidget, setFirstWidget] = useRecoilState<boolean>(firstWidgetState);
     const [secondWidget, setSecondWidget] = useRecoilState<boolean>(secondWidgetState);
     const [thirdWidget, setThirdWidget] = useRecoilState<boolean>(thirdWidgetState);
@@ -271,6 +276,62 @@ const usePaymentsTable = () => {
         setThirdWidget(true);
     };
 
+    const isShowReceiptTransference = !isNewReceipt && documentItemValue?.receiptTransfers?.length > 0 && documentItemValue?.transferSum > 0 ;
+    const ReceiptTransferenceComponent: React.FC = () => {
+        const transferenceHeaders = ['transferDate', 'transferAccount', 'transferSum']; // Define headers
+        const transferenceRows = documentItemValue?.receiptTransfers; // Use your method to render rows
+        const columnWidths = ['30%', '30%', '30%'];
+
+        return (
+            <CustomMethodsTable
+                headers={transferenceHeaders}
+                rows={transferenceRows}
+                columnWidths={columnWidths}
+            />
+        );
+    };
+
+    const isShowReceiptCreditCards = !isNewReceipt && documentItemValue?.receiptCreditCards?.length > 0 && documentItemValue?.creditCardTotal > 0;
+    const ReceiptCreditCardsComponent: React.FC = () => {
+        const creditCardHeaders = ['creditCardNum', 'installments' , 'creditCardSum'];
+        const creditCardRows = documentItemValue?.receiptCreditCards;
+        const columnWidths = ['30%', '30%', '30%'];
+
+        return (
+            <CustomMethodsTable
+                headers={creditCardHeaders}
+                rows={creditCardRows}
+                columnWidths={columnWidths}
+            />
+        );
+    };
+
+    const isShowReceiptChecks = !isNewReceipt && documentItemValue?.receiptChecks?.length > 0 && documentItemValue?.checksTotal > 0 ;
+    const ReceiptChecksComponent: React.FC = () => {
+        const checkHeaders = ['dueDate', 'checkNumber', 'bankCode', 'branch', 'checkSum'];
+        const checkRows = documentItemValue?.receiptChecks;
+        const columnWidths = ['20%', '20%', '20%', '20%', '20%'];
+
+        return (
+            <CustomMethodsTable
+                headers={checkHeaders}
+                rows={checkRows}
+                columnWidths={columnWidths}
+            />
+        );
+    };
+
+
+    const [openMethodsDetailsModal, setOpenMethodsDetailsModal] = useState<boolean>(false);
+
+    const handleOpenMethodsDetailsModal = () => {
+        setOpenMethodsDetailsModal(true);
+    }
+
+    const handleCloseMethodsDetailsModal = () => {
+        setOpenMethodsDetailsModal(false);
+    }
+
     return {
         t,
         documentItemValue,
@@ -301,7 +362,16 @@ const usePaymentsTable = () => {
         handleSecondButtonClick,
         handleThirdButtonClick,
         resetReceiptState,
-        setCheckedItems
+        setCheckedItems,
+        isShowReceiptTransference,
+        ReceiptTransferenceComponent,
+        isShowReceiptCreditCards,
+        ReceiptCreditCardsComponent,
+        isShowReceiptChecks,
+        ReceiptChecksComponent,
+        openMethodsDetailsModal,
+        handleOpenMethodsDetailsModal,
+        handleCloseMethodsDetailsModal,
     };
 };
 

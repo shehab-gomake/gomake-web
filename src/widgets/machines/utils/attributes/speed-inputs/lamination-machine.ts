@@ -1,3 +1,4 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const laminationMachine = (state: Record<string, any>) => {
     return [
@@ -12,6 +13,7 @@ const laminationMachine = (state: Record<string, any>) => {
             value: state.attributes?.setupTimeMin ? state.attributes?.setupTimeMin : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.setupTimeMin,
+            unit: EMeasurementUnits.MINUTE
         },
         {
             name: "warmUpTime",
@@ -23,6 +25,7 @@ const laminationMachine = (state: Record<string, any>) => {
             options: [],
             value: state?.attributes?.warmUpTime ? state?.attributes?.warmUpTime : '',
             machineInputType: 'input',
+            unit: EMeasurementUnits.MINUTE,
             isValid: !!state?.attributes?.warmUpTime,
         },
         {
@@ -36,6 +39,7 @@ const laminationMachine = (state: Record<string, any>) => {
             value: state.attributes?.maxSpeed ? state.attributes?.maxSpeed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxSpeed,
+            unit: EMeasurementUnits.METER_PER_HOUR
         },
         {
             name: 'machineAttributes.speedByMediaWeight',
@@ -51,7 +55,8 @@ const laminationMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.weight",
                     required: true,
                     parameterKey: "weight",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.GRAM
                 },
                 {
                     name: "speedPercentage",

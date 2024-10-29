@@ -13,11 +13,12 @@ const ADD_NEW_PRODUCTION_GROUP_URL = '/v1/erp-service/board-missions-group/creat
 const DELETE_PRODUCTION_GROUP_URL = '/v1/erp-service/board-missions-group/delete-group/';
 const GET_PRINT_HOUSE_ACTIONS_MACHINES_URL = '/v1/printhouse-config/actions/get-actions-machines';
 const GET_PRINT_HOUSE_ACTIONS_REQUIER_EMPLOYEE_URL = '/v1/printhouse-config/actions/get-all-actions-require-employee';
-
 const GET_BOARDS_MISSIONS_GROUPS_URL = '/v1/erp-service/board-missions/groups/';
 const GET_BOARDS_MISSIONS_STATIONS_URL = '/v1/erp-service/board-missions/board-missions-stations/';
 const UPDATE_BOARD_MISSIONS_ACTION_DONE = '/v1/erp-service/board-missions-actions/move-to-done/';
 const CANCEL_BOARD_MISSIONS_ACTION_DONE = '/v1/erp-service/board-missions-actions/back-to-in-process/';
+const UPDATE_BOARD_MISSIONS_ACTION_EMPLOYEE = '/v1/erp-service/board-missions-actions/update-action-employee';
+const UPDATE_BOARD_MISSIONS_ACTION_MACHINE = '/v1/erp-service/board-missions-actions/update-action-machine';
 const TOGGLE_BOARD_MISSIONS_ACTION_TIMER_URL = '/v1/erp-service/board-missions-actions/toggle-timer/';
 const BOARD_MISSIONS_ADD_NOTE_URL = '/v1/erp-service/board-missions/add-note';
 const BOARD_MISSIONS_DELETE_NOTE_URL = '/v1/erp-service/board-missions/delete-note';
@@ -31,7 +32,11 @@ const GET_UPLOADING_FILES_URL = '/v1/erp-service/board-missions/get-uploading-fi
 const GET_BOARD_MISSIONS_ID_BY_QR_CODE_URL = '/v1/erp-service/qr-codes/board-missions-id/';
 const HANDLE_BOARD_MISSIONS_ID_BY_QR_CODE_URL = '/v1/erp-service/qr-codes/handle-board-missions/';
 const UPDATE_BOARD_MISSIONS_BY_QR_CODE_URL = '/v1/erp-service/qr-codes/update-board-missions';
+const CLEAR_FILES_UPLOADER_LIST_URL = '/v1/erp-service/board-missions/clear-list';
 
+const UPDATE_PRODUCTION_FLOOR_JOB_COLOR_URL = '/v1/erp-service/board-missions/update-production-floor-job-color';
+const RESET_PRODUCTION_FLOOR_JOB_COLOR_URL = '/v1/erp-service/board-missions/reset-production-floor-job-color';
+const GET_BOARD_MISSION_DATA_FOR_MENU_URL = '/v1/erp-service/board-missions/get-board-mission-data-for-menu'
 
 const getProductionFloorData: ICallAndSetData = async (callApi, setState, connectionId: string, lock = false, abortController) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCTION_FLOOR_DATA_URL + '?connectionId=' + connectionId, setState, {}, false, abortController);
@@ -63,8 +68,8 @@ const addNewBoardMissionsGroup: ICallAndSetData = async (callApi, callBack, grou
 const deleteBoardMissionsGroup: ICallAndSetData = async (callApi, callBack, groupId) => {
     return await getSetApiData(callApi, EHttpMethod.DELETE, DELETE_PRODUCTION_GROUP_URL + groupId, callBack);
 }
-const getPrintHouseActions: ICallAndSetData = async (callApi, callBack, ) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRINT_HOUSE_ACTIONS_MACHINES_URL , callBack);
+const getPrintHouseActions: ICallAndSetData = async (callApi, callBack, data) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRINT_HOUSE_ACTIONS_MACHINES_URL + '?isFromEmployeeForm=' + data , callBack);
 }
 const getAllActionsRequireEmployeeApi: ICallAndSetData = async (callApi, callBack, ) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRINT_HOUSE_ACTIONS_REQUIER_EMPLOYEE_URL , callBack);
@@ -130,7 +135,36 @@ const handleBoardMissionsQrCodeApi: ICallAndSetData = async (callApi, setState, 
 const updateBoardMissionsQrCodeApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_BY_QR_CODE_URL, setState, data);
 }
+
+
+
+const boardMissionsUpdateActionEmployee: ICallAndSetData = async (callApi, callBack, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_ACTION_EMPLOYEE , callBack, data);
+}
+
+const boardMissionsUpdateActionMachine: ICallAndSetData = async (callApi, callBack, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_BOARD_MISSIONS_ACTION_MACHINE , callBack, data);
+}
+
+const clearUploadingFilesListApi: ICallAndSetData = async (callApi, callBack, ) => {
+    return await getSetApiData(callApi, EHttpMethod.DELETE, CLEAR_FILES_UPLOADER_LIST_URL , callBack, );
+}
+
+const updateProductionFloorJobColorApi: ICallAndSetData = async (callApi, callBack, data: {boardMissionId: string; productionFloorJobColor: string;} ) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_PRODUCTION_FLOOR_JOB_COLOR_URL, callBack , data);
+}
+
+const resetProductionFloorJobColorApi: ICallAndSetData = async (callApi, callBack, data: {boardMissionId : string; } ) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, RESET_PRODUCTION_FLOOR_JOB_COLOR_URL, callBack , data);
+}
+
+const getBoardMissionDataForMenuApi: ICallAndSetData = async (callApi, callBack, data: {boardMissionId : string; } ) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARD_MISSION_DATA_FOR_MENU_URL, callBack , data);
+}
+
 export {
+    boardMissionsUpdateActionEmployee,
+    boardMissionsUpdateActionMachine,
     getProductionFloorData,
     updateBoardsMissionsStatusApi,
     setBoardFiltersApi,
@@ -158,5 +192,9 @@ export {
     updateBoardsMissionsOrderApi,
     getBoardMissionsIdByQrCodeApi,
     handleBoardMissionsQrCodeApi,
-    updateBoardMissionsQrCodeApi
+    updateBoardMissionsQrCodeApi,
+    clearUploadingFilesListApi,
+    updateProductionFloorJobColorApi,
+    resetProductionFloorJobColorApi,
+    getBoardMissionDataForMenuApi
 }

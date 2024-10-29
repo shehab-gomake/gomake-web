@@ -3,7 +3,7 @@ import React from "react";
 import { useRecoilValue } from "recoil";
 import { QuoteCard } from "./quote-card";
 
-const QuoteItems = () => {
+const QuoteItems = ({isPrePaymentPage}) => {
   let indexs = 0;
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
 
@@ -19,6 +19,7 @@ const QuoteItems = () => {
               item={item}
               index={index}
               parentIndex={parentIndex}
+              isPrePaymentPage={isPrePaymentPage}
             />
             {item?.childsDocumentItems &&
               item?.childsDocumentItems?.map(
@@ -30,6 +31,7 @@ const QuoteItems = () => {
                       item={childItem}
                       index={indexs}
                       parentIndex={index}
+                      isPrePaymentPage={isPrePaymentPage}
                     />
                   );
                 }

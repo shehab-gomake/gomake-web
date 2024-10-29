@@ -1,4 +1,3 @@
-
 import { Divider } from "@mui/joy";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { AdjustmentsLedgerReportModal } from "./widgets/adjustments-modal";
@@ -10,11 +9,17 @@ import { useStyle } from "./style";
 import { CreateNewTransactionModal } from "./widgets/create-transaction-modal";
 import { HeaderTitle } from "@/widgets/header-title";
 
-const LedgerReportWidget = () => {
+interface LedgerReportWidgetProps {
+  customerId?: string;
+  isFromCustomerCard?: boolean;
+}
+const LedgerReportWidget = ({
+  customerId,
+  isFromCustomerCard = false,
+}: LedgerReportWidgetProps) => {
   const { classes } = useStyle();
   const {
     t,
-    onSelectDeliveryTimeDates,
     renderOptions,
     checkWhatRenderArray,
     handleCustomerChange,
@@ -35,7 +40,6 @@ const LedgerReportWidget = () => {
     isopenCreateTransactionModal,
     isExtended,
     showTable,
-    resetDatePicker,
     customer,
     tableHeaders,
     isopenEmailModal,
@@ -43,20 +47,34 @@ const LedgerReportWidget = () => {
     selectedContactById,
     isopenAdjustmentsModal,
     clientPaymentsList,
-  } = useLedgerReport();
+    setClientPaymentsList,
+    handleDateChange,
+    fromDate,
+    toDate,
+    isFetching,
+  } = useLedgerReport({ customerId });
 
   return (
     <div style={classes.mainContainer}>
-      <HeaderTitle title={t("tabs.ledgerReport")} marginTop={"0px"} marginBottom={"0px"} />
+      {!isFromCustomerCard && (
+        <HeaderTitle
+          title={t("tabs.ledgerReport")}
+          marginTop={"0px"}
+          marginBottom={"0px"}
+        />
+      )}
       <LedgerReportHeaderWidget
-        onSelectDeliveryTimeDates={onSelectDeliveryTimeDates}
-        resetDatePicker={resetDatePicker}
         customer={customer}
         renderOptions={renderOptions}
         checkWhatRenderArray={checkWhatRenderArray}
         handleCustomerChange={handleCustomerChange}
         isExtended={isExtended}
         onChangeIsExtended={onChangeIsExtended}
+        handleDateChange={handleDateChange}
+        fromDate={fromDate}
+        toDate={toDate}
+        customerId={customerId}
+        isFetchingCustomers={isFetching}
       />
       <Divider />
       <LedgerReportButtonWidget
@@ -66,15 +84,15 @@ const LedgerReportWidget = () => {
         onClickShowCard={onClickShowCard}
         onClickAdjustments={onClickAdjustments}
       />
-      {
-        showTable &&
+      {showTable && (
         <PrimaryTable
           rows={getTableDataRows()}
           headers={tableHeaders}
-          maxHeight={650}
-          stickyHeader={true}  
-                />
-      }
+          maxHeight={"100vh"}
+          stickyFirstCol={false}
+          stickyHeader={true}
+        />
+      )}
       <SendEmailLedgerReportModal
         openModal={isopenEmailModal}
         onCloseModal={onClickCloseEmailModal}
@@ -85,12 +103,18 @@ const LedgerReportWidget = () => {
         SendCustomerLedgerToMailApi={SendCustomerLedgerToMailApi}
       />
       <AdjustmentsLedgerReportModal
+        customerId={customerId || customer?.id}
         onCloseModal={onClickCloseAdjustmentsModal}
         openModal={isopenAdjustmentsModal}
         clientPaymentsList={clientPaymentsList}
         getClientPaymentItems={getClientPaymentItems}
+        setClientPaymentsList={setClientPaymentsList}
       />
-      <CreateNewTransactionModal onCloseModal={onClickCloseCreateTransactionModal} openModal={isopenCreateTransactionModal} />
+      <CreateNewTransactionModal
+        onCloseModal={onClickCloseCreateTransactionModal}
+        openModal={isopenCreateTransactionModal}
+        customerId={customerId}
+      />
     </div>
   );
 };

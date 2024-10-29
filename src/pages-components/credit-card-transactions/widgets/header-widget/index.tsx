@@ -1,17 +1,13 @@
-
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
-import { GoMakeAutoComplate , GomakeTextInput } from "@/components"
-import {
-  CreditCardTransactionsReportHeaderWidgetProps
-} from "@/pages-components/credit-card-transactions/widgets/header-widget/use-header-credit-card-widget";
+import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { CreditCardTransactionsReportHeaderWidgetProps } from "@/pages-components/credit-card-transactions/widgets/header-widget/use-header-credit-card-widget";
 import { HeaderTitle } from "@/widgets";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { DateRangePicker } from "rsuite";
 
 const CreditCardTransactionsReportHeaderWidget = ({
-  onSelectDeliveryTimeDates,
-  resetDatePicker,
   customer,
   transactionAmount,
   receiptNumber,
@@ -22,8 +18,11 @@ const CreditCardTransactionsReportHeaderWidget = ({
   onClickClearFilter,
   checkWhatRenderArray,
   handleCustomerChange,
+  handleDateChange,
+  fromDate,
+  toDate,
+  isFetchingCustomers,
 }: CreditCardTransactionsReportHeaderWidgetProps) => {
-
   const { t } = useTranslation();
   const { classes } = useStyle();
 
@@ -49,10 +48,13 @@ const CreditCardTransactionsReportHeaderWidget = ({
             placeholder={t("sales.quote.chooseCustomer")}
             onChange={handleCustomerChange}
             value={customer}
+            loading={isFetchingCustomers}
           />
         </div>
         <div style={classes.date2FilterContainer}>
-          <h3 style={classes.filterLabelStyle}>{t("creditCardTransactions.transactionAmount")}</h3>
+          <h3 style={classes.filterLabelStyle}>
+            {t("creditCardTransactions.transactionAmount")}
+          </h3>
           <GomakeTextInput
             style={classes.textInputStyle}
             value={transactionAmount}
@@ -62,7 +64,9 @@ const CreditCardTransactionsReportHeaderWidget = ({
           />
         </div>
         <div style={classes.date2FilterContainer}>
-          <h3 style={classes.filterLabelStyle}>{t("sales.quote.receiptNumber")}</h3>
+          <h3 style={classes.filterLabelStyle}>
+            {t("sales.quote.receiptNumber")}
+          </h3>
           <GomakeTextInput
             style={classes.textInputStyle}
             value={receiptNumber}
@@ -71,9 +75,14 @@ const CreditCardTransactionsReportHeaderWidget = ({
           />
         </div>
         <div style={classes.date1FilterContainer}>
-          <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
+          <h3 style={classes.filterLabelStyle}>
+            {t("boardMissions.dateRange")}
+          </h3>
           <div style={{ width: "100%" }}>
-            <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+            <DateRangePicker
+              onChange={handleDateChange}
+              value={fromDate && toDate ? [fromDate, toDate] : null}
+            />
           </div>
         </div>
 

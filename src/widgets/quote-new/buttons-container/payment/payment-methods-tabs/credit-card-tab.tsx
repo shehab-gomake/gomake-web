@@ -16,7 +16,7 @@ const CreditCardTab = ({
     handleSaveAndClose
 }) => {
     const { classes } = useStyle();
-    const { getCardNumberProps, getExpiryDateProps, getCVCProps } = usePaymentInputs();
+    const { getCardNumberProps, getCVCProps } = usePaymentInputs();
     const {
         t,
         handleCardNumberChange,
@@ -38,9 +38,9 @@ const CreditCardTab = ({
     } = usePaymentMethodsTabs();
 
     return (
-        <div style={{ display: "flex", flexDirection: "column" as "column", gap: "10px" }} >
+        <div style={{ display: "flex", flexDirection: "column" as "column", gap: "10px" , paddingTop: cardTransactionsOptions.length > 0 ? "0px" : "10px"}} >
             {
-                cardTransactionsOptions && !isTransacted && <div style={{ width: "75%", alignSelf: "center" }}>
+                cardTransactionsOptions.length > 0 && !isTransacted && <div style={{ width: "75%", alignSelf: "center" }}>
                     <GoMakeAutoComplate
                         key={"chooseExistingCard-select"}
                         value={transactionSelected}
@@ -64,7 +64,7 @@ const CreditCardTab = ({
                                 value={creditCard?.cardNumber}
                             />
                             <input
-                                {...getExpiryDateProps({ onChange: handleExpiryDateChange })}
+                                onChange={handleExpiryDateChange}
                                 style={{ ...classes.creditCardInputs, width: "20%" }}
                                 placeholder="MM/YY"
                                 value={creditCard?.expDate_MMYY} />
@@ -123,10 +123,12 @@ const CreditCardTab = ({
                             <div style={{ width: "45%" }}>
                                 <GoMakeAutoComplate
                                     key={"transactionType"}
-                                    value={creditCard?.transactionType}
+                                    value={transactionTypes.find(
+                                        (option) => option.value === creditCard?.transactionType
+                                      )}
                                     style={classes.selectInputs}
                                     options={transactionTypes}
-                                    placeholder={t("payment.transactionType")}
+                                    placeholder={t("payment.transactionssType")}
                                     onChange={(e, value) => handleChangeInputs("transactionType", value?.value)}
                                 />
                             </div>
@@ -143,7 +145,7 @@ const CreditCardTab = ({
                                 </div>
                             )}
                         </div>
-                    </div>
+                    </div> 
                 }
                 {
                     secondWidget &&
@@ -165,7 +167,6 @@ const CreditCardTab = ({
                         <div style={classes.creditCardSecondInputsContainer}>
                             <input
                                 key={"Total-2"}
-
                                 style={classes.creditSecondCardInputs}
                                 placeholder="Total"
                                 value={totalCreditCard}
@@ -187,7 +188,6 @@ const CreditCardTab = ({
                         <div style={classes.creditCardSecondInputsContainer}>
                             <input
                                 key={"Total-3"}
-
                                 style={classes.creditSecondCardInputs}
                                 placeholder="Total"
                                 value={totalCreditCard}
@@ -199,7 +199,9 @@ const CreditCardTab = ({
                             <div style={{ width: "45%" }}>
                                 <GoMakeAutoComplate
                                     key={"transactionType-2"}
-                                    value={creditCard?.transactionType}
+                                    value={transactionTypes.find(
+                                        (option) => option.value === creditCard?.transactionType
+                                      )}
                                     style={classes.selectInputs}
                                     options={transactionTypes}
                                     placeholder={t("payment.transactionType")}
@@ -221,12 +223,12 @@ const CreditCardTab = ({
                         </div>
                     </div>
                 }
-                {(!secondWidget && !isTransacted) && <PrimaryButton variant="contained" style={{ width: "75%", padding: "4px" }} onClick={() => onClickMakePayment(handleSaveAndClose)} >{t('payment.makePayment')}</PrimaryButton>}
-                {!isTransacted && <div style={{ display: "flex", flexDirection: "column", width: "75%" }}>
+                {!secondWidget && <PrimaryButton variant="contained" style={{ width: "75%", padding: "4px" }} onClick={() => onClickMakePayment(handleSaveAndClose , thirdWidget)} >{t('payment.makePayment')}</PrimaryButton>}
+                <div style={{ display: "flex", flexDirection: "column", width: "75%" }}>
                     {!firstWidget && <SecondaryButton style={classes.creditButtons} onClick={handleFirstButtonClick}>{t('payment.manualCreditCard')}</SecondaryButton>}
                     {!secondWidget && <SecondaryButton style={classes.creditButtons} onClick={handleSecondButtonClick}>{t('payment.creditDetailsWithoutSwipe')}</SecondaryButton>}
                     {!thirdWidget && <SecondaryButton style={classes.creditButtons} onClick={handleThirdButtonClick}>{t('payment.processingViaPinPad')}</SecondaryButton>}
-                </div>}
+                </div>
             </div>
             }
         </div>

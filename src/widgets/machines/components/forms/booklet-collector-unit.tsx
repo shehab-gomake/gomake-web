@@ -6,7 +6,7 @@ import {CollectorCellsMaxThickness} from "@/widgets/machines/components/forms/co
 
 const BookletCollectorUnit = ({}: IStepFormProps) => {
     const {classes} = useStyle();
-    const {machineFoldingAttributes, changeMachineAttributes, errors} = useMachineAttributes();
+    const {machineFoldingAttributes, changeMachineAttributes, errors, machineState} = useMachineAttributes();
 
     return (
         <div style={classes.container}>
@@ -16,7 +16,7 @@ const BookletCollectorUnit = ({}: IStepFormProps) => {
                         <InputContainer key={property.parameterKey} attribute={property} updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
                     ))
                 }
-                <CollectorCellsMaxThickness/>
+                <CollectorCellsMaxThickness disabled={!!machineState.attributes?.isManualCollector}/>
             </div>
         </div>
     );

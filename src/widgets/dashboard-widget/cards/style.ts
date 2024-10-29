@@ -17,7 +17,7 @@ const useStyle = () => {
                 display: 'flex',
                 justifyContent: 'space-between',
                 gap: '32px',
-                height: '184px'
+                height: '80px'
             },
             header: {
                 ...FONT_FAMILY.Lexend(600, 20),

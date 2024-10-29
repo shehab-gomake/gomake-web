@@ -1,9 +1,36 @@
-import { getAndSetAllCustomers, getAndSetClientContacts } from "@/services/hooks";
+import {
+  getAndSetAllCustomers,
+  getAndSetClientContacts,
+} from "@/services/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "./use-gomake-axios";
 import { useDebouncedCallback } from "use-debounce";
 
-const useCustomerDropDownList = () => {
+interface UseCustomerDropDownListProps {
+  shouldRenderCustomersOnMount?: boolean;
+  shouldRenderSuppliersOnMount?: boolean;
+}
+
+// const useDebounce = (value: string, delay: number) => {
+//   const [debouncedValue, setDebouncedValue] = useState<string>(value);
+
+//   useEffect(() => {
+//     const handler = setTimeout(() => {
+//       setDebouncedValue(value);
+//     }, delay);
+
+//     return () => {
+//       clearTimeout(handler);
+//     };
+//   }, [value, delay]);
+
+//   return debouncedValue;
+// };
+
+const useCustomerDropDownList = ({
+  shouldRenderCustomersOnMount = true,
+  shouldRenderSuppliersOnMount = false,
+}: UseCustomerDropDownListProps = {}) => {
   const { callApi } = useGomakeAxios();
   const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [supplierList, setSupplierList] = useState([]);
@@ -13,63 +40,95 @@ const useCustomerDropDownList = () => {
     id: string;
   } | null>();
 
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+
   const renderOptions = () => {
     return customersListCreateQuote;
   };
 
-  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
-      searchTerm: SearchTerm,
-      onlyCreateOrderClients: false,
-    });
-  }, []);
+  const getAllCustomersCreateQuote = useCallback(
+    async (SearchTerm?: string) => {
+      if (SearchTerm) {
+        setIsFetching(true); // Start fetching only if SearchTerm is provided
+      }
 
-  const getAllCustomersCreateOrder = useCallback(async (SearchTerm?) => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      ClientType: "C",
-      searchTerm: SearchTerm,
-      onlyCreateOrderClients: true,
-    });
-  }, []);
+      await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
+        clientType: "C",
+        searchTerm: SearchTerm as string,
+        onlyCreateOrderClients: false,
+      });
+      setIsFetching(false); // Finish fetching
+    },
+    []
+  );
 
-  const getAllSupplierList = useCallback(async (SearchTerm?) => {
+  const getAllCustomersCreateOrder = useCallback(
+    async (SearchTerm?: string) => {
+      if (SearchTerm) {
+        setIsFetching(true); // Start fetching only if SearchTerm is provided
+      }
+      await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
+        clientType: "C",
+        searchTerm: SearchTerm as string,
+        onlyCreateOrderClients: true,
+      });
+      setIsFetching(false); // Finish fetching
+    },
+    []
+  );
+
+  const getAllSupplierList = useCallback(async (SearchTerm?: string) => {
+    if (SearchTerm) {
+      setIsFetching(true); // Start fetching only if SearchTerm is provided
+    }
     await getAndSetAllCustomers(callApi, setSupplierList, {
-      ClientType: "S",
-      searchTerm: SearchTerm,
+      clientType: "S",
+      searchTerm: SearchTerm as string,
       onlyCreateOrderClients: true,
     });
+    setIsFetching(false); // Finish fetching
   }, []);
 
-  const debouncedGetAllCustomersCreateOrder = useDebouncedCallback((value) => {
-    getAllCustomersCreateOrder(value);
-  }, 500);
+  const debouncedGetAllCustomersCreateOrder = useDebouncedCallback(
+    (value: string) => {
+      getAllCustomersCreateOrder(value);
+    },
+    1200
+  );
 
-  const checkWhatRenderArray = (e) => {
-    const value = e.target.value;
-    if (value) {
-      debouncedGetAllCustomersCreateOrder(value);
-    } else {
+  const checkWhatRenderArray = (e: any) => {
+    const value = e.target.value.trim();
+
+    if (value === "") {
+      // Clear debounced calls if input is cleared
+      debouncedGetAllCustomersCreateOrder.cancel();
       getAllCustomersCreateQuote();
+    } else {
+      debouncedGetAllCustomersCreateOrder(value);
     }
   };
-  useEffect(()=>{
-    getAllSupplierList()
-  },[])
 
   const handleCustomerChange = (e: any, value: any) => {
     setCustomer(value);
   };
-
-  useEffect(() => {
-    getAllCustomersCreateQuote();
-  }, []);
 
   const getAllClientContacts = useCallback(async () => {
     await getAndSetClientContacts(callApi, setClientContactsValue, {
       ClientId: customer?.id,
     });
   }, [customer]);
+
+  useEffect(() => {
+    if (shouldRenderSuppliersOnMount) {
+      getAllSupplierList();
+    }
+  }, [shouldRenderSuppliersOnMount, getAllSupplierList]);
+
+  useEffect(() => {
+    if (shouldRenderCustomersOnMount) {
+      getAllCustomersCreateQuote();
+    }
+  }, [shouldRenderCustomersOnMount, getAllCustomersCreateQuote]);
 
   return {
     customer,
@@ -80,7 +139,8 @@ const useCustomerDropDownList = () => {
     getAllClientContacts,
     setCustomer,
     clientContactsValue,
-    supplierList
+    supplierList,
+    isFetching,
   };
 };
 

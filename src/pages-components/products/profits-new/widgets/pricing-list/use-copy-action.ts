@@ -1,0 +1,112 @@
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { EHttpMethod } from "@/services/api-service/enums";
+import { getAllPrintHouseActions } from "@/services/hooks";
+import { actionLists } from "@/store";
+import { useRouter } from "next/router";
+import { useCallback, useState } from "react";
+import { useRecoilState } from "recoil";
+
+interface EAction {
+  id: string;
+  actionId: string;
+  name: string;
+  isInternal: boolean;
+  isOutsource: boolean;
+  isActive: boolean;
+  index: number | null; // index can be a number or null
+}
+const useCopyAction = ({ getAllActionProfitRowsByActionId }) => {
+  const router = useRouter();
+  const { callApi } = useGomakeAxios();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedCationId, setSelectedActionId] = useState<EAction>();
+  const { alertFaultUpdate } = useSnackBar();
+
+  const handleMoreOptionIconClick = (event) => {
+    getActions();
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+  const onCloseModal = () => {
+    setOpenModal(false);
+  };
+  const onOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const CopyActionProfitsToOtherActionApi = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/profits/copy-action-profits-to-other-action`,
+      {
+        sourceActionId: selectedCationId?.actionId,
+        destinationActionId: router.query.actionId,
+        isOutSource: router.query.isOutSource ? true : false,
+      }
+    );
+    if (res?.success) {
+      onCloseModal();
+    } else {
+      // Handle error response here
+    }
+  }, [router, selectedCationId]);
+
+  const [allActions, setAllActions] = useRecoilState(actionLists);
+  const getActions = useCallback(async () => {
+    await getAllPrintHouseActions(callApi, setAllActions);
+  }, []);
+
+  const [percentageProfit, setPercentageProfit] = useState("");
+  const [openProfitModal, setOpenProfitModal] = useState(false);
+  const onCloseProfitModal = () => {
+    setOpenProfitModal(false);
+    setPercentageProfit("");
+  };
+  const onOpenProfitModal = () => {
+    setOpenProfitModal(true);
+  };
+
+  const AddNewProfitForActionProfitsApi = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printHouse-config/profits/add-new-profit-for-action-profit-by-action-id`,
+      {
+        actionProductId: router.query.actionId,
+        profit: percentageProfit,
+        isOutSource: router.query.isOutSource ? true : false,
+      }
+    );
+    if (res?.success) {
+      onCloseProfitModal();
+      //?
+      getAllActionProfitRowsByActionId();
+    } else {
+      alertFaultUpdate();
+    }
+  }, [percentageProfit]);
+
+  return {
+    router,
+    anchorEl,
+    openModal,
+    allActions,
+    selectedCationId,
+    setSelectedActionId,
+    handleMoreOptionIconClick,
+    onOpenModal,
+    CopyActionProfitsToOtherActionApi,
+    handleCloseMenu,
+    onCloseModal,
+    setPercentageProfit,
+    percentageProfit,
+    openProfitModal,
+    onCloseProfitModal,
+    onOpenProfitModal,
+    AddNewProfitForActionProfitsApi,
+  };
+};
+
+export { useCopyAction };
