@@ -11,14 +11,15 @@ import { JobsIcon } from "./icons/jobs";
 import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { PayIcon } from "./icons/pay";
 import { PaymentIcon } from "./icons/payment";
 import { useStyle } from "@/pages-components/quotes/more-circle/style";
 import { useRouter } from "next/router";
 import { TrackingIcon } from "./icons/tracking";
 import { UnLockIcon } from "./icons/unlock";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { isSelectedCLoseAsDeleveryNoteState } from "@/pages/customers/customer-states";
+import { PauseIcon } from "@/icons/pause-icon";
+import { ResumeIcon } from "@/icons/resume-icon";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -44,6 +45,7 @@ const useMoreCircle = () => {
     onOpenCancelReceiptModalRefund,
     onClickOpenDocument,
     onClickOpenChangeProductionStatusModal,
+    onClickPauseOrResume,
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
@@ -65,7 +67,7 @@ const useMoreCircle = () => {
     const setIsSelectedCLoseAsDeleveryNote = useSetRecoilState(
       isSelectedCLoseAsDeleveryNoteState
     );
-    const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
+
     const isQuote = documentType === DOCUMENT_TYPE.quote;
     const isOrder = documentType === DOCUMENT_TYPE.order;
     const isDeliveryNote = documentType === DOCUMENT_TYPE.deliveryNote;
@@ -80,9 +82,13 @@ const useMoreCircle = () => {
       isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
     const isOrdersTracking = pathname === "/ordersTracking";
 
+    const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
+    const isClosedOrder = quote?.statusTitleText === "Order.Closed";
+    const isPauseOrder = quote?.statusTitleText === "Order.Paused";
+
     return [
       {
-        condition: isQuote && quote?.isEditable,
+        condition: !isPauseOrder && isQuote && quote?.isEditable,
         onClick: () => {
           const isCreateStatus =
             quote?.documentStatus === QUOTE_STATUSES.Create;
@@ -92,7 +98,7 @@ const useMoreCircle = () => {
         name: t("sales.quote.edit"),
       },
       {
-        condition: documentType !== DOCUMENT_TYPE.quote,
+        condition: !isPauseOrder && documentType !== DOCUMENT_TYPE.quote,
         onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
         icon: <EditingIcon />,
         name: (
@@ -105,37 +111,38 @@ const useMoreCircle = () => {
         ),
       },
       {
-        condition: true,
+        condition: !isPauseOrder && true,
         onClick: () => onClickLoggers(quote),
         icon: <LoggerIcon />,
         name: t("sales.quote.loggers"),
       },
       {
-        condition: isDeliveryNote,
+        condition: !isPauseOrder && isDeliveryNote,
         onClick: () => onClickOpenPrintPDFModal(quote),
         icon: <PDFIcon />,
         name: t("sales.quote.pdf"),
       },
       {
-        condition: !isDeliveryNote,
+        condition: !isPauseOrder && !isDeliveryNote,
         onClick: () => onClickPdf(quote?.id),
         icon: <PDFIcon />,
         name: t("sales.quote.pdf"),
       },
       {
-        condition: isOrder && quote?.isCanClose && !isCanceledOrder,
+        condition:
+          !isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder,
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <PDFIcon />,
         name: t("sales.quote.boardMissionsPdf"),
       },
       {
-        condition: isOrder || isQuote,
+        condition: (!isPauseOrder && isOrder) || isQuote,
         onClick: () => onClickDuplicate(quote?.id),
         icon: <DuplicateIcon />,
         name: t("sales.quote.duplicate"),
       },
       {
-        condition: showNewDuplicate,
+        condition: !isPauseOrder && showNewDuplicate,
         onClick: () =>
           navigate(
             `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`
@@ -145,6 +152,7 @@ const useMoreCircle = () => {
       },
       {
         condition:
+          !isPauseOrder &&
           isOrder &&
           quote?.isCanClose &&
           CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
@@ -160,7 +168,8 @@ const useMoreCircle = () => {
         ),
       },
       {
-        condition: isOrder && quote?.isCanClose && !isCanceledOrder,
+        condition:
+          !isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder,
         onClick: () => {
           quote?.productionStatus
             ? navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`)
@@ -172,7 +181,7 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          (isOrder && quote?.isCanClose && !isCanceledOrder) ||
+          (!isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder) ||
           (isDeliveryNote && quote?.isCanClose),
         onClick: () => {
           if (isOrder) {
@@ -190,13 +199,14 @@ const useMoreCircle = () => {
         name: t("sales.quote.closeAsInvoice"),
       },
       {
-        condition: isOrder && quote?.isCanClose && !isCanceledOrder,
+        condition:
+          !isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder,
         onClick: () => navigate(`/purchaseOrders?orderNumber=${quote?.number}`),
         icon: <TickMoveIcon />,
         name: t("sales.quote.purchaseOrders"),
       },
       {
-        condition: isDeliveryNote && quote?.isCanClose,
+        condition: !isPauseOrder && isDeliveryNote && quote?.isCanClose,
         onClick: () =>
           navigate(
             `/deliveryNoteRefund?isNewCreation=true&documentId=${quote?.id}`
@@ -205,14 +215,14 @@ const useMoreCircle = () => {
         name: t("sales.quote.createDeliveryNoteRefund"),
       },
       {
-        condition: isInvoice && quote?.isCanClose,
+        condition: !isPauseOrder && isInvoice && quote?.isCanClose,
         onClick: () =>
           navigate(`/invoiceRefund?isNewCreation=true&documentId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.createInvoiceRefund"),
       },
       {
-        condition: isPurchaseInvoice && quote?.isCanClose,
+        condition: !isPauseOrder && isPurchaseInvoice && quote?.isCanClose,
         onClick: () =>
           navigate(
             `/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`
@@ -221,7 +231,7 @@ const useMoreCircle = () => {
         name: t("sales.quote.createPurchaseInvoiceRefund"),
       },
       {
-        condition: isPurchaseOrder && quote?.isCanClose,
+        condition: !isPauseOrder && isPurchaseOrder && quote?.isCanClose,
         onClick: () =>
           navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
@@ -229,7 +239,7 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          (isOrder && quote?.isCanClose && !isCanceledOrder) ||
+          (!isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder) ||
           (isDeliveryNote && quote?.isCanClose) ||
           (isInvoice && quote?.isCanClose),
         onClick: () =>
@@ -241,20 +251,26 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          isOrder && (quote?.isCanCancelManualClose || isCanceledOrder),
+          !isPauseOrder &&
+          isOrder &&
+          (quote?.isCanCancelManualClose || isCanceledOrder),
         onClick: () => onClickOpenDocument(quote),
         icon: <UnLockIcon />,
         name: t("sales.quote.open"),
       },
       {
-        condition: isOrder && quote?.isCanCloseForTracking && !isCanceledOrder,
+        condition:
+          !isPauseOrder &&
+          isOrder &&
+          quote?.isCanCloseForTracking &&
+          !isCanceledOrder,
         onClick: () => onClickCloseAndTrack(quote),
         icon: <TrackingIcon />,
         name: t("sales.quote.closeAndTrack"),
       },
       {
         condition:
-          (isOrder && quote?.isCanClose && !isCanceledOrder) ||
+          (!isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder) ||
           (isReceipt && quote?.status !== "Receipt.Canceled"),
         onClick: () =>
           isOrder
@@ -266,24 +282,39 @@ const useMoreCircle = () => {
         name: t("sales.quote.cancel"),
       },
       // {
-      //   condition: isInvoice && quote?.isCanClose,
+      //   condition: !isPauseOrder &&   isInvoice && quote?.isCanClose,
       //   onClick: () => navigate(`/receipt?isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`),
       //   icon: <PayIcon />,
       //   name: t("sales.quote.pay")
       // },
       {
-        condition: isOrder && quote?.isCanClose && !isCanceledOrder,
+        condition:
+          !isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder,
         onClick: () => onClickSendPayment(quote),
         icon: <PaymentIcon />,
         name: t("sales.quote.sendPayment"),
       },
       {
         condition:
+          !isPauseOrder &&
           isOrdersTracking &&
           parseFloat(quote?.totalPrice) !== parseFloat(quote?.sumApplied),
         onClick: () => onClickMakePayment(quote),
         icon: <PaymentIcon />,
         name: t("sales.quote.makePayment"),
+      },
+      {
+        condition:
+          isOrder && !isCanceledOrder && !isPauseOrder && !isClosedOrder,
+        onClick: () => onClickPauseOrResume(quote?.id),
+        icon: <PauseIcon />,
+        name: t("sales.quote.pause"),
+      },
+      {
+        condition: isOrder && isPauseOrder,
+        onClick: () => onClickPauseOrResume(quote?.id),
+        icon: <ResumeIcon />,
+        name: t("sales.quote.resume"),
       },
     ];
   };
