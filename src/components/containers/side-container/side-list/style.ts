@@ -1,9 +1,8 @@
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { convertHeightToVH } from "@/utils/adapter";
 
-const useStyle = () => {
+const useStyle = ({isHaveDeleteIcon}) => {
   const { primaryColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
@@ -21,7 +20,7 @@ const useStyle = () => {
       listContainer: {
         backgroundColor: "inherit",
         overflow: "auto",
-        height: "calc(100vh - 235px)",
+        height: isHaveDeleteIcon?"calc(100vh - 305px)":"calc(100vh - 235px)",
       },
       buttonWrapper: {
         padding: "3px 14px",

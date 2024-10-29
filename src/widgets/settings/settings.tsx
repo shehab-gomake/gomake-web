@@ -6,10 +6,10 @@ import { useRouter } from "next/router";
 import { SideBarContainer } from "@/components/containers/side-container/side-bar-container";
 import { IListItem } from "@/components/containers/interface";
 import { useUserPermission } from "@/hooks/use-permission";
-import {StepType} from "@reactour/tour";
-import {useGoMakeTour} from "@/hooks/use-go-make-tour";
-import {useGomakeAxios} from "@/hooks";
-import {inactiveUserFirstLogin} from "@/services/api-service/users/users-api";
+import { StepType } from "@reactour/tour";
+import { useGoMakeTour } from "@/hooks/use-go-make-tour";
+import { useGomakeAxios } from "@/hooks";
+import { inactiveUserFirstLogin } from "@/services/api-service/users/users-api";
 
 const SettingsWidget = () => {
   const { t } = useTranslation();
@@ -17,7 +17,7 @@ const SettingsWidget = () => {
   const { settingsRoute, id, productId } = query;
   const [selected, setSelected] = useState<IListItem>();
   const { CheckPermission } = useUserPermission();
-  const {callApi} = useGomakeAxios();
+  const { callApi } = useGomakeAxios();
   const onSelectItem = (value: string) => {
     const selectedItem = list.find((item) => item.value === value);
     push("/settings/" + selectedItem.path).then();
@@ -48,7 +48,7 @@ const SettingsWidget = () => {
       content: 'Add and update all system users includes:\n Username and passward\n personal information\n working hours\n',
       position: 'center',
       styles: {
-        maskWrapper: props => ({...props, maxHeight: '300px'})
+        maskWrapper: props => ({ ...props, maxHeight: '300px' })
       }
     },
     {
@@ -60,23 +60,23 @@ const SettingsWidget = () => {
       selector: '[data-tour="productsSettingsWidget"]',
       content: 'Add and update all system users includes:\n Username and passward\n personal information\n working hours\n',
       position: 'center',
-      action: elem => elem?.scrollIntoView({block: 'start', behavior: "smooth"}),
+      action: elem => elem?.scrollIntoView({ block: 'start', behavior: "smooth" }),
       styles: {
-        maskWrapper: props => ({...props,})
+        maskWrapper: props => ({ ...props, })
       }
     },
     {
       selector: '[data-tour="start-tour-btn"]',
       content: 'Congratulations!\n' +
-          'Now you\'re ready to use the system.\n' +
-          'For help,\n' +
-          'click the help button for training on all pages.',
+        'Now you\'re ready to use the system.\n' +
+        'For help,\n' +
+        'click the help button for training on all pages.',
       position: 'bottom',
-      action: async () => await inactiveUserFirstLogin(callApi, () => {}),
+      action: async () => await inactiveUserFirstLogin(callApi, () => { }),
     },
   ]
 
-  const {} = useGoMakeTour(settingsSteps, []);
+  const { } = useGoMakeTour(settingsSteps, []);
   const Side = () => {
     return (
       <>
@@ -87,6 +87,7 @@ const SettingsWidget = () => {
           selectedItem={selected?.value}
           onSelect={onSelectItem}
           title={t("settings.settings")}
+          isHaveDeleteIcon={false}
         />
       </>
     );
