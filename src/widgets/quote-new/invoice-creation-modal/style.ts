@@ -24,6 +24,9 @@ const useStyle = () => {
         width: "100%",
       },
       optionsButtons: {
+        "& .MuiButton-startIcon": {
+          margin: "0 5px",
+        },
         ...FONT_FAMILY.Inter(600, 16),
         width: "100%",
         borderRadius: "8px",
