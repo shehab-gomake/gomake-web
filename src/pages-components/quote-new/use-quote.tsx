@@ -1287,7 +1287,6 @@ const useQuoteNew = ({
     });
   };
 
-  //!here
   const onClickSendQuoteToClient = async (messageType: number) => {
     debugger;
     if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
