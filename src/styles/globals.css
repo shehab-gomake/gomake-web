@@ -502,3 +502,10 @@ df-messenger {
 .rs-input {
   padding-right: 10px !important;
 }
+
+.production-floor-gantt-station-row {
+  background-color: black;
+  position: relative;
+  z-index: 300;
+
+}
