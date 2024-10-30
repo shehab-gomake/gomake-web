@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { EditIcon } from "@/icons";
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
-import { getAllBudgetsForClientApi } from "@/services/api-service/generic-doc/documents-api";
+import { getAllBudgetsForClientApi, getAllDocumentsByBudgetApi, getAllDocumentsByBudgetIdApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getBudgetStatusText, getPaymentStatusText } from "./helpers-budget";
 import { EHttpMethod } from "@/services/api-service/enums";
@@ -11,8 +11,30 @@ const useBudgetTab = (state) => {
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData, alertSuccessGetData, alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const [budgets, setBudgets] = useState([]);
+  const [allDocumentsByBudgetId, setAllDocumentsByBudgetId] = useState([]);
+  const [allDocumentsByBudget, setAllDocumentsByBudget] = useState([]);
 
-  const getClientOrderItems = async () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);
+  const [currentBudget, setCurrentBudget] = useState(null);
+
+  const handleAddNewBudget = () => {
+    setCurrentBudget(null);
+    setIsModalOpen(true);
+  };
+
+  const handleEditBudget = (budget) => {
+    setCurrentBudget(budget);
+    setIsModalOpen(true);
+  };
+
+  const handleViewOrders = (budget) => {
+    getAllDocumentsByBudgetId(budget)
+    setAllDocumentsByBudgetId([])
+    setIsOrdersModalOpen(true);
+  };
+
+  const getAllBudgetsForClient = async () => {
     const callBack = (res) => {
       if (res?.success) {
         setBudgets(res.data);
@@ -24,12 +46,47 @@ const useBudgetTab = (state) => {
     await getAllBudgetsForClientApi(callApi, callBack, {
       clientId: state?.id,
     });
-
-
   };
+
+
+  const getAllDocumentsByBudget = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setAllDocumentsByBudget(res.data);
+        alertSuccessGetData();
+      } else {
+        alertFaultGetData();
+      }
+    };
+    await getAllDocumentsByBudgetApi(callApi, callBack, {
+      clientId: state?.id,
+    });
+  };
+
+  const getAllDocumentsByBudgetId = async (budget) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setAllDocumentsByBudgetId(res.data);
+        alertSuccessGetData();
+      } else {
+        alertFaultGetData();
+      }
+    };
+    await getAllDocumentsByBudgetIdApi(callApi, callBack, {
+      budgetId: budget?.id,
+    });
+  };
+
+
   useEffect(() => {
-    getClientOrderItems()
+    getAllBudgetsForClient()
   }, [])
+
+  useEffect(() => {
+    if (isOrdersModalOpen) {
+      getAllDocumentsByBudget()
+    }
+  }, [isOrdersModalOpen])
   const tableHeaders = [
     "Budget Name",
     "VAT Included",
@@ -54,7 +111,7 @@ const useBudgetTab = (state) => {
     );
     if (res?.success) {
       alertSuccessAdded();
-      getClientOrderItems();
+      getAllBudgetsForClient();
     } else {
       alertFaultAdded();
     }
@@ -70,7 +127,7 @@ const useBudgetTab = (state) => {
     );
     if (res?.success) {
       alertSuccessUpdate();
-      getClientOrderItems();
+      getAllBudgetsForClient();
     } else {
       alertFaultUpdate();
     }
@@ -91,11 +148,28 @@ const useBudgetTab = (state) => {
     getBudgetStatusText(row.status),
     <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 10 }}>
       <div onClick={() => handleEditBudget(row)} style={{ cursor: "pointer" }}><EditIcon /></div>
-      <div onClick={handleViewOrders} style={{ cursor: "pointer" }}><AccountTreeIcon /></div>
+      <div onClick={() => handleViewOrders(row)} style={{ cursor: "pointer" }}><AccountTreeIcon /></div>
     </div>
   ]);
 
-  return { tableHeaders, mapData, addBudget, editBudget, getPaymentStatusText, setBudgets, budgets };
+  return {
+    mapData,
+    addBudget,
+    editBudget,
+    setBudgets,
+    handleViewOrders,
+    handleEditBudget,
+    handleAddNewBudget,
+    setIsModalOpen,
+    setIsOrdersModalOpen,
+    tableHeaders,
+    budgets,
+    allDocumentsByBudgetId,
+    isModalOpen,
+    isOrdersModalOpen,
+    currentBudget,
+    allDocumentsByBudget
+  };
 };
 
 export { useBudgetTab };

@@ -11,26 +11,27 @@ import { Skeleton } from "@mui/material";
 const BudgetTab = ({ state }) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
-    const { tableHeaders, mapData, addBudget, editBudget, setBudgets, budgets } = useBudgetTab(state);
+    const {
+        mapData,
+        addBudget,
+        editBudget,
+        setBudgets,
+        handleViewOrders,
+        handleEditBudget,
+        handleAddNewBudget,
+        setIsModalOpen,
+        setIsOrdersModalOpen,
+        tableHeaders,
+        budgets,
+        allDocumentsByBudgetId,
+        isModalOpen,
+        isOrdersModalOpen,
+        currentBudget,
+        allDocumentsByBudget
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);
-    const [currentBudget, setCurrentBudget] = useState(null);
-    const [currentOrders, setCurrentOrders] = useState([]);
+    } = useBudgetTab(state);
 
-    const handleAddNewBudget = () => {
-        setCurrentBudget(null);
-        setIsModalOpen(true);
-    };
 
-    const handleEditBudget = (budget) => {
-        setCurrentBudget(budget);
-        setIsModalOpen(true);
-    };
-
-    const handleViewOrders = () => {
-        setIsOrdersModalOpen(true);
-    };
 
     return (
         <div style={{ width: '100%', marginTop: 10 }} data-tour={'BudgetTable'}>
@@ -69,7 +70,8 @@ const BudgetTab = ({ state }) => {
                 <OrdersModal
                     isOpen={isOrdersModalOpen}
                     onClose={() => setIsOrdersModalOpen(false)}
-                    orders={currentOrders}
+                    allDocuments={allDocumentsByBudgetId}
+                    allDocumentsByBudget={allDocumentsByBudget}
                 />
             )}
         </div>
