@@ -73,7 +73,7 @@ const BudgetsMenuForClient = ({ handleClose, open, anchorEl, documentType }) => 
           ))
         ) : (
           <div style={classes.menuTabStyle}>
-            {t('No budgets available for')} {quoteStateValue?.client?.name}
+            {t('sales.quote.noBudgetsAvailableFor')} {quoteStateValue?.client?.name}
           </div>
         )}
       </div>
