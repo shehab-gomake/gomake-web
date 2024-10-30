@@ -5,19 +5,33 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 
 const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget, updateDocumentBudget, selectedBudget }) => {
   // State to manage switching between modals
   const { callApi } = useGomakeAxios();
+  const { t } = useTranslation();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [isClientOrdersModalOpen, setIsClientOrdersModalOpen] = useState(false);
   const [selectedOrders, setSelectedOrders] = useState([]);
   // Table headers for the current budget's orders
-  const ordersTableHeaders = ["Document Number", "Document Type", "Total Price Without VAT", "Total Price", "More"];
+  const ordersTableHeaders = [
+    t("home.headers.documentNumber"),
+    t("documentingDesign.documnetCreation.docmentType"),
+    t("home.headers.totalPriceWithoutVat"),
+    t("reports.totalPrice"),
+    t("properties.more")
+  ];
 
   // Table headers for client's orders selection modal
-  const clientOrdersTableHeaders = ["#", "Document Number", "Document Type", "Total Price Without VAT", "Total Price"];
+  const clientOrdersTableHeaders = [
+    "#",
+    t("home.headers.documentNumber"),
+    t("documentingDesign.documnetCreation.docmentType"),
+    t("home.headers.totalPriceWithoutVat"),
+    t("reports.totalPrice")
+  ];
 
   const handleDeleteOrder = (document) => {
     updateDocumentBudget(document)
