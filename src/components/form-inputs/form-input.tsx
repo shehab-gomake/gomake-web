@@ -138,7 +138,7 @@ const FormInput = ({
         }
         setDataLoaded(true);
       });
-    } else if (input.options && input.options.length > 0) {
+    } else if (input.options && input.options.length > 0 && options.length === 0) {
       setOptions(
         input.options.map(({ value, text }) => ({ label: text, value }))
       );
@@ -146,6 +146,7 @@ const FormInput = ({
       input.options?.length === 0 &&
       input.parameterKey === "machines"
     ) {
+
       setOptions(machinesCategoriesList);
     } else if (
       input.options?.length === 0 &&
@@ -184,7 +185,7 @@ const FormInput = ({
   const [selectedOptions, setSelectedOptions] = useState([]);
 
   useEffect(() => {
-    if (typeof input?.value === "string") {
+    if (typeof input?.value === "string" && input.parameterKey !== "directions") {
       const selectedValues = input.value.split(",").map((val) => val.trim());
       const selected = options.filter((option) =>
         selectedValues.includes(option.value.toString())
@@ -267,45 +268,45 @@ const FormInput = ({
                 renderOption={
                   input.multiple
                     ? (props: any, option: any) => {
-                        return (
-                          <Stack style={classes.multiSelectOption}>
-                            <div>
-                              <Checkbox
-                                onChange={(e, checked) => {
-                                  if (checked) {
-                                    setSelectedOptions((prevValues) => [
-                                      ...prevValues,
-                                      {
-                                        label: option.label,
-                                        value: option.value,
-                                      },
-                                    ]);
-                                  } else {
-                                    setSelectedOptions((prevValues) =>
-                                      prevValues.filter(
-                                        (item) => item.value !== option.value
-                                      )
-                                    );
-                                  }
-                                  handleSelectCheck(
-                                    input.parameterKey,
-                                    checked,
-                                    option
+                      return (
+                        <Stack style={classes.multiSelectOption}>
+                          <div>
+                            <Checkbox
+                              onChange={(e, checked) => {
+                                if (checked) {
+                                  setSelectedOptions((prevValues) => [
+                                    ...prevValues,
+                                    {
+                                      label: option.label,
+                                      value: option.value,
+                                    },
+                                  ]);
+                                } else {
+                                  setSelectedOptions((prevValues) =>
+                                    prevValues.filter(
+                                      (item) => item.value !== option.value
+                                    )
                                   );
-                                }}
-                                icon={<CheckboxIcon />}
-                                checkedIcon={<CheckboxCheckedIcon />}
-                                checked={
-                                  values?.length > 0
-                                    ? values?.includes(option?.value)
-                                    : input?.value?.includes(option?.value)
                                 }
-                              />
-                            </div>
-                            <div>{option.label}</div>
-                          </Stack>
-                        );
-                      }
+                                handleSelectCheck(
+                                  input.parameterKey,
+                                  checked,
+                                  option
+                                );
+                              }}
+                              icon={<CheckboxIcon />}
+                              checkedIcon={<CheckboxCheckedIcon />}
+                              checked={
+                                values?.length > 0
+                                  ? values?.includes(option?.value)
+                                  : input?.value?.includes(option?.value)
+                              }
+                            />
+                          </div>
+                          <div>{option.label}</div>
+                        </Stack>
+                      );
+                    }
                     : undefined
                 }
                 PaperComponent={(props: any) => (

@@ -18,6 +18,8 @@ const OtherOptionsSection = ({
   onClose,
 }: OtherOptionsSectionProps) => {
   const { t } = useTranslation();
+  const dir = t("direction");
+  const isRTL = dir === "rtl";
   const { classes } = useStyle();
   const { navigate } = useGomakeRouter();
   const { alertFaultGetData } = useSnackBar();
@@ -64,21 +66,21 @@ const OtherOptionsSection = ({
     <Stack direction={"column"} gap={"10px"} width={"100%"}>
       <span style={classes.sectionTitle}>{t("sales.modals.otherOptions")}</span>
       <Button
-        style={classes.optionsButtons}
+        sx={classes.optionsButtons}
         onClick={onClickPrint}
         startIcon={<PrinterIcon />}
       >
         {t("sales.modals.print")}
       </Button>
       <Button
-        style={classes.optionsButtons}
+        sx={classes.optionsButtons}
         onClick={onClickPay}
         startIcon={<PayIcon />}
       >
         {t("sales.modals.pay")}
       </Button>
       <Button
-        style={classes.optionsButtons}
+        sx={classes.optionsButtons}
         onClick={onClickCreateNewInvoice}
         startIcon={<CreateIcon />}
       >
