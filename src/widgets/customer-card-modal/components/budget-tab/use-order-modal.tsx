@@ -12,7 +12,7 @@ const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget, updateDocu
   // State to manage switching between modals
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+  const { alertSuccessUpdate, alertFaultUpdate, alertFault } = useSnackBar();
   const [isClientOrdersModalOpen, setIsClientOrdersModalOpen] = useState(false);
   const [selectedOrders, setSelectedOrders] = useState([]);
   // Table headers for the current budget's orders
@@ -92,7 +92,14 @@ const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget, updateDocu
     if (res?.success) {
       alertSuccessUpdate();
     } else {
-      alertFaultUpdate();
+      if (res?.errors?.statusCode === 107) {
+        alertFault(t(`documentingDesign.${res?.errors?.message}`));
+      }
+      else {
+        alertFaultUpdate();
+
+      }
+
     }
   }, [selectedBudget, selectedOrders]);
 
