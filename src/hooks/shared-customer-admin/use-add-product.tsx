@@ -29,10 +29,11 @@ import { ButtonParameterWidget } from "@/pages-components/products/digital-offse
 import { findParameterByCode } from "@/utils/helpers";
 import { SettingsIcon } from "@/icons/settings";
 import { UpdateTypes } from "@/widgets/shared-admin-customers/add-product/parameters/widgets/section-mapping";
+import { UpdateParameterModal } from "@/widgets/shared-admin-customers/add-product/parameters/widgets/update-parameter-modal";
 
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
-  const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
+  const { alertFaultAdded, alertSuccessAdded, alertFault } = useSnackBar();
   const [expanded, setExpanded] = useState<string | false>("");
   const handleChange =
     (panel: string) => (event: React.SyntheticEvent, newExpanded: boolean) => {
@@ -332,7 +333,8 @@ const useAddProduct = ({ clasess }) => {
       sectionId: string,
       subSectionId: string,
       parameter: any,
-      option: any
+      option: any,
+      updateType?: UpdateTypes
     ) => {
       let temp = [...parameter?.valuesConfigs];
 
@@ -340,7 +342,7 @@ const useAddProduct = ({ clasess }) => {
 
       const updatedArray = temp.map((obj) => {
         if (obj.id === objectIdToUpdate) {
-          return { ...obj, isHidden: !obj.isHidden };
+          return { ...obj, isHidden: !obj.isHidden, updateType };
         }
         return obj;
       });
@@ -353,6 +355,7 @@ const useAddProduct = ({ clasess }) => {
     },
     [router]
   );
+
   const updatedProductParameterValuesConfigsDefault = useCallback(
     async (
       sectionId: string,
@@ -380,6 +383,7 @@ const useAddProduct = ({ clasess }) => {
     },
     [router]
   );
+
   const updatedParameterMaterialTypeValuesConfigsDefault = useCallback(
     async (
       sectionId: string,
@@ -591,6 +595,43 @@ const useAddProduct = ({ clasess }) => {
       setOpenModal(true);
     }, 100);
   };
+
+  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<any>({});
+  const [selectedSectionId, setSelectedSectionId] = useState<any>({});
+  const [selectedSubSectionId, setSelectedSubSectionId] = useState<any>({});
+  const [selectedUpdateType, setSelectedUpdateType] =
+    useState<UpdateTypes | null>(null);
+
+  const handleCloseModal = () => {
+    setIsUpdateModalOpen(false);
+    setSelectedUpdateType(null);
+    setSelectedOption(null);
+    setSelectedSectionId(null);
+    setSelectedSubSectionId(null);
+  };
+
+  const handleOpenModal = () => {
+    setIsUpdateModalOpen(true);
+  };
+
+  const handleUpdateParametersValue = () => {
+    if (selectedUpdateType === null) {
+      alertFault(t("products.parameters.pleaseSelectOneOption"));
+      return;
+    }
+
+    updatedProductParameterValuesConfigsHidden(
+      selectedSectionId,
+      selectedSubSectionId,
+      selectedParameter,
+      selectedOption,
+      selectedUpdateType
+    );
+
+    handleCloseModal();
+  };
+
   const _renderParameterType = (
     sectionId,
     subSectionId,
@@ -679,28 +720,26 @@ const useAddProduct = ({ clasess }) => {
                     {option.isHidden ? (
                       <div
                         style={{ cursor: "pointer" }}
-                        onClick={() =>
-                          updatedProductParameterValuesConfigsHidden(
-                            sectionId,
-                            subSectionId,
-                            parameter,
-                            option
-                          )
-                        }
+                        onClick={() => {
+                          setSelectedSectionId(sectionId);
+                          setSelectedSubSectionId(subSectionId);
+                          setSelectedParameter(parameter);
+                          setSelectedOption(option);
+                          handleOpenModal();
+                        }}
                       >
                         <HiddenIcon />
                       </div>
                     ) : (
                       <div
                         style={{ cursor: "pointer" }}
-                        onClick={() =>
-                          updatedProductParameterValuesConfigsHidden(
-                            sectionId,
-                            subSectionId,
-                            parameter,
-                            option
-                          )
-                        }
+                        onClick={() => {
+                          setSelectedSectionId(sectionId);
+                          setSelectedSubSectionId(subSectionId);
+                          setSelectedParameter(parameter);
+                          setSelectedOption(option);
+                          handleOpenModal();
+                        }}
                       >
                         <NotHiddenIcon />
                       </div>
@@ -1031,6 +1070,11 @@ const useAddProduct = ({ clasess }) => {
     onOpeneMultiParameterModal,
     settingParameters,
     setSettingParameters,
+    setSelectedUpdateType,
+    selectedUpdateType,
+    handleCloseModal,
+    isUpdateModalOpen,
+    handleUpdateParametersValue,
   };
 };
 

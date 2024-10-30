@@ -7,6 +7,7 @@ import { Tabs } from "@mui/material";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
 import { GalleryModal, MultiParameterModal } from "../../digital-offset-price";
+import { UpdateParameterModal } from "./widgets/update-parameter-modal";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();
@@ -43,6 +44,12 @@ const ParameterWidget = () => {
     onOpeneMultiParameterModal,
     setSettingParameters,
     settingParameters,
+
+    setSelectedUpdateType,
+    selectedUpdateType,
+    handleCloseModal,
+    isUpdateModalOpen,
+    handleUpdateParametersValue,
   } = useAddProduct({ clasess });
 
   return (
@@ -185,6 +192,13 @@ const ParameterWidget = () => {
         isParameterSettings={true}
         setSettingParameters={setSettingParameters}
         getProductById={getProductById}
+      />
+      <UpdateParameterModal
+        openModal={isUpdateModalOpen}
+        onClose={handleCloseModal}
+        selectedUpdateType={selectedUpdateType}
+        setSelectedUpdateType={setSelectedUpdateType}
+        onUpdate={handleUpdateParametersValue}
       />
     </>
   );
