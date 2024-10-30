@@ -346,7 +346,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           if (docType === DOCUMENT_TYPE.purchaseOrder) {
             // Split the creationDate to get the date and time separately
             const [date, time] = quote?.creationDate?.split(" ") || ["", ""];
-
             return [
               // Display the date on the first line and time on the second line
               <div>
@@ -443,7 +442,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 documentType={docType}
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickQuoteDuplicate}
+                onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
                 onClickOpenChangeProductionStatusModal={
@@ -522,7 +521,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 documentType={docType}
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickQuoteDuplicate}
+                onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
                 onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
@@ -540,6 +539,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenChangeProductionStatusModal
                 }
                 onClickPauseOrResume={onClickPauseOrResume}
+                onOpenDuplicateModal={onOpenDuplicateModal}
               />,
             ];
           } else {
@@ -595,7 +595,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 documentType={docType}
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickQuoteDuplicate}
+                onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={
@@ -630,7 +630,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             documentType={docType}
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
-            onClickDuplicate={onClickQuoteDuplicate}
+            onClickDuplicate={onClickDocumentDuplicate}
             onClickLoggers={onClickDocumentLogs}
             onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
             onOpenCancelReceiptModal={onOpenCancelReceiptModal}
@@ -865,7 +865,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 documentType={docType}
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickQuoteDuplicate}
+                onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
                 onClickOpenChangeProductionStatusModal={
@@ -943,7 +943,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 documentType={docType}
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickQuoteDuplicate}
+                onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
@@ -961,6 +961,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenChangeProductionStatusModal
                 }
                 onClickPauseOrResume={onClickPauseOrResume}
+                onOpenDuplicateModal={onOpenDuplicateModal}
               />,
             ];
           } else {
@@ -1015,7 +1016,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 documentType={docType}
                 onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickQuoteDuplicate}
+                onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
                 onClickOpenCloseOrderNotesModal={
@@ -1049,7 +1050,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             documentType={docType}
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
-            onClickDuplicate={onClickQuoteDuplicate}
+            onClickDuplicate={onClickDocumentDuplicate}
             onClickLoggers={onClickDocumentLogs}
             onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
             onOpenCancelReceiptModal={onOpenCancelReceiptModal}
@@ -1390,7 +1391,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
-  const onClickQuoteDuplicate = async (id: string) => {
+  const onClickDocumentDuplicate = async (
+    id: string,
+    withJobNumbers: boolean | null = false
+  ) => {
     const callBack = (res) => {
       if (res?.success) {
         const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
@@ -1404,9 +1408,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         alertFaultDuplicate();
       }
     };
+
     await duplicateDocumentApi(callApi, callBack, {
       documentId: id,
       documentType: docType,
+      withJobNumbers,
     });
   };
 
@@ -1456,7 +1462,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             documentType={docType}
             onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
-            onClickDuplicate={onClickQuoteDuplicate}
+            onClickDuplicate={onClickDocumentDuplicate}
             onClickLoggers={onClickDocumentLogs}
             onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
             onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
@@ -2288,6 +2294,17 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   }, [debouncePatternSearch]);
 
+  const [openDuplicateModal, setOpenDuplicateModal] = useState<boolean>(false);
+  const onCloseDuplicateModal = () => {
+    setSelectedDocument({});
+    setOpenDuplicateModal(false);
+  };
+
+  const onOpenDuplicateModal = (mission: any) => {
+    setSelectedDocument(mission);
+    setOpenDuplicateModal(true);
+  };
+
   return {
     showCustomerModal,
     customerForEdit,
@@ -2418,6 +2435,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onChangeDocumentSearch,
     isPausedOrders,
     setIsPausedOrders,
+    openDuplicateModal,
+    onCloseDuplicateModal,
+    onClickDocumentDuplicate,
   };
 };
 

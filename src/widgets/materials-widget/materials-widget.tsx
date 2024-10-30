@@ -40,7 +40,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const dir: "rtl" | "ltr" = t("direction");
   const { getMaterialCategoryData, pagesCount, pageNumber, setPageNumber } =
     useMaterialsCategories(props.isAdmin);
-  const pageSize = 12;
+  const pageSize = 14;
   const activeFilter = useRecoilValue(activeFilterState);
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);

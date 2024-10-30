@@ -23,6 +23,7 @@ const MoreMenuWidget = ({
   onClickOpenDocument,
   onClickOpenChangeProductionStatusModal,
   onClickPauseOrResume,
+ onOpenDuplicateModal
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -47,6 +48,7 @@ const MoreMenuWidget = ({
     onClickOpenDocument,
     onClickOpenChangeProductionStatusModal,
     onClickPauseOrResume,
+      onOpenDuplicateModal
   });
 
   return (

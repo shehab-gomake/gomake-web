@@ -40,10 +40,11 @@ const SideList = ({
   children,
   isCode = false,
   isTranslated = false,
+  isHaveDeleteIcon = false
 }: any) => {
   const { primaryColor } = useGomakeTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { classes } = useStyle();
+  const { classes } = useStyle({ isHaveDeleteIcon });
   const [filter, setFilter] = useState<string>();
   const { duplicateMachine, deleteMachine } = usePrintHouseAddMachine();
   const handleFilterChange = (event) => {
