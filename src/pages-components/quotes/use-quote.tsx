@@ -38,6 +38,7 @@ import {
   moveOrderToReadyApi,
   OpenCanceledDocumentApi,
   OpenDocumentApi,
+  pauseOrdResumeOrderApi,
   updateDocumentApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
@@ -78,6 +79,7 @@ interface Query {
   accountingStatus?: string;
   productionStatus?: string;
   isCanceled?: boolean;
+  isPaused?: boolean;
   pageNumber?: number;
 }
 
@@ -102,6 +104,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [quoteStatusId, setQuoteStatusId] = useState<any>();
   const [customerId, setCustomerId] = useState<any>();
   const [isCanceledState, setIsCanceledState] = useState(false);
+  const [isPausedOrders, setIsPausedOrders] = useState(false);
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
   const [allQuotes, setAllQuotes] = useState();
@@ -326,6 +329,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         maxPrice: maxPrice,
         productList: productIds,
         isCanceled: isCanceledState,
+        isPaused: isPausedOrders,
         isOrderInTracking: isOrdersTracking,
         fromDate: fromDate && GetDateFormat(fromDate),
         toDate: toDate && GetDateFormat(toDate),
@@ -534,6 +538,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickPauseOrResume={onClickPauseOrResume}
                 onOpenDuplicateModal={onOpenDuplicateModal}
               />,
             ];
@@ -674,6 +679,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         )
       : null;
     const currentIsCanceled = router.query.isCanceled;
+    const currentIsPaused = router.query.isPaused;
 
     if (isReceipt) {
       await getAllReceiptsApi(callApi, callBack, {
@@ -719,6 +725,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           maxPrice: currentMaxPrice || maxPrice,
           productList: productIds,
           isCanceled: currentIsCanceled || isCanceledState,
+          isPaused: currentIsPaused || isPausedOrders,
           isOrderInTracking: isOrdersTracking,
           fromDate: currentFromDate && GetDateFormat(currentFromDate),
           toDate: currentToDate && GetDateFormat(currentToDate),
@@ -744,6 +751,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     maxPrice,
     productIds,
     isCanceledState,
+    isPausedOrders,
     fromDate,
     toDate,
     onClickOpenModal,
@@ -952,6 +960,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickPauseOrResume={onClickPauseOrResume}
                 onOpenDuplicateModal={onOpenDuplicateModal}
               />,
             ];
@@ -1119,7 +1128,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       query.productionStatus = productionStatus.value.toString();
     else delete query.productionStatus;
 
-    query.isCanceled = isCanceledState;
+    if (isCanceledState) query.isCanceled = isCanceledState;
+    else delete query.isCanceled;
+
+    if (isPausedOrders) query.isPaused = isPausedOrders;
+    else delete query.isPaused;
 
     handleClose();
     setPage(1);
@@ -1149,6 +1162,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setToDate(null);
     setResetDatePicker(true);
     setIsCanceledState(false);
+    setIsPausedOrders(false);
     setPage(1);
     setMinPrice("");
     setMaxPrice("");
@@ -2036,6 +2050,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   };
 
+  const onClickPauseOrResume = async (documentId: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getAllQuotes();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await pauseOrdResumeOrderApi(callApi, callBack, {
+      documentId,
+      documentType: docType,
+    });
+  };
+
   const [openMakePaymentModal, setOpenMakePaymentModal] = useState(false);
   const onClickMakePayment = (order) => {
     setSelectedQuoteItemValue(order);
@@ -2150,6 +2179,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       productionStatus,
       isCanceled,
       pageNumber,
+      isPaused,
     } = router.query;
 
     if (customerId) {
@@ -2202,7 +2232,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           : isCanceled === "true"
       );
     }
-    // }, [router, renderOptions(), agentsCategories]);
+
+    if (isPaused) {
+      setIsPausedOrders(
+        Array.isArray(isPaused) ? isPaused[0] === "true" : isPaused === "true"
+      );
+    }
   }, [router, agentsCategories]);
 
   const moveOrderToReady = async () => {
@@ -2398,6 +2433,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickCloseChangeProductionStatusModal,
     moveOrderToReady,
     onChangeDocumentSearch,
+    isPausedOrders,
+    setIsPausedOrders,
     openDuplicateModal,
     onCloseDuplicateModal,
     onClickDocumentDuplicate,
