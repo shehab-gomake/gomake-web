@@ -88,6 +88,7 @@ import { AdvertisingProductCategoryParameterWidget } from "@/pages-components/pr
 import { AdvertisingProductNameParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-name";
 import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-outputs";
 import { useMaterials } from "../use-materials";
+import { ESourceView } from "@/enums/products";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
@@ -3043,10 +3044,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const subSectionParameter = subSection.parameters.find(
         (param) => param.id === parameterId && param.actionIndex === actionIndex
       );
-      if(subSectionParameter){
+      if (subSectionParameter) {
         subSectionParameter.isHidden = false;
       }
-      
+
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
         temp[findIndex] = {
@@ -3791,6 +3792,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         },
         {
           Id: router?.query?.productId,
+          sourceView: ESourceView.ProductCalculationView
         }
       );
     }

@@ -28,6 +28,7 @@ import { selectParameterButtonState, selectedValueConfigState } from "@/store";
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { findParameterByCode } from "@/utils/helpers";
 import { SettingsIcon } from "@/icons/settings";
+import { ESourceView } from "@/enums/products";
 
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
@@ -138,6 +139,7 @@ const useAddProduct = ({ clasess }) => {
     if (router?.query?.id) {
       const data = await getAndSetProductById(callApi, setTemplate, {
         Id: router?.query?.id,
+        sourceView: ESourceView.ProductEditView
       });
       setProductState(data);
     }
