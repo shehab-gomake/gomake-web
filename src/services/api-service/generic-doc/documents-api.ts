@@ -76,6 +76,16 @@ const UPDATE_DOCUMENT_COMMENTS_URL =
 const UPDATE_DOCUMENT_INTERNAL_NOTES_URL =
   "/v1/erp-service/document/update-document-internal-notes";
 const GET_CLIENT_DOCUMENTS = "/v1/erp-service/documents/get-client-documents";
+
+const GET_ALL_BUDGETS_FOR_CLIENT = "/v1/erp-service/budgets/get-all-budgets-for-client";
+const GET_ALL_DOCUMENTS_BY_BUDGET_ID = "/v1/erp-service/budgets/get-all-documents-by-budget-id";
+
+const GET_ALL_DOCUMENTS_BY_BUDGET = "/v1/erp-service/budgets/get-all-documents-for-budget";
+
+const GET_ALL_CLIENT_ACTIVE_BUDGETS = "/v1/erp-service/budgets/get-client-active-budgets";
+
+
+
 const ADD_CREATE_CONTACT_URL = "/v1/crm-service/customer/create-contact";
 const SORT_DOCUMENT_ITEMS_URL = "/v1/erp-service/documents/sort-document-items";
 const UPDATE_DISCOUNT_TYPE_URL =
@@ -648,6 +658,66 @@ const getClientDocumentsApi: ICallAndSetData = async (
   );
 };
 
+const getAllBudgetsForClientApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { clientId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_BUDGETS_FOR_CLIENT,
+    setState,
+    data,
+    false
+  );
+};
+
+const getAllDocumentsByBudgetIdApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { budgetId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_DOCUMENTS_BY_BUDGET_ID,
+    setState,
+    data,
+    false
+  );
+};
+
+const getAllDocumentsByBudgetApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { clientId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_DOCUMENTS_BY_BUDGET,
+    setState,
+    data,
+    false
+  );
+};
+
+const getAllClientActiveBudgetsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { clientId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_CLIENT_ACTIVE_BUDGETS,
+    setState,
+    data,
+    false
+  );
+};
+
 const getBoardMissionPDF: ICallAndSetData = async (
   callApi,
   setState,
@@ -1012,5 +1082,9 @@ export {
   sendReceiptToClientApi,
   getWhatsAppMessageForReceiptApi,
   moveOrderToReadyApi,
+  getAllBudgetsForClientApi,
+  getAllDocumentsByBudgetIdApi,
+  getAllDocumentsByBudgetApi,
+  getAllClientActiveBudgetsApi,
   pauseOrdResumeOrderApi,
 };

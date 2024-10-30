@@ -54,5 +54,4 @@ const useSnackBar = () => {
     alertFaultSend: () => showAlert("alerts.sendFailed", "error"),
   };
 };
-
 export { useSnackBar };
