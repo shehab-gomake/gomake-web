@@ -3,17 +3,17 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { Skeleton } from "@mui/material";
 import { useOrderModal } from "./use-order-modal";
 
-const OrdersModal = ({ isOpen, onClose, allDocuments, allDocumentsByBudget }) => {
+const OrdersModal = ({ isOpen, onClose, allDocuments, allDocumentsByBudget, updateDocumentBudget, selectedBudget }) => {
     const {
         handleClose,
         handleClientOrdersClick,
         mapOrdersData,
         mapClientOrdersData,
+        updateDocumentsBudget,
         isClientOrdersModalOpen,
         ordersTableHeaders,
-        clientOrdersTableHeaders
-    } = useOrderModal({ allDocuments, onClose, allDocumentsByBudget })
-
+        clientOrdersTableHeaders,
+    } = useOrderModal({ allDocuments, onClose, allDocumentsByBudget, updateDocumentBudget, selectedBudget })
     return (
         <>
             {/* Orders in the current budget modal */}
@@ -59,6 +59,13 @@ const OrdersModal = ({ isOpen, onClose, allDocuments, allDocumentsByBudget }) =>
                         headers={clientOrdersTableHeaders}
                         maxHeight={300}
                     />
+
+                    <GomakePrimaryButton
+                        style={{ width: "fit-content", marginTop: 25, height: 40, backgroundColor: "#EC038D" }}
+                        onClick={() => updateDocumentsBudget()}
+                    >
+                        Update Documents
+                    </GomakePrimaryButton>
                 </div>
             </GoMakeModal>
         </>

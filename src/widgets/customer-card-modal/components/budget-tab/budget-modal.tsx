@@ -4,9 +4,10 @@ import { Checkbox, FormControlLabel } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { BudgetStatus, getBudgetStatusText, getPaymentStatusText, PaymentStatus } from "./helpers-budget";
 import { DateRangePicker } from "rsuite";
+import { useTranslation } from "react-i18next";
 3
 const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
-    console.log("budget", budget)
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({
         name: "",
         isAmountWithVat: false,
@@ -55,7 +56,6 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
                 ...formData,
                 fromDate: new Date(dates[0]), // Save as new Date
                 toDate: new Date(dates[1]),
-                // Adjust as needed
             });
         }
     };
@@ -75,16 +75,17 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
         { label: getPaymentStatusText(PaymentStatus.ByClientPaymentTerms), value: PaymentStatus.ByClientPaymentTerms }
     ]
     return (
-        <GoMakeModal open={isOpen} onClose={onClose} insideStyle={{ width: 500, height: "fit-contact" }} modalTitle={budget ? "Edit Budget" : "New Budget"}>
+        <GoMakeModal open={isOpen} onClose={onClose} insideStyle={{ width: 500, height: "fit-contact" }}
+            modalTitle={budget ? t("customers.modal.editBudget") : t("customers.modal.newBudgetModal")}>
             <div style={{ display: "flex", flexDirection: "column", padding: 20, width: "100%", gap: 20 }}>
                 <GomakeTextInput
-                    placeholder="Budget Name"
+                    placeholder={t("customers.modal.budgetName")}
                     value={formData.name}
                     onChange={(e) => handleTextInputChange("name", e.target.value)}
                     style={{ height: 40 }}
                 />
                 <GomakeTextInput
-                    placeholder="Total"
+                    placeholder={t("deposits.total")}
                     value={formData.amount}
                     onChange={(e) => handleTextInputChange("amount", e.target.value)}
                     style={{ height: 40 }}
@@ -95,7 +96,7 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
                 />
 
                 <GomakeTextInput
-                    placeholder="Invoice Number"
+                    placeholder={t("customers.modal.invoiceNumber")}
                     value={formData.invoiceNumber}
                     onChange={(e) => handleTextInputChange("invoiceNumber", e.target.value)}
                     style={{ height: 40 }}
@@ -107,7 +108,7 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
                         handleTextInputChange("paymentStatus", item?.value)
                     }}
                     style={{ border: "none", height: 40 }}
-                    placeholder="Payment Status"
+                    placeholder={t("customers.modal.paymentStatus")}
                 />
                 <GoMakeAutoComplate
                     options={BudgetStatusList}
@@ -116,7 +117,7 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
                         handleTextInputChange("status", item?.value)
                     }}
                     style={{ border: "none", height: 40 }}
-                    placeholder="Status"
+                    placeholder={t("customers.modal.status")}
                 />
                 <FormControlLabel
                     control={
@@ -128,10 +129,10 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
                             name="isAmountWithVat"
                         />
                     }
-                    label="VAT Included"
+                    label={t("customers.modal.vatIncluded")}
                 />
                 <GomakePrimaryButton onClick={handleSubmit} color="primary" variant="contained" >
-                    {budget ? "Edit" : "Save"}
+                    {budget ? t("materials.buttons.edit") : t("materials.buttons.save")}
                 </GomakePrimaryButton>
             </div>
         </GoMakeModal >

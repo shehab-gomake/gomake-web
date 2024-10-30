@@ -5,11 +5,22 @@ import { getAllBudgetsForClientApi, getAllDocumentsByBudgetApi, getAllDocumentsB
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getBudgetStatusText, getPaymentStatusText } from "./helpers-budget";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { useTranslation } from "react-i18next";
 
 
 const useBudgetTab = (state) => {
   const { callApi } = useGomakeAxios();
-  const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData, alertSuccessGetData, alertSuccessAdded, alertFaultAdded } = useSnackBar();
+  const { t } = useTranslation();
+  const {
+    alertSuccessUpdate,
+    alertFaultUpdate,
+    alertFaultGetData,
+    alertSuccessGetData,
+    alertSuccessAdded,
+    alertFaultAdded,
+    alertSuccessDelete,
+    alertFaultDelete
+  } = useSnackBar();
   const [budgets, setBudgets] = useState([]);
   const [allDocumentsByBudgetId, setAllDocumentsByBudgetId] = useState([]);
   const [allDocumentsByBudget, setAllDocumentsByBudget] = useState([]);
@@ -17,7 +28,7 @@ const useBudgetTab = (state) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);
   const [currentBudget, setCurrentBudget] = useState(null);
-
+  const [selectedBudget, setSelectedBudget] = useState(null);
   const handleAddNewBudget = () => {
     setCurrentBudget(null);
     setIsModalOpen(true);
@@ -29,6 +40,7 @@ const useBudgetTab = (state) => {
   };
 
   const handleViewOrders = (budget) => {
+    setSelectedBudget(budget)
     getAllDocumentsByBudgetId(budget)
     setAllDocumentsByBudgetId([])
     setIsOrdersModalOpen(true);
@@ -88,15 +100,15 @@ const useBudgetTab = (state) => {
     }
   }, [isOrdersModalOpen])
   const tableHeaders = [
-    "Budget Name",
-    "VAT Included",
-    "Total",
-    "Balance",
-    "Invoice Number",
-    "Period",
-    "Payment Status",
-    "Status",
-    "More"
+    t("customers.modal.budgetName"),
+    t("customers.modal.vatIncluded"),
+    t("deposits.total"),
+    t("customers.modal.balance"),
+    t("customers.modal.invoiceNumber"),
+    t("customers.modal.period"),
+    t("customers.modal.paymentStatus"),
+    t("customers.modal.status"),
+    t("customers.modal.more")
   ];
 
   const addBudget = useCallback(async (budget) => {
@@ -136,9 +148,9 @@ const useBudgetTab = (state) => {
   const mapData = (handleEditBudget, handleViewOrders) => budgets.map((row) => [
     row.name,
     row.isAmountWithVat ? (
-      <div style={{ color: "#40CC4E" }}>Yes</div>
+      <div style={{ color: "#40CC4E" }}>{t("modal.yes")}</div>
     ) : (
-      <div style={{ color: "#D92C2C" }}>No</div>
+      <div style={{ color: "#D92C2C" }}>{t("modal.no")}</div>
     ),
     row.amount,
     row.balance,
@@ -152,6 +164,26 @@ const useBudgetTab = (state) => {
     </div>
   ]);
 
+
+  const updateDocumentBudget = useCallback(async (budget) => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/erp-service/budgets/update-document-budget`,
+      {
+        documentType: budget?.documentType,
+        documentId: budget?.documentId,
+        budgetId: null
+      }
+    );
+    if (res?.success) {
+
+      getAllDocumentsByBudgetId(selectedBudget)
+      alertSuccessDelete();
+    } else {
+      alertFaultDelete();
+    }
+  }, [selectedBudget]);
+
   return {
     mapData,
     addBudget,
@@ -162,13 +194,15 @@ const useBudgetTab = (state) => {
     handleAddNewBudget,
     setIsModalOpen,
     setIsOrdersModalOpen,
+    updateDocumentBudget,
     tableHeaders,
     budgets,
     allDocumentsByBudgetId,
     isModalOpen,
     isOrdersModalOpen,
     currentBudget,
-    allDocumentsByBudget
+    allDocumentsByBudget,
+    selectedBudget
   };
 };
 

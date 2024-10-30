@@ -1,20 +1,27 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
+import { EHttpMethod } from "@/services/api-service/enums";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 
-const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget }) => {
+const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget, updateDocumentBudget, selectedBudget }) => {
   // State to manage switching between modals
+  const { callApi } = useGomakeAxios();
+  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [isClientOrdersModalOpen, setIsClientOrdersModalOpen] = useState(false);
   const [selectedOrders, setSelectedOrders] = useState([]);
-
   // Table headers for the current budget's orders
   const ordersTableHeaders = ["Document Number", "Document Type", "Total Price Without VAT", "Total Price", "More"];
 
   // Table headers for client's orders selection modal
   const clientOrdersTableHeaders = ["#", "Document Number", "Document Type", "Total Price Without VAT", "Total Price"];
+
+  const handleDeleteOrder = (document) => {
+    updateDocumentBudget(document)
+  }
 
   // Mapping orders for the current budget modal
   const mapOrdersData = () => allDocuments?.map(document => [
@@ -22,29 +29,29 @@ const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget }) => {
     DOCUMENT_TYPE[document.documentType],
     document.totalPaymentBeforeVat,
     document.totalPayment,
-    <div style={{ cursor: "pointer" }}><DeleteIcon /></div>
+    <div onClick={() => handleDeleteOrder(document)} style={{ cursor: "pointer" }}><DeleteIcon /></div>
   ]);
 
   // Mapping client's orders data for selection
   const mapClientOrdersData = () => allDocumentsByBudget.map(order => [
     <Checkbox
-      checked={selectedOrders.includes(order.number)}
-      onChange={(e) => handleSelectOrder(e, order.number)}
+      checked={selectedOrders.some(selected => selected.documentId === order.id)}
+      onChange={(e) => handleSelectOrder(e, order)}
       icon={<CheckboxIcon />}
       checkedIcon={<CheckboxCheckedIcon />}
     />,
     order.number,
-    DOCUMENT_TYPE[order.documentStatus],
+    DOCUMENT_TYPE[order.documentType],
     order.totalPaymentBeforeVat,
     order.totalPayment,
   ]);
 
   // Handling selection of orders
-  const handleSelectOrder = (e, orderNumber) => {
+  const handleSelectOrder = (e, order) => {
     if (e.target.checked) {
-      setSelectedOrders([...selectedOrders, orderNumber]);
+      setSelectedOrders([...selectedOrders, { documentId: order?.id, documentType: order?.documentType }]);
     } else {
-      setSelectedOrders(selectedOrders.filter(order => order !== orderNumber));
+      setSelectedOrders(selectedOrders.filter(selected => selected.documentId !== order.id));
     }
   };
 
@@ -59,11 +66,28 @@ const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget }) => {
     onClose();
   };
 
+  const updateDocumentsBudget = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/erp-service/budgets/update-documents-budget`,
+      {
+        budgetId: selectedBudget?.id,
+        documents: selectedOrders
+      }
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+    } else {
+      alertFaultUpdate();
+    }
+  }, [selectedBudget, selectedOrders]);
+
   return {
     handleClose,
     handleClientOrdersClick,
     mapOrdersData,
     mapClientOrdersData,
+    updateDocumentsBudget,
     isClientOrdersModalOpen,
     ordersTableHeaders,
     clientOrdersTableHeaders
