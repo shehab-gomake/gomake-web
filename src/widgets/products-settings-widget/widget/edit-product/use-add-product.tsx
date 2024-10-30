@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getAndSetProductById } from "@/services/hooks";
 import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
+import { ESourceView } from "@/enums/products";
 
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
@@ -33,7 +34,7 @@ const useAddProduct = () => {
   const [activeTab, setActiveTab] = useState(t("products.addProduct.admin.settings"));
   const onClickSettingsTab = () => {
     setActiveTab(t("products.addProduct.admin.settings"));
-  }; 
+  };
   const onClickParametersTab = () => {
     setActiveTab(t("products.addProduct.admin.parameters"));
   };
@@ -69,6 +70,7 @@ const useAddProduct = () => {
     if (router?.query?.id) {
       await getAndSetProductById(callApi, setProductState, {
         Id: router?.query?.id,
+        sourceView: ESourceView.ProductEditView
       });
     }
   }, [router, setProductState, activeIndex]);
