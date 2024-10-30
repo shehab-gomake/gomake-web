@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getAndSetProductById } from "@/services/hooks";
 import { useRouter } from "next/router";
 import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
+import { ESourceView } from "@/enums/products";
 
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
@@ -78,6 +79,7 @@ const useAddProduct = () => {
     if (router?.query?.productId) {
       const data = await getAndSetProductById(callApi, setTemplate, {
         Id: router?.query?.productId,
+        sourceView: ESourceView.ProductEditView
       });
       setProductState(data);
     }
