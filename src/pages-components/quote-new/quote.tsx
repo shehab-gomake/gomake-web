@@ -41,7 +41,7 @@ import { ViewSignatureApprovalModal } from "@/widgets/quote-new/total-price-and-
 import { CreditCardPaySection } from "@/widgets/quote-confirmation-mobile/components/credit-card-pay-section";
 import moment from "moment";
 import { QuoteNewPageSkeletonWidget } from "./quote-skeleton";
-import { InvoiceCreationModal } from "@/widgets/quote-new/total-price-and-vat/invoice-creation-modal";
+import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;

@@ -117,6 +117,8 @@ const SEND_RECEIPIT_TO_CLIENT_URL =
 const GET_WHATSAPP_MESSAGE_FOR_RECEIPIT_URL =
   "/v1/erp-service/receipt/get-whats-app-message-for-receipt";
 const MOVE_ORDER_TO_DONE_URL = "/v1/erp-service/documents/move-order-to-done";
+const PAUSE_OR_RESUME_DOCUMENT_URL =
+  "/v1/erp-service/documents/pause-or-resume-document";
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -1002,6 +1004,20 @@ const moveOrderToReadyApi: ICallAndSetData = async (
   );
 };
 
+const pauseOrdResumeOrderApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    PAUSE_OR_RESUME_DOCUMENT_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1069,5 +1085,6 @@ export {
   getAllBudgetsForClientApi,
   getAllDocumentsByBudgetIdApi,
   getAllDocumentsByBudgetApi,
-  getAllClientActiveBudgetsApi
+  getAllClientActiveBudgetsApi,
+  pauseOrdResumeOrderApi,
 };
