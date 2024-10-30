@@ -82,6 +82,10 @@ const GET_ALL_DOCUMENTS_BY_BUDGET_ID = "/v1/erp-service/budgets/get-all-document
 
 const GET_ALL_DOCUMENTS_BY_BUDGET = "/v1/erp-service/budgets/get-all-documents-for-budget";
 
+const GET_ALL_CLIENT_ACTIVE_BUDGETS = "/v1/erp-service/budgets/get-client-active-budgets";
+
+
+
 const ADD_CREATE_CONTACT_URL = "/v1/crm-service/customer/create-contact";
 const SORT_DOCUMENT_ITEMS_URL = "/v1/erp-service/documents/sort-document-items";
 const UPDATE_DISCOUNT_TYPE_URL =
@@ -697,6 +701,21 @@ const getAllDocumentsByBudgetApi: ICallAndSetData = async (
   );
 };
 
+const getAllClientActiveBudgetsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { clientId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_CLIENT_ACTIVE_BUDGETS,
+    setState,
+    data,
+    false
+  );
+};
+
 const getBoardMissionPDF: ICallAndSetData = async (
   callApi,
   setState,
@@ -1049,5 +1068,6 @@ export {
   moveOrderToReadyApi,
   getAllBudgetsForClientApi,
   getAllDocumentsByBudgetIdApi,
-  getAllDocumentsByBudgetApi
+  getAllDocumentsByBudgetApi,
+  getAllClientActiveBudgetsApi
 };
