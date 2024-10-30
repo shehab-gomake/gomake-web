@@ -8,6 +8,7 @@ import {
   GomakePrimaryButton,
   GomakeTextInput,
   SecondSwitch,
+  ThreeOptionsModal,
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
@@ -180,6 +181,11 @@ const QuotesListPageWidget = ({
     onClickCloseChangeProductionStatusModal,
     moveOrderToReady,
     onChangeDocumentSearch,
+    isPausedOrders,
+    setIsPausedOrders,
+    openDuplicateModal,
+    onCloseDuplicateModal,
+    onClickDocumentDuplicate,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -446,6 +452,19 @@ const QuotesListPageWidget = ({
                                 />
                               </div>
                             )}
+                            {documentType === DOCUMENT_TYPE.order && (
+                              <div style={classes.statusFilterContainer}>
+                                <h3 style={classes.filterLabelStyle}>
+                                  {t("sales.quote.pausedOrders")}
+                                </h3>
+                                <SecondSwitch
+                                  checked={isPausedOrders}
+                                  onChange={(e) => {
+                                    setIsPausedOrders(e.target.checked);
+                                  }}
+                                />
+                              </div>
+                            )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
                                 DOCUMENT_TYPE.purchaseInvoiceRefund &&
@@ -542,7 +561,7 @@ const QuotesListPageWidget = ({
             <PrimaryTable
               stickyFirstCol={false}
               stickyHeader={true}
-              maxHeight={750}
+              maxHeight={"calc(100vh - 265px)"}
               rows={allQuotes}
               headers={tableHeaders}
               columnWidths={
@@ -615,7 +634,7 @@ const QuotesListPageWidget = ({
       {isFromHomePage && (
         <PrimaryTable
           stickyHeader={true}
-          maxHeight={400}
+          maxHeight={"calc(100vh)"}
           rows={allDocuments}
           headers={tableHomeHeader}
           variant="ClassicTable"
@@ -809,6 +828,15 @@ const QuotesListPageWidget = ({
         openModal={openCancelReceiptModalRefund}
         handleModalClose={onCloseCancelReceiptModalRefund}
         onClickCancel={onClickCancelReceipt}
+      />
+      <ThreeOptionsModal
+        title={t("boardMissions.duplicateModalTitle")}
+        yesBtn={"boardMissions.duplicateModalYes"}
+        noBtn={"boardMissions.duplicateModalNo"}
+        openModal={openDuplicateModal}
+        onClose={onCloseDuplicateModal}
+        onClickYes={() => onClickDocumentDuplicate(selectedDocument?.id, true)}
+        onClickNo={() => onClickDocumentDuplicate(selectedDocument?.id, false)}
       />
     </>
   );

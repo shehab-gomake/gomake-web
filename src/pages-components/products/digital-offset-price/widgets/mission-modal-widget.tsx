@@ -31,9 +31,10 @@ const MissionModalWidget = ({ onClickCloseCurrentStationModal, missionsListForEd
             style={clasess.missionItemContainer}
           >
             <div style={clasess.missionText1}>{mission?.number}</div> -
-            <div style={clasess.missionText}>{mission?.productType}</div>:
+            {mission?.productType && <>
+              <div style={clasess.missionText}>{mission?.productType}</div>:</>}
             <div style={clasess.missionText}>{mission?.station?.actionName}</div>
-            {mission?.employeeName && (
+            {mission?.station?.employeeName && (
               <div
                 style={clasess.missionText2}
               >

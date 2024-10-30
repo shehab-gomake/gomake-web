@@ -1288,6 +1288,7 @@ const useQuoteNew = ({
   };
 
   const onClickSendQuoteToClient = async (messageType: number) => {
+    debugger;
     if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
       alertFault("reports.pleaseSelectOneItem");
       return;

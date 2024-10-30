@@ -11,6 +11,7 @@ import {
   importOutputsApi,
   importProductsApi,
   importProfitsApi,
+  importSMSTemplatesApi,
 } from "@/services/api-service/import-data/import-data-endpoints";
 import Stack from "@mui/material/Stack";
 import { PaymentHistoryComponent } from "@/pages-components/company-reports/payment-history/payment-history";
@@ -33,15 +34,8 @@ enum EAction {
   MATERIALS,
   PRODUCTS,
   OUTPUTS,
+  SMS_TEMPLATE,
 }
-
-const actionApiMap = {
-  [EAction.PROFITS]: importProfitsApi,
-  [EAction.MACHINES]: importMachinesApi,
-  [EAction.MATERIALS]: importMaterialsApi,
-  [EAction.PRODUCTS]: importProductsApi,
-  [EAction.OUTPUTS]: importOutputsApi,
-};
 
 const OptionsComponent = ({
   printHouse,
@@ -91,6 +85,8 @@ const OptionsComponent = ({
       await handelImportProducts();
     } else if (actionState === EAction.OUTPUTS) {
       await handelImportOutputs();
+    } else if (actionState === EAction.SMS_TEMPLATE) {
+      await handelImportSmsTemplates();
     }
   };
 
@@ -122,6 +118,13 @@ const OptionsComponent = ({
     await importOutputsApi(callApi, callBack, {
       source: sourcePrintHouseId,
       destination: printHouse?.id,
+    });
+  };
+
+  const handelImportSmsTemplates = async () => {
+    await importSMSTemplatesApi(callApi, callBack, {
+      sourcePrintHouseId,
+      distPrintHouseId: printHouse?.id,
     });
   };
 
@@ -181,13 +184,11 @@ const OptionsComponent = ({
               : t("importData.addPaymentDetails")}
           </div>
         </MenuItem>
-
         {printHouse?.printHouseCreditCardDetails && (
           <MenuItem onClick={() => handleClickMakePayment(printHouse?.id)}>
             <div style={classes.rowTextStyle}>{t("payment.makePayment")}</div>
           </MenuItem>
         )}
-
         <MenuItem onClick={() => handleOpenSendPaymentModal(printHouse?.id)}>
           <div style={classes.rowTextStyle}>
             {t("prePayment.sendPaymentPage")}
@@ -224,6 +225,11 @@ const OptionsComponent = ({
             {t("importData.uploadDocument")}
           </div>
         </MenuItem>
+        <MenuItem onClick={() => handleOptionClick(EAction.SMS_TEMPLATE)}>
+          <div style={classes.rowTextStyle}>
+            {t("importData.importSmsTemplate")}
+          </div>
+        </MenuItem>
         <MenuItem onClick={() => setOpenPaymentModal(true)}>
           <div style={classes.rowTextStyle}>
             {t("importData.paymentHistory")}
@@ -256,7 +262,6 @@ const OptionsComponent = ({
       >
         <PaymentHistoryComponent printHouseId={printHouse?.id} />
       </GoMakeModal>
-
       <GoMakeModal
         modalTitle={t("importData.uploadDocument")}
         insideStyle={{ width: "400px", height: "fit-content" }}

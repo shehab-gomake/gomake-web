@@ -53,7 +53,7 @@ const DepositsListPageWidget = () => {
                     <PrimaryTable
                         stickyFirstCol={false}
                         stickyHeader={true}
-                        maxHeight={650}
+                        maxHeight={"100vh"}
                         rows={allDeposits}
                         headers={tableHeaders}
                     />

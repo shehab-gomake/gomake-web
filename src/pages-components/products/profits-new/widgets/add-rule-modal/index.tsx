@@ -3,6 +3,7 @@ import {
   GoMakeModal,
   GomakePrimaryButton,
   GomakeTextInput,
+  SecondSwitch,
 } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
@@ -718,33 +719,34 @@ const AddRuleModal = ({
                   )}
                   {rule.category?.id === "Property input" && (
                     <>
-                      {rules[index]?.statement2?.type === 0 ||
-                        rules[index]?.statement2?.type === 5 ? (
+                      {rules[index]?.statement2?.type === 0 || rules[index]?.statement2?.type === 5 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}
                           </label>
                           <GoMakeAutoComplate
-                            key={
-                              selectedCategories?.id +
-                              index +
-                              selectedStatment2?.id
-                            }
-                            options={rules[index]?.statement2?.values?.map(
-                              (value) => {
-                                return {
-                                  ...value,
-                                  label: value?.name,
-                                  id: value.id,
-                                };
-                              }
-                            )}
+                            key={selectedCategories?.id + index + selectedStatment2?.id}
+                            options={rules[index]?.statement2?.values?.map((value) => ({
+                              ...value,
+                              label: value?.name,
+                              id: value.id,
+                            }))}
                             style={clasess.dropDownListContainer}
                             placeholder={t("properties.statment")}
                             value={rule.statement}
-                            onChange={(e, value) =>
-                              handleChange(index, "statement", value)
-                            }
+                            onChange={(e, value) => handleChange(index, "statement", value)}
+                          />
+                        </div>
+                      ) : rules[index]?.statement2?.type === 3 ? (
+                        <div>
+                          <label style={clasess.inputLable}>
+                            {t("properties.statment")}
+                          </label>
+                          <SecondSwitch
+                            checked={rule.statement === "Yes"}
+                            onChange={(e, value) => {
+                              handleChange(index, "statement", value === true ? "Yes" : "No")
+                            }}
                           />
                         </div>
                       ) : (
@@ -753,21 +755,16 @@ const AddRuleModal = ({
                             {t("properties.statment")}
                           </label>
                           <GomakeTextInput
-                            key={
-                              selectedCategories?.id +
-                              index +
-                              selectedStatment2?.id
-                            }
+                            key={selectedCategories?.id + index + selectedStatment2?.id}
                             style={clasess.textInputContainer}
                             placeholder={t("properties.statment")}
-                            onChange={(e) =>
-                              handleChange(index, "statement", e.target.value)
-                            }
+                            onChange={(e) => handleChange(index, "statement", e.target.value)}
                           />
                         </div>
                       )}
                     </>
                   )}
+
                   {rule.category?.id === "Machine category" && (
                     <div>
                       <label style={clasess.inputLable}>

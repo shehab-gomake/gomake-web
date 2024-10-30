@@ -21,7 +21,9 @@ const MoreMenuWidget = ({
   onOpenCancelReceiptModal,
   onOpenCancelReceiptModalRefund,
   onClickOpenDocument,
-  onClickOpenChangeProductionStatusModal
+  onClickOpenChangeProductionStatusModal,
+  onClickPauseOrResume,
+ onOpenDuplicateModal
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -44,7 +46,9 @@ const MoreMenuWidget = ({
     onOpenCancelReceiptModal,
     onOpenCancelReceiptModalRefund,
     onClickOpenDocument,
-    onClickOpenChangeProductionStatusModal
+    onClickOpenChangeProductionStatusModal,
+    onClickPauseOrResume,
+      onOpenDuplicateModal
   });
 
   return (
