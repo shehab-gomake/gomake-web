@@ -10,7 +10,7 @@ const connectionToPrintingMachine = (state: Record<string, any>) => {
             name: `machineAttributes.${label}`,
             parameterKey: parameterKey,
             isValid: true,
-            value: state[parameterKey],
+            value: state.attributes[parameterKey],
             inputs: [
                 {
                     name: "",

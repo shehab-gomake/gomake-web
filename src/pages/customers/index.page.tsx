@@ -134,7 +134,8 @@ export default function Home() {
           <PrimaryTable
             stickyFirstCol={false}
             stickyHeader={true}
-            maxHeight={650}
+            // maxHeight={650}
+            maxHeight={"calc(100vh - 300px)"}
             rows={getCustomersRows()}
             headers={tableHeaders}
           />

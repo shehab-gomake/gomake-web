@@ -130,14 +130,14 @@ export default function Home() {
             onClickExport={onClickExportClient}
             onClickImport={onClickImportClient}
           />
-          <Stack spacing={3}>
+          <>
             <PrimaryTable
               stickyFirstCol={false}
               stickyHeader={true}
-              maxHeight={650}
+              maxHeight={"calc(100vh - 300px)"}
               rows={getCustomersRows()}
               headers={tableHeaders}
-            ></PrimaryTable>
+            />
             <CustomerCardWidget
               isValidCustomer={isValidCustomer}
               customerAction={CUSTOMER_ACTIONS.Edit}
@@ -150,7 +150,7 @@ export default function Home() {
               setCustomer={setCustomerForEdit}
               showUpdateButton={true}
             />
-          </Stack>
+          </>
         </div>
         <GoMakePagination
           onChangePageNumber={(event, value) => setPageNumber(value)}

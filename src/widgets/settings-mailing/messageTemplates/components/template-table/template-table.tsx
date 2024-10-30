@@ -6,7 +6,7 @@ import { allSmsTemplateState } from "@/widgets/settings-mailing/states/state";
 
 const TemplateTable = () => {
 
-    const { tableHeaders, getSMSTemplateTypes} = useMessageTemplate();
+    const { tableHeaders, getSMSTemplateTypes } = useMessageTemplate();
     const allSmsTemplates = useRecoilValue<string[][]>(allSmsTemplateState)
 
 
@@ -15,9 +15,14 @@ const TemplateTable = () => {
     }, [])
 
     return (
-        <div style={{width:"100%"}}>
-        <PrimaryTable stickyFirstCol={false}  rows={allSmsTemplates} headers={tableHeaders}    maxHeight={650}
-            stickyHeader={true}></PrimaryTable>
+        <div style={{ width: "100%" }}>
+            <PrimaryTable
+                stickyFirstCol={false}
+                stickyHeader={true}
+                rows={allSmsTemplates}
+                headers={tableHeaders}
+                maxHeight={"calc(100vh - 273px)"}
+            />
         </div>
     );
 }

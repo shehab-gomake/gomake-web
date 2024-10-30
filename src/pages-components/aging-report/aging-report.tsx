@@ -85,7 +85,7 @@ const AgingReportWidget = () => {
         <PrimaryTable
           rows={getTableDataRows(onClickOpenCustomerModal)} // Pass handler here
           headers={transformedHeaders}
-          maxHeight={720}
+          maxHeight={"100vh"}
           stickyHeader={true}
         />
       )}

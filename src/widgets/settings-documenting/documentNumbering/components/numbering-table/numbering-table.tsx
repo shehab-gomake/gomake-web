@@ -3,18 +3,23 @@ import { useEffect } from "react";
 import { useDocumentNumbers } from "../../use-documents-numbers";
 
 const NumberingTable = () => {
-    const { getAllDocumentsNumbers , documentsNumbers , tableHeaders} = useDocumentNumbers();
-    
+    const { getAllDocumentsNumbers, documentsNumbers, tableHeaders } = useDocumentNumbers();
+
     useEffect(() => {
         getAllDocumentsNumbers()
-      }, []);
+    }, []);
 
     return (
         <>
-        <PrimaryTable stickyFirstCol={false} stickyHeader={true} rows={documentsNumbers} headers={tableHeaders} maxHeight={700}
-        ></PrimaryTable>
+            <PrimaryTable
+                stickyFirstCol={false}
+                stickyHeader={true}
+                rows={documentsNumbers}
+                headers={tableHeaders}
+                maxHeight={"calc(100vh - 213px)"}
+            />
         </>
     );
 }
 
-export {NumberingTable}
+export { NumberingTable }
