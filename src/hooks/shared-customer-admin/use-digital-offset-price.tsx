@@ -4352,7 +4352,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const matchingTemplateParam = productTemplate.sections
           .flatMap((section) => section.subSections)
           .flatMap((subSection) => subSection.parameters)
-          .find((templateParam) => templateParam.id === param.parameterId);
+          .find((templateParam) => templateParam.id === param.parameterId && !templateParam?.isHiddenInSetting);
 
         // Check if the parameter is not hidden (isHidden = false)
         return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
@@ -4370,7 +4370,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const matchingTemplateParam = productTemplate.sections
         .flatMap((section) => section.subSections)
         .flatMap((subSection) => subSection.parameters)
-        .find((templateParam) => templateParam.id === param.parameterId);
+        .find((templateParam) => templateParam.id === param.parameterId && !templateParam?.isHiddenInSetting);
 
       // Check if the parameter is not hidden (isHidden = false)
       return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
