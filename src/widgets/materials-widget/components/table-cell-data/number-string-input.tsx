@@ -67,7 +67,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRo
         <>
             {isUpdate ? isLoading ? <DotsLoader /> : <UpdateValueInput clickedOut={onClickOut()} onInputChange={onInputChange} value={updateValue as string} onUpdate={onBlur}
                 onCancel={() => setIsUpdate(false)} /> :
-                isEditable ? <PrimaryButton sx={classes.clickableData} onClick={onClick} variant={'text'}>{value}</PrimaryButton> : <span>{value}</span>
+                isEditable ? <PrimaryButton style={{ minWidth: "max-content" }} sx={classes.clickableData} onClick={onClick} variant={'text'}>{value}</PrimaryButton> : <span>{value}</span>
             }
             <GoMakeDeleteModal
                 openModal={openDeleteTableRowModal}
