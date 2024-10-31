@@ -8,6 +8,7 @@ import { BudgetModal } from "./budget-modal";
 import { OrdersModal } from "./order-modal";
 import { useBudgetTab } from "./use-budget-tab";
 import { useStyle } from "./style";
+import { GoMakeDeleteModal } from "@/components";
 
 const BudgetTab = ({ state }) => {
     const { classes } = useStyle();
@@ -23,6 +24,8 @@ const BudgetTab = ({ state }) => {
         setIsModalOpen,
         setIsOrdersModalOpen,
         updateDocumentBudget,
+        onCloseCreateInvoiceModal,
+        navigate,
         tableHeaders,
         budgets,
         allDocumentsByBudgetId,
@@ -30,7 +33,9 @@ const BudgetTab = ({ state }) => {
         isOrdersModalOpen,
         currentBudget,
         allDocumentsByBudget,
-        selectedBudget
+        selectedBudget,
+        openCreateInvoiceModal,
+        path
     } = useBudgetTab(state);
     return (
         <div style={{ width: '100%', marginTop: 10 }} data-tour={'BudgetTable'}>
@@ -75,6 +80,16 @@ const BudgetTab = ({ state }) => {
                     selectedBudget={selectedBudget}
                 />
             )}
+
+            <GoMakeDeleteModal
+                hideIcon={true}
+                title={t("do you want to create a invoice ?")}
+                yesBtn={t("create invoice")}
+                cancelBtn={t("modal.cancel")}
+                openModal={openCreateInvoiceModal}
+                onClose={onCloseCreateInvoiceModal}
+                onClickDelete={() => navigate(path)}
+            />
         </div>
     );
 };
