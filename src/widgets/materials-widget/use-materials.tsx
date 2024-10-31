@@ -28,6 +28,7 @@ import {
   materialHeadersState,
   materialsClientsState,
   materialsMachinesState,
+  materialsTablePageState,
   materialsUnCheckedState,
   materialTypeTableState,
   openAddRowModalState,
@@ -132,7 +133,7 @@ const useMaterials = (isAdmin: boolean) => {
   const { onDeleteCategoryRow } = useAddCategoryRow(isAdmin);
   const setFlagState = useSetRecoilState(flagState);
   const { t } = useTranslation();
-
+  const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
   const onSelectCategory = (category: string) => {
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";
@@ -141,6 +142,7 @@ const useMaterials = (isAdmin: boolean) => {
     // setActiveFilter(EMaterialActiveFilter.ACTIVE);
     setIsAllMaterialsChecked(false)
     setMaterialFilter([])
+    setPageNumber(1)
   };
   const onDeleteCategory = async (categoryKey) => {
     const callBack = (res) => {
