@@ -41,7 +41,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRo
 
     const onBlur = () => {
         if (updateValue !== value) {
-            if (isHaveMorethanMaterialSuppliers) {
+            if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
                 onClickOpenDeleteTableRowModal()
             }
             else {

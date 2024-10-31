@@ -49,8 +49,9 @@ const useMaterialFilters = () => {
     const option = activeFilterOptions?.find(
       ({ value }) => value === activeFilter
     );
+
     return option?.label;
-  }, [activeFilter]);
+  }, [activeFilter,activeFilterOptions]);
 
   const onActiveFilterChange = (value: any) => {
     setActiveFilter(value);

@@ -40,7 +40,8 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
 
   const onBlur = async () => {
     if (updateValue !== valueArray[isUpdate]) {
-      if (isHaveMorethanMaterialSuppliers) {
+
+      if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
         onClickOpenDeleteTableRowModal()
       }
       else {
