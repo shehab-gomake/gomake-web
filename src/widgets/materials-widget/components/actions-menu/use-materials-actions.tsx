@@ -281,9 +281,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
         else if (action.key === "CreatePurchaseOrder") {
           CreatePurchaseOrder().then();
         }
-        // else if (isHaveMorethanMaterialSuppliers) {
-        //   onClickOpenUpdatedTableRowModal()
-        // }
         else {
           await updateMaterials(action, callApi, onUpdateCallBack, {
             materialType,
@@ -299,14 +296,37 @@ const useMaterialsActions = (isAdmin: boolean) => {
           });
         }
       } else {
+        console.log("action", action)
+
         if (action.key === "Duplicate") {
           duplicatePrintHouseMaterials();
         }
         else if (action.key === "CreatePurchaseOrder") {
           CreatePurchaseOrder().then();
         }
-        else if (isHaveMorethanMaterialSuppliers) {
-          onClickOpenUpdatedTableRowModal()
+        else if (action.key === "Delete") {
+          await updateMaterials(action, callApi, onUpdateCallBack, {
+            materialType,
+            materialCategory,
+            isAllMaterialsChecked,
+            selectedMaterialsIds,
+            updatedValue,
+            uncheckedMaterials,
+            rate,
+            activeFilter,
+            materialFilter,
+            supplierId
+          });
+        }
+        else if (
+          isHaveMorethanMaterialSuppliers &&
+          (action?.action !== EMaterialsActions.UpdateCurrency &&
+            action?.action !== EMaterialsActions.UpdatePricePerTon &&
+            action?.action !== EMaterialsActions.UpdatePricePerUnit &&
+            action?.action !== EMaterialsActions.UpdatePricePerTonPercents &&
+            action?.action !== EMaterialsActions.UpdatePricePerUnitPercents)
+        ) {
+          onClickOpenUpdatedTableRowModal();
         }
         else {
           await updateMaterials(action, callApi, onUpdateCallBack, {
