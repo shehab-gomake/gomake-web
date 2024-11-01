@@ -81,6 +81,7 @@ const CurrencyInput = ({
           sx={classes.clickableData}
           onClick={() => onClickActionModal()}
           variant={"text"}
+          style={{ minWidth: "max-content" }}
         >
           {currencyName()}
         </PrimaryButton>

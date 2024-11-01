@@ -1,8 +1,6 @@
 import React, { SyntheticEvent, useCallback, useEffect, useState } from "react";
 import { useTableCellData } from "@/widgets/materials-widget/components/table-cell-data/use-table-cell-data";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
-import { getAllProductsForDropDownList } from "@/services/hooks";
-import { useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { productsForDropDownList } from "@/store";
