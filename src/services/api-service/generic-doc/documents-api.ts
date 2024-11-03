@@ -77,14 +77,16 @@ const UPDATE_DOCUMENT_INTERNAL_NOTES_URL =
   "/v1/erp-service/document/update-document-internal-notes";
 const GET_CLIENT_DOCUMENTS = "/v1/erp-service/documents/get-client-documents";
 
-const GET_ALL_BUDGETS_FOR_CLIENT = "/v1/erp-service/budgets/get-all-budgets-for-client";
-const GET_ALL_DOCUMENTS_BY_BUDGET_ID = "/v1/erp-service/budgets/get-all-documents-by-budget-id";
+const GET_ALL_BUDGETS_FOR_CLIENT =
+  "/v1/erp-service/budgets/get-all-budgets-for-client";
+const GET_ALL_DOCUMENTS_BY_BUDGET_ID =
+  "/v1/erp-service/budgets/get-all-documents-by-budget-id";
 
-const GET_ALL_DOCUMENTS_BY_BUDGET = "/v1/erp-service/budgets/get-all-documents-for-budget";
+const GET_ALL_DOCUMENTS_BY_BUDGET =
+  "/v1/erp-service/budgets/get-all-documents-for-budget";
 
-const GET_ALL_CLIENT_ACTIVE_BUDGETS = "/v1/erp-service/budgets/get-client-active-budgets";
-
-
+const GET_ALL_CLIENT_ACTIVE_BUDGETS =
+  "/v1/erp-service/budgets/get-client-active-budgets";
 
 const ADD_CREATE_CONTACT_URL = "/v1/crm-service/customer/create-contact";
 const SORT_DOCUMENT_ITEMS_URL = "/v1/erp-service/documents/sort-document-items";
@@ -119,6 +121,7 @@ const GET_WHATSAPP_MESSAGE_FOR_RECEIPIT_URL =
 const MOVE_ORDER_TO_DONE_URL = "/v1/erp-service/documents/move-order-to-done";
 const PAUSE_OR_RESUME_DOCUMENT_URL =
   "/v1/erp-service/documents/pause-or-resume-document";
+const CREATE_DOCUMENT_URL = "/v1/erp-service/documents/create-document";
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -1018,6 +1021,16 @@ const pauseOrdResumeOrderApi: ICallAndSetData = async (
   );
 };
 
+const createDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    CREATE_DOCUMENT_URL,
+    setState,
+    data,
+    false
+  );
+};
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1087,4 +1100,5 @@ export {
   getAllDocumentsByBudgetApi,
   getAllClientActiveBudgetsApi,
   pauseOrdResumeOrderApi,
+  createDocumentApi,
 };
