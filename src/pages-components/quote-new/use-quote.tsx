@@ -23,6 +23,7 @@ import {
   calculateDocumentItemApi,
   cancelDocumentApi,
   changeDocumentClientApi,
+  createDocumentApi,
   deleteDocumentAddressApi,
   deleteDocumentContactApi,
   deleteDocumentItemApi,
@@ -287,8 +288,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -594,6 +595,7 @@ const useQuoteNew = ({
         {
           documentType: docType,
           clientId: item?.id,
+          ...(router?.query?.budgetId ? { budgetId: router.query.budgetId } : {}),
         }
       );
       if (res?.success) {
@@ -1018,7 +1020,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1438,7 +1440,6 @@ const useQuoteNew = ({
   };
 
   const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
-
   const handleSaveBtnClickForDocument = async () => {
     if (
       !quoteItemValue?.documentItems ||
@@ -1451,48 +1452,41 @@ const useQuoteNew = ({
       alertFault("alerts.cannotCreateWithPriceZero");
       return;
     }
-    setLoadingWithShadow(true);
-    try {
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/documents/create-document`,
-        {
-          documentType: docType,
-          document: {
-            ...quoteItemValue,
-            creationDate: creationDate,
-            taxDate: taxDate,
-            dueDate: selectDate,
-            exchangeRate:
-              quoteItemValue.exchangeRate === 0
-                ? 1
-                : quoteItemValue.exchangeRate,
-          },
-        },
-        false
-      );
 
+    setLoadingWithShadow(true);
+
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessAdded();
-        const _data = res?.data?.data?.data || {};
+        const _data = res?.data || {};
         setQuoteItemValue(_data);
         if (
           docType === DOCUMENT_TYPE.invoice ||
           docType === DOCUMENT_TYPE.deliveryNote
         ) {
           onClickOpenInvoiceCreation();
-          navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`);
+          navigate(`/${documentPath}?Id=${_data?.id}`);
         } else {
-          navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`);
+          navigate(`/${documentPath}?Id=${_data?.id}`);
         }
       } else {
         alertFaultAdded();
       }
-    } catch (error) {
-      alertFaultAdded();
-    } finally {
       setLoadingWithShadow(false);
-    }
+    };
+
+    await createDocumentApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        ...quoteItemValue,
+        creationDate: creationDate,
+        taxDate: taxDate,
+        dueDate: selectDate,
+        ...(router?.query?.budgetId ? { budgetID: router.query.budgetId } : {}),
+        exchangeRate:
+          quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
+      },
+    });
   };
 
   const onClickDeleteAddress = async (item: any) => {
