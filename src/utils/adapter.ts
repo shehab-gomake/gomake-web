@@ -9,6 +9,7 @@ export const convertHeightToVH = (height: number) => {
 export const leftRightAdapter = (dir: string, size: number) => {
   return dir === "rtl" ? { right: size } : { left: size };
 };
+
 export const adaptRight = (dir: string, size: number) => {
   return dir === "rtl"
     ? {
