@@ -4,6 +4,9 @@ import {EHttpMethod} from "@/services/api-service/enums";
 const UPDATE_PRODUCT_ITEM_ACTION_MACHINE_URL = '/v1/calculation-service/calculations/update-action-machine';
 const UPDATE_PRODUCT_ITEM_ACTION_Employee_URL = '/v1/erp-service/update-product-item-action-employee';
 const CHANGE_WORK_FLOW = '/v1/erp-service/product-item-value/change-work-flow';
+
+const ADD_OUT_SOURCE_ACTION = '/v1/erp-service/product-item-value/add-out-source-action';
+
 const UPDATE_PRODUCT_ITEM_ACTION_DATA_URL = '/v1/erp-service/quote/update-product-item-draft-work-flow-data';
 const UPDATE_SELECTED_WORK_FLOW_URL = '/v1/calculation-service/calculations/update-work-flow';
 const UPDATE_PRODUCT_ITEM_VALUE_OUTSOURCE = '/v1/erp-service/quote/update-product-item-value-out-source';
@@ -16,6 +19,9 @@ const updateProductItemDraftActionMachine: ICallAndSetData = async (callApi, set
 }
 const changeWorkFlw: ICallAndSetData = async (callApi, setState, data:{}) => {
     return await getSetApiData(callApi, EHttpMethod.POST, CHANGE_WORK_FLOW, setState , data);
+}
+const addOutSourceActionApi: ICallAndSetData = async (callApi, setState, data:{}) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, ADD_OUT_SOURCE_ACTION, setState , data);
 }
 const updateProductItemDraftActionData: ICallAndSetData = async (callApi, setState, data:{}) => {
     return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_PRODUCT_ITEM_ACTION_DATA_URL, setState , data);
@@ -47,5 +53,6 @@ export
     updateProductItemValueOutsource, 
     updateProductItemValueOutsourceSupplierCost,
     updateActionEmployeeApi,
-    updateBoardMissionActionOutputApi
+    updateBoardMissionActionOutputApi,
+    addOutSourceActionApi
  };

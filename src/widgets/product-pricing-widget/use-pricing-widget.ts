@@ -1,17 +1,15 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
-import { useCallback, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 
-import { updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { addOutSourceActionApi, updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { actionListForWorkFlow, currentCalculationConnectionId, foldOptionsState, productItemValueByEditState, viewPricingTab } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 import { calculationResultState, currentProductItemValueDraftId, currentProductItemValuePriceState, currentProductItemValueState, selectedWorkFlowState } from "./state";
 import { EPricingViews, EWorkSource } from "./enums";
 import { getWorkFlowsActionsApi, getWorkFlowsApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
-import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-outputs";
 
 const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType}) => {
 
@@ -221,6 +219,19 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType}) =>
   }
 
 
+  const onClickAddOutSourceAction = async () => {
+    const callBack = (res) => {
+        if (res.success) {
+        }
+    };
+    await addOutSourceActionApi(callApi, callBack, {
+      productItemValueId: productItemValueDraftId,
+      signalRConnectionId: connectionId,
+      sourceType: EWorkSource.OUT
+    })
+};
+
+
 
 
   return {
@@ -246,7 +257,8 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType}) =>
     heightScrolling,
     handleScroll,
     allCountSelectedTabWorkFlow,
-    t
+    t,
+    onClickAddOutSourceAction
   }
 }
 

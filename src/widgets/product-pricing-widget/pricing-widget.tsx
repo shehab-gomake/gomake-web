@@ -34,10 +34,12 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
     handleTabClick,
     handleScroll,
     allCountSelectedTabWorkFlow,
+    onClickAddOutSourceAction,
     t
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType });
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
+  console.log("selectedWorkFlowsByTabList", selectedWorkFlowsByTabList)
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack direction={"row"} justifyContent={"space-between"}>
@@ -155,7 +157,13 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
 
         </div>
       )}
-      {view === EPricingViews.OUTSOURCE_WORKFLOW && <OutSourceSuppliers widgetType={widgetType} />}
+      {view === EPricingViews.OUTSOURCE_WORKFLOW &&
+        <OutSourceSuppliers
+          widgetType={widgetType}
+          onClickAddOutSourceAction={onClickAddOutSourceAction}
+          selectedWorkFlow={selectedWorkFlow}
+        />
+      }
     </Stack>
   );
 };
