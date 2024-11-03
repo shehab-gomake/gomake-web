@@ -128,6 +128,9 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
       if (router?.query.documentId) {
         requestBody.documentId = router.query.documentId;
       }
+      if (router?.query.budgetId) {
+        requestBody.budgetId = router.query.budgetId;
+      }
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/get-new-document-data`,
@@ -181,10 +184,10 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
                     style={
                       _childsDocumentItemsMapping != null
                         ? {
-                            height: "100%",
-                            overflowY: "scroll",
-                            paddingRight: 5,
-                          }
+                          height: "100%",
+                          overflowY: "scroll",
+                          paddingRight: 5,
+                        }
                         : { height: 36, overflowY: "scroll", paddingRight: 5 }
                     }
                   >
@@ -232,11 +235,11 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         const result = await getAllClientAddress();
         isUpdate
           ? updateClientAddress(
-              result.find((item) => item.id === res.data.data.result)
-            )
+            result.find((item) => item.id === res.data.data.result)
+          )
           : onClickAddAddress(
-              result.find((item) => item.id === res.data.data.result)
-            );
+            result.find((item) => item.id === res.data.data.result)
+          );
       } else {
         alertFaultAdded();
       }

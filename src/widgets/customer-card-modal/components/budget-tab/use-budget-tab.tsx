@@ -2,11 +2,27 @@ import { useCallback, useEffect, useState } from "react";
 import { EditIcon } from "@/icons";
 import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import { getAllBudgetsForClientApi, getAllDocumentsByBudgetApi, getAllDocumentsByBudgetIdApi } from "@/services/api-service/generic-doc/documents-api";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { getBudgetStatusText, getPaymentStatusText } from "./helpers-budget";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useTranslation } from "react-i18next";
 
+type Budget = {
+  id: string;
+  name: string;
+  amount: number;
+  balance: number;
+  clientId: string;
+  clientName: string | null;
+  fromDate: string;
+  toDate: string;
+  paymentStatus: number;
+  comments: string | null;
+  invoiceNumber: string;
+  status: number;
+  isAmountWithVat: boolean;
+  recordID: number;
+};
 
 const useBudgetTab = (state) => {
   const { callApi } = useGomakeAxios();
@@ -21,14 +37,30 @@ const useBudgetTab = (state) => {
     alertSuccessDelete,
     alertFaultDelete
   } = useSnackBar();
+  const { navigate } = useGomakeRouter();
   const [budgets, setBudgets] = useState([]);
   const [allDocumentsByBudgetId, setAllDocumentsByBudgetId] = useState([]);
   const [allDocumentsByBudget, setAllDocumentsByBudget] = useState([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);
   const [currentBudget, setCurrentBudget] = useState(null);
   const [selectedBudget, setSelectedBudget] = useState(null);
+  const [newBudget, setNewBudget] = useState<Budget | null>(null);
+  const path = `/invoice?isNewCreation=true&budgetId=${newBudget?.id}`;
+
+
+  const [openCreateInvoiceModal, setOpenCreateInvoiceModal] =
+    useState<boolean>(false);
+  const onCloseCreateInvoiceModal = () => {
+    setOpenCreateInvoiceModal(false);
+  };
+  const onOpenCreateInvoiceModal = () => {
+    setOpenCreateInvoiceModal(true);
+  };
+
   const handleAddNewBudget = () => {
     setCurrentBudget(null);
     setIsModalOpen(true);
@@ -50,8 +82,10 @@ const useBudgetTab = (state) => {
     const callBack = (res) => {
       if (res?.success) {
         setBudgets(res.data);
+        setIsDataLoaded(true);
         alertSuccessGetData();
       } else {
+        setIsDataLoaded(true);
         alertFaultGetData();
       }
     };
@@ -79,9 +113,12 @@ const useBudgetTab = (state) => {
     const callBack = (res) => {
       if (res?.success) {
         setAllDocumentsByBudgetId(res.data);
+        setIsLoadingDocuments(true)
         alertSuccessGetData();
       } else {
         alertFaultGetData();
+        setIsLoadingDocuments(true)
+
       }
     };
     await getAllDocumentsByBudgetIdApi(callApi, callBack, {
@@ -124,6 +161,11 @@ const useBudgetTab = (state) => {
     if (res?.success) {
       alertSuccessAdded();
       getAllBudgetsForClient();
+      setNewBudget(res?.data?.data?.data)
+
+      if (!res?.data?.data?.data?.invoiceNumber) {
+        onOpenCreateInvoiceModal();
+      }
     } else {
       alertFaultAdded();
     }
@@ -202,7 +244,13 @@ const useBudgetTab = (state) => {
     isOrdersModalOpen,
     currentBudget,
     allDocumentsByBudget,
-    selectedBudget
+    selectedBudget,
+    openCreateInvoiceModal,
+    path,
+    isDataLoaded,
+    isLoadingDocuments,
+    onCloseCreateInvoiceModal,
+    navigate
   };
 };
 
