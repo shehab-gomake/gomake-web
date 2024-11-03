@@ -1,13 +1,14 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
+import { leftRightAdapter, convertWidthToVW } from "@/utils/adapter";
 import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
   const { theme, primaryColor, secondColor, errorColor } = useGomakeTheme();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
+  const isRtl = dir === "rtl";
 
   const classes = useMemo(() => {
     return {
@@ -26,7 +27,7 @@ const useStyle = () => {
         borderRadius: "4px",
         height: "40px",
         padding: dir === "ltr" ? "6.5px 14px" : "6.5px 0px",
-        paddingLeft: dir === "ltr" ? 0 : "14px",        
+        paddingLeft: dir === "ltr" ? 0 : "14px",
       },
       fileInputStyle: {
         boxSizing: "border-box" as "border-box",
@@ -109,7 +110,7 @@ const useStyle = () => {
         alignItems: "center",
       },
     };
-  }, [theme]);
+  }, [theme, t]);
   return {
     classes,
   };

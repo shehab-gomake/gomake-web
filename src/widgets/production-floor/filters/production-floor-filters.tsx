@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Stack,
@@ -7,6 +7,9 @@ import {
   Typography,
   Menu,
   IconButton,
+  Paper,
+  MenuItem,
+  CircularProgress,
 } from "@mui/material";
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
@@ -21,18 +24,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useStyle } from "./style";
-import { useRecoilState } from "recoil";
-import { productionFloorFiltersState } from "../state/production-floor-filters";
-
-interface CustomCardProps {
-  label: string;
-  machineId?: string;
-  onClick?: () => void;
-  isSelected?: boolean;
-  dir?: string;
-  getColorByMachineId?: any;
-  filters?: any;
-}
+import { useRouter } from "next/router";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -42,6 +34,28 @@ interface CustomGroupsProps {
   group: IFilterGroupsList;
   isFromMenu?: boolean;
 }
+
+const ScrollableDiv = styled("div")(({ theme }) => ({
+  maxHeight: "35vh",
+  overflowY: "auto",
+  overflowX: "auto",
+  "&::-webkit-scrollbar": {
+    width: "8px",
+  },
+  "&::-webkit-scrollbar-track": {
+    background: "white",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    background: "#EAECF0",
+    borderRadius: "8px",
+  },
+  "&::-webkit-scrollbar-thumb:hover": {
+    background: "#b0b0b0",
+  },
+  "&::-webkit-scrollbar-button": {
+    display: "none",
+  },
+}));
 
 const CustomIconButton = styled(IconButton)(({ theme }) => ({
   width: "30px",
@@ -56,29 +70,6 @@ const CustomIconButton = styled(IconButton)(({ theme }) => ({
     backgroundColor: toRgba("#2E3092", 0.1),
   },
 }));
-
-const CustomCard = styled(Card)<{ isSelected?: boolean; color: string }>(
-  ({ isSelected, color }) => ({
-    border: isSelected ? `none` : `1.5px solid ${color}`,
-    backgroundColor: isSelected ? color : toRgba(color, 0.1),
-    borderRadius: "4px",
-    transition: "background-color 0.3s ease, border 0.3s ease",
-    cursor: "pointer",
-    boxShadow: "0px 1px 2px rgba(16, 24, 40, 0.05)",
-    padding: "0px",
-    height: "35px",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    // width: 'fit-content',
-    width: "100%",
-    // important
-    maxWidth: "250px",
-    "&:hover": {
-      boxShadow: "0px 2px 4px rgba(16, 24, 40, 0.1)",
-    },
-  })
-);
 
 const CustomGroup = styled(Card)<{
   isSelected?: boolean;
@@ -122,60 +113,6 @@ const Circle = styled(Box)<{ numColor: string; dir: string }>(
     whiteSpace: "nowrap",
   })
 );
-
-const CustomCardComponent = ({
-  label,
-  onClick,
-  isSelected,
-  dir,
-  machineId,
-  getColorByMachineId,
-  filters,
-}: CustomCardProps) => {
-  const machineStatus = filters.stations
-    .flatMap((station) => station?.machineStatuses)
-    .find((status) => status?.id === machineId);
-
-  const inProcessCount = machineStatus?.inProcessCount || 0;
-  const stuckCount = machineStatus?.stuckCount || 0;
-  const color = getColorByMachineId(machineId);
-
-  return (
-    <CustomCard onClick={onClick} isSelected={isSelected} color={color}>
-      <CardContent
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "10px !important",
-          width: "100%",
-        }}
-      >
-        <Typography
-          variant="subtitle2"
-          sx={{
-            color: isSelected ? "#FFF" : color,
-            ...FONT_FAMILY.Inter(400, 14),
-            // maxWidth: '170px',
-            overflow: "hidden",
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {label}
-        </Typography>
-        <Box sx={{ display: "flex" }}>
-          <Circle numColor="#E7D000" dir={dir}>
-            {inProcessCount}
-          </Circle>
-          <Circle numColor="#D92D20" dir={dir}>
-            {stuckCount}
-          </Circle>
-        </Box>
-      </CardContent>
-    </CustomCard>
-  );
-};
 
 const CustomGroupComponent = ({
   onClick,
@@ -243,6 +180,7 @@ const CustomGroupComponent = ({
 
 const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
   const { classes } = useStyle();
+  const { push } = useRouter();
   const { tagsList } = filtersInputs();
   const [containerWidth, setContainerWidth] = useState(0);
   const {
@@ -250,25 +188,17 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     dir,
     search,
     setSearch,
-    filters,
     onTagsChange,
     onSelectDeliveryTimeDates,
     onSelectCreateDates,
     createDateFilter,
     deliveryDateFilter,
     isRTL,
-    getColorByMachineId,
     handleMoreClick,
-    handleChipClick,
     handleClose,
     anchorEl,
-    visibleCards,
-    hiddenCards,
     setMachinesColors,
-    setVisibleCards,
-    setHiddenCards,
     scrollContainerRef,
-    selectedChips,
     visibleFilterGroups,
     setVisibleFilterGroups,
     hiddenFilterGroups,
@@ -276,6 +206,10 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     handleSelectGroup,
     selectedGroupId,
     deleteStationFilterGroupById,
+    missionsList,
+    setMissionsList,
+    filteredMissionsBySearch,
+    isSearchLoading,
   } = useProductionFloorFilters({ getStationFilterGroups });
 
   useEffect(() => {
@@ -303,40 +237,6 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
       window.removeEventListener("resize", updateContainerWidth);
     };
   }, []);
-
-  // useEffect(() => {
-  //   if (scrollContainerRef.current) {
-  //     let totalWidth = 0;
-  //     let visible: { label: string; machineId: string }[] = [];
-  //     let hidden: { label: string; machineId: string }[] = [];
-
-  //     actionsMachinesIds.forEach((item) => {
-  //       const {
-  //         actionName = "Unknown Action",
-  //         machineIds = [],
-  //         machineNames = [],
-  //       } = item;
-
-  //       machineNames.forEach((machineName, index) => {
-  //         const cardWidth = 240;
-
-  //         totalWidth += cardWidth;
-
-  //         const cardLabel = `${actionName} | ${machineName}`;
-  //         const machineId = machineIds[index];
-
-  //         if (totalWidth <= containerWidth) {
-  //           visible.push({ label: cardLabel, machineId: machineId || "" });
-  //         } else {
-  //           hidden.push({ label: cardLabel, machineId: machineId || "" });
-  //         }
-  //       });
-  //     });
-
-  //     setVisibleCards(visible);
-  //     setHiddenCards(hidden);
-  //   }
-  // }, [actionsMachinesIds, containerWidth]);
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -369,17 +269,47 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     }
   }, [filterGroups, containerWidth]);
 
-  const [filtersState, setFiltersState] = useRecoilState(
-    productionFloorFiltersState
-  );
+  const getMissionsList = useCallback(() => {
+    return missionsList.length > 0 ? missionsList : [];
+  }, [missionsList]);
 
   return (
     <Stack style={classes.headerFilterContainer}>
-      <SearchInputComponent
-        bgColor={"#F8F8F8"}
-        value={search}
-        onChange={setSearch}
-      />
+      <Stack>
+        <SearchInputComponent
+          bgColor={"#F8F8F8"}
+          value={search}
+          onChange={setSearch}
+          filtersButton={
+            isSearchLoading && (
+              <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
+            )
+          }
+        />
+        {filteredMissionsBySearch.length === 0 &&
+          getMissionsList().length !== 0 && (
+            <Paper elevation={3} sx={classes.paperStyle}>
+              <ScrollableDiv>
+                {getMissionsList().map((option, index) => (
+                  <MenuItem
+                    key={index}
+                    sx={classes.missionRowStyle}
+                    onClick={() => {
+                      push(
+                        `/production-floor?boardMissionsId=${option.id}&step=stations`
+                      ).then(() => {
+                        setSearch("");
+                        setMissionsList([]);
+                      });
+                    }}
+                  >
+                    {`${option?.number}\\${option?.orderNumber}`}
+                  </MenuItem>
+                ))}
+              </ScrollableDiv>
+            </Paper>
+          )}
+      </Stack>
       <SelectComponent
         buttonLabel={"productionFloor.tags"}
         list={tagsList}
@@ -396,74 +326,6 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
         placeholder={t("productionFloor.createTime")}
       />
       <Box ref={scrollContainerRef} sx={classes.filtersCardBox}>
-        {/* {filterGroups?.length === 0 &&
-          visibleCards?.map((card, index) => (
-            <CustomCardComponent
-              dir={dir}
-              key={index}
-              label={card.label}
-              machineId={card.machineId}
-              onClick={() => handleChipClick(card)}
-              isSelected={selectedChips?.includes(card.label)}
-              getColorByMachineId={getColorByMachineId}
-              filters={filters}
-            />
-          ))} */}
-        {/* {filterGroups?.length === 0 && hiddenCards.length > 0 && (
-          <>
-            <CustomIconButton onClick={handleMoreClick}>
-              <MoreHorizIcon />
-            </CustomIconButton>
-            <Menu
-              transformOrigin={{
-                horizontal: isRTL ? "left" : "right",
-                vertical: "top",
-              }}
-              anchorOrigin={{
-                horizontal: isRTL ? "left" : "right",
-                vertical: "bottom",
-              }}
-              PaperProps={{
-                sx: {
-                  padding: "0px 8px",
-                  maxHeight: "438px",
-                  overflowY: "auto",
-                  "&::-webkit-scrollbar": {
-                    width: "8px",
-                  },
-                  "&::-webkit-scrollbar-track": {
-                    backgroundColor: "#ffffff",
-                  },
-                  "&::-webkit-scrollbar-thumb": {
-                    backgroundColor: "#CCCDCF",
-                    borderRadius: "4px",
-                  },
-                  "&::-webkit-scrollbar-thumb:hover": {
-                    backgroundColor: "#888",
-                  },
-                },
-              }}
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
-              <Stack spacing={1}>
-                {hiddenCards?.map((card, index) => (
-                  <CustomCardComponent
-                    dir={dir}
-                    key={index}
-                    label={card.label}
-                    machineId={card.machineId}
-                    onClick={() => handleChipClick(card)}
-                    isSelected={selectedChips?.includes(card.label)}
-                    getColorByMachineId={getColorByMachineId}
-                    filters={filters}
-                  />
-                ))}
-              </Stack>
-            </Menu>
-          </>
-        )} */}
         {visibleFilterGroups?.map((group, index) => (
           <CustomGroupComponent
             dir={dir}
