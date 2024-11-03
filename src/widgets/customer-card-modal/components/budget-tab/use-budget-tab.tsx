@@ -41,6 +41,8 @@ const useBudgetTab = (state) => {
   const [budgets, setBudgets] = useState([]);
   const [allDocumentsByBudgetId, setAllDocumentsByBudgetId] = useState([]);
   const [allDocumentsByBudget, setAllDocumentsByBudget] = useState([]);
+  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isLoadingDocuments, setIsLoadingDocuments] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isOrdersModalOpen, setIsOrdersModalOpen] = useState(false);
@@ -80,8 +82,10 @@ const useBudgetTab = (state) => {
     const callBack = (res) => {
       if (res?.success) {
         setBudgets(res.data);
+        setIsDataLoaded(true);
         alertSuccessGetData();
       } else {
+        setIsDataLoaded(true);
         alertFaultGetData();
       }
     };
@@ -109,9 +113,12 @@ const useBudgetTab = (state) => {
     const callBack = (res) => {
       if (res?.success) {
         setAllDocumentsByBudgetId(res.data);
+        setIsLoadingDocuments(true)
         alertSuccessGetData();
       } else {
         alertFaultGetData();
+        setIsLoadingDocuments(true)
+
       }
     };
     await getAllDocumentsByBudgetIdApi(callApi, callBack, {
@@ -240,6 +247,8 @@ const useBudgetTab = (state) => {
     selectedBudget,
     openCreateInvoiceModal,
     path,
+    isDataLoaded,
+    isLoadingDocuments,
     onCloseCreateInvoiceModal,
     navigate
   };
