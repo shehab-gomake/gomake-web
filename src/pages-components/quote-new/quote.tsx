@@ -311,7 +311,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const {} = useGoMakeTour(quoteSteps, []);
+  const { } = useGoMakeTour(quoteSteps, []);
 
   useEffect(() => {
     if (isInvoice) {
@@ -376,8 +376,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -394,7 +394,7 @@ const QuoteNewPageWidget = ({
                   <div style={classes.settingsStatusContainer}>
                     <>
                       {quoteItemValue?.signImageUrl &&
-                      quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -719,6 +719,7 @@ const QuoteNewPageWidget = ({
         updateDiscountType={updateDiscountType}
         updateIsShowDetails={updateIsShowDetails}
         updateIsShowPrices={updateIsShowPrices}
+        documentType={documentType}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}

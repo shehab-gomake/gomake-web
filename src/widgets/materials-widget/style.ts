@@ -60,6 +60,7 @@ const useStyle = () => {
         padding: "0 10px",
         height: "26px",
         borderRadius: "4",
+        width: "fit-content",
         ...FONT_FAMILY.Lexend(400, 14),
         "&:hover": {
           backgroundColor: neutralColor(200),

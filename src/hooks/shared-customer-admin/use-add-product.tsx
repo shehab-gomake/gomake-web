@@ -30,6 +30,7 @@ import { findParameterByCode } from "@/utils/helpers";
 import { SettingsIcon } from "@/icons/settings";
 import { UpdateTypes } from "@/widgets/shared-admin-customers/add-product/parameters/widgets/section-mapping";
 import { UpdateParameterModal } from "@/widgets/shared-admin-customers/add-product/parameters/widgets/update-parameter-modal";
+import { ESourceView } from "@/enums/products";
 
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
@@ -142,6 +143,7 @@ const useAddProduct = ({ clasess }) => {
     if (router?.query?.id) {
       const data = await getAndSetProductById(callApi, setTemplate, {
         Id: router?.query?.id,
+        sourceView: ESourceView.ProductEditView
       });
       setProductState(data);
     }

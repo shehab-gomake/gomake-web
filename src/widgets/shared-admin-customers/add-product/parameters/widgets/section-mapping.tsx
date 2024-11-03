@@ -132,9 +132,10 @@ const SectionMappingWidget = ({
         {subSection?.parameters
           ?.filter((x) => !x.isHiddenInSetting)
           ?.map((parameter, paramIndex) => {
-            const isHiddenIcon = relatedParameters?.some(
-              (relatedParam) => relatedParam.parameterId === parameter.id
-            );
+
+            // const isHiddenIcon = relatedParameters?.some(
+            //   (relatedParam) => relatedParam.parameterId === parameter.id
+            // );
 
             return (
               <div key={paramIndex}>
@@ -155,7 +156,8 @@ const SectionMappingWidget = ({
                         <SettingIcon width={20} height={20} />
                       </div>
                     )}
-                    {!isHiddenIcon &&
+
+                    {(
                       renderIconWithTooltip(
                         parameter?.isHidden,
                         <HiddenIcon />,
