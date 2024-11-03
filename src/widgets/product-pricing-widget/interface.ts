@@ -15,6 +15,9 @@ export interface IPricingWidgetProps {
   onSelectNewWorkFlow?: (id: string) => void;
   getOutSourcingSuppliers: () => void;
   widgetType:EWidgetProductType;
+  getSelectedWorkFlow?:()=>void;
+  selectedWorkFlowCalculatedIsLoaded?:boolean;
+  setSelectedWorkFlowCalculatedIsLoaded?:any
 }
 
 export interface IPricingAction {

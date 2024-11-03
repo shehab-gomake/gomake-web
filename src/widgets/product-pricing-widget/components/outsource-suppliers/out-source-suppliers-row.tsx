@@ -40,8 +40,8 @@ const OutSourceSuppliersRowComponent = ({
     widgetType,
     options,
     onClickAddOutSourceAction,
-    selectedWorkFlow
-}: { widgetType: EWidgetProductType; options: IOutSourceSupplier[]; onClickAddOutSourceAction: () => void, selectedWorkFlow: any }) => {
+    selectedWorkFlow,
+}: { widgetType: EWidgetProductType; options: IOutSourceSupplier[]; onClickAddOutSourceAction: () => void, selectedWorkFlow: any, }) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
@@ -100,6 +100,7 @@ const OutSourceSuppliersRowComponent = ({
     }, [supplier?.finalPrice, setCurrentProductItemValueTotalPrice])
     return (
         <>
+
             <Fade in={true} timeout={700}>
                 <Stack direction={"column"} alignItems={'flex-start'} justifyContent={'flex-start'} gap={"15px"}
                 >
