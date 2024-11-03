@@ -23,6 +23,7 @@ import {
   calculateDocumentItemApi,
   cancelDocumentApi,
   changeDocumentClientApi,
+  createDocumentApi,
   deleteDocumentAddressApi,
   deleteDocumentContactApi,
   deleteDocumentItemApi,
@@ -1438,7 +1439,6 @@ const useQuoteNew = ({
   };
 
   const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
-
   const handleSaveBtnClickForDocument = async () => {
     if (
       !quoteItemValue?.documentItems ||
@@ -1451,48 +1451,40 @@ const useQuoteNew = ({
       alertFault("alerts.cannotCreateWithPriceZero");
       return;
     }
-    setLoadingWithShadow(true);
-    try {
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/documents/create-document`,
-        {
-          documentType: docType,
-          document: {
-            ...quoteItemValue,
-            creationDate: creationDate,
-            taxDate: taxDate,
-            dueDate: selectDate,
-            exchangeRate:
-              quoteItemValue.exchangeRate === 0
-                ? 1
-                : quoteItemValue.exchangeRate,
-          },
-        },
-        false
-      );
 
+    setLoadingWithShadow(true);
+
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessAdded();
-        const _data = res?.data?.data?.data || {};
+        const _data = res?.data || {};
         setQuoteItemValue(_data);
         if (
           docType === DOCUMENT_TYPE.invoice ||
           docType === DOCUMENT_TYPE.deliveryNote
         ) {
           onClickOpenInvoiceCreation();
-          navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`);
+          navigate(`/${documentPath}?Id=${_data?.id}`);
         } else {
-          navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`);
+          navigate(`/${documentPath}?Id=${_data?.id}`);
         }
       } else {
         alertFaultAdded();
       }
-    } catch (error) {
-      alertFaultAdded();
-    } finally {
       setLoadingWithShadow(false);
-    }
+    };
+
+    await createDocumentApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        ...quoteItemValue,
+        creationDate: creationDate,
+        taxDate: taxDate,
+        dueDate: selectDate,
+        exchangeRate:
+          quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
+      },
+    });
   };
 
   const onClickDeleteAddress = async (item: any) => {
