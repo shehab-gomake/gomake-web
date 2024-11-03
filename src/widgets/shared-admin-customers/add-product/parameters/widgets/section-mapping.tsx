@@ -132,7 +132,6 @@ const SectionMappingWidget = ({
         {subSection?.parameters
           ?.filter((x) => !x.isHiddenInSetting)
           ?.map((parameter, paramIndex) => {
-
             // const isHiddenIcon = relatedParameters?.some(
             //   (relatedParam) => relatedParam.parameterId === parameter.id
             // );
@@ -157,19 +156,18 @@ const SectionMappingWidget = ({
                       </div>
                     )}
 
-                    {(
-                      renderIconWithTooltip(
-                        parameter?.isHidden,
-                        <HiddenIcon />,
-                        <NotHiddenIcon />,
-                        "hidden",
-                        "visible",
-                        () => {
-                          setSelectedActionType(ParameterActionType.VISIBLE);
-                          setSelectedParameter(parameter);
-                          handleOpenModal();
-                        }
-                      )}
+                    {renderIconWithTooltip(
+                      parameter?.isHidden,
+                      <HiddenIcon />,
+                      <NotHiddenIcon />,
+                      "hidden",
+                      "visible",
+                      () => {
+                        setSelectedActionType(ParameterActionType.VISIBLE);
+                        setSelectedParameter(parameter);
+                        handleOpenModal();
+                      }
+                    )}
                     {parameter?.parameterType !== EParameterTypes.SWITCH &&
                       renderIconWithTooltip(
                         parameter?.isRequired,
