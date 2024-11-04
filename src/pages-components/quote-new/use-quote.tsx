@@ -1471,7 +1471,7 @@ const useQuoteNew = ({
         },
         false
       );
-
+      setLoadingWithShadow(false);
       if (res?.success) {
         alertSuccessAdded();
         const _data = res?.data?.data?.data || {};
