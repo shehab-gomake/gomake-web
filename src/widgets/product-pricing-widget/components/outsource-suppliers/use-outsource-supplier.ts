@@ -62,7 +62,7 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
         });
     };
 
-    const updateProductItemValueOutsourceWithKey = async (supplierId, key, value, actionId) => {
+    const updateProductItemValueOutsourceWithKey = async (supplierId, key, value, actionId?) => {
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessUpdate();
@@ -78,18 +78,16 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
             supplierId,
             key,
             value,
-            actionId
+            ...(actionId ? { actionId } : {}),
         });
     };
 
-    const updateCost = (supplierId, cost, actionId) => {
+    const updateCost = (supplierId, cost, actionId?) => {
         const updatedSuppliers = suppliers.map(supplier => {
             if (supplier.supplierId === supplierId) {
                 return {
                     ...supplier,
                     cost,
-                    
-                    //finalPrice: cost + cost * supplier.profit / 100
                 };
             }
             return supplier;
@@ -110,7 +108,7 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalCost, cost,actionId);
     };
 
-    const updateWorkHours = (supplierId, workHours,actionId) => {
+    const updateWorkHours = (supplierId, workHours,actionId?) => {
         const updatedSuppliers = suppliers.map(supplier => {
             if (supplier.supplierId === supplierId) {
                 return {
@@ -135,7 +133,7 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalRealProductionTime, workHours,actionId);
     };
 
-    const updateProfit = (supplierId, profit,actionId) => {
+    const updateProfit = (supplierId, profit,actionId?) => {
         const updatedSuppliers = suppliers.map(supplier => {
             if (supplier.supplierId === supplierId) {
                 return {
@@ -165,7 +163,7 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.Profit, profit,actionId);
     };
 
-    const updateSupplierId =  async (supplierId,actionId) => {
+    const updateSupplierId =  async (supplierId,actionId?) => {
         const updatedSuppliers = suppliers.map(supplier => {
             if (supplier.supplierId === supplierId) {
                 return {
@@ -202,7 +200,7 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
         });
     };
 
-    const updatePrice = (supplierId, price,actionId) => {
+    const updatePrice = (supplierId, price,actionId?) => {
         const updatedSuppliers = suppliers.map(supplier => {
             if (supplier.supplierId === supplierId) {
                 return {
