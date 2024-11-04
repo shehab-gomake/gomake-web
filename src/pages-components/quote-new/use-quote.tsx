@@ -594,9 +594,6 @@ const useQuoteNew = ({
         {
           documentType: docType,
           clientId: item?.id,
-          ...(router?.query?.budgetId
-            ? { budgetId: router.query.budgetId }
-            : {}),
         }
       );
       if (res?.success) {
@@ -1475,8 +1472,6 @@ const useQuoteNew = ({
         false
       );
 
-    const callBack = (res) => {
-      setLoadingWithShadow(false);
       if (res?.success) {
         alertSuccessAdded();
         const _data = res?.data?.data?.data || {};
@@ -1493,20 +1488,11 @@ const useQuoteNew = ({
       } else {
         alertFaultAdded();
       }
-    };
-
-    await createDocumentApi(callApi, callBack, {
-      documentType: docType,
-      document: {
-        ...quoteItemValue,
-        creationDate: creationDate,
-        taxDate: taxDate,
-        dueDate: selectDate,
-        ...(router?.query?.budgetId ? { budgetID: router.query.budgetId } : {}),
-        exchangeRate:
-          quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
-      },
-    });
+    } catch (error) {
+      alertFaultAdded();
+    } finally {
+      setLoadingWithShadow(false);
+    }
   };
 
   const onClickDeleteAddress = async (item: any) => {
@@ -1649,7 +1635,6 @@ const useQuoteNew = ({
           getQuote();
           getAllEmployees();
           prevRouterQueryRef.current = router.query;
-          debugger;
         }
       }
     }
