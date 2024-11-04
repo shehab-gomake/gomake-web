@@ -1,6 +1,10 @@
 import { OptionsButton } from "@/components/options-button/options-button";
 import { MenuItem } from "@mui/material";
-import { GoMakeAutoComplate, GoMakeModal } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeModal,
+  GomakePrimaryButton,
+} from "@/components";
 import { useState } from "react";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
@@ -20,6 +24,32 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { printHousesState } from "@/pages-components/company-reports/components/types/state";
 import { useStyle } from "@/pages-components/company-reports/style";
+import styled from "styled-components";
+
+const ScrollableDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: auto;
+  gap: 20px;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #cccdcf;
+    border-radius: 10px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: #b0b0b0;
+  }
+  &::-webkit-scrollbar-button {
+    display: none;
+  }
+`;
 
 interface IProps {
   printHouse: IPrintHouse;
@@ -46,7 +76,7 @@ const OptionsComponent = ({
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertFault } = useSnackBar();
+  const { alertFault, alertSuccess } = useSnackBar();
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [actionState, setActionState] = useState<EAction>();
   const [sourcePrintHouseId, setSourcePrintHouseId] = useState<string>("");
@@ -54,6 +84,8 @@ const OptionsComponent = ({
   const [openUploadModal, setOpenUploadModal] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [openErrorsModal, setOpenErrorsModal] = useState<boolean>(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
   const printHouses =
     useRecoilValue<{ id: string; name: string }[]>(printHousesState);
 
@@ -96,24 +128,28 @@ const OptionsComponent = ({
       destination: printHouse?.id,
     });
   };
+
   const handelImportProfits = async () => {
     await importProfitsApi(callApi, callBack, {
       source: sourcePrintHouseId,
       destination: printHouse?.id,
     });
   };
+
   const handelImportMaterials = async () => {
     await importMaterialsApi(callApi, callBack, {
       source: sourcePrintHouseId,
       destination: printHouse?.id,
     });
   };
+
   const handelImportProducts = async () => {
     await importProductsApi(callApi, callBack, {
       source: sourcePrintHouseId,
       destination: printHouse?.id,
     });
   };
+
   const handelImportOutputs = async () => {
     await importOutputsApi(callApi, callBack, {
       source: sourcePrintHouseId,
@@ -133,6 +169,11 @@ const OptionsComponent = ({
     setSelectedFile(null);
   };
 
+  const handleErrorsModalClose = () => {
+    setOpenErrorsModal(false);
+    setErrorMessages([]);
+  };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -150,8 +191,12 @@ const OptionsComponent = ({
 
     const callBack = (res) => {
       if (res.success) {
-        alertFault("importData.fileUploadedSuccessfully");
+        alertSuccess("importData.fileUploadedSuccessfully");
         handleUploadModalClose();
+        if (res.data) {
+          setErrorMessages(res.data);
+          setOpenErrorsModal(true);
+        }
       } else {
         alertFault("importData.fileUploadFailed");
       }
@@ -161,7 +206,6 @@ const OptionsComponent = ({
       fileBase64,
       printHouseId: printHouse?.id,
     });
-
     setIsUploading(false);
   };
 
@@ -169,7 +213,16 @@ const OptionsComponent = ({
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
+      reader.onload = () => {
+        let result = reader.result as string;
+        const base64Prefix =
+          "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,";
+        // Remove the prefix if present
+        if (result.startsWith(base64Prefix)) {
+          result = result.replace(base64Prefix, "");
+        }
+        resolve(result);
+      };
       reader.onerror = (error) => reject(error);
     });
   };
@@ -278,6 +331,32 @@ const OptionsComponent = ({
           >
             {isUploading ? t("sales.uploading") : t("sales.quote.upload")}
           </PrimaryButton>
+        </Stack>
+      </GoMakeModal>
+      <GoMakeModal
+        modalTitle={t("importData.errorsMessages")}
+        insideStyle={classes.insideModalStyle}
+        openModal={openErrorsModal}
+        onClose={handleErrorsModalClose}
+        modalTitleStyle={classes.modalTitle}
+        withRoundedCloseIcon={false}
+      >
+        <Stack gap={"20px"}>
+          <ScrollableDiv>
+            {errorMessages.length > 0 ? (
+              errorMessages.map((message, index) => (
+                <div key={index}>{message}</div>
+              ))
+            ) : (
+              <div>{t("importData.noErrors")}</div>
+            )}
+          </ScrollableDiv>
+          <GomakePrimaryButton
+            style={classes.btnStyle}
+            onClick={handleErrorsModalClose}
+          >
+            {t("importData.ok")}
+          </GomakePrimaryButton>
         </Stack>
       </GoMakeModal>
     </>
