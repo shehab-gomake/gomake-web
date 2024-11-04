@@ -147,6 +147,9 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
             return supplier;
         });
 
+        
+   
+
         setSuppliers(resetOtherSuppliers(supplierId).map(supplier => {
             if (supplier.supplierId === supplierId) {
                 return updatedSuppliers.find(s => s.supplierId === supplierId);
@@ -160,6 +163,43 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
             //finalPrice: supplier.cost + supplier.cost * profit / 100
         });
         updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.Profit, profit,actionId);
+    };
+
+    const updateSupplierId =  async (supplierId,actionId) => {
+        const updatedSuppliers = suppliers.map(supplier => {
+            if (supplier.supplierId === supplierId) {
+                return {
+                    ...supplier,
+                };
+            }
+            return supplier;
+        });
+
+        setSuppliers(resetOtherSuppliers(supplierId).map(supplier => {
+            if (supplier.supplierId === supplierId) {
+                return updatedSuppliers.find(s => s.supplierId === supplierId);
+            }
+            return supplier;
+        }));
+
+        setSupplier({
+            ...supplier,
+        });
+        const callBack = (res) => {
+            if (res.success) {
+                alertSuccessUpdate();
+            }
+            else {
+                alertFaultUpdate();
+            }
+        };
+
+        await updateProductItemValueOutsourceSupplierCost(callApi, callBack, {
+            productItemValueId: productItemValueDraftId,
+            signalRConnectionId: connectionId,
+            supplierId,
+            actionId
+        });
     };
 
     const updatePrice = (supplierId, price,actionId) => {
@@ -251,7 +291,9 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
         updatePrice,
         addItem,
         updateQuoteItem,
-        productItemValueByEdit
+        updateSupplierId,
+        productItemValueByEdit,
+        currentProductItemValue
     };
 };
 
