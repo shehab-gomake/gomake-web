@@ -67,7 +67,9 @@ const useStyle = ({ source }: any) => {
       optionsDiv: {
         padding: "5px 0px",
         maxHeight: "300px",
-        overflowY: "scroll" as "scroll",
+        overflowY: "auto" as "auto",
+        scrollbarColor: "#CCCDCF #f1f1f1",
+        scrollbarWidth: "thin" as "thin",
       },
       applyBtnContainer: {
         display: "flex",

@@ -32,7 +32,7 @@ interface IProps {
   count?: number;
 }
 
-const StatusTableComponent = ({ status, boards }: IProps) => {
+const StatusTableComponent = ({ status, boards, count }: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const {
