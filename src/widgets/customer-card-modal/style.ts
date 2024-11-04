@@ -23,7 +23,7 @@ const useStyle = () => {
         backgroundColor: "#F135A3",
       },
       insideStyle: {
-        width: "64%",
+        width: "75%",
         height: "93%",
         overFlow: "hidden",
         maxWidth: "1240px",

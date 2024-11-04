@@ -88,7 +88,8 @@ const LedgerReportWidget = ({
         <PrimaryTable
           rows={getTableDataRows()}
           headers={tableHeaders}
-          maxHeight={720}
+          maxHeight={"100vh"}
+          stickyFirstCol={false}
           stickyHeader={true}
         />
       )}

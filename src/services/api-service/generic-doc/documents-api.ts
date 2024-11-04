@@ -76,6 +76,18 @@ const UPDATE_DOCUMENT_COMMENTS_URL =
 const UPDATE_DOCUMENT_INTERNAL_NOTES_URL =
   "/v1/erp-service/document/update-document-internal-notes";
 const GET_CLIENT_DOCUMENTS = "/v1/erp-service/documents/get-client-documents";
+
+const GET_ALL_BUDGETS_FOR_CLIENT =
+  "/v1/erp-service/budgets/get-all-budgets-for-client";
+const GET_ALL_DOCUMENTS_BY_BUDGET_ID =
+  "/v1/erp-service/budgets/get-all-documents-by-budget-id";
+
+const GET_ALL_DOCUMENTS_BY_BUDGET =
+  "/v1/erp-service/budgets/get-all-documents-for-budget";
+
+const GET_ALL_CLIENT_ACTIVE_BUDGETS =
+  "/v1/erp-service/budgets/get-client-active-budgets";
+
 const ADD_CREATE_CONTACT_URL = "/v1/crm-service/customer/create-contact";
 const SORT_DOCUMENT_ITEMS_URL = "/v1/erp-service/documents/sort-document-items";
 const UPDATE_DISCOUNT_TYPE_URL =
@@ -102,12 +114,15 @@ const UPDATE_DOCUMENT_TITLE_URL =
 const EXPORT_DOCUMENT_TABLE_TO_EXCEL_URL =
   "/v1/erp-service/documents/export-document-table-to-excel";
 
+const SEND_RECEIPIT_TO_CLIENT_URL =
+  "/v1/erp-service/receipt/send-receipt-to-client";
+const GET_WHATSAPP_MESSAGE_FOR_RECEIPIT_URL =
+  "/v1/erp-service/receipt/get-whats-app-message-for-receipt";
+const MOVE_ORDER_TO_DONE_URL = "/v1/erp-service/documents/move-order-to-done";
+const PAUSE_OR_RESUME_DOCUMENT_URL =
+  "/v1/erp-service/documents/pause-or-resume-document";
+const CREATE_DOCUMENT_URL = "/v1/erp-service/documents/create-document";
 
-  const SEND_RECEIPIT_TO_CLIENT_URL = "/v1/erp-service/receipt/send-receipt-to-client";
-  const GET_WHATSAPP_MESSAGE_FOR_RECEIPIT_URL = "/v1/erp-service/receipt/get-whats-app-message-for-receipt";
-
-
-  const MOVE_ORDER_TO_DONE_URL = "/v1/erp-service/documents/move-order-to-done";
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
@@ -646,6 +661,66 @@ const getClientDocumentsApi: ICallAndSetData = async (
   );
 };
 
+const getAllBudgetsForClientApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { clientId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_BUDGETS_FOR_CLIENT,
+    setState,
+    data,
+    false
+  );
+};
+
+const getAllDocumentsByBudgetIdApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { budgetId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_DOCUMENTS_BY_BUDGET_ID,
+    setState,
+    data,
+    false
+  );
+};
+
+const getAllDocumentsByBudgetApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { clientId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_DOCUMENTS_BY_BUDGET,
+    setState,
+    data,
+    false
+  );
+};
+
+const getAllClientActiveBudgetsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: { clientId: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_CLIENT_ACTIVE_BUDGETS,
+    setState,
+    data,
+    false
+  );
+};
+
 const getBoardMissionPDF: ICallAndSetData = async (
   callApi,
   setState,
@@ -889,7 +964,6 @@ const OpenCanceledDocumentApi: ICallAndSetData = async (
   );
 };
 
-
 const sendReceiptToClientApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -933,6 +1007,30 @@ const moveOrderToReadyApi: ICallAndSetData = async (
   );
 };
 
+const pauseOrdResumeOrderApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    PAUSE_OR_RESUME_DOCUMENT_URL,
+    setState,
+    data
+  );
+};
+
+const createDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    CREATE_DOCUMENT_URL,
+    setState,
+    data,
+    false
+  );
+};
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -996,5 +1094,11 @@ export {
   OpenCanceledDocumentApi,
   sendReceiptToClientApi,
   getWhatsAppMessageForReceiptApi,
-  moveOrderToReadyApi
+  moveOrderToReadyApi,
+  getAllBudgetsForClientApi,
+  getAllDocumentsByBudgetIdApi,
+  getAllDocumentsByBudgetApi,
+  getAllClientActiveBudgetsApi,
+  pauseOrdResumeOrderApi,
+  createDocumentApi,
 };

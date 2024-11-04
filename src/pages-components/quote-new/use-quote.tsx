@@ -23,6 +23,7 @@ import {
   calculateDocumentItemApi,
   cancelDocumentApi,
   changeDocumentClientApi,
+  createDocumentApi,
   deleteDocumentAddressApi,
   deleteDocumentContactApi,
   deleteDocumentItemApi,
@@ -65,7 +66,11 @@ import {
   isSelectedCLoseAsDeleveryNoteState,
 } from "@/pages/customers/customer-states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
-import { isAtLeastOneSelected } from "@/utils/helpers";
+import {
+  checkArrayNotEmptyOrEmailNotEmpty,
+  checkArrayNotEmptyOrPhoneNotEmpty,
+  isAtLeastOneSelected,
+} from "@/utils/helpers";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -241,9 +246,11 @@ const useQuoteNew = ({
   const handleCancelBtnClose = () => {
     setAnchorElCancelBtn(null);
   };
+
   const handleSendBtnClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElSendBtn(event.currentTarget);
   };
+
   const handleSendBtnClose = () => {
     setAnchorElSendBtn(null);
   };
@@ -281,8 +288,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -588,6 +595,7 @@ const useQuoteNew = ({
         {
           documentType: docType,
           clientId: item?.id,
+          ...(router?.query?.budgetId ? { budgetId: router.query.budgetId } : {}),
         }
       );
       if (res?.success) {
@@ -957,7 +965,6 @@ const useQuoteNew = ({
     setOpenDeleteItemModal(true);
   };
 
-  //!here
   const deleteQuoteItem = async () => {
     if (router.query.isNewCreation) {
       const updatedDocumentItems = quoteItemValue.documentItems.filter(
@@ -1013,7 +1020,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1281,32 +1288,9 @@ const useQuoteNew = ({
       },
     });
   };
-  const checkArrayNotEmptyOrPhoneNotEmpty = (array) => {
-    if (array.length === 0) {
-      return false;
-    }
-    for (let i = 0; i < array.length; i++) {
-      if (array[i].contactPhone && array[i].contactPhone.trim() !== "") {
-        return true;
-      }
-    }
-
-    return false;
-  };
-  const checkArrayNotEmptyOrEmailNotEmpty = (array) => {
-    if (array.length === 0) {
-      return false;
-    }
-    for (let i = 0; i < array.length; i++) {
-      if (array[i].contactMail && array[i].contactMail.trim() !== "") {
-        return true;
-      }
-    }
-
-    return false;
-  };
 
   const onClickSendQuoteToClient = async (messageType: number) => {
+    debugger;
     if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
       alertFault("reports.pleaseSelectOneItem");
       return;
@@ -1456,7 +1440,6 @@ const useQuoteNew = ({
   };
 
   const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
-
   const handleSaveBtnClickForDocument = async () => {
     if (
       !quoteItemValue?.documentItems ||
@@ -1469,48 +1452,41 @@ const useQuoteNew = ({
       alertFault("alerts.cannotCreateWithPriceZero");
       return;
     }
-    setLoadingWithShadow(true);
-    try {
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/documents/create-document`,
-        {
-          documentType: docType,
-          document: {
-            ...quoteItemValue,
-            creationDate: creationDate,
-            taxDate: taxDate,
-            dueDate: selectDate,
-            exchangeRate:
-              quoteItemValue.exchangeRate === 0
-                ? 1
-                : quoteItemValue.exchangeRate,
-          },
-        },
-        false
-      );
 
+    setLoadingWithShadow(true);
+
+    const callBack = (res) => {
       if (res?.success) {
         alertSuccessAdded();
-        const _data = res?.data?.data?.data || {};
+        const _data = res?.data || {};
         setQuoteItemValue(_data);
         if (
           docType === DOCUMENT_TYPE.invoice ||
           docType === DOCUMENT_TYPE.deliveryNote
         ) {
           onClickOpenInvoiceCreation();
-          navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`);
+          navigate(`/${documentPath}?Id=${_data?.id}`);
         } else {
-          navigate(`/${documentPath}?Id=${res?.data?.data?.data?.id}`);
+          navigate(`/${documentPath}?Id=${_data?.id}`);
         }
       } else {
         alertFaultAdded();
       }
-    } catch (error) {
-      alertFaultAdded();
-    } finally {
       setLoadingWithShadow(false);
-    }
+    };
+
+    await createDocumentApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        ...quoteItemValue,
+        creationDate: creationDate,
+        taxDate: taxDate,
+        dueDate: selectDate,
+        ...(router?.query?.budgetId ? { budgetID: router.query.budgetId } : {}),
+        exchangeRate:
+          quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
+      },
+    });
   };
 
   const onClickDeleteAddress = async (item: any) => {
@@ -1634,12 +1610,36 @@ const useQuoteNew = ({
     );
   }, [quoteItemValue, quoteConfirm]);
 
+  //!important
+  const prevRouterQueryRef = useRef(router.query);
+  const hasMountedRef = useRef(false);
   useEffect(() => {
     if (!isQuoteConfirmation) {
-      getQuote();
-      getAllEmployees();
+      if (!hasMountedRef.current) {
+        getQuote();
+        getAllEmployees();
+        hasMountedRef.current = true;
+      } else {
+        // Check if the router query has changed (to avoid redundant calls)
+        const hasQueryChanged =
+          JSON.stringify(prevRouterQueryRef.current) !==
+          JSON.stringify(router.query);
+
+        if (hasQueryChanged) {
+          getQuote();
+          getAllEmployees();
+          prevRouterQueryRef.current = router.query;
+        }
+      }
     }
-  }, [isQuoteConfirmation]);
+  }, [isQuoteConfirmation, router.query]);
+
+  // useEffect(() => {
+  //   if (!isQuoteConfirmation) {
+  //     getQuote();
+  //     getAllEmployees();
+  //   }
+  // }, [isQuoteConfirmation]);
 
   const documentsTitles = [
     {

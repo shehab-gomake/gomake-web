@@ -53,7 +53,8 @@ const useStyle = ({
         width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
-        height: "100%",
+        height: "100vh",
+        maxHeight: "100vh",
         overflow: "scroll",
 
       },
@@ -70,6 +71,7 @@ const useStyle = ({
         flexDirection: "column" as "column",
         backgroundColor: "#F6F6F6",
         height: "100%",
+      
         overflow: "scroll",
       },
       poweredContainer: {

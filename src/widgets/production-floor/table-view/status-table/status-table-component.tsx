@@ -24,7 +24,6 @@ import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
 import { useCallback } from "react";
 import { ThreeOptionsModal } from "@/components";
-import { PrintPackingSlipModal } from "@/pages-components/board-missions/widgets/print-packing-slip-modal";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 
 interface IProps {
@@ -93,6 +92,9 @@ const StatusTableComponent = ({ status, boards }: IProps) => {
               search
             ) ||
             `${board?.clientName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            `${board?.productName?.toLowerCase()}`.includes(
               search.toLowerCase()
             ) ||
             board?.automatedTags?.some((tag) =>

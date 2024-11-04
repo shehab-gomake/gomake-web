@@ -3,6 +3,7 @@ import { SettingsIcon } from "@/icons/settings";
 import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
+import {EParameterTypes} from "@/enums";
 
 // Custom tooltip component for long text options
 const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -68,7 +69,13 @@ const DropDownListParameterWidget = ({
     } else if (parameter?.code === "devicesize") {
       setDeviceSize(value?.id);
     }
-
+    let valueId = null;
+    if(parameter?.parameterType == EParameterTypes.MACHINES_SELECT){
+      valueId = value?.updateName;
+    }
+    else{
+      valueId = value?.id;
+    }
     // Update the subProducts for pricing
     onChangeSubProductsForPrice(
       parameter?.id,
@@ -77,7 +84,7 @@ const DropDownListParameterWidget = ({
       parameter?.parameterType,
       parameter?.name,
       parameter?.actionId,
-      value ? { valueIds: value?.id, values: value?.updateName } : { valueIds: null, values: null }, // Handle cleared state
+      value ? { valueIds: valueId, values: value?.updateName } : { valueIds: null, values: null }, // Handle cleared state
       subSection?.type,
       index,
       parameter?.actionIndex,

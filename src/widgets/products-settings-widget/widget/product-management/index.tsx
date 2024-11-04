@@ -101,7 +101,7 @@ const ProductManagementWidget = () => {
             stickyFirstCol={false}
             rows={productSearched}
             headers={tableHeaders}
-            maxHeight={650}
+            maxHeight={"calc(100vh - 303px)"}
             stickyHeader={true}
           />
         ) : (
@@ -109,7 +109,7 @@ const ProductManagementWidget = () => {
             stickyFirstCol={false}
             rows={allProducts}
             headers={tableHeaders}
-            maxHeight={650}
+            maxHeight={"calc(100vh - 303px)"}
             stickyHeader={true}
           />
         )}

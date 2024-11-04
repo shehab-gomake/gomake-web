@@ -28,6 +28,7 @@ import {
   materialHeadersState,
   materialsClientsState,
   materialsMachinesState,
+  materialsTablePageState,
   materialsUnCheckedState,
   materialTypeTableState,
   openAddRowModalState,
@@ -44,6 +45,7 @@ import { EMaterialActiveFilter } from "@/widgets/materials-widget/enums";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { useMaterialsCategories } from "./use-materials-categories";
+import { NumberStringInput } from "./components/table-cell-data/number-string-input";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -131,7 +133,7 @@ const useMaterials = (isAdmin: boolean) => {
   const { onDeleteCategoryRow } = useAddCategoryRow(isAdmin);
   const setFlagState = useSetRecoilState(flagState);
   const { t } = useTranslation();
-
+  const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
   const onSelectCategory = (category: string) => {
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";
@@ -140,6 +142,7 @@ const useMaterials = (isAdmin: boolean) => {
     // setActiveFilter(EMaterialActiveFilter.ACTIVE);
     setIsAllMaterialsChecked(false)
     setMaterialFilter([])
+    setPageNumber(1)
   };
   const onDeleteCategory = async (categoryKey) => {
     const callBack = (res) => {
@@ -265,7 +268,6 @@ const useMaterials = (isAdmin: boolean) => {
         onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
         checked={isAllSelected()}
       />,
-      // t("login.code"),
       ...(isAdmin ? materialHeaders.filter(x => x.key !== "stock") : materialHeaders.filter((header) => !header.isForAdmin)
       ).map((header) =>
         header.unit ? (
@@ -274,7 +276,7 @@ const useMaterials = (isAdmin: boolean) => {
             <span>{header.value}</span> <small>{header.unit}</small>
           </div>
         ) : (
-          header.value
+          <div style={{ textTransform: 'capitalize' }}>{header.value}</div>
         )
       ),
       t("usersSettings.isActive"),
@@ -321,7 +323,6 @@ const useMaterials = (isAdmin: boolean) => {
           onChange={(e, checked) => onChangeRowCheckBox(dataRow.id, checked)}
           checked={dataRow.checked}
         />,
-        // dataRow?.code,
         ...filteredHeaders.map((header) => (
           <TableCellData
             {...dataRow.rowData[header.key]}
@@ -331,8 +332,6 @@ const useMaterials = (isAdmin: boolean) => {
             onChangeRowCheckBox={onChangeRowCheckBox}
           />
         )),
-
-
         dataRow?.isActive ? t("usersSettings.active") : t("usersSettings.inactive"),
         <MaterialMenuWidget
           dataRow={dataRow}

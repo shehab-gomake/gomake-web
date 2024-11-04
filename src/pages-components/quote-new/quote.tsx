@@ -41,7 +41,7 @@ import { ViewSignatureApprovalModal } from "@/widgets/quote-new/total-price-and-
 import { CreditCardPaySection } from "@/widgets/quote-confirmation-mobile/components/credit-card-pay-section";
 import moment from "moment";
 import { QuoteNewPageSkeletonWidget } from "./quote-skeleton";
-import { InvoiceCreationModal } from "@/widgets/quote-new/total-price-and-vat/invoice-creation-modal";
+import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -253,7 +253,7 @@ const QuoteNewPageWidget = ({
     selectedDocument,
     isSelectedCLoseAsDeleveryNote,
     moveOrderToReady,
-    navigate
+    navigate,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -311,7 +311,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const { } = useGoMakeTour(quoteSteps, []);
+  const {} = useGoMakeTour(quoteSteps, []);
 
   useEffect(() => {
     if (isInvoice) {
@@ -376,8 +376,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -394,7 +394,7 @@ const QuoteNewPageWidget = ({
                   <div style={classes.settingsStatusContainer}>
                     <>
                       {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                      quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -624,7 +624,9 @@ const QuoteNewPageWidget = ({
                 onClickOpenNewItemNotesModal={onClickOpenNewItemNotesModal}
                 handleRejectBtnClick={handleRejectBtnClick}
                 handleAcceptBtnClick={handleAcceptBtnClick}
-                onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+                onClickOpenChangeProductionStatusModal={
+                  onClickOpenChangeProductionStatusModal
+                }
               />
             </div>
           )}
@@ -717,6 +719,7 @@ const QuoteNewPageWidget = ({
         updateDiscountType={updateDiscountType}
         updateIsShowDetails={updateIsShowDetails}
         updateIsShowPrices={updateIsShowPrices}
+        documentType={documentType}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}
@@ -801,13 +804,14 @@ const QuoteNewPageWidget = ({
         onClickDelete={moveOrderToReady}
         onClickCancel={() => {
           if (isSelectedCLoseAsDeleveryNote) {
-            navigate(`/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`)
-
-          }
-          else {
-            const path = documentType === DOCUMENT_TYPE.order
-              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+            navigate(
+              `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+            );
+          } else {
+            const path =
+              documentType === DOCUMENT_TYPE.order
+                ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
             navigate(path);
           }
         }}
@@ -834,7 +838,7 @@ const QuoteNewPageWidget = ({
         onClose={onClickCloseInvoiceCreation}
         openModal={openInvoiceCreationModal}
         docType={documentType}
-        handleSendBtnClick={handleSendBtnClick}
+        onClickSendDocumentToClient={onClickSendQuoteToClient}
       />
     </>
   );

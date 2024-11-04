@@ -31,6 +31,7 @@ const useUserProfile = () => {
         await getUserProfile(callApi, callBack);
     }
     const updateProfile = async () => {
+        debugger;
         const callBack = (res) => {
             if (res.success) {
                 i18n.changeLanguage(profileState.systemLang);

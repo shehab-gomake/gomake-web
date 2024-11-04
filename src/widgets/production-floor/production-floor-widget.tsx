@@ -5,7 +5,7 @@ import {
   EProductionFloorView,
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { GroupsTable } from "@/widgets/production-floor/views/groups-view/groups-table";
 import { useRouter } from "next/router";
 import { ProductionFloorBoardMissionsViews } from "@/widgets/production-floor/views/boards-view/production-floor-board-missions-views";
@@ -21,10 +21,7 @@ import { useProductionFloorData } from "./use-production-floor-data";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
-  const [openBoardMissionsDrawer, setOpenBoardMissionsDarawer] =
-    useState<boolean>(false);
-  const { query, replace, pathname, } = useRouter();
-  const router = useRouter()
+  const { query, replace, pathname, push } = useRouter();
   const { connectionId, closeConnection } = useProductionFloorSignalr();
   const { groupsId, boardMissionsId, step, productType } = query;
 
@@ -40,7 +37,6 @@ const ProductionFloorWidget = () => {
   }, []);
 
   useEffect(() => {
-    setOpenBoardMissionsDarawer(!!boardMissionsId);
     if (!!boardMissionsId && !step) {
       replace(
         { pathname: pathname, query: { ...query, step: "stations" } },
@@ -90,12 +86,10 @@ const ProductionFloorWidget = () => {
       {/* here */}
       <Drawer
         sx={{ zIndex: 999999 }}
-        open={openBoardMissionsDrawer}
+        open={!!boardMissionsId}
         anchor={"bottom"}
         onClose={() => {
-          setOpenBoardMissionsDarawer(false);
-          // router.push('/production-floor');
-          // replace("/production-floor", undefined, { shallow: true });
+          push("/production-floor", undefined, { shallow: true });
         }}
       >
         <Stack
@@ -105,9 +99,7 @@ const ProductionFloorWidget = () => {
         >
           <IconButton
             onClick={() => {
-              setOpenBoardMissionsDarawer(false);
-              // router.push('/production-floor');
-              // replace("/production-floor", undefined, { shallow: true });
+              push("/production-floor", undefined, { shallow: true });
             }}
             sx={{
               width: "fit-content",
@@ -121,9 +113,8 @@ const ProductionFloorWidget = () => {
           >
             <ClearRoundedIcon width={48} height={48} />
           </IconButton>
-          {openBoardMissionsDrawer && (
+          {!!boardMissionsId && (
             <BoardMissionsComponent
-              updateStatus={updateStatus}
               connectionId={connectionId}
               productType={!!productType ? productType.toString() : ""}
               step={step?.toString()}

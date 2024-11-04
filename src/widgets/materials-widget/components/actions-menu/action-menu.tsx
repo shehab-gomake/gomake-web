@@ -50,11 +50,16 @@ const ActionMenu = (props: IActionMenuProps) => {
     onClickCloseUpdatedTableRowModal,
     updatedTableRowModal
   } = useMaterialsActions(props.isAdmin);
-
   const getMaterialActions = () => {
     if (props.isAdmin) {
       return materialActions.filter(x => x.action !== EMaterialsActions.UpdateIsActive && x.action !== EMaterialsActions.UpdateIsInActive && x.action !== EMaterialsActions.CreatePurchaseOrder);
     } else {
+      // return [...materialActions, {
+      //   "key": "UpdateNumbering",
+      //   "isUnderLine": false,
+      //   "icon": "purchaseOrderIcon",
+      //   "action": 16
+      // }];
       return materialActions;
     }
     /*else {
@@ -89,23 +94,26 @@ const ActionMenu = (props: IActionMenuProps) => {
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
         onClick={handleCloseMenu}
       >
-        {getMaterialActions()?.map((action) => (
-          <>
-            <MenuItem
-              style={clasess.menuItemContainer}
-              key={action.action}
-              onClick={() => onChooseAction(action)}
-            >
-              <div style={clasess.actionIconStyle}>
-                {_renderIcons(action.icon)}
-              </div>
-              <div style={clasess.rowTextStyle}>
-                {t("materialsActions." + action.key)}
-              </div>
-            </MenuItem>
-            {action?.isUnderLine && <Divider />}
-          </>
-        ))}
+        {getMaterialActions()?.map((action) => {
+
+          return (
+            <>
+              <MenuItem
+                style={clasess.menuItemContainer}
+                key={action.action}
+                onClick={() => onChooseAction(action)}
+              >
+                <div style={clasess.actionIconStyle}>
+                  {_renderIcons(action.icon)}
+                </div>
+                <div style={clasess.rowTextStyle}>
+                  {t("materialsActions." + action.key)}
+                </div>
+              </MenuItem>
+              {action?.isUnderLine && <Divider />}
+            </>
+          )
+        })}
       </Menu>
       {action?.action === EMaterialsActions.Delete ?
         <GoMakeDeleteModal
@@ -118,7 +126,7 @@ const ActionMenu = (props: IActionMenuProps) => {
           onClose={handleCloseModal}
           insideStyle={{ width: 500, height: "auto" }}
           openModal={action !== null}
-          modalTitle={action?.action === EMaterialsActions.CreatePurchaseOrder ? t("materials.modals.quantityPerMaterial") : t("materialsActions." + action?.key)}
+          modalTitle={t("materialsActions." + action?.key)}
         >
           <Stack
             gap={3}
@@ -194,7 +202,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                       <div style={{ width: "50%", height: "100%" }}>
                         <GoMakeAutoComplate
                           placeholder={"select property"}
-                          getOptionLabel={(option: any) => option.key}
+                          getOptionLabel={(option: any) => option.value}
                           options={materialHeaders.filter(x => !x.isHideInDuplicate)}
                           onChange={(event, value) => {
                             handleChange(index, "key", value);
@@ -246,11 +254,19 @@ const ActionMenu = (props: IActionMenuProps) => {
                 </div>
               </div>
             ) : (
-              <GomakeTextInput
-                onChange={(e) => onTextInputChange(e.target.value)}
-                value={updatedValue}
-                type={action?.action === EMaterialsActions.CreatePurchaseOrder ? "number" : undefined}
-              />
+              <div style={{
+                display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start",
+                alignContent: "flex-start", width: "100%",
+              }}>
+                {action?.action === EMaterialsActions.CreatePurchaseOrder && <div style={{ marginBottom: 10, marginTop: 15 }}>{t("boardMissions.package")}</div>}
+                <GomakeTextInput
+                  onChange={(e) => onTextInputChange(e.target.value)}
+                  value={updatedValue}
+                  type={action?.action === EMaterialsActions.CreatePurchaseOrder ? "number" : undefined}
+                  style={{ height: 40 }}
+                />
+              </div>
+
             )}
             <SecondaryButton
               onClick={onUpdate}

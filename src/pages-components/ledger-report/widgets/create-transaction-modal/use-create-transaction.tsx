@@ -10,10 +10,17 @@ export enum EAccountType {
 
 const useCreateNewTransaction = ({ onCloseModal, customerId }) => {
   const { t } = useTranslation();
-  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange, setCustomer, isFetching } =
-    useCustomerDropDownList();
+  const {
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    setCustomer,
+    isFetching,
+  } = useCustomerDropDownList();
   const { callApi } = useGomakeAxios();
-  const { alertFaultGetData, alertFaultAdded, alertSuccessAdded } = useSnackBar();
+  const { alertFaultGetData, alertFaultAdded, alertSuccessAdded } =
+    useSnackBar();
   const dateRef = useRef(null);
   const [erpAccountsList, setErpAccountsList] = useState([]);
   const accountTypeList: { id: number; name: string }[] = [
@@ -25,7 +32,9 @@ const useCreateNewTransaction = ({ onCloseModal, customerId }) => {
   const [selectAccountType, setAccountType] = useState<any>();
   const [price, setPrice] = useState<number>(0);
   const [reference, setReference] = useState<string>("");
-  const [selectDate, setSelectDate] = useState<string>(new Date().toISOString().split("T")[0]);
+  const [selectDate, setSelectDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
 
   const handleERPAccountChange = (e: any, value: any) => {
     setErpAccount(value);
@@ -44,7 +53,10 @@ const useCreateNewTransaction = ({ onCloseModal, customerId }) => {
   };
 
   const getAgingReportFilter = useCallback(async () => {
-    const res = await callApi(EHttpMethod.GET, `/v1/erp-service/receipts/get-erp-accounts`);
+    const res = await callApi(
+      EHttpMethod.GET,
+      `/v1/erp-service/receipts/get-erp-accounts`
+    );
     if (res?.success) {
       setErpAccountsList(res.data?.data?.data);
     } else {
@@ -67,22 +79,32 @@ const useCreateNewTransaction = ({ onCloseModal, customerId }) => {
   };
 
   const createTransactionsApi = useCallback(async () => {
-    debugger;
-    const res = await callApi(EHttpMethod.POST, `/v1/erp-service/Receipts/create-transaction`, {
-      clientId: customerId ? customerId : customer.id,
-      accountCode: selectErpAccount.code,
-      amount: price,
-      reference: reference,
-      referenceDate: selectDate,
-      type: selectAccountType.id,
-    });
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/Receipts/create-transaction`,
+      {
+        clientId: customerId ? customerId : customer.id,
+        accountCode: selectErpAccount.code,
+        amount: price,
+        reference: reference,
+        referenceDate: selectDate,
+        type: selectAccountType.id,
+      }
+    );
     if (res?.success) {
       alertSuccessAdded();
       onCloseAndRemoveState();
     } else {
       alertFaultAdded();
     }
-  }, [customer, price, reference, selectDate, selectAccountType, selectErpAccount]);
+  }, [
+    customer,
+    price,
+    reference,
+    selectDate,
+    selectAccountType,
+    selectErpAccount,
+  ]);
 
   return {
     customer,

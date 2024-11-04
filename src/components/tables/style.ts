@@ -10,7 +10,8 @@ const useStyle = (maxHeight: number, dir: 'rtl' | 'ltr') => {
                 // overflow: "scroll" as "scroll",
                 boxSizing: 'border-box',
                 width: "100%",
-                maxHeight: convertHeightToVH(maxHeight),
+                maxHeight: maxHeight,
+                height: "100%",
                 boxShadow: '0px 4px 40px 0px #00000014'
 
 

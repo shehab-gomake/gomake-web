@@ -97,7 +97,7 @@ const CompanyReportWidget = () => {
           stickyHeader={true}
           rows={filteredReports}
           headers={tableHeaders}
-          maxHeight={800}
+          maxHeight={"100vh"}
         />
         <PaymentDetailsModal
           openModal={openPaymentDetails}

@@ -49,6 +49,7 @@ const CashTab = () => {
                     type={"number"}
                     placeholder={t("payment.sum")}
                     value={totalCash}
+                    id={"cashPaymentInput"}
                     onChange={(e) => handleTotalCashChange(e.target.value)}
                 />
             </Stack>

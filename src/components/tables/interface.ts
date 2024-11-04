@@ -6,7 +6,7 @@ export interface ITableProps {
   headers: (string | JSX.Element)[];
   stickyHeader?: boolean;
   stickyFirstCol?: boolean;
-  maxHeight?: number;
+  maxHeight?: any;
   variant?: TABLE_TYPE;
   withoutShadow?: boolean;
   dataTour?: string;
@@ -20,7 +20,7 @@ export interface ISecondaryTableProps {
   headers: (string | JSX.Element)[];
   stickyHeader?: boolean;
   stickyFirstCol?: boolean;
-  maxHeight?: number;
+  maxHeight?: any;
   onScrolledBottom?: () => void;
   children?: any
 }
@@ -51,7 +51,7 @@ export interface ITableForOutputsProps {
   rows: TableRowCell[][];
   stickyHeader?: boolean;
   stickyFirstCol?: boolean;
-  maxHeight?: number;
+  maxHeight?: any;
   variant?: TABLE_TYPE;
   withoutShadow?: boolean;
   dataTour?: string;

@@ -15,8 +15,11 @@ import { AutomaticDiscountMenu } from "../automatic-discount-menu";
 import { DotIcon } from "@/icons";
 import { Check } from "@mui/icons-material";
 import { DiscountType, SortByTypes } from "@/enums";
+import { BudgetsMenuForClient } from "../budgets-menu-for-client";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
-const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, setIsUpdateExchangeRate, isUpdateExchangeRate, onBlurCurrency, isUpdateCurrency, setIsUpdateCurrency, updateCurrency, onClickRefresh, sortDocumentItems, updateIsShowDetails, updateIsShowPrices, updateDiscountType }) => {
+const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, setIsUpdateExchangeRate, isUpdateExchangeRate, onBlurCurrency, isUpdateCurrency, setIsUpdateCurrency, updateCurrency, onClickRefresh, sortDocumentItems, updateIsShowDetails, updateIsShowPrices, updateDiscountType, documentType }) => {
+  console.log("documentType", documentType)
   const { classes } = useStyle();
   const { t } = useTranslation();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
@@ -27,10 +30,12 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
   const matchingCurrency = currencies.find(currency => currency.value === quoteStateValue?.currency)?.label;
   const [exchangeRate, setExchangeRate] = useState(quoteStateValue?.exchangeRate || "-");
   const [anchorElTableSorting, setAnchorElTableSorting] = useState<null | HTMLElement>(null);
-
+  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+  const [anchorElBudget, setAnchorElBudget] = useState<null | HTMLElement>(null);
   const [anchorElAutomaticDiscount, setAnchorElAutomaticDiscount] = useState<null | HTMLElement>(null);
   const openTableSorting = Boolean(anchorElTableSorting);
   const openAutomaticDiscount = Boolean(anchorElAutomaticDiscount);
+  const openBudget = Boolean(anchorElBudget);
 
   useEffect(() => {
     setDetailsView(quoteStateValue?.isShowDetails)
@@ -69,6 +74,12 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
 
   const handleAutomaticDiscountClose = () => {
     setAnchorElAutomaticDiscount(null);
+  };
+  const handleBudget = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElBudget(event.currentTarget);
+  };
+  const handleBudgetClose = () => {
+    setAnchorElBudget(null);
   };
 
   const _renderSelectionType = (type: DiscountType) => {
@@ -138,6 +149,19 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
             }
           </div>
           <Divider />
+          {(documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.deliveryNote) && (
+            <>
+              <div
+                onClick={handleBudget}
+                className="table-sorting"
+                style={classes.menuTabStyle}
+              >
+                {t("sales.quote.budget")}
+              </div>
+              <Divider />
+            </>
+          )}
+
 
           <div style={classes.menuRowStyle}>
             <div style={classes.menuTabStyle}>{t("sales.quote.details")}</div>
@@ -199,6 +223,12 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
         open={openAutomaticDiscount}
         anchorEl={anchorElAutomaticDiscount}
         updateDiscountType={updateDiscountType}
+      />
+      <BudgetsMenuForClient
+        handleClose={handleBudgetClose}
+        open={openBudget}
+        anchorEl={anchorElBudget}
+        documentType={documentType}
       />
     </>
   );

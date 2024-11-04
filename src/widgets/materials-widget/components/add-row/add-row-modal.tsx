@@ -51,7 +51,8 @@ const AddRowModal = (props: IAddRowModalProps) => {
     useRecoilValue<
       { key: string; value: string; inputType: number; values: any[] }[]
     >(materialHeadersState);
-  const notebookTypesObj = materialHeaders?.find(
+
+    const notebookTypesObj = materialHeaders?.find(
     (item) => item.key === "notebookTypes"
   );
 
@@ -90,7 +91,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
         <Stack style={classes.inputsDivStyle}>
           {rowInputs(
             rowData,
-            isFetching,
+            isFetching, 
             materialHeaders,
             currencies,
             machinesCategories,
