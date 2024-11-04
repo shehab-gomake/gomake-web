@@ -15,8 +15,6 @@ import { systemCurrencyState } from "@/store";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { calculationResultState, currentProductItemValuePriceState } from "../../state";
 import { GomakePrimaryButton, UpdateValueAutoComplete } from "@/components";
-import { useSnackBar } from "@/hooks";
-import { addOutSourceActionApi } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { TextAreaActionsMapping } from "../action/key-value-view";
 
 interface IProps {

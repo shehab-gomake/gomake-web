@@ -15,7 +15,6 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { systemCurrencyState } from "@/store";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { currentProductItemValuePriceState } from "../../state";
-import { addOutSourceActionApi } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 
 interface IProps {
     value: number;
