@@ -344,15 +344,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => {
           if (docType === DOCUMENT_TYPE.purchaseOrder) {
-            // Split the creationDate to get the date and time separately
-            const [date, time] = quote?.creationDate?.split(" ") || ["", ""];
             return [
-              // Display the date on the first line and time on the second line
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
@@ -385,13 +378,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             const purchaseOrderNumbers = quote?.orderNumbers
               ? quote?.orderNumbers.join(", ")
               : "";
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
@@ -418,13 +406,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -451,9 +434,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
-            // Split the createdDate to get the date and time separately
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
-
             const jobsElement = CheckPermission(
               Permissions.SHOW_BOARD_MISSIONS
             ) ? (
@@ -478,12 +458,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             }`;
 
             return [
-              // Display the date on the first line and time on the second line
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -543,16 +518,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else {
-            // Split the createdDate to get the date and time separately
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
-
             return [
-              // Display the date on the first line and time on the second line
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -611,7 +578,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         });
 
         const mapReceiptData = data?.map((quote: any) => [
-          // GetDateFormat(quote?.creationDate),
           quote?.creationDate?.split(" ")[0],
           <div
             style={{ cursor: "pointer" }}
@@ -766,16 +732,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => {
           if (docType === DOCUMENT_TYPE.purchaseOrder) {
-            // Split the creationDate to get the date and time separately
-            const [date, time] = quote?.creationDate?.split(" ") || ["", ""];
-
             return [
-              // Display the date on the first line and time on the second line
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
@@ -808,13 +766,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             const purchaseOrderNumbers = quote?.orderNumbers
               ? quote?.orderNumbers.join(", ")
               : "";
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
@@ -841,13 +794,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -874,9 +822,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
-            // Split the createdDate to get the date and time separately
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
-
             const jobsElement = CheckPermission(
               Permissions.SHOW_BOARD_MISSIONS
             ) ? (
@@ -900,12 +845,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
             }`;
             return [
-              // Display the date on the first line and time on the second line
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -965,16 +905,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else {
-            // Split the createdDate to get the date and time separately
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
-
             return [
-              // Display the date on the first line and time on the second line
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -1031,7 +963,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
         });
         const mapReceiptData = data?.map((quote: any) => [
-          // GetDateFormat(quote?.creationDate),
           quote?.creationDate?.split(" ")[0],
           <div
             style={{ cursor: "pointer" }}

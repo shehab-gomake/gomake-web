@@ -103,7 +103,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     useState<boolean>(false);
   const [allBoardMissions, setAllBoardMissions] = useState([]);
   const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
-  const { GetDateFormat } = useDateFormat();
+  const { GetDateFormat, getFormattedLocalDate, GetJobDateFormat } =
+    useDateFormat();
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
@@ -395,18 +396,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         if (res?.success) {
           const _data = res?.data;
           const mapData = _data.data?.map((mission: any) => {
-            const [createdDate, createdTime] = mission?.createdDate?.split(
-              "T"
-            ) || ["", ""];
-            const [dueDate, dueTime] = mission?.dueDate?.split("T") || ["", ""];
-
-            // Format the time to display only hours and minutes
-            const formattedCreatedTime = createdTime
-              .split(":")
-              .slice(0, 2)
-              .join(":");
-            const formattedDueTime = dueTime.split(":").slice(0, 2).join(":");
-
             return [
               <a
                 href={mission?.boardMissionImage}
@@ -425,16 +414,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                   }}
                 />
               </a>,
-              <div>
-                {createdDate}
-                <br />
-                {formattedCreatedTime}
-              </div>,
-              <div>
-                {dueDate}
-                <br />
-                {formattedDueTime}
-              </div>,
+              GetJobDateFormat(mission?.createdDate),
+              GetJobDateFormat(mission?.dueDate),
               mission?.clientName,
               mission?.productType
                 ? `${mission?.number} / ${mission?.productType}`
@@ -524,8 +505,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         if (res?.success) {
           const _data = res?.data;
           const mapData = _data.data?.map((mission: any) => [
-            mission?.createdDate?.split("T")[0],
-            mission?.dueDate?.split("T")[0],
+            // mission?.createdDate?.split("T")[0],
+            // mission?.dueDate?.split("T")[0],
+            GetJobDateFormat(mission?.createdDate),
+            GetJobDateFormat(mission?.dueDate),
             mission?.clientName,
             mission?.supplierName,
             mission?.productType
