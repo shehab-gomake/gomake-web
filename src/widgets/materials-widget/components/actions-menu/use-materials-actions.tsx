@@ -296,8 +296,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
           });
         }
       } else {
-        console.log("action", action)
-
         if (action.key === "Duplicate") {
           duplicatePrintHouseMaterials();
         }

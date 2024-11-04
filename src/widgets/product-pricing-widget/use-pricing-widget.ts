@@ -56,7 +56,6 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
 
   useEffect(() => {
     if (isUpdateResolved) {
-      console.log("calculationResult?.totalPrice",calculationResult)
       setCurrentProductItemValueTotalPrice(calculationResult?.totalPrice);
       setIsUpdateResolved(false);
     }

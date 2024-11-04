@@ -18,8 +18,7 @@ import { DiscountType, SortByTypes } from "@/enums";
 import { BudgetsMenuForClient } from "../budgets-menu-for-client";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
-const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, setIsUpdateExchangeRate, isUpdateExchangeRate, onBlurCurrency, isUpdateCurrency, setIsUpdateCurrency, updateCurrency, onClickRefresh, sortDocumentItems, updateIsShowDetails, updateIsShowPrices, updateDiscountType, documentType }) => {
-  console.log("documentType", documentType)
+const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, setIsUpdateExchangeRate, isUpdateExchangeRate, onBlurCurrency, isUpdateCurrency, setIsUpdateCurrency, updateCurrency, onClickRefresh, sortDocumentItems, updateIsShowDetails, updateIsShowPrices, updateDiscountType, documentType, getQuote }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
@@ -36,7 +35,6 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
   const openTableSorting = Boolean(anchorElTableSorting);
   const openAutomaticDiscount = Boolean(anchorElAutomaticDiscount);
   const openBudget = Boolean(anchorElBudget);
-
   useEffect(() => {
     setDetailsView(quoteStateValue?.isShowDetails)
     setShowPrices(quoteStateValue?.isShowPrice)
@@ -156,7 +154,17 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
                 className="table-sorting"
                 style={classes.menuTabStyle}
               >
-                {t("sales.quote.budget")}
+                {
+                  quoteStateValue?.budgetName !== null ?
+                    <div style={classes.selectedTabStyle}>
+                      <div style={classes.mainTabContainer}>{t("sales.quote.budget")}
+                        <DotIcon />
+                      </div>
+                      <div style={classes.selectedTabContainer} >
+                        <Check style={{ width: 16, height: 16 }} /> {quoteStateValue?.budgetName}
+                      </div>
+                    </div> : t("sales.quote.budget")
+                }
               </div>
               <Divider />
             </>
@@ -229,6 +237,7 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
         open={openBudget}
         anchorEl={anchorElBudget}
         documentType={documentType}
+        getQuote={getQuote}
       />
     </>
   );
