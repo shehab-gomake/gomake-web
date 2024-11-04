@@ -92,6 +92,9 @@ const PriceListPageWidget = ({ widgetType }) => {
     onClickOpenCurrentStationModal,
     missionsListForEdit,
     isFlowChanged,
+    getSelectedWorkFlow,
+    selectedWorkFlowCalculatedIsLoaded,
+    setSelectedWorkFlowCalculatedIsLoaded
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const router = useRouter();
@@ -314,6 +317,9 @@ const PriceListPageWidget = ({ widgetType }) => {
                             actions={jobActions}
                             workFlows={workFlows}
                             widgetType={widgetType}
+                            getSelectedWorkFlow={getSelectedWorkFlow}
+                            selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+                            setSelectedWorkFlowCalculatedIsLoaded={setSelectedWorkFlowCalculatedIsLoaded}
                           />
                         );
                       } else {

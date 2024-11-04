@@ -5,12 +5,17 @@ import { Stack } from "@mui/material";
 import { OutSourceSuppliersRowComponent } from "./out-source-suppliers-row";
 
 
-const OutSourceSuppliers = ({ widgetType }) => {
+const OutSourceSuppliers = ({ widgetType, onClickAddOutSourceAction, selectedWorkFlow, selectedWorkFlowCalculatedIsLoaded }) => {
     const suppliers = useRecoilValue(outsourceSuppliersState);
-
     return <Stack gap={'15px'}>
         {/* {suppliers?.map(supplier => <OutSourceSupplierComponent {...supplier} widgetType={widgetType} />)} */}
-        { suppliers && suppliers.length > 0 && <OutSourceSuppliersRowComponent widgetType={widgetType} options={suppliers} />}
+        {suppliers && suppliers.length > 0 && <OutSourceSuppliersRowComponent
+            widgetType={widgetType}
+            options={suppliers}
+            onClickAddOutSourceAction={onClickAddOutSourceAction}
+            selectedWorkFlow={selectedWorkFlow}
+            selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+        />}
     </Stack>
 }
 export { OutSourceSuppliers }

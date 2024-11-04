@@ -15,6 +15,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { systemCurrencyState } from "@/store";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { currentProductItemValuePriceState } from "../../state";
+import { addOutSourceActionApi } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 
 interface IProps {
     value: number;
@@ -40,7 +41,7 @@ const OutSourceSupplierComponent = ({
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
     const [supplier, setSupplier] = useState<IOutSourceSupplier | null>();
-    const { updatePrice, updateWorkHours, updateProfit, updateCost, addItem, updateQuoteItem } = useOutsourceSupplier({supplier, setSupplier});
+    const { updatePrice, updateWorkHours, updateProfit, updateCost, addItem, updateQuoteItem } = useOutsourceSupplier({ supplier, setSupplier });
     const handleDeliveryTimeUpdate = (newValue: number) => {
         updateWorkHours(supplierId, +newValue);
     }
@@ -62,7 +63,7 @@ const OutSourceSupplierComponent = ({
             setCurrentProductItemValueTotalPrice(finalPrice)
         }
     }, [finalPrice])
-    
+
     const systemCurrency = useRecoilValue<any>(systemCurrencyState);
 
     return (

@@ -11,6 +11,7 @@ export enum EOutSoucrceUpdateKey {
   TotalRealProductionTime = 1,
   Profit = 2,
   TotalPrice = 3,
+  Outputs = 4,
 }
 
 export enum DocumentsTypeReportList {
