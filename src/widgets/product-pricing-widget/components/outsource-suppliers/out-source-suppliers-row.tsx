@@ -1,7 +1,7 @@
 import { EOutsourceSupplierStatus } from "@/widgets/product-pricing-widget/enums";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { Fade } from "@mui/material";
+import { Fade, Skeleton, } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import { UpdateValueInput } from "@/components/text-input/update-value-input";
@@ -41,7 +41,8 @@ const OutSourceSuppliersRowComponent = ({
     options,
     onClickAddOutSourceAction,
     selectedWorkFlow,
-}: { widgetType: EWidgetProductType; options: IOutSourceSupplier[]; onClickAddOutSourceAction: () => void, selectedWorkFlow: any, }) => {
+    selectedWorkFlowCalculatedIsLoaded
+}: { widgetType: EWidgetProductType; options: IOutSourceSupplier[]; onClickAddOutSourceAction: () => void, selectedWorkFlow: any, selectedWorkFlowCalculatedIsLoaded: boolean }) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
@@ -100,54 +101,56 @@ const OutSourceSuppliersRowComponent = ({
     }, [supplier?.finalPrice, setCurrentProductItemValueTotalPrice])
     return (
         <>
-
-            <Fade in={true} timeout={700}>
-                <Stack direction={"column"} alignItems={'flex-start'} justifyContent={'flex-start'} gap={"15px"}
-                >
-                    {selectedWorkFlow?.actions?.map((action, index) => {
-                        const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
-                        const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : action?.supplierId;
-                        const foundSupplier = options.find(x => x.supplierId == suppId) || options[0];
-                        return (
-                            <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
-                                style={{ ...classes.actionContainer, }}
-                            >
-                                <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
-                                    style={{ ...classes.actionContainer, padding: '10px 16px' }}>
-                                    <Stack alignItems={'center'} direction={"row"} gap={'10px'} flexWrap={'wrap'}>
-                                        <EditableSelect isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually}
-                                            label={t('suppliers.supplierName')} value={foundSupplier?.supplierName} onUpdate={handleSupplierUpdate} options={options} />
-                                        <Divider orientation={'vertical'} flexItem />
-                                        <EditableValue unit={'W.H'} isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually}
-                                            label={t('pricingWidget.endTime')}
-                                            value={Array.isArray(action?.totalProductionTime?.outSourceValues) && action?.totalProductionTime?.outSourceValues.length > 0
-                                                ? action?.totalProductionTime?.outSourceValues[0]
-                                                : 0}
-                                            onUpdate={(v) => { handleDeliveryTimeUpdate(+v, action?.id) }} />
-                                        <Divider orientation={'vertical'} flexItem />
-                                        <EditableValue unit={systemCurrency} isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.cost')}
-                                            value={Array.isArray(action?.totalCost?.outSourceValues) && action?.totalCost?.outSourceValues.length > 0
-                                                ? action?.totalCost?.outSourceValues[0]
-                                                : 0} onUpdate={(v) => { handleCostUpdate(+v, action?.id) }} />
-                                        <Divider orientation={'vertical'} flexItem />
-                                        <EditableValue unit={'%'} isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.profit')}
-                                            value={Array.isArray(action?.profit?.outSourceValues) && action?.profit?.outSourceValues.length > 0
-                                                ? action?.profit?.outSourceValues[0]
-                                                : 0} onUpdate={(v) => { handleProfitUpdate(+v, action?.id) }} />
-                                        <Divider orientation={'vertical'} flexItem />
-                                        <EditableValue unit={systemCurrency} isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually && foundSupplier?.cost !== 0}
-                                            valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={Array.isArray(action?.totalPrice?.outSourceValues) && action?.totalPrice?.outSourceValues.length > 0
-                                                ? action?.totalPrice?.outSourceValues[0]
-                                                : 0}
-                                            onUpdate={(v) => { handleUpdatePrice(+v, action?.id) }} />
+            {
+                selectedWorkFlowCalculatedIsLoaded ? <Skeleton variant="rectangular" width={'100%'} height={'100px'} /> :
+                    <Fade in={true} timeout={700}>
+                        <Stack direction={"column"} alignItems={'flex-start'} justifyContent={'flex-start'} gap={"15px"}
+                        >
+                            {!selectedWorkFlowCalculatedIsLoaded && selectedWorkFlow?.actions?.map((action, index) => {
+                                const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
+                                const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : action?.supplierId;
+                                const foundSupplier = options.find(x => x.supplierId == suppId) || options[0];
+                                return (
+                                    <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
+                                        style={{ ...classes.actionContainer, }}
+                                    >
+                                        <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
+                                            style={{ ...classes.actionContainer, padding: '10px 16px' }}>
+                                            <Stack alignItems={'center'} direction={"row"} gap={'10px'} flexWrap={'wrap'}>
+                                                <EditableSelect isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually}
+                                                    label={t('suppliers.supplierName')} value={foundSupplier?.supplierName} onUpdate={handleSupplierUpdate} options={options} />
+                                                <Divider orientation={'vertical'} flexItem />
+                                                <EditableValue unit={'W.H'} isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually}
+                                                    label={t('pricingWidget.endTime')}
+                                                    value={Array.isArray(action?.totalProductionTime?.outSourceValues) && action?.totalProductionTime?.outSourceValues.length > 0
+                                                        ? action?.totalProductionTime?.outSourceValues[0]
+                                                        : 0}
+                                                    onUpdate={(v) => { handleDeliveryTimeUpdate(+v, action?.id) }} />
+                                                <Divider orientation={'vertical'} flexItem />
+                                                <EditableValue unit={systemCurrency} isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.cost')}
+                                                    value={Array.isArray(action?.totalCost?.outSourceValues) && action?.totalCost?.outSourceValues.length > 0
+                                                        ? action?.totalCost?.outSourceValues[0]
+                                                        : 0} onUpdate={(v) => { handleCostUpdate(+v, action?.id) }} />
+                                                <Divider orientation={'vertical'} flexItem />
+                                                <EditableValue unit={'%'} isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.profit')}
+                                                    value={Array.isArray(action?.profit?.outSourceValues) && action?.profit?.outSourceValues.length > 0
+                                                        ? action?.profit?.outSourceValues[0]
+                                                        : 0} onUpdate={(v) => { handleProfitUpdate(+v, action?.id) }} />
+                                                <Divider orientation={'vertical'} flexItem />
+                                                <EditableValue unit={systemCurrency} isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually && foundSupplier?.cost !== 0}
+                                                    valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={Array.isArray(action?.totalPrice?.outSourceValues) && action?.totalPrice?.outSourceValues.length > 0
+                                                        ? action?.totalPrice?.outSourceValues[0]
+                                                        : 0}
+                                                    onUpdate={(v) => { handleUpdatePrice(+v, action?.id) }} />
+                                            </Stack>
+                                        </Stack>
                                     </Stack>
-                                </Stack>
-                            </Stack>
-                        )
-                    })}
+                                )
+                            })}
 
-                </Stack>
-            </Fade>
+                        </Stack>
+                    </Fade>
+            }
             <GomakePrimaryButton
                 onClick={onClickAddOutSourceAction}
                 style={{

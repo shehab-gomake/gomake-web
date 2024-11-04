@@ -36,7 +36,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType, setSele
     allCountSelectedTabWorkFlow,
     onClickAddOutSourceAction,
     t
-  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType });
+  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded });
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   return (
@@ -114,7 +114,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType, setSele
       )}
       <Divider />
 
-      {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && !selectedWorkFlowCalculatedIsLoaded && (
+      {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && (
         <div data-tour={'actions-container'}>
           <SubWorkFlowsComponent
             widgetType={widgetType}
@@ -125,10 +125,11 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType, setSele
             actions={selectedWorkFlow?.actions}
             productType={selectedWorkFlow.productType}
             widgetType={widgetType}
+            selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
           />
         </div>
       )}
-      {selectedWorkFlowsByTabList?.length > 0 && view === EPricingViews.OTHERS_WORKFLOWS && !selectedWorkFlowCalculatedIsLoaded && (
+      {selectedWorkFlowsByTabList?.length > 0 && view === EPricingViews.OTHERS_WORKFLOWS && (
         <div data-tour={'allWorkflowsContainer'}>
           <WorkFlowsComponent
             showSelected={() => setView(EPricingViews.SELECTED_WORKFLOW)}
@@ -157,11 +158,12 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType, setSele
 
         </div>
       )}
-      {view === EPricingViews.OUTSOURCE_WORKFLOW && !selectedWorkFlowCalculatedIsLoaded && selectedWorkFlow && (
+      {view === EPricingViews.OUTSOURCE_WORKFLOW && (
         <OutSourceSuppliers
           widgetType={widgetType}
           onClickAddOutSourceAction={onClickAddOutSourceAction}
           selectedWorkFlow={selectedWorkFlow}
+          selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
         />
       )}
     </Stack>

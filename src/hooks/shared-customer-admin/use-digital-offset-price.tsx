@@ -1672,7 +1672,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setPricingDefaultValue(null);
         setCalculationExceptionsLogs(null);
         setQuantityTypes([]);
-        setCalculationResult(null);
+        // setCalculationResult(null);
         setOutSuppliers(null);
         setLoading(false);
         setLoadingWithLockScreen(false);

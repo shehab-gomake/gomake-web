@@ -11,7 +11,7 @@ import { calculationResultState, currentProductItemValueDraftId, currentProductI
 import { EPricingViews, EWorkSource } from "./enums";
 import { getWorkFlowsActionsApi, getWorkFlowsApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 
-const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType}) => {
+const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,selectedWorkFlowCalculatedIsLoaded}) => {
 
   const [view, setView] = useRecoilState<EPricingViews>(viewPricingTab);
   const [actionList, setActionList] = useRecoilState(actionListForWorkFlow)
@@ -56,10 +56,11 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType}) =>
 
   useEffect(() => {
     if (isUpdateResolved) {
+      console.log("calculationResult?.totalPrice",calculationResult)
       setCurrentProductItemValueTotalPrice(calculationResult?.totalPrice);
       setIsUpdateResolved(false);
     }
-  }, [ calculationResult]);
+  }, [ calculationResult,selectedWorkFlowCalculatedIsLoaded]);
 
   const updateProductItemValue = async (sourceType: number) => {
     const callBack = (res) => {
