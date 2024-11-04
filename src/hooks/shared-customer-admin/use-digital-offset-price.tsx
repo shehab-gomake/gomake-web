@@ -312,8 +312,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       getSelectedWorkFlow();
     }
   }, [calculationResult, currentCalculationSessionId]);
+  const [selectedWorkFlowCalculatedIsLoaded, setSelectedWorkFlowCalculatedIsLoaded] = useState<boolean>(false)
 
   const getSelectedWorkFlow = async () => {
+    // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
@@ -375,7 +377,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setIsChangePriceForEdit(true);
       setIsActionEmployeeUpdated(false);
       setIsJobNameValue(false);
+      setSelectedWorkFlowCalculatedIsLoaded(false)
+
     }
+    setSelectedWorkFlowCalculatedIsLoaded(false)
+
   };
 
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
@@ -1666,7 +1672,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setPricingDefaultValue(null);
         setCalculationExceptionsLogs(null);
         setQuantityTypes([]);
-        setCalculationResult(null);
+        // setCalculationResult(null);
         setOutSuppliers(null);
         setLoading(false);
         setLoadingWithLockScreen(false);
@@ -4599,6 +4605,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     missionsListForEdit,
     formatMissions,
     isFlowChanged,
+    getSelectedWorkFlow,
+    selectedWorkFlowCalculatedIsLoaded,
+    setSelectedWorkFlowCalculatedIsLoaded
   };
 };
 

@@ -9,7 +9,7 @@ import { getAllClientActiveBudgetsApi } from "@/services/api-service/generic-doc
 import { Divider } from "@mui/material";
 import { EHttpMethod } from "@/services/api-service/enums";
 
-const BudgetsMenuForClient = ({ handleClose, open, anchorEl, documentType }) => {
+const BudgetsMenuForClient = ({ handleClose, open, anchorEl, documentType, getQuote }) => {
 
   const { t } = useTranslation();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
@@ -47,6 +47,7 @@ const BudgetsMenuForClient = ({ handleClose, open, anchorEl, documentType }) => 
     );
     if (res?.success) {
       alertSuccessUpdate();
+      getQuote()
     } else {
       alertFaultUpdate();
     }

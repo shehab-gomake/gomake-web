@@ -75,7 +75,6 @@ const CustomerCardWidget = ({
   isFromCartPage = false,
   onChangeSelectBusiness,
 }: IProps) => {
-  console.log("customer", customer)
   const { classes } = useStyle();
   const { t } = useTranslation();
   const {

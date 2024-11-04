@@ -17,7 +17,7 @@ import { useState } from "react";
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { FONT_FAMILY } from "@/utils/font-family";
 
-const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPricingWidgetProps) => {
+const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType, setSelectedWorkFlowCalculatedIsLoaded, selectedWorkFlowCalculatedIsLoaded }: IPricingWidgetProps) => {
   const { classes } = useStyle();
   const {
     view,
@@ -34,8 +34,9 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
     handleTabClick,
     handleScroll,
     allCountSelectedTabWorkFlow,
+    onClickAddOutSourceAction,
     t
-  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType });
+  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded });
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   return (
@@ -85,6 +86,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
         )}
         <InOutSourceSelect
           onChange={(v: EWorkSource) => {
+            setSelectedWorkFlowCalculatedIsLoaded(true)
             setView(
               v === EWorkSource.OUT
                 ? EPricingViews.OUTSOURCE_WORKFLOW
@@ -96,7 +98,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
           disabled={!selectedWorkFlow}
           withPartially={selectedWorkFlow?.actions?.some(
             (action) => action.source === EWorkSource.OUT
-          )}
+          ) && view !== EPricingViews.OUTSOURCE_WORKFLOW && !selectedWorkFlowCalculatedIsLoaded}
           value={
             view === EPricingViews.OUTSOURCE_WORKFLOW
               ? EWorkSource.OUT
@@ -123,6 +125,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
             actions={selectedWorkFlow?.actions}
             productType={selectedWorkFlow.productType}
             widgetType={widgetType}
+            selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
           />
         </div>
       )}
@@ -155,7 +158,14 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType }: IPric
 
         </div>
       )}
-      {view === EPricingViews.OUTSOURCE_WORKFLOW && <OutSourceSuppliers widgetType={widgetType} />}
+      {view === EPricingViews.OUTSOURCE_WORKFLOW && (
+        <OutSourceSuppliers
+          widgetType={widgetType}
+          onClickAddOutSourceAction={onClickAddOutSourceAction}
+          selectedWorkFlow={selectedWorkFlow}
+          selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+        />
+      )}
     </Stack>
   );
 };
