@@ -81,12 +81,18 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
   useEffect(() => {
     getOutSourcingSuppliers();
   }, []);
+
   useEffect(() => {
-    if (productItemValueByEdit?.sourceType && isChangeView) {
+    if (productItemValueByEdit?.sourceType === EWorkSource.OUT) {
       setView(EPricingViews.OUTSOURCE_WORKFLOW)
     }
-
-    else if (!selectedWorkFlow) {
+    else if(productItemValueByEdit?.sourceType === EWorkSource.INTERNAL){
+      setView(EPricingViews.SELECTED_WORKFLOW)
+    }
+  }, [productItemValueByEdit])
+  
+  useEffect(() => {
+     if (!selectedWorkFlow) {
       setView(EPricingViews.OUTSOURCE_WORKFLOW);
     } else if (currentProductItemValue) {
       let temp = cloneDeep(currentProductItemValue);
@@ -96,20 +102,14 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
       setCurrentProductItemValue(productItemValue);
 
     }
-
   }, [selectedWorkFlow,]);
-  useEffect(() => {
-    if (withPartially && isChangeView) {
-      setView(EPricingViews.SELECTED_WORKFLOW);
-    }
-    else if (productItemValueByEdit?.sourceType && isChangeView) {
+  useEffect(()=>{
+    if(selectedWorkFlow?.isOutSourceWorkFlow){
       setView(EPricingViews.OUTSOURCE_WORKFLOW)
+    }else{
+      setView(EPricingViews.SELECTED_WORKFLOW)
     }
-    else if (selectedWorkFlow && currentProductItemValue && isChangeView) {
-      setView(EPricingViews.SELECTED_WORKFLOW);
-    }
-  }, [selectedWorkFlow, currentProductItemValue, isChangeView])
-
+  },[selectedWorkFlow])
 
   const reorderedTabs = [
     ...(tabs.find(tab => tab.key === "general") ? [tabs.find(tab => tab.key === "general")] : []), // "Flows Pending" tab if exists

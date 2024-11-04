@@ -17,7 +17,13 @@ import { useState } from "react";
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { FONT_FAMILY } from "@/utils/font-family";
 
-const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType, setSelectedWorkFlowCalculatedIsLoaded, selectedWorkFlowCalculatedIsLoaded }: IPricingWidgetProps) => {
+const PricingWidget = ({
+  workFlows,
+  getOutSourcingSuppliers,
+  widgetType,
+  setSelectedWorkFlowCalculatedIsLoaded,
+  selectedWorkFlowCalculatedIsLoaded
+}: IPricingWidgetProps) => {
   const { classes } = useStyle();
   const {
     view,
@@ -37,6 +43,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType, setSele
     onClickAddOutSourceAction,
     t
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded });
+
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   return (

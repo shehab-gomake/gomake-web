@@ -104,9 +104,9 @@ const OutSourceSuppliersRowComponent = ({
                         <Stack direction={"column"} alignItems={'flex-start'} justifyContent={'flex-start'} gap={"15px"}
                         >
                             {!selectedWorkFlowCalculatedIsLoaded && selectedWorkFlow?.actions?.map((action, index) => {
-                                const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
-                                const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : action?.supplierId;
-                                const foundSupplier = options.find(x => x.supplierId == suppId) || options[0];
+                                // const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
+                                // const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : action?.supplierId;
+                                const foundSupplier = options.find(x => x.supplierId == action?.supplierId);
                                 const textAreaOutputs = action?.outputs?.filter(
                                     (parameter) =>
                                         parameter && parameter?.propertyType === RuleType.OUTPUT &&
@@ -119,8 +119,8 @@ const OutSourceSuppliersRowComponent = ({
                                         <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
                                             style={{ ...classes.actionContainer, padding: '10px 16px' }}>
                                             <Stack alignItems={'center'} direction={"row"} gap={'10px'} flexWrap={'wrap'}>
-                                                <EditableSelect isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually}
-                                                    label={t('suppliers.supplierName')} value={foundSupplier?.supplierName}
+                                                <EditableSelect isEditable={true}
+                                                    label={t('suppliers.supplierName')} value={foundSupplier?.supplierName ? foundSupplier?.supplierName : "Select Supplier"}
                                                     // onUpdate={handleSupplierUpdate} 
                                                     onUpdate={(v) => { handleSupplierUpdate(v, action?.id) }}
                                                     options={options} />
