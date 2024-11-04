@@ -61,7 +61,6 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
     };
 
     const handleSubmit = () => {
-        console.log("formData", formData)
         onSave(formData);
     };
     const BudgetStatusList: any = [

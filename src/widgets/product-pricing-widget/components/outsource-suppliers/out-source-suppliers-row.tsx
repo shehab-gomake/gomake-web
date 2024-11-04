@@ -87,8 +87,6 @@ const OutSourceSuppliersRowComponent = ({
     const handleSupplierUpdate = (value, actionId) => {
         const selectedSupp = options.find(x => x.supplierId == value?.value);
         updateSupplierId(selectedSupp?.supplierId, actionId);
-        console.log("value", selectedSupp)
-
         // setCurrentProductItemValueTotalPrice(selectedSupp.finalPrice)
         // setSupplier(selectedSupp);
     }
