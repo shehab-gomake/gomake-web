@@ -288,8 +288,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -595,7 +595,9 @@ const useQuoteNew = ({
         {
           documentType: docType,
           clientId: item?.id,
-          ...(router?.query?.budgetId ? { budgetId: router.query.budgetId } : {}),
+          ...(router?.query?.budgetId
+            ? { budgetId: router.query.budgetId }
+            : {}),
         }
       );
       if (res?.success) {
@@ -1020,7 +1022,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1452,10 +1454,10 @@ const useQuoteNew = ({
       alertFault("alerts.cannotCreateWithPriceZero");
       return;
     }
-
     setLoadingWithShadow(true);
 
     const callBack = (res) => {
+      setLoadingWithShadow(false);
       if (res?.success) {
         alertSuccessAdded();
         const _data = res?.data || {};
@@ -1472,7 +1474,6 @@ const useQuoteNew = ({
       } else {
         alertFaultAdded();
       }
-      setLoadingWithShadow(false);
     };
 
     await createDocumentApi(callApi, callBack, {
@@ -1629,6 +1630,7 @@ const useQuoteNew = ({
           getQuote();
           getAllEmployees();
           prevRouterQueryRef.current = router.query;
+          debugger;
         }
       }
     }
