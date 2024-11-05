@@ -41,6 +41,8 @@ const ProfitsNewPageWidget = () => {
     calculateCaseValue,
     isLoading,
     ProfitCurrency,
+    quantityOfPackages,
+    setQuantityOfPackages,
     handleCloseAdditionalProfitMenu,
     handleClickAdditionalProfitMenu,
     setSelectedActionProfitRow,
@@ -173,6 +175,8 @@ const ProfitsNewPageWidget = () => {
               deleteActionProfitRow={deleteActionProfitRow}
               selectedAdditionalProfitRow={selectedAdditionalProfitRow}
               selectedPricingTableItems={selectedPricingTableItems}
+              quantityOfPackages={quantityOfPackages}
+              setQuantityOfPackages={setQuantityOfPackages}
             />
           </div>
         ) : (

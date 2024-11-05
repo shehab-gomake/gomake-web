@@ -13,6 +13,7 @@ import { Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import { SettingsIcon } from "@/icons/settings";
 import { DuplicateMaterial, PercentageMaterial } from "@/icons";
 import { useCopyAction } from "./use-copy-action";
+import { EPricingBy } from "../../enums/profites-enum";
 
 const PricingList = ({
   tableHeaders,
@@ -37,6 +38,8 @@ const PricingList = ({
   selectedAdditionalProfitRow,
   selectedPricingTableItems,
   getAllActionProfitRowsByActionId,
+  quantityOfPackages,
+  setQuantityOfPackages,
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -82,6 +85,18 @@ const PricingList = ({
               key={selectedPricingTableItems}
             />
           </div>
+          {
+            selectedPricingBy?.value === EPricingBy.PACKAGE &&
+            <div style={classes.autoCompleteContainer}>
+              <GomakeTextInput
+                style={classes.autoCompleteStyleContainer}
+                onChange={(e) => setQuantityOfPackages(e.target.value)}
+                value={quantityOfPackages}
+                placeholder={t("boardMissions.quantityOfPackages")}
+                type="number"
+              />
+            </div>
+          }
           <div style={classes.autoCompleteContainer}>
             <GoMakeAutoComplate
               options={Transition}

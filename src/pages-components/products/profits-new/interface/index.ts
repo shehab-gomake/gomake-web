@@ -73,6 +73,8 @@ export type PricingListProps = {
   selectedAdditionalProfitRow?: ProfitsPricingTables;
   selectedPricingTableItems?: any;
   getAllActionProfitRowsByActionId?: (value: any) => void;
+  quantityOfPackages: number;
+  setQuantityOfPackages: (value: number) => void;
 };
 export type PricingListTableProps = {
   tableHeaders: string[];
@@ -190,6 +192,8 @@ export type ProfitLeftSideProps = {
   selectedAdditionalProfitRow?: ProfitsPricingTables;
   selectedPricingTableItems?: any;
   getAllActionProfitRowsByActionId?: (value: any) => void;
+  quantityOfPackages: number;
+  setQuantityOfPackages: (value: number) => void;
 };
 
 export type selectedOutputsProps = {

@@ -79,6 +79,10 @@ const useNewProfits = () => {
       label: "M^3",
       value: EPricingBy.CUBIC_METER,
     },
+    {
+      label: t("boardMissions.package"),
+      value: EPricingBy.PACKAGE,
+    },
   ];
   const [PricingBy, setPricingBy] = useState([]);
   const modifiedPricingBy = PricingByList.slice(1);
@@ -111,6 +115,7 @@ const useNewProfits = () => {
   const [selectedAdditionalProfitRow, setSelectedActionProfitRow] =
     useState<ProfitsPricingTables>();
   const [profitRowType, setProfitRowType] = useState(1);
+  const [quantityOfPackages, setQuantityOfPackages] = useState<number>(0);
   const [selectedPricingBy, setSelectedPricingBy] =
     useState<SelectedPricingByType>({
       label: "",
@@ -911,6 +916,8 @@ const useNewProfits = () => {
     calculateCaseValue,
     isLoading,
     ProfitCurrency,
+    quantityOfPackages,
+    setQuantityOfPackages,
     handleCloseAdditionalProfitMenu,
     handleClickAdditionalProfitMenu,
     setSelectedActionProfitRow,
