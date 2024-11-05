@@ -50,6 +50,7 @@ const SettingsWidget = ({
     onClickClosePricingType,
     query,
     productSKU,
+    updateProductSKURow,
   } = useSettings({ onClickParametersTab, productState, onChangeStateProduct });
 
   const [defultProductSKU, setDefultProductSKU] = useState();
@@ -152,7 +153,7 @@ const SettingsWidget = ({
     }
   };
   return (
-    <div style={clasess.mainContainer} className="custom-scrollbar" >
+    <div style={clasess.mainContainer} className="custom-scrollbar">
       <div style={clasess.categoryNameStyle}>
         {t("products.addProduct.admin.productCategory")}
       </div>
@@ -200,11 +201,9 @@ const SettingsWidget = ({
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.productSKU")}
             <span style={clasess.requierdInput}>*</span>
-            {!isUpdate && (
-              <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
-                +
-              </span>
-            )}
+            <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
+              +
+            </span>
           </div>
           <div style={{ width: 250 }}>
             {allProductSKU && (
@@ -498,6 +497,7 @@ const SettingsWidget = ({
         onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
         onClickCloseDeleteRowModal={onClickCloseDeleteRowModal}
         deleteProductSKURow={deleteProductSKURow}
+        updateProductSKURow={updateProductSKURow}
         productSKUState={productSKU}
       />
       <GoMakeDeleteModal
