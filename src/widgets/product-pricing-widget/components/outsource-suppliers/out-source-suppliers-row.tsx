@@ -1,7 +1,7 @@
 import { EOutsourceSupplierStatus, RuleType, HtmlElementType } from "@/widgets/product-pricing-widget/enums";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { Fade, Skeleton, } from "@mui/material";
+import { Fade, IconButton, Skeleton, } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import { UpdateValueInput } from "@/components/text-input/update-value-input";
@@ -16,6 +16,7 @@ import { EWidgetProductType } from "@/pages-components/products/digital-offset-p
 import { calculationResultState, currentProductItemValuePriceState } from "../../state";
 import { GomakePrimaryButton, UpdateValueAutoComplete } from "@/components";
 import { TextAreaActionsMapping } from "../action/key-value-view";
+import { WastebasketNew2 } from "@/icons";
 
 interface IProps {
     value: number;
@@ -39,9 +40,10 @@ const OutSourceSuppliersRowComponent = ({
     widgetType,
     options,
     onClickAddOutSourceAction,
+    onClickRemoveOutSourceAction,
     selectedWorkFlow,
     selectedWorkFlowCalculatedIsLoaded
-}: { widgetType: EWidgetProductType; options: IOutSourceSupplier[]; onClickAddOutSourceAction: () => void, selectedWorkFlow: any, selectedWorkFlowCalculatedIsLoaded: boolean }) => {
+}: { widgetType: EWidgetProductType; options: IOutSourceSupplier[]; onClickAddOutSourceAction: () => void, onClickRemoveOutSourceAction: (actionId: string) => void, selectedWorkFlow: any, selectedWorkFlowCalculatedIsLoaded: boolean }) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
@@ -104,9 +106,9 @@ const OutSourceSuppliersRowComponent = ({
                         <Stack direction={"column"} alignItems={'flex-start'} justifyContent={'flex-start'} gap={"15px"}
                         >
                             {!selectedWorkFlowCalculatedIsLoaded && selectedWorkFlow?.actions?.map((action, index) => {
-                                const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
-                                const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : action?.supplierId;
-                                const foundSupplier = options.find(x => x.supplierId == suppId) || options[0];
+                                // const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
+                                // const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : action?.supplierId;
+                                const foundSupplier = options.find(x => x.supplierId == action?.supplierId);
                                 const textAreaOutputs = action?.outputs?.filter(
                                     (parameter) =>
                                         parameter && parameter?.propertyType === RuleType.OUTPUT &&
@@ -116,11 +118,11 @@ const OutSourceSuppliersRowComponent = ({
                                     <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
                                         style={{ ...classes.actionContainer, }}
                                     >
-                                        <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
+                                        <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'} position={"relative"}
                                             style={{ ...classes.actionContainer, padding: '10px 16px' }}>
                                             <Stack alignItems={'center'} direction={"row"} gap={'10px'} flexWrap={'wrap'}>
-                                                <EditableSelect isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually}
-                                                    label={t('suppliers.supplierName')} value={foundSupplier?.supplierName}
+                                                <EditableSelect isEditable={true}
+                                                    label={t('suppliers.supplierName')} value={foundSupplier?.supplierName ? foundSupplier?.supplierName : "Select Supplier"}
                                                     // onUpdate={handleSupplierUpdate} 
                                                     onUpdate={(v) => { handleSupplierUpdate(v, action?.id) }}
                                                     options={options} />
@@ -157,6 +159,12 @@ const OutSourceSuppliersRowComponent = ({
                                                     supplierId={foundSupplier?.supplierId}
                                                 />
                                             </Stack>
+                                            {selectedWorkFlow?.actions.length > 1 && (
+                                                <IconButton onClick={() => { onClickRemoveOutSourceAction(action?.id) }} style={classes.toggleActionButton}>
+                                                    <WastebasketNew2 />
+                                                </IconButton>
+                                            )}
+
                                         </Stack>
                                     </Stack>
                                 )

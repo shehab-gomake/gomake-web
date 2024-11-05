@@ -17,7 +17,14 @@ import { useState } from "react";
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { FONT_FAMILY } from "@/utils/font-family";
 
-const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType, setSelectedWorkFlowCalculatedIsLoaded, selectedWorkFlowCalculatedIsLoaded }: IPricingWidgetProps) => {
+const PricingWidget = ({
+  workFlows,
+  getOutSourcingSuppliers,
+  widgetType,
+  setSelectedWorkFlowCalculatedIsLoaded,
+  selectedWorkFlowCalculatedIsLoaded,
+  getSelectedWorkFlow
+}: IPricingWidgetProps) => {
   const { classes } = useStyle();
   const {
     view,
@@ -35,8 +42,10 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType, setSele
     handleScroll,
     allCountSelectedTabWorkFlow,
     onClickAddOutSourceAction,
+    onClickRemoveOutSourceAction,
     t
-  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded });
+  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
+
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   return (
@@ -164,6 +173,7 @@ const PricingWidget = ({ workFlows, getOutSourcingSuppliers, widgetType, setSele
           onClickAddOutSourceAction={onClickAddOutSourceAction}
           selectedWorkFlow={selectedWorkFlow}
           selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+          onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
         />
       )}
     </Stack>
