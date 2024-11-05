@@ -4,7 +4,7 @@ import {
   useGomakeRouter,
   useSnackBar,
 } from "@/hooks";
-import { useCallback, useEffect, useState } from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import { useTranslation } from "react-i18next";
 import { ApprovalStatus, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
@@ -140,6 +140,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { quoteNumber } = query;
   const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList();
+  const searchInputRef = useRef(null);
   const [accountingStatus, setAccountingStatus] = useState<{
     label: string;
     value: PStatus;
@@ -2132,8 +2133,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (toDate && typeof toDate === "string") setToDate(new Date(toDate));
 
     if (finalPatternSearch && typeof finalPatternSearch === "string") {
-      setPatternSearch(finalPatternSearch);
-      setFinalPatternSearch(finalPatternSearch);
+      if(!(searchInputRef && searchInputRef.current && document.activeElement.id == searchInputRef.current.id)){
+        setPatternSearch(finalPatternSearch);
+        setFinalPatternSearch(finalPatternSearch);
+      }
+      
     }
 
     if (accountingStatus) {
@@ -2369,6 +2373,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openDuplicateModal,
     onCloseDuplicateModal,
     onClickDocumentDuplicate,
+    searchInputRef
   };
 };
 

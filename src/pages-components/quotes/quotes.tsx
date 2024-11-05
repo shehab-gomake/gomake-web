@@ -186,6 +186,7 @@ const QuotesListPageWidget = ({
     openDuplicateModal,
     onCloseDuplicateModal,
     onClickDocumentDuplicate,
+    searchInputRef
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -552,6 +553,7 @@ const QuotesListPageWidget = ({
                 }
                 onChange={onChangeDocumentSearch}
                 value={patternSearch}
+                inputRef={searchInputRef}
               />
               <ExcelMenu
                 onGenerateReportClick={onOpenAddRuleModal}
