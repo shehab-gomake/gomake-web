@@ -6,6 +6,7 @@ const UPDATE_PRODUCT_ITEM_ACTION_Employee_URL = '/v1/erp-service/update-product-
 const CHANGE_WORK_FLOW = '/v1/erp-service/product-item-value/change-work-flow';
 
 const ADD_OUT_SOURCE_ACTION = '/v1/erp-service/product-item-value/add-out-source-action';
+const REMOVE_OUTSOURCE_ACTION = '/v1/erp-service/product-item-value/remove-outsource-action';
 
 const UPDATE_PRODUCT_ITEM_ACTION_DATA_URL = '/v1/erp-service/quote/update-product-item-draft-work-flow-data';
 const UPDATE_SELECTED_WORK_FLOW_URL = '/v1/calculation-service/calculations/update-work-flow';
@@ -23,6 +24,11 @@ const changeWorkFlw: ICallAndSetData = async (callApi, setState, data:{}) => {
 const addOutSourceActionApi: ICallAndSetData = async (callApi, setState, data:{}) => {
     return await getSetApiData(callApi, EHttpMethod.POST, ADD_OUT_SOURCE_ACTION, setState , data);
 }
+
+const removeOutSourceActionApi: ICallAndSetData = async (callApi, setState, data:{}) => {
+    return await getSetApiData(callApi, EHttpMethod.DELETE, REMOVE_OUTSOURCE_ACTION, setState , data);
+}
+
 const updateProductItemDraftActionData: ICallAndSetData = async (callApi, setState, data:{}) => {
     return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_PRODUCT_ITEM_ACTION_DATA_URL, setState , data);
 }
@@ -54,5 +60,6 @@ export
     updateProductItemValueOutsourceSupplierCost,
     updateActionEmployeeApi,
     updateBoardMissionActionOutputApi,
-    addOutSourceActionApi
+    addOutSourceActionApi,
+    removeOutSourceActionApi
  };

@@ -107,7 +107,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     toDate,
     router,
     isFetching,
-    printOrderJobsUsingPrintNode,
+    printOrderJobsUsingPrintNode, 
+    searchInputRef
   } = useBoardMissions({ isPurchaseJobs });
   const [newOrderId, setNewOrderId] = useRecoilState(
     newOrderIdToPrintJobsState
@@ -319,6 +320,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             }
             onChange={onChangeMissionsSearch}
             value={patternSearch}
+            inputRef={searchInputRef}
           />
           <PrimaryTable
             stickyFirstCol={false}

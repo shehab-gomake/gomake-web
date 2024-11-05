@@ -7,7 +7,7 @@ import {
 } from "@/hooks";
 import { useBoardMissionsSignalr } from "@/hooks/signalr/use-board-missions-signalr";
 import { getAllProductsForDropDownList } from "@/services/hooks";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import { useTranslation } from "react-i18next";
 import { PStatus } from "./widgets/enums";
 import {
@@ -80,7 +80,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     label: string;
     value: PStatus;
   } | null>();
-
+  const searchInputRef = useRef(null);
   const [orderStatus, setOrderStatus] = useState<StatusOption>();
   const [supplierId, selectedSupplierId] = useState<any>();
   const [productIds, setProductIds] = useState<string[]>([]);
@@ -103,7 +103,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     useState<boolean>(false);
   const [allBoardMissions, setAllBoardMissions] = useState([]);
   const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
-  const { GetDateFormat } = useDateFormat();
+  const { GetDateFormat, getFormattedLocalDate, GetJobDateFormat } =
+    useDateFormat();
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
@@ -395,18 +396,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         if (res?.success) {
           const _data = res?.data;
           const mapData = _data.data?.map((mission: any) => {
-            const [createdDate, createdTime] = mission?.createdDate?.split(
-              "T"
-            ) || ["", ""];
-            const [dueDate, dueTime] = mission?.dueDate?.split("T") || ["", ""];
-
-            // Format the time to display only hours and minutes
-            const formattedCreatedTime = createdTime
-              .split(":")
-              .slice(0, 2)
-              .join(":");
-            const formattedDueTime = dueTime.split(":").slice(0, 2).join(":");
-
             return [
               <a
                 href={mission?.boardMissionImage}
@@ -425,16 +414,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                   }}
                 />
               </a>,
-              <div>
-                {createdDate}
-                <br />
-                {formattedCreatedTime}
-              </div>,
-              <div>
-                {dueDate}
-                <br />
-                {formattedDueTime}
-              </div>,
+              GetJobDateFormat(mission?.createdDate),
+              GetJobDateFormat(mission?.dueDate),
               mission?.clientName,
               mission?.productType
                 ? `${mission?.number} / ${mission?.productType}`
@@ -524,8 +505,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         if (res?.success) {
           const _data = res?.data;
           const mapData = _data.data?.map((mission: any) => [
-            mission?.createdDate?.split("T")[0],
-            mission?.dueDate?.split("T")[0],
+            // mission?.createdDate?.split("T")[0],
+            // mission?.dueDate?.split("T")[0],
+            GetJobDateFormat(mission?.createdDate),
+            GetJobDateFormat(mission?.dueDate),
             mission?.clientName,
             mission?.supplierName,
             mission?.productType
@@ -899,8 +882,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       setToReadyDate(new Date(toReadyDate));
 
     if (finalPatternSearch && typeof finalPatternSearch === "string") {
-      setPatternSearch(finalPatternSearch);
-      setFinalPatternSearch(finalPatternSearch);
+      if(!(searchInputRef && searchInputRef.current && document.activeElement.id == searchInputRef.current.id)){
+        setPatternSearch(finalPatternSearch);
+        setFinalPatternSearch(finalPatternSearch);s
+      }
+     
     }
   }, [router, agentsCategories]);
 
@@ -1015,6 +1001,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     router,
     isFetching,
     printOrderJobsUsingPrintNode,
+    searchInputRef
   };
 };
 

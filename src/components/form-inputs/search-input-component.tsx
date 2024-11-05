@@ -11,6 +11,7 @@ interface ISearchInputProps {
   searchInputStyle?: any;
   bgColor?: string;
   filtersButton?: JSX.Element;
+  inputRef?: any
 }
 
 const SearchInputComponent = ({
@@ -20,6 +21,7 @@ const SearchInputComponent = ({
   searchInputStyle,
   bgColor,
   filtersButton,
+  inputRef
 }: ISearchInputProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -39,6 +41,7 @@ const SearchInputComponent = ({
       }
       placeholder={placeHolder || t("header.search")}
       value={value}
+      inputRef={inputRef}
       startAdornment={
         <InputAdornment position="start">
           <div style={classes.iconStyle}>

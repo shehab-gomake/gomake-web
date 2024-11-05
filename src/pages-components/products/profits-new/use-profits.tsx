@@ -82,7 +82,6 @@ const useNewProfits = () => {
   ];
   const [PricingBy, setPricingBy] = useState([]);
   const modifiedPricingBy = PricingByList.slice(1);
-
   useEffect(() => {
     if (router.query.isOutSource) {
       setPricingBy(modifiedPricingBy);
@@ -204,6 +203,7 @@ const useNewProfits = () => {
         setActionProfitByActionId,
         {
           productId: router.query.productId,
+          ...(router.query.isOutSource ? { isOutSource: router.query.isOutSource } : {}),
         }
       );
     } else {
@@ -274,11 +274,6 @@ const useNewProfits = () => {
   }, [actionProfitByActionId, selectedPricingTableItems]);
 
   useEffect(() => {
-    // if (router.query.draftId) {
-    //   getCalculateCaseProfits();
-    // } else {
-    //   getAllActionProfitRowsByActionId();
-    // }
     getActionProfitByActionId();
   }, [router]);
   useEffect(() => {
@@ -307,9 +302,8 @@ const useNewProfits = () => {
       "products.profits.pricingListWidget.totalPriceWithAdditionProfit"
     );
 
-    const pricingLabel = `${selectedPricingBy?.label}${
-      selectedPricingType === EPricingBy.COST ? ` ${ProfitCurrency}` : ""
-    }`;
+    const pricingLabel = `${selectedPricingBy?.label}${selectedPricingType === EPricingBy.COST ? ` ${ProfitCurrency}` : ""
+      }`;
 
     const defaultHeaders = [
       pricingLabel,
@@ -333,18 +327,18 @@ const useNewProfits = () => {
       case signalRConnectionId && !isOutSource:
         headers = selectedAdditionalProfitRow?.id
           ? [
-              pricingLabel,
-              profitHeader,
-              `${totalPriceLabel} ${ProfitCurrency}`,
-              `${totalPriceWithAdditionProfit} (${profitValue})`,
-              moreHeader,
-            ]
+            pricingLabel,
+            profitHeader,
+            `${totalPriceLabel} ${ProfitCurrency}`,
+            `${totalPriceWithAdditionProfit} (${profitValue})`,
+            moreHeader,
+          ]
           : [
-              pricingLabel,
-              profitHeader,
-              `${totalPriceLabel} ${ProfitCurrency}`,
-              moreHeader,
-            ];
+            pricingLabel,
+            profitHeader,
+            `${totalPriceLabel} ${ProfitCurrency}`,
+            moreHeader,
+          ];
         break;
 
       case selectedPricingType === EPricingBy.COST:
@@ -357,11 +351,11 @@ const useNewProfits = () => {
         headers = selectedAdditionalProfitRow?.id
           ? additionalProfitHeaders
           : [
-              pricingLabel,
-              unitPriceLabel,
-              `${totalPriceLabel} ${ProfitCurrency}`,
-              moreHeader,
-            ];
+            pricingLabel,
+            unitPriceLabel,
+            `${totalPriceLabel} ${ProfitCurrency}`,
+            moreHeader,
+          ];
         break;
     }
 
@@ -459,7 +453,6 @@ const useNewProfits = () => {
     );
     setSelectedPricingBy(defaultPricingByValue);
     setSelectedTransition(defaultTransitionValue);
-    // sssssddadfdsad
   }, [selectedPricingTableItems]);
 
   const updatePricingByForAction = useCallback(
@@ -782,8 +775,7 @@ const useNewProfits = () => {
   const reOrderPricingTables = useCallback(async (data: any) => {
     const res = await callApi(
       EHttpMethod.PUT,
-      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionIdOrProductId=${
-        router.query.actionId
+      `/v1/printhouse-config/profits/update-re-order-pricing-tables?actionIdOrProductId=${router.query.actionId
       }?isOutSourc=${router.query.isOutSource ? true : false}`,
       {
         data,
