@@ -7,7 +7,7 @@ import {
 } from "@/hooks";
 import { useBoardMissionsSignalr } from "@/hooks/signalr/use-board-missions-signalr";
 import { getAllProductsForDropDownList } from "@/services/hooks";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PStatus } from "./widgets/enums";
 import {
@@ -883,11 +883,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     if (toReadyDate && typeof toReadyDate === "string")
       setToReadyDate(new Date(toReadyDate));
     if (finalPatternSearch && typeof finalPatternSearch === "string") {
-      if(!(searchInputRef && searchInputRef.current && document.activeElement.id == searchInputRef.current.id)){
+      if (
+        !(
+          searchInputRef &&
+          searchInputRef.current &&
+          document.activeElement.id == searchInputRef.current.id
+        )
+      ) {
         setPatternSearch(finalPatternSearch);
-        setFinalPatternSearch(finalPatternSearch);s
+        setFinalPatternSearch(finalPatternSearch);
       }
-     
     }
   }, [router, agentsCategories]);
 
@@ -1007,7 +1012,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     router,
     isFetching,
     printOrderJobsUsingPrintNode,
-    searchInputRef
+    searchInputRef,
   };
 };
 
