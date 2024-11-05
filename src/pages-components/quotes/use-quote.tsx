@@ -96,7 +96,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
-  const [patternSearch, setPatternSearch] = useState("");
+  // const [patternSearch, setPatternSearch] = useState("");
+  const [patternSearch, setPatternSearch] = useState<any>(null); //?new
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
@@ -1109,7 +1110,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   useEffect(() => {
-    debugger;
     const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
     if (!isFromHomePage) {
       if (isNotFilteredData) getAllQuotesInitial();
@@ -1647,7 +1647,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   }, []);
 
   useEffect(() => {
-    debugger;
     if (quoteNumber) {
       setPage(1);
       const pattern = quoteNumber?.toString();
