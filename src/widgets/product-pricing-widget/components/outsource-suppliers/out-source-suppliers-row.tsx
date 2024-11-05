@@ -1,7 +1,7 @@
 import { EOutsourceSupplierStatus, RuleType, HtmlElementType } from "@/widgets/product-pricing-widget/enums";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { Fade, Skeleton, } from "@mui/material";
+import { Fade, IconButton, Skeleton, } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import { UpdateValueInput } from "@/components/text-input/update-value-input";
@@ -16,6 +16,7 @@ import { EWidgetProductType } from "@/pages-components/products/digital-offset-p
 import { calculationResultState, currentProductItemValuePriceState } from "../../state";
 import { GomakePrimaryButton, UpdateValueAutoComplete } from "@/components";
 import { TextAreaActionsMapping } from "../action/key-value-view";
+import { WastebasketNew2 } from "@/icons";
 
 interface IProps {
     value: number;
@@ -116,7 +117,7 @@ const OutSourceSuppliersRowComponent = ({
                                     <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
                                         style={{ ...classes.actionContainer, }}
                                     >
-                                        <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
+                                        <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'} position={"relative"}
                                             style={{ ...classes.actionContainer, padding: '10px 16px' }}>
                                             <Stack alignItems={'center'} direction={"row"} gap={'10px'} flexWrap={'wrap'}>
                                                 <EditableSelect isEditable={true}
@@ -157,6 +158,12 @@ const OutSourceSuppliersRowComponent = ({
                                                     supplierId={foundSupplier?.supplierId}
                                                 />
                                             </Stack>
+                                            <IconButton onClick={(e) => {
+
+                                            }} style={classes.toggleActionButton}>
+                                                <WastebasketNew2 />
+                                            </IconButton>
+
                                         </Stack>
                                     </Stack>
                                 )
