@@ -29,6 +29,8 @@ const useSettings = ({
     alertFaultAdded,
     alertSuccessAdded,
     alertSuccessDelete,
+    alertSuccessUpdate,
+    alertFaultUpdate,
     alertFault,
     alertFaultDelete,
   } = useSnackBar();
@@ -77,7 +79,7 @@ const useSettings = ({
     setIsProductSKU(false);
     setErrorName(false);
     setErrorCode(false);
-    setProductSKU(INIT_PRODUCT_SKU_STATE)
+    setProductSKU(INIT_PRODUCT_SKU_STATE);
   };
 
   const onClickOpenProductSKU = () => {
@@ -90,8 +92,8 @@ const useSettings = ({
     code: "",
     productionFloorJobColor: "#2e3092",
     printerId: 0,
-    printerBin: ''
-  }
+    printerBin: "",
+  };
   const [productSKU, setProductSKU] = useState(INIT_PRODUCT_SKU_STATE);
   const [errorName, setErrorName] = useState(false);
   const [errorCode, setErrorCode] = useState(false);
@@ -113,13 +115,13 @@ const useSettings = ({
         `/v1/printhouse-config/productsSKU/create-product-sku`,
         {
           ...productSKU,
-          productionFloorJobColor: productSKU?.productionFloorJobColor
+          productionFloorJobColor: productSKU?.productionFloorJobColor,
         }
       );
       if (res?.success) {
         alertSuccessAdded();
         getAllProductsSKU();
-        setProductSKU(INIT_PRODUCT_SKU_STATE)
+        setProductSKU(INIT_PRODUCT_SKU_STATE);
       } else {
         alertFaultAdded();
       }
@@ -384,6 +386,22 @@ const useSettings = ({
     }
   }, [selectedProductId]);
 
+  const updateProductSKURow = useCallback(async (productSKU) => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/productsSKU/update-product-sku`,
+      {
+        productSKU,
+      }
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+      getAllProductsSKU();
+    } else {
+      alertFaultUpdate();
+    }
+  }, []);
+
   return {
     t,
     productClientsList,
@@ -417,6 +435,7 @@ const useSettings = ({
     onClickClosePricingType,
     selectPricingType,
     productSKU,
+    updateProductSKURow,
   };
 };
 
