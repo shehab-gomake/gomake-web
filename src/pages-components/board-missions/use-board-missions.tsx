@@ -884,7 +884,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     if (finalPatternSearch && typeof finalPatternSearch === "string") {
       if(!(searchInputRef && searchInputRef.current && document.activeElement.id == searchInputRef.current.id)){
         setPatternSearch(finalPatternSearch);
-        setFinalPatternSearch(finalPatternSearch);s
+        setFinalPatternSearch(finalPatternSearch);
       }
      
     }
