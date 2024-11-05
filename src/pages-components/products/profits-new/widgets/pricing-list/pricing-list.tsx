@@ -64,7 +64,7 @@ const PricingList = ({
       <div style={classes.headerMainCointaner}>
         <div style={classes.listTitle}>
           {t("products.profits.pricingListWidget.pricingListTitle")} (
-          {`${router?.query?.actionName}`})
+          {`${router?.query?.actionName || router?.query?.productName}`})
         </div>
         <div style={classes.filtersCointaner}>
           <IconButton
