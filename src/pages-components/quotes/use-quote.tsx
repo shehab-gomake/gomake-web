@@ -96,7 +96,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
-  const [patternSearch, setPatternSearch] = useState("");
+  // const [patternSearch, setPatternSearch] = useState("");
+  const [patternSearch, setPatternSearch] = useState<any>(null); //?new
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
@@ -444,7 +445,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   color: "inherit",
                   textDecoration: "unset",
                 }}
-                href={`/jobs?finalPatternSearch=${quote?.number}`}
+                href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
               >
                 {quote?.jobs}
               </a>
@@ -832,7 +833,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   color: "inherit",
                   textDecoration: "unset",
                 }}
-                href={`/jobs?finalPatternSearch=${quote?.number}`}
+                href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
               >
                 {quote?.jobs}
               </a>
@@ -1115,7 +1116,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       if (isNotFilteredData) getAllQuotesInitial();
       else getAllQuotes();
     }
-    // }, [page, pageSize, router]);
   }, [pageSize, router]);
 
   const tableHeaders =
@@ -2094,7 +2094,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   /*   Most Important   */
-
   useEffect(() => {
     const {
       customerId,
