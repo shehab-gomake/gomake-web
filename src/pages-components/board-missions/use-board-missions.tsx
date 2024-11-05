@@ -85,7 +85,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [supplierId, selectedSupplierId] = useState<any>();
   const [productIds, setProductIds] = useState<string[]>([]);
   const [productsList, setProductsList] = useState([]);
-  const [patternSearch, setPatternSearch] = useState<string>("");
+
+  // const [patternSearch, setPatternSearch] = useState<string>("");
+  const [patternSearch, setPatternSearch] = useState<any>(null); //?new
 
   //DATE
   const [fromDate, setFromDate] = useState<Date>();
@@ -880,7 +882,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       setFromReadyDate(new Date(fromReadyDate));
     if (toReadyDate && typeof toReadyDate === "string")
       setToReadyDate(new Date(toReadyDate));
-
     if (finalPatternSearch && typeof finalPatternSearch === "string") {
       setPatternSearch(finalPatternSearch);
       setFinalPatternSearch(finalPatternSearch);
@@ -892,29 +893,34 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const debouncePatternSearch = useDebounce(patternSearch, 1000);
+
   useEffect(() => {
-    const trimmedSearch = debouncePatternSearch?.trim() || "";
-    setFinalPatternSearch(trimmedSearch);
-    if (trimmedSearch === "") {
-      const { finalPatternSearch, ...remainingQuery } = router.query;
+    if (debouncePatternSearch !== null) {
+      //?new
+      const trimmedSearch = debouncePatternSearch?.trim() || "";
+      setFinalPatternSearch(trimmedSearch);
+      setPageNumber(1); //?new
+      if (trimmedSearch === "") {
+        const { finalPatternSearch, ...remainingQuery } = router.query;
+        router.push({
+          pathname: router.pathname,
+          query: {
+            ...remainingQuery,
+            pageNumber: 1,
+          },
+        });
+        return;
+      }
+
       router.push({
         pathname: router.pathname,
         query: {
-          ...remainingQuery,
+          ...router.query,
+          finalPatternSearch: trimmedSearch,
           pageNumber: 1,
         },
       });
-      return;
     }
-
-    router.push({
-      pathname: router.pathname,
-      query: {
-        ...router.query,
-        finalPatternSearch: trimmedSearch,
-        pageNumber: 1,
-      },
-    });
   }, [debouncePatternSearch]);
 
   return {
