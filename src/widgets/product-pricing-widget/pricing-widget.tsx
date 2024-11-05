@@ -22,7 +22,8 @@ const PricingWidget = ({
   getOutSourcingSuppliers,
   widgetType,
   setSelectedWorkFlowCalculatedIsLoaded,
-  selectedWorkFlowCalculatedIsLoaded
+  selectedWorkFlowCalculatedIsLoaded,
+  getSelectedWorkFlow
 }: IPricingWidgetProps) => {
   const { classes } = useStyle();
   const {
@@ -41,8 +42,9 @@ const PricingWidget = ({
     handleScroll,
     allCountSelectedTabWorkFlow,
     onClickAddOutSourceAction,
+    onClickRemoveOutSourceAction,
     t
-  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded });
+  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
 
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
@@ -171,6 +173,7 @@ const PricingWidget = ({
           onClickAddOutSourceAction={onClickAddOutSourceAction}
           selectedWorkFlow={selectedWorkFlow}
           selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+          onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
         />
       )}
     </Stack>

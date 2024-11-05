@@ -40,9 +40,10 @@ const OutSourceSuppliersRowComponent = ({
     widgetType,
     options,
     onClickAddOutSourceAction,
+    onClickRemoveOutSourceAction,
     selectedWorkFlow,
     selectedWorkFlowCalculatedIsLoaded
-}: { widgetType: EWidgetProductType; options: IOutSourceSupplier[]; onClickAddOutSourceAction: () => void, selectedWorkFlow: any, selectedWorkFlowCalculatedIsLoaded: boolean }) => {
+}: { widgetType: EWidgetProductType; options: IOutSourceSupplier[]; onClickAddOutSourceAction: () => void, onClickRemoveOutSourceAction: (actionId: string) => void, selectedWorkFlow: any, selectedWorkFlowCalculatedIsLoaded: boolean }) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
@@ -158,11 +159,11 @@ const OutSourceSuppliersRowComponent = ({
                                                     supplierId={foundSupplier?.supplierId}
                                                 />
                                             </Stack>
-                                            <IconButton onClick={(e) => {
-
-                                            }} style={classes.toggleActionButton}>
-                                                <WastebasketNew2 />
-                                            </IconButton>
+                                            {selectedWorkFlow?.actions.length > 1 && (
+                                                <IconButton onClick={() => { onClickRemoveOutSourceAction(action?.id) }} style={classes.toggleActionButton}>
+                                                    <WastebasketNew2 />
+                                                </IconButton>
+                                            )}
 
                                         </Stack>
                                     </Stack>
