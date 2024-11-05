@@ -443,7 +443,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   color: "inherit",
                   textDecoration: "unset",
                 }}
-                href={`/jobs?finalPatternSearch=${quote?.number}`}
+                href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
               >
                 {quote?.jobs}
               </a>
@@ -831,7 +831,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   color: "inherit",
                   textDecoration: "unset",
                 }}
-                href={`/jobs?finalPatternSearch=${quote?.number}`}
+                href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
               >
                 {quote?.jobs}
               </a>
@@ -1109,12 +1109,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   useEffect(() => {
+    debugger;
     const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
     if (!isFromHomePage) {
       if (isNotFilteredData) getAllQuotesInitial();
       else getAllQuotes();
     }
-    // }, [page, pageSize, router]);
   }, [pageSize, router]);
 
   const tableHeaders =
@@ -1647,6 +1647,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   }, []);
 
   useEffect(() => {
+    debugger;
     if (quoteNumber) {
       setPage(1);
       const pattern = quoteNumber?.toString();
@@ -2093,7 +2094,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   /*   Most Important   */
-
   useEffect(() => {
     const {
       customerId,
