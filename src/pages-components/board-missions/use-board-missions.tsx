@@ -7,7 +7,7 @@ import {
 } from "@/hooks";
 import { useBoardMissionsSignalr } from "@/hooks/signalr/use-board-missions-signalr";
 import { getAllProductsForDropDownList } from "@/services/hooks";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import { useTranslation } from "react-i18next";
 import { PStatus } from "./widgets/enums";
 import {
@@ -80,7 +80,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     label: string;
     value: PStatus;
   } | null>();
-
+  const searchInputRef = useRef(null);
   const [orderStatus, setOrderStatus] = useState<StatusOption>();
   const [supplierId, selectedSupplierId] = useState<any>();
   const [productIds, setProductIds] = useState<string[]>([]);
@@ -883,8 +883,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     if (toReadyDate && typeof toReadyDate === "string")
       setToReadyDate(new Date(toReadyDate));
     if (finalPatternSearch && typeof finalPatternSearch === "string") {
-      setPatternSearch(finalPatternSearch);
-      setFinalPatternSearch(finalPatternSearch);
+      if(!(searchInputRef && searchInputRef.current && document.activeElement.id == searchInputRef.current.id)){
+        setPatternSearch(finalPatternSearch);
+        setFinalPatternSearch(finalPatternSearch);s
+      }
+     
     }
   }, [router, agentsCategories]);
 
@@ -1004,6 +1007,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     router,
     isFetching,
     printOrderJobsUsingPrintNode,
+    searchInputRef
   };
 };
 
