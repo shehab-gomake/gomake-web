@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import {  useEffect, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 
-import { addOutSourceActionApi, updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { addOutSourceActionApi, removeOutSourceActionApi, updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { actionListForWorkFlow, currentCalculationConnectionId, foldOptionsState, productItemValueByEditState, viewPricingTab } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
@@ -11,7 +11,7 @@ import { calculationResultState, currentProductItemValueDraftId, currentProductI
 import { EPricingViews, EWorkSource } from "./enums";
 import { getWorkFlowsActionsApi, getWorkFlowsApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 
-const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,selectedWorkFlowCalculatedIsLoaded}) => {
+const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow}) => {
 
   const [view, setView] = useRecoilState<EPricingViews>(viewPricingTab);
   const [actionList, setActionList] = useRecoilState(actionListForWorkFlow)
@@ -81,12 +81,18 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
   useEffect(() => {
     getOutSourcingSuppliers();
   }, []);
+
   useEffect(() => {
-    if (productItemValueByEdit?.sourceType && isChangeView) {
+    if (productItemValueByEdit?.sourceType === EWorkSource.OUT) {
       setView(EPricingViews.OUTSOURCE_WORKFLOW)
     }
-
-    else if (!selectedWorkFlow) {
+    else if(productItemValueByEdit?.sourceType === EWorkSource.INTERNAL){
+      setView(EPricingViews.SELECTED_WORKFLOW)
+    }
+  }, [productItemValueByEdit])
+  
+  useEffect(() => {
+     if (!selectedWorkFlow) {
       setView(EPricingViews.OUTSOURCE_WORKFLOW);
     } else if (currentProductItemValue) {
       let temp = cloneDeep(currentProductItemValue);
@@ -96,20 +102,14 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
       setCurrentProductItemValue(productItemValue);
 
     }
-
   }, [selectedWorkFlow,]);
-  useEffect(() => {
-    if (withPartially && isChangeView) {
-      setView(EPricingViews.SELECTED_WORKFLOW);
-    }
-    else if (productItemValueByEdit?.sourceType && isChangeView) {
+  useEffect(()=>{
+    if(selectedWorkFlow?.isOutSourceWorkFlow){
       setView(EPricingViews.OUTSOURCE_WORKFLOW)
+    }else{
+      setView(EPricingViews.SELECTED_WORKFLOW)
     }
-    else if (selectedWorkFlow && currentProductItemValue && isChangeView) {
-      setView(EPricingViews.SELECTED_WORKFLOW);
-    }
-  }, [selectedWorkFlow, currentProductItemValue, isChangeView])
-
+  },[selectedWorkFlow])
 
   const reorderedTabs = [
     ...(tabs.find(tab => tab.key === "general") ? [tabs.find(tab => tab.key === "general")] : []), // "Flows Pending" tab if exists
@@ -231,6 +231,18 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
     })
 };
 
+const onClickRemoveOutSourceAction = async (actionId) => {
+  const callBack = (res) => {
+      if (res.success) {
+        getSelectedWorkFlow()
+      }
+  };
+  await removeOutSourceActionApi(callApi, callBack, {
+    actionId ,
+    signalRConnectionId: connectionId,
+  })
+};
+
 
 
 
@@ -258,7 +270,8 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
     handleScroll,
     allCountSelectedTabWorkFlow,
     t,
-    onClickAddOutSourceAction
+    onClickAddOutSourceAction,
+    onClickRemoveOutSourceAction
   }
 }
 
