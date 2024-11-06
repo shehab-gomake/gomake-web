@@ -170,7 +170,8 @@ const useProductionFloorFilters = ({
             ],
     }).then(() => {
       setView(EProductionFloorView.TABLE);
-      push("/production-floor").then();
+      // push("/production-floor").then();
+      push("/production-floor?view=table").then();
     });
   };
 

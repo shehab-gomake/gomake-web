@@ -28,9 +28,11 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups }: any) => {
     onClickBack,
     currentPathIndex,
     onStationsChange,
+    useUpdateViewInUrl,
   } = useProductionFloorHeader();
   const { t } = useTranslation();
   const dir = t("direction");
+  const updateViewInUrl = useUpdateViewInUrl();
 
   return (
     <Stack
@@ -115,10 +117,11 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups }: any) => {
             variant={
               view === EProductionFloorView.DASHBOARD ? "contained" : "outlined"
             }
-            onClick={() => {
-              setView(EProductionFloorView.DASHBOARD);
-              navigateToProductionFloor();
-            }}
+            // onClick={() => {
+            //   setView(EProductionFloorView.DASHBOARD);
+            //   navigateToProductionFloor();
+            // }}
+            onClick={() => updateViewInUrl(EProductionFloorView.DASHBOARD)}
           >
             <AvTimerIcon />
           </PrimaryButton>
@@ -127,10 +130,11 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups }: any) => {
             variant={
               view === EProductionFloorView.KANBAN ? "contained" : "outlined"
             }
-            onClick={() => {
-              setView(EProductionFloorView.KANBAN);
-              navigateToProductionFloor();
-            }}
+            // onClick={() => {
+            //   setView(EProductionFloorView.KANBAN);
+            //   navigateToProductionFloor();
+            // }}
+            onClick={() => updateViewInUrl(EProductionFloorView.KANBAN)}
           >
             <GridViewIcon />
           </PrimaryButton>
@@ -139,10 +143,11 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups }: any) => {
             variant={
               view === EProductionFloorView.TABLE ? "contained" : "outlined"
             }
-            onClick={() => {
-              setView(EProductionFloorView.TABLE);
-              navigateToProductionFloor();
-            }}
+            // onClick={() => {
+            //   setView(EProductionFloorView.TABLE);
+            //   navigateToProductionFloor();
+            // }}
+            onClick={() => updateViewInUrl(EProductionFloorView.TABLE)}
           >
             <ViewHeadlineIcon />
           </PrimaryButton>
