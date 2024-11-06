@@ -219,10 +219,10 @@ const useAddProduct = ({ clasess }) => {
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
-          updateType,
           isShowToClient: !parameter?.isShowToClient,
         },
         updateActionType: EUpdateActionType.showToClient,
+        updateType,
       });
     },
     [router]
@@ -238,10 +238,10 @@ const useAddProduct = ({ clasess }) => {
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
-          updateType,
           isHidden: !parameter?.isHidden,
         },
         updateActionType: EUpdateActionType.hidden,
+        updateType,
       });
     },
     [router]
@@ -257,10 +257,10 @@ const useAddProduct = ({ clasess }) => {
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
-          updateType,
           isRequired: !parameter?.isRequired,
         },
         updateActionType: EUpdateActionType.required,
+        updateType,
       });
     },
     [router]
@@ -276,10 +276,10 @@ const useAddProduct = ({ clasess }) => {
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
-          updateType,
           isLock: !parameter?.isLock,
         },
         updateActionType: EUpdateActionType.lock,
+        updateType,
       });
     },
     [router]
@@ -344,7 +344,7 @@ const useAddProduct = ({ clasess }) => {
 
       const updatedArray = temp.map((obj) => {
         if (obj.id === objectIdToUpdate) {
-          return { ...obj, isHidden: !obj.isHidden, updateType };
+          return { ...obj, isHidden: !obj.isHidden };
         }
         return obj;
       });
@@ -355,6 +355,7 @@ const useAddProduct = ({ clasess }) => {
         },
         updatedValueId: objectIdToUpdate,
         updatedActionType: EUpdateActionType.hiddenValue,
+        updateType,
       });
     },
     [router]
@@ -490,19 +491,19 @@ const useAddProduct = ({ clasess }) => {
     [router]
   );
 
-  //!!!!!!!!!!!!!!!!!!!!!!!!!!
-  //! for materials last two hidden icon
   const updatedParameterMaterialTypeValuesConfigsHidden = useCallback(
     async (
       sectionId: string,
       subSectionId: string,
       parameter: any,
-      option: any
+      option: any,
+      updateType?: UpdateTypes
     ) => {
       let temp = [...parameter?.valuesConfigs];
       if (temp?.length <= 0) {
+        const newId = uuidv4();
         temp.push({
-          id: uuidv4(),
+          id: newId,
           isHidden: true,
           isDefault: false,
           isDeleted: false,
@@ -515,30 +516,48 @@ const useAddProduct = ({ clasess }) => {
             },
           ],
         });
-        await updatedValuesConfigsForParameters(sectionId, subSectionId, {
-          ...parameter,
-          valuesConfigs: temp,
-        });
+        await updatedValuesConfigsForParameters(
+          sectionId,
+          subSectionId,
+          {
+            ...parameter,
+            valuesConfigs: temp,
+          },
+          newId,
+          EUpdateActionType.hiddenValue,
+          updateType
+        );
       } else {
         let objectIdToUpdate = option?.valueId;
-        if (
-          temp.findIndex(
-            (item) => item?.materialValueIds[0]?.valueId === objectIdToUpdate
-          ) !== -1
-        ) {
+        const matchingItem = temp.find(
+          (item) => item?.materialValueIds[0]?.valueId === objectIdToUpdate
+        );
+
+        if (matchingItem) {
+          const idToSend = matchingItem?.id;
+
           const updatedArray = temp.map((obj) => {
             if (obj?.materialValueIds[0]?.valueId === objectIdToUpdate) {
               return { ...obj, isHidden: !obj.isHidden };
             }
             return obj;
           });
-          await updatedValuesConfigsForParameters(sectionId, subSectionId, {
-            ...parameter,
-            valuesConfigs: updatedArray,
-          });
+
+          await updatedValuesConfigsForParameters(
+            sectionId,
+            subSectionId,
+            {
+              ...parameter,
+              valuesConfigs: updatedArray,
+            },
+            idToSend,
+            EUpdateActionType.hiddenValue,
+            updateType
+          );
         } else {
+          const newId = uuidv4();
           temp.push({
-            id: uuidv4(),
+            id: newId,
             isHidden: true,
             isDefault: false,
             isDeleted: false,
@@ -551,10 +570,17 @@ const useAddProduct = ({ clasess }) => {
               },
             ],
           });
-          await updatedValuesConfigsForParameters(sectionId, subSectionId, {
-            ...parameter,
-            valuesConfigs: temp,
-          });
+          await updatedValuesConfigsForParameters(
+            sectionId,
+            subSectionId,
+            {
+              ...parameter,
+              valuesConfigs: temp,
+            },
+            newId,
+            EUpdateActionType.hiddenValue,
+            updateType
+          );
         }
       }
     },
@@ -562,7 +588,14 @@ const useAddProduct = ({ clasess }) => {
   );
 
   const updatedValuesConfigsForParameters = useCallback(
-    async (sectionId: string, subSectionId: string, data: any) => {
+    async (
+      sectionId: string,
+      subSectionId: string,
+      data: any,
+      updatedValueId?: string,
+      updatedActionType?: EUpdateActionType,
+      updateType?: UpdateTypes
+    ) => {
       const res = await callApi(
         "PUT",
         `/v1/printhouse-config/products/update-product-parameter`,
@@ -572,6 +605,9 @@ const useAddProduct = ({ clasess }) => {
           subSectionId: subSectionId,
           productParameterType: 1,
           parameter: data,
+          updatedValueId,
+          updatedActionType,
+          updateType,
         }
       );
       if (res?.success) {
@@ -621,19 +657,29 @@ const useAddProduct = ({ clasess }) => {
     setIsUpdateModalOpen(true);
   };
 
+  const [isMaterialParameter, setIsMaterialParameter] =
+    useState<boolean>(false);
   const handleUpdateParametersValue = () => {
     if (selectedUpdateType === null) {
       alertFault(t("products.parameters.pleaseSelectOneOption"));
       return;
     }
-
-    updatedProductParameterValuesConfigsHidden(
-      selectedSectionId,
-      selectedSubSectionId,
-      selectedParameter,
-      selectedOption,
-      selectedUpdateType
-    );
+    if (isMaterialParameter)
+      updatedParameterMaterialTypeValuesConfigsHidden(
+        selectedSectionId,
+        selectedSubSectionId,
+        selectedParameter,
+        selectedOption,
+        selectedUpdateType
+      );
+    else
+      updatedProductParameterValuesConfigsHidden(
+        selectedSectionId,
+        selectedSubSectionId,
+        selectedParameter,
+        selectedOption,
+        selectedUpdateType
+      );
 
     handleCloseModal();
   };
@@ -727,6 +773,7 @@ const useAddProduct = ({ clasess }) => {
                       <div
                         style={{ cursor: "pointer" }}
                         onClick={() => {
+                          setIsMaterialParameter(false);
                           setSelectedSectionId(sectionId);
                           setSelectedSubSectionId(subSectionId);
                           setSelectedParameter(parameter);
@@ -740,6 +787,7 @@ const useAddProduct = ({ clasess }) => {
                       <div
                         style={{ cursor: "pointer" }}
                         onClick={() => {
+                          setIsMaterialParameter(false);
                           setSelectedSectionId(sectionId);
                           setSelectedSubSectionId(subSectionId);
                           setSelectedParameter(parameter);
@@ -823,16 +871,8 @@ const useAddProduct = ({ clasess }) => {
                   {option.isHidden ? (
                     <div
                       style={{ cursor: "pointer" }}
-                      // onClick={() =>
-                      //   updatedProductParameterValuesConfigsHidden(
-                      //     sectionId,
-                      //     subSectionId,
-                      //     parameter,
-                      //     option
-                      //   )
-                      // }
-
                       onClick={() => {
+                        setIsMaterialParameter(false);
                         setSelectedSectionId(sectionId);
                         setSelectedSubSectionId(subSectionId);
                         setSelectedParameter(parameter);
@@ -845,15 +885,8 @@ const useAddProduct = ({ clasess }) => {
                   ) : (
                     <div
                       style={{ cursor: "pointer" }}
-                      // onClick={() =>
-                      //   updatedProductParameterValuesConfigsHidden(
-                      //     sectionId,
-                      //     subSectionId,
-                      //     parameter,
-                      //     option
-                      //   )
-                      // }
                       onClick={() => {
+                        setIsMaterialParameter(false);
                         setSelectedSectionId(sectionId);
                         setSelectedSubSectionId(subSectionId);
                         setSelectedParameter(parameter);
@@ -960,9 +993,9 @@ const useAddProduct = ({ clasess }) => {
                 const matchedConfig = parameter?.valuesConfigs.find((config) =>
                   config.materialValueIds.some((id) => id.valueId === valueId)
                 );
-
                 return matchedConfig && matchedConfig.isHidden === true;
               }
+
               return (
                 <div style={clasess.optionsContainer}>
                   <div {...props} style={{ width: "100%" }}>
@@ -972,28 +1005,28 @@ const useAddProduct = ({ clasess }) => {
                     {checkValueIdAndHidden(option?.valueId) ? (
                       <div
                         style={{ cursor: "pointer" }}
-                        onClick={() =>
-                          updatedParameterMaterialTypeValuesConfigsHidden(
-                            sectionId,
-                            subSectionId,
-                            parameter,
-                            option
-                          )
-                        }
+                        onClick={() => {
+                          setIsMaterialParameter(true);
+                          setSelectedSectionId(sectionId);
+                          setSelectedSubSectionId(subSectionId);
+                          setSelectedParameter(parameter);
+                          setSelectedOption(option);
+                          handleOpenModal();
+                        }}
                       >
                         <HiddenIcon />
                       </div>
                     ) : (
                       <div
                         style={{ cursor: "pointer" }}
-                        onClick={() =>
-                          updatedParameterMaterialTypeValuesConfigsHidden(
-                            sectionId,
-                            subSectionId,
-                            parameter,
-                            option
-                          )
-                        }
+                        onClick={() => {
+                          setIsMaterialParameter(true);
+                          setSelectedSectionId(sectionId);
+                          setSelectedSubSectionId(subSectionId);
+                          setSelectedParameter(parameter);
+                          setSelectedOption(option);
+                          handleOpenModal();
+                        }}
                       >
                         <NotHiddenIcon />
                       </div>
