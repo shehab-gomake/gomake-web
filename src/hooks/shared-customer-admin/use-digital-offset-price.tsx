@@ -4475,14 +4475,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           `${action.actionName}: ${t("validateWorkflows.noMavhine")}`
         );
       }
-      if (
-        action.isNeedMaterial &&
-        (!action.materials || Object.keys(action.materials).length === 0)
-      ) {
-        errors.push(
-          `${action.actionName}: ${t("validateWorkflows.noMaterilas")}`
-        );
-      }
+      // if (
+      //   action.isNeedMaterial &&
+      //   (!action.materials || Object.keys(action.materials).length === 0)
+      // ) {
+      //   errors.push(
+      //     `${action.actionName}: ${t("validateWorkflows.noMaterilas")}`
+      //   );
+      // }
       if ((action.source === 1 || action.source === 2) && !action.supplierId) {
         errors.push(
           `${action.actionName}: ${t("validateWorkflows.noSuppliers")}`
