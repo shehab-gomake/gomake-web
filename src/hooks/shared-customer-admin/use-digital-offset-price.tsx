@@ -3907,7 +3907,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCheckParameter(checkParameter)
   }, [isRequiredParameters])*/
   const getItemParameterValues = () => {
-    debugger
     const updatedSubProducts = removeHiddenParametersFromSubProducts(
       subProducts,
       productTemplate
@@ -4352,10 +4351,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const filteredParameters = subProduct?.parameters?.filter((param) => {
         let matchingTemplateParam = null;
         const section = productTemplate.sections.find(x=>x.id == param.sectionId);
-        if(section && section.sections){
-          const subSection = section.sections.find(x=>x.id == param.subSectionId);
+        if(section && section.subSections){
+          const subSection = section.subSections.find(x=>x.id == param.subSectionId);
           if(subSection && subSection.parameters){
-            matchingTemplateParam =  subSection.parameters.find(templateParam => templateParam.id === param.parameterId && !templateParam?.isHiddenInSetting)
+            matchingTemplateParam =  subSection.parameters.find(templateParam => templateParam.id === param.parameterId && templateParam.actionIndex === param.actionIndex && !templateParam?.isHiddenInSetting)
           }
         }
         // Check if the parameter is not hidden (isHidden = false)
