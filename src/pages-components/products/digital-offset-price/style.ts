@@ -226,7 +226,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        width: "100%",
+        // width: "100%",
         minWidth: 220,
         // maxWidth: 220,
       },
