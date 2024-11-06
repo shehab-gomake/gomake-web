@@ -59,7 +59,7 @@ const UpdateParameterModal = ({
               {t("products.parameters.samePricingType")}
             </span>
           </Stack>
-          <Stack direction={"row"} width={"100%"} alignItems={"center"}>
+          {/* <Stack direction={"row"} width={"100%"} alignItems={"center"}>
             <CircleCheckbox
               checked={selectedUpdateType === UpdateTypes.ALL_PRODUCTS}
               onChange={() => setSelectedUpdateType(UpdateTypes.ALL_PRODUCTS)}
@@ -67,7 +67,7 @@ const UpdateParameterModal = ({
             <span style={clasess.optionsTitle}>
               {t("products.parameters.allProducts")}
             </span>
-          </Stack>
+          </Stack> */}
         </Stack>
         <Stack direction={"row"} gap={"10px"}>
           <Button style={clasess.cancelButton} onClick={onClose}>

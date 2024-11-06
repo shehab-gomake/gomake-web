@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { adaptPaddingRight } from "@/utils/adapter";
 
 const useStyle = () => {
   const { t } = useTranslation();
@@ -129,7 +130,6 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 8,
-        //!here
         minWidth: 240,
       },
       spanRequierd: {
@@ -193,16 +193,15 @@ const useStyle = () => {
         width: "100%",
         height: 25,
         backgroundColor: "transparent",
-        paddingLeft: 2,
+        ...adaptPaddingRight(t("direction"), 2),
         boxShadow: "none",
       },
       paramNameStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
-        //!here
         //  minWidth: 120,
         height: 25,
-        paddingLeft: 2,
+        ...adaptPaddingRight(t("direction"), 2),
       },
       plusIconStyle: {
         cursor: "pointer",

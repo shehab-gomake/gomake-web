@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 import { getAndSetProductById } from "@/services/hooks";
@@ -21,16 +21,14 @@ import {
 } from "@/components";
 
 import { useMaterials } from "../use-materials";
-import { digitslPriceState } from "./store";
 import { EButtonTypes, EParameterTypes } from "@/enums";
 import cloneDeep from "lodash.clonedeep";
-import { selectParameterButtonState, selectedValueConfigState } from "@/store";
+import { selectParameterButtonState } from "@/store";
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { findParameterByCode } from "@/utils/helpers";
 import { SettingsIcon } from "@/icons/settings";
 import { UpdateTypes } from "@/widgets/shared-admin-customers/add-product/parameters/widgets/section-mapping";
-import { UpdateParameterModal } from "@/widgets/shared-admin-customers/add-product/parameters/widgets/update-parameter-modal";
-import { ESourceView } from "@/enums/products";
+import { ESourceView, EUpdateActionType } from "@/enums/products";
 
 const useAddProduct = ({ clasess }) => {
   const { callApi } = useGomakeAxios();
@@ -218,13 +216,13 @@ const useAddProduct = ({ clasess }) => {
       parameter: any,
       updateType: UpdateTypes
     ) => {
-      debugger;
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
           updateType,
           isShowToClient: !parameter?.isShowToClient,
         },
+        updateActionType: EUpdateActionType.showToClient,
       });
     },
     [router]
@@ -243,6 +241,7 @@ const useAddProduct = ({ clasess }) => {
           updateType,
           isHidden: !parameter?.isHidden,
         },
+        updateActionType: EUpdateActionType.hidden,
       });
     },
     [router]
@@ -261,6 +260,7 @@ const useAddProduct = ({ clasess }) => {
           updateType,
           isRequired: !parameter?.isRequired,
         },
+        updateActionType: EUpdateActionType.required,
       });
     },
     [router]
@@ -279,6 +279,7 @@ const useAddProduct = ({ clasess }) => {
           updateType,
           isLock: !parameter?.isLock,
         },
+        updateActionType: EUpdateActionType.lock,
       });
     },
     [router]
@@ -338,9 +339,7 @@ const useAddProduct = ({ clasess }) => {
       option: any,
       updateType?: UpdateTypes
     ) => {
-      debugger;
       let temp = [...parameter?.valuesConfigs];
-
       let objectIdToUpdate = option?.id;
 
       const updatedArray = temp.map((obj) => {
@@ -354,12 +353,13 @@ const useAddProduct = ({ clasess }) => {
           ...parameter,
           valuesConfigs: updatedArray,
         },
+        updatedValueId: objectIdToUpdate,
+        updatedActionType: EUpdateActionType.hiddenValue,
       });
     },
     [router]
   );
 
-  //!here check where we used i think when choose value from dropdown , fix later
   const updatedProductParameterValuesConfigsDefault = useCallback(
     async (
       sectionId: string,
@@ -490,6 +490,7 @@ const useAddProduct = ({ clasess }) => {
     [router]
   );
 
+  //!!!!!!!!!!!!!!!!!!!!!!!!!!
   //! for materials last two hidden icon
   const updatedParameterMaterialTypeValuesConfigsHidden = useCallback(
     async (
@@ -620,7 +621,6 @@ const useAddProduct = ({ clasess }) => {
     setIsUpdateModalOpen(true);
   };
 
-  //!here for update button in the modal
   const handleUpdateParametersValue = () => {
     if (selectedUpdateType === null) {
       alertFault(t("products.parameters.pleaseSelectOneOption"));
