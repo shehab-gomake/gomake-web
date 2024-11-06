@@ -143,7 +143,7 @@ const useAddProduct = ({ clasess }) => {
     if (router?.query?.id) {
       const data = await getAndSetProductById(callApi, setTemplate, {
         Id: router?.query?.id,
-        sourceView: ESourceView.ProductEditView
+        sourceView: ESourceView.ProductEditView,
       });
       setProductState(data);
     }
@@ -338,6 +338,7 @@ const useAddProduct = ({ clasess }) => {
       option: any,
       updateType?: UpdateTypes
     ) => {
+      debugger;
       let temp = [...parameter?.valuesConfigs];
 
       let objectIdToUpdate = option?.id;
@@ -358,6 +359,7 @@ const useAddProduct = ({ clasess }) => {
     [router]
   );
 
+  //!here check where we used i think when choose value from dropdown , fix later
   const updatedProductParameterValuesConfigsDefault = useCallback(
     async (
       sectionId: string,
@@ -488,6 +490,7 @@ const useAddProduct = ({ clasess }) => {
     [router]
   );
 
+  //! for materials last two hidden icon
   const updatedParameterMaterialTypeValuesConfigsHidden = useCallback(
     async (
       sectionId: string,
@@ -617,6 +620,7 @@ const useAddProduct = ({ clasess }) => {
     setIsUpdateModalOpen(true);
   };
 
+  //!here for update button in the modal
   const handleUpdateParametersValue = () => {
     if (selectedUpdateType === null) {
       alertFault(t("products.parameters.pleaseSelectOneOption"));
@@ -819,28 +823,43 @@ const useAddProduct = ({ clasess }) => {
                   {option.isHidden ? (
                     <div
                       style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        updatedProductParameterValuesConfigsHidden(
-                          sectionId,
-                          subSectionId,
-                          parameter,
-                          option
-                        )
-                      }
+                      // onClick={() =>
+                      //   updatedProductParameterValuesConfigsHidden(
+                      //     sectionId,
+                      //     subSectionId,
+                      //     parameter,
+                      //     option
+                      //   )
+                      // }
+
+                      onClick={() => {
+                        setSelectedSectionId(sectionId);
+                        setSelectedSubSectionId(subSectionId);
+                        setSelectedParameter(parameter);
+                        setSelectedOption(option);
+                        handleOpenModal();
+                      }}
                     >
                       <HiddenIcon />
                     </div>
                   ) : (
                     <div
                       style={{ cursor: "pointer" }}
-                      onClick={() =>
-                        updatedProductParameterValuesConfigsHidden(
-                          sectionId,
-                          subSectionId,
-                          parameter,
-                          option
-                        )
-                      }
+                      // onClick={() =>
+                      //   updatedProductParameterValuesConfigsHidden(
+                      //     sectionId,
+                      //     subSectionId,
+                      //     parameter,
+                      //     option
+                      //   )
+                      // }
+                      onClick={() => {
+                        setSelectedSectionId(sectionId);
+                        setSelectedSubSectionId(subSectionId);
+                        setSelectedParameter(parameter);
+                        setSelectedOption(option);
+                        handleOpenModal();
+                      }}
                     >
                       <NotHiddenIcon />
                     </div>

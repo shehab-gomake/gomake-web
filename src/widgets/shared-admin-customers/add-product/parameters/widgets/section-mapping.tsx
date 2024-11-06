@@ -141,7 +141,7 @@ const SectionMappingWidget = ({
                 <div style={clasess.parameterContainer}>
                   <div style={clasess.parameterLabelStyle}>
                     <div style={clasess.paramNameStyle}>
-                      {parameter?.name}{" "}
+                      {parameter?.name}
                       <small>&nbsp;{parameter?.defaultUnit}</small>
                     </div>
                     {parameter?.parameterType ===

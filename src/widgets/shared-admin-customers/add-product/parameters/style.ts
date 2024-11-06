@@ -129,6 +129,8 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 8,
+        //!here
+        minWidth: 240,
       },
       spanRequierd: {
         color: errorColor(500),
@@ -197,7 +199,8 @@ const useStyle = () => {
       paramNameStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
-        minWidth: 120,
+        //!here
+        //  minWidth: 120,
         height: 25,
         paddingLeft: 2,
       },
