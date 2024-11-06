@@ -13,7 +13,7 @@ import { Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import { SettingsIcon } from "@/icons/settings";
 import { DuplicateMaterial, PercentageMaterial } from "@/icons";
 import { useCopyAction } from "./use-copy-action";
-import { EPricingBy } from "../../enums/profites-enum";
+import { EPricingBy, ETransition } from "../../enums/profites-enum";
 
 const PricingList = ({
   tableHeaders,
@@ -40,6 +40,8 @@ const PricingList = ({
   getAllActionProfitRowsByActionId,
   quantityOfPackages,
   setQuantityOfPackages,
+  updatePackageUnitQuantity,
+  addNewStepForActionProfitRow
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -80,7 +82,19 @@ const PricingList = ({
             <GoMakeAutoComplate
               options={PricingBy}
               style={classes.autoCompleteStyleContainer}
-              onChange={(e, value) => updatePricingByForAction(value)}
+              onChange={(e, value) => {
+                if (value?.value !== EPricingBy.PACKAGE) {
+                  updatePricingByForAction(value);
+                } else {
+                  const myvalue = {
+                    label: t("products.profits.pricingListWidget.steps"),
+                    value: ETransition.STEPS,
+                  };
+                  updateTransitionForAction(myvalue);
+                  updatePricingByForAction(value);
+
+                }
+              }}
               value={selectedPricingBy}
               key={selectedPricingTableItems}
             />
@@ -90,7 +104,10 @@ const PricingList = ({
             <div style={classes.autoCompleteContainer}>
               <GomakeTextInput
                 style={classes.autoCompleteStyleContainer}
-                onChange={(e) => setQuantityOfPackages(e.target.value)}
+                onChange={(e) => {
+                  setQuantityOfPackages(e.target.value);
+                }}
+                onBlur={() => quantityOfPackages !== 0 && updatePackageUnitQuantity()}
                 value={quantityOfPackages}
                 placeholder={t("boardMissions.quantityOfPackages")}
                 type="number"
@@ -104,6 +121,7 @@ const PricingList = ({
               onChange={(e, value) => updateTransitionForAction(value)}
               value={selectedTransition}
               key={selectedPricingTableItems}
+              disabled={selectedPricingBy?.value === EPricingBy.PACKAGE}
             />
           </div>
         </div>
@@ -123,6 +141,7 @@ const PricingList = ({
         setSelectedActionProfit={setSelectedActionProfit}
         deleteActionProfitRow={deleteActionProfitRow}
         selectedAdditionalProfitRow={selectedAdditionalProfitRow}
+        addNewStepForActionProfitRow={addNewStepForActionProfitRow}
       />
       <div style={classes.chartContainer}>
         <LineChart actionProfitRowChartData={actionProfitRowChartData} />

@@ -17,6 +17,7 @@ export type ActionProfit = {
   actionProfitRows: any[];
   actionExpections: any[];
   recordID: number;
+  packageUnit?: number;
 };
 
 export type ActionProfitRow = {
@@ -75,6 +76,8 @@ export type PricingListProps = {
   getAllActionProfitRowsByActionId?: (value: any) => void;
   quantityOfPackages: number;
   setQuantityOfPackages: (value: number) => void;
+  updatePackageUnitQuantity: () => void;
+  addNewStepForActionProfitRow: (value: number, totalPrice: number) => void;
 };
 export type PricingListTableProps = {
   tableHeaders: string[];
@@ -95,6 +98,7 @@ export type PricingListTableProps = {
   setSelectedActionProfit?: (value: any) => void;
   deleteActionProfitRow?: (id: string) => void;
   selectedAdditionalProfitRow?: ProfitsPricingTables;
+  addNewStepForActionProfitRow: (value: number, totalPrice: number) => void;
 };
 export type PricingListTableRowProps = {
   item: any;
@@ -194,6 +198,7 @@ export type ProfitLeftSideProps = {
   getAllActionProfitRowsByActionId?: (value: any) => void;
   quantityOfPackages: number;
   setQuantityOfPackages: (value: number) => void;
+  updatePackageUnitQuantity: () => void;
 };
 
 export type selectedOutputsProps = {

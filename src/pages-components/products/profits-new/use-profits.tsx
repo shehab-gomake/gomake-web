@@ -456,8 +456,21 @@ const useNewProfits = () => {
     let defaultTransitionValue = Transition.find(
       (item) => item?.value === selectedPricingTableItems?.transitionType
     );
-    setSelectedPricingBy(defaultPricingByValue);
-    setSelectedTransition(defaultTransitionValue);
+    console.log("defaultTransitionValue", defaultPricingByValue)
+    if (defaultPricingByValue?.value === EPricingBy.PACKAGE) {
+      setQuantityOfPackages(actionProfitByActionId?.packageUnit);
+      setSelectedPricingBy(defaultPricingByValue);
+      setSelectedTransition({
+        label: t("products.profits.pricingListWidget.steps"),
+        value: ETransition.STEPS,
+      });
+    }
+    else {
+      setSelectedPricingBy(defaultPricingByValue);
+      setSelectedTransition(defaultTransitionValue);
+
+    }
+
   }, [selectedPricingTableItems]);
 
   const updatePricingByForAction = useCallback(
@@ -883,6 +896,21 @@ const useNewProfits = () => {
     [selectedPricingTableItems]
   );
 
+  const updatePackageUnitQuantity = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/profits/update-package-unit-quantity`,
+      {
+        actionOrProductId: router.query.actionId || router.query.productId,
+        pakageUnit: quantityOfPackages,
+        isOutSource: router.query.isOutSource ? true : false,
+      }
+    );
+    if (res?.success) {
+      getAllActionProfitRowsByActionId();
+    }
+  }, [quantityOfPackages, router]);
+
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
@@ -948,6 +976,7 @@ const useNewProfits = () => {
     getProfitsPricingTables,
     getAllActionProfitRowsByActionId,
     getCalculateCaseProfits,
+    updatePackageUnitQuantity
   };
 };
 
