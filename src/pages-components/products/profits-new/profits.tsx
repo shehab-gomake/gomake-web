@@ -72,7 +72,8 @@ const ProfitsNewPageWidget = () => {
     getProfitsPricingTables,
     getAllActionProfitRowsByActionId,
     getCalculateCaseProfits,
-    updatePackageUnitQuantity
+    updatePackageUnitQuantity,
+    updatePricingByForActionPackage
   } = useNewProfits();
   const profitsSteps: StepType[] = [
     {
@@ -179,6 +180,7 @@ const ProfitsNewPageWidget = () => {
               quantityOfPackages={quantityOfPackages}
               setQuantityOfPackages={setQuantityOfPackages}
               updatePackageUnitQuantity={updatePackageUnitQuantity}
+              updatePricingByForActionPackage={updatePricingByForActionPackage}
             />
           </div>
         ) : (

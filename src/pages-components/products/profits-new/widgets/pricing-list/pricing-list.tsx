@@ -41,7 +41,8 @@ const PricingList = ({
   quantityOfPackages,
   setQuantityOfPackages,
   updatePackageUnitQuantity,
-  addNewStepForActionProfitRow
+  addNewStepForActionProfitRow,
+  updatePricingByForActionPackage
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -86,12 +87,7 @@ const PricingList = ({
                 if (value?.value !== EPricingBy.PACKAGE) {
                   updatePricingByForAction(value);
                 } else {
-                  const myvalue = {
-                    label: t("products.profits.pricingListWidget.steps"),
-                    value: ETransition.STEPS,
-                  };
-                  updateTransitionForAction(myvalue);
-                  updatePricingByForAction(value);
+                  updatePricingByForActionPackage(value)
 
                 }
               }}

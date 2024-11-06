@@ -486,6 +486,50 @@ const useNewProfits = () => {
         actionExpections: [],
         productId: router.query.productId,
         isOutSource: router.query.isOutSource ? true : false,
+        packageUnit: actionProfitByActionId?.packageUnit,
+        exceptionId:
+          selectedPricingTableItems?.index == 0
+            ? null
+            : selectedPricingTableItems?.id,
+      };
+      if (router.query.productId) {
+        requestBody.productId = router.query.productId;
+      }
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/printhouse-config/profits/update-action-profit`,
+        requestBody
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        setSelectedPricingBy(data);
+        if (router.query.signalRConnectionId) {
+          getCalculateCaseProfits();
+        } else {
+          getProfitsPricingTables();
+          getAllActionProfitRowsByActionId();
+        }
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [actionProfitByActionId, router, selectedPricingTableItems]
+  );
+
+  const updatePricingByForActionPackage = useCallback(
+    async (data: SelectedPricingByType) => {
+      const requestBody: any = {
+        recordID: actionProfitByActionId?.recordID,
+        id: actionProfitByActionId?.id,
+        printingActionId: actionProfitByActionId?.printingActionId,
+        pricingBy: data?.value,
+        transitionType: 1,
+        minPrice: actionProfitByActionId?.minPrice,
+        actionProfitRows: [],
+        actionExpections: [],
+        productId: router.query.productId,
+        isOutSource: router.query.isOutSource ? true : false,
+        packageUnit: actionProfitByActionId?.packageUnit,
         exceptionId:
           selectedPricingTableItems?.index == 0
             ? null
@@ -527,6 +571,7 @@ const useNewProfits = () => {
         actionProfitRows: [],
         actionExpections: [],
         isOutSource: router.query.isOutSource ? true : false,
+        packageUnit: actionProfitByActionId?.packageUnit,
         exceptionId:
           selectedPricingTableItems?.index == 0
             ? null
@@ -666,6 +711,7 @@ const useNewProfits = () => {
         minPrice: data,
         actionProfitRows: [],
         actionExpections: [],
+        packageUnit: actionProfitByActionId?.packageUnit,
         isOutSource: router.query.isOutSource ? true : false,
       };
       if (router.query.productId) {
@@ -908,6 +954,7 @@ const useNewProfits = () => {
     );
     if (res?.success) {
       getAllActionProfitRowsByActionId();
+      getActionProfitByActionId()
     }
   }, [quantityOfPackages, router]);
 
@@ -976,7 +1023,8 @@ const useNewProfits = () => {
     getProfitsPricingTables,
     getAllActionProfitRowsByActionId,
     getCalculateCaseProfits,
-    updatePackageUnitQuantity
+    updatePackageUnitQuantity,
+    updatePricingByForActionPackage
   };
 };
 
