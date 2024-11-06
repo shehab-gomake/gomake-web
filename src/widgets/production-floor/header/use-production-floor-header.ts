@@ -40,11 +40,13 @@ const useProductionFloorHeader = () => {
   const showAllJobsButton = useMemo(() => hasGroupsFilters, [hasGroupsFilters]);
   const { push, replace, query } = useRouter();
   const { groupsId } = query;
+  const router = useRouter();
 
   const onClickPath = (path: IProductionFloorPath, index: number) => {
     if (path.actionType === EPathActionType.FILTER) {
       setGroupFromPath(groups.slice(0, (index + 1) / 2));
-      push("/production-floor").then();
+      // push("/production-floor").then();
+      push("/production-floor?view=table").then();
       setView(EProductionFloorView.TABLE);
     }
   };
@@ -62,7 +64,8 @@ const useProductionFloorHeader = () => {
       const prevPath = paths[i - 1];
       if (prevPath.actionType === EPathActionType.FILTER) {
         setGroupFromPath(groups.slice(0, i / 2));
-        push("/production-floor").then();
+        // push("/production-floor").then();
+        push("/production-floor?view=table").then();
         setView(EProductionFloorView.TABLE);
       } else {
         push("/production-floor?groupsId=" + prevPath.data.groupId).then();
@@ -76,6 +79,20 @@ const useProductionFloorHeader = () => {
 
   const navigateToProductionFloor = () => {
     replace("/production-floor", undefined, { shallow: true });
+  };
+
+  const useUpdateViewInUrl = () => {
+    const updateView = (view: EProductionFloorView) => {
+      setView(view);
+
+      // Update the URL with the view as a query parameter
+      const viewName = EProductionFloorView[view].toLowerCase();
+      router.push(`/production-floor?view=${viewName}`, undefined, {
+        shallow: true,
+      });
+    };
+
+    return updateView;
   };
 
   const handleClick = () => {
@@ -134,6 +151,7 @@ const useProductionFloorHeader = () => {
     onSelectMachine,
     onSelectStation,
     buttonRef,
+    useUpdateViewInUrl,
   };
 };
 export { useProductionFloorHeader };

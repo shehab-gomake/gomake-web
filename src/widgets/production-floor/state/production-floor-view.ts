@@ -1,12 +1,13 @@
-import {atom} from "recoil";
+import { atom } from "recoil";
 
 export enum EProductionFloorView {
-    TABLE,
-    KANBAN,
-    GROUPS,
-    DASHBOARD
+  TABLE,
+  KANBAN,
+  GROUPS,
+  DASHBOARD,
 }
+
 export const productionFloorViewState = atom({
-    default: EProductionFloorView.TABLE,
-    key: 'productionFloorViewState'
+  default: EProductionFloorView.TABLE,
+  key: "productionFloorViewState",
 });
