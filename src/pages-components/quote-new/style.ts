@@ -29,7 +29,7 @@ const useStyle = (isQuoteConfirmation) => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: 5,
+        gap: 15,
       },
       quoteStatusContainer: {
         display: "flex",
