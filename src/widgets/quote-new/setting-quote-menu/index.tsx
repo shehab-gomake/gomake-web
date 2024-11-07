@@ -15,7 +15,6 @@ import { AutomaticDiscountMenu } from "../automatic-discount-menu";
 import { DotIcon } from "@/icons";
 import { Check } from "@mui/icons-material";
 import { DiscountType, SortByTypes } from "@/enums";
-import { BudgetsMenuForClient } from "../budgets-menu-for-client";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, setIsUpdateExchangeRate, isUpdateExchangeRate, onBlurCurrency, isUpdateCurrency, setIsUpdateCurrency, updateCurrency, onClickRefresh, sortDocumentItems, updateIsShowDetails, updateIsShowPrices, updateDiscountType, documentType, getQuote }) => {
@@ -232,13 +231,7 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
         anchorEl={anchorElAutomaticDiscount}
         updateDiscountType={updateDiscountType}
       />
-      <BudgetsMenuForClient
-        handleClose={handleBudgetClose}
-        open={openBudget}
-        anchorEl={anchorElBudget}
-        documentType={documentType}
-        getQuote={getQuote}
-      />
+
     </>
   );
 };

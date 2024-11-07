@@ -79,6 +79,10 @@ const useNewProfits = () => {
       label: "M^3",
       value: EPricingBy.CUBIC_METER,
     },
+    {
+      label: t("boardMissions.package"),
+      value: EPricingBy.PACKAGE,
+    },
   ];
   const [PricingBy, setPricingBy] = useState([]);
   const modifiedPricingBy = PricingByList.slice(1);
@@ -111,6 +115,7 @@ const useNewProfits = () => {
   const [selectedAdditionalProfitRow, setSelectedActionProfitRow] =
     useState<ProfitsPricingTables>();
   const [profitRowType, setProfitRowType] = useState(1);
+  const [quantityOfPackages, setQuantityOfPackages] = useState<number>(0);
   const [selectedPricingBy, setSelectedPricingBy] =
     useState<SelectedPricingByType>({
       label: "",
@@ -451,8 +456,20 @@ const useNewProfits = () => {
     let defaultTransitionValue = Transition.find(
       (item) => item?.value === selectedPricingTableItems?.transitionType
     );
-    setSelectedPricingBy(defaultPricingByValue);
-    setSelectedTransition(defaultTransitionValue);
+    if (defaultPricingByValue?.value === EPricingBy.PACKAGE) {
+      setQuantityOfPackages(actionProfitByActionId?.packageUnit);
+      setSelectedPricingBy(defaultPricingByValue);
+      setSelectedTransition({
+        label: t("products.profits.pricingListWidget.steps"),
+        value: ETransition.STEPS,
+      });
+    }
+    else {
+      setSelectedPricingBy(defaultPricingByValue);
+      setSelectedTransition(defaultTransitionValue);
+
+    }
+
   }, [selectedPricingTableItems]);
 
   const updatePricingByForAction = useCallback(
@@ -468,6 +485,7 @@ const useNewProfits = () => {
         actionExpections: [],
         productId: router.query.productId,
         isOutSource: router.query.isOutSource ? true : false,
+        packageUnit: actionProfitByActionId?.packageUnit,
         exceptionId:
           selectedPricingTableItems?.index == 0
             ? null
@@ -497,6 +515,50 @@ const useNewProfits = () => {
     [actionProfitByActionId, router, selectedPricingTableItems]
   );
 
+  const updatePricingByForActionPackage = useCallback(
+    async (data: SelectedPricingByType) => {
+      const requestBody: any = {
+        recordID: actionProfitByActionId?.recordID,
+        id: actionProfitByActionId?.id,
+        printingActionId: actionProfitByActionId?.printingActionId,
+        pricingBy: data?.value,
+        transitionType: 1,
+        minPrice: actionProfitByActionId?.minPrice,
+        actionProfitRows: [],
+        actionExpections: [],
+        productId: router.query.productId,
+        isOutSource: router.query.isOutSource ? true : false,
+        packageUnit: actionProfitByActionId?.packageUnit,
+        exceptionId:
+          selectedPricingTableItems?.index == 0
+            ? null
+            : selectedPricingTableItems?.id,
+      };
+      if (router.query.productId) {
+        requestBody.productId = router.query.productId;
+      }
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/printhouse-config/profits/update-action-profit`,
+        requestBody
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        setSelectedPricingBy(data);
+        if (router.query.signalRConnectionId) {
+          getCalculateCaseProfits();
+        } else {
+          getProfitsPricingTables();
+          getAllActionProfitRowsByActionId();
+        }
+        setSelectedActionProfitRow(null);
+      } else {
+        alertFaultUpdate();
+      }
+    },
+    [actionProfitByActionId, router, selectedPricingTableItems]
+  );
+
   const updateTransitionForAction = useCallback(
     async (data: SelectedPricingByType) => {
       const requestBody: any = {
@@ -509,6 +571,7 @@ const useNewProfits = () => {
         actionProfitRows: [],
         actionExpections: [],
         isOutSource: router.query.isOutSource ? true : false,
+        packageUnit: actionProfitByActionId?.packageUnit,
         exceptionId:
           selectedPricingTableItems?.index == 0
             ? null
@@ -531,6 +594,7 @@ const useNewProfits = () => {
           getProfitsPricingTables();
           getAllActionProfitRowsByActionId();
         }
+        setSelectedActionProfitRow(null);
       } else {
         alertFaultUpdate();
       }
@@ -648,6 +712,7 @@ const useNewProfits = () => {
         minPrice: data,
         actionProfitRows: [],
         actionExpections: [],
+        packageUnit: actionProfitByActionId?.packageUnit,
         isOutSource: router.query.isOutSource ? true : false,
       };
       if (router.query.productId) {
@@ -666,6 +731,8 @@ const useNewProfits = () => {
           getAllActionProfitRowsByActionId();
         }
         getActionProfitByActionId();
+        setSelectedActionProfitRow(null);
+
       } else {
         alertFaultUpdate();
       }
@@ -878,6 +945,22 @@ const useNewProfits = () => {
     [selectedPricingTableItems]
   );
 
+  const updatePackageUnitQuantity = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/profits/update-package-unit-quantity`,
+      {
+        actionOrProductId: router.query.actionId || router.query.productId,
+        pakageUnit: quantityOfPackages,
+        isOutSource: router.query.isOutSource ? true : false,
+      }
+    );
+    if (res?.success) {
+      getAllActionProfitRowsByActionId();
+      getActionProfitByActionId()
+    }
+  }, [quantityOfPackages, router]);
+
   return {
     allActionProfitRowsByActionId,
     actionProfitRowChartData,
@@ -911,6 +994,8 @@ const useNewProfits = () => {
     calculateCaseValue,
     isLoading,
     ProfitCurrency,
+    quantityOfPackages,
+    setQuantityOfPackages,
     handleCloseAdditionalProfitMenu,
     handleClickAdditionalProfitMenu,
     setSelectedActionProfitRow,
@@ -941,6 +1026,8 @@ const useNewProfits = () => {
     getProfitsPricingTables,
     getAllActionProfitRowsByActionId,
     getCalculateCaseProfits,
+    updatePackageUnitQuantity,
+    updatePricingByForActionPackage
   };
 };
 

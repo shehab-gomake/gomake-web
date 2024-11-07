@@ -165,7 +165,8 @@ const useStyle = () => {
         alignItems: "center",
       },
       autoCompleteStyleContainer: {
-        height: 25,
+        height: 33,
+        maxHeight: 33,
         borderRadius: 0,
         ...FONT_FAMILY.Lexend(400, 14),
         color: "#F135A3",

@@ -97,3 +97,8 @@ export enum ORDER_STATUSES {
   Paused,
   Ready,
 }
+
+export enum EAdditionType {
+  PERCENTS = 0,
+  VALUE = 1,
+}

@@ -1,43 +1,69 @@
-import {ENotificationType, ISystemNotification} from "@/store/system-notifications";
+import {
+  ENotificationType,
+  ISystemNotification,
+} from "@/store/system-notifications";
 import Link from "next/link";
-import {useTranslation} from "react-i18next";
-import {FONT_FAMILY} from "@/utils/font-family";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import { useTranslation } from "react-i18next";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const NotificationMessageComponent = ({message, type, documentId}: ISystemNotification) => {
-    const {primaryColor} = useGomakeTheme();
-    const style = {
-        color: primaryColor(900),
-        ...FONT_FAMILY.Lexend(400, 16),
-        textDecoration: 'none'
-    }
-    const {t} = useTranslation();
-    return type === ENotificationType.QUOTE_APPROVED_STATUS ?
-        <Link style={style} href={`/quotes`}>{t('notifications.approvedQuoteMessage', {
-            number: message
-        })}</Link> :
-        type === ENotificationType.QUOTE_APPROVED_BY_MANAGER_STATUS ?
-            <Link style={style} href={`/quotes`}>{t('notifications.adminApprovedQuoteMessage', {
-                number: message
-            })}</Link> :
-            type === ENotificationType.QUOTE_REJECTED_BY_MANAGER_STATUS ?
-                <Link style={style} href={`/quotes`}>{t('notifications.adminRejectedQuoteMessage', {
-                    number: message
-                })}</Link> :
+const NotificationMessageComponent = ({
+  message,
+  type,
+  documentId,
+}: ISystemNotification) => {
+  const { primaryColor } = useGomakeTheme();
+  const style = {
+    color: primaryColor(900),
+    ...FONT_FAMILY.Lexend(400, 16),
+    textDecoration: "none",
+  };
+  const { t } = useTranslation();
+  return type === ENotificationType.QUOTE_APPROVED_STATUS ? (
+    <Link style={style} href={`/quotes`}>
+      {t("notifications.approvedQuoteMessage", {
+        number: message,
+      })}
+    </Link>
+  ) : type === ENotificationType.QUOTE_APPROVED_BY_MANAGER_STATUS ? (
+    <Link style={style} href={`/quotes`}>
+      {t("notifications.adminApprovedQuoteMessage", {
+        number: message,
+      })}
+    </Link>
+  ) : type === ENotificationType.QUOTE_REJECTED_BY_MANAGER_STATUS ? (
+    <Link style={style} href={`/quotes`}>
+      {t("notifications.adminRejectedQuoteMessage", {
+        number: message,
+      })}
+    </Link>
+  ) : type === ENotificationType.QUOTE_REJECTED_STATUS ? (
+    <Link style={style} href={`/quotes`}>
+      {t("notifications.rejectedQuoteMessage", {
+        number: message,
+      })}
+    </Link>
+  ) : type === ENotificationType.BOARD_MISSIONS_APPROVED_STATUS ? (
+    <Link
+      style={style}
+      href={`/production-floor?boardMissionsId=${documentId}&productType=&step=stations`}
+    >
+      {t("notifications.approvedBoardMissionsMessage", {
+        number: message,
+      })}
+    </Link>
+  ) : type === ENotificationType.BOARD_MISSIONS_REJECTED_STATUS ? (
+    <Link
+      style={style}
+      href={`/production-floor?boardMissionsId=${documentId}&productType=&step=stations`}
+    >
+      {t("notifications.rejectedBoardMissionsMessage", {
+        number: message,
+      })}
+    </Link>
+  ) : (
+    <span>{message}</span>
+  );
+};
 
-                type === ENotificationType.QUOTE_REJECTED_STATUS ?
-                    <Link style={style} href={`/quotes`}>{t('notifications.rejectedQuoteMessage', {
-                        number: message
-                    })}</Link> :
-                    type === ENotificationType.BOARD_MISSIONS_APPROVED_STATUS ? <Link style={style}
-                                                                                      href={`/production-floor?boardMissionsId=${documentId}&productType=&step=stations`}>{t('notifications.approvedBoardMissionsMessage', {
-                            number: message
-                        })}</Link> :
-                        type === ENotificationType.BOARD_MISSIONS_REJECTED_STATUS ? <Link style={style}
-                                                                                          href={`/production-floor?boardMissionsId=${documentId}&productType=&step=stations`}>{t('notifications.rejectedBoardMissionsMessage', {
-                                number: message
-                            })}</Link> :
-                            <span>{message}</span>
-}
-
-export {NotificationMessageComponent}
+export { NotificationMessageComponent };

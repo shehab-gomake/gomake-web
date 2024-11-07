@@ -1,14 +1,13 @@
 import { TabsMappingWidget } from "@/pages-components/products/digital-offset-price/widgets/tabs-mapping";
 import { GomakePrimaryButton } from "@/components";
 import { useAddProduct } from "@/hooks";
-
 import { ChildParameterModal } from "../child-parameter-modal";
-
 import { useStyle } from "./style";
 import { Tabs } from "@mui/material";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
 import { GalleryModal, MultiParameterModal } from "../../digital-offset-price";
+import { UpdateParameterModal } from "./widgets/update-parameter-modal";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();
@@ -44,7 +43,13 @@ const ParameterWidget = () => {
     onCloseMultiParameterModal,
     onOpeneMultiParameterModal,
     setSettingParameters,
-    settingParameters
+    settingParameters,
+
+    setSelectedUpdateType,
+    selectedUpdateType,
+    handleCloseModal,
+    isUpdateModalOpen,
+    handleUpdateParametersValue,
   } = useAddProduct({ clasess });
 
   return (
@@ -74,7 +79,8 @@ const ParameterWidget = () => {
                 </Tabs>
               </div>
               <div
-                className="custom-scrollbar" style={{ height: "55vh", overflow: "scroll", width: "100%" }}
+                className="custom-scrollbar"
+                style={{ height: "55vh", overflow: "scroll", width: "100%" }}
               >
                 <div style={clasess.sectionsContainer}>
                   {template?.sections?.map((section, index) => {
@@ -93,11 +99,15 @@ const ParameterWidget = () => {
                               updatedProductParameterHidden={
                                 updatedProductParameterHidden
                               }
-                              updatedProductParameterShowToClient={updatedProductParameterShowToClient}
+                              updatedProductParameterShowToClient={
+                                updatedProductParameterShowToClient
+                              }
                               updatedProductParameteRequierd={
                                 updatedProductParameteRequierd
                               }
-                              updatedProductParameteLocked={updatedProductParameteLocked}
+                              updatedProductParameteLocked={
+                                updatedProductParameteLocked
+                              }
                               _renderParameterType={_renderParameterType}
                               relatedParameters={relatedParameters}
                             />
@@ -113,11 +123,15 @@ const ParameterWidget = () => {
                               updatedProductParameterHidden={
                                 updatedProductParameterHidden
                               }
-                              updatedProductParameterShowToClient={updatedProductParameterShowToClient}
+                              updatedProductParameterShowToClient={
+                                updatedProductParameterShowToClient
+                              }
                               updatedProductParameteRequierd={
                                 updatedProductParameteRequierd
                               }
-                              updatedProductParameteLocked={updatedProductParameteLocked}
+                              updatedProductParameteLocked={
+                                updatedProductParameteLocked
+                              }
                               _renderParameterType={_renderParameterType}
                               relatedParameters={relatedParameters}
                             />
@@ -178,7 +192,13 @@ const ParameterWidget = () => {
         isParameterSettings={true}
         setSettingParameters={setSettingParameters}
         getProductById={getProductById}
-
+      />
+      <UpdateParameterModal
+        openModal={isUpdateModalOpen}
+        onClose={handleCloseModal}
+        selectedUpdateType={selectedUpdateType}
+        setSelectedUpdateType={setSelectedUpdateType}
+        onUpdate={handleUpdateParametersValue}
       />
     </>
   );

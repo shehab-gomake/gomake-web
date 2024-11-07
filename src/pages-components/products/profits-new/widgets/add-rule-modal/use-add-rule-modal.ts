@@ -47,6 +47,7 @@ const useAddRuleModal = ({
   const { t } = useTranslation();
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const categoriesList = useRecoilValue(machineCategoriesState);
+  const [additionType, setAdditionType] = useState<number>(null);
 
   const onCloseScheduleModal = () => {
     setOpenScheduleModal(false);
@@ -415,6 +416,7 @@ const useAddRuleModal = ({
       additionalProfit: additionalProfit,
       pricingBy: selectedPricingBy?.value,
       exceptionRule: expression,
+      additionType: additionType||0,
       exceptionConditionProperties: rules.map((item) => {
         return {
           statementId: getStatementId(item),
@@ -697,6 +699,7 @@ const useAddRuleModal = ({
     toDate,
     isFetching,
     getConditionText,
+    setAdditionType
   };
 };
 

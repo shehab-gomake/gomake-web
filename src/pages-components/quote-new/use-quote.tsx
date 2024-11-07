@@ -28,6 +28,7 @@ import {
   deleteDocumentContactApi,
   deleteDocumentItemApi,
   duplicateWithAnotherQuantityApi,
+  getAllClientActiveBudgetsApi,
   getWhatsAppMessageApi,
   getWhatsAppMessageForReceiptApi,
   moveOrderToReadyApi,
@@ -288,8 +289,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1022,7 +1023,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1292,7 +1293,6 @@ const useQuoteNew = ({
   };
 
   const onClickSendQuoteToClient = async (messageType: number) => {
-    debugger;
     if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
       alertFault("reports.pleaseSelectOneItem");
       return;
@@ -1630,7 +1630,6 @@ const useQuoteNew = ({
           getQuote();
           getAllEmployees();
           prevRouterQueryRef.current = router.query;
-          debugger;
         }
       }
     }
@@ -1874,6 +1873,46 @@ const useQuoteNew = ({
       isSendMessage: false,
     });
   };
+
+
+  const [allClientActiveBudgets, setAllClientActiveBudgets] = useState([]);
+  const getAllClientActiveBudgets = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setAllClientActiveBudgets(res.data);
+      }
+    };
+    await getAllClientActiveBudgetsApi(callApi, callBack, {
+      clientId: quoteItemValue?.client?.id,
+    });
+  };
+
+  useEffect(() => {
+    if (quoteItemValue?.client?.id) {
+      getAllClientActiveBudgets()
+    }
+  }, [quoteItemValue?.client?.id])
+
+  const updateDocumentBudget = useCallback(async (budget) => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/erp-service/budgets/update-document-budget`,
+      {
+        documentType: docType,
+        documentId: quoteItemValue?.id,
+        budgetId: budget.id
+      }
+    );
+    console.log("res", res)
+
+    if (res?.success) {
+      alertSuccessUpdate();
+      getQuote()
+    } else {
+      alertFault(`${t("sales.quote.errorUpdateBudget")}`);
+      // document total is greater than the budget balance
+    }
+  }, [docType, quoteItemValue]);
   return {
     dateRef,
     taxDateRef,
@@ -2075,6 +2114,8 @@ const useQuoteNew = ({
     isSelectedCLoseAsDeleveryNote,
     navigate,
     moveOrderToReady,
+    allClientActiveBudgets,
+    updateDocumentBudget
   };
 };
 
