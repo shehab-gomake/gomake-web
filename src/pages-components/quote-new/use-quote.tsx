@@ -1903,15 +1903,16 @@ const useQuoteNew = ({
         budgetId: budget.id
       }
     );
+    console.log("res", res)
+
     if (res?.success) {
       alertSuccessUpdate();
       getQuote()
     } else {
-      alertFaultUpdate();
+      alertFault(`${t("sales.quote.errorUpdateBudget")}`);
+      // document total is greater than the budget balance
     }
   }, [docType, quoteItemValue]);
-
-  console.log("quoteItemValue", quoteItemValue)
   return {
     dateRef,
     taxDateRef,

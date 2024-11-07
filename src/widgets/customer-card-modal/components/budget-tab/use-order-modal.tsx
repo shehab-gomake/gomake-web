@@ -91,12 +91,14 @@ const useOrderModal = ({ allDocuments, onClose, allDocumentsByBudget, updateDocu
     );
     if (res?.success) {
       alertSuccessUpdate();
+      onClose();
     } else {
       if (res?.errors?.statusCode === 107) {
         alertFault(t(`documentingDesign.${res?.errors?.message}`));
       }
       else {
         alertFaultUpdate();
+
 
       }
 

@@ -265,9 +265,6 @@ const QuoteNewPageWidget = ({
     isPrePaymentPage: isPrePaymentPage,
   });
   const { getCurrencyUnitText } = useQuoteGetData();
-  console.log("quoteState", quoteState)
-
-  console.log("allClientActiveBudgets", allClientActiveBudgets)
   const handleChangeCreationDate = (event) => {
     const newDate = event.target.value;
     const newDateRounded = moment(newDate)
@@ -289,7 +286,6 @@ const QuoteNewPageWidget = ({
   useEffect(() => {
     if (quoteState?.budgetId) {
       const budget = allClientActiveBudgets.find(budget => budget.id === quoteState.budgetId);
-      console.log("sssssdddd", budget)
       setSelectedBudget(budget);
     }
   }, [quoteState, allClientActiveBudgets]);
