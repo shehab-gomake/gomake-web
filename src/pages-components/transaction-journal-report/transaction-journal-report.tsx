@@ -10,6 +10,8 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { isValidCustomer } from "@/utils/helpers";
 import { AccountingTransactionReportHeader } from "./widgets/header-widget/acconting-header";
+import { GoMakePagination } from "@/components/pagination/gomake-pagination";
+import { useEffect } from "react";
 
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
@@ -43,26 +45,37 @@ const TransactionJournalReportWidget = ({
     filterState,
     setFilterState,
     handleDatesChange,
-    renderOptions,
-    checkWhatRenderArray,
-    isFetching,
-    customer,
-    handleCustomerChange,
+    handlePageSizeChange,
+    pageSize,
+    pagesCount,
+    pageNumber,
+    setPageNumber,
+    getAccountingTransactionReportFilter,
+    handleClearFilters,
+    getAccountingTableRows,
   } = useTransactionJournalReport({ reportType });
+  const isAccountingTransaction =
+    reportType === EReportType.AccountingTransaction;
+
+  useEffect(() => {
+    isAccountingTransaction && getAccountingTransactionReportFilter();
+  }, [pageNumber, pageSize]);
 
   return (
-    <div style={classes.mainContainer}>
+    <div
+      style={
+        isAccountingTransaction
+          ? classes.mainContainer
+          : { ...classes.mainContainer, marginBottom: 20 }
+      }
+    >
       <HeaderTitle title={label} marginTop={"0px"} marginBottom={"0px"} />
       {reportType === EReportType.AccountingTransaction ? (
         <AccountingTransactionReportHeader
           handleDateChange={handleDatesChange}
           filterState={filterState}
           setFilterState={setFilterState}
-          renderOptions={renderOptions}
-          checkWhatRenderArray={checkWhatRenderArray}
-          isFetching={isFetching}
-          customer={customer}
-          handleCustomerChange={handleCustomerChange}
+          handleClickClear={handleClearFilters}
         />
       ) : (
         <TransactionJournalReportHeaderWidget
@@ -80,51 +93,64 @@ const TransactionJournalReportWidget = ({
         onClickPrintCard={onClickPrintCard}
         onClickShowCard={onClickShowCard}
       />
-      <div style={{ width: "100%", height: "100%" }}>
-        {documentType?.id !== DocumentsTypeReportList.Payments &&
-        reportType !== EReportType.DailyPayments ? (
-          <div>
-            {showTable &&
-              dataTable?.map((item) => {
-                return (
-                  <PrimaryTable
-                    rows={getTableDataRows(
-                      item?.data,
-                      onClickOpenCustomerModal
-                    )}
-                    headers={tableHeaders}
-                    maxHeight={"calc(100vh - 300px)"}
-                    stickyHeader={true}
-                  />
-                );
-              })}
-          </div>
-        ) : (
-          <div>
-            {showTable &&
-              dataTable?.map((item) => {
-                return (
-                  <div style={classes.tableTitleContainer}>
-                    <div style={classes.titleStyle}>
-                      {item.accountName}-{item.accountCode}
-                    </div>
+
+      {isAccountingTransaction && (
+        <PrimaryTable
+          rows={getAccountingTableRows()}
+          headers={tableHeaders}
+          maxHeight={"calc(100vh - 300px)"}
+          stickyHeader={true}
+        />
+      )}
+
+      {!isAccountingTransaction && (
+        <div style={{ width: "100%", height: "100%" }}>
+          {documentType?.id !== DocumentsTypeReportList.Payments &&
+          reportType !== EReportType.DailyPayments ? (
+            <div>
+              {showTable &&
+                dataTable?.map((item) => {
+                  return (
                     <PrimaryTable
                       rows={getTableDataRows(
                         item?.data,
                         onClickOpenCustomerModal
                       )}
                       headers={tableHeaders}
-                      maxHeight={400}
+                      maxHeight={"calc(100vh - 300px)"}
+                      stickyHeader={true}
                     />
-                    <div style={classes.totalStyle}>
-                      {t("deposits.total")} : {item.total.toFixed(2)}
+                  );
+                })}
+            </div>
+          ) : (
+            <div>
+              {showTable &&
+                dataTable?.map((item) => {
+                  return (
+                    <div style={classes.tableTitleContainer}>
+                      <div style={classes.titleStyle}>
+                        {item.accountName}-{item.accountCode}
+                      </div>
+                      <PrimaryTable
+                        rows={getTableDataRows(
+                          item?.data,
+                          onClickOpenCustomerModal
+                        )}
+                        headers={tableHeaders}
+                        maxHeight={400}
+                      />
+                      <div style={classes.totalStyle}>
+                        {t("deposits.total")} : {item.total.toFixed(2)}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-          </div>
-        )}
-      </div>
+                  );
+                })}
+            </div>
+          )}
+        </div>
+      )}
+
       <CustomerCardWidget
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
@@ -138,6 +164,16 @@ const TransactionJournalReportWidget = ({
         setCustomer={setCustomerForEdit}
         showUpdateButton={true}
       />
+      {isAccountingTransaction && (
+        <GoMakePagination
+          onChangePageNumber={(event, value) => setPageNumber(value)}
+          onChangePageSize={handlePageSizeChange}
+          page={pageNumber}
+          setPage={setPageNumber}
+          pagesCount={pagesCount}
+          pageSize={pageSize}
+        />
+      )}
     </div>
   );
 };

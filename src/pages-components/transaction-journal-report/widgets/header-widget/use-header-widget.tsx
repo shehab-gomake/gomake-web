@@ -18,12 +18,7 @@ export interface AccountingTransactionReportHeaderProps {
   handleDateChange: any;
   filterState: FilterState;
   setFilterState: any;
-
-  renderOptions: any;
-  checkWhatRenderArray: any;
-  isFetching: boolean;
-  customer: any;
-  handleCustomerChange: any;
+  handleClickClear: () => void;
 }
 
 const useAgingReportHeader = () => {

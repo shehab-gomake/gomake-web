@@ -4,17 +4,14 @@ import {
 } from "./use-header-widget";
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { GomakeTextInput } from "@/components";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
 const AccountingTransactionReportHeader = ({
   handleDateChange,
   filterState,
   setFilterState,
-  renderOptions,
-  checkWhatRenderArray,
-  isFetching,
-  customer,
-  handleCustomerChange,
+  handleClickClear,
 }: AccountingTransactionReportHeaderProps) => {
   const { classes, t } = useAgingReportHeader();
   const dir: "rtl" | "ltr" = t("direction");
@@ -26,14 +23,6 @@ const AccountingTransactionReportHeader = ({
     right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
   }
 `;
-
-  const handleClientChange = (e: any, value: any) => {
-    setFilterState((prevState) => ({
-      ...prevState,
-      customerId: value?.id,
-    }));
-    handleCustomerChange(value);
-  };
 
   return (
     <div style={classes.mainContainer}>
@@ -51,21 +40,6 @@ const AccountingTransactionReportHeader = ({
           />
         </div>
       </div>
-      <div style={classes.date2FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
-        <GoMakeAutoComplate
-          key={customer?.id}
-          options={renderOptions()}
-          onChangeTextField={checkWhatRenderArray}
-          getOptionLabel={(option: any) => `${option.name}`}
-          style={classes.textInputStyle}
-          placeholder={t("sales.quote.chooseCustomer")}
-          onChange={handleClientChange}
-          value={customer}
-          loading={isFetching}
-        />
-      </div>
-
       <div style={classes.date1FilterContainer}>
         <h3 style={classes.filterLabelStyle}>
           {t("accounting.fromAccountCode")}
@@ -82,7 +56,6 @@ const AccountingTransactionReportHeader = ({
           style={{ height: 40 }}
         />
       </div>
-
       <div style={classes.date1FilterContainer}>
         <h3 style={classes.filterLabelStyle}>
           {t("accounting.toAccountCode")}
@@ -99,6 +72,13 @@ const AccountingTransactionReportHeader = ({
           style={{ height: 40 }}
         />
       </div>
+      <SecondaryButton
+        style={classes.clearBtn}
+        variant={"outlined"}
+        onClick={handleClickClear}
+      >
+        {t("sales.quote.clear")}
+      </SecondaryButton>
     </div>
   );
 };

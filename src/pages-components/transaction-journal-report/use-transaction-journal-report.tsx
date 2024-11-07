@@ -14,7 +14,7 @@ import { getAndSetCustomerById } from "@/services/api-service/customers/customer
 import { useSetRecoilState } from "recoil";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetClientTypes } from "@/services/hooks";
-import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
 
 // export interface FilterState {
 //   fromCodeAccount: string;
@@ -26,7 +26,6 @@ export interface FilterState {
   toAccount: string;
   startDate: Date | null;
   endDate: Date | null;
-  customerId: any;
 }
 
 interface TransactionJournalReportWidgetProps {
@@ -48,25 +47,23 @@ const useTransactionJournalReport = ({
   // New states for customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const [pagesCount, setPagesCount] = useState(0);
+  const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+
+  const handlePageSizeChange = (event) => {
+    setPageNumber(1);
+    setPageSize(event.target.value);
+  };
+
   const isAccountingTransaction =
     reportType === EReportType.AccountingTransaction;
-  const {
-    customer,
-    renderOptions,
-    checkWhatRenderArray,
-    handleCustomerChange,
-    isFetching,
-  } = useCustomerDropDownList({
-    shouldRenderCustomersOnMount: isAccountingTransaction,
-    shouldRenderSuppliersOnMount: false,
-  });
 
   const [filterState, setFilterState] = useState<FilterState>({
     fromAccount: "",
     toAccount: "",
     startDate: startOfYear(new Date()),
     endDate: endOfToday(),
-    customerId: "",
   });
 
   const getDocumentTypeName = (transType: number): string => {
@@ -145,11 +142,28 @@ const useTransactionJournalReport = ({
         });
       }
     },
-    [dataTable]
+    [reportType, dataTable]
   );
 
+  const getAccountingTableRows = useCallback(() => {
+    return dataTable?.map((data, index) => [
+      data?.transType,
+      data?.documentDate?.split("T")[0],
+      data?.valueDate?.split("T")[0],
+      data?.debAccountKey,
+      data?.debitAccountName,
+      data?.credAccountKey,
+      data?.creditAccountName,
+      data?.debitAmount?.toFixed(2),
+      data?.creditAmount?.toFixed(2),
+      data?.reference,
+      data?.ref2,
+      data?.description,
+    ]);
+  }, [reportType, dataTable]);
+
   const tableHeaders = useMemo(() => {
-    const headers = [
+    let headers = [
       t("reports.dueDate"),
       t("reports.documentNumber"),
       t("reports.transType"),
@@ -161,11 +175,27 @@ const useTransactionJournalReport = ({
     ];
     if (reportType === EReportType.DailyPayments) {
       headers.push(`${t("reports.credit")} / ${t("reports.debit")}`);
+    } else if (reportType === EReportType.AccountingTransaction) {
+      headers = [
+        t("reports.transType"),
+        t("reports.documentDate"),
+        t("reports.valueDate"),
+        t("reports.debAccountKey"),
+        t("reports.debitAccountName"),
+        t("reports.credAccountKey"),
+        t("reports.creditAccountName"),
+        t("reports.debitAmount"),
+        t("reports.creditAmount"),
+        t("reports.reference"),
+        t("reports.ref2"),
+        t("reports.description"),
+      ];
     } else {
       headers.push(t("reports.credit"));
     }
+
     return headers;
-  }, [t, reportType]);
+  }, [reportType, t]);
 
   const onClickPrintCard = () => {
     ExportLedgerReportPDF();
@@ -253,17 +283,46 @@ const useTransactionJournalReport = ({
         ...filterState,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
+        pageNumber,
+        pageSize,
       }
     );
     if (res?.success) {
-      setDataTable(res.data?.data?.data);
+      const tableData = res.data?.data?.data;
+      setDataTable(tableData.data);
+      setPagesCount(Math.ceil(tableData.totalRecords / pageSize));
+
       alertSuccessGetData();
-      setShowTable(true);
     } else {
       alertFaultGetData();
-      setShowTable(false);
     }
-  }, [customer, reportType, filterState]);
+  }, [reportType, filterState, pageNumber, pageSize]);
+
+  const ExportAccountingReportPDF = useCallback(async () => {
+    if (!filterState.startDate || !filterState.endDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+    const formattedStartDate = format(filterState.startDate, "yyyy-MM-dd");
+    const formattedEndDate = format(filterState.endDate, "yyyy-MM-dd");
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/export-accounting-transaction-report-pdf`,
+      {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+      },
+      true,
+      null
+    );
+    if (res?.success) {
+      const pdfLink = res?.data?.data?.data;
+      downloadPdf(pdfLink);
+    } else {
+      alertFaultGetData();
+    }
+  }, [reportType, filterState]);
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
@@ -345,6 +404,16 @@ const useTransactionJournalReport = ({
     }
   };
 
+  const handleClearFilters = () => {
+    setFilterState({
+      fromAccount: "",
+      toAccount: "",
+      startDate: null,
+      endDate: null,
+    });
+    setPageNumber(1);
+  };
+
   return {
     t,
     handleDocumentTypeChange,
@@ -368,13 +437,16 @@ const useTransactionJournalReport = ({
     label,
     filterState,
     setFilterState,
-
     handleDatesChange,
-    renderOptions,
-    checkWhatRenderArray,
-    isFetching,
-    customer,
-    handleCustomerChange,
+    handlePageSizeChange,
+    pageSize,
+    pagesCount,
+    pageNumber,
+    setPageNumber,
+    getAccountingTransactionReportFilter,
+    ExportAccountingReportPDF,
+    handleClearFilters,
+    getAccountingTableRows,
   };
 };
 
