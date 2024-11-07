@@ -154,7 +154,7 @@ const SectionMappingWidget = ({
                         );
                         return (
                           <React.Fragment>
-                            {parameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }}></div> : <></>}
+                            {parameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
                             <div
                               key={parameter?.id}
                               style={{
