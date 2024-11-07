@@ -416,7 +416,7 @@ const useAddRuleModal = ({
       additionalProfit: additionalProfit,
       pricingBy: selectedPricingBy?.value,
       exceptionRule: expression,
-      additionType: additionType,
+      additionType: additionType||0,
       exceptionConditionProperties: rules.map((item) => {
         return {
           statementId: getStatementId(item),
