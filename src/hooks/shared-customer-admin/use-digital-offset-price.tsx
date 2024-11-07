@@ -2393,19 +2393,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               p.actionIndex === actionIndex
                           );
                           return (
-                            <div key={parameterId}>
-                              {_renderParameterType(
-                                myParameter,
-                                subSection,
-                                section,
-                                subSection?.parameters,
-                                myParameter?.value,
-                                list,
-                                true,
-                                false,
-                                false
-                              )}
-                            </div>
+                            <React.Fragment>
+                              {relatedParameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
+                              <div key={parameterId}>
+                                {_renderParameterType(
+                                  myParameter,
+                                  subSection,
+                                  section,
+                                  subSection?.parameters,
+                                  myParameter?.value,
+                                  list,
+                                  true,
+                                  false,
+                                  false
+                                )}
+                              </div>
+                            </React.Fragment>
+
                           );
                         }
                       }
@@ -2444,31 +2448,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               p.actionIndex === actionIndex
                           );
                           return (
-                            <div key={parameterId}>
-                              {_renderParameterType(
-                                myParameter,
-                                subSection,
-                                section,
-                                subSection?.parameters,
-                                myParameter?.value,
-                                list,
-                                true,
-                                false,
-                                false
-                              )}
-                            </div>
-                          );
-                        }
-                        if (relatedParameter.activateByAllValues) {
-                          if (subSection.optionToDuplicateContent) {
-                            const { parameterId, actionIndex } =
-                              relatedParameter;
-                            const myParameter = list?.find(
-                              (p) =>
-                                p.id === parameterId &&
-                                p.actionIndex === actionIndex
-                            );
-                            return (
+                            <React.Fragment>
+                              {myParameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
                               <div key={parameterId}>
                                 {_renderParameterType(
                                   myParameter,
@@ -2482,6 +2463,35 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                                   false
                                 )}
                               </div>
+                            </React.Fragment>
+                          );
+                        }
+                        if (relatedParameter.activateByAllValues) {
+                          if (subSection.optionToDuplicateContent) {
+                            const { parameterId, actionIndex } =
+                              relatedParameter;
+                            const myParameter = list?.find(
+                              (p) =>
+                                p.id === parameterId &&
+                                p.actionIndex === actionIndex
+                            );
+                            return (
+                              <React.Fragment>
+                                {myParameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
+                                <div key={parameterId}>
+                                  {_renderParameterType(
+                                    myParameter,
+                                    subSection,
+                                    section,
+                                    subSection?.parameters,
+                                    myParameter?.value,
+                                    list,
+                                    true,
+                                    false,
+                                    false
+                                  )}
+                                </div>
+                              </React.Fragment>
                             );
                           }
 
@@ -3274,6 +3284,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
           if (materialRelatedParameters?.length > 0) {
             temp = temp.filter((subProduct) => {
+              if (subProduct.actionIndex !== actionIndex) {
+                return true
+              }
               return !materialRelatedParameters.some(
                 (materialParameter) =>
                   materialParameter.id === subProduct.parameterId
@@ -3304,7 +3317,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       x.actionIndex === actionIndex
                   );
                   let prevPathParamDefaultValue = temp.find(
-                    (x) => x.parameterId === prevPathParam.id
+                    (x) => x.parameterId === prevPathParam.id && x.actionIndex === actionIndex
                   );
 
                   if (
@@ -4350,11 +4363,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     return subProducts.map((subProduct) => {
       const filteredParameters = subProduct?.parameters?.filter((param) => {
         let matchingTemplateParam = null;
-        const section = productTemplate.sections.find(x=>x.id == param.sectionId);
-        if(section && section.subSections){
-          const subSection = section.subSections.find(x=>x.id == param.subSectionId);
-          if(subSection && subSection.parameters){
-            matchingTemplateParam =  subSection.parameters.find(templateParam => templateParam.id === param.parameterId && templateParam.actionIndex === param.actionIndex && !templateParam?.isHiddenInSetting)
+        const section = productTemplate.sections.find(x => x.id == param.sectionId);
+        if (section && section.subSections) {
+          const subSection = section.subSections.find(x => x.id == param.subSectionId);
+          if (subSection && subSection.parameters) {
+            matchingTemplateParam = subSection.parameters.find(templateParam => templateParam.id === param.parameterId && templateParam.actionIndex === param.actionIndex && !templateParam?.isHiddenInSetting)
           }
         }
         // Check if the parameter is not hidden (isHidden = false)
