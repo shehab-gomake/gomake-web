@@ -3290,6 +3290,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
           if (materialRelatedParameters?.length > 0) {
             temp = temp.filter((subProduct) => {
+              if (subProduct.actionIndex !== actionIndex) {
+                return true
+              }
               return !materialRelatedParameters.some(
                 (materialParameter) =>
                   materialParameter.id === subProduct.parameterId
@@ -3320,7 +3323,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       x.actionIndex === actionIndex
                   );
                   let prevPathParamDefaultValue = temp.find(
-                    (x) => x.parameterId === prevPathParam.id
+                    (x) => x.parameterId === prevPathParam.id && x.actionIndex === actionIndex
                   );
 
                   if (
