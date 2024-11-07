@@ -13,7 +13,7 @@ import { useAddRuleModal } from "./use-add-rule-modal";
 import { ETypeException, EValueType } from "../../enums/profites-enum";
 import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
-import { EParameterTypes } from "@/enums";
+import { EAdditionType, EParameterTypes } from "@/enums";
 import { useRouter } from "next/router";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
@@ -94,6 +94,7 @@ const AddRuleModal = ({
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
+  const [additionType, setAdditionType] = useState<number>(null);
   const router = useRouter();
 
   const [selectedOutputs, setSelectedOutputs] =
@@ -128,19 +129,19 @@ const AddRuleModal = ({
                 options={
                   router.query.actionId
                     ? machincesList?.machines?.map((value) => {
-                        return {
-                          ...value,
-                          label: value?.machineName,
-                          id: value.machineId,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: value?.machineName,
+                        id: value.machineId,
+                      };
+                    })
                     : allMachincesList?.map((value) => {
-                        return {
-                          ...value,
-                          label: `${value?.manufacturer} - ${value?.model}`,
-                          id: value.id,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: `${value?.manufacturer} - ${value?.model}`,
+                        id: value.id,
+                      };
+                    })
                 }
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectMachine")}
@@ -397,9 +398,9 @@ const AddRuleModal = ({
         modalTitle={
           isPropertiesWidge
             ? t("products.profits.exceptions.addNewRule") +
-              " (" +
-              selectedProperties?.propertyName +
-              ")"
+            " (" +
+            selectedProperties?.propertyName +
+            ")"
             : t("products.profits.exceptions.addNewRule")
         }
         onClose={() => {
@@ -541,19 +542,19 @@ const AddRuleModal = ({
                         options={
                           router.query.actionId
                             ? allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.manufacturer} - ${value?.model}`,
-                                  id: value.id,
-                                };
-                              })
+                              return {
+                                ...value,
+                                label: `${value?.manufacturer} - ${value?.model}`,
+                                id: value.id,
+                              };
+                            })
                             : allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.manufacturer} - ${value?.model}`,
-                                  id: value.id,
-                                };
-                              })
+                              return {
+                                ...value,
+                                label: `${value?.manufacturer} - ${value?.model}`,
+                                id: value.id,
+                              };
+                            })
                         }
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
@@ -606,19 +607,19 @@ const AddRuleModal = ({
                           options={
                             router.query.actionId
                               ? allMachincesList?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: `${value?.manufacturer} - ${value?.model}`,
-                                    id: value.id,
-                                  };
-                                })
+                                return {
+                                  ...value,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
+                                  id: value.id,
+                                };
+                              })
                               : allMachincesList?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: `${value?.manufacturer} - ${value?.model}`,
-                                    id: value.id,
-                                  };
-                                })
+                                return {
+                                  ...value,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
+                                  id: value.id,
+                                };
+                              })
                           }
                           style={clasess.dropDownListContainer}
                           placeholder={t("properties.statment")}
@@ -720,7 +721,7 @@ const AddRuleModal = ({
                   {rule.category?.id === "Property input" && (
                     <>
                       {rules[index]?.statement2?.type === 0 ||
-                      rules[index]?.statement2?.type === 5 ? (
+                        rules[index]?.statement2?.type === 5 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}
@@ -872,23 +873,41 @@ const AddRuleModal = ({
             </span>
           </div>
           {typeExceptionSelected === ETypeException.ADDITIONAL && (
-            <div style={{ width: "20%" }}>
-              <div style={clasess.selectTypeStyle}>
-                {t("products.profits.exceptions.additionalProfit")}
+            <div style={{ display: "flex", gap: 10 }}>
+              <div style={{ width: "20%" }}>
+                <div style={clasess.selectTypeStyle}>
+                  {t("products.profits.exceptions.additionalProfit")}
+                </div>
+                <GomakeTextInput
+                  type="number"
+                  placeholder={t("products.profits.exceptions.additionalProfit")}
+                  onChange={(e: any) => {
+                    setAdditionalProfit(e.target.value);
+                  }}
+                  style={{
+                    border: "0px",
+                    background: "#fff",
+                    borderRadius: 4,
+                    height: 40,
+                  }}
+                />
               </div>
-              <GomakeTextInput
-                type="number"
-                placeholder={t("products.profits.exceptions.additionalProfit")}
-                onChange={(e: any) => {
-                  setAdditionalProfit(e.target.value);
-                }}
-                style={{
-                  border: "0px",
-                  background: "#fff",
-                  borderRadius: 4,
-                  height: 40,
-                }}
-              />
+              <div style={{ width: "20%" }}>
+                <div style={clasess.selectTypeStyle}>
+                  {t("products.profits.exceptions.additionType")}
+                </div>
+                <GoMakeAutoComplate
+                  options={[
+                    { label: "percents", value: EAdditionType.PERCENTS },
+                    { label: "value", value: EAdditionType.VALUE },
+                  ]}
+                  placeholder={t("products.profits.exceptions.additionType")}
+                  style={clasess.autoComplateStyle}
+                  onChange={(e: any, value: any) => {
+                    setAdditionType(value?.value);
+                  }}
+                />
+              </div>
             </div>
           )}
           {typeExceptionSelected === ETypeException.PROFIT && (
