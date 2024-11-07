@@ -1,9 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { format } from 'date-fns';
-import { useDocumentsType, useGomakeAxios, useSnackBar } from "@/hooks";
+import { format } from "date-fns";
+import {
+  useCustomerDropDownList,
+  useDocumentsType,
+  useGomakeAxios,
+  useSnackBar,
+} from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { DocumentsTypeReportList } from "@/enums";
+import { DocumentsTypeReportList, EReportType } from "@/enums";
 import { endOfToday, startOfYear } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { useSetRecoilState } from "recoil";
@@ -11,24 +16,58 @@ import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetClientTypes } from "@/services/hooks";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 
-interface TransactionJournalReportWidgetProps {
-  isPayment: boolean;
+// export interface FilterState {
+//   fromCodeAccount: string;
+//   toCodeAccount: string;
+// }
+
+export interface FilterState {
+  fromAccount: string;
+  toAccount: string;
+  startDate: Date | null;
+  endDate: Date | null;
+  customerId: any;
 }
 
-const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidgetProps) => {
+interface TransactionJournalReportWidgetProps {
+  reportType: EReportType;
+}
+
+const useTransactionJournalReport = ({
+  reportType,
+}: TransactionJournalReportWidgetProps) => {
   const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const { documentsTypeList, documentType, handleDocumentTypeChange } = useDocumentsType();
-  const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
+  const { documentsTypeList, documentType, handleDocumentTypeChange } =
+    useDocumentsType();
   const [showTable, setShowTable] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
   const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
-
   // New states for customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
+  const isAccountingTransaction =
+    reportType === EReportType.AccountingTransaction;
+  const {
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+  } = useCustomerDropDownList({
+    shouldRenderCustomersOnMount: isAccountingTransaction,
+    shouldRenderSuppliersOnMount: false,
+  });
+
+  const [filterState, setFilterState] = useState<FilterState>({
+    fromAccount: "",
+    toAccount: "",
+    startDate: startOfYear(new Date()),
+    endDate: endOfToday(),
+    customerId: "",
+  });
 
   const getDocumentTypeName = (transType: number): string => {
     switch (transType) {
@@ -62,10 +101,10 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
           let documentPath;
           switch (data?.transType) {
             case DocumentsTypeReportList.Invoice:
-              documentPath = 'invoices';
+              documentPath = "invoices";
               break;
             case DocumentsTypeReportList.InvoiceRefund:
-              documentPath = 'invoiceRefunds';
+              documentPath = "invoiceRefunds";
               break;
             default:
               documentPath = null;
@@ -74,7 +113,11 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
             data?.dueDate?.split("T")[0],
             documentPath ? (
               <a
-                style={{ cursor: "pointer", color: "inherit", textDecoration: 'unset' }}
+                style={{
+                  cursor: "pointer",
+                  color: "inherit",
+                  textDecoration: "unset",
+                }}
                 href={`/${documentPath}?documentNumber=${data?.docNumber}`}
               >
                 {data?.docNumber}
@@ -87,10 +130,17 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
             data?.accountCode,
             data?.accountName,
             data?.cardCode,
-            <div style={{ cursor: "pointer" }} onClick={() => onClickOpenCustomerModal(data?.clientId)}>
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => onClickOpenCustomerModal(data?.clientId)}
+            >
               {data?.cardName}
             </div>,
-            isPayment ? data?.credit > 0 ? data?.credit?.toFixed(2) : data?.debit?.toFixed(2) : data?.credit?.toFixed(2),
+            reportType === EReportType.DailyPayments
+              ? data?.credit > 0
+                ? data?.credit?.toFixed(2)
+                : data?.debit?.toFixed(2)
+              : data?.credit?.toFixed(2),
           ];
         });
       }
@@ -98,31 +148,27 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     [dataTable]
   );
 
-  const tableHeaders = [
-    t("reports.dueDate"),
-    t("reports.documentNumber"),
-    t("reports.transType"),
-    t("reports.TransNumber"),
-    t("reports.AccountCode"),
-    t("reports.accountName"),
-    t("reports.cardcode"),
-    t("reports.cardname"),
-    isPayment ? `${t("reports.credit")} / ${t("reports.debit")}` : t("reports.credit"),
-  ];
-
-  const onSelectDeliveryTimeDates = (fromDate: Date, toDate: Date) => {
-    setResetDatePicker(false);
-    setFromDate(fromDate);
-    setToDate(toDate);
-  };
+  const tableHeaders = useMemo(() => {
+    const headers = [
+      t("reports.dueDate"),
+      t("reports.documentNumber"),
+      t("reports.transType"),
+      t("reports.TransNumber"),
+      t("reports.AccountCode"),
+      t("reports.accountName"),
+      t("reports.cardcode"),
+      t("reports.cardname"),
+    ];
+    if (reportType === EReportType.DailyPayments) {
+      headers.push(`${t("reports.credit")} / ${t("reports.debit")}`);
+    } else {
+      headers.push(t("reports.credit"));
+    }
+    return headers;
+  }, [t, reportType]);
 
   const onClickPrintCard = () => {
     ExportLedgerReportPDF();
-  };
-
-  const onClickShowCard = () => {
-    setShowTable(false);
-    getTransactionJournalReportFilter();
   };
 
   const ExportLedgerReportPDF = useCallback(async () => {
@@ -175,7 +221,10 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
       {
         startDate: formattedStartDate,
         endDate: formattedEndDate,
-        documentsType: isPayment ? DocumentsTypeReportList.Payments : documentType?.id,
+        documentsType:
+          reportType === EReportType.DailyPayments
+            ? DocumentsTypeReportList.Payments
+            : documentType?.id,
       }
     );
     if (res?.success) {
@@ -186,7 +235,35 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
       alertFaultGetData();
       setShowTable(false);
     }
-  }, [fromDate, toDate, documentType, isPayment]);
+  }, [fromDate, toDate, documentType, reportType]);
+
+  const getAccountingTransactionReportFilter = useCallback(async () => {
+    if (!filterState.startDate || !filterState.endDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+
+    const formattedStartDate = format(filterState.startDate, "yyyy-MM-dd");
+    const formattedEndDate = format(filterState.endDate, "yyyy-MM-dd");
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/get-accounting-transaction-report`,
+      {
+        ...filterState,
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+      }
+    );
+    if (res?.success) {
+      setDataTable(res.data?.data?.data);
+      alertSuccessGetData();
+      setShowTable(true);
+    } else {
+      alertFaultGetData();
+      setShowTable(false);
+    }
+  }, [customer, reportType, filterState]);
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
@@ -198,6 +275,12 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     }
   };
 
+  const onClickShowCard = () => {
+    setShowTable(false);
+    if (isAccountingTransaction) getAccountingTransactionReportFilter();
+    else getTransactionJournalReportFilter();
+  };
+
   const onClickOpenCustomerModal = async (customerId) => {
     const callBack = (res) => {
       if (res.success) {
@@ -207,7 +290,10 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     };
     await getAndSetCustomerById(callApi, callBack, { customerId });
   };
-  const setClientTypesCategories = useSetRecoilState(clientTypesCategoriesState);
+
+  const setClientTypesCategories = useSetRecoilState(
+    clientTypesCategoriesState
+  );
 
   const getClientTypesCategories = async () => {
     const callBack = (res) => {
@@ -220,21 +306,52 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
         setClientTypesCategories(clientTypes);
       }
     };
-    await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
+    await getAndSetClientTypes(callApi, callBack, {
+      cardType: CLIENT_TYPE_Id.CUSTOMER,
+    });
   };
 
   useEffect(() => {
     getClientTypesCategories();
   }, []);
+
+  // NEW
+  const label = (() => {
+    switch (reportType) {
+      case EReportType.TransactionJournal:
+        return t("tabs.transactionJournalReport");
+      case EReportType.DailyPayments:
+        return t("tabs.dailyPaymentsReport");
+      case EReportType.AccountingTransaction:
+        return t("tabs.accountingTransactionReport");
+      default:
+        return "";
+    }
+  })();
+
+  const handleDatesChange = (value) => {
+    if (value && value.length === 2) {
+      setFilterState((prevState) => ({
+        ...prevState,
+        startDate: value[0],
+        endDate: value[1],
+      }));
+    } else {
+      setFilterState((prevState) => ({
+        ...prevState,
+        startDate: null,
+        endDate: null,
+      }));
+    }
+  };
+
   return {
     t,
-    onSelectDeliveryTimeDates,
     handleDocumentTypeChange,
     onClickPrintCard,
     onClickShowCard,
     getTableDataRows,
     documentType,
-    resetDatePicker,
     documentsTypeList,
     showTable,
     tableHeaders,
@@ -246,7 +363,18 @@ const useTransactionJournalReport = ({ isPayment }: TransactionJournalReportWidg
     setShowCustomerModal,
     customerForEdit,
     setCustomerForEdit,
-    onClickOpenCustomerModal
+    onClickOpenCustomerModal,
+    //?new
+    label,
+    filterState,
+    setFilterState,
+
+    handleDatesChange,
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
+    customer,
+    handleCustomerChange,
   };
 };
 
