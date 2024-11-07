@@ -77,6 +77,7 @@ const AddRuleModal = ({
     actionEmployeeList,
     isFetching,
     getConditionText,
+    setAdditionType
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -94,7 +95,6 @@ const AddRuleModal = ({
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
-  const [additionType, setAdditionType] = useState<number>(null);
   const router = useRouter();
 
   const [selectedOutputs, setSelectedOutputs] =

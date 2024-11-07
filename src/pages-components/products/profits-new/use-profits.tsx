@@ -456,7 +456,6 @@ const useNewProfits = () => {
     let defaultTransitionValue = Transition.find(
       (item) => item?.value === selectedPricingTableItems?.transitionType
     );
-    console.log("defaultTransitionValue", defaultPricingByValue)
     if (defaultPricingByValue?.value === EPricingBy.PACKAGE) {
       setQuantityOfPackages(actionProfitByActionId?.packageUnit);
       setSelectedPricingBy(defaultPricingByValue);
@@ -508,6 +507,7 @@ const useNewProfits = () => {
           getProfitsPricingTables();
           getAllActionProfitRowsByActionId();
         }
+        setSelectedActionProfitRow(null);
       } else {
         alertFaultUpdate();
       }
@@ -549,6 +549,7 @@ const useNewProfits = () => {
           getProfitsPricingTables();
           getAllActionProfitRowsByActionId();
         }
+        setSelectedActionProfitRow(null);
       } else {
         alertFaultUpdate();
       }
@@ -684,6 +685,8 @@ const useNewProfits = () => {
           getAllActionProfitRowsByActionId();
         }
         getActionProfitByActionId();
+        setSelectedActionProfitRow(null);
+
       } else {
         alertFaultUpdate();
       }

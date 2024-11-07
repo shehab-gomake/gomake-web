@@ -2,6 +2,7 @@ import { MoreCircleIcon } from "@/icons";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
+import { EAdditionType } from "@/enums";
 
 const AdditionsAndExceptionsMapping = ({
   item,
@@ -53,7 +54,7 @@ const AdditionsAndExceptionsMapping = ({
             {t("products.profits.exceptions.value")}
           </div>
           <div style={clasess.valueStyle}>
-            {item?.profitValue} %
+            {item?.profitValue} {item?.additionType === EAdditionType.PERCENTS && "%"}
           </div>
         </div>
         <div
