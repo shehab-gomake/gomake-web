@@ -2924,10 +2924,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     parameterId: string,
     sectionId: string,
     subSectionId: string,
-    parameters: any[]
+    parameters: any[],
+    productTemplateCopy
   ) => {
     // Find the parameter in the productTemplate
-    const productTemplateCopy = cloneDeep(productTemplate);
+    //const productTemplateCopy = cloneDeep();
     const section = productTemplateCopy.sections.find(
       (section) => section.id === sectionId
     );
@@ -2947,6 +2948,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         );
 
         if (relatedParameter) {
+          
           let valueToAdd = null;
           let valueIds = null;
 
@@ -3004,15 +3006,143 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 isGeneralInfoInProductionFloor:
                   relatedParameter?.isGeneralInfoInProductionFloor,
               });
+              const parameterValue = relatedParameter.valuesConfigs.find(
+                  (x) => x.id === valueIds
+              );
+              let actionIndex = relatedParameter.actionIndex
+              if (
+                  relatedParameter.materialPath &&
+                  relatedParameter.materialPath.length > 0
+              ) {
+                debugger;
+                const materialPath =
+                    relatedParameter.materialPath[
+                    relatedParameter.materialPath.length - 1
+                        ];
+                const materialRelatedParameters = subSection.parameters.filter(
+                    (x) =>
+                        x.id !== relatedParameter.id &&
+                        x.actionIndex === actionIndex &&
+                        x.materialPath?.find((y) => compareStrings(y, materialPath))
+                );
+                if (materialRelatedParameters?.length > 0) {
+                  parameters = parameters.filter((subProduct) => {
+                    if (subProduct.actionIndex !== actionIndex) {
+                      return true
+                    }
+                    return !materialRelatedParameters.some(
+                        (materialParameter) =>
+                            materialParameter.id === subProduct.parameterId
+                    );
+                  });
+                }
 
+                materialRelatedParameters?.forEach((param) => {
+                  if (param.materialPath && param.materialPath.length > 0) {
+                    const materialPath =
+                        param.materialPath[param.materialPath.length - 1];
+                    const index = param.materialPath.findIndex((x) =>
+                        compareStrings(x, materialPath)
+                    );
+                    let allMaterialsCopy = cloneDeep(allMaterials);
+                    let paramMaterialValues = [];
+                    if (index > 0) {
+                      allMaterialsCopy = allMaterialsCopy?.find((x) =>
+                          compareStrings(x.pathName, param.materialPath[0])
+                      )?.data;
+                      for (let i = 0; i <= index; i++) {
+                        const prevPath = param.materialPath[i];
+                        const prevPathParam = subSection.parameters.find(
+                            (x) =>
+                                x.materialPath &&
+                                x.materialPath.length > i &&
+                                x.materialPath[i] === prevPath &&
+                                x.actionIndex === actionIndex
+                        );
+                        let prevPathParamDefaultValue = parameters.find(
+                            (x) => x.parameterId === prevPathParam.id && x.actionIndex === actionIndex
+                        );
+
+                        if (
+                            prevPathParamDefaultValue &&
+                            prevPathParamDefaultValue?.valueIds &&
+                            prevPathParamDefaultValue?.valueIds.length
+                        ) {
+                          allMaterialsCopy = allMaterialsCopy?.find(
+                              (x) =>
+                                  x.valueId === prevPathParamDefaultValue?.valueIds[0]
+                          )?.data;
+                        } else {
+                          // allMaterialsCopy = []
+                        }
+                      }
+                      paramMaterialValues = allMaterialsCopy;
+                    } else if (index === 0) {
+                      allMaterialsCopy = allMaterialsCopy.find((x) =>
+                          compareStrings(x.pathName, materialPath)
+                      )?.data;
+                      paramMaterialValues = allMaterialsCopy?.find((x) =>
+                          parameterValue?.values?.find((y) => y === x.valueId)
+                      )?.data;
+                    }
+                    param.valuesConfigs = [];
+                    //param.isHidden = false;
+                    paramMaterialValues?.forEach((val) => {
+                      param.valuesConfigs.push({
+                        id: val.valueId,
+                        activateAction: false,
+                        isDefault: false,
+                        isDeleted: false,
+                        isHidden: false,
+                        materialValueIds: null,
+                        selectedParameterValues: null,
+                        updateName: val.value,
+                        values: [val.valueId],
+                        additionalAttribute: val?.additionalAttribute,
+                        currency: val?.currency,
+                      });
+                    });
+                    param.valuesConfigs = param.valuesConfigs.filter(
+                        (x) => x.values && x.values.length > 0
+                    );
+                    if (
+                        param?.valuesConfigs &&
+                        param?.valuesConfigs?.length === 1 &&
+                        param?.isRequired
+                    ) {
+                      param.valuesConfigs[0].isDefault = true;
+                      parameters.push({
+                        parameterId: param?.id,
+                        parameterName: param?.name,
+                        actionId: param?.actionId,
+                        parameterType: param?.parameterType,
+                        isQuantityParameter: param?.isQuantityParameter,
+                        valueIds: param?.valuesConfigs[0]?.values,
+                        values: [param?.valuesConfigs[0]?.updateName],
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: param?.actionIndex,
+                        parameterCode: param?.code,
+                        valuesConfigs: param?.valuesConfigs,
+                        unitKey: param?.unitKey,
+                        unitType: param?.unitType,
+                        isGeneralInfoInProductionFloor:
+                        param?.isGeneralInfoInProductionFloor,
+                      });
+                    }
+                  }
+                });
+              }
               // Recursively add related parameters for the newly added parameter
               addRelatedParametersWithDefaultValues(
                 relatedParameter.id,
                 sectionId,
                 subSectionId,
-                parameters
+                parameters,
+                productTemplateCopy
               );
             }
+            
           }
         }
       });
@@ -3109,7 +3239,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           parameterId,
           sectionId,
           subSectionId,
-          temp
+          temp,
+            productTemplateCopy
         );
       }
       if (subSectionParameter) {
