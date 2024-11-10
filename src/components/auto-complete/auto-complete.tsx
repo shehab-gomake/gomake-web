@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Collapse, Divider, Stack } from "@mui/material";
 import { DownIcon, UpIcon } from "./icons";
 import CircularProgress from "@mui/material/CircularProgress";
+import { adaptMarginRight } from "@/utils/adapter";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
@@ -113,6 +114,7 @@ const GoMakeAutoComplate = ({
   groupBy,
   renderGroup,
   loading, // Add loading prop
+  startIcon,
 }: {
   value?: any;
   onChange?: any;
@@ -137,10 +139,12 @@ const GoMakeAutoComplate = ({
   groupBy?: (option: any) => string;
   renderGroup?: (params: any) => React.ReactNode;
   loading?: boolean; // Add loading prop
+  startIcon?: React.ReactNode; // Add startIcon as a React node
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
 
   useEffect(() => {
     if (value?.name) {
@@ -212,6 +216,13 @@ const GoMakeAutoComplate = ({
           onChange={onChangeTextField || params.onChange}
           InputProps={{
             ...params.InputProps,
+            ...(startIcon && {
+              startAdornment: (
+                <div style={{ display: "flex", marginLeft: "10px" }}>
+                  {startIcon}
+                </div>
+              ),
+            }), // Add startIcon here
             ...(loading && {
               endAdornment: (
                 <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
@@ -220,6 +231,21 @@ const GoMakeAutoComplate = ({
           }}
         />
       )}
+      // renderInput={(params: any) => (
+      //   <TextField
+      //     {...params}
+      //     placeholder={defaultValue?.label || placeholder}
+      //     onChange={onChangeTextField || params.onChange}
+      //     InputProps={{
+      //       ...params.InputProps,
+      //       ...(loading && {
+      //         endAdornment: (
+      //           <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
+      //         ),
+      //       }),
+      //     }}
+      //   />
+      // )}
       loading={loading} // Pass loading prop to show spinner
       defaultValue={defaultValue}
       autoHighlight={autoHighlight}

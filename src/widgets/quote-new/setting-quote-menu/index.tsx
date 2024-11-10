@@ -7,7 +7,7 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { quoteItemState } from "@/store";
 import { useRecoilValue } from "recoil";
-import SyncIcon from '@mui/icons-material/Sync';
+import SyncIcon from "@mui/icons-material/Sync";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { useTranslation } from "react-i18next";
@@ -17,27 +17,56 @@ import { Check } from "@mui/icons-material";
 import { DiscountType, SortByTypes } from "@/enums";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
-const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, setIsUpdateExchangeRate, isUpdateExchangeRate, onBlurCurrency, isUpdateCurrency, setIsUpdateCurrency, updateCurrency, onClickRefresh, sortDocumentItems, updateIsShowDetails, updateIsShowPrices, updateDiscountType, documentType, getQuote }) => {
+const SettingQuoteMenu = ({
+  handleClose,
+  open,
+  anchorEl,
+  onBlurExchangeRate,
+  setIsUpdateExchangeRate,
+  isUpdateExchangeRate,
+  onBlurCurrency,
+  isUpdateCurrency,
+  setIsUpdateCurrency,
+  updateCurrency,
+  onClickRefresh,
+  sortDocumentItems,
+  updateIsShowDetails,
+  updateIsShowPrices,
+  updateDiscountType,
+  documentType,
+  getQuote,
+}) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const { getCurrenciesApi } = useCompanyProfile();
-  const [detailsView, setDetailsView] = useState(quoteStateValue?.isShowDetails)
-  const [showPrices, setShowPrices] = useState(quoteStateValue?.isShowPrice)
-  const currencies = useRecoilValue<{ label: string, value: string }[]>(currenciesState);
-  const matchingCurrency = currencies.find(currency => currency.value === quoteStateValue?.currency)?.label;
-  const [exchangeRate, setExchangeRate] = useState(quoteStateValue?.exchangeRate || "-");
-  const [anchorElTableSorting, setAnchorElTableSorting] = useState<null | HTMLElement>(null);
+  const [detailsView, setDetailsView] = useState(
+    quoteStateValue?.isShowDetails
+  );
+  const [showPrices, setShowPrices] = useState(quoteStateValue?.isShowPrice);
+  const currencies =
+    useRecoilValue<{ label: string; value: string }[]>(currenciesState);
+  const matchingCurrency = currencies.find(
+    (currency) => currency.value === quoteStateValue?.currency
+  )?.label;
+  const [exchangeRate, setExchangeRate] = useState(
+    quoteStateValue?.exchangeRate || "-"
+  );
+  const [anchorElTableSorting, setAnchorElTableSorting] =
+    useState<null | HTMLElement>(null);
   const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
-  const [anchorElBudget, setAnchorElBudget] = useState<null | HTMLElement>(null);
-  const [anchorElAutomaticDiscount, setAnchorElAutomaticDiscount] = useState<null | HTMLElement>(null);
+  const [anchorElBudget, setAnchorElBudget] = useState<null | HTMLElement>(
+    null
+  );
+  const [anchorElAutomaticDiscount, setAnchorElAutomaticDiscount] =
+    useState<null | HTMLElement>(null);
   const openTableSorting = Boolean(anchorElTableSorting);
   const openAutomaticDiscount = Boolean(anchorElAutomaticDiscount);
   const openBudget = Boolean(anchorElBudget);
   useEffect(() => {
-    setDetailsView(quoteStateValue?.isShowDetails)
-    setShowPrices(quoteStateValue?.isShowPrice)
-  }, [quoteStateValue?.isShowDetails, quoteStateValue?.isShowPrice])
+    setDetailsView(quoteStateValue?.isShowDetails);
+    setShowPrices(quoteStateValue?.isShowPrice);
+  }, [quoteStateValue?.isShowDetails, quoteStateValue?.isShowPrice]);
 
   useEffect(() => {
     setExchangeRate(quoteStateValue?.exchangeRate || "-");
@@ -48,13 +77,15 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
   }, []);
 
   const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
-    setDetailsView(event.target.checked)
-    updateIsShowDetails()
+    setDetailsView(event.target.checked);
+    updateIsShowDetails();
   };
 
-  const handleSwitchCheckForShowPrice = (event: ChangeEvent<HTMLInputElement>) => {
-    setShowPrices(event.target.checked)
-    updateIsShowPrices()
+  const handleSwitchCheckForShowPrice = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setShowPrices(event.target.checked);
+    updateIsShowPrices();
   };
 
   const handleTableSorting = (event: React.MouseEvent<HTMLElement>) => {
@@ -88,7 +119,7 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
       default:
         return <div> {t("sales.quote.none")}</div>;
     }
-  }
+  };
   const _renderSortingBy = (type: SortByTypes) => {
     switch (type) {
       case SortByTypes.Date:
@@ -98,7 +129,7 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
       case SortByTypes.WorkNameABC:
         return <div>{t("sales.quote.jobName")}</div>;
     }
-  }
+  };
 
   return (
     <>
@@ -114,17 +145,20 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
             className="table-sorting"
             style={classes.menuTabStyle}
           >
-            {
-              quoteStateValue?.sortType !== null ?
-                <div style={classes.selectedTabStyle}>
-                  <div style={classes.mainTabContainer}>{t("sales.quote.tableSortingBy")}
-                    <DotIcon />
-                  </div>
-                  <div style={classes.selectedTabContainer} >
-                    <Check style={{ width: 16, height: 16 }} /> {_renderSortingBy(quoteStateValue?.sortType)}
-                  </div>
-                </div> : t("sales.quote.tableSortingBy")
-            }
+            {quoteStateValue?.sortType !== null ? (
+              <div style={classes.selectedTabStyle}>
+                <div style={classes.mainTabContainer}>
+                  {t("sales.quote.tableSortingBy")}
+                  <DotIcon />
+                </div>
+                <div style={classes.selectedTabContainer}>
+                  <Check style={{ width: 16, height: 16 }} />{" "}
+                  {_renderSortingBy(quoteStateValue?.sortType)}
+                </div>
+              </div>
+            ) : (
+              t("sales.quote.tableSortingBy")
+            )}
           </div>
 
           <Divider />
@@ -133,81 +167,64 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
             className="table-sorting"
             style={classes.menuTabStyle}
           >
-            {
-              quoteStateValue?.discountType !== null ?
-                <div style={classes.selectedTabStyle}>
-                  <div style={classes.mainTabContainer}>{t("sales.quote.automaticDiscount")}
-                    <DotIcon />
-                  </div>
-                  <div style={classes.selectedTabContainer} >
-                    <Check style={{ width: 16, height: 16 }} /> {_renderSelectionType(quoteStateValue?.discountType)}
-                  </div>
-                </div> : t("sales.quote.automaticDiscount")
-            }
+            {quoteStateValue?.discountType !== null ? (
+              <div style={classes.selectedTabStyle}>
+                <div style={classes.mainTabContainer}>
+                  {t("sales.quote.automaticDiscount")}
+                  <DotIcon />
+                </div>
+                <div style={classes.selectedTabContainer}>
+                  <Check style={{ width: 16, height: 16 }} />{" "}
+                  {_renderSelectionType(quoteStateValue?.discountType)}
+                </div>
+              </div>
+            ) : (
+              t("sales.quote.automaticDiscount")
+            )}
           </div>
           <Divider />
-          {(documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.deliveryNote) && (
-            <>
-              <div
-                onClick={handleBudget}
-                className="table-sorting"
-                style={classes.menuTabStyle}
-              >
-                {
-                  quoteStateValue?.budgetName !== null ?
-                    <div style={classes.selectedTabStyle}>
-                      <div style={classes.mainTabContainer}>{t("sales.quote.budget")}
-                        <DotIcon />
-                      </div>
-                      <div style={classes.selectedTabContainer} >
-                        <Check style={{ width: 16, height: 16 }} /> {quoteStateValue?.budgetName}
-                      </div>
-                    </div> : t("sales.quote.budget")
-                }
-              </div>
-              <Divider />
-            </>
-          )}
-
-
           <div style={classes.menuRowStyle}>
             <div style={classes.menuTabStyle}>{t("sales.quote.details")}</div>
-            <SecondSwitch
-              checked={detailsView}
-              onChange={handleSwitchCheck}
-            />
+            <SecondSwitch checked={detailsView} onChange={handleSwitchCheck} />
           </div>
           <Divider />
           <div style={classes.menuRowStyle}>
-            <div style={classes.menuTabStyle}>{t("sales.quote.showPrices")}</div>
+            <div style={classes.menuTabStyle}>
+              {t("sales.quote.showPrices")}
+            </div>
             <SecondSwitch
               checked={showPrices}
               onChange={handleSwitchCheckForShowPrice}
             />
           </div>
-          {quoteStateValue?.isForeignCurrency && <>
-            <Divider />
-            <div style={classes.menuRowStyle}>
-              <div style={classes.menuTabStyle}>{t("sales.quote.exchangeRate")}</div>
-              <InputUpdatedValues
-                value={exchangeRate}
-                onBlur={() => onBlurExchangeRate(exchangeRate)}
-                isUpdate={isUpdateExchangeRate}
-                setIsUpdate={setIsUpdateExchangeRate}
-                onInputChange={(v) => setExchangeRate(v)}
-              />
-              <IconButton onClick={onClickRefresh}>
-                <SyncIcon />
-              </IconButton>
-            </div></>}
+          {quoteStateValue?.isForeignCurrency && (
+            <>
+              <Divider />
+              <div style={classes.menuRowStyle}>
+                <div style={classes.menuTabStyle}>
+                  {t("sales.quote.exchangeRate")}
+                </div>
+                <InputUpdatedValues
+                  value={exchangeRate}
+                  onBlur={() => onBlurExchangeRate(exchangeRate)}
+                  isUpdate={isUpdateExchangeRate}
+                  setIsUpdate={setIsUpdateExchangeRate}
+                  onInputChange={(v) => setExchangeRate(v)}
+                />
+                <IconButton onClick={onClickRefresh}>
+                  <SyncIcon />
+                </IconButton>
+              </div>
+            </>
+          )}
           <Divider />
           <div style={classes.menuRowStyle}>
             <div style={classes.menuTabStyle}>{t("sales.quote.currency")}</div>
             <AutoCompleteUpdatedValue
               value={matchingCurrency}
-              options={currencies.map(currency => ({
+              options={currencies.map((currency) => ({
                 value: currency.value,
-                text: currency.label
+                text: currency.label,
               }))}
               onBlur={onBlurCurrency}
               isUpdate={isUpdateCurrency}
@@ -231,7 +248,6 @@ const SettingQuoteMenu = ({ handleClose, open, anchorEl, onBlurExchangeRate, set
         anchorEl={anchorElAutomaticDiscount}
         updateDiscountType={updateDiscountType}
       />
-
     </>
   );
 };
