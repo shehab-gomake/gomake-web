@@ -13,7 +13,7 @@ import {
   GoMakeDeleteModal,
 } from "@/components";
 import { HeaderTitle } from "@/widgets";
-import { BudgetIcon, DotIcon, SettingNewIcon } from "@/icons";
+import { ArrowDownNewIcon, BudgetIcon, DotIcon, SettingNewIcon } from "@/icons";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useQuoteNew } from "./use-quote";
 import { quoteConfirmationState, quoteItemState } from "@/store";
@@ -417,7 +417,8 @@ const QuoteNewPageWidget = ({
                       documentType === DOCUMENT_TYPE.deliveryNote) &&
                       allClientActiveBudgets.length !== 0 && (
                         <GoMakeAutoComplate
-                          startIcon={<BudgetIcon width={20} height={20} />} // Pass your icon here
+                          startIcon={<BudgetIcon width={20} height={20} />}
+                          arrowIcon={<ArrowDownNewIcon color="#344054" />}
                           options={allClientActiveBudgets}
                           style={classes.budgetList}
                           placeholder={t("sales.quote.budget")}

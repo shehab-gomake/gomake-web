@@ -155,7 +155,7 @@ const useStyle = (isQuoteConfirmation) => {
           "1px solid var(--Component-colors-Components-Buttons-Secondary-button-secondary-border, #D0D5DD)",
         ...FONT_FAMILY.Lexend(500, 14),
         "& input::placeholder": {
-          color: "#000000 !important",
+          color: "#344054 !important",
           fontFamily: "Inter !important",
           fontWeight: 600,
           fontSize: "14px !important",

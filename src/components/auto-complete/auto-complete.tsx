@@ -107,15 +107,14 @@ const GoMakeAutoComplate = ({
   defaultValue,
   disabled,
   multiple = false,
-  arrowColor,
   onChangeTextField,
   PaperComponent,
   withArrow = false,
   groupBy,
-  renderGroup,
   loading, // Add loading prop
   defaultFiltering = true,
   startIcon,
+  arrowIcon,
 }: {
   value?: any;
   onChange?: any;
@@ -133,15 +132,14 @@ const GoMakeAutoComplate = ({
   defaultValue?: any;
   multiple?: any;
   disabled?: any;
-  arrowColor?: any;
   onChangeTextField?: any;
   PaperComponent?: any;
   withArrow?: boolean;
   groupBy?: (option: any) => string;
-  renderGroup?: (params: any) => React.ReactNode;
   loading?: boolean; // Add loading prop
   defaultFiltering?: boolean;
-  startIcon?: React.ReactNode; // Add startIcon as a React node
+  startIcon?: React.ReactNode;
+  arrowIcon?: React.ReactNode;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -188,8 +186,7 @@ const GoMakeAutoComplate = ({
       style={style}
       options={options}
       disabled={disabled}
-      popupIcon={withArrow ? <ArrowDropDownIcon /> : ""}
-      groupBy={groupBy}
+      popupIcon={withArrow ? arrowIcon || <ArrowDropDownIcon /> : null}
       renderGroup={(params) => (
         <div key={params.key}>
           <GroupHeader onClick={() => toggleGroup(params.group)}>
@@ -224,7 +221,7 @@ const GoMakeAutoComplate = ({
                   {startIcon}
                 </div>
               ),
-            }), // Add startIcon here
+            }),
             ...(loading && {
               endAdornment: (
                 <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
@@ -233,21 +230,6 @@ const GoMakeAutoComplate = ({
           }}
         />
       )}
-      // renderInput={(params: any) => (
-      //   <TextField
-      //     {...params}
-      //     placeholder={defaultValue?.label || placeholder}
-      //     onChange={onChangeTextField || params.onChange}
-      //     InputProps={{
-      //       ...params.InputProps,
-      //       ...(loading && {
-      //         endAdornment: (
-      //           <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
-      //         ),
-      //       }),
-      //     }}
-      //   />
-      // )}
       loading={loading} // Pass loading prop to show spinner
       defaultValue={defaultValue}
       autoHighlight={autoHighlight}
