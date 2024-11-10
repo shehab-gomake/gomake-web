@@ -502,3 +502,6 @@ df-messenger {
 .rs-input {
   padding-right: 10px !important;
 }
+.MuiInputBase-root input{
+  border: none !important;
+}

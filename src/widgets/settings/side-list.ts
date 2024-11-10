@@ -1,6 +1,5 @@
 import { IListItem } from "@/components/containers/interface";
 import { ProductsSettingsWidget } from "@/widgets/products-settings-widget/products-settings-widget";
-import { EmptyComponent } from "@/widgets/settings/empty-component";
 import { ProfileIcon } from "@/components/icons/profile-icon";
 import { SmsIcon } from "@/components/icons/sms-icon";
 import { ProductsSettingsIcon } from "@/components/icons/products-settings-icon";
@@ -16,6 +15,8 @@ import { TranslationsWidget } from "../translation-widget/translation-widget";
 import {Permissions} from "@/components/CheckPermission/enum";
 import { FinancesWidget } from "../finances";
 
+import { BudgetIcon } from "@/icons";
+import { PriceProfitWidge } from "../price-profit-widge";
 export const list: IListItem[] = [
   {
     component: SettingsProfileWidget,
@@ -72,9 +73,17 @@ export const list: IListItem[] = [
     permission: Permissions.SHOW_FINANCE,
   },
   {
+    component: PriceProfitWidge,
+    text: "settings.priceProfit",
+    value: "8",
+    // permission: Permissions.TRANSLATION_ADMIN, ASK MOHAND
+    icon: BudgetIcon,
+    path: "price-profit",
+  },
+  {
     component: TranslationsWidget,
     text: "settings.translations",
-    value: "8",
+    value: "9",
     permission: Permissions.TRANSLATION_ADMIN,
     icon: DocumentIcon,
     path: "translations",
