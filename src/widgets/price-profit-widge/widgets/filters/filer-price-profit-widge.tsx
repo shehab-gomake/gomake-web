@@ -20,7 +20,7 @@ const FilterPriceProfitWidget = () => {
           withArrow={true}
         />
       </div>
-      <div style={classes.searchContainer}>
+      {/* <div style={classes.searchContainer}>
         <SearchInputComponent onChange={() => { }}
           searchInputStyle={classes.searchInputStyle}
         />
@@ -28,7 +28,7 @@ const FilterPriceProfitWidget = () => {
           style={classes.filtersBtn}
           leftIcon={<FilterIcon />}
         >{t("Filters")} </GomakePrimaryButton>
-      </div>
+      </div> */}
     </div>
   );
 };
