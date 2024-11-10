@@ -1299,9 +1299,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   defaultValue = defualtValueConfig.id;
                 }
               }
-              // if (relatedToParameter && !defaultValue) {
-              //   parameter.isHidden = true;
-              // }
+              if (relatedToParameter && (!defaultValue || defaultValue === "false")) {
+                 parameter.isHidden = true;
+              }
+              const parameterDefaultValue = parameter.valuesConfigs?.find(
+                  (x) => x.isDefault
+              );
+              if(relatedToParameter && relatedToParameter.relatedParameters){
+                let relationConfigs = relatedToParameter.relatedParameters.find(x=>x.parameterId === parameter.id);
+                if(relationConfigs && relationConfigs.activateByAllValues && !parameterDefaultValue ){
+                  parameter.isHidden = true;
+                }
+                else if(!(relationConfigs && relationConfigs.selectedValueIds && parameterDefaultValue && relationConfigs.selectedValueIds.find(x=> x === parameterDefaultValue.id ))){
+                  parameter.isHidden = true;
+                }
+              }
               if (!relatedToParameter) {
                 if (
                   (parameter?.parameterType ===
@@ -1426,10 +1438,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
                 }
 
-                const defaultValue = parameter.valuesConfigs?.find(
-                  (x) => x.isDefault
-                );
-                if (defaultValue) {
+                
+                
+                if (parameterDefaultValue) {
+                  
                   const materialPath =
                     parameter.materialPath[parameter.materialPath.length - 1];
                   const materialRelatedParameters =
@@ -1490,7 +1502,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           compareStrings(x.pathName, materialPath)
                         )?.data;
                         paramMaterialValues = allMaterialsCopy?.find((x) =>
-                          defaultValue?.values?.find((y) => y === x.valueId)
+                            parameterDefaultValue?.values?.find((y) => y === x.valueId)
                         )?.data;
                       }
                       if (
@@ -1513,12 +1525,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         param.valuesConfigs = param.valuesConfigs.filter(
                           (x) => x.values && x.values.length > 0
                         );
-                        paramMaterialValues?.forEach((val) => {
+                        for(let i = 0 ; i < paramMaterialValues?.length;i++){
+                          let val = paramMaterialValues[i];
                           const existsValue = param.valuesConfigs?.find(
-                            (x) =>
-                              x.valueIds &&
-                              x.valueIds.length > 0 &&
-                              x.valueIds[0] === val.valueId
+                              (x) =>
+                                  (x.valueIds &&
+                                  x.valueIds.length > 0 &&
+                                  x.valueIds[0] === val.valueId) || (x.id === val.valueId)
                           );
                           if (!existsValue) {
                             param.valuesConfigs.push({
@@ -1534,14 +1547,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               additionalAttribute: val?.additionalAttribute,
                               currency: val?.currency,
                             });
-                          } else {
+                          }
+                          else {
                             existsValue.id = val.valueId;
                             existsValue.updateName = val.value;
                             (existsValue.additionalAttribute =
-                              val?.additionalAttribute),
-                              (existsValue.currency = val?.currency);
+                                val?.additionalAttribute),
+                                (existsValue.currency = val?.currency);
                           }
-                        });
+                        }
                         if (
                           param?.valuesConfigs &&
                           param?.valuesConfigs?.length === 1 &&
@@ -3014,7 +3028,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   relatedParameter.materialPath &&
                   relatedParameter.materialPath.length > 0
               ) {
-                debugger;
                 const materialPath =
                     relatedParameter.materialPath[
                     relatedParameter.materialPath.length - 1
