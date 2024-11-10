@@ -95,6 +95,18 @@ const useStyle = () => {
         menuItemReviewText: {
           ...FONT_FAMILY.Lexend(500, 14),
           color: "#344054",
+        },
+        viewAllContainer: {
+          display: "flex",
+          flexDirection: "row" as "row",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          ...FONT_FAMILY.Lexend(500, 16),
+          color: "#2E3092",
+          width: "100%",
+          gap: 8,
+          padding: "16px",
+          cursor: "pointer"
         }
     };
   }, []);

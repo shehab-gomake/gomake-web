@@ -36,7 +36,23 @@ const useStyle = () => {
         borderRadius:8,
         backgroundColor:"transparent",
         border:"1px solid #E0E0E0"
-      }
+      },
+      menuContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: 10,
+      },
+      menuItemReviewContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        gap: 8,
+        justifyContent: "flex-start",
+        alignItems: "center"
+      },
+      menuItemReviewText: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: "#667085",
+      },
     };
   }, []);
   return {

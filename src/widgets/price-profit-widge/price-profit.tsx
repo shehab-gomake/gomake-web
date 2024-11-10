@@ -13,8 +13,12 @@ const PriceProfitWidge = () => {
     anchorEl,
     selectedProduct,
     products,
+    anchorElSetting,
+    openSetting,
     handleClose,
     handleOpen,
+    handleOpenSetting,
+    handleCloseSetting,
     handleCheckboxChange,
     handleRestoreOriginalPrice,
     handleUpdateNewPrice,
@@ -24,7 +28,7 @@ const PriceProfitWidge = () => {
 
   return (
     <div style={classes.mainContainer}>
-      <PriceProfitHeaderWidget />
+      <PriceProfitHeaderWidget handleClose={handleCloseSetting} anchorEl={anchorElSetting} open={openSetting} handleOpen={handleOpenSetting} />
       <Divider style={classes.divider} />
       <FilterPriceProfitWidget />
       <PriceProfitTable

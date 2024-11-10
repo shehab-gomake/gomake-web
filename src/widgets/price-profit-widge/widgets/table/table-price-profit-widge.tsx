@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useStyle } from './style';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, MenuItem } from '@mui/material';
-import { CheckboxCheckedIcon, CheckboxIcon, Warning2Icon } from '@/icons';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, MenuItem, Divider } from '@mui/material';
+import { CheckboxCheckedIcon, CheckboxIcon, PlusIcon, Warning2Icon } from '@/icons';
 import { GoMakeMenu } from '@/components';
-import { ReStoreIcon } from './icons/restore-icon';
+
 import { UpdatedPriceIcon } from './icons/update-icon';
+import { ReStoreIcon } from './icons/restore-icon';
 import { ReviewIcon } from './icons/review-icon';
+import { useStyle } from './style';
 
 interface PriceProfitTableProps {
   headers: any[];
@@ -39,6 +40,8 @@ const PriceProfitTable = ({
   setSelectedProduct
 }: PriceProfitTableProps) => {
   const { classes } = useStyle()
+  const [showAllProducts, setShowAllProducts] = useState(false); // New state variable
+
 
   return (
     <TableContainer>
@@ -64,7 +67,7 @@ const PriceProfitTable = ({
         </TableHead>
         <TableBody>
           {products?.data?.map((product, index) => (
-            !product.IsHidden && (
+            (showAllProducts || !product.IsHidden) && (
               <TableRow key={index}>
                 <TableCell sx={classes.tableBodyCell} style={product?.IsSelected ? { borderLeft: "6px solid #11A5EC" } : {}}>
                   <Checkbox
@@ -99,6 +102,11 @@ const PriceProfitTable = ({
           ))}
         </TableBody>
       </Table>
+      <div style={classes.viewAllContainer} onClick={() => setShowAllProducts(!showAllProducts)}>
+        <PlusIcon stroke="#2E3092" width={16} height={16} />
+        {showAllProducts ? "Hide hidden" : "View all"}
+      </div>
+      <Divider />
       <GoMakeMenu
         handleClose={handleClose}
         open={open}
