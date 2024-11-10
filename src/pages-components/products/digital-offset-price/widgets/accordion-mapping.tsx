@@ -25,15 +25,15 @@ const AccordionMappingWidget = ({
   )?.parameters;
   const hasMatchingParameter = (parameterList, subSection) => {
     for (let param of subSection.parameters) {
-      let matchingParameter = parameterList?.find(p =>
-        p.parameterId === param.id && p.subSectionId === subSection.id
+      let matchingParameter = parameterList?.find(
+        (p) => p.parameterId === param.id && p.subSectionId === subSection.id
       );
       if (matchingParameter || param.oldSystemValue) {
         return true;
       }
     }
     return false;
-  }
+  };
   const hasMatching = hasMatchingParameter(parameterList, subSection);
   return (
     <Accordion
@@ -45,7 +45,13 @@ const AccordionMappingWidget = ({
         data-tour={subSection?.id}
         expandIcon={<ExpandMoreIcon />}
         style={
-          expanded === `panel_${index}` ? hasMatching ? clasess.activeTabContainer2 : clasess.activeTabContainer : hasMatching ? clasess.activeTabContainer2 : null
+          expanded === `panel_${index}`
+            ? hasMatching
+              ? clasess.activeTabContainer2
+              : clasess.activeTabContainer
+            : hasMatching
+            ? clasess.activeTabContainer2
+            : null
         }
       >
         <div style={clasess.headerAccordionContainer}>
@@ -55,11 +61,10 @@ const AccordionMappingWidget = ({
             ) : (
               <EditIcon stroke={"rgba(18, 19, 58, 1)"} />
             )
+          ) : hasMatching ? (
+            <CheckBoxAccordion />
           ) : (
-            hasMatching ? (
-              <CheckBoxAccordion />
-            ) :
-              <EditIcon />
+            <EditIcon />
           )}
 
           <div

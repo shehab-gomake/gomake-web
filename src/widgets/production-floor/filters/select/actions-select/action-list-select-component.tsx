@@ -19,6 +19,7 @@ import { useStyle } from "./style";
 import { DepartmentModal } from "@/widgets/production-floor/header/components/groups/department-modal";
 import { SaveIcon } from "@/widgets/production-floor/header/components/icons/save-icon";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import styled from "styled-components";
 
 interface IProps {
   onClickApply: any;
@@ -92,6 +93,28 @@ const ActionsListComponent = ({
       onClick: handleClick,
     });
 
+  const ScrollableDiv = styled.div`
+    max-height: 35vh;
+    overflow-y: auto;
+    overflow-x: auto;
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #cccdcf;
+      border-radius: 10px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: #b0b0b0;
+    }
+    &::-webkit-scrollbar-button {
+      display: none;
+    }
+  `;
+
   return (
     <div style={{ position: "relative" }}>
       {!!buttonElement ? (
@@ -120,7 +143,7 @@ const ActionsListComponent = ({
                     onChange={handleFilterChange}
                   />
                 </div>
-                <div style={classes.optionsDiv}>
+                <ScrollableDiv>
                   {getList().map((option, index) => {
                     return (
                       <CollapseOptionComponent
@@ -132,7 +155,7 @@ const ActionsListComponent = ({
                       />
                     );
                   })}
-                </div>
+                </ScrollableDiv>
               </FormGroup>
               <div style={classes.applyBtnContainer}>
                 <SecondaryButton

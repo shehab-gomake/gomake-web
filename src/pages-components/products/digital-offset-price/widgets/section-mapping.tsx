@@ -49,7 +49,7 @@ const SectionMappingWidget = ({
     setGroupedParameters(groupedParameters);
   }, [subSection, relatedParameters]);
   useEffect(() => {
-    if (groupedParameters && groupedParameters[0]?.length > 0) {
+    if (groupedParameters) {
       setGroupedParametersArray(Object?.values(groupedParameters));
     }
   }, [groupedParameters]);
@@ -93,17 +93,21 @@ const SectionMappingWidget = ({
         ].parameters = updatedArray;
       }
     }
-    // 3. Delete parameters from subProducts
     const updatedSubProducts = subProducts.map((subProduct) => {
       if (subProduct.type === subSection.type) {
         return {
           ...subProduct,
           parameters: subProduct.parameters
             .map((parameter) => {
-              if (parameter.actionIndex > index) {
-                return { ...parameter, actionIndex: parameter.actionIndex - 1 };
-              } else if (parameter.actionIndex === index) {
-                return null; // Remove the parameter with actionIndex === index
+              if (
+                parameter.sectionId === mySectionId.id &&
+                parameter.subSectionId === mySubSectionId.id
+              ) {
+                if (parameter.actionIndex > index) {
+                  return { ...parameter, actionIndex: parameter.actionIndex - 1 };
+                } else if (parameter.actionIndex === index) {
+                  return null; // Remove the parameter with actionIndex === index
+                }
               }
               return parameter;
             })

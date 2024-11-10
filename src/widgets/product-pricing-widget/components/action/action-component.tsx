@@ -3,7 +3,7 @@ import Divider from "@mui/material/Divider";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { IWorkFlowAction } from "@/widgets/product-pricing-widget/interface";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
-import { Collapse, Fade, IconButton, Tooltip } from "@mui/material";
+import { Collapse, Fade, IconButton, Skeleton, Tooltip } from "@mui/material";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -43,6 +43,7 @@ interface IActionContainerComponentProps extends IWorkFlowAction {
   workFlowId?: string;
   productType?: string | null;
   widgetType?: EWidgetProductType,
+  selectedWorkFlowCalculatedIsLoaded?: boolean
 }
 
 interface IActionsComponentProps {
@@ -50,13 +51,15 @@ interface IActionsComponentProps {
   workFlowId?: string;
   productType: string | null;
   widgetType: EWidgetProductType,
+  selectedWorkFlowCalculatedIsLoaded?: boolean
 }
 
 const Actions = ({
   actions,
   workFlowId,
   productType,
-  widgetType
+  widgetType,
+  selectedWorkFlowCalculatedIsLoaded
 }: IActionsComponentProps) => {
   return (
     <Stack gap={"10px"}>
@@ -68,6 +71,7 @@ const Actions = ({
             widgetType={widgetType}
             productType={productType}
             workFlowId={workFlowId}
+            selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
             delay={index * 800}
             {...action}
           />
@@ -108,7 +112,8 @@ const ActionContainerComponent = ({
   totalPriceValue,
   profitValue,
   isNeedFolds,
-  foldOptionValueId
+  foldOptionValueId,
+  selectedWorkFlowCalculatedIsLoaded
 }: IActionContainerComponentProps) => {
 
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
@@ -247,552 +252,559 @@ const ActionContainerComponent = ({
 
 
   return (
-    <Fade
-      in={true}
-      timeout={delay}
-      style={{ width: "100%", position: "relative" }}
-    >
-      <Stack
-        onClick={() => setIsOpen(!isOpen)}
-        style={{
-          ...classes.actionContainer,
-          border: isOpen ? classes.actionContainerBorder : "unset",
-        }}
-      >
-        <Stack
-          padding={"10px 0"}
-          direction={"row"}
-          justifyContent={"space-between"}
-        >
-          <Stack
-            direction={"row"}
-            gap={"16px"}
-            alignItems={"center"}
-            flexWrap={"wrap"}
+    <>
+      {selectedWorkFlowCalculatedIsLoaded ? <Skeleton variant="rectangular" width={'100%'} height={'100px'} /> :
+        <>
+          <Fade
+            in={true}
+            timeout={delay}
+            style={{ width: "100%", position: "relative" }}
           >
             <Stack
-              style={classes.sectionTitle}
-              direction={"row"}
-              alignItems={"center"}
-              gap={"10px"}
-            >
-              <span>{actionName}</span>
-              {source === EWorkSource.OUT ? (
-                <Stack
-                  gap={"10px"}
-                  direction={"row"}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Divider orientation={"vertical"} flexItem color={"#000"} />
-                  <GoMakeAutoComplate
-                    placeholder={"Select supplier"}
-                    value={getSupplierId()}
-                    style={{ width: "200px" }}
-                    onChange={handleSupplierChange}
-                    options={suppliersState?.map((s) => ({
-                      value: s.supplierId,
-                      label: s.supplierName,
-                    }))}
-                  />
-                </Stack>
-              ) : (
-                isNeedMachine && (
-                  <>
-                    <Divider orientation={"vertical"} flexItem color={"#000"} />
-                    {!chooseMachine ? (
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setChooseMachine(true);
-                          onClickGetMachineForAction(actionId)
-                        }}
-                        variant={"text"}
-                        style={classes.sectionTitle}
-                      >
-                        {
-                          machineName != null ? <>
-                            {machineName?.length > 20
-                              ? machineName.slice(0, 20) + "..."
-                              : machineName}
-                          </> : <>
-                            Selecte New Machine
-                          </>
-                        }
-
-                      </Button>
-                    ) : (
-                      <Stack
-                        direction={"row"}
-                        gap={"5px"}
-                        alignItems={"center"}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <GoMakeAutoComplate
-                          onChange={(e, v) => {
-                            selectNewMachine(
-                              v?.value,
-                              actionId,
-                              productType,
-                              actionIndex
-                            );
-                            setAttributesData({
-                              actionId,
-                              productType,
-                              actionIndex,
-                              machineName: v?.label,
-                              machineId: v?.value,
-                              printingActionId: id,
-
-                            })
-                            setChooseMachine(false);
-                          }}
-                          style={{ width: "200px" }}
-                          options={machinesList}
-                          placeholder={"Choose machine"}
-                          value={machineName}
-                        />
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setChooseMachine(false);
-                          }}
-                        >
-                          <ClearRoundedIcon />
-                        </IconButton>
-                      </Stack>
-                    )}
-                  </>
-                )
-              )}
-            </Stack>
-
-            {source != EWorkSource.OUT && <Divider orientation={"vertical"} flexItem />}
-            <Stack
-              style={classes.sectionTitle}
-              direction={"row"}
-              alignItems={"center"}
-              gap={"10px"}
-            >
-              {
-                isNeedEmployee && source != EWorkSource.OUT && (
-                  <>
-                    {!chooseEmployee ? (
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setChooseEmployee(true);
-                          onClickGetEmployeeForAction(actionId)
-                        }}
-                        variant={"text"}
-                        style={classes.sectionTitle}
-                      >
-                        {employeeName ? employeeName : <>Select New Employee</>}
-                      </Button>
-                    ) : (
-                      <Stack
-                        direction={"row"}
-                        gap={"5px"}
-                        alignItems={"center"}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <GoMakeAutoComplate
-                          onChange={(e, v) => {
-                            if (widgetType === EWidgetProductType.EDIT) {
-                              setIsActionEmployeeUpdated(true);
-                            }
-                            updateWorkFlowForEmployees(actionId, productType, actionIndex, v?.label, v?.value, id)
-                            setChooseEmployee(false);
-                          }}
-                          style={{ width: "200px" }}
-                          options={employeesList}
-                          placeholder={"Choose Employee"}
-                          value={employeeName}
-                        />
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setChooseEmployee(false);
-                          }}
-                        >
-                          <ClearRoundedIcon />
-                        </IconButton>
-                      </Stack>
-                    )}
-                  </>
-                )
-              }
-            </Stack>
-            {
-              isNeedEmployee && <Divider orientation={"vertical"} flexItem />
-            }
-
-
-
-            <Stack
-              style={classes.sectionTitle}
-              direction={"row"}
-              alignItems={"center"}
-              gap={"10px"}
-            >
-              {
-                isNeedMaterial && (
-                  <>
-                    {!chooseMaterial ? (
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setChooseMaterial(true);
-                          onClickGetMaterialsForAction(materials[0])
-                        }}
-                        variant={"text"}
-                        style={classes.sectionTitle}
-                      >
-                        {materials[0]?.materialCategories?.length > 0 ? <>
-                          {materials[0]?.materialCategories[0]?.name?.length > 20
-                            ? materials[0]?.materialCategories[0]?.name.slice(0, 20) + "..."
-                            : materials[0]?.materialCategories[0]?.name}</> : <>
-                          Select New Material
-                        </>}
-
-                      </Button>
-                    ) : (
-                      <Stack
-                        direction={"row"}
-                        gap={"5px"}
-                        alignItems={"center"}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <GoMakeAutoComplate
-                          onChange={(e, v) => {
-                            selectNewMaterials(
-                              v?.value,
-                              actionId,
-                              productType,
-                              actionIndex
-                            );
-                            setAttributesData({
-                              actionId,
-                              productType,
-                              actionIndex,
-                              printHouseMaterialSizeName: v?.label,
-                              printHouseMaterialSizeId: v?.value,
-                              printingActionId: id,
-                            })
-                            setChooseMaterial(false);
-
-                          }}
-                          style={{ width: "200px" }}
-                          options={materialsList}
-                          placeholder={"Choose material"}
-                          value={materials[0]?.materialCategories[0]?.name}
-                        />
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setChooseMaterial(false);
-                          }}
-                        >
-                          <ClearRoundedIcon />
-                        </IconButton>
-                      </Stack>
-                    )}
-                  </>
-                )
-              }
-            </Stack>
-            {
-              isNeedMaterial && <Divider orientation={"vertical"} flexItem />
-            }
-
-            <Stack
-              style={classes.sectionTitle}
-              direction={"row"}
-              alignItems={"center"}
-              gap={"10px"}
-            >
-              {
-                isNeedFolds && (
-                  <>
-                    {!chooseFold ? (
-                      <Button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setChooseFold(true);
-                        }}
-                        variant={"text"}
-                        style={classes.sectionTitle}
-                      >
-                        {foldOptionValueId ? selectedfold?.name : <>Select New Folds</>}
-                      </Button>
-                    ) : (
-                      <Stack
-                        direction={"row"}
-                        gap={"5px"}
-                        alignItems={"center"}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <GoMakeAutoComplate
-                          onChange={(e, v) => {
-                            updateWorkFlowForFold(actionId, productType, actionIndex, v?.id, id)
-                            setChooseFold(false);
-                          }}
-                          style={{ width: "200px" }}
-                          options={foldOptions}
-                          placeholder={"Choose Fold option"}
-                          getOptionLabel={(option) => option.name}
-                          value={selectedfold}
-                        />
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setChooseFold(false);
-                          }}
-                        >
-                          <ClearRoundedIcon />
-                        </IconButton>
-                      </Stack>
-                    )}
-                  </>
-                )
-              }
-            </Stack>
-            {
-              isNeedFolds && <Divider orientation={"vertical"} flexItem />
-            }
-
-            <EditableKeyValueViewComponent
-              onUpdate={handleDeliveryTimeUpdate}
-              {...totalProductionTime}
-              source={source}
-              name={t("home.headers.productDate")}
-            />
-            {
-              source === EWorkSource.OUT &&
-              <>
-                <Divider
-                  orientation={"vertical"}
-                  style={{ height: "50%", margin: "auto 0" }}
-                  flexItem
-                />
-                <EditableKeyValueViewComponent
-                  onUpdate={handleCostUpdate}
-                  {...totalCost}
-                  values={totalCostValue}
-                  source={source}
-                  name={t("machineAttributes.cost")}
-                />
-                <Divider
-                  orientation={"vertical"}
-                  style={{ height: "50%", margin: "auto 0" }}
-                  flexItem
-                />
-                <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
-                  <EditableKeyValueViewComponent
-                    onUpdate={handleProfitUpdate}
-                    {...profit}
-                    values={profitValue}
-                    source={source}
-                    name={t("products.profits.pricingListWidget.profit")}
-                  />
-                  <span>
-                    {source === EWorkSource.OUT
-                      ? `(${calculateOutSourceProfitInMoney()
-                      } ${totalPrice ? totalPrice.defaultUnit : ""})`
-                      : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
-                      })`}
-                  </span>
-                </Stack>
-                <Divider
-                  orientation={"vertical"}
-                  style={{ height: "50%", margin: "auto 0" }}
-                  flexItem
-                />
-
-                <EditableKeyValueViewComponent
-                  onUpdate={handleUpdatePrice}
-                  {...totalPrice}
-                  values={totalPriceValue}
-                  source={source}
-                  valueColor={secondColor(500)}
-                  name={t("sales.quote.price")}
-                />
-              </>
-            }
-            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
-              {
-                source !== EWorkSource.OUT &&
-                <>
-                  <Divider
-                    orientation={"vertical"}
-                    style={{ height: "50%", margin: "auto 0" }}
-                    flexItem
-                  />
-                  <EditableKeyValueViewComponent
-                    onUpdate={handleCostUpdate}
-                    {...totalCost}
-                    values={totalCostValue}
-                    source={source}
-                    name={t("machineAttributes.cost")}
-                  />
-                  <Divider
-                    orientation={"vertical"}
-                    style={{ height: "50%", margin: "auto 0" }}
-                    flexItem
-                  />
-                  <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
-                    <EditableKeyValueViewComponent
-                      onUpdate={handleProfitUpdate}
-                      {...profit}
-                      values={profitValue}
-                      source={source}
-                      name={t("products.profits.pricingListWidget.profit")}
-                    />
-                    <span>
-                      {`(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
-                        })`}
-                    </span>
-                  </Stack>
-                  <Divider
-                    orientation={"vertical"}
-                    style={{ height: "50%", margin: "auto 0" }}
-                    flexItem
-                  />
-
-                  <EditableKeyValueViewComponent
-                    onUpdate={handleUpdatePrice}
-                    {...totalPrice}
-                    values={totalPriceValue}
-                    source={source}
-                    valueColor={secondColor(500)}
-                    name={t("sales.quote.price")}
-                  />
-                </>
-              }
-            </PermissionCheck>
-
-            <Divider orientation={"vertical"} flexItem />
-            <div onClick={(e) => e.stopPropagation()}>
-              <InOutSourceSelect value={source} onChange={handleSourceChange} />
-            </div>
-          </Stack>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              gap: 10,
-            }}
-          >
-            {actionException?.exceptionKey && (
-              <Tooltip title={t("CalculationExceptions." + actionException?.exceptionKey)}>
-                <IconButton>
-                  {_renderIconLogs(actionException?.exceptionType, 24, 24)}
-
-                </IconButton>
-              </Tooltip>
-            )}
-
-            <IconButton
-              onClick={(e) => {
-                e.stopPropagation();
-                handleClick(e);
+              onClick={() => setIsOpen(!isOpen)}
+              style={{
+                ...classes.actionContainer,
+                border: isOpen ? classes.actionContainerBorder : "unset",
               }}
             >
-              <SettingsIcon
-                stroke={"rgba(237, 2, 140, 1)"}
-                width={24}
-                height={24}
-              />
-            </IconButton>
-            <IconButton
-              onClick={() => setIsOpen(!isOpen)}
-              style={classes.toggleActionButton}
-            >
-              {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </div>
-        </Stack>
-        <Collapse
-          in={isOpen}
-          collapsedSize={0}
-          orientation={"vertical"}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {inputsParameters?.length > 0 && (
-            <>
-              <Divider />
               <Stack
                 padding={"10px 0"}
                 direction={"row"}
-                gap={"16px"}
-                flexWrap={"wrap"}
+                justifyContent={"space-between"}
               >
-                <ParametersMapping parameters={inputsParameters} />
-              </Stack>
-            </>
-          )}
-          {outputsParameters?.length > 0 && source === EWorkSource.INTERNAL && (
-            <>
-              <Divider />
-              <Stack
-                padding={"10px 0"}
-                direction={"row"}
-                gap={"16px"}
-                flexWrap={"wrap"}
-              >
-                <ParametersMapping
-                  source={source}
-                  parameters={outputsParameters}
-                />
-                {imageOutputs.map((parameter) => (
-                  <PrintImageComponent {...parameter} />
-                ))}
-                <Divider orientation={"vertical"} flexItem />
-                <TextAreaActionsMapping
-                  parameters={textAreaOutputs}
-                  actionId={id}
-                  currentProductItemValue={currentProductItemValue}
-                  productType={productType}
-                />
-                {tableOutputs.map((parameter) => (
-                  <TableOutPutComponent {...parameter} />
-                ))}
-              </Stack>
-            </>
-          )}
-        </Collapse>
-        <SettingsMenu
-          handleClose={handleClose}
-          open={open}
-          anchorEl={anchorEl}
-          actionId={actionId}
-          actionName={actionName}
-          currentProductItemValue={currentProductItemValue}
-          machineName={machineName}
-          categoryId={categoryId}
-        />
-        <GoMakeDeleteModal
-          insideStyle={classes.insideStyle}
-          openModal={openModalMachine}
-          onClose={onClickCloseModalMachine}
-          title={t("pricingWidget.machineMsg")}
-          hideIcon={true}
-          yesBtn={t("modal.confirm")}
-          onClickDelete={updateWorkFlowForMachine}
-        />
-        <GoMakeDeleteModal
-          insideStyle={classes.insideStyle}
-          openModal={openModalMaterial}
-          onClose={onClickCloseModalMaterial}
-          title={t("pricingWidget.materialMsg")}
-          hideIcon={true}
-          yesBtn={t("modal.confirm")}
-          onClickDelete={updateWorkFlowForMaterials}
-        />
-      </Stack>
+                <Stack
+                  direction={"row"}
+                  gap={"16px"}
+                  alignItems={"center"}
+                  flexWrap={"wrap"}
+                >
+                  <Stack
+                    style={classes.sectionTitle}
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={"10px"}
+                  >
+                    <span>{actionName}</span>
+                    {source === EWorkSource.OUT ? (
+                      <Stack
+                        gap={"10px"}
+                        direction={"row"}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Divider orientation={"vertical"} flexItem color={"#000"} />
+                        <GoMakeAutoComplate
+                          placeholder={"Select supplier"}
+                          value={getSupplierId()}
+                          style={{ width: "200px" }}
+                          onChange={handleSupplierChange}
+                          options={suppliersState?.map((s) => ({
+                            value: s.supplierId,
+                            label: s.supplierName,
+                          }))}
+                        />
+                      </Stack>
+                    ) : (
+                      isNeedMachine && (
+                        <>
+                          <Divider orientation={"vertical"} flexItem color={"#000"} />
+                          {!chooseMachine ? (
+                            <Button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setChooseMachine(true);
+                                onClickGetMachineForAction(actionId)
+                              }}
+                              variant={"text"}
+                              style={classes.sectionTitle}
+                            >
+                              {
+                                machineName != null ? <>
+                                  {machineName?.length > 20
+                                    ? machineName.slice(0, 20) + "..."
+                                    : machineName}
+                                </> : <>
+                                  Selecte New Machine
+                                </>
+                              }
 
-    </Fade>
+                            </Button>
+                          ) : (
+                            <Stack
+                              direction={"row"}
+                              gap={"5px"}
+                              alignItems={"center"}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <GoMakeAutoComplate
+                                onChange={(e, v) => {
+                                  selectNewMachine(
+                                    v?.value,
+                                    actionId,
+                                    productType,
+                                    actionIndex
+                                  );
+                                  setAttributesData({
+                                    actionId,
+                                    productType,
+                                    actionIndex,
+                                    machineName: v?.label,
+                                    machineId: v?.value,
+                                    printingActionId: id,
+
+                                  })
+                                  setChooseMachine(false);
+                                }}
+                                style={{ width: "200px" }}
+                                options={machinesList}
+                                placeholder={"Choose machine"}
+                                value={machineName}
+                              />
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setChooseMachine(false);
+                                }}
+                              >
+                                <ClearRoundedIcon />
+                              </IconButton>
+                            </Stack>
+                          )}
+                        </>
+                      )
+                    )}
+                  </Stack>
+
+                  {source != EWorkSource.OUT && <Divider orientation={"vertical"} flexItem />}
+                  <Stack
+                    style={classes.sectionTitle}
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={"10px"}
+                  >
+                    {
+                      isNeedEmployee && source != EWorkSource.OUT && (
+                        <>
+                          {!chooseEmployee ? (
+                            <Button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setChooseEmployee(true);
+                                onClickGetEmployeeForAction(actionId)
+                              }}
+                              variant={"text"}
+                              style={classes.sectionTitle}
+                            >
+                              {employeeName ? employeeName : <>Select New Employee</>}
+                            </Button>
+                          ) : (
+                            <Stack
+                              direction={"row"}
+                              gap={"5px"}
+                              alignItems={"center"}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <GoMakeAutoComplate
+                                onChange={(e, v) => {
+                                  if (widgetType === EWidgetProductType.EDIT) {
+                                    setIsActionEmployeeUpdated(true);
+                                  }
+                                  updateWorkFlowForEmployees(actionId, productType, actionIndex, v?.label, v?.value, id)
+                                  setChooseEmployee(false);
+                                }}
+                                style={{ width: "200px" }}
+                                options={employeesList}
+                                placeholder={"Choose Employee"}
+                                value={employeeName}
+                              />
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setChooseEmployee(false);
+                                }}
+                              >
+                                <ClearRoundedIcon />
+                              </IconButton>
+                            </Stack>
+                          )}
+                        </>
+                      )
+                    }
+                  </Stack>
+                  {
+                    isNeedEmployee && <Divider orientation={"vertical"} flexItem />
+                  }
+
+
+
+                  <Stack
+                    style={classes.sectionTitle}
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={"10px"}
+                  >
+                    {
+                      isNeedMaterial && (
+                        <>
+                          {!chooseMaterial ? (
+                            <Button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setChooseMaterial(true);
+                                onClickGetMaterialsForAction(materials[0])
+                              }}
+                              variant={"text"}
+                              style={classes.sectionTitle}
+                            >
+                              {materials[0]?.materialCategories?.length > 0 ? <>
+                                {materials[0]?.materialCategories[0]?.name?.length > 20
+                                  ? materials[0]?.materialCategories[0]?.name.slice(0, 20) + "..."
+                                  : materials[0]?.materialCategories[0]?.name}</> : <>
+                                Select New Material
+                              </>}
+
+                            </Button>
+                          ) : (
+                            <Stack
+                              direction={"row"}
+                              gap={"5px"}
+                              alignItems={"center"}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <GoMakeAutoComplate
+                                onChange={(e, v) => {
+                                  selectNewMaterials(
+                                    v?.value,
+                                    actionId,
+                                    productType,
+                                    actionIndex
+                                  );
+                                  setAttributesData({
+                                    actionId,
+                                    productType,
+                                    actionIndex,
+                                    printHouseMaterialSizeName: v?.label,
+                                    printHouseMaterialSizeId: v?.value,
+                                    printingActionId: id,
+                                  })
+                                  setChooseMaterial(false);
+
+                                }}
+                                style={{ width: "200px" }}
+                                options={materialsList}
+                                placeholder={"Choose material"}
+                                value={materials[0]?.materialCategories[0]?.name}
+                              />
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setChooseMaterial(false);
+                                }}
+                              >
+                                <ClearRoundedIcon />
+                              </IconButton>
+                            </Stack>
+                          )}
+                        </>
+                      )
+                    }
+                  </Stack>
+                  {
+                    isNeedMaterial && <Divider orientation={"vertical"} flexItem />
+                  }
+
+                  <Stack
+                    style={classes.sectionTitle}
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={"10px"}
+                  >
+                    {
+                      isNeedFolds && (
+                        <>
+                          {!chooseFold ? (
+                            <Button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setChooseFold(true);
+                              }}
+                              variant={"text"}
+                              style={classes.sectionTitle}
+                            >
+                              {foldOptionValueId ? selectedfold?.name : <>Select New Folds</>}
+                            </Button>
+                          ) : (
+                            <Stack
+                              direction={"row"}
+                              gap={"5px"}
+                              alignItems={"center"}
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <GoMakeAutoComplate
+                                onChange={(e, v) => {
+                                  updateWorkFlowForFold(actionId, productType, actionIndex, v?.id, id)
+                                  setChooseFold(false);
+                                }}
+                                style={{ width: "200px" }}
+                                options={foldOptions}
+                                placeholder={"Choose Fold option"}
+                                getOptionLabel={(option) => option.name}
+                                value={selectedfold}
+                              />
+                              <IconButton
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setChooseFold(false);
+                                }}
+                              >
+                                <ClearRoundedIcon />
+                              </IconButton>
+                            </Stack>
+                          )}
+                        </>
+                      )
+                    }
+                  </Stack>
+                  {
+                    isNeedFolds && <Divider orientation={"vertical"} flexItem />
+                  }
+
+                  <EditableKeyValueViewComponent
+                    onUpdate={handleDeliveryTimeUpdate}
+                    {...totalProductionTime}
+                    source={source}
+                    name={t("home.headers.productDate")}
+                  />
+                  {
+                    source === EWorkSource.OUT &&
+                    <>
+                      <Divider
+                        orientation={"vertical"}
+                        style={{ height: "50%", margin: "auto 0" }}
+                        flexItem
+                      />
+                      <EditableKeyValueViewComponent
+                        onUpdate={handleCostUpdate}
+                        {...totalCost}
+                        values={totalCostValue}
+                        source={source}
+                        name={t("machineAttributes.cost")}
+                      />
+                      <Divider
+                        orientation={"vertical"}
+                        style={{ height: "50%", margin: "auto 0" }}
+                        flexItem
+                      />
+                      <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+                        <EditableKeyValueViewComponent
+                          onUpdate={handleProfitUpdate}
+                          {...profit}
+                          values={profitValue}
+                          source={source}
+                          name={t("products.profits.pricingListWidget.profit")}
+                        />
+                        <span>
+                          {source === EWorkSource.OUT
+                            ? `(${calculateOutSourceProfitInMoney()
+                            } ${totalPrice ? totalPrice.defaultUnit : ""})`
+                            : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
+                            })`}
+                        </span>
+                      </Stack>
+                      <Divider
+                        orientation={"vertical"}
+                        style={{ height: "50%", margin: "auto 0" }}
+                        flexItem
+                      />
+
+                      <EditableKeyValueViewComponent
+                        onUpdate={handleUpdatePrice}
+                        {...totalPrice}
+                        values={totalPriceValue}
+                        source={source}
+                        valueColor={secondColor(500)}
+                        name={t("sales.quote.price")}
+                      />
+                    </>
+                  }
+                  <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
+                    {
+                      source !== EWorkSource.OUT &&
+                      <>
+                        <Divider
+                          orientation={"vertical"}
+                          style={{ height: "50%", margin: "auto 0" }}
+                          flexItem
+                        />
+                        <EditableKeyValueViewComponent
+                          onUpdate={handleCostUpdate}
+                          {...totalCost}
+                          values={totalCostValue}
+                          source={source}
+                          name={t("machineAttributes.cost")}
+                        />
+                        <Divider
+                          orientation={"vertical"}
+                          style={{ height: "50%", margin: "auto 0" }}
+                          flexItem
+                        />
+                        <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+                          <EditableKeyValueViewComponent
+                            onUpdate={handleProfitUpdate}
+                            {...profit}
+                            values={profitValue}
+                            source={source}
+                            name={t("products.profits.pricingListWidget.profit")}
+                          />
+                          <span>
+                            {`(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
+                              })`}
+                          </span>
+                        </Stack>
+                        <Divider
+                          orientation={"vertical"}
+                          style={{ height: "50%", margin: "auto 0" }}
+                          flexItem
+                        />
+
+                        <EditableKeyValueViewComponent
+                          onUpdate={handleUpdatePrice}
+                          {...totalPrice}
+                          values={totalPriceValue}
+                          source={source}
+                          valueColor={secondColor(500)}
+                          name={t("sales.quote.price")}
+                        />
+                      </>
+                    }
+                  </PermissionCheck>
+
+                  <Divider orientation={"vertical"} flexItem />
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <InOutSourceSelect value={source} onChange={handleSourceChange} />
+                  </div>
+                </Stack>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    gap: 10,
+                  }}
+                >
+                  {actionException?.exceptionKey && (
+                    <Tooltip title={t("CalculationExceptions." + actionException?.exceptionKey)}>
+                      <IconButton>
+                        {_renderIconLogs(actionException?.exceptionType, 24, 24)}
+
+                      </IconButton>
+                    </Tooltip>
+                  )}
+
+                  <IconButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleClick(e);
+                    }}
+                  >
+                    <SettingsIcon
+                      stroke={"rgba(237, 2, 140, 1)"}
+                      width={24}
+                      height={24}
+                    />
+                  </IconButton>
+                  <IconButton
+                    onClick={() => setIsOpen(!isOpen)}
+                    style={classes.toggleActionButton}
+                  >
+                    {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                  </IconButton>
+                </div>
+              </Stack>
+              <Collapse
+                in={isOpen}
+                collapsedSize={0}
+                orientation={"vertical"}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {inputsParameters?.length > 0 && (
+                  <>
+                    <Divider />
+                    <Stack
+                      padding={"10px 0"}
+                      direction={"row"}
+                      gap={"16px"}
+                      flexWrap={"wrap"}
+                    >
+                      <ParametersMapping parameters={inputsParameters} />
+                    </Stack>
+                  </>
+                )}
+                {outputsParameters?.length > 0 && source === EWorkSource.INTERNAL && (
+                  <>
+                    <Divider />
+                    <Stack
+                      padding={"10px 0"}
+                      direction={"row"}
+                      gap={"16px"}
+                      flexWrap={"wrap"}
+                    >
+                      <ParametersMapping
+                        source={source}
+                        parameters={outputsParameters}
+                      />
+                      {imageOutputs.map((parameter) => (
+                        <PrintImageComponent {...parameter} />
+                      ))}
+                      <Divider orientation={"vertical"} flexItem />
+                      <TextAreaActionsMapping
+                        parameters={textAreaOutputs}
+                        actionId={id}
+                        currentProductItemValue={currentProductItemValue}
+                        productType={productType}
+                      />
+                      {tableOutputs.map((parameter) => (
+                        <TableOutPutComponent {...parameter} />
+                      ))}
+                    </Stack>
+                  </>
+                )}
+              </Collapse>
+              <SettingsMenu
+                handleClose={handleClose}
+                open={open}
+                anchorEl={anchorEl}
+                actionId={actionId}
+                actionName={actionName}
+                currentProductItemValue={currentProductItemValue}
+                machineName={machineName}
+                categoryId={categoryId}
+              />
+              <GoMakeDeleteModal
+                insideStyle={classes.insideStyle}
+                openModal={openModalMachine}
+                onClose={onClickCloseModalMachine}
+                title={t("pricingWidget.machineMsg")}
+                hideIcon={true}
+                yesBtn={t("modal.confirm")}
+                onClickDelete={updateWorkFlowForMachine}
+              />
+              <GoMakeDeleteModal
+                insideStyle={classes.insideStyle}
+                openModal={openModalMaterial}
+                onClose={onClickCloseModalMaterial}
+                title={t("pricingWidget.materialMsg")}
+                hideIcon={true}
+                yesBtn={t("modal.confirm")}
+                onClickDelete={updateWorkFlowForMaterials}
+              />
+            </Stack>
+
+          </Fade>
+        </>
+      }
+    </>
+
   );
 };
 

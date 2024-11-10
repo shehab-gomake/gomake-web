@@ -11,13 +11,21 @@ interface ISearchInputProps {
   searchInputStyle?: any;
   bgColor?: string;
   filtersButton?: JSX.Element;
+  inputRef?: any
 }
 
-
-const SearchInputComponent = ({ onChange, value, placeHolder, searchInputStyle, bgColor, filtersButton }: ISearchInputProps) => {
-
+const SearchInputComponent = ({
+  onChange,
+  value,
+  placeHolder,
+  searchInputStyle,
+  bgColor,
+  filtersButton,
+  inputRef
+}: ISearchInputProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
 
   return (
     <GoMakeTextInputIcon
@@ -26,9 +34,14 @@ const SearchInputComponent = ({ onChange, value, placeHolder, searchInputStyle, 
         const trimmedValue = e.target.value.trimStart();
         onChange(trimmedValue);
       }}
-      style={searchInputStyle ? {...classes.searchInput, ...searchInputStyle} : classes.searchInput}
+      style={
+        searchInputStyle
+          ? { ...classes.searchInput, ...searchInputStyle }
+          : classes.searchInput
+      }
       placeholder={placeHolder || t("header.search")}
       value={value}
+      inputRef={inputRef}
       startAdornment={
         <InputAdornment position="start">
           <div style={classes.iconStyle}>
@@ -36,7 +49,12 @@ const SearchInputComponent = ({ onChange, value, placeHolder, searchInputStyle, 
           </div>
         </InputAdornment>
       }
-      endAdornment={filtersButton}
+      // endAdornment={filtersButton}
+      endAdornment={
+        <InputAdornment position="start">
+          <div>{filtersButton}</div>
+        </InputAdornment>
+      }
     />
   );
 };

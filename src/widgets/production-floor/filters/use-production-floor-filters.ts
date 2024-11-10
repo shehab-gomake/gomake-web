@@ -1,5 +1,10 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
+import {
+  filteredMissionsStateBySearch,
+  missionsListState,
+  productionFloorTextSearchState,
+  searchLoadingState,
+} from "@/widgets/production-floor/state/text-search";
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import {
@@ -18,10 +23,6 @@ import { useRouter } from "next/router";
 import { useMemo, useRef, useState } from "react";
 import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
 import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
-import {
-  Source,
-  useActionsList,
-} from "./select/actions-select/use-actions-list";
 import { useTranslation } from "react-i18next";
 import { selectedChipIdsState } from "../state/text-search";
 import {
@@ -58,7 +59,12 @@ const useProductionFloorFilters = ({
   const { t } = useTranslation();
   const dir = t("direction");
   const isRTL = dir === "rtl";
+  const filteredMissionsBySearch = useRecoilValue(
+    filteredMissionsStateBySearch
+  );
+  const isSearchLoading = useRecoilValue(searchLoadingState);
 
+  const [missionsList, setMissionsList] = useRecoilState(missionsListState);
   const [visibleCards, setVisibleCards] = useState<
     { label: string; machineId: string }[]
   >([]);
@@ -164,7 +170,8 @@ const useProductionFloorFilters = ({
             ],
     }).then(() => {
       setView(EProductionFloorView.TABLE);
-      push("/production-floor").then();
+      // push("/production-floor").then();
+      push("/production-floor?view=table").then();
     });
   };
 
@@ -337,6 +344,10 @@ const useProductionFloorFilters = ({
     getStationFilterGroups,
     getStationFilterGroupById,
     deleteStationFilterGroupById,
+    missionsList,
+    setMissionsList,
+    filteredMissionsBySearch,
+    isSearchLoading,
   };
 };
 

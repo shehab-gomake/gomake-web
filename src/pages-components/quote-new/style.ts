@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = (isQuoteConfirmation) => {
-  const { secondColor, grayColor, primaryColor ,theme } = useGomakeTheme();
+  const { secondColor, grayColor, primaryColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -29,7 +29,7 @@ const useStyle = (isQuoteConfirmation) => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: 5,
+        gap: 15,
       },
       quoteStatusContainer: {
         display: "flex",
@@ -58,12 +58,12 @@ const useStyle = (isQuoteConfirmation) => {
         display: "flex",
         position: "relative" as "relative",
         ...FONT_FAMILY.Lexend(400, 16),
-        color: grayColor(500), 
+        color: grayColor(500),
         cursor: "pointer",
-        gap:"5px"
+        gap: "5px",
       },
       dateValue: {
-        color: "black", 
+        color: "black",
       },
       datePickerContainer: {
         display: "flex",
@@ -110,25 +110,25 @@ const useStyle = (isQuoteConfirmation) => {
         overflow: "hidden",
         display: "flex",
         flexDirection: "column" as "column",
-        padding : isQuoteConfirmation ? "20px 100px 0px 100px" : "none"
+        padding: isQuoteConfirmation ? "20px 100px 0px 100px" : "none",
       },
-      signatureApproval:{
+      signatureApproval: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        paddingLeft:8,
-        paddingRight:8,
-        backgroundColor:"#04BB16",
+        paddingLeft: 8,
+        paddingRight: 8,
+        backgroundColor: "#04BB16",
         borderRadius: 8,
-        ...FONT_FAMILY.Inter(600,12),
+        ...FONT_FAMILY.Inter(600, 12),
         color: "#FFF",
-        height:43,
+        height: 43,
         cursor: "pointer",
       },
       titleStyle: {
         display: "flex",
         ...FONT_FAMILY.Lexend(500, 18),
-        color:  "Black",
+        color: "Black",
         lineHeight: "30px",
         width: "70%",
         flexDirection: "column" as "column",
@@ -136,8 +136,7 @@ const useStyle = (isQuoteConfirmation) => {
         alignSelf: "center",
         justifyContent: "center",
         gap: "16px",
-        margin: '10px 0px'
-
+        margin: "10px 0px",
       },
       borderContainer: {
         width: "100%",
@@ -145,10 +144,25 @@ const useStyle = (isQuoteConfirmation) => {
         borderBottom: `1px solid ${grayColor(200)}`,
         maxHeight: 140,
         overflow: "scroll",
-        marginTop:"20px"
+        marginTop: "20px",
+      },
+      budgetList: {
+        width: 185,
+        height: 36,
+        boxShadow: "none", // Shadow style
+        borderRadius: 8,
+        border:
+          "1px solid var(--Component-colors-Components-Buttons-Secondary-button-secondary-border, #D0D5DD)",
+        ...FONT_FAMILY.Lexend(500, 14),
+        "& input::placeholder": {
+          color: "#344054 !important",
+          fontFamily: "Inter !important",
+          fontWeight: 600,
+          fontSize: "14px !important",
+        },
       },
     };
-  }, [isQuoteConfirmation , theme]);
+  }, [isQuoteConfirmation, theme]);
   return {
     classes,
   };

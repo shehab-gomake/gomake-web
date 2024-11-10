@@ -3,8 +3,10 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { Skeleton } from "@mui/material";
 import { useOrderModal } from "./use-order-modal";
 import { useTranslation } from "react-i18next";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const OrdersModal = ({ isOpen, onClose, allDocuments, allDocumentsByBudget, updateDocumentBudget, selectedBudget }) => {
+const OrdersModal = ({ isOpen, onClose, allDocuments, allDocumentsByBudget, updateDocumentBudget, selectedBudget, isLoadingDocuments }) => {
     const {
         handleClose,
         handleClientOrdersClick,
@@ -15,6 +17,7 @@ const OrdersModal = ({ isOpen, onClose, allDocuments, allDocumentsByBudget, upda
         ordersTableHeaders,
         clientOrdersTableHeaders,
     } = useOrderModal({ allDocuments, onClose, allDocumentsByBudget, updateDocumentBudget, selectedBudget })
+    const { errorColor } = useGomakeTheme();
     const { t } = useTranslation();
     return (
         <>
@@ -32,16 +35,23 @@ const OrdersModal = ({ isOpen, onClose, allDocuments, allDocumentsByBudget, upda
                     >
                         {t("customers.modal.belongsToTheBudget")}
                     </GomakePrimaryButton>
-                    {allDocuments.length === 0 ? (
-                        <Skeleton variant="rectangular" width="100%" height={100} />
+                    {isLoadingDocuments ? (
+                        allDocuments.length === 0 ? (
+                            <div
+                                style={{ textAlign: 'center', marginTop: 10, color: errorColor(500), ...FONT_FAMILY.Lexend(700, 18) }}>
+                                {t("customers.buttons.noDocumentsFound")}
+                            </div>
+                        ) : (
+                            <PrimaryTable
+                                stickyFirstCol={true}
+                                stickyHeader={true}
+                                rows={mapOrdersData()}
+                                headers={ordersTableHeaders}
+                                maxHeight={300}
+                            />
+                        )
                     ) : (
-                        <PrimaryTable
-                            stickyFirstCol={true}
-                            stickyHeader={true}
-                            rows={mapOrdersData()}
-                            headers={ordersTableHeaders}
-                            maxHeight={300}
-                        />
+                        <Skeleton variant="rectangular" width={"100%"} height={250} />
                     )}
                 </div>
             </GoMakeModal>

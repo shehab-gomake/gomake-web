@@ -108,6 +108,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     router,
     isFetching,
     printOrderJobsUsingPrintNode,
+    searchInputRef,
   } = useBoardMissions({ isPurchaseJobs });
   const [newOrderId, setNewOrderId] = useRecoilState(
     newOrderIdToPrintJobsState
@@ -168,6 +169,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                           <GoMakeAutoComplate
                             key={customer?.id}
                             options={renderOptions()}
+                            defaultFiltering={false}
                             onChangeTextField={checkWhatRenderArray}
                             getOptionLabel={(option: any) => `${option.name}`}
                             style={classes.textInputStyle}
@@ -319,6 +321,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             }
             onChange={onChangeMissionsSearch}
             value={patternSearch}
+            inputRef={searchInputRef}
           />
           <PrimaryTable
             stickyFirstCol={false}

@@ -62,7 +62,7 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
         });
     };
 
-    const updateProductItemValueOutsourceWithKey = async (supplierId, key, value) => {
+    const updateProductItemValueOutsourceWithKey = async (supplierId, key, value, actionId?) => {
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessUpdate();
@@ -77,17 +77,17 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
             signalRConnectionId: connectionId,
             supplierId,
             key,
-            value
+            value,
+            ...(actionId ? { actionId } : {}),
         });
     };
 
-    const updateCost = (supplierId, cost) => {
+    const updateCost = (supplierId, cost, actionId?) => {
         const updatedSuppliers = suppliers.map(supplier => {
             if (supplier.supplierId === supplierId) {
                 return {
                     ...supplier,
-                    cost: cost,
-                    //finalPrice: cost + cost * supplier.profit / 100
+                    cost,
                 };
             }
             return supplier;
@@ -105,10 +105,10 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
             cost: cost,
             //finalPrice: cost + cost * supplier.profit / 100
         });
-        updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalCost, cost);
+        updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalCost, cost,actionId);
     };
 
-    const updateWorkHours = (supplierId, workHours) => {
+    const updateWorkHours = (supplierId, workHours,actionId?) => {
         const updatedSuppliers = suppliers.map(supplier => {
             if (supplier.supplierId === supplierId) {
                 return {
@@ -130,16 +130,44 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
             ...supplier,
             workHours: workHours
         });
-        updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalRealProductionTime, workHours);
+        updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalRealProductionTime, workHours,actionId);
     };
 
-    const updateProfit = (supplierId, profit) => {
+    const updateProfit = (supplierId, profit,actionId?) => {
         const updatedSuppliers = suppliers.map(supplier => {
             if (supplier.supplierId === supplierId) {
                 return {
                     ...supplier,
                     profit: profit,
                     //finalPrice: supplier.cost + supplier.cost * profit / 100
+                };
+            }
+            return supplier;
+        });
+
+        
+   
+
+        setSuppliers(resetOtherSuppliers(supplierId).map(supplier => {
+            if (supplier.supplierId === supplierId) {
+                return updatedSuppliers.find(s => s.supplierId === supplierId);
+            }
+            return supplier;
+        }));
+
+        setSupplier({
+            ...supplier,
+            profit: profit,
+            //finalPrice: supplier.cost + supplier.cost * profit / 100
+        });
+        updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.Profit, profit,actionId);
+    };
+
+    const updateSupplierId =  async (supplierId,actionId?) => {
+        const updatedSuppliers = suppliers.map(supplier => {
+            if (supplier.supplierId === supplierId) {
+                return {
+                    ...supplier,
                 };
             }
             return supplier;
@@ -154,13 +182,25 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
 
         setSupplier({
             ...supplier,
-            profit: profit,
-            //finalPrice: supplier.cost + supplier.cost * profit / 100
         });
-        updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.Profit, profit);
+        const callBack = (res) => {
+            if (res.success) {
+                alertSuccessUpdate();
+            }
+            else {
+                alertFaultUpdate();
+            }
+        };
+
+        await updateProductItemValueOutsourceSupplierCost(callApi, callBack, {
+            productItemValueId: productItemValueDraftId,
+            signalRConnectionId: connectionId,
+            supplierId,
+            actionId
+        });
     };
 
-    const updatePrice = (supplierId, price) => {
+    const updatePrice = (supplierId, price,actionId?) => {
         const updatedSuppliers = suppliers.map(supplier => {
             if (supplier.supplierId === supplierId) {
                 return {
@@ -186,7 +226,7 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
             // cost: price,
             // profit: 0
         });
-        updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalPrice, price);
+        updateProductItemValueOutsourceWithKey(supplierId, EOutSoucrceUpdateKey.TotalPrice, price,actionId);
     };
 
     const addItem = async (supplierId) => {
@@ -249,7 +289,9 @@ const useOutsourceSupplier = ({ supplier, setSupplier , options }: IProps) => {
         updatePrice,
         addItem,
         updateQuoteItem,
-        productItemValueByEdit
+        updateSupplierId,
+        productItemValueByEdit,
+        currentProductItemValue
     };
 };
 

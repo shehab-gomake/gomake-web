@@ -10,11 +10,12 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { EditIcon, PlusIcon } from "@/icons";
 import { NotesForActionModal } from "./notes-for-action-modal";
-import { updateBoardMissionActionOutputApi, updateProductItemDraftActionData } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { updateBoardMissionActionOutputApi, updateProductItemDraftActionData, updateProductItemValueOutsourceSupplierCost } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { useGomakeAxios } from "@/hooks";
 import { useRecoilValue } from "recoil";
 import { currentCalculationConnectionId } from "@/store";
 import { removeTags } from "@/utils/helpers";
+import { EOutSoucrceUpdateKey } from "@/enums";
 
 interface IKeyValueViewProps extends IOutput {
     valueColor?: string;
@@ -94,7 +95,7 @@ const ParametersMapping = ({ parameters, source, isWorkFlows = false, isProducti
 };
 
 
-const TextAreaActionsMapping = ({ parameters, actionId, currentProductItemValue, productType, orderItemId }: any) => {
+const TextAreaActionsMapping = ({ parameters, actionId, currentProductItemValue, productType, orderItemId, isOutSource, supplierId }: any) => {
     return (
         <>
             {parameters?.flatMap((parameter, index, array) => {
@@ -106,6 +107,8 @@ const TextAreaActionsMapping = ({ parameters, actionId, currentProductItemValue,
                         currentProductItemValue={currentProductItemValue}
                         productType={productType}
                         orderItemId={orderItemId}
+                        isOutSource={isOutSource}
+                        supplierId={supplierId}
                     />
                 );
                 const isLastElement = index >= array.length - 1;
@@ -130,7 +133,9 @@ const KeyValueViewComponent = ({
     actionId,
     currentProductItemValue,
     productType,
-    orderItemId
+    orderItemId,
+    isOutSource,
+    supplierId
 }: any) => {
     const { callApi } = useGomakeAxios();
     const connectionId = useRecoilValue(currentCalculationConnectionId);
@@ -138,18 +143,24 @@ const KeyValueViewComponent = ({
     const [value, setValue] = useState<string>("");
     const [openModal, setOpenModal] = useState<boolean>(false);
     useEffect(() => {
-        if (values && values.length > 0) {
-            if (values.length > 1) {
-                const formattedValues = values
-                    .map(item => item.replace(/\s+/g, '')) // Remove spaces within each item
-                    .join(' '); // Join items with a space between them
-                setValue(formattedValues)
-            }
-            else {
-                setValue(values[0])
+        if (isOutSource && outSourceValues && outSourceValues.length > 0) {
+            setValue(outSourceValues[0])
+        }
+        else {
+            if (values && values.length > 0) {
+                if (values.length > 1) {
+                    const formattedValues = values
+                        .map(item => item.replace(/\s+/g, '')) // Remove spaces within each item
+                        .join(' '); // Join items with a space between them
+                    setValue(formattedValues)
+                }
+                else {
+                    setValue(values[0])
+                }
             }
         }
-    }, [values])
+
+    }, [values, outSourceValues])
     const handleOnClose = () => {
         setOpenModal(false);
     }
@@ -158,21 +169,42 @@ const KeyValueViewComponent = ({
     }
 
     const onClickSaveNoteForAction = async (comment: string) => {
-        const callBack = (res) => {
-            if (res.success) {
-                setValue(comment)
-                handleOnClose()
-            }
-        };
-        await updateProductItemDraftActionData(callApi, callBack, {
-            productItemValueId: currentProductItemValue?.productItemValueId,
-            actionId: actionId,
-            value: comment,
-            fieldName: name,
-            productType: productType,
-            signalRConnectionId: connectionId,
-            OutputId: id
-        })
+        if (isOutSource) {
+            const callBack = (res) => {
+                if (res.success) {
+                    setValue(comment)
+                    handleOnClose()
+                }
+
+            };
+
+            await updateProductItemValueOutsourceSupplierCost(callApi, callBack, {
+                productItemValueId: currentProductItemValue?.productItemValueId,
+                signalRConnectionId: connectionId,
+                actionId,
+                supplierId,
+                key: EOutSoucrceUpdateKey.Outputs,
+                value,
+                OutputId: id
+            });
+        } else {
+            const callBack = (res) => {
+                if (res.success) {
+                    setValue(comment)
+                    handleOnClose()
+                }
+            };
+            await updateProductItemDraftActionData(callApi, callBack, {
+                productItemValueId: currentProductItemValue?.productItemValueId,
+                actionId: actionId,
+                value: comment,
+                fieldName: name,
+                productType: productType,
+                signalRConnectionId: connectionId,
+                OutputId: id
+            })
+        }
+
     };
     const onClickSaveNoteBoardMissionActionOutput = async (comment: string) => {
         const callBack = (res) => {

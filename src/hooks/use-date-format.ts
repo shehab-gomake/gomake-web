@@ -5,6 +5,7 @@ const useDateFormat = () => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
 
+  //?Correct for 04-11-2024 15:22
   const GetDateFormat = (date: Date) => {
     const utcDate = moment.utc(date, "DD-MM-YYYY h:mm");
     let format = "YYYY-MM-DD HH:mm";
@@ -14,7 +15,20 @@ const useDateFormat = () => {
     return utcDate.local().format(format);
   };
 
-  // Convert to UTC first, then to local time
+  //?Correct for 2024-11-04T15:22:48.818687
+  //Convert to this 04-11-2024 17:22
+  const GetJobDateFormat = (date: Date) => {
+    const utcDate = moment.utc(date, "YYYY-MM-DD HH:mm");
+    let format = "DD-MM-YYYY HH:mm";
+    if (dir === "rtl") {
+      format = "DD-MM-YYYY HH:mm";
+    }
+    return utcDate.local().format(format);
+  };
+
+  //?Correct for 2024-11-04T15:22:49.966622
+  //Convert to this 04/11/2024 17:22
+  //Convert to UTC first, then to local time
   const getFormattedLocalDate = (date: Date | string) => {
     const localDate = moment.utc(date).local();
     let format = "DD/MM/YYYY HH:mm";
@@ -56,6 +70,7 @@ const useDateFormat = () => {
 
   return {
     GetDateFormat,
+    GetJobDateFormat,
     GetShortDateFormat,
     GetDateWithoutHoursFormat,
     getFormattedLocalDate,
