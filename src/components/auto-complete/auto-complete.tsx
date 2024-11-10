@@ -116,9 +116,9 @@ const GoMakeAutoComplate = ({
 }: {
   value?: any;
   onChange?: any;
-  onInputChange?: any,
-  onKeyDown?: any,
-  onClose?: any
+  onInputChange?: any;
+  onKeyDown?: any;
+  onClose?: any;
   style?: any;
   error?: any;
   options: any;
@@ -149,7 +149,6 @@ const GoMakeAutoComplate = ({
       setSelectedOption(null);
     }
   }, [value]);
-
 
   const [expandedGroups, setExpandedGroups] = useState<{
     [key: string]: boolean;
@@ -235,6 +234,7 @@ const GoMakeAutoComplate = ({
       }
       getOptionSelected={(option: any, value: any) => option?.id === value?.id}
       PaperComponent={PaperComponent}
+      filterOptions={(x) => x} //? Bypass default filtering
     />
   );
 };
