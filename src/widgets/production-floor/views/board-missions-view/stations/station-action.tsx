@@ -64,7 +64,7 @@ interface IProps extends IBoardMissionsStation {
   isHaveSubACtions?: boolean;
   isHideTimeAndDate?: boolean;
 }
-//!here
+
 const BoardMissionsStationAction = ({
   id,
   actionId,
@@ -85,7 +85,7 @@ const BoardMissionsStationAction = ({
   isNeedMachine,
   isNeedMaterial,
   getStations,
-  isHaveSubACtions, //!here
+  isHaveSubACtions,
   subActions,
   isHideTimeAndDate,
   supplierName,
