@@ -1,4 +1,15 @@
+import { useState } from "react";
+
 const usePriceProfit = () => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
 
   const data = {
     "headers": [
@@ -95,7 +106,7 @@ const usePriceProfit = () => {
           {
             "Qunatity": "5000",
             "PrintHousePrice": "100",
-            "CalculatedPrice": "100",
+            "CalculatedPrice": "150",
             "IsNotCalcuated": false
           }
         ]
@@ -104,7 +115,11 @@ const usePriceProfit = () => {
   }
 
   return {
-    data
+    data,
+    open,
+    anchorEl,
+    handleClose,
+    handleOpen
   };
 };
 

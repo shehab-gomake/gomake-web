@@ -48,6 +48,53 @@ const useStyle = () => {
           alignItems: 'center',
           gap: 5,
           textAlign: 'center' as "center"
+        },
+        menuContainer: {
+          display: "flex",
+          flexDirection: "column" as "column",
+          gap: 10,
+        },
+        menuItem: {
+          display: "flex",
+          flexDirection: "row" as "row",
+          gap: 10,
+          justifyContent: "space-between",
+          alignItems: "center",
+          width: "100%"
+        },
+        menuItemRestoreContainer: {
+          display: "flex",
+          flexDirection: "row" as "row",
+          gap: 8,
+          justifyContent: "flex-start",
+          alignItems: "center"
+        },
+        menuItemUpdateContainer: {
+          display: "flex",
+          flexDirection: "row" as "row",
+          gap: 8,
+          justifyContent: "flex-start",
+          alignItems: "center"
+        },
+        menuItemRestoreText: {
+          ...FONT_FAMILY.Lexend(500, 14),
+          color: "#079455",
+
+        },
+        menuItemUpdateText: {
+          ...FONT_FAMILY.Lexend(500, 14),
+          color: "#D92D20",
+        },
+        menuItemReviewContainer: {
+          display: "flex",
+          flexDirection: "row" as "row",
+          gap: 8,
+          justifyContent: "flex-start",
+          alignItems: "center"
+        },
+        menuItemReviewText: {
+          ...FONT_FAMILY.Lexend(500, 14),
+          color: "#344054",
         }
     };
   }, []);
