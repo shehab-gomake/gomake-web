@@ -7,10 +7,10 @@ import { UpdatedPriceIcon } from './icons/update-icon';
 import { ReStoreIcon } from './icons/restore-icon';
 import { ReviewIcon } from './icons/review-icon';
 import { useStyle } from './style';
+import { InputUpdatedValues } from '@/widgets/quote-new/input-updated-values';
 
 interface PriceProfitTableProps {
   headers: any[];
-  data: any[];
   open: boolean;
   anchorEl: HTMLElement | null;
   handleClose: () => void;
@@ -22,11 +22,14 @@ interface PriceProfitTableProps {
   selectedProduct: any;
   products: any;
   setSelectedProduct: (data: any) => void;
+  handlePriceChange: (index: number, idx: number, newValue: string) => void;
+  isUpdate: boolean;
+  setIsUpdate: (value: boolean) => void;
+  onBlurPriceChange: (value: any) => void;
 }
 
 const PriceProfitTable = ({
   headers,
-  data,
   open,
   anchorEl,
   handleClose,
@@ -37,11 +40,16 @@ const PriceProfitTable = ({
   handleReviewCalculation,
   selectedProduct,
   products,
-  setSelectedProduct
+  setSelectedProduct,
+  handlePriceChange,
+  isUpdate,
+  setIsUpdate,
+  onBlurPriceChange
 }: PriceProfitTableProps) => {
   const { classes } = useStyle()
   const [showAllProducts, setShowAllProducts] = useState(false); // New state variable
 
+  const [selectedCell, setSelectedCell] = useState<{ row: number, col: number } | null>(null); // New state to track selected cell
 
   return (
     <TableContainer>
@@ -84,16 +92,35 @@ const PriceProfitTable = ({
                     key={idx}
                     style={price.PrintHousePrice !== price.CalculatedPrice ? classes.tableBodyCellError : classes.tableBodyNotErrorCell}
                     onClick={(event) => {
+
                       if (price.PrintHousePrice !== price.CalculatedPrice) {
-                        // Open your popup here
                         handleOpen(event)
                         setSelectedProduct({ ...product, ...price })
+                      }
+                      else {
+                        setSelectedCell({ row: index, col: idx });
                       }
                     }}
                   >
                     <div style={classes.tableBodyCellContent}>
-                      {price.IsNotCalcuated ? <Warning2Icon /> :
-                        price.CalculatedPrice}
+                      {price.IsNotCalcuated ? (
+                        <Warning2Icon />
+                      ) : (
+                        selectedCell?.row === index && selectedCell?.col === idx ? ( // Check if the cell is selected
+                          <InputUpdatedValues
+                            value={price.CalculatedPrice}
+                            onBlur={onBlurPriceChange}
+                            isUpdate={isUpdate}
+                            setIsUpdate={() => setIsUpdate(!isUpdate)}
+                            onInputChange={(e) => {
+                              console.log('e', e)
+                              // handlePriceChange(index, idx, newValue);
+                            }}
+                          />
+                        ) : (
+                          <span>{price.CalculatedPrice}</span> // Display the price if not selected
+                        )
+                      )}
                     </div>
                   </TableCell>
                 ))}

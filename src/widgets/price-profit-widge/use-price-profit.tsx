@@ -142,6 +142,7 @@ const usePriceProfit = () => {
     ]
   }
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isUpdate, setIsUpdate] = useState(false); // New state variable
   const [anchorElSetting, setAnchorElSetting] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const openSetting = Boolean(anchorElSetting);
@@ -193,6 +194,13 @@ const usePriceProfit = () => {
     handleClose()
   };
 
+  const onBlurPriceChange = async (item) => {
+    setIsUpdate(false);
+  };
+  const handlePriceChange = (index: number, idx: number, newValue: string) => {
+    console.log('newValue', newValue)
+  };
+
 
 
 
@@ -213,7 +221,10 @@ const usePriceProfit = () => {
     handleUpdateNewPrice,
     handleReviewCalculation,
     setSelectedProduct,
-
+    handlePriceChange,
+    isUpdate,
+    setIsUpdate,
+    onBlurPriceChange
   };
 };
 

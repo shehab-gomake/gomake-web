@@ -24,16 +24,24 @@ const PriceProfitWidge = () => {
     handleUpdateNewPrice,
     handleReviewCalculation,
     setSelectedProduct,
+    handlePriceChange,
+    isUpdate,
+    setIsUpdate,
+    onBlurPriceChange
   } = usePriceProfit()
 
   return (
     <div style={classes.mainContainer}>
-      <PriceProfitHeaderWidget handleClose={handleCloseSetting} anchorEl={anchorElSetting} open={openSetting} handleOpen={handleOpenSetting} />
+      <PriceProfitHeaderWidget
+        handleClose={handleCloseSetting}
+        anchorEl={anchorElSetting}
+        open={openSetting}
+        handleOpen={handleOpenSetting}
+      />
       <Divider style={classes.divider} />
       <FilterPriceProfitWidget />
       <PriceProfitTable
         headers={data?.headers}
-        data={data?.data}
         open={open}
         anchorEl={anchorEl}
         handleClose={handleClose}
@@ -45,6 +53,10 @@ const PriceProfitWidge = () => {
         selectedProduct={selectedProduct}
         products={products}
         setSelectedProduct={setSelectedProduct}
+        handlePriceChange={handlePriceChange}
+        isUpdate={isUpdate}
+        setIsUpdate={setIsUpdate}
+        onBlurPriceChange={onBlurPriceChange}
       />
     </div>
   );

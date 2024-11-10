@@ -31,6 +31,8 @@ const useStyle = () => {
         },
         tableBodyCell: {
           border: '1px solid #EAECF0',
+          width: "120px",
+          maxWidth: "120px"
         },
         tableBodyCellError: {
           backgroundColor: '#f8d7da',
@@ -39,7 +41,9 @@ const useStyle = () => {
           cursor: "pointer"
         },
         tableBodyNotErrorCell: {
-          ...FONT_FAMILY.Lexend(500, 14)
+          ...FONT_FAMILY.Lexend(500, 14),
+          cursor: "pointer"
+
         },
         tableBodyCellContent: {
           display: 'flex',
@@ -47,7 +51,7 @@ const useStyle = () => {
           justifyContent: "center",
           alignItems: 'center',
           gap: 5,
-          textAlign: 'center' as "center"
+          textAlign: 'center' as "center",
         },
         menuContainer: {
           display: "flex",
