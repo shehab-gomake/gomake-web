@@ -77,7 +77,7 @@ const AddRuleModal = ({
     actionEmployeeList,
     isFetching,
     getConditionText,
-    setAdditionType
+    setAdditionType,
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -129,19 +129,19 @@ const AddRuleModal = ({
                 options={
                   router.query.actionId
                     ? machincesList?.machines?.map((value) => {
-                      return {
-                        ...value,
-                        label: value?.machineName,
-                        id: value.machineId,
-                      };
-                    })
+                        return {
+                          ...value,
+                          label: value?.machineName,
+                          id: value.machineId,
+                        };
+                      })
                     : allMachincesList?.map((value) => {
-                      return {
-                        ...value,
-                        label: `${value?.manufacturer} - ${value?.model}`,
-                        id: value.id,
-                      };
-                    })
+                        return {
+                          ...value,
+                          label: `${value?.manufacturer} - ${value?.model}`,
+                          id: value.id,
+                        };
+                      })
                 }
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectMachine")}
@@ -398,9 +398,9 @@ const AddRuleModal = ({
         modalTitle={
           isPropertiesWidge
             ? t("products.profits.exceptions.addNewRule") +
-            " (" +
-            selectedProperties?.propertyName +
-            ")"
+              " (" +
+              selectedProperties?.propertyName +
+              ")"
             : t("products.profits.exceptions.addNewRule")
         }
         onClose={() => {
@@ -542,19 +542,19 @@ const AddRuleModal = ({
                         options={
                           router.query.actionId
                             ? allMachincesList?.map((value) => {
-                              return {
-                                ...value,
-                                label: `${value?.manufacturer} - ${value?.model}`,
-                                id: value.id,
-                              };
-                            })
+                                return {
+                                  ...value,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
+                                  id: value.id,
+                                };
+                              })
                             : allMachincesList?.map((value) => {
-                              return {
-                                ...value,
-                                label: `${value?.manufacturer} - ${value?.model}`,
-                                id: value.id,
-                              };
-                            })
+                                return {
+                                  ...value,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
+                                  id: value.id,
+                                };
+                              })
                         }
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
@@ -580,6 +580,7 @@ const AddRuleModal = ({
                           };
                         })}
                         getOptionLabel={(option: any) => `${option.name}`}
+                        defaultFiltering={false}
                         onChangeTextField={checkWhatRenderArray}
                         style={clasess.dropDownListContainer}
                         placeholder={t("sales.quote.chooseCustomer")}
@@ -607,19 +608,19 @@ const AddRuleModal = ({
                           options={
                             router.query.actionId
                               ? allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.manufacturer} - ${value?.model}`,
-                                  id: value.id,
-                                };
-                              })
+                                  return {
+                                    ...value,
+                                    label: `${value?.manufacturer} - ${value?.model}`,
+                                    id: value.id,
+                                  };
+                                })
                               : allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.manufacturer} - ${value?.model}`,
-                                  id: value.id,
-                                };
-                              })
+                                  return {
+                                    ...value,
+                                    label: `${value?.manufacturer} - ${value?.model}`,
+                                    id: value.id,
+                                  };
+                                })
                           }
                           style={clasess.dropDownListContainer}
                           placeholder={t("properties.statment")}
@@ -721,7 +722,7 @@ const AddRuleModal = ({
                   {rule.category?.id === "Property input" && (
                     <>
                       {rules[index]?.statement2?.type === 0 ||
-                        rules[index]?.statement2?.type === 5 ? (
+                      rules[index]?.statement2?.type === 5 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}
@@ -880,7 +881,9 @@ const AddRuleModal = ({
                 </div>
                 <GomakeTextInput
                   type="number"
-                  placeholder={t("products.profits.exceptions.additionalProfit")}
+                  placeholder={t(
+                    "products.profits.exceptions.additionalProfit"
+                  )}
                   onChange={(e: any) => {
                     setAdditionalProfit(e.target.value);
                   }}

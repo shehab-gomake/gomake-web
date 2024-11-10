@@ -186,7 +186,7 @@ const QuotesListPageWidget = ({
     openDuplicateModal,
     onCloseDuplicateModal,
     onClickDocumentDuplicate,
-    searchInputRef
+    searchInputRef,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -320,6 +320,7 @@ const QuotesListPageWidget = ({
                                 getOptionLabel={(option: any) =>
                                   `${option.name}`
                                 }
+                                defaultFiltering={false}
                                 onChangeTextField={checkWhatRenderArray}
                                 style={classes.textInputStyle}
                                 placeholder={t("sales.quote.chooseCustomer")}

@@ -114,6 +114,7 @@ const GoMakeAutoComplate = ({
   groupBy,
   renderGroup,
   loading, // Add loading prop
+  defaultFiltering = true,
   startIcon,
 }: {
   value?: any;
@@ -139,6 +140,7 @@ const GoMakeAutoComplate = ({
   groupBy?: (option: any) => string;
   renderGroup?: (params: any) => React.ReactNode;
   loading?: boolean; // Add loading prop
+  defaultFiltering?: boolean;
   startIcon?: React.ReactNode; // Add startIcon as a React node
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
@@ -260,7 +262,7 @@ const GoMakeAutoComplate = ({
       }
       getOptionSelected={(option: any, value: any) => option?.id === value?.id}
       PaperComponent={PaperComponent}
-      filterOptions={(x) => x} //? Bypass default filtering
+      filterOptions={defaultFiltering ? undefined : (x) => x} //? Bypass default filtering
     />
   );
 };

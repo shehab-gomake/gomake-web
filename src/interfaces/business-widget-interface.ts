@@ -19,4 +19,5 @@ export interface IBusinessWidget {
   inputMainContainerStyle?: React.CSSProperties;
   placeholder?: string;
   isFetching?: boolean;
+  defaultFiltering?: boolean;
 }

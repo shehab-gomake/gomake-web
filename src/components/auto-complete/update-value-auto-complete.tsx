@@ -24,6 +24,7 @@ interface IUpdateValueAutoCompleteProps {
   getOptionLabel?: any;
   onChangeTextField?: any;
   loading?: boolean;
+  defaultFiltering?: boolean;
 }
 
 const UpdateValueAutoComplete = ({
@@ -33,6 +34,7 @@ const UpdateValueAutoComplete = ({
   getOptionLabel,
   onChangeTextField,
   loading = false,
+  defaultFiltering = true,
 }: IUpdateValueAutoCompleteProps) => {
   const { secondColor } = useGomakeTheme();
   const { t } = useTranslation();
@@ -123,6 +125,7 @@ const UpdateValueAutoComplete = ({
                 {props?.children}
               </Paper>
             )}
+            filterOptions={defaultFiltering ? undefined : (x) => x}
           />
         </Paper>
       </ClickOutside>

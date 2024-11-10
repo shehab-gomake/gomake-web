@@ -117,6 +117,7 @@ const BusinessNewWidget = ({
       <div style={classes.businessContainerStyle}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
+          defaultFiltering={false}
           value={
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
