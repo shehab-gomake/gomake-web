@@ -106,19 +106,18 @@ const PriceProfitTable = ({
                       {price.IsNotCalcuated ? (
                         <Warning2Icon />
                       ) : (
-                        selectedCell?.row === index && selectedCell?.col === idx ? ( // Check if the cell is selected
+                        selectedCell?.row === index && selectedCell?.col === idx ? (
                           <InputUpdatedValues
                             value={price.CalculatedPrice}
                             onBlur={onBlurPriceChange}
                             isUpdate={isUpdate}
                             setIsUpdate={() => setIsUpdate(!isUpdate)}
-                            onInputChange={(e) => {
-                              console.log('e', e)
-                              // handlePriceChange(index, idx, newValue);
+                            onInputChange={(value) => {
+                              handlePriceChange(index, idx, value);
                             }}
                           />
                         ) : (
-                          <span>{price.CalculatedPrice}</span> // Display the price if not selected
+                          <span>{price.CalculatedPrice}</span>
                         )
                       )}
                     </div>
@@ -129,9 +128,9 @@ const PriceProfitTable = ({
           ))}
         </TableBody>
       </Table>
-      <div style={classes.viewAllContainer} onClick={() => setShowAllProducts(!showAllProducts)}>
+      <div style={classes.viewAllContainer}>
         <PlusIcon stroke="#2E3092" width={16} height={16} />
-        {showAllProducts ? "Hide hidden" : "View all"}
+        <span onClick={() => setShowAllProducts(!showAllProducts)}>{showAllProducts ? "Hide hidden" : "View all"}</span>
       </div>
       <Divider />
       <GoMakeMenu

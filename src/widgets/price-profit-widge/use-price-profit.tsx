@@ -198,9 +198,22 @@ const usePriceProfit = () => {
     setIsUpdate(false);
   };
   const handlePriceChange = (index: number, idx: number, newValue: string) => {
-    console.log('newValue', newValue)
-  };
+    setProducts((prevProducts) => {
+      const updatedProducts = { ...prevProducts }; // Corrected to spread the object
+      const productToUpdate = { ...updatedProducts.data[index] }; // Access the data array
+      const updatedPricePerQuantity = [...productToUpdate.PricePerQuantity];
 
+      updatedPricePerQuantity[idx] = {
+        ...updatedPricePerQuantity[idx],
+        CalculatedPrice: newValue
+      };
+
+      productToUpdate.PricePerQuantity = updatedPricePerQuantity;
+      updatedProducts.data[index] = productToUpdate; // Update the data array
+
+      return updatedProducts; // Return the updated object
+    });
+  };
 
 
 
