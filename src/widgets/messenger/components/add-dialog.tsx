@@ -228,6 +228,7 @@ const AddDialog = ({ onAddDialog, onCloseModal, openModal }: IProps) => {
                 key={customerId}
                 options={customers}
                 getOptionLabel={(option: any) => `${option.name}`}
+                defaultFiltering={false}
                 onChangeTextField={checkWhatRenderArray}
                 placeholder={t("sales.quote.chooseCustomer")}
                 onChange={(e: any, value: any) => {

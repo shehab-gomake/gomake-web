@@ -113,12 +113,13 @@ const GoMakeAutoComplate = ({
   groupBy,
   renderGroup,
   loading, // Add loading prop
+  defaultFiltering = true,
 }: {
   value?: any;
   onChange?: any;
-  onInputChange?: any,
-  onKeyDown?: any,
-  onClose?: any
+  onInputChange?: any;
+  onKeyDown?: any;
+  onClose?: any;
   style?: any;
   error?: any;
   options: any;
@@ -137,6 +138,7 @@ const GoMakeAutoComplate = ({
   groupBy?: (option: any) => string;
   renderGroup?: (params: any) => React.ReactNode;
   loading?: boolean; // Add loading prop
+  defaultFiltering?: boolean;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -149,7 +151,6 @@ const GoMakeAutoComplate = ({
       setSelectedOption(null);
     }
   }, [value]);
-
 
   const [expandedGroups, setExpandedGroups] = useState<{
     [key: string]: boolean;
@@ -235,6 +236,7 @@ const GoMakeAutoComplate = ({
       }
       getOptionSelected={(option: any, value: any) => option?.id === value?.id}
       PaperComponent={PaperComponent}
+      filterOptions={defaultFiltering ? undefined : (x) => x} //? Bypass default filtering
     />
   );
 };
