@@ -14,24 +14,32 @@ interface PriceProfitTableProps {
   anchorEl: HTMLElement | null;
   handleClose: () => void;
   handleOpen: (event: React.MouseEvent<HTMLElement>) => void;
+  handleCheckboxChange: (index: number) => void;
+  handleRestoreOriginalPrice: (data: any) => void;
+  handleUpdateNewPrice: (data: any) => void;
+  handleReviewCalculation: (data: any) => void;
+  selectedProduct: any;
+  products: any;
+  setSelectedProduct: (data: any) => void;
 }
 
-const PriceProfitTable = ({ headers, data, open, anchorEl, handleClose, handleOpen }: PriceProfitTableProps) => {
+const PriceProfitTable = ({
+  headers,
+  data,
+  open,
+  anchorEl,
+  handleClose,
+  handleOpen,
+  handleCheckboxChange,
+  handleRestoreOriginalPrice,
+  handleUpdateNewPrice,
+  handleReviewCalculation,
+  selectedProduct,
+  products,
+  setSelectedProduct
+}: PriceProfitTableProps) => {
   const { classes } = useStyle()
-  const [selectedProduct, setSelectedProduct] = useState<any>(null)
-  console.log("selectedProduct", selectedProduct)
 
-  const handleRestoreOriginalPrice = () => {
-    // Add logic for restoring the original price
-  };
-
-  const handleUpdateNewPrice = () => {
-    // Add logic for updating the new price
-  };
-
-  const handleReviewCalculation = () => {
-    // Add logic for reviewing the calculation
-  };
   return (
     <TableContainer>
       <Table style={classes.table}>
@@ -55,14 +63,16 @@ const PriceProfitTable = ({ headers, data, open, anchorEl, handleClose, handleOp
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((product, index) => (
+          {products?.data?.map((product, index) => (
             !product.IsHidden && (
               <TableRow key={index}>
                 <TableCell sx={classes.tableBodyCell} style={product?.IsSelected ? { borderLeft: "6px solid #11A5EC" } : {}}>
                   <Checkbox
                     icon={<CheckboxIcon />}
                     checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
-                    checked={product.IsSelected} />
+                    checked={product.IsSelected}
+                    onChange={() => handleCheckboxChange(index)}
+                  />
                   {product.ProductName}
                 </TableCell>
                 {product.PricePerQuantity.map((price, idx) => (
@@ -95,7 +105,7 @@ const PriceProfitTable = ({ headers, data, open, anchorEl, handleClose, handleOp
         anchorEl={anchorEl}
       >
         <div style={classes.menuContainer}>
-          <MenuItem onClick={handleRestoreOriginalPrice} style={classes.menuItem}>
+          <MenuItem onClick={() => handleRestoreOriginalPrice(selectedProduct)} style={classes.menuItem}>
             <div style={classes.menuItemRestoreContainer}>
               <ReStoreIcon />
               <div style={classes.menuItemRestoreText}>
@@ -106,7 +116,7 @@ const PriceProfitTable = ({ headers, data, open, anchorEl, handleClose, handleOp
               ₪ {selectedProduct?.PrintHousePrice}
             </div>
           </MenuItem>
-          <MenuItem onClick={handleUpdateNewPrice} style={classes.menuItem}>
+          <MenuItem onClick={() => handleUpdateNewPrice(selectedProduct)} style={classes.menuItem}>
             <div style={classes.menuItemUpdateContainer}>
               <UpdatedPriceIcon />
               <div style={classes.menuItemUpdateText}>Update new price</div>
@@ -115,7 +125,7 @@ const PriceProfitTable = ({ headers, data, open, anchorEl, handleClose, handleOp
               ₪ {selectedProduct?.CalculatedPrice}
             </div>
           </MenuItem>
-          <MenuItem onClick={handleReviewCalculation}>
+          <MenuItem onClick={() => handleReviewCalculation(selectedProduct)}>
             <div style={classes.menuItemReviewContainer}>
               <ReviewIcon />
               <div style={classes.menuItemReviewText}>Review calculation</div>

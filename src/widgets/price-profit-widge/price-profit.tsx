@@ -11,8 +11,15 @@ const PriceProfitWidge = () => {
     data,
     open,
     anchorEl,
+    selectedProduct,
+    products,
     handleClose,
-    handleOpen
+    handleOpen,
+    handleCheckboxChange,
+    handleRestoreOriginalPrice,
+    handleUpdateNewPrice,
+    handleReviewCalculation,
+    setSelectedProduct,
   } = usePriceProfit()
 
   return (
@@ -27,6 +34,13 @@ const PriceProfitWidge = () => {
         anchorEl={anchorEl}
         handleClose={handleClose}
         handleOpen={handleOpen}
+        handleCheckboxChange={handleCheckboxChange}
+        handleRestoreOriginalPrice={handleRestoreOriginalPrice}
+        handleUpdateNewPrice={handleUpdateNewPrice}
+        handleReviewCalculation={handleReviewCalculation}
+        selectedProduct={selectedProduct}
+        products={products}
+        setSelectedProduct={setSelectedProduct}
       />
     </div>
   );

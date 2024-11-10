@@ -1,16 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const usePriceProfit = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-
   const data = {
     "headers": [
       {
@@ -113,13 +103,67 @@ const usePriceProfit = () => {
       }
     ]
   }
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+
+  const [products, setProducts] = useState(data);
+
+  useEffect(() => {
+    setProducts(data)
+  }, [])
+
+  const handleCheckboxChange = (index: number) => {
+    setProducts(prevProducts => ({
+      ...prevProducts,
+      data: prevProducts.data.map((product, i) =>
+        i === index ? { ...product, IsSelected: !product.IsSelected } : product
+      )
+    }));
+  };
+
+  const handleRestoreOriginalPrice = (data: any) => {
+    console.log('data1', data)
+    // Add logic for restoring the original price
+    handleClose()
+  };
+
+  const handleUpdateNewPrice = (data: any) => {
+    console.log('data2', data)
+    // Add logic for updating the new price
+    handleClose()
+  };
+
+  const handleReviewCalculation = (data: any) => {
+    console.log('data3', data)
+    // Add logic for reviewing the calculation
+    handleClose()
+  };
+
+
+
 
   return {
     data,
     open,
     anchorEl,
+    selectedProduct,
+    products,
     handleClose,
-    handleOpen
+    handleOpen,
+    handleCheckboxChange,
+    handleRestoreOriginalPrice,
+    handleUpdateNewPrice,
+    handleReviewCalculation,
+    setSelectedProduct,
+
   };
 };
 
