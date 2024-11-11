@@ -69,7 +69,7 @@ const usePriceProfit = () => {
             "isDefualt": false
           }
         ]
-      }
+      },
     ],
     "data": [
       {

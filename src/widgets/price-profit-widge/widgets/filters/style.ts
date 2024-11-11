@@ -22,11 +22,7 @@ const useStyle = () => {
       },
       parameterItem:{
         ...FONT_FAMILY.Lexend(400,14),
-        color:"#B42318",
-        border: "1px solid #FECDCA",
-        backgroundColor: "#FECDCA",
-        
-        borderRadius: 4,
+        borderRadius:8,
         padding: 4  
       }
     };
