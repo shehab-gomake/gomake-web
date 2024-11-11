@@ -18,12 +18,18 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         alignItems: "center",
         justifyContent: "space-between",
-        gap:10,
+        gap:14,
       },
       parameterItem:{
         ...FONT_FAMILY.Lexend(400,14),
         borderRadius:8,
-        padding: 4  
+        padding: 4  ,
+        cursor:"pointer"
+      },
+      menuContainer:{
+        display: "flex",
+        flexDirection: "column" as "column",
+        padding: "2px 8px",
       }
     };
   }, []);

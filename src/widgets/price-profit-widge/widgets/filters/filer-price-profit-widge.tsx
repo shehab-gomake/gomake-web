@@ -1,11 +1,21 @@
 
+import { GoMakeMenu } from "@/components/menu/menu";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { ParameterListWidget } from "./parameter-list-widget";
 
 const FilterPriceProfitWidget = ({ parameters }: { parameters: any }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  console.log(parameters)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
   const colorsMock = [
     {
       color: "#B42318",
@@ -51,22 +61,16 @@ const FilterPriceProfitWidget = ({ parameters }: { parameters: any }) => {
             const defaultValue = parameter.values.find((value: any) => value.isDefualt);
             displayValue = defaultValue ? defaultValue.label : '';
           }
-
           // Use modulo to cycle through colorsMock
           const colorStyle = colorsMock[index % colorsMock.length];
 
           return (
-            <span
-              key={index}
-              style={{
-                ...classes.parameterItem,
-                color: colorStyle.color,
-                borderColor: colorStyle.border,
-                backgroundColor: colorStyle.backgroundColor,
-              }}
-            >
-              {`${t(parameter.ParameterName)}: ${displayValue}`}
-            </span>
+            <ParameterListWidget
+              parameter={parameter}
+              index={index}
+              colorStyle={colorStyle}
+              displayValue={displayValue}
+            />
           );
         })}
       </div>
