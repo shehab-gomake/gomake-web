@@ -24,6 +24,53 @@ const usePriceProfit = () => {
         "Total": "100"
       }
     ],
+    "parameters": [
+      {
+        "ParameterName": "width",
+        "ParameterId": "",
+        "Type": "1",
+        "defualtValue": "100",
+        "values": []
+      },
+      {
+        "ParameterName": "length",
+        "ParameterId": "",
+        "Type": "1",
+        "defualtValue": "",
+        "values": []
+      },
+      {
+        "ParameterName": "Sheet cateogry",
+        "ParameterId": "",
+        "Type": "5",
+        "defualtValue": "",
+        "values": [
+          {
+            "id": "uncoted",
+            "label": "uncoted",
+            "isDefualt": true
+          },
+          {
+            "id": "coted mate",
+            "label": "coted mate",
+            "isDefualt": false
+          }
+        ]
+      },
+      {
+        "ParameterName": "Sheet weight",
+        "ParameterId": "",
+        "Type": "5",
+        "defualtValue": "",
+        "values": [
+          {
+            "id": "100",
+            "label": "100",
+            "isDefualt": false
+          }
+        ]
+      }
+    ],
     "data": [
       {
         "ProductId": "3123123212",
@@ -64,7 +111,7 @@ const usePriceProfit = () => {
         ]
       },
       {
-        "ProductId": "445855",
+        "ProductId": "445ssww855",
         "ProductName": "Folding",
         "IsSelected": false,
         "IsHidden": true,
@@ -223,6 +270,19 @@ const usePriceProfit = () => {
     });
   };
 
+  const handleHideProduct = (index: number, value: boolean) => {
+    setProducts(prevProducts => {
+      const updatedProducts = {
+        ...prevProducts,
+        data: prevProducts.data.map((product, i) =>
+          i === index ? { ...product, IsHidden: !value } : product
+        )
+      };
+      return updatedProducts;
+    });
+  };
+
+
 
 
   return {
@@ -249,7 +309,8 @@ const usePriceProfit = () => {
     handlePrintClose,
     anchorElPrint,
     openPrint,
-    handleOpenPrint
+    handleOpenPrint,
+    handleHideProduct
   };
 };
 

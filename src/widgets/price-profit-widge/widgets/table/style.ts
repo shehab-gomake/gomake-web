@@ -49,11 +49,11 @@ const useStyle = () => {
             background: "#F9FAFB"
           }
         },
-        moreIconContainer: {
+        moreIconContainer: { 
           position: "absolute" as "absolute",
           right: "10px",
           top: "25px",
-          cursor: "pointer"
+          cursor: "pointer",
         },
         tableBodyCellError: {
           backgroundColor: '#f8d7da',
@@ -132,6 +132,34 @@ const useStyle = () => {
           gap: 8,
           padding: "16px",
           cursor: "pointer"
+        },
+        moreMenuContainer: {
+          display: "flex",
+          flexDirection: "row" as "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          width: "100%",
+          padding: "0px 4px",
+          gap: 16
+
+        },
+        switchContainer: {
+          display: "flex",
+          flexDirection: "row" as "row",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 10,
+          border: "1px solid #EAECF0",
+          borderRadius: "6px",
+          padding: "0px 8px"
+        },
+        switchText: {
+          ...FONT_FAMILY.Lexend(700, 14),
+          color: "#344054"
+        },
+        appearanceText: {
+          ...FONT_FAMILY.Lexend(500, 14),
+          color: "#344054"
         }
     };
   }, []);

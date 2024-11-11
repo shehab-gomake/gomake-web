@@ -31,7 +31,8 @@ const PriceProfitWidge = () => {
     handlePrintClose,
     anchorElPrint,
     openPrint,
-    handleOpenPrint
+    handleOpenPrint,
+    handleHideProduct
   } = usePriceProfit()
 
   return (
@@ -47,7 +48,7 @@ const PriceProfitWidge = () => {
         handleOpenPrint={handleOpenPrint}
       />
       <Divider style={classes.divider} />
-      <FilterPriceProfitWidget />
+      <FilterPriceProfitWidget parameters={data?.parameters} />
       <PriceProfitTable
         headers={data?.headers}
         open={open}
@@ -65,6 +66,7 @@ const PriceProfitWidge = () => {
         isUpdate={isUpdate}
         setIsUpdate={setIsUpdate}
         onBlurPriceChange={onBlurPriceChange}
+        handleHideProduct={handleHideProduct}
       />
     </div>
   );

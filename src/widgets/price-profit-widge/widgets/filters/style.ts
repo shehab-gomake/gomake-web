@@ -13,25 +13,21 @@ const useStyle = () => {
         gap:10,
         padding:16
       },
-   
-      searchContainer:{
-        display:"flex",
-        flexDirection:"row" as "row",
-        gap:10
+      parameterContainer:{
+        display: 'flex',
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap:10,
       },
-      searchInputStyle:{
-        border:"1px solid #D0D5DD",
-        backgroundColor:"transparent"
-
-      },
-      filtersBtn:{
-        width:"fit-content",
-        height: 40,
-        borderRadius:10,
-        backgroundColor:"transparent",
-        border:"1px solid #E0E0E0",
-        color:"#182230",
-        ...FONT_FAMILY.Lexend(500,14)
+      parameterItem:{
+        ...FONT_FAMILY.Lexend(400,14),
+        color:"#B42318",
+        border: "1px solid #FECDCA",
+        backgroundColor: "#FECDCA",
+        
+        borderRadius: 4,
+        padding: 4  
       }
     };
   }, []);

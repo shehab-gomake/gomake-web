@@ -27,6 +27,7 @@ interface PriceProfitTableProps {
   isUpdate: boolean;
   setIsUpdate: (value: boolean) => void;
   onBlurPriceChange: (value: any) => void;
+  handleHideProduct: (index: number, data: any) => void;
 }
 
 const PriceProfitTable = ({
@@ -45,7 +46,8 @@ const PriceProfitTable = ({
   handlePriceChange,
   isUpdate,
   setIsUpdate,
-  onBlurPriceChange
+  onBlurPriceChange,
+  handleHideProduct
 }: PriceProfitTableProps) => {
   const { classes } = useStyle()
   const [showAllProducts, setShowAllProducts] = useState(false);
@@ -88,6 +90,7 @@ const PriceProfitTable = ({
                 setIsUpdate={setIsUpdate}
                 activeCell={activeCell}
                 setActiveCell={setActiveCell}
+                handleHideProduct={handleHideProduct}
               />
             )
           ))}

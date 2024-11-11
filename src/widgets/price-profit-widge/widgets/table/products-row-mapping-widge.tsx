@@ -5,6 +5,8 @@ import { CheckboxCheckedIcon } from '@/icons';
 import { CheckboxIcon } from '@/icons';
 import { useStyle } from './style';
 import { MoreIcon } from './icons/more-icon';
+import { GoMakeMenu, SecondSwitch } from '@/components';
+import { useState } from 'react';
 
 
 const ProductsRowMappingTable = ({
@@ -18,42 +20,79 @@ const ProductsRowMappingTable = ({
   isUpdate,
   setIsUpdate,
   activeCell,
-  setActiveCell
+  setActiveCell,
+  handleHideProduct
 }) => {
   const { classes } = useStyle()
-
-
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+  const handleActiveOpen = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
   return (
-    <TableRow key={index}>
-      <TableCell sx={classes.tableBodyCellForProduct} style={product?.IsSelected ? { borderLeft: "6px solid #11A5EC" } : {}}>
-        <Checkbox
-          icon={<CheckboxIcon />}
-          checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
-          checked={product.IsSelected}
-          onChange={() => handleCheckboxChange(index)}
-        />
-        {product.ProductName}
-        <div style={classes.moreIconContainer}>
-          <MoreIcon />
+    <>
+      <TableRow key={index}>
+        <TableCell
+          className="tableBodyCellForProduct"
+          sx={{
+            ...classes.tableBodyCellForProduct,
+            borderLeft: product?.IsSelected ? '6px solid #11A5EC' : 'none',
+          }}
+          style={product?.IsSelected ? { borderLeft: "6px solid #11A5EC" } : {}}>
+          <Checkbox
+            icon={<CheckboxIcon />}
+            checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
+            checked={product.IsSelected}
+            onChange={() => handleCheckboxChange(index)}
+          />
+          {product.ProductName}
+          <div
+            className="moreIconContainer"
+            style={classes.moreIconContainer}
+            onClick={handleActiveOpen}
+          >
+            <MoreIcon />
+          </div>
+        </TableCell>
+        {product.PricePerQuantity.map((price, idx) => (
+          <PriceProfitRowMappingTable
+            price={price}
+            idx={idx}
+            index={index}
+            handleOpen={handleOpen}
+            setSelectedProduct={setSelectedProduct}
+            onBlurPriceChange={onBlurPriceChange}
+            handlePriceChange={handlePriceChange}
+            isUpdate={isUpdate}
+            product={product}
+            setIsUpdate={setIsUpdate}
+            activeCell={activeCell}
+            setActiveCell={setActiveCell}
+          />
+        ))}
+      </TableRow>
+      <GoMakeMenu
+        handleClose={handleClose}
+        open={open}
+        anchorEl={anchorEl}
+      >
+        <div style={classes.moreMenuContainer}>
+          <div style={classes.appearanceText}>Appearance</div>
+          <div style={classes.switchContainer}>
+            <div style={classes.switchText}>{product?.IsHidden ? "off" : "on"}</div>
+            <SecondSwitch
+              checked={!product?.IsHidden}
+              onChange={(e) => {
+                handleHideProduct(index, e.target.checked)
+              }}
+            />
+          </div>
         </div>
-      </TableCell>
-      {product.PricePerQuantity.map((price, idx) => (
-        <PriceProfitRowMappingTable
-          price={price}
-          idx={idx}
-          index={index}
-          handleOpen={handleOpen}
-          setSelectedProduct={setSelectedProduct}
-          onBlurPriceChange={onBlurPriceChange}
-          handlePriceChange={handlePriceChange}
-          isUpdate={isUpdate}
-          product={product}
-          setIsUpdate={setIsUpdate}
-          activeCell={activeCell}
-          setActiveCell={setActiveCell}
-        />
-      ))}
-    </TableRow>
+      </GoMakeMenu>
+    </>
   );
 };
 
