@@ -17,8 +17,6 @@ import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { CollapseOptionComponent } from "@/widgets/production-floor/filters/select/actions-select/collapse-option-component";
 import { useStyle } from "./style";
 import { DepartmentModal } from "@/widgets/production-floor/header/components/groups/department-modal";
-import { SaveIcon } from "@/widgets/production-floor/header/components/icons/save-icon";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import styled from "styled-components";
 
 interface IProps {
@@ -54,7 +52,6 @@ const ActionsListComponent = ({
   } = useActionsList({ source, onClickApply, filterGroups, setFilterGroups });
 
   const { classes } = useStyle({ source });
-  const { secondColor } = useGomakeTheme();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
@@ -170,11 +167,6 @@ const ActionsListComponent = ({
                 >
                   {t("productionFloor.apply")}
                 </SecondaryButton>
-                {source === Source.PRODUCTION_FLOOR && (
-                  <div onClick={handleClickSave} style={classes.iconContainer}>
-                    <SaveIcon color={secondColor(500)} />
-                  </div>
-                )}
               </div>
             </div>
           </Paper>
