@@ -185,6 +185,462 @@ const usePriceProfit = () => {
             "IsNotCalcuated": false
           }
         ]
+      },
+      {
+        "ProductId": "3123123212",
+        "ProductName": "Paper + preprss",
+        "IsSelected": true,
+        "IsHidden": false,
+        "PricePerQuantity": [
+          {
+            "Qunatity": "10",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "120",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "100",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": true
+          },
+          {
+            "Qunatity": "300",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "1000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "5000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          }
+        ]
+      },
+      {
+        "ProductId": "445ssww855",
+        "ProductName": "Folding",
+        "IsSelected": false,
+        "IsHidden": true,
+        "PricePerQuantity": [
+          {
+            "Qunatity": "10",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "100",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "300",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "1000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "5000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "150",
+            "IsNotCalcuated": false
+          }
+        ]
+      },
+      {
+        "ProductId": "445855",
+        "ProductName": "Folding",
+        "IsSelected": false,
+        "IsHidden": false,
+        "PricePerQuantity": [
+          {
+            "Qunatity": "10",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "100",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "300",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "1000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "5000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "150",
+            "IsNotCalcuated": false
+          }
+        ]
+      },
+      {
+        "ProductId": "3123123212",
+        "ProductName": "Paper + preprss",
+        "IsSelected": true,
+        "IsHidden": false,
+        "PricePerQuantity": [
+          {
+            "Qunatity": "10",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "120",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "100",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": true
+          },
+          {
+            "Qunatity": "300",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "1000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "5000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          }
+        ]
+      },
+      {
+        "ProductId": "445ssww855",
+        "ProductName": "Folding",
+        "IsSelected": false,
+        "IsHidden": true,
+        "PricePerQuantity": [
+          {
+            "Qunatity": "10",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "100",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "300",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "1000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "5000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "150",
+            "IsNotCalcuated": false
+          }
+        ]
+      },
+      {
+        "ProductId": "445855",
+        "ProductName": "Folding",
+        "IsSelected": false,
+        "IsHidden": false,
+        "PricePerQuantity": [
+          {
+            "Qunatity": "10",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "100",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "300",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "1000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "5000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "150",
+            "IsNotCalcuated": false
+          }
+        ]
+      },
+      {
+        "ProductId": "3123123212",
+        "ProductName": "Paper + preprss",
+        "IsSelected": true,
+        "IsHidden": false,
+        "PricePerQuantity": [
+          {
+            "Qunatity": "10",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "120",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "100",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": true
+          },
+          {
+            "Qunatity": "300",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "1000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "5000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          }
+        ]
+      },
+      {
+        "ProductId": "445ssww855",
+        "ProductName": "Folding",
+        "IsSelected": false,
+        "IsHidden": true,
+        "PricePerQuantity": [
+          {
+            "Qunatity": "10",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "100",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "300",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "1000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "5000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "150",
+            "IsNotCalcuated": false
+          }
+        ]
+      },
+      {
+        "ProductId": "445855",
+        "ProductName": "Folding",
+        "IsSelected": false,
+        "IsHidden": false,
+        "PricePerQuantity": [
+          {
+            "Qunatity": "10",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "100",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "300",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "1000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "5000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "150",
+            "IsNotCalcuated": false
+          }
+        ]
+      },
+      {
+        "ProductId": "3123123212",
+        "ProductName": "Paper + preprss",
+        "IsSelected": true,
+        "IsHidden": false,
+        "PricePerQuantity": [
+          {
+            "Qunatity": "10",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "120",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "100",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": true
+          },
+          {
+            "Qunatity": "300",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "1000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "5000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          }
+        ]
+      },
+      {
+        "ProductId": "445ssww855",
+        "ProductName": "Folding",
+        "IsSelected": false,
+        "IsHidden": true,
+        "PricePerQuantity": [
+          {
+            "Qunatity": "10",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "100",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "300",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "1000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "5000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "150",
+            "IsNotCalcuated": false
+          }
+        ]
+      },
+      {
+        "ProductId": "445855",
+        "ProductName": "Folding",
+        "IsSelected": false,
+        "IsHidden": false,
+        "PricePerQuantity": [
+          {
+            "Qunatity": "10",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "100",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "300",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "1000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "100",
+            "IsNotCalcuated": false
+          },
+          {
+            "Qunatity": "5000",
+            "PrintHousePrice": "100",
+            "CalculatedPrice": "150",
+            "IsNotCalcuated": false
+          }
+        ]
       }
     ]
   }

@@ -3,6 +3,9 @@ import { useMemo } from "react";
 const useStyle = () => {
   const classes = useMemo(() => {
     return {
+      tableContainer:{
+        maxHeight: "69vh",
+      },
         table: {
           borderCollapse: 'separate' as "separate"
         },
@@ -16,13 +19,15 @@ const useStyle = () => {
         },
         tableHeadCell: {
           border: '1px solid #EAECF0',
-          ...FONT_FAMILY.Lexend(700, 14),
-          paddingLeft: "25px"
+          ...FONT_FAMILY.Lexend(500, 14),
+          paddingLeft: "25px",
+          color: "#FFF"
         },
         tableHeadCellValue: {
           border: '1px solid #EAECF0',
           textAlign: 'center',
-          ...FONT_FAMILY.Lexend(700, 14)
+          ...FONT_FAMILY.Lexend(500, 14),
+          color: "#FFF"
         },
         tableHeadCellValueTotal: {
           ...FONT_FAMILY.Lexend(600, 14),

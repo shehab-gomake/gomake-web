@@ -54,7 +54,7 @@ const PriceProfitTable = ({
   const [activeCell, setActiveCell] = useState<{ index: number, idx: number } | null>(null);
 
   return (
-    <TableContainer>
+    <TableContainer style={classes.tableContainer}>
       <Table style={classes.table}>
         <TableHead>
           <TableRow style={classes.tableHead}>
