@@ -10,12 +10,15 @@ const ADD_NEW_EMPLOYEE_URL = '/v1/crm-service/employee/add-employee';
 const UPDATE_EMPLOYEE_URL = '/v1/crm-service/employee/update-employee';
 const INACTIVE_USER_FIRST_LOGIN_URL = '/v1/crm-service/users/inactive-first-login';
 const GET_ALL_USERS_CAN_APPROVE_QUOTE_URL = '/v1/crm-service/employee/get-all-users-can-approve-quote';
+const GET_EMPLOYEES_WORKING_HOURS_URL = '/v1/crm-service/employee/get-employees-working-hours';
+const UPDATE_EMPLOYEE_DEFAULT_WORKING_HOURS_URL = '/v1/crm-service/employee/update-default-employee-working-hours/';
+const UPDATE_EMPLOYEE_DAY_WORKING_HOURS_URL = '/v1/crm-service/employee/update-employee-day-working-hours';
 
 const getAllUsersApi: ICallAndSetData = async (callApi, setState) => {
-    return  await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_USERS_URL, setState)
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_USERS_URL, setState)
 }
 
-const getEmployeeApi: ICallAndSetData = async (callApi, setState,id: string) => {
+const getEmployeeApi: ICallAndSetData = async (callApi, setState, id: string) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_EMPLOYEE_BY_ID_URL + id, setState);
 }
 const toggleEmployeeStatus: ICallAndSetData = async (callApi, setState, userId: string) => {
@@ -33,8 +36,28 @@ const inactiveUserFirstLogin: ICallAndSetData = async (callApi, setState) => {
 }
 
 const getAllUsersCanApproveQuoteApi: ICallAndSetData = async (callApi, setState) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_USERS_CAN_APPROVE_QUOTE_URL , setState);
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_USERS_CAN_APPROVE_QUOTE_URL, setState);
+}
+const getEmployeesWorkingHoursApi: ICallAndSetData = async (callApi, setState) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_EMPLOYEES_WORKING_HOURS_URL, setState);
+}
+const updateEmployeesWorkingHoursApi: ICallAndSetData = async (callApi, setState, {employeeId, data}) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_EMPLOYEE_DEFAULT_WORKING_HOURS_URL + employeeId, setState, data);
+}
+const updateEmployeesDayWorkingHoursApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_EMPLOYEE_DAY_WORKING_HOURS_URL, setState, data);
 }
 
 
-export {getAllUsersApi, getEmployeeApi, toggleEmployeeStatus, addNewEmployee, updateEmployee, inactiveUserFirstLogin,getAllUsersCanApproveQuoteApi};
+export {
+    getAllUsersApi,
+    getEmployeeApi,
+    toggleEmployeeStatus,
+    addNewEmployee,
+    updateEmployee,
+    inactiveUserFirstLogin,
+    getAllUsersCanApproveQuoteApi,
+    getEmployeesWorkingHoursApi,
+    updateEmployeesWorkingHoursApi,
+    updateEmployeesDayWorkingHoursApi
+};
