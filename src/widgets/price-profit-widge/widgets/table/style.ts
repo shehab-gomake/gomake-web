@@ -8,12 +8,16 @@ const useStyle = () => {
         },
         tableHead:{
           height:72,
-          background:"#F2F4F7"
+          background:"#B1B2E3"
+        },
+        tableHeadTotal:{
+          height:72,
+          background:"#D0D5DD"
         },
         tableHeadCell: {
           border: '1px solid #EAECF0',
           ...FONT_FAMILY.Lexend(700, 14),
-          paddingLeft: "56px"
+          paddingLeft: "25px"
         },
         tableHeadCellValue: {
           border: '1px solid #EAECF0',
@@ -22,7 +26,8 @@ const useStyle = () => {
         },
         tableHeadCellValueTotal: {
           ...FONT_FAMILY.Lexend(600, 14),
-          borderLeft: "6px solid #4BA30D"
+          borderLeft: "6px solid #4BA30D",
+            paddingLeft: "25px"
         },
         tableHeadCellTotalValue: {
           border: '1px solid #EAECF0',
@@ -32,7 +37,23 @@ const useStyle = () => {
         tableBodyCell: {
           border: '1px solid #EAECF0',
           width: "120px",
-          maxWidth: "120px"
+          maxWidth: "120px",
+          
+        },
+        tableBodyCellForProduct: {
+          border: '1px solid #EAECF0',
+          width: "120px",
+          maxWidth: "120px",
+          position: "relative" as "relative",
+          "&:hover": {
+            background: "#F9FAFB"
+          }
+        },
+        moreIconContainer: {
+          position: "absolute" as "absolute",
+          right: "10px",
+          top: "25px",
+          cursor: "pointer"
         },
         tableBodyCellError: {
           backgroundColor: '#f8d7da',

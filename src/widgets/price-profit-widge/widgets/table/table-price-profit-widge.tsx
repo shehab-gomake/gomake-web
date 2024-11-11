@@ -64,7 +64,7 @@ const PriceProfitTable = ({
               </TableCell>
             ))}
           </TableRow>
-          <TableRow>
+          <TableRow style={classes.tableHeadTotal}>
             <TableCell sx={classes.tableHeadCellValueTotal}>Total</TableCell>
             {headers.map((header, index) => (
               <TableCell sx={classes.tableHeadCellTotalValue} key={index} colSpan={header?.quantities?.length}>

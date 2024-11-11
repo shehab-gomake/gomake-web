@@ -4,6 +4,7 @@ import { PriceProfitRowMappingTable } from './table-price-profit-row-mapping-wid
 import { CheckboxCheckedIcon } from '@/icons';
 import { CheckboxIcon } from '@/icons';
 import { useStyle } from './style';
+import { MoreIcon } from './icons/more-icon';
 
 
 const ProductsRowMappingTable = ({
@@ -24,7 +25,7 @@ const ProductsRowMappingTable = ({
 
   return (
     <TableRow key={index}>
-      <TableCell sx={classes.tableBodyCell} style={product?.IsSelected ? { borderLeft: "6px solid #11A5EC" } : {}}>
+      <TableCell sx={classes.tableBodyCellForProduct} style={product?.IsSelected ? { borderLeft: "6px solid #11A5EC" } : {}}>
         <Checkbox
           icon={<CheckboxIcon />}
           checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
@@ -32,6 +33,9 @@ const ProductsRowMappingTable = ({
           onChange={() => handleCheckboxChange(index)}
         />
         {product.ProductName}
+        <div style={classes.moreIconContainer}>
+          <MoreIcon />
+        </div>
       </TableCell>
       {product.PricePerQuantity.map((price, idx) => (
         <PriceProfitRowMappingTable

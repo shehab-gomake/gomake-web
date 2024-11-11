@@ -146,17 +146,25 @@ const usePriceProfit = () => {
   const [anchorElSetting, setAnchorElSetting] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const openSetting = Boolean(anchorElSetting);
+  const [anchorElPrint, setAnchorElPrint] = useState<null | HTMLElement>(null);
+  const openPrint = Boolean(anchorElPrint);
   const handleClose = () => {
     setAnchorEl(null);
   };
   const handleCloseSetting = () => {
     setAnchorElSetting(null);
   };
+  const handlePrintClose = () => {
+    setAnchorElPrint(null);
+  };
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
   const handleOpenSetting = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElSetting(event.currentTarget);
+  };
+  const handleOpenPrint = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElPrint(event.currentTarget);
   };
 
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
@@ -237,7 +245,11 @@ const usePriceProfit = () => {
     handlePriceChange,
     isUpdate,
     setIsUpdate,
-    onBlurPriceChange
+    onBlurPriceChange,
+    handlePrintClose,
+    anchorElPrint,
+    openPrint,
+    handleOpenPrint
   };
 };
 

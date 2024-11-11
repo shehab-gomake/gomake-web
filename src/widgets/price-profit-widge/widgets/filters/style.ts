@@ -13,13 +13,7 @@ const useStyle = () => {
         gap:10,
         padding:16
       },
-      autoCompleteStyle:{
-        width:"200px",
-        height:40,
-        border:"1px solid #D0D5DD",
-        boxShadow:"none"
-
-      },
+   
       searchContainer:{
         display:"flex",
         flexDirection:"row" as "row",

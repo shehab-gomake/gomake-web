@@ -29,7 +29,13 @@ const useStyle = () => {
         border:"none"
 
       },
-      
+      autoCompleteStyle:{
+        width:"200px",
+        height:40,
+        border:"1px solid #D0D5DD",
+        boxShadow:"none"
+
+      },
       settingBtn:{
         width:"fit-content",
         height: 40,
