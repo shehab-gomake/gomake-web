@@ -41,7 +41,7 @@ const GoMakeMenu = ({
       style={style}
       sx={sx}
     >
-      {Children.map(children, (child) =>
+    {Children.map(children, (child) =>
         isValidElement(child)
           ? cloneElement(child as ReactElement, {
               onKeyDown: (event: React.KeyboardEvent) => {
