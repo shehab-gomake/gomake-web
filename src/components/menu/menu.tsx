@@ -1,5 +1,6 @@
 import { Menu } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import {Children, cloneElement} from "react";
 
 const GoMakeMenu = ({ handleClose, open, anchorEl, ...props }) => {
   const { children }: any = props;
@@ -25,7 +26,13 @@ const GoMakeMenu = ({ handleClose, open, anchorEl, ...props }) => {
       style={props.style}
       sx={props.sx}
     >
-      {children}
+        {Children.map(children, (child) =>
+            cloneElement(child, {
+                onKeyDown: (event) => {
+                    event.stopPropagation();
+                },
+            })
+        )}
     </Menu>
   );
 };
