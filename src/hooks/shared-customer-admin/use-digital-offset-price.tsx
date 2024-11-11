@@ -1311,9 +1311,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   defaultValue = defualtValueConfig.id;
                 }
               }
-              if(parameter.code === "additionname"){
-                debugger
-              }
               const targetSubProduct = subProducts.find(
                   (item) => item.type === subSection?.type
               );
@@ -2609,11 +2606,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         const param = subSectionCopy.parameters.find(
                           (x) => x.id === relatedParameter.parameterId && x.actionIndex == relatedParameter.actionIndex
                         );
-                        if (param.isHidden == true) {
+                        if (param && param.isHidden == true) {
                           return;
                         }
-                        param.isHidden = true;
-                        setProductTemplate(productCopy);
+                        if(param){
+                          param.isHidden = true;
+                          setProductTemplate(productCopy);
+                        }
+                        
+                       
                       }
                     } else {
                       const valueInArray =
@@ -4189,7 +4190,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setErrorMsg("");
           const newCalculationSessionId = uuidv4();
           setCurrentCalculationSessionId(newCalculationSessionId);
-          debugger
           const itemParmetersValues = getItemParameterValues();
           const updatedGeneralParameters =
             removeHiddenParametersFromSubProductsParameters(
@@ -4568,9 +4568,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     productTemplate
   ) {
     return parameters.filter((param) => {
-      if(param.parameterCode == "additionname"){
-        debugger
-      }
       let matchingTemplateParam = null;
       const section = productTemplate.sections.find(x => x.id == param.sectionId);
       if (section && section.subSections) {
