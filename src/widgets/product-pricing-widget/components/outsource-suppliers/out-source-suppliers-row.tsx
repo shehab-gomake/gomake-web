@@ -1,7 +1,7 @@
-import { EOutsourceSupplierStatus } from "@/widgets/product-pricing-widget/enums";
+import { EOutsourceSupplierStatus, RuleType, HtmlElementType } from "@/widgets/product-pricing-widget/enums";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { Fade } from "@mui/material";
+import { Fade, IconButton, Skeleton, } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import { UpdateValueInput } from "@/components/text-input/update-value-input";
@@ -14,8 +14,9 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { systemCurrencyState } from "@/store";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { calculationResultState, currentProductItemValuePriceState } from "../../state";
-import { UpdateValueAutoComplete } from "@/components";
-import { useSnackBar } from "@/hooks";
+import { GomakePrimaryButton, UpdateValueAutoComplete } from "@/components";
+import { TextAreaActionsMapping } from "../action/key-value-view";
+import { WastebasketNew2 } from "@/icons";
 
 interface IProps {
     value: number;
@@ -37,22 +38,27 @@ interface ISelectProps {
 
 const OutSourceSuppliersRowComponent = ({
     widgetType,
-    options
-}: { widgetType: EWidgetProductType; options: IOutSourceSupplier[] }) => {
+    options,
+    onClickAddOutSourceAction,
+    onClickRemoveOutSourceAction,
+    selectedWorkFlow,
+    selectedWorkFlowCalculatedIsLoaded
+}: { widgetType: EWidgetProductType; options: IOutSourceSupplier[]; onClickAddOutSourceAction: () => void, onClickRemoveOutSourceAction: (actionId: string) => void, selectedWorkFlow: any, selectedWorkFlowCalculatedIsLoaded: boolean }) => {
     const { t } = useTranslation();
     const { classes } = useStyle();
     const { secondColor } = useGomakeTheme();
-    const { alertFault } = useSnackBar();
     const [supplier, setSupplier] = useState<IOutSourceSupplier | null>();
-    const { updatePrice, updateWorkHours, updateProfit, updateCost, productItemValueByEdit } = useOutsourceSupplier({ supplier, setSupplier, options });
+    const { updatePrice, updateWorkHours, updateProfit, updateSupplierId, updateCost, productItemValueByEdit, currentProductItemValue } = useOutsourceSupplier({ supplier, setSupplier, options });
     const systemCurrency = useRecoilValue<any>(systemCurrencyState);
     const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(currentProductItemValuePriceState);
     const calculationResult = useRecoilValue(calculationResultState);
 
+
+
     useEffect(() => {
         if (options?.length > 0) {
             const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
-            const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : calculationResult?.productItemValue?.supplierId;
+            const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : selectedWorkFlow?.actions?.supplierId;
             const foundSupplier = options.find(x => x.supplierId == suppId) || options[0];
             if (isEditOrDuplicate && foundSupplier) {
                 setSupplier({
@@ -67,27 +73,24 @@ const OutSourceSuppliersRowComponent = ({
             }
         }
     }, []);
-    const handleDeliveryTimeUpdate = (newValue: number) => {
-        updateWorkHours(supplier?.supplierId, +newValue);
+    const handleDeliveryTimeUpdate = (newValue: number, actionId: string, supplierId: string) => {
+        updateWorkHours(supplierId, +newValue, actionId);
     }
-    const handleCostUpdate = (newCost: number) => {
-        updateCost(supplier?.supplierId, newCost);
+    const handleCostUpdate = (newCost: number, actionId: string, supplierId: string) => {
+        updateCost(supplierId, newCost, actionId);
     }
-    const handleProfitUpdate = (profit: number) => {
-        updateProfit(supplier?.supplierId, +profit)
+    const handleProfitUpdate = (profit: number, actionId: string, supplierId: string) => {
+        updateProfit(supplierId, +profit, actionId)
     }
-    const handleUpdatePrice = (price: number) => {
-        if (supplier?.cost === 0) {
-            alertFault(t("pricingWidget.costCannotBeZero"));
-        } else {
-            updatePrice(supplier?.supplierId, price);
-        }
+    const handleUpdatePrice = (price: number, actionId: string, supplierId: string) => {
+        updatePrice(supplierId, price, actionId);
     }
 
-    const handleSupplierUpdate = (value) => {
+    const handleSupplierUpdate = (value, actionId) => {
         const selectedSupp = options.find(x => x.supplierId == value?.value);
-        setCurrentProductItemValueTotalPrice(selectedSupp.finalPrice)
-        setSupplier(selectedSupp);
+        updateSupplierId(selectedSupp?.supplierId, actionId);
+        // setCurrentProductItemValueTotalPrice(selectedSupp.finalPrice)
+        // setSupplier(selectedSupp);
     }
 
     useEffect(() => {
@@ -95,31 +98,93 @@ const OutSourceSuppliersRowComponent = ({
             setCurrentProductItemValueTotalPrice(supplier.finalPrice)
         }
     }, [supplier?.finalPrice, setCurrentProductItemValueTotalPrice])
-
-
     return (
-        <Fade in={true} timeout={700}>
-            <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
-                style={{ ...classes.actionContainer, padding: '10px 16px' }}>
-                <Stack alignItems={'center'} direction={"row"} gap={'10px'} flexWrap={'wrap'}>
-                    <EditableSelect isEditable={supplier?.status === EOutsourceSupplierStatus.Manually}
-                        label={t('suppliers.supplierName')} value={supplier?.supplierName} onUpdate={handleSupplierUpdate} options={options} />
-                    <Divider orientation={'vertical'} flexItem />
-                    <EditableValue unit={'W.H'} isEditable={supplier?.status === EOutsourceSupplierStatus.Manually}
-                        label={t('pricingWidget.endTime')} value={supplier?.workHours} onUpdate={handleDeliveryTimeUpdate} />
-                    <Divider orientation={'vertical'} flexItem />
-                    <EditableValue unit={systemCurrency} isEditable={supplier?.status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.cost')}
-                        value={supplier?.cost} onUpdate={handleCostUpdate} />
-                    <Divider orientation={'vertical'} flexItem />
-                    <EditableValue unit={'%'} isEditable={supplier?.status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.profit')}
-                        value={supplier?.profit} onUpdate={handleProfitUpdate} />
-                    <Divider orientation={'vertical'} flexItem />
-                    <EditableValue unit={systemCurrency} isEditable={supplier?.status === EOutsourceSupplierStatus.Manually && supplier?.cost !== 0}
-                        valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={supplier?.finalPrice}
-                        onUpdate={handleUpdatePrice} />
-                </Stack>
-            </Stack>
-        </Fade>
+        <>
+            {
+                selectedWorkFlowCalculatedIsLoaded ? <Skeleton variant="rectangular" width={'100%'} height={'100px'} /> :
+                    <Fade in={true} timeout={700}>
+                        <Stack direction={"column"} alignItems={'flex-start'} justifyContent={'flex-start'} gap={"15px"}
+                        >
+                            {!selectedWorkFlowCalculatedIsLoaded && selectedWorkFlow?.actions?.map((action, index) => {
+                                // const isEditOrDuplicate = widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE;
+                                // const suppId = isEditOrDuplicate ? productItemValueByEdit?.supplierId : action?.supplierId;
+                                const foundSupplier = options.find(x => x.supplierId == action?.supplierId);
+                                const textAreaOutputs = action?.outputs?.filter(
+                                    (parameter) =>
+                                        parameter && parameter?.propertyType === RuleType.OUTPUT &&
+                                        parameter?.htmlElementType === HtmlElementType.TEXT_AREA
+                                );
+                                return (
+                                    <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
+                                        style={{ ...classes.actionContainer, }}
+                                    >
+                                        <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'} position={"relative"}
+                                            style={{ ...classes.actionContainer, padding: '10px 16px' }}>
+                                            <Stack alignItems={'center'} direction={"row"} gap={'10px'} flexWrap={'wrap'}>
+                                                <EditableSelect isEditable={true}
+                                                    label={t('suppliers.supplierName')} value={foundSupplier?.supplierName ? foundSupplier?.supplierName : "Select Supplier"}
+                                                    // onUpdate={handleSupplierUpdate} 
+                                                    onUpdate={(v) => { handleSupplierUpdate(v, action?.id) }}
+                                                    options={options} />
+                                                <Divider orientation={'vertical'} flexItem />
+                                                <EditableValue unit={'W.H'} isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually}
+                                                    label={t('pricingWidget.endTime')}
+                                                    value={Array.isArray(action?.totalProductionTime?.outSourceValues) && action?.totalProductionTime?.outSourceValues.length > 0
+                                                        ? action?.totalProductionTime?.outSourceValues[0]
+                                                        : 0}
+                                                    onUpdate={(v) => { handleDeliveryTimeUpdate(+v, action?.id, foundSupplier?.supplierId) }} />
+                                                <Divider orientation={'vertical'} flexItem />
+                                                <EditableValue unit={systemCurrency} isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.cost')}
+                                                    value={Array.isArray(action?.totalCost?.outSourceValues) && action?.totalCost?.outSourceValues.length > 0
+                                                        ? action?.totalCost?.outSourceValues[0]
+                                                        : 0} onUpdate={(v) => { handleCostUpdate(+v, action?.id, foundSupplier?.supplierId) }} />
+                                                <Divider orientation={'vertical'} flexItem />
+                                                <EditableValue unit={'%'} isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.profit')}
+                                                    value={Array.isArray(action?.profit?.outSourceValues) && action?.profit?.outSourceValues.length > 0
+                                                        ? action?.profit?.outSourceValues[0]
+                                                        : 0} onUpdate={(v) => { handleProfitUpdate(+v, action?.id, foundSupplier?.supplierId) }} />
+                                                <Divider orientation={'vertical'} flexItem />
+                                                <EditableValue unit={systemCurrency} isEditable={foundSupplier?.status === EOutsourceSupplierStatus.Manually && foundSupplier?.cost !== 0}
+                                                    valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={Array.isArray(action?.totalPrice?.outSourceValues) && action?.totalPrice?.outSourceValues.length > 0
+                                                        ? action?.totalPrice?.outSourceValues[0]
+                                                        : 0}
+                                                    onUpdate={(v) => { handleUpdatePrice(+v, action?.id, foundSupplier?.supplierId) }} />
+                                                <Divider orientation={"vertical"} flexItem />
+                                                <TextAreaActionsMapping
+                                                    parameters={textAreaOutputs}
+                                                    actionId={action?.id}
+                                                    currentProductItemValue={currentProductItemValue}
+                                                    productType={action?.productType}
+                                                    isOutSource={true}
+                                                    supplierId={foundSupplier?.supplierId}
+                                                />
+                                            </Stack>
+                                            {selectedWorkFlow?.actions.length > 1 && (
+                                                <IconButton onClick={() => { onClickRemoveOutSourceAction(action?.id) }} style={classes.toggleActionButton}>
+                                                    <WastebasketNew2 />
+                                                </IconButton>
+                                            )}
+
+                                        </Stack>
+                                    </Stack>
+                                )
+                            })}
+
+                        </Stack>
+                    </Fade>
+            }
+            <GomakePrimaryButton
+                onClick={onClickAddOutSourceAction}
+                style={{
+                    width: 'fit-content',
+                    alignSelf: "flex-end",
+                    marginTop: 10,
+                    height: 40,
+                    marginRight: 10
+                }}>
+                {t('pricingWidget.addNewOutSourceAction')}
+            </GomakePrimaryButton>
+        </>
     )
 }
 

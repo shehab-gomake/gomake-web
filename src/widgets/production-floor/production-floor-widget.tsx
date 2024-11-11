@@ -55,6 +55,21 @@ const ProductionFloorWidget = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const { view: viewQuery } = query;
+    if (viewQuery) {
+      const viewEnum = (
+        Object.keys(EProductionFloorView) as Array<
+          keyof typeof EProductionFloorView
+        >
+      ).find((key) => key.toLowerCase() === viewQuery);
+
+      if (viewEnum) {
+        setView(EProductionFloorView[viewEnum]);
+      }
+    }
+  }, [query, setView]);
+
   return (
     <Stack
       padding={"0 20px"}
@@ -83,13 +98,15 @@ const ProductionFloorWidget = () => {
         )}
         <QrListenerWidget listening={!boardMissionsId} />
       </Stack>
-      {/* here */}
       <Drawer
         sx={{ zIndex: 999999 }}
         open={!!boardMissionsId}
         anchor={"bottom"}
         onClose={() => {
-          push("/production-floor", undefined, { shallow: true });
+          const currentView = EProductionFloorView[view].toLowerCase();
+          push(`/production-floor?view=${currentView}`, undefined, {
+            shallow: true,
+          });
         }}
       >
         <Stack
@@ -99,7 +116,10 @@ const ProductionFloorWidget = () => {
         >
           <IconButton
             onClick={() => {
-              push("/production-floor", undefined, { shallow: true });
+              const currentView = EProductionFloorView[view].toLowerCase();
+              push(`/production-floor?view=${currentView}`, undefined, {
+                shallow: true,
+              });
             }}
             sx={{
               width: "fit-content",

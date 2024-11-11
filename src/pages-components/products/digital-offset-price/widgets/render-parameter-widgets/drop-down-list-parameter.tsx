@@ -3,7 +3,7 @@ import { SettingsIcon } from "@/icons/settings";
 import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
-import {EParameterTypes} from "@/enums";
+import { EParameterTypes } from "@/enums";
 
 // Custom tooltip component for long text options
 const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -70,10 +70,10 @@ const DropDownListParameterWidget = ({
       setDeviceSize(value?.id);
     }
     let valueId = null;
-    if(parameter?.parameterType == EParameterTypes.MACHINES_SELECT){
+    if (parameter?.parameterType == EParameterTypes.MACHINES_SELECT) {
       valueId = value?.updateName;
     }
-    else{
+    else {
       valueId = value?.id;
     }
     // Update the subProducts for pricing
@@ -96,6 +96,7 @@ const DropDownListParameterWidget = ({
 
     <div data-tour={parameter?.id} style={parameter?.setSettingIcon && inModal ? { ...clasess.dropDownListWithSettingIcon, minWidth: '250px' } : clasess.dropDownListWithSettingIcon}>
       <GoMakeAutoComplate
+        key={selectedValue}
         options={parameter?.valuesConfigs?.filter(value => {
           return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
         })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}

@@ -139,7 +139,7 @@ const ChildParameterModal = ({
                   let temp = [...state.valuesConfigs];
                   temp.push({
                     id: uuidv4(),
-                    isHidden: false,
+                    isHidden: true,
                     isDefault: false,
                     isDeleted: false,
                     updateName: "",
@@ -180,7 +180,7 @@ const ChildParameterModal = ({
                                   snapshot.isDragging,
                                   provided.draggableProps.style
                                 )}
-                              // style={clasess.addNewValueContainer}
+                                // style={clasess.addNewValueContainer}
                               >
                                 <div
                                   style={{
@@ -193,7 +193,9 @@ const ChildParameterModal = ({
                                 <div style={clasess.textInputContainer}>
                                   <GomakeTextInput
                                     style={clasess.textInputStyle}
-                                    placeholder={t("products.profits.exceptions.enterValue")}
+                                    placeholder={t(
+                                      "products.profits.exceptions.enterValue"
+                                    )}
                                     onChange={(e) =>
                                       changeItems(
                                         index,
@@ -241,7 +243,7 @@ const ChildParameterModal = ({
                                           }}
                                           defaultValue={
                                             state.valuesConfigs[index].values[
-                                            value?.id
+                                              value?.id
                                             ]
                                           }
                                         />
@@ -281,7 +283,7 @@ const ChildParameterModal = ({
                 const hasRepeatedNames = state.valuesConfigs.some(
                   (item, index) => isUpdateNameRepeated(item?.updateName, index)
                 );
-                const hasUpdateNames = checkUpdateNames(state.valuesConfigs)
+                const hasUpdateNames = checkUpdateNames(state.valuesConfigs);
                 if (!hasRepeatedNames && hasUpdateNames) {
                   updatedValuesConfigsForParameters(
                     selectedSectonId,
@@ -296,15 +298,13 @@ const ChildParameterModal = ({
                       message: t("products.offsetPrice.admin.fillValue"),
                       type: "error",
                     });
-                  }
-                  else {
+                  } else {
                     setSnackbarStateValue({
                       state: true,
                       message: t("products.offsetPrice.admin.valuesErrorMsg"),
                       type: "error",
                     });
                   }
-
                 }
               }}
             >

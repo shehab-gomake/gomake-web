@@ -108,6 +108,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     router,
     isFetching,
     printOrderJobsUsingPrintNode,
+    searchInputRef,
   } = useBoardMissions({ isPurchaseJobs });
   const [newOrderId, setNewOrderId] = useRecoilState(
     newOrderIdToPrintJobsState
@@ -166,6 +167,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                           <GoMakeAutoComplate
                             key={customer?.id}
                             options={renderOptions()}
+                            defaultFiltering={false}
                             onChangeTextField={checkWhatRenderArray}
                             getOptionLabel={(option: any) => `${option.name}`}
                             style={classes.textInputStyle}
@@ -317,11 +319,11 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
             }
             onChange={onChangeMissionsSearch}
             value={patternSearch}
+            inputRef={searchInputRef}
           />
           <PrimaryTable
             stickyFirstCol={false}
             stickyHeader={true}
-
             maxHeight={"calc(100vh - 250px)"}
             rows={!isPurchaseJobs ? allBoardMissions : allPurchaseJobs}
             headers={!isPurchaseJobs ? tableHeader : tableHeaderForPurchaseJobs}
@@ -329,55 +331,55 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               !isPurchaseJobs
                 ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                   ? [
+                      "7%",
+                      "7%",
+                      "6%",
+                      "6%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "4%",
+                      "6%",
+                      "12%",
+                      "7%",
+                      "7%",
+                      "13%",
+                      "3%",
+                    ]
+                  : [
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "18%",
+                      "7%",
+                      "15%",
+                      "7%",
+                      "3%",
+                    ]
+                : [
                     "7%",
+                    "5%",
+                    "6%",
                     "7%",
                     "6%",
-                    "6%",
                     "7%",
-                    "7%",
+                    "11%",
                     "8%",
+                    "6%",
+                    "8%",
+                    "5%",
+                    "5%",
+                    "7%",
                     "7%",
                     "4%",
-                    "6%",
-                    "12%",
-                    "7%",
-                    "7%",
-                    "13%",
-                    "3%",
+                    "2%",
                   ]
-                  : [
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "8%",
-                    "7%",
-                    "18%",
-                    "7%",
-                    "15%",
-                    "7%",
-                    "3%",
-                  ]
-                : [
-                  "7%",
-                  "5%",
-                  "6%",
-                  "7%",
-                  "6%",
-                  "7%",
-                  "11%",
-                  "8%",
-                  "6%",
-                  "8%",
-                  "5%",
-                  "5%",
-                  "7%",
-                  "7%",
-                  "4%",
-                  "2%",
-                ]
             }
           />
         </div>

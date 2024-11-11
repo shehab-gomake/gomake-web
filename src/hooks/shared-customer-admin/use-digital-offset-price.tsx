@@ -312,8 +312,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       getSelectedWorkFlow();
     }
   }, [calculationResult, currentCalculationSessionId]);
+  const [selectedWorkFlowCalculatedIsLoaded, setSelectedWorkFlowCalculatedIsLoaded] = useState<boolean>(false)
 
   const getSelectedWorkFlow = async () => {
+    // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
@@ -375,7 +377,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setIsChangePriceForEdit(true);
       setIsActionEmployeeUpdated(false);
       setIsJobNameValue(false);
+      setSelectedWorkFlowCalculatedIsLoaded(false)
+
     }
+    setSelectedWorkFlowCalculatedIsLoaded(false)
+
   };
 
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
@@ -728,7 +734,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let temp = [];
             subSection.parameters.forEach((parameter) => {
               if (parameter?.isHidden && !parameter?.isHiddenInSetting) {
-                return;
+                if (parameter.isUnderParameterId !== null) {
+                  underParameterIdsArray.push({
+                    underParameterId: parameter.isUnderParameterId,
+                    myParameter: parameter,
+                    sectionId: section.id,
+                    subSectionId: subSection.id,
+                  });
+                }
+               return;
               }
               parameter.relatedParameters.forEach((x) => {
                 x.sectionId = section.id;
@@ -1293,9 +1307,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   defaultValue = defualtValueConfig.id;
                 }
               }
-              // if (relatedToParameter && !defaultValue) {
-              //   parameter.isHidden = true;
-              // }
+              if (relatedToParameter && (!defaultValue || defaultValue === "false")) {
+                 parameter.isHidden = true;
+              }
+              const parameterDefaultValue = parameter.valuesConfigs?.find(
+                  (x) => x.isDefault
+              );
+              if(parameter.code === "PrintingColorsside2"){
+                debugger
+              }
+              if(relatedToParameter && relatedToParameter.relatedParameters ){
+                let relationConfigs = relatedToParameter.relatedParameters.find(x=>x.parameterId === parameter.id);
+                if(relationConfigs && relationConfigs.activateByAllValues && !defaultValue ){
+                  parameter.isHidden = true;
+                }
+                else if(!(relationConfigs && relationConfigs.selectedValueIds && defaultValue && relationConfigs.selectedValueIds.find(x=> x === defaultValue ))){
+                  parameter.isHidden = true;
+                }
+              }
               if (!relatedToParameter) {
                 if (
                   (parameter?.parameterType ===
@@ -1420,10 +1449,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
                 }
 
-                const defaultValue = parameter.valuesConfigs?.find(
-                  (x) => x.isDefault
-                );
-                if (defaultValue) {
+                
+                
+                if (parameterDefaultValue) {
+                  
                   const materialPath =
                     parameter.materialPath[parameter.materialPath.length - 1];
                   const materialRelatedParameters =
@@ -1484,7 +1513,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           compareStrings(x.pathName, materialPath)
                         )?.data;
                         paramMaterialValues = allMaterialsCopy?.find((x) =>
-                          defaultValue?.values?.find((y) => y === x.valueId)
+                            parameterDefaultValue?.values?.find((y) => y === x.valueId)
                         )?.data;
                       }
                       if (
@@ -1507,12 +1536,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         param.valuesConfigs = param.valuesConfigs.filter(
                           (x) => x.values && x.values.length > 0
                         );
-                        paramMaterialValues?.forEach((val) => {
+                        for(let i = 0 ; i < paramMaterialValues?.length;i++){
+                          let val = paramMaterialValues[i];
                           const existsValue = param.valuesConfigs?.find(
-                            (x) =>
-                              x.valueIds &&
-                              x.valueIds.length > 0 &&
-                              x.valueIds[0] === val.valueId
+                              (x) =>
+                                  (x.valueIds &&
+                                  x.valueIds.length > 0 &&
+                                  x.valueIds[0] === val.valueId) || (x.id === val.valueId)
                           );
                           if (!existsValue) {
                             param.valuesConfigs.push({
@@ -1528,14 +1558,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               additionalAttribute: val?.additionalAttribute,
                               currency: val?.currency,
                             });
-                          } else {
+                          }
+                          else {
                             existsValue.id = val.valueId;
                             existsValue.updateName = val.value;
                             (existsValue.additionalAttribute =
-                              val?.additionalAttribute),
-                              (existsValue.currency = val?.currency);
+                                val?.additionalAttribute),
+                                (existsValue.currency = val?.currency);
                           }
-                        });
+                        }
                         if (
                           param?.valuesConfigs &&
                           param?.valuesConfigs?.length === 1 &&
@@ -1666,7 +1697,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setPricingDefaultValue(null);
         setCalculationExceptionsLogs(null);
         setQuantityTypes([]);
-        setCalculationResult(null);
+        // setCalculationResult(null);
         setOutSuppliers(null);
         setLoading(false);
         setLoadingWithLockScreen(false);
@@ -2393,19 +2424,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               p.actionIndex === actionIndex
                           );
                           return (
-                            <div key={parameterId}>
-                              {_renderParameterType(
-                                myParameter,
-                                subSection,
-                                section,
-                                subSection?.parameters,
-                                myParameter?.value,
-                                list,
-                                true,
-                                false,
-                                false
-                              )}
-                            </div>
+                            <React.Fragment>
+                              {relatedParameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
+                              <div key={parameterId}>
+                                {_renderParameterType(
+                                  myParameter,
+                                  subSection,
+                                  section,
+                                  subSection?.parameters,
+                                  myParameter?.value,
+                                  list,
+                                  true,
+                                  false,
+                                  false
+                                )}
+                              </div>
+                            </React.Fragment>
+
                           );
                         }
                       }
@@ -2444,31 +2479,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                               p.actionIndex === actionIndex
                           );
                           return (
-                            <div key={parameterId}>
-                              {_renderParameterType(
-                                myParameter,
-                                subSection,
-                                section,
-                                subSection?.parameters,
-                                myParameter?.value,
-                                list,
-                                true,
-                                false,
-                                false
-                              )}
-                            </div>
-                          );
-                        }
-                        if (relatedParameter.activateByAllValues) {
-                          if (subSection.optionToDuplicateContent) {
-                            const { parameterId, actionIndex } =
-                              relatedParameter;
-                            const myParameter = list?.find(
-                              (p) =>
-                                p.id === parameterId &&
-                                p.actionIndex === actionIndex
-                            );
-                            return (
+                            <React.Fragment>
+                              {myParameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
                               <div key={parameterId}>
                                 {_renderParameterType(
                                   myParameter,
@@ -2482,6 +2494,35 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                                   false
                                 )}
                               </div>
+                            </React.Fragment>
+                          );
+                        }
+                        if (relatedParameter.activateByAllValues) {
+                          if (subSection.optionToDuplicateContent) {
+                            const { parameterId, actionIndex } =
+                              relatedParameter;
+                            const myParameter = list?.find(
+                              (p) =>
+                                p.id === parameterId &&
+                                p.actionIndex === actionIndex
+                            );
+                            return (
+                              <React.Fragment>
+                                {myParameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
+                                <div key={parameterId}>
+                                  {_renderParameterType(
+                                    myParameter,
+                                    subSection,
+                                    section,
+                                    subSection?.parameters,
+                                    myParameter?.value,
+                                    list,
+                                    true,
+                                    false,
+                                    false
+                                  )}
+                                </div>
+                              </React.Fragment>
                             );
                           }
 
@@ -2908,10 +2949,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     parameterId: string,
     sectionId: string,
     subSectionId: string,
-    parameters: any[]
+    parameters: any[],
+    productTemplateCopy
   ) => {
     // Find the parameter in the productTemplate
-    const productTemplateCopy = cloneDeep(productTemplate);
+    //const productTemplateCopy = cloneDeep();
     const section = productTemplateCopy.sections.find(
       (section) => section.id === sectionId
     );
@@ -2931,6 +2973,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         );
 
         if (relatedParameter) {
+          
           let valueToAdd = null;
           let valueIds = null;
 
@@ -2988,15 +3031,142 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 isGeneralInfoInProductionFloor:
                   relatedParameter?.isGeneralInfoInProductionFloor,
               });
+              const parameterValue = relatedParameter.valuesConfigs.find(
+                  (x) => x.id === valueIds
+              );
+              let actionIndex = relatedParameter.actionIndex
+              if (
+                  relatedParameter.materialPath &&
+                  relatedParameter.materialPath.length > 0
+              ) {
+                const materialPath =
+                    relatedParameter.materialPath[
+                    relatedParameter.materialPath.length - 1
+                        ];
+                const materialRelatedParameters = subSection.parameters.filter(
+                    (x) =>
+                        x.id !== relatedParameter.id &&
+                        x.actionIndex === actionIndex &&
+                        x.materialPath?.find((y) => compareStrings(y, materialPath))
+                );
+                if (materialRelatedParameters?.length > 0) {
+                  parameters = parameters.filter((subProduct) => {
+                    if (subProduct.actionIndex !== actionIndex) {
+                      return true
+                    }
+                    return !materialRelatedParameters.some(
+                        (materialParameter) =>
+                            materialParameter.id === subProduct.parameterId
+                    );
+                  });
+                }
 
+                materialRelatedParameters?.forEach((param) => {
+                  if (param.materialPath && param.materialPath.length > 0) {
+                    const materialPath =
+                        param.materialPath[param.materialPath.length - 1];
+                    const index = param.materialPath.findIndex((x) =>
+                        compareStrings(x, materialPath)
+                    );
+                    let allMaterialsCopy = cloneDeep(allMaterials);
+                    let paramMaterialValues = [];
+                    if (index > 0) {
+                      allMaterialsCopy = allMaterialsCopy?.find((x) =>
+                          compareStrings(x.pathName, param.materialPath[0])
+                      )?.data;
+                      for (let i = 0; i <= index; i++) {
+                        const prevPath = param.materialPath[i];
+                        const prevPathParam = subSection.parameters.find(
+                            (x) =>
+                                x.materialPath &&
+                                x.materialPath.length > i &&
+                                x.materialPath[i] === prevPath &&
+                                x.actionIndex === actionIndex
+                        );
+                        let prevPathParamDefaultValue = parameters.find(
+                            (x) => x.parameterId === prevPathParam.id && x.actionIndex === actionIndex
+                        );
+
+                        if (
+                            prevPathParamDefaultValue &&
+                            prevPathParamDefaultValue?.valueIds &&
+                            prevPathParamDefaultValue?.valueIds.length
+                        ) {
+                          allMaterialsCopy = allMaterialsCopy?.find(
+                              (x) =>
+                                  x.valueId === prevPathParamDefaultValue?.valueIds[0]
+                          )?.data;
+                        } else {
+                          // allMaterialsCopy = []
+                        }
+                      }
+                      paramMaterialValues = allMaterialsCopy;
+                    } else if (index === 0) {
+                      allMaterialsCopy = allMaterialsCopy.find((x) =>
+                          compareStrings(x.pathName, materialPath)
+                      )?.data;
+                      paramMaterialValues = allMaterialsCopy?.find((x) =>
+                          parameterValue?.values?.find((y) => y === x.valueId)
+                      )?.data;
+                    }
+                    param.valuesConfigs = [];
+                    //param.isHidden = false;
+                    paramMaterialValues?.forEach((val) => {
+                      param.valuesConfigs.push({
+                        id: val.valueId,
+                        activateAction: false,
+                        isDefault: false,
+                        isDeleted: false,
+                        isHidden: false,
+                        materialValueIds: null,
+                        selectedParameterValues: null,
+                        updateName: val.value,
+                        values: [val.valueId],
+                        additionalAttribute: val?.additionalAttribute,
+                        currency: val?.currency,
+                      });
+                    });
+                    param.valuesConfigs = param.valuesConfigs.filter(
+                        (x) => x.values && x.values.length > 0
+                    );
+                    if (
+                        param?.valuesConfigs &&
+                        param?.valuesConfigs?.length === 1 &&
+                        param?.isRequired
+                    ) {
+                      param.valuesConfigs[0].isDefault = true;
+                      parameters.push({
+                        parameterId: param?.id,
+                        parameterName: param?.name,
+                        actionId: param?.actionId,
+                        parameterType: param?.parameterType,
+                        isQuantityParameter: param?.isQuantityParameter,
+                        valueIds: param?.valuesConfigs[0]?.values,
+                        values: [param?.valuesConfigs[0]?.updateName],
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: param?.actionIndex,
+                        parameterCode: param?.code,
+                        valuesConfigs: param?.valuesConfigs,
+                        unitKey: param?.unitKey,
+                        unitType: param?.unitType,
+                        isGeneralInfoInProductionFloor:
+                        param?.isGeneralInfoInProductionFloor,
+                      });
+                    }
+                  }
+                });
+              }
               // Recursively add related parameters for the newly added parameter
               addRelatedParametersWithDefaultValues(
                 relatedParameter.id,
                 sectionId,
                 subSectionId,
-                parameters
+                parameters,
+                productTemplateCopy
               );
             }
+            
           }
         }
       });
@@ -3093,7 +3263,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           parameterId,
           sectionId,
           subSectionId,
-          temp
+          temp,
+            productTemplateCopy
         );
       }
       if (subSectionParameter) {
@@ -3274,6 +3445,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
           if (materialRelatedParameters?.length > 0) {
             temp = temp.filter((subProduct) => {
+              if (subProduct.actionIndex !== actionIndex) {
+                return true
+              }
               return !materialRelatedParameters.some(
                 (materialParameter) =>
                   materialParameter.id === subProduct.parameterId
@@ -3304,7 +3478,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       x.actionIndex === actionIndex
                   );
                   let prevPathParamDefaultValue = temp.find(
-                    (x) => x.parameterId === prevPathParam.id
+                    (x) => x.parameterId === prevPathParam.id && x.actionIndex === actionIndex
                   );
 
                   if (
@@ -4349,11 +4523,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   function removeHiddenParametersFromSubProducts(subProducts, productTemplate) {
     return subProducts.map((subProduct) => {
       const filteredParameters = subProduct?.parameters?.filter((param) => {
-        const matchingTemplateParam = productTemplate.sections
-          .flatMap((section) => section.subSections)
-          .flatMap((subSection) => subSection.parameters)
-          .find((templateParam) => templateParam.id === param.parameterId && !templateParam?.isHiddenInSetting);
-
+        let matchingTemplateParam = null;
+        const section = productTemplate.sections.find(x => x.id == param.sectionId);
+        if (section && section.subSections) {
+          const subSection = section.subSections.find(x => x.id == param.subSectionId);
+          if (subSection && subSection.parameters) {
+            matchingTemplateParam = subSection.parameters.find(templateParam => templateParam.id === param.parameterId && templateParam.actionIndex === param.actionIndex && !templateParam?.isHiddenInSetting)
+          }
+        }
         // Check if the parameter is not hidden (isHidden = false)
         return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
       });
@@ -4469,14 +4646,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           `${action.actionName}: ${t("validateWorkflows.noMavhine")}`
         );
       }
-      if (
-        action.isNeedMaterial &&
-        (!action.materials || Object.keys(action.materials).length === 0)
-      ) {
-        errors.push(
-          `${action.actionName}: ${t("validateWorkflows.noMaterilas")}`
-        );
-      }
+      // if (
+      //   action.isNeedMaterial &&
+      //   (!action.materials || Object.keys(action.materials).length === 0)
+      // ) {
+      //   errors.push(
+      //     `${action.actionName}: ${t("validateWorkflows.noMaterilas")}`
+      //   );
+      // }
       if ((action.source === 1 || action.source === 2) && !action.supplierId) {
         errors.push(
           `${action.actionName}: ${t("validateWorkflows.noSuppliers")}`
@@ -4599,6 +4776,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     missionsListForEdit,
     formatMissions,
     isFlowChanged,
+    getSelectedWorkFlow,
+    selectedWorkFlowCalculatedIsLoaded,
+    setSelectedWorkFlowCalculatedIsLoaded
   };
 };
 

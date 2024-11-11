@@ -12,8 +12,8 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
         name: "",
         isAmountWithVat: false,
         amount: "",
-        fromDate: new Date(),
-        toDate: new Date(),
+        fromDate: null,
+        toDate: null,
         paymentStatus: "",
         invoiceNumber: "",
         status: ""
@@ -27,8 +27,8 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
                 name: "",
                 isAmountWithVat: false,
                 amount: "",
-                fromDate: new Date(),
-                toDate: new Date(),
+                fromDate: null,
+                toDate: null,
                 paymentStatus: "",
                 invoiceNumber: "",
                 status: ""
@@ -61,7 +61,6 @@ const BudgetModal = ({ isOpen, onClose, onSave, budget }) => {
     };
 
     const handleSubmit = () => {
-        console.log("formData", formData)
         onSave(formData);
     };
     const BudgetStatusList: any = [

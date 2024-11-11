@@ -4,7 +4,7 @@ import {
   useGomakeRouter,
   useSnackBar,
 } from "@/hooks";
-import { useCallback, useEffect, useState } from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import { useTranslation } from "react-i18next";
 import { ApprovalStatus, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
@@ -96,7 +96,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
-  const [patternSearch, setPatternSearch] = useState("");
+  // const [patternSearch, setPatternSearch] = useState("");
+  const [patternSearch, setPatternSearch] = useState<any>(null); //?new
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
@@ -140,6 +141,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { quoteNumber } = query;
   const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList();
+  const searchInputRef = useRef(null);
   const [accountingStatus, setAccountingStatus] = useState<{
     label: string;
     value: PStatus;
@@ -344,15 +346,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => {
           if (docType === DOCUMENT_TYPE.purchaseOrder) {
-            // Split the creationDate to get the date and time separately
-            const [date, time] = quote?.creationDate?.split(" ") || ["", ""];
             return [
-              // Display the date on the first line and time on the second line
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
@@ -385,13 +380,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             const purchaseOrderNumbers = quote?.orderNumbers
               ? quote?.orderNumbers.join(", ")
               : "";
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
@@ -418,13 +408,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -451,9 +436,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
-            // Split the createdDate to get the date and time separately
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
-
             const jobsElement = CheckPermission(
               Permissions.SHOW_BOARD_MISSIONS
             ) ? (
@@ -463,7 +445,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   color: "inherit",
                   textDecoration: "unset",
                 }}
-                href={`/jobs?finalPatternSearch=${quote?.number}`}
+                href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
               >
                 {quote?.jobs}
               </a>
@@ -478,12 +460,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             }`;
 
             return [
-              // Display the date on the first line and time on the second line
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -543,16 +520,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else {
-            // Split the createdDate to get the date and time separately
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
-
             return [
-              // Display the date on the first line and time on the second line
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -611,7 +580,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         });
 
         const mapReceiptData = data?.map((quote: any) => [
-          // GetDateFormat(quote?.creationDate),
           quote?.creationDate?.split(" ")[0],
           <div
             style={{ cursor: "pointer" }}
@@ -766,16 +734,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => {
           if (docType === DOCUMENT_TYPE.purchaseOrder) {
-            // Split the creationDate to get the date and time separately
-            const [date, time] = quote?.creationDate?.split(" ") || ["", ""];
-
             return [
-              // Display the date on the first line and time on the second line
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
@@ -808,13 +768,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             const purchaseOrderNumbers = quote?.orderNumbers
               ? quote?.orderNumbers.join(", ")
               : "";
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
@@ -841,13 +796,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.quote) {
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
             return [
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -874,9 +824,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
-            // Split the createdDate to get the date and time separately
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
-
             const jobsElement = CheckPermission(
               Permissions.SHOW_BOARD_MISSIONS
             ) ? (
@@ -886,7 +833,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   color: "inherit",
                   textDecoration: "unset",
                 }}
-                href={`/jobs?finalPatternSearch=${quote?.number}`}
+                href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
               >
                 {quote?.jobs}
               </a>
@@ -900,12 +847,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
             }`;
             return [
-              // Display the date on the first line and time on the second line
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -965,16 +907,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else {
-            // Split the createdDate to get the date and time separately
-            const [date, time] = quote?.createdDate?.split(" ") || ["", ""];
-
             return [
-              // Display the date on the first line and time on the second line
-              <div>
-                {date}
-                <br />
-                {time}
-              </div>,
+              GetDateFormat(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -1031,7 +965,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
         });
         const mapReceiptData = data?.map((quote: any) => [
-          // GetDateFormat(quote?.creationDate),
           quote?.creationDate?.split(" ")[0],
           <div
             style={{ cursor: "pointer" }}
@@ -1183,7 +1116,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       if (isNotFilteredData) getAllQuotesInitial();
       else getAllQuotes();
     }
-    // }, [page, pageSize, router]);
   }, [pageSize, router]);
 
   const tableHeaders =
@@ -2162,7 +2094,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   /*   Most Important   */
-
   useEffect(() => {
     const {
       customerId,
@@ -2201,8 +2132,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (toDate && typeof toDate === "string") setToDate(new Date(toDate));
 
     if (finalPatternSearch && typeof finalPatternSearch === "string") {
-      setPatternSearch(finalPatternSearch);
-      setFinalPatternSearch(finalPatternSearch);
+      if(!(searchInputRef && searchInputRef.current && document.activeElement.id == searchInputRef.current.id)){
+        setPatternSearch(finalPatternSearch);
+        setFinalPatternSearch(finalPatternSearch);
+      }
+      
     }
 
     if (accountingStatus) {
@@ -2438,6 +2372,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openDuplicateModal,
     onCloseDuplicateModal,
     onClickDocumentDuplicate,
+    searchInputRef
   };
 };
 

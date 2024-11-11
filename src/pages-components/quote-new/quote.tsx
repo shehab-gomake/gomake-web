@@ -7,9 +7,13 @@ import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
-import { GoMakeAlertModal, GoMakeDeleteModal } from "@/components";
+import {
+  GoMakeAlertModal,
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+} from "@/components";
 import { HeaderTitle } from "@/widgets";
-import { SettingNewIcon } from "@/icons";
+import { ArrowDownNewIcon, BudgetIcon, DotIcon, SettingNewIcon } from "@/icons";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useQuoteNew } from "./use-quote";
 import { quoteConfirmationState, quoteItemState } from "@/store";
@@ -17,7 +21,7 @@ import { useStyle } from "./style";
 import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { _renderQuoteStatus } from "@/utils/constants";
-import { Box, IconButton, Skeleton } from "@mui/material";
+import { Box, Divider, IconButton, Skeleton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../quotes/enums";
@@ -42,6 +46,9 @@ import { CreditCardPaySection } from "@/widgets/quote-confirmation-mobile/compon
 import moment from "moment";
 import { QuoteNewPageSkeletonWidget } from "./quote-skeleton";
 import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal";
+import { Check } from "@mui/icons-material";
+import { useQuoteGetData } from "./use-quote-get-data";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -252,14 +259,16 @@ const QuoteNewPageWidget = ({
     onClickCloseChangeProductionStatusModal,
     selectedDocument,
     isSelectedCLoseAsDeleveryNote,
+    allClientActiveBudgets,
     moveOrderToReady,
     navigate,
+    updateDocumentBudget,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
-
+  const { getCurrencyUnitText } = useQuoteGetData();
   const handleChangeCreationDate = (event) => {
     const newDate = event.target.value;
     const newDateRounded = moment(newDate)
@@ -276,6 +285,16 @@ const QuoteNewPageWidget = ({
       onClickOpenReferenceModal();
     }
   };
+  const [selectedBudget, setSelectedBudget] = useState(null);
+
+  useEffect(() => {
+    if (quoteState?.budgetId) {
+      const budget = allClientActiveBudgets.find(
+        (budget) => budget.id === quoteState.budgetId
+      );
+      setSelectedBudget(budget);
+    }
+  }, [quoteState, allClientActiveBudgets]);
 
   const quoteSteps: StepType[] = [
     {
@@ -390,8 +409,61 @@ const QuoteNewPageWidget = ({
                     </div>
                   )}
                 </div>
+
                 {!isQuoteConfirmation && (
                   <div style={classes.settingsStatusContainer}>
+                    {(documentType === DOCUMENT_TYPE.quote ||
+                      documentType === DOCUMENT_TYPE.order ||
+                      documentType === DOCUMENT_TYPE.deliveryNote) &&
+                      allClientActiveBudgets.length !== 0 && (
+                        <GoMakeAutoComplate
+                          startIcon={<BudgetIcon width={20} height={20} />}
+                          arrowIcon={<ArrowDownNewIcon color="#344054" />}
+                          options={allClientActiveBudgets}
+                          style={classes.budgetList}
+                          placeholder={t("sales.quote.budget")}
+                          getOptionLabel={(option) =>
+                            `${option.name} - ${option.amount}`
+                          }
+                          withArrow={true}
+                          key={selectedBudget?.id}
+                          value={selectedBudget}
+                          onChange={(e, value) => {
+                            if (value) {
+                              updateDocumentBudget(value);
+                            }
+                          }}
+                          renderOption={(props: any, option: any) => (
+                            <div
+                              {...props}
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                padding: 10,
+                                cursor: "pointer",
+                              }}
+                            >
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 10,
+                                  ...FONT_FAMILY.Lexend(600, 14),
+                                }}
+                              >
+                                <BudgetIcon width={16} height={16} />
+                                {option.name}
+                              </div>
+                              <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>
+                                {option.amount}
+                                {getCurrencyUnitText(quoteItemValue?.currency)}
+                              </div>
+                            </div>
+                          )}
+                        />
+                      )}
                     <>
                       {quoteItemValue?.signImageUrl &&
                       quoteItemValue?.signerName ? (
@@ -415,6 +487,7 @@ const QuoteNewPageWidget = ({
                         </>
                       )}
                     </>
+
                     {isShowSettingIcon && (
                       <IconButton
                         style={{ marginRight: 4 }}
@@ -720,6 +793,7 @@ const QuoteNewPageWidget = ({
         updateIsShowDetails={updateIsShowDetails}
         updateIsShowPrices={updateIsShowPrices}
         documentType={documentType}
+        getQuote={getQuote}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}

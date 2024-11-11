@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { adaptPaddingRight } from "@/utils/adapter";
 
 const useStyle = () => {
   const { t } = useTranslation();
@@ -129,6 +130,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 8,
+        minWidth: 240,
       },
       spanRequierd: {
         color: errorColor(500),
@@ -191,15 +193,15 @@ const useStyle = () => {
         width: "100%",
         height: 25,
         backgroundColor: "transparent",
-        paddingLeft: 2,
+        ...adaptPaddingRight(t("direction"), 2),
         boxShadow: "none",
       },
       paramNameStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: primaryColor(900),
-        minWidth: 120,
+        //  minWidth: 120,
         height: 25,
-        paddingLeft: 2,
+        ...adaptPaddingRight(t("direction"), 2),
       },
       plusIconStyle: {
         cursor: "pointer",
@@ -269,7 +271,7 @@ const useStyle = () => {
       detailsIconStyle: {
         strokeWidth: "1",
         width: "23px",
-        height: "23px"
+        height: "23px",
       },
       btnSelectedStyle: {
         display: "flex",
@@ -278,6 +280,32 @@ const useStyle = () => {
         alignItems: "center",
         gap: 6,
         padding: "8px 0px",
+      },
+      optionsTitle: {
+        ...FONT_FAMILY.Inter(500, 16),
+        color: "#344054",
+      },
+      insideStyle: {
+        width: "544px",
+        minWidth: "400px",
+        borderRadius: "12px",
+        height: "auto",
+        maxHeight: 600,
+        zIndex: 999999,
+        padding: "20px",
+      },
+      cancelButton: {
+        ...FONT_FAMILY.Inter(600, 16),
+        width: "50%",
+        borderRadius: "8px",
+        height: "44px",
+        backgroundColor: "#FFFFFF",
+        color: "#344054",
+        border: "1px solid #D0D5DD",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textTransform: "capitalize" as "capitalize",
       },
     };
   }, [i18next.language, t]);

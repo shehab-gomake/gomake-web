@@ -47,6 +47,7 @@ const useAddRuleModal = ({
   const { t } = useTranslation();
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const categoriesList = useRecoilValue(machineCategoriesState);
+  const [additionType, setAdditionType] = useState<number>(null);
 
   const onCloseScheduleModal = () => {
     setOpenScheduleModal(false);
@@ -142,6 +143,7 @@ const useAddRuleModal = ({
       setState
     );
   };
+
   const getAllMaterials = async () => {
     const callBack = (res) => {
       if (res.success) {
@@ -153,28 +155,32 @@ const useAddRuleModal = ({
   const [expression, setExpression] = useState(
     "Your rules will viewed here . . ."
   );
-  const conditions = useMemo(() => {
-    return [
-      { label: "==", id: "==" },
-      { label: ">", id: ">" },
-      { label: ">=", id: ">=" },
-      { label: "<", id: "<" },
-      { label: "<=", id: "<=" },
-      { label: "!=", id: "!=" },
-    ];
-  }, []);
+
+  // const conditions = useMemo(() => {
+  //   return [
+  //     { label: "==", id: "==" },
+  //     { label: ">", id: ">" },
+  //     { label: ">=", id: ">=" },
+  //     { label: "<", id: "<" },
+  //     { label: "<=", id: "<=" },
+  //     { label: "!=", id: "!=" },
+  //   ];
+  // }, []);
+
   const mainconditions = useMemo(() => {
     return [
       { label: "AND", id: "&&" },
       { label: "OR", id: "||" },
     ];
   }, []);
+
   const BooleanRender = useMemo(() => {
     return [
       { label: "Yes", id: true },
       { label: "No", id: false },
     ];
   }, []);
+
   const GroupByOptions = useMemo(() => {
     return [
       { label: "Client", id: EGroupByEnum.CLIENT },
@@ -335,7 +341,7 @@ const useAddRuleModal = ({
           ? condition.category.label
           : ""
         : "";
-      const conditionLabel = condition?.condition?.label ?? "";
+      const conditionLabel = condition?.condition?.id ?? "";
       const statement2Label = condition.statement2?.label ?? "";
       let text = "";
 
@@ -391,6 +397,7 @@ const useAddRuleModal = ({
     const textInput = displayText(rules);
     setExpression(textInput);
   }, [rules]);
+
   const getStatementId = (item) => {
     if (typeof item?.statement === "object") {
       //material input
@@ -409,6 +416,7 @@ const useAddRuleModal = ({
       additionalProfit: additionalProfit,
       pricingBy: selectedPricingBy?.value,
       exceptionRule: expression,
+      additionType: additionType||0,
       exceptionConditionProperties: rules.map((item) => {
         return {
           statementId: getStatementId(item),
@@ -615,6 +623,36 @@ const useAddRuleModal = ({
     }
   }, [propertieValue, EStatementCategory, rules, filterData]);
 
+  const getConditionText = (label) => {
+    switch (label) {
+      case "==":
+        return t("properties.conditions.equal");
+      case ">":
+        return t("properties.conditions.greater_than");
+      case ">=":
+        return t("properties.conditions.greater_than_or_equal");
+      case "<":
+        return t("properties.conditions.less_than");
+      case "<=":
+        return t("properties.conditions.less_than_or_equal");
+      case "!=":
+        return t("properties.conditions.not_equal");
+      default:
+        return "";
+    }
+  };
+
+  const conditions = useMemo(() => {
+    return [
+      { label: t("properties.conditions.equal"), id: "==" },
+      { label: t("properties.conditions.greater_than"), id: ">" },
+      { label: t("properties.conditions.greater_than_or_equal"), id: ">=" },
+      { label: t("properties.conditions.less_than"), id: "<" },
+      { label: t("properties.conditions.less_than_or_equal"), id: "<=" },
+      { label: t("properties.conditions.not_equal"), id: "!=" },
+    ];
+  }, []);
+
   return {
     rules,
     deleteRule,
@@ -660,6 +698,8 @@ const useAddRuleModal = ({
     fromDate,
     toDate,
     isFetching,
+    getConditionText,
+    setAdditionType
   };
 };
 

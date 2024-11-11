@@ -16,6 +16,7 @@ import { PricingListTableProps } from "../../interface";
 import { MoreMenuWidget } from "./more-menu";
 import { GoMakeDeleteModal } from "@/components";
 import { useState } from "react";
+import { EPricingBy } from "../../enums/profites-enum";
 
 const PrimaryTableCell = styled(TableCell)(() => {
   return {
@@ -43,6 +44,7 @@ const PricingListTable = ({
   setSelectedActionProfit,
   deleteActionProfitRow,
   selectedAdditionalProfitRow,
+  addNewStepForActionProfitRow,
 }: PricingListTableProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -99,7 +101,16 @@ const PricingListTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      <div style={classes.addNewQuantity} onClick={() => onOpenAddStepModal()}>
+      <div
+        style={classes.addNewQuantity}
+        onClick={() => {
+          if (selectedPricingBy?.value === EPricingBy.PACKAGE) {
+            addNewStepForActionProfitRow(0, 0);
+          } else {
+            onOpenAddStepModal();
+          }
+        }}
+      >
         <Plus />
         {t("products.profits.pricingListWidget.addNewStep")}
       </div>
