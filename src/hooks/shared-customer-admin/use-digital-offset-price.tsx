@@ -4475,6 +4475,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     const updatedProductTemplate = updateIsHidden(productTemplate, subProducts);
     setProductTemplate(updatedProductTemplate);
+    
   }, [subProducts]);
 
   const updateIsHidden = (productTemplate, subProducts) => {
