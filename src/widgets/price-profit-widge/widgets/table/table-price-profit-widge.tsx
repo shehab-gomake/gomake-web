@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, MenuItem, Divider } from '@mui/material';
-import { CheckboxCheckedIcon, CheckboxIcon, PlusIcon, Warning2Icon } from '@/icons';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, MenuItem, Divider } from '@mui/material';
+import { PlusIcon } from '@/icons';
 import { GoMakeMenu } from '@/components';
 
+
+import { ProductsRowMappingTable } from './products-row-mapping-widge';
 import { UpdatedPriceIcon } from './icons/update-icon';
 import { ReStoreIcon } from './icons/restore-icon';
 import { ReviewIcon } from './icons/review-icon';
 import { useStyle } from './style';
-import { InputUpdatedValues } from '@/widgets/quote-new/input-updated-values';
 
 interface PriceProfitTableProps {
   headers: any[];
@@ -47,9 +48,8 @@ const PriceProfitTable = ({
   onBlurPriceChange
 }: PriceProfitTableProps) => {
   const { classes } = useStyle()
-  const [showAllProducts, setShowAllProducts] = useState(false); // New state variable
-
-  const [selectedCell, setSelectedCell] = useState<{ row: number, col: number } | null>(null); // New state to track selected cell
+  const [showAllProducts, setShowAllProducts] = useState(false);
+  const [activeCell, setActiveCell] = useState<{ index: number, idx: number } | null>(null);
 
   return (
     <TableContainer>
@@ -76,54 +76,19 @@ const PriceProfitTable = ({
         <TableBody>
           {products?.data?.map((product, index) => (
             (showAllProducts || !product.IsHidden) && (
-              <TableRow key={index}>
-                <TableCell sx={classes.tableBodyCell} style={product?.IsSelected ? { borderLeft: "6px solid #11A5EC" } : {}}>
-                  <Checkbox
-                    icon={<CheckboxIcon />}
-                    checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
-                    checked={product.IsSelected}
-                    onChange={() => handleCheckboxChange(index)}
-                  />
-                  {product.ProductName}
-                </TableCell>
-                {product.PricePerQuantity.map((price, idx) => (
-                  <TableCell
-                    sx={classes.tableBodyCell}
-                    key={idx}
-                    style={price.PrintHousePrice !== price.CalculatedPrice ? classes.tableBodyCellError : classes.tableBodyNotErrorCell}
-                    onClick={(event) => {
-
-                      if (price.PrintHousePrice !== price.CalculatedPrice) {
-                        handleOpen(event)
-                        setSelectedProduct({ ...product, ...price })
-                      }
-                      else {
-                        setSelectedCell({ row: index, col: idx });
-                      }
-                    }}
-                  >
-                    <div style={classes.tableBodyCellContent}>
-                      {price.IsNotCalcuated ? (
-                        <Warning2Icon />
-                      ) : (
-                        selectedCell?.row === index && selectedCell?.col === idx ? (
-                          <InputUpdatedValues
-                            value={price.CalculatedPrice}
-                            onBlur={onBlurPriceChange}
-                            isUpdate={isUpdate}
-                            setIsUpdate={() => setIsUpdate(!isUpdate)}
-                            onInputChange={(value) => {
-                              handlePriceChange(index, idx, value);
-                            }}
-                          />
-                        ) : (
-                          <span>{price.CalculatedPrice}</span>
-                        )
-                      )}
-                    </div>
-                  </TableCell>
-                ))}
-              </TableRow>
+              <ProductsRowMappingTable
+                product={product}
+                index={index}
+                handleCheckboxChange={handleCheckboxChange}
+                handleOpen={handleOpen}
+                setSelectedProduct={setSelectedProduct}
+                onBlurPriceChange={onBlurPriceChange}
+                handlePriceChange={handlePriceChange}
+                isUpdate={isUpdate}
+                setIsUpdate={setIsUpdate}
+                activeCell={activeCell}
+                setActiveCell={setActiveCell}
+              />
             )
           ))}
         </TableBody>
