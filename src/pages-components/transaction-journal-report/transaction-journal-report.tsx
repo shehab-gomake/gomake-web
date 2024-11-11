@@ -92,6 +92,7 @@ const TransactionJournalReportWidget = ({
       <LedgerReportButtonWidget
         onClickPrintCard={onClickPrintCard}
         onClickShowCard={onClickShowCard}
+        reportType={reportType}
       />
 
       {isAccountingTransaction && (
