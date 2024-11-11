@@ -17,8 +17,9 @@ import { SettingIcon } from "@/widgets/shared-admin-customers";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useRouter } from "next/router";
 import { getAllSubProducts } from "@/services/hooks/admin-side/products/get-all-sub-products";
-import { EnterArrow } from "@/icons";
+import { EnterArrow, PlusIcon } from "@/icons";
 import { addProductProfitRuleApi } from "@/services/api-service/products/product-endpoints";
+import { EditingIcon } from "../more-circle/icons/editing";
 
 const useProductManagement = () => {
   const router = useRouter();
@@ -151,6 +152,20 @@ const useProductManagement = () => {
           </div>
         )}
       </div>,
+      <div style={{ display: "inline-flex" }} onClick={() => {
+        window.open(
+          `/products/profits?productId=${item?.id}&productName=${item?.name}&isOutSource=true`,
+          "_blank"
+        )
+      }}>
+        {item?.isHaveOutSourceSettings ?
+          <div style={{ display: "inline-flex", cursor: "pointer", alignItems: "center", gap: 10 }} >
+            <EditingIcon />{t("materials.buttons.edit")}
+          </div>
+          :
+          <div style={{ display: "inline-flex", cursor: "pointer", alignItems: "center", gap: 10 }} ><PlusIcon stroke="#8283BE" /> {t("materials.buttons.add")} </div>
+        }
+      </div>,
       <div
         style={clasess.subPrductContainer}
         onClick={(e: any) =>
@@ -160,8 +175,8 @@ const useProductManagement = () => {
           )
         }
       >
+        <EnterArrow stroke="#8283BE" />
         <div style={{ width: 35 }}>{item?.subProductsCount}</div>
-        <EnterArrow />
       </div>,
 
       <div style={{ display: "inline-flex" }}>
@@ -186,6 +201,7 @@ const useProductManagement = () => {
     t("products.productManagement.admin.prouctName"),
     t("products.addProduct.admin.pricingType"),
     t("tabs.profits"),
+    t("products.actions.outSource"),
     t("products.addProduct.admin.subProducts"),
     t("products.productManagement.admin.status"),
     t("products.productManagement.admin.more"),

@@ -1,5 +1,13 @@
 import { useGomakeAuth, useGomakeRouter } from "@/hooks";
-import { CustomersIcon, HomeIcon, ProductFloorIcon, ReportsIcon, SalesIcon, SettingNavBar, ShopingIcon } from "@/icons";
+import {
+  CustomersIcon,
+  HomeIcon,
+  ProductFloorIcon,
+  ReportsIcon,
+  SalesIcon,
+  SettingNavBar,
+  ShopingIcon,
+} from "@/icons";
 import { useEffect, useMemo, useState } from "react";
 import { CubeIcon } from "@/components/icons/cube-icon";
 import { useRecoilValue } from "recoil";
@@ -11,7 +19,10 @@ import { BankingIcon } from "@/icons/banking-icon";
 import { MachineIcon } from "@/icons/machine-icon";
 import { ActionIcon } from "@/icons/action-icon";
 
-const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: boolean) => {
+const useAuthLayoutHook = (
+  permissionEnumValue?: Permissions,
+  allowAnonymous?: boolean
+) => {
   const { isAuth } = useGomakeAuth(permissionEnumValue, allowAnonymous);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
@@ -35,7 +46,8 @@ const useAuthLayoutHook = (permissionEnumValue?: Permissions, allowAnonymous?: b
         isLine: false,
         key: "productFloor",
         title: "tabs.productFloor",
-        path: "/production-floor",
+        // path: "/production-floor",
+        path: "/production-floor?view=table",
         isList: false,
         Permission: Permissions.SHOW_PRODUCTION_FLOOR,
         icon: () => {

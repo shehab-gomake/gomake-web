@@ -1,16 +1,20 @@
 import { useRecoilValue } from "recoil";
-import { OutSourceSupplierComponent } from "@/widgets/product-pricing-widget/components/outsource-suppliers/out-source-supplier";
 import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 import { Stack } from "@mui/material";
 import { OutSourceSuppliersRowComponent } from "./out-source-suppliers-row";
 
 
-const OutSourceSuppliers = ({ widgetType }) => {
+const OutSourceSuppliers = ({ widgetType, onClickAddOutSourceAction, onClickRemoveOutSourceAction, selectedWorkFlow, selectedWorkFlowCalculatedIsLoaded }) => {
     const suppliers = useRecoilValue(outsourceSuppliersState);
-
     return <Stack gap={'15px'}>
-        {/* {suppliers?.map(supplier => <OutSourceSupplierComponent {...supplier} widgetType={widgetType} />)} */}
-        { suppliers && suppliers.length > 0 && <OutSourceSuppliersRowComponent widgetType={widgetType} options={suppliers} />}
+        {suppliers && suppliers.length > 0 && <OutSourceSuppliersRowComponent
+            widgetType={widgetType}
+            options={suppliers}
+            onClickAddOutSourceAction={onClickAddOutSourceAction}
+            selectedWorkFlow={selectedWorkFlow}
+            selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+            onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
+        />}
     </Stack>
 }
 export { OutSourceSuppliers }

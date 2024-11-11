@@ -79,7 +79,7 @@ const RowMappingWidget = ({
           <InputUpdatedValues
             value={item?.value}
             onBlur={() => onBlurCost(item)}
-            isUpdate={isUpdateCost}
+            isUpdate={isUpdateCost && selectedPricingBy?.value != EPricingBy.PACKAGE}
             setIsUpdate={setIsUpdateCost}
             onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
               onInputChangeCost(e)

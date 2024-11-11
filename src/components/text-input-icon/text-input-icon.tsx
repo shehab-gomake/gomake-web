@@ -56,7 +56,8 @@ const GoMakeTextInputIcon = ({
   type,
   startAdornment,
   placeholder,
-  bgColor
+  bgColor,
+  inputRef
 }: {
   labelText?: string;
   placeholder?: any;
@@ -68,6 +69,7 @@ const GoMakeTextInputIcon = ({
   type?: any;
   startAdornment?: any;
   bgColor?: any;
+  inputRef?: any;
 }) => {
   return (
     <StyledTextField
@@ -80,6 +82,8 @@ const GoMakeTextInputIcon = ({
       startAdornment={startAdornment}
       placeholder={placeholder}
       color={bgColor}
+      inputRef={inputRef}
+      id={"searchInput"}
     />
   );
 };

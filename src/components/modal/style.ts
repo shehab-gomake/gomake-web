@@ -3,8 +3,13 @@ import { convertWidthToVW } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = ({ insideStyle, headerPadding, isMiddleTitle , modalTitleColor}: any) => {
-  const { primaryColor, errorColor , neutralColor} = useGomakeTheme();
+const useStyle = ({
+  insideStyle,
+  headerPadding,
+  isMiddleTitle,
+  modalTitleColor,
+}: any) => {
+  const { primaryColor, errorColor, neutralColor } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -28,7 +33,7 @@ const useStyle = ({ insideStyle, headerPadding, isMiddleTitle , modalTitleColor}
         paddingBottom: convertWidthToVW(20),
         ...insideStyle,
       },
-      
+
       closeIcon: {
         display: "flex",
         justifyContent: "flex-end",
@@ -36,11 +41,9 @@ const useStyle = ({ insideStyle, headerPadding, isMiddleTitle , modalTitleColor}
         cursor: "pointer" as "pointer",
       },
 
-     
-
       titleModalStyle: {
         display: "flex",
-        color: modalTitleColor || primaryColor(500), 
+        color: modalTitleColor || primaryColor(500),
         ...FONT_FAMILY.Lexend(500, 24),
         ...(isMiddleTitle && { margin: "0 auto" }),
       },
@@ -61,12 +64,12 @@ const useStyle = ({ insideStyle, headerPadding, isMiddleTitle , modalTitleColor}
         width: "100%",
       },
       headerContainer: {
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
+        width: "100%",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
         paddingRight: headerPadding,
-        paddingLeft: headerPadding
+        paddingLeft: headerPadding,
       },
       modalContainer: {
         display: "flex",

@@ -2,11 +2,20 @@ import { KanbanColumnComponent } from "@/widgets/production-floor/kanban-view/ka
 import { useProductionFloorKanban } from "@/widgets/production-floor/kanban-view/use-production-floor-kanban";
 import Stack from "@mui/material/Stack";
 import { useRecoilValue } from "recoil";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { selectedChipIdsState } from "../state/text-search";
+import { useProductionFloorTable } from "../table-view/use-production-floor-table";
 
+//?New
 const ProductionFloorKanbanBoard = () => {
   const { data } = useProductionFloorKanban();
+  const {
+    search,
+    setFilteredMissionsBySearch,
+    getAllBoardMissions,
+    setMissionsList,
+  } = useProductionFloorTable();
+
   const selectedChipId = useRecoilValue(selectedChipIdsState);
 
   const filteredDataByMachine = useMemo(() => {
@@ -27,6 +36,39 @@ const ProductionFloorKanbanBoard = () => {
     });
   }, [data, selectedChipId]);
 
+  const matchSearch = (mission) => {
+    return search
+      ? `${mission.boardMissionNumber}\\${mission.orderNumber}`.includes(
+          search
+        ) ||
+          `${mission.clientName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          `${mission.productName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          mission.automatedTags?.some((tag) =>
+            tag.toLowerCase().includes(search.toLowerCase())
+          )
+      : true;
+  };
+  const allFilteredMissions = filteredDataByMachine.flatMap(
+    (statusBoards) => statusBoards.boardMissions
+  );
+  const filteredMissions = allFilteredMissions.filter(matchSearch);
+
+  useEffect(() => {
+    setFilteredMissionsBySearch(filteredMissions);
+    if (filteredMissions?.length === 0) {
+      const delayFetch = setTimeout(() => {
+        getAllBoardMissions();
+      }, 1000);
+      return () => clearTimeout(delayFetch);
+    } else {
+      setMissionsList([]);
+    }
+  }, [search]);
+
   return (
     <Stack
       direction={"row"}
@@ -45,7 +87,6 @@ const ProductionFloorKanbanBoard = () => {
           <KanbanColumnComponent
             key={column.boardMissionStatus.boardMissionStatus?.name}
             status={column.boardMissionStatus.boardMissionStatus}
-            //count={column.boardMissionStatus.count}
             boardsMissions={column.boardMissions}
           />
         ))}

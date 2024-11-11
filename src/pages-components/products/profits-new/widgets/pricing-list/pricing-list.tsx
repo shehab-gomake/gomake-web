@@ -13,6 +13,7 @@ import { Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import { SettingsIcon } from "@/icons/settings";
 import { DuplicateMaterial, PercentageMaterial } from "@/icons";
 import { useCopyAction } from "./use-copy-action";
+import { EPricingBy, ETransition } from "../../enums/profites-enum";
 
 const PricingList = ({
   tableHeaders,
@@ -37,6 +38,11 @@ const PricingList = ({
   selectedAdditionalProfitRow,
   selectedPricingTableItems,
   getAllActionProfitRowsByActionId,
+  quantityOfPackages,
+  setQuantityOfPackages,
+  updatePackageUnitQuantity,
+  addNewStepForActionProfitRow,
+  updatePricingByForActionPackage
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -64,7 +70,7 @@ const PricingList = ({
       <div style={classes.headerMainCointaner}>
         <div style={classes.listTitle}>
           {t("products.profits.pricingListWidget.pricingListTitle")} (
-          {`${router?.query?.actionName}`})
+          {`${router?.query?.actionName || router?.query?.productName}`})
         </div>
         <div style={classes.filtersCointaner}>
           <IconButton
@@ -77,11 +83,33 @@ const PricingList = ({
             <GoMakeAutoComplate
               options={PricingBy}
               style={classes.autoCompleteStyleContainer}
-              onChange={(e, value) => updatePricingByForAction(value)}
+              onChange={(e, value) => {
+                if (value?.value !== EPricingBy.PACKAGE) {
+                  updatePricingByForAction(value);
+                } else {
+                  updatePricingByForActionPackage(value)
+
+                }
+              }}
               value={selectedPricingBy}
               key={selectedPricingTableItems}
             />
           </div>
+          {
+            selectedPricingBy?.value === EPricingBy.PACKAGE &&
+            <div style={classes.autoCompleteContainer}>
+              <GomakeTextInput
+                style={classes.autoCompleteStyleContainer}
+                onChange={(e) => {
+                  setQuantityOfPackages(e.target.value);
+                }}
+                onBlur={() => quantityOfPackages !== 0 && updatePackageUnitQuantity()}
+                value={quantityOfPackages}
+                placeholder={t("boardMissions.quantityOfPackages")}
+                type="number"
+              />
+            </div>
+          }
           <div style={classes.autoCompleteContainer}>
             <GoMakeAutoComplate
               options={Transition}
@@ -89,6 +117,7 @@ const PricingList = ({
               onChange={(e, value) => updateTransitionForAction(value)}
               value={selectedTransition}
               key={selectedPricingTableItems}
+              disabled={selectedPricingBy?.value === EPricingBy.PACKAGE}
             />
           </div>
         </div>
@@ -108,6 +137,7 @@ const PricingList = ({
         setSelectedActionProfit={setSelectedActionProfit}
         deleteActionProfitRow={deleteActionProfitRow}
         selectedAdditionalProfitRow={selectedAdditionalProfitRow}
+        addNewStepForActionProfitRow={addNewStepForActionProfitRow}
       />
       <div style={classes.chartContainer}>
         <LineChart actionProfitRowChartData={actionProfitRowChartData} />

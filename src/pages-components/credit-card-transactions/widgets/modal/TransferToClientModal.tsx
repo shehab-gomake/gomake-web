@@ -46,6 +46,7 @@ const TransferToClientModal = ({
         <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
         <GoMakeAutoComplate
           options={renderOptions()}
+          defaultFiltering={false}
           onChangeTextField={checkWhatRenderArray}
           getOptionLabel={(option: any) => `${option.name}`}
           style={classes.textInputStyle}
