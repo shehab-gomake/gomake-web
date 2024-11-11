@@ -734,7 +734,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let temp = [];
             subSection.parameters.forEach((parameter) => {
               if (parameter?.isHidden && !parameter?.isHiddenInSetting) {
-                return;
+                if (parameter.isUnderParameterId !== null) {
+                  underParameterIdsArray.push({
+                    underParameterId: parameter.isUnderParameterId,
+                    myParameter: parameter,
+                    sectionId: section.id,
+                    subSectionId: subSection.id,
+                  });
+                }
+               return;
               }
               parameter.relatedParameters.forEach((x) => {
                 x.sectionId = section.id;
@@ -1305,12 +1313,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               const parameterDefaultValue = parameter.valuesConfigs?.find(
                   (x) => x.isDefault
               );
-              if(relatedToParameter && relatedToParameter.relatedParameters){
+              if(parameter.code === "PrintingColorsside2"){
+                debugger
+              }
+              if(relatedToParameter && relatedToParameter.relatedParameters ){
                 let relationConfigs = relatedToParameter.relatedParameters.find(x=>x.parameterId === parameter.id);
-                if(relationConfigs && relationConfigs.activateByAllValues && !parameterDefaultValue ){
+                if(relationConfigs && relationConfigs.activateByAllValues && !defaultValue ){
                   parameter.isHidden = true;
                 }
-                else if(!(relationConfigs && relationConfigs.selectedValueIds && parameterDefaultValue && relationConfigs.selectedValueIds.find(x=> x === parameterDefaultValue.id ))){
+                else if(!(relationConfigs && relationConfigs.selectedValueIds && defaultValue && relationConfigs.selectedValueIds.find(x=> x === defaultValue ))){
                   parameter.isHidden = true;
                 }
               }
