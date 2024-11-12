@@ -16,6 +16,9 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useGomakeAxios } from "@/hooks";
 import { Stack } from "@mui/material";
 import { productsForDropDownList } from "@/store";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+
 interface FiltersActionsBarProps {
   isAdmin: boolean;
   subCategory?: string;
@@ -46,6 +49,27 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     label: string;
     isDefault: boolean;
   } | null>({ value: "", label: "", isDefault: false });
+
+  const [items, setItems] = useState(materialSuppliers);
+
+  useEffect(() => {
+    if (materialSuppliers?.length > 0) {
+      setItems(materialSuppliers)
+    }
+  }, [])
+
+
+  const onDragEnd = (result) => {
+    console.log("result", result)
+    if (!result.destination) return; // Exit if dropped outside the list
+
+    const reorderedItems = Array.from(items);
+    console.log("reorderedItems", reorderedItems)
+    const [movedItem] = reorderedItems.splice(result.source.index, 1);
+    reorderedItems.splice(result.destination.index, 0, movedItem);
+
+    setItems(reorderedItems); // Update the options with the new order
+  };
 
   useEffect(() => {
     const index = materialSuppliers.map((s) => s.value).indexOf(supplierId);
@@ -166,33 +190,54 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           <GoMakeAutoComplate
             key={`supplier_${props?.subCategory + supplierName}`}
             style={{ width: "200px" }}
-            options={materialSuppliers.filter((item, index, self) =>
-              index === self.findIndex((t) => (
-                t.value === item.value
-              )))}
+            options={items}
             placeholder={t("materials.sheetPaper.selectSupplier")}
             onChange={(e: any, value: any) => {
               onSelectSupplier(value.value);
             }}
             value={supplierName ? supplierName : ""}
             disableClearable={true}
-            renderOption={(props: any, option: any) => {
+            renderOption={(props, option, { index }) => {
               return (
-                <Stack direction={"row"}>
-                  <div {...props} style={{ width: "100%" }}>
-                    {option.label}
-                  </div>
-                  <div>
-                    <SecondSwitch
-                      checked={option?.isDefault}
-                      onChange={() => {
-                        onSetDefaultSupplier(option.value).then();
-                      }}
-                    />
-                  </div>
-                </Stack>
-              );
-            }}
+                <div style={{ width: '100%' }}>
+                  <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="droppable">
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          style={{ width: '100%' }}
+                        >
+                          <Draggable draggableId={option.value} index={index}>
+                            {(provided) => (
+                              <div
+                                {...props}
+                                {...provided.draggableProps}
+                                ref={provided.innerRef}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  width: '100%',
+                                  ...props.style,
+                                  ...provided.draggableProps.style,
+                                }}
+                              >
+                                <div {...provided.dragHandleProps} style={{ paddingRight: 8 }}>
+                                  <DragIndicatorIcon />
+                                </div>
+                                {option.label}
+                              </div>
+                            )}
+                          </Draggable>
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </Droppable>
+                  </DragDropContext>
+                </div>
+              )
+            }
+            }
             PaperComponent={(props) => {
               return (
                 <Paper elevation={8} {...props}>
