@@ -50,14 +50,20 @@ const useTransactionJournalReport = ({
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
+  const [isOpenCreateTransactionModal, setIsCreateTransactionModal] =
+    useState<boolean>(false);
+
+  const onClickCloseCreateTransactionModal = () => {
+    setIsCreateTransactionModal(false);
+  };
+  const onClickOpenCreateTransactionModal = () => {
+    setIsCreateTransactionModal(true);
+  };
 
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
   };
-
-  const isAccountingTransaction =
-    reportType === EReportType.AccountingTransaction;
 
   const [filterState, setFilterState] = useState<FilterState>({
     fromAccount: "",
@@ -522,6 +528,9 @@ const useTransactionJournalReport = ({
     rows,
     headers,
     getAdjustmentsReports,
+    onClickOpenCreateTransactionModal,
+    onClickCloseCreateTransactionModal,
+    isOpenCreateTransactionModal,
   };
 };
 
