@@ -13,6 +13,8 @@ import { AccountingTransactionReportHeader } from "./widgets/header-widget/accon
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { useEffect } from "react";
 
+import CollapsibleTable from "./widgets/collapse-table";
+
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
 }
@@ -40,7 +42,6 @@ const TransactionJournalReportWidget = ({
     customerForEdit,
     setCustomerForEdit,
     onClickOpenCustomerModal,
-    //?new
     label,
     filterState,
     setFilterState,
@@ -53,12 +54,20 @@ const TransactionJournalReportWidget = ({
     getAccountingTransactionReportFilter,
     handleClearFilters,
     getAccountingTableRows,
+    rows,
+    headers,
+    getAdjustmentsReports,
   } = useTransactionJournalReport({ reportType });
   const isAccountingTransaction =
     reportType === EReportType.AccountingTransaction;
+  const isAdjustmentsReport = reportType === EReportType.AdjustmentsReport;
 
   useEffect(() => {
-    isAccountingTransaction && getAccountingTransactionReportFilter();
+    if (isAccountingTransaction) {
+      getAccountingTransactionReportFilter();
+    } else if (isAdjustmentsReport) {
+      getAdjustmentsReports();
+    }
   }, [pageNumber, pageSize]);
 
   return (
@@ -70,14 +79,15 @@ const TransactionJournalReportWidget = ({
       }
     >
       <HeaderTitle title={label} marginTop={"0px"} marginBottom={"0px"} />
-      {reportType === EReportType.AccountingTransaction ? (
+      {isAccountingTransaction && (
         <AccountingTransactionReportHeader
           handleDateChange={handleDatesChange}
           filterState={filterState}
           setFilterState={setFilterState}
           handleClickClear={handleClearFilters}
         />
-      ) : (
+      )}
+      {!isAdjustmentsReport && !isAccountingTransaction && (
         <TransactionJournalReportHeaderWidget
           handleDocumentTypeChange={handleDocumentTypeChange}
           documentType={documentType}
@@ -94,7 +104,13 @@ const TransactionJournalReportWidget = ({
         onClickShowCard={onClickShowCard}
         reportType={reportType}
       />
-
+      {reportType === EReportType.AdjustmentsReport && (
+        <CollapsibleTable
+          rows={rows}
+          headers={headers}
+          style={{ height: "100%", maxHeight: "calc(100vh - 300px)" }}
+        />
+      )}
       {isAccountingTransaction && (
         <PrimaryTable
           rows={getAccountingTableRows()}
@@ -103,8 +119,7 @@ const TransactionJournalReportWidget = ({
           stickyHeader={true}
         />
       )}
-
-      {!isAccountingTransaction && (
+      {!isAccountingTransaction && !isAdjustmentsReport && (
         <div style={{ width: "100%", height: "100%" }}>
           {documentType?.id !== DocumentsTypeReportList.Payments &&
           reportType !== EReportType.DailyPayments ? (
@@ -151,7 +166,6 @@ const TransactionJournalReportWidget = ({
           )}
         </div>
       )}
-
       <CustomerCardWidget
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
@@ -165,7 +179,7 @@ const TransactionJournalReportWidget = ({
         setCustomer={setCustomerForEdit}
         showUpdateButton={true}
       />
-      {isAccountingTransaction && (
+      {(isAccountingTransaction || isAdjustmentsReport) && (
         <GoMakePagination
           onChangePageNumber={(event, value) => setPageNumber(value)}
           onChangePageSize={handlePageSizeChange}
