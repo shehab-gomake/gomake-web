@@ -7,4 +7,5 @@ export enum EReportType {
   TransactionJournal = 0,
   DailyPayments,
   AccountingTransaction,
+  AdjustmentsReport,
 }
