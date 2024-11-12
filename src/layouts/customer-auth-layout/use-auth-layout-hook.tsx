@@ -261,6 +261,12 @@ const useAuthLayoutHook = (
             path: "/credit-card-transactions",
             Permission: Permissions.SHOW_CREDIT_CARD_TRANSACTIONS,
           },
+          {
+            key: "accountingTransactionReport",
+            title: "tabs.accountingTransactionReport",
+            path: "/accounting-transaction-report",
+            //  Permission: true,
+          },
         ],
         icon: () => {
           return <ReportsIcon />;
