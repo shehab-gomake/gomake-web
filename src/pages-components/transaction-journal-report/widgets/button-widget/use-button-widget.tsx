@@ -4,12 +4,14 @@ import { useTranslation } from "react-i18next";
 export interface LedgerReportButtonWidgetProps {
   onClickPrintCard: () => void;
   onClickShowCard: () => void;
+  onClickCreateNewTransaction?: () => void;
   reportType: EReportType;
 }
 
 const useLedgerReportHeader = ({
   onClickPrintCard,
   onClickShowCard,
+  onClickCreateNewTransaction,
   reportType,
 }: LedgerReportButtonWidgetProps) => {
   const { t } = useTranslation();
@@ -22,6 +24,14 @@ const useLedgerReportHeader = ({
       name: t("reports.showCard"),
       onclick: onClickShowCard,
     },
+    ...(isAccountingTransaction
+      ? [
+          {
+            name: t("reports.createNewTransaction"),
+            onclick: onClickCreateNewTransaction,
+          },
+        ]
+      : []),
     ...(!isAccountingTransaction && !isAdjustmentsReport
       ? [
           {
@@ -31,7 +41,6 @@ const useLedgerReportHeader = ({
         ]
       : []),
   ];
-
   return {
     tabs,
   };

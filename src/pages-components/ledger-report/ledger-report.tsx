@@ -113,7 +113,6 @@ const LedgerReportWidget = ({
       <CreateNewTransactionModal
         onCloseModal={onClickCloseCreateTransactionModal}
         openModal={isopenCreateTransactionModal}
-        customerId={customerId}
       />
     </div>
   );

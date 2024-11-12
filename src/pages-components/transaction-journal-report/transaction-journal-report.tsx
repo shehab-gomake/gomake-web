@@ -11,9 +11,10 @@ import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { isValidCustomer } from "@/utils/helpers";
 import { AccountingTransactionReportHeader } from "./widgets/header-widget/acconting-header";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import CollapsibleTable from "./widgets/collapse-table";
+import { CreateNewTransactionModal } from "../ledger-report/widgets/create-transaction-modal";
 
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
@@ -57,6 +58,9 @@ const TransactionJournalReportWidget = ({
     rows,
     headers,
     getAdjustmentsReports,
+    onClickOpenCreateTransactionModal,
+    onClickCloseCreateTransactionModal,
+    isOpenCreateTransactionModal,
   } = useTransactionJournalReport({ reportType });
   const isAccountingTransaction =
     reportType === EReportType.AccountingTransaction;
@@ -102,6 +106,7 @@ const TransactionJournalReportWidget = ({
       <LedgerReportButtonWidget
         onClickPrintCard={onClickPrintCard}
         onClickShowCard={onClickShowCard}
+        onClickCreateNewTransaction={onClickOpenCreateTransactionModal}
         reportType={reportType}
       />
       {reportType === EReportType.AdjustmentsReport && (
@@ -178,6 +183,10 @@ const TransactionJournalReportWidget = ({
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
         showUpdateButton={true}
+      />
+      <CreateNewTransactionModal
+        onCloseModal={onClickCloseCreateTransactionModal}
+        openModal={isOpenCreateTransactionModal}
       />
       {(isAccountingTransaction || isAdjustmentsReport) && (
         <GoMakePagination
