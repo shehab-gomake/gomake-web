@@ -17,6 +17,7 @@ import { getAndSetClientTypes } from "@/services/hooks";
 import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
 import { IconButton } from "@mui/material";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
+import { useDateFormat } from "@/hooks/use-date-format";
 
 export interface FilterState {
   fromAccount: string;
@@ -35,6 +36,8 @@ const useTransactionJournalReport = ({
   const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const { getFormattedLocalDate } = useDateFormat();
+
   const { documentsTypeList, documentType, handleDocumentTypeChange } =
     useDocumentsType();
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -295,9 +298,8 @@ const useTransactionJournalReport = ({
     }
   }, [reportType, filterState, pageNumber, pageSize]);
 
-  // new
   const [rows, setRows] = useState<any[]>([]);
-
+  const headers = ["createdAt", "updatedAt", "deleteButton"];
   const getAdjustmentsReports = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -310,22 +312,22 @@ const useTransactionJournalReport = ({
     if (res?.success) {
       const data = res.data?.data?.data;
       const mappedRows = data.items.map((item: any) => ({
-        createdAt: item.createdAt,
-        updatedAt: item.updatedAt,
+        createdAt: getFormattedLocalDate(item.createdAt),
+        updatedAt: getFormattedLocalDate(item.updatedAt),
         deleteButton: item?.isDeletable ? (
           <IconButton onClick={() => DeleteAdjustment(item.id)}>
             <DeleteIcon />
           </IconButton>
         ) : null,
         history: item.allocations.map((allocation: any) => ({
-          transNum: allocation.document.documentNumber, // Assuming you want documentNumber as transNum
-          addressNum: "test", // No value for addressNum as per your mock data
-          reference: allocation.document.documentNumber, // Assuming documentNumber is used for reference
-          sum: allocation.document.totalPrice, // Assuming totalPrice is used for sum
-          adjustmentSum: allocation.allocatedAmount, // Assuming allocatedAmount is used for adjustmentSum
-          currency: "$", // Assuming a fixed currency
-          valueDate: allocation.document.dueDate, // Assuming dueDate is used for valueDate
-          docDate: allocation.document.docDate, // Assuming docDate is used for docDate
+          transNum: allocation.document.documentNumber,
+          addressNum: "test",
+          reference: allocation.document.documentNumber,
+          sum: allocation.document.totalPrice,
+          adjustmentSum: allocation.allocatedAmount,
+          currency: "$",
+          valueDate: getFormattedLocalDate(allocation.document.dueDate),
+          docDate: getFormattedLocalDate(allocation.document.docDate),
         })),
       }));
 
@@ -483,8 +485,6 @@ const useTransactionJournalReport = ({
     });
     setPageNumber(1);
   };
-
-  const headers = ["createdAt", "updatedAt", "deleteButton"];
 
   return {
     t,

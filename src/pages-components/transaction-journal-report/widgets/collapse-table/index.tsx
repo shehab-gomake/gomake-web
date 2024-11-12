@@ -1,9 +1,5 @@
-// CollapsibleTable.tsx
-
-import * as React from "react";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -12,35 +8,42 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { useTranslation } from "react-i18next";
+import React from "react";
 
 interface CollapsibleTableProps {
   rows: any[];
   headers: string[];
-  style?: React.CSSProperties; // Allow custom styles to be passed as a prop
+  style?: React.CSSProperties;
 }
 
 function CollapsibleTable({ rows, headers, style }: CollapsibleTableProps) {
+  const { t } = useTranslation();
+  const isRtl = t("direction") === "rtl";
+
   const Row = (props: { row: any }) => {
     const { row } = props;
-    const { t } = useTranslation();
 
     return (
       <React.Fragment>
         {/* main row */}
         <TableRow
-          sx={{ "& > *": { borderBottom: "unset" }, background: "#ebecff" }}
+          sx={{
+            "& > *": { borderBottom: "unset" },
+            background: "#ebecff",
+            textAlign: isRtl ? "right" : "left",
+          }}
         >
           {headers.map((key, index) => {
             if (key !== "history") {
               if (index === 2)
                 return (
-                  <TableCell key={index} align="left">
+                  <TableCell key={index} align={isRtl ? "left" : "right"}>
                     {row[key]}
                   </TableCell>
                 );
               else
                 return (
-                  <TableCell key={index} align="left">
+                  <TableCell key={index} align={isRtl ? "right" : "left"}>
                     <strong>{t(`reports.${key}`)} : </strong> {row[key]}
                   </TableCell>
                 );
@@ -50,7 +53,14 @@ function CollapsibleTable({ rows, headers, style }: CollapsibleTableProps) {
         </TableRow>
         {/* sub rows */}
         <TableRow>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+          <TableCell
+            style={{
+              paddingBottom: 0,
+              paddingTop: 0,
+              textAlign: isRtl ? "right" : "left",
+            }}
+            colSpan={6}
+          >
             <Collapse in={true} timeout="auto" unmountOnExit>
               <Box sx={{ margin: 1 }}>
                 <Table size="small" aria-label="purchases">
@@ -58,7 +68,13 @@ function CollapsibleTable({ rows, headers, style }: CollapsibleTableProps) {
                     <TableRow>
                       {row.history.length > 0 &&
                         Object.keys(row.history[0]).map((key) => (
-                          <TableCell key={key}>{t(`reports.${key}`)}</TableCell>
+                          <TableCell
+                            key={key}
+                            align={"center"}
+                            // align={isRtl ? "right" : "left"}
+                          >
+                            {t(`reports.${key}`)}
+                          </TableCell>
                         ))}
                     </TableRow>
                   </TableHead>
@@ -66,7 +82,11 @@ function CollapsibleTable({ rows, headers, style }: CollapsibleTableProps) {
                     {row.history.map((historyRow) => (
                       <TableRow key={historyRow.date}>
                         {Object.keys(historyRow).map((key) => (
-                          <TableCell key={key} align={"left"}>
+                          <TableCell
+                            key={key}
+                            align={"center"}
+                            //align={isRtl ? "right" : "left"}
+                          >
                             {historyRow[key]}
                           </TableCell>
                         ))}
@@ -88,6 +108,7 @@ function CollapsibleTable({ rows, headers, style }: CollapsibleTableProps) {
       sx={{
         maxHeight: "500px",
         overflowY: "auto",
+        direction: isRtl ? "rtl" : "ltr",
         ...style,
       }}
     >
