@@ -15,11 +15,8 @@ import { useSetRecoilState } from "recoil";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetClientTypes } from "@/services/hooks";
 import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
-
-// export interface FilterState {
-//   fromCodeAccount: string;
-//   toCodeAccount: string;
-// }
+import { IconButton } from "@mui/material";
+import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 
 export interface FilterState {
   fromAccount: string;
@@ -283,7 +280,7 @@ const useTransactionJournalReport = ({
         ...filterState,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
-        pageNumber,
+        pageNumber: pageNumber - 1,
         pageSize,
       }
     );
@@ -297,6 +294,48 @@ const useTransactionJournalReport = ({
       alertFaultGetData();
     }
   }, [reportType, filterState, pageNumber, pageSize]);
+
+  // new
+  const [rows, setRows] = useState<any[]>([]);
+
+  const getAdjustmentsReports = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/get-adjustments-report`,
+      {
+        pageNumber,
+        pageSize,
+      }
+    );
+    if (res?.success) {
+      const data = res.data?.data?.data;
+      const mappedRows = data.items.map((item: any) => ({
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        deleteButton: item?.isDeletable ? (
+          <IconButton onClick={() => DeleteAdjustment(item.id)}>
+            <DeleteIcon />
+          </IconButton>
+        ) : null,
+        history: item.allocations.map((allocation: any) => ({
+          transNum: allocation.document.documentNumber, // Assuming you want documentNumber as transNum
+          addressNum: "test", // No value for addressNum as per your mock data
+          reference: allocation.document.documentNumber, // Assuming documentNumber is used for reference
+          sum: allocation.document.totalPrice, // Assuming totalPrice is used for sum
+          adjustmentSum: allocation.allocatedAmount, // Assuming allocatedAmount is used for adjustmentSum
+          currency: "$", // Assuming a fixed currency
+          valueDate: allocation.document.dueDate, // Assuming dueDate is used for valueDate
+          docDate: allocation.document.docDate, // Assuming docDate is used for docDate
+        })),
+      }));
+
+      setRows(mappedRows);
+      setPagesCount(Math.ceil(data.totalRecords / pageSize));
+      alertSuccessGetData();
+    } else {
+      alertFaultGetData();
+    }
+  }, [reportType, pageNumber, pageSize]);
 
   const ExportAccountingReportPDF = useCallback(async () => {
     if (!filterState.startDate || !filterState.endDate) {
@@ -324,6 +363,26 @@ const useTransactionJournalReport = ({
     }
   }, [reportType, filterState]);
 
+  const DeleteAdjustment = useCallback(
+    async (AdjustmentGroupId: string) => {
+      const res = await callApi(
+        EHttpMethod.DELETE,
+        `/v1/erp-service/reports/delete-adjustment-by-group-id`,
+        {
+          AdjustmentGroupId,
+        },
+        true,
+        null
+      );
+      if (res?.success) {
+        getAdjustmentsReports();
+      } else {
+        alertFaultGetData();
+      }
+    },
+    [reportType]
+  );
+
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
       setFromDate(value[0]);
@@ -336,8 +395,17 @@ const useTransactionJournalReport = ({
 
   const onClickShowCard = () => {
     setShowTable(false);
-    if (isAccountingTransaction) getAccountingTransactionReportFilter();
-    else getTransactionJournalReportFilter();
+    switch (reportType) {
+      case EReportType.AccountingTransaction:
+        getAccountingTransactionReportFilter();
+        break;
+      case EReportType.AdjustmentsReport:
+        getAdjustmentsReports();
+        break;
+      default:
+        getTransactionJournalReportFilter();
+        break;
+    }
   };
 
   const onClickOpenCustomerModal = async (customerId) => {
@@ -383,6 +451,8 @@ const useTransactionJournalReport = ({
         return t("tabs.dailyPaymentsReport");
       case EReportType.AccountingTransaction:
         return t("tabs.accountingTransactionReport");
+      case EReportType.AdjustmentsReport:
+        return t("tabs.adjustmentsReport");
       default:
         return "";
     }
@@ -413,6 +483,8 @@ const useTransactionJournalReport = ({
     });
     setPageNumber(1);
   };
+
+  const headers = ["createdAt", "updatedAt", "deleteButton"];
 
   return {
     t,
@@ -447,6 +519,9 @@ const useTransactionJournalReport = ({
     ExportAccountingReportPDF,
     handleClearFilters,
     getAccountingTableRows,
+    rows,
+    headers,
+    getAdjustmentsReports,
   };
 };
 

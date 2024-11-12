@@ -15,13 +15,14 @@ const useLedgerReportHeader = ({
   const { t } = useTranslation();
   const isAccountingTransaction =
     reportType === EReportType.AccountingTransaction;
+  const isAdjustmentsReport = reportType === EReportType.AdjustmentsReport;
 
   const tabs = [
     {
       name: t("reports.showCard"),
       onclick: onClickShowCard,
     },
-    ...(!isAccountingTransaction
+    ...(!isAccountingTransaction && !isAdjustmentsReport
       ? [
           {
             name: t("reports.printCard"),
