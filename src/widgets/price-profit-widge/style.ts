@@ -8,7 +8,6 @@ const useStyle = () => {
         justifyContent: 'flex-start',
         alignItems: "flex-start",
         width: "100%",
-        gap:10,
         backgroundColor:"#FFFF",
         height:"100%",
         borderRadius:16

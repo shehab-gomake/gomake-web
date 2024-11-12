@@ -23,7 +23,7 @@ const useStyle = () => {
       parameterItem:{
         ...FONT_FAMILY.Lexend(400,14),
         borderRadius:8,
-        padding: 4  ,
+        padding: 8  ,
         cursor:"pointer"
       },
       menuContainer:{

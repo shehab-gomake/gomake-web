@@ -30,7 +30,7 @@ const ParameterListWidget = ({
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-
+  const [value, setValue] = useState(parameter?.defaultValue);
   return (
     <>
       <span
@@ -60,6 +60,8 @@ const ParameterListWidget = ({
               options={parameter?.values}
               onChange={(e: any, value: any) => {
                 updateDropdownValue(value, index);
+                handleClose();
+
               }}
               value={parameter?.values?.find((value: any) => value.isDefault)?.label}
               placeholder={`Select ${t(parameter.ParameterName)}`}
@@ -71,12 +73,23 @@ const ParameterListWidget = ({
             />
           ) : parameter?.Type === "1" || parameter?.Type === "2" ? (
             <GomakeTextInput
-              defaultValue={parameter?.defaultValue} // Corrected from 'defualtValue' to 'defaultValue'
+              defaultValue={parameter?.defaultValue}
               placeholder={`Enter ${t(parameter.ParameterName)}`}
               onChange={(e: any) => {
-                updateTextInputValue(e.target.value, index);
+                setValue(e.target.value);
               }}
-              value={parameter?.defaultValue}
+              onBlur={(e: any) => {
+                updateTextInputValue(e.target.value, index);
+                handleClose();
+
+              }}
+              onKeyDown={(e: any) => {
+                if (e.key === 'Enter') {
+                  updateTextInputValue(e.target.value, index);
+                  handleClose();
+                }
+              }}
+              value={value}
               style={{
                 width: 170,
                 height: 34,

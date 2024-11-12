@@ -3,7 +3,7 @@ import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { ParameterListWidget } from "./parameter-list-widget";
 
-const FilterPriceProfitWidget = ({ parameters, updateDropdownValue, updateTextInputValue }: { parameters: any, updateDropdownValue: (value: any, index: number) => void, updateTextInputValue: (value: string, index: number) => void }) => {
+const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateTextInputValue }: { parameters: any, updateDropdownValue: (value: any, index: number) => void, updateTextInputValue: (value: string, index: number) => void }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
 
@@ -70,4 +70,4 @@ const FilterPriceProfitWidget = ({ parameters, updateDropdownValue, updateTextIn
     </div>
   );
 };
-export { FilterPriceProfitWidget };
+export { ParmaetersPriceProfitWidget };

@@ -1,8 +1,10 @@
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 const useStyle = () => {
-  const {secondColor}=useGomakeTheme()
+  const {t} = useTranslation()
+  const direction = t('direction');
   const classes = useMemo(() => {
     return {
       mainContainer:{
@@ -13,9 +15,10 @@ const useStyle = () => {
         width: "100%",
         gap:10,
         padding:16,
+        ...adaptPaddingRight(direction, 24),
       },
       title:{
-        ...FONT_FAMILY.Lexend(500,18)
+        ...FONT_FAMILY.Lexend(500,22)
       },
       buttonContainer:{
         display:"flex",

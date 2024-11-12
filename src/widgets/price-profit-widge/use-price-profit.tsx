@@ -744,7 +744,7 @@ const usePriceProfit = () => {
         if (i === index) {
           const updatedValues = param.values.map(val => ({
             ...val,
-            isDefault: val.id === value.id // Set `isDefault` true only for selected item
+            isDefault: val?.id === value?.id // Set `isDefault` true only for selected item
           }));
           return { ...param, values: updatedValues };
         }
