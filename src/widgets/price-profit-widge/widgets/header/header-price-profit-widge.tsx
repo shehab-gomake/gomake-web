@@ -5,6 +5,9 @@ import { ArrowDownNewIcon, PrintIcon, SettingNewIcon } from "@/icons";
 import { MenuItem } from "@mui/material";
 import { ReviewIcon } from "../table/icons/review-icon";
 import { UpdatedPriceIcon } from "../table/icons/update-icon";
+import { ReStoreIcon } from "../table/icons/restore-icon";
+import { ResetIcon } from "../table/icons/reser-icon";
+import { UpdatedPriceIcon2 } from "../table/icons/update-price-icon";
 
 const PriceProfitHeaderWidget = ({ handleClose, anchorEl, open, handleOpen, handlePrintClose, anchorElPrint, openPrint, handleOpenPrint }) => {
   const { classes } = useStyle();
@@ -20,6 +23,7 @@ const PriceProfitHeaderWidget = ({ handleClose, anchorEl, open, handleOpen, hand
           style={classes.autoCompleteStyle}
           placeholder={t("Select Product")}
           withArrow={true}
+          popupIcon={<ArrowDownNewIcon />}
         />
         <GomakePrimaryButton
           style={classes.settingBtn}
@@ -31,6 +35,7 @@ const PriceProfitHeaderWidget = ({ handleClose, anchorEl, open, handleOpen, hand
         <GomakePrimaryButton
           style={classes.printBtn}
           leftIcon={<PrintIcon />}
+          rightIcon={<ArrowDownNewIcon stroke="#fff" />}
           onClick={handleOpenPrint}
         >{t("Print")}
         </GomakePrimaryButton>
@@ -44,19 +49,19 @@ const PriceProfitHeaderWidget = ({ handleClose, anchorEl, open, handleOpen, hand
         <div style={classes.menuContainer}>
           <MenuItem>
             <div style={classes.menuItemReviewContainer}>
-              <ReviewIcon />
+              <ReStoreIcon stroke={"#667085"} />
               <div style={classes.menuItemReviewText}>Restore original prices</div>
             </div>
           </MenuItem>
           <MenuItem>
             <div style={classes.menuItemReviewContainer}>
-              <ReviewIcon />
+              <ResetIcon />
               <div style={classes.menuItemReviewText}>Reset old version</div>
             </div>
           </MenuItem>
           <MenuItem>
             <div style={classes.menuItemReviewContainer}>
-              <UpdatedPriceIcon stroke="#667085" />
+              <UpdatedPriceIcon2 />
               <div style={classes.menuItemReviewText}>Update all new prices</div>
             </div>
           </MenuItem>

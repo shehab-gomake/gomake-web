@@ -82,7 +82,7 @@ const useStyle = () => {
         menuContainer: {
           display: "flex",
           flexDirection: "column" as "column",
-          gap: 10,
+          gap: 5,
         },
         menuItem: {
           display: "flex",
@@ -144,7 +144,7 @@ const useStyle = () => {
           alignItems: "center",
           justifyContent: "space-between",
           width: "100%",
-          padding: "0px 4px",
+          padding: "4px 8px",
           gap: 16
 
         },

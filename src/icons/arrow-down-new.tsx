@@ -1,4 +1,4 @@
-const ArrowDownNewIcon = () => {
+const ArrowDownNewIcon = (props: any) => {
   return (
     <svg
       width="20"
@@ -9,7 +9,7 @@ const ArrowDownNewIcon = () => {
     >
       <path
         d="M5 7.5L10 12.5L15 7.5"
-        stroke="#252675"
+        stroke={props.stroke || "#252675"}
         stroke-width="1.67"
         stroke-linecap="round"
         stroke-linejoin="round"

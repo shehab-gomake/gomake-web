@@ -1,0 +1,10 @@
+const ResetIcon = () => {
+    return (
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.66602 4.66667H9.33268C11.5418 4.66667 13.3327 6.45753 13.3327 8.66667C13.3327 10.8758 11.5418 12.6667 9.33268 12.6667H2.66602M2.66602 4.66667L5.33268 2M2.66602 4.66667L5.33268 7.33333" stroke="#667085" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+
+    );
+};
+
+export { ResetIcon };

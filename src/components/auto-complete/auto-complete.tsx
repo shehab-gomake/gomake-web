@@ -111,6 +111,7 @@ const GoMakeAutoComplate = ({
   PaperComponent,
   withArrow = false,
   groupBy,
+  popupIcon,
   renderGroup,
   loading, // Add loading prop
 }: {
@@ -133,6 +134,7 @@ const GoMakeAutoComplate = ({
   arrowColor?: any;
   onChangeTextField?: any;
   PaperComponent?: any;
+  popupIcon?: any;
   withArrow?: boolean;
   groupBy?: (option: any) => string;
   renderGroup?: (params: any) => React.ReactNode;
@@ -183,7 +185,7 @@ const GoMakeAutoComplate = ({
       style={style}
       options={options}
       disabled={disabled}
-      popupIcon={withArrow ? <ArrowDropDownIcon /> : ""}
+      popupIcon={withArrow ? popupIcon ? popupIcon : <ArrowDropDownIcon /> : ""}
       groupBy={groupBy}
       renderGroup={(params) => (
         <div key={params.key}>
