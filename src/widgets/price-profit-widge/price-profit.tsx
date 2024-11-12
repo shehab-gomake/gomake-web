@@ -32,7 +32,9 @@ const PriceProfitWidge = () => {
     anchorElPrint,
     openPrint,
     handleOpenPrint,
-    handleHideProduct
+    handleHideProduct,
+    updateDropdownValue,
+    updateTextInputValue
   } = usePriceProfit()
 
   return (
@@ -48,7 +50,11 @@ const PriceProfitWidge = () => {
         handleOpenPrint={handleOpenPrint}
       />
       <Divider style={classes.divider} />
-      <FilterPriceProfitWidget parameters={data?.parameters} />
+      <FilterPriceProfitWidget
+        parameters={products?.parameters}
+        updateDropdownValue={updateDropdownValue}
+        updateTextInputValue={updateTextInputValue}
+      />
       <PriceProfitTable
         headers={data?.headers}
         open={open}

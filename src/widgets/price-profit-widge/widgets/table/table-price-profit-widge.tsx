@@ -58,7 +58,6 @@ const PriceProfitTable = ({
       <Table style={classes.table}>
         <TableHead>
           <TableRow style={classes.tableHead}>
-
             <TableCell sx={classes.tableHeadCell}>Quantities</TableCell>
             {headers.map((header, index) => (
               <TableCell sx={classes.tableHeadCellValue} key={index} colSpan={header?.quantities?.length}>

@@ -29,31 +29,31 @@ const usePriceProfit = () => {
         "ParameterName": "width",
         "ParameterId": "",
         "Type": "1",
-        "defualtValue": "100",
+        "defaultValue": "100",
         "values": []
       },
       {
         "ParameterName": "length",
         "ParameterId": "",
         "Type": "1",
-        "defualtValue": "",
+        "defaultValue": "",
         "values": []
       },
       {
         "ParameterName": "Sheet cateogry",
         "ParameterId": "",
         "Type": "5",
-        "defualtValue": "",
+        "defaultValue": "",
         "values": [
           {
             "id": "uncoted",
             "label": "uncoted",
-            "isDefualt": true
+            "isDefault": true
           },
           {
             "id": "coted mate",
             "label": "coted mate",
-            "isDefualt": false
+            "isDefault": false
           }
         ]
       },
@@ -61,12 +61,12 @@ const usePriceProfit = () => {
         "ParameterName": "Sheet weight",
         "ParameterId": "",
         "Type": "5",
-        "defualtValue": "",
+        "defaultValue": "",
         "values": [
           {
             "id": "100",
             "label": "100",
-            "isDefualt": false
+            "isDefault": false
           }
         ]
       },
@@ -738,9 +738,35 @@ const usePriceProfit = () => {
     });
   };
 
+  const updateDropdownValue = (value: any, index: number) => {
+    setProducts(prevProducts => {
+      const updatedParameters = prevProducts.parameters.map((param, i) => {
+        if (i === index) {
+          const updatedValues = param.values.map(val => ({
+            ...val,
+            isDefault: val.id === value.id // Set `isDefault` true only for selected item
+          }));
+          return { ...param, values: updatedValues };
+        }
+        return param;
+      });
+      console.log("updatedParameters", updatedParameters)
+      return { ...prevProducts, parameters: updatedParameters };
+    });
+  };
 
-
-
+  const updateTextInputValue = (value: string, index: number) => {
+    setProducts(prevProducts => {
+      const updatedParameters = prevProducts.parameters.map((param, i) => {
+        if (i === index) {
+          // Ensure the key name is `defaultValue` in `param`
+          return { ...param, defaultValue: value };
+        }
+        return param;
+      });
+      return { ...prevProducts, parameters: updatedParameters };
+    });
+  };
   return {
     data,
     open,
@@ -766,7 +792,9 @@ const usePriceProfit = () => {
     anchorElPrint,
     openPrint,
     handleOpenPrint,
-    handleHideProduct
+    handleHideProduct,
+    updateDropdownValue,
+    updateTextInputValue
   };
 };
 

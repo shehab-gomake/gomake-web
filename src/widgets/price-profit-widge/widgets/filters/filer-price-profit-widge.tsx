@@ -1,21 +1,12 @@
 
-import { GoMakeMenu } from "@/components/menu/menu";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
 import { ParameterListWidget } from "./parameter-list-widget";
 
-const FilterPriceProfitWidget = ({ parameters }: { parameters: any }) => {
+const FilterPriceProfitWidget = ({ parameters, updateDropdownValue, updateTextInputValue }: { parameters: any, updateDropdownValue: (value: any, index: number) => void, updateTextInputValue: (value: string, index: number) => void }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+
   const colorsMock = [
     {
       color: "#B42318",
@@ -56,9 +47,9 @@ const FilterPriceProfitWidget = ({ parameters }: { parameters: any }) => {
           let displayValue = '';
 
           if (parameter.Type === '1') {
-            displayValue = parameter.defualtValue;
+            displayValue = parameter.defaultValue;
           } else if (parameter.Type === '0' || parameter.Type === '5') {
-            const defaultValue = parameter.values.find((value: any) => value.isDefualt);
+            const defaultValue = parameter.values.find((value: any) => value.isDefault);
             displayValue = defaultValue ? defaultValue.label : '';
           }
           // Use modulo to cycle through colorsMock
@@ -70,6 +61,8 @@ const FilterPriceProfitWidget = ({ parameters }: { parameters: any }) => {
               index={index}
               colorStyle={colorStyle}
               displayValue={displayValue}
+              updateDropdownValue={updateDropdownValue}
+              updateTextInputValue={updateTextInputValue}
             />
           );
         })}
