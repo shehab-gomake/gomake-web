@@ -18,6 +18,8 @@ import { Stack } from "@mui/material";
 import { productsForDropDownList } from "@/store";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import { updateSupplierPriorityApi } from "@/services/api-service/materials/materials-endpoints";
+import { profile } from "console";
 
 interface FiltersActionsBarProps {
   isAdmin: boolean;
@@ -56,7 +58,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     if (materialSuppliers?.length > 0) {
       setItems(materialSuppliers)
     }
-  }, [])
+  }, [materialSuppliers])
 
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const handleClose = () => {
@@ -66,15 +68,34 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     setAnchorEl(event.currentTarget);
   };
 
+
+  const updateMaterialsImages = async (list) => {
+    const callBack = (res) => {
+      if (res.success) {
+
+      } else {
+
+      }
+    };
+    await updateSupplierPriorityApi(callApi, callBack, {
+      MaterialTypeKey: "",
+      CategoryKey: "",
+      List: list
+    });
+  };
+
   const onDragEnd = (result) => {
-    console.log("result", result)
     if (!result.destination) return; // Exit if dropped outside the list
 
     const reorderedItems = Array.from(items);
-    console.log("reorderedItems", reorderedItems)
     const [movedItem] = reorderedItems.splice(result.source.index, 1);
     reorderedItems.splice(result.destination.index, 0, movedItem);
-
+    updateMaterialsImages(reorderedItems?.map((item, index) => {
+      return {
+        supplierId: item.value,
+        order: index + 1
+      }
+    }))
     setItems(reorderedItems); // Update the options with the new order
   };
 
