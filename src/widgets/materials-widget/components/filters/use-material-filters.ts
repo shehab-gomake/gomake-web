@@ -115,6 +115,7 @@ const useMaterialFilters = () => {
     materialTableFilters,
     setFilterValue,
     getFilterValue,
+    materialType, 
     materialCategory,
     filters
   };

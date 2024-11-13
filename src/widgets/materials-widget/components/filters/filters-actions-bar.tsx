@@ -40,6 +40,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     setFilterValue,
     getFilterValue,
     materialCategory,
+    materialType
   } = useMaterialFilters();
   const { callApi } = useGomakeAxios();
   const [selectedOption, setSelectedOptions] = useState([])
@@ -75,9 +76,9 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
       }
     };
     await updateSupplierPriorityApi(callApi, callBack, {
-      MaterialTypeKey: "",
-      CategoryKey: "",
-      List: list
+      materialTypeKey: materialType,
+      categoryKey: materialCategory,
+      list: list
     });
   };
 
