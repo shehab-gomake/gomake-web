@@ -1,10 +1,10 @@
-import { GoMakeAutoComplate, SecondSwitch } from "@/components";
+import { GoMakeAutoComplate } from "@/components";
 import { ActionMenu } from "@/widgets/materials-widget/components/actions-menu/action-menu";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMaterialFilters } from "@/widgets/materials-widget/components/filters/use-material-filters";
 import Button from "@mui/material/Button";
-import { Menu, MenuItem, Paper } from "@mui/material";
+import { Menu, MenuItem } from "@mui/material";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   materialsClientsState,
@@ -19,7 +19,6 @@ import { productsForDropDownList } from "@/store";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { updateSupplierPriorityApi } from "@/services/api-service/materials/materials-endpoints";
-import { profile } from "console";
 
 interface FiltersActionsBarProps {
   isAdmin: boolean;
@@ -37,12 +36,10 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     materialSuppliers,
     supplierId,
     onSelectSupplier,
-    onSetDefaultSupplier,
     materialTableFilters,
     setFilterValue,
     getFilterValue,
     materialCategory,
-    filters
   } = useMaterialFilters();
   const { callApi } = useGomakeAxios();
   const [selectedOption, setSelectedOptions] = useState([])
@@ -85,7 +82,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   };
 
   const onDragEnd = (result) => {
-    if (!result.destination) return; // Exit if dropped outside the list
+    if (!result.destination) return;
 
     const reorderedItems = Array.from(items);
     const [movedItem] = reorderedItems.splice(result.source.index, 1);
@@ -96,7 +93,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         order: index + 1
       }
     }))
-    setItems(reorderedItems); // Update the options with the new order
+    setItems(reorderedItems);
   };
 
   useEffect(() => {
@@ -166,8 +163,6 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             );
           }
           if (key === "machines") {
-            let filtersTemp = filters.find((item) => item.key === key)
-            const filteredItems = filterItemsById(options, filtersTemp)
             return (
               <GoMakeAutoComplate
                 key={materialCategory + "-" + key}
