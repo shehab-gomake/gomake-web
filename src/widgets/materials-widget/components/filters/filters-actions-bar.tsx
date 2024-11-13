@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMaterialFilters } from "@/widgets/materials-widget/components/filters/use-material-filters";
 import Button from "@mui/material/Button";
-import { Paper } from "@mui/material";
+import { Menu, MenuItem, Paper } from "@mui/material";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   materialsClientsState,
@@ -58,6 +58,13 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     }
   }, [])
 
+  const [anchorEl, setAnchorEl] = useState<any>(null);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const onDragEnd = (result) => {
     console.log("result", result)
@@ -187,83 +194,84 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
       }
       <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
         {props.isAdmin === false ? (
-          <GoMakeAutoComplate
-            key={`supplier_${props?.subCategory + supplierName}`}
-            style={{ width: "200px" }}
-            options={items}
-            placeholder={t("materials.sheetPaper.selectSupplier")}
-            onChange={(e: any, value: any) => {
-              onSelectSupplier(value.value);
-            }}
-            value={supplierName ? supplierName : ""}
-            disableClearable={true}
-            renderOption={(props, option, { index }) => {
-              return (
-                <div style={{ width: '100%' }}>
-                  <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="droppable">
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.droppableProps}
-                          style={{ width: '100%' }}
-                        >
-                          <Draggable draggableId={option.value} index={index}>
-                            {(provided) => (
-                              <div
-                                {...props}
-                                {...provided.draggableProps}
-                                ref={provided.innerRef}
-                                style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  width: '100%',
-                                  ...props.style,
-                                  ...provided.draggableProps.style,
-                                }}
-                              >
-                                <div {...provided.dragHandleProps} style={{ paddingRight: 8 }}>
-                                  <DragIndicatorIcon />
-                                </div>
-                                {option.label}
-                              </div>
-                            )}
-                          </Draggable>
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
-                  </DragDropContext>
-                </div>
-              )
-            }
-            }
-            PaperComponent={(props) => {
-              return (
-                <Paper elevation={8} {...props}>
-                  {props?.children}
-                  <Button
-                    sx={{
-                      width: "100%",
-                      backgroundColor: primaryColor(10),
-                      color: secondColor(500),
-                      ...FONT_FAMILY.Lexend(500, 16),
-                    }}
-                    onMouseDown={() => {
-                      setOpenAddSupplierModal(true);
-                    }}
-                  >
-                    {t("materials.sheetPaper.addNewSupplier")}
-                  </Button>
-                </Paper>
-              );
-            }}
-          />
+          <button
+            onClick={(e) => handleOpen(e)}
+            style={{
+              width: "fit-content",
+              height: "40px",
+              border: "1px solid #E0E0E0",
+              borderRadius: "5px",
+              padding: "5px",
+              backgroundColor: "#FFF",
+              minWidth: "140px",
+              boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+              borderBottom: "2px solid rgb(237, 2, 140)",
+              paddingLeft: "12px",
+              cursor: 'pointer',
+              textAlign: "left"
+            }}>
+            <div
+              style={{ ...FONT_FAMILY.Lexend(500, 16) }}>
+              {supplierName?.label}
+            </div>
+          </button>
         ) : (
           <></>
         )}
         <ActionMenu isAdmin={props.isAdmin} />
+        <Menu
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+        >
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="menu-droppable">
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  {items.map((item, index) => (
+                    <Draggable key={item.value} draggableId={item.value} index={index}>
+                      {(provided) => (
+                        <MenuItem
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          onClick={() => {
+                            onSelectSupplier(item.value);
+                            handleClose();
+                          }}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            ...provided.draggableProps.style,
+                          }}
+                        >
+                          <DragIndicatorIcon style={{ marginRight: 8 }} />
+                          {item.label}
+                        </MenuItem>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+          <Button
+            sx={{
+              width: "100%",
+              backgroundColor: primaryColor(10),
+              color: secondColor(500),
+              ...FONT_FAMILY.Lexend(500, 16),
+            }}
+            onMouseDown={() => {
+              setOpenAddSupplierModal(true);
+            }}
+          >
+            {t("materials.sheetPaper.addNewSupplier")}
+          </Button>
+        </Menu>
       </Stack>
+
     </Stack>
   );
 };
