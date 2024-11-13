@@ -46,7 +46,7 @@ import {
   additionalProductItemsState,
   calculationExceptionsLogsState,
   calculationProgressState,
-  calculationResultState,
+  calculationResultState, currentCalculationSessionIdState,
   currentProductItemValueDraftId,
   currentProductItemValuePriceState,
   currentProductItemValueState,
@@ -291,8 +291,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     useState(false);
   const [currentSignalRConnectionId, setCurrentSignalRConnectionId] =
     useRecoilState(currentCalculationConnectionId);
-  const [currentCalculationSessionId, setCurrentCalculationSessionId] =
-    useState<string>("");
+  const [currentCalculationSessionId, setCurrentCalculationSessionId] = useRecoilState<any>(currentCalculationSessionIdState);
   const [requestAbortController, setRequestAbortController] =
     useState<AbortController>(null);
   const [billingMethod, setBillingMethod] = useState<any>();
