@@ -146,7 +146,7 @@ const QuoteForPriceTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      {quoteItems?.isShowPrice && (
+      {quoteItems?.isShowPrice && quoteItems?.documentItems?.length > 0 && (
         <TotalPriceComp
           documentType={documentType}
           getCalculateQuote={getCalculateQuote}
