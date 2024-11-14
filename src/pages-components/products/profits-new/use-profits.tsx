@@ -319,7 +319,7 @@ const useNewProfits = () => {
 
     const additionalProfitHeaders = [
       pricingLabel,
-      unitPriceLabel,
+      selectedPricingType === EPricingBy.COST ? profitHeader : unitPriceLabel,
       `${totalPriceLabel} ${ProfitCurrency}`,
       `${totalPriceWithAdditionProfit} (${profitValue})`,
 
