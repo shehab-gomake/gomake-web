@@ -3,13 +3,23 @@ import { useStyle } from "./style";
 import { GoMakeAutoComplate, GoMakeMenu, GomakePrimaryButton } from "@/components";
 import { ArrowDownNewIcon, PrintIcon, SettingNewIcon } from "@/icons";
 import { MenuItem } from "@mui/material";
-import { ReviewIcon } from "../table/icons/review-icon";
-import { UpdatedPriceIcon } from "../table/icons/update-icon";
 import { ReStoreIcon } from "../table/icons/restore-icon";
 import { ResetIcon } from "../table/icons/reser-icon";
 import { UpdatedPriceIcon2 } from "../table/icons/update-price-icon";
 
-const PriceProfitHeaderWidget = ({ handleClose, anchorEl, open, handleOpen, handlePrintClose, anchorElPrint, openPrint, handleOpenPrint }) => {
+const PriceProfitHeaderWidget = ({
+  handleClose,
+  anchorEl,
+  open,
+  handleOpen,
+  handlePrintClose,
+  anchorElPrint,
+  openPrint,
+  handleOpenPrint,
+  pricingProfileSetting,
+  selectedPricingProfileSetting,
+  setSelectedPricingProfileSetting
+}) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
 
@@ -19,7 +29,13 @@ const PriceProfitHeaderWidget = ({ handleClose, anchorEl, open, handleOpen, hand
       <div style={classes.title}>{t("settings.priceProfit")}</div>
       <div style={classes.buttonContainer}>
         <GoMakeAutoComplate
-          options={[]}
+          options={pricingProfileSetting?.map((item) => ({
+            ...item,
+            label: item?.productName,
+            value: item?.productId
+          }))}
+          value={selectedPricingProfileSetting}
+          onChange={(e, value) => setSelectedPricingProfileSetting(value)}
           style={classes.autoCompleteStyle}
           placeholder={t("Select Product")}
           withArrow={true}

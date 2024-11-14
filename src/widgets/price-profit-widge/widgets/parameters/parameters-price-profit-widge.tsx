@@ -1,11 +1,13 @@
 
 import { useStyle } from "./style";
-import { useTranslation } from "react-i18next";
 import { ParameterListWidget } from "./parameter-list-widget";
 
-const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateTextInputValue }: { parameters: any, updateDropdownValue: (value: any, index: number) => void, updateTextInputValue: (value: string, index: number) => void }) => {
+const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateTextInputValue }: {
+  parameters: any,
+  updateDropdownValue: (value: any, index: number) => void,
+  updateTextInputValue: (value: string, index: number) => void
+}) => {
   const { classes } = useStyle();
-  const { t } = useTranslation();
 
   const colorsMock = [
     {
@@ -43,14 +45,14 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateTe
   return (
     <div style={classes.mainContainer}>
       <div style={classes.parameterContainer}>
-        {parameters.map((parameter: any, index: number) => {
+        {parameters?.map((parameter: any, index: number) => {
           let displayValue = '';
 
-          if (parameter.Type === '1') {
+          if (parameter.parameterType === 1 || parameter.parameterType === 2) {
             displayValue = parameter.defaultValue;
-          } else if (parameter.Type === '0' || parameter.Type === '5') {
+          } else if (parameter.parameterType === 0 || parameter.parameterType === 5) {
             const defaultValue = parameter.values.find((value: any) => value.isDefault);
-            displayValue = defaultValue ? defaultValue.label : '';
+            displayValue = defaultValue ? defaultValue.parameterName : '';
           }
           // Use modulo to cycle through colorsMock
           const colorStyle = colorsMock[index % colorsMock.length];

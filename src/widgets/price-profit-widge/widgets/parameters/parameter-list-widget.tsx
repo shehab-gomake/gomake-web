@@ -43,19 +43,19 @@ const ParameterListWidget = ({
           backgroundColor: colorStyle.backgroundColor,
         }}
       >
-        {`${t(parameter.ParameterName)}: ${displayValue}`}
+        {`${t(parameter.parameterName)}: ${displayValue}`}
       </span>
       <GoMakeMenu
         handleClose={handleClose}
         open={open}
         anchorEl={anchorEl}
-        style={parameter?.Type === "1" ? {
+        style={parameter?.parameterType === 1 ? {
           marginTop: 10,
           marginLeft: 100,
         } : {}}
       >
         <div style={classes.menuContainer}>
-          {parameter?.Type === "0" || parameter?.Type === "5" ? (
+          {parameter?.parameterType === 0 || parameter?.parameterType === 5 ? (
             <GoMakeAutoComplate
               options={parameter?.values}
               onChange={(e: any, value: any) => {
@@ -64,17 +64,17 @@ const ParameterListWidget = ({
 
               }}
               value={parameter?.values?.find((value: any) => value.isDefault)?.label}
-              placeholder={`Select ${t(parameter.ParameterName)}`}
+              placeholder={`Select ${t(parameter.parameterName)}`}
               style={{
                 width: 170,
                 height: 34,
                 border: "none",
               }}
             />
-          ) : parameter?.Type === "1" || parameter?.Type === "2" ? (
+          ) : parameter?.parameterType === 1 || parameter?.parameterType === 2 ? (
             <GomakeTextInput
               defaultValue={parameter?.defaultValue}
-              placeholder={`Enter ${t(parameter.ParameterName)}`}
+              placeholder={`Enter ${t(parameter.parameterName)}`}
               onChange={(e: any) => {
                 setValue(e.target.value);
               }}

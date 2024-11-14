@@ -59,24 +59,24 @@ const PriceProfitTable = ({
         <TableHead>
           <TableRow style={classes.tableHead}>
             <TableCell sx={classes.tableHeadCell}>Quantities</TableCell>
-            {headers.map((header, index) => (
+            {headers?.map((header, index) => (
               <TableCell sx={classes.tableHeadCellValue} key={index} colSpan={header?.quantities?.length}>
-                {header?.Qunatity}
+                {header?.qunatity}
               </TableCell>
             ))}
           </TableRow>
           <TableRow style={classes.tableHeadTotal}>
             <TableCell sx={classes.tableHeadCellValueTotal}>Total</TableCell>
-            {headers.map((header, index) => (
+            {headers?.map((header, index) => (
               <TableCell sx={classes.tableHeadCellTotalValue} key={index} colSpan={header?.quantities?.length}>
-                {header?.Total}
+                {header?.total}
               </TableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
           {products?.data?.map((product, index) => (
-            (showAllProducts || !product.IsHidden) && (
+            (showAllProducts || product.isHidden) && (
               <ProductsRowMappingTable
                 product={product}
                 index={index}

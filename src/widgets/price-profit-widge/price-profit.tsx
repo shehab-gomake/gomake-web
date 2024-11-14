@@ -8,7 +8,6 @@ import { PriceProfitTable } from "./widgets/table/table-price-profit-widge";
 const PriceProfitWidge = () => {
   const { classes } = useStyle();
   const {
-    data,
     open,
     anchorEl,
     selectedProduct,
@@ -34,9 +33,12 @@ const PriceProfitWidge = () => {
     handleOpenPrint,
     handleHideProduct,
     updateDropdownValue,
-    updateTextInputValue
+    updateTextInputValue,
+    pricingProfileSetting,
+    selectedPricingProfileSetting,
+    setSelectedPricingProfileSetting
   } = usePriceProfit()
-
+  console.log("products", products)
   return (
     <div style={classes.mainContainer}>
       <PriceProfitHeaderWidget
@@ -48,32 +50,41 @@ const PriceProfitWidge = () => {
         anchorElPrint={anchorElPrint}
         openPrint={openPrint}
         handleOpenPrint={handleOpenPrint}
+        pricingProfileSetting={pricingProfileSetting}
+        selectedPricingProfileSetting={selectedPricingProfileSetting}
+        setSelectedPricingProfileSetting={setSelectedPricingProfileSetting}
       />
       <Divider style={classes.divider} />
-      <ParmaetersPriceProfitWidget
-        parameters={products?.parameters}
-        updateDropdownValue={updateDropdownValue}
-        updateTextInputValue={updateTextInputValue}
-      />
-      <PriceProfitTable
-        headers={data?.headers}
-        open={open}
-        anchorEl={anchorEl}
-        handleClose={handleClose}
-        handleOpen={handleOpen}
-        handleCheckboxChange={handleCheckboxChange}
-        handleRestoreOriginalPrice={handleRestoreOriginalPrice}
-        handleUpdateNewPrice={handleUpdateNewPrice}
-        handleReviewCalculation={handleReviewCalculation}
-        selectedProduct={selectedProduct}
-        products={products}
-        setSelectedProduct={setSelectedProduct}
-        handlePriceChange={handlePriceChange}
-        isUpdate={isUpdate}
-        setIsUpdate={setIsUpdate}
-        onBlurPriceChange={onBlurPriceChange}
-        handleHideProduct={handleHideProduct}
-      />
+      {
+        products && products?.requiredParameters?.length > 0 &&
+        <ParmaetersPriceProfitWidget
+          parameters={products?.requiredParameters}
+          updateDropdownValue={updateDropdownValue}
+          updateTextInputValue={updateTextInputValue}
+        />
+      }
+      {
+        products && products?.headers?.length > 0 && products?.data?.length > 0 &&
+        <PriceProfitTable
+          headers={products?.headers}
+          open={open}
+          anchorEl={anchorEl}
+          handleClose={handleClose}
+          handleOpen={handleOpen}
+          handleCheckboxChange={handleCheckboxChange}
+          handleRestoreOriginalPrice={handleRestoreOriginalPrice}
+          handleUpdateNewPrice={handleUpdateNewPrice}
+          handleReviewCalculation={handleReviewCalculation}
+          selectedProduct={selectedProduct}
+          products={products}
+          setSelectedProduct={setSelectedProduct}
+          handlePriceChange={handlePriceChange}
+          isUpdate={isUpdate}
+          setIsUpdate={setIsUpdate}
+          onBlurPriceChange={onBlurPriceChange}
+          handleHideProduct={handleHideProduct}
+        />
+      }
     </div>
   );
 };

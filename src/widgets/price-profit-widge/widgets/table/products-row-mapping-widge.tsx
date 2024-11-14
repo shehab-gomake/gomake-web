@@ -39,16 +39,16 @@ const ProductsRowMappingTable = ({
           className="tableBodyCellForProduct"
           sx={{
             ...classes.tableBodyCellForProduct,
-            borderLeft: product?.IsSelected ? '6px solid #11A5EC' : 'none',
+            borderLeft: product?.isSelected ? '6px solid #11A5EC' : 'none',
           }}
-          style={product?.IsSelected ? { borderLeft: "6px solid #11A5EC" } : {}}>
+          style={product?.isSelected ? { borderLeft: "6px solid #11A5EC" } : {}}>
           <Checkbox
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
-            checked={product.IsSelected}
+            checked={product.isSelected}
             onChange={() => handleCheckboxChange(index)}
           />
-          {product.ProductName}
+          {product.productName}
           <div
             className="moreIconContainer"
             style={classes.moreIconContainer}
@@ -57,7 +57,7 @@ const ProductsRowMappingTable = ({
             <MoreIcon />
           </div>
         </TableCell>
-        {product.PricePerQuantity.map((price, idx) => (
+        {product?.PricePerQuantity?.map((price, idx) => (
           <PriceProfitRowMappingTable
             price={price}
             idx={idx}
@@ -82,9 +82,9 @@ const ProductsRowMappingTable = ({
         <div style={classes.moreMenuContainer}>
           <div style={classes.appearanceText}>Appearance</div>
           <div style={classes.switchContainer}>
-            <div style={classes.switchText}>{product?.IsHidden ? "off" : "on"}</div>
+            <div style={classes.switchText}>{product?.isHidden ? "off" : "on"}</div>
             <SecondSwitch
-              checked={!product?.IsHidden}
+              checked={!product?.isHidden}
               onChange={(e) => {
                 handleHideProduct(index, e.target.checked)
               }}
