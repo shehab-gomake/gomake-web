@@ -993,7 +993,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const isDieCutExisting = existingParameters.find(
                       (param) => param?.parameterCode === "DieCut"
                     );
-
+                    debugger
                     if (isDieCutExisting || existingParameters.length === 0) {
                       const nameValue = value?.additionalAttribute?.find(
                         (attr) => attr.valueId === "name"
@@ -1032,7 +1032,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const isDieCutExisting = existingParameters.find(
                       (param) => param?.parameterCode === "DieCut"
                     );
-
+                    debugger
                     if (isDieCutExisting) {
                       let materialSelected = allMaterials?.find(
                         (item) =>
@@ -1117,7 +1117,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const isDieCutExisting = existingParameters.find(
                       (param) => param?.parameterCode === "DieKissCut"
                     );
-
+                    debugger
                     if (isDieCutExisting) {
                       let materialSelected = allMaterials?.find(
                         (item) =>
@@ -1176,28 +1176,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                   });
                   if (defaultObject) {
-                    if(!subProduct.parameters.findIndex(x=>x.parameterId === parameter?.id &&  x.sectionId === section.id &&  x.subSectionId === subSection.id  && x.actionIndex ===  parameter?.actionIndex)){
-                      subProduct.parameters.push({
-                        parameterId: parameter?.id,
-                        parameterName: parameter?.name,
-                        actionId: parameter?.actionId,
-                        parameterType: parameter?.parameterType,
-                        isQuantityParameter: parameter?.isQuantityParameter,
-                        ...(defaultObject && {
-                          valueIds: [defaultObject?.id],
-                          values: [defaultObject?.updateName],
-                        }),
-                        sectionId: section?.id,
-                        subSectionId: subSection?.id,
-                        actionIndex: parameter?.actionIndex,
-                        parameterCode: parameter?.code,
-                        valuesConfigs: parameter?.valuesConfigs,
-                        unitKey: parameter?.unitKey,
-                        unitType: parameter?.unitType,
-                        isGeneralInfoInProductionFloor:
-                        parameter?.isGeneralInfoInProductionFloor,
-                      });
-                    }
+                    subProduct.parameters.push({
+                      parameterId: parameter?.id,
+                      parameterName: parameter?.name,
+                      actionId: parameter?.actionId,
+                      parameterType: parameter?.parameterType,
+                      isQuantityParameter: parameter?.isQuantityParameter,
+                      ...(defaultObject && {
+                        valueIds: [defaultObject?.id],
+                        values: [defaultObject?.updateName],
+                      }),
+                      sectionId: section?.id,
+                      subSectionId: subSection?.id,
+                      actionIndex: parameter?.actionIndex,
+                      parameterCode: parameter?.code,
+                      valuesConfigs: parameter?.valuesConfigs,
+                      unitKey: parameter?.unitKey,
+                      unitType: parameter?.unitType,
+                      isGeneralInfoInProductionFloor:
+                      parameter?.isGeneralInfoInProductionFloor,
+                    });
                     
                     parameter?.childsParameters?.map((item) => {
                       const childParam = subSection.parameters.find(
@@ -1217,28 +1215,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       ) {
                         isDisabled = true;
                       }
-                      if(!subProduct.parameters.findIndex(x=>x.parameterId === childParam?.id  &&  x.sectionId === section.id &&  x.subSectionId === subSection.id  && x.actionIndex ===  childParam?.actionIndex)){
-                        subProduct.parameters.push({
-                          parameterId: childParam?.id,
-                          parameterName: childParam?.name,
-                          actionId: childParam?.actionId,
-                          parameterType: childParam?.parameterType,
-                          isQuantityParameter: childParam?.isQuantityParameter,
-                          values: item.defaultValue
-                              ? [item?.defaultValue]
-                              : [childParam?.defaultValue],
-                          sectionId: section?.id,
-                          subSectionId: subSection?.id,
-                          actionIndex: childParam?.actionIndex,
-                          parameterCode: childParam?.code,
-                          valuesConfigs: childParam?.valuesConfigs,
-                          unitKey: childParam?.unitKey,
-                          unitType: childParam?.unitType,
-                          isDisabled: isDisabled,
-                          isGeneralInfoInProductionFloor:
-                          childParam?.isGeneralInfoInProductionFloor,
-                        });
-                      }
+                      subProduct.parameters.push({
+                        parameterId: childParam?.id,
+                        parameterName: childParam?.name,
+                        actionId: childParam?.actionId,
+                        parameterType: childParam?.parameterType,
+                        isQuantityParameter: childParam?.isQuantityParameter,
+                        values: item.defaultValue
+                            ? [item?.defaultValue]
+                            : [childParam?.defaultValue],
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: childParam?.actionIndex,
+                        parameterCode: childParam?.code,
+                        valuesConfigs: childParam?.valuesConfigs,
+                        unitKey: childParam?.unitKey,
+                        unitType: childParam?.unitType,
+                        isDisabled: isDisabled,
+                        isGeneralInfoInProductionFloor:
+                        childParam?.isGeneralInfoInProductionFloor,
+                      });
                       
                     });
                   }
@@ -1427,6 +1423,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter.code === "DieCut" ||
                     parameter.code === "DieKissCut"
                   ) {
+                    debugger
                     if (parameter.valuesConfigs.length === 0) {
                       parameter.valuesConfigs = materialData?.map((data) => ({
                         id: data.valueId,
@@ -1451,7 +1448,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         return existingConfig
                           ? {
                             ...existingConfig,
-                            isDefault: true,
                             additionalAttribute: data.additionalAttribute,
                             currency: data.currency,
                           }
@@ -3036,9 +3032,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         );
     
         if (relatedParameter) {
-          if(relatedParameter.code == "BothsideSameprintcolor"){
-            debugger
-          }
+          
           let valueToAdd = null;
           let valueIds = null;
 
@@ -3286,7 +3280,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSectionParameter) {
         subSectionParameter.isHidden = false;
       }
-      if(subSectionParameter.code === "PrintingSides"){
+      if(subSectionParameter.code === "BindingType"){
         debugger
       }
       if (findIndex !== -1) {
@@ -3868,6 +3862,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
         }
       }
+      
       let temp2 = [...subProducts];
       const index2 = temp2.findIndex((item) => item.type === subSectionType);
       temp2[index2] = {
