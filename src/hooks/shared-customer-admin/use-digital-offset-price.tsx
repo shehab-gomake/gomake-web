@@ -2716,6 +2716,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       (relatedParameter) =>
         subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
     );
+    if(parameter.code === "Puncturetype"){
+      debugger;
+    }
     relatedParametersfilterd?.map((relatedParameter) => {
       const subProduct = subProducts?.find((x) => x.type === subSection?.type);
       let actionIndex = parameter.actionIndex;
@@ -2793,7 +2796,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           productTemplate,
           subProducts
         );
-      } else if (relatedParameter.activateByAllValues && !paramValue) {
+      } 
+      else if (relatedParameter.activateByAllValues && !paramValue) {
         const sectionCopy = productTemplate.sections.find(
           (x) => x.id === section.id
         );
@@ -2910,6 +2914,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             (x) => x.id === relatedParameter.parameterId
           );
           if (param.isHidden == false) {
+            processRelatedParameters2(
+                param,
+                subSection,
+                section,
+                productTemplate,
+                subProducts
+            );
             return;
           }
           param.isHidden = false;
@@ -2924,6 +2935,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             (x) => x.id === relatedParameter.parameterId
           );
           if (param.isHidden == true) {
+            processRelatedParameters2(
+                param,
+                subSection,
+                section,
+                productTemplate,
+                subProducts
+            );
             return;
           }
           subProducts.forEach((x) => {
@@ -3016,6 +3034,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const parentParameter = subSection?.parameters.find(
       (param) => param.id === parameterId
     );
+    if(parentParameter.code === "Puncturetype"){
+      debugger;
+    }
     // Check if the parameter has related parameters
     if (parentParameter && parentParameter.relatedParameters) {
       parentParameter.relatedParameters.forEach((relatedParam) => {
@@ -3051,7 +3072,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             else if (
               relatedParameter.valuesConfigs &&
               relatedParameter.valuesConfigs.length === 1 &&
-              relatedParameter.valuesConfigs[0]?.values?.length > 0
+              relatedParameter.valuesConfigs[0]?.values?.length > 0 &&
+              relatedParameter.isRequired
             ) {
               valueToAdd = relatedParameter.valuesConfigs[0]?.updateName;
               valueIds = relatedParameter.valuesConfigs[0]?.values[0];
@@ -3167,7 +3189,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       )?.data;
                     }
                     param.valuesConfigs = [];
-                    //param.isHidden = false;
+                    param.isHidden = false;
                     paramMaterialValues?.forEach((val) => {
                       param.valuesConfigs.push({
                         id: val.valueId,
@@ -3191,6 +3213,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         param?.valuesConfigs?.length === 1 &&
                         param?.isRequired
                     ) {
+                      debugger
                       param.valuesConfigs[0].isDefault = true;
                       parameters.push({
                         parameterId: param?.id,
