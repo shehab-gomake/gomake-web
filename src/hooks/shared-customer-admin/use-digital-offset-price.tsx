@@ -993,7 +993,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const isDieCutExisting = existingParameters.find(
                       (param) => param?.parameterCode === "DieCut"
                     );
-                    debugger
                     if (isDieCutExisting || existingParameters.length === 0) {
                       const nameValue = value?.additionalAttribute?.find(
                         (attr) => attr.valueId === "name"
@@ -1032,7 +1031,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const isDieCutExisting = existingParameters.find(
                       (param) => param?.parameterCode === "DieCut"
                     );
-                    debugger
                     if (isDieCutExisting) {
                       let materialSelected = allMaterials?.find(
                         (item) =>
@@ -1117,7 +1115,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const isDieCutExisting = existingParameters.find(
                       (param) => param?.parameterCode === "DieKissCut"
                     );
-                    debugger
                     if (isDieCutExisting) {
                       let materialSelected = allMaterials?.find(
                         (item) =>
@@ -1423,7 +1420,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter.code === "DieCut" ||
                     parameter.code === "DieKissCut"
                   ) {
-                    debugger
                     if (parameter.valuesConfigs.length === 0) {
                       parameter.valuesConfigs = materialData?.map((data) => ({
                         id: data.valueId,
@@ -3020,9 +3016,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const parentParameter = subSection?.parameters.find(
       (param) => param.id === parameterId
     );
-    if(parentParameter.code === "PrintingSides"){
-      debugger
-    }
     // Check if the parameter has related parameters
     if (parentParameter && parentParameter.relatedParameters) {
       parentParameter.relatedParameters.forEach((relatedParam) => {
@@ -3073,7 +3066,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             const relatedIndex = parameters.findIndex(
               (param) => param.parameterId === relatedParameter.id
             );
-
+            
             if (relatedIndex === -1) {
               // Add the related parameter to the parameters array
               parameters.push({
@@ -3094,6 +3087,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 isGeneralInfoInProductionFloor:
                   relatedParameter?.isGeneralInfoInProductionFloor,
               });
+              relatedParameter.isHidden = false;
               const parameterValue = relatedParameter.valuesConfigs.find(
                   (x) => x.id === valueIds
               );
@@ -3279,9 +3273,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       if (subSectionParameter) {
         subSectionParameter.isHidden = false;
-      }
-      if(subSectionParameter.code === "BindingType"){
-        debugger
       }
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
@@ -3861,6 +3852,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           }
         }
+        
       }
       
       let temp2 = [...subProducts];
@@ -4549,6 +4541,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       } else if (section.relatedToParameters) {
         // let isHidden = true;
         section.relatedToParameters.forEach((parameter) => {
+          if(parameter.actionIndex === undefined || parameter.actionIndex === null ){
+            parameter.actionIndex = 0
+          }
           // Check if any parameter in allParameters matches the condition
           const matchingParameter = allParameters.find(
             (p) =>
