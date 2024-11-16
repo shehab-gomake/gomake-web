@@ -289,8 +289,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1023,7 +1023,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1442,6 +1442,7 @@ const useQuoteNew = ({
   };
 
   const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
+
   const handleSaveBtnClickForDocument = async () => {
     if (
       !quoteItemValue?.documentItems ||
@@ -1454,10 +1455,8 @@ const useQuoteNew = ({
       alertFault("alerts.cannotCreateWithPriceZero");
       return;
     }
-    setLoadingWithShadow(true);
 
     const callBack = (res) => {
-      setLoadingWithShadow(false);
       if (res?.success) {
         alertSuccessAdded();
         const _data = res?.data || {};
@@ -1466,8 +1465,8 @@ const useQuoteNew = ({
           docType === DOCUMENT_TYPE.invoice ||
           docType === DOCUMENT_TYPE.deliveryNote
         ) {
-          onClickOpenInvoiceCreation();
           navigate(`/${documentPath}?Id=${_data?.id}`);
+          onClickOpenInvoiceCreation();
         } else {
           navigate(`/${documentPath}?Id=${_data?.id}`);
         }
@@ -1874,7 +1873,6 @@ const useQuoteNew = ({
     });
   };
 
-
   const [allClientActiveBudgets, setAllClientActiveBudgets] = useState([]);
   const getAllClientActiveBudgets = async () => {
     const callBack = (res) => {
@@ -1889,30 +1887,33 @@ const useQuoteNew = ({
 
   useEffect(() => {
     if (quoteItemValue?.client?.id) {
-      getAllClientActiveBudgets()
+      getAllClientActiveBudgets();
     }
-  }, [quoteItemValue?.client?.id])
+  }, [quoteItemValue?.client?.id]);
 
-  const updateDocumentBudget = useCallback(async (budget) => {
-    const res = await callApi(
-      EHttpMethod.PUT,
-      `/v1/erp-service/budgets/update-document-budget`,
-      {
-        documentType: docType,
-        documentId: quoteItemValue?.id,
-        budgetId: budget.id
+  const updateDocumentBudget = useCallback(
+    async (budget) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/budgets/update-document-budget`,
+        {
+          documentType: docType,
+          documentId: quoteItemValue?.id,
+          budgetId: budget.id,
+        }
+      );
+      console.log("res", res);
+
+      if (res?.success) {
+        alertSuccessUpdate();
+        getQuote();
+      } else {
+        alertFault(`${t("sales.quote.errorUpdateBudget")}`);
+        // document total is greater than the budget balance
       }
-    );
-    console.log("res", res)
-
-    if (res?.success) {
-      alertSuccessUpdate();
-      getQuote()
-    } else {
-      alertFault(`${t("sales.quote.errorUpdateBudget")}`);
-      // document total is greater than the budget balance
-    }
-  }, [docType, quoteItemValue]);
+    },
+    [docType, quoteItemValue]
+  );
   return {
     dateRef,
     taxDateRef,
@@ -2115,7 +2116,7 @@ const useQuoteNew = ({
     navigate,
     moveOrderToReady,
     allClientActiveBudgets,
-    updateDocumentBudget
+    updateDocumentBudget,
   };
 };
 
