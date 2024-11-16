@@ -9,6 +9,7 @@ phases:
       - REPOSITORY_URI=776797999133.dkr.ecr.il-central-1.amazonaws.com/gomake-web
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
+      - printenv > .env
   build:
     commands:
       - echo Build started on `date`
