@@ -47,7 +47,7 @@ const GoMakeDeleteModal = ({
           {!hideIcon && (
             <div style={classes.icon}>{props.icon || <Wastebasket />}</div>
           )}
-          <div style={classes.title}>{title}</div>
+          <div style={classes.title}>{t(title)}</div>
           <div style={classes.subTitle}>{subTitle}</div>
           {withClose && (
             <div style={classes.closeIcon} onClick={onClose}>

@@ -119,6 +119,8 @@ export enum Permissions {
   SHOW_DAILY_PAYMENT_REPORT = "ShowDailyPaymentsReport",
   SHOW_SALES_REPORT = "ShowSalesReport",
   SHOW_CREDIT_CARD_TRANSACTIONS = "ShowCreditCardTransactions",
+  SHOW_ACCOUNTING_TRANSACTION_REPORT = "ShowAccountingTransactionReport", 
+  SHOW_ADJUSTMENTS_REPORT = "ShowAdjustmentsReport", 
 
 }
 

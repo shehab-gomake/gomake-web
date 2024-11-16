@@ -11,10 +11,15 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useEffect } from "react";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
-import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import {
+  CLIENT_TYPE,
+  CLIENT_TYPE_Id,
+  CUSTOMER_ACTIONS,
+} from "@/pages/customers/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
+import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -57,7 +62,11 @@ export default function Home() {
     getAllCustomers,
     onClickExportClient,
     onClickImportClient,
-    handlePageSizeChange
+    handlePageSizeChange,
+
+    openExportModal,
+    onOpenExportClientModal,
+    onCloseExportClientModal,
   } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -91,7 +100,10 @@ export default function Home() {
   ]);
 
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_CLIENT} className={`custom-scrollbar`}>
+    <CustomerAuthLayout
+      permissionEnumValue={Permissions.SHOW_CLIENT}
+      className={`custom-scrollbar`}
+    >
       <Stack
         direction="column"
         justifyContent="space-between"
@@ -128,7 +140,7 @@ export default function Home() {
             agentName={agentName}
             valClientType={valClientType}
             valStatus={valStatus}
-            onClickExport={onClickExportClient}
+            onClickExport={onOpenExportClientModal}
             onClickImport={onClickImportClient}
           />
           <PrimaryTable
@@ -151,6 +163,16 @@ export default function Home() {
             customer={customerForEdit}
             setCustomer={setCustomerForEdit}
             showUpdateButton={true}
+          />
+          <ThreeOptionsModal
+            title={t("customers.modal.exportClients")}
+            subTitle={t("customers.modal.exportPrompt")}
+            yesBtn={"customers.modal.includeContacts"}
+            noBtn={"customers.modal.excludeContacts"}
+            openModal={openExportModal}
+            onClose={onCloseExportClientModal}
+            onClickYes={() => onClickExportClient(true)}
+            onClickNo={() => onClickExportClient(false)}
           />
         </div>
         <GoMakePagination
