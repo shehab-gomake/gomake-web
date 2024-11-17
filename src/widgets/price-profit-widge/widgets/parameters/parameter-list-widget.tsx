@@ -11,14 +11,16 @@ const ParameterListWidget = ({
   colorStyle,
   displayValue,
   updateDropdownValue,
-  updateTextInputValue
+  updateTextInputValue,
+  updateProfitProfileProductParameter
 }: {
   parameter: any,
   index: number,
   colorStyle: any,
   displayValue: string,
   updateDropdownValue: (value: any, index: number) => void,
-  updateTextInputValue: (value: string, index: number) => void
+  updateTextInputValue: (value: string, index: number) => void,
+  updateProfitProfileProductParameter: (data: any) => void
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -80,6 +82,7 @@ const ParameterListWidget = ({
               }}
               onBlur={(e: any) => {
                 updateTextInputValue(e.target.value, index);
+                updateProfitProfileProductParameter(parameter);
                 handleClose();
 
               }}

@@ -36,9 +36,9 @@ const PriceProfitWidge = () => {
     updateTextInputValue,
     pricingProfileSetting,
     selectedPricingProfileSetting,
-    setSelectedPricingProfileSetting
+    setSelectedPricingProfileSetting,
+    updateProfitProfileProductParameter
   } = usePriceProfit()
-  console.log("products", products)
   return (
     <div style={classes.mainContainer}>
       <PriceProfitHeaderWidget
@@ -61,6 +61,8 @@ const PriceProfitWidge = () => {
           parameters={products?.requiredParameters}
           updateDropdownValue={updateDropdownValue}
           updateTextInputValue={updateTextInputValue}
+          updateProfitProfileProductParameter={updateProfitProfileProductParameter}
+
         />
       }
       {

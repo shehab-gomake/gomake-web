@@ -1,5 +1,6 @@
 import { useGomakeAxios } from "@/hooks";
-import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi } from "@/services/api-service/products/product-endpoints";
+import { EHttpMethod } from "@/services/api-service/enums";
+import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, updateProfitProfileProductParameterApi } from "@/services/api-service/products/product-endpoints";
 import { useCallback, useEffect, useState } from "react";
 
 interface PricingProfileSetting {
@@ -807,6 +808,23 @@ const usePriceProfit = () => {
       getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
     }
   }, [selectedPricingProfileSetting])
+
+  const updateProfitProfileProductParameter = useCallback(async (data: any) => {
+    console.log("data", data)
+    const callBack = (res) => {
+      if (res?.success) {
+        console.log("res", res)
+      }
+    };
+    await updateProfitProfileProductParameterApi(callApi, callBack, {
+      productId: selectedPricingProfileSetting?.productId,
+      parameterId: data?.parameterId,
+      parameterName: data?.parameterName,
+      sectionId: data?.sectionId,
+      subSectionId: data?.subSectionId,
+      defaultValue: data?.defaultValue
+    });
+  }, [selectedPricingProfileSetting]);
   return {
     open,
     anchorEl,
@@ -836,7 +854,8 @@ const usePriceProfit = () => {
     updateTextInputValue,
     pricingProfileSetting,
     selectedPricingProfileSetting,
-    setSelectedPricingProfileSetting
+    setSelectedPricingProfileSetting,
+    updateProfitProfileProductParameter
   };
 };
 

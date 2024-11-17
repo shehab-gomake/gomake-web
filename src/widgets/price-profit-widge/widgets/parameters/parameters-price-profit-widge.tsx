@@ -2,10 +2,11 @@
 import { useStyle } from "./style";
 import { ParameterListWidget } from "./parameter-list-widget";
 
-const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateTextInputValue }: {
+const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateTextInputValue, updateProfitProfileProductParameter }: {
   parameters: any,
   updateDropdownValue: (value: any, index: number) => void,
-  updateTextInputValue: (value: string, index: number) => void
+  updateTextInputValue: (value: string, index: number) => void,
+  updateProfitProfileProductParameter: (data: any) => void
 }) => {
   const { classes } = useStyle();
 
@@ -65,6 +66,7 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateTe
               displayValue={displayValue}
               updateDropdownValue={updateDropdownValue}
               updateTextInputValue={updateTextInputValue}
+              updateProfitProfileProductParameter={updateProfitProfileProductParameter}
             />
           );
         })}
