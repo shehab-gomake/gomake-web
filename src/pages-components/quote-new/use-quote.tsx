@@ -289,8 +289,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -920,7 +920,14 @@ const useQuoteNew = ({
           alertSuccessUpdate();
           getQuote();
         } else {
-          alertFaultUpdate();
+          if (res?.message === "amount_greater_budget") {
+            alertFault(`${t("sales.quote.errorUpdateBudget")}`);
+          }
+          else {
+            alertFaultUpdate();
+          }
+          getQuote();
+
         }
       };
       await calculateDocumentItemApi(callApi, callBack, {
@@ -1023,7 +1030,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1884,6 +1891,7 @@ const useQuoteNew = ({
       clientId: quoteItemValue?.client?.id,
     });
   };
+  const [selectedBudget, setSelectedBudget] = useState(null);
 
   useEffect(() => {
     if (quoteItemValue?.client?.id) {
@@ -1902,17 +1910,24 @@ const useQuoteNew = ({
           budgetId: budget.id,
         }
       );
-      console.log("res", res);
-
       if (res?.success) {
         alertSuccessUpdate();
         getQuote();
       } else {
         alertFault(`${t("sales.quote.errorUpdateBudget")}`);
-        // document total is greater than the budget balance
+        if (quoteItemValue?.budgetId) {
+          const budget = allClientActiveBudgets.find(
+            (budget) => budget.id === quoteItemValue.budgetId
+          );
+          setSelectedBudget(budget);
+        }
+        else {
+          setSelectedBudget(null);
+
+        }
       }
     },
-    [docType, quoteItemValue]
+    [docType, quoteItemValue, allClientActiveBudgets]
   );
   return {
     dateRef,
@@ -2117,6 +2132,8 @@ const useQuoteNew = ({
     moveOrderToReady,
     allClientActiveBudgets,
     updateDocumentBudget,
+    selectedBudget,
+    setSelectedBudget
   };
 };
 
