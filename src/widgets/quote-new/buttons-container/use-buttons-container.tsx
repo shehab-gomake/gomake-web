@@ -16,7 +16,11 @@ import {
   getReceiptPdfApi,
 } from "@/services/api-service/generic-doc/receipts-api";
 import { checkedItemsIdsState, finalTotalPaymentState } from "./states";
-import { checkArrayNotEmptyOrEmailNotEmpty, checkArrayNotEmptyOrPhoneNotEmpty, isAtLeastOneSelected } from "@/utils/helpers";
+import {
+  checkArrayNotEmptyOrEmailNotEmpty,
+  checkArrayNotEmptyOrPhoneNotEmpty,
+  isAtLeastOneSelected,
+} from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
@@ -30,7 +34,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const router = useRouter();
   const { push } = useRouter();
   const { CheckDocumentPermission } = useUserPermission();
-  const quoteItemValue: any = useRecoilValue(quoteItemState);
+  const [quoteItemValue, setQuoteItemValue] =
+    useRecoilState<any>(quoteItemState);
   const {
     alertFault,
     alertFaultSend,
@@ -50,6 +55,15 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
   const [openMangerApprovalModal, setOpenMangerApprovalModal] = useState(false);
   const [, setShowPrintJobsModal] = useRecoilState(newOrderIdToPrintJobsState);
+  const [openReceiptCreationModal, setOpenReceiptCreationModal] =
+    useState(false);
+
+  const onClickOpenReceiptCreation = () => {
+    setOpenReceiptCreationModal(true);
+  };
+  const onClickCloseReceiptCreation = () => {
+    setOpenReceiptCreationModal(false);
+  };
 
   useEffect(() => {
     const data = isAtLeastOneSelected(quoteItemValue?.documentItems);
@@ -72,14 +86,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       );
 
       if (quoteItemValue?.client?.isCreateOrder) {
-
         if (!checkPhones && !checkEmails) {
           alertFault("home.admin.pleaseSelectPhoneOrEmail");
-        }
-        else {
+        } else {
           setOpenOrderNowModal(true);
         }
-
       } else {
         alertFault("home.admin.pleaseSelectClient");
       }
@@ -201,6 +212,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   };
 
   const checkedItemsIds = useRecoilValue(checkedItemsIdsState);
+
   const onClickCreateNewReceipt = async () => {
     const filteredReceiptItems = Object.values(checkedItemsIds)
       .map((id) => quoteItemValue.receiptItems.find((item) => item.id === id))
@@ -215,8 +227,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     }
     const callBack = (res) => {
       if (res?.success) {
+        const receiptId = res?.data;
         alertSuccessAdded();
-        navigate("/receipts");
+        navigate(`/receipt?Id=${receiptId}`);
+        onClickOpenReceiptCreation();
       } else {
         alertFaultAdded();
       }
@@ -321,8 +335,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         docType === DOCUMENT_TYPE.order
           ? navigate("/orders")
           : docType === DOCUMENT_TYPE.deliveryNote
-            ? navigate("/deliveryNotes")
-            : navigate("/invoices");
+          ? navigate("/deliveryNotes")
+          : navigate("/invoices");
       } else {
         alertFaultUpdate();
       }
@@ -419,6 +433,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     handleAddExistingItem,
     isOrder,
     isQuote,
+    openReceiptCreationModal,
+    onClickOpenReceiptCreation,
+    onClickCloseReceiptCreation,
   };
 };
 

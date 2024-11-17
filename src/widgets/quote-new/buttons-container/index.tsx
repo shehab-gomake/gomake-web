@@ -19,6 +19,7 @@ import { CreditCardIcon } from "@/icons/credit-card-icon";
 import { CloseBtnMenu } from "./close-btn-menu";
 import { ArrowUpNewIcon } from "@/icons/arrow-up-new";
 import { ManuallyCloseModal } from "./close-manually-modal";
+import { InvoiceCreationModal } from "../invoice-creation-modal";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -33,7 +34,8 @@ const ButtonsContainer = ({
   onClickOpenNewItemNotesModal,
   handleRejectBtnClick,
   handleAcceptBtnClick,
-  onClickOpenChangeProductionStatusModal
+  onClickOpenChangeProductionStatusModal,
+  onClickSendReceiptToClient,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -87,7 +89,10 @@ const ButtonsContainer = ({
     handleAddExistingItem,
     isOrder,
     isQuote,
+    openReceiptCreationModal,
+    onClickCloseReceiptCreation,
   } = useButtonsContainer(documentType);
+
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
       quoteItemValue.isSendWhatsappWeb ||
@@ -346,7 +351,9 @@ const ButtonsContainer = ({
           documentState={quoteItemValue}
           documentType={documentType}
           onClickClose={onClickOpenCloseOrderModal}
-          onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+          onClickOpenChangeProductionStatusModal={
+            onClickOpenChangeProductionStatusModal
+          }
         />
         <ManuallyCloseModal
           documentType={documentType}
@@ -356,6 +363,12 @@ const ButtonsContainer = ({
           onClickYes={ManuallyCloseDocument}
           documentCloseNumber={documentCloseNumber}
           onChange={handleDocumentNumberChange}
+        />
+        <InvoiceCreationModal
+          onClose={onClickCloseReceiptCreation}
+          openModal={openReceiptCreationModal}
+          docType={documentType}
+          onClickSendDocumentToClient={onClickSendReceiptToClient}
         />
       </div>
     </div>

@@ -5,6 +5,7 @@ import { useStyle } from "../style";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
 
 interface OtherOptionsSectionProps {
   quoteItemValue: any;
@@ -18,13 +19,12 @@ const OtherOptionsSection = ({
   onClose,
 }: OtherOptionsSectionProps) => {
   const { t } = useTranslation();
-  const dir = t("direction");
-  const isRTL = dir === "rtl";
   const { classes } = useStyle();
   const { navigate } = useGomakeRouter();
   const { alertFaultGetData } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const documentPath = DOCUMENT_TYPE[docType];
+  const isReceipt = docType === DOCUMENT_TYPE.receipt;
 
   const onClickPrint = async () => {
     const downloadPdf = (url) => {
@@ -46,10 +46,16 @@ const OtherOptionsSection = ({
         alertFaultGetData();
       }
     };
-    await getDocumentPdfApi(callApi, callBack, {
-      documentId: quoteItemValue?.id,
-      documentType: docType,
-    });
+    if (isReceipt) {
+      await getReceiptPdfApi(callApi, callBack, {
+        receiptId: quoteItemValue?.id,
+      });
+    } else {
+      await getDocumentPdfApi(callApi, callBack, {
+        documentId: quoteItemValue?.id,
+        documentType: docType,
+      });
+    }
   };
 
   const onClickPay = () =>
@@ -62,6 +68,19 @@ const OtherOptionsSection = ({
     onClose();
   };
 
+  const getCreateButtonText = () => {
+    switch (docType) {
+      case DOCUMENT_TYPE.deliveryNote:
+        return t("sales.modals.createNewDeliveryNote");
+      case DOCUMENT_TYPE.invoice:
+        return t("sales.modals.createNewInvoice");
+      case DOCUMENT_TYPE.receipt:
+        return t("sales.modals.createNewReceipt");
+      default:
+        return t("sales.modals.createNewDocument");
+    }
+  };
+
   return (
     <Stack direction={"column"} gap={"10px"} width={"100%"}>
       <span style={classes.sectionTitle}>{t("sales.modals.otherOptions")}</span>
@@ -72,19 +91,21 @@ const OtherOptionsSection = ({
       >
         {t("sales.modals.print")}
       </Button>
-      <Button
-        sx={classes.optionsButtons}
-        onClick={onClickPay}
-        startIcon={<PayIcon />}
-      >
-        {t("sales.modals.pay")}
-      </Button>
+      {docType === DOCUMENT_TYPE.invoice && (
+        <Button
+          sx={classes.optionsButtons}
+          onClick={onClickPay}
+          startIcon={<PayIcon />}
+        >
+          {t("sales.modals.pay")}
+        </Button>
+      )}
       <Button
         sx={classes.optionsButtons}
         onClick={onClickCreateNewInvoice}
         startIcon={<CreateIcon />}
       >
-        {t("sales.modals.createNewInvoice")}
+        {getCreateButtonText()}
       </Button>
     </Stack>
   );
