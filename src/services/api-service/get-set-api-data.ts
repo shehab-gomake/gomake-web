@@ -28,6 +28,8 @@ const getSetApiData = async (
   const _errors_data = get(result, errorsDataKey);
 
   const res = {
+    ...result,
+    ..._data,
     success: !!result.success,
     data: result.success ? _data : _errors_data,
   };
