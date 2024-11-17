@@ -194,9 +194,9 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
         );
       }
       setMaterialData([])
-      onClose();
-    }
 
+    }
+    onClose();
   };
   const onClickNewOrder = () => {
     setIsChargeForNewDie(true);
