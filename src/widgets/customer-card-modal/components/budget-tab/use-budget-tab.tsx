@@ -197,7 +197,7 @@ const useBudgetTab = (state) => {
     row.amount,
     row.balance,
     row.invoiceNumber,
-    `${row?.fromDate?.split("T")[0]} / ${row?.toDate?.split("T")[0]}`,
+    row.fromDate && row.toDate ? `${row.fromDate.split("T")[0]} / ${row.toDate.split("T")[0]}` : "",
     getPaymentStatusText(row.paymentStatus),
     getBudgetStatusText(row.status),
     <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: 10 }}>

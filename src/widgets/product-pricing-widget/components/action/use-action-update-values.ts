@@ -1,5 +1,6 @@
 import { useRecoilState, useRecoilValue} from "recoil";
 import {
+    currentCalculationSessionIdState,
     currentProductItemValueDraftId,
     jobActionsState,
 } from "@/widgets/product-pricing-widget/state";
@@ -34,7 +35,7 @@ const useActionUpdateValues = () => {
     const [attributesData,setAttributesData] =useState<AttributesData>({})
     const [openModalMachine,setOpenModalMachine]=useState(false);
     const [openModalMaterial,setOpenModalMaterial]=useState(false);
-    
+    const [currentCalculationSessionId, setCurrentCalculationSessionId] = useRecoilState<any>(currentCalculationSessionIdState);
     const onClickOpenModalMachine=()=>{
         setOpenModalMachine(true)
     }
@@ -113,8 +114,12 @@ const useActionUpdateValues = () => {
             alertFaultUpdate()
         }
     }
-    const apiCallBackMachine = (res: {success: boolean}) => {
+    const apiCallBackMachine = (res:any) => {
+        debugger
         if (res.success) {
+            if(res.data && res.data.item2){
+                setCurrentCalculationSessionId(res.data.item2)
+            }
             alertSuccessUpdate()
         }else {
             onClickOpenModalMachine()
