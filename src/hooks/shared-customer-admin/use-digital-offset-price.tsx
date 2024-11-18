@@ -1070,7 +1070,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }
 
                     }
-                  } else if (value && parameter.code === "DieKissCut") {
+                  } 
+                  else if (value && parameter.code === "DieKissCut") {
                     const existingParameters =
                       productItemValueByEdit?.itemParmetersValues || [];
                     const isDieCutExisting = existingParameters.find(
@@ -1108,7 +1109,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }
 
                     }
-                  } else if (!value && parameter.code === "DieKissCut") {
+                  } 
+                  else if (!value && parameter.code === "DieKissCut") {
                     const existingParameters =
                       productItemValueByEdit?.itemParmetersValues || [];
                     const isDieCutExisting = existingParameters.find(
@@ -1126,31 +1128,29 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       const nameValue = additionalAttribute?.find(
                         (attr) => attr.valueId === "name"
                       )?.value;
-                      if (!subProduct.parameters.findIndex(x => x.parameterId === parameter?.id && x.sectionId === section.id && x.subSectionId === subSection.id && x.actionIndex === parameter?.actionIndex)) {
-                        subProduct.parameters.push({
-                          parameterId: parameter?.id,
-                          parameterName: parameter?.name,
-                          actionId:
+                      subProduct.parameters.push({
+                        parameterId: parameter?.id,
+                        parameterName: parameter?.name,
+                        actionId:
                             value?.activateAction === true
-                              ? parameter?.actionId
-                              : null,
-                          parameterType: parameter?.parameterType,
-                          isQuantityParameter: parameter?.isQuantityParameter,
-                          ...(isDieCutExisting?.valueIds[0] && {
-                            valueIds: [isDieCutExisting?.valueIds[0]],
-                            values: [nameValue],
-                          }),
-                          sectionId: section?.id,
-                          subSectionId: subSection?.id,
-                          actionIndex: parameter?.actionIndex,
-                          parameterCode: parameter?.code,
-                          valuesConfigs: parameter?.valuesConfigs,
-                          unitKey: parameter?.unitKey,
-                          unitType: parameter?.unitType,
-                          isGeneralInfoInProductionFloor:
-                            parameter?.isGeneralInfoInProductionFloor,
-                        });
-                      }
+                                ? parameter?.actionId
+                                : null,
+                        parameterType: parameter?.parameterType,
+                        isQuantityParameter: parameter?.isQuantityParameter,
+                        ...(isDieCutExisting?.valueIds[0] && {
+                          valueIds: [isDieCutExisting?.valueIds[0]],
+                          values: [nameValue],
+                        }),
+                        sectionId: section?.id,
+                        subSectionId: subSection?.id,
+                        actionIndex: parameter?.actionIndex,
+                        parameterCode: parameter?.code,
+                        valuesConfigs: parameter?.valuesConfigs,
+                        unitKey: parameter?.unitKey,
+                        unitType: parameter?.unitType,
+                        isGeneralInfoInProductionFloor:
+                        parameter?.isGeneralInfoInProductionFloor,
+                      });
 
                     }
                   }

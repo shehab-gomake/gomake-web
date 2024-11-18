@@ -13,7 +13,7 @@ const ThreeOptionsModal = ({
   onClickYes,
   onClickNo,
   hideIcon = false,
-  title ,
+  title,
   yesBtn = "modal.yes",
   noBtn = "modal.no",
   cancelBtn = "modal.cancel",
@@ -27,14 +27,14 @@ const ThreeOptionsModal = ({
       open={openModal}
       onClose={onClose}
       {...props}
-      style={{ outline: "none", zIndex: 999999}}
+      style={{ outline: "none", zIndex: 999999 }}
     >
-      <div style={{...classes.container , ...props.style}}>
+      <div style={{ ...classes.container, ...props.style }}>
         <div style={classes.content}>
           {!hideIcon && (
-            <div style={classes.icon}>{props?.icon ||   <WarningAmberIcon
-              style={classes.iconStyle}
-            /> }</div>
+            <div style={classes.icon}>
+              {props?.icon || <WarningAmberIcon style={classes.iconStyle} />}
+            </div>
           )}
           <div style={classes.title}>{title}</div>
           <div style={classes.subTitle}>{subTitle}</div>
@@ -48,21 +48,21 @@ const ThreeOptionsModal = ({
             >
               {t(yesBtn)}
             </GomakePrimaryButton>{" "}
-            {
-            !!noBtn &&<> <GomakePrimaryButton
-              style={classes.confirmBtn}
-              onClick={() => {
-                onClickNo();
-                onClose();
-              }}
-            >
-              {t(noBtn)}
-            </GomakePrimaryButton>{" "}</>
-            }
-            <GomakePrimaryButton
-              style={classes.cancelBtn}
-              onClick={onClose}
-            >
+            {!!noBtn && (
+              <>
+                {" "}
+                <GomakePrimaryButton
+                  style={classes.confirmBtn}
+                  onClick={() => {
+                    onClickNo();
+                    onClose();
+                  }}
+                >
+                  {t(noBtn)}
+                </GomakePrimaryButton>{" "}
+              </>
+            )}
+            <GomakePrimaryButton style={classes.cancelBtn} onClick={onClose}>
               {t(cancelBtn)}
             </GomakePrimaryButton>
           </div>

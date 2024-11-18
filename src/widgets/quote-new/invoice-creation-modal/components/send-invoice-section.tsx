@@ -5,6 +5,7 @@ import { useStyle } from "../style";
 import { useTranslation } from "react-i18next";
 import { CircleCheckbox } from "@/components/check-box/circle-check-box";
 import { useState } from "react";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 enum MessageTypes {
   EMAIL = "email",
@@ -13,10 +14,12 @@ enum MessageTypes {
 
 interface SendInvoiceSectionProps {
   handleSendDocument: (value) => void;
+  docType: DOCUMENT_TYPE;
 }
 
 const SendInvoiceSection: React.FC<SendInvoiceSectionProps> = ({
   handleSendDocument,
+  docType,
 }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -24,9 +27,22 @@ const SendInvoiceSection: React.FC<SendInvoiceSectionProps> = ({
     MessageTypes.EMAIL
   );
 
+  const getSendButtonText = () => {
+    switch (docType) {
+      case DOCUMENT_TYPE.deliveryNote:
+        return t("sales.modals.sendDeliveryNote");
+      case DOCUMENT_TYPE.invoice:
+        return t("sales.modals.sendInvoice");
+      case DOCUMENT_TYPE.receipt:
+        return t("sales.modals.sendReceipt");
+      default:
+        return t("sales.modals.sendDocument");
+    }
+  };
+
   return (
     <Stack direction={"column"} gap={"10px"} width={"100%"}>
-      <span style={classes.sectionTitle}>{t("sales.modals.sendInvoice")}</span>
+      <span style={classes.sectionTitle}>{getSendButtonText()}</span>
       <Stack direction={"row"} gap={"10px"} width={"100%"}>
         <Stack direction={"row"} width={"100%"} alignItems={"center"}>
           <CircleCheckbox
