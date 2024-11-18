@@ -2713,9 +2713,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       (relatedParameter) =>
         subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
     );
-    if (parameter.code === "Puncturetype") {
-      debugger;
-    }
     relatedParametersfilterd?.map((relatedParameter) => {
       const subProduct = subProducts?.find((x) => x.type === subSection?.type);
       let actionIndex = parameter.actionIndex;
@@ -3031,9 +3028,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const parentParameter = subSection?.parameters.find(
       (param) => param.id === parameterId
     );
-    if (parentParameter.code === "Puncturetype") {
-      debugger;
-    }
     // Check if the parameter has related parameters
     if (parentParameter && parentParameter.relatedParameters) {
       parentParameter.relatedParameters.forEach((relatedParam) => {
