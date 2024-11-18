@@ -3241,6 +3241,247 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
 
           }
+          else if (relatedParameter.materialPath && relatedParameter.materialPath.length > 0) {
+            const parameterDefaultValue = relatedParameter.valuesConfigs?.find(
+                (x) => x.isDefault
+            );
+
+            if (relatedParameter.materialPath.length == 1) {
+              const materialData = allMaterials?.find((x) =>
+                  compareStrings(x.pathName, relatedParameter.materialPath[0])
+              )?.data;
+              if (!relatedParameter.valuesConfigs) {
+                relatedParameter.valuesConfigs = [];
+              }
+              relatedParameter.valuesConfigs.forEach((val) => {
+                if (
+                    val.materialValueIds &&
+                    val.materialValueIds.length > 0
+                ) {
+                  val.valueIds = [];
+                  val.values = [];
+                  val.materialValueIds.forEach((materialValue) => {
+                    val.valueIds.push(materialValue.valueId);
+                    val.values.push(materialValue.valueId);
+                  });
+                }
+              });
+              if (
+                  relatedParameter.code === "DieCut" ||
+                  relatedParameter.code === "DieKissCut"
+              ) {
+                if (relatedParameter.valuesConfigs.length === 0) {
+                  relatedParameter.valuesConfigs = materialData?.map((data) => ({
+                    id: data.valueId,
+                    isHidden: false,
+                    isDefault: false,
+                    updateName: null,
+                    activateAction: false,
+                    isDeleted: false,
+                    materialValueIds: null,
+                    values: null,
+                    selectedParameterValues: null,
+                    code: null, // Add code if needed
+                    additionalAttribute: data.additionalAttribute,
+                    currency: data.currency,
+                  }));
+                } else {
+                  // If valueConfigs has objects, update it based on materialData
+                  relatedParameter.valuesConfigs = materialData?.map((data) => {
+                    const existingConfig = relatedParameter.valuesConfigs.find(
+                        (config) => config.id === data.valueId
+                    );
+                    return existingConfig
+                        ? {
+                          ...existingConfig,
+                          additionalAttribute: data.additionalAttribute,
+                          currency: data.currency,
+                        }
+                        : {
+                          id: data.valueId,
+                          isHidden: false,
+                          isDefault: false,
+                          updateName: null,
+                          activateAction: false,
+                          isDeleted: false,
+                          materialValueIds: null,
+                          values: null,
+                          selectedParameterValues: null,
+                          code: null, // Add code if needed
+                          additionalAttribute: data.additionalAttribute,
+                          currency: data.currency,
+                        };
+                  });
+                }
+              } 
+              else {
+                relatedParameter.valuesConfigs = relatedParameter.valuesConfigs.filter(
+                    (x) => x.valueIds && x.valueIds.length > 0
+                );
+                if (materialData) {
+                  materialData.forEach((val) => {
+                    const existsValue = relatedParameter.valuesConfigs.find(
+                        (x) =>
+                            x.valueIds &&
+                            x.valueIds.length > 0 &&
+                            x.valueIds[0] === val.valueId
+                    );
+                    if (!existsValue) {
+                      relatedParameter.valuesConfigs.push({
+                        id: val.valueId,
+                        activateAction: false,
+                        isDefault: false,
+                        isDeleted: false,
+                        isHidden: false,
+                        materialValueIds: null,
+                        selectedParameterValues: null,
+                        updateName: val.value,
+                        values: [val.valueId],
+                        additionalAttribute: val?.additionalAttribute,
+                        currency: val?.currency,
+                      });
+                    } else {
+                      existsValue.id = val.valueId;
+                      existsValue.updateName = val.value;
+                      (existsValue.additionalAttribute =
+                          val?.additionalAttribute),
+                          (existsValue.currency = val?.currency);
+                    }
+                  });
+                }
+              }
+            }
+
+
+
+            if (parameterDefaultValue) {
+
+              const materialPath =
+                  relatedParameter.materialPath[relatedParameter.materialPath.length - 1];
+              const materialRelatedParameters =
+                  subSection.parameters.filter(
+                      (x) =>
+                          x.id !== relatedParameter.id &&
+                          x.actionIndex === relatedParameter.actionIndex &&
+                          x.materialPath?.find((y) =>
+                              compareStrings(y, materialPath)
+                          )
+                  );
+              if (
+                  materialRelatedParameters &&
+                  materialRelatedParameters.length > 0
+              ) {
+                let param = materialRelatedParameters[0];
+                if (param.materialPath && param.materialPath.length > 0) {
+                  const index = param.materialPath.findIndex((x) =>
+                      compareStrings(x, materialPath)
+                  );
+                  let allMaterialsCopy = cloneDeep(allMaterials);
+                  let paramMaterialValues = [];
+                  if (index > 0) {
+                    allMaterialsCopy = allMaterialsCopy?.find((x) =>
+                        compareStrings(x.pathName, param.materialPath[0])
+                    )?.data;
+                    for (let i = 0; i <= index; i++) {
+                      const prevPath = param.materialPath[i];
+                      const prevPathParam = subSection.parameters.find(
+                          (x) =>
+                              x.materialPath &&
+                              x.materialPath.length > i &&
+                              x.materialPath[i] === prevPath &&
+                              x.actionIndex === relatedParameter.actionIndex
+                      );
+                      let prevPathParamDefaultValue =
+                          prevPathParam.valuesConfigs.find(
+                              (x) => x.isDefault
+                          );
+
+                      if (
+                          prevPathParamDefaultValue &&
+                          prevPathParamDefaultValue?.values &&
+                          prevPathParamDefaultValue?.values.length
+                      ) {
+                        allMaterialsCopy = allMaterialsCopy?.find(
+                            (x) =>
+                                x.valueId ===
+                                prevPathParamDefaultValue?.values[0]
+                        )?.data;
+                      } else {
+                        allMaterialsCopy = [];
+                      }
+                    }
+                    paramMaterialValues = allMaterialsCopy;
+                  } else if (index === 0) {
+                    allMaterialsCopy = allMaterialsCopy.find((x) =>
+                        compareStrings(x.pathName, materialPath)
+                    )?.data;
+                    paramMaterialValues = allMaterialsCopy?.find((x) =>
+                        parameterDefaultValue?.values?.find((y) => y === x.valueId)
+                    )?.data;
+                  }
+                  if (
+                      index != -1 &&
+                      index < param.materialPath.length - 1
+                  ) {
+                    param.valuesConfigs.forEach((val) => {
+                      if (
+                          val.materialValueIds &&
+                          val.materialValueIds.length > 0
+                      ) {
+                        val.valueIds = [];
+                        val.values = [];
+                        val.materialValueIds.forEach((materialValue) => {
+                          val.valueIds.push(materialValue.valueId);
+                          val.values.push(materialValue.valueId);
+                        });
+                      }
+                    });
+                    param.valuesConfigs = param.valuesConfigs.filter(
+                        (x) => x.values && x.values.length > 0
+                    );
+                    for (let i = 0; i < paramMaterialValues?.length; i++) {
+                      let val = paramMaterialValues[i];
+                      const existsValue = param.valuesConfigs?.find(
+                          (x) =>
+                              (x.valueIds &&
+                                  x.valueIds.length > 0 &&
+                                  x.valueIds[0] === val.valueId) || (x.id === val.valueId)
+                      );
+                      if (!existsValue) {
+                        param.valuesConfigs.push({
+                          id: val.valueId,
+                          activateAction: false,
+                          isDefault: false,
+                          isDeleted: false,
+                          isHidden: false,
+                          materialValueIds: null,
+                          selectedParameterValues: null,
+                          updateName: val.value,
+                          values: [val.valueId],
+                          additionalAttribute: val?.additionalAttribute,
+                          currency: val?.currency,
+                        });
+                      }
+                      else {
+                        existsValue.id = val.valueId;
+                        existsValue.updateName = val.value;
+                        (existsValue.additionalAttribute =
+                            val?.additionalAttribute),
+                            (existsValue.currency = val?.currency);
+                      }
+                    }
+                    if (
+                        param?.valuesConfigs &&
+                        param?.valuesConfigs?.length === 1 &&
+                        param?.isRequired
+                    ) {
+                      param.valuesConfigs[0].isDefault = true;
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       });
     }
