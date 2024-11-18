@@ -61,7 +61,7 @@ const PriceProfitTable = ({
             <TableCell sx={classes.tableHeadCell}>Quantities</TableCell>
             {headers?.map((header, index) => (
               <TableCell sx={classes.tableHeadCellValue} key={index} colSpan={header?.quantities?.length}>
-                {header?.qunatity}
+                {header?.quantity}
               </TableCell>
             ))}
           </TableRow>
@@ -69,7 +69,7 @@ const PriceProfitTable = ({
             <TableCell sx={classes.tableHeadCellValueTotal}>Total</TableCell>
             {headers?.map((header, index) => (
               <TableCell sx={classes.tableHeadCellTotalValue} key={index} colSpan={header?.quantities?.length}>
-                {header?.total}
+                {header?.total?.toFixed(3)}
               </TableCell>
             ))}
           </TableRow>

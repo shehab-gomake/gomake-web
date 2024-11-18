@@ -27,10 +27,10 @@ const PriceProfitRowMappingTable = ({
     <TableCell
       sx={classes.tableBodyCell}
       key={idx}
-      style={price.PrintHousePrice !== price.CalculatedPrice ? classes.tableBodyCellError : classes.tableBodyNotErrorCell}
+      style={(price.printHousePrice !== price.calculatedPrice) && price.calculatedPrice == null ? classes.tableBodyCellError : classes.tableBodyNotErrorCell}
       onClick={(event) => {
 
-        if (price.PrintHousePrice !== price.CalculatedPrice) {
+        if ((price.printHousePrice !== price.calculatedPrice) && price.calculatedPrice == null) {
           handleOpen(event)
           setSelectedProduct({ ...product, ...price })
         }
@@ -40,16 +40,16 @@ const PriceProfitRowMappingTable = ({
       }}
     >
       <div style={classes.tableBodyCellContent}>
-        {price.IsNotCalcuated ? (
+        {price.isNotCalcuated ? (
           <Warning2Icon />
         ) : (
           <InputUpdatedValues
-            value={price.CalculatedPrice}
+            value={price.calculatedPrice?.toFixed(3) ?? "----"}
             onBlur={() => {
               onBlurPriceChange();
               setActiveCell(null);
             }}
-            isUpdate={isUpdate && isActive}
+            isUpdate={(isUpdate && isActive) && price.calculatedPrice !== null}
             setIsUpdate={() => setIsUpdate(!isUpdate)}
             onInputChange={(value) => {
               handlePriceChange(index, idx, value);

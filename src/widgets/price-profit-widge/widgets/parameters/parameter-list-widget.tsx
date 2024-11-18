@@ -11,6 +11,7 @@ const ParameterListWidget = ({
   colorStyle,
   displayValue,
   updateDropdownValue,
+  updateDropdownMaterialValue,
   updateTextInputValue,
   updateProfitProfileProductParameter
 }: {
@@ -19,8 +20,9 @@ const ParameterListWidget = ({
   colorStyle: any,
   displayValue: string,
   updateDropdownValue: (value: any, index: number) => void,
+  updateDropdownMaterialValue: (value: any, index: number) => void,
   updateTextInputValue: (value: string, index: number) => void,
-  updateProfitProfileProductParameter: (data: any) => void
+  updateProfitProfileProductParameter: (data: any, value: any) => void
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -57,7 +59,7 @@ const ParameterListWidget = ({
         } : {}}
       >
         <div style={classes.menuContainer}>
-          {parameter?.parameterType === 0 || parameter?.parameterType === 5 ? (
+          {parameter?.parameterType === 0 ? (
             <GoMakeAutoComplate
               options={parameter?.values}
               onChange={(e: any, value: any) => {
@@ -73,33 +75,50 @@ const ParameterListWidget = ({
                 border: "none",
               }}
             />
-          ) : parameter?.parameterType === 1 || parameter?.parameterType === 2 ? (
-            <GomakeTextInput
-              defaultValue={parameter?.defaultValue}
-              placeholder={`Enter ${t(parameter.parameterName)}`}
-              onChange={(e: any) => {
-                setValue(e.target.value);
-              }}
-              onBlur={(e: any) => {
-                updateTextInputValue(e.target.value, index);
-                updateProfitProfileProductParameter(parameter);
+          ) : parameter?.parameterType === 5 ?
+            <GoMakeAutoComplate
+              options={parameter?.materialValues}
+              onChange={(e: any, value: any) => {
+                updateDropdownMaterialValue(value, index);
+                updateProfitProfileProductParameter(parameter, value);
                 handleClose();
 
               }}
-              onKeyDown={(e: any) => {
-                if (e.key === 'Enter') {
-                  updateTextInputValue(e.target.value, index);
-                  handleClose();
-                }
-              }}
-              value={value}
+              getOptionLabel={(option: any) => option.value}
+              value={parameter?.materialValues?.find((value: any) => value.valueId === parameter?.defaultValue)}
+              placeholder={`Select ${t(parameter.parameterName)}`}
               style={{
                 width: 170,
                 height: 34,
-                borderRadius: 8,
+                border: "none",
               }}
-            />
-          ) : null}
+            /> : parameter?.parameterType === 1 || parameter?.parameterType === 2 ? (
+              <GomakeTextInput
+                defaultValue={parameter?.defaultValue}
+                placeholder={`Enter ${t(parameter.parameterName)}`}
+                onChange={(e: any) => {
+                  setValue(e.target.value);
+                }}
+                onBlur={(e: any) => {
+                  updateTextInputValue(e.target.value, index);
+                  updateProfitProfileProductParameter(parameter, e.target.value);
+                  handleClose();
+
+                }}
+                onKeyDown={(e: any) => {
+                  if (e.key === 'Enter') {
+                    updateTextInputValue(e.target.value, index);
+                    handleClose();
+                  }
+                }}
+                value={value}
+                style={{
+                  width: 170,
+                  height: 34,
+                  borderRadius: 8,
+                }}
+              />
+            ) : null}
         </div>
       </GoMakeMenu>
     </>

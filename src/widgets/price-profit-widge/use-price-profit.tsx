@@ -1,4 +1,5 @@
 import { useGomakeAxios } from "@/hooks";
+import { useDisplayProfitProfilesSignalr } from "@/hooks/signalr/use-display-profit-profiles-signalr";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, updateProfitProfileProductParameterApi } from "@/services/api-service/products/product-endpoints";
 import { useCallback, useEffect, useState } from "react";
@@ -13,6 +14,7 @@ interface PricingProfileSetting {
 
 const usePriceProfit = () => {
   const { callApi } = useGomakeAxios();
+  const { } = useDisplayProfitProfilesSignalr()
 
   // const data = {
   //   "headers": [
@@ -688,7 +690,8 @@ const usePriceProfit = () => {
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
 
   const [products, setProducts] = useState<any>([]);
-
+  const [requestAbortController, setRequestAbortController] =
+    useState<AbortController>(null);
   // useEffect(() => {
   //   setProducts(data)
   // }, [])
@@ -727,14 +730,14 @@ const usePriceProfit = () => {
     setProducts((prevProducts) => {
       const updatedProducts = { ...prevProducts }; // Corrected to spread the object
       const productToUpdate = { ...updatedProducts.data[index] }; // Access the data array
-      const updatedPricePerQuantity = [...productToUpdate.PricePerQuantity];
+      const updatedPricePerQuantity = [...productToUpdate.pricePerQuantity];
 
       updatedPricePerQuantity[idx] = {
         ...updatedPricePerQuantity[idx],
         CalculatedPrice: newValue
       };
 
-      productToUpdate.PricePerQuantity = updatedPricePerQuantity;
+      productToUpdate.pricePerQuantity = updatedPricePerQuantity;
       updatedProducts.data[index] = productToUpdate; // Update the data array
 
       return updatedProducts; // Return the updated object
@@ -769,6 +772,21 @@ const usePriceProfit = () => {
     });
   };
 
+  const updateDropdownMaterialValue = (value: any, index: number) => {
+    setProducts(prevProducts => {
+      const updatedParameters = prevProducts.requiredParameters.map((param, i) => {
+        if (i === index) {
+          const updatedValues = param.materialValues.map(val => ({
+            ...val,
+          }));
+          return { ...param, materialValues: updatedValues };
+        }
+        return param;
+      });
+      return { ...prevProducts, requiredParameters: updatedParameters };
+    });
+  };
+
   const updateTextInputValue = (value: string, index: number) => {
     setProducts(prevProducts => {
       const updatedParameters = prevProducts.requiredParameters.map((param, i) => {
@@ -792,13 +810,31 @@ const usePriceProfit = () => {
   }, []);
 
   const getAllProfitProfileProductByProductId = useCallback(async (productId: string) => {
+    // Abort any ongoing request
+    if (requestAbortController) {
+      requestAbortController.abort();
+    }
+
+    // Create a new AbortController instance
+    const newRequestAbortController = new AbortController();
+    setRequestAbortController(newRequestAbortController);
+
     const callBack = (res) => {
       if (res?.success) {
-        setProducts(res?.data)
+        setProducts(res?.data);
       }
     };
-    await getAllProfitProfileProductByProductIdApi(callApi, callBack, { productId });
-  }, []);
+
+    // Pass the signal from the AbortController to the API call
+    await getAllProfitProfileProductByProductIdApi(
+      callApi,
+      callBack,
+      { productId },
+      false,
+      newRequestAbortController // Pass the signal here
+    );
+
+  }, [requestAbortController]);
   useEffect(() => {
     getAllPricingProfileSettingForDropDownList()
   }, [])
@@ -809,11 +845,13 @@ const usePriceProfit = () => {
     }
   }, [selectedPricingProfileSetting])
 
-  const updateProfitProfileProductParameter = useCallback(async (data: any) => {
-    console.log("data", data)
+  const updateProfitProfileProductParameter = useCallback(async (data: any, value: any) => {
     const callBack = (res) => {
       if (res?.success) {
-        console.log("res", res)
+        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+      }
+      else {
+        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
       }
     };
     await updateProfitProfileProductParameterApi(callApi, callBack, {
@@ -822,7 +860,7 @@ const usePriceProfit = () => {
       parameterName: data?.parameterName,
       sectionId: data?.sectionId,
       subSectionId: data?.subSectionId,
-      defaultValue: data?.defaultValue
+      defaultValue: value?.valueId ? value?.valueId : data?.defaultValue
     });
   }, [selectedPricingProfileSetting]);
   return {
@@ -851,6 +889,7 @@ const usePriceProfit = () => {
     handleOpenPrint,
     handleHideProduct,
     updateDropdownValue,
+    updateDropdownMaterialValue,
     updateTextInputValue,
     pricingProfileSetting,
     selectedPricingProfileSetting,

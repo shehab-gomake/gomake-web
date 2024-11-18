@@ -33,6 +33,7 @@ const PriceProfitWidge = () => {
     handleOpenPrint,
     handleHideProduct,
     updateDropdownValue,
+    updateDropdownMaterialValue,
     updateTextInputValue,
     pricingProfileSetting,
     selectedPricingProfileSetting,
@@ -60,6 +61,7 @@ const PriceProfitWidge = () => {
         <ParmaetersPriceProfitWidget
           parameters={products?.requiredParameters}
           updateDropdownValue={updateDropdownValue}
+          updateDropdownMaterialValue={updateDropdownMaterialValue}
           updateTextInputValue={updateTextInputValue}
           updateProfitProfileProductParameter={updateProfitProfileProductParameter}
 

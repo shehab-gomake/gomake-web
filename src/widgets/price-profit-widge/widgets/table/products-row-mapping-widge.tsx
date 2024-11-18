@@ -42,13 +42,15 @@ const ProductsRowMappingTable = ({
             borderLeft: product?.isSelected ? '6px solid #11A5EC' : 'none',
           }}
           style={product?.isSelected ? { borderLeft: "6px solid #11A5EC" } : {}}>
-          <Checkbox
-            icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
-            checked={product.isSelected}
-            onChange={() => handleCheckboxChange(index)}
-          />
-          {product.productName}
+          <div>
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
+              checked={product.isSelected}
+              onChange={() => handleCheckboxChange(index)}
+            />
+            {product.productName}
+          </div>
           <div
             className="moreIconContainer"
             style={classes.moreIconContainer}
@@ -57,7 +59,7 @@ const ProductsRowMappingTable = ({
             <MoreIcon />
           </div>
         </TableCell>
-        {product?.PricePerQuantity?.map((price, idx) => (
+        {product?.pricePerQuantity?.map((price, idx) => (
           <PriceProfitRowMappingTable
             price={price}
             idx={idx}

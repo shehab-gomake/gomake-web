@@ -2,11 +2,12 @@
 import { useStyle } from "./style";
 import { ParameterListWidget } from "./parameter-list-widget";
 
-const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateTextInputValue, updateProfitProfileProductParameter }: {
+const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDropdownMaterialValue, updateTextInputValue, updateProfitProfileProductParameter }: {
   parameters: any,
   updateDropdownValue: (value: any, index: number) => void,
+  updateDropdownMaterialValue: (value: any, index: number) => void,
   updateTextInputValue: (value: string, index: number) => void,
-  updateProfitProfileProductParameter: (data: any) => void
+  updateProfitProfileProductParameter: (data: any, value: any) => void
 }) => {
   const { classes } = useStyle();
 
@@ -51,9 +52,12 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateTe
 
           if (parameter.parameterType === 1 || parameter.parameterType === 2) {
             displayValue = parameter.defaultValue;
-          } else if (parameter.parameterType === 0 || parameter.parameterType === 5) {
+          } else if (parameter.parameterType === 0) {
             const defaultValue = parameter.values.find((value: any) => value.isDefault);
             displayValue = defaultValue ? defaultValue.parameterName : '';
+          }
+          else if (parameter.parameterType === 5) {
+            displayValue = parameter.defaultValue
           }
           // Use modulo to cycle through colorsMock
           const colorStyle = colorsMock[index % colorsMock.length];
@@ -65,6 +69,7 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateTe
               colorStyle={colorStyle}
               displayValue={displayValue}
               updateDropdownValue={updateDropdownValue}
+              updateDropdownMaterialValue={updateDropdownMaterialValue}
               updateTextInputValue={updateTextInputValue}
               updateProfitProfileProductParameter={updateProfitProfileProductParameter}
             />

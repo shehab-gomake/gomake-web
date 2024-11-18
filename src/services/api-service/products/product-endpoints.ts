@@ -29,11 +29,11 @@ const getAllProductAndMaterialsApi: ICallAndSetData = async (callApi, setState, 
 };
 
 const getAllPricingProfileSettingForDropDownListApi: ICallAndSetData = async (callApi, setState) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_PRICING_PROFILE_SETTING_FOR_DROP_DOWN_LIST_URL ,setState);
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_PRICING_PROFILE_SETTING_FOR_DROP_DOWN_LIST_URL ,setState,false);
 };
 
-const getAllProfitProfileProductByProductIdApi: ICallAndSetData = async (callApi, setState, data) => {
-    return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_PROFIT_PROFILE_PRODUCT_BY_PRODUCT_ID_URL ,setState, data);
+const getAllProfitProfileProductByProductIdApi: ICallAndSetData = async (callApi, setState, data,lock,abort) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_PROFIT_PROFILE_PRODUCT_BY_PRODUCT_ID_URL ,setState, data,lock,abort);
 };
 const updateProfitProfileProductParameterApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_PROFIT_PROFILE_PRODUCT_PARAMETER_URL ,setState, data);
