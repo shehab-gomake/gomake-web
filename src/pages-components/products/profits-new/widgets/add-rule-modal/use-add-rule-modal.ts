@@ -498,8 +498,8 @@ const useAddRuleModal = ({
         ruleConditionStatements: null,
         exceptionConditionProperties: rules.map((item) => {
           return {
-            statementId: getStatementId(item),
-            statementValue: item.statement2.id,
+            statementId: item.statement2.id,
+            statementValue: getStatementId(item),
             operator: item.condition.id,
             conditionBetweenStatements: item.linkCondition
               ? item.linkCondition.id
