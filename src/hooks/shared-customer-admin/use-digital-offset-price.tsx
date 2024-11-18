@@ -1696,7 +1696,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   // ]);
 
   useEffect(() => {
-    debugger
     if (connectionId) {
       setCurrentSignalRConnectionId(connectionId);
       setCurrentProductItemValueTotalPrice(null);
