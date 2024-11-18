@@ -176,8 +176,8 @@ const useAddRuleModal = ({
 
   const BooleanRender = useMemo(() => {
     return [
-      { label: "Yes", id: true },
-      { label: "No", id: false },
+      { label: t("modal.yes"), id: true },
+      { label: t("modal.no"), id: false },
     ];
   }, []);
 

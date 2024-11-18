@@ -236,8 +236,8 @@ const AddRuleModal = ({
               </div>
               <GoMakeAutoComplate
                 options={[
-                  { label: "Yes", value: "true" },
-                  { label: "No", value: "false" },
+                  { label: t("modal.yes"), value: true },
+                  { label: t("modal.no"), value: false },
                 ]}
                 placeholder={t("products.profits.exceptions.selectValue")}
                 style={clasess.autoComplateStyle}
@@ -349,8 +349,8 @@ const AddRuleModal = ({
               </div>
               <GoMakeAutoComplate
                 options={[
-                  { label: "Yes", value: "true" },
-                  { label: "No", value: "false" },
+                  { label: t("modal.yes"), value: true },
+                  { label: t("modal.no"), value: false },
                 ]}
                 placeholder={t("products.profits.exceptions.selectValue")}
                 style={clasess.autoComplateStyle}
@@ -360,28 +360,6 @@ const AddRuleModal = ({
               />
             </div>
           );
-        // case EParameterTypes.:
-        //   return (
-        //     <div style={{ width: "20%" }}>
-        //       <div style={clasess.selectTypeStyle}>
-        //         {t("products.profits.exceptions.selectValue")}
-        //         <span style={clasess.spanUnitStyle}>
-        //           {selectedOutputs?.defaultUnit}
-        //         </span>
-        //       </div>
-        //       <GoMakeAutoComplate
-        //         options={[
-        //           { label: "Yes", value: "true" },
-        //           { label: "No", value: "false" },
-        //         ]}
-        //         placeholder={t("products.profits.exceptions.selectValue")}
-        //         style={clasess.autoComplateStyle}
-        //         onChange={(e: any, value: any) => {
-        //           setPropertieValue(value?.value as string);
-        //         }}
-        //       />
-        //     </div>
-        //   );
       }
     }
   };
@@ -685,8 +663,8 @@ const AddRuleModal = ({
                         </label>
                         <GoMakeAutoComplate
                           options={[
-                            { label: "Yes", value: "true" },
-                            { label: "No", value: "false" },
+                            { label: t("modal.yes"), value: true },
+                            { label: t("modal.no"), value: false },
                           ]}
                           style={clasess.dropDownListContainer}
                           placeholder={t("properties.statment")}
