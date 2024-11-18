@@ -1,7 +1,11 @@
 import { useStyle } from "./style";
 import { ArrowDownNewIcon, PlusIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
-import { GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
+import {
+  GoMakeDeleteModal,
+  GomakePrimaryButton,
+  ThreeOptionsModal,
+} from "@/components";
 import { useButtonsContainer } from "./use-buttons-container";
 import {
   DELIVERY_NOTE_STATUSES,
@@ -91,6 +95,9 @@ const ButtonsContainer = ({
     isQuote,
     openReceiptCreationModal,
     onClickCloseReceiptCreation,
+    handleClickPrint,
+    openExportReceiptPdfModal,
+    onCloseExportReceiptPdfModal,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -221,7 +228,7 @@ const ButtonsContainer = ({
         {!isNewCreation && (
           <GomakePrimaryButton
             style={classes.btnSecondContainer}
-            onClick={() => onClickPrint()}
+            onClick={handleClickPrint}
           >
             {t("sales.quote.print")}
           </GomakePrimaryButton>
@@ -369,6 +376,16 @@ const ButtonsContainer = ({
           openModal={openReceiptCreationModal}
           docType={documentType}
           onClickSendDocumentToClient={onClickSendReceiptToClient}
+        />
+        <ThreeOptionsModal
+          title={t("sales.modals.printReceipt")}
+          subTitle={t("sales.modals.includeInvoicesPdfPrompt")}
+          yesBtn={"sales.modals.withInvoices"}
+          noBtn={"sales.modals.withoutInvoices"}
+          openModal={openExportReceiptPdfModal}
+          onClose={onCloseExportReceiptPdfModal}
+          onClickYes={() => onClickPrint(true)}
+          onClickNo={() => onClickPrint(false)}
         />
       </div>
     </div>

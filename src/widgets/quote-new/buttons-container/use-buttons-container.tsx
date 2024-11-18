@@ -13,6 +13,7 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import {
   cancelReceiptApi,
   createReceiptApi,
+  getReceiptInvoicesPdfApi,
   getReceiptPdfApi,
 } from "@/services/api-service/generic-doc/receipts-api";
 import { checkedItemsIdsState, finalTotalPaymentState } from "./states";
@@ -165,7 +166,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     });
   };
 
-  const onClickPrint = async () => {
+  const onClickPrint = async (withInvoices?: boolean) => {
     const downloadPdf = (url) => {
       const anchor = document.createElement("a");
       anchor.href = url;
@@ -186,10 +187,16 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         alertFaultGetData();
       }
     };
+
     if (docType === DOCUMENT_TYPE.receipt) {
-      await getReceiptPdfApi(callApi, callBack, {
-        receiptId: quoteItemValue?.id,
-      });
+      if (withInvoices)
+        await getReceiptInvoicesPdfApi(callApi, callBack, {
+          receiptId: quoteItemValue?.id,
+        });
+      else
+        await getReceiptPdfApi(callApi, callBack, {
+          receiptId: quoteItemValue?.id,
+        });
     } else {
       await getDocumentPdfApi(callApi, callBack, {
         documentId: quoteItemValue?.id,
@@ -378,6 +385,23 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     }
   };
 
+  const [openExportReceiptPdfModal, setOpenExportReceiptPdfModal] =
+    useState<boolean>(false);
+
+  const onOpenExportReceiptPdfModal = () => {
+    setOpenExportReceiptPdfModal(true);
+  };
+
+  const onCloseExportReceiptPdfModal = () => {
+    setOpenExportReceiptPdfModal(false);
+  };
+
+  const handleClickPrint = () => {
+    if (docType === DOCUMENT_TYPE.receipt) {
+      onOpenExportReceiptPdfModal();
+    } else onClickPrint();
+  };
+
   return {
     openOrderNowModal,
     onClickConfirmWithoutNotification,
@@ -436,6 +460,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     openReceiptCreationModal,
     onClickOpenReceiptCreation,
     onClickCloseReceiptCreation,
+    openExportReceiptPdfModal,
+    onOpenExportReceiptPdfModal,
+    onCloseExportReceiptPdfModal,
+    handleClickPrint,
   };
 };
 

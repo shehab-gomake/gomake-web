@@ -30,14 +30,14 @@ const OtherOptionsSection = ({
   const { callApi } = useGomakeAxios();
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
-  const [openExportModal, setOpenExportModal] = useState<boolean>(false);
+  const [openExportPdfModal, setOpenExportPdfModal] = useState<boolean>(false);
 
-  const onOpenExportClientModal = () => {
-    setOpenExportModal(true);
+  const onOpenExportPdfModal = () => {
+    setOpenExportPdfModal(true);
   };
 
-  const onCloseExportClientModal = () => {
-    setOpenExportModal(false);
+  const onCloseExportPdfModal = () => {
+    setOpenExportPdfModal(false);
   };
 
   const onClickPrint = async (withInvoices?: boolean) => {
@@ -102,7 +102,7 @@ const OtherOptionsSection = ({
 
   const handleClickPrint = () => {
     if (isReceipt) {
-      onOpenExportClientModal();
+      onOpenExportPdfModal();
     } else onClickPrint();
   };
 
@@ -137,8 +137,8 @@ const OtherOptionsSection = ({
         subTitle={t("sales.modals.includeInvoicesPdfPrompt")}
         yesBtn={"sales.modals.withInvoices"}
         noBtn={"sales.modals.withoutInvoices"}
-        openModal={openExportModal}
-        onClose={onCloseExportClientModal}
+        openModal={openExportPdfModal}
+        onClose={onCloseExportPdfModal}
         onClickYes={() => onClickPrint(true)}
         onClickNo={() => onClickPrint(false)}
       />
