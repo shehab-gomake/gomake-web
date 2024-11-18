@@ -7,11 +7,18 @@ const CREATE_RECEIPT_URL = "/v1/erp-service/receipts/create-receipt";
 const GET_ALL_RECEIPTS_URL = "/v1/erp-service/receipts/get-all-receipts";
 const GET_RECEIPT_BY_ID_URL = "/v1/erp-service/receipts/get-receipt-by-id";
 const CANCEL_RECEIPT_URL = "/v1/erp-service/receipts/cancel-receipt";
-const CREATE_CREDIT_TRANSACTION_URL = "/v1/erp-service/receipts/create-credit-transaction";
-const GET_RECEIPT_PDF_URL="/v1/erp-service/receipts/get-receipt-pdf";
-const GET_ALL_CREDIT_TRANSACTIONS_URL="/v1/erp-service/receipts/get-all-transaction";
+const CREATE_CREDIT_TRANSACTION_URL =
+  "/v1/erp-service/receipts/create-credit-transaction";
+const GET_RECEIPT_PDF_URL = "/v1/erp-service/receipts/get-receipt-pdf";
+const GET_ALL_CREDIT_TRANSACTIONS_URL =
+  "/v1/erp-service/receipts/get-all-transaction";
 
-const getClientPaymentItemsApi: ICallAndSetData = async (callApi, setState, data , lock) => {
+const getClientPaymentItemsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data,
+  lock
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
@@ -48,7 +55,10 @@ const createReceiptApi: ICallAndSetData = async (callApi, setState, data) => {
     EHttpMethod.POST,
     CREATE_RECEIPT_URL,
     setState,
-    data
+    data,
+    true,
+    null,
+    true
   );
 };
 
@@ -62,8 +72,11 @@ const cancelReceiptApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
-
-const createCreditTransactionApi: ICallAndSetData = async (callApi, setState, data) => {
+const createCreditTransactionApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
@@ -73,7 +86,6 @@ const createCreditTransactionApi: ICallAndSetData = async (callApi, setState, da
     false
   );
 };
-
 
 const getReceiptPdfApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -85,8 +97,11 @@ const getReceiptPdfApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
-
-const getAllCreditTransactionsApi: ICallAndSetData = async (callApi, setState, data) => {
+const getAllCreditTransactionsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
@@ -104,5 +119,5 @@ export {
   cancelReceiptApi,
   createCreditTransactionApi,
   getReceiptPdfApi,
-  getAllCreditTransactionsApi
+  getAllCreditTransactionsApi,
 };
