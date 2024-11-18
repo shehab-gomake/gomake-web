@@ -366,7 +366,7 @@ const ButtonsContainer = ({
         />
         <InvoiceCreationModal
           onClose={onClickCloseReceiptCreation}
-          openModal={openReceiptCreationModal}
+          openModal={true}
           docType={documentType}
           onClickSendDocumentToClient={onClickSendReceiptToClient}
         />

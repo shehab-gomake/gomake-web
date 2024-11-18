@@ -5,7 +5,12 @@ import { useStyle } from "../style";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { getDocumentPdfApi } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { getReceiptPdfApi } from "@/services/api-service/generic-doc/receipts-api";
+import {
+  getReceiptInvoicesPdfApi,
+  getReceiptPdfApi,
+} from "@/services/api-service/generic-doc/receipts-api";
+import { useState } from "react";
+import { ThreeOptionsModal } from "@/components";
 
 interface OtherOptionsSectionProps {
   quoteItemValue: any;
@@ -25,8 +30,17 @@ const OtherOptionsSection = ({
   const { callApi } = useGomakeAxios();
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
+  const [openExportModal, setOpenExportModal] = useState<boolean>(false);
 
-  const onClickPrint = async () => {
+  const onOpenExportClientModal = () => {
+    setOpenExportModal(true);
+  };
+
+  const onCloseExportClientModal = () => {
+    setOpenExportModal(false);
+  };
+
+  const onClickPrint = async (withInvoices?: boolean) => {
     const downloadPdf = (url) => {
       const anchor = document.createElement("a");
       anchor.href = url;
@@ -47,9 +61,14 @@ const OtherOptionsSection = ({
       }
     };
     if (isReceipt) {
-      await getReceiptPdfApi(callApi, callBack, {
-        receiptId: quoteItemValue?.id,
-      });
+      if (withInvoices)
+        await getReceiptInvoicesPdfApi(callApi, callBack, {
+          receiptId: quoteItemValue?.id,
+        });
+      else
+        await getReceiptPdfApi(callApi, callBack, {
+          receiptId: quoteItemValue?.id,
+        });
     } else {
       await getDocumentPdfApi(callApi, callBack, {
         documentId: quoteItemValue?.id,
@@ -81,12 +100,18 @@ const OtherOptionsSection = ({
     }
   };
 
+  const handleClickPrint = () => {
+    if (isReceipt) {
+      onOpenExportClientModal();
+    } else onClickPrint();
+  };
+
   return (
     <Stack direction={"column"} gap={"10px"} width={"100%"}>
       <span style={classes.sectionTitle}>{t("sales.modals.otherOptions")}</span>
       <Button
         sx={classes.optionsButtons}
-        onClick={onClickPrint}
+        onClick={handleClickPrint}
         startIcon={<PrinterIcon />}
       >
         {t("sales.modals.print")}
@@ -107,6 +132,16 @@ const OtherOptionsSection = ({
       >
         {getCreateButtonText()}
       </Button>
+      <ThreeOptionsModal
+        title={t("sales.modals.printReceipt")}
+        subTitle={t("sales.modals.includeInvoicesPdfPrompt")}
+        yesBtn={"sales.modals.withInvoices"}
+        noBtn={"sales.modals.withoutInvoices"}
+        openModal={openExportModal}
+        onClose={onCloseExportClientModal}
+        onClickYes={() => onClickPrint(true)}
+        onClickNo={() => onClickPrint(false)}
+      />
     </Stack>
   );
 };
