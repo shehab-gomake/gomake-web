@@ -91,7 +91,7 @@ const AddRuleModal = ({
     filterData,
     openModal,
   });
-
+  console.log("rules", rules)
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
@@ -109,11 +109,14 @@ const AddRuleModal = ({
     const selectedParameters = parametersStateValue?.find(
       (parameter) => parameter?.id === selectedProperties?.propertyId
     );
+    console.log("ssssss", { selectedOutputs, selectedParameters })
+
     setSelectedOutputs(selectedOutputs);
     setSelectedParameters(selectedParameters);
   }, [selectedProperties, Outputs, parametersStateValue]);
 
   const _renderInptsForProperties = () => {
+
     if (selectedProperties?.ruleType === 0) {
       switch (selectedOutputs?.valueType) {
         case EValueType.MACHINE:
@@ -129,19 +132,19 @@ const AddRuleModal = ({
                 options={
                   router.query.actionId
                     ? machincesList?.machines?.map((value) => {
-                        return {
-                          ...value,
-                          label: value?.machineName,
-                          id: value.machineId,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: value?.machineName,
+                        id: value.machineId,
+                      };
+                    })
                     : allMachincesList?.map((value) => {
-                        return {
-                          ...value,
-                          label: `${value?.manufacturer} - ${value?.model}`,
-                          id: value.id,
-                        };
-                      })
+                      return {
+                        ...value,
+                        label: `${value?.manufacturer} - ${value?.model}`,
+                        id: value.id,
+                      };
+                    })
                 }
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectMachine")}
@@ -233,8 +236,8 @@ const AddRuleModal = ({
               </div>
               <GoMakeAutoComplate
                 options={[
-                  { label: "Yes", value: "true" },
-                  { label: "No", value: "false" },
+                  { label: t("modal.yes"), value: true },
+                  { label: t("modal.no"), value: false },
                 ]}
                 placeholder={t("products.profits.exceptions.selectValue")}
                 style={clasess.autoComplateStyle}
@@ -346,8 +349,8 @@ const AddRuleModal = ({
               </div>
               <GoMakeAutoComplate
                 options={[
-                  { label: "Yes", value: "true" },
-                  { label: "No", value: "false" },
+                  { label: t("modal.yes"), value: true },
+                  { label: t("modal.no"), value: false },
                 ]}
                 placeholder={t("products.profits.exceptions.selectValue")}
                 style={clasess.autoComplateStyle}
@@ -398,9 +401,9 @@ const AddRuleModal = ({
         modalTitle={
           isPropertiesWidge
             ? t("products.profits.exceptions.addNewRule") +
-              " (" +
-              selectedProperties?.propertyName +
-              ")"
+            " (" +
+            selectedProperties?.propertyName +
+            ")"
             : t("products.profits.exceptions.addNewRule")
         }
         onClose={() => {
@@ -542,19 +545,19 @@ const AddRuleModal = ({
                         options={
                           router.query.actionId
                             ? allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.manufacturer} - ${value?.model}`,
-                                  id: value.id,
-                                };
-                              })
+                              return {
+                                ...value,
+                                label: `${value?.manufacturer} - ${value?.model}`,
+                                id: value.id,
+                              };
+                            })
                             : allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.manufacturer} - ${value?.model}`,
-                                  id: value.id,
-                                };
-                              })
+                              return {
+                                ...value,
+                                label: `${value?.manufacturer} - ${value?.model}`,
+                                id: value.id,
+                              };
+                            })
                         }
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
@@ -608,19 +611,19 @@ const AddRuleModal = ({
                           options={
                             router.query.actionId
                               ? allMachincesList?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: `${value?.manufacturer} - ${value?.model}`,
-                                    id: value.id,
-                                  };
-                                })
+                                return {
+                                  ...value,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
+                                  id: value.id,
+                                };
+                              })
                               : allMachincesList?.map((value) => {
-                                  return {
-                                    ...value,
-                                    label: `${value?.manufacturer} - ${value?.model}`,
-                                    id: value.id,
-                                  };
-                                })
+                                return {
+                                  ...value,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
+                                  id: value.id,
+                                };
+                              })
                           }
                           style={clasess.dropDownListContainer}
                           placeholder={t("properties.statment")}
@@ -650,6 +653,40 @@ const AddRuleModal = ({
                             handleChange(index, "statement", e.target.value)
                           }
                         />
+                      </div>
+                    )}
+                  {rule.category?.id === "Property output" &&
+                    rules[index]?.statement2?.valueType === 5 && (
+                      <div>
+                        <label style={clasess.inputLable}>
+                          {t("properties.statment")}
+                        </label>
+                        <GoMakeAutoComplate
+                          options={[
+                            { label: t("modal.yes"), value: true },
+                            { label: t("modal.no"), value: false },
+                          ]}
+                          style={clasess.dropDownListContainer}
+                          placeholder={t("properties.statment")}
+                          value={rule.statement}
+                          onChange={(e, value) => {
+                            // handleChange(index, "statement2", value);
+                            handleChange(index, "statement", value);
+                          }}
+                        />
+                        {/* <GomakeTextInput
+                          key={
+                            selectedCategories?.id +
+                            index +
+                            selectedStatment2?.id
+                          }
+                          style={clasess.textInputContainer}
+                          placeholder={t("properties.statment")}
+                          value={rule.statement}
+                          onChange={(e) =>
+                            handleChange(index, "statement", e.target.value)
+                          }
+                        /> */}
                       </div>
                     )}
                   {rule.category?.id === "Products" && (
@@ -722,7 +759,7 @@ const AddRuleModal = ({
                   {rule.category?.id === "Property input" && (
                     <>
                       {rules[index]?.statement2?.type === 0 ||
-                      rules[index]?.statement2?.type === 5 ? (
+                        rules[index]?.statement2?.type === 5 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}
