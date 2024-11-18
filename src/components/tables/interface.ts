@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-export type TABLE_TYPE = "PrimaryTable " | "ClassicTable";
+export type TABLE_TYPE = "PrimaryTable " | "ClassicTable" | "OddEvenTable";
 
 export interface ITableProps {
   rows: ReactNode[][];
