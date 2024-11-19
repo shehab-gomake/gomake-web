@@ -176,8 +176,8 @@ const useAddRuleModal = ({
 
   const BooleanRender = useMemo(() => {
     return [
-      { label: "Yes", id: true },
-      { label: "No", id: false },
+      { label: t("modal.yes"), id: true },
+      { label: t("modal.no"), id: false },
     ];
   }, []);
 
@@ -498,8 +498,8 @@ const useAddRuleModal = ({
         ruleConditionStatements: null,
         exceptionConditionProperties: rules.map((item) => {
           return {
-            statementId: getStatementId(item),
-            statementValue: item.statement2.id,
+            statementId: item.statement2.id,
+            statementValue: getStatementId(item),
             operator: item.condition.id,
             conditionBetweenStatements: item.linkCondition
               ? item.linkCondition.id

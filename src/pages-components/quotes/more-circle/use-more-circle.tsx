@@ -126,7 +126,7 @@ const useMoreCircle = () => {
       },
       {
         condition: !isPauseOrder && !isDeliveryNote,
-        onClick: () => onClickPdf(quote?.id),
+        onClick: () => onClickPdf(isReceipt ? quote : quote?.id),
         icon: <PDFIcon />,
         name: t("sales.quote.pdf"),
       },

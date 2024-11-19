@@ -56,6 +56,7 @@ interface IProps {
   handleOpenModal: (item: IPrintHouse) => void;
   handleClickMakePayment: (printHouseId: string) => void;
   handleOpenSendPaymentModal: (printHouseId: string) => void;
+  handleClickTestCalculation: (printHouseId: string) => void;
 }
 
 enum EAction {
@@ -72,6 +73,7 @@ const OptionsComponent = ({
   handleOpenModal,
   handleClickMakePayment,
   handleOpenSendPaymentModal,
+  handleClickTestCalculation,
 }: IProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -286,6 +288,11 @@ const OptionsComponent = ({
         <MenuItem onClick={() => setOpenPaymentModal(true)}>
           <div style={classes.rowTextStyle}>
             {t("importData.paymentHistory")}
+          </div>
+        </MenuItem>
+        <MenuItem onClick={() => handleClickTestCalculation(printHouse?.id)}>
+          <div style={classes.rowTextStyle}>
+            {t("companyReports.testCalculation")}
           </div>
         </MenuItem>
       </OptionsButton>

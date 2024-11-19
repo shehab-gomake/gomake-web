@@ -10,7 +10,10 @@ import {
   TableRow,
 } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { ITableForOutputsProps, ITableProps } from "@/components/tables/interface";
+import {
+  ITableForOutputsProps,
+  ITableProps,
+} from "@/components/tables/interface";
 import { useStyle } from "@/components/tables/style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTranslation } from "react-i18next";
@@ -53,7 +56,7 @@ const PrimaryTableRow = styled(TableRow)(() => {
   const { neutralColor } = useGomakeTheme();
   return {
     "&:nth-of-type(even)": {
-      backgroundColor: neutralColor(100),
+      backgroundColor: neutralColor(200),
     },
     "&:last-child td, &:last-child th": {
       border: 0,
@@ -110,7 +113,13 @@ const PrimaryTableForOutputs = ({
     variant === "ClassicTable" ? ClassicTableRow : PrimaryTableRow;
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden", boxShadow: withoutShadow && "none" }}>
+    <Paper
+      sx={{
+        width: "100%",
+        overflow: "hidden",
+        boxShadow: withoutShadow && "none",
+      }}
+    >
       <TableContainer style={classes.tableContainer}>
         <Table data-tour={dataTour} stickyHeader={stickyHeader}>
           <TableHead>
@@ -143,20 +152,35 @@ const PrimaryTableForOutputs = ({
                 {row.map((cell: any, cellIndex) => {
                   const cellStyle = columnWidths
                     ? {
-                      width: columnWidths?.[cellIndex],
-                    }
+                        width: columnWidths?.[cellIndex],
+                      }
                     : {};
-                  const displayText = cell.addionalNote ? (() => {
-                    let translatedString = t("tableHeadersForOutputs." + cell.addionalNote)
-                      .replace(/\{\{(\d+)\}\}/g, (_, index) => cell.values?.[index] || "");
-                    const usedIndexes = Array.from(translatedString.matchAll(/\{\{(\d+)\}\}/g)).map(match => parseInt(match[1], 10));
-                    const remainingValues = cell.values?.filter((_, index) => !usedIndexes.includes(index)) || [];
-                    if (remainingValues.length > 0 && usedIndexes.length < cell.values?.length) {
-                      translatedString += " | " + remainingValues.join(", ");
-                    }
+                  const displayText = cell.addionalNote
+                    ? (() => {
+                        let translatedString = t(
+                          "tableHeadersForOutputs." + cell.addionalNote
+                        ).replace(
+                          /\{\{(\d+)\}\}/g,
+                          (_, index) => cell.values?.[index] || ""
+                        );
+                        const usedIndexes = Array.from(
+                          translatedString.matchAll(/\{\{(\d+)\}\}/g)
+                        ).map((match) => parseInt(match[1], 10));
+                        const remainingValues =
+                          cell.values?.filter(
+                            (_, index) => !usedIndexes.includes(index)
+                          ) || [];
+                        if (
+                          remainingValues.length > 0 &&
+                          usedIndexes.length < cell.values?.length
+                        ) {
+                          translatedString +=
+                            " | " + remainingValues.join(", ");
+                        }
 
-                    return translatedString;
-                  })() : cell?.values?.join(", ");
+                        return translatedString;
+                      })()
+                    : cell?.values?.join(", ");
 
                   return (
                     <TableCellComponent
@@ -167,7 +191,7 @@ const PrimaryTableForOutputs = ({
                         ...getFontStyle(cell.fontStyle),
                         ...cellStyle,
                         paddingLeft: 15,
-                        paddingRight: 15
+                        paddingRight: 15,
                       }}
                     >
                       {displayText}

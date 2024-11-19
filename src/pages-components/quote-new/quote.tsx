@@ -700,6 +700,7 @@ const QuoteNewPageWidget = ({
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendReceiptToClient={onClickSendReceiptToClient}
               />
             </div>
           )}

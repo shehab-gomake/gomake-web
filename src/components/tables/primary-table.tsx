@@ -35,12 +35,21 @@ const PrimaryTableCell = styled(TableCell)(() => {
 });
 
 const PrimaryTableRow = styled(TableRow)(() => {
+  return {
+    // hide last border
+    "&:last-child td, &:last-child th": {
+      border: 0,
+    },
+  };
+});
+
+const OddEvenTableRow = styled(TableRow)(() => {
   const { neutralColor } = useGomakeTheme();
   return {
     "&:nth-of-type(even)": {
-      backgroundColor: neutralColor(100),
+      // backgroundColor: `${neutralColor(100)} !important`,
+      backgroundColor: `#ececec8a !important`,
     },
-    // hide last border
     "&:last-child td, &:last-child th": {
       border: 0,
     },
@@ -110,8 +119,14 @@ const PrimaryTable = ({
   const { classes } = useStyle(maxHeight, dir);
   const TableCell =
     variant === "ClassicTable" ? ClassicTableCell : PrimaryTableCell;
+
   const TableRow =
-    variant === "ClassicTable" ? ClassicTableRow : PrimaryTableRow;
+    variant === "ClassicTable"
+      ? ClassicTableRow
+      : variant === "OddEvenTable"
+      ? OddEvenTableRow
+      : PrimaryTableRow;
+
   return (
     <Paper
       sx={{

@@ -84,7 +84,7 @@ const AddNewRuleModal = ({ openModal, onClose }) => {
   const [value, setValue] = useState<string>("");
   const { machines } = usePrintHouseMachines();
   const { clientTypes } = usePrintHouseClientTypes();
-  const { clients } = usePrintHouseClients(); 
+  const { clients } = usePrintHouseClients();
   const { materials, materialsDropdown } = useMaterials();
   const { parameters } = useParameters();
   const { Outputs } = useOutputs();
@@ -302,8 +302,8 @@ const AddNewRuleModal = ({ openModal, onClose }) => {
 
   const boolState = useMemo(() => {
     return [
-      { label: "Yes", id: true },
-      { label: "No", id: false },
+      { label: t("modal.yes"), id: true },
+      { label: t("modal.no"), id: false },
     ];
   }, []);
 
