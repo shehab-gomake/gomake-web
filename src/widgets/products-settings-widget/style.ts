@@ -9,7 +9,7 @@ const useStyle = () => {
   const { t } = useTranslation();
   const { primaryColor, neutralColor } = useGomakeTheme();
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -20,9 +20,9 @@ const useStyle = () => {
       },
       mainHeadecontainer: {
         display: "flex",
-        flexDirection: "row" as "row",
+        flexDirection: "column" as "column",
         justifyContent: "space-between",
-        alignItems: "center",
+        //   alignItems: "center",
         width: "100%",
         marginBottom: 40,
       },
@@ -70,14 +70,16 @@ const useStyle = () => {
         paddingRight: 8,
         cursor: "pointer",
       },
-      gobackBtnStyle: {
+      goBackBtnStyle: {
+        cursor: "pointer",
+        // alignSelf: "flex-end",
         width: 140,
         height: 40,
       },
     };
   }, [i18next.language, t]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };
