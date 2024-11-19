@@ -67,10 +67,10 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
             return [
               isUpdate === index ? (
                 <UpdateValueInput
-                  clickedOut={() => onBlur().then()}
+                  clickedOut={() => onBlur()?.then()}
                   onInputChange={onInputChange}
                   onCancel={() => setIsUpdate(null)}
-                  onUpdate={() => onBlur().then()}
+                  onUpdate={() => onBlur()?.then()}
                   value={updateValue}
                 />
               ) : (

@@ -662,6 +662,7 @@ const usePriceProfit = () => {
   const [pricingProfileSetting, setPricingProfileSetting] = useState<PricingProfileSetting[]>([])
   const [selectedPricingProfileSetting, setSelectedPricingProfileSetting] = useState<PricingProfileSetting | null>(null)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [isUpdateQuantity, setIsUpdateQuantity] = useState(false); // New state variable
   const [isUpdate, setIsUpdate] = useState(false); // New state variable
   const [anchorElSetting, setAnchorElSetting] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -726,7 +727,9 @@ const usePriceProfit = () => {
   const onBlurPriceChange = async (item) => {
     setIsUpdate(false);
   };
+  const [newPrintHousePrice, setNewPrintHousePrice] = useState(null)
   const handlePriceChange = (index: number, idx: number, newValue: string) => {
+    setNewPrintHousePrice(Number(newValue))
     setProducts((prevProducts) => {
       const updatedProducts = { ...prevProducts }; // Corrected to spread the object
       const productToUpdate = { ...updatedProducts.data[index] }; // Access the data array
@@ -734,7 +737,7 @@ const usePriceProfit = () => {
 
       updatedPricePerQuantity[idx] = {
         ...updatedPricePerQuantity[idx],
-        CalculatedPrice: newValue
+        calculatedPrice: newValue
       };
 
       productToUpdate.pricePerQuantity = updatedPricePerQuantity;
@@ -801,11 +804,22 @@ const usePriceProfit = () => {
     });
   };
   const onBlurQuantityChange = () => {
-    setIsUpdate(false);
+    updateProfitProfileProductQuantities()
+
   };
   const handleQuantity = (index: number, value: string) => {
-    console.log('value', value)
+    setProducts(prevProducts => {
+      const updatedHeaders = prevProducts.headers.map((header, i) => {
+        if (i === index) {
+          return { ...header, quantity: Number(value) }; // Update the quantity
+        }
+        return header;
+      });
+
+      return { ...prevProducts, headers: updatedHeaders };
+    });
   };
+
   const getAllPricingProfileSettingForDropDownList = useCallback(async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -870,29 +884,46 @@ const usePriceProfit = () => {
     });
   }, [selectedPricingProfileSetting]);
 
-  const updateProfitProfileProductQuantities = useCallback(async (data: any) => {
+  const updateProfitProfileProductQuantities = useCallback(async () => {
+    const quantities = products?.headers?.map(item => item.quantity);
+
     const callBack = (res) => {
       if (res?.success) {
+        setIsUpdateQuantity(false);
+        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
       }
       else {
+        setIsUpdateQuantity(false);
+        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
       }
     };
     await updateProfitProfileProductQuantitiesApi(callApi, callBack, {
-
+      productId: selectedPricingProfileSetting?.productId,
+      quantities: quantities
     });
-  }, []);
+  }, [products, selectedPricingProfileSetting]);
 
   const updatePrintHousePrice = useCallback(async (data: any) => {
+    console.log("data", data)
     const callBack = (res) => {
       if (res?.success) {
+        setIsUpdate(false);
+        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
       }
       else {
+        setIsUpdate(false);
+        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+
       }
     };
     await updatePrintHousePriceApi(callApi, callBack, {
-
+      productId: selectedPricingProfileSetting?.productId,
+      subProductId: data?.productId,
+      quantity: data?.quantity,
+      printHousePrice: Number(data?.calculatedPrice),
+      rowId: data?.rowId
     });
-  }, []);
+  }, [selectedPricingProfileSetting, newPrintHousePrice]);
 
   return {
     open,
@@ -913,6 +944,8 @@ const usePriceProfit = () => {
     handlePriceChange,
     isUpdate,
     setIsUpdate,
+    isUpdateQuantity,
+    setIsUpdateQuantity,
     onBlurPriceChange,
     handlePrintClose,
     anchorElPrint,
@@ -927,7 +960,8 @@ const usePriceProfit = () => {
     setSelectedPricingProfileSetting,
     updateProfitProfileProductParameter,
     onBlurQuantityChange,
-    handleQuantity
+    handleQuantity,
+    updatePrintHousePrice
   };
 };
 

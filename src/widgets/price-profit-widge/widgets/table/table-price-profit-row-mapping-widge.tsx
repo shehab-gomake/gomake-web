@@ -17,7 +17,8 @@ const PriceProfitRowMappingTable = ({
   product,
   setIsUpdate,
   activeCell,
-  setActiveCell
+  setActiveCell,
+  updatePrintHousePrice
 }) => {
   const { classes } = useStyle()
 
@@ -27,10 +28,10 @@ const PriceProfitRowMappingTable = ({
     <TableCell
       sx={classes.tableBodyCell}
       key={idx}
-      style={(price.printHousePrice !== price.calculatedPrice) && price.calculatedPrice == null ? classes.tableBodyCellError : classes.tableBodyNotErrorCell}
+      style={(price.printHousePrice !== price.calculatedPrice) && price.printHousePrice !== null ? classes.tableBodyCellError : classes.tableBodyNotErrorCell}
       onClick={(event) => {
 
-        if ((price.printHousePrice !== price.calculatedPrice) && price.calculatedPrice == null) {
+        if ((price.printHousePrice !== price.calculatedPrice) && price.printHousePrice !== null) {
           handleOpen(event)
           setSelectedProduct({ ...product, ...price })
         }
@@ -40,13 +41,15 @@ const PriceProfitRowMappingTable = ({
       }}
     >
       <div style={classes.tableBodyCellContent}>
-        {price.isNotCalcuated ? (
+        {price.isErrorInCalculation ? (
           <Warning2Icon />
         ) : (
           <InputUpdatedValues
-            value={price.calculatedPrice?.toFixed(3) ?? "----"}
+            value={price.calculatedPrice ?? "----"}
+            isTwoDigit
             onBlur={() => {
-              onBlurPriceChange();
+              // onBlurPriceChange();
+              updatePrintHousePrice({ ...product, ...price })
               setActiveCell(null);
             }}
             isUpdate={(isUpdate && isActive) && price.calculatedPrice !== null}

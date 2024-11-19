@@ -31,6 +31,9 @@ interface PriceProfitTableProps {
   handleHideProduct: (index: number, data: any) => void;
   onBlurQuantityChange: () => void;
   handleQuantity: (index: number, value: string) => void;
+  isUpdateQuantity: boolean;
+  setIsUpdateQuantity: (value: boolean) => void;
+  updatePrintHousePrice: (data: any) => void;
 }
 
 const PriceProfitTable = ({
@@ -52,11 +55,17 @@ const PriceProfitTable = ({
   onBlurPriceChange,
   handleHideProduct,
   onBlurQuantityChange,
-  handleQuantity
+  handleQuantity,
+  isUpdateQuantity,
+  setIsUpdateQuantity,
+  updatePrintHousePrice
 }: PriceProfitTableProps) => {
   const { classes } = useStyle()
   const [showAllProducts, setShowAllProducts] = useState(false);
   const [activeCell, setActiveCell] = useState<{ index: number, idx: number } | null>(null);
+  const [isActiveQuantityCell, setIsActiveQuantityCell] = useState(null);
+
+
   return (
     <TableContainer style={classes.tableContainer}>
       <Table style={classes.table}>
@@ -64,7 +73,7 @@ const PriceProfitTable = ({
           <TableRow style={classes.tableHead}>
             <TableCell sx={classes.tableHeadCell}>Quantities</TableCell>
             {headers?.map((header, index) => {
-              const isActive = activeCell?.index === index; // Check if the current cell is active
+              const isActive = isActiveQuantityCell === index; // Check if the current cell is active
 
               return (
                 <TableCell sx={classes.tableHeadCellValue} key={index} colSpan={header?.quantities?.length}>
@@ -72,17 +81,15 @@ const PriceProfitTable = ({
                     <InputUpdatedValues
                       value={header?.quantity ?? "----"}
                       onBlur={() => {
-                        console.log("onBlur")
+                        onBlurQuantityChange();
                       }}
-                      isUpdate={isActive && isUpdate} // Update only if the cell is active
+                      isUpdate={isActive && isUpdateQuantity} // Update only if the cell is active
                       setIsUpdate={() => {
-                        setActiveCell({ index, idx: null })
-                        setIsUpdate(!isUpdate);
+                        setIsActiveQuantityCell(index)
+                        setIsUpdateQuantity(!isUpdateQuantity);
                       }}
                       onInputChange={(value) => {
-                        if (isActive) {
-                          handleQuantity(index, value);
-                        }
+                        handleQuantity(index, value);
                       }}
                       speicalStyle={{ color: "#FFF", textAlign: "center" }}
                     />
@@ -101,24 +108,27 @@ const PriceProfitTable = ({
           </TableRow>
         </TableHead>
         <TableBody>
-          {products?.data?.map((product, index) => (
-            (showAllProducts || product.isHidden) && (
-              <ProductsRowMappingTable
-                product={product}
-                index={index}
-                handleCheckboxChange={handleCheckboxChange}
-                handleOpen={handleOpen}
-                setSelectedProduct={setSelectedProduct}
-                onBlurPriceChange={onBlurPriceChange}
-                handlePriceChange={handlePriceChange}
-                isUpdate={isUpdate}
-                setIsUpdate={setIsUpdate}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                handleHideProduct={handleHideProduct}
-              />
+          {products?.data?.map((product, index) => {
+            return (
+              (showAllProducts || !product.isHidden) && (
+                <ProductsRowMappingTable
+                  product={product}
+                  index={index}
+                  handleCheckboxChange={handleCheckboxChange}
+                  handleOpen={handleOpen}
+                  setSelectedProduct={setSelectedProduct}
+                  onBlurPriceChange={onBlurPriceChange}
+                  handlePriceChange={handlePriceChange}
+                  isUpdate={isUpdate}
+                  setIsUpdate={setIsUpdate}
+                  activeCell={activeCell}
+                  setActiveCell={setActiveCell}
+                  handleHideProduct={handleHideProduct}
+                  updatePrintHousePrice={updatePrintHousePrice}
+                />
+              )
             )
-          ))}
+          })}
         </TableBody>
       </Table>
       <div style={classes.viewAllContainer}>

@@ -40,7 +40,10 @@ const PriceProfitWidge = () => {
     setSelectedPricingProfileSetting,
     updateProfitProfileProductParameter,
     onBlurQuantityChange,
-    handleQuantity
+    handleQuantity,
+    isUpdateQuantity,
+    setIsUpdateQuantity,
+    updatePrintHousePrice
   } = usePriceProfit()
   return (
     <div style={classes.mainContainer}>
@@ -91,6 +94,9 @@ const PriceProfitWidge = () => {
           handleHideProduct={handleHideProduct}
           onBlurQuantityChange={onBlurQuantityChange}
           handleQuantity={handleQuantity}
+          isUpdateQuantity={isUpdateQuantity}
+          setIsUpdateQuantity={setIsUpdateQuantity}
+          updatePrintHousePrice={updatePrintHousePrice}
         />
       }
     </div>

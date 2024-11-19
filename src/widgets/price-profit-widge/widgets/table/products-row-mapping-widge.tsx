@@ -21,7 +21,8 @@ const ProductsRowMappingTable = ({
   setIsUpdate,
   activeCell,
   setActiveCell,
-  handleHideProduct
+  handleHideProduct,
+  updatePrintHousePrice
 }) => {
   const { classes } = useStyle()
   const [anchorEl, setAnchorEl] = useState(null)
@@ -73,6 +74,7 @@ const ProductsRowMappingTable = ({
             setIsUpdate={setIsUpdate}
             activeCell={activeCell}
             setActiveCell={setActiveCell}
+            updatePrintHousePrice={updatePrintHousePrice}
           />
         ))}
       </TableRow>
