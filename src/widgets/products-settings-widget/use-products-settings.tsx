@@ -1,4 +1,4 @@
-import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   deleteShipmentTypeByIdApi,
   getAllShipmentTypesApi,
@@ -6,11 +6,14 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { IconButton } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import { DeleteIcon } from "../settings-mailing/messageTemplates/components/more-circle/icons/delete";
+import { useUserPermission } from "@/hooks/use-permission";
+import { ProductManagementWidget } from "./widget/product-management";
+import { ShipmentsSetting } from "./widget/shipments-setting";
+import { ITab } from "@/components/tabs/interface";
 
 const useProductsSettings = () => {
-  const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData, alertFaultDelete, alertSuccessDelete } =
@@ -18,6 +21,7 @@ const useProductsSettings = () => {
   const [allShipmentTypes, setAllShipmentTypes] = useState([]);
   const [value, setValue] = useState(0);
   const [openModal, setOpenModal] = useState(false);
+  const { CheckPermission } = useUserPermission();
 
   const handleOpenModal = () => {
     setOpenModal(true);
@@ -27,22 +31,11 @@ const useProductsSettings = () => {
     setOpenModal(false);
   };
 
-  const handleChange = (event: any, newValue: any) => {
-    setValue(newValue);
-  };
-
-  const tabs = [
-    {
-      name: t("settings.productManagement"),
-      permission: Permissions.SHOW_PRODUCTS,
-    },
-    {
-      name: t("settings.shipmentsSetting"),
-      permission: Permissions.SHOW_SHIPMENT_TYPES,
-    },
-    {
-      name: t("settings.pricingSetting"),
-    },
+  const tableHeaders = [
+    t("customers.modal.name"),
+    t("shipmentTypes.startingPrice"),
+    t("shipmentTypes.freeShipping"),
+    t("properties.more"),
   ];
 
   const getAllShipmentTypes = async () => {
@@ -65,6 +58,31 @@ const useProductsSettings = () => {
     await getAllShipmentTypesApi(callApi, callBack);
   };
 
+  const tabs: ITab[] = [
+    CheckPermission(Permissions.SHOW_PRODUCTS) && {
+      title: t("settings.productManagement"),
+      component: (
+        <Stack data-tour={"productsSettingsWidget"}>
+          <ProductManagementWidget />
+        </Stack>
+      ),
+    },
+    CheckPermission(Permissions.SHOW_SHIPMENT_TYPES) && {
+      title: t("settings.shipmentsSetting"),
+      component: (
+        <ShipmentsSetting
+          getAllShipmentTypes={getAllShipmentTypes}
+          tableHeaders={tableHeaders}
+          allShipmentTypes={allShipmentTypes}
+        />
+      ),
+    },
+    {
+      title: t("settings.pricingSetting"),
+      component: <span>coming soon</span>,
+    },
+  ].filter(Boolean);
+
   const onClickDeleteShipmentType = async (id: string) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -78,25 +96,14 @@ const useProductsSettings = () => {
     await deleteShipmentTypeByIdApi(callApi, callBack, { id });
   };
 
-  const tableHeaders = [
-    t("customers.modal.name"),
-    t("shipmentTypes.startingPrice"),
-    t("shipmentTypes.freeShipping"),
-    t("properties.more"),
-  ];
-
   return {
     t,
     tabs,
     value,
-    navigate,
-    handleChange,
     setValue,
     openModal,
     handleCloseModal,
     handleOpenModal,
-    tableHeaders,
-    allShipmentTypes,
     getAllShipmentTypes,
   };
 };
