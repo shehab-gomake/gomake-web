@@ -9,6 +9,7 @@ import { UpdatedPriceIcon } from './icons/update-icon';
 import { ReStoreIcon } from './icons/restore-icon';
 import { ReviewIcon } from './icons/review-icon';
 import { useStyle } from './style';
+import { InputUpdatedValues } from '@/widgets/quote-new/input-updated-values';
 
 interface PriceProfitTableProps {
   headers: any[];
@@ -28,6 +29,8 @@ interface PriceProfitTableProps {
   setIsUpdate: (value: boolean) => void;
   onBlurPriceChange: (value: any) => void;
   handleHideProduct: (index: number, data: any) => void;
+  onBlurQuantityChange: () => void;
+  handleQuantity: (index: number, value: string) => void;
 }
 
 const PriceProfitTable = ({
@@ -47,23 +50,46 @@ const PriceProfitTable = ({
   isUpdate,
   setIsUpdate,
   onBlurPriceChange,
-  handleHideProduct
+  handleHideProduct,
+  onBlurQuantityChange,
+  handleQuantity
 }: PriceProfitTableProps) => {
   const { classes } = useStyle()
   const [showAllProducts, setShowAllProducts] = useState(false);
   const [activeCell, setActiveCell] = useState<{ index: number, idx: number } | null>(null);
-
   return (
     <TableContainer style={classes.tableContainer}>
       <Table style={classes.table}>
         <TableHead>
           <TableRow style={classes.tableHead}>
             <TableCell sx={classes.tableHeadCell}>Quantities</TableCell>
-            {headers?.map((header, index) => (
-              <TableCell sx={classes.tableHeadCellValue} key={index} colSpan={header?.quantities?.length}>
-                {header?.quantity}
-              </TableCell>
-            ))}
+            {headers?.map((header, index) => {
+              const isActive = activeCell?.index === index; // Check if the current cell is active
+
+              return (
+                <TableCell sx={classes.tableHeadCellValue} key={index} colSpan={header?.quantities?.length}>
+                  <div style={classes.tableBodyCellContent}>
+                    <InputUpdatedValues
+                      value={header?.quantity ?? "----"}
+                      onBlur={() => {
+                        console.log("onBlur")
+                      }}
+                      isUpdate={isActive && isUpdate} // Update only if the cell is active
+                      setIsUpdate={() => {
+                        setActiveCell({ index, idx: null })
+                        setIsUpdate(!isUpdate);
+                      }}
+                      onInputChange={(value) => {
+                        if (isActive) {
+                          handleQuantity(index, value);
+                        }
+                      }}
+                      speicalStyle={{ color: "#FFF", textAlign: "center" }}
+                    />
+                  </div>
+                </TableCell>
+              );
+            })}
           </TableRow>
           <TableRow style={classes.tableHeadTotal}>
             <TableCell sx={classes.tableHeadCellValueTotal}>Total</TableCell>

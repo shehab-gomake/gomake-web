@@ -54,7 +54,7 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDr
             displayValue = parameter.defaultValue;
           } else if (parameter.parameterType === 0) {
             const defaultValue = parameter.values.find((value: any) => value.isDefault);
-            displayValue = defaultValue ? defaultValue.parameterName : '';
+            displayValue = defaultValue ? defaultValue.name : '';
           }
           else if (parameter.parameterType === 5) {
             displayValue = parameter.defaultValue

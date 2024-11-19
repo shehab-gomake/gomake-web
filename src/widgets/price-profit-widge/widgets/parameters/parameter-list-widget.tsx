@@ -64,10 +64,12 @@ const ParameterListWidget = ({
               options={parameter?.values}
               onChange={(e: any, value: any) => {
                 updateDropdownValue(value, index);
+                updateProfitProfileProductParameter(parameter, value);
                 handleClose();
 
               }}
-              value={parameter?.values?.find((value: any) => value.isDefault)?.label}
+              getOptionLabel={(option: any) => option.name}
+              value={parameter?.values?.find((value: any) => value.isDefault)}
               placeholder={`Select ${t(parameter.parameterName)}`}
               style={{
                 width: 170,

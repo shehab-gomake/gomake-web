@@ -1,7 +1,7 @@
 import { useGomakeAxios } from "@/hooks";
 import { useDisplayProfitProfilesSignalr } from "@/hooks/signalr/use-display-profit-profiles-signalr";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, updateProfitProfileProductParameterApi } from "@/services/api-service/products/product-endpoints";
+import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, updatePrintHousePriceApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi } from "@/services/api-service/products/product-endpoints";
 import { useCallback, useEffect, useState } from "react";
 
 interface PricingProfileSetting {
@@ -800,6 +800,12 @@ const usePriceProfit = () => {
       return { ...prevProducts, requiredParameters: updatedParameters };
     });
   };
+  const onBlurQuantityChange = () => {
+    setIsUpdate(false);
+  };
+  const handleQuantity = (index: number, value: string) => {
+    console.log('value', value)
+  };
   const getAllPricingProfileSettingForDropDownList = useCallback(async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -860,9 +866,34 @@ const usePriceProfit = () => {
       parameterName: data?.parameterName,
       sectionId: data?.sectionId,
       subSectionId: data?.subSectionId,
-      defaultValue: value?.valueId ? value?.valueId : data?.defaultValue
+      defaultValue: value?.valueId ? value?.valueId : value?.id ? value?.id : data?.defaultValue
     });
   }, [selectedPricingProfileSetting]);
+
+  const updateProfitProfileProductQuantities = useCallback(async (data: any) => {
+    const callBack = (res) => {
+      if (res?.success) {
+      }
+      else {
+      }
+    };
+    await updateProfitProfileProductQuantitiesApi(callApi, callBack, {
+
+    });
+  }, []);
+
+  const updatePrintHousePrice = useCallback(async (data: any) => {
+    const callBack = (res) => {
+      if (res?.success) {
+      }
+      else {
+      }
+    };
+    await updatePrintHousePriceApi(callApi, callBack, {
+
+    });
+  }, []);
+
   return {
     open,
     anchorEl,
@@ -894,7 +925,9 @@ const usePriceProfit = () => {
     pricingProfileSetting,
     selectedPricingProfileSetting,
     setSelectedPricingProfileSetting,
-    updateProfitProfileProductParameter
+    updateProfitProfileProductParameter,
+    onBlurQuantityChange,
+    handleQuantity
   };
 };
 

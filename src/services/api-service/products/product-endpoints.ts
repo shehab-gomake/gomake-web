@@ -11,6 +11,10 @@ const GET_ALL_PRICING_PROFILE_SETTING_FOR_DROP_DOWN_LIST_URL = "/v1/printhouse-c
 const GET_ALL_PROFIT_PROFILE_PRODUCT_BY_PRODUCT_ID_URL = "/v1/printhouse-config/profit-profile-products/get-all-profit-profile-product-by-product-id";
 const UPDATE_PROFIT_PROFILE_PRODUCT_PARAMETER_URL = "/v1/printhouse-config/profit-profile-products/update-profit-profile-product-parameter";
 
+const UPDATE_PROFIT_PROFILE_PRODUCT_QUANTITIES_URL = "/v1/printhouse-config/profit-profile-products/update-profit-profile-product-quantities";
+const UPDATE_PRINT_HOUSE_PRICE_URL = "/v1/printhouse-config/profit-profile-products/update-print-house-price";
+
+
 const addProductProfitRuleApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, ADD_PRODUCT_PROFIT_RULE_URL, setState, data);
 };
@@ -39,6 +43,13 @@ const updateProfitProfileProductParameterApi: ICallAndSetData = async (callApi, 
     return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_PROFIT_PROFILE_PRODUCT_PARAMETER_URL ,setState, data);
 };
 
+const updateProfitProfileProductQuantitiesApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_PROFIT_PROFILE_PRODUCT_QUANTITIES_URL ,setState, data);
+};
+const updatePrintHousePriceApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_PRINT_HOUSE_PRICE_URL ,setState, data);
+};
+
 export {
     addProductProfitRuleApi,
     getProductProfitRulesApi,
@@ -47,5 +58,7 @@ export {
     getAllProductAndMaterialsApi,
     getAllPricingProfileSettingForDropDownListApi,
     getAllProfitProfileProductByProductIdApi,
-    updateProfitProfileProductParameterApi
+    updateProfitProfileProductParameterApi,
+    updateProfitProfileProductQuantitiesApi,
+    updatePrintHousePriceApi
 }
