@@ -18,6 +18,10 @@ import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
 import { IconButton } from "@mui/material";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useDateFormat } from "@/hooks/use-date-format";
+import LinkIcon from "@mui/icons-material/Link";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import LinkOffIcon from "@mui/icons-material/LinkOff";
+import { adaptMarginLeft } from "@/utils/adapter";
 
 export interface FilterState {
   fromAccount: string;
@@ -36,6 +40,7 @@ const useTransactionJournalReport = ({
   const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const dir = t("direction");
   const { getFormattedLocalDate } = useDateFormat();
 
   const { documentsTypeList, documentType, handleDocumentTypeChange } =
@@ -151,8 +156,10 @@ const useTransactionJournalReport = ({
     [reportType, dataTable]
   );
 
+  //!here
   const getAccountingTableRows = useCallback(() => {
     return dataTable?.map((data, index) => [
+      data?.transNumber ?? "-",
       data?.transType,
       data?.documentDate?.split("T")[0],
       data?.valueDate?.split("T")[0],
@@ -160,11 +167,32 @@ const useTransactionJournalReport = ({
       data?.debitAccountName,
       data?.credAccountKey,
       data?.creditAccountName,
-      data?.debitAmount?.toFixed(2),
-      data?.creditAmount?.toFixed(2),
+      data?.debitAmount && data.debitAmount !== 0
+        ? data.debitAmount.toFixed(2)
+        : "-",
+      data?.creditAmount && data.creditAmount !== 0
+        ? data.creditAmount.toFixed(2)
+        : "-",
       data?.reference,
-      data?.ref2,
       data?.description,
+      // data?.documentPath ? (
+      //   <a
+      //     target="_blank"
+      //     rel="noopener noreferrer"
+      //     style={{
+      //       cursor: "pointer",
+      //       color: "inherit",
+      //       textDecoration: "unset",
+      //       display: "flex",
+      //       alignItems: "center",
+      //     }}
+      //     href={data?.documentPath}
+      //   >
+      //     <LinkIcon fontSize="small" style={{ ...adaptMarginLeft(dir, 5) }} />
+      //   </a>
+      // ) : (
+      //   <LinkOffIcon fontSize="small" style={{ marginRight: 4 }} />
+      // ),
     ]);
   }, [reportType, dataTable]);
 
@@ -183,6 +211,7 @@ const useTransactionJournalReport = ({
       headers.push(`${t("reports.credit")} / ${t("reports.debit")}`);
     } else if (reportType === EReportType.AccountingTransaction) {
       headers = [
+        t("reports.transNum"),
         t("reports.transType"),
         t("reports.documentDate"),
         t("reports.valueDate"),
@@ -193,8 +222,8 @@ const useTransactionJournalReport = ({
         t("reports.debitAmount"),
         t("reports.creditAmount"),
         t("reports.reference"),
-        t("reports.ref2"),
         t("reports.description"),
+        // "",
       ];
     } else {
       headers.push(t("reports.credit"));
@@ -326,12 +355,12 @@ const useTransactionJournalReport = ({
           </IconButton>
         ) : null,
         history: item.allocations.map((allocation: any) => ({
-          transNum: allocation.document.documentNumber,
-          addressNum: "test",
+          transNum: allocation.document.record,
+          // addressNum: "test",
           reference: allocation.document.documentNumber,
           sum: allocation.document.totalPrice,
           adjustmentSum: allocation.allocatedAmount,
-          currency: "$",
+          // currency: "$",
           valueDate: getFormattedLocalDate(allocation.document.dueDate),
           docDate: getFormattedLocalDate(allocation.document.docDate),
         })),
@@ -492,6 +521,53 @@ const useTransactionJournalReport = ({
     setPageNumber(1);
   };
 
+  const {
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+  } = useCustomerDropDownList();
+
+  //!new
+  const [isOpenAdjustmentsModal, setIsOpenAdjustmentsModal] =
+    useState<boolean>(false);
+
+  const onClickCloseAdjustmentsModal = () => {
+    setIsOpenAdjustmentsModal(false);
+  };
+  const onClickOpenAdjustmentsModal = () => {
+    if (customer?.id) {
+      setIsOpenAdjustmentsModal(true);
+    } else {
+      alertFault("reports.pleaseSelectCustomer");
+    }
+  };
+
+  const [clientPaymentsList, setClientPaymentsList] = useState<any>([]);
+
+  const getClientPaymentItems = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.GET,
+      `/v1/erp-service/receipts/get-client-payment-items`,
+      {
+        clientId: customer?.id,
+      }
+    );
+    if (res?.success) {
+      let data = res.data?.data?.data;
+      if (data?.length > 0) {
+        const newData = data?.map((item) => ({
+          ...item,
+          fixedPrice: item?.totalPrice?.toFixed(2) ?? item?.price?.toFixed(2),
+        }));
+        setClientPaymentsList(newData);
+        alertSuccessGetData();
+      }
+    } else {
+      alertFaultGetData();
+    }
+  }, [customer]);
   return {
     t,
     handleDocumentTypeChange,
@@ -531,6 +607,19 @@ const useTransactionJournalReport = ({
     onClickOpenCreateTransactionModal,
     onClickCloseCreateTransactionModal,
     isOpenCreateTransactionModal,
+
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+    isOpenAdjustmentsModal,
+    onClickCloseAdjustmentsModal,
+    onClickOpenAdjustmentsModal,
+
+    getClientPaymentItems,
+    clientPaymentsList,
+    setClientPaymentsList,
   };
 };
 

@@ -15,6 +15,9 @@ import { useEffect, useState } from "react";
 
 import CollapsibleTable from "./widgets/collapse-table";
 import { CreateNewTransactionModal } from "../ledger-report/widgets/create-transaction-modal";
+import { AdjustmentsLedgerReportModal } from "../ledger-report/widgets/adjustments-modal";
+import { GoMakeAutoComplate } from "@/components";
+import { useCustomerDropDownList } from "@/hooks";
 
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
@@ -61,6 +64,17 @@ const TransactionJournalReportWidget = ({
     onClickOpenCreateTransactionModal,
     onClickCloseCreateTransactionModal,
     isOpenCreateTransactionModal,
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+    isOpenAdjustmentsModal,
+    onClickCloseAdjustmentsModal,
+    onClickOpenAdjustmentsModal,
+    getClientPaymentItems,
+    clientPaymentsList,
+    setClientPaymentsList,
   } = useTransactionJournalReport({ reportType });
   const isAccountingTransaction =
     reportType === EReportType.AccountingTransaction;
@@ -74,6 +88,12 @@ const TransactionJournalReportWidget = ({
     }
   }, [pageNumber, pageSize]);
 
+  useEffect(() => {
+    if (customer?.id && isOpenAdjustmentsModal) {
+      getClientPaymentItems();
+    }
+  }, [customer, isOpenAdjustmentsModal]);
+
   return (
     <div
       style={
@@ -83,6 +103,30 @@ const TransactionJournalReportWidget = ({
       }
     >
       <HeaderTitle title={label} marginTop={"0px"} marginBottom={"0px"} />
+      {isAdjustmentsReport && (
+        <div
+          style={{
+            ...classes.date1FilterContainer,
+            width: "18%",
+            maxWidth: "200px",
+          }}
+        >
+          <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+          <GoMakeAutoComplate
+            key={customer?.id}
+            options={renderOptions()}
+            defaultFiltering={false}
+            onChangeTextField={checkWhatRenderArray}
+            getOptionLabel={(option: any) => `${option.name}`}
+            style={classes.textInputStyle}
+            placeholder={t("sales.quote.chooseCustomer")}
+            onChange={handleCustomerChange}
+            value={customer}
+            loading={isFetching}
+          />
+        </div>
+      )}
+
       {isAccountingTransaction && (
         <AccountingTransactionReportHeader
           handleDateChange={handleDatesChange}
@@ -107,6 +151,7 @@ const TransactionJournalReportWidget = ({
         onClickPrintCard={onClickPrintCard}
         onClickShowCard={onClickShowCard}
         onClickCreateNewTransaction={onClickOpenCreateTransactionModal}
+        onClickOpenAdjustmentsModal={onClickOpenAdjustmentsModal}
         reportType={reportType}
       />
       {reportType === EReportType.AdjustmentsReport && (
@@ -187,6 +232,15 @@ const TransactionJournalReportWidget = ({
       <CreateNewTransactionModal
         onCloseModal={onClickCloseCreateTransactionModal}
         openModal={isOpenCreateTransactionModal}
+      />
+      {/* !!here */}
+      <AdjustmentsLedgerReportModal
+        customerId={customer?.id}
+        onCloseModal={onClickCloseAdjustmentsModal}
+        openModal={isOpenAdjustmentsModal}
+        clientPaymentsList={clientPaymentsList}
+        getClientPaymentItems={getClientPaymentItems}
+        setClientPaymentsList={setClientPaymentsList}
       />
       {(isAccountingTransaction || isAdjustmentsReport) && (
         <GoMakePagination
