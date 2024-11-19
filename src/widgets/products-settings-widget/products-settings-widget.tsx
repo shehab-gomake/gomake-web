@@ -18,6 +18,7 @@ import Stack from "@mui/material/Stack";
 import { ShipmentsSetting } from "./widget/shipments-setting";
 import { AddShipmentModal } from "./widget/shipments-setting/add-shipment-modal";
 
+//!here permissions
 const ProductsSettingsWidget = () => {
   const { clasess } = useStyle();
   const router = useRouter();
@@ -35,6 +36,47 @@ const ProductsSettingsWidget = () => {
     getAllShipmentTypes,
   } = useProductsSettings();
 
+  const renderActionButton = () => {
+    switch (value) {
+      case EWidgetProductSettingsTabs.PRODUCT_MANAGMENT:
+        return (
+          <PermissionCheck userPermission={Permissions.ADD_PRODUCT}>
+            <AddButton
+              label={t("products.productManagement.admin.addProduct")}
+              onClick={() => setValue(EWidgetProductSettingsTabs.ADD_PRODUCT)}
+            />
+          </PermissionCheck>
+        );
+
+      case EWidgetProductSettingsTabs.SHIPMENTS_SETTING:
+        return (
+          <PermissionCheck userPermission={Permissions.SHOW_SHIPMENT_TYPES}>
+            <AddButton
+              label={t("shipmentTypes.addNewShipmentType")}
+              onClick={handleOpenModal}
+              style={{ textTransform: "inherit" }}
+            />
+          </PermissionCheck>
+        );
+
+      case EWidgetProductSettingsTabs.ADD_PRODUCT:
+        return (
+          <GomakePrimaryButton
+            style={clasess.gobackBtnStyle}
+            leftIcon={<LeftArrowIcon />}
+            onClick={() =>
+              setValue(EWidgetProductSettingsTabs.PRODUCT_MANAGMENT)
+            }
+          >
+            {t("products.productManagement.admin.goBack")}
+          </GomakePrimaryButton>
+        );
+
+      default:
+        return null;
+    }
+  };
+
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.mainHeadecontainer}>
@@ -49,38 +91,8 @@ const ProductsSettingsWidget = () => {
             })}
           </UsersSettingsTabs>
         </PermissionCheck>
-        {!router.query.productId && (
-          <>
-            {value === 3 ? (
-              <GomakePrimaryButton
-                style={clasess.gobackBtnStyle}
-                leftIcon={<LeftArrowIcon />}
-                onClick={() =>
-                  setValue(EWidgetProductSettingsTabs.PRODUCT_MANAGMENT)
-                }
-              >
-                {t("products.productManagement.admin.goBack")}
-              </GomakePrimaryButton>
-            ) : value === 1 ? (
-              <PermissionCheck userPermission={Permissions.SHOW_SHIPMENT_TYPES}>
-                <AddButton
-                  style={{ textTransform: "inherit" }}
-                  label={t("shipmentTypes.addNewShipmentType")}
-                  onClick={handleOpenModal}
-                />
-              </PermissionCheck>
-            ) : (
-              <PermissionCheck userPermission={Permissions.ADD_PRODUCT}>
-                <AddButton
-                  label={t("products.productManagement.admin.addProduct")}
-                  onClick={() =>
-                    setValue(EWidgetProductSettingsTabs.ADD_PRODUCT)
-                  }
-                />
-              </PermissionCheck>
-            )}
-          </>
-        )}
+
+        {!router.query.productId && renderActionButton()}
       </div>
       <CustomTabPanel
         value={value}
