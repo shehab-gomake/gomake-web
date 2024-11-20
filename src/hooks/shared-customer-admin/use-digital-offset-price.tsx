@@ -2723,7 +2723,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const parm = subProduct?.parameters?.find(
         (param) =>
           param.parameterId === parameter.id &&
-          param.actionIndex === parameter.actionIndex
+          param.actionIndex === parameter.actionIndex &&
+          param.sectionId === section.id && 
+          param.subSectionId === subSection.id
       );
       const myParameter = subSection?.parameters?.find(
         (p) =>
