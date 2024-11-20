@@ -2,7 +2,7 @@ import { useGomakeAxios } from "@/hooks";
 import { useDisplayProfitProfilesSignalr } from "@/hooks/signalr/use-display-profit-profiles-signalr";
 import { useGomakeRouter } from "@/hooks/use-gomake-router";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, updatePrintHousePriceApi, updateProfitProfileProductHiddenApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi, updateProfitProfileProductSelectedApi } from "@/services/api-service/products/product-endpoints";
+import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, updatePrintHousePriceApi, updateProfitProfileProductHiddenApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi, updateProfitProfileProductSelectedApi, updateSelectedPrintHousePricesApi } from "@/services/api-service/products/product-endpoints";
 import { useCallback, useEffect, useState } from "react";
 
 interface PricingProfileSetting {
@@ -314,6 +314,22 @@ const usePriceProfit = () => {
     });
   }, [selectedPricingProfileSetting])
 
+  const updateSelectedPrintHousePrices = useCallback(async (isNewPrice: boolean) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setIsUpdate(false);
+        setProducts(res?.data)
+      }
+      else {
+        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+      }
+    }
+    await updateSelectedPrintHousePricesApi(callApi, callBack, {
+      productId: selectedPricingProfileSetting?.productId,
+      isNewPrice,
+    });
+  }, [selectedPricingProfileSetting])
+
   
 
   return {
@@ -354,7 +370,8 @@ const usePriceProfit = () => {
     handleQuantity,
     updatePrintHousePrice,
     updateProfitProfileProductHidden,
-    updateProfitProfileProductSelected
+    updateProfitProfileProductSelected,
+    updateSelectedPrintHousePrices
   };
 };
 
