@@ -33,7 +33,9 @@ interface PriceProfitTableProps {
   handleQuantity: (index: number, value: string) => void;
   isUpdateQuantity: boolean;
   setIsUpdateQuantity: (value: boolean) => void;
-  updatePrintHousePrice: (data: any) => void;
+  updatePrintHousePrice: (data: any, isNewPrice: boolean, isCalculatedPrice?: boolean) => void;
+  updateProfitProfileProductHidden: (data: any, handleClose: () => void) => void;
+  updateProfitProfileProductSelected: (data: any) => void;
 }
 
 const PriceProfitTable = ({
@@ -58,7 +60,9 @@ const PriceProfitTable = ({
   handleQuantity,
   isUpdateQuantity,
   setIsUpdateQuantity,
-  updatePrintHousePrice
+  updatePrintHousePrice,
+  updateProfitProfileProductHidden,
+  updateProfitProfileProductSelected
 }: PriceProfitTableProps) => {
   const { classes } = useStyle()
   const [showAllProducts, setShowAllProducts] = useState(false);
@@ -125,6 +129,8 @@ const PriceProfitTable = ({
                   setActiveCell={setActiveCell}
                   handleHideProduct={handleHideProduct}
                   updatePrintHousePrice={updatePrintHousePrice}
+                  updateProfitProfileProductHidden={updateProfitProfileProductHidden}
+                  updateProfitProfileProductSelected={updateProfitProfileProductSelected}
                 />
               )
             )

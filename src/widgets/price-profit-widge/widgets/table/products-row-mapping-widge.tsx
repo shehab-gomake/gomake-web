@@ -22,7 +22,9 @@ const ProductsRowMappingTable = ({
   activeCell,
   setActiveCell,
   handleHideProduct,
-  updatePrintHousePrice
+  updatePrintHousePrice,
+  updateProfitProfileProductHidden,
+  updateProfitProfileProductSelected
 }) => {
   const { classes } = useStyle()
   const [anchorEl, setAnchorEl] = useState(null)
@@ -48,7 +50,10 @@ const ProductsRowMappingTable = ({
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
               checked={product.isSelected}
-              onChange={() => handleCheckboxChange(index)}
+              onChange={() => {
+                handleCheckboxChange(index)
+                updateProfitProfileProductSelected(product)
+              }}
             />
             {product.productName}
           </div>
@@ -91,6 +96,7 @@ const ProductsRowMappingTable = ({
               checked={!product?.isHidden}
               onChange={(e) => {
                 handleHideProduct(index, e.target.checked)
+                updateProfitProfileProductHidden(product,handleClose)
               }}
             />
           </div>

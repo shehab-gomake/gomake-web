@@ -1,7 +1,8 @@
 import { useGomakeAxios } from "@/hooks";
 import { useDisplayProfitProfilesSignalr } from "@/hooks/signalr/use-display-profit-profiles-signalr";
+import { useGomakeRouter } from "@/hooks/use-gomake-router";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, updatePrintHousePriceApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi } from "@/services/api-service/products/product-endpoints";
+import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, updatePrintHousePriceApi, updateProfitProfileProductHiddenApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi, updateProfitProfileProductSelectedApi } from "@/services/api-service/products/product-endpoints";
 import { useCallback, useEffect, useState } from "react";
 
 interface PricingProfileSetting {
@@ -15,650 +16,6 @@ interface PricingProfileSetting {
 const usePriceProfit = () => {
   const { callApi } = useGomakeAxios();
   const { } = useDisplayProfitProfilesSignalr()
-
-  // const data = {
-  //   "headers": [
-  //     {
-  //       "Qunatity": "10",
-  //       "Total": "100"
-  //     },
-  //     {
-  //       "Qunatity": "100",
-  //       "Total": "100"
-  //     },
-  //     {
-  //       "Qunatity": "300",
-  //       "Total": "100"
-  //     },
-  //     {
-  //       "Qunatity": "1000",
-  //       "Total": "100"
-  //     },
-  //     {
-  //       "Qunatity": "5000",
-  //       "Total": "100"
-  //     }
-  //   ],
-  //   "parameters": [
-  //     {
-  //       "ParameterName": "width",
-  //       "ParameterId": "",
-  //       "Type": "1",
-  //       "defaultValue": "100",
-  //       "values": []
-  //     },
-  //     {
-  //       "ParameterName": "length",
-  //       "ParameterId": "",
-  //       "Type": "1",
-  //       "defaultValue": "",
-  //       "values": []
-  //     },
-  //     {
-  //       "ParameterName": "Sheet cateogry",
-  //       "ParameterId": "",
-  //       "Type": "5",
-  //       "defaultValue": "",
-  //       "values": [
-  //         {
-  //           "id": "uncoted",
-  //           "label": "uncoted",
-  //           "isDefault": true
-  //         },
-  //         {
-  //           "id": "coted mate",
-  //           "label": "coted mate",
-  //           "isDefault": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ParameterName": "Sheet weight",
-  //       "ParameterId": "",
-  //       "Type": "5",
-  //       "defaultValue": "",
-  //       "values": [
-  //         {
-  //           "id": "100",
-  //           "label": "100",
-  //           "isDefault": false
-  //         }
-  //       ]
-  //     },
-  //   ],
-  //   "data": [
-  //     {
-  //       "ProductId": "3123123212",
-  //       "ProductName": "Paper + preprss",
-  //       "IsSelected": true,
-  //       "IsHidden": false,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "120",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": true
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "445ssww855",
-  //       "ProductName": "Folding",
-  //       "IsSelected": false,
-  //       "IsHidden": true,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "150",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "445855",
-  //       "ProductName": "Folding",
-  //       "IsSelected": false,
-  //       "IsHidden": false,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "150",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "3123123212",
-  //       "ProductName": "Paper + preprss",
-  //       "IsSelected": true,
-  //       "IsHidden": false,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "120",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": true
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "445ssww855",
-  //       "ProductName": "Folding",
-  //       "IsSelected": false,
-  //       "IsHidden": true,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "150",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "445855",
-  //       "ProductName": "Folding",
-  //       "IsSelected": false,
-  //       "IsHidden": false,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "150",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "3123123212",
-  //       "ProductName": "Paper + preprss",
-  //       "IsSelected": true,
-  //       "IsHidden": false,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "120",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": true
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "445ssww855",
-  //       "ProductName": "Folding",
-  //       "IsSelected": false,
-  //       "IsHidden": true,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "150",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "445855",
-  //       "ProductName": "Folding",
-  //       "IsSelected": false,
-  //       "IsHidden": false,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "150",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "3123123212",
-  //       "ProductName": "Paper + preprss",
-  //       "IsSelected": true,
-  //       "IsHidden": false,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "120",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": true
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "445ssww855",
-  //       "ProductName": "Folding",
-  //       "IsSelected": false,
-  //       "IsHidden": true,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "150",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "445855",
-  //       "ProductName": "Folding",
-  //       "IsSelected": false,
-  //       "IsHidden": false,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "150",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "3123123212",
-  //       "ProductName": "Paper + preprss",
-  //       "IsSelected": true,
-  //       "IsHidden": false,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "120",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": true
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "445ssww855",
-  //       "ProductName": "Folding",
-  //       "IsSelected": false,
-  //       "IsHidden": true,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "150",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     },
-  //     {
-  //       "ProductId": "445855",
-  //       "ProductName": "Folding",
-  //       "IsSelected": false,
-  //       "IsHidden": false,
-  //       "PricePerQuantity": [
-  //         {
-  //           "Qunatity": "10",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "100",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "300",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "1000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "100",
-  //           "IsNotCalcuated": false
-  //         },
-  //         {
-  //           "Qunatity": "5000",
-  //           "PrintHousePrice": "100",
-  //           "CalculatedPrice": "150",
-  //           "IsNotCalcuated": false
-  //         }
-  //       ]
-  //     }
-  //   ]
-  // }
   const [pricingProfileSetting, setPricingProfileSetting] = useState<PricingProfileSetting[]>([])
   const [selectedPricingProfileSetting, setSelectedPricingProfileSetting] = useState<PricingProfileSetting | null>(null)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -707,19 +64,17 @@ const usePriceProfit = () => {
   };
 
   const handleRestoreOriginalPrice = (data: any) => {
-    console.log('data1', data)
-    // Add logic for restoring the original price
+    updatePrintHousePrice(data, false, false)
     handleClose()
   };
 
   const handleUpdateNewPrice = (data: any) => {
-    console.log('data2', data)
-    // Add logic for updating the new price
+    updatePrintHousePrice(data, true,false)
     handleClose()
   };
 
   const handleReviewCalculation = (data: any) => {
-    console.log('data3', data)
+    window.open(`/products/create?profitsProfileRowId=${data?.rowId}&quantity=${data?.quantity}`, "_blank");
     // Add logic for reviewing the calculation
     handleClose()
   };
@@ -890,7 +245,7 @@ const usePriceProfit = () => {
     const callBack = (res) => {
       if (res?.success) {
         setIsUpdateQuantity(false);
-        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+        setProducts(res?.data)
       }
       else {
         setIsUpdateQuantity(false);
@@ -903,12 +258,11 @@ const usePriceProfit = () => {
     });
   }, [products, selectedPricingProfileSetting]);
 
-  const updatePrintHousePrice = useCallback(async (data: any) => {
-    console.log("data", data)
+  const updatePrintHousePrice = useCallback(async (data: any, isNewPrice: boolean, isCalculatedPrice?: boolean) => {
     const callBack = (res) => {
       if (res?.success) {
         setIsUpdate(false);
-        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+        setProducts(res?.data)
       }
       else {
         setIsUpdate(false);
@@ -920,10 +274,47 @@ const usePriceProfit = () => {
       productId: selectedPricingProfileSetting?.productId,
       subProductId: data?.productId,
       quantity: data?.quantity,
-      printHousePrice: Number(data?.calculatedPrice),
-      rowId: data?.rowId
+      printHousePrice:isCalculatedPrice? Number(data?.calculatedPrice):Number(data?.printHousePrice),
+      rowId: data?.rowId,
+      isNewPrice:isNewPrice
     });
   }, [selectedPricingProfileSetting, newPrintHousePrice]);
+
+  const updateProfitProfileProductHidden = useCallback(async (data: any, handleClose: () => void) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setIsUpdate(false);
+        setProducts(res?.data)
+        handleClose()
+      }
+      else {
+        handleClose()
+        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+      }
+    }
+    await updateProfitProfileProductHiddenApi(callApi, callBack, {
+      productId: selectedPricingProfileSetting?.productId,
+      rowId: data?.rowId,
+    });
+  }, [selectedPricingProfileSetting])
+
+  const updateProfitProfileProductSelected = useCallback(async (data: any, ) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setIsUpdate(false);
+        setProducts(res?.data)
+      }
+      else {
+        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+      }
+    }
+    await updateProfitProfileProductSelectedApi(callApi, callBack, {
+      productId: selectedPricingProfileSetting?.productId,
+      rowId: data?.rowId,
+    });
+  }, [selectedPricingProfileSetting])
+
+  
 
   return {
     open,
@@ -961,7 +352,9 @@ const usePriceProfit = () => {
     updateProfitProfileProductParameter,
     onBlurQuantityChange,
     handleQuantity,
-    updatePrintHousePrice
+    updatePrintHousePrice,
+    updateProfitProfileProductHidden,
+    updateProfitProfileProductSelected
   };
 };
 

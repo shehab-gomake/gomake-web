@@ -49,7 +49,7 @@ const PriceProfitRowMappingTable = ({
             isTwoDigit
             onBlur={() => {
               // onBlurPriceChange();
-              updatePrintHousePrice({ ...product, ...price })
+              updatePrintHousePrice({ ...product, ...price }, false,true)
               setActiveCell(null);
             }}
             isUpdate={(isUpdate && isActive) && price.calculatedPrice !== null}
