@@ -1,6 +1,5 @@
 import {useGomakeAxios} from "@/hooks";
 import {getEmployeesWorkingHoursApi} from "@/services/api-service/users/users-api";
-import {useState} from "react";
 import {
     IEmployeeDefaultWorkingHours,
     IEmployeeExceptionWorkingHours,
@@ -15,7 +14,7 @@ import {
 const useEmployeeWorkingHours = () => {
     const {callApi} = useGomakeAxios();
 
-    const [employeesState, setEmployeesState] = useRecoilState<IEmployeeWorkingHours[]>(employeesWorkingHoursState);
+    const [, setEmployeesState] = useRecoilState<IEmployeeWorkingHours[]>(employeesWorkingHoursState);
     const employees = useRecoilValue(employeesWorkingHoursSelector);
     const getEmployees = async () => {
         const callBack = (res) => {

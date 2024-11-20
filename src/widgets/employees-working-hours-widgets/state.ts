@@ -1,5 +1,5 @@
 import {atom, selector} from "recoil";
-import {IEmployeeWorkingHours} from "@/widgets/employees-working-hours-widgets/interface";
+import {IEmployeeWorkingHours, IWorkingHoursMachine} from "@/widgets/employees-working-hours-widgets/interface";
 
 export const employeeWorkingHoursSearchState = atom<string>({
     default: '',
@@ -19,4 +19,9 @@ export const employeesWorkingHoursSelector = selector({
         const employees = get(employeesWorkingHoursState);
         return search ? employees.filter(employee => employee.firstname.includes(search) || employee.lastname.includes(search)) : employees
     }
-})
+});
+
+export const machinesState = atom<IWorkingHoursMachine[]>({
+    key: 'employeeHoursMachinesListState',
+    default: []
+});

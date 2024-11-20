@@ -13,6 +13,7 @@ const GET_ALL_USERS_CAN_APPROVE_QUOTE_URL = '/v1/crm-service/employee/get-all-us
 const GET_EMPLOYEES_WORKING_HOURS_URL = '/v1/crm-service/employee/get-employees-working-hours';
 const UPDATE_EMPLOYEE_DEFAULT_WORKING_HOURS_URL = '/v1/crm-service/employee/update-default-employee-working-hours/';
 const UPDATE_EMPLOYEE_DAY_WORKING_HOURS_URL = '/v1/crm-service/employee/update-employee-day-working-hours';
+const RESET_EMPLOYEE_DAY_WORKING_HOURS_URL = '/v1/crm-service/employee/reset-employee-day-working-hours';
 
 const getAllUsersApi: ICallAndSetData = async (callApi, setState) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_USERS_URL, setState)
@@ -47,6 +48,9 @@ const updateEmployeesWorkingHoursApi: ICallAndSetData = async (callApi, setState
 const updateEmployeesDayWorkingHoursApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_EMPLOYEE_DAY_WORKING_HOURS_URL, setState, data);
 }
+const resetEmployeesDayWorkingHoursApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, RESET_EMPLOYEE_DAY_WORKING_HOURS_URL, setState, data);
+}
 
 
 export {
@@ -59,5 +63,6 @@ export {
     getAllUsersCanApproveQuoteApi,
     getEmployeesWorkingHoursApi,
     updateEmployeesWorkingHoursApi,
-    updateEmployeesDayWorkingHoursApi
+    updateEmployeesDayWorkingHoursApi,
+    resetEmployeesDayWorkingHoursApi
 };

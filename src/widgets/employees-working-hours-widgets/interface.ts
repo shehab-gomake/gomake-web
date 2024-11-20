@@ -15,9 +15,18 @@ export interface IEmployeeDefaultWorkingHours {
 export interface IStartEndTime {
     startTime: Date;
     endTime: Date;
+    machines: string[];
 }
 
 export interface IEmployeeExceptionWorkingHours {
+    id: string;
     date: Date;
     times: IStartEndTime[]
+}
+
+export interface IWorkingHoursMachine {
+    label: string;
+    value: string;
+    employees?: string[];
+    minManpowerOperation: number;
 }
