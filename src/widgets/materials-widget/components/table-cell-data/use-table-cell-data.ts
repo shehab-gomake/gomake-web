@@ -5,12 +5,20 @@ import {updatePrintHouseMaterialPropApi} from "@/services/api-service/materials/
 import {updateMaterialPropApi} from "@/services/api-service/materials/materials-endpoints";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { updateProfitProfileProductMaterialApi } from "@/services/api-service/products/product-endpoints";
 
 const useTableCellData = (isAdmin:boolean) => {
     const {callApi} = useGomakeAxios();
     const [data, setData] = useRecoilState(materialCategoryDataState);
     const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
+    const [openPriceModal, setOpenPriceModal] = useState<boolean>(false);
+    const onClickClosePriceModal = () => {
+      setOpenPriceModal(false);
+    };
+    const onClickOpenPriceModal = () => {
+      setOpenPriceModal(true);
+    };
     const { query } = useRouter();
     const { materialType, materialCategory } = query;
     const supplierId = useRecoilValue(selectedSupplierIdState);
@@ -40,6 +48,9 @@ const useTableCellData = (isAdmin:boolean) => {
                         supplierId
                     )
                 }
+                if(key.includes("price")){
+                    onClickOpenPriceModal()
+                }
               
             }
         }
@@ -61,10 +72,26 @@ const useTableCellData = (isAdmin:boolean) => {
         
     }
 
+    const updateProfitProfileProductHidden = useCallback(async (isUpdateAndFixPrice:boolean) => {
+        const callBack = (res) => {
+          if (res?.success) {
+            onClickClosePriceModal()
+          }
+         
+        }
+        await updateProfitProfileProductMaterialApi(callApi, callBack, {
+            key: materialCategory?.toString(),
+            isUpdateAndFixPrice: isUpdateAndFixPrice,
+        });
+      }, [])
+      console.log(materialType)
     return {
         updateCellData,
         machinesOptions,
         clientsOptions,
+        openPriceModal,
+        onClickClosePriceModal,
+        updateProfitProfileProductHidden,
     }
 }
 
