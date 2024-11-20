@@ -7,12 +7,13 @@ import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { updateProfitProfileProductMaterialApi } from "@/services/api-service/products/product-endpoints";
+import { openPriceModalState } from "@/store";
 
 const useTableCellData = (isAdmin:boolean) => {
     const {callApi} = useGomakeAxios();
     const [data, setData] = useRecoilState(materialCategoryDataState);
     const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
-    const [openPriceModal, setOpenPriceModal] = useState<boolean>(false);
+    const [openPriceModal, setOpenPriceModal] = useRecoilState<boolean>(openPriceModalState);
     const onClickClosePriceModal = () => {
       setOpenPriceModal(false);
     };
@@ -84,7 +85,6 @@ const useTableCellData = (isAdmin:boolean) => {
             isUpdateAndFixPrice: isUpdateAndFixPrice,
         });
       }, [])
-      console.log(materialType)
     return {
         updateCellData,
         machinesOptions,
