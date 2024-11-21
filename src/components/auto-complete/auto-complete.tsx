@@ -138,6 +138,7 @@ const GoMakeAutoComplate = ({
   PaperComponent?: any;
   popupIcon?: any;
   withArrow?: boolean;
+  renderGroup?: (params: any) => React.ReactNode;
   groupBy?: (option: any) => string;
   loading?: boolean; // Add loading prop
   defaultFiltering?: boolean;
