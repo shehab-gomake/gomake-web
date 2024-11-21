@@ -52,7 +52,7 @@ const PriceProfitHeaderWidget = ({
         <GomakePrimaryButton
           style={classes.printBtn}
           leftIcon={<PrintIcon />}
-          rightIcon={<ArrowDownNewIcon stroke="#fff" />}
+          rightIcon={<ArrowDownNewIcon color="#fff" />}
           onClick={handleOpenPrint}
         >{t("Print")}
         </GomakePrimaryButton>
