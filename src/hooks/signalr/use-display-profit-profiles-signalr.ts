@@ -12,8 +12,9 @@ const useDisplayProfitProfilesSignalr = ({getAllProfitProfileProductByProductId,
     useEffect(() => {
         if (connection) {
             connection.on("Show", () => {
-                getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
-                console.log("Updataaaaaaaaaaaaaaaae")
+                if(selectedPricingProfileSetting?.productId){
+                    getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+                }
             });
         }
     }, [connection]);
