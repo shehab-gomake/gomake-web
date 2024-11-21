@@ -37,6 +37,7 @@ export type ProfitsPricingTables = {
   profitValue: number;
   pricingBy: number;
   transitionType: number;
+  additionType: number;
 };
 
 export type ActionProfitRowChartData = {
