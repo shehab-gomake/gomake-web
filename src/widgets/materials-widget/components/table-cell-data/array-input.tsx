@@ -28,7 +28,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
     setOpenDeleteTableRowModal(true);
   };
 
-  const { updateCellData, openPriceModal, onClickClosePriceModal, updateProfitProfileProductHidden } = useTableCellData(isAdmin);
+  const { updateCellData,} = useTableCellData(isAdmin);
   const onClick = (index) => {
     if (isEditable) {
       setIsUpdate(index);
@@ -126,21 +126,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
         }}
       />
 
-<GoMakeDeleteModal
-        openModal={openPriceModal}
-        onClose={onClickClosePriceModal}
-        hideIcon
-        title={t("this update will effects the profit profile")}
-        subTitle={t("do you want to fix the profits to save the prices in the profit profile ?")}
-        yesBtn={t("Yes fix the profits")}
-        cancelBtn={t("No don't fix the profits")}
-        onClickDelete={async () => {
-          updateProfitProfileProductHidden(true)
-        }}
-        onClickCancel={async () => {
-          updateProfitProfileProductHidden(false)
-        }}
-      />
+
     </>
 
   );
