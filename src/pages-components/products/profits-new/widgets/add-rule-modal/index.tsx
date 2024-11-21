@@ -77,7 +77,7 @@ const AddRuleModal = ({
     actionEmployeeList,
     isFetching,
     getConditionText,
-    setAdditionType
+    setAdditionType,
   } = useAddRuleModal({
     typeExceptionSelected,
     selectedPricingBy,
@@ -91,7 +91,7 @@ const AddRuleModal = ({
     filterData,
     openModal,
   });
-
+  console.log("rules", rules)
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
@@ -109,11 +109,14 @@ const AddRuleModal = ({
     const selectedParameters = parametersStateValue?.find(
       (parameter) => parameter?.id === selectedProperties?.propertyId
     );
+    console.log("ssssss", { selectedOutputs, selectedParameters })
+
     setSelectedOutputs(selectedOutputs);
     setSelectedParameters(selectedParameters);
   }, [selectedProperties, Outputs, parametersStateValue]);
 
   const _renderInptsForProperties = () => {
+
     if (selectedProperties?.ruleType === 0) {
       switch (selectedOutputs?.valueType) {
         case EValueType.MACHINE:
@@ -233,8 +236,8 @@ const AddRuleModal = ({
               </div>
               <GoMakeAutoComplate
                 options={[
-                  { label: "Yes", value: "true" },
-                  { label: "No", value: "false" },
+                  { label: t("modal.yes"), value: true },
+                  { label: t("modal.no"), value: false },
                 ]}
                 placeholder={t("products.profits.exceptions.selectValue")}
                 style={clasess.autoComplateStyle}
@@ -346,8 +349,8 @@ const AddRuleModal = ({
               </div>
               <GoMakeAutoComplate
                 options={[
-                  { label: "Yes", value: "true" },
-                  { label: "No", value: "false" },
+                  { label: t("modal.yes"), value: true },
+                  { label: t("modal.no"), value: false },
                 ]}
                 placeholder={t("products.profits.exceptions.selectValue")}
                 style={clasess.autoComplateStyle}
@@ -580,6 +583,7 @@ const AddRuleModal = ({
                           };
                         })}
                         getOptionLabel={(option: any) => `${option.name}`}
+                        defaultFiltering={false}
                         onChangeTextField={checkWhatRenderArray}
                         style={clasess.dropDownListContainer}
                         placeholder={t("sales.quote.chooseCustomer")}
@@ -649,6 +653,40 @@ const AddRuleModal = ({
                             handleChange(index, "statement", e.target.value)
                           }
                         />
+                      </div>
+                    )}
+                  {rule.category?.id === "Property output" &&
+                    rules[index]?.statement2?.valueType === 5 && (
+                      <div>
+                        <label style={clasess.inputLable}>
+                          {t("properties.statment")}
+                        </label>
+                        <GoMakeAutoComplate
+                          options={[
+                            { label: t("modal.yes"), value: true },
+                            { label: t("modal.no"), value: false },
+                          ]}
+                          style={clasess.dropDownListContainer}
+                          placeholder={t("properties.statment")}
+                          value={rule.statement}
+                          onChange={(e, value) => {
+                            // handleChange(index, "statement2", value);
+                            handleChange(index, "statement", value);
+                          }}
+                        />
+                        {/* <GomakeTextInput
+                          key={
+                            selectedCategories?.id +
+                            index +
+                            selectedStatment2?.id
+                          }
+                          style={clasess.textInputContainer}
+                          placeholder={t("properties.statment")}
+                          value={rule.statement}
+                          onChange={(e) =>
+                            handleChange(index, "statement", e.target.value)
+                          }
+                        /> */}
                       </div>
                     )}
                   {rule.category?.id === "Products" && (
@@ -880,7 +918,9 @@ const AddRuleModal = ({
                 </div>
                 <GomakeTextInput
                   type="number"
-                  placeholder={t("products.profits.exceptions.additionalProfit")}
+                  placeholder={t(
+                    "products.profits.exceptions.additionalProfit"
+                  )}
                   onChange={(e: any) => {
                     setAdditionalProfit(e.target.value);
                   }}

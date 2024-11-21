@@ -319,7 +319,7 @@ const useNewProfits = () => {
 
     const additionalProfitHeaders = [
       pricingLabel,
-      unitPriceLabel,
+      selectedPricingType === EPricingBy.COST ? profitHeader : unitPriceLabel,
       `${totalPriceLabel} ${ProfitCurrency}`,
       `${totalPriceWithAdditionProfit} (${profitValue})`,
 
@@ -938,6 +938,10 @@ const useNewProfits = () => {
         alertSuccessDelete();
         getProfitsPricingTables();
         setSelectedActionProfitRow(null);
+        const defaultRow = profitsPricingTables?.find((item) => {
+          return item.exceptionType === ETypeException.DEFAULT;
+        });
+        setSelectedPricingTableItems(defaultRow);
       } else {
         alertFaultDelete();
       }

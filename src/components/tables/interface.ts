@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-export type TABLE_TYPE = "PrimaryTable " | "ClassicTable";
+export type TABLE_TYPE = "PrimaryTable " | "ClassicTable" | "OddEvenTable";
 
 export interface ITableProps {
   rows: ReactNode[][];
@@ -11,8 +11,8 @@ export interface ITableProps {
   withoutShadow?: boolean;
   dataTour?: string;
   isLastItemTotal?: boolean;
-  columnWidths?:string[];
-  onDragEnd?:any;
+  columnWidths?: string[];
+  onDragEnd?: any;
 }
 
 export interface ISecondaryTableProps {
@@ -22,7 +22,7 @@ export interface ISecondaryTableProps {
   stickyFirstCol?: boolean;
   maxHeight?: any;
   onScrolledBottom?: () => void;
-  children?: any
+  children?: any;
 }
 
 export interface IAccordionTable {
@@ -45,7 +45,6 @@ interface TableRowCell {
   fontStyle: number;
 }
 
-
 export interface ITableForOutputsProps {
   headers: TableHeader[];
   rows: TableRowCell[][];
@@ -56,5 +55,5 @@ export interface ITableForOutputsProps {
   withoutShadow?: boolean;
   dataTour?: string;
   isLastItemTotal?: boolean;
-  columnWidths?:string[];
+  columnWidths?: string[];
 }

@@ -45,8 +45,8 @@ const useStyle = () => {
       },
       textInputStyle: {
         width: "100%",
+        height: "40px",
         border: "none",
-        height: 45,
       },
       filterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),

@@ -7,9 +7,13 @@ import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
 import { DateFormatterDDMMYYYY } from "@/utils/adapter";
-import { GoMakeAlertModal, GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
+import {
+  GoMakeAlertModal,
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+} from "@/components";
 import { HeaderTitle } from "@/widgets";
-import { BudgetIcon, DotIcon, SettingNewIcon } from "@/icons";
+import { ArrowDownNewIcon, BudgetIcon, DotIcon, SettingNewIcon } from "@/icons";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useQuoteNew } from "./use-quote";
 import { quoteConfirmationState, quoteItemState } from "@/store";
@@ -259,6 +263,7 @@ const QuoteNewPageWidget = ({
     moveOrderToReady,
     navigate,
     updateDocumentBudget,
+    selectedBudget, setSelectedBudget
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -281,11 +286,12 @@ const QuoteNewPageWidget = ({
       onClickOpenReferenceModal();
     }
   };
-  const [selectedBudget, setSelectedBudget] = useState(null);
 
   useEffect(() => {
     if (quoteState?.budgetId) {
-      const budget = allClientActiveBudgets.find(budget => budget.id === quoteState.budgetId);
+      const budget = allClientActiveBudgets.find(
+        (budget) => budget.id === quoteState.budgetId
+      );
       setSelectedBudget(budget);
     }
   }, [quoteState, allClientActiveBudgets]);
@@ -406,50 +412,58 @@ const QuoteNewPageWidget = ({
 
                 {!isQuoteConfirmation && (
                   <div style={classes.settingsStatusContainer}>
-                    {(documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order || documentType === DOCUMENT_TYPE.deliveryNote) && (
-                      <GoMakeAutoComplate
-                        options={allClientActiveBudgets}
-                        style={{ width: 185, height: 36, border: "none", borderRadius: 8, ...FONT_FAMILY.Lexend(500, 14) }}
-                        placeholder={t("sales.quote.budget")}
-                        getOptionLabel={(option) => `${option.name} - ${option.amount}`}
-                        withArrow={true}
-                        key={selectedBudget?.id}
-                        value={selectedBudget}
-                        onChange={(e, value) => {
-                          if (value) {
-                            updateDocumentBudget(value);
+                    {(documentType === DOCUMENT_TYPE.quote ||
+                      documentType === DOCUMENT_TYPE.order ||
+                      documentType === DOCUMENT_TYPE.deliveryNote) &&
+                      allClientActiveBudgets.length !== 0 && (
+                        <GoMakeAutoComplate
+                          startIcon={<BudgetIcon width={20} height={20} />}
+                          arrowIcon={<ArrowDownNewIcon color="#344054" />}
+                          options={allClientActiveBudgets}
+                          style={classes.budgetList}
+                          placeholder={t("sales.quote.budget")}
+                          getOptionLabel={(option) =>
+                            `${option.name} - ${option.amount}`
                           }
-                        }}
-                        renderOption={(props: any, option: any) => (
-                          <div
-                            {...props}
-                            style={{
-                              display: "flex",
-                              flexDirection: "row",
-                              alignItems: "center",
-                              justifyContent: "space-between",
-                              padding: 10,
-                              cursor: "pointer",
-                            }}
-                          >
+                          withArrow={true}
+                          key={selectedBudget?.id}
+                          value={selectedBudget}
+                          onChange={(e, value) => {
+                            if (value) {
+                              updateDocumentBudget(value);
+                            }
+                          }}
+                          renderOption={(props: any, option: any) => (
                             <div
+                              {...props}
                               style={{
                                 display: "flex",
+                                flexDirection: "row",
                                 alignItems: "center",
-                                gap: 10,
-                                ...FONT_FAMILY.Lexend(600, 14),
+                                justifyContent: "space-between",
+                                padding: 10,
+                                cursor: "pointer",
                               }}
                             >
-                              <BudgetIcon width={16} height={16} />
-                              {option.name}
+                              <div
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  gap: 10,
+                                  ...FONT_FAMILY.Lexend(600, 14),
+                                }}
+                              >
+                                <BudgetIcon width={16} height={16} />
+                                {option.name}
+                              </div>
+                              <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>
+                                {option.amount}
+                                {getCurrencyUnitText(quoteItemValue?.currency)}
+                              </div>
                             </div>
-                            <div style={{ ...FONT_FAMILY.Lexend(600, 14) }}>
-                              {option.amount} {getCurrencyUnitText(quoteItemValue?.currency)}
-                            </div>
-                          </div>
-                        )}
-                      />
-                    )}
+                          )}
+                        />
+                      )}
                     <>
                       {quoteItemValue?.signImageUrl &&
                         quoteItemValue?.signerName ? (
@@ -482,7 +496,6 @@ const QuoteNewPageWidget = ({
                         <SettingNewIcon />
                       </IconButton>
                     )}
-
                   </div>
                 )}
               </div>
@@ -687,6 +700,7 @@ const QuoteNewPageWidget = ({
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendReceiptToClient={onClickSendReceiptToClient}
               />
             </div>
           )}

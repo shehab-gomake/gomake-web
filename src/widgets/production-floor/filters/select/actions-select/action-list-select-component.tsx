@@ -17,8 +17,6 @@ import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { CollapseOptionComponent } from "@/widgets/production-floor/filters/select/actions-select/collapse-option-component";
 import { useStyle } from "./style";
 import { DepartmentModal } from "@/widgets/production-floor/header/components/groups/department-modal";
-import { SaveIcon } from "@/widgets/production-floor/header/components/icons/save-icon";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import styled from "styled-components";
 
 interface IProps {
@@ -51,10 +49,12 @@ const ActionsListComponent = ({
     handleClick,
     handleClickSave,
     createBoardMissionStationFilterGroup,
+    handleCloseList,
+    toggleCollapse,
+    openCollapse,
   } = useActionsList({ source, onClickApply, filterGroups, setFilterGroups });
 
   const { classes } = useStyle({ source });
-  const { secondColor } = useGomakeTheme();
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
@@ -131,7 +131,7 @@ const ActionsListComponent = ({
         </Button>
       )}
       {open && (
-        <ClickOutside exceptionRef={buttonRef} onClick={() => setOpen(false)}>
+        <ClickOutside exceptionRef={buttonRef} onClick={handleCloseList}>
           <Paper sx={classes.paperStyle}>
             <div style={{ minWidth: "280px" }}>
               <FormGroup>
@@ -151,6 +151,8 @@ const ActionsListComponent = ({
                         key={index + option.actionId + option.actionName}
                         onSelectStation={onSelectStation}
                         onSelectMachine={onSelectMachine}
+                        open={openCollapse[option.actionId] || false}
+                        onToggleCollapse={() => toggleCollapse(option.actionId)}
                         {...option}
                       />
                     );
@@ -170,11 +172,6 @@ const ActionsListComponent = ({
                 >
                   {t("productionFloor.apply")}
                 </SecondaryButton>
-                {source === Source.PRODUCTION_FLOOR && (
-                  <div onClick={handleClickSave} style={classes.iconContainer}>
-                    <SaveIcon color={secondColor(500)} />
-                  </div>
-                )}
               </div>
             </div>
           </Paper>

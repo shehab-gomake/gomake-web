@@ -35,12 +35,21 @@ const PrimaryTableCell = styled(TableCell)(() => {
 });
 
 const PrimaryTableRow = styled(TableRow)(() => {
+  return {
+    // hide last border
+    "&:last-child td, &:last-child th": {
+      border: 0,
+    },
+  };
+});
+
+const OddEvenTableRow = styled(TableRow)(() => {
   const { neutralColor } = useGomakeTheme();
   return {
     "&:nth-of-type(even)": {
-      backgroundColor: neutralColor(100),
+      // backgroundColor: `${neutralColor(100)} !important`,
+      backgroundColor: `#ececec8a !important`,
     },
-    // hide last border
     "&:last-child td, &:last-child th": {
       border: 0,
     },
@@ -75,21 +84,21 @@ const ClassicTableRow = styled(TableRow)(() => {
 
 const StyledTableContainer = styled(TableContainer)(() => ({
   // Enable horizontal scrolling
-  overflowX: 'auto',
+  overflowX: "auto",
 
-  '&::-webkit-scrollbar': {
-    width: '10px',
-    height: '10px', // For horizontal scrollbar height
+  "&::-webkit-scrollbar": {
+    width: "10px",
+    height: "10px", // For horizontal scrollbar height
   },
-  '&::-webkit-scrollbar-track': {
-    background: '#f1f1f1',
+  "&::-webkit-scrollbar-track": {
+    background: "#f1f1f1",
   },
-  '&::-webkit-scrollbar-thumb': {
-    background: '#CCCDCF',
-    borderRadius: '10px',
+  "&::-webkit-scrollbar-thumb": {
+    background: "#CCCDCF",
+    borderRadius: "10px",
   },
-  '&::-webkit-scrollbar-thumb:hover': {
-    cursor: 'pointer',
+  "&::-webkit-scrollbar-thumb:hover": {
+    cursor: "pointer",
   },
 }));
 
@@ -103,47 +112,68 @@ const PrimaryTable = ({
   withoutShadow,
   columnWidths,
   dataTour,
-  isLastItemTotal = false
+  isLastItemTotal = false,
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
   const TableCell =
     variant === "ClassicTable" ? ClassicTableCell : PrimaryTableCell;
+
   const TableRow =
-    variant === "ClassicTable" ? ClassicTableRow : PrimaryTableRow;
+    variant === "ClassicTable"
+      ? ClassicTableRow
+      : variant === "OddEvenTable"
+      ? OddEvenTableRow
+      : PrimaryTableRow;
+
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden", boxShadow: withoutShadow && "none", height: "100%" }}>
-      <StyledTableContainer
-        style={classes.tableContainer}>
+    <Paper
+      sx={{
+        width: "100%",
+        overflow: "hidden",
+        boxShadow: withoutShadow && "none",
+        height: "100%",
+      }}
+    >
+      <StyledTableContainer style={classes.tableContainer}>
         <Table data-tour={dataTour} stickyHeader={stickyHeader}>
           <TableHead>
-            <TableRow >
+            <TableRow>
               {headers?.map((header, index) => {
                 if (index === 0 && stickyHeader) {
-                  return (
-                    <TableCell align={"center"} >{header}</TableCell>
-                  );
+                  return <TableCell align={"center"}>{header}</TableCell>;
                 } else {
                   return <TableCell align={"center"}>{header}</TableCell>;
                 }
               })}
             </TableRow>
           </TableHead>
-          <TableBody  >
+          <TableBody>
             {rows?.map((row, index) => (
-              <TableRow key={`row_${index}`}
-                style={{ backgroundColor: isLastItemTotal && index === rows.length - 1 ? "#EFDDFF" : "inherit" }} >
+              <TableRow
+                key={`row_${index}`}
+                style={{
+                  backgroundColor:
+                    isLastItemTotal && index === rows.length - 1
+                      ? "#EFDDFF"
+                      : "inherit",
+                }}
+              >
                 {row.map((cell, index) => {
                   const cellStyle = columnWidths
                     ? {
-                      width: columnWidths?.[index]
-
-                    } : {};
+                        width: columnWidths?.[index],
+                      }
+                    : {};
                   if (index === 0 && stickyFirstCol) {
                     return <TableCell style={classes.sticky}>{cell}</TableCell>;
                   } else {
-                    return <TableCell align={"center"} style={cellStyle}>{cell}</TableCell>;
+                    return (
+                      <TableCell align={"center"} style={cellStyle}>
+                        {cell}
+                      </TableCell>
+                    );
                   }
                 })}
               </TableRow>

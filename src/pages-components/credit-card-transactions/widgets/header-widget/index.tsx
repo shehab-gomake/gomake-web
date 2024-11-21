@@ -35,13 +35,13 @@ const CreditCardTransactionsReportHeaderWidget = ({
           title={t("creditCardTransactions.creditCardTransactions")}
         />
       </div>
-
       <div style={classes.filtersContainer}>
         <div style={classes.date2FilterContainer}>
           <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
           <GoMakeAutoComplate
             key={customer?.id}
             options={renderOptions()}
+            defaultFiltering={false}
             onChangeTextField={checkWhatRenderArray}
             getOptionLabel={(option: any) => `${option.name}`}
             style={classes.textInputStyle}

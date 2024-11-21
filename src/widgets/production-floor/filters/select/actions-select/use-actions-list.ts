@@ -282,8 +282,25 @@ const useActionsList = ({
       ...stationFilterGroup,
       stations: actionsMachinesIds,
     });
-    setOpen(false);
+    //setOpen(false);
     onClickOpenDepartmentModal();
+    setOpenCollapse({});
+  };
+
+  const [openCollapse, setOpenCollapse] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+
+  const toggleCollapse = (actionId: string) => {
+    setOpenCollapse((prev) => ({
+      ...prev,
+      [actionId]: !prev[actionId],
+    }));
+  };
+
+  const handleCloseList = () => {
+    setOpen(false);
+    setOpenCollapse({}); // Collapse all when the list is closed
   };
 
   return {
@@ -306,6 +323,9 @@ const useActionsList = ({
     createBoardMissionStationFilterGroup,
     handleClick,
     handleClickSave,
+    handleCloseList,
+    toggleCollapse,
+    openCollapse,
   };
 };
 

@@ -45,6 +45,7 @@ const TransferBalanceModal = ({
             <GoMakeAutoComplate
               key={customer?.id}
               options={renderOptions()}
+              defaultFiltering={false}
               onChangeTextField={checkWhatRenderArray}
               getOptionLabel={(option: any) => `${option.name}`}
               style={classes.textInputStyle}

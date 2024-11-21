@@ -158,21 +158,27 @@ export const toRgba = (color: string, opacity: number) => {
   return rgbaColor;
 };
 
-export const checkIfDieCutOrDieKissCutExists = (subProducts) => {
-  for (const subProduct of subProducts) {
-    if (subProduct.parameters) {
-      const dieCutParam = subProduct.parameters.find(
-        (param) =>
-          param.parameterCode === "DieCut" ||
-          param.parameterCode === "DieKissCut" ||
-          param.parameterCode === "DieStamp"
-      );
-      if (dieCutParam) {
-        return true;
+export const checkIfDieCutOrDieKissCutExists = (subProducts, isParameterSettings) => {
+  if (isParameterSettings) {
+    return true;
+  }
+  else{
+    for (const subProduct of subProducts) {
+      if (subProduct.parameters) {
+        const dieCutParam = subProduct.parameters.find(
+          (param) =>
+            param.parameterCode === "DieCut" ||
+            param.parameterCode === "DieKissCut" ||
+            param.parameterCode === "DieStamp"
+        );
+        if (dieCutParam) {
+          return true;
+        }
       }
     }
+    return false;
   }
-  return false;
+  
 };
 
 export const checkArrayNotEmptyOrPhoneNotEmpty = (array) => {

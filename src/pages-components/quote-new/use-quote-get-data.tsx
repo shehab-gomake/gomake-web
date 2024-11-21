@@ -14,7 +14,6 @@ import {
 import { useCallback, useState } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { currencyUnitState } from "@/store/currency-units";
-import { getAllShipmentTypesApi } from "@/services/api-service/shipmentTypes/get-shipment-types-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 import { EHttpMethod } from "@/services/api-service/enums";
@@ -29,6 +28,7 @@ import {
   getClientPaymentItemsApi,
   getReceiptByIdApi,
 } from "@/services/api-service/generic-doc/receipts-api";
+import { getAllShipmentTypesApi } from "@/services/api-service/shipmentTypes/shipment-type-api";
 
 const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   const { callApi } = useGomakeAxios();
@@ -184,10 +184,10 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
                     style={
                       _childsDocumentItemsMapping != null
                         ? {
-                          height: "100%",
-                          overflowY: "scroll",
-                          paddingRight: 5,
-                        }
+                            height: "100%",
+                            overflowY: "scroll",
+                            paddingRight: 5,
+                          }
                         : { height: 36, overflowY: "scroll", paddingRight: 5 }
                     }
                   >
@@ -235,11 +235,11 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         const result = await getAllClientAddress();
         isUpdate
           ? updateClientAddress(
-            result.find((item) => item.id === res.data.data.result)
-          )
+              result.find((item) => item.id === res.data.data.result)
+            )
           : onClickAddAddress(
-            result.find((item) => item.id === res.data.data.result)
-          );
+              result.find((item) => item.id === res.data.data.result)
+            );
       } else {
         alertFaultAdded();
       }

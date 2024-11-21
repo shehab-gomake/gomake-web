@@ -116,6 +116,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
               getOptionLabel={(option: any) =>
                 option && option.name ? `${option.code} - ${option.name}` : ""
               }
+              defaultFiltering={false}
               onChangeTextField={checkWhatRenderArray}
               value={selectedClient}
               loading={isFetching}

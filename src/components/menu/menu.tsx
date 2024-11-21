@@ -1,10 +1,26 @@
-import { Menu } from '@mui/material';
-import { useTranslation } from 'react-i18next';
+import { Menu } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import { Children, cloneElement, isValidElement, ReactElement } from "react";
 
-const GoMakeMenu = ({ handleClose, open, anchorEl, ...props }) => {
-  const { children }: any = props;
+interface GoMakeMenuProps {
+  handleClose: () => void;
+  open: boolean;
+  anchorEl: HTMLElement | null;
+  children: ReactElement | ReactElement[]; // Define the type of children
+  style?: React.CSSProperties;
+  sx?: object;
+}
+
+const GoMakeMenu = ({
+  handleClose,
+  open,
+  anchorEl,
+  children,
+  style,
+  sx,
+}: GoMakeMenuProps) => {
   const { t } = useTranslation();
-  const direction = t('direction');
+  const direction = t("direction");
 
   return (
     <Menu
@@ -13,19 +29,27 @@ const GoMakeMenu = ({ handleClose, open, anchorEl, ...props }) => {
       open={open}
       onClose={handleClose}
       anchorOrigin={
-        direction === 'rtl'
-          ? { vertical: 'bottom', horizontal: 'left' }
-          : { vertical: 'bottom', horizontal: 'right' }
+        direction === "rtl"
+          ? { vertical: "bottom", horizontal: "left" }
+          : { vertical: "bottom", horizontal: "right" }
       }
       transformOrigin={
-        direction === 'rtl'
-          ? { vertical: 'top', horizontal: 'left' }
-          : { vertical: 'top', horizontal: 'right' }
+        direction === "rtl"
+          ? { vertical: "top", horizontal: "left" }
+          : { vertical: "top", horizontal: "right" }
       }
-      style={props.style}
-      sx={props.sx}
+      style={style}
+      sx={sx}
     >
-      {children}
+    {Children.map(children, (child) =>
+        isValidElement(child)
+          ? cloneElement(child as ReactElement, {
+              onKeyDown: (event: React.KeyboardEvent) => {
+                event.stopPropagation();
+              },
+            })
+          : null
+      )}
     </Menu>
   );
 };

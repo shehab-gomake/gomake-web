@@ -436,6 +436,11 @@ df-messenger {
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 11px !important;
+  height: 11px !important;
+}
+.small.custom-scrollbar::-webkit-scrollbar {
+  width: 3px !important;
+  height: 3px !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {

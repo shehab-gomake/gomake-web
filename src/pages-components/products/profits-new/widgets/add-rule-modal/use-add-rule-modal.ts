@@ -176,8 +176,8 @@ const useAddRuleModal = ({
 
   const BooleanRender = useMemo(() => {
     return [
-      { label: "Yes", id: true },
-      { label: "No", id: false },
+      { label: t("modal.yes"), id: true },
+      { label: t("modal.no"), id: false },
     ];
   }, []);
 
@@ -489,6 +489,7 @@ const useAddRuleModal = ({
     if (!isValidRules) {
       return;
     }
+    
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/printhouse-config/print-house-action/add-rule/${router?.query?.actionId}/${selectedProperties?.propertyId}/${selectedProperties?.ruleType}`,
@@ -497,39 +498,38 @@ const useAddRuleModal = ({
         ruleConditionStatements: null,
         exceptionConditionProperties: rules.map((item) => {
           return {
-            statementId:
-              item.category.id === "Property output" ||
-              item.category.id === "Property input"
-                ? item.statement2.id
-                : typeof item?.statement === "object"
-                ? item?.statement?.id
-                : item.statement,
-            statementValue:
-              item.category.id === "Property output" ||
-              item.category.id === "Property input"
-                ? typeof item?.statement === "object"
-                  ? item?.statement?.id
-                  : item.statement
-                : item.statement2.id,
+            statementId: item.statement2.id,
+            statementValue: getStatementId(item),
             operator: item.condition.id,
             conditionBetweenStatements: item.linkCondition
               ? item.linkCondition.id
               : "",
             statementCategory: EStatementCategory[item.category.id],
           };
-          // return {
-          //   statementId:
-          //     typeof item?.statement === "object"
-          //       ? item?.statement?.id
-          //       : item.statement,
-          //   statementValue: item?.statement2?.id,
-          //   operator: item?.condition?.id,
-          //   conditionBetweenStatements: item.linkCondition
-          //     ? item.linkCondition.id
-          //     : "",
-          //   statementCategory: EStatementCategory[item.category.id],
-          // };
         }),
+        // exceptionConditionProperties: rules.map((item) => {
+        //   return {
+        //     statementId:
+        //       item.category.id === "Property output" ||
+        //       item.category.id === "Property input"
+        //         ? item.statement2.id
+        //         : typeof item?.statement === "object"
+        //         ? item?.statement?.id
+        //         : item.statement,
+        //     statementValue:
+        //       item.category.id === "Property output" ||
+        //       item.category.id === "Property input"
+        //         ? typeof item?.statement === "object"
+        //           ? item?.statement?.id
+        //           : item.statement
+        //         : item.statement2.id,
+        //     operator: item.condition.id,
+        //     conditionBetweenStatements: item.linkCondition
+        //       ? item.linkCondition.id
+        //       : "",
+        //     statementCategory: EStatementCategory[item.category.id],
+        //   };
+        // }),
         successEvent: propertieValue,
         expression: expression,
       }

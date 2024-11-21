@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Collapse, Divider, Stack } from "@mui/material";
 import { DownIcon, UpIcon } from "./icons";
 import CircularProgress from "@mui/material/CircularProgress";
+import { adaptMarginRight } from "@/utils/adapter";
 
 const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
   return {
@@ -106,7 +107,6 @@ const GoMakeAutoComplate = ({
   defaultValue,
   disabled,
   multiple = false,
-  arrowColor,
   onChangeTextField,
   PaperComponent,
   withArrow = false,
@@ -114,12 +114,15 @@ const GoMakeAutoComplate = ({
   popupIcon,
   renderGroup,
   loading, // Add loading prop
+  defaultFiltering = true,
+  startIcon,
+  arrowIcon,
 }: {
   value?: any;
   onChange?: any;
-  onInputChange?: any,
-  onKeyDown?: any,
-  onClose?: any
+  onInputChange?: any;
+  onKeyDown?: any;
+  onClose?: any;
   style?: any;
   error?: any;
   options: any;
@@ -131,18 +134,20 @@ const GoMakeAutoComplate = ({
   defaultValue?: any;
   multiple?: any;
   disabled?: any;
-  arrowColor?: any;
   onChangeTextField?: any;
   PaperComponent?: any;
   popupIcon?: any;
   withArrow?: boolean;
   groupBy?: (option: any) => string;
-  renderGroup?: (params: any) => React.ReactNode;
   loading?: boolean; // Add loading prop
+  defaultFiltering?: boolean;
+  startIcon?: React.ReactNode;
+  arrowIcon?: React.ReactNode;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
 
   useEffect(() => {
     if (value?.name) {
@@ -151,7 +156,6 @@ const GoMakeAutoComplate = ({
       setSelectedOption(null);
     }
   }, [value]);
-
 
   const [expandedGroups, setExpandedGroups] = useState<{
     [key: string]: boolean;
@@ -215,6 +219,13 @@ const GoMakeAutoComplate = ({
           onChange={onChangeTextField || params.onChange}
           InputProps={{
             ...params.InputProps,
+            ...(startIcon && {
+              startAdornment: (
+                <div style={{ display: "flex", marginLeft: "10px" }}>
+                  {startIcon}
+                </div>
+              ),
+            }),
             ...(loading && {
               endAdornment: (
                 <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
@@ -237,6 +248,7 @@ const GoMakeAutoComplate = ({
       }
       getOptionSelected={(option: any, value: any) => option?.id === value?.id}
       PaperComponent={PaperComponent}
+      filterOptions={defaultFiltering ? undefined : (x) => x} //? Bypass default filtering
     />
   );
 };

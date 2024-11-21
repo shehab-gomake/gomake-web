@@ -1,26 +1,48 @@
+import { EReportType } from "@/enums";
 import { useTranslation } from "react-i18next";
 
 export interface LedgerReportButtonWidgetProps {
   onClickPrintCard: () => void;
   onClickShowCard: () => void;
-
+  onClickCreateNewTransaction?: () => void;
+  reportType: EReportType;
 }
 
-const useLedgerReportHeader = ({ onClickPrintCard, onClickShowCard }: LedgerReportButtonWidgetProps) => {
-  const { t } = useTranslation()
+const useLedgerReportHeader = ({
+  onClickPrintCard,
+  onClickShowCard,
+  onClickCreateNewTransaction,
+  reportType,
+}: LedgerReportButtonWidgetProps) => {
+  const { t } = useTranslation();
+  const isAccountingTransaction =
+    reportType === EReportType.AccountingTransaction;
+  const isAdjustmentsReport = reportType === EReportType.AdjustmentsReport;
+
   const tabs = [
     {
       name: t("reports.showCard"),
-      onclick: onClickShowCard
+      onclick: onClickShowCard,
     },
-    {
-      name: t("reports.printCard"),
-      onclick: onClickPrintCard
-    },
-  ]
-
+    ...(isAccountingTransaction
+      ? [
+          {
+            name: t("reports.createNewTransaction"),
+            onclick: onClickCreateNewTransaction,
+          },
+        ]
+      : []),
+    ...(!isAccountingTransaction && !isAdjustmentsReport
+      ? [
+          {
+            name: t("reports.printCard"),
+            onclick: onClickPrintCard,
+          },
+        ]
+      : []),
+  ];
   return {
-    tabs
+    tabs,
   };
 };
 
