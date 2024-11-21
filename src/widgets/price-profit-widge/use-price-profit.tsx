@@ -1,8 +1,8 @@
-import { useGomakeAxios } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useDisplayProfitProfilesSignalr } from "@/hooks/signalr/use-display-profit-profiles-signalr";
 import { useGomakeRouter } from "@/hooks/use-gomake-router";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, updatePrintHousePriceApi, updateProfitProfileProductHiddenApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi, updateProfitProfileProductSelectedApi, updateSelectedPrintHousePricesApi } from "@/services/api-service/products/product-endpoints";
+import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, getProfitsProfilePdfApi, updatePrintHousePriceApi, updateProfitProfileProductHiddenApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi, updateProfitProfileProductSelectedApi, updateSelectedPrintHousePricesApi } from "@/services/api-service/products/product-endpoints";
 import { useCallback, useEffect, useState } from "react";
 
 interface PricingProfileSetting {
@@ -16,6 +16,7 @@ interface PricingProfileSetting {
 const usePriceProfit = () => {
   const { callApi } = useGomakeAxios();
   const { } = useDisplayProfitProfilesSignalr()
+  const { alertFaultGetData } = useSnackBar();
   const [pricingProfileSetting, setPricingProfileSetting] = useState<PricingProfileSetting[]>([])
   const [selectedPricingProfileSetting, setSelectedPricingProfileSetting] = useState<PricingProfileSetting | null>(null)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -146,6 +147,7 @@ const usePriceProfit = () => {
   };
 
   const updateTextInputValue = (value: string, index: number) => {
+    console.log("aaaaaa",value)
     setProducts(prevProducts => {
       const updatedParameters = prevProducts.requiredParameters.map((param, i) => {
         if (i === index) {
@@ -221,6 +223,7 @@ const usePriceProfit = () => {
   }, [selectedPricingProfileSetting])
 
   const updateProfitProfileProductParameter = useCallback(async (data: any, value: any) => {
+    console.log("qqqqq",{value,data})
     const callBack = (res) => {
       if (res?.success) {
         getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
@@ -235,7 +238,7 @@ const usePriceProfit = () => {
       parameterName: data?.parameterName,
       sectionId: data?.sectionId,
       subSectionId: data?.subSectionId,
-      defaultValue: value?.valueId ? value?.valueId : value?.id ? value?.id : data?.defaultValue
+      defaultValue: value?.valueId ? value?.valueId : value?.id ? value?.id : value
     });
   }, [selectedPricingProfileSetting]);
 
@@ -330,6 +333,35 @@ const usePriceProfit = () => {
     });
   }, [selectedPricingProfileSetting])
 
+  const onClickPrint = async (isSelected?: boolean) => {
+    const downloadPdf = (url) => {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.target = "_blank";
+      anchor.addEventListener("click", () => {
+        setTimeout(() => {
+          anchor.remove();
+        }, 100);
+      });
+      anchor.click();
+    };
+    const callBack = (res) => {
+      if (res?.success) {
+        const pdfLink = res.data;
+        downloadPdf(pdfLink);
+        // window.open(pdfLink, "_blank");
+      } else {
+        alertFaultGetData();
+      }
+    };
+
+    await getProfitsProfilePdfApi(callApi, callBack, {
+      productId: selectedPricingProfileSetting?.productId,
+      isSelectedProducts:isSelected
+    });
+     
+  };
+
   
 
   return {
@@ -371,7 +403,8 @@ const usePriceProfit = () => {
     updatePrintHousePrice,
     updateProfitProfileProductHidden,
     updateProfitProfileProductSelected,
-    updateSelectedPrintHousePrices
+    updateSelectedPrintHousePrices,
+    onClickPrint
   };
 };
 

@@ -19,6 +19,8 @@ const UPDATE_PROFIT_PROFILE_PRODUCT_SELECTED_URL = "/v1/printhouse-config/profit
 const UPDATE_SELECTED_PRINT_HOUSE_PRICES_URL = "/v1/printhouse-config/profit-profile-products/update-selected-print-house-prices";
 const UPDATE_PROFIT_PROFILE_PRODUCT_MATERIAL_URL = "/v1/printhouse-config/profit-profile-products/update-profit-profile-product-material";
 
+const GET_PROFITS_PROFILE_PDF_URL = "/v1/printhouse-config/profit-profile-products/get-profits-profile-pdf";
+
 
 
 const addProductProfitRuleApi: ICallAndSetData = async (callApi, setState, data) => {
@@ -70,6 +72,16 @@ const updateProfitProfileProductMaterialApi: ICallAndSetData = async (callApi, s
     return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_PROFIT_PROFILE_PRODUCT_MATERIAL_URL ,setState, data);
 };
 
+const getProfitsProfilePdfApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(
+      callApi,
+      EHttpMethod.GET,
+      GET_PROFITS_PROFILE_PDF_URL,
+      setState,
+      data
+    );
+  };
+
 
 export {
     addProductProfitRuleApi,
@@ -85,5 +97,6 @@ export {
     updateProfitProfileProductHiddenApi,
     updateProfitProfileProductSelectedApi,
     updateSelectedPrintHousePricesApi,
-    updateProfitProfileProductMaterialApi
+    updateProfitProfileProductMaterialApi,
+    getProfitsProfilePdfApi
 }

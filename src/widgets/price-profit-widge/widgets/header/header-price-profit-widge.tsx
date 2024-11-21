@@ -19,7 +19,8 @@ const PriceProfitHeaderWidget = ({
   pricingProfileSetting,
   selectedPricingProfileSetting,
   setSelectedPricingProfileSetting,
-  updateSelectedPrintHousePrices
+  updateSelectedPrintHousePrices,
+  onClickPrint
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -91,10 +92,10 @@ const PriceProfitHeaderWidget = ({
         anchorEl={anchorElPrint}
       >
         <div style={classes.menuContainer}>
-          <MenuItem>
+          <MenuItem onClick={() => onClickPrint(false)}>
             <div style={classes.menuItemReviewText}>Print all</div>
           </MenuItem>
-          <MenuItem>
+          <MenuItem onClick={() => onClickPrint(true)}>
             <div style={classes.menuItemReviewText}>Only selected</div>
           </MenuItem>
         </div>
