@@ -48,6 +48,7 @@ const useAddRuleModal = ({
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const categoriesList = useRecoilValue(machineCategoriesState);
   const [additionType, setAdditionType] = useState<number>(null);
+  
 
   const onCloseScheduleModal = () => {
     setOpenScheduleModal(false);
