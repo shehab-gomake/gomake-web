@@ -32,7 +32,9 @@ const RightSideWidget = ({
   sampleType,
   errorMsg,
   calculationServerErrorState,
+
 }: any) => {
+  console.log("errorMsg",errorMsg);
   const {
     currentProductItemValueTotalPrice,
     lastProductItemValueTotalPrice,
@@ -433,16 +435,17 @@ const RightSideWidget = ({
             <div style={clasess.logsContainer}>
               {errorMsg && (
                 <div style={clasess.generalMsgTextStyle}>
-                  {t("products.offsetPrice.admin.general")} {errorMsg}
+                {errorMsg}
                 </div>
               )}
-              {calculationServerErrorState && (
+              {/* {calculationServerErrorState && (
                 <div style={clasess.generalMsgTextStyle}>
                   {t("products.offsetPrice.admin.general")} Server Error
                 </div>
-              )}
+              )} */}
 
               {logsArray?.map((item) => {
+                console.log("item",item);
                 if (item.actionName) {
                   return (
                     <div
@@ -523,15 +526,42 @@ const RightSideWidget = ({
                       </div>
                     </div>
                   );
-                } else {
+                } 
+                else {
                   return (
-                    <div style={clasess.generalMsgTextStyle}>
-                      <div style={clasess.iconLogsTextStyle}>
-                        {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
-                      </div>
-                      {t("products.offsetPrice.admin.general")}{" "}
-                      {t("CalculationExceptions." + item?.exceptionKey)}
+                    <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-start",
+                      alignItems: "flex-start",
+                      width: "100%",
+                      gap: 5,
+                    }}
+                  >
+                    {_renderIconLogs(item?.exceptionType, 16, 16)}
+
+                    <div style={{ width: "100%", marginTop: -3 }}>
+                      {item?.values &&
+                      item?.values?.length > 0 ? (
+                        <span style={{ color: "black" }}>
+                          {item?.exceptionMessage +
+                            t(
+                              "CalculationExceptions." +
+                              item?.exceptionKey
+                            ).replace(
+                              /\{\{(\d+)\}\}/g,
+                              (_, index) =>
+                                item?.values[index] || ""
+                            )}
+                        </span>
+                      ) : (
+                        <span style={{ color: "black" }}>
+                         {t("CalculationExceptions." + item?.exceptionKey)}
+                        </span>
+                      )}
                     </div>
+                  </div>
                   );
                 }
               })}
