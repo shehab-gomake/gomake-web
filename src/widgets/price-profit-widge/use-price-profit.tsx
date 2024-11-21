@@ -1,7 +1,5 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useDisplayProfitProfilesSignalr } from "@/hooks/signalr/use-display-profit-profiles-signalr";
-import { useGomakeRouter } from "@/hooks/use-gomake-router";
-import { EHttpMethod } from "@/services/api-service/enums";
 import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, getProfitsProfilePdfApi, updatePrintHousePriceApi, updateProfitProfileProductHiddenApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi, updateProfitProfileProductSelectedApi, updateSelectedPrintHousePricesApi } from "@/services/api-service/products/product-endpoints";
 import { useCallback, useEffect, useState } from "react";
 
@@ -15,7 +13,6 @@ interface PricingProfileSetting {
 
 const usePriceProfit = () => {
   const { callApi } = useGomakeAxios();
-  const { } = useDisplayProfitProfilesSignalr()
   const { alertFaultGetData } = useSnackBar();
   const [pricingProfileSetting, setPricingProfileSetting] = useState<PricingProfileSetting[]>([])
   const [selectedPricingProfileSetting, setSelectedPricingProfileSetting] = useState<PricingProfileSetting | null>(null)
@@ -147,7 +144,6 @@ const usePriceProfit = () => {
   };
 
   const updateTextInputValue = (value: string, index: number) => {
-    console.log("aaaaaa",value)
     setProducts(prevProducts => {
       const updatedParameters = prevProducts.requiredParameters.map((param, i) => {
         if (i === index) {
@@ -223,7 +219,6 @@ const usePriceProfit = () => {
   }, [selectedPricingProfileSetting])
 
   const updateProfitProfileProductParameter = useCallback(async (data: any, value: any) => {
-    console.log("qqqqq",{value,data})
     const callBack = (res) => {
       if (res?.success) {
         getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
@@ -361,6 +356,7 @@ const usePriceProfit = () => {
     });
      
   };
+  const { } = useDisplayProfitProfilesSignalr({getAllProfitProfileProductByProductId,selectedPricingProfileSetting})
 
   
 
