@@ -1,5 +1,4 @@
 import { IIconProps } from "@/components/icons/interface";
-
 const ArrowDownNewIcon = ({ width, height, color }: IIconProps) => {
   return (
     <svg
