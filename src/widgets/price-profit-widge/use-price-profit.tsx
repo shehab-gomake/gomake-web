@@ -17,13 +17,17 @@ const usePriceProfit = () => {
   const [pricingProfileSetting, setPricingProfileSetting] = useState<PricingProfileSetting[]>([])
   const [selectedPricingProfileSetting, setSelectedPricingProfileSetting] = useState<PricingProfileSetting | null>(null)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [isUpdateQuantity, setIsUpdateQuantity] = useState(false); // New state variable
-  const [isUpdate, setIsUpdate] = useState(false); // New state variable
+  const [isUpdateQuantity, setIsUpdateQuantity] = useState(false)
+  const [isUpdate, setIsUpdate] = useState(false);
   const [anchorElSetting, setAnchorElSetting] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const openSetting = Boolean(anchorElSetting);
   const [anchorElPrint, setAnchorElPrint] = useState<null | HTMLElement>(null);
   const openPrint = Boolean(anchorElPrint);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+  const [products, setProducts] = useState<any>([]);
+  const [requestAbortController, setRequestAbortController] =useState<AbortController>(null);
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -43,14 +47,6 @@ const usePriceProfit = () => {
     setAnchorElPrint(event.currentTarget);
   };
 
-  const [selectedProduct, setSelectedProduct] = useState<any>(null)
-
-  const [products, setProducts] = useState<any>([]);
-  const [requestAbortController, setRequestAbortController] =
-    useState<AbortController>(null);
-  // useEffect(() => {
-  //   setProducts(data)
-  // }, [])
 
   const handleCheckboxChange = (index: number) => {
     setProducts(prevProducts => ({
