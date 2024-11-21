@@ -32,6 +32,7 @@ import {
   cancelBoardMissionsActionDone,
   toggleBoardMissionsActionTimer,
   updateBoardMissionsActionDone,
+  updatePrintHouseMaterialStockFromJobApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -44,7 +45,7 @@ import {
 import { useBoardMissionsUpdatedOutputs } from "./use-board-missions-updated-outputs";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { ActionTimer } from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
@@ -55,6 +56,11 @@ import {
 import { useUserPermission } from "@/hooks/use-permission";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { TableOutPutComponent } from "@/widgets/product-pricing-widget/components/table-output/table-output-component";
+import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
+import {
+  boardMissionMaterialState,
+  materialModalState,
+} from "./material-and-production-time-modal/states";
 
 interface IProps extends IBoardMissionsStation {
   delay: number;
@@ -120,6 +126,7 @@ const BoardMissionsStationAction = ({
   const [openModal, setOpenMpdal] = useState(false);
 
   const onClickOpenModal = (e) => {
+    //!here
     if (isLastStation && isOrderCompleted) {
       setIsReadyModal(true);
     } else {
@@ -155,6 +162,18 @@ const BoardMissionsStationAction = ({
       parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
+
+  //!new
+  // const [openMaterialsModal, setOpenMaterialsModal] = useState(false);
+  // const onClickOpenMaterialsModal = () => {
+  //   setOpenMaterialsModal(true);
+  // };
+  // const onClickCloseMaterialsModal = () => {
+  //   setOpenMaterialsModal(false);
+  // };
+
+  const setState = useSetRecoilState<any>(boardMissionMaterialState);
+  const setOpenMaterialsModal = useSetRecoilState<any>(materialModalState);
   const onClickDone = async (
     boardMissionsActionId: string,
     sendMSg?: boolean
@@ -164,6 +183,10 @@ const BoardMissionsStationAction = ({
       setLoading(false);
 
       if (res.success) {
+        //!new
+        setState(res.data);
+        setOpenMaterialsModal(true);
+
         const currentActionId = res.data.currentStationId;
         //stations.find(x=>x.boardMissionActionId == currentActionId).;
         setStations(
@@ -178,8 +201,8 @@ const BoardMissionsStationAction = ({
           ...boardMissions,
           currentBoardMissionActionId: currentActionId,
         });
-        alertSuccessUpdate();
         setOpenPackagingModal(true);
+        alertSuccessUpdate();
       } else {
         alertFaultUpdate();
         setLoading(false);
@@ -191,6 +214,7 @@ const BoardMissionsStationAction = ({
       isSendMessage: !!sendMSg,
     });
   };
+
   const onClickBackToProcess = async (boardMissionsActionId: string) => {
     setLoading(true);
     const callBack = (res) => {
@@ -337,6 +361,61 @@ const BoardMissionsStationAction = ({
       label
     );
   };
+
+  // const state = {
+  //   currentStationId: "d97a9e66-8db8-4b45-ad8e-44f26f97c351",
+  //   boardMissionActionId: "b97a9e66-8db8-4b45-ad8e-44f26f97c351",
+  //   productionTime: "5000",
+  //   materials: [
+  //     {
+  //       productType: "1",
+  //       workFlowActionId: "44",
+  //       materialKey: "Sheets 1",
+  //       currentValue: "1",
+  //     },
+
+  //     {
+  //       productType: "2",
+  //       workFlowActionId: "44",
+  //       materialKey: "Sheets 2",
+  //       currentValue: "12",
+  //     },
+  //     {
+  //       productType: "3",
+  //       workFlowActionId: "44",
+  //       materialKey: "Sheets 3",
+  //       currentValue: "123",
+  //     },
+  //   ],
+  // };
+
+  //!here
+  // const onUpdateMaterialStock = async (updatedState: {
+  //   currentStationId: string;
+  //   boardMissionActionId: string;
+  //   productionTime: string;
+  //   materials: {
+  //     ProductType: string;
+  //     WorkFlowActionId: string;
+  //     materialKey: string;
+  //     currentValue: string;
+  //   }[];
+  // }) => {
+  //   const callBack = (res) => {
+  //     if (res.success) {
+  //       alertSuccessUpdate();
+  //       onClickCloseMaterialsModal();
+  //     } else {
+  //       alertFaultUpdate();
+  //     }
+  //   };
+  //   await updatePrintHouseMaterialStockFromJobApi(
+  //     callApi,
+  //     callBack,
+  //     updatedState
+  //   );
+  // };
+
   return (
     <>
       {isHaveSubACtions ? (
@@ -901,6 +980,7 @@ const BoardMissionsStationAction = ({
           </Stack>
         </Fade>
       )}
+
       <ThreeOptionsModal
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
@@ -928,6 +1008,12 @@ const BoardMissionsStationAction = ({
         openModal={openPackagingModal}
         onClose={() => setOpenPackagingModal(false)}
       />
+      {/* <MaterialsAndProductionTimeModalWidget
+        openModal={openMaterialsModal}
+        onClose={onClickCloseMaterialsModal}
+        state={state}
+        onUpdate={onUpdateMaterialStock}
+      /> */}
     </>
   );
 };
