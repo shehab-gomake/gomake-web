@@ -41,10 +41,10 @@ const PhoneInputUpdatedValues = ({
         <div style={clasess.labelStyle}>{label}</div>
         {isUpdate ? (
           <UpdateValuePhoneInput
-            clickedOut={() => onBlur().then()}
+            clickedOut={() => onBlur()?.then()}
             onInputChange={onInputChange}
             onCancel={() => setIsUpdate(null)}
-            onUpdate={() => onBlur().then()}
+            onUpdate={() => onBlur()?.then()}
             value={updateValue}
 
           />
