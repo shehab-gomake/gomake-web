@@ -507,3 +507,20 @@ df-messenger {
 .rs-input {
   padding-right: 10px !important;
 }
+.MuiInputBase-root input{
+  border: none !important;
+}
+
+.moreIconContainer {
+  opacity: 0;
+  transition: opacity 0.3s ease; /* Smooth transition */
+  position: absolute;
+  right: 10px;
+  top: 25px;
+  cursor: pointer;
+}
+
+/* Show the MoreIcon container on TableCell hover */
+.tableBodyCellForProduct:hover .moreIconContainer {
+  opacity: 1;
+}
