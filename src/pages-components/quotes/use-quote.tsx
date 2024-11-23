@@ -4,7 +4,7 @@ import {
   useGomakeRouter,
   useSnackBar,
 } from "@/hooks";
-import {useCallback, useEffect, useRef, useState} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApprovalStatus, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
@@ -48,6 +48,7 @@ import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
 import {
   cancelReceiptApi,
   getAllReceiptsApi,
+  getReceiptInvoicesPdfApi,
   getReceiptPdfApi,
 } from "@/services/api-service/generic-doc/receipts-api";
 import {
@@ -203,7 +204,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setFromLogsDate(null);
     setToLogsDate(null);
   };
-  const onClickQuotePdf = async (id: string, withPrices?: boolean) => {
+
+  const onClickQuotePdf = async (
+    id: string,
+    withPrices?: boolean,
+    withInvoices?: boolean
+  ) => {
     const downloadPdf = (url) => {
       const anchor = document.createElement("a");
       anchor.href = url;
@@ -218,16 +224,20 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
-        // window.open(pdfLink, "_blank");
         downloadPdf(pdfLink);
       } else {
         alertFaultGetData();
       }
     };
     if (isReceipt) {
-      await getReceiptPdfApi(callApi, callBack, {
-        receiptId: id,
-      });
+      if (withInvoices)
+        await getReceiptInvoicesPdfApi(callApi, callBack, {
+          receiptId: id,
+        });
+      else
+        await getReceiptPdfApi(callApi, callBack, {
+          receiptId: id,
+        });
     } else {
       await getDocumentPdfApi(callApi, callBack, {
         documentId: id,
@@ -235,6 +245,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         withPrices: withPrices ?? false,
       });
     }
+  };
+
+  const [openExportReceiptPdfModal, setOpenExportReceiptPdfModal] =
+    useState<boolean>(false);
+
+  const onOpenExportReceiptPdfModal = (receiptItem: any) => {
+    setSelectedDocument(receiptItem);
+    setOpenExportReceiptPdfModal(true);
+  };
+
+  const onCloseExportReceiptPdfModal = () => {
+    setSelectedDocument({});
+    setOpenExportReceiptPdfModal(false);
   };
 
   const getEmployeeCategories = async (isAgent: boolean, setState: any) => {
@@ -597,7 +620,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             quote={quote}
             documentType={docType}
             onClickOpenModal={onClickOpenModal}
-            onClickPdf={onClickQuotePdf}
+            //onClickPdf={onClickQuotePdf}
+            onClickPdf={onOpenExportReceiptPdfModal}
             onClickDuplicate={onClickDocumentDuplicate}
             onClickLoggers={onClickDocumentLogs}
             onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
@@ -2132,11 +2156,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (toDate && typeof toDate === "string") setToDate(new Date(toDate));
 
     if (finalPatternSearch && typeof finalPatternSearch === "string") {
-      if(!(searchInputRef && searchInputRef.current && document.activeElement.id == searchInputRef.current.id)){
+      if (
+        !(
+          searchInputRef &&
+          searchInputRef.current &&
+          document.activeElement.id == searchInputRef.current.id
+        )
+      ) {
         setPatternSearch(finalPatternSearch);
         setFinalPatternSearch(finalPatternSearch);
       }
-      
     }
 
     if (accountingStatus) {
@@ -2372,7 +2401,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     openDuplicateModal,
     onCloseDuplicateModal,
     onClickDocumentDuplicate,
-    searchInputRef
+    searchInputRef,
+    openExportReceiptPdfModal,
+    onCloseExportReceiptPdfModal,
   };
 };
 
