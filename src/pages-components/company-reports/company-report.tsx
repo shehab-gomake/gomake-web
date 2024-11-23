@@ -29,11 +29,10 @@ const CompanyReportWidget = () => {
     openSendPaymentModal,
     handleCloseSendPaymentModal,
     selectedPrintHouseId,
+    countries,
+    selectedCountry,
+    setSelectedCountry,
   } = useCompanyReport();
-
-  useEffect(() => {
-    getReport();
-  }, []);
 
   const [debouncedPatternSearch] = useDebounce(patternSearch, 300);
   const filteredReports = useMemo(() => {
@@ -47,6 +46,12 @@ const CompanyReportWidget = () => {
           t(`companyReports.${PrintHousePayStatus[payStatus.value]}`)
       );
     }
+    // Filter by country
+    if (selectedCountry) {
+      reports = reports.filter(
+        (item) => item[2]?.toLowerCase() === selectedCountry?.toLowerCase()
+      );
+    }
 
     if (debouncedPatternSearch.trim()) {
       const lowercasedSearch = debouncedPatternSearch.toLowerCase();
@@ -58,7 +63,11 @@ const CompanyReportWidget = () => {
     }
 
     return reports;
-  }, [AllReport, payStatus, debouncedPatternSearch]);
+  }, [AllReport, payStatus, selectedCountry, debouncedPatternSearch]);
+
+  useEffect(() => {
+    getReport();
+  }, []);
 
   return (
     <>
@@ -73,17 +82,34 @@ const CompanyReportWidget = () => {
           direction={"row"}
           justifyContent={"space-between"}
         >
-          <div style={classes.statusFilterContainer}>
-            <h3 style={classes.filterLabelStyle}>{t("Pay status")}</h3>
-            <GoMakeAutoComplate
-              options={payStatuses}
-              style={classes.textInputStyle}
-              placeholder={"pay status"}
-              onChange={handlePayStatusChange}
-              value={payStatus}
-              withArrow={true}
-            />
-          </div>
+          <Stack width={"100%"} direction={"row"} spacing={1}>
+            <div style={classes.statusFilterContainer}>
+              <h3 style={classes.filterLabelStyle}>{t("Pay status")}</h3>
+              <GoMakeAutoComplate
+                options={payStatuses}
+                style={classes.textInputStyle}
+                placeholder={"pay status"}
+                onChange={handlePayStatusChange}
+                value={payStatus}
+                withArrow={true}
+              />
+            </div>
+            <div style={classes.statusFilterContainer}>
+              <h3 style={classes.filterLabelStyle}>
+                {t("profileSettings.country")}
+              </h3>
+              <GoMakeAutoComplate
+                options={countries}
+                style={classes.textInputStyle}
+                placeholder={t("Select country")}
+                onChange={(e: any, value: any) => {
+                  setSelectedCountry(value?.value);
+                }}
+                value={selectedCountry}
+                withArrow={true}
+              />
+            </div>
+          </Stack>
           <SearchInputComponent
             searchInputStyle={{ width: "20vw", alignSelf: "flex-end" }}
             onChange={(e) => {
@@ -98,6 +124,7 @@ const CompanyReportWidget = () => {
           rows={filteredReports}
           headers={tableHeaders}
           maxHeight={"100vh"}
+          variant="OddEvenTable"
         />
         <PaymentDetailsModal
           openModal={openPaymentDetails}

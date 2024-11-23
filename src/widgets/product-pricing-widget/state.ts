@@ -65,6 +65,11 @@ export const currentProductItemValuePriceState = atom<number>({
   key: "currentProductItemValuePriceState",
   default: null,
 });
+
+export const currentCalculationSessionIdState = atom<number>({
+  key: "currentCalculationSessionIdState",
+  default: null,
+});
 export const lastProductItemValuePriceState = atom<number>({
   key: "lastProductItemValuePriceState",
   default: null,

@@ -24,7 +24,7 @@ export interface IListItem {
   text: string;
   value?: string;
   component?: () => JSX.Element;
-  icon?: () => JSX.Element;
+  icon?: any;
   path?: string;
   permission?: string;
   editComponent?: () => JSX.Element;

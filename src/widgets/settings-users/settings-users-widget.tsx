@@ -15,79 +15,129 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { GoMakeDialog } from "@/components/dialog/dialog";
+import { RolesWidget } from "./Roles/roles-widget";
 
 const SettingsUsersWidget = () => {
-    const { t } = useTranslation();
-    const { CheckPermission } = useUserPermission();
-    const {
-        handleAddEmployeeClick,
-        openModal,
-        setOpenModal,
-        onUpdateEmployee,
-        onAddEmployee,
-        action,
-        openVerificationModal,
-        handleCloseVerificationModal
-    } = useEmployee();
+  const { t } = useTranslation();
+  const { CheckPermission } = useUserPermission();
+  const {
+    handleAddEmployeeClick,
+    openModal,
+    setOpenModal,
+    onUpdateEmployee,
+    onAddEmployee,
+    action,
+    openVerificationModal,
+    handleCloseVerificationModal,
+  } = useEmployee();
 
-    const {
-        addNewRole,
-        setOpenAddRoleModal,
-        openAddRoleModal,
-        inputValue,
-        setInputValue
-    } = useAddRole();
+  const {
+    addNewRole,
+    setOpenAddRoleModal,
+    openAddRoleModal,
+    inputValue,
+    setInputValue,
+    value,
+    setValue,
+  } = useAddRole();
 
-    const tabs: ITab[] = [
-        CheckPermission(Permissions.SHOW_EMPLOYEES) && { title: t("usersSettings.users"), component: <UsersSettings /> },
-        CheckPermission(Permissions.SHOW_PERMISSIONS) && { title: t("usersSettings.permission"), component: <PermissionsWidget /> }
-    ];
+  const tabs: ITab[] = [
+    CheckPermission(Permissions.SHOW_EMPLOYEES) && {
+      title: t("usersSettings.users"),
+      component: <UsersSettings />,
+    },
+    CheckPermission(Permissions.SHOW_PERMISSIONS) && {
+      title: t("usersSettings.permission"),
+      component: <PermissionsWidget />,
+    },
+    {
+      title: t("usersSettings.roles"),
+      component: <RolesWidget />,
+    },
+  ].filter(Boolean);
 
-    return (
-        <div data-tour={'settingUsersWidget'}>
-            <PrimaryTabsComponent tabs={tabs} >
-                <div style={{ display: "flex", gap: 10 }}>
-                    <PermissionCheck userPermission={Permissions.ADD_EMPLOYEE} >
-                        <AddButton label={t("usersSettings.addEmployee")} onClick={handleAddEmployeeClick} />
-                    </PermissionCheck>
-                    <PermissionCheck userPermission={Permissions.ADD_ROLE} >
-                        <AddButton label={t("permissionsSettings.addRole")}
-                            onClick={() => setOpenAddRoleModal(true)} />
-                    </PermissionCheck>
-                </div>
-            </PrimaryTabsComponent>
-            <GoMakeModal
-                insideStyle={{ paddingLeft: 0, paddingRight: 0 }}
-                headerPadding={20}
-                openModal={openModal}
-                onClose={() => setOpenModal(false)}
-                modalTitle={t(
-                    action === EmployeeActions.ADD
-                        ? "usersSettings.addEmployee"
-                        : "usersSettings.editEmployee"
-                )}
-            >
-                <AddEmployee
-                    onClickUpdate={onUpdateEmployee}
-                    action={action}
-                    onClickAdd={onAddEmployee}
-                />
-            </GoMakeModal>
-            <GoMakeDialog
-                open={openVerificationModal}
-                onClose={handleCloseVerificationModal}
-                title={t("usersSettings.mailVerificationRequired")}
-                description={t("usersSettings.verificationMailSent")}
-            />
-            <GoMakeModal insideStyle={{ paddingLeft: 0, paddingRight: 0, width: 500, height: 250 }}
-                headerPadding={20}
-                openModal={openAddRoleModal}
-                onClose={() => setOpenAddRoleModal(false)}
-                modalTitle={t("permissionsSettings.addRole")}>
-                <AddUpdateRole onActionClick={addNewRole} action={EActions.ADD} value={inputValue} onChange={(v) => { setInputValue(v) }} />
-            </GoMakeModal>
+  const renderAddButton = (activeTabTitle: string) => {
+    if (activeTabTitle === t("usersSettings.users")) {
+      return (
+        <PermissionCheck userPermission={Permissions.ADD_EMPLOYEE}>
+          <AddButton
+            label={t("usersSettings.addEmployee")}
+            onClick={handleAddEmployeeClick}
+          />
+        </PermissionCheck>
+      );
+    } else if (activeTabTitle === t("usersSettings.roles")) {
+      return (
+        <PermissionCheck userPermission={Permissions.ADD_ROLE}>
+          <AddButton
+            label={t("permissionsSettings.addRole")}
+            onClick={() => setOpenAddRoleModal(true)}
+          />
+        </PermissionCheck>
+      );
+    }
+    return null;
+  };
+
+  return (
+    <div data-tour={"settingUsersWidget"}>
+      <PrimaryTabsComponent
+        tabs={tabs}
+        selectedTabIndex={value}
+        onSelectTab={(newIndex) => {
+          setValue(newIndex);
+        }}
+      >
+        <div style={{ display: "flex", gap: 10 }}>
+          {renderAddButton(tabs[value]?.title || "")}
         </div>
-    );
+      </PrimaryTabsComponent>
+      <GoMakeModal
+        insideStyle={{ paddingLeft: 0, paddingRight: 0 }}
+        headerPadding={20}
+        openModal={openModal}
+        onClose={() => setOpenModal(false)}
+        modalTitle={t(
+          action === EmployeeActions.ADD
+            ? "usersSettings.addEmployee"
+            : "usersSettings.editEmployee"
+        )}
+      >
+        <AddEmployee
+          onClickUpdate={onUpdateEmployee}
+          action={action}
+          onClickAdd={onAddEmployee}
+        />
+      </GoMakeModal>
+      <GoMakeDialog
+        open={openVerificationModal}
+        onClose={handleCloseVerificationModal}
+        title={t("usersSettings.mailVerificationRequired")}
+        description={t("usersSettings.verificationMailSent")}
+      />
+      <GoMakeModal
+        insideStyle={{
+          paddingLeft: 0,
+          paddingRight: 0,
+          width: 500,
+          height: 250,
+        }}
+        headerPadding={20}
+        openModal={openAddRoleModal}
+        onClose={() => setOpenAddRoleModal(false)}
+        modalTitle={t("permissionsSettings.addRole")}
+      >
+        <AddUpdateRole
+          onActionClick={addNewRole}
+          action={EActions.ADD}
+          value={inputValue}
+          onChange={(v) => {
+            setInputValue(v);
+          }}
+        />
+      </GoMakeModal>
+    </div>
+  );
 };
 
 export { SettingsUsersWidget };

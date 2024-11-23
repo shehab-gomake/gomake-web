@@ -1,7 +1,6 @@
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 export enum Permissions {
-
   // client group
   SHOW_CLIENT = "ShowClient",
   EDIT_CLIENT = "EditClient",
@@ -62,8 +61,9 @@ export enum Permissions {
   EDIT_ROLE = "EditRole",
   SHOW_PERMISSIONS = "ShowPermissions",
   SHOW_FINANCE = "ShowFinance",
+  SHOW_SHIPMENT_TYPES = "ShowShipmentTypes",
 
-  //orders group    
+  //orders group
   SHOW_ORDERS = "ShowOrders",
   SHOW_COSTS_IN_ORDERS = "IsShowCostsInOrders",
   EDIT_ORDERS = "EditOrders",
@@ -119,9 +119,9 @@ export enum Permissions {
   SHOW_DAILY_PAYMENT_REPORT = "ShowDailyPaymentsReport",
   SHOW_SALES_REPORT = "ShowSalesReport",
   SHOW_CREDIT_CARD_TRANSACTIONS = "ShowCreditCardTransactions",
-
+  SHOW_ACCOUNTING_TRANSACTION_REPORT = "ShowAccountingTransactionReport",
+  SHOW_ADJUSTMENTS_REPORT = "ShowAdjustmentsReport",
 }
-
 
 export const DocumentPermission = {
   EDIT_DOCUMENT: "EditDocument",
@@ -129,9 +129,8 @@ export const DocumentPermission = {
   UPDATE_DOCUMENT_ITEM: "UpdateDocumentItem",
   UPDATE_DOCUMENT_DISCOUNT: "UpdateDocumentDiscount",
   UPDATE_DOCUMENT_ITEM_PRICES: "UpdateDocumentItemPrices",
-  UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES: "UpdateDocumentDeliveryItemPrices"
+  UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES: "UpdateDocumentDeliveryItemPrices",
 };
-
 
 export const documentPermissionMap = {
   [DocumentPermission.EDIT_DOCUMENT]: {
@@ -157,11 +156,11 @@ export const documentPermissionMap = {
   [DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES]: {
     [DOCUMENT_TYPE.quote]: Permissions.UPDATE_QUOTE_ITEM_PRICES,
     [DOCUMENT_TYPE.order]: Permissions.UPDATE_ORDER_ITEM_PRICES,
-    [DOCUMENT_TYPE.purchaseOrder]: Permissions.UPDATE_PURCHASE_ORDER_ITEM_PRICES,
+    [DOCUMENT_TYPE.purchaseOrder]:
+      Permissions.UPDATE_PURCHASE_ORDER_ITEM_PRICES,
   },
   [DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES]: {
     [DOCUMENT_TYPE.quote]: Permissions.UPDATE_QUOTE_DELIVERY_ITEM_PRICES,
     [DOCUMENT_TYPE.order]: Permissions.UPDATE_ORDER_DELIVERY_ITEM_PRICES,
   },
-
 };

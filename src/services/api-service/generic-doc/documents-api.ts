@@ -1028,9 +1028,12 @@ const createDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     CREATE_DOCUMENT_URL,
     setState,
     data,
-    false
+    true,
+    null,
+    true
   );
 };
+
 export {
   getDocumentApi,
   getAllDocumentsApi,

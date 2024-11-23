@@ -19,6 +19,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
   const { t } = useTranslation();
 
   const [openDeleteTableRowModal, setOpenDeleteTableRowModal] = useState<boolean>(false);
+
   const onClickCloseDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(false);
   };
@@ -26,7 +27,8 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
   const onClickOpenDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(true);
   };
-  const { updateCellData } = useTableCellData(isAdmin);
+
+  const { updateCellData,} = useTableCellData(isAdmin);
   const onClick = (index) => {
     if (isEditable) {
       setIsUpdate(index);
@@ -40,15 +42,19 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
 
   const onBlur = async () => {
     if (updateValue !== valueArray[isUpdate]) {
-
-      if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
-        onClickOpenDeleteTableRowModal()
+      // if(parameterKey.includes("price")){
+      //   onClickOpenPriceModal()
+      // }
+      // else{
+        if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
+          onClickOpenDeleteTableRowModal()
+        }
+        else {
+          await updateCellData(id, parameterKey, updateValue, isUpdate);
+          setIsUpdate(null);
+        }
       }
-      else {
-        await updateCellData(id, parameterKey, updateValue, isUpdate);
-        setIsUpdate(null);
-      }
-    }
+    // }
     else {
       setIsUpdate(null);
     }
@@ -67,10 +73,10 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
             return [
               isUpdate === index ? (
                 <UpdateValueInput
-                  clickedOut={() => onBlur().then()}
+                  clickedOut={() => onBlur()?.then()}
                   onInputChange={onInputChange}
                   onCancel={() => setIsUpdate(null)}
-                  onUpdate={() => onBlur().then()}
+                  onUpdate={() => onBlur()?.then()}
                   value={updateValue}
                 />
               ) : (
@@ -119,6 +125,8 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
           setIsUpdate(null);
         }}
       />
+
+
     </>
 
   );

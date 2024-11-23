@@ -20,6 +20,7 @@ import { useSetRecoilState } from "recoil";
 import { isSelectedCLoseAsDeleveryNoteState } from "@/pages/customers/customer-states";
 import { PauseIcon } from "@/icons/pause-icon";
 import { ResumeIcon } from "@/icons/resume-icon";
+import { PayIcon } from "./icons/pay";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -125,7 +126,7 @@ const useMoreCircle = () => {
       },
       {
         condition: !isPauseOrder && !isDeliveryNote,
-        onClick: () => onClickPdf(quote?.id),
+        onClick: () => onClickPdf(isReceipt ? quote : quote?.id),
         icon: <PDFIcon />,
         name: t("sales.quote.pdf"),
       },
@@ -284,12 +285,15 @@ const useMoreCircle = () => {
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
-      // {
-      //   condition: !isPauseOrder &&   isInvoice && quote?.isCanClose,
-      //   onClick: () => navigate(`/receipt?isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`),
-      //   icon: <PayIcon />,
-      //   name: t("sales.quote.pay")
-      // },
+      {
+        condition: !isPauseOrder && isInvoice && quote?.isCanClose,
+        onClick: () =>
+          navigate(
+            `/receipt?isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`
+          ),
+        icon: <PayIcon />,
+        name: t("sales.quote.pay"),
+      },
       {
         condition:
           !isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder,

@@ -49,7 +49,7 @@ import { useExchangeRate } from "@/hooks/use-exchange-rate";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { EMaterialsTabsIcon } from "@/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { actionMenuState } from "@/store";
+import { actionMenuState, openPriceModalState } from "@/store";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
 import { CreateOrder } from "@/icons/material-tabs/create-order";
 
@@ -343,7 +343,11 @@ const useMaterialsActions = (isAdmin: boolean) => {
       }
     }
   };
+  const [openPriceModal, setOpenPriceModal] = useRecoilState<boolean>(openPriceModalState);
 
+  const onClickOpenPriceModal = () => {
+    setOpenPriceModal(true);
+  };
   const onUpdateCallBack = (res) => {
     if (res.success) {
       if (action?.action === EMaterialsActions.Delete) {
@@ -363,6 +367,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
               : { ...material, checked: false }
           )
         )
+      }
+      if (action?.key.toLowerCase().includes("price")&&!openPriceModal) {
+        onClickOpenPriceModal();
       }
       setAction(null);
       setIsAllMaterialsChecked(false);

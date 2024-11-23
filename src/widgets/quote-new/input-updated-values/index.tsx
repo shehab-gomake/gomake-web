@@ -39,10 +39,10 @@ const InputUpdatedValues = ({
         <div style={clasess.labelStyle}>{label}</div>
         {isUpdate ? (
           <UpdateValueInput
-            clickedOut={() => onBlur().then()}
+            clickedOut={() => onBlur()?.then()}
             onInputChange={onInputChange}
             onCancel={() => setIsUpdate(null)}
-            onUpdate={() => onBlur().then()}
+            onUpdate={() => onBlur()?.then()}
             value={updateValue}
             width={"210px"}
           />

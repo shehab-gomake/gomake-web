@@ -27,6 +27,7 @@ import { getAndSetProductProfitByProductId } from "./services/get-product-profit
 import { useRecoilValue } from "recoil";
 import { systemCurrencyState } from "@/store";
 import { currencyUnitState } from "@/store/currency-units";
+import { EAdditionType } from "@/enums/document-type-enum";
 const useNewProfits = () => {
   const {
     alertFaultUpdate,
@@ -286,12 +287,24 @@ const useNewProfits = () => {
       getProfitsPricingTables();
     }
   }, [actionProfitByActionId]);
+  const renderAdditionType = (additionType:number) => {
+    if(additionType === EAdditionType.Percentage) {
+      return "%"
+    }
+    if(additionType === EAdditionType.ValuePerJob) {
+      return t("products.profits.exceptions.valuePerJob")
+    }
+    if(additionType === EAdditionType.ValuePerUnit) {
+      return t("products.profits.exceptions.valuePerUnit")
+    }
+  }
   useEffect(() => {
     const isOutSource = router.query.isOutSource;
     const signalRConnectionId = router.query.signalRConnectionId;
     const selectedPricingType = selectedPricingBy?.value;
     const profitValue = selectedAdditionalProfitRow?.profitValue;
-
+    const additionType = selectedAdditionalProfitRow?.additionType
+    
     const unitPriceLabel = isOutSource
       ? t("products.profits.pricingListWidget.unitCost")
       : t("products.profits.pricingListWidget.unitPrice");
@@ -319,9 +332,9 @@ const useNewProfits = () => {
 
     const additionalProfitHeaders = [
       pricingLabel,
-      unitPriceLabel,
+      selectedPricingType === EPricingBy.COST ? profitHeader : unitPriceLabel,
       `${totalPriceLabel} ${ProfitCurrency}`,
-      `${totalPriceWithAdditionProfit} (${profitValue})`,
+      `${totalPriceWithAdditionProfit} (${profitValue} ${renderAdditionType(additionType)})`,
 
       moreHeader,
     ];
@@ -335,7 +348,7 @@ const useNewProfits = () => {
             pricingLabel,
             profitHeader,
             `${totalPriceLabel} ${ProfitCurrency}`,
-            `${totalPriceWithAdditionProfit} (${profitValue})`,
+            `${totalPriceWithAdditionProfit} (${profitValue} ${renderAdditionType(additionType)})`,
             moreHeader,
           ]
           : [
