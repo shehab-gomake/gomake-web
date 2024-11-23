@@ -99,6 +99,7 @@ export enum ORDER_STATUSES {
 }
 
 export enum EAdditionType {
-  PERCENTS = 0,
-  VALUE = 1,
+  Percentage,
+  ValuePerJob,
+  ValuePerUnit,
 }
