@@ -1,6 +1,6 @@
 import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 export enum EAccountType {
@@ -8,42 +8,36 @@ export enum EAccountType {
   CREDIT = 1,
 }
 
-const useCreateNewTransaction = ({ onCloseModal, customerId }) => {
+const useCreateNewTransaction = ({ onCloseModal }) => {
   const { t } = useTranslation();
-  const {
-    customer,
-    renderOptions,
-    checkWhatRenderArray,
-    handleCustomerChange,
-    setCustomer,
-    isFetching,
-  } = useCustomerDropDownList();
-  const { callApi } = useGomakeAxios();
-  const { alertFaultGetData, alertFaultAdded, alertSuccessAdded } =
-    useSnackBar();
   const dateRef = useRef(null);
+  const { callApi } = useGomakeAxios();
+  const {
+    alertFaultGetData,
+    alertFaultAdded,
+    alertSuccessAdded,
+    alertRequiredFields,
+  } = useSnackBar();
+  const { renderOptions, checkWhatRenderArray, isFetching } =
+    useCustomerDropDownList();
   const [erpAccountsList, setErpAccountsList] = useState([]);
   const accountTypeList: { id: number; name: string }[] = [
     { id: EAccountType.DEBIT, name: t("reports.debit") },
     { id: EAccountType.CREDIT, name: t("reports.credit") },
   ];
 
-  const [selectErpAccount, setErpAccount] = useState<any>();
-  const [selectAccountType, setAccountType] = useState<any>();
+  const [selectTransactionType, setTransactionType] = useState<any>();
   const [price, setPrice] = useState<number>(0);
   const [reference, setReference] = useState<string>("");
   const [selectDate, setSelectDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
 
-  const handleERPAccountChange = (e: any, value: any) => {
-    setErpAccount(value);
-  };
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
-  const handleAccountTypeChange = (e: any, value: any) => {
-    setAccountType(value);
+  const handleTransactionTypeChange = (e: any, value: any) => {
+    setTransactionType(value);
   };
   const onChangeReference = (e: any) => {
     setReference(e.target.value);
@@ -69,28 +63,58 @@ const useCreateNewTransaction = ({ onCloseModal, customerId }) => {
   }, []);
 
   const onCloseAndRemoveState = () => {
-    setCustomer(null);
-    setErpAccount(null);
     setPrice(0);
     setReference("");
     setSelectDate(new Date().toISOString().split("T")[0]);
-    setAccountType(null);
+    setTransactionType(null);
+
+    setFromAccountType(null);
+    setToAccountType(null);
+    setToAccountCode(null);
+    setToClientId(null);
+    setFromClientId(null);
+    setFromAccountCode(null);
     onCloseModal();
   };
 
+  const [fromAccountType, setFromAccountType] = useState<string>();
+  const [toAccountType, setToAccountType] = useState<string>();
+  const [fromClientId, setFromClientId] = useState<string | null>(null);
+  const [toClientId, setToClientId] = useState<string | null>(null);
+  const [fromAccountCode, setFromAccountCode] = useState<string | null>(null);
+  const [toAccountCode, setToAccountCode] = useState<string | null>(null);
+
   const createTransactionsApi = useCallback(async () => {
+    if (
+      !price ||
+      !reference ||
+      !selectDate ||
+      !selectTransactionType.name ||
+      !(fromAccountCode || fromClientId) ||
+      !(toAccountCode || toClientId)
+    ) {
+      alertRequiredFields();
+      return;
+    }
+
+    const transObject: Record<string, any> = {
+      amount: price,
+      reference: reference,
+      referenceDate: selectDate,
+      type: selectTransactionType?.id,
+    };
+
+    if (toAccountCode !== null) transObject.toAccountCode = toAccountCode;
+    if (fromAccountCode !== null) transObject.fromAccountCode = fromAccountCode;
+    if (toClientId !== null) transObject.toClientId = toClientId;
+    if (fromClientId !== null) transObject.fromClientId = fromClientId;
+
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/Receipts/create-transaction`,
-      {
-        clientId: customerId ? customerId : customer.id,
-        accountCode: selectErpAccount.code,
-        amount: price,
-        reference: reference,
-        referenceDate: selectDate,
-        type: selectAccountType.id,
-      }
+      transObject
     );
+
     if (res?.success) {
       alertSuccessAdded();
       onCloseAndRemoveState();
@@ -98,26 +122,64 @@ const useCreateNewTransaction = ({ onCloseModal, customerId }) => {
       alertFaultAdded();
     }
   }, [
-    customer,
     price,
     reference,
     selectDate,
-    selectAccountType,
-    selectErpAccount,
+    selectTransactionType,
+    toAccountCode,
+    fromAccountCode,
+    toClientId,
+    fromClientId,
   ]);
 
+  const accountTypeOptions = useMemo(
+    () => [
+      { label: t("reports.client"), value: "client" },
+      { label: t("reports.account"), value: "account" },
+    ],
+    [t]
+  );
+
+  const handleFromChange = (e: any, value: any) => {
+    if (fromAccountType === "client") {
+      setFromClientId(value?.id ?? null);
+      setFromAccountCode(null);
+    } else if (fromAccountType === "account") {
+      setFromAccountCode(value?.code ?? null);
+      setFromClientId(null);
+    }
+  };
+
+  const handleToChange = (e: any, value: any) => {
+    if (toAccountType === "client") {
+      setToClientId(value?.id ?? null);
+      setToAccountCode(null);
+    } else if (toAccountType === "account") {
+      setToAccountCode(value?.code ?? null);
+      setToClientId(null);
+    }
+  };
+
+  const handleFromTypeChange = (e: any, value: any) => {
+    setFromAccountType(value?.value ?? null);
+    setFromClientId(null);
+    setFromAccountCode(null);
+  };
+
+  const handleToTypeChange = (e: any, value: any) => {
+    setToAccountType(value?.value ?? null);
+    setToAccountCode(null);
+    setToClientId(null);
+  };
+
   return {
-    customer,
+    t,
     erpAccountsList,
     renderOptions,
     checkWhatRenderArray,
-    handleCustomerChange,
-    selectErpAccount,
-    handleERPAccountChange,
-    t,
     accountTypeList,
-    selectAccountType,
-    handleAccountTypeChange,
+    selectTransactionType,
+    handleTransactionTypeChange,
     handleClickSelectDate,
     selectDate,
     setSelectDate,
@@ -127,6 +189,17 @@ const useCreateNewTransaction = ({ onCloseModal, customerId }) => {
     createTransactionsApi,
     onCloseAndRemoveState,
     isFetching,
+    accountTypeOptions,
+    toAccountCode,
+    fromAccountCode,
+    toClientId,
+    fromClientId,
+    toAccountType,
+    fromAccountType,
+    handleFromChange,
+    handleToChange,
+    handleToTypeChange,
+    handleFromTypeChange,
   };
 };
 

@@ -146,7 +146,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                 <div>
                   <IconButton onClick={handleClick}>
                     <TuneIcon />
-                    {Object.keys(router.query).length > 0 && (
+                    {Object.keys(router.query).filter(
+                      (key) => key !== "pageNumber"
+                    ).length > 0 && (
                       <div style={{ position: "absolute", top: -5, right: -1 }}>
                         <DotIcon />
                       </div>

@@ -95,7 +95,8 @@ const DropDownListParameterWidget = ({
   return (
 
     <div data-tour={parameter?.id} style={parameter?.setSettingIcon && inModal ? { ...clasess.dropDownListWithSettingIcon, minWidth: '250px' } : clasess.dropDownListWithSettingIcon}>
-      <GoMakeAutoComplate
+      <GoMakeAutoComplate 
+        disabled={parameter?.isLock}
         key={selectedValue}
         options={parameter?.valuesConfigs?.filter(value => {
           return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);

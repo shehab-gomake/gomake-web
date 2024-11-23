@@ -187,6 +187,8 @@ const QuotesListPageWidget = ({
     onCloseDuplicateModal,
     onClickDocumentDuplicate,
     searchInputRef,
+    openExportReceiptPdfModal,
+    onCloseExportReceiptPdfModal,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -295,7 +297,9 @@ const QuotesListPageWidget = ({
                     <div>
                       <IconButton onClick={handleClick}>
                         <TuneIcon />
-                        {Object.keys(router.query).length > 0 && (
+                        {Object.keys(router.query).filter(
+                          (key) => key !== "pageNumber"
+                        ).length > 0 && (
                           <div
                             style={{ position: "absolute", top: -5, right: -1 }}
                           >
@@ -840,6 +844,16 @@ const QuotesListPageWidget = ({
         onClose={onCloseDuplicateModal}
         onClickYes={() => onClickDocumentDuplicate(selectedDocument?.id, true)}
         onClickNo={() => onClickDocumentDuplicate(selectedDocument?.id, false)}
+      />
+      <ThreeOptionsModal
+        title={t("sales.modals.printReceipt")}
+        subTitle={t("sales.modals.includeInvoicesPdfPrompt")}
+        yesBtn={"sales.modals.withInvoices"}
+        noBtn={"sales.modals.withoutInvoices"}
+        openModal={openExportReceiptPdfModal}
+        onClose={onCloseExportReceiptPdfModal}
+        onClickYes={() => onClickQuotePdf(selectedDocument?.id, false, true)}
+        onClickNo={() => onClickQuotePdf(selectedDocument?.id, false, false)}
       />
     </>
   );
