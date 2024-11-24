@@ -2,7 +2,7 @@
 import { GoMakeMenu } from "@/components/menu/menu";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 
 const ParameterListWidget = ({
@@ -34,7 +34,10 @@ const ParameterListWidget = ({
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const [value, setValue] = useState(parameter?.defaultValue);
+  const [value, setValue] = useState();
+  useEffect(() => {
+    setValue(parameter?.defaultValue)
+  }, [parameter])
   return (
     <>
       <span
@@ -70,6 +73,7 @@ const ParameterListWidget = ({
               }}
               getOptionLabel={(option: any) => option.name}
               value={parameter?.values?.find((value: any) => value.isDefault)}
+              key={parameter}
               placeholder={`Select ${t(parameter.parameterName)}`}
               style={{
                 width: 170,
@@ -96,11 +100,11 @@ const ParameterListWidget = ({
               }}
             /> : parameter?.parameterType === 1 || parameter?.parameterType === 2 ? (
               <GomakeTextInput
-                defaultValue={parameter?.defaultValue}
                 placeholder={`Enter ${t(parameter.parameterName)}`}
                 onChange={(e: any) => {
                   setValue(e.target.value);
                 }}
+                key={parameter}
                 onBlur={(e: any) => {
                   updateTextInputValue(e.target.value, index);
                   updateProfitProfileProductParameter(parameter, e.target.value);
