@@ -3,7 +3,7 @@ import {getUserToken} from "@/services/storage-data";
 import config from "@/config";
 import {useEffect} from "react";
 
-const useDisplayProfitProfilesSignalr = ({getAllProfitProfileProductByProductId,selectedPricingProfileSetting}:{getAllProfitProfileProductByProductId:any,selectedPricingProfileSetting:any}) => {
+const useDisplayProfitProfilesSignalr = () => {
     const {connection,} = useGoMakeSignalr<any[]>({
         url: config.erp_server + '/hubs/displayProfitProfiles',
         accessToken: getUserToken(),
@@ -12,9 +12,7 @@ const useDisplayProfitProfilesSignalr = ({getAllProfitProfileProductByProductId,
     useEffect(() => {
         if (connection) {
             connection.on("Show", () => {
-                if(selectedPricingProfileSetting?.productId){
-                    getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
-                }
+              console.log("Show")
             });
         }
     }, [connection]);
