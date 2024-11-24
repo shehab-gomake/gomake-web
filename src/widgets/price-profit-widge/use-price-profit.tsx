@@ -225,7 +225,10 @@ const usePriceProfit = () => {
       const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
 
       if (res?.success) {
-        getAllProfitProfileProductByProductId(productId);
+        setProducts(prevProducts => ({
+          ...prevProducts,
+          requiredParameters: res?.data
+        }));
       }
       else {
         getAllProfitProfileProductByProductId(productId);
@@ -366,7 +369,7 @@ const usePriceProfit = () => {
     });
 
   };
-  const { } = useDisplayProfitProfilesSignalr()
+  const { } = useDisplayProfitProfilesSignalr({ setProducts })
 
 
 
