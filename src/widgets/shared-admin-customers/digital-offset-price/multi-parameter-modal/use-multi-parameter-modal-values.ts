@@ -173,7 +173,7 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
           let parametersCopy = lodashClonedeep(selectedParameterValues);
           
           // Step 1: Find the parameter for colors to get the correct index
-          const colorParameter = parametersCopy.find(param => param.parameterId === "8eff3238-a321-48f3-85eb-c14afaccbff3");
+          const colorParameter = parametersCopy?.find(param => param.parameterId === "8eff3238-a321-48f3-85eb-c14afaccbff3");
           if (!colorParameter) return parametersCopy; // Exit if color parameter not found
           
           // Step 2: Find the index of the valueId within the colors parameter
