@@ -85,9 +85,7 @@ const usePrintHouseAddMachine = () => {
             if (res.success) {
                 setUpdatedMachine(res.data);
                 alertSuccessUpdate();
-                if (!!getMachineCategory()?.isEffectProfitProfile) {
-                    setOpenOptionsModal(true);
-                }
+                setOpenOptionsModal(true);
             } else {
                 alertFaultUpdate();
             }
@@ -96,15 +94,15 @@ const usePrintHouseAddMachine = () => {
     }
 
     const updateProfitProfile = async (isUpdateAndFixPrice: boolean) => {
-      const callBack = (res) => {
-        if (res.success) {
-            alertSuccessUpdate();
+        const callBack = (res) => {
+            if (res.success) {
+                alertSuccessUpdate();
+            }
         }
-      }
-      await updateProfitProfileProductMachineApi(callApi, callBack, {
-          key: machineState.category,
-          isUpdateAndFixPrice
-      })
+        await updateProfitProfileProductMachineApi(callApi, callBack, {
+            key: machineState.category,
+            isUpdateAndFixPrice
+        })
     }
 
     return {
