@@ -156,10 +156,9 @@ const useTransactionJournalReport = ({
     [reportType, dataTable]
   );
 
-  //!here
   const getAccountingTableRows = useCallback(() => {
     return dataTable?.map((data, index) => [
-      data?.transNumber ?? "-",
+      data?.transNumber,
       data?.transType,
       data?.documentDate?.split("T")[0],
       data?.valueDate?.split("T")[0],
@@ -167,32 +166,11 @@ const useTransactionJournalReport = ({
       data?.debitAccountName,
       data?.credAccountKey,
       data?.creditAccountName,
-      data?.debitAmount && data.debitAmount !== 0
-        ? data.debitAmount.toFixed(2)
-        : "-",
-      data?.creditAmount && data.creditAmount !== 0
-        ? data.creditAmount.toFixed(2)
-        : "-",
+      data?.debitAmount?.toFixed(2),
+      data?.creditAmount?.toFixed(2),
       data?.reference,
+      data?.ref2,
       data?.description,
-      // data?.documentPath ? (
-      //   <a
-      //     target="_blank"
-      //     rel="noopener noreferrer"
-      //     style={{
-      //       cursor: "pointer",
-      //       color: "inherit",
-      //       textDecoration: "unset",
-      //       display: "flex",
-      //       alignItems: "center",
-      //     }}
-      //     href={data?.documentPath}
-      //   >
-      //     <LinkIcon fontSize="small" style={{ ...adaptMarginLeft(dir, 5) }} />
-      //   </a>
-      // ) : (
-      //   <LinkOffIcon fontSize="small" style={{ marginRight: 4 }} />
-      // ),
     ]);
   }, [reportType, dataTable]);
 
@@ -222,8 +200,8 @@ const useTransactionJournalReport = ({
         t("reports.debitAmount"),
         t("reports.creditAmount"),
         t("reports.reference"),
+        t("reports.ref2"),
         t("reports.description"),
-        // "",
       ];
     } else {
       headers.push(t("reports.credit"));
@@ -318,7 +296,7 @@ const useTransactionJournalReport = ({
         ...filterState,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
-        pageNumber: pageNumber - 1,
+        pageNumber: pageNumber,
         pageSize,
       }
     );
@@ -335,7 +313,6 @@ const useTransactionJournalReport = ({
 
   const [rows, setRows] = useState<any[]>([]);
 
-  //!here
   const headers = [
     "accountName",
     "accountKey",
@@ -354,19 +331,14 @@ const useTransactionJournalReport = ({
     if (res?.success) {
       const data = res.data?.data?.data;
       const mappedRows = data.items.map((item: any) => ({
-        // createdAt: getFormattedLocalDate(item.createdAt),
-        // updatedAt: getFormattedLocalDate(item.updatedAt),
-
         accountName: item.relatedAccountName,
         accountKey: item.relatedAccountKey,
         adjustmentRecordNumber: item.recordNumber,
-
         deleteButton: item?.isDeletable ? (
           <IconButton onClick={() => DeleteAdjustment(item.id)}>
             <DeleteIcon />
           </IconButton>
         ) : null,
-
         history:
           item.adjustments?.map((adjustment: any) => ({
             transNum: adjustment.recordNumber,
@@ -376,17 +348,6 @@ const useTransactionJournalReport = ({
             valueDate: getFormattedLocalDate(adjustment.document.dueDate),
             docDate: getFormattedLocalDate(adjustment.document.docDate),
           })) || [],
-
-        // history: item.allocations.map((allocation: any) => ({
-        //   transNum: allocation.document.record,
-        //   // addressNum: "test",
-        //   reference: allocation.document.documentNumber,
-        //   sum: allocation.document.totalPrice,
-        //   adjustmentSum: allocation.allocatedAmount,
-        //   // currency: "$",
-        //   valueDate: getFormattedLocalDate(allocation.document.dueDate),
-        //   docDate: getFormattedLocalDate(allocation.document.docDate),
-        // })),
       }));
 
       setRows(mappedRows);
@@ -502,7 +463,6 @@ const useTransactionJournalReport = ({
     getClientTypesCategories();
   }, []);
 
-  // NEW
   const label = (() => {
     switch (reportType) {
       case EReportType.TransactionJournal:
@@ -552,7 +512,6 @@ const useTransactionJournalReport = ({
     isFetching,
   } = useCustomerDropDownList();
 
-  //!new
   const [isOpenAdjustmentsModal, setIsOpenAdjustmentsModal] =
     useState<boolean>(false);
 
@@ -609,17 +568,15 @@ const useTransactionJournalReport = ({
           ...filterState,
           startDate: formattedStartDate,
           endDate: formattedEndDate,
-          pageNumber: pageNumber - 1,
+          pageNumber: pageNumber,
           pageSize,
         },
       },
       true,
-      null,
-      "blob"
+      null
     );
-
     const downloadLink = document.createElement("a");
-    const link = URL?.createObjectURL(res.data);
+    const link = res.data.data.data;
     downloadLink.href = link;
     downloadLink.download = `AccountingReport.xlsx`;
     downloadLink.click();
@@ -644,7 +601,6 @@ const useTransactionJournalReport = ({
     customerForEdit,
     setCustomerForEdit,
     onClickOpenCustomerModal,
-    //?new
     label,
     filterState,
     setFilterState,
@@ -664,7 +620,6 @@ const useTransactionJournalReport = ({
     onClickOpenCreateTransactionModal,
     onClickCloseCreateTransactionModal,
     isOpenCreateTransactionModal,
-
     customer,
     renderOptions,
     checkWhatRenderArray,
@@ -673,7 +628,6 @@ const useTransactionJournalReport = ({
     isOpenAdjustmentsModal,
     onClickCloseAdjustmentsModal,
     onClickOpenAdjustmentsModal,
-
     getClientPaymentItems,
     clientPaymentsList,
     setClientPaymentsList,

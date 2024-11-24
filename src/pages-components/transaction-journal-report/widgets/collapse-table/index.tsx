@@ -16,7 +16,6 @@ interface CollapsibleTableProps {
   style?: React.CSSProperties;
 }
 
-//!here
 function CollapsibleTable({ rows, headers, style }: CollapsibleTableProps) {
   const { t } = useTranslation();
   const isRtl = t("direction") === "rtl";

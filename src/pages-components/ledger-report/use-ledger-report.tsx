@@ -65,7 +65,6 @@ const useLedgerReport = ({ customerId }: any) => {
     }
   };
 
-  //!here
   const onClickCloseAdjustmentsModal = () => {
     setIsOpenAdjustmentsModal(false);
   };
@@ -241,7 +240,6 @@ const useLedgerReport = ({ customerId }: any) => {
     }
   }, [fromDate, toDate, isExtended, customer, customerId]);
 
-  //!here
   const getClientPaymentItems = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.GET,
