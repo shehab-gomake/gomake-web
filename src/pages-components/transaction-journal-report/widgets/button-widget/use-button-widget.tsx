@@ -6,6 +6,7 @@ export interface LedgerReportButtonWidgetProps {
   onClickShowCard: () => void;
   onClickCreateNewTransaction?: () => void;
   onClickOpenAdjustmentsModal?: () => void;
+  onClickExportAccountingReportExcel?: () => void;
   reportType: EReportType;
 }
 
@@ -14,6 +15,7 @@ const useLedgerReportHeader = ({
   onClickShowCard,
   onClickCreateNewTransaction,
   onClickOpenAdjustmentsModal,
+  onClickExportAccountingReportExcel,
   reportType,
 }: LedgerReportButtonWidgetProps) => {
   const { t } = useTranslation();
@@ -22,10 +24,6 @@ const useLedgerReportHeader = ({
   const isAdjustmentsReport = reportType === EReportType.AdjustmentsReport;
 
   const tabs = [
-    // {
-    //   name: t("reports.showCard"),
-    //   onclick: onClickShowCard,
-    // },
     ...(!isAdjustmentsReport
       ? [
           {
@@ -47,6 +45,10 @@ const useLedgerReportHeader = ({
           {
             name: t("reports.createNewTransaction"),
             onclick: onClickCreateNewTransaction,
+          },
+          {
+            name: t("reports.excelReport"),
+            onclick: onClickExportAccountingReportExcel,
           },
         ]
       : []),

@@ -568,6 +568,40 @@ const useTransactionJournalReport = ({
       alertFaultGetData();
     }
   }, [customer]);
+
+  const onClickExportAccountingReportExcel = useCallback(async () => {
+    if (!filterState.startDate || !filterState.endDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+
+    const formattedStartDate = format(filterState.startDate, "yyyy-MM-dd");
+    const formattedEndDate = format(filterState.endDate, "yyyy-MM-dd");
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/export-accounting-report-excel`,
+      {
+        myBody: {
+          ...filterState,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          pageNumber: pageNumber - 1,
+          pageSize,
+        },
+      },
+      true,
+      null,
+      "blob"
+    );
+
+    const downloadLink = document.createElement("a");
+    const link = URL?.createObjectURL(res.data);
+    downloadLink.href = link;
+    downloadLink.download = `AccountingReport.xlsx`;
+    downloadLink.click();
+  }, [reportType, filterState, pageNumber, pageSize]);
+
   return {
     t,
     handleDocumentTypeChange,
@@ -620,6 +654,7 @@ const useTransactionJournalReport = ({
     getClientPaymentItems,
     clientPaymentsList,
     setClientPaymentsList,
+    onClickExportAccountingReportExcel,
   };
 };
 

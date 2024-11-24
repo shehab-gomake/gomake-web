@@ -75,7 +75,9 @@ const TransactionJournalReportWidget = ({
     getClientPaymentItems,
     clientPaymentsList,
     setClientPaymentsList,
+    onClickExportAccountingReportExcel,
   } = useTransactionJournalReport({ reportType });
+
   const isAccountingTransaction =
     reportType === EReportType.AccountingTransaction;
   const isAdjustmentsReport = reportType === EReportType.AdjustmentsReport;
@@ -152,6 +154,7 @@ const TransactionJournalReportWidget = ({
         onClickShowCard={onClickShowCard}
         onClickCreateNewTransaction={onClickOpenCreateTransactionModal}
         onClickOpenAdjustmentsModal={onClickOpenAdjustmentsModal}
+        onClickExportAccountingReportExcel={onClickExportAccountingReportExcel}
         reportType={reportType}
       />
       {reportType === EReportType.AdjustmentsReport && (
