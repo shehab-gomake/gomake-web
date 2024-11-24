@@ -61,7 +61,7 @@ const EmployeeHoursCell = ({date, onClick, employee}: IProps) => {
                         </MenuButton>
                     }
                 </Stack>
-                {workingHours ? (
+                {workingHours.times.length > 0 ? (
                     <Stack>
                         {workingHours.times.map((time, index) => (
                             <span key={index}>{`${formatTime(time.startTime)} - ${formatTime(time.endTime)}`}</span>
@@ -71,11 +71,12 @@ const EmployeeHoursCell = ({date, onClick, employee}: IProps) => {
                     '-'
                 )}
             </TableCell>
-            <TableCell sx={{...classes.tableCell, width: '50%'}} align="center">
-                <Stack dir={'ltr'} maxHeight={'60px'} overflow={'auto'} className={'custom-scrollbar small'} gap={'8px'}>
+            <TableCell sx={{width: '50%', padding: 0}} align="center">
+                <Stack dir={'ltr'}  padding={ '0 10px'} maxHeight={'80px'} overflow={'auto'} className={'custom-scrollbar small'} gap={'8px'}>
                     {
-                        !!workingHours &&
-                        getEmployeeMachines(workingHours.times.flatMap(time => time.machines)).map(machine => <MachineNameComponent key={machine.value} machineName={machine.label}/>)
+                        !!workingHours && getEmployeeMachines(workingHours.times.flatMap(time => time.machines)).length > 0 ?
+                        getEmployeeMachines(workingHours.times.flatMap(time => time.machines)).map(machine => <MachineNameComponent key={machine.value} machineName={machine.label}/>) :
+                            <span>-</span>
                     }
                 </Stack>
             </TableCell>

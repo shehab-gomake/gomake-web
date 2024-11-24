@@ -9,14 +9,14 @@ const useStyle = () => {
       tableHeader: {
         backgroundColor: '#F9FAFB',
         textAlign: 'center',
-        ...FONT_FAMILY.Inter(700, 12),
+        ...FONT_FAMILY.Inter(700, 18),
         border: '1px solid #EAECF0'
       },
       tableCell: {
         border: '1px solid #EAECF0',
         backgroundColor: '#FFF',
         height: '100px',
-        ...FONT_FAMILY.Inter(400, 12)
+        ...FONT_FAMILY.Inter(400, 16)
       }
     };
   }, [theme]);

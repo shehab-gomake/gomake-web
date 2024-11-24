@@ -18,6 +18,8 @@ import {HeaderComponent} from "@/widgets/employees-working-hours-widgets/modals/
 import {useRecoilState} from "recoil";
 import {employeesWorkingHoursState, machinesState} from "@/widgets/employees-working-hours-widgets/state";
 import {useTranslation} from "react-i18next";
+import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import {FONT_FAMILY} from "@/utils/font-family";
 
 interface NewExceptionModalProps {
     open: boolean;
@@ -44,6 +46,7 @@ const DayHoursModal: React.FC<NewExceptionModalProps> = ({
     const {mapMachinesWithEmployeesByDate} = useWorkingHours();
     const [employees,] = useRecoilState(employeesWorkingHoursState);
     const {t} = useTranslation();
+    const {primaryColor} = useGomakeTheme();
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setActive(event.target.value === "true");
@@ -115,17 +118,17 @@ const DayHoursModal: React.FC<NewExceptionModalProps> = ({
             <Stack gap="20px">
                     <HeaderComponent employee={employee} date={selectedDate}/>
                 <FormControl>
-                    <FormLabel>{t('employeeWorkingHours.employeeStatus')}</FormLabel>
+                    <FormLabel style={{...FONT_FAMILY.Inter(500, 18), color: primaryColor(500)}}>{t('employeeWorkingHours.employeeStatus')}</FormLabel>
                     <RadioGroup row value={active} onChange={handleChange}>
                         <FormControlLabel
                             style={{width: '50%'}}
                             value={true}
-                            control={<Radio color="primary" />}
+                            control={<Radio style={{color: primaryColor(500)}}/>}
                             label={t('usersSettings.active')}
                         />
                         <FormControlLabel
                             value={false}
-                            control={<Radio color="secondary" />}
+                            control={<Radio style={{color: primaryColor(500)}}/>}
                             label={t('usersSettings.inactive')}
                         />
                     </RadioGroup>
