@@ -50,6 +50,7 @@ const ProductsRowMappingTable = ({
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
               checked={product.isSelected}
+              disabled={product?.isSelectLocked}
               onChange={() => {
                 handleCheckboxChange(index)
                 updateProfitProfileProductSelected(product)
@@ -96,7 +97,7 @@ const ProductsRowMappingTable = ({
               checked={!product?.isHidden}
               onChange={(e) => {
                 handleHideProduct(index, e.target.checked)
-                updateProfitProfileProductHidden(product,handleClose)
+                updateProfitProfileProductHidden(product, handleClose)
               }}
             />
           </div>
