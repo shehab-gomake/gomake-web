@@ -18,7 +18,6 @@ const usePriceProfit = () => {
   const [pricingProfileSetting, setPricingProfileSetting] = useState<PricingProfileSetting[]>([])
   const [selectedPricingProfileSetting, setSelectedPricingProfileSetting] = useState<PricingProfileSetting | null>(null)
   const router = useRouter()
-  console.log("productId", router.query.productId)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isUpdateQuantity, setIsUpdateQuantity] = useState(false)
   const [isUpdate, setIsUpdate] = useState(false);
@@ -72,7 +71,6 @@ const usePriceProfit = () => {
 
   const handleReviewCalculation = (data: any) => {
     window.open(`/products/create?profitsProfileRowId=${data?.rowId}&quantity=${data?.quantity}`, "_blank");
-    // Add logic for reviewing the calculation
     handleClose()
   };
 
@@ -134,7 +132,11 @@ const usePriceProfit = () => {
           const updatedValues = param.materialValues.map(val => ({
             ...val,
           }));
-          return { ...param, materialValues: updatedValues };
+          return {
+            ...param,
+            materialValues: updatedValues,
+            defaultValue: value?.value // Set defaultValue to the selected value
+          };
         }
         return param;
       });

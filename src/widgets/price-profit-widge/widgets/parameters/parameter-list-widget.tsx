@@ -28,11 +28,17 @@ const ParameterListWidget = ({
   const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const [autoCompleteOpen, setAutoCompleteOpen] = useState(false);
+
   const handleClose = () => {
     setAnchorEl(null);
   };
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+    if (!displayValue && (parameter?.parameterType === 0 || parameter?.parameterType === 5)) {
+
+      setAutoCompleteOpen(true);
+    }
   };
   const [value, setValue] = useState();
   useEffect(() => {
@@ -64,6 +70,7 @@ const ParameterListWidget = ({
         <div style={classes.menuContainer}>
           {parameter?.parameterType === 0 ? (
             <GoMakeAutoComplate
+              // ref={autoCompleteRef}
               options={parameter?.values}
               onChange={(e: any, value: any) => {
                 updateDropdownValue(value, index);
@@ -80,15 +87,19 @@ const ParameterListWidget = ({
                 height: 34,
                 border: "none",
               }}
+              open={autoCompleteOpen}
+              onClose={() => setAutoCompleteOpen(false)}
+              onOpen={() => setAutoCompleteOpen(true)}
             />
           ) : parameter?.parameterType === 5 ?
             <GoMakeAutoComplate
+              // ref={autoCompleteRef}
               options={parameter?.materialValues}
               onChange={(e: any, value: any) => {
                 updateDropdownMaterialValue(value, index);
                 updateProfitProfileProductParameter(parameter, value);
                 handleClose();
-
+                setAutoCompleteOpen(false); // Close the dropdown
               }}
               getOptionLabel={(option: any) => option.value}
               value={parameter?.materialValues?.find((value: any) => value.valueId === parameter?.defaultValue)}
@@ -98,6 +109,9 @@ const ParameterListWidget = ({
                 height: 34,
                 border: "none",
               }}
+              open={autoCompleteOpen}
+              onClose={() => setAutoCompleteOpen(false)}
+              onOpen={() => setAutoCompleteOpen(true)}
             /> : parameter?.parameterType === 1 || parameter?.parameterType === 2 ? (
               <GomakeTextInput
                 placeholder={`Enter ${t(parameter.parameterName)}`}
