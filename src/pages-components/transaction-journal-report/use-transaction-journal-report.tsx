@@ -334,7 +334,14 @@ const useTransactionJournalReport = ({
   }, [reportType, filterState, pageNumber, pageSize]);
 
   const [rows, setRows] = useState<any[]>([]);
-  const headers = ["createdAt", "updatedAt", "deleteButton"];
+
+  //!here
+  const headers = [
+    "accountName",
+    "accountKey",
+    "adjustmentRecordNumber",
+    "deleteButton",
+  ];
   const getAdjustmentsReports = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -347,23 +354,39 @@ const useTransactionJournalReport = ({
     if (res?.success) {
       const data = res.data?.data?.data;
       const mappedRows = data.items.map((item: any) => ({
-        createdAt: getFormattedLocalDate(item.createdAt),
-        updatedAt: getFormattedLocalDate(item.updatedAt),
+        // createdAt: getFormattedLocalDate(item.createdAt),
+        // updatedAt: getFormattedLocalDate(item.updatedAt),
+
+        accountName: item.relatedAccountName,
+        accountKey: item.relatedAccountKey,
+        adjustmentRecordNumber: item.recordNumber,
+
         deleteButton: item?.isDeletable ? (
           <IconButton onClick={() => DeleteAdjustment(item.id)}>
             <DeleteIcon />
           </IconButton>
         ) : null,
-        history: item.allocations.map((allocation: any) => ({
-          transNum: allocation.document.record,
-          // addressNum: "test",
-          reference: allocation.document.documentNumber,
-          sum: allocation.document.totalPrice,
-          adjustmentSum: allocation.allocatedAmount,
-          // currency: "$",
-          valueDate: getFormattedLocalDate(allocation.document.dueDate),
-          docDate: getFormattedLocalDate(allocation.document.docDate),
-        })),
+
+        history:
+          item.adjustments?.map((adjustment: any) => ({
+            transNum: adjustment.recordNumber,
+            reference: adjustment.document.documentNumber,
+            sum: adjustment.amount,
+            adjustmentSum: adjustment.allocatedAmount,
+            valueDate: getFormattedLocalDate(adjustment.document.dueDate),
+            docDate: getFormattedLocalDate(adjustment.document.docDate),
+          })) || [],
+
+        // history: item.allocations.map((allocation: any) => ({
+        //   transNum: allocation.document.record,
+        //   // addressNum: "test",
+        //   reference: allocation.document.documentNumber,
+        //   sum: allocation.document.totalPrice,
+        //   adjustmentSum: allocation.allocatedAmount,
+        //   // currency: "$",
+        //   valueDate: getFormattedLocalDate(allocation.document.dueDate),
+        //   docDate: getFormattedLocalDate(allocation.document.docDate),
+        // })),
       }));
 
       setRows(mappedRows);

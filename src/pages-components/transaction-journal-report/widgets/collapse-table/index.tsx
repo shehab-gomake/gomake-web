@@ -16,6 +16,7 @@ interface CollapsibleTableProps {
   style?: React.CSSProperties;
 }
 
+//!here
 function CollapsibleTable({ rows, headers, style }: CollapsibleTableProps) {
   const { t } = useTranslation();
   const isRtl = t("direction") === "rtl";
@@ -35,7 +36,7 @@ function CollapsibleTable({ rows, headers, style }: CollapsibleTableProps) {
         >
           {headers.map((key, index) => {
             if (key !== "history") {
-              if (index === 2)
+              if (index === 3)
                 return (
                   <TableCell key={index} align={isRtl ? "left" : "right"}>
                     {row[key]}

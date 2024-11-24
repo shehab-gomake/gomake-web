@@ -24,14 +24,18 @@ const useLedgerReportHeader = ({
   const isAdjustmentsReport = reportType === EReportType.AdjustmentsReport;
 
   const tabs = [
-    ...(!isAdjustmentsReport
-      ? [
-          {
-            name: t("reports.showCard"),
-            onclick: onClickShowCard,
-          },
-        ]
-      : []),
+    {
+      name: t("reports.showCard"),
+      onclick: onClickShowCard,
+    },
+    // ...(!isAdjustmentsReport
+    //   ? [
+    //       {
+    //         name: t("reports.showCard"),
+    //         onclick: onClickShowCard,
+    //       },
+    //     ]
+    //   : []),
     ...(isAdjustmentsReport
       ? [
           {
