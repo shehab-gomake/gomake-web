@@ -386,7 +386,6 @@ const useAuthLayoutHook = (
         key: "settings",
         title: "tabs.settings",
         path: "/settings",
-        Permission: Permissions.SHOW_SETTINGS,
         isList: false,
         icon: () => {
           return <SettingNavBar />;

@@ -1,5 +1,5 @@
 import {MachineStepper} from "@/widgets/machines/components/stepper/machines-stepper";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useRecoilValue} from "recoil";
 import {machineCategoriesState} from "@/store/machine-categories";
 import {IStep} from "@/widgets/machines/utils/interface/step";
@@ -15,7 +15,7 @@ import {MachinesSideList} from "@/components/containers/machines-container/side-
 import {NavigationButtons} from "@/widgets/machines/components/forms/navigationButtons";
 import {StepType} from "@reactour/tour";
 import {useGoMakeTour} from "@/hooks/use-go-make-tour";
-import {GoMakeModal} from "@/components";
+import {GoMakeDeleteModal, GoMakeModal} from "@/components";
 import {AddMachineModal} from "@/widgets/machines/customer/add-machine-modal";
 import { useUserPermission } from "@/hooks/use-permission";
 
@@ -28,7 +28,7 @@ const CustomerEditMachines = () => {
     const [machineSteps, setMachineSteps] = useState<IStep[]>([]);
     const selectedMachine = useRecoilValue(machineState);
     const {getPrintHouseMachinesList, setMachine, getAndSetMachines} = usePrintHouseMachines();
-    const {updateMachine} = usePrintHouseAddMachine();
+    const {updateMachine, setOpenOptionsModal, openUpdateOptionsModal, updateProfitProfile} = usePrintHouseAddMachine();
     const {t} = useTranslation();
     const [openAddMachineModal, setOpenAddMachineModal] = useState<boolean>(false);
     const { CheckPermission } = useUserPermission();
@@ -113,6 +113,21 @@ const CustomerEditMachines = () => {
             <GoMakeModal insideStyle={{width: 'fit-content', height: 'fit-content'}} openModal={openAddMachineModal} onClose={()=> setOpenAddMachineModal(false)} modalTitle={t('tabs.addMachine')}>
                 <AddMachineModal closeModal={()=>setOpenAddMachineModal(false)}/>
             </GoMakeModal>
+            <GoMakeDeleteModal
+                openModal={openUpdateOptionsModal}
+                onClose={()=>setOpenOptionsModal(false)}
+                hideIcon
+                title={t("updateProfitProfileMachineModal.title")}
+                subTitle={t("updateProfitProfileMachineModal.subTitle")}
+                yesBtn={t("updateProfitProfileMachineModal.yesButton")}
+                cancelBtn={t("updateProfitProfileMachineModal.noButton")}
+                onClickDelete={async () => {
+                    await updateProfitProfile(true)
+                }}
+                onClickCancel={async () => {
+                    await updateProfitProfile(false)
+                }}
+            />
         </>
 
     );
