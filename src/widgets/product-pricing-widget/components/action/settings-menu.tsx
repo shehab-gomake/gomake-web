@@ -1,8 +1,9 @@
 import { GoMakeMenu } from "@/components";
-import { MenuItem } from "@mui/material";
+import { Divider, MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import {useRecoilState, useRecoilValue} from "recoil";
-import {currentCalculationConnectionId} from "@/store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { currentCalculationConnectionId } from "@/store";
+import { DeleteSettingsIcon, OsSettingsIcon, PrinterIcon, ProfitIcon, ProportiesIcon } from "@/icons";
 
 const SettingsMenu = ({
   handleClose,
@@ -39,20 +40,29 @@ const SettingsMenu = ({
   };
   return (
     <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-      <MenuItem onClick={onClickProfit}>
+      <MenuItem onClick={onClickProfit} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <ProfitIcon />
         {t("products.profits.admin.title")}
       </MenuItem>
-      <MenuItem onClick={onClickProporties}>
+      <MenuItem onClick={onClickProporties} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <ProportiesIcon />
         {t("products.profits.admin.proporties")}
       </MenuItem>
-      <MenuItem onClick={onClickOsSettings}>
+      <MenuItem onClick={onClickOsSettings} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <OsSettingsIcon />
         {t("products.profits.admin.OSSettings")}
       </MenuItem>
       {machineName && (
-        <MenuItem onClick={onClickMachine}>
+        <MenuItem onClick={onClickMachine} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <PrinterIcon />
           {t("products.offsetPrice.admin.machine")}
         </MenuItem>
       )}
+      <Divider />
+      <MenuItem style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <DeleteSettingsIcon />
+        {t("navigationButtons.delete")}
+      </MenuItem>
     </GoMakeMenu>
   );
 };
