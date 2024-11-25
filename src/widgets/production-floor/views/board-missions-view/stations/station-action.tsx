@@ -56,7 +56,6 @@ import {
 import { useUserPermission } from "@/hooks/use-permission";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { TableOutPutComponent } from "@/widgets/product-pricing-widget/components/table-output/table-output-component";
-import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
 import {
   boardMissionMaterialState,
   materialModalState,
@@ -126,7 +125,6 @@ const BoardMissionsStationAction = ({
   const [openModal, setOpenMpdal] = useState(false);
 
   const onClickOpenModal = (e) => {
-    //!here
     if (isLastStation && isOrderCompleted) {
       setIsReadyModal(true);
     } else {
@@ -163,15 +161,6 @@ const BoardMissionsStationAction = ({
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
 
-  //!new
-  // const [openMaterialsModal, setOpenMaterialsModal] = useState(false);
-  // const onClickOpenMaterialsModal = () => {
-  //   setOpenMaterialsModal(true);
-  // };
-  // const onClickCloseMaterialsModal = () => {
-  //   setOpenMaterialsModal(false);
-  // };
-
   const setState = useSetRecoilState<any>(boardMissionMaterialState);
   const setOpenMaterialsModal = useSetRecoilState<any>(materialModalState);
   const onClickDone = async (
@@ -183,10 +172,8 @@ const BoardMissionsStationAction = ({
       setLoading(false);
 
       if (res.success) {
-        //!new
         setState(res.data);
         setOpenMaterialsModal(true);
-
         const currentActionId = res.data.currentStationId;
         //stations.find(x=>x.boardMissionActionId == currentActionId).;
         setStations(
@@ -361,60 +348,6 @@ const BoardMissionsStationAction = ({
       label
     );
   };
-
-  // const state = {
-  //   currentStationId: "d97a9e66-8db8-4b45-ad8e-44f26f97c351",
-  //   boardMissionActionId: "b97a9e66-8db8-4b45-ad8e-44f26f97c351",
-  //   productionTime: "5000",
-  //   materials: [
-  //     {
-  //       productType: "1",
-  //       workFlowActionId: "44",
-  //       materialKey: "Sheets 1",
-  //       currentValue: "1",
-  //     },
-
-  //     {
-  //       productType: "2",
-  //       workFlowActionId: "44",
-  //       materialKey: "Sheets 2",
-  //       currentValue: "12",
-  //     },
-  //     {
-  //       productType: "3",
-  //       workFlowActionId: "44",
-  //       materialKey: "Sheets 3",
-  //       currentValue: "123",
-  //     },
-  //   ],
-  // };
-
-  //!here
-  // const onUpdateMaterialStock = async (updatedState: {
-  //   currentStationId: string;
-  //   boardMissionActionId: string;
-  //   productionTime: string;
-  //   materials: {
-  //     ProductType: string;
-  //     WorkFlowActionId: string;
-  //     materialKey: string;
-  //     currentValue: string;
-  //   }[];
-  // }) => {
-  //   const callBack = (res) => {
-  //     if (res.success) {
-  //       alertSuccessUpdate();
-  //       onClickCloseMaterialsModal();
-  //     } else {
-  //       alertFaultUpdate();
-  //     }
-  //   };
-  //   await updatePrintHouseMaterialStockFromJobApi(
-  //     callApi,
-  //     callBack,
-  //     updatedState
-  //   );
-  // };
 
   return (
     <>
@@ -1008,12 +941,6 @@ const BoardMissionsStationAction = ({
         openModal={openPackagingModal}
         onClose={() => setOpenPackagingModal(false)}
       />
-      {/* <MaterialsAndProductionTimeModalWidget
-        openModal={openMaterialsModal}
-        onClose={onClickCloseMaterialsModal}
-        state={state}
-        onUpdate={onUpdateMaterialStock}
-      /> */}
     </>
   );
 };

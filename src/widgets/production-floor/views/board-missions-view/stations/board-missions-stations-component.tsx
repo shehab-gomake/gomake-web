@@ -12,16 +12,14 @@ import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { GeneralInformationComponent } from "./general-information/general-information-component";
 import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
-import {
-  boardMissionMaterialState,
-  materialModalState,
-} from "./material-and-production-time-modal/states";
+import { materialModalState } from "./material-and-production-time-modal/states";
 import { updatePrintHouseMaterialStockFromJobApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 const BoardMissionsStationsComponent = () => {
   const {
     stations,
+    setStations,
     subWorkFlows,
     boardMissions,
     onClickAllJob,
@@ -41,12 +39,11 @@ const BoardMissionsStationsComponent = () => {
   );
   const isLoading = !boardMissionsDetails?.boardMissionId && sortedStations;
 
-  //!new
-  const [state, setState] = useRecoilState<any>(boardMissionMaterialState);
   const [openMaterialsModal, setOpenMaterialsModal] =
     useRecoilState<any>(materialModalState);
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+
   const onUpdateMaterialStock = async (updatedState: {
     currentStationId: string;
     boardMissionActionId: string;
@@ -62,6 +59,23 @@ const BoardMissionsStationsComponent = () => {
       if (res.success) {
         alertSuccessUpdate();
         setOpenMaterialsModal(false);
+
+        setStations(
+          stations.map((station) => {
+            if (
+              station.boardMissionActionId == updatedState.boardMissionActionId
+            ) {
+              return {
+                ...station,
+                boardMissionActionTimer: {
+                  isTimerRunning: false,
+                  totalRunningTime: Number(updatedState.productionTime),
+                },
+              };
+            }
+            return { ...station };
+          })
+        );
       } else {
         alertFaultUpdate();
       }
@@ -166,12 +180,9 @@ const BoardMissionsStationsComponent = () => {
           </>
         )}
       </Stack>
-
-      {/* !hereeee */}
       <MaterialsAndProductionTimeModalWidget
         openModal={openMaterialsModal}
         onClose={() => setOpenMaterialsModal(false)}
-        state={state}
         onUpdate={onUpdateMaterialStock}
       />
     </div>
