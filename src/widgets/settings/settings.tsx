@@ -22,7 +22,7 @@ const SettingsWidget = () => {
     const selectedItem = list.find((item) => item.value === value);
     push("/settings/" + selectedItem.path).then();
   };
-  const dir: "rtl" | "ltr" = t("direction");
+
   useEffect(() => {
     if (settingsRoute) {
       const item = list.find((item) => item.path === settingsRoute);
@@ -32,6 +32,7 @@ const SettingsWidget = () => {
       setSelected(!!item ? item : list[0]);
     }
   }, [settingsRoute, id]);
+
   const settingsSteps: StepType[] = [
     {
       selector: '[data-tour="profileSettings"]',
@@ -82,12 +83,19 @@ const SettingsWidget = () => {
   ];
 
   const {} = useGoMakeTour(settingsSteps, []);
+
   const Side = () => {
     return (
       <>
         <SideList
           list={list
-            .filter((x) => !x.permission || CheckPermission(x.permission))
+            .filter(
+              (x) =>
+                !x.permission ||
+                (Array.isArray(x.permission)
+                  ? x.permission.some((perm) => CheckPermission(perm))
+                  : CheckPermission(x.permission))
+            )
             .map((item) => ({ ...item, text: t(item.text) }))}
           selectedItem={selected?.value}
           onSelect={onSelectItem}
@@ -96,6 +104,7 @@ const SettingsWidget = () => {
       </>
     );
   };
+
   return (
     <SideBarContainer side={Side()} header={""} subHeader={""}>
       {selected && selected.component && !id && <selected.component />}
