@@ -13,19 +13,13 @@ const GomakeLoadingWithShadow = () => {
   const { classes } = useStyle();
   return (
     <Backdrop sx={{ zIndex: 9999999999999999 }} open={loading}>
-      <div
-        style={classes.containerStyle}
-      >
+      <div style={classes.containerStyle}>
         <CircularProgress
           size="60px"
           thickness={2}
           style={{ color: primaryColor(600) }}
         />
-        <Typography
-          variant="h6"
-          component="div"
-          style={classes.textStyle}
-        >
+        <Typography variant="h6" component="div" style={classes.textStyle}>
           {t("Loading")}...
         </Typography>
         {/* <div style={{ marginTop: "10px", display: "flex", alignItems: "center" }}>

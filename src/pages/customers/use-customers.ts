@@ -24,6 +24,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useDebounce } from "@/utils/use-debounce";
+import { useSnackBar } from "@/hooks";
 export interface IStatus {
   label: string;
   value: string;
@@ -35,21 +36,26 @@ const useCustomers = (
 ) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const { alertFaultGetData } = useSnackBar();
+  const { CheckPermission } = useUserPermission();
   const [allCustomers, setAllCustomers] = useState([]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
-
-
-
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  
+  const [openExportModal, setOpenExportModal] = useState<boolean>(false);
+
+  const onOpenExportClientModal = () => {
+    setOpenExportModal(true);
+  };
+
+  const onCloseExportClientModal = () => {
+    setOpenExportModal(false);
+  };
+
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
   };
-
-
-  const { CheckPermission } = useUserPermission();
 
   const tableHeaders = [
     clientType == "C"
@@ -61,6 +67,7 @@ const useCustomers = (
     t("customers.status"),
     CheckPermission(Permissions.EDIT_CLIENT) ? t("customers.hashtag") : null,
   ];
+
   const getCustomersRows = useCallback(() => {
     return allCustomers?.map((customer) => [
       customer?.customerCode,
@@ -81,7 +88,7 @@ const useCustomers = (
 
   const [name, setCustomerName] = useState("");
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
-  
+
   const debounce = useDebounce(name, 1000);
   useEffect(() => {
     setFinalPatternSearch(debounce);
@@ -129,26 +136,26 @@ const useCustomers = (
     isActive,
   });
 
-  ///////////////////////// select clientType //////////////////////////////
   const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
     clientTypesCategoriesState
   );
-  const getClientTypesCategories = async ( cardType : CLIENT_TYPE_Id) => {
+  const getClientTypesCategories = async (cardType: CLIENT_TYPE_Id) => {
     const callBack = (res) => {
       if (res.success) {
         const clientTypes = res.data.map((types) => ({
           label: types.name,
           id: types.id,
-          additionProfits : types?.additionProfits  ?? 0,  
+          additionProfits: types?.additionProfits ?? 0,
         }));
         setClientTypesCategories(clientTypes);
       }
     };
-    await getAndSetClientTypes(callApi, callBack , {cardType : cardType} );
+    await getAndSetClientTypes(callApi, callBack, { cardType: cardType });
   };
 
-  ///////////////////////// select agent //////////////////////////////
-  const [agentsCategories, setAgentsCategories] = useRecoilState(agentsCategoriesState);
+  const [agentsCategories, setAgentsCategories] = useRecoilState(
+    agentsCategoriesState
+  );
   const getAgentCategories = async () => {
     const callBack = (res) => {
       if (res.success) {
@@ -161,8 +168,8 @@ const useCustomers = (
     };
     await getAndSetEmployees2(callApi, callBack, { isAgent: true });
   };
-  const [customerForEdit, setCustomerForEdit] = useState([]);
 
+  const [customerForEdit, setCustomerForEdit] = useState([]);
   const getCustomerForEdit = async (id) => {
     const callBack = (res) => {
       if (res.success) {
@@ -195,7 +202,6 @@ const useCustomers = (
     await getAndSetCustomerById(callApi, callBack, { customerId: id });
   };
 
-  /////////////////////////  convert to active/inactive  //////////////////////////////
   const updatedStatus = useCallback(async (data: any) => {
     const res: any = await callApi(
       "PUT",
@@ -215,7 +221,6 @@ const useCustomers = (
     }
   }, []);
 
-  /////////////////////////  get All Customers  //////////////////////////////
   const getAllCustomers = useCallback(async () => {
     const data = await getAndSetCustomersPagination(
       callApi,
@@ -236,7 +241,14 @@ const useCustomers = (
     );
     setPagesCount(Math.ceil(data / pageSize));
     return data;
-  }, [pageNumber, pageSize ,finalPatternSearch, ClientTypeId, agentId, isActive]);
+  }, [
+    pageNumber,
+    pageSize,
+    finalPatternSearch,
+    ClientTypeId,
+    agentId,
+    isActive,
+  ]);
 
   const handleClean = useCallback(async () => {
     setCustomerName("");
@@ -255,13 +267,7 @@ const useCustomers = (
     filteredAddresses,
     filteredUsers
   ) => {
-    if (
-      !(
-        customer &&
-        customer.name &&
-        customer.clientTypeId
-      )
-    ) {
+    if (!(customer && customer.name && customer.clientTypeId)) {
       return false;
     }
     if (filteredContacts) {
@@ -271,14 +277,14 @@ const useCustomers = (
         }
       }
     }
-      if (filteredAddresses) {
+    if (filteredAddresses) {
       for (const address of filteredAddresses) {
         if (!address.address1) {
           return false;
         }
       }
     }
-  
+
     if (filteredUsers) {
       for (const user of filteredUsers) {
         if (!user.email) {
@@ -288,11 +294,11 @@ const useCustomers = (
     }
     if (filteredUsers) {
       for (const user of filteredUsers?.filter((user) => !user.id)) {
-      if (!user.password) {
-        return false;
+        if (!user.password) {
+          return false;
+        }
       }
     }
-  }
     return true;
   };
 
@@ -317,20 +323,32 @@ const useCustomers = (
     }
   };
 
-  const onClickExportClient = async () => {
-    const result = await callApi(
-      EHttpMethod.GET,
-      "/v1/crm-service/customer/export-client",
-      { clientType: clientType },
-      true,
-      null,
-      "blob"
-    );
-    const downloadLink = document.createElement("a");
-    const link = URL.createObjectURL(result?.data);
-    downloadLink.href = link;
-    downloadLink.download = "clients.xlsx";
-    downloadLink.click();
+  const onClickExportClient = async (exportWithContacts: boolean) => {
+    try {
+      const result = await callApi(
+        EHttpMethod.GET,
+        "/v1/crm-service/customer/export-client",
+        { clientType: clientType, exportWithContacts: exportWithContacts },
+        true,
+        null,
+        "blob"
+      );
+
+      if (result?.success) {
+        debugger;
+        const downloadLink = document.createElement("a");
+        const link = URL.createObjectURL(result?.data);
+        downloadLink.href = link;
+        downloadLink.download = "clients.xlsx";
+        downloadLink.click();
+
+        setOpenExportModal(false);
+      } else {
+        alertFaultGetData();
+      }
+    } catch (error) {
+      alertFaultGetData();
+    }
   };
 
   return {
@@ -372,7 +390,10 @@ const useCustomers = (
     onClickImportClient,
     setPagesCount,
     setPageSize,
-    handlePageSizeChange
+    handlePageSizeChange,
+    openExportModal,
+    onOpenExportClientModal,
+    onCloseExportClientModal,
   };
 };
 export { useCustomers };

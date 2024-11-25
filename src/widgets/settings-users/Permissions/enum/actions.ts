@@ -1,4 +1,5 @@
 export enum EActions {
-    ADD,
-    UPDATE
+  ADD,
+  UPDATE,
+  DELETE,
 }

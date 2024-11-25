@@ -19,11 +19,11 @@ const AddProductWidget = () => {
   } = useAddProduct();
   return (
     <div style={clasess.mainContainer}>
-      <HeaderTitle
+      {/* <HeaderTitle
         title={t("products.addProduct.admin.title")}
         marginTop={-29}
         marginBottom={20}
-      />
+      /> */}
       <div style={clasess.headerTabsContainer}>
         {tabs?.map((item, index) => {
           return (

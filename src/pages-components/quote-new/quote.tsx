@@ -263,6 +263,7 @@ const QuoteNewPageWidget = ({
     moveOrderToReady,
     navigate,
     updateDocumentBudget,
+    selectedBudget, setSelectedBudget
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -285,7 +286,6 @@ const QuoteNewPageWidget = ({
       onClickOpenReferenceModal();
     }
   };
-  const [selectedBudget, setSelectedBudget] = useState(null);
 
   useEffect(() => {
     if (quoteState?.budgetId) {
@@ -330,7 +330,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const {} = useGoMakeTour(quoteSteps, []);
+  const { } = useGoMakeTour(quoteSteps, []);
 
   useEffect(() => {
     if (isInvoice) {
@@ -395,8 +395,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -466,7 +466,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                      quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -700,6 +700,7 @@ const QuoteNewPageWidget = ({
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendReceiptToClient={onClickSendReceiptToClient}
               />
             </div>
           )}

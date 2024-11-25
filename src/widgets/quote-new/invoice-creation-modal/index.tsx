@@ -6,6 +6,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 import { SendInvoiceSection } from "./components/send-invoice-section";
 import { OtherOptionsSection } from "./components/other-option-section";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 interface InvoiceCreationModal {
   openModal: boolean;
@@ -24,11 +25,22 @@ const InvoiceCreationModal = ({
   const { t } = useTranslation();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
 
+  const modalTitleMap = {
+    [DOCUMENT_TYPE.deliveryNote]: t("sales.modals.proceedToCreateDeliveryNote"),
+    [DOCUMENT_TYPE.invoice]: t("sales.modals.proceedToCreateInvoice"),
+    [DOCUMENT_TYPE.receipt]: t("sales.modals.proceedToCreateReceipt"),
+    [DOCUMENT_TYPE.deliveryNoteRefund]: t(
+      "sales.modals.proceedToCreateDeliveryNote"
+    ),
+    [DOCUMENT_TYPE.invoiceRefund]: t("sales.modals.proceedToCreateInvoice"),
+  };
+  const modalTitle = modalTitleMap[docType];
+
   return (
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={t("sales.modals.proceedToCreateInvoice")}
+        modalTitle={modalTitle}
         onClose={onClose}
         modalTitleStyle={{
           ...FONT_FAMILY.Inter(600, 18),
@@ -41,6 +53,7 @@ const InvoiceCreationModal = ({
         <div style={classes.mainContainer}>
           <SendInvoiceSection
             handleSendDocument={onClickSendDocumentToClient}
+            docType={docType}
           />
           <OtherOptionsSection
             quoteItemValue={quoteItemValue}

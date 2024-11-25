@@ -49,6 +49,9 @@ const ActionsListComponent = ({
     handleClick,
     handleClickSave,
     createBoardMissionStationFilterGroup,
+    handleCloseList,
+    toggleCollapse,
+    openCollapse,
   } = useActionsList({ source, onClickApply, filterGroups, setFilterGroups });
 
   const { classes } = useStyle({ source });
@@ -128,7 +131,7 @@ const ActionsListComponent = ({
         </Button>
       )}
       {open && (
-        <ClickOutside exceptionRef={buttonRef} onClick={() => setOpen(false)}>
+        <ClickOutside exceptionRef={buttonRef} onClick={handleCloseList}>
           <Paper sx={classes.paperStyle}>
             <div style={{ minWidth: "280px" }}>
               <FormGroup>
@@ -148,6 +151,8 @@ const ActionsListComponent = ({
                         key={index + option.actionId + option.actionName}
                         onSelectStation={onSelectStation}
                         onSelectMachine={onSelectMachine}
+                        open={openCollapse[option.actionId] || false}
+                        onToggleCollapse={() => toggleCollapse(option.actionId)}
                         {...option}
                       />
                     );

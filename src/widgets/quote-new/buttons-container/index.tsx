@@ -1,7 +1,11 @@
 import { useStyle } from "./style";
 import { ArrowDownNewIcon, PlusIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
-import { GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
+import {
+  GoMakeDeleteModal,
+  GomakePrimaryButton,
+  ThreeOptionsModal,
+} from "@/components";
 import { useButtonsContainer } from "./use-buttons-container";
 import {
   DELIVERY_NOTE_STATUSES,
@@ -19,6 +23,7 @@ import { CreditCardIcon } from "@/icons/credit-card-icon";
 import { CloseBtnMenu } from "./close-btn-menu";
 import { ArrowUpNewIcon } from "@/icons/arrow-up-new";
 import { ManuallyCloseModal } from "./close-manually-modal";
+import { InvoiceCreationModal } from "../invoice-creation-modal";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -33,7 +38,8 @@ const ButtonsContainer = ({
   onClickOpenNewItemNotesModal,
   handleRejectBtnClick,
   handleAcceptBtnClick,
-  onClickOpenChangeProductionStatusModal
+  onClickOpenChangeProductionStatusModal,
+  onClickSendReceiptToClient,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -87,7 +93,13 @@ const ButtonsContainer = ({
     handleAddExistingItem,
     isOrder,
     isQuote,
+    openReceiptCreationModal,
+    onClickCloseReceiptCreation,
+    handleClickPrint,
+    openExportReceiptPdfModal,
+    onCloseExportReceiptPdfModal,
   } = useButtonsContainer(documentType);
+
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
       quoteItemValue.isSendWhatsappWeb ||
@@ -216,7 +228,7 @@ const ButtonsContainer = ({
         {!isNewCreation && (
           <GomakePrimaryButton
             style={classes.btnSecondContainer}
-            onClick={() => onClickPrint()}
+            onClick={handleClickPrint}
           >
             {t("sales.quote.print")}
           </GomakePrimaryButton>
@@ -346,7 +358,9 @@ const ButtonsContainer = ({
           documentState={quoteItemValue}
           documentType={documentType}
           onClickClose={onClickOpenCloseOrderModal}
-          onClickOpenChangeProductionStatusModal={onClickOpenChangeProductionStatusModal}
+          onClickOpenChangeProductionStatusModal={
+            onClickOpenChangeProductionStatusModal
+          }
         />
         <ManuallyCloseModal
           documentType={documentType}
@@ -356,6 +370,22 @@ const ButtonsContainer = ({
           onClickYes={ManuallyCloseDocument}
           documentCloseNumber={documentCloseNumber}
           onChange={handleDocumentNumberChange}
+        />
+        <InvoiceCreationModal
+          onClose={onClickCloseReceiptCreation}
+          openModal={openReceiptCreationModal}
+          docType={documentType}
+          onClickSendDocumentToClient={onClickSendReceiptToClient}
+        />
+        <ThreeOptionsModal
+          title={t("sales.modals.printReceipt")}
+          subTitle={t("sales.modals.includeInvoicesPdfPrompt")}
+          yesBtn={"sales.modals.withInvoices"}
+          noBtn={"sales.modals.withoutInvoices"}
+          openModal={openExportReceiptPdfModal}
+          onClose={onCloseExportReceiptPdfModal}
+          onClickYes={() => onClickPrint(true)}
+          onClickNo={() => onClickPrint(false)}
         />
       </div>
     </div>
