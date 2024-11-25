@@ -6,6 +6,8 @@ import { MenuItem } from "@mui/material";
 import { ReStoreIcon } from "../table/icons/restore-icon";
 import { ResetIcon } from "../table/icons/reser-icon";
 import { UpdatedPriceIcon2 } from "../table/icons/update-price-icon";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const PriceProfitHeaderWidget = ({
   handleClose,
@@ -24,7 +26,18 @@ const PriceProfitHeaderWidget = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const router = useRouter()
+  useEffect(() => {
+    if (router.query.productId) {
+      const selectedPricingProfileSetting = pricingProfileSetting?.map((item) => ({
+        ...item,
+        label: item?.productName,
+        value: item?.productId
+      }))?.find(item => item?.productId === router.query.productId)
+      setSelectedPricingProfileSetting(selectedPricingProfileSetting)
 
+    }
+  }, [router, pricingProfileSetting])
 
   return (
     <div style={classes.mainContainer}>
@@ -37,7 +50,16 @@ const PriceProfitHeaderWidget = ({
             value: item?.productId
           }))}
           value={selectedPricingProfileSetting}
-          onChange={(e, value) => setSelectedPricingProfileSetting(value)}
+          key={selectedPricingProfileSetting?.productId}
+          onChange={(e, value) => {
+            setSelectedPricingProfileSetting(value)
+            if (value?.value) {
+              router.push({
+                pathname: window.location.pathname,
+                query: { ...router.query, productId: value.value },
+              });
+            }
+          }}
           style={classes.autoCompleteStyle}
           placeholder={t("Select Product")}
           withArrow={true}

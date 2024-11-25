@@ -27,6 +27,14 @@ export const list: IListItem[] = [
     dataTour: 'settingsProfile'
   },
   {
+    component: PriceProfitWidge,
+    text: "settings.priceProfit",
+    value: "8",
+    // permission: Permissions.TRANSLATION_ADMIN, ASK MOHAND
+    icon: BudgetIcon,
+    path: "price-profit",
+  },
+  {
     component: ProductsSettingsWidget,
     text: "settings.products",
     value: "2",
@@ -72,14 +80,7 @@ export const list: IListItem[] = [
     path: "finances",
     permission: Permissions.SHOW_FINANCE,
   },
-  {
-    component: PriceProfitWidge,
-    text: "settings.priceProfit",
-    value: "8",
-    // permission: Permissions.TRANSLATION_ADMIN, ASK MOHAND
-    icon: BudgetIcon,
-    path: "price-profit",
-  },
+  
   {
     component: TranslationsWidget,
     text: "settings.translations",

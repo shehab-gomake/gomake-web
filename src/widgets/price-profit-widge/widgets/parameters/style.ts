@@ -17,7 +17,8 @@ const useStyle = () => {
         display: 'flex',
         flexDirection: "row" as "row",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
+        flexWrap: "wrap" as "wrap",
         gap:14,
       },
       parameterItem:{
