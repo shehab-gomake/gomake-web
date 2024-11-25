@@ -38,10 +38,41 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDr
       backgroundColor: "#F9FAFB",
     },
     {
+      color: "#1F7A8C",
+      border: "#A0DDE6",
+      backgroundColor: "#E0F7FA",
+    },
+    {
+      color: "#FF6F61",
+      border: "#FFD1C1",
+      backgroundColor: "#FFF0EB",
+    },
+    {
       color: "#026AA2",
       border: "#B9E6FE",
       backgroundColor: "#F0F9FF",
+    },
+    {
+      color: "#A83232",
+      border: "#F5B7B1",
+      backgroundColor: "#FDEDEC",
+    },
+    {
+      color: "#A85D32",
+      border: "#F7C6A3",
+      backgroundColor: "#FEF5E7",
+    },
+    {
+      color: "#8A2BE2",
+      border: "#D8BFD8",
+      backgroundColor: "#E6E6FA",
+    },
+    {
+      color: "#228B22",
+      border: "#98FB98",
+      backgroundColor: "#F0FFF0",
     }
+
   ]
 
   return (
