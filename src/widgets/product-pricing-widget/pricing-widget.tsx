@@ -16,7 +16,7 @@ import { calculationResultState } from "./state";
 import { useState } from "react";
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { FONT_FAMILY } from "@/utils/font-family";
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 
 const PricingWidget = ({
   workFlows,
@@ -44,8 +44,22 @@ const PricingWidget = ({
     allCountSelectedTabWorkFlow,
     onClickAddOutSourceAction,
     onClickRemoveOutSourceAction,
+    actionListDropDown,
+    hasSubWorkFlowsOrProductTypeActions,
+    getSectionNames,
+    sectionNameSelected,
+    setSectionNames,
+    actionNameSelected,
+    setActionNameSelected,
+    isAddNewAction,
+    onClickCloseAddNewAction,
+    onClickAddNewAction,
     t
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
+  const isHasSubWorkFlowsOrProductTypeActions = hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)
+  const sectionNames = getSectionNames(selectedWorkFlow);
+
+  console.log("sectionNameSelected", sectionNameSelected)
 
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
@@ -95,19 +109,36 @@ const PricingWidget = ({
           <div />
         )}
         <Stack direction={"row"} gap={"10px"}>
-          <GoMakeAutoComplate
-            options={[]}
-            style={{
-              width: 140,
-              height: 36,
-              border: "1px solid #D0D5DD",
-              borderRadius: 8,
-              boxShadow: "none",
-              backgroundColor: "#FFF"
-            }}
-            placeholder={t("select action")}
+          {
+            isHasSubWorkFlowsOrProductTypeActions && <GoMakeAutoComplate
+              options={[...sectionNames, {
+                sectionName: t("pricingWidget.general"),
+                productType: null
+              }]}
+              style={classes.autoCompleteSelectedAction}
+              placeholder={t("pricingWidget.selectSectionName")}
+              withArrow={true}
+              getOptionLabel={(option) => option.sectionName}
+              onChange={(e, value) => {
+                setSectionNames(value)
+              }}
+              value={sectionNameSelected ?? null}
+            />
+          }
+          {!isHasSubWorkFlowsOrProductTypeActions && <GoMakeAutoComplate
+            options={actionListDropDown}
+            key={actionNameSelected}
+            style={classes.autoCompleteSelectedAction}
+            placeholder={t("pricingWidget.selectAction")}
             withArrow={true}
-          />
+            getOptionLabel={(option) => option.name}
+            onChange={(e, value) => {
+              onClickAddNewAction()
+              setActionNameSelected(value)
+            }}
+            value={actionNameSelected ?? null}
+          />}
+
           <InOutSourceSelect
             onChange={(v: EWorkSource) => {
               setSelectedWorkFlowCalculatedIsLoaded(true)
@@ -193,6 +224,17 @@ const PricingWidget = ({
           onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
         />
       )}
+
+      <GoMakeDeleteModal
+        title={t("are you sure you want to add this action?")}
+        yesBtn={t("sales.quote.add")}
+        openModal={isAddNewAction}
+        onClose={onClickCloseAddNewAction}
+        hideIcon
+        //  onClickDelete={() => setIsChangePriceForEdit(false)}
+        onClickCancel={() => setActionNameSelected(null)}
+
+      />
     </Stack>
   );
 };

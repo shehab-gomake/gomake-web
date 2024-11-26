@@ -94,7 +94,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     isFlowChanged,
     getSelectedWorkFlow,
     selectedWorkFlowCalculatedIsLoaded,
-    setSelectedWorkFlowCalculatedIsLoaded
+    setSelectedWorkFlowCalculatedIsLoaded,
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const router = useRouter();
@@ -264,7 +264,7 @@ const PriceListPageWidget = ({ widgetType }) => {
       position: "top",
     },
   ];
-  const {} = useGoMakeTour(productSteps, [relatedParameters]);
+  const { } = useGoMakeTour(productSteps, [relatedParameters]);
   return (
     <div>
       {productTemplate?.sections?.length > 0 ? (
@@ -419,15 +419,15 @@ const PriceListPageWidget = ({ widgetType }) => {
                 )}
                 {[...productTemplate?.sections, PricingTab].length - 1 !==
                   activeIndex && (
-                  <div data-tour="next-button">
-                    <GomakePrimaryButton
-                      style={clasess.nextBtnStyle}
-                      onClick={handleNextClick}
-                    >
-                      {t("products.offsetPrice.admin.nextBtn")}
-                    </GomakePrimaryButton>
-                  </div>
-                )}
+                    <div data-tour="next-button">
+                      <GomakePrimaryButton
+                        style={clasess.nextBtnStyle}
+                        onClick={handleNextClick}
+                      >
+                        {t("products.offsetPrice.admin.nextBtn")}
+                      </GomakePrimaryButton>
+                    </div>
+                  )}
               </div>
             </div>
             <div
@@ -448,7 +448,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                   onClick={() => {
                     if (
                       DOCUMENT_TYPE.order ===
-                        Number(router.query.documentType) &&
+                      Number(router.query.documentType) &&
                       isFlowChanged
                     ) {
                       onClickOpenCurrentStationModal();

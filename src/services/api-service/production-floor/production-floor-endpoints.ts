@@ -37,6 +37,8 @@ const CLEAR_FILES_UPLOADER_LIST_URL = '/v1/erp-service/board-missions/clear-list
 const UPDATE_PRODUCTION_FLOOR_JOB_COLOR_URL = '/v1/erp-service/board-missions/update-production-floor-job-color';
 const RESET_PRODUCTION_FLOOR_JOB_COLOR_URL = '/v1/erp-service/board-missions/reset-production-floor-job-color';
 const GET_BOARD_MISSION_DATA_FOR_MENU_URL = '/v1/erp-service/board-missions/get-board-mission-data-for-menu'
+const GET_PRINT_HOUSE_ACTIONS_URL = '/v1/printhouse-config/actions/get-all-actions';
+
 
 const getProductionFloorData: ICallAndSetData = async (callApi, setState, connectionId: string, lock = false, abortController) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCTION_FLOOR_DATA_URL + '?connectionId=' + connectionId, setState, {}, false, abortController);
@@ -162,6 +164,10 @@ const getBoardMissionDataForMenuApi: ICallAndSetData = async (callApi, callBack,
     return await getSetApiData(callApi, EHttpMethod.GET, GET_BOARD_MISSION_DATA_FOR_MENU_URL, callBack , data);
 }
 
+const getAllActionsApi: ICallAndSetData = async (callApi, callBack, ) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRINT_HOUSE_ACTIONS_URL , callBack);
+}
+
 export {
     boardMissionsUpdateActionEmployee,
     boardMissionsUpdateActionMachine,
@@ -196,5 +202,6 @@ export {
     clearUploadingFilesListApi,
     updateProductionFloorJobColorApi,
     resetProductionFloorJobColorApi,
-    getBoardMissionDataForMenuApi
+    getBoardMissionDataForMenuApi,
+    getAllActionsApi
 }

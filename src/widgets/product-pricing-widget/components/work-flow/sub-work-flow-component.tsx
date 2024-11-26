@@ -153,6 +153,8 @@ const SubWorkFlowsComponent = ({ workflows, isEditableActions, widgetType }: ISu
         const reorderedWorkflows = Array.from(workflowsList);
         const [removed] = reorderedWorkflows.splice(result.source.index, 1);
         reorderedWorkflows.splice(result.destination.index, 0, removed);
+        console.log(reorderedWorkflows)
+
         setWorkflowsList(reorderedWorkflows);
     };
 
