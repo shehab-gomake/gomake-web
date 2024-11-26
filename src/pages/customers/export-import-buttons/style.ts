@@ -83,6 +83,21 @@ const useStyle = () => {
         borderRadius: 4,
         height: 40,
       },
+      btnStyle: {
+        width: "100%",
+        borderRadius: "8px",
+        height: "40px",
+      },
+      insideModalStyle: {
+        width: "500px",
+        height: "fit-content",
+        padding: "25px",
+      },
+      modalTitle: {
+        ...FONT_FAMILY.Inter(600, 18),
+        color: "#000000",
+        paddingBottom: "10px",
+      },
     };
   }, []);
   return {

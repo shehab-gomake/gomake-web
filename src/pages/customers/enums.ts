@@ -1,17 +1,29 @@
 export enum CLIENT_TYPE_Id {
-    CUSTOMER = 1,
-    SUPPLIER = 2,
+  CUSTOMER = 1,
+  SUPPLIER = 2,
 }
 
 export enum CLIENT_TYPE {
-    CUSTOMER = "C",
-    SUPPLIER = "S",
+  CUSTOMER = "C",
+  SUPPLIER = "S",
 }
 
 export enum DEFAULT_VALUES {
-    PageSize = 15,
-} 
-export enum CUSTOMER_ACTIONS{
-    Add = 0,
-    Edit = 1,
+  PageSize = 15,
+}
+export enum CUSTOMER_ACTIONS {
+  Add = 0,
+  Edit = 1,
+}
+
+export enum ClientErrorCode {
+  REQUIRED_CODE = 1,
+  REQUIRED_NAME,
+  REQUIRED_CLIENT_TYPE,
+  PAYMENT_TERM_NOT_VALID,
+  PHONE_NOT_VALID,
+  EMAIL_NOT_VALID,
+  CONTACT_NAME_NOT_VALID,
+  CONTACT_MAIL_NOT_VALID,
+  CONTACT_PHONE_NOT_VALID,
 }

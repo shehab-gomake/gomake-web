@@ -1,13 +1,18 @@
 import i18next from "i18next";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { convertHeightToVH, convertWidthToVW , adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
+import {
+  convertHeightToVH,
+  convertWidthToVW,
+  adaptPaddingLeft,
+  adaptPaddingRight,
+} from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const direction = t('direction');
+  const direction = t("direction");
   const { secondColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
@@ -45,7 +50,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         paddingLeft: 20,
         paddingRight: 20,
-        height: "100%", 
+        height: "100%",
       },
       sameRow: {
         display: "flex",
@@ -60,8 +65,8 @@ const useStyle = () => {
         height: 30,
       },
       searchContainer: {
-        display:"flex",
-        gap:"5px"
+        display: "flex",
+        gap: "5px",
       },
       subHeaderRightSide: {
         display: "flex",
@@ -93,6 +98,21 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         alignItems: "center",
         ...adaptPaddingLeft(direction, 20),
+      },
+      btnStyle: {
+        width: "100%",
+        borderRadius: "8px",
+        height: "40px",
+      },
+      insideModalStyle: {
+        width: "500px",
+        height: "fit-content",
+        padding: "25px",
+      },
+      modalTitle: {
+        ...FONT_FAMILY.Inter(600, 18),
+        color: "#000000",
+        paddingBottom: "10px",
       },
     };
   }, [i18next.language, t]);
