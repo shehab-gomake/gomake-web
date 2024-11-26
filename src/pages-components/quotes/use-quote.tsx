@@ -110,7 +110,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [dateRange, setDateRange] = useState<any>();
   const [agentId, setAgentId] = useState<any>();
   const [allQuotes, setAllQuotes] = useState();
-  const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [openLogsModal, setOpenLogsModal] = useState(false);
   const [logsModalTitle, setLogsModalTitle] = useState<string>();
@@ -272,15 +271,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     };
     await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
   };
-
-  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
-    await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-      clientType: "C",
-      onlyCreateOrderClients: false,
-      searchTerm: SearchTerm,
-      isOccasionalCustomer: true,
-    });
-  }, []);
 
   const onClickDocumentLogs = async (document: any) => {
     try {
@@ -1665,7 +1655,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   useEffect(() => {
     if (!isFromHomePage) {
-      getAllCustomersCreateQuote();
       // this for client type list in customer modal
       getClientTypesCategories();
     }

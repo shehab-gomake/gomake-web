@@ -42,7 +42,6 @@ export enum Permissions {
   EDIT_PROPERTIES = "EditPropertiesInActions",
 
   //settings group
-  SHOW_SETTINGS = "ShowSetting",
   SHOW_PROFILE_COMPANY = "ShowCompanyProfile",
   EDIT_COMPANY_PROFILE = "UpdateCompanyProfile",
   SHOW_PRODUCTS = "ShowProducts",

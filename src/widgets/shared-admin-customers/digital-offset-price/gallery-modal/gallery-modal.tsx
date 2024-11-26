@@ -64,6 +64,7 @@ const GalleryModal = ({
         onClose={() => {
           setMaterialTableFilters([])
           setMaterialData([])
+          setMaterialDataFilter("")
           onClose()
 
         }}
