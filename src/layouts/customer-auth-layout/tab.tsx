@@ -7,7 +7,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { selectedTabState } from "@/store";
 import { navStatusState } from "@/store/nav-status";
 import { useTranslation } from "react-i18next";
-import {useUserPermission} from "@/hooks/use-permission";
+import { useUserPermission } from "@/hooks/use-permission";
 interface IProps {
   tab: {
     isLine?: boolean;
@@ -22,7 +22,8 @@ interface IProps {
   customGap?: number;
 }
 const Tab = ({ tab, customGap }: IProps) => {
-  const [selectedTabValue, setSelectedTabValue] =useRecoilState(selectedTabState);
+  const [selectedTabValue, setSelectedTabValue] =
+    useRecoilState(selectedTabState);
   const { navigate } = useGomakeRouter();
   const [isListOpen, setIsListOpen] = useState(tab?.key === selectedTabValue);
   const [isHover, setIsHover] = useState(false);
@@ -30,7 +31,7 @@ const Tab = ({ tab, customGap }: IProps) => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
   const { classes } = useStyle({ isHover, navStatus, customGap });
-  
+
   const handleMouseEnter = useCallback(() => {
     setIsHover(true);
   }, []);
@@ -47,6 +48,7 @@ const Tab = ({ tab, customGap }: IProps) => {
     }
     setSelectedTabValue(tab.key || "");
   }, [tab, isListOpen, setIsListOpen]);
+
   const changeRoute = useCallback((route: string) => {
     navigate(route);
   }, []);
@@ -56,6 +58,16 @@ const Tab = ({ tab, customGap }: IProps) => {
       setIsListOpen(true);
     }
   }, [selectedTabValue]);
+
+  const handleOpenInNewTab = useCallback(
+    (path: string | undefined, e: React.MouseEvent) => {
+      if ((e.button === 1 || e.button === 2) && path) {
+        window.open(path, "_blank");
+      }
+    },
+    []
+  );
+
   return (
     <>
       <div
@@ -63,11 +75,7 @@ const Tab = ({ tab, customGap }: IProps) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={onClickTab}
-        onMouseDown={(e) => {
-          if (e.button === 1) {
-            window.open(tab.path, "_blank");
-          }
-        }}
+        onMouseDown={(e) => handleOpenInNewTab(tab.path, e)}
       >
         {tab.isList ? (
           <div>
@@ -89,23 +97,21 @@ const Tab = ({ tab, customGap }: IProps) => {
       </div>
       <Collapse in={isListOpen}>
         {!navStatus.isClosed &&
-          tab.list?.filter(x=>!x.Permission || CheckPermission(x.Permission)).map((list: any) => {
-            return (
-              <div style={classes.tabList} key={list?.key}>
-                <div
-                  onClick={() => changeRoute(list?.path)}
-                  onMouseDown={(e) => {
-                    if (e.button === 1) {
-                      window.open(list?.path, "_blank");
-                    }
-                  }}
-                  style={classes.tabTitle}
-                >
-                  {t(list?.title)}
+          tab.list
+            ?.filter((x) => !x.Permission || CheckPermission(x.Permission))
+            .map((list: any) => {
+              return (
+                <div style={classes.tabList} key={list?.key}>
+                  <div
+                    onClick={() => changeRoute(list?.path)}
+                    onMouseDown={(e) => handleOpenInNewTab(list?.path, e)}
+                    style={classes.tabTitle}
+                  >
+                    {t(list?.title)}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
       </Collapse>
     </>
   );
