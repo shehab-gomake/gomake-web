@@ -1,11 +1,12 @@
 import React, {useEffect} from 'react';
-import {Stack, TextField, IconButton} from '@mui/material';
+import {Stack, IconButton} from '@mui/material';
 import {AddCircleOutlineRounded} from '@mui/icons-material';
-import {DeleteIcon} from "@/components/icons/delete-icon";
 import {SelectMachines} from "@/widgets/employees-working-hours-widgets/modals/components/select-machines";
 import {IStartEndTime, IWorkingHoursMachine} from "@/widgets/employees-working-hours-widgets/interface";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {useTranslation} from "react-i18next";
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import {TimeTextField} from "@/widgets/employees-working-hours-widgets/modals/components/time-text-field";
+import {FONT_FAMILY} from "@/utils/font-family";
 
 interface TimeRangeManagerProps {
     groupIndex: number;
@@ -26,9 +27,8 @@ const TimeRangeManager: React.FC<TimeRangeManagerProps> = ({
                                                                onRemoveTimeRange,
                                                                machines,
                                                                timeIndex,
-    time
+                                                               time
                                                            }) => {
-    const {secondColor} = useGomakeTheme();
     const {t} = useTranslation();
     const convertDateToTimeString = (date) => {
         const tDate = new Date(date);
@@ -37,73 +37,57 @@ const TimeRangeManager: React.FC<TimeRangeManagerProps> = ({
         return `${hours}:${minutes}`;
     };
 
-    useEffect(()=>{console.log(machines)},[machines])
+    useEffect(() => {
+        console.log(machines)
+    }, [machines])
 
     return (
-                <Stack gap="20px" key={timeIndex}>
-                    <Stack direction="row" gap="10px" alignItems="center">
-                        <TextField
-                            type="time"
-                            variant="outlined"
-                            fullWidth
-                            value={convertDateToTimeString(time.startTime)}
-                            onChange={(e) =>
-                                onTimeChange(groupIndex, timeIndex, 'startTime', e.target.value)
-                            }
-                            sx={{
-                                border: '1px solid #D0D5DD',
-                                borderRadius: '8px',
-                                height: '40px',
-                                '& .MuiOutlinedInput-root': {
-                                    height: '100%',
-                                    '& input': {
-                                        padding: '0 14px',
-                                    },
-                                },
-                            }}
-                        />
-                        <span>{t('employeeWorkingHours.to')}</span>
-                        <TextField
-                            type="time"
-                            variant="outlined"
-                            fullWidth
-                            value={convertDateToTimeString(time.endTime)}
-                            onChange={(e) =>
-                                onTimeChange(groupIndex, timeIndex, 'endTime', e.target.value)
-                            }
-                            sx={{
-                                border: '1px solid #D0D5DD',
-                                borderRadius: '8px',
-                                height: '40px',
-                                '& .MuiOutlinedInput-root': {
-                                    height: '100%',
-                                    '& input': {
-                                        padding: '0 14px',
-                                    },
-                                },
-                            }}
-                        />
-                        {timeIndex === 0 ? (
-                            <IconButton
-                                sx={{fontSize: 14}}
-                                onClick={() => onAddTimeRange(groupIndex)}
-                            >
-                                <AddCircleOutlineRounded/>
-                            </IconButton>
-                        ) : (
-                            <IconButton
-                                onClick={() => onRemoveTimeRange(groupIndex, timeIndex)}
-                            >
-                                <DeleteIcon width={24} height={24} color={secondColor(500)}/>
-                            </IconButton>
-                        )}
-                    </Stack>
-                    <SelectMachines
-                        onChange={(v) => onMachinesChange(groupIndex, timeIndex, v)}
-                        options={[...machines]}
-                        values={time.machines}
-                    />
-                </Stack>
+        <Stack gap="20px" key={timeIndex}>
+            <Stack direction="row" gap="10px" alignItems="center">
+                <TimeTextField
+                    type="time"
+                    variant="outlined"
+                    fullWidth
+                    value={convertDateToTimeString(time.startTime)}
+                    onChange={(e) =>
+                        onTimeChange(groupIndex, timeIndex, 'startTime', e.target.value)
+                    }
+                />
+                <span>{t('employeeWorkingHours.to')}</span>
+                <TimeTextField
+                    type="time"
+                    variant="outlined"
+                    fullWidth
+                    value={convertDateToTimeString(time.endTime)}
+                    onChange={(e) =>
+                        onTimeChange(groupIndex, timeIndex, 'endTime', e.target.value)
+                    }
+                />
+                {timeIndex === 0 ? (
+                    <IconButton
+                        sx={{fontSize: 14}}
+                        onClick={() => onAddTimeRange(groupIndex)}
+                    >
+                        <AddCircleOutlineRounded/>
+                    </IconButton>
+                ) : (
+                    <IconButton
+
+                        onClick={() => onRemoveTimeRange(groupIndex, timeIndex)}
+                    >
+                        <DeleteOutlinedIcon style={{color: 'D92D20'}}/>
+                    </IconButton>
+                )}
+            </Stack>
+            <div>
+             <h5 style={{...FONT_FAMILY.Inter(500, 14), color: '#344054', paddingBottom: '8px'}}>{t('tabs.machines')}</h5>
+            <SelectMachines
+                onChange={(v) => onMachinesChange(groupIndex, timeIndex, v)}
+                options={[...machines]}
+                values={time.machines}
+            />
+            </div>
+        </Stack>
     );
 };
 
