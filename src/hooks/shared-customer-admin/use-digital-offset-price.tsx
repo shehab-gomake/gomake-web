@@ -962,10 +962,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         subProduct.parameters.push({
                           parameterId: parameter?.id,
                           parameterName: parameter?.name,
-                          actionId:
-                            value?.activateAction === true
-                              ? parameter?.actionId
-                              : null,
+                          actionId: parameter?.actionId,
                           ...(data?.id > 0 && { material: data?.id }),
                           parameterType: parameter?.parameterType,
                           isQuantityParameter: parameter?.isQuantityParameter,
