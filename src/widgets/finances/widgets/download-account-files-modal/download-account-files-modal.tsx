@@ -1,8 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton } from "@/components";
 import { useStyle } from "./style";
-import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
+import { GoMakeDatepicker } from "@/components/datepicker/datepicker";
 import { useDownloadAccountFilesModal } from "./use-download-account-files-modal";
+import {DateRangePicker} from "rsuite";
 
 interface DownloadAccountFilesModalProps {
     openModal: boolean;
@@ -32,7 +33,9 @@ const DownloadAccountFilesModal: React.FC<DownloadAccountFilesModalProps> = ({ o
                         <div style={classes.date1FilterContainer}>
                             <h3 style={classes.filterLabelStyle}>{t("boardMissions.dateRange")}</h3>
                             <div style={{ width: 300 }}>
-                                <GoMakeDatepicker onChange={onSelectDeliveryTimeDates} placeholder={t("boardMissions.chooseDate")} reset={resetDatePicker} />
+                                <DateRangePicker
+                                    onChange={onSelectDeliveryTimeDates}
+                                />
                             </div>
                         </div>
                         <div style={classes.date1FilterContainer}>

@@ -72,13 +72,6 @@ const AccountingTransactionReportHeader = ({
           style={{ height: 40 }}
         />
       </div>
-      {/* <SecondaryButton
-        style={classes.clearBtn}
-        variant={"outlined"}
-        onClick={handleClickClear}
-      >
-        {t("sales.quote.clear")}
-      </SecondaryButton> */}
     </div>
   );
 };

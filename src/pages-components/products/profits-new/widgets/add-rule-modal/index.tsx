@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { AddPlusIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useAddRuleModal } from "./use-add-rule-modal";
-import { ETypeException, EValueType } from "../../enums/profites-enum";
+import { EPricingBy, ETypeException, EValueType } from "../../enums/profites-enum";
 import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
 import { EAdditionType, EParameterTypes } from "@/enums";
@@ -34,6 +34,7 @@ const AddRuleModal = ({
   filterData,
   onCreate,
 }: any) => {
+  console.log("selectedPricingBy",selectedPricingBy);
   const { clasess } = useStyle();
   const { t } = useTranslation();
 
@@ -932,14 +933,15 @@ const AddRuleModal = ({
                   }}
                 />
               </div>
-              <div style={{ width: "20%" }}>
+              {selectedPricingBy?.value !==EPricingBy.COST &&<div style={{ width: "20%" }}>
                 <div style={clasess.selectTypeStyle}>
                   {t("products.profits.exceptions.additionType")}
                 </div>
                 <GoMakeAutoComplate
                   options={[
-                    { label: "percents", value: EAdditionType.PERCENTS },
-                    { label: "value", value: EAdditionType.VALUE },
+                    { label: t("products.profits.exceptions.percents"), value: EAdditionType.Percentage },
+                    { label: t("products.profits.exceptions.valuePerUnit"), value: EAdditionType.ValuePerUnit },
+                    { label: t("products.profits.exceptions.valuePerJob"), value: EAdditionType.ValuePerJob },
                   ]}
                   placeholder={t("products.profits.exceptions.additionType")}
                   style={clasess.autoComplateStyle}
@@ -947,7 +949,8 @@ const AddRuleModal = ({
                     setAdditionType(value?.value);
                   }}
                 />
-              </div>
+              </div>}
+              
             </div>
           )}
           {typeExceptionSelected === ETypeException.PROFIT && (

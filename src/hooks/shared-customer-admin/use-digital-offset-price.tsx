@@ -1696,7 +1696,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   // ]);
 
   useEffect(() => {
-    if (connectionId) {
+    if (connectionId && !currentSignalRConnectionId) {
       setCurrentSignalRConnectionId(connectionId);
       setCurrentProductItemValueTotalPrice(null);
       setLastProductItemValueTotalPrice(null);
@@ -2745,6 +2745,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           (x) => x.id === relatedParameter.parameterId
         );
         if (param.isHidden == true) {
+          processRelatedParameters2(
+              param,
+              subSection,
+              section,
+              productTemplate,
+              subProducts
+          );
           return;
         }
 
@@ -2782,6 +2789,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           (x) => x.id === relatedParameter.parameterId
         );
         if (param.isHidden == false) {
+          processRelatedParameters2(
+              param,
+              subSection,
+              section,
+              productTemplate,
+              subProducts
+          );
           return;
         }
         param.isHidden = false;
@@ -2804,6 +2818,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           (x) => x.id === relatedParameter.parameterId
         );
         if (param.isHidden == true) {
+          processRelatedParameters2(
+              param,
+              subSection,
+              section,
+              productTemplate,
+              subProducts
+          );
           return;
         }
         param.isHidden = true;
@@ -2846,6 +2867,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             (x) => x.id === relatedParameter.parameterId
           );
           if (param.isHidden == false) {
+            processRelatedParameters2(
+                param,
+                subSection,
+                section,
+                productTemplate,
+                subProducts
+            );
             return;
           }
           param.isHidden = false;
@@ -2867,6 +2895,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             (x) => x.id === relatedParameter.parameterId
           );
           if (param.isHidden == true) {
+            processRelatedParameters2(
+                param,
+                subSection,
+                section,
+                productTemplate,
+                subProducts
+            );
             return;
           }
           subProducts.forEach((x) => {
@@ -3206,7 +3241,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       param?.valuesConfigs?.length === 1 &&
                       param?.isRequired
                     ) {
-                      debugger
                       param.valuesConfigs[0].isDefault = true;
                       parameters.push({
                         parameterId: param?.id,
@@ -4497,6 +4531,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               generalParameters,
               productTemplate
             );
+          if(calculationSubProducts && calculationSubProducts.length > 0){
+            calculationSubProducts.forEach(subProduct=>{
+              subProduct.parameters = removeHiddenParametersFromSubProductsParameters(
+                  subProduct.parameters,
+                  productTemplate
+              );
+            })
+          }
           const res: any = await callApi(
             "POST",
             `/v1/calculation-service/calculations/calculate-productV2`,

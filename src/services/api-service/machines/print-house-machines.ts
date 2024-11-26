@@ -7,6 +7,7 @@ const PRINT_HOUSE_DUPLICATE_MACHINE_URL = '/v1/duplicate-machine';
 const PRINT_HOUSE_UPDATE_MACHINE_URL = '/v1/update-machine';
 const PRINT_HOUSE_DELETE_MACHINES_URL = '/v1/delete-machine'
 const QUICK_SETUP_ADD_MACHINES_URL = '/v1/machines/quick-setup/add-machines'
+const GET_ALL_PRINT_HOUSE_MACHINES_URL = '/v1/machines/get-all'
 const printHouseAddNewMachine: ICallAndSetData = async (callApi, setState, machine) => {
     return  await getSetApiData(callApi, EHttpMethod.POST, PRINT_HOUSE_ADD_MACHINE_URL, setState, machine);
 };
@@ -22,5 +23,8 @@ const printHouseUpdateMachine: ICallAndSetData = async (callApi, setState, machi
 const quickSetupAddMachines: ICallAndSetData = async (callApi, setState, machines) => {
     return await getSetApiData(callApi, EHttpMethod.POST, QUICK_SETUP_ADD_MACHINES_URL, setState, machines);
 };
+const getAllPrintHouseMachines: ICallAndSetData = async (callApi, setState) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_PRINT_HOUSE_MACHINES_URL, setState);
+};
 
-export {printHouseAddNewMachine, printHouseDeleteMachine, printHouseUpdateMachine, quickSetupAddMachines, printHouseDuplicateMachine};
+export {printHouseAddNewMachine, printHouseDeleteMachine, printHouseUpdateMachine, quickSetupAddMachines, printHouseDuplicateMachine, getAllPrintHouseMachines};
