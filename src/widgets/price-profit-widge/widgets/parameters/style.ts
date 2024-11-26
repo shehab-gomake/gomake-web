@@ -6,8 +6,8 @@ const useStyle = () => {
     return {
       mainContainer:{
         display: 'flex',
-        flexDirection: "row" as "row",
-        alignItems: "center",
+        flexDirection: "column" as "column",
+        alignItems: "flex-start",
         justifyContent: "space-between",
         width: "100%",
         gap:10,
@@ -31,6 +31,11 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         padding: "2px 8px",
+      },
+      sectionContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: 10
       }
     };
   }, []);
