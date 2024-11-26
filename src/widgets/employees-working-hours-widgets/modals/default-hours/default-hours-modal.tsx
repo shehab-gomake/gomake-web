@@ -6,7 +6,6 @@ import {
 } from "@/widgets/employees-working-hours-widgets/interface";
 import {PrimaryButton} from "@/components/button/primary-button";
 import {GoMakeModal} from "@/components";
-import {DeleteIcon} from "@/components/icons/delete-icon";
 import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 import {TimeRangeManager} from "@/widgets/employees-working-hours-widgets/modals/components/time-range-manager";
 import {useWorkingHours} from "@/widgets/employees-working-hours-widgets/use-working-hours";
@@ -16,6 +15,7 @@ import {ActionButtons} from "@/widgets/employees-working-hours-widgets/modals/co
 import {useRecoilState} from "recoil";
 import {employeesWorkingHoursState, machinesState} from "@/widgets/employees-working-hours-widgets/state";
 import {useTranslation} from "react-i18next";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 
 
 interface EditDefaultWorkingHoursModalProps {
@@ -36,7 +36,6 @@ const DefaultHoursModal: React.FC<EditDefaultWorkingHoursModalProps> = ({
     const [dayGroups, setDayGroups] = useState<IEmployeeDefaultWorkingHours[]>(existingWorkingHours);
     const [employees] = useRecoilState(employeesWorkingHoursState)
     const [, setError] = useState<string | null>(null);
-    const {secondColor} = useGomakeTheme();
     const {convertTimeToDate} = useWorkingHours();
     const selectedDays = dayGroups.flatMap(group => group.days);
     const [machines] = useRecoilState(machinesState);
@@ -149,7 +148,7 @@ const DefaultHoursModal: React.FC<EditDefaultWorkingHoursModalProps> = ({
                                         <PrimaryButton sx={{padding: 0, display: 'flex', alignItems: 'center'}}
                                                        variant={'text'}
                                                        onClick={() => handleRemoveGroup(groupIndex)}>
-                                            <DeleteIcon width={20} height={20} color={secondColor(500)}/>
+                                            <DeleteOutlinedIcon style={{color: 'D92D20'}}/>
                                             <span>{t('modal.delete')}</span>
                                         </PrimaryButton>
                                     )}
