@@ -38,6 +38,9 @@ import { _renderIconLogs } from "@/utils/constants";
 import { TableOutPutComponent } from "../table-output/table-output-component";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { isActionEmployeeUpdatedState } from "@/store";
+import { Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { SortIcon } from "@/icons/sort-icon";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -61,25 +64,74 @@ const Actions = ({
   widgetType,
   selectedWorkFlowCalculatedIsLoaded
 }: IActionsComponentProps) => {
+  const [actionsList, setActionsList] = useState(actions);
+  // useEffect(() => {
+  //   setActionsList(actions)
+  // }, [])
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const reorderedActions = Array.from(actionsList);
+    const [movedAction] = reorderedActions.splice(result.source.index, 1);
+    reorderedActions.splice(result.destination.index, 0, movedAction);
+    setActionsList(reorderedActions)
+    // Update the state or perform any action with reorderedActions
+  };
   return (
-    <Stack gap={"10px"}>
-      {actions?.map((action, index) => {
-        return (
-          <ActionContainerComponent
-            key={action.id}
-            data-toure={'action'}
-            widgetType={widgetType}
-            productType={productType}
-            workFlowId={workFlowId}
-            selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
-            delay={index * 800}
-            {...action}
-          />
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="actionsDroppable">
+        {(provided) => (
+          <Stack
+            gap={"10px"}
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
+            {actionsList?.map((action, index) => (
+              <Draggable key={action.id} draggableId={action.id} index={index}>
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                      <SortIcon />
+                      <ActionContainerComponent
+                        data-toure={'action'}
+                        widgetType={widgetType}
+                        productType={productType}
+                        workFlowId={workFlowId}
+                        selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+                        delay={index * 800}
+                        {...action}
+                      />
+                    </div>
+                  </div>
+                )}
+              </Draggable>
+            ))}
+            {provided.placeholder}
+          </Stack>
+        )}
+      </Droppable>
+    </DragDropContext>
+    // <Stack gap={"10px"}>
+    //   {actions?.map((action, index) => {
+    //     return (
+    //       <ActionContainerComponent
+    //         key={action.id}
+    //         data-toure={'action'}
+    //         widgetType={widgetType}
+    //         productType={productType}
+    //         workFlowId={workFlowId}
+    //         selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+    //         delay={index * 800}
+    //         {...action}
+    //       />
 
-        );
+    //     );
 
-      })}
-    </Stack>
+    //   })}
+    // </Stack>
   );
 };
 
@@ -260,6 +312,7 @@ const ActionContainerComponent = ({
             timeout={delay}
             style={{ width: "100%", position: "relative" }}
           >
+
             <Stack
               onClick={() => setIsOpen(!isOpen)}
               style={{
@@ -267,11 +320,13 @@ const ActionContainerComponent = ({
                 border: isOpen ? classes.actionContainerBorder : "unset",
               }}
             >
+
               <Stack
                 padding={"10px 0"}
                 direction={"row"}
                 justifyContent={"space-between"}
               >
+
                 <Stack
                   direction={"row"}
                   gap={"16px"}

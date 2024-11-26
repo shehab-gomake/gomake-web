@@ -16,6 +16,7 @@ import { calculationResultState } from "./state";
 import { useState } from "react";
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { FONT_FAMILY } from "@/utils/font-family";
+import { GoMakeAutoComplate } from "@/components";
 
 const PricingWidget = ({
   workFlows,
@@ -93,27 +94,43 @@ const PricingWidget = ({
         ) : (
           <div />
         )}
-        <InOutSourceSelect
-          onChange={(v: EWorkSource) => {
-            setSelectedWorkFlowCalculatedIsLoaded(true)
-            setView(
-              v === EWorkSource.OUT
-                ? EPricingViews.OUTSOURCE_WORKFLOW
-                : EPricingViews.SELECTED_WORKFLOW
-            )
-            updateProductItemValue(v)
-            setIsChangeView(false)
-          }}
-          disabled={!selectedWorkFlow}
-          withPartially={selectedWorkFlow?.actions?.some(
-            (action) => action.source === EWorkSource.OUT
-          ) && view !== EPricingViews.OUTSOURCE_WORKFLOW && !selectedWorkFlowCalculatedIsLoaded}
-          value={
-            view === EPricingViews.OUTSOURCE_WORKFLOW
-              ? EWorkSource.OUT
-              : EWorkSource.INTERNAL
-          }
-        />
+        <Stack direction={"row"} gap={"10px"}>
+          <GoMakeAutoComplate
+            options={[]}
+            style={{
+              width: 140,
+              height: 36,
+              border: "1px solid #D0D5DD",
+              borderRadius: 8,
+              boxShadow: "none",
+              backgroundColor: "#FFF"
+            }}
+            placeholder={t("select action")}
+            withArrow={true}
+          />
+          <InOutSourceSelect
+            onChange={(v: EWorkSource) => {
+              setSelectedWorkFlowCalculatedIsLoaded(true)
+              setView(
+                v === EWorkSource.OUT
+                  ? EPricingViews.OUTSOURCE_WORKFLOW
+                  : EPricingViews.SELECTED_WORKFLOW
+              )
+              updateProductItemValue(v)
+              setIsChangeView(false)
+            }}
+            disabled={!selectedWorkFlow}
+            withPartially={selectedWorkFlow?.actions?.some(
+              (action) => action.source === EWorkSource.OUT
+            ) && view !== EPricingViews.OUTSOURCE_WORKFLOW && !selectedWorkFlowCalculatedIsLoaded}
+            value={
+              view === EPricingViews.OUTSOURCE_WORKFLOW
+                ? EWorkSource.OUT
+                : EWorkSource.INTERNAL
+            }
+          />
+
+        </Stack>
       </Stack>
       {selectedWorkFlow && (
         <GeneralInformationComponent
