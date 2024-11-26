@@ -15,8 +15,7 @@ const useStyle = () => {
         paddingLeft: 20,
         paddingRight: 20,
         height: "100%",
-        overflowY: 'auto' as 'auto',
-
+        overflowY: "auto" as "auto",
       },
       filtersContainer: {
         display: "flex",
@@ -27,7 +26,6 @@ const useStyle = () => {
         width: 384,
         padding: 15,
         flexWrap: "wrap" as "wrap",
-
       },
       selectedFilterContainer: {
         display: "flex",
@@ -42,7 +40,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         width: "100%",
-        gap: "10px"
+        gap: "10px",
       },
       statusFilterContainer: {
         display: "flex",
@@ -68,16 +66,16 @@ const useStyle = () => {
       },
       filterLabelStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
-        marginBottom: 7
+        marginBottom: 7,
       },
       packageLabelStyle: {
         ...FONT_FAMILY.Lexend(550, 14),
         color: primaryColor(400),
-        marginBottom: 7
+        marginBottom: 7,
       },
       inputValueStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
-        boxSizing: 'border-box' as 'border-box',
+        boxSizing: "border-box" as "border-box",
         borderRadius: 4,
         height: 45,
         lineHeight: "21px",
@@ -93,13 +91,11 @@ const useStyle = () => {
         width: "100%",
         border: "none",
         height: 45,
-
       },
       textInputForProductsStyle: {
         width: 350,
         border: "none",
         height: 45,
-
       },
       clearBtnStyle: {
         height: 40,
@@ -107,25 +103,34 @@ const useStyle = () => {
         border: `1px solid ${secondColor(500)}`,
         color: secondColor(500),
         width: "12.5%",
-        minWidth: "fit-content"
+        minWidth: "fit-content",
       },
       paginationStyle: {
         paddingLeft: 20,
         paddingRight: 20,
-        height: '50px'
+        height: "50px",
       },
       warningIconStyle: {
         width: 120,
         height: 120,
         color: errorColor(300),
       },
-      modalStyle:{
+      modalStyle: {
         width: "25%",
         borderRadius: "8px",
         height: "auto",
         maxHeight: 600,
         gap: "10px",
-        zIndex: 999999
+        zIndex: 999999,
+      },
+      materialsQuantityModalStyle: {
+        width: "500px",
+        maxWidth: "40%",
+        borderRadius: "8px",
+        height: "auto",
+        maxHeight: 600,
+        gap: "10px",
+        zIndex: 999999,
       },
     };
   }, [theme]);

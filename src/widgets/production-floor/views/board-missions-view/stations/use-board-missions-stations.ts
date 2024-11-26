@@ -73,6 +73,7 @@ const useBoardMissionsStations = () => {
 
   return {
     stations,
+    setStations,
     subWorkFlows,
     boardMissions,
     onClickAllJob,
