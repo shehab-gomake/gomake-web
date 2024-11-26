@@ -10,7 +10,13 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDr
   updateProfitProfileProductParameter: (data: any, value: any) => void
 }) => {
   const { classes } = useStyle();
-
+  const parametersBySection = parameters.reduce((acc: any, parameter: any) => {
+    if (!acc[parameter.sectionName]) {
+      acc[parameter.sectionName] = [];
+    }
+    acc[parameter.sectionName].push(parameter);
+    return acc;
+  }, {});
   const colorsMock = [
     {
       color: "#B42318",
@@ -77,36 +83,41 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDr
 
   return (
     <div style={classes.mainContainer}>
-      <div style={classes.parameterContainer}>
-        {parameters?.map((parameter: any, index: number) => {
-          let displayValue = '';
+      {Object.entries(parametersBySection).map(([sectionName, sectionParameters]: [string, any[]]) => (
+        <div key={sectionName} style={classes.sectionContainer}>
+          <h3>{sectionName}</h3>
+          <div style={classes.parameterContainer}>
+            {sectionParameters.map((parameter: any, index: number) => {
+              let displayValue = '';
 
-          if (parameter.parameterType === 1 || parameter.parameterType === 2) {
-            displayValue = parameter.defaultValue;
-          } else if (parameter.parameterType === 0) {
-            const defaultValue = parameter.values.find((value: any) => value.isDefault);
-            displayValue = defaultValue ? defaultValue.name : '';
-          }
-          else if (parameter.parameterType === 5) {
-            displayValue = parameter.defaultValue
-          }
-          // Use modulo to cycle through colorsMock
-          const colorStyle = colorsMock[index % colorsMock.length];
+              if (parameter.parameterType === 1 || parameter.parameterType === 2) {
+                displayValue = parameter.defaultValue;
+              } else if (parameter.parameterType === 0) {
+                const defaultValue = parameter.values.find((value: any) => value.isDefault);
+                displayValue = defaultValue ? defaultValue.name : '';
+              } else if (parameter.parameterType === 5) {
+                displayValue = parameter.defaultValue;
+              }
+              // Use modulo to cycle through colorsMock
+              const colorStyle = colorsMock[index % colorsMock.length];
 
-          return (
-            <ParameterListWidget
-              parameter={parameter}
-              index={index}
-              colorStyle={colorStyle}
-              displayValue={displayValue}
-              updateDropdownValue={updateDropdownValue}
-              updateDropdownMaterialValue={updateDropdownMaterialValue}
-              updateTextInputValue={updateTextInputValue}
-              updateProfitProfileProductParameter={updateProfitProfileProductParameter}
-            />
-          );
-        })}
-      </div>
+              return (
+                <ParameterListWidget
+                  key={parameter.parameterId}
+                  parameter={parameter}
+                  index={index}
+                  colorStyle={colorStyle}
+                  displayValue={displayValue}
+                  updateDropdownValue={updateDropdownValue}
+                  updateDropdownMaterialValue={updateDropdownMaterialValue}
+                  updateTextInputValue={updateTextInputValue}
+                  updateProfitProfileProductParameter={updateProfitProfileProductParameter}
+                />
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
