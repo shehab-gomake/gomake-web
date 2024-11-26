@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import {  useEffect, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 
-import { addOutSourceActionApi, removeOutSourceActionApi, updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { addActionToWorkFlowApi, addOutSourceActionApi, deleteActionToWorkFlowApi, removeOutSourceActionApi, updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { actionListForWorkFlow, currentCalculationConnectionId, foldOptionsState, productItemValueByEditState, viewPricingTab } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
@@ -17,8 +17,8 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
   const [view, setView] = useRecoilState<EPricingViews>(viewPricingTab);
   const [actionList, setActionList] = useRecoilState(actionListForWorkFlow)
   const [actionListDropDown, setActionListDropDown] = useState([]);
-  const [actionNameSelected, setActionNameSelected] = useState()
-  const [sectionNameSelected, setSectionNames] = useState()
+  const [actionNameSelected, setActionNameSelected] = useState<any>()
+  const [sectionNameSelected, setSectionNames] = useState<any>()
   const [isAddNewAction, setIsAddNewAction] = useState(false)
 
   const onClickCloseAddNewAction = () => {
@@ -28,16 +28,36 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
     setIsAddNewAction(true)
   }
 
+
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState)
-
+console.log("selectedWorkFlow", selectedWorkFlow)
   const [pageSize, setPageSize] = useState(10)
   const [heightScrolling, setHeightScrolling] = useState(50)
   const [isChangeView, setIsChangeView] = useState(true)
   const [isFirstEntry, setIsFirstEntry] = useState(false)
   const { alertFaultUpdate } = useSnackBar();
+
+  const [anchorElActionsListMenu, setAnchorElActionsListMenu] = useState<null | HTMLElement>(null);
+  const [anchorElSectionNameListMenu, setAnchorElSectionNameListMenu] = useState<null | HTMLElement>(null);
+  const openActionsListMenu = Boolean(anchorElActionsListMenu);
+  const openSectionNameListMenu = Boolean(anchorElSectionNameListMenu);
+  const handleCloseActionsListMenu = () => {
+    setAnchorElActionsListMenu(null);
+  };
+  const handleCloseSectionNameListMenu = () => {
+    setAnchorElSectionNameListMenu(null);
+  };
+
+  const handleOpenActionsListMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElActionsListMenu(event.currentTarget);
+  };
+  const handleOpenSectionNameListMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElSectionNameListMenu(event.currentTarget);
+  };
+
 
 
   useEffect(() => {
@@ -305,6 +325,21 @@ const getSectionNames = (selectedWorkFlow) => {
   return Array.from(sectionNames);
 };
 
+const onClickAddActionToWorkFlow = async () => {
+  const callBack = (res) => {
+      if (res.success) {
+      }
+  };
+  await addActionToWorkFlowApi(callApi, callBack, {
+    signalRConnectionId: connectionId,
+    productType: sectionNameSelected?.sectionName?sectionNameSelected?.productType:null,
+    actionId: actionNameSelected?.id,
+    sectionName: sectionNameSelected?.sectionName?sectionNameSelected?.sectionName:null,
+    // printingActionId: ""
+  })
+};
+
+
   return {
     view,
     setView,
@@ -340,7 +375,16 @@ const getSectionNames = (selectedWorkFlow) => {
     setActionNameSelected,
     isAddNewAction,
     onClickCloseAddNewAction,
-    onClickAddNewAction
+    onClickAddNewAction,
+    onClickAddActionToWorkFlow,
+    anchorElActionsListMenu,
+    openActionsListMenu,
+    handleCloseActionsListMenu,
+    handleOpenActionsListMenu,
+    anchorElSectionNameListMenu,
+    openSectionNameListMenu,
+    handleCloseSectionNameListMenu,
+    handleOpenSectionNameListMenu
   }
 }
 

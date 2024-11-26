@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { currentCalculationConnectionId } from "@/store";
 import { DeleteSettingsIcon, OsSettingsIcon, PrinterIcon, ProfitIcon, ProportiesIcon } from "@/icons";
+import { deleteActionToWorkFlowApi } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { useGomakeAxios } from "@/hooks";
 
 const SettingsMenu = ({
   handleClose,
@@ -14,10 +16,13 @@ const SettingsMenu = ({
   currentProductItemValue,
   machineName,
   categoryId,
+  productType,
+  id,
+  sectionName
 }) => {
   const { t } = useTranslation();
   const currentSignalRConnectionId = useRecoilValue(currentCalculationConnectionId);
-
+  const { callApi } = useGomakeAxios();
   const onClickProfit = () => {
     const uri = `/products/profits?actionId=${actionId}&actionName=${actionName}&signalRConnectionId=${currentSignalRConnectionId}`;
     window.open(uri, "_blank");
@@ -37,6 +42,21 @@ const SettingsMenu = ({
     const uri = `/machines/category/${categoryId}`;
     window.open(uri, "_blank");
     handleClose();
+  };
+  const onClickDeleteActionToWorkFlow = async (data) => {
+    const callBack = (res) => {
+      console.log("res", res)
+      if (res.success) {
+        handleClose();
+      }
+    };
+    await deleteActionToWorkFlowApi(callApi, callBack, {
+      signalRConnectionId: currentSignalRConnectionId,
+      productType: data?.productType,
+      actionId: data?.actionId,
+      sectionName: data?.sectionName,
+      printingActionId: data?.id
+    })
   };
   return (
     <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
@@ -59,7 +79,7 @@ const SettingsMenu = ({
         </MenuItem>
       )}
       <Divider />
-      <MenuItem style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+      <MenuItem style={{ display: "flex", alignItems: "center", gap: "10px" }} onClick={() => onClickDeleteActionToWorkFlow({ id, actionId, productType, sectionName })}>
         <DeleteSettingsIcon />
         {t("navigationButtons.delete")}
       </MenuItem>

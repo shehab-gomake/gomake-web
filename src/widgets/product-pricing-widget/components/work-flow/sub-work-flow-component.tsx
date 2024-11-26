@@ -1,5 +1,5 @@
 import { ICalculatedWorkFlow } from "@/widgets/product-pricing-widget/interface";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { Collapse, Fade, IconButton } from "@mui/material";
 import Stack from "@mui/material/Stack";
@@ -148,6 +148,9 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
 
 const SubWorkFlowsComponent = ({ workflows, isEditableActions, widgetType }: ISubWorkFlowsComponentProps) => {
     const [workflowsList, setWorkflowsList] = useState(workflows);
+    useEffect(() => {
+        setWorkflowsList(workflows)
+    }, [workflows])
     const onDragEnd = (result) => {
         if (!result.destination) return;
         const reorderedWorkflows = Array.from(workflowsList);

@@ -17,6 +17,9 @@ import { useState } from "react";
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { FONT_FAMILY } from "@/utils/font-family";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
+import { ActionsListMenu } from "./components/actions-menu";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { SectionNameListMenu } from "./components/sections-menu";
 
 const PricingWidget = ({
   workFlows,
@@ -54,12 +57,20 @@ const PricingWidget = ({
     isAddNewAction,
     onClickCloseAddNewAction,
     onClickAddNewAction,
-    t
+    onClickAddActionToWorkFlow,
+    t,
+    anchorElActionsListMenu,
+    openActionsListMenu,
+    handleCloseActionsListMenu,
+    handleOpenActionsListMenu,
+    anchorElSectionNameListMenu,
+    openSectionNameListMenu,
+    handleCloseSectionNameListMenu,
+    handleOpenSectionNameListMenu
+
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
   const isHasSubWorkFlowsOrProductTypeActions = hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)
   const sectionNames = getSectionNames(selectedWorkFlow);
-
-  console.log("sectionNameSelected", sectionNameSelected)
 
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
@@ -110,20 +121,11 @@ const PricingWidget = ({
         )}
         <Stack direction={"row"} gap={"10px"}>
           {
-            isHasSubWorkFlowsOrProductTypeActions && <GoMakeAutoComplate
-              options={[...sectionNames, {
-                sectionName: t("pricingWidget.general"),
-                productType: null
-              }]}
-              style={classes.autoCompleteSelectedAction}
-              placeholder={t("pricingWidget.selectSectionName")}
-              withArrow={true}
-              getOptionLabel={(option) => option.sectionName}
-              onChange={(e, value) => {
-                setSectionNames(value)
-              }}
-              value={sectionNameSelected ?? null}
-            />
+            isHasSubWorkFlowsOrProductTypeActions &&
+            <div style={classes.autoCompleteSelectedSectionName} onClick={handleOpenSectionNameListMenu}>
+              {t("pricingWidget.selectAction")}
+              <ArrowDropDownIcon />
+            </div>
           }
           {!isHasSubWorkFlowsOrProductTypeActions && <GoMakeAutoComplate
             options={actionListDropDown}
@@ -231,9 +233,29 @@ const PricingWidget = ({
         openModal={isAddNewAction}
         onClose={onClickCloseAddNewAction}
         hideIcon
-        //  onClickDelete={() => setIsChangePriceForEdit(false)}
+        onClickDelete={onClickAddActionToWorkFlow}
         onClickCancel={() => setActionNameSelected(null)}
 
+      />
+      <ActionsListMenu
+        handleClose={handleCloseActionsListMenu}
+        open={openActionsListMenu}
+        anchorEl={anchorElActionsListMenu}
+        actionListDropDown={actionListDropDown}
+        setActionNameSelected={setActionNameSelected}
+        onClickAddNewAction={onClickAddNewAction}
+        handleCloseSectionNameListMenu={handleCloseSectionNameListMenu}
+      />
+      <SectionNameListMenu
+        handleClose={handleCloseSectionNameListMenu}
+        open={openSectionNameListMenu}
+        anchorEl={anchorElSectionNameListMenu}
+        handleOpen={handleOpenActionsListMenu}
+        sectionNames={[...sectionNames, {
+          sectionName: t("pricingWidget.general"),
+          productType: null
+        }]}
+        setSectionNames={setSectionNames}
       />
     </Stack>
   );

@@ -47,6 +47,7 @@ interface IActionContainerComponentProps extends IWorkFlowAction {
   productType?: string | null;
   widgetType?: EWidgetProductType,
   selectedWorkFlowCalculatedIsLoaded?: boolean
+  sectionName?: string
 }
 
 interface IActionsComponentProps {
@@ -54,7 +55,8 @@ interface IActionsComponentProps {
   workFlowId?: string;
   productType: string | null;
   widgetType: EWidgetProductType,
-  selectedWorkFlowCalculatedIsLoaded?: boolean
+  selectedWorkFlowCalculatedIsLoaded?: boolean,
+  sectionName?: string
 }
 
 const Actions = ({
@@ -65,16 +67,15 @@ const Actions = ({
   selectedWorkFlowCalculatedIsLoaded
 }: IActionsComponentProps) => {
   const [actionsList, setActionsList] = useState(actions);
-  // useEffect(() => {
-  //   setActionsList(actions)
-  // }, [])
+  useEffect(() => {
+    setActionsList(actions)
+  }, [actions])
   const onDragEnd = (result) => {
     if (!result.destination) return;
     const reorderedActions = Array.from(actionsList);
     const [movedAction] = reorderedActions.splice(result.source.index, 1);
     reorderedActions.splice(result.destination.index, 0, movedAction);
     setActionsList(reorderedActions)
-    // Update the state or perform any action with reorderedActions
   };
   return (
     <DragDropContext onDragEnd={onDragEnd}>
@@ -114,24 +115,6 @@ const Actions = ({
         )}
       </Droppable>
     </DragDropContext>
-    // <Stack gap={"10px"}>
-    //   {actions?.map((action, index) => {
-    //     return (
-    //       <ActionContainerComponent
-    //         key={action.id}
-    //         data-toure={'action'}
-    //         widgetType={widgetType}
-    //         productType={productType}
-    //         workFlowId={workFlowId}
-    //         selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
-    //         delay={index * 800}
-    //         {...action}
-    //       />
-
-    //     );
-
-    //   })}
-    // </Stack>
   );
 };
 
@@ -165,7 +148,8 @@ const ActionContainerComponent = ({
   profitValue,
   isNeedFolds,
   foldOptionValueId,
-  selectedWorkFlowCalculatedIsLoaded
+  selectedWorkFlowCalculatedIsLoaded,
+  sectionName
 }: IActionContainerComponentProps) => {
 
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
@@ -834,6 +818,9 @@ const ActionContainerComponent = ({
                 currentProductItemValue={currentProductItemValue}
                 machineName={machineName}
                 categoryId={categoryId}
+                id={id}
+                productType={productType}
+                sectionName={sectionName}
               />
               <GoMakeDeleteModal
                 insideStyle={classes.insideStyle}
