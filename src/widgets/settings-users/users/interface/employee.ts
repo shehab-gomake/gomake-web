@@ -34,6 +34,7 @@ export interface Employee {
   stationsFilter?: IStation[];
   printerId?: number;
   printerBin?: string;
+  userLang?: string;
 }
 
 export interface IUserData {
