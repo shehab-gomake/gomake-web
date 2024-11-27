@@ -45,13 +45,9 @@ import { CreditCardPaySection } from "@/widgets/quote-confirmation-mobile/compon
 import moment from "moment";
 import { QuoteNewPageSkeletonWidget } from "./quote-skeleton";
 import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal";
+import { Check } from "@mui/icons-material";
 import { useQuoteGetData } from "./use-quote-get-data";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { DateField } from "@/components/date-picker/date-filed";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -65,7 +61,6 @@ const QuoteNewPageWidget = ({
   isPrePaymentPage,
 }: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
-
   const router = useRouter();
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
@@ -77,7 +72,6 @@ const QuoteNewPageWidget = ({
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
   const quoteState = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
   const { resetReceiptState } = usePaymentsTable();
-  const { getCurrencyUnitText } = useQuoteGetData();
   const [docNumber, setDocNumber] = useState(quoteState?.number);
   const {
     selectDate,
@@ -160,6 +154,7 @@ const QuoteNewPageWidget = ({
     setIsUpdateAgent,
     updateAgent,
     t,
+    handleClickSelectDate,
     handleShowLess,
     setIsDisplayWidget,
     onOpenDeleteModalContact,
@@ -241,6 +236,8 @@ const QuoteNewPageWidget = ({
     clientName,
     setClientName,
     onClickOpenNewItemNotesModal,
+    handleClickForCreationDate,
+    handleClickForTaxDate,
     setActiveClickAwayForTaxDate,
     openReferenceModal,
     onClickCloseReferenceModal,
@@ -272,9 +269,10 @@ const QuoteNewPageWidget = ({
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
-  const dir: "rtl" | "ltr" = t("direction");
+  const { getCurrencyUnitText } = useQuoteGetData();
 
-  const handleChangeCreationDate = (newDate) => {
+  const handleChangeCreationDate = (event) => {
+    const newDate = event.target.value;
     const currentCreationDate = creationDate
       ? moment(creationDate).format("YYYY-MM-DD")
       : "";
@@ -330,10 +328,6 @@ const QuoteNewPageWidget = ({
 
   const {} = useGoMakeTour(quoteSteps, []);
 
-  const theme = createTheme({
-    direction: dir, // Ensure the theme is in RTL mode
-  });
-
   useEffect(() => {
     if (isInvoice) {
       const fetchTaxesData = async () => {
@@ -359,6 +353,38 @@ const QuoteNewPageWidget = ({
   useEffect(() => {
     setDocNumber(quoteState?.number);
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation]);
+
+  const DateField = ({
+    label,
+    date,
+    handleClick,
+    handleChange,
+    inputRef,
+    isEditable,
+  }) => (
+    <div
+      style={{
+        ...classes.dateFiled,
+        cursor: isEditable ? "pointer" : "default",
+      }}
+      onClick={isEditable ? handleClick : null}
+    >
+      <span>{label}</span>
+      <span style={classes.dateValue}>
+        {date
+          ? moment(date, "YYYY-MM-DD").format("DD/MM/YYYY") // Display date in the correct format
+          : t("sales.quote.selectDate")}
+      </span>
+      <div style={classes.datePickerContainer}>
+        <input
+          type="date"
+          value={date ? moment(date, "YYYY-MM-DD").format("YYYY-MM-DD") : ""}
+          onChange={handleChange}
+          ref={inputRef}
+        />
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -475,49 +501,59 @@ const QuoteNewPageWidget = ({
                   </div>
                 )}
               </div>
+
               {isPrePaymentPage ? (
                 <div style={classes.firstBorder} />
               ) : (
                 <div style={classes.datesContainer}>
-                  <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                      <DateField
-                        label={t("sales.quote.creationDate")}
-                        date={creationDate}
-                        handleChange={handleChangeCreationDate}
-                        isEditable={isInvoice && quoteItemValue?.isEditable}
-                        inputRef={creationDateRef}
-                        preventOpenCondition={!quoteState.client}
-                      />
-                      <DateField
-                        label={t("sales.quote.dateOfReference")}
-                        date={selectDate}
-                        handleChange={(newDate) => {
-                          setSelectDate(newDate);
-                          setActiveClickAway(true);
-                        }}
-                        isEditable={quoteItemValue?.isEditable}
-                        inputRef={dateRef}
-                        preventOpenCondition={!quoteState.client}
-                      />
-                      {isInvoice && (
-                        <DateField
-                          label={t("sales.quote.taxDate")}
-                          date={taxDate}
-                          handleChange={(newDate) => {
-                            setTaxDate(newDate);
-                            setActiveClickAwayForTaxDate(true);
-                          }}
-                          isEditable={quoteItemValue?.isEditable}
-                          inputRef={taxDateRef}
-                          preventOpenCondition={!quoteState.client}
-                        />
-                      )}
-                    </LocalizationProvider>
-                  </ThemeProvider>
+                  {/* Creation Date */}
+                  <DateField
+                    label={t("sales.quote.creationDate")}
+                    date={creationDate}
+                    handleClick={
+                      isInvoice && quoteItemValue?.isEditable
+                        ? handleClickForCreationDate
+                        : null
+                    }
+                    handleChange={handleChangeCreationDate}
+                    inputRef={creationDateRef}
+                    isEditable={isInvoice && quoteItemValue?.isEditable}
+                  />
+                  {/* Due Date */}
+                  <DateField
+                    label={t("sales.quote.dateOfReference")}
+                    date={selectDate}
+                    handleClick={
+                      quoteItemValue?.isEditable ? handleClickSelectDate : null
+                    }
+                    handleChange={(e) => {
+                      setSelectDate(e.target.value);
+                      setActiveClickAway(true);
+                    }}
+                    inputRef={dateRef}
+                    isEditable={quoteItemValue?.isEditable}
+                  />
+                  {/* Tax Date */}
+                  {isInvoice && (
+                    <DateField
+                      label={t("sales.quote.taxDate")}
+                      date={taxDate}
+                      handleClick={
+                        quoteItemValue?.isEditable
+                          ? handleClickForTaxDate
+                          : null
+                      }
+                      handleChange={(e) => {
+                        setTaxDate(e.target.value);
+                        setActiveClickAwayForTaxDate(true);
+                      }}
+                      inputRef={taxDateRef}
+                      isEditable={quoteItemValue?.isEditable}
+                    />
+                  )}
                 </div>
               )}
+
               <div style={classes.bordersecondContainer}>
                 <BusinessNewWidget
                   values={quoteState}

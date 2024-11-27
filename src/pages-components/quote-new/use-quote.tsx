@@ -1198,14 +1198,23 @@ const useQuoteNew = ({
     [quoteItems]
   );
 
-  const creationDateRef = useRef(null);
   const dateRef = useRef(null);
+  const creationDateRef = useRef(null);
   const taxDateRef = useRef(null);
   const [activeClickAway, setActiveClickAway] = useState(false);
   const [activeClickAwayForCreationDate, setActiveClickAwayForCreationDate] =
     useState(false);
   const [activeClickAwayForTaxDate, setActiveClickAwayForTaxDate] =
     useState(false);
+  const handleClickSelectDate = () => {
+    dateRef?.current?.showPicker();
+  };
+  const handleClickForCreationDate = () => {
+    creationDateRef?.current?.showPicker();
+  };
+  const handleClickForTaxDate = () => {
+    taxDateRef?.current?.showPicker();
+  };
 
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
   const [openSignatureApprovalModal, setOpenSignatureApprovalModal] =
@@ -1998,6 +2007,7 @@ const useQuoteNew = ({
     handleCancelBtnClose,
     handleSendBtnClick,
     handleSendBtnClose,
+    handleClickSelectDate,
     setActiveClickAway,
     changeQuoteItems,
     changedocumentItemsChild,
@@ -2109,6 +2119,8 @@ const useQuoteNew = ({
     clientName,
     setClientName,
     onClickOpenNewItemNotesModal,
+    handleClickForCreationDate,
+    handleClickForTaxDate,
     setActiveClickAwayForCreationDate,
     setActiveClickAwayForTaxDate,
     openReferenceModal,
