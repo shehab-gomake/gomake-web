@@ -180,6 +180,7 @@ const PricingWidget = ({
             widgetType={widgetType}
             isEditableActions={true}
             workflows={selectedWorkFlow?.subWorkFlows || []}
+            reOderMainActions={reOderMainActions}
           />
           <Actions
             actions={selectedWorkFlow?.actions}

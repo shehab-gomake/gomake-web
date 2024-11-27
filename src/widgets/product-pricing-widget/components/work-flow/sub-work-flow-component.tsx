@@ -19,15 +19,17 @@ import { SortIcon } from "@/icons";
 interface ISubWorkFlowComponentProps extends ICalculatedWorkFlow {
     isEditableActions?: boolean;
     widgetType: EWidgetProductType;
+    reOderMainActions: (data: any) => void
 }
 
 interface ISubWorkFlowsComponentProps {
     workflows: ICalculatedWorkFlow[];
     isEditableActions?: boolean;
     widgetType: EWidgetProductType;
+    reOderMainActions: (data: any) => void
 }
 
-const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, productType, profit, totalCost, totalPrice, totalRealProductionTime, widgetType }: ISubWorkFlowComponentProps) => {
+const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, productType, profit, totalCost, totalPrice, totalRealProductionTime, widgetType, reOderMainActions }: ISubWorkFlowComponentProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const { classes } = useStyle();
     const { t } = useTranslation()
@@ -39,6 +41,12 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
         const reorderedActions = Array.from(actionsList);
         const [removed] = reorderedActions.splice(result.source.index, 1);
         reorderedActions.splice(result.destination.index, 0, removed);
+        const formattedActions = reorderedActions.map((action: any, index: number) => ({
+            printingActionId: action?.id,
+            productType: action?.productType,
+            orderIndex: index
+        }));
+        reOderMainActions(formattedActions)
         setActionsList(reorderedActions);
     };
     return (
@@ -96,6 +104,7 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
                                                     alignItems={'center'}
                                                     position={'relative'}
                                                     padding={'0 5px'}
+                                                    zIndex={1000}
                                                     ref={provided.innerRef}
                                                     {...provided.draggableProps}
                                                     {...provided.dragHandleProps}
@@ -122,31 +131,12 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
                         )}
                     </Droppable>
                 </DragDropContext>
-                {/* <Stack padding={'10px 0'} gap={'10px'}>
-                    {
-                        actions?.map((action, i) =>
-                            <Stack direction={'row'} alignItems={'center'} position={'relative'} padding={'0 5px'}>
-                                {
-                                    i + 1 < actions?.length ? <Divider orientation={'vertical'} style={{
-                                        width: '2px',
-                                        backgroundColor: '#667085',
-                                        margin: i === 0 ? '-20px 0 -10px 0' : '-10px 0'
-                                    }} flexItem /> :
-                                        <Divider style={classes.subWorkFlowDividerVertical} absolute orientation={"vertical"} />
-                                }
-                                <Divider orientation={'horizontal'}
-                                    style={{ width: '30px', height: '2px', backgroundColor: '#667085' }} />
-                                {isEditableActions ? <ActionContainerComponent widgetType={widgetType} productType={productType} workFlowId={id} {...action} /> :
-                                    <ActionComponent {...action} />}
-                            </Stack>)
-                    }
-                </Stack> */}
             </Collapse>
         </>
     )
 };
 
-const SubWorkFlowsComponent = ({ workflows, isEditableActions, widgetType }: ISubWorkFlowsComponentProps) => {
+const SubWorkFlowsComponent = ({ workflows, isEditableActions, widgetType, reOderMainActions }: ISubWorkFlowsComponentProps) => {
     const [workflowsList, setWorkflowsList] = useState(workflows);
     useEffect(() => {
         setWorkflowsList(workflows)
@@ -178,6 +168,7 @@ const SubWorkFlowsComponent = ({ workflows, isEditableActions, widgetType }: ISu
                                                 <SubWorkFlowComponent
                                                     widgetType={widgetType}
                                                     isEditableActions={isEditableActions}
+                                                    reOderMainActions={reOderMainActions}
                                                     {...flow}
                                                 />
                                             </div>
