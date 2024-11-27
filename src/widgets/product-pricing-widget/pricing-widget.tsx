@@ -66,7 +66,8 @@ const PricingWidget = ({
     anchorElSectionNameListMenu,
     openSectionNameListMenu,
     handleCloseSectionNameListMenu,
-    handleOpenSectionNameListMenu
+    handleOpenSectionNameListMenu,
+    reOderMainActions
 
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
   const isHasSubWorkFlowsOrProductTypeActions = hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)
@@ -185,6 +186,7 @@ const PricingWidget = ({
             productType={selectedWorkFlow.productType}
             widgetType={widgetType}
             selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+            reOderMainActions={reOderMainActions}
           />
         </div>
       )}
