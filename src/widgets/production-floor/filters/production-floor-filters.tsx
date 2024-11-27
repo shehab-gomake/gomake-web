@@ -25,6 +25,9 @@ import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useStyle } from "./style";
 import { useRouter } from "next/router";
+import { GoMakeDeleteModal } from "@/components";
+
+//!here
 
 interface CustomGroupsProps {
   dir?: string;
@@ -114,6 +117,22 @@ const Circle = styled(Box)<{ numColor: string; dir: string }>(
   })
 );
 
+const IconButtonWrapper = styled("div")({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  position: "relative",
+  "& .clear-icon": {
+    visibility: "hidden",
+    opacity: 0,
+    transition: "visibility 0.2s, opacity 0.2s",
+  },
+  "&:hover .clear-icon": {
+    visibility: "visible",
+    opacity: 1,
+  },
+});
+
 const CustomGroupComponent = ({
   onClick,
   onClickDelete,
@@ -123,58 +142,69 @@ const CustomGroupComponent = ({
   isFromMenu,
 }: CustomGroupsProps) => {
   return (
-    <CustomGroup
-      onClick={onClick}
-      isSelected={isSelected}
-      color={group?.color}
-      isFromMenu={isFromMenu}
-    >
-      <CardContent
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          gap: "10px",
-          justifyContent: "space-between",
-          padding:
-            dir === "ltr"
-              ? "0px 5px 0px 0px !important"
-              : "0px 0px 0px 5px !important",
-          width: "100%",
-        }}
+    <IconButtonWrapper>
+      <CustomGroup
+        onClick={onClick}
+        isSelected={isSelected}
+        color={group?.color}
+        isFromMenu={isFromMenu}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton onClick={onClickDelete}>
-            <ClearIcon
-              style={{
-                cursor: "pointer",
-                fontSize: "14px",
+        <CardContent
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            justifyContent: "space-between",
+            padding:
+              dir === "rtl"
+                ? "0px 8px 0px 0px !important"
+                : "0px 0px 0px 8px !important",
+            width: "100%",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
                 color: isSelected ? "#FFF" : group?.color,
+                ...FONT_FAMILY.Inter(400, 14),
+                overflow: "hidden",
+                whiteSpace: "nowrap",
+                textOverflow: "ellipsis",
               }}
-            />
-          </IconButton>
-          <Typography
-            variant="subtitle2"
-            sx={{
-              color: isSelected ? "#FFF" : group?.color,
-              ...FONT_FAMILY.Inter(400, 14),
-              overflow: "hidden",
-              whiteSpace: "nowrap",
-              textOverflow: "ellipsis",
-            }}
-          >
-            {group?.name}
-          </Typography>
-        </Box>
-        <Box sx={{ display: "flex" }}>
-          <Circle numColor="#E7D000" dir={dir}>
-            {group?.inProcessCount}
-          </Circle>
-          <Circle numColor="#D92D20" dir={dir}>
-            {group?.stuckCount}
-          </Circle>
-        </Box>
-      </CardContent>
-    </CustomGroup>
+            >
+              {group?.name}
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Circle numColor="#E7D000" dir={dir}>
+              {group?.inProcessCount}
+            </Circle>
+            <Circle numColor="#D92D20" dir={dir}>
+              {group?.stuckCount}
+            </Circle>
+            <IconButton
+              onClick={onClickDelete}
+              size="small"
+              style={{
+                padding: "4px",
+                margin: "0px 0px 0px 2px",
+              }}
+            >
+              <ClearIcon
+                className="clear-icon"
+                style={{
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  color: isSelected ? "#FFF" : group?.color,
+                }}
+              />
+            </IconButton>
+          </Box>
+        </CardContent>
+      </CustomGroup>
+    </IconButtonWrapper>
   );
 };
 
@@ -273,6 +303,24 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     return missionsList.length > 0 ? missionsList : [];
   }, [missionsList]);
 
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedIdToDelete, setSelectedIdToDelete] = useState<string>("");
+
+  const handleClearClick = (id: string) => {
+    setOpenModal(true);
+    setSelectedIdToDelete(id);
+  };
+
+  const handleDeleteConfirm = () => {
+    deleteStationFilterGroupById(selectedIdToDelete);
+    setOpenModal(false);
+  };
+
+  const handleCancel = () => {
+    setOpenModal(false);
+    setSelectedIdToDelete("");
+  };
+
   return (
     <Stack style={classes.headerFilterContainer}>
       <Stack>
@@ -334,7 +382,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
             onClick={() => handleSelectGroup(group?.id)}
             onClickDelete={(event) => {
               event.stopPropagation();
-              deleteStationFilterGroupById(group?.id);
+              handleClearClick(group?.id);
             }}
             isSelected={selectedGroupId === group?.id ? true : false}
             isFromMenu={false}
@@ -374,7 +422,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
                     onClick={() => handleSelectGroup(group?.id)}
                     onClickDelete={(event) => {
                       event.stopPropagation();
-                      deleteStationFilterGroupById(group?.id);
+                      handleClearClick(group?.id);
                     }}
                     isSelected={selectedGroupId === group?.id ? true : false}
                     isFromMenu={true}
@@ -385,6 +433,12 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
           </>
         )}
       </Box>
+      <GoMakeDeleteModal
+        openModal={openModal}
+        onClose={handleCancel}
+        onClickDelete={handleDeleteConfirm}
+        onClickCancel={handleCancel}
+      />
     </Stack>
   );
 };
