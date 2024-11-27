@@ -17,6 +17,7 @@ const UPDATED_BOARD_MISSION_ACTION_OUTPUT_URL = '/v1/erp-service/board-missions/
 
 const ADD_ACTION_TO_WORK_FLOW = '/v1/erp-service/product-item-value/add-action-to-work-flow';
 const DELETE_ACTION_TO_WORK_FLOW = '/v1/erp-service/product-item-value/delete-action-from-work-flow';
+const UPDATE_ACTIONS_ORDER_IN_WORK_FLOW = '/v1/erp-service/product-item-value/update-actions-order-in-work-flow';
 const updateProductItemDraftActionMachine: ICallAndSetData = async (callApi, setState, data:{}) => {
     return await getSetApiData(callApi, EHttpMethod.POST, UPDATE_PRODUCT_ITEM_ACTION_MACHINE_URL, setState , data);
 }
@@ -58,6 +59,9 @@ const addActionToWorkFlowApi: ICallAndSetData = async (callApi, setState, data:{
 const deleteActionToWorkFlowApi: ICallAndSetData = async (callApi, setState, data:{}) => {
     return await getSetApiData(callApi, EHttpMethod.PUT, DELETE_ACTION_TO_WORK_FLOW, setState , data);
 }
+const updateActionsOrderInWorkFlowApi: ICallAndSetData = async (callApi, setState, data:{}) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_ACTIONS_ORDER_IN_WORK_FLOW, setState , data);
+}
 
 export 
 { 
@@ -72,5 +76,6 @@ export
     addOutSourceActionApi,
     removeOutSourceActionApi,
     addActionToWorkFlowApi,
-    deleteActionToWorkFlowApi
+    deleteActionToWorkFlowApi,
+    updateActionsOrderInWorkFlowApi
  };

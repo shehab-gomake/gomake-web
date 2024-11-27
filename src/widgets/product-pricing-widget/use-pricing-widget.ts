@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import {  useEffect, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 
-import { addActionToWorkFlowApi, addOutSourceActionApi, deleteActionToWorkFlowApi, removeOutSourceActionApi, updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { addActionToWorkFlowApi, addOutSourceActionApi, deleteActionToWorkFlowApi, removeOutSourceActionApi, updateActionsOrderInWorkFlowApi, updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { actionListForWorkFlow, currentCalculationConnectionId, foldOptionsState, productItemValueByEditState, viewPricingTab } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
@@ -335,7 +335,17 @@ const onClickAddActionToWorkFlow = async () => {
     productType: sectionNameSelected?.sectionName?sectionNameSelected?.productType:null,
     actionId: actionNameSelected?.id,
     sectionName: sectionNameSelected?.sectionName?sectionNameSelected?.sectionName:null,
-    // printingActionId: ""
+  })
+};
+
+const reOderMainActions = async (data) => {
+  const callBack = (res) => {
+      if (res.success) {
+      }
+  };
+  await updateActionsOrderInWorkFlowApi(callApi, callBack, {
+    signalRConnectionId: connectionId,
+    actionOrderIndexList: data
   })
 };
 
@@ -384,7 +394,8 @@ const onClickAddActionToWorkFlow = async () => {
     anchorElSectionNameListMenu,
     openSectionNameListMenu,
     handleCloseSectionNameListMenu,
-    handleOpenSectionNameListMenu
+    handleOpenSectionNameListMenu,
+    reOderMainActions
   }
 }
 

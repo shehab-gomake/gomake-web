@@ -75,6 +75,12 @@ const Actions = ({
     const reorderedActions = Array.from(actionsList);
     const [movedAction] = reorderedActions.splice(result.source.index, 1);
     reorderedActions.splice(result.destination.index, 0, movedAction);
+    const formattedActions = reorderedActions.map((action, index) => ({
+      "printingActionId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+      "productType": "string",
+      "orderIndex": 0
+    }));
+    console.log("reorderedActions,", reorderedActions)
     setActionsList(reorderedActions)
   };
   return (
