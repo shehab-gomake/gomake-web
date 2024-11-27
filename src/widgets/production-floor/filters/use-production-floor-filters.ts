@@ -302,6 +302,24 @@ const useProductionFloorFilters = ({
     }).then();
   };
 
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedIdToDelete, setSelectedIdToDelete] = useState<string>("");
+
+  const handleClearClick = (id: string) => {
+    setOpenModal(true);
+    setSelectedIdToDelete(id);
+  };
+
+  const handleDeleteConfirm = () => {
+    deleteStationFilterGroupById(selectedIdToDelete);
+    setOpenModal(false);
+  };
+
+  const handleCancel = () => {
+    setOpenModal(false);
+    setSelectedIdToDelete("");
+  };
+
   return {
     t,
     dir,
@@ -348,6 +366,10 @@ const useProductionFloorFilters = ({
     setMissionsList,
     filteredMissionsBySearch,
     isSearchLoading,
+    openModal,
+    handleDeleteConfirm,
+    handleCancel,
+    handleClearClick,
   };
 };
 
