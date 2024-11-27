@@ -37,6 +37,9 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
     const direction = t('direction');
     const hasActionException = actions.some(action => action.actionException);
     const [actionsList, setActionsList] = useState(actions);
+    useEffect(() => {
+        setActionsList(actions)
+    }, [actions])
     const onDragEnd = (result) => {
         if (!result.destination) return;
         const reorderedActions = Array.from(actionsList);
