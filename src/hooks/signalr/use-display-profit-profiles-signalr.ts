@@ -12,23 +12,40 @@ const useDisplayProfitProfilesSignalr = ({setProducts}) => {
     useEffect(() => {
         if (connection) {
             connection.on("UpdateProfitProfileProduct", (updatedData) => {
-                setProducts(prevProducts => {
-                    const updatedProducts = prevProducts.data.map(product => {
-                      const matchingData = updatedData.find(data => data.rowId === product.rowId);
-                      if (matchingData) {
-                        return {
-                          ...product,
-                          pricePerQuantity: matchingData.pricePerQuantity
-                        };
-                      }
-                      return product;
-                    });
-                
+              setProducts((prevProducts) => {
+                const updatedProducts = prevProducts.data.map((product) => {
+                  const matchingData = updatedData.find((data) => data.rowId === product.rowId);
+                  if (matchingData) {
                     return {
-                      ...prevProducts,
-                      data: updatedProducts
+                      ...product,
+                      pricePerQuantity: matchingData.pricePerQuantity,
                     };
-                  });
+                  }
+                  return product;
+                });
+              
+                const updatedHeaders = prevProducts.headers.map((header) => {
+                  const totalForQuantity = updatedProducts
+                    .filter((product) => product.isSelected) // Include only selected products
+                    .reduce((sum, product) => {
+                      const price = product.pricePerQuantity.find(
+                        (p) => p.quantity === header.quantity
+                      );
+                      return sum + (price?.calculatedPrice || 0);
+                    }, 0);
+              
+                  return {
+                    ...header,
+                    total: totalForQuantity,
+                  };
+                });
+              
+                return {
+                  ...prevProducts,
+                  data: updatedProducts,
+                  headers: updatedHeaders,
+                };
+              });
             });
         }
     }, [connection]);

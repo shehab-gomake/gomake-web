@@ -10,6 +10,7 @@ import { ReStoreIcon } from './icons/restore-icon';
 import { ReviewIcon } from './icons/review-icon';
 import { useStyle } from './style';
 import { InputUpdatedValues } from '@/widgets/quote-new/input-updated-values';
+import { useTranslation } from 'react-i18next';
 
 interface PriceProfitTableProps {
   headers: any[];
@@ -68,115 +69,118 @@ const PriceProfitTable = ({
   const [showAllProducts, setShowAllProducts] = useState(false);
   const [activeCell, setActiveCell] = useState<{ index: number, idx: number } | null>(null);
   const [isActiveQuantityCell, setIsActiveQuantityCell] = useState(null);
-
+  const { t } = useTranslation()
 
   return (
     <TableContainer style={{ ...classes.tableContainer, overflowY: 'auto', maxHeight: '700px' }}>
-    <Table style={classes.table}>
-      <TableHead>
-        <TableRow style={{ ...classes.tableHead, position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#B1B2E3' }}>
-          <TableCell sx={classes.tableHeadCell}>Quantities</TableCell>
-          {headers?.map((header, index) => {
-            const isActive = isActiveQuantityCell === index; // Check if the current cell is active
+      <Table style={classes.table}>
+        <TableHead>
+          <TableRow style={{ ...classes.tableHead, position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#B1B2E3' }}>
+            <TableCell sx={classes.tableHeadCell}>{t("priceProfit.quantities")}</TableCell>
+            {headers?.map((header, index) => {
+              const isActive = isActiveQuantityCell === index; // Check if the current cell is active
 
-            return (
-              <TableCell sx={classes.tableHeadCellValue} key={index} colSpan={header?.quantities?.length}>
-                <div style={classes.tableBodyCellContent}>
-                  <InputUpdatedValues
-                    value={header?.quantity ?? "----"}
-                    onBlur={() => {
-                      onBlurQuantityChange();
-                    }}
-                    isUpdate={isActive && isUpdateQuantity} // Update only if the cell is active
-                    setIsUpdate={() => {
-                      setIsActiveQuantityCell(index)
-                      setIsUpdateQuantity(!isUpdateQuantity);
-                    }}
-                    onInputChange={(value) => {
-                      handleQuantity(index, value);
-                    }}
-                    speicalStyle={{ color: "#FFF", textAlign: "center" }}
-                  />
-                </div>
+              return (
+                <TableCell sx={classes.tableHeadCellValue} key={index} colSpan={header?.quantities?.length}>
+                  <div style={classes.tableBodyCellContent}>
+                    <InputUpdatedValues
+                      value={header?.quantity ?? "----"}
+                      onBlur={() => {
+                        onBlurQuantityChange();
+                      }}
+                      isUpdate={isActive && isUpdateQuantity} // Update only if the cell is active
+                      setIsUpdate={() => {
+                        setIsActiveQuantityCell(index)
+                        setIsUpdateQuantity(!isUpdateQuantity);
+                      }}
+                      onInputChange={(value) => {
+                        handleQuantity(index, value);
+                      }}
+                      speicalStyle={{ color: "#FFF", textAlign: "center" }}
+                    />
+                  </div>
+                </TableCell>
+              );
+            })}
+          </TableRow>
+          <TableRow style={{ ...classes.tableHeadTotal, position: 'sticky', top: '72px', zIndex: 1, backgroundColor: '#D0D5DD' }}>
+            <TableCell sx={classes.tableHeadCellValueTotal}>{t("priceProfit.total")}</TableCell>
+            {headers?.map((header, index) => (
+              <TableCell sx={classes.tableHeadCellTotalValue} key={index} colSpan={header?.quantities?.length}>
+                {header?.total?.toFixed(3)}
               </TableCell>
-            );
-          })}
-        </TableRow>
-        <TableRow style={{ ...classes.tableHeadTotal, position: 'sticky', top: '72px', zIndex: 1, backgroundColor: '#D0D5DD' }}>
-          <TableCell sx={classes.tableHeadCellValueTotal}>Total</TableCell>
-          {headers?.map((header, index) => (
-            <TableCell sx={classes.tableHeadCellTotalValue} key={index} colSpan={header?.quantities?.length}>
-              {header?.total?.toFixed(3)}
-            </TableCell>
-          ))}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {products?.data?.map((product, index) => {
-          return (
-            (showAllProducts || !product.isHidden) && (
-              <ProductsRowMappingTable
-                product={product}
-                index={index}
-                handleCheckboxChange={handleCheckboxChange}
-                handleOpen={handleOpen}
-                setSelectedProduct={setSelectedProduct}
-                onBlurPriceChange={onBlurPriceChange}
-                handlePriceChange={handlePriceChange}
-                isUpdate={isUpdate}
-                setIsUpdate={setIsUpdate}
-                activeCell={activeCell}
-                setActiveCell={setActiveCell}
-                handleHideProduct={handleHideProduct}
-                updatePrintHousePrice={updatePrintHousePrice}
-                updateProfitProfileProductHidden={updateProfitProfileProductHidden}
-                updateProfitProfileProductSelected={updateProfitProfileProductSelected}
-              />
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {products?.data?.map((product, index) => {
+            return (
+              (showAllProducts || !product.isHidden) && (
+                <ProductsRowMappingTable
+                  product={product}
+                  index={index}
+                  handleCheckboxChange={handleCheckboxChange}
+                  handleOpen={handleOpen}
+                  setSelectedProduct={setSelectedProduct}
+                  onBlurPriceChange={onBlurPriceChange}
+                  handlePriceChange={handlePriceChange}
+                  isUpdate={isUpdate}
+                  setIsUpdate={setIsUpdate}
+                  activeCell={activeCell}
+                  setActiveCell={setActiveCell}
+                  handleHideProduct={handleHideProduct}
+                  updatePrintHousePrice={updatePrintHousePrice}
+                  updateProfitProfileProductHidden={updateProfitProfileProductHidden}
+                  updateProfitProfileProductSelected={updateProfitProfileProductSelected}
+                  handleReviewCalculation={handleReviewCalculation}
+                />
+              )
             )
-          )
-        })}
-      </TableBody>
-    </Table>
-    <div style={classes.viewAllContainer}>
-      <PlusIcon stroke="#2E3092" width={16} height={16} />
-      <span onClick={() => setShowAllProducts(!showAllProducts)}>{showAllProducts ? "Hide hidden" : "View all"}</span>
-    </div>
-    <Divider />
-    <GoMakeMenu
-      handleClose={handleClose}
-      open={open}
-      anchorEl={anchorEl}
-    >
-      <div style={classes.menuContainer}>
-        <MenuItem onClick={() => handleRestoreOriginalPrice(selectedProduct)} style={classes.menuItem}>
-          <div style={classes.menuItemRestoreContainer}>
-            <ReStoreIcon />
-            <div style={classes.menuItemRestoreText}>
-              Restore original price
-            </div>
-          </div>
-          <div style={classes.menuItemRestoreText}>
-            ₪ {selectedProduct?.PrintHousePrice}
-          </div>
-        </MenuItem>
-        <MenuItem onClick={() => handleUpdateNewPrice(selectedProduct)} style={classes.menuItem}>
-          <div style={classes.menuItemUpdateContainer}>
-            <UpdatedPriceIcon />
-            <div style={classes.menuItemUpdateText}>Update new price</div>
-          </div>
-          <div style={classes.menuItemUpdateText}>
-            ₪ {selectedProduct?.CalculatedPrice}
-          </div>
-        </MenuItem>
-        <MenuItem onClick={() => handleReviewCalculation(selectedProduct)}>
-          <div style={classes.menuItemReviewContainer}>
-            <ReviewIcon />
-            <div style={classes.menuItemReviewText}>Review calculation</div>
-          </div>
-        </MenuItem>
+          })}
+        </TableBody>
+      </Table>
+      <div style={classes.viewAllContainer}>
+        <PlusIcon stroke="#2E3092" width={16} height={16} />
+        <span onClick={() => setShowAllProducts(!showAllProducts)}>{showAllProducts ? t("priceProfit.hideHidden") : t("priceProfit.viewAll")}</span>
       </div>
-    </GoMakeMenu>
-  </TableContainer>
+      <Divider />
+      <GoMakeMenu
+        handleClose={handleClose}
+        open={open}
+        anchorEl={anchorEl}
+      >
+        <div style={classes.menuContainer}>
+          <MenuItem onClick={() => handleRestoreOriginalPrice(selectedProduct)} style={classes.menuItem}>
+            <div style={classes.menuItemRestoreContainer}>
+              <ReStoreIcon />
+              <div style={classes.menuItemRestoreText}>
+                {t("priceProfit.restoreOriginalPrice")}
+              </div>
+            </div>
+            <div style={classes.menuItemRestoreText}>
+              ₪ {selectedProduct?.PrintHousePrice}
+            </div>
+          </MenuItem>
+          <MenuItem onClick={() => handleUpdateNewPrice(selectedProduct)} style={classes.menuItem}>
+            <div style={classes.menuItemUpdateContainer}>
+              <UpdatedPriceIcon />
+              <div style={classes.menuItemUpdateText}>
+                {t("priceProfit.updateNewPrice")}
+              </div>
+            </div>
+            <div style={classes.menuItemUpdateText}>
+              ₪ {selectedProduct?.CalculatedPrice}
+            </div>
+          </MenuItem>
+          <MenuItem onClick={() => handleReviewCalculation(selectedProduct)}>
+            <div style={classes.menuItemReviewContainer}>
+              <ReviewIcon />
+              <div style={classes.menuItemReviewText}>{t("priceProfit.reviewCalculation")}</div>
+            </div>
+          </MenuItem>
+        </div>
+      </GoMakeMenu>
+    </TableContainer>
   );
 };
 
