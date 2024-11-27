@@ -348,6 +348,16 @@ const reOderMainActions = async (data) => {
     actionOrderIndexList: data
   })
 };
+const reOderSubWorkFlows = async (data) => {
+  const callBack = (res) => {
+      if (res.success) {
+      }
+  };
+  await updateActionsOrderInWorkFlowApi(callApi, callBack, {
+    signalRConnectionId: connectionId,
+    subProductOrderIndex: data
+  })
+};
 
 
   return {
@@ -395,7 +405,8 @@ const reOderMainActions = async (data) => {
     openSectionNameListMenu,
     handleCloseSectionNameListMenu,
     handleOpenSectionNameListMenu,
-    reOderMainActions
+    reOderMainActions,
+    reOderSubWorkFlows
   }
 }
 

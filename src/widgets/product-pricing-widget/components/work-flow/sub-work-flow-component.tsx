@@ -27,6 +27,7 @@ interface ISubWorkFlowsComponentProps {
     isEditableActions?: boolean;
     widgetType: EWidgetProductType;
     reOderMainActions: (data: any) => void
+    reOderSubWorkFlows: (data: any) => void
 }
 
 const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, productType, profit, totalCost, totalPrice, totalRealProductionTime, widgetType, reOderMainActions }: ISubWorkFlowComponentProps) => {
@@ -136,7 +137,9 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
     )
 };
 
-const SubWorkFlowsComponent = ({ workflows, isEditableActions, widgetType, reOderMainActions }: ISubWorkFlowsComponentProps) => {
+const SubWorkFlowsComponent = ({ workflows, isEditableActions, widgetType, reOderMainActions,
+    reOderSubWorkFlows
+}: ISubWorkFlowsComponentProps) => {
     const [workflowsList, setWorkflowsList] = useState(workflows);
     useEffect(() => {
         setWorkflowsList(workflows)
@@ -146,9 +149,13 @@ const SubWorkFlowsComponent = ({ workflows, isEditableActions, widgetType, reOde
         const reorderedWorkflows = Array.from(workflowsList);
         const [removed] = reorderedWorkflows.splice(result.source.index, 1);
         reorderedWorkflows.splice(result.destination.index, 0, removed);
-        console.log(reorderedWorkflows)
-
+        const formattedWorkflows = reorderedWorkflows.map((workflow: any, index: number) => ({
+            printingActionId: workflow?.id,
+            productType: workflow?.productType,
+            orderIndex: index
+        }));
         setWorkflowsList(reorderedWorkflows);
+        reOderSubWorkFlows(formattedWorkflows)
     };
 
     return (

@@ -67,7 +67,8 @@ const PricingWidget = ({
     openSectionNameListMenu,
     handleCloseSectionNameListMenu,
     handleOpenSectionNameListMenu,
-    reOderMainActions
+    reOderMainActions,
+    reOderSubWorkFlows
 
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
   const isHasSubWorkFlowsOrProductTypeActions = hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)
@@ -181,6 +182,7 @@ const PricingWidget = ({
             isEditableActions={true}
             workflows={selectedWorkFlow?.subWorkFlows || []}
             reOderMainActions={reOderMainActions}
+            reOderSubWorkFlows={reOderSubWorkFlows}
           />
           <Actions
             actions={selectedWorkFlow?.actions}
