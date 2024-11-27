@@ -166,9 +166,10 @@ const SubWorkFlowsComponent = ({ workflows, isEditableActions, widgetType, reOde
                         {workflowsList.map((flow, index) => (
                             <Draggable key={flow.id} draggableId={flow.id} index={index}>
                                 {(provided) => (
-                                    <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
-                                        <div style={{ display: "flex", alignItems: "flex-start", gap: "10px", }}>
-                                            <div style={{ marginTop: "15px" }}>
+                                    <div ref={provided.innerRef} {...provided.draggableProps}>
+                                        <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                                            {/* Attach dragHandleProps only to the SortIcon */}
+                                            <div style={{ marginTop: "15px" }} {...provided.dragHandleProps}>
                                                 <SortIcon />
                                             </div>
                                             <div>
