@@ -102,6 +102,7 @@ export interface IWorkFlowAction {
   isNeedMaterial?:boolean,
   isNeedFolds?:boolean,
   foldOptionValueId?:string,
+  sectionName?: string
 }
 
 export interface IOutput {

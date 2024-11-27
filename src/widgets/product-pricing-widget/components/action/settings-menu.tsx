@@ -1,8 +1,11 @@
 import { GoMakeMenu } from "@/components";
-import { MenuItem } from "@mui/material";
+import { Divider, MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import {useRecoilState, useRecoilValue} from "recoil";
-import {currentCalculationConnectionId} from "@/store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { currentCalculationConnectionId } from "@/store";
+import { DeleteSettingsIcon, OsSettingsIcon, PrinterIcon, ProfitIcon, ProportiesIcon } from "@/icons";
+import { deleteActionToWorkFlowApi } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { useGomakeAxios } from "@/hooks";
 
 const SettingsMenu = ({
   handleClose,
@@ -13,10 +16,13 @@ const SettingsMenu = ({
   currentProductItemValue,
   machineName,
   categoryId,
+  productType,
+  id,
+  sectionName
 }) => {
   const { t } = useTranslation();
   const currentSignalRConnectionId = useRecoilValue(currentCalculationConnectionId);
-
+  const { callApi } = useGomakeAxios();
   const onClickProfit = () => {
     const uri = `/products/profits?actionId=${actionId}&actionName=${actionName}&signalRConnectionId=${currentSignalRConnectionId}`;
     window.open(uri, "_blank");
@@ -37,22 +43,46 @@ const SettingsMenu = ({
     window.open(uri, "_blank");
     handleClose();
   };
+  const onClickDeleteActionToWorkFlow = async (data) => {
+    const callBack = (res) => {
+      console.log("res", res)
+      if (res.success) {
+        handleClose();
+      }
+    };
+    await deleteActionToWorkFlowApi(callApi, callBack, {
+      signalRConnectionId: currentSignalRConnectionId,
+      productType: data?.productType,
+      actionId: data?.actionId,
+      sectionName: data?.sectionName,
+      printingActionId: data?.id
+    })
+  };
   return (
     <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-      <MenuItem onClick={onClickProfit}>
+      <MenuItem onClick={onClickProfit} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <ProfitIcon />
         {t("products.profits.admin.title")}
       </MenuItem>
-      <MenuItem onClick={onClickProporties}>
+      <MenuItem onClick={onClickProporties} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <ProportiesIcon />
         {t("products.profits.admin.proporties")}
       </MenuItem>
-      <MenuItem onClick={onClickOsSettings}>
+      <MenuItem onClick={onClickOsSettings} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <OsSettingsIcon />
         {t("products.profits.admin.OSSettings")}
       </MenuItem>
       {machineName && (
-        <MenuItem onClick={onClickMachine}>
+        <MenuItem onClick={onClickMachine} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <PrinterIcon />
           {t("products.offsetPrice.admin.machine")}
         </MenuItem>
       )}
+      <Divider />
+      <MenuItem style={{ display: "flex", alignItems: "center", gap: "10px" }} onClick={() => onClickDeleteActionToWorkFlow({ id, actionId, productType, sectionName })}>
+        <DeleteSettingsIcon />
+        {t("navigationButtons.delete")}
+      </MenuItem>
     </GoMakeMenu>
   );
 };

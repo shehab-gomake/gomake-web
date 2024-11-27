@@ -94,7 +94,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     isFlowChanged,
     getSelectedWorkFlow,
     selectedWorkFlowCalculatedIsLoaded,
-    setSelectedWorkFlowCalculatedIsLoaded
+    setSelectedWorkFlowCalculatedIsLoaded,
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const router = useRouter();
