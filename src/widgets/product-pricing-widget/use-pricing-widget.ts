@@ -33,12 +33,11 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
   const { t } = useTranslation();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState)
-console.log("selectedWorkFlow", selectedWorkFlow)
   const [pageSize, setPageSize] = useState(10)
   const [heightScrolling, setHeightScrolling] = useState(50)
   const [isChangeView, setIsChangeView] = useState(true)
   const [isFirstEntry, setIsFirstEntry] = useState(false)
-  const { alertFaultUpdate } = useSnackBar();
+  const { alertFaultUpdate,alertFaultAdded,alertSuccessAdded } = useSnackBar();
 
   const [anchorElActionsListMenu, setAnchorElActionsListMenu] = useState<null | HTMLElement>(null);
   const [anchorElSectionNameListMenu, setAnchorElSectionNameListMenu] = useState<null | HTMLElement>(null);
@@ -328,6 +327,10 @@ const getSectionNames = (selectedWorkFlow) => {
 const onClickAddActionToWorkFlow = async () => {
   const callBack = (res) => {
       if (res.success) {
+        alertSuccessAdded();
+      }
+      else{
+        alertFaultAdded();
       }
   };
   await addActionToWorkFlowApi(callApi, callBack, {
