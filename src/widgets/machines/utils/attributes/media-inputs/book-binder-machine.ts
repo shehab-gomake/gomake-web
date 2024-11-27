@@ -1,5 +1,6 @@
 import {mediaThicknessSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-thickness-settings";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {sheetsCategoriesList} from "@/widgets/machines/utils/attributes/media-inputs/sheets-categories-list";
 
 const bookBinderMachine = (state: Record<string, any>) => {
     return [
@@ -110,6 +111,7 @@ const bookBinderMachine = (state: Record<string, any>) => {
                 },
             ]
         },
+        ...sheetsCategoriesList(state)
     ]
 }
 

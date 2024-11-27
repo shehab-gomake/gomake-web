@@ -42,6 +42,7 @@ import {creatingDiesMachine} from "@/widgets/machines/utils/attributes/media-inp
 import {meshProcessorMachine} from "@/widgets/machines/utils/attributes/media-inputs/mesh-processor-machine";
 import {silkPrinter} from "@/widgets/machines/utils/attributes/media-inputs/silk-printer";
 import {cardCutting} from "@/widgets/machines/utils/attributes/media-inputs/card-cutting";
+import {widePrinting} from "@/widgets/machines/utils/attributes/media-inputs/wide-printing";
 
 const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) => {
     switch (categoryId) {
@@ -54,7 +55,7 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
         case ECategoryId.FLEXO_PRINTING:
             return rollDigitalPrinting(state);
         case ECategoryId.ROLL_WIDE_PRINTING:
-            return flatbedWidePrinting(state);
+            return widePrinting(state);
         case ECategoryId.FLATBED_WIDE_PRINTING:
             return flatbedWidePrinting(state);
         case ECategoryId.LAMINATION_MACHINE:
