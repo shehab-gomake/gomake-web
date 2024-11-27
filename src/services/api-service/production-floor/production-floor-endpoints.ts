@@ -37,7 +37,7 @@ const UPDATE_PRODUCTION_FLOOR_JOB_COLOR_URL = "/v1/erp-service/board-missions/up
 const RESET_PRODUCTION_FLOOR_JOB_COLOR_URL = "/v1/erp-service/board-missions/reset-production-floor-job-color";
 const GET_BOARD_MISSION_DATA_FOR_MENU_URL = "/v1/erp-service/board-missions/get-board-mission-data-for-menu";
 const UPDATE_PRINT_HOUSE_MATERIAL_STOCK_FROM_JOB_URL = "/v1/erp-service/board-missions-actions/update-print-house-material-stock-from-job";
-
+const GET_PRINT_HOUSE_ACTIONS_URL = "/v1/printhouse-config/actions/get-all-actions";
 const getProductionFloorData: ICallAndSetData = async (callApi, setState, connectionId: string, lock = false, abortController) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCTION_FLOOR_DATA_URL + "?connectionId=" + connectionId, setState, {}, false, abortController);
 };
