@@ -1,9 +1,9 @@
-import {Stack, TextField} from "@mui/material";
+import { Stack, TextField } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
-import {IWorkingHoursMachine} from "@/widgets/employees-working-hours-widgets/interface";
+import { IWorkingHoursMachine } from "@/widgets/employees-working-hours-widgets/interface";
 import MenuItem from "@mui/material/MenuItem";
-import {FONT_FAMILY} from "@/utils/font-family";
-import {useTranslation} from "react-i18next";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
     options: IWorkingHoursMachine[];
@@ -11,8 +11,8 @@ interface IProps {
     onChange: (values: string[]) => void;
 }
 
-const SelectMachines = ({options, values, onChange}: IProps) => {
-    const {t} = useTranslation();
+const SelectMachines = ({ options, values, onChange }: IProps) => {
+    const { t } = useTranslation();
     const handleSelectedChange = (options: any) => {
         const updatedValues = options.map(op => op.value);
         onChange && onChange(updatedValues);
@@ -23,7 +23,7 @@ const SelectMachines = ({options, values, onChange}: IProps) => {
             multiple
             options={options}
             getOptionDisabled={(option) => option.employees.length >= option.minManpowerOperation}
-            placeholder={t('materials.inputs.selectMachine')}
+            // placeholder={t('materials.inputs.selectMachine')}
             getOptionLabel={(option) => option.label}
             filterSelectedOptions
             disableClearable={true}
@@ -34,10 +34,10 @@ const SelectMachines = ({options, values, onChange}: IProps) => {
                         <span>{option.label}</span>
                         <Stack direction={'row'} flexWrap={'wrap'} gap={'5px'}>
                             <span
-                                style={{...FONT_FAMILY.Inter(400, 12)}}>{t('employeeWorkingHours.disabledMachineMsg')}</span>
+                                style={{ ...FONT_FAMILY.Inter(400, 12) }}>{t('employeeWorkingHours.disabledMachineMsg')}</span>
                             {
                                 option.employees.map(employeeName => <span
-                                    style={{...FONT_FAMILY.Inter(400, 12)}}>{employeeName}</span>)
+                                    style={{ ...FONT_FAMILY.Inter(400, 12) }}>{employeeName}</span>)
                             }
                         </Stack>
                     </Stack>
@@ -66,4 +66,4 @@ const SelectMachines = ({options, values, onChange}: IProps) => {
     );
 };
 
-export {SelectMachines};
+export { SelectMachines };

@@ -26,8 +26,8 @@ interface ISubWorkFlowsComponentProps {
     workflows: ICalculatedWorkFlow[];
     isEditableActions?: boolean;
     widgetType: EWidgetProductType;
-    reOderMainActions: (data: any) => void
-    reOderSubWorkFlows: (data: any) => void
+    reOderMainActions?: (data: any) => void
+    reOderSubWorkFlows?: (data: any) => void
 }
 
 const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, productType, profit, totalCost, totalPrice, totalRealProductionTime, widgetType, reOderMainActions }: ISubWorkFlowComponentProps) => {
