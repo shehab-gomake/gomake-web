@@ -34,7 +34,6 @@ const AddRuleModal = ({
   filterData,
   onCreate,
 }: any) => {
-  console.log("selectedPricingBy", selectedPricingBy);
   const { clasess } = useStyle();
   const { t } = useTranslation();
 
@@ -92,7 +91,6 @@ const AddRuleModal = ({
     filterData,
     openModal,
   });
-  console.log("rules", rules)
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
@@ -110,8 +108,6 @@ const AddRuleModal = ({
     const selectedParameters = parametersStateValue?.find(
       (parameter) => parameter?.id === selectedProperties?.propertyId
     );
-    console.log("ssssss", { selectedOutputs, selectedParameters })
-
     setSelectedOutputs(selectedOutputs);
     setSelectedParameters(selectedParameters);
   }, [selectedProperties, Outputs, parametersStateValue]);
@@ -950,7 +946,6 @@ const AddRuleModal = ({
                   }}
                 />
               </div>
-
             </div>
           )}
           {typeExceptionSelected === ETypeException.PROFIT && (

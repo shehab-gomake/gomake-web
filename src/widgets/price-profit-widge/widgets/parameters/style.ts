@@ -36,7 +36,12 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         gap: 10
+      },
+      sectionName: {
+        ...FONT_FAMILY.Lexend(500, 16),
+        color: "#101828"
       }
+
     };
   }, []);
   return {

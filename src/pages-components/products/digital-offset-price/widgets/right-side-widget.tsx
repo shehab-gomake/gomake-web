@@ -34,7 +34,6 @@ const RightSideWidget = ({
   calculationServerErrorState,
 
 }: any) => {
-  console.log("errorMsg",errorMsg);
   const {
     currentProductItemValueTotalPrice,
     lastProductItemValueTotalPrice,
@@ -67,7 +66,7 @@ const RightSideWidget = ({
             t.actionName === item.actionName &&
             t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
             t?.exception?.exceptionMessage ===
-              item?.exception?.exceptionMessage &&
+            item?.exception?.exceptionMessage &&
             JSON.parse(t.values || "[]")
               .sort()
               .join(",") === itemValuesSorted
@@ -204,7 +203,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-            calculationProgress.totalWorkFlowsCount && (
+          calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -232,9 +231,9 @@ const RightSideWidget = ({
               )
                 ? 0
                 : (
-                    (currentProductItemValueTotalPrice || 0) /
-                    (quantity?.values[0] || 1)
-                  )?.toFixed(4),
+                  (currentProductItemValueTotalPrice || 0) /
+                  (quantity?.values[0] || 1)
+                )?.toFixed(4),
               unitPrice: systemCurrency,
             })}
           </div>
@@ -435,7 +434,7 @@ const RightSideWidget = ({
             <div style={clasess.logsContainer}>
               {errorMsg && (
                 <div style={clasess.generalMsgTextStyle}>
-                {errorMsg}
+                  {errorMsg}
                 </div>
               )}
               {/* {calculationServerErrorState && (
@@ -445,7 +444,6 @@ const RightSideWidget = ({
               )} */}
 
               {logsArray?.map((item) => {
-                console.log("item",item);
                 if (item.actionName) {
                   return (
                     <div
@@ -481,7 +479,7 @@ const RightSideWidget = ({
                         <span style={{ color: "black" }}>
                           {t(
                             "CalculationExceptions." +
-                              item?.exception?.exceptionKey
+                            item?.exception?.exceptionKey
                           )}
                         </span>
                       </div>
@@ -503,12 +501,12 @@ const RightSideWidget = ({
 
                       <div style={{ width: "100%", marginTop: -3 }}>
                         {item?.exception?.values &&
-                        item?.exception?.values?.length > 0 ? (
+                          item?.exception?.values?.length > 0 ? (
                           <span style={{ color: "black" }}>
                             {item?.exception?.exceptionMessage +
                               t(
                                 "CalculationExceptions." +
-                                  item?.exception?.exceptionKey
+                                item?.exception?.exceptionKey
                               ).replace(
                                 /\{\{(\d+)\}\}/g,
                                 (_, index) =>
@@ -519,49 +517,49 @@ const RightSideWidget = ({
                           <span style={{ color: "black" }}>
                             {t(
                               "CalculationExceptions." +
-                                item?.exception?.exceptionKey
+                              item?.exception?.exceptionKey
                             )}
                           </span>
                         )}
                       </div>
                     </div>
                   );
-                } 
+                }
                 else {
                   return (
                     <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "flex-start",
-                      alignItems: "flex-start",
-                      width: "100%",
-                      gap: 5,
-                    }}
-                  >
-                    {_renderIconLogs(item?.exceptionType, 16, 16)}
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "flex-start",
+                        alignItems: "flex-start",
+                        width: "100%",
+                        gap: 5,
+                      }}
+                    >
+                      {_renderIconLogs(item?.exceptionType, 16, 16)}
 
-                    <div style={{ width: "100%", marginTop: -3 }}>
-                      {item?.values &&
-                      item?.values?.length > 0 ? (
-                        <span style={{ color: "black" }}>
-                          {item?.exceptionMessage +
-                            t(
-                              "CalculationExceptions." +
-                              item?.exceptionKey
-                            ).replace(
-                              /\{\{(\d+)\}\}/g,
-                              (_, index) =>
-                                item?.values[index] || ""
-                            )}
-                        </span>
-                      ) : (
-                        <span style={{ color: "black" }}>
-                         {t("CalculationExceptions." + item?.exceptionKey)}
-                        </span>
-                      )}
+                      <div style={{ width: "100%", marginTop: -3 }}>
+                        {item?.values &&
+                          item?.values?.length > 0 ? (
+                          <span style={{ color: "black" }}>
+                            {item?.exceptionMessage +
+                              t(
+                                "CalculationExceptions." +
+                                item?.exceptionKey
+                              ).replace(
+                                /\{\{(\d+)\}\}/g,
+                                (_, index) =>
+                                  item?.values[index] || ""
+                              )}
+                          </span>
+                        ) : (
+                          <span style={{ color: "black" }}>
+                            {t("CalculationExceptions." + item?.exceptionKey)}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
                   );
                 }
               })}
