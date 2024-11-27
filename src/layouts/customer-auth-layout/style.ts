@@ -56,7 +56,6 @@ const useStyle = ({
         height: "100vh",
         maxHeight: "100vh",
         overflow: "scroll",
-
       },
       headerContainer: {
         display: "flex",
@@ -71,7 +70,7 @@ const useStyle = ({
         flexDirection: "column" as "column",
         backgroundColor: "#F6F6F6",
         height: "100%",
-      
+
         overflow: "scroll",
       },
       poweredContainer: {

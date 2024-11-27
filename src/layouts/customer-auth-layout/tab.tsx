@@ -1,5 +1,4 @@
-import { TabCloseIcon } from "@/icons";
-import { Collapse } from "@mui/material";
+import { Collapse, Stack } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { useGomakeRouter } from "@/hooks";
@@ -8,6 +7,9 @@ import { selectedTabState } from "@/store";
 import { navStatusState } from "@/store/nav-status";
 import { useTranslation } from "react-i18next";
 import { useUserPermission } from "@/hooks/use-permission";
+import { ArrowDownIcon } from "@/icons/side-list-icons/arrows";
+import { convertWidthToVW } from "@/utils/adapter";
+
 interface IProps {
   tab: {
     isLine?: boolean;
@@ -77,23 +79,35 @@ const Tab = ({ tab, customGap }: IProps) => {
         onClick={onClickTab}
         onMouseDown={(e) => handleOpenInNewTab(tab.path, e)}
       >
-        {tab.isList ? (
-          <div>
-            {isListOpen ? (
-              <div style={classes.rotate90}>
-                <TabCloseIcon />
-              </div>
-            ) : (
-              <TabCloseIcon />
-            )}
-          </div>
-        ) : (
-          <div style={{ marginLeft: 5 }} />
-        )}
-        <div>{tab && tab?.icon()}</div>
-        <div style={classes.tabTitle}>
-          {!navStatus.isClosed ? t(tab.title) : null}
-        </div>
+        <Stack
+          direction={"row"}
+          sx={{
+            justifyContent: navStatus?.isClosed
+              ? "flex-start"
+              : "space-between",
+            width: navStatus?.isClosed ? "auto" : "100%",
+          }}
+        >
+          <Stack direction={"row"} sx={{ gap: convertWidthToVW(8) }}>
+            <div>{tab && tab?.icon()}</div>
+            <div style={classes.tabTitle}>
+              {!navStatus.isClosed ? t(tab.title) : null}
+            </div>
+          </Stack>
+          {tab.isList ? (
+            <div>
+              {isListOpen ? (
+                <div style={classes.rotate90}>
+                  <ArrowDownIcon />
+                </div>
+              ) : (
+                <ArrowDownIcon />
+              )}
+            </div>
+          ) : (
+            <div style={{ marginLeft: 5 }} />
+          )}
+        </Stack>
       </div>
       <Collapse in={isListOpen}>
         {!navStatus.isClosed &&

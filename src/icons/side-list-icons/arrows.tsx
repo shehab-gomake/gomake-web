@@ -28,9 +28,10 @@ const UpDownIcon = () => {
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
-        d="M5 8L10 13L15 8"
+        d="M19.9201 15.0499L13.4001 8.52989C12.6301 7.75989 11.3701 7.75989 10.6001 8.52989L4.08008 15.0499"
         stroke="white"
-        stroke-width="1.66667"
+        stroke-width="1.5"
+        stroke-miterlimit="10"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
