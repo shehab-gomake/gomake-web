@@ -112,7 +112,6 @@ const LeftSideLayout = (customGap) => {
           )}
         </div>
       </Link>
-
       {/* <div style={classes.logoContainer}>
         <Image
           src={

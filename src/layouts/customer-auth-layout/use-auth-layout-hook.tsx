@@ -1,23 +1,26 @@
 import { useGomakeAuth, useGomakeRouter } from "@/hooks";
-import {
-  CustomersIcon,
-  HomeIcon,
-  ProductFloorIcon,
-  ReportsIcon,
-  SalesIcon,
-  SettingNavBar,
-  ShopingIcon,
-} from "@/icons";
 import { useEffect, useMemo, useState } from "react";
-import { CubeIcon } from "@/components/icons/cube-icon";
 import { useRecoilValue } from "recoil";
 import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 import { Permissions } from "@/components/CheckPermission/enum";
-import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
-import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
-import { BankingIcon } from "@/icons/banking-icon";
-import { MachineIcon } from "@/icons/machine-icon";
-import { ActionIcon } from "@/icons/action-icon";
+import { HomeIcon } from "@/icons/side-list-icons/home";
+import { ProductionFloorIcon } from "@/icons/side-list-icons/production-floor";
+import { SalesIcon } from "@/icons/side-list-icons/sales";
+import { PurchaseIcon } from "@/icons/side-list-icons/purchase";
+import { BankingIcon } from "@/icons/side-list-icons/banking";
+import { ContactsIcon } from "@/icons/side-list-icons/contacts";
+import { ReportsIcon } from "@/icons/side-list-icons/reports";
+import {
+  MaterialsAdminIcon,
+  MaterialsIcon,
+} from "@/icons/side-list-icons/material";
+import {
+  MachinesAdminIcon,
+  MachinesIcon,
+} from "@/icons/side-list-icons/machines";
+import { ActionsIcon } from "@/icons/side-list-icons/actions";
+import { SettingsIcon } from "@/icons/side-list-icons/settings";
+import { CustomerServiceIcon } from "@/icons/side-list-icons/customer-service";
 
 const useAuthLayoutHook = (
   permissionEnumValue?: Permissions,
@@ -46,12 +49,11 @@ const useAuthLayoutHook = (
         isLine: false,
         key: "productFloor",
         title: "tabs.productFloor",
-        // path: "/production-floor",
         path: "/production-floor?view=table",
         isList: false,
         Permission: Permissions.SHOW_PRODUCTION_FLOOR,
         icon: () => {
-          return <ProductFloorIcon />;
+          return <ProductionFloorIcon />;
         },
         isProduction: true,
       },
@@ -164,7 +166,7 @@ const useAuthLayoutHook = (
           },
         ],
         icon: () => {
-          return <ShopingIcon />;
+          return <PurchaseIcon />;
         },
         isProduction: true,
       },
@@ -214,7 +216,7 @@ const useAuthLayoutHook = (
           },
         ],
         icon: () => {
-          return <CustomersIcon />;
+          return <ContactsIcon />;
         },
         isProduction: true,
       },
@@ -295,7 +297,7 @@ const useAuthLayoutHook = (
         path: "/materials",
         isList: false,
         icon: () => {
-          return <CubeIcon width={24} height={24} color={"white"} />;
+          return <MaterialsIcon />;
         },
         isProduction: true,
         tourData: "menu-materials",
@@ -308,7 +310,7 @@ const useAuthLayoutHook = (
         path: "/materials-admin",
         isList: false,
         icon: () => {
-          return <CubeIcon width={24} height={24} color={"white"} />;
+          return <MaterialsAdminIcon />;
         },
         isProduction: true,
       },
@@ -320,7 +322,7 @@ const useAuthLayoutHook = (
         Permission: Permissions.SHOW_MACHINES,
         isList: false,
         icon: () => {
-          return <MachineIcon />;
+          return <MachinesIcon />;
         },
         isProduction: true,
         tourData: "menuMachines",
@@ -333,7 +335,7 @@ const useAuthLayoutHook = (
         Permission: Permissions.MACHINES_ADMIN,
         isList: false,
         icon: () => {
-          return <MachineIcon isAdmin="true" />;
+          return <MachinesAdminIcon />;
         },
         isProduction: true,
       },
@@ -345,7 +347,7 @@ const useAuthLayoutHook = (
         Permission: Permissions.SHOW_ACTIONS,
         isList: false,
         icon: () => {
-          return <ActionIcon />;
+          return <ActionsIcon />;
         },
         isProduction: true,
         tourData: "menuActions",
@@ -377,7 +379,7 @@ const useAuthLayoutHook = (
         Permission: Permissions.SHOW_ADMIN_CUSTOMER_SERVICE,
         isList: false,
         icon: () => {
-          return <ReportsIcon />;
+          return <CustomerServiceIcon />;
         },
         isProduction: true,
       },
@@ -388,7 +390,7 @@ const useAuthLayoutHook = (
         path: "/settings",
         isList: false,
         icon: () => {
-          return <SettingNavBar />;
+          return <SettingsIcon />;
         },
         isProduction: true,
         tourData: "menu-settings",
