@@ -43,6 +43,10 @@ const useStyle = () => {
           border: '1px solid #EAECF0',
           width: "120px",
           maxWidth: "120px",
+          position: "relative" as "relative",
+          "&:hover": {
+            background: "#F9FAFB"
+          }
           
         },
         tableBodyCellForProduct: {

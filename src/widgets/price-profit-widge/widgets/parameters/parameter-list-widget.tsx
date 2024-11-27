@@ -70,7 +70,6 @@ const ParameterListWidget = ({
         <div style={classes.menuContainer}>
           {parameter?.parameterType === 0 ? (
             <GoMakeAutoComplate
-              // ref={autoCompleteRef}
               options={parameter?.values}
               onChange={(e: any, value: any) => {
                 updateDropdownValue(value, index);
@@ -81,7 +80,7 @@ const ParameterListWidget = ({
               getOptionLabel={(option: any) => option.name}
               value={parameter?.values?.find((value: any) => value.isDefault)}
               key={parameter}
-              placeholder={`Select ${t(parameter.parameterName)}`}
+              placeholder={`${t("priceProfit.select")} ${t(parameter.parameterName)}`}
               style={{
                 width: 170,
                 height: 34,
@@ -103,7 +102,7 @@ const ParameterListWidget = ({
               }}
               getOptionLabel={(option: any) => option.value}
               value={parameter?.materialValues?.find((value: any) => value.valueId === parameter?.defaultValue)}
-              placeholder={`Select ${t(parameter.parameterName)}`}
+              placeholder={`${t("priceProfit.select")} ${t(parameter.parameterName)}`}
               style={{
                 width: 170,
                 height: 34,
@@ -114,7 +113,7 @@ const ParameterListWidget = ({
               onOpen={() => setAutoCompleteOpen(true)}
             /> : parameter?.parameterType === 1 || parameter?.parameterType === 2 ? (
               <GomakeTextInput
-                placeholder={`Enter ${t(parameter.parameterName)}`}
+                placeholder={`${t("priceProfit.enter")} ${t(parameter.parameterName)}`}
                 onChange={(e: any) => {
                   setValue(e.target.value);
                 }}
