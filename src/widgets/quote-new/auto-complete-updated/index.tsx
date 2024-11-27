@@ -30,7 +30,7 @@ const AutoCompleteUpdatedValue = ({
           <UpdateValueAutoComplete
             clickedOut={() => onBlur()}
             onCancel={() => setIsUpdate(null)}
-            onUpdate={() => onBlur().then()}
+            onUpdate={() => onBlur()?.then()}
             value={updateValue}
             options={options}
             getOptionLabel={getOptionLabel}

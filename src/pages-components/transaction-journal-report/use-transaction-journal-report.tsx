@@ -18,6 +18,10 @@ import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
 import { IconButton } from "@mui/material";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useDateFormat } from "@/hooks/use-date-format";
+import LinkIcon from "@mui/icons-material/Link";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import LinkOffIcon from "@mui/icons-material/LinkOff";
+import { adaptMarginLeft } from "@/utils/adapter";
 
 export interface FilterState {
   fromAccount: string;
@@ -36,6 +40,7 @@ const useTransactionJournalReport = ({
   const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const dir = t("direction");
   const { getFormattedLocalDate } = useDateFormat();
 
   const { documentsTypeList, documentType, handleDocumentTypeChange } =
@@ -153,6 +158,7 @@ const useTransactionJournalReport = ({
 
   const getAccountingTableRows = useCallback(() => {
     return dataTable?.map((data, index) => [
+      data?.transNumber,
       data?.transType,
       data?.documentDate?.split("T")[0],
       data?.valueDate?.split("T")[0],
@@ -183,6 +189,7 @@ const useTransactionJournalReport = ({
       headers.push(`${t("reports.credit")} / ${t("reports.debit")}`);
     } else if (reportType === EReportType.AccountingTransaction) {
       headers = [
+        t("reports.transNum"),
         t("reports.transType"),
         t("reports.documentDate"),
         t("reports.valueDate"),
@@ -289,7 +296,7 @@ const useTransactionJournalReport = ({
         ...filterState,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
-        pageNumber: pageNumber - 1,
+        pageNumber: pageNumber,
         pageSize,
       }
     );
@@ -305,7 +312,13 @@ const useTransactionJournalReport = ({
   }, [reportType, filterState, pageNumber, pageSize]);
 
   const [rows, setRows] = useState<any[]>([]);
-  const headers = ["createdAt", "updatedAt", "deleteButton"];
+
+  const headers = [
+    "accountName",
+    "accountKey",
+    "adjustmentRecordNumber",
+    "deleteButton",
+  ];
   const getAdjustmentsReports = useCallback(async () => {
     const res = await callApi(
       EHttpMethod.POST,
@@ -318,23 +331,23 @@ const useTransactionJournalReport = ({
     if (res?.success) {
       const data = res.data?.data?.data;
       const mappedRows = data.items.map((item: any) => ({
-        createdAt: getFormattedLocalDate(item.createdAt),
-        updatedAt: getFormattedLocalDate(item.updatedAt),
+        accountName: item?.relatedAccountName,
+        accountKey: item?.relatedAccountKey,
+        adjustmentRecordNumber: item?.recordNumber,
         deleteButton: item?.isDeletable ? (
           <IconButton onClick={() => DeleteAdjustment(item.id)}>
             <DeleteIcon />
           </IconButton>
         ) : null,
-        history: item.allocations.map((allocation: any) => ({
-          transNum: allocation.document.documentNumber,
-          addressNum: "test",
-          reference: allocation.document.documentNumber,
-          sum: allocation.document.totalPrice,
-          adjustmentSum: allocation.allocatedAmount,
-          currency: "$",
-          valueDate: getFormattedLocalDate(allocation.document.dueDate),
-          docDate: getFormattedLocalDate(allocation.document.docDate),
-        })),
+        history:
+          item?.adjustments?.map((adjustment: any) => ({
+            transNum: adjustment?.recordNumber,
+            reference: adjustment?.document?.documentNumber,
+            sum: adjustment?.amount,
+            adjustmentSum: adjustment?.allocatedAmount,
+            valueDate: getFormattedLocalDate(adjustment?.document?.dueDate),
+            docDate: getFormattedLocalDate(adjustment?.document?.docDate),
+          })) || [],
       }));
 
       setRows(mappedRows);
@@ -450,7 +463,6 @@ const useTransactionJournalReport = ({
     getClientTypesCategories();
   }, []);
 
-  // NEW
   const label = (() => {
     switch (reportType) {
       case EReportType.TransactionJournal:
@@ -492,6 +504,84 @@ const useTransactionJournalReport = ({
     setPageNumber(1);
   };
 
+  const {
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+  } = useCustomerDropDownList();
+
+  const [isOpenAdjustmentsModal, setIsOpenAdjustmentsModal] =
+    useState<boolean>(false);
+
+  const onClickCloseAdjustmentsModal = () => {
+    setIsOpenAdjustmentsModal(false);
+  };
+  const onClickOpenAdjustmentsModal = () => {
+    if (customer?.id) {
+      setIsOpenAdjustmentsModal(true);
+    } else {
+      alertFault("reports.pleaseSelectCustomer");
+    }
+  };
+
+  const [clientPaymentsList, setClientPaymentsList] = useState<any>([]);
+
+  const getClientPaymentItems = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.GET,
+      `/v1/erp-service/receipts/get-client-payment-items`,
+      {
+        clientId: customer?.id,
+      }
+    );
+    if (res?.success) {
+      let data = res.data?.data?.data;
+      if (data?.length > 0) {
+        const newData = data?.map((item) => ({
+          ...item,
+          fixedPrice: item?.totalPrice?.toFixed(2) ?? item?.price?.toFixed(2),
+        }));
+        setClientPaymentsList(newData);
+        alertSuccessGetData();
+      }
+    } else {
+      alertFaultGetData();
+    }
+  }, [customer]);
+
+  const onClickExportAccountingReportExcel = useCallback(async () => {
+    if (!filterState.startDate || !filterState.endDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+
+    const formattedStartDate = format(filterState.startDate, "yyyy-MM-dd");
+    const formattedEndDate = format(filterState.endDate, "yyyy-MM-dd");
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/export-accounting-report-excel`,
+      {
+        myBody: {
+          ...filterState,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          pageNumber: pageNumber,
+          pageSize,
+        },
+      },
+      true,
+      null
+    );
+    const downloadLink = document.createElement("a");
+    const link = res.data.data.data;
+    downloadLink.href = link;
+    downloadLink.download = `AccountingReport.xlsx`;
+    downloadLink.click();
+  }, [reportType, filterState, pageNumber, pageSize]);
+
   return {
     t,
     handleDocumentTypeChange,
@@ -511,7 +601,6 @@ const useTransactionJournalReport = ({
     customerForEdit,
     setCustomerForEdit,
     onClickOpenCustomerModal,
-    //?new
     label,
     filterState,
     setFilterState,
@@ -531,6 +620,18 @@ const useTransactionJournalReport = ({
     onClickOpenCreateTransactionModal,
     onClickCloseCreateTransactionModal,
     isOpenCreateTransactionModal,
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+    isOpenAdjustmentsModal,
+    onClickCloseAdjustmentsModal,
+    onClickOpenAdjustmentsModal,
+    getClientPaymentItems,
+    clientPaymentsList,
+    setClientPaymentsList,
+    onClickExportAccountingReportExcel,
   };
 };
 

@@ -1,7 +1,6 @@
 import { HeaderTitle } from "@/widgets";
 import { useTranslation } from "react-i18next";
 import { CustomerAuthLayout } from "@/layouts";
-import Pagination from "@mui/material/Pagination";
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
@@ -21,6 +20,7 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "../../components/CheckPermission/enum";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { ThreeOptionsModal } from "@/components";
+import { ClientUploadExcelErrorsModal } from "../customers/export-import-buttons/errors-messages-modal";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -66,7 +66,11 @@ export default function Home() {
     openExportModal,
     onOpenExportClientModal,
     onCloseExportClientModal,
+    openErrorsModal,
+    handleErrorsModalClose,
+    errorMessages,
   } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
+
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
   const onCustomerAdd = (customer) => {
@@ -170,6 +174,11 @@ export default function Home() {
               onClose={onCloseExportClientModal}
               onClickYes={() => onClickExportClient(true)}
               onClickNo={() => onClickExportClient(false)}
+            />
+            <ClientUploadExcelErrorsModal
+              openErrorsModal={openErrorsModal}
+              handleErrorsModalClose={handleErrorsModalClose}
+              errorMessages={errorMessages}
             />
           </>
         </div>

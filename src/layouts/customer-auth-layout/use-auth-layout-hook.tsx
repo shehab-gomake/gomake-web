@@ -265,13 +265,11 @@ const useAuthLayoutHook = (
             key: "accountingTransactionReport",
             title: "tabs.accountingTransactionReport",
             path: "/accounting-transaction-report",
-            Permission: Permissions.SHOW_ACCOUNTING_TRANSACTION_REPORT,
           },
           {
             key: "adjustmentsReport",
             title: "tabs.adjustmentsReport",
             path: "/adjustments-report",
-            Permission: Permissions.SHOW_ADJUSTMENTS_REPORT,
           },
         ],
         icon: () => {
@@ -388,7 +386,6 @@ const useAuthLayoutHook = (
         key: "settings",
         title: "tabs.settings",
         path: "/settings",
-        Permission: Permissions.SHOW_SETTINGS,
         isList: false,
         icon: () => {
           return <SettingNavBar />;

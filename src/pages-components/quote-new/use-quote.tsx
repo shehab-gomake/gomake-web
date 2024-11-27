@@ -289,8 +289,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -922,12 +922,10 @@ const useQuoteNew = ({
         } else {
           if (res?.message === "amount_greater_budget") {
             alertFault(`${t("sales.quote.errorUpdateBudget")}`);
-          }
-          else {
+          } else {
             alertFaultUpdate();
           }
           getQuote();
-
         }
       };
       await calculateDocumentItemApi(callApi, callBack, {
@@ -1030,7 +1028,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1200,24 +1198,14 @@ const useQuoteNew = ({
     [quoteItems]
   );
 
-  const dateRef = useRef(null);
   const creationDateRef = useRef(null);
+  const dateRef = useRef(null);
   const taxDateRef = useRef(null);
   const [activeClickAway, setActiveClickAway] = useState(false);
   const [activeClickAwayForCreationDate, setActiveClickAwayForCreationDate] =
     useState(false);
   const [activeClickAwayForTaxDate, setActiveClickAwayForTaxDate] =
     useState(false);
-
-  const handleClickSelectDate = () => {
-    dateRef?.current?.showPicker();
-  };
-  const handleClickForCreationDate = () => {
-    creationDateRef?.current?.showPicker();
-  };
-  const handleClickForTaxDate = () => {
-    taxDateRef?.current?.showPicker();
-  };
 
   const [openOtherReasonModal, setOpenOtherReasonModal] = useState(false);
   const [openSignatureApprovalModal, setOpenSignatureApprovalModal] =
@@ -1545,12 +1533,34 @@ const useQuoteNew = ({
           setActiveClickAway(false);
         }
       }
+
+      if (taxDateRef.current && !taxDateRef.current.contains(event.target)) {
+        if (activeClickAwayForTaxDate) {
+          if (router.query.isNewCreation) {
+            const updatedQuoteItemValue = { ...quoteItemValue };
+            updatedQuoteItemValue.dueDate = selectDate;
+            updatedQuoteItemValue.taxDate = taxDate;
+            updatedQuoteItemValue.creationDate = creationDate;
+            setQuoteItemValue(updatedQuoteItemValue);
+          }
+          setActiveClickAwayForTaxDate(false);
+        }
+      }
     };
+
     document.addEventListener("click", handleClickOutside);
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
+  }, [
+    dateRef,
+    taxDateRef,
+    activeClickAway,
+    activeClickAwayForTaxDate,
+    quoteItemValue,
+    selectDate,
+    taxDate,
+  ]);
 
   const [openReferenceModal, setOpenReferenceModal] = useState(false);
   const onClickOpenReferenceModal = () => {
@@ -1920,10 +1930,8 @@ const useQuoteNew = ({
             (budget) => budget.id === quoteItemValue.budgetId
           );
           setSelectedBudget(budget);
-        }
-        else {
+        } else {
           setSelectedBudget(null);
-
         }
       }
     },
@@ -1990,7 +1998,6 @@ const useQuoteNew = ({
     handleCancelBtnClose,
     handleSendBtnClick,
     handleSendBtnClose,
-    handleClickSelectDate,
     setActiveClickAway,
     changeQuoteItems,
     changedocumentItemsChild,
@@ -2102,8 +2109,6 @@ const useQuoteNew = ({
     clientName,
     setClientName,
     onClickOpenNewItemNotesModal,
-    handleClickForCreationDate,
-    handleClickForTaxDate,
     setActiveClickAwayForCreationDate,
     setActiveClickAwayForTaxDate,
     openReferenceModal,
@@ -2133,7 +2138,7 @@ const useQuoteNew = ({
     allClientActiveBudgets,
     updateDocumentBudget,
     selectedBudget,
-    setSelectedBudget
+    setSelectedBudget,
   };
 };
 
