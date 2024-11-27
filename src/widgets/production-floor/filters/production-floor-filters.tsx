@@ -27,8 +27,6 @@ import { useStyle } from "./style";
 import { useRouter } from "next/router";
 import { GoMakeDeleteModal } from "@/components";
 
-//!here
-
 interface CustomGroupsProps {
   dir?: string;
   onClick: () => void;
@@ -61,7 +59,7 @@ const ScrollableDiv = styled("div")(({ theme }) => ({
 }));
 
 const CustomIconButton = styled(IconButton)(({ theme }) => ({
-  width: "30px",
+  width: "35px",
   height: "35px",
   border: `1.5px solid #2E3092`,
   borderRadius: "4px",
@@ -72,6 +70,9 @@ const CustomIconButton = styled(IconButton)(({ theme }) => ({
   "&:hover": {
     backgroundColor: toRgba("#2E3092", 0.1),
   },
+
+  ...FONT_FAMILY.Inter(400, 16),
+  color: toRgba("#2E3092", 0.9),
 }));
 
 const CustomGroup = styled(Card)<{
@@ -142,54 +143,56 @@ const CustomGroupComponent = ({
   isFromMenu,
 }: CustomGroupsProps) => {
   return (
-    <IconButtonWrapper>
-      <CustomGroup
-        onClick={onClick}
-        isSelected={isSelected}
-        color={group?.color}
-        isFromMenu={isFromMenu}
+    <CustomGroup
+      onClick={onClick}
+      isSelected={isSelected}
+      color={group?.color}
+      isFromMenu={isFromMenu}
+    >
+      <CardContent
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          justifyContent: "space-between",
+          padding: dir === "rtl" ? "0px 8px !important" : "0px 8px !important",
+          width: "100%",
+        }}
       >
-        <CardContent
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            justifyContent: "space-between",
-            padding:
-              dir === "rtl"
-                ? "0px 8px 0px 0px !important"
-                : "0px 0px 0px 8px !important",
-            width: "100%",
-          }}
-        >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography
-              variant="subtitle2"
-              sx={{
-                color: isSelected ? "#FFF" : group?.color,
-                ...FONT_FAMILY.Inter(400, 14),
-                overflow: "hidden",
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {group?.name}
-            </Typography>
-          </Box>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              color: isSelected ? "#FFF" : group?.color,
+              ...FONT_FAMILY.Inter(400, 14),
+              overflow: "hidden",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {group?.name}
+          </Typography>
+        </Box>
 
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Circle numColor="#E7D000" dir={dir}>
-              {group?.inProcessCount}
-            </Circle>
-            <Circle numColor="#D92D20" dir={dir}>
-              {group?.stuckCount}
-            </Circle>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Circle numColor="#E7D000" dir={dir}>
+            {group?.inProcessCount}
+          </Circle>
+          <Circle numColor="#D92D20" dir={dir}>
+            {group?.stuckCount}
+          </Circle>
+          <Circle
+            numColor={group?.color}
+            dir={dir}
+            sx={{
+              backgroundColor: "transparent",
+            }}
+          >
             <IconButton
               onClick={onClickDelete}
               size="small"
               style={{
                 padding: "4px",
-                margin: "0px 0px 0px 2px",
               }}
             >
               <ClearIcon
@@ -201,10 +204,10 @@ const CustomGroupComponent = ({
                 }}
               />
             </IconButton>
-          </Box>
-        </CardContent>
-      </CustomGroup>
-    </IconButtonWrapper>
+          </Circle>
+        </Box>
+      </CardContent>
+    </CustomGroup>
   );
 };
 
@@ -235,11 +238,14 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     setHiddenFilterGroups,
     handleSelectGroup,
     selectedGroupId,
-    deleteStationFilterGroupById,
     missionsList,
     setMissionsList,
     filteredMissionsBySearch,
     isSearchLoading,
+    openModal,
+    handleDeleteConfirm,
+    handleCancel,
+    handleClearClick,
   } = useProductionFloorFilters({ getStationFilterGroups });
 
   useEffect(() => {
@@ -302,24 +308,6 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
   const getMissionsList = useCallback(() => {
     return missionsList.length > 0 ? missionsList : [];
   }, [missionsList]);
-
-  const [openModal, setOpenModal] = useState(false);
-  const [selectedIdToDelete, setSelectedIdToDelete] = useState<string>("");
-
-  const handleClearClick = (id: string) => {
-    setOpenModal(true);
-    setSelectedIdToDelete(id);
-  };
-
-  const handleDeleteConfirm = () => {
-    deleteStationFilterGroupById(selectedIdToDelete);
-    setOpenModal(false);
-  };
-
-  const handleCancel = () => {
-    setOpenModal(false);
-    setSelectedIdToDelete("");
-  };
 
   return (
     <Stack style={classes.headerFilterContainer}>
@@ -391,7 +379,8 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
         {hiddenFilterGroups.length > 0 && (
           <>
             <CustomIconButton onClick={handleMoreClick}>
-              <MoreHorizIcon />
+              {/* <MoreHorizIcon /> */}
+              +1
             </CustomIconButton>
             <Menu
               transformOrigin={{
