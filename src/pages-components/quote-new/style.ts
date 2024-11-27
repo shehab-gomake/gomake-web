@@ -47,7 +47,7 @@ const useStyle = (isQuoteConfirmation) => {
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
-        // marginBottom: 14,
+        marginBottom: 14,
       },
       quoteNumberStyle: {
         ...FONT_FAMILY.Lexend(500, 24),
@@ -79,7 +79,9 @@ const useStyle = (isQuoteConfirmation) => {
         alignItems: "center",
         width: "100%",
         gap: 17,
+        paddingBottom: 14,
         borderBottom: `1px solid ${grayColor(200)}`,
+        marginBottom: 14,
       },
       firstBorder: {
         width: "100%",
