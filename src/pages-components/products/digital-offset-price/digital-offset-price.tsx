@@ -438,7 +438,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 marginRight: 55,
               }}
             >
-              {widgetType === EWidgetProductType.EDIT ? (
+              { widgetType === EWidgetProductType.EDIT ? (
                 <GomakePrimaryButton
                   style={
                     isLoadging
@@ -460,7 +460,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 >
                   {t("sales.quote.edit")}
                 </GomakePrimaryButton>
-              ) : (
+              ) : !router?.query?.profitsProfileRowId ? (
                 <GomakePrimaryButton
                   data-tour="addPricingBtn"
                   style={
@@ -473,7 +473,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 >
                   {t("products.offsetPrice.admin.addOrderBtn")}
                 </GomakePrimaryButton>
-              )}
+              ) : <div></div>}
             </div>
           </div>
         </div>
