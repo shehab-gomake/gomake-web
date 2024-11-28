@@ -102,6 +102,7 @@ const SettingsMenu = ({
         modalType={ModalType.DELETE}
         onClickDelete={() => onClickDeleteActionToWorkFlow({ id, actionId, productType, sectionName })}
 
+
       />
     </>
   );

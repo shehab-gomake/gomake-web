@@ -64,14 +64,12 @@ const useStyle = ({modalType}: {modalType: ModalType}) => {
       btnsContainer: {
         display: "flex",
         flexDirection:  "row-reverse" as  "row-reverse",
-        
         justifyContent: "center",
         alignItems: "center",
         gap: 11,
         width: "100%",
       },
       confirmBtn: {
-       // width: "50%",
        height: 44,
        lineHeight:"10px",
        borderRadius: "8px",
@@ -81,22 +79,41 @@ const useStyle = ({modalType}: {modalType: ModalType}) => {
         color: "#FFF",
       },
       cancelBtn: {
-      //  width: "50%",
         height: 44,
         borderRadius: "8px",
         ...FONT_FAMILY.Lexend(600, 16),
         backgroundColor: "#FFF",
         color: "#344054",
         border: `1px solid #D0D5DD`,
+        
       },
       iconStyle:{
-        width: 120,
-        height: 120,
+        width: 60,
+        height: 60,
         color: errorColor(300) 
       },
       children:{
         marginBottom: 20,
-      }
+      },
+      yesBtn: {
+        height: 44,
+        lineHeight:"18px",
+        borderRadius: "8px",
+         ...FONT_FAMILY.Lexend(600, 16),
+         backgroundColor:  "#2E3092",
+         border: `1px solid #2E3092`,
+         color: "#FFF",
+       },
+       noBtn: {
+        textAlign: "center",
+        height: 44,
+        borderRadius: "8px",
+        lineHeight:"18px",
+        ...FONT_FAMILY.Lexend(600, 16),
+        backgroundColor: "#FFF",
+        color: "#272977",
+        border: `1px solid #7375CD`,
+       },
     };
   }, [theme,RTL,modalType]);
 

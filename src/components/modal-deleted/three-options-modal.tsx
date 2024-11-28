@@ -1,9 +1,12 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
-import { Modal } from "@mui/material";
+import { IconButton, Modal, Tooltip } from "@mui/material";
 import { GomakePrimaryButton } from "../button";
 import { useStyle } from "./style";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { ModalType } from "@/enums";
+import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
+import { RoundedCloseIcon } from "../modal/icon/close";
 
 const ThreeOptionsModal = ({
   openModal,
@@ -17,9 +20,12 @@ const ThreeOptionsModal = ({
   yesBtn = "modal.yes",
   noBtn = "modal.no",
   cancelBtn = "modal.cancel",
+  modalType = ModalType.DELETE,
+  withClose = true,
+  withRoundedCloseIcon = false,
   ...props
 }: any) => {
-  const { classes } = useStyle();
+  const { classes } = useStyle({ modalType: modalType });
   const { t } = useTranslation();
   return (
     <Modal
@@ -31,6 +37,15 @@ const ThreeOptionsModal = ({
     >
       <div style={{ ...classes.container, ...props.style }}>
         <div style={classes.content}>
+          {withClose && (
+            <div style={classes.closeIcon} onClick={onClose}>
+              <Tooltip title={t("modal.close")}>
+                <IconButton>
+                  {withRoundedCloseIcon ? <RoundedCloseIcon /> : <CloseIcon />}
+                </IconButton>
+              </Tooltip>
+            </div>
+          )}
           {!hideIcon && (
             <div style={classes.icon}>
               {props?.icon || <WarningAmberIcon style={classes.iconStyle} />}
@@ -40,18 +55,18 @@ const ThreeOptionsModal = ({
           <div style={classes.subTitle}>{subTitle}</div>
           <div style={classes.btnsContainer}>
             <GomakePrimaryButton
-              style={classes.confirmBtn}
+              style={classes.yesBtn}
               onClick={() => {
                 onClickYes();
                 onClose();
               }}
             >
               {t(yesBtn)}
-            </GomakePrimaryButton>{" "}
+            </GomakePrimaryButton>
             {!!noBtn && (
               <>
                 <GomakePrimaryButton
-                  style={classes.confirmBtn}
+                  style={classes.noBtn}
                   onClick={() => {
                     onClickNo();
                     onClose();

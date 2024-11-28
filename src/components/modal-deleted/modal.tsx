@@ -1,11 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { IconButton, Modal, Tooltip } from "@mui/material";
-import { EditIcon, AddIcon, Wastebasket, WarningIcon, AddModalIcon, EditModalIcon, DuplicateModalIcon, WarningModalIcon } from "@/icons";
+import { Wastebasket, AddModalIcon, EditModalIcon, DuplicateModalIcon, WarningModalIcon } from "@/icons";
 import { GomakePrimaryButton } from "../button";
 import { useStyle } from "./style";
 import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
-import { DuplicateIcon } from "../icons/duplicate-icon";
 import { ModalType } from "@/enums/tabs-icon-enums";
+import { RoundedCloseIcon } from "../modal/icon/close";
 
 const GoMakeDeleteModal = ({
   openModal,
@@ -132,7 +132,7 @@ const GoMakeDeleteModal = ({
             <div style={classes.closeIcon} onClick={onClose}>
               <Tooltip title={t("modal.close")}>
                 <IconButton>
-                  {withRoundedCloseIcon ? <CloseIcon /> : <CloseIcon />}
+                  {withRoundedCloseIcon ? <RoundedCloseIcon /> : <CloseIcon />}
                 </IconButton>
               </Tooltip>
             </div>
