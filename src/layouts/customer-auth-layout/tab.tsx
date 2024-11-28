@@ -1,5 +1,4 @@
-import { TabCloseIcon } from "@/icons";
-import { Collapse } from "@mui/material";
+import { Collapse, Stack } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { useGomakeRouter } from "@/hooks";
@@ -8,6 +7,9 @@ import { selectedTabState } from "@/store";
 import { navStatusState } from "@/store/nav-status";
 import { useTranslation } from "react-i18next";
 import { useUserPermission } from "@/hooks/use-permission";
+import { ArrowDownIcon } from "@/icons/side-list-icons/arrows";
+import { convertWidthToVW } from "@/utils/adapter";
+
 interface IProps {
   tab: {
     isLine?: boolean;
@@ -29,6 +31,8 @@ const Tab = ({ tab, customGap }: IProps) => {
   const [isHover, setIsHover] = useState(false);
   const navStatus = useRecoilValue(navStatusState);
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const { CheckPermission } = useUserPermission();
   const { classes } = useStyle({ isHover, navStatus, customGap });
 
@@ -61,7 +65,7 @@ const Tab = ({ tab, customGap }: IProps) => {
 
   const handleOpenInNewTab = useCallback(
     (path: string | undefined, e: React.MouseEvent) => {
-      if ((e.button === 1 || e.button === 2) && path) {
+      if (e.button === 1 && path) {
         window.open(path, "_blank");
       }
     },
@@ -77,23 +81,56 @@ const Tab = ({ tab, customGap }: IProps) => {
         onClick={onClickTab}
         onMouseDown={(e) => handleOpenInNewTab(tab.path, e)}
       >
+        {/* Conditional rendering of Stack or a element */}
         {tab.isList ? (
-          <div>
-            {isListOpen ? (
-              <div style={classes.rotate90}>
-                <TabCloseIcon />
+          <Stack
+            direction={"row"}
+            sx={{
+              justifyContent: navStatus?.isClosed
+                ? "flex-start"
+                : "space-between",
+              width: navStatus?.isClosed ? "auto" : "100%",
+            }}
+          >
+            <Stack direction={"row"} sx={{ gap: convertWidthToVW(8) }}>
+              <div>{tab && tab?.icon()}</div>
+              <div style={classes.tabTitle}>
+                {!navStatus.isClosed ? t(tab.title) : null}
               </div>
-            ) : (
-              <TabCloseIcon />
-            )}
-          </div>
+            </Stack>
+            <div>
+              {isListOpen ? (
+                <div style={isRTL ? classes.rotate90Rtl : classes.rotate90}>
+                  <ArrowDownIcon />
+                </div>
+              ) : (
+                <ArrowDownIcon />
+              )}
+            </div>
+          </Stack>
         ) : (
-          <div style={{ marginLeft: 5 }} />
+          <a
+            href={tab.path}
+            rel="noopener noreferrer"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: navStatus?.isClosed
+                ? "flex-start"
+                : "space-between",
+              width: navStatus?.isClosed ? "auto" : "100%",
+              textDecoration: "none",
+            }}
+          >
+            <Stack direction={"row"} sx={{ gap: convertWidthToVW(8) }}>
+              <div>{tab && tab?.icon()}</div>
+              <div style={classes.tabTitle}>
+                {!navStatus.isClosed ? t(tab.title) : null}
+              </div>
+            </Stack>
+            <div style={{ marginLeft: 5 }} />
+          </a>
         )}
-        <div>{tab && tab?.icon()}</div>
-        <div style={classes.tabTitle}>
-          {!navStatus.isClosed ? t(tab.title) : null}
-        </div>
       </div>
       <Collapse in={isListOpen}>
         {!navStatus.isClosed &&
@@ -101,7 +138,12 @@ const Tab = ({ tab, customGap }: IProps) => {
             ?.filter((x) => !x.Permission || CheckPermission(x.Permission))
             .map((list: any) => {
               return (
-                <div style={classes.tabList} key={list?.key}>
+                <a
+                  href={list?.path}
+                  rel="noopener noreferrer"
+                  style={classes.tabList}
+                  key={list?.key}
+                >
                   <div
                     onClick={() => changeRoute(list?.path)}
                     onMouseDown={(e) => handleOpenInNewTab(list?.path, e)}
@@ -109,7 +151,7 @@ const Tab = ({ tab, customGap }: IProps) => {
                   >
                     {t(list?.title)}
                   </div>
-                </div>
+                </a>
               );
             })}
       </Collapse>

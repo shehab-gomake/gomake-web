@@ -1,5 +1,9 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import {
+  adaptRight,
+  convertHeightToVH,
+  convertWidthToVW,
+} from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { LAYOUT_DEFAULT_GAP, SIDE_MENU_Layout } from "@/utils/layout-config";
 import { useMemo } from "react";
@@ -56,7 +60,6 @@ const useStyle = ({
         height: "100vh",
         maxHeight: "100vh",
         overflow: "scroll",
-
       },
       headerContainer: {
         display: "flex",
@@ -71,15 +74,18 @@ const useStyle = ({
         flexDirection: "column" as "column",
         backgroundColor: "#F6F6F6",
         height: "100%",
-      
+
         overflow: "scroll",
       },
       poweredContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 10,
+        justifyContent: navStatus?.isClosed ? "center" : "flex-start",
+        alignItems: navStatus?.isClosed ? "center" : "flex-start",
+        marginTop: "10px",
+        marginBottom: navStatus?.isClosed ? "10px" : "10px",
+        gap: "7px",
+        width: "100%",
       },
       poweredByLbl: {
         ...FONT_FAMILY.Lexend(400, 12),
@@ -89,8 +95,6 @@ const useStyle = ({
         ...FONT_FAMILY.Lexend(400, 28),
         color: "#FFF",
       },
-
-      ///Tab
       tabsContainer: {
         alignSelf: "flex-start",
         width: "100%",
@@ -116,13 +120,17 @@ const useStyle = ({
         color: "#FFF",
         cursor: "pointer",
         minWidth: "fit-content",
+        lineHeight: "24px",
+        letterSpacing: "0.04em",
       },
       line: {
-        border: "1px solid #FFFFFF",
-        opacity: 0.4,
-        width: "90%",
+        border: "1px solid #FFFFFF19",
+        width: navStatus?.isClosed ? "70%" : "98%",
         marginTop: convertHeightToVH(24),
-        // marginBottom: convertHeightToVH(32),
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        alignSelf: "stretch",
       },
       lineContainer: {
         width: "100%",
@@ -135,11 +143,18 @@ const useStyle = ({
         paddingTop: convertWidthToVW(15),
         paddingLeft: convertWidthToVW(25),
         paddingRight: convertWidthToVW(25),
+        display: "flex",
+        textDecoration: "none",
       },
       rotate90: {
-        "-webkit-animation": "rotate90 0.5s forwards ",
-        "-moz-animation": "rotate90 0.5s forwards ",
-        animation: "rotate90 0.5s forwards ",
+        "-webkit-animation": "rotate90 0.5s forwards",
+        "-moz-animation": "rotate90 0.5s forwards",
+        animation: "rotate90 0.5s forwards",
+      },
+      rotate90Rtl: {
+        "-webkit-animation": "rotate90-rtl 0.5s forwards",
+        "-moz-animation": "rotate90-rtl 0.5s forwards",
+        animation: "rotate90-rtl 0.5s forwards",
       },
     };
   }, [isHover, navStatus]);
