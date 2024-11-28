@@ -79,22 +79,23 @@ const Tab = ({ tab, customGap }: IProps) => {
         onClick={onClickTab}
         onMouseDown={(e) => handleOpenInNewTab(tab.path, e)}
       >
-        <Stack
-          direction={"row"}
-          sx={{
-            justifyContent: navStatus?.isClosed
-              ? "flex-start"
-              : "space-between",
-            width: navStatus?.isClosed ? "auto" : "100%",
-          }}
-        >
-          <Stack direction={"row"} sx={{ gap: convertWidthToVW(8) }}>
-            <div>{tab && tab?.icon()}</div>
-            <div style={classes.tabTitle}>
-              {!navStatus.isClosed ? t(tab.title) : null}
-            </div>
-          </Stack>
-          {tab.isList ? (
+        {/* Conditional rendering of Stack or a element */}
+        {tab.isList ? (
+          <Stack
+            direction={"row"}
+            sx={{
+              justifyContent: navStatus?.isClosed
+                ? "flex-start"
+                : "space-between",
+              width: navStatus?.isClosed ? "auto" : "100%",
+            }}
+          >
+            <Stack direction={"row"} sx={{ gap: convertWidthToVW(8) }}>
+              <div>{tab && tab?.icon()}</div>
+              <div style={classes.tabTitle}>
+                {!navStatus.isClosed ? t(tab.title) : null}
+              </div>
+            </Stack>
             <div>
               {isListOpen ? (
                 <div style={classes.rotate90}>
@@ -104,10 +105,30 @@ const Tab = ({ tab, customGap }: IProps) => {
                 <ArrowDownIcon />
               )}
             </div>
-          ) : (
+          </Stack>
+        ) : (
+          <a
+            href={tab.path}
+            rel="noopener noreferrer"
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: navStatus?.isClosed
+                ? "flex-start"
+                : "space-between",
+              width: navStatus?.isClosed ? "auto" : "100%",
+              textDecoration: "none",
+            }}
+          >
+            <Stack direction={"row"} sx={{ gap: convertWidthToVW(8) }}>
+              <div>{tab && tab?.icon()}</div>
+              <div style={classes.tabTitle}>
+                {!navStatus.isClosed ? t(tab.title) : null}
+              </div>
+            </Stack>
             <div style={{ marginLeft: 5 }} />
-          )}
-        </Stack>
+          </a>
+        )}
       </div>
       <Collapse in={isListOpen}>
         {!navStatus.isClosed &&
@@ -115,7 +136,12 @@ const Tab = ({ tab, customGap }: IProps) => {
             ?.filter((x) => !x.Permission || CheckPermission(x.Permission))
             .map((list: any) => {
               return (
-                <div style={classes.tabList} key={list?.key}>
+                <a
+                  href={list?.path}
+                  rel="noopener noreferrer"
+                  style={classes.tabList}
+                  key={list?.key}
+                >
                   <div
                     onClick={() => changeRoute(list?.path)}
                     onMouseDown={(e) => handleOpenInNewTab(list?.path, e)}
@@ -123,7 +149,7 @@ const Tab = ({ tab, customGap }: IProps) => {
                   >
                     {t(list?.title)}
                   </div>
-                </div>
+                </a>
               );
             })}
       </Collapse>

@@ -143,6 +143,8 @@ const useStyle = ({
         paddingTop: convertWidthToVW(15),
         paddingLeft: convertWidthToVW(25),
         paddingRight: convertWidthToVW(25),
+        display: "flex",
+        textDecoration: "none",
       },
       rotate90: {
         "-webkit-animation": "rotate90 0.5s forwards ",
