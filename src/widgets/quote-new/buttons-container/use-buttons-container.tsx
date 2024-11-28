@@ -58,6 +58,13 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [, setShowPrintJobsModal] = useRecoilState(newOrderIdToPrintJobsState);
   const [openReceiptCreationModal, setOpenReceiptCreationModal] =
     useState(false);
+  //!new
+  const [openOrderNowPrePaymentModal, setOpenOrderNowPrePaymentModal] =
+    useState(false);
+
+  const onClickCloseOrderNowPreModal = () => {
+    setOpenOrderNowPrePaymentModal(false);
+  };
 
   const onClickOpenReceiptCreation = () => {
     setOpenReceiptCreationModal(true);
@@ -75,6 +82,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
   const open = Boolean(anchorEl);
 
+  //!here
   const onClickOpenOrderNowModal = () => {
     if (!isSelectedAtLeastOne) {
       alertFault("reports.pleaseSelectOneItem");
@@ -90,7 +98,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         if (!checkPhones && !checkEmails) {
           alertFault("home.admin.pleaseSelectPhoneOrEmail");
         } else {
-          setOpenOrderNowModal(true);
+          //setOpenOrderNowModal(true);
+          setOpenOrderNowPrePaymentModal(true);
         }
       } else {
         alertFault("home.admin.pleaseSelectClient");
@@ -464,6 +473,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     onOpenExportReceiptPdfModal,
     onCloseExportReceiptPdfModal,
     handleClickPrint,
+
+    openOrderNowPrePaymentModal,
+    onClickCloseOrderNowPreModal,
   };
 };
 

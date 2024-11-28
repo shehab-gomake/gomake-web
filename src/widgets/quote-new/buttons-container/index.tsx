@@ -24,6 +24,7 @@ import { CloseBtnMenu } from "./close-btn-menu";
 import { ArrowUpNewIcon } from "@/icons/arrow-up-new";
 import { ManuallyCloseModal } from "./close-manually-modal";
 import { InvoiceCreationModal } from "../invoice-creation-modal";
+import { OrderNowPrePaymentModal } from "../total-price-and-vat/order-now-modal/order-now-pre-payment";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -98,6 +99,10 @@ const ButtonsContainer = ({
     handleClickPrint,
     openExportReceiptPdfModal,
     onCloseExportReceiptPdfModal,
+
+    //!new
+    openOrderNowPrePaymentModal,
+    onClickCloseOrderNowPreModal,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -386,6 +391,13 @@ const ButtonsContainer = ({
           onClose={onCloseExportReceiptPdfModal}
           onClickYes={() => onClickPrint(true)}
           onClickNo={() => onClickPrint(false)}
+        />
+        <OrderNowPrePaymentModal
+          quoteItemValue={quoteItemValue}
+          openModal={openOrderNowPrePaymentModal}
+          onClose={onClickCloseOrderNowPreModal}
+          confirmWithoutNotification={() => alert("yes1")}
+          confirmWithNotification={() => alert("yes2")}
         />
       </div>
     </div>
