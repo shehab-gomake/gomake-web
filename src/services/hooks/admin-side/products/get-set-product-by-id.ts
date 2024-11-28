@@ -25,4 +25,16 @@ const getAndSetChatBotProductId = async (
   );
   return returnResult(result, setState);
 };
-export { getAndSetProductById,getAndSetChatBotProductId };
+const getAndSetProfitProfileReviewProductId = async (
+    callApi: ICallApi,
+    setState?: ISetState,
+    data?: any
+) => {
+  const result: any = await callApi(
+      "GET",
+      "/v1/printhouse-config/profit-profile-products/get-product-calculation-review",
+      data
+  );
+  return returnResult(result, setState);
+};
+export { getAndSetProductById,getAndSetChatBotProductId,getAndSetProfitProfileReviewProductId };
