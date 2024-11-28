@@ -14,7 +14,7 @@ const useStyle = ({modalType}: {modalType: ModalType}) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        width: "fit-content",
+        width: "-webkit-fill-available",
         minWidth: 600,
         borderRadius: 12,
         backgroundColor: "#FFFFFF",
@@ -72,7 +72,7 @@ const useStyle = ({modalType}: {modalType: ModalType}) => {
       confirmBtn: {
        height: 44,
        lineHeight:"10px",
-       borderRadius: "8px",
+       borderRadius: "15px",
         ...FONT_FAMILY.Lexend(600, 16),
         backgroundColor: modalType === ModalType.DELETE ? "#D92D20" : "#2E3092",
         border: `1px solid ${modalType === ModalType.DELETE ? "#D92D20" : "#2E3092"}`,
@@ -80,7 +80,7 @@ const useStyle = ({modalType}: {modalType: ModalType}) => {
       },
       cancelBtn: {
         height: 44,
-        borderRadius: "8px",
+        borderRadius: "15px",
         ...FONT_FAMILY.Lexend(600, 16),
         backgroundColor: "#FFF",
         color: "#344054",

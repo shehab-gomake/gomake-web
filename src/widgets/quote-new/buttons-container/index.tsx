@@ -24,6 +24,7 @@ import { CloseBtnMenu } from "./close-btn-menu";
 import { ArrowUpNewIcon } from "@/icons/arrow-up-new";
 import { ManuallyCloseModal } from "./close-manually-modal";
 import { InvoiceCreationModal } from "../invoice-creation-modal";
+import { ModalType } from "@/enums";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -339,6 +340,7 @@ const ButtonsContainer = ({
           selectedTab={selectedTabIndex}
         />
         <GoMakeDeleteModal
+          modalType={ModalType.EDIT}
           icon={<WarningAmberIcon style={classes.iconStyle} />}
           title={t("payment.cancelReceipt")}
           yesBtn={t("sales.quote.yesBtn")}

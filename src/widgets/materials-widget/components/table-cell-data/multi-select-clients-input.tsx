@@ -9,6 +9,7 @@ import { useCustomerDropDownList } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { materialCategorySuppliersState } from "../../state";
+import { ModalType } from "@/enums";
 
 interface IProps {
   parameterKey: string;
@@ -143,6 +144,7 @@ const MultiSelectClientsInput = ({
         )}
       />
       <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
         openModal={openDeleteTableRowModal}
         onClose={onClickCloseDeleteTableRowModal}
         hideIcon

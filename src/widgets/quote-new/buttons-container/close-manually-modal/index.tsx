@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { GoMakeDeleteModal, GomakeTextInput } from "@/components";
-import {  DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { ModalType } from "@/enums";
 
 const ManuallyCloseModal = ({
   documentType,
@@ -16,26 +17,27 @@ const ManuallyCloseModal = ({
 
   return (
     <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
-        title={t("sales.quote.titleCloseModal")}
-        yesBtn={t("sales.quote.yesBtn")}
-        openModal={openModal}
-        onClose={onClose}
-        subTitle={`${t("sales.quote.subTitleCloseModal", {
-          documentName: t(`sales.quote.${DOCUMENT_TYPE[documentType]}`).toLowerCase(),
-        })}?`}
-        onClickDelete={() => onClickYes(selectedDocumentId)}
-        style={{ width: "35%" }}
-      >
-        <GomakeTextInput
-          style={{ height: "40px", minWidth: 180 }}
-          placeholder={t("sales.enterDocumentNumber")}
-          value={documentCloseNumber}
-          onChange={onChange}
-        />
-      </GoMakeDeleteModal>
+      // icon={
+      //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+      // }
+      modalType={ModalType.WARNING}
+      title={t("sales.quote.titleCloseModal")}
+      yesBtn={t("sales.quote.yesBtn")}
+      openModal={openModal}
+      onClose={onClose}
+      subTitle={`${t("sales.quote.subTitleCloseModal", {
+        documentName: t(`sales.quote.${DOCUMENT_TYPE[documentType]}`).toLowerCase(),
+      })}?`}
+      onClickDelete={() => onClickYes(selectedDocumentId)}
+      style={{ width: "35%" }}
+    >
+      <GomakeTextInput
+        style={{ height: "40px", minWidth: 180 }}
+        placeholder={t("sales.enterDocumentNumber")}
+        value={documentCloseNumber}
+        onChange={onChange}
+      />
+    </GoMakeDeleteModal>
 
   );
 };

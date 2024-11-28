@@ -10,6 +10,7 @@ import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { QuoteStatuses } from "../total-price-and-vat/enums";
 import { OtherReasonModal } from "../total-price-and-vat/other-reason-modal";
 import { ApproveSignatureModal } from "../total-price-and-vat/approve-signature-modal";
+import { ModalType } from "@/enums";
 
 const ButtonsConfirmContainer = () => {
   const { classes } = useStyle();
@@ -80,7 +81,8 @@ const ButtonsConfirmContainer = () => {
         onClickCancelOffer={onClickReject}
       />
       <GoMakeDeleteModal
-        icon={<WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />}
+        // icon={<WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />}
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openRejectModal}
@@ -91,6 +93,7 @@ const ButtonsConfirmContainer = () => {
       />
 
       <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
         title={t("sales.quote.approveOffer")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={approveModal}

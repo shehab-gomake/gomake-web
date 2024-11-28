@@ -48,6 +48,7 @@ import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal
 import { Check } from "@mui/icons-material";
 import { useQuoteGetData } from "./use-quote-get-data";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { ModalType } from "@/enums";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -326,7 +327,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const {} = useGoMakeTour(quoteSteps, []);
+  const { } = useGoMakeTour(quoteSteps, []);
 
   useEffect(() => {
     if (isInvoice) {
@@ -398,8 +399,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -468,7 +469,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                      quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -750,11 +751,9 @@ const QuoteNewPageWidget = ({
         }
       />
       <GoMakeDeleteModal
-        title={t("sales.quote.deleteItem")}
-        yesBtn={t("materials.buttons.delete")}
+        modalType={ModalType.DELETE}
         openModal={openDeleteItemModal}
         onClose={onCloseDeleteItemModal}
-        subTitle={t("sales.quote.areYouSureDeleteItem")}
         onClickDelete={deleteQuoteItem}
       />
       <SendBtnMenu
@@ -817,9 +816,10 @@ const QuoteNewPageWidget = ({
         onClose={onClickCloseSignatureApprovalModal}
       />
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openIrrelevantCancelModal}
@@ -831,9 +831,10 @@ const QuoteNewPageWidget = ({
         }
       />
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPriceCancelModal}
@@ -843,9 +844,10 @@ const QuoteNewPageWidget = ({
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
       />
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openDeliveryTimeCancelModal}
@@ -871,7 +873,7 @@ const QuoteNewPageWidget = ({
         }}
       />
       <GoMakeDeleteModal
-        hideIcon
+        modalType={ModalType.EDIT}
         title={"sales.moveOrderToReadyWhenCloseOrderTitle"}
         yesBtn={t("sales.moveToReadyAndCloseOrder")}
         cancelBtn={t("sales.closeOrderWithoutMoveToReady")}

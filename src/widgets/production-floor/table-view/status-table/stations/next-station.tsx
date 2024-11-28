@@ -13,6 +13,7 @@ import { INextStation } from "@/widgets/production-floor/interfaces/next-station
 import { useStations } from "./use-stations";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
+import { ModalType } from "@/enums";
 
 interface IProps extends ICurrentStation, INextStation {
   boardMissionId: string;
@@ -71,6 +72,7 @@ const NextStationComponent = ({
       </PermissionCheck>
       <GoMakeDeleteModal
         hideIcon={true}
+        modalType={ModalType.WARNING}
         title={t("customers.modal.nextStationModalTitle")}
         yesBtn={t("sales.quote.yesBtn")}
         cancelBtn={t("modal.no")}

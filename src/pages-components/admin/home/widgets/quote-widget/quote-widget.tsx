@@ -24,6 +24,7 @@ import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
+import { ModalType } from "@/enums";
 
 const QuoteWidget = ({ isAdmin = true }) => {
   const { classes } = useStyle();
@@ -168,8 +169,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
                   isDisabled
                     ? handleClick
                     : isAdmin
-                    ? onClickCreateQuote
-                    : onClickCreateQuoteForCustomer
+                      ? onClickCreateQuote
+                      : onClickCreateQuoteForCustomer
                 }
                 variant="contained"
                 style={{ width: "100%", height: 40 }}
@@ -199,8 +200,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
               isDisabled
                 ? handleClick
                 : isAdmin
-                ? onClickCreateQuote
-                : onClickCreateQuoteForCustomer
+                  ? onClickCreateQuote
+                  : onClickCreateQuoteForCustomer
             }
             variant="contained"
             style={{ width: "100%", height: 40 }}
@@ -222,9 +223,10 @@ const QuoteWidget = ({ isAdmin = true }) => {
         <div style={classes.errorMsgStyle}>{_renderErrorMessage()}</div>
       </Popover>
       <GoMakeDeleteModal
+        title={t("sales.quote.titleMessage")}
         subTitle={t("sales.quote.MessageForClient")}
         icon={<WarningAmberIcon style={classes.AmberIconStyle} />}
-        title={t("sales.quote.titleMessage")}
+        modalType={ModalType.EDIT}
         yesBtn={t("sales.quote.Confirm")}
         openModal={openModal}
         onClose={onClickCloseModal}

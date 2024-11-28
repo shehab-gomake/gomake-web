@@ -41,6 +41,7 @@ import { isActionEmployeeUpdatedState } from "@/store";
 import { Draggable } from "react-beautiful-dnd";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons/sort-icon";
+import { ModalType } from "@/enums";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -831,6 +832,7 @@ const ActionContainerComponent = ({
                 sectionName={sectionName}
               />
               <GoMakeDeleteModal
+                modalType={ModalType.ADD}
                 insideStyle={classes.insideStyle}
                 openModal={openModalMachine}
                 onClose={onClickCloseModalMachine}
@@ -840,6 +842,7 @@ const ActionContainerComponent = ({
                 onClickDelete={updateWorkFlowForMachine}
               />
               <GoMakeDeleteModal
+                modalType={ModalType.ADD}
                 insideStyle={classes.insideStyle}
                 openModal={openModalMaterial}
                 onClose={onClickCloseModalMaterial}

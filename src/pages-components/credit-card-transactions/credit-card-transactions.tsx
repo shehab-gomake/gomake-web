@@ -7,6 +7,7 @@ import { GoMakeDeleteModal, GoMakeModal } from "@/components";
 import { Stack } from "@mui/material";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { TransferToClientModal } from "./widgets/modal/TransferToClientModal";
+import { ModalType } from "@/enums";
 
 const CreditCardTransactionsWidget = () => {
   const { classes } = useStyle();
@@ -92,6 +93,7 @@ const CreditCardTransactionsWidget = () => {
       </GoMakeModal>
       <GoMakeDeleteModal
         icon={<WarningAmberIcon style={classes.iconStyle} />}
+        modalType={ModalType.WARNING}
         title={t("creditCardTransactions.ProcessRefundModalTitle")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openRefundModal}
