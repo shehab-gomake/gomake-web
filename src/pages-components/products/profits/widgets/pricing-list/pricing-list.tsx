@@ -110,7 +110,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
                                   ? `${tablePercent[index]}`
                                   : `${100 / (tableHeaders.length - 1)}%`
                               }
-                              // width={`${100 / tableHeaders.length}%`}
+                            // width={`${100 / tableHeaders.length}%`}
                             />
                           );
                         })}
@@ -122,7 +122,7 @@ const PricingList = ({ tableHeaders, tablePercent }: IProps) => {
                       <Row
                         row={row}
                         tablePercent={tablePercent}
-                        // width={`${100 / (Object.entries(row).length - 1)}%`}
+                      // width={`${100 / (Object.entries(row).length - 1)}%`}
                       />
                       <div style={clasess.line}></div>
                     </div>

@@ -911,12 +911,12 @@ const AddRuleModal = ({
             <div style={{ display: "flex", gap: 10 }}>
               <div style={{ width: "20%" }}>
                 <div style={clasess.selectTypeStyle}>
-                  {t("products.profits.exceptions.additionalProfit")}
+                  {t("products.profits.exceptions.addition")}
                 </div>
                 <GomakeTextInput
                   type="number"
                   placeholder={t(
-                    "products.profits.exceptions.additionalProfit"
+                    "products.profits.exceptions.addition"
                   )}
                   onChange={(e: any) => {
                     setAdditionalProfit(e.target.value);
@@ -929,7 +929,7 @@ const AddRuleModal = ({
                   }}
                 />
               </div>
-              {selectedPricingBy?.value !== EPricingBy.COST && <div style={{ width: "20%" }}>
+              <div style={{ width: "20%" }}>
                 <div style={clasess.selectTypeStyle}>
                   {t("products.profits.exceptions.additionType")}
                 </div>
@@ -945,8 +945,7 @@ const AddRuleModal = ({
                     setAdditionType(value?.value);
                   }}
                 />
-              </div>}
-
+              </div>
             </div>
           )}
           {typeExceptionSelected === ETypeException.PROFIT && (
