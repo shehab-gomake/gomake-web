@@ -31,6 +31,8 @@ const Tab = ({ tab, customGap }: IProps) => {
   const [isHover, setIsHover] = useState(false);
   const navStatus = useRecoilValue(navStatusState);
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const { CheckPermission } = useUserPermission();
   const { classes } = useStyle({ isHover, navStatus, customGap });
 
@@ -98,7 +100,7 @@ const Tab = ({ tab, customGap }: IProps) => {
             </Stack>
             <div>
               {isListOpen ? (
-                <div style={classes.rotate90}>
+                <div style={isRTL ? classes.rotate90Rtl : classes.rotate90}>
                   <ArrowDownIcon />
                 </div>
               ) : (

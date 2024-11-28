@@ -147,9 +147,14 @@ const useStyle = ({
         textDecoration: "none",
       },
       rotate90: {
-        "-webkit-animation": "rotate90 0.5s forwards ",
-        "-moz-animation": "rotate90 0.5s forwards ",
-        animation: "rotate90 0.5s forwards ",
+        "-webkit-animation": "rotate90 0.5s forwards",
+        "-moz-animation": "rotate90 0.5s forwards",
+        animation: "rotate90 0.5s forwards",
+      },
+      rotate90Rtl: {
+        "-webkit-animation": "rotate90-rtl 0.5s forwards",
+        "-moz-animation": "rotate90-rtl 0.5s forwards",
+        animation: "rotate90-rtl 0.5s forwards",
       },
     };
   }, [isHover, navStatus]);
