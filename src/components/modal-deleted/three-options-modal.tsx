@@ -23,6 +23,7 @@ const ThreeOptionsModal = ({
   modalType = ModalType.DELETE,
   withClose = true,
   withRoundedCloseIcon = false,
+  children,
   ...props
 }: any) => {
   const { classes } = useStyle({ modalType: modalType });
@@ -53,6 +54,7 @@ const ThreeOptionsModal = ({
           )}
           <div style={classes.title}>{title}</div>
           <div style={classes.subTitle}>{subTitle}</div>
+          {children && <div style={classes.children}>{children}</div>}
           <div style={classes.btnsContainer}>
             <GomakePrimaryButton
               style={classes.yesBtn}

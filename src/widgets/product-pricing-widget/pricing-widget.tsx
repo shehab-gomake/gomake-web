@@ -141,19 +141,6 @@ const PricingWidget = ({
               {t("pricingWidget.addAction")}
               <ArrowDropDownIcon />
             </div>
-            // <GoMakeAutoComplate
-            //   options={actionListDropDown}
-            //   key={actionNameSelected}
-            //   style={classes.autoCompleteSelectedAction}
-            //   placeholder={t("pricingWidget.selectAction")}
-            //   withArrow={true}
-            //   getOptionLabel={(option) => option.name}
-            //   onChange={(e, value) => {
-            //     onClickAddNewAction()
-            //     setActionNameSelected(value)
-            //   }}
-            //   value={actionNameSelected ?? null}
-            // />
           }
 
           <InOutSourceSelect
