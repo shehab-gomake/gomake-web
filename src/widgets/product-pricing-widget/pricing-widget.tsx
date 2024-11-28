@@ -244,16 +244,12 @@ const PricingWidget = ({
           onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
         />
       )}
-
       <GoMakeDeleteModal
         modalType={ModalType.ADD}
         openModal={isAddNewAction}
         onClose={onClickCloseAddNewAction}
         onClickDelete={onClickAddActionToWorkFlow}
-        onClickCancel={() => setActionNameSelected(null)}
-
       />
-
       <ActionsListMenu
         handleClose={handleCloseActionsListMenu}
         open={openActionsListMenu}
