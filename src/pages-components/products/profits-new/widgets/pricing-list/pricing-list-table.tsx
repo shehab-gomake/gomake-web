@@ -17,6 +17,7 @@ import { MoreMenuWidget } from "./more-menu";
 import { GoMakeDeleteModal } from "@/components";
 import { useState } from "react";
 import { EPricingBy } from "../../enums/profites-enum";
+import { ModalType } from "@/enums";
 
 const PrimaryTableCell = styled(TableCell)(() => {
   return {
@@ -122,6 +123,7 @@ const PricingListTable = ({
         onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
       />
       <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
         openModal={openDeleteRowModal}
         onClose={onClickCloseDeleteRowModal}
         onClickDelete={() => deleteActionProfitRow(selectedActionProfitRow?.id)}

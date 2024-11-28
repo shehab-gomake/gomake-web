@@ -9,6 +9,7 @@ import { useRecoilValue } from "recoil";
 import { materialCategorySuppliersState } from "../../state";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
+import { ModalType } from "@/enums";
 
 const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowData) => {
   const { classes } = useStyle();
@@ -28,7 +29,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
     setOpenDeleteTableRowModal(true);
   };
 
-  const { updateCellData,} = useTableCellData(isAdmin);
+  const { updateCellData, } = useTableCellData(isAdmin);
   const onClick = (index) => {
     if (isEditable) {
       setIsUpdate(index);
@@ -46,14 +47,14 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
       //   onClickOpenPriceModal()
       // }
       // else{
-        if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
-          onClickOpenDeleteTableRowModal()
-        }
-        else {
-          await updateCellData(id, parameterKey, updateValue, isUpdate);
-          setIsUpdate(null);
-        }
+      if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
+        onClickOpenDeleteTableRowModal()
       }
+      else {
+        await updateCellData(id, parameterKey, updateValue, isUpdate);
+        setIsUpdate(null);
+      }
+    }
     // }
     else {
       setIsUpdate(null);
@@ -115,6 +116,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
         })}
       </Stack>
       <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
         openModal={openDeleteTableRowModal}
         onClose={onClickCloseDeleteTableRowModal}
         hideIcon

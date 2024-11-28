@@ -1,34 +1,52 @@
-import React from "react";
-import { GoMakeMenu } from "@/components";
-import { Divider } from "@mui/material";
+import React, { useState } from "react";
+import { GoMakeMenu, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
-import { SortByTypes } from "@/enums";
-import { useRecoilValue } from "recoil";
-import { quoteItemState } from "@/store";
 
-const ActionsListMenu = ({ handleClose, open, anchorEl, actionListDropDown, setActionNameSelected, onClickAddNewAction, handleCloseSectionNameListMenu }) => {
-
+const ActionsListMenu = ({
+  handleClose,
+  open,
+  anchorEl,
+  actionListDropDown,
+  setActionNameSelected,
+  onClickAddNewAction,
+  handleCloseSectionNameListMenu,
+  isUnderlined
+}) => {
   const { t } = useTranslation();
-  const quoteStateValue = useRecoilValue<any>(quoteItemState);
-  const selectedSort = quoteStateValue?.sortType
-  const { classes } = useStyle();
+  const [searchQuery, setSearchQuery] = useState("");
+  const filteredActions = actionListDropDown?.filter(action =>
+    action.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const { classes } = useStyle({ isUnderlined });
   return (
     <GoMakeMenu
-      handleClose={handleClose}
+      handleClose={() => {
+        handleClose()
+        setSearchQuery("")
+      }}
       open={open}
       anchorEl={anchorEl}
       style={classes.mainContainer}
     >
+      <GomakeTextInput
+        style={classes.textInputStyle}
+        value={searchQuery}
+        placeholder={t("pricingWidget.searchActions")}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
       <div style={classes.bodyContainer}>
+
         {
-          actionListDropDown?.map((action, index) => (
-            <div key={index} style={{ backgroundColor: selectedSort === SortByTypes.Date ? "#EBECFF" : "", ...classes.menuTabStyle }} className="table-sorting" onClick={() => {
-              setActionNameSelected(action)
-              onClickAddNewAction()
-              handleClose()
-              handleCloseSectionNameListMenu()
-            }}>
+          filteredActions?.map((action, index) => (
+            <div key={index} style={classes.menuTabStyle} className="action-menu-item"
+              onClick={() => {
+                setActionNameSelected(action)
+                onClickAddNewAction()
+                handleClose()
+                handleCloseSectionNameListMenu()
+              }}>
               {action?.name}
             </div>
           ))

@@ -5,25 +5,26 @@ import { MessageTemplates } from "./messageTemplates/message-templates";
 import { AddButton } from "@/components/button/add-button";
 import { GoMakeDeleteModal, GoMakeModal } from "@/components";
 import { AddNewSMSTemplateGroup } from "./messageTemplates/components/add-new/add-new";
-import { editModalState, groupModalState , smsBodyState, smsSubjectState, smsTemplateState, templateGroupStateNew } from "./states/state";
+import { editModalState, groupModalState, smsBodyState, smsSubjectState, smsTemplateState, templateGroupStateNew } from "./states/state";
 import { useMessageTemplate } from "./useMessageTemplate";
 import { useEffect } from "react";
 import { EmailSettings } from "./messageTemplates/components/mail-editor/mail-editor";
 import { ISMSTemplate, SMSTemplateGroup } from "./messageTemplates/interfaces/interface";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useStyle } from "./style";
+import { ModalType } from "@/enums";
 
 const SettingsMailingWidget = () => {
     const { t } = useTranslation();
     const { classes } = useStyle();
-    const { onClickYes, onAddSMSTemplateGroup, onUpdateSmsTemplate, getSMSTemplateGroups, getTemplateVariables, setTemplateGroup, types, getSMSTemplateTypes, openDeleteModal, onCloseDeleteModal} = useMessageTemplate();
+    const { onClickYes, onAddSMSTemplateGroup, onUpdateSmsTemplate, getSMSTemplateGroups, getTemplateVariables, setTemplateGroup, types, getSMSTemplateTypes, openDeleteModal, onCloseDeleteModal } = useMessageTemplate();
     const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
     const [openEditModal, setOpenEditModal] = useRecoilState<boolean>(editModalState);
     const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
     const setSubject = useSetRecoilState<string>(smsSubjectState);
     const setBody = useSetRecoilState<string>(smsBodyState)
     const setNewTemplateGroup = useSetRecoilState<SMSTemplateGroup>(templateGroupStateNew);
-    
+
     const templateTitle = types.find((option) => option.value == state?.templateType)?.text || " ";
 
     const tabs: ITab[] = [
@@ -57,6 +58,7 @@ const SettingsMailingWidget = () => {
                 <EmailSettings onClickSave={onUpdateSmsTemplate} />
             </GoMakeModal>
             <GoMakeDeleteModal
+                modalType={ModalType.EDIT}
                 hideIcon={true}
                 title={t("mailingSettings.changeLang")}
                 yesBtn={t("mailingSettings.changeAnyway")}

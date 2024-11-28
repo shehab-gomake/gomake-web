@@ -16,10 +16,11 @@ import { calculationResultState } from "./state";
 import { useState } from "react";
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { FONT_FAMILY } from "@/utils/font-family";
-import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ActionsListMenu } from "./components/actions-menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SectionNameListMenu } from "./components/sections-menu";
+import { ModalType } from "@/enums";
 
 const PricingWidget = ({
   workFlows,
@@ -73,9 +74,9 @@ const PricingWidget = ({
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
   const isHasSubWorkFlowsOrProductTypeActions = hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)
   const sectionNames = getSectionNames(selectedWorkFlow);
-
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
+  const [isUnderlined, setIsUnderlined] = useState(false);
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack direction={"row"} justifyContent={"space-between"}>
@@ -124,24 +125,23 @@ const PricingWidget = ({
         <Stack direction={"row"} gap={"10px"}>
           {
             isHasSubWorkFlowsOrProductTypeActions &&
-            <div style={classes.autoCompleteSelectedSectionName} onClick={handleOpenSectionNameListMenu}>
-              {t("pricingWidget.selectAction")}
+            <div style={classes.autoCompleteSelectedSectionName} onClick={(e) => {
+              handleOpenSectionNameListMenu(e)
+              setIsUnderlined(false)
+            }}>
+              {t("pricingWidget.addAction")}
               <ArrowDropDownIcon />
             </div>
           }
-          {!isHasSubWorkFlowsOrProductTypeActions && <GoMakeAutoComplate
-            options={actionListDropDown}
-            key={actionNameSelected}
-            style={classes.autoCompleteSelectedAction}
-            placeholder={t("pricingWidget.selectAction")}
-            withArrow={true}
-            getOptionLabel={(option) => option.name}
-            onChange={(e, value) => {
-              onClickAddNewAction()
-              setActionNameSelected(value)
-            }}
-            value={actionNameSelected ?? null}
-          />}
+          {!isHasSubWorkFlowsOrProductTypeActions &&
+            <div style={classes.autoCompleteSelectedSectionName} onClick={(e) => {
+              handleOpenActionsListMenu(e)
+              setIsUnderlined(true)
+            }}>
+              {t("pricingWidget.addAction")}
+              <ArrowDropDownIcon />
+            </div>
+          }
 
           <InOutSourceSelect
             onChange={(v: EWorkSource) => {
@@ -231,16 +231,11 @@ const PricingWidget = ({
           onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
         />
       )}
-
       <GoMakeDeleteModal
-        title={t("are you sure you want to add this action?")}
-        yesBtn={t("sales.quote.add")}
+        modalType={ModalType.ADD}
         openModal={isAddNewAction}
         onClose={onClickCloseAddNewAction}
-        hideIcon
         onClickDelete={onClickAddActionToWorkFlow}
-        onClickCancel={() => setActionNameSelected(null)}
-
       />
       <ActionsListMenu
         handleClose={handleCloseActionsListMenu}
@@ -250,6 +245,7 @@ const PricingWidget = ({
         setActionNameSelected={setActionNameSelected}
         onClickAddNewAction={onClickAddNewAction}
         handleCloseSectionNameListMenu={handleCloseSectionNameListMenu}
+        isUnderlined={isUnderlined}
       />
       <SectionNameListMenu
         handleClose={handleCloseSectionNameListMenu}

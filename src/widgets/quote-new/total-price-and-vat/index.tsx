@@ -11,6 +11,7 @@ import { OtherReasonModal } from "./other-reason-modal";
 import { QuoteStatuses } from "./enums";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { OrderNowModal } from "./order-now-modal";
+import { ModalType } from "@/enums";
 
 const TotalPriceAndVatWidit = () => {
   const { t } = useTranslation();
@@ -204,9 +205,10 @@ const TotalPriceAndVatWidit = () => {
         onClickCancelOffer={onClickCancelOffer}
       />
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openIrrelevantCancelModal}
@@ -218,9 +220,10 @@ const TotalPriceAndVatWidit = () => {
         }
       />
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPriceCancelModal}
@@ -230,9 +233,10 @@ const TotalPriceAndVatWidit = () => {
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
       />
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openDeliveryTimeCancelModal}

@@ -5,6 +5,7 @@ import { useAdjustmentsModal } from "./use-adjustments-modal";
 import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { Skeleton } from "@mui/material";
+import { ModalType } from "@/enums";
 
 const AdjustmentsLedgerReportModal = ({
   openModal,
@@ -97,6 +98,7 @@ const AdjustmentsLedgerReportModal = ({
           )}
         </div>
         <GoMakeDeleteModal
+          modalType={ModalType.DELETE}
           openModal={openDeleteModal}
           onClose={onClickCloseDeleteModal}
           onClickDelete={cancelTransactionsApi}
