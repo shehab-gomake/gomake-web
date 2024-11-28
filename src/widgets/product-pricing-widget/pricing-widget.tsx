@@ -73,9 +73,9 @@ const PricingWidget = ({
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
   const isHasSubWorkFlowsOrProductTypeActions = hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)
   const sectionNames = getSectionNames(selectedWorkFlow);
-
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
+  const [isUnderlined, setIsUnderlined] = useState(false);
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack direction={"row"} justifyContent={"space-between"}>
@@ -124,24 +124,36 @@ const PricingWidget = ({
         <Stack direction={"row"} gap={"10px"}>
           {
             isHasSubWorkFlowsOrProductTypeActions &&
-            <div style={classes.autoCompleteSelectedSectionName} onClick={handleOpenSectionNameListMenu}>
-              {t("pricingWidget.selectAction")}
+            <div style={classes.autoCompleteSelectedSectionName} onClick={(e) => {
+              handleOpenSectionNameListMenu(e)
+              setIsUnderlined(false)
+            }}>
+              {t("pricingWidget.addAction")}
               <ArrowDropDownIcon />
             </div>
           }
-          {!isHasSubWorkFlowsOrProductTypeActions && <GoMakeAutoComplate
-            options={actionListDropDown}
-            key={actionNameSelected}
-            style={classes.autoCompleteSelectedAction}
-            placeholder={t("pricingWidget.selectAction")}
-            withArrow={true}
-            getOptionLabel={(option) => option.name}
-            onChange={(e, value) => {
-              onClickAddNewAction()
-              setActionNameSelected(value)
-            }}
-            value={actionNameSelected ?? null}
-          />}
+          {!isHasSubWorkFlowsOrProductTypeActions &&
+            <div style={classes.autoCompleteSelectedSectionName} onClick={(e) => {
+              handleOpenActionsListMenu(e)
+              setIsUnderlined(true)
+            }}>
+              {t("pricingWidget.addAction")}
+              <ArrowDropDownIcon />
+            </div>
+            // <GoMakeAutoComplate
+            //   options={actionListDropDown}
+            //   key={actionNameSelected}
+            //   style={classes.autoCompleteSelectedAction}
+            //   placeholder={t("pricingWidget.selectAction")}
+            //   withArrow={true}
+            //   getOptionLabel={(option) => option.name}
+            //   onChange={(e, value) => {
+            //     onClickAddNewAction()
+            //     setActionNameSelected(value)
+            //   }}
+            //   value={actionNameSelected ?? null}
+            // />
+          }
 
           <InOutSourceSelect
             onChange={(v: EWorkSource) => {
@@ -250,6 +262,7 @@ const PricingWidget = ({
         setActionNameSelected={setActionNameSelected}
         onClickAddNewAction={onClickAddNewAction}
         handleCloseSectionNameListMenu={handleCloseSectionNameListMenu}
+        isUnderlined={isUnderlined}
       />
       <SectionNameListMenu
         handleClose={handleCloseSectionNameListMenu}
