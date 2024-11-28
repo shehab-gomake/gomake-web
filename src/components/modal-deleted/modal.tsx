@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { IconButton, Modal, Tooltip } from "@mui/material";
-import { Wastebasket, AddModalIcon, EditModalIcon, DuplicateModalIcon, WarningModalIcon } from "@/icons";
+import { Wastebasket, AddModalIcon, EditModalIcon, DuplicateModalIcon, WarningModalIcon, DeleteModalIcon } from "@/icons";
 import { GomakePrimaryButton } from "../button";
 import { useStyle } from "./style";
 import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
@@ -30,7 +30,7 @@ const GoMakeDeleteModal = ({
 
   const _renderIcon = (modalType: ModalType) => {
     if (modalType === ModalType.DELETE) {
-      return <Wastebasket width={34} height={34} color="#D92D20" />;
+      return <DeleteModalIcon />;
     }
     if (modalType === ModalType.DUPLICATE) {
       return <DuplicateModalIcon />;
