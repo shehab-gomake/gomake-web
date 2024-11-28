@@ -63,7 +63,7 @@ const Tab = ({ tab, customGap }: IProps) => {
 
   const handleOpenInNewTab = useCallback(
     (path: string | undefined, e: React.MouseEvent) => {
-      if ((e.button === 1 || e.button === 2) && path) {
+      if (e.button === 1 && path) {
         window.open(path, "_blank");
       }
     },

@@ -1,5 +1,9 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { convertHeightToVH, convertWidthToVW } from "@/utils/adapter";
+import {
+  adaptRight,
+  convertHeightToVH,
+  convertWidthToVW,
+} from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { LAYOUT_DEFAULT_GAP, SIDE_MENU_Layout } from "@/utils/layout-config";
 import { useMemo } from "react";
@@ -76,9 +80,12 @@ const useStyle = ({
       poweredContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 10,
+        justifyContent: navStatus?.isClosed ? "center" : "flex-start",
+        alignItems: navStatus?.isClosed ? "center" : "flex-start",
+        marginTop: "10px",
+        marginBottom: navStatus?.isClosed ? "10px" : "10px",
+        gap: "7px",
+        width: "100%",
       },
       poweredByLbl: {
         ...FONT_FAMILY.Lexend(400, 12),
@@ -88,8 +95,6 @@ const useStyle = ({
         ...FONT_FAMILY.Lexend(400, 28),
         color: "#FFF",
       },
-
-      ///Tab
       tabsContainer: {
         alignSelf: "flex-start",
         width: "100%",
@@ -115,13 +120,17 @@ const useStyle = ({
         color: "#FFF",
         cursor: "pointer",
         minWidth: "fit-content",
+        lineHeight: "24px",
+        letterSpacing: "0.04em",
       },
       line: {
-        border: "1px solid #FFFFFF",
-        opacity: 0.4,
-        width: "90%",
+        border: "1px solid #FFFFFF19",
+        width: navStatus?.isClosed ? "70%" : "98%",
         marginTop: convertHeightToVH(24),
-        // marginBottom: convertHeightToVH(32),
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-start",
+        alignSelf: "stretch",
       },
       lineContainer: {
         width: "100%",
