@@ -29,6 +29,12 @@ export interface IStatus {
   label: string;
   value: string;
 }
+
+export type ErrorMessage = {
+  errorCode: number;
+  lineNumber: number;
+};
+
 const useCustomers = (
   clientType: "C" | "S",
   pageNumber: number,
@@ -36,7 +42,8 @@ const useCustomers = (
 ) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const { alertFaultGetData } = useSnackBar();
+  const { alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } =
+    useSnackBar();
   const { CheckPermission } = useUserPermission();
   const [allCustomers, setAllCustomers] = useState([]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
@@ -302,6 +309,13 @@ const useCustomers = (
     return true;
   };
 
+  const [openErrorsModal, setOpenErrorsModal] = useState<boolean>(false);
+  const [errorMessages, setErrorMessages] = useState<ErrorMessage[]>([]);
+  const handleErrorsModalClose = () => {
+    setOpenErrorsModal(false);
+    setErrorMessages([]);
+  };
+
   const onClickImportClient = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -314,7 +328,20 @@ const useCustomers = (
             return data + String.fromCharCode(byte);
           }, "")
         );
-        importClientApi(callApi, () => {}, {
+
+        const callBack = (res) => {
+          if (res.success) {
+            if (res.data && Array.isArray(res.data) && res.data.length > 0) {
+              setErrorMessages(res.data);
+              setOpenErrorsModal(true);
+            } else {
+              alertSuccessUpdate();
+            }
+          } else {
+            alertFaultUpdate();
+          }
+        };
+        importClientApi(callApi, callBack, {
           fileBase64: base64String,
           clientType: clientType,
         });
@@ -335,7 +362,6 @@ const useCustomers = (
       );
 
       if (result?.success) {
-        debugger;
         const downloadLink = document.createElement("a");
         const link = URL.createObjectURL(result?.data);
         downloadLink.href = link;
@@ -394,6 +420,9 @@ const useCustomers = (
     openExportModal,
     onOpenExportClientModal,
     onCloseExportClientModal,
+    openErrorsModal,
+    handleErrorsModalClose,
+    errorMessages,
   };
 };
 export { useCustomers };

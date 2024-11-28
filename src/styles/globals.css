@@ -38,13 +38,22 @@ html * {
   }
 }
 
+@keyframes rotate90-rtl {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-90deg);
+  }
+}
+
 ::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
 .MuiAutocomplete-listbox {
-  max-height: 300px; 
-  overflow-y: auto; 
+  max-height: 300px;
+  overflow-y: auto;
 }
 .MuiAutocomplete-listbox::-webkit-scrollbar {
   width: 8px;
@@ -285,7 +294,7 @@ input::placeholder {
 
 .MuiAutocomplete-input {
   padding: 0 !important;
-  padding-left: 20px !important;
+  padding-left: 5px !important;
   padding-top: 1px !important;
 }
 
@@ -439,8 +448,8 @@ df-messenger {
   height: 11px !important;
 }
 .small.custom-scrollbar::-webkit-scrollbar {
-  width: 3px !important;
-  height: 3px !important;
+  width: 5px !important;
+  height: 5px !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -507,7 +516,7 @@ df-messenger {
 .rs-input {
   padding-right: 10px !important;
 }
-.MuiInputBase-root input{
+.MuiInputBase-root input {
   border: none !important;
 }
 

@@ -7,6 +7,7 @@ import { useStyle } from './style';
 import { MoreIcon } from './icons/more-icon';
 import { GoMakeMenu, SecondSwitch } from '@/components';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 
 const ProductsRowMappingTable = ({
@@ -24,8 +25,10 @@ const ProductsRowMappingTable = ({
   handleHideProduct,
   updatePrintHousePrice,
   updateProfitProfileProductHidden,
-  updateProfitProfileProductSelected
+  updateProfitProfileProductSelected,
+  handleReviewCalculation
 }) => {
+  const { t } = useTranslation()
   const { classes } = useStyle()
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
@@ -50,6 +53,7 @@ const ProductsRowMappingTable = ({
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
               checked={product.isSelected}
+              disabled={product?.isSelectLocked}
               onChange={() => {
                 handleCheckboxChange(index)
                 updateProfitProfileProductSelected(product)
@@ -80,6 +84,7 @@ const ProductsRowMappingTable = ({
             activeCell={activeCell}
             setActiveCell={setActiveCell}
             updatePrintHousePrice={updatePrintHousePrice}
+            handleReviewCalculation={handleReviewCalculation}
           />
         ))}
       </TableRow>
@@ -89,14 +94,14 @@ const ProductsRowMappingTable = ({
         anchorEl={anchorEl}
       >
         <div style={classes.moreMenuContainer}>
-          <div style={classes.appearanceText}>Appearance</div>
+          <div style={classes.appearanceText}>{t("priceProfit.appearance")}</div>
           <div style={classes.switchContainer}>
-            <div style={classes.switchText}>{product?.isHidden ? "off" : "on"}</div>
+            <div style={classes.switchText}>{product?.isHidden ? t("priceProfit.off") : t("priceProfit.on")}</div>
             <SecondSwitch
               checked={!product?.isHidden}
               onChange={(e) => {
                 handleHideProduct(index, e.target.checked)
-                updateProfitProfileProductHidden(product,handleClose)
+                updateProfitProfileProductHidden(product, handleClose)
               }}
             />
           </div>

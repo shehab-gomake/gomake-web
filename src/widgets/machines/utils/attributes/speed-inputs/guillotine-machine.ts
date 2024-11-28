@@ -43,6 +43,44 @@ const guillotineMachine = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.cuttingHeight,
             unit: EMeasurementUnits.CM
         },
+        {
+            name: 'machineAttributes.booksCutting',
+            parameterKey: 'booksCutting',
+            machineInputType: 'multiInput',
+            value: state.attributes?.booksCutting ? state.attributes?.booksCutting : {},
+            isValid: true,
+            inputs: [
+                {
+                    name: "speed",
+                    label: "machineAttributes.speed",
+                    type: "text",
+                    placeholder: "machineAttributes.speed",
+                    parameterKey: "speed",
+                    options: [],
+                    value: state.attributes?.booksCutting?.speed ? state.attributes?.booksCutting?.speed : '',
+                    unit: EMeasurementUnits.CUTS_PH
+                },
+                {
+                    name: "maxCuttingHeight",
+                    label: "machineAttributes.maxCuttingHeight",
+                    type: "text",
+                    placeholder: "machineAttributes.maxCuttingHeight",
+                    parameterKey: "maxCuttingHeight",
+                    options: [],
+                    value: state.attributes?.booksCutting?.maxCuttingHeight ? state.attributes?.booksCutting?.maxCuttingHeight : '',
+                    unit: EMeasurementUnits.CM
+                },
+                {
+                    name: "maxBooksQuantity",
+                    label: "machineAttributes.maxBooksQuantity",
+                    type: "text",
+                    placeholder: "machineAttributes.maxBooksQuantity",
+                    parameterKey: "maxBooksQuantity",
+                    options: [],
+                    value: state.attributes?.booksCutting?.maxBooksQuantity ? state.attributes?.booksCutting?.maxBooksQuantity : '',
+                },
+            ]
+        },
     ]
 }
 

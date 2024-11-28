@@ -10,6 +10,7 @@ import {rollLaserCutMachine} from "@/widgets/machines/utils/attributes/other-set
 import {analogEnhancementMachine} from "@/widgets/machines/utils/attributes/other-settings/analog-enhancement-machine";
 import {collectorMachine} from "@/widgets/machines/utils/attributes/other-settings/collector-machine";
 import {widePrinting} from "@/widgets/machines/utils/attributes/other-settings/wide-printing";
+import {laminationMachine} from "@/widgets/machines/utils/attributes/other-settings/lamination-machine";
 
 
 const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[] => {
@@ -37,7 +38,9 @@ const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[
         case ECategoryId.BOOKS_SEWING_MACHINE:
             return bookletMachine(state);
         case ECategoryId.ROLL_WIDE_PRINTING:
-            return widePrinting(state)
+            return widePrinting(state);
+        case ECategoryId.LAMINATION_MACHINE:
+            return laminationMachine(state);
         default:
             return []
     }

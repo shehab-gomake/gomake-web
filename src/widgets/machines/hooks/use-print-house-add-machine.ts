@@ -8,12 +8,17 @@ import {
     printHouseDeleteMachine, printHouseDuplicateMachine,
     printHouseUpdateMachine
 } from "@/services/api-service/machines/print-house-machines";
+import {machineCategoriesState} from "@/store/machine-categories";
+import {useCallback, useState} from "react";
+import {updateProfitProfileProductMachineApi} from "@/services/api-service/products/product-endpoints";
 
 const usePrintHouseAddMachine = () => {
     const {addMachineToList, setUpdatedMachine, deleteMachineFromArray} = usePrintHouseMachines();
     const {callApi} = useGomakeAxios();
     const machineState = useRecoilValue(STATE);
     const setMachineState = useSetRecoilState(STATE);
+    const machinesCategories = useRecoilValue(machineCategoriesState);
+    const [openUpdateOptionsModal, setOpenOptionsModal] = useState<boolean>(false);
     const {
         alertFaultAdded,
         alertSuccessAdded,
@@ -24,6 +29,9 @@ const usePrintHouseAddMachine = () => {
     } = useSnackBar();
     const {push} = useRouter();
 
+    const getMachineCategory = useCallback(() => {
+        return machinesCategories?.find(category => category.id === machineState.category);
+    }, [machineState])
     const addPrintHouseMachine = async () => {
         const payload = {...machineState};
         payload.machineId = machineState.id;
@@ -77,6 +85,7 @@ const usePrintHouseAddMachine = () => {
             if (res.success) {
                 setUpdatedMachine(res.data);
                 alertSuccessUpdate();
+                setOpenOptionsModal(true);
             } else {
                 alertFaultUpdate();
             }
@@ -84,11 +93,26 @@ const usePrintHouseAddMachine = () => {
         await printHouseUpdateMachine(callApi, callBack, {...machineState});
     }
 
+    const updateProfitProfile = async (isUpdateAndFixPrice: boolean) => {
+        const callBack = (res) => {
+            if (res.success) {
+                alertSuccessUpdate();
+            }
+        }
+        await updateProfitProfileProductMachineApi(callApi, callBack, {
+            key: machineState.category,
+            isUpdateAndFixPrice
+        })
+    }
+
     return {
         addPrintHouseMachine,
         duplicateMachine,
         deleteMachine,
-        updateMachine
+        updateMachine,
+        openUpdateOptionsModal,
+        setOpenOptionsModal,
+        updateProfitProfile
     }
 };
 

@@ -1,8 +1,11 @@
 import {Button, Menu} from "@mui/material";
 import { useState } from "react";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import {useTranslation} from "react-i18next";
 const MenuButton = ({ children }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const {t} = useTranslation();
+  const direction = t('direction');
   const handleMoreOptionIconClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -30,8 +33,8 @@ const MenuButton = ({ children }) => {
         open={Boolean(anchorEl)}
         anchorEl={anchorEl}
         onClose={handleClose2Menu}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        transformOrigin={{ horizontal: direction === 'ltr' ? "left" : "right", vertical: "top" }}
+        anchorOrigin={{ horizontal:direction === "ltr" ? "left" : "right", vertical: "bottom" }}
         onClick={handleCloseMenu}
       >
         {children}

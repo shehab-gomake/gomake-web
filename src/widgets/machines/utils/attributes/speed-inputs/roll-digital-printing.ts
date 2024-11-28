@@ -1,6 +1,7 @@
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 import {printingGeneral} from "@/widgets/machines/utils/attributes/speed-inputs/printing-general";
 
+
 const rollDigitalPrinting = (state: Record<string, any>) => {
     return [
         {

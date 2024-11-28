@@ -40,6 +40,21 @@ const useStyle = () => {
         marginTop: 10,
         marginBottom: 20,
       },
+      date1FilterContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 10,
+        // width: "18%",
+      },
+      filterLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
+      textInputStyle: {
+        width: "100%",
+        border: "none",
+      },
     };
   }, []);
   return {

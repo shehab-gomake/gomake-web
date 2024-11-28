@@ -117,6 +117,8 @@ const GoMakeAutoComplate = ({
   defaultFiltering = true,
   startIcon,
   arrowIcon,
+  open, // Add the `open` prop
+  onOpen, // Add the `onOpen` prop
 }: {
   value?: any;
   onChange?: any;
@@ -144,6 +146,8 @@ const GoMakeAutoComplate = ({
   defaultFiltering?: boolean;
   startIcon?: React.ReactNode;
   arrowIcon?: React.ReactNode;
+  open?: boolean;
+  onOpen?: () => void;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -186,6 +190,8 @@ const GoMakeAutoComplate = ({
       }}
       onInputChange={onInputChange}
       onKeyDown={onKeyDown}
+      open={open} // Pass the `open` prop to Autocomplete
+      onOpen={onOpen} // Pass the `onOpen` callback to Autocomplete
       onClose={onClose}
       style={style}
       options={options}

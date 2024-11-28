@@ -6,8 +6,8 @@ const useStyle = () => {
     return {
       mainContainer:{
         display: 'flex',
-        flexDirection: "row" as "row",
-        alignItems: "center",
+        flexDirection: "column" as "column",
+        alignItems: "flex-start",
         justifyContent: "space-between",
         width: "100%",
         gap:10,
@@ -17,7 +17,8 @@ const useStyle = () => {
         display: 'flex',
         flexDirection: "row" as "row",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
+        flexWrap: "wrap" as "wrap",
         gap:14,
       },
       parameterItem:{
@@ -30,7 +31,17 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
         padding: "2px 8px",
+      },
+      sectionContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: 10
+      },
+      sectionName: {
+        ...FONT_FAMILY.Lexend(500, 16),
+        color: "#101828"
       }
+
     };
   }, []);
   return {

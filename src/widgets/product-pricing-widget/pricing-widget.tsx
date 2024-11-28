@@ -16,6 +16,10 @@ import { calculationResultState } from "./state";
 import { useState } from "react";
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { FONT_FAMILY } from "@/utils/font-family";
+import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
+import { ActionsListMenu } from "./components/actions-menu";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { SectionNameListMenu } from "./components/sections-menu";
 
 const PricingWidget = ({
   workFlows,
@@ -43,8 +47,32 @@ const PricingWidget = ({
     allCountSelectedTabWorkFlow,
     onClickAddOutSourceAction,
     onClickRemoveOutSourceAction,
-    t
+    actionListDropDown,
+    hasSubWorkFlowsOrProductTypeActions,
+    getSectionNames,
+    sectionNameSelected,
+    setSectionNames,
+    actionNameSelected,
+    setActionNameSelected,
+    isAddNewAction,
+    onClickCloseAddNewAction,
+    onClickAddNewAction,
+    onClickAddActionToWorkFlow,
+    t,
+    anchorElActionsListMenu,
+    openActionsListMenu,
+    handleCloseActionsListMenu,
+    handleOpenActionsListMenu,
+    anchorElSectionNameListMenu,
+    openSectionNameListMenu,
+    handleCloseSectionNameListMenu,
+    handleOpenSectionNameListMenu,
+    reOderMainActions,
+    reOderSubWorkFlows
+
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
+  const isHasSubWorkFlowsOrProductTypeActions = hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)
+  const sectionNames = getSectionNames(selectedWorkFlow);
 
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
@@ -93,27 +121,51 @@ const PricingWidget = ({
         ) : (
           <div />
         )}
-        <InOutSourceSelect
-          onChange={(v: EWorkSource) => {
-            setSelectedWorkFlowCalculatedIsLoaded(true)
-            setView(
-              v === EWorkSource.OUT
-                ? EPricingViews.OUTSOURCE_WORKFLOW
-                : EPricingViews.SELECTED_WORKFLOW
-            )
-            updateProductItemValue(v)
-            setIsChangeView(false)
-          }}
-          disabled={!selectedWorkFlow}
-          withPartially={selectedWorkFlow?.actions?.some(
-            (action) => action.source === EWorkSource.OUT
-          ) && view !== EPricingViews.OUTSOURCE_WORKFLOW && !selectedWorkFlowCalculatedIsLoaded}
-          value={
-            view === EPricingViews.OUTSOURCE_WORKFLOW
-              ? EWorkSource.OUT
-              : EWorkSource.INTERNAL
+        <Stack direction={"row"} gap={"10px"}>
+          {
+            isHasSubWorkFlowsOrProductTypeActions &&
+            <div style={classes.autoCompleteSelectedSectionName} onClick={handleOpenSectionNameListMenu}>
+              {t("pricingWidget.selectAction")}
+              <ArrowDropDownIcon />
+            </div>
           }
-        />
+          {!isHasSubWorkFlowsOrProductTypeActions && <GoMakeAutoComplate
+            options={actionListDropDown}
+            key={actionNameSelected}
+            style={classes.autoCompleteSelectedAction}
+            placeholder={t("pricingWidget.selectAction")}
+            withArrow={true}
+            getOptionLabel={(option) => option.name}
+            onChange={(e, value) => {
+              onClickAddNewAction()
+              setActionNameSelected(value)
+            }}
+            value={actionNameSelected ?? null}
+          />}
+
+          <InOutSourceSelect
+            onChange={(v: EWorkSource) => {
+              setSelectedWorkFlowCalculatedIsLoaded(true)
+              setView(
+                v === EWorkSource.OUT
+                  ? EPricingViews.OUTSOURCE_WORKFLOW
+                  : EPricingViews.SELECTED_WORKFLOW
+              )
+              updateProductItemValue(v)
+              setIsChangeView(false)
+            }}
+            disabled={!selectedWorkFlow}
+            withPartially={selectedWorkFlow?.actions?.some(
+              (action) => action.source === EWorkSource.OUT
+            ) && view !== EPricingViews.OUTSOURCE_WORKFLOW && !selectedWorkFlowCalculatedIsLoaded}
+            value={
+              view === EPricingViews.OUTSOURCE_WORKFLOW
+                ? EWorkSource.OUT
+                : EWorkSource.INTERNAL
+            }
+          />
+
+        </Stack>
       </Stack>
       {selectedWorkFlow && (
         <GeneralInformationComponent
@@ -129,12 +181,15 @@ const PricingWidget = ({
             widgetType={widgetType}
             isEditableActions={true}
             workflows={selectedWorkFlow?.subWorkFlows || []}
+            reOderMainActions={reOderMainActions}
+            reOderSubWorkFlows={reOderSubWorkFlows}
           />
           <Actions
             actions={selectedWorkFlow?.actions}
             productType={selectedWorkFlow.productType}
             widgetType={widgetType}
             selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+            reOderMainActions={reOderMainActions}
           />
         </div>
       )}
@@ -176,6 +231,37 @@ const PricingWidget = ({
           onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
         />
       )}
+
+      <GoMakeDeleteModal
+        title={t("are you sure you want to add this action?")}
+        yesBtn={t("sales.quote.add")}
+        openModal={isAddNewAction}
+        onClose={onClickCloseAddNewAction}
+        hideIcon
+        onClickDelete={onClickAddActionToWorkFlow}
+        onClickCancel={() => setActionNameSelected(null)}
+
+      />
+      <ActionsListMenu
+        handleClose={handleCloseActionsListMenu}
+        open={openActionsListMenu}
+        anchorEl={anchorElActionsListMenu}
+        actionListDropDown={actionListDropDown}
+        setActionNameSelected={setActionNameSelected}
+        onClickAddNewAction={onClickAddNewAction}
+        handleCloseSectionNameListMenu={handleCloseSectionNameListMenu}
+      />
+      <SectionNameListMenu
+        handleClose={handleCloseSectionNameListMenu}
+        open={openSectionNameListMenu}
+        anchorEl={anchorElSectionNameListMenu}
+        handleOpen={handleOpenActionsListMenu}
+        sectionNames={[...sectionNames, {
+          sectionName: t("pricingWidget.general"),
+          productType: null
+        }]}
+        setSectionNames={setSectionNames}
+      />
     </Stack>
   );
 };

@@ -6,6 +6,8 @@ import { MenuItem } from "@mui/material";
 import { ReStoreIcon } from "../table/icons/restore-icon";
 import { ResetIcon } from "../table/icons/reser-icon";
 import { UpdatedPriceIcon2 } from "../table/icons/update-price-icon";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 const PriceProfitHeaderWidget = ({
   handleClose,
@@ -24,7 +26,18 @@ const PriceProfitHeaderWidget = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const router = useRouter()
+  useEffect(() => {
+    if (router.query.productId) {
+      const selectedPricingProfileSetting = pricingProfileSetting?.map((item) => ({
+        ...item,
+        label: item?.productName,
+        value: item?.productId
+      }))?.find(item => item?.productId === router.query.productId)
+      setSelectedPricingProfileSetting(selectedPricingProfileSetting)
 
+    }
+  }, [router, pricingProfileSetting])
 
   return (
     <div style={classes.mainContainer}>
@@ -37,9 +50,18 @@ const PriceProfitHeaderWidget = ({
             value: item?.productId
           }))}
           value={selectedPricingProfileSetting}
-          onChange={(e, value) => setSelectedPricingProfileSetting(value)}
+          key={selectedPricingProfileSetting?.productId}
+          onChange={(e, value) => {
+            setSelectedPricingProfileSetting(value)
+            if (value?.value) {
+              router.push({
+                pathname: window.location.pathname,
+                query: { ...router.query, productId: value.value },
+              });
+            }
+          }}
           style={classes.autoCompleteStyle}
-          placeholder={t("Select Product")}
+          placeholder={t("priceProfit.selectProduct")}
           withArrow={true}
           popupIcon={<ArrowDownNewIcon />}
         />
@@ -55,7 +77,7 @@ const PriceProfitHeaderWidget = ({
           leftIcon={<PrintIcon />}
           rightIcon={<ArrowDownNewIcon color="#fff" />}
           onClick={handleOpenPrint}
-        >{t("Print")}
+        >{t("priceProfit.print")}
         </GomakePrimaryButton>
 
       </div>
@@ -68,19 +90,19 @@ const PriceProfitHeaderWidget = ({
           <MenuItem onClick={() => updateSelectedPrintHousePrices(false)}>
             <div style={classes.menuItemReviewContainer}>
               <ReStoreIcon stroke={"#667085"} />
-              <div style={classes.menuItemReviewText}>Restore original prices</div>
+              <div style={classes.menuItemReviewText}>{t("priceProfit.restoreOriginalPrices")}</div>
             </div>
           </MenuItem>
           <MenuItem>
             <div style={classes.menuItemReviewContainer}>
               <ResetIcon />
-              <div style={classes.menuItemReviewText}>Reset old version</div>
+              <div style={classes.menuItemReviewText}>{t("priceProfit.resetOldVersion")}</div>
             </div>
           </MenuItem>
           <MenuItem onClick={() => updateSelectedPrintHousePrices(true)}>
             <div style={classes.menuItemReviewContainer}>
               <UpdatedPriceIcon2 />
-              <div style={classes.menuItemReviewText}>Update all new prices</div>
+              <div style={classes.menuItemReviewText}>{t("priceProfit.updateAllNewPrices")}</div>
             </div>
           </MenuItem>
         </div>
@@ -93,10 +115,10 @@ const PriceProfitHeaderWidget = ({
       >
         <div style={classes.menuContainer}>
           <MenuItem onClick={() => onClickPrint(false)}>
-            <div style={classes.menuItemReviewText}>Print all</div>
+            <div style={classes.menuItemReviewText}>{t("priceProfit.printAll")}</div>
           </MenuItem>
           <MenuItem onClick={() => onClickPrint(true)}>
-            <div style={classes.menuItemReviewText}>Only selected</div>
+            <div style={classes.menuItemReviewText}>{t("priceProfit.onlySelected")}</div>
           </MenuItem>
         </div>
       </GoMakeMenu>

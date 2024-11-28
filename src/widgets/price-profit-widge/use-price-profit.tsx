@@ -1,6 +1,7 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useDisplayProfitProfilesSignalr } from "@/hooks/signalr/use-display-profit-profiles-signalr";
 import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, getProfitsProfilePdfApi, updatePrintHousePriceApi, updateProfitProfileProductHiddenApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi, updateProfitProfileProductSelectedApi, updateSelectedPrintHousePricesApi } from "@/services/api-service/products/product-endpoints";
+import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
 interface PricingProfileSetting {
@@ -16,6 +17,7 @@ const usePriceProfit = () => {
   const { alertFaultGetData } = useSnackBar();
   const [pricingProfileSetting, setPricingProfileSetting] = useState<PricingProfileSetting[]>([])
   const [selectedPricingProfileSetting, setSelectedPricingProfileSetting] = useState<PricingProfileSetting | null>(null)
+  const router = useRouter()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isUpdateQuantity, setIsUpdateQuantity] = useState(false)
   const [isUpdate, setIsUpdate] = useState(false);
@@ -26,7 +28,7 @@ const usePriceProfit = () => {
   const openPrint = Boolean(anchorElPrint);
   const [selectedProduct, setSelectedProduct] = useState<any>(null)
   const [products, setProducts] = useState<any>([]);
-  const [requestAbortController, setRequestAbortController] =useState<AbortController>(null);
+  const [requestAbortController, setRequestAbortController] = useState<AbortController>(null);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -63,13 +65,12 @@ const usePriceProfit = () => {
   };
 
   const handleUpdateNewPrice = (data: any) => {
-    updatePrintHousePrice(data, true,false)
+    updatePrintHousePrice(data, true, false)
     handleClose()
   };
 
   const handleReviewCalculation = (data: any) => {
     window.open(`/products/create?profitsProfileRowId=${data?.rowId}&quantity=${data?.quantity}`, "_blank");
-    // Add logic for reviewing the calculation
     handleClose()
   };
 
@@ -131,7 +132,11 @@ const usePriceProfit = () => {
           const updatedValues = param.materialValues.map(val => ({
             ...val,
           }));
-          return { ...param, materialValues: updatedValues };
+          return {
+            ...param,
+            materialValues: updatedValues,
+            defaultValue: value?.value // Set defaultValue to the selected value
+          };
         }
         return param;
       });
@@ -209,33 +214,39 @@ const usePriceProfit = () => {
   }, [])
 
   useEffect(() => {
-    if (selectedPricingProfileSetting?.productId) {
-      getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+    if (router.query.productId) {
+      const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
+      getAllProfitProfileProductByProductId(productId);
     }
-  }, [selectedPricingProfileSetting])
+  }, [router])
 
   const updateProfitProfileProductParameter = useCallback(async (data: any, value: any) => {
     const callBack = (res) => {
+      const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
+
       if (res?.success) {
-        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+        setProducts(prevProducts => ({
+          ...prevProducts,
+          requiredParameters: res?.data
+        }));
       }
       else {
-        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+        getAllProfitProfileProductByProductId(productId);
       }
     };
     await updateProfitProfileProductParameterApi(callApi, callBack, {
-      productId: selectedPricingProfileSetting?.productId,
+      productId: router.query.productId,
       parameterId: data?.parameterId,
       parameterName: data?.parameterName,
       sectionId: data?.sectionId,
       subSectionId: data?.subSectionId,
       defaultValue: value?.valueId ? value?.valueId : value?.id ? value?.id : value
     });
-  }, [selectedPricingProfileSetting]);
+  }, [router]);
 
   const updateProfitProfileProductQuantities = useCallback(async () => {
     const quantities = products?.headers?.map(item => item.quantity);
-
+    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
     const callBack = (res) => {
       if (res?.success) {
         setIsUpdateQuantity(false);
@@ -243,16 +254,18 @@ const usePriceProfit = () => {
       }
       else {
         setIsUpdateQuantity(false);
-        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+        getAllProfitProfileProductByProductId(productId)
       }
     };
     await updateProfitProfileProductQuantitiesApi(callApi, callBack, {
-      productId: selectedPricingProfileSetting?.productId,
+      productId: productId,
       quantities: quantities
     });
-  }, [products, selectedPricingProfileSetting]);
+  }, [products, router]);
 
   const updatePrintHousePrice = useCallback(async (data: any, isNewPrice: boolean, isCalculatedPrice?: boolean) => {
+    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
+
     const callBack = (res) => {
       if (res?.success) {
         setIsUpdate(false);
@@ -260,21 +273,22 @@ const usePriceProfit = () => {
       }
       else {
         setIsUpdate(false);
-        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+        getAllProfitProfileProductByProductId(productId)
 
       }
     };
     await updatePrintHousePriceApi(callApi, callBack, {
-      productId: selectedPricingProfileSetting?.productId,
+      productId: productId,
       subProductId: data?.productId,
       quantity: data?.quantity,
-      printHousePrice:isCalculatedPrice? Number(data?.calculatedPrice):Number(data?.printHousePrice),
+      printHousePrice: isCalculatedPrice ? Number(data?.calculatedPrice) : Number(data?.printHousePrice),
       rowId: data?.rowId,
-      isNewPrice:isNewPrice
+      isNewPrice: isNewPrice
     });
-  }, [selectedPricingProfileSetting, newPrintHousePrice]);
+  }, [router, newPrintHousePrice]);
 
   const updateProfitProfileProductHidden = useCallback(async (data: any, handleClose: () => void) => {
+    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
     const callBack = (res) => {
       if (res?.success) {
         setIsUpdate(false);
@@ -283,46 +297,49 @@ const usePriceProfit = () => {
       }
       else {
         handleClose()
-        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+        getAllProfitProfileProductByProductId(productId)
       }
     }
     await updateProfitProfileProductHiddenApi(callApi, callBack, {
-      productId: selectedPricingProfileSetting?.productId,
+      productId: productId,
       rowId: data?.rowId,
     });
-  }, [selectedPricingProfileSetting])
+  }, [router])
 
-  const updateProfitProfileProductSelected = useCallback(async (data: any, ) => {
+  const updateProfitProfileProductSelected = useCallback(async (data: any,) => {
+    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
+
     const callBack = (res) => {
       if (res?.success) {
         setIsUpdate(false);
         setProducts(res?.data)
       }
       else {
-        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+        getAllProfitProfileProductByProductId(productId)
       }
     }
     await updateProfitProfileProductSelectedApi(callApi, callBack, {
-      productId: selectedPricingProfileSetting?.productId,
+      productId: productId,
       rowId: data?.rowId,
     });
-  }, [selectedPricingProfileSetting])
+  }, [router])
 
   const updateSelectedPrintHousePrices = useCallback(async (isNewPrice: boolean) => {
+    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
     const callBack = (res) => {
       if (res?.success) {
         setIsUpdate(false);
         setProducts(res?.data)
       }
       else {
-        getAllProfitProfileProductByProductId(selectedPricingProfileSetting?.productId)
+        getAllProfitProfileProductByProductId(productId)
       }
     }
     await updateSelectedPrintHousePricesApi(callApi, callBack, {
-      productId: selectedPricingProfileSetting?.productId,
+      productId: productId,
       isNewPrice,
     });
-  }, [selectedPricingProfileSetting])
+  }, [router])
 
   const onClickPrint = async (isSelected?: boolean) => {
     const downloadPdf = (url) => {
@@ -347,14 +364,14 @@ const usePriceProfit = () => {
     };
 
     await getProfitsProfilePdfApi(callApi, callBack, {
-      productId: selectedPricingProfileSetting?.productId,
-      isSelectedProducts:isSelected
+      productId: router.query.productId,
+      isSelectedProducts: isSelected
     });
-     
-  };
-  const { } = useDisplayProfitProfilesSignalr({getAllProfitProfileProductByProductId,selectedPricingProfileSetting})
 
-  
+  };
+  const { } = useDisplayProfitProfilesSignalr({ setProducts })
+
+
 
   return {
     open,

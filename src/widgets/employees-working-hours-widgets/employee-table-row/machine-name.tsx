@@ -27,7 +27,7 @@ const MachineNameComponent = ({machineName}: IProps) => {
                                           textOverflow: 'ellipsis',
                                           maxWidth: '150px',
                                           minHeight: 'fit-content',
-                                          ...FONT_FAMILY.Inter(400, 12)
+                                          ...FONT_FAMILY.Inter(400, 16)
                                       }}>{machineName}</span>
     </Tooltip>
 }

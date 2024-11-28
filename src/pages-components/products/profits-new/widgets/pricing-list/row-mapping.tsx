@@ -180,7 +180,7 @@ const RowMappingWidget = ({
           />
         </div>
       </PrimaryTableCell>
-      {selectedAdditionalProfitRow?.id && (
+      {/* {selectedAdditionalProfitRow?.id && (
         <PrimaryTableCell style={classes.cellContainerStyle}>
           <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
@@ -194,7 +194,7 @@ const RowMappingWidget = ({
             />
           </div>
         </PrimaryTableCell>
-      )}
+      )} */}
 
       <PrimaryTableCell style={classes.cellContainerStyle}>
         <div
