@@ -13,6 +13,7 @@ import { DeleteMenuIcon } from "@/pages/admin/products/parameters/widget/more-ci
 import { rowInputs } from "../add-row/inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
+import { ModalType } from "@/enums";
 interface IActionMenuProps {
   isAdmin: boolean;
 }
@@ -117,6 +118,7 @@ const ActionMenu = (props: IActionMenuProps) => {
       </Menu>
       {action?.action === EMaterialsActions.Delete ?
         <GoMakeDeleteModal
+          modalType={ModalType.DELETE}
           openModal={action !== null}
           onClose={handleCloseModal}
           onClickDelete={onUpdate}
@@ -279,6 +281,7 @@ const ActionMenu = (props: IActionMenuProps) => {
         </GoMakeModal>
       }
       <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
         openModal={openUpdatedTableRowModal}
         onClose={onClickCloseUpdatedTableRowModal}
         hideIcon

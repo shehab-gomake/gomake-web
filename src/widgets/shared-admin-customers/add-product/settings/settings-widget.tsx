@@ -12,6 +12,7 @@ import { EProductClient } from "./settings-data";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
 import FormatColorResetIcon from "@mui/icons-material/FormatColorReset";
+import { ModalType } from "@/enums";
 
 const SettingsWidget = ({
   onClickParametersTab,
@@ -500,6 +501,7 @@ const SettingsWidget = ({
         productSKUState={productSKU}
       />
       <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
         title={t("modal.pricingTypeTitle")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPricingTypeModal}

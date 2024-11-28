@@ -10,6 +10,7 @@ import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { QUOTE_STATUSES } from "@/pages-components/quotes/enums";
 import { ApproveSignatureModal } from "@/widgets/quote-new/total-price-and-vat/approve-signature-modal";
+import { ModalType } from "@/enums";
 
 const ButtonsConfirmContainer = ({ isMobile }) => {
   const { classes } = useStyle();
@@ -81,7 +82,8 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
         style={{ width: "80%", height: "60%" }}
       />
       <GoMakeDeleteModal
-        icon={<WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />}
+        // icon={<WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />}
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openRejectModal}
@@ -91,8 +93,9 @@ const ButtonsConfirmContainer = ({ isMobile }) => {
         onClickDelete={onClickReject}
         style={{ width: "unset" }}
       />
-        <GoMakeDeleteModal
-        style={{width:"90%"}}
+      <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
+        style={{ width: "90%" }}
         title={t("sales.quote.approveOffer")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={approveModal}

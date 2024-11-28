@@ -14,6 +14,7 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { ModalType } from "@/enums";
 
 const BusinessNewWidget = ({
   values,
@@ -122,8 +123,8 @@ const BusinessNewWidget = ({
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
               : quoteStateValue?.client?.name
-              ? quoteStateValue?.client?.name
-              : t("sales.quote.selectBusinessName")
+                ? quoteStateValue?.client?.name
+                : t("sales.quote.selectBusinessName")
           }
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
@@ -273,31 +274,31 @@ const BusinessNewWidget = ({
         )}
         {values?.documentAddresses?.length > 0
           ? !isQuoteConfirmation &&
-            canEditDocument && (
-              <div style={classes.addNewAddressStyle} onClick={() => null}>
-                <MinusIcon />
-                <div
-                  style={classes.addNewAddressTextStyle}
-                  onClick={() =>
-                    onClickDeleteAddress(values?.documentAddresses[0])
-                  }
-                >
-                  {t("sales.quote.removeAddress")}
-                </div>
+          canEditDocument && (
+            <div style={classes.addNewAddressStyle} onClick={() => null}>
+              <MinusIcon />
+              <div
+                style={classes.addNewAddressTextStyle}
+                onClick={() =>
+                  onClickDeleteAddress(values?.documentAddresses[0])
+                }
+              >
+                {t("sales.quote.removeAddress")}
               </div>
-            )
+            </div>
+          )
           : !isQuoteConfirmation &&
-            canEditAddress && (
-              <div style={classes.addNewAddressStyle}>
-                <PlusNewIcon />
-                <div
-                  style={classes.addNewAddressTextStyle}
-                  onClick={() => setOpenModal(true)}
-                >
-                  {t("sales.quote.addAddress")}
-                </div>
+          canEditAddress && (
+            <div style={classes.addNewAddressStyle}>
+              <PlusNewIcon />
+              <div
+                style={classes.addNewAddressTextStyle}
+                onClick={() => setOpenModal(true)}
+              >
+                {t("sales.quote.addAddress")}
               </div>
-            )}
+            </div>
+          )}
         {!isQuoteConfirmation && (
           <AddressModal
             isUpdate={values?.documentAddresses?.length > 0}
@@ -324,6 +325,7 @@ const BusinessNewWidget = ({
         icon={
           <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
         }
+        modalType={ModalType.WARNING}
         openModal={openChangeClientModal}
         onClose={onClickCloseChangeClientModal}
         title={t("products.profits.titleChangeClient")}

@@ -1,6 +1,7 @@
 import { GoMakeDeleteModal } from "@/components";
 import { IconButton, Tooltip } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { ModalType } from "@/enums";
 
 const GoMakeDeleteMaterialModal = ({
   onOpen,
@@ -21,6 +22,7 @@ const GoMakeDeleteMaterialModal = ({
         <GoMakeDeleteModal
           title={"Delete Sheet"}
           yesBtn={"Delete"}
+          modalType={ModalType.DELETE}
           openModal={openModal}
           onClose={onClose}
           subTitle={subTitle}

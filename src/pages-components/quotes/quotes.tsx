@@ -45,6 +45,7 @@ import { createGlobalStyle } from "styled-components";
 import { CancelReceiptModal } from "@/widgets/quote-new/buttons-container/payment/cancel-receipt-modal/cancel-receipt-modal";
 import { ExcelMenu } from "./widgets/excel-menu/excel-menu";
 import { DotIcon } from "@/icons";
+import { ModalType } from "@/enums";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -300,12 +301,12 @@ const QuotesListPageWidget = ({
                         {Object.keys(router.query).filter(
                           (key) => key !== "pageNumber"
                         ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
-                        )}
+                            <div
+                              style={{ position: "absolute", top: -5, right: -1 }}
+                            >
+                              <DotIcon />
+                            </div>
+                          )}
                       </IconButton>
                       <GoMakeMenu
                         handleClose={handleClose}
@@ -427,7 +428,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder &&
                               documentType !== DOCUMENT_TYPE.receipt && (
                                 <div style={classes.statusFilterContainer}>
@@ -473,7 +474,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder && (
                                 <div
                                   style={{
@@ -575,7 +576,7 @@ const QuotesListPageWidget = ({
                 documentType === DOCUMENT_TYPE.quote
                   ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
                   : documentType === DOCUMENT_TYPE.order
-                  ? [
+                    ? [
                       "6%",
                       "5%",
                       "5%",
@@ -591,32 +592,32 @@ const QuotesListPageWidget = ({
                       "5%",
                       "5%",
                     ]
-                  : documentType === DOCUMENT_TYPE.purchaseInvoice ||
-                    documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
-                  ? [
-                      "7%",
-                      "15%",
-                      "10%",
-                      "13%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "5%",
-                    ]
-                  : [
-                      "7%",
-                      "8%",
-                      "8%",
-                      "8%",
-                      "10%",
-                      "26%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "3%",
-                    ]
+                    : documentType === DOCUMENT_TYPE.purchaseInvoice ||
+                      documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+                      ? [
+                        "7%",
+                        "15%",
+                        "10%",
+                        "13%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "5%",
+                      ]
+                      : [
+                        "7%",
+                        "8%",
+                        "8%",
+                        "8%",
+                        "10%",
+                        "26%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "3%",
+                      ]
               }
             />
           </div>
@@ -649,12 +650,12 @@ const QuotesListPageWidget = ({
         />
       )}
       <GoMakeDeleteModal
-        icon={<WarningAmberIcon style={classes.warningIconStyle} />}
+        modalType={ModalType.WARNING}
         title={t("sales.quote.titleModal")}
+        subTitle={t("sales.quote.subTitleModal")}
         yesBtn={t("sales.quote.changeStatus")}
         openModal={openModal}
         onClose={onClickCloseModal}
-        subTitle={t("sales.quote.subTitleModal")}
         onClickDelete={() => updateQuoteStatus()}
       />
       <GoMakeModal
@@ -683,9 +684,10 @@ const QuotesListPageWidget = ({
         />
       )}
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openIrrelevantCancelModal}
@@ -697,9 +699,10 @@ const QuotesListPageWidget = ({
         }
       />
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPriceCancelModal}
@@ -709,9 +712,10 @@ const QuotesListPageWidget = ({
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
       />
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.WARNING}
         title={t("sales.quote.titleCloseModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openCloseOrderModal}
@@ -732,9 +736,10 @@ const QuotesListPageWidget = ({
         />
       </GoMakeDeleteModal>
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openDeliveryTimeCancelModal}
@@ -788,6 +793,7 @@ const QuotesListPageWidget = ({
         style={{ width: "35%" }}
       ></GoMakeDeleteModal>
       <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
         title={`Do you want to print the delivery note with prices ?`}
         openModal={openPrintPDFModal}
         yesBtn={t("sales.quote.yesBtn")}
@@ -803,6 +809,7 @@ const QuotesListPageWidget = ({
       />
       <GoMakeDeleteModal
         icon={<WarningAmberIcon style={classes.cancelIconStyle} />}
+        modalType={ModalType.WARNING}
         title={t("payment.cancelReceipt")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openCancelReceiptModal}
@@ -810,7 +817,7 @@ const QuotesListPageWidget = ({
         onClickDelete={onClickCancelReceipt}
       />
       <GoMakeDeleteModal
-        hideIcon
+        modalType={ModalType.EDIT}
         title={"sales.moveOrderToReadyWhenCloseOrderTitle"}
         yesBtn={t("sales.moveToReadyAndCloseOrder")}
         cancelBtn={t("sales.closeOrderWithoutMoveToReady")}

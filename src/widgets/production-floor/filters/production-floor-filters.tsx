@@ -26,6 +26,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import { useStyle } from "./style";
 import { useRouter } from "next/router";
 import { GoMakeDeleteModal } from "@/components";
+import { ModalType } from "@/enums";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -423,6 +424,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
         )}
       </Box>
       <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
         openModal={openModal}
         onClose={handleCancel}
         onClickDelete={handleDeleteConfirm}

@@ -125,13 +125,15 @@ const useStyle = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "0 10px",
-        width: "fit-content",
+        padding: "8px 12px",
+        width: 140,
         height: 36,
         border: "1px solid #D0D5DD",
         borderRadius: 8,
         boxShadow: "none",
-        backgroundColor: "#FFF"
+        backgroundColor: "#FFF",
+        color:"#344054",
+        ...FONT_FAMILY.Inter(500, 14)
       }
 
     };

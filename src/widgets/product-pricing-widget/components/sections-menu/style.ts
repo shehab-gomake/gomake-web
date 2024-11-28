@@ -8,13 +8,13 @@ const useStyle = () => {
         marginTop: 4,
       },
       bodyContainer: {
-        minWidth: 236,
-        padding: "2px 10px"
+        minWidth: 140,
+        padding: 0
       },
       menuTabStyle: {
         padding: "8px 10px",
-        ...FONT_FAMILY.Lexend(500, 12),
-        color: "#8283BE",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: "#182230",
         cursor: "pointer",
       },
       menuRowStyle: {
