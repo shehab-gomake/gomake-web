@@ -351,7 +351,7 @@ const SettingsWidget = ({
         {t("products.addProduct.admin.style")}
       </div>
       <div style={clasess.firstContainer}>
-        <div style={clasess.itemOnFirstContainer}>
+        {/* <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.noteColor")}
           </div>
@@ -375,8 +375,8 @@ const SettingsWidget = ({
               </div>
             )}
           </div>
-        </div>
-        <div style={clasess.itemOnFirstContainer}>
+        </div> */}
+        {/* <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.textColor")}
           </div>
@@ -400,8 +400,7 @@ const SettingsWidget = ({
               </div>
             )}
           </div>
-        </div>
-
+        </div> */}
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.jobColor")}

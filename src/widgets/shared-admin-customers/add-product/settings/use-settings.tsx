@@ -13,6 +13,11 @@ import { v4 as uuidv4 } from "uuid";
 import { EProductClient, ProductClient } from "./settings-data";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { useSetRecoilState } from "recoil";
+import {
+  EWidgetProductSettingsTabs,
+  selectedProductsTabState,
+} from "@/widgets/products-settings-widget/enums";
 
 const useSettings = ({
   onClickParametersTab,
@@ -34,6 +39,9 @@ const useSettings = ({
     alertFault,
     alertFaultDelete,
   } = useSnackBar();
+  const setSelectedTabValue = useSetRecoilState<number>(
+    selectedProductsTabState
+  );
   const [RandomId, setRandomId] = useState();
   const [selectedProductId, setSelectedProductId] = useState<string>("");
   const [openDeleteRowModal, setOpenDeleteRowModal] = useState<boolean>(false);
@@ -52,6 +60,7 @@ const useSettings = ({
   useEffect(() => {
     setRandomId(uuidv4());
   }, []);
+
   const [allProductSKU, setAllProductSKU] = useState<any>();
   const [allTemplate, setAllTemplate] = useState<any>();
   const [allGroups, setAllGroups] = useState<any>();
@@ -174,12 +183,8 @@ const useSettings = ({
         }
       );
       if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
-        navigate("/settings/products");
+        alertSuccessAdded();
+        setSelectedTabValue(EWidgetProductSettingsTabs.PRODUCT_MANAGMENT);
       } else {
         if (res?.errors?.statusCode === 2627) {
           alertFault(t("products.offsetPrice.admin.productAlreadyExists"));
@@ -226,11 +231,7 @@ const useSettings = ({
         }
       );
       if (res?.success) {
-        setSnackbarStateValue({
-          state: true,
-          message: t("modal.addedSusuccessfully"),
-          type: "sucess",
-        });
+        alertSuccessAdded();
         navigate(`/settings/products/edit/${RandomId}?isParameter=${true}`);
         onClickParametersTab();
       } else {
