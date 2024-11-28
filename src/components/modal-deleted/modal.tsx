@@ -1,10 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { IconButton, Modal, Tooltip } from "@mui/material";
-import { Wastebasket } from "@/icons";
+import { EditIcon, AddIcon, Wastebasket, WarningIcon, AddModalIcon, EditModalIcon, DuplicateModalIcon, WarningModalIcon } from "@/icons";
 import { GomakePrimaryButton } from "../button";
 import { useStyle } from "./style";
-import { RoundedCloseIcon } from "../modal/icon/close";
 import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
+import { DuplicateIcon } from "../icons/duplicate-icon";
+import { ModalType } from "@/enums/tabs-icon-enums";
 
 const GoMakeDeleteModal = ({
   openModal,
@@ -13,16 +14,98 @@ const GoMakeDeleteModal = ({
   subTitle,
   onClickDelete,
   hideIcon = false,
-  title = "modal.confirmDelete",
-  yesBtn = "modal.delete",
+  title,
+  yesBtn,
   onClickCancel,
   children,
-  withClose,
-  withRoundedCloseIcon = true,
+  withClose = true,
+  withRoundedCloseIcon = false,
+  modalType = ModalType.DELETE,
   ...props
 }: any) => {
-  const { classes } = useStyle();
+  const { classes } = useStyle({ modalType });
   const { t } = useTranslation();
+
+
+
+  const _renderIcon = (modalType: ModalType) => {
+    if (modalType === ModalType.DELETE) {
+      return <Wastebasket width={34} height={34} color="#D92D20" />;
+    }
+    if (modalType === ModalType.DUPLICATE) {
+      return <DuplicateModalIcon />;
+    }
+    if (modalType === ModalType.EDIT) {
+      return <EditModalIcon />;
+    }
+    if (modalType === ModalType.ADD) {
+      return <AddModalIcon />;
+    }
+    if (modalType === ModalType.WARNING) {
+      return <WarningModalIcon />;
+    }
+  };
+
+  const _renderTitle = (modalType: ModalType) => {
+    if (modalType === ModalType.DELETE) {
+      return t("modal.deleteModalTitle");
+    }
+    if (modalType === ModalType.DUPLICATE) {
+      return t("modal.duplicateModalTitle");
+    }
+    if (modalType === ModalType.EDIT) {
+      return t("modal.editModalTitle");
+    }
+    if (modalType === ModalType.ADD) {
+      return t("modal.addModalTitle");
+    }
+    if (modalType === ModalType.WARNING) {
+      return t("modal.warningModalTitle");
+    }
+  };
+
+  const _renderSubTitle = (modalType: ModalType) => {
+    if (modalType === ModalType.DELETE) {
+      return t("modal.deleteModalSubTitle");
+    }
+    if (modalType === ModalType.DUPLICATE) {
+      return t("modal.duplicateModalSubTitle");
+    }
+    if (modalType === ModalType.EDIT) {
+      return t("modal.editModalSubTitle");
+    }
+    if (modalType === ModalType.ADD) {
+      return t("modal.addModalSubTitle");
+    }
+    if (modalType === ModalType.WARNING) {
+      return t("modal.warningModalSubTitle");
+    }
+  };
+  const _renderConfirmBtn = (modalType: ModalType) => {
+    if (modalType === ModalType.DELETE) {
+      return t("modal.delete");
+    }
+    if (modalType === ModalType.DUPLICATE) {
+      return t("modal.duplicateConfirmBtn");
+    }
+    if (modalType === ModalType.EDIT) {
+      return t("modal.editConfirmBtn");
+    }
+    if (modalType === ModalType.ADD) {
+      return t("modal.addConfirmBtn");
+    }
+    if (modalType === ModalType.WARNING) {
+      return t("modal.warningConfirmBtn");
+    }
+  };
+  const _renderCancelBtn = (modalType: ModalType) => {
+    if (modalType === ModalType.DELETE) {
+      return t("modal.cancel");
+    }
+    else {
+      return t("modal.discard");
+    }
+  };
 
   const handleCancelClick = () => {
     if (onClickCancel) {
@@ -43,21 +126,23 @@ const GoMakeDeleteModal = ({
       }}
     >
       <div style={{ ...classes.container, ...props.style }}>
+
         <div style={classes.content}>
-          {!hideIcon && (
-            <div style={classes.icon}>{props.icon || <Wastebasket />}</div>
-          )}
-          <div style={classes.title}>{t(title)}</div>
-          <div style={classes.subTitle}>{subTitle}</div>
           {withClose && (
             <div style={classes.closeIcon} onClick={onClose}>
               <Tooltip title={t("modal.close")}>
                 <IconButton>
-                  {withRoundedCloseIcon ? <RoundedCloseIcon /> : <CloseIcon />}
+                  {withRoundedCloseIcon ? <CloseIcon /> : <CloseIcon />}
                 </IconButton>
               </Tooltip>
             </div>
           )}
+          {!hideIcon && (
+            <div style={classes.icon}>{props.icon || _renderIcon(modalType)}</div>
+          )}
+          <div style={classes.title}>{title ? t(title) : _renderTitle(modalType)}</div>
+          <div style={classes.subTitle}>{subTitle ? t(subTitle) : _renderSubTitle(modalType)}</div>
+
           {children && <div style={classes.children}>{children}</div>}
           <div style={classes.btnsContainer}>
             <GomakePrimaryButton
@@ -67,10 +152,10 @@ const GoMakeDeleteModal = ({
                 onClose();
               }}
             >
-              {t(yesBtn)}
-            </GomakePrimaryButton>{" "}
+              {yesBtn ? t(yesBtn) : _renderConfirmBtn(modalType)}
+            </GomakePrimaryButton>
             <GomakePrimaryButton style={classes.cancelBtn} onClick={handleCancelClick}>
-              {props?.cancelBtn || t("materials.buttons.cancel")}
+              {props?.cancelBtn || _renderCancelBtn(modalType)}
             </GomakePrimaryButton>
           </div>
         </div>

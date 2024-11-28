@@ -20,6 +20,7 @@ import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import { ActionsListMenu } from "./components/actions-menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SectionNameListMenu } from "./components/sections-menu";
+import { ModalType } from "@/enums";
 
 const PricingWidget = ({
   workFlows,
@@ -245,11 +246,9 @@ const PricingWidget = ({
       )}
 
       <GoMakeDeleteModal
-        title={t("are you sure you want to add this action?")}
-        yesBtn={t("sales.quote.add")}
+        modalType={ModalType.ADD}
         openModal={isAddNewAction}
         onClose={onClickCloseAddNewAction}
-        hideIcon
         onClickDelete={onClickAddActionToWorkFlow}
         onClickCancel={() => setActionNameSelected(null)}
 
