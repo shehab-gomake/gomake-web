@@ -12,6 +12,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { GoMakeIcon } from "@/icons/side-list-icons/gomake";
 
 const LeftSideLayout = (customGap) => {
   const { t } = useTranslation();
@@ -22,23 +23,15 @@ const LeftSideLayout = (customGap) => {
   const { CheckPermission } = useUserPermission();
   const { classes } = useStyle({ navStatus, customGap });
   const [myProfileLogo, setMyProfileLogo] = useState("");
+  const [hoverTimeout, setHoverTimeout] = useState(null);
 
   useEffect(() => {
     setMyProfileLogo(localStorage.getItem("systemLogo"));
   }, []);
 
-  // useEffect(() => {
-  //   const isHover = localStorage.getItem("isHover");
-  //   if (isHover && isHover == "true") {
-  //     setIsHover(true);
-  //     setNavStatus({ isClosed: false });
-  //   }
-  // }, []);
-
   useEffect(() => {
     const isHover = localStorage.getItem("isHover");
     const currentURL = window.location.href;
-
     const isTargetURL = currentURL.includes("goautomation.");
 
     if (isTargetURL) {
@@ -67,12 +60,22 @@ const LeftSideLayout = (customGap) => {
     return true;
   };
 
+  const handleMouseEnter = () => {
+    const timeout = setTimeout(() => {
+      setNavStatus({ isClosed: false });
+    }, 500); // Adjust the delay (in milliseconds) here
+    setHoverTimeout(timeout);
+  };
+
+  const handleMouseLeave = () => {
+    clearTimeout(hoverTimeout);
+  };
+
   return (
     <div
       style={classes.leftContainer}
-      onMouseEnter={() => {
-        setNavStatus({ isClosed: false });
-      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       {!navStatus.isClosed && (
         <div
@@ -99,32 +102,23 @@ const LeftSideLayout = (customGap) => {
           <LockIcon style={{ color: "#FFF", width: 20, height: 20 }} />
         </div>
       )}
-      <Link href="/" passHref>
+      <Link
+        href="/"
+        passHref
+        style={{ alignSelf: navStatus.isClosed ? "center" : "flex-start" }}
+      >
         <div style={classes.logoContainer}>
           {myProfileLogo && (
             <Image
               src={myProfileLogo}
               alt="logo"
               style={{ objectFit: "contain" }}
-              width={80}
-              height={80}
+              width={73}
+              height={73}
             />
           )}
         </div>
       </Link>
-
-      {/* <div style={classes.logoContainer}>
-        <Image
-          src={
-            myProfileLogo
-              ? myProfileLogo
-              : "https://i.ibb.co/wzpwSq6/Group-1239.png"
-          }
-          alt="logo"
-          width={80}
-          height={80}
-        />
-      </div> */}
       <div style={classes.tabsContainer}>
         {tabs1.map((tab, i) => {
           if (tab.isLine) {
@@ -172,9 +166,12 @@ const LeftSideLayout = (customGap) => {
           })
         )}
       </div>
+      <div style={{ ...classes.lineContainer, paddingBottom: "10px" }}>
+        <div style={classes.line} />
+      </div>
       <div style={classes.poweredContainer}>
         <div style={classes.poweredByLbl}>{t("login.poweredBy")}</div>
-        <div style={classes.goMakeByLbl}>{t("login.GoMake")}</div>
+        <GoMakeIcon />
       </div>
     </div>
   );
