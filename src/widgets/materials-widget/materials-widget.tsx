@@ -32,6 +32,7 @@ import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list"
 import { UpdatedNumburingModal } from "./components/updated-numbering/updated-numbering-modal";
 import { CreatePurchaseOrderModal } from "./components/create-purchase-order-modal/create-purchase-order-modal";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
+import { ModalType } from "@/enums";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -282,11 +283,13 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       <UpdatedNumburingModal isAdmin={props.isAdmin} />
       <CreatePurchaseOrderModal isAdmin={props.isAdmin} />
       <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
         openModal={openDeleteRowModal}
         onClose={onClickCloseDeleteRowModal}
         onClickDelete={() => onDeleteCategory(selectedCategory?.categoryKey)}
       />
       <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
         openModal={openDeleteTableRowModal}
         onClose={onClickCloseDeleteTableRowModal}
         onClickDelete={() => onDeleteCategoryRow(selectedTableRow?.id)}
@@ -307,6 +310,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         openModal={openPriceModal}
         onClose={onClickClosePriceModal}
         hideIcon
+        modalType={ModalType.EDIT}
         title={t("this update will effects the profit profile")}
         subTitle={t("do you want to fix the profits to save the prices in the profit profile ?")}
         yesBtn={t("Yes fix the profits")}

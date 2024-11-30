@@ -302,6 +302,10 @@ input::placeholder {
   background-color: #ebecff;
 }
 
+.action-menu-item:hover {
+  background-color: #F9FAFB;
+}
+
 .MuiTabs-flexContainer {
   gap: 25px !important;
 }

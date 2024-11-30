@@ -5,6 +5,7 @@ import { MoreCircleIcon } from "@/icons";
 import { GoMakeDeleteModal, GoMakeMenu } from "@/components";
 import { useRecoilValue } from "recoil";
 import { profitsState } from "../../../store/profits";
+import { ModalType } from "@/enums";
 
 const ProductTestListMoreCircleWidget = ({ item }: any) => {
   const {
@@ -42,6 +43,7 @@ const ProductTestListMoreCircleWidget = ({ item }: any) => {
             ? t("products.profits.deleteBaseProduct")
             : t("products.profits.deleteProduct")
         }
+        modalType={ModalType.DELETE}
         yesBtn={t("products.profits.delete")}
         openModal={openDeleteModal}
         onOpen={onOpenDeleteModal}
@@ -50,8 +52,8 @@ const ProductTestListMoreCircleWidget = ({ item }: any) => {
           item?.item?.isBaseCase
             ? t("products.profits.subTitleDeleteBaseProduct")
             : `${t("products.profits.subTitleDeleteProduct", {
-                name: `${item?.name}`,
-              })}?`
+              name: `${item?.name}`,
+            })}?`
         }
         onClickDelete={() => profitsStateValue?.deleteTestProductResult(item)}
       />

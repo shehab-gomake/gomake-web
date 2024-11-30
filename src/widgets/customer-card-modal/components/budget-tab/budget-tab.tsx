@@ -11,6 +11,7 @@ import { useStyle } from "./style";
 import { GoMakeDeleteModal } from "@/components";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { ModalType } from "@/enums";
 
 const BudgetTab = ({ state }) => {
     const { classes } = useStyle();
@@ -96,6 +97,7 @@ const BudgetTab = ({ state }) => {
 
             <GoMakeDeleteModal
                 hideIcon={true}
+                modalType={ModalType.ADD}
                 title={t("do you want to create a invoice ?")}
                 yesBtn={t("create invoice")}
                 cancelBtn={t("modal.cancel")}

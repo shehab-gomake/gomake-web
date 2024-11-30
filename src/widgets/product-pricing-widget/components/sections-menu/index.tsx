@@ -24,7 +24,7 @@ const SectionNameListMenu = ({ handleClose, open, anchorEl, sectionNames, handle
       <div style={classes.bodyContainer}>
         {
           sectionNames?.map((sectionName, index) => (
-            <div key={index} style={{ backgroundColor: selectedSort === SortByTypes.Date ? "#EBECFF" : "", ...classes.menuTabStyle }} className="table-sorting"
+            <div key={index} style={classes.menuTabStyle} className="action-menu-item"
               onClick={(e) => {
                 handleOpen(e)
                 setSectionNames(sectionName)

@@ -1,94 +1,121 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
-
-const useStyle = () => {
-  const {theme, primaryColor, neutralColor, errorColor } = useGomakeTheme();
-
+import { useTranslation } from "react-i18next";
+import { ModalType } from "@/enums";
+const useStyle = ({modalType}: {modalType: ModalType}) => {
+  const { t } = useTranslation();
+  const {theme, primaryColor,  errorColor } = useGomakeTheme();
+  const dir: "rtl" | "ltr" = t("direction");
+  const RTL = dir === 'rtl';
   const classes = useMemo(() => {
     return {
       container: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        width: "45%",
-        borderRadius: 20,
+        width: "-webkit-fill-available",
+        minWidth: 600,
+        borderRadius: 12,
         backgroundColor: "#FFFFFF",
         position: "absolute" as "absolute",
         left: "50%",
         top: "50%",
         transform: "translate(-50%, -50%)",
         boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.05)",
+        padding: 24,
+
       },
       content: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
-        padding: 30,
-        width: "80%",
+        width: "100%",
         position: "relative" as "relative",
       },
       icon: {
         display: "flex",
         flexDirection: "column" as "column",
-        marginBottom: 10,
+        marginBottom: 16,
       },
       title: {
-        ...FONT_FAMILY.Lexend(700, 16),
-        color: primaryColor(500),
-        marginBottom: 14,
+        ...FONT_FAMILY.Lexend(600, 18),
+        color: "#101828",
+        marginBottom: 4,
         textAlign: "center" as "center",
       },
       closeIcon: {
         display: "flex",
-        justifyContent: "flex-end",
-        alignItems: "center",
         cursor: "pointer" as "pointer",
+        alignSelf: "flex-end",
+        width: "fit-content",
         position: "absolute" as "absolute",
-        top:5,
-        right:-60,
+        top: 0,
+        right: 0,
       },
       subTitle: {
-        ...FONT_FAMILY.Lexend(400, 12),
-        color: neutralColor(500),
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: "#475467",
         textAlign: "center" as "center",
         marginBottom: 33,
         width: "89%",
       },
       btnsContainer: {
         display: "flex",
-        flexDirection: "row" as "row",
+        flexDirection:  "row-reverse" as  "row-reverse",
         justifyContent: "center",
         alignItems: "center",
         gap: 11,
         width: "100%",
       },
       confirmBtn: {
-       // width: "50%",
-       height: 35,
+       height: 44,
        lineHeight:"10px",
-        borderRadius: "10px",
-        ...FONT_FAMILY.Lexend(500, 10),
-        backgroundColor: primaryColor(500),
+       borderRadius: "15px",
+        ...FONT_FAMILY.Lexend(600, 16),
+        backgroundColor: modalType === ModalType.DELETE ? "#D92D20" : "#2E3092",
+        border: `1px solid ${modalType === ModalType.DELETE ? "#D92D20" : "#2E3092"}`,
+        color: "#FFF",
       },
       cancelBtn: {
-      //  width: "50%",
-        height: 35,
-        borderRadius: "10px",
-        ...FONT_FAMILY.Lexend(500, 10),
-        backgroundColor: errorColor(500),
+        height: 44,
+        borderRadius: "15px",
+        ...FONT_FAMILY.Lexend(600, 16),
+        backgroundColor: "#FFF",
+        color: "#344054",
+        border: `1px solid #D0D5DD`,
+        
       },
       iconStyle:{
-        width: 120,
-        height: 120,
+        width: 60,
+        height: 60,
         color: errorColor(300) 
       },
       children:{
         marginBottom: 20,
-      }
+      },
+      yesBtn: {
+        height: 44,
+        lineHeight:"18px",
+        borderRadius: "8px",
+         ...FONT_FAMILY.Lexend(600, 16),
+         backgroundColor:  "#2E3092",
+         border: `1px solid #2E3092`,
+         color: "#FFF",
+       },
+       noBtn: {
+        textAlign: "center",
+        height: 44,
+        borderRadius: "8px",
+        lineHeight:"18px",
+        ...FONT_FAMILY.Lexend(600, 16),
+        backgroundColor: "#FFF",
+        color: "#272977",
+        border: `1px solid #7375CD`,
+       },
     };
-  }, [theme]);
+  }, [theme,RTL,modalType]);
 
   return {
     classes,

@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { productsForDropDownList } from "@/store";
 import { materialCategorySuppliersState } from "../../state";
+import { ModalType } from "@/enums";
 
 interface IProps {
   parameterKey: string;
@@ -86,6 +87,7 @@ const SelectInput = ({ values, parameterKey, id, value, isAdmin }: IProps) => {
         options={options}
       />
       <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
         openModal={openDeleteTableRowModal}
         onClose={onClickCloseDeleteTableRowModal}
         hideIcon

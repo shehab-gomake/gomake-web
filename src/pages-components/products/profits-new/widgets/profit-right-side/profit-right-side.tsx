@@ -13,6 +13,7 @@ import { AddRuleModal } from "../add-rule-modal";
 import { useStyle } from "./style";
 import { AdditinalProfitMenu } from "../additinal-profit-menu";
 import { useTranslation } from "react-i18next";
+import { ModalType } from "@/enums";
 
 const ProfitRightSideWidget = ({
     minimumValue,
@@ -216,6 +217,7 @@ const ProfitRightSideWidget = ({
                 }
             />
             <GoMakeDeleteModal
+                modalType={ModalType.DELETE}
                 openModal={openDeleteRowModal}
                 onClose={onClickCloseDeleteRowModal}
                 onClickDelete={() =>
@@ -223,6 +225,7 @@ const ProfitRightSideWidget = ({
                 }
             />
             <GoMakeDeleteModal
+                modalType={ModalType.DELETE}
                 openModal={openDeleteAdditionalRowModal}
                 onClose={onClickCloseDeleteAdditionalRowModal}
                 onClickDelete={() =>
