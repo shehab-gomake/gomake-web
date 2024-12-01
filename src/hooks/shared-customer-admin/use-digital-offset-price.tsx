@@ -359,8 +359,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (
         mySelectedWorkFlow &&
         mySelectedWorkFlow.totalPrice &&
-        mySelectedWorkFlow.totalPrice.values
+        mySelectedWorkFlow.totalPrice.values && !isNaN(mySelectedWorkFlow.totalPrice.values[0])
       ) {
+        debugger
         setCurrentProductItemValueTotalPrice(
           parseFloat(mySelectedWorkFlow.totalPrice.values[0])
         );
@@ -442,9 +443,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           calculationProgress.currentWorkFlowsCount
           ? signalRPricingResult.currentWorkFlowIndex
           : calculationProgress.currentWorkFlowsCount + 1;
+      debugger
       if (
         signalRPricingResult.isCalculationFinished &&
-        signalRPricingResult.totalPrice
+        signalRPricingResult.totalPrice && !isNaN(signalRPricingResult.totalPrice)
       ) {
         setCurrentProductItemValueTotalPrice(
           parseFloat(signalRPricingResult.totalPrice)
