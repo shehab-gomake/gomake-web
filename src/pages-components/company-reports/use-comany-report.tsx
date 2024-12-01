@@ -2,12 +2,9 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getAllDataPrintHousesReports } from "@/services/api-service/company-report/get-print-houses-report";
-import { DirectboxSendIcon } from "@/icons";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { generateCalculateProductsExcelForPrintHousesApi } from "@/services/hooks";
-import { IconButton } from "@mui/material";
 import { OptionsComponent } from "@/pages-components/company-reports/components/options-component";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { printHousesState } from "@/pages-components/company-reports/components/types/state";
 import {
   IPrintHouse,
@@ -38,11 +35,10 @@ const initialPrintHouseState: IPrintHouse = {
 export const useCompanyReport = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { primaryColor } = useGomakeTheme();
   const { alertFaultUpdate, alertSuccessUpdate, alertFault, alertSuccess } =
     useSnackBar();
-  const [, setPrintHouses] =
-    useRecoilState<{ id: string; name: string }[]>(printHousesState);
+  const setPrintHouses =
+    useSetRecoilState<{ id: string; name: string }[]>(printHousesState);
   const [AllReport, setAllReport] = useState([]);
   const [patternSearch, setPatternSearch] = useState<string>("");
   const [openPaymentDetails, setOpenPaymentDetails] = useState<boolean>(false);
@@ -50,6 +46,8 @@ export const useCompanyReport = () => {
     initialPrintHouseState
   );
   const [selectedPrintHouseId, setSelectedPrintHouseId] = useState<string>("");
+  const [countries, setCountries] = useState<{ id: string; name: string }[]>();
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   const handleOpenModal = (printHouse) => {
     setSelectedPrintHouse(printHouse);
@@ -77,10 +75,10 @@ export const useCompanyReport = () => {
   const tableHeaders = [
     t("companyReports.companyName"),
     t("companyReports.Domain"),
+    t("profileSettings.country"),
     t("companyReports.PhoneNumber"),
     t("companyReports.Email"),
     t("companyReports.StartingDate"),
-    t("companyReports.Status"),
     "",
     t("Pay Status"),
     "",
@@ -91,7 +89,6 @@ export const useCompanyReport = () => {
     t("companyReports.Orders"),
     t("companyReports.OrderItems"),
     t("companyReports.EstimationSuccessRate"),
-    t("companyReports.testCalculation"),
     t(""),
   ];
 
@@ -116,46 +113,48 @@ export const useCompanyReport = () => {
             name: printHouse.printHouseName,
           }))
         );
+        setCountries(
+          res.data
+            .map((printHouse) => printHouse?.country ?? "no")
+            .filter(
+              (country, index, self) =>
+                country !== "no" && self.indexOf(country) === index
+            )
+            .map((country) => ({
+              value: country,
+              label: country,
+            }))
+        );
+
         const formattedData = res.data.map((item) => [
           item?.printHouseName,
           item?.domain,
-          item?.phone,
-          item?.mail,
+          item?.country ?? "-",
+          item?.phone ?? "-",
+          item?.mail ?? "-",
           item.creationDate
             ? new Date(item.creationDate).toLocaleDateString()
             : "N/A",
-          item.status,
           "",
           t(`companyReports.${PrintHousePayStatus[item?.printHousePayStatus]}`),
           "",
-          item.lastActivity
+          item?.lastActivity
             ? new Date(item.lastActivity).toLocaleDateString()
-            : "N/A",
+            : "-",
           item.calculationsCount,
           item?.quotesCount,
           item?.quoteItemsCount,
           item?.orderCount,
           item?.orderItemsCount,
           item?.successRate,
-          <IconButton
-            type="button"
-            onClick={() =>
-              generateCalculateProductsExcelForPrintHousesWithPrintHouseId(
-                item?.id
-              )
-            }
-          >
-            <DirectboxSendIcon
-              stroke={primaryColor(500)}
-              width={20}
-              height={20}
-            />
-          </IconButton>,
           <OptionsComponent
             printHouse={item}
             handleOpenModal={handleOpenModal}
             handleClickMakePayment={handleMakePaymentClick}
             handleOpenSendPaymentModal={handleOpenSendPaymentModal}
+            handleClickTestCalculation={
+              generateCalculateProductsExcelForPrintHousesWithPrintHouseId
+            }
           />,
         ]);
         setAllReport(formattedData);
@@ -235,5 +234,8 @@ export const useCompanyReport = () => {
     openSendPaymentModal,
     handleCloseSendPaymentModal,
     selectedPrintHouseId,
+    countries,
+    selectedCountry,
+    setSelectedCountry,
   };
 };

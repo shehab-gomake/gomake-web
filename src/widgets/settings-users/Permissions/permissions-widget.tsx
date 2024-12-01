@@ -9,45 +9,48 @@ import { GoMakeModal } from "@/components";
 import { AddUpdateRole } from "@/widgets/settings-users/Permissions/components/add-update-role";
 import { EActions } from "@/widgets/settings-users/Permissions/enum/actions";
 
-
 const PermissionsWidget = () => {
-    const { t } = useTranslation();
-    const {
-        permissionsTable,
-        onSelectTab,
-        onChangePermissionSearch,
-        getPermissionRolesRelations,
-        tableHeaders,
-        modalState,
-        setModalState,
-        setModalInputValue,
-        modalInputValue,
-        tabs,
-        updateRoleName
-    } = usePermissions();
+  const { t } = useTranslation();
+  const {
+    permissionsTable,
+    onSelectTab,
+    onChangePermissionSearch,
+    getPermissionRolesRelations,
+    tableHeaders,
+    modalState,
+    setModalState,
+    setModalInputValue,
+    modalInputValue,
+    tabs,
+    updateRoleName,
+  } = usePermissions();
 
-    useEffect(() => {
-        getPermissionRolesRelations().then();
-    }, [])
+  useEffect(() => {
+    getPermissionRolesRelations().then();
+  }, []);
 
-    return (
-        <Stack direction={'column'} gap={'5px'}>
-            <Stack gap={"10px"}>
-                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                    <SearchInputComponent onChange={onChangePermissionSearch} />
-                </div>
-                <SecondaryTabsComponent tabs={tabs()} onSelectTab={onSelectTab} withBackGround={false} />
-            </Stack>
-            <Stack display={'grid'} padding={'5px'}>
-                <PrimaryTable
-                    stickyFirstCol={true}
-                    stickyHeader={true}
-                    maxHeight={"calc(100vh - 375px)"}
-                    headers={tableHeaders()}
-                    rows={permissionsTable()}
-                />
-            </Stack>
-            <GoMakeModal insideStyle={{ paddingLeft: 0, paddingRight: 0, width: 500, height: 250 }}
+  return (
+    <Stack direction={"column"} gap={"5px"}>
+      <Stack gap={"10px"}>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <SearchInputComponent onChange={onChangePermissionSearch} />
+        </div>
+        <SecondaryTabsComponent
+          tabs={tabs()}
+          onSelectTab={onSelectTab}
+          withBackGround={false}
+        />
+      </Stack>
+      <Stack display={"grid"} padding={"5px"}>
+        <PrimaryTable
+          stickyFirstCol={true}
+          stickyHeader={true}
+          maxHeight={"calc(100vh - 375px)"}
+          headers={tableHeaders()}
+          rows={permissionsTable()}
+        />
+      </Stack>
+      {/* <GoMakeModal insideStyle={{ paddingLeft: 0, paddingRight: 0, width: 500, height: 250 }}
                 headerPadding={20}
                 openModal={modalState}
                 onClose={() => setModalState(false)}
@@ -56,9 +59,9 @@ const PermissionsWidget = () => {
                     onChange={(v) => {
                         setModalInputValue(v)
                     }} />
-            </GoMakeModal>
-        </Stack>
-    )
-}
+            </GoMakeModal> */}
+    </Stack>
+  );
+};
 
 export { PermissionsWidget };

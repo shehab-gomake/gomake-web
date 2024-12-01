@@ -1,5 +1,8 @@
 import {mediaSheetLossInput} from "@/widgets/machines/utils/attributes/media-inputs/media-sheet-loss-input";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {mediaSheetsCategories} from "@/widgets/machines/utils/attributes/media-inputs/media-sheets-categories";
+import {mediaWideFormatCategories} from "@/widgets/machines/utils/attributes/media-inputs/media-wide-format-categories";
+import {mediaFlatbedCategories} from "@/widgets/machines/utils/attributes/media-inputs/media-flatbed-categories";
 
 const flatbedCuttingMachine = (state: Record<string, any>) => {
     return [
@@ -73,102 +76,9 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
                 },
             ]
         },
-        {
-            name: '',
-            parameterKey: 'sheetCategories',
-            machineInputType: 'multiInput',
-            value: state.attributes?.sheetCategories ? state.attributes?.sheetCategories : {},
-            isValid: true,
-            inputs: [
-                {
-                    name: "isAvailable",
-                    label: "machineAttributes.sheetsAvailable",
-                    type: "switch",
-                    placeholder: "machineAttributes.sheetsAvailable",
-                    required: true,
-                    parameterKey: "isAvailable",
-                    options: [],
-                    value: state.attributes?.sheetCategories?.isAvailable ? state.attributes?.sheetCategories?.isAvailable : ''
-                },
-                {
-                    name: "categories",
-                    label: "machineAttributes.categories",
-                    type: "select",
-                    placeholder: "machineAttributes.categories",
-                    required: true,
-                    parameterKey: "categories",
-                    options: [],
-                    value: state?.attributes?.sheetCategories?.categories,
-                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=sheets',
-                    multiple: true,
-                    disabled: !state.attributes?.sheetCategories?.isAvailable
-                },
-            ]
-        },
-        {
-            name: '',
-            parameterKey: 'wideFormatCategories',
-            machineInputType: 'multiInput',
-            value: state.attributes?.wideFormatCategories ? state.attributes?.wideFormatCategories : {},
-            isValid: true,
-            inputs: [
-                {
-                    name: "isAvailable",
-                    label: "machineAttributes.wideFormatAvailable",
-                    type: "switch",
-                    placeholder: "machineAttributes.wideFormatAvailable",
-                    required: true,
-                    parameterKey: "isAvailable",
-                    options: [],
-                    value: state.attributes?.wideFormatCategories?.isAvailable ? state.attributes?.wideFormatCategories?.isAvailable : ''
-                },
-                {
-                    name: "categories",
-                    label: "machineAttributes.categories",
-                    type: "select",
-                    placeholder: "machineAttributes.categories",
-                    required: true,
-                    parameterKey: "categories",
-                    options: [],
-                    value: state?.attributes?.wideFormatCategories?.categories,
-                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=wideFormatMaterial',
-                    multiple: true,
-                    disabled: !state.attributes?.wideFormatCategories?.isAvailable
-                },
-            ]
-        },
-        {
-            name: '',
-            parameterKey: 'flatbedsCategories',
-            machineInputType: 'multiInput',
-            value: state.attributes?.flatbedsCategories ? state.attributes?.flatbedsCategories : {},
-            isValid: true,
-            inputs: [
-                {
-                    name: "isAvailable",
-                    label: "machineAttributes.flatbedsAvailable",
-                    type: "switch",
-                    placeholder: "machineAttributes.flatbedsAvailable",
-                    required: true,
-                    parameterKey: "isAvailable",
-                    options: [],
-                    value: state.attributes?.flatbedsCategories?.isAvailable ? state.attributes?.flatbedsCategories?.isAvailable : ''
-                },
-                {
-                    name: "categories",
-                    label: "machineAttributes.categories",
-                    type: "select",
-                    placeholder: "machineAttributes.categories",
-                    required: true,
-                    parameterKey: "categories",
-                    options: [],
-                    value: state?.attributes?.flatbedsCategories?.categories,
-                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=flatbeds',
-                    multiple: true,
-                    disabled: !state.attributes?.flatbedsCategories?.isAvailable
-                },
-            ]
-        },
+        ...mediaSheetsCategories(state),
+        ...mediaWideFormatCategories(state),
+        ...mediaFlatbedCategories(state),
     ]
 }
 

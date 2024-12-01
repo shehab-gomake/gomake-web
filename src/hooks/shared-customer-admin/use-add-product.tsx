@@ -711,7 +711,8 @@ const useAddProduct = ({ clasess }) => {
           disabled={parameter?.isHidden}
         />
       );
-    } else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
+    } 
+    else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
       return (
         <GomakeTextInput
           style={clasess.textInputStyle}
@@ -729,7 +730,8 @@ const useAddProduct = ({ clasess }) => {
           disabled={parameter?.isHidden}
         />
       );
-    } else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST) {
+    } 
+    else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.MACHINES_SELECT) {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
       );
@@ -824,7 +826,8 @@ const useAddProduct = ({ clasess }) => {
           )}
         </div>
       );
-    } else if (parameter?.parameterType === EParameterTypes.SWITCH) {
+    } 
+    else if (parameter?.parameterType === EParameterTypes.SWITCH) {
       return (
         <SecondSwitch
           disabled={parameter?.isHidden}
@@ -839,9 +842,8 @@ const useAddProduct = ({ clasess }) => {
           }}
         />
       );
-    } else if (
-      parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS
-    ) {
+    } 
+    else if (parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS) {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
       );
@@ -906,7 +908,7 @@ const useAddProduct = ({ clasess }) => {
     } else if (
       parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
       parameter?.parameterType ===
-        EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
     ) {
       if (allMaterials?.length > 0) {

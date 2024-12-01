@@ -48,6 +48,7 @@ const useAddRuleModal = ({
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const categoriesList = useRecoilValue(machineCategoriesState);
   const [additionType, setAdditionType] = useState<number>(null);
+  
 
   const onCloseScheduleModal = () => {
     setOpenScheduleModal(false);
@@ -176,8 +177,8 @@ const useAddRuleModal = ({
 
   const BooleanRender = useMemo(() => {
     return [
-      { label: "Yes", id: true },
-      { label: "No", id: false },
+      { label: t("modal.yes"), id: "true" },
+      { label: t("modal.no"), id: "false" },
     ];
   }, []);
 
@@ -496,40 +497,45 @@ const useAddRuleModal = ({
         ruleName: expression,
         ruleConditionStatements: null,
         exceptionConditionProperties: rules.map((item) => {
-          return {
-            statementId:
-              item.category.id === "Property output" ||
-              item.category.id === "Property input"
-                ? item.statement2.id
-                : typeof item?.statement === "object"
-                ? item?.statement?.id
-                : item.statement,
-            statementValue:
-              item.category.id === "Property output" ||
-              item.category.id === "Property input"
-                ? typeof item?.statement === "object"
-                  ? item?.statement?.id
-                  : item.statement
-                : item.statement2.id,
+          
+          let condition =  {
+            statementId: getStatementId(item),
+            statementValue: item.statement2.id,
             operator: item.condition.id,
             conditionBetweenStatements: item.linkCondition
               ? item.linkCondition.id
               : "",
             statementCategory: EStatementCategory[item.category.id],
           };
-          // return {
-          //   statementId:
-          //     typeof item?.statement === "object"
-          //       ? item?.statement?.id
-          //       : item.statement,
-          //   statementValue: item?.statement2?.id,
-          //   operator: item?.condition?.id,
-          //   conditionBetweenStatements: item.linkCondition
-          //     ? item.linkCondition.id
-          //     : "",
-          //   statementCategory: EStatementCategory[item.category.id],
-          // };
+          if(item.category.id == "Property input" || item.category.id == "Property output"){
+            condition.statementId = item.statement2.id;
+            condition.statementValue = getStatementId(item);
+          }
+          return condition;
         }),
+        // exceptionConditionProperties: rules.map((item) => {
+        //   return {
+        //     statementId:
+        //       item.category.id === "Property output" ||
+        //       item.category.id === "Property input"
+        //         ? item.statement2.id
+        //         : typeof item?.statement === "object"
+        //         ? item?.statement?.id
+        //         : item.statement,
+        //     statementValue:
+        //       item.category.id === "Property output" ||
+        //       item.category.id === "Property input"
+        //         ? typeof item?.statement === "object"
+        //           ? item?.statement?.id
+        //           : item.statement
+        //         : item.statement2.id,
+        //     operator: item.condition.id,
+        //     conditionBetweenStatements: item.linkCondition
+        //       ? item.linkCondition.id
+        //       : "",
+        //     statementCategory: EStatementCategory[item.category.id],
+        //   };
+        // }),
         successEvent: propertieValue,
         expression: expression,
       }

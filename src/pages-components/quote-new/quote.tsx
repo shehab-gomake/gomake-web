@@ -6,14 +6,13 @@ import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
-import { DateFormatterDDMMYYYY } from "@/utils/adapter";
 import {
   GoMakeAlertModal,
   GoMakeAutoComplate,
   GoMakeDeleteModal,
 } from "@/components";
 import { HeaderTitle } from "@/widgets";
-import { ArrowDownNewIcon, BudgetIcon, DotIcon, SettingNewIcon } from "@/icons";
+import { ArrowDownNewIcon, BudgetIcon, SettingNewIcon } from "@/icons";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useQuoteNew } from "./use-quote";
 import { quoteConfirmationState, quoteItemState } from "@/store";
@@ -21,7 +20,7 @@ import { useStyle } from "./style";
 import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { _renderQuoteStatus } from "@/utils/constants";
-import { Box, Divider, IconButton, Skeleton } from "@mui/material";
+import { IconButton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../quotes/enums";
@@ -49,6 +48,7 @@ import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal
 import { Check } from "@mui/icons-material";
 import { useQuoteGetData } from "./use-quote-get-data";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { ModalType } from "@/enums";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -263,29 +263,26 @@ const QuoteNewPageWidget = ({
     moveOrderToReady,
     navigate,
     updateDocumentBudget,
+    selectedBudget,
+    setSelectedBudget,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
   const { getCurrencyUnitText } = useQuoteGetData();
+
   const handleChangeCreationDate = (event) => {
     const newDate = event.target.value;
-    const newDateRounded = moment(newDate)
-      .seconds(0)
-      .milliseconds(0)
-      .toISOString();
-    const currentCreationDateRounded = moment(creationDate)
-      .seconds(0)
-      .milliseconds(0)
-      .toISOString();
+    const currentCreationDate = creationDate
+      ? moment(creationDate).format("YYYY-MM-DD")
+      : "";
 
-    if (newDateRounded !== currentCreationDateRounded) {
+    if (newDate !== currentCreationDate) {
       setNewCreationDate(newDate);
       onClickOpenReferenceModal();
     }
   };
-  const [selectedBudget, setSelectedBudget] = useState(null);
 
   useEffect(() => {
     if (quoteState?.budgetId) {
@@ -330,7 +327,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const {} = useGoMakeTour(quoteSteps, []);
+  const { } = useGoMakeTour(quoteSteps, []);
 
   useEffect(() => {
     if (isInvoice) {
@@ -375,10 +372,17 @@ const QuoteNewPageWidget = ({
     >
       <span>{label}</span>
       <span style={classes.dateValue}>
-        {date ? DateFormatterDDMMYYYY(date) : t("sales.quote.selectDate")}
+        {date
+          ? moment(date, "YYYY-MM-DD").format("DD/MM/YYYY") // Display date in the correct format
+          : t("sales.quote.selectDate")}
       </span>
       <div style={classes.datePickerContainer}>
-        <input type="datetime-local" onChange={handleChange} ref={inputRef} />
+        <input
+          type="date"
+          value={date ? moment(date, "YYYY-MM-DD").format("YYYY-MM-DD") : ""}
+          onChange={handleChange}
+          ref={inputRef}
+        />
       </div>
     </div>
   );
@@ -395,8 +399,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -409,7 +413,6 @@ const QuoteNewPageWidget = ({
                     </div>
                   )}
                 </div>
-
                 {!isQuoteConfirmation && (
                   <div style={classes.settingsStatusContainer}>
                     {(documentType === DOCUMENT_TYPE.quote ||
@@ -466,7 +469,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                      quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -531,7 +534,6 @@ const QuoteNewPageWidget = ({
                     inputRef={dateRef}
                     isEditable={quoteItemValue?.isEditable}
                   />
-
                   {/* Tax Date */}
                   {isInvoice && (
                     <DateField
@@ -700,6 +702,7 @@ const QuoteNewPageWidget = ({
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendReceiptToClient={onClickSendReceiptToClient}
               />
             </div>
           )}
@@ -748,11 +751,9 @@ const QuoteNewPageWidget = ({
         }
       />
       <GoMakeDeleteModal
-        title={t("sales.quote.deleteItem")}
-        yesBtn={t("materials.buttons.delete")}
+        modalType={ModalType.DELETE}
         openModal={openDeleteItemModal}
         onClose={onCloseDeleteItemModal}
-        subTitle={t("sales.quote.areYouSureDeleteItem")}
         onClickDelete={deleteQuoteItem}
       />
       <SendBtnMenu
@@ -815,9 +816,10 @@ const QuoteNewPageWidget = ({
         onClose={onClickCloseSignatureApprovalModal}
       />
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openIrrelevantCancelModal}
@@ -829,9 +831,10 @@ const QuoteNewPageWidget = ({
         }
       />
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPriceCancelModal}
@@ -841,9 +844,10 @@ const QuoteNewPageWidget = ({
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
       />
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        // icon={
+        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
+        // }
+        modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openDeliveryTimeCancelModal}
@@ -869,7 +873,7 @@ const QuoteNewPageWidget = ({
         }}
       />
       <GoMakeDeleteModal
-        hideIcon
+        modalType={ModalType.EDIT}
         title={"sales.moveOrderToReadyWhenCloseOrderTitle"}
         yesBtn={t("sales.moveToReadyAndCloseOrder")}
         cancelBtn={t("sales.closeOrderWithoutMoveToReady")}

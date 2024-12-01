@@ -289,8 +289,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -920,7 +920,12 @@ const useQuoteNew = ({
           alertSuccessUpdate();
           getQuote();
         } else {
-          alertFaultUpdate();
+          if (res?.message === "amount_greater_budget") {
+            alertFault(`${t("sales.quote.errorUpdateBudget")}`);
+          } else {
+            alertFaultUpdate();
+          }
+          getQuote();
         }
       };
       await calculateDocumentItemApi(callApi, callBack, {
@@ -1023,7 +1028,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1201,7 +1206,6 @@ const useQuoteNew = ({
     useState(false);
   const [activeClickAwayForTaxDate, setActiveClickAwayForTaxDate] =
     useState(false);
-
   const handleClickSelectDate = () => {
     dateRef?.current?.showPicker();
   };
@@ -1442,6 +1446,7 @@ const useQuoteNew = ({
   };
 
   const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
+
   const handleSaveBtnClickForDocument = async () => {
     if (
       !quoteItemValue?.documentItems ||
@@ -1454,10 +1459,8 @@ const useQuoteNew = ({
       alertFault("alerts.cannotCreateWithPriceZero");
       return;
     }
-    setLoadingWithShadow(true);
 
     const callBack = (res) => {
-      setLoadingWithShadow(false);
       if (res?.success) {
         alertSuccessAdded();
         const _data = res?.data || {};
@@ -1466,8 +1469,8 @@ const useQuoteNew = ({
           docType === DOCUMENT_TYPE.invoice ||
           docType === DOCUMENT_TYPE.deliveryNote
         ) {
-          onClickOpenInvoiceCreation();
           navigate(`/${documentPath}?Id=${_data?.id}`);
+          onClickOpenInvoiceCreation();
         } else {
           navigate(`/${documentPath}?Id=${_data?.id}`);
         }
@@ -1539,12 +1542,34 @@ const useQuoteNew = ({
           setActiveClickAway(false);
         }
       }
+
+      if (taxDateRef.current && !taxDateRef.current.contains(event.target)) {
+        if (activeClickAwayForTaxDate) {
+          if (router.query.isNewCreation) {
+            const updatedQuoteItemValue = { ...quoteItemValue };
+            updatedQuoteItemValue.dueDate = selectDate;
+            updatedQuoteItemValue.taxDate = taxDate;
+            updatedQuoteItemValue.creationDate = creationDate;
+            setQuoteItemValue(updatedQuoteItemValue);
+          }
+          setActiveClickAwayForTaxDate(false);
+        }
+      }
     };
+
     document.addEventListener("click", handleClickOutside);
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [dateRef, activeClickAway, quoteItemValue, selectDate]);
+  }, [
+    dateRef,
+    taxDateRef,
+    activeClickAway,
+    activeClickAwayForTaxDate,
+    quoteItemValue,
+    selectDate,
+    taxDate,
+  ]);
 
   const [openReferenceModal, setOpenReferenceModal] = useState(false);
   const onClickOpenReferenceModal = () => {
@@ -1874,7 +1899,6 @@ const useQuoteNew = ({
     });
   };
 
-
   const [allClientActiveBudgets, setAllClientActiveBudgets] = useState([]);
   const getAllClientActiveBudgets = async () => {
     const callBack = (res) => {
@@ -1886,33 +1910,42 @@ const useQuoteNew = ({
       clientId: quoteItemValue?.client?.id,
     });
   };
+  const [selectedBudget, setSelectedBudget] = useState(null);
 
   useEffect(() => {
     if (quoteItemValue?.client?.id) {
-      getAllClientActiveBudgets()
+      getAllClientActiveBudgets();
     }
-  }, [quoteItemValue?.client?.id])
+  }, [quoteItemValue?.client?.id]);
 
-  const updateDocumentBudget = useCallback(async (budget) => {
-    const res = await callApi(
-      EHttpMethod.PUT,
-      `/v1/erp-service/budgets/update-document-budget`,
-      {
-        documentType: docType,
-        documentId: quoteItemValue?.id,
-        budgetId: budget.id
+  const updateDocumentBudget = useCallback(
+    async (budget) => {
+      const res = await callApi(
+        EHttpMethod.PUT,
+        `/v1/erp-service/budgets/update-document-budget`,
+        {
+          documentType: docType,
+          documentId: quoteItemValue?.id,
+          budgetId: budget.id,
+        }
+      );
+      if (res?.success) {
+        alertSuccessUpdate();
+        getQuote();
+      } else {
+        alertFault(`${t("sales.quote.errorUpdateBudget")}`);
+        if (quoteItemValue?.budgetId) {
+          const budget = allClientActiveBudgets.find(
+            (budget) => budget.id === quoteItemValue.budgetId
+          );
+          setSelectedBudget(budget);
+        } else {
+          setSelectedBudget(null);
+        }
       }
-    );
-    console.log("res", res)
-
-    if (res?.success) {
-      alertSuccessUpdate();
-      getQuote()
-    } else {
-      alertFault(`${t("sales.quote.errorUpdateBudget")}`);
-      // document total is greater than the budget balance
-    }
-  }, [docType, quoteItemValue]);
+    },
+    [docType, quoteItemValue, allClientActiveBudgets]
+  );
   return {
     dateRef,
     taxDateRef,
@@ -2115,7 +2148,9 @@ const useQuoteNew = ({
     navigate,
     moveOrderToReady,
     allClientActiveBudgets,
-    updateDocumentBudget
+    updateDocumentBudget,
+    selectedBudget,
+    setSelectedBudget,
   };
 };
 

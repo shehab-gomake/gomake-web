@@ -14,5 +14,4 @@ const getAndSetAllEmployees = async (
   return returnResult(result, setState);
 };
 
-
 export { getAndSetAllEmployees };

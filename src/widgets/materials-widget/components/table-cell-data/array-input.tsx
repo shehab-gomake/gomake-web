@@ -9,6 +9,7 @@ import { useRecoilValue } from "recoil";
 import { materialCategorySuppliersState } from "../../state";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
+import { ModalType } from "@/enums";
 
 const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowData) => {
   const { classes } = useStyle();
@@ -19,6 +20,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
   const { t } = useTranslation();
 
   const [openDeleteTableRowModal, setOpenDeleteTableRowModal] = useState<boolean>(false);
+
   const onClickCloseDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(false);
   };
@@ -26,7 +28,8 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
   const onClickOpenDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(true);
   };
-  const { updateCellData } = useTableCellData(isAdmin);
+
+  const { updateCellData, } = useTableCellData(isAdmin);
   const onClick = (index) => {
     if (isEditable) {
       setIsUpdate(index);
@@ -40,7 +43,10 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
 
   const onBlur = async () => {
     if (updateValue !== valueArray[isUpdate]) {
-
+      // if(parameterKey.includes("price")){
+      //   onClickOpenPriceModal()
+      // }
+      // else{
       if (isHaveMorethanMaterialSuppliers && !parameterKey.includes("price")) {
         onClickOpenDeleteTableRowModal()
       }
@@ -49,6 +55,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
         setIsUpdate(null);
       }
     }
+    // }
     else {
       setIsUpdate(null);
     }
@@ -67,10 +74,10 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
             return [
               isUpdate === index ? (
                 <UpdateValueInput
-                  clickedOut={() => onBlur().then()}
+                  clickedOut={() => onBlur()?.then()}
                   onInputChange={onInputChange}
                   onCancel={() => setIsUpdate(null)}
-                  onUpdate={() => onBlur().then()}
+                  onUpdate={() => onBlur()?.then()}
                   value={updateValue}
                 />
               ) : (
@@ -109,6 +116,7 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
         })}
       </Stack>
       <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
         openModal={openDeleteTableRowModal}
         onClose={onClickCloseDeleteTableRowModal}
         hideIcon
@@ -119,6 +127,8 @@ const ArrayInput = ({ valueArray, isEditable, parameterKey, id, isAdmin }: IRowD
           setIsUpdate(null);
         }}
       />
+
+
     </>
 
   );

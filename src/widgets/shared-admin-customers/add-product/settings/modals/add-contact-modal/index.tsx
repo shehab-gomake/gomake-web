@@ -11,6 +11,7 @@ import { IconButton, Paper, Tooltip } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 import { usePrintNodePrinters } from "@/hooks/use-print-node-printers";
 import ProductItem from "./sku-components/product-item-row";
+import { ModalType } from "@/enums";
 
 interface AddProductSkuModalProps {
   openModal: boolean;
@@ -171,6 +172,7 @@ const AddProductSkuModal = ({
         </div>
       </GoMakeModal>
       <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
         openModal={openDeleteRowModal}
         onClose={onClickCloseDeleteRowModal}
         onClickDelete={deleteProductSKURow}

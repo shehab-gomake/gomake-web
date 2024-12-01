@@ -16,6 +16,19 @@ const AdditionsAndExceptionsMapping = ({
   const { clasess } = useStyle();
   const router = useRouter()
   const { t } = useTranslation();
+  const renderAdditionType = (additionType: EAdditionType) => {
+    switch (additionType) {
+      case EAdditionType.Percentage:
+        return "%";
+      case EAdditionType.ValuePerUnit:
+        return `${ProfitCurrency} / U`;
+      case EAdditionType.ValuePerJob:
+        return `${ProfitCurrency} / J`;
+      default:
+        return "";
+    }
+  };
+
   return (
     <div style={clasess.mainContainer}>
       <div
@@ -31,16 +44,16 @@ const AdditionsAndExceptionsMapping = ({
               getCalculateCaseProfits(null);
             } else {
               setSelectedActionProfitRow(item);
-              getCalculateCaseProfits(item);
+              // getCalculateCaseProfits(item);
             }
           }
           else {
             if (selectedAdditionalProfitRow?.id === item?.id) {
               setSelectedActionProfitRow(null);
-              getAllActionProfitRowsByActionId(null);
+              // getAllActionProfitRowsByActionId(null);
             } else {
               setSelectedActionProfitRow(item);
-              getAllActionProfitRowsByActionId(item);
+              // getAllActionProfitRowsByActionId(item);
             }
           }
 
@@ -54,7 +67,7 @@ const AdditionsAndExceptionsMapping = ({
             {t("products.profits.exceptions.value")}
           </div>
           <div style={clasess.valueStyle}>
-            {item?.profitValue} {item?.additionType === EAdditionType.PERCENTS && "%"}
+            {item?.profitValue} {renderAdditionType(item?.additionType)}
           </div>
         </div>
         <div

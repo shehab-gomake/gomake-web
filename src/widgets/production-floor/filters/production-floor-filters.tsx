@@ -25,6 +25,8 @@ import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useStyle } from "./style";
 import { useRouter } from "next/router";
+import { GoMakeDeleteModal } from "@/components";
+import { ModalType } from "@/enums";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -58,7 +60,7 @@ const ScrollableDiv = styled("div")(({ theme }) => ({
 }));
 
 const CustomIconButton = styled(IconButton)(({ theme }) => ({
-  width: "30px",
+  width: "35px",
   height: "35px",
   border: `1.5px solid #2E3092`,
   borderRadius: "4px",
@@ -69,6 +71,9 @@ const CustomIconButton = styled(IconButton)(({ theme }) => ({
   "&:hover": {
     backgroundColor: toRgba("#2E3092", 0.1),
   },
+
+  ...FONT_FAMILY.Inter(400, 16),
+  color: toRgba("#2E3092", 0.9),
 }));
 
 const CustomGroup = styled(Card)<{
@@ -114,6 +119,22 @@ const Circle = styled(Box)<{ numColor: string; dir: string }>(
   })
 );
 
+const IconButtonWrapper = styled("div")({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  position: "relative",
+  "& .clear-icon": {
+    visibility: "hidden",
+    opacity: 0,
+    transition: "visibility 0.2s, opacity 0.2s",
+  },
+  "&:hover .clear-icon": {
+    visibility: "visible",
+    opacity: 1,
+  },
+});
+
 const CustomGroupComponent = ({
   onClick,
   onClickDelete,
@@ -135,23 +156,11 @@ const CustomGroupComponent = ({
           alignItems: "center",
           gap: "10px",
           justifyContent: "space-between",
-          padding:
-            dir === "ltr"
-              ? "0px 5px 0px 0px !important"
-              : "0px 0px 0px 5px !important",
+          padding: dir === "rtl" ? "0px 8px !important" : "0px 8px !important",
           width: "100%",
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center" }}>
-          <IconButton onClick={onClickDelete}>
-            <ClearIcon
-              style={{
-                cursor: "pointer",
-                fontSize: "14px",
-                color: isSelected ? "#FFF" : group?.color,
-              }}
-            />
-          </IconButton>
           <Typography
             variant="subtitle2"
             sx={{
@@ -165,12 +174,37 @@ const CustomGroupComponent = ({
             {group?.name}
           </Typography>
         </Box>
-        <Box sx={{ display: "flex" }}>
+
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <Circle numColor="#E7D000" dir={dir}>
             {group?.inProcessCount}
           </Circle>
           <Circle numColor="#D92D20" dir={dir}>
             {group?.stuckCount}
+          </Circle>
+          <Circle
+            numColor={group?.color}
+            dir={dir}
+            sx={{
+              backgroundColor: "transparent",
+            }}
+          >
+            <IconButton
+              onClick={onClickDelete}
+              size="small"
+              style={{
+                padding: "4px",
+              }}
+            >
+              <ClearIcon
+                className="clear-icon"
+                style={{
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  color: isSelected ? "#FFF" : group?.color,
+                }}
+              />
+            </IconButton>
           </Circle>
         </Box>
       </CardContent>
@@ -205,11 +239,14 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     setHiddenFilterGroups,
     handleSelectGroup,
     selectedGroupId,
-    deleteStationFilterGroupById,
     missionsList,
     setMissionsList,
     filteredMissionsBySearch,
     isSearchLoading,
+    openModal,
+    handleDeleteConfirm,
+    handleCancel,
+    handleClearClick,
   } = useProductionFloorFilters({ getStationFilterGroups });
 
   useEffect(() => {
@@ -334,7 +371,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
             onClick={() => handleSelectGroup(group?.id)}
             onClickDelete={(event) => {
               event.stopPropagation();
-              deleteStationFilterGroupById(group?.id);
+              handleClearClick(group?.id);
             }}
             isSelected={selectedGroupId === group?.id ? true : false}
             isFromMenu={false}
@@ -343,7 +380,8 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
         {hiddenFilterGroups.length > 0 && (
           <>
             <CustomIconButton onClick={handleMoreClick}>
-              <MoreHorizIcon />
+              {/* <MoreHorizIcon /> */}
+              +1
             </CustomIconButton>
             <Menu
               transformOrigin={{
@@ -374,7 +412,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
                     onClick={() => handleSelectGroup(group?.id)}
                     onClickDelete={(event) => {
                       event.stopPropagation();
-                      deleteStationFilterGroupById(group?.id);
+                      handleClearClick(group?.id);
                     }}
                     isSelected={selectedGroupId === group?.id ? true : false}
                     isFromMenu={true}
@@ -385,6 +423,13 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
           </>
         )}
       </Box>
+      <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
+        openModal={openModal}
+        onClose={handleCancel}
+        onClickDelete={handleDeleteConfirm}
+        onClickCancel={handleCancel}
+      />
     </Stack>
   );
 };

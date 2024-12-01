@@ -15,6 +15,7 @@ import { materialCategorySuppliersState, materialsParametersState } from "../../
 import { useTranslation } from "react-i18next";
 import { MultiSelectClientsInput } from "./multi-select-clients-input";
 import { useState } from "react";
+import { ModalType } from "@/enums";
 
 const TableCellData = ({
   value,
@@ -26,7 +27,6 @@ const TableCellData = ({
   isAdmin,
   onChangeRowCheckBox,
 }: IRowData) => {
-
   const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin);
   const machinesCategories = useRecoilValue(machineCategoriesState);
   const parameterCategories = useRecoilValue<any>(materialsParametersState);
@@ -57,6 +57,7 @@ const TableCellData = ({
         <>
           <SecondSwitch checked={value} onChange={toggleIsActive} />
           <GoMakeDeleteModal
+            modalType={ModalType.EDIT}
             openModal={openDeleteTableRowModal}
             onClose={onClickCloseDeleteTableRowModal}
             hideIcon

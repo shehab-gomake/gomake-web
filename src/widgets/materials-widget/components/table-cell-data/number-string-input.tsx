@@ -9,6 +9,7 @@ import { useRecoilValue } from "recoil";
 import { materialCategorySuppliersState } from "../../state";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
+import { ModalType } from "@/enums";
 
 
 const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRowData) => {
@@ -70,6 +71,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRo
                 isEditable ? <PrimaryButton style={{ minWidth: "max-content" }} sx={classes.clickableData} onClick={onClick} variant={'text'}>{value}</PrimaryButton> : <span>{value}</span>
             }
             <GoMakeDeleteModal
+                modalType={ModalType.EDIT}
                 openModal={openDeleteTableRowModal}
                 onClose={onClickCloseDeleteTableRowModal}
                 hideIcon

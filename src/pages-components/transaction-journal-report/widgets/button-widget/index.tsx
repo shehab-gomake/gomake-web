@@ -8,12 +8,18 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 const LedgerReportButtonWidget = ({
   onClickPrintCard,
   onClickShowCard,
+  onClickCreateNewTransaction,
+  onClickOpenAdjustmentsModal,
+  onClickExportAccountingReportExcel,
   reportType,
 }: LedgerReportButtonWidgetProps) => {
   const { classes } = useStyle();
   const { tabs } = useLedgerReportHeader({
     onClickPrintCard,
     onClickShowCard,
+    onClickCreateNewTransaction,
+    onClickOpenAdjustmentsModal,
+    onClickExportAccountingReportExcel,
     reportType,
   });
 

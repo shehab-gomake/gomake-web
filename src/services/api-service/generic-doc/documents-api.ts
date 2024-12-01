@@ -122,6 +122,8 @@ const MOVE_ORDER_TO_DONE_URL = "/v1/erp-service/documents/move-order-to-done";
 const PAUSE_OR_RESUME_DOCUMENT_URL =
   "/v1/erp-service/documents/pause-or-resume-document";
 const CREATE_DOCUMENT_URL = "/v1/erp-service/documents/create-document";
+const START_ORDER_PRODUCTION_URL =
+  "/v1/erp-service/documents/start-order-production";
 
 const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -418,7 +420,10 @@ const createOrderApi: ICallAndSetData = async (callApi, setState, data) => {
     EHttpMethod.POST,
     CONVERT_QUOTE_TO_ORDER_URL,
     setState,
-    data
+    data,
+    true,
+    null,
+    true
   );
 };
 
@@ -1028,9 +1033,26 @@ const createDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
     CREATE_DOCUMENT_URL,
     setState,
     data,
-    false
+    true,
+    null,
+    true
   );
 };
+
+const startOrderProductionApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    START_ORDER_PRODUCTION_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1101,4 +1123,5 @@ export {
   getAllClientActiveBudgetsApi,
   pauseOrdResumeOrderApi,
   createDocumentApi,
+  startOrderProductionApi,
 };

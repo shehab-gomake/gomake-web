@@ -32,6 +32,7 @@ import {
   cancelBoardMissionsActionDone,
   toggleBoardMissionsActionTimer,
   updateBoardMissionsActionDone,
+  updatePrintHouseMaterialStockFromJobApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -44,7 +45,7 @@ import {
 import { useBoardMissionsUpdatedOutputs } from "./use-board-missions-updated-outputs";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { ActionTimer } from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
@@ -55,6 +56,11 @@ import {
 import { useUserPermission } from "@/hooks/use-permission";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { TableOutPutComponent } from "@/widgets/product-pricing-widget/components/table-output/table-output-component";
+import {
+  boardMissionMaterialState,
+  materialModalState,
+} from "./material-and-production-time-modal/states";
+import { ModalType } from "@/enums";
 
 interface IProps extends IBoardMissionsStation {
   delay: number;
@@ -155,6 +161,9 @@ const BoardMissionsStationAction = ({
       parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
+
+  const setState = useSetRecoilState<any>(boardMissionMaterialState);
+  const setOpenMaterialsModal = useSetRecoilState<any>(materialModalState);
   const onClickDone = async (
     boardMissionsActionId: string,
     sendMSg?: boolean
@@ -164,6 +173,8 @@ const BoardMissionsStationAction = ({
       setLoading(false);
 
       if (res.success) {
+        setState(res.data);
+        setOpenMaterialsModal(true);
         const currentActionId = res.data.currentStationId;
         //stations.find(x=>x.boardMissionActionId == currentActionId).;
         setStations(
@@ -178,8 +189,8 @@ const BoardMissionsStationAction = ({
           ...boardMissions,
           currentBoardMissionActionId: currentActionId,
         });
-        alertSuccessUpdate();
         setOpenPackagingModal(true);
+        alertSuccessUpdate();
       } else {
         alertFaultUpdate();
         setLoading(false);
@@ -191,6 +202,7 @@ const BoardMissionsStationAction = ({
       isSendMessage: !!sendMSg,
     });
   };
+
   const onClickBackToProcess = async (boardMissionsActionId: string) => {
     setLoading(true);
     const callBack = (res) => {
@@ -337,6 +349,7 @@ const BoardMissionsStationAction = ({
       label
     );
   };
+
   return (
     <>
       {isHaveSubACtions ? (
@@ -635,12 +648,12 @@ const BoardMissionsStationAction = ({
                                     >
                                       {(!!machensFilter
                                         ? machinesList?.filter((value) =>
-                                            value.label
-                                              ?.toLowerCase()
-                                              ?.includes(
-                                                machensFilter?.toLowerCase()
-                                              )
-                                          )
+                                          value.label
+                                            ?.toLowerCase()
+                                            ?.includes(
+                                              machensFilter?.toLowerCase()
+                                            )
+                                        )
                                         : machinesList
                                       )?.map((value, index) => {
                                         return (
@@ -728,12 +741,12 @@ const BoardMissionsStationAction = ({
                                   >
                                     {(!!contactsFilter
                                       ? employeesList?.filter((value) =>
-                                          value.label
-                                            ?.toLowerCase()
-                                            ?.includes(
-                                              contactsFilter?.toLowerCase()
-                                            )
-                                        )
+                                        value.label
+                                          ?.toLowerCase()
+                                          ?.includes(
+                                            contactsFilter?.toLowerCase()
+                                          )
+                                      )
                                       : employeesList
                                     )?.map((value, index) => {
                                       return (
@@ -901,6 +914,7 @@ const BoardMissionsStationAction = ({
           </Stack>
         </Fade>
       )}
+
       <ThreeOptionsModal
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
@@ -914,6 +928,7 @@ const BoardMissionsStationAction = ({
       />
       <GoMakeDeleteModal
         hideIcon={true}
+        modalType={ModalType.ADD}
         title={t("customers.modal.updateJobStationModalTitle")}
         yesBtn={t("modal.confirm")}
         openModal={openModal}

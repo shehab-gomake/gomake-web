@@ -111,10 +111,14 @@ const GoMakeAutoComplate = ({
   PaperComponent,
   withArrow = false,
   groupBy,
+  popupIcon,
+  renderGroup,
   loading, // Add loading prop
   defaultFiltering = true,
   startIcon,
   arrowIcon,
+  open, // Add the `open` prop
+  onOpen, // Add the `onOpen` prop
 }: {
   value?: any;
   onChange?: any;
@@ -134,12 +138,16 @@ const GoMakeAutoComplate = ({
   disabled?: any;
   onChangeTextField?: any;
   PaperComponent?: any;
+  popupIcon?: any;
   withArrow?: boolean;
+  renderGroup?: (params: any) => React.ReactNode;
   groupBy?: (option: any) => string;
   loading?: boolean; // Add loading prop
   defaultFiltering?: boolean;
   startIcon?: React.ReactNode;
   arrowIcon?: React.ReactNode;
+  open?: boolean;
+  onOpen?: () => void;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -182,11 +190,14 @@ const GoMakeAutoComplate = ({
       }}
       onInputChange={onInputChange}
       onKeyDown={onKeyDown}
+      open={open} // Pass the `open` prop to Autocomplete
+      onOpen={onOpen} // Pass the `onOpen` callback to Autocomplete
       onClose={onClose}
       style={style}
       options={options}
       disabled={disabled}
-      popupIcon={withArrow ? arrowIcon || <ArrowDropDownIcon /> : null}
+      popupIcon={withArrow ? popupIcon ? popupIcon : <ArrowDropDownIcon /> : ""}
+      groupBy={groupBy}
       renderGroup={(params) => (
         <div key={params.key}>
           <GroupHeader onClick={() => toggleGroup(params.group)}>

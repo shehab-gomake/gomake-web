@@ -1,7 +1,6 @@
 import { HeaderTitle } from "@/widgets";
 import { useTranslation } from "react-i18next";
 import { CustomerAuthLayout } from "@/layouts";
-import Pagination from "@mui/material/Pagination";
 import { useState } from "react";
 import Stack from "@mui/material/Stack";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
@@ -12,10 +11,16 @@ import { AddCustomerButton } from "../customers/add-customer";
 import { useCustomers } from "../customers/use-customers";
 import { customerMapFunction } from "@/services/api-service/customers/customers-api";
 import { useEffect } from "react";
-import { CLIENT_TYPE, CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import {
+  CLIENT_TYPE,
+  CLIENT_TYPE_Id,
+  CUSTOMER_ACTIONS,
+} from "@/pages/customers/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "../../components/CheckPermission/enum";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
+import { ThreeOptionsModal } from "@/components";
+import { ClientUploadExcelErrorsModal } from "../customers/export-import-buttons/errors-messages-modal";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -57,8 +62,15 @@ export default function Home() {
     onClickExportClient,
     onClickImportClient,
     getClientTypesCategories,
-    handlePageSizeChange
+    handlePageSizeChange,
+    openExportModal,
+    onOpenExportClientModal,
+    onCloseExportClientModal,
+    openErrorsModal,
+    handleErrorsModalClose,
+    errorMessages,
   } = useCustomers(CLIENT_TYPE.SUPPLIER, pageNumber, setPageNumber);
+
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
   const onCustomerAdd = (customer) => {
@@ -90,7 +102,10 @@ export default function Home() {
   }, []);
 
   return (
-    <CustomerAuthLayout permissionEnumValue={Permissions.SHOW_SUPPLIER} className={`custom-scrollbar`}>
+    <CustomerAuthLayout
+      permissionEnumValue={Permissions.SHOW_SUPPLIER}
+      className={`custom-scrollbar`}
+    >
       <Stack
         direction="column"
         justifyContent="space-between"
@@ -127,7 +142,7 @@ export default function Home() {
             agentName={agentName}
             valClientType={valClientType}
             valStatus={valStatus}
-            onClickExport={onClickExportClient}
+            onClickExport={onOpenExportClientModal}
             onClickImport={onClickImportClient}
           />
           <>
@@ -149,6 +164,21 @@ export default function Home() {
               customer={customerForEdit}
               setCustomer={setCustomerForEdit}
               showUpdateButton={true}
+            />
+            <ThreeOptionsModal
+              title={t("customers.modal.exportClients")}
+              subTitle={t("customers.modal.exportPrompt")}
+              yesBtn={"customers.modal.includeContacts"}
+              noBtn={"customers.modal.excludeContacts"}
+              openModal={openExportModal}
+              onClose={onCloseExportClientModal}
+              onClickYes={() => onClickExportClient(true)}
+              onClickNo={() => onClickExportClient(false)}
+            />
+            <ClientUploadExcelErrorsModal
+              openErrorsModal={openErrorsModal}
+              handleErrorsModalClose={handleErrorsModalClose}
+              errorMessages={errorMessages}
             />
           </>
         </div>

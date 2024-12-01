@@ -38,13 +38,22 @@ html * {
   }
 }
 
+@keyframes rotate90-rtl {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-90deg);
+  }
+}
+
 ::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
 .MuiAutocomplete-listbox {
-  max-height: 300px; 
-  overflow-y: auto; 
+  max-height: 300px;
+  overflow-y: auto;
 }
 .MuiAutocomplete-listbox::-webkit-scrollbar {
   width: 8px;
@@ -285,12 +294,16 @@ input::placeholder {
 
 .MuiAutocomplete-input {
   padding: 0 !important;
-  padding-left: 20px !important;
+  padding-left: 5px !important;
   padding-top: 1px !important;
 }
 
 .table-sorting:hover {
   background-color: #ebecff;
+}
+
+.action-menu-item:hover {
+  background-color: #F9FAFB;
 }
 
 .MuiTabs-flexContainer {
@@ -436,6 +449,11 @@ df-messenger {
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 11px !important;
+  height: 11px !important;
+}
+.small.custom-scrollbar::-webkit-scrollbar {
+  width: 5px !important;
+  height: 5px !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -501,4 +519,21 @@ df-messenger {
 
 .rs-input {
   padding-right: 10px !important;
+}
+.MuiInputBase-root input {
+  border: none !important;
+}
+
+.moreIconContainer {
+  opacity: 0;
+  transition: opacity 0.3s ease; /* Smooth transition */
+  position: absolute;
+  right: 10px;
+  top: 25px;
+  cursor: pointer;
+}
+
+/* Show the MoreIcon container on TableCell hover */
+.tableBodyCellForProduct:hover .moreIconContainer {
+  opacity: 1;
 }

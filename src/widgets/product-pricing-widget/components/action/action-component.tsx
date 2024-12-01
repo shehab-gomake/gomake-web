@@ -37,13 +37,18 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderIconLogs } from "@/utils/constants";
 import { TableOutPutComponent } from "../table-output/table-output-component";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import { isActionEmployeeUpdatedState } from "@/store";
+import { isActionEmployeeUpdatedState, permissionsState } from "@/store";
+import { Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { SortIcon } from "@/icons/sort-icon";
+import { ModalType } from "@/enums";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
   productType?: string | null;
   widgetType?: EWidgetProductType,
   selectedWorkFlowCalculatedIsLoaded?: boolean
+  sectionName?: string
 }
 
 interface IActionsComponentProps {
@@ -51,7 +56,9 @@ interface IActionsComponentProps {
   workFlowId?: string;
   productType: string | null;
   widgetType: EWidgetProductType,
-  selectedWorkFlowCalculatedIsLoaded?: boolean
+  selectedWorkFlowCalculatedIsLoaded?: boolean,
+  sectionName?: string
+  reOderMainActions: (data: any) => void
 }
 
 const Actions = ({
@@ -59,27 +66,90 @@ const Actions = ({
   workFlowId,
   productType,
   widgetType,
-  selectedWorkFlowCalculatedIsLoaded
+  selectedWorkFlowCalculatedIsLoaded,
+  reOderMainActions
 }: IActionsComponentProps) => {
+  const [actionsList, setActionsList] = useState(actions);
+  useEffect(() => {
+    setActionsList(actions)
+  }, [actions])
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const reorderedActions = Array.from(actionsList);
+    const [movedAction] = reorderedActions.splice(result.source.index, 1);
+    reorderedActions.splice(result.destination.index, 0, movedAction);
+    const formattedActions = reorderedActions.map((action: any, index: number) => ({
+      printingActionId: action?.id,
+      productType: action?.productType,
+      orderIndex: index
+    }));
+    setActionsList(reorderedActions)
+    reOderMainActions(formattedActions)
+  };
+  const permissions = useRecoilValue(permissionsState);
   return (
-    <Stack gap={"10px"}>
-      {actions?.map((action, index) => {
-        return (
-          <ActionContainerComponent
-            key={action.id}
-            data-toure={'action'}
-            widgetType={widgetType}
-            productType={productType}
-            workFlowId={workFlowId}
-            selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
-            delay={index * 800}
-            {...action}
-          />
+    <>
+      {
+        permissions.includes(Permissions.CUSTOMIZE_WORKFLOW) ?
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="actionsDroppable">
+              {(provided) => (
+                <Stack
+                  gap={"10px"}
+                  {...provided.droppableProps}
+                  ref={provided.innerRef}
+                >
+                  {actionsList?.map((action, index) => (
+                    <Draggable key={action.id} draggableId={action.id} index={index}>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <SortIcon />
+                            <ActionContainerComponent
+                              data-toure={'action'}
+                              widgetType={widgetType}
+                              productType={productType}
+                              workFlowId={workFlowId}
+                              selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+                              delay={index * 800}
+                              {...action}
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </Stack>
+              )}
+            </Droppable>
+          </DragDropContext> : <>
+            {actionsList?.map((action, index) => (
 
-        );
+              <div style={{ marginBottom: "16px" }}>
+                <ActionContainerComponent
+                  data-toure={'action'}
+                  widgetType={widgetType}
+                  productType={productType}
+                  workFlowId={workFlowId}
+                  selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+                  delay={index * 800}
+                  {...action}
+                />
+              </div>
+            ))}
+          </>
+      }
 
-      })}
-    </Stack>
+
+
+
+    </>
+
   );
 };
 
@@ -113,7 +183,8 @@ const ActionContainerComponent = ({
   profitValue,
   isNeedFolds,
   foldOptionValueId,
-  selectedWorkFlowCalculatedIsLoaded
+  selectedWorkFlowCalculatedIsLoaded,
+  sectionName
 }: IActionContainerComponentProps) => {
 
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
@@ -260,6 +331,7 @@ const ActionContainerComponent = ({
             timeout={delay}
             style={{ width: "100%", position: "relative" }}
           >
+
             <Stack
               onClick={() => setIsOpen(!isOpen)}
               style={{
@@ -267,11 +339,13 @@ const ActionContainerComponent = ({
                 border: isOpen ? classes.actionContainerBorder : "unset",
               }}
             >
+
               <Stack
                 padding={"10px 0"}
                 direction={"row"}
                 justifyContent={"space-between"}
               >
+
                 <Stack
                   direction={"row"}
                   gap={"16px"}
@@ -779,8 +853,12 @@ const ActionContainerComponent = ({
                 currentProductItemValue={currentProductItemValue}
                 machineName={machineName}
                 categoryId={categoryId}
+                id={id}
+                productType={productType}
+                sectionName={sectionName}
               />
               <GoMakeDeleteModal
+                modalType={ModalType.ADD}
                 insideStyle={classes.insideStyle}
                 openModal={openModalMachine}
                 onClose={onClickCloseModalMachine}
@@ -790,6 +868,7 @@ const ActionContainerComponent = ({
                 onClickDelete={updateWorkFlowForMachine}
               />
               <GoMakeDeleteModal
+                modalType={ModalType.ADD}
                 insideStyle={classes.insideStyle}
                 openModal={openModalMaterial}
                 onClose={onClickCloseModalMaterial}

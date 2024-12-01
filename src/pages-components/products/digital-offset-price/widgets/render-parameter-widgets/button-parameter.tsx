@@ -358,7 +358,7 @@ const ButtonParameterWidget = ({
     if (!transformedShape) return;
     setSelectedShape(transformedShape);
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
-  const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts);
+  const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts, isParameterSettings);
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
     if (isStraightKnife) {
       Comp = (

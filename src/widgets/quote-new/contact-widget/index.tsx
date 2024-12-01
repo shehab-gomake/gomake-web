@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useRouter } from "next/router";
+import { ModalType } from "@/enums";
 
 const ContactNewWidget = ({
   handleShowLess,
@@ -123,13 +124,10 @@ const ContactNewWidget = ({
           onOpenNewContact={onOpenNewContact}
         />
       )}
-
       <GoMakeDeleteModal
-        title={t("sales.quote.deleteContactRow")}
-        yesBtn={t("materials.buttons.delete")}
+        modalType={ModalType.DELETE}
         openModal={openDeleteModalContact}
         onClose={onCloseDeleteModalContact}
-        subTitle={t("sales.quote.subTitleDeleteContactRow")}
         onClickDelete={() => onClickDeleteContact(selectedContact)}
       />
     </>

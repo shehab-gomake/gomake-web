@@ -17,8 +17,10 @@ const useTranslationsTable = () => {
   const [translationsTableRows, setTranslationsTableRows] = useState<any>();
   const [totalPages, setTotalPages] = useState<number>();
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchFilter, setSearchFilter] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState<string>("");
   const [hasTextChanged, setHasTextChanged] = useState(false);
+
   const updateTranslation = (e, path, key, lang) => {
     const value = e.target.value;
     const updateObj = {
@@ -58,6 +60,7 @@ const useTranslationsTable = () => {
     };
     updateWebTranslationsTable(callApi, callBack, updateObj);
   };
+
   const handleTranslationChange = (e, path, key, lang) => {
     const value = e.target.value;
 
@@ -88,6 +91,7 @@ const useTranslationsTable = () => {
 
     setHasTextChanged(true);
   };
+
   useEffect(() => {
     if (translationsTableData && translationsTableData.length > 0) {
       const headers = ["path", "key"];
@@ -124,6 +128,7 @@ const useTranslationsTable = () => {
       setTranslationsTableRows(rows);
     }
   }, [translationsTableData]);
+
   const getTranslationsTable = () => {
     const callBack = (res) => {
       const data = res.data.data as IGetWebTranslationsTableResult[];
@@ -132,7 +137,7 @@ const useTranslationsTable = () => {
     };
     getWebTranslationsTable(callApi, callBack, {
       page: currentPage,
-      filter: searchFilter,
+      filter: searchTerm,
     });
   };
 
@@ -143,8 +148,10 @@ const useTranslationsTable = () => {
     translationsTableRows,
     currentPage,
     setCurrentPage,
-    searchFilter,
-    setSearchFilter,
+    setSearchTerm,
+    searchTerm,
+    debouncedSearchTerm,
+    setDebouncedSearchTerm,
   };
 };
 export { useTranslationsTable };

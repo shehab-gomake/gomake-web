@@ -165,6 +165,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     }
   }, [selectedShape])
   const onClickChoosParameter = () => {
+    setMaterialDataFilter("")
     if (isParameterSettings) {
       updatedProductParameteDefaultValue(selectParameterButton?.sectionId, selectParameterButton?.subSectionId, selectParameterButton?.parameter)
     }
@@ -194,9 +195,9 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
         );
       }
       setMaterialData([])
-      onClose();
-    }
 
+    }
+    onClose();
   };
   const onClickNewOrder = () => {
     setIsChargeForNewDie(true);

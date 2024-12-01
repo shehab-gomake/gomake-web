@@ -1,13 +1,17 @@
 import { useMemo } from "react";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
-    return {};
+  const classes = useMemo(() => {
+    return {
+      btnStyle: {
+        width: "100%",
+        borderRadius: "8px",
+        height: "40px",
+      },
+    };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };
