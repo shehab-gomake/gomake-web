@@ -23,6 +23,7 @@ export enum Permissions {
   UPDATE_QUOTE_DELIVERY_ITEM_PRICES = "UpdateQuoteDeliveryItemPrices",
   SHOW_COSTS_IN_CALCULATIONS = "ShowCostsInCalculations",
   //SHOW_PROFITS_IN_CALCULATIONS = "ShowProfitsInCalculations",
+  CUSTOMIZE_WORKFLOW = "CustomizeWorkflow",
 
   //Materials group
   EDIT_MATERIAL = "EditMaterial",

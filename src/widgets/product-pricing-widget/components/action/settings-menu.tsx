@@ -8,6 +8,9 @@ import { deleteActionToWorkFlowApi } from "@/services/api-service/product-item-v
 import { useGomakeAxios } from "@/hooks";
 import { useState } from "react";
 import { ModalType } from "@/enums";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
+
 
 const SettingsMenu = ({
   handleClose,
@@ -89,11 +92,13 @@ const SettingsMenu = ({
             {t("products.offsetPrice.admin.machine")}
           </MenuItem>
         )}
-        <Divider />
-        <MenuItem style={{ display: "flex", alignItems: "center", gap: "10px" }} onClick={onClickOpenDeleteModal}>
-          <DeleteSettingsIcon />
-          {t("navigationButtons.delete")}
-        </MenuItem>
+        <PermissionCheck userPermission={Permissions.CUSTOMIZE_WORKFLOW}>
+          <Divider />
+          <MenuItem style={{ display: "flex", alignItems: "center", gap: "10px" }} onClick={onClickOpenDeleteModal}>
+            <DeleteSettingsIcon />
+            {t("navigationButtons.delete")}
+          </MenuItem>
+        </PermissionCheck>
 
       </GoMakeMenu>
       <GoMakeDeleteModal
