@@ -57,7 +57,6 @@ const SettingsMenu = ({
   };
   const onClickDeleteActionToWorkFlow = async (data) => {
     const callBack = (res) => {
-      console.log("res", res)
       if (res.success) {
         handleClose();
       }

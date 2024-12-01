@@ -490,7 +490,6 @@ const useAddRuleModal = ({
     if (!isValidRules) {
       return;
     }
-    debugger
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/printhouse-config/print-house-action/add-rule/${router?.query?.actionId}/${selectedProperties?.propertyId}/${selectedProperties?.ruleType}`,

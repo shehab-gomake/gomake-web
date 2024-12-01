@@ -361,7 +361,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         mySelectedWorkFlow.totalPrice &&
         mySelectedWorkFlow.totalPrice.values && !isNaN(mySelectedWorkFlow.totalPrice.values[0])
       ) {
-        debugger
         setCurrentProductItemValueTotalPrice(
           parseFloat(mySelectedWorkFlow.totalPrice.values[0])
         );
@@ -443,7 +442,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           calculationProgress.currentWorkFlowsCount
           ? signalRPricingResult.currentWorkFlowIndex
           : calculationProgress.currentWorkFlowsCount + 1;
-      debugger
       if (
         signalRPricingResult.isCalculationFinished &&
         signalRPricingResult.totalPrice && !isNaN(signalRPricingResult.totalPrice)
@@ -4326,25 +4324,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           Id: router?.query?.productId,
         }
       );
-    } 
-    if(router?.query?.profitsProfileRowId){
+    }
+    if (router?.query?.profitsProfileRowId) {
       await getAndSetProfitProfileReviewProductId(
-          callApi,
-          (data) => {
-            const updatedTemplate = updateIsHidden(data, subProducts);
-            setDefaultProductTemplate(updatedTemplate);
-            initProduct(updatedTemplate, materials);
-            let checkParameter = validateParameters(subProducts);
-            if (checkParameter) {
-              setCanCalculation(true);
-            } else {
-              setCanCalculation(false);
-            }
-          },
-          {
-            profitsProfileRowId: router?.query?.profitsProfileRowId,
-            quantity: router?.query?.quantity,
+        callApi,
+        (data) => {
+          const updatedTemplate = updateIsHidden(data, subProducts);
+          setDefaultProductTemplate(updatedTemplate);
+          initProduct(updatedTemplate, materials);
+          let checkParameter = validateParameters(subProducts);
+          if (checkParameter) {
+            setCanCalculation(true);
+          } else {
+            setCanCalculation(false);
           }
+        },
+        {
+          profitsProfileRowId: router?.query?.profitsProfileRowId,
+          quantity: router?.query?.quantity,
+        }
       );
     }
     else {
