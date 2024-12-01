@@ -13,7 +13,6 @@ import {
 } from "@/pages-components/quotes/enums";
 import { PaymentModal } from "./payment/payment-modal";
 import { PaymentBtn } from "./payment/payment-button";
-import { CancelReceiptModal } from "./payment/cancel-receipt-modal/cancel-receipt-modal";
 import { OrderNowModal } from "../total-price-and-vat/order-now-modal";
 import { useGomakeRouter, useSnackBar } from "@/hooks";
 import { ManagerApprovalModal } from "../total-price-and-vat/manger-approval-modal";
@@ -346,10 +345,20 @@ const ButtonsContainer = ({
           onClose={onClickCloseDeleteModal}
           onClickDelete={onClickCancelReceipt}
         />
-        <CancelReceiptModal
+        <ThreeOptionsModal
+          title={t("payment.cancelReceipt")}
+          yesBtn={t("payment.CancelWithRefund")}
+          noBtn={t("payment.CancelWithoutRefund")}
           openModal={openCancelReceiptModal}
-          handleModalClose={onClickCloseCancelReceiptModal}
-          onClickCancel={onClickCancelReceipt}
+          onClose={onClickCloseCancelReceiptModal}
+          onClickYes={() => {
+            onClickCancelReceipt(true);
+            onClickCloseCancelReceiptModal();
+          }}
+          onClickNo={() => {
+            onClickCancelReceipt(false);
+            onClickCloseCancelReceiptModal();
+          }}
         />
         <CloseBtnMenu
           handleClose={handleCloseBtnClose}

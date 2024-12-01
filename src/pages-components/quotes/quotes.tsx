@@ -41,7 +41,6 @@ import { SendPaymentModal } from "./widgets/send-payment-modal/send-payment-moda
 import { MakePaymentModal } from "./widgets/make-payment-modal/make-payment-modal";
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
-import { CancelReceiptModal } from "@/widgets/quote-new/buttons-container/payment/cancel-receipt-modal/cancel-receipt-modal";
 import { ExcelMenu } from "./widgets/excel-menu/excel-menu";
 import { DotIcon } from "@/icons";
 import { ModalType } from "@/enums";
@@ -823,10 +822,20 @@ const QuotesListPageWidget = ({
           }
         }}
       />
-      <CancelReceiptModal
+      <ThreeOptionsModal
+        title={t("payment.cancelReceipt")}
+        yesBtn={t("payment.CancelWithRefund")}
+        noBtn={t("payment.CancelWithoutRefund")}
         openModal={openCancelReceiptModalRefund}
-        handleModalClose={onCloseCancelReceiptModalRefund}
-        onClickCancel={onClickCancelReceipt}
+        onClose={onCloseCancelReceiptModalRefund}
+        onClickYes={() => {
+          onClickCancelReceipt(true);
+          onCloseCancelReceiptModalRefund();
+        }}
+        onClickNo={() => {
+          onClickCancelReceipt(false);
+          onCloseCancelReceiptModalRefund();
+        }}
       />
       <ThreeOptionsModal
         title={t("boardMissions.duplicateModalTitle")}
