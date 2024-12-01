@@ -10,7 +10,12 @@ interface IPaymentModalProps {
   onClickCancel: (value: boolean) => void;
 }
 
-const CancelReceiptModal = ({ openModal, handleModalClose, onClickCancel }: IPaymentModalProps) => {
+//!here
+const CancelReceiptModal = ({
+  openModal,
+  handleModalClose,
+  onClickCancel,
+}: IPaymentModalProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
 
@@ -19,11 +24,13 @@ const CancelReceiptModal = ({ openModal, handleModalClose, onClickCancel }: IPay
       disableEnforceFocus
       open={openModal}
       onClose={handleModalClose}
-      style={{outline: "none"}}
+      style={{ outline: "none" }}
     >
       <div style={classes.container}>
         <div style={classes.content}>
-          <div style={classes.icon}>{<WarningAmberIcon style={classes.iconStyle} />}</div>
+          <div style={classes.icon}>
+            {<WarningAmberIcon style={classes.iconStyle} />}
+          </div>
           <div style={classes.title}>{t("payment.cancelReceipt")}</div>
           <div style={classes.subTitle} />
           <div style={classes.btnsContainer}>
@@ -45,14 +52,16 @@ const CancelReceiptModal = ({ openModal, handleModalClose, onClickCancel }: IPay
             >
               {t("payment.CancelWithoutRefund")}
             </GomakePrimaryButton>
-            <GomakePrimaryButton style={classes.cancelBtn} onClick={handleModalClose}>
+            <GomakePrimaryButton
+              style={classes.cancelBtn}
+              onClick={handleModalClose}
+            >
               {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           </div>
         </div>
       </div>
     </Modal>
-
   );
-}
-export { CancelReceiptModal }
+};
+export { CancelReceiptModal };

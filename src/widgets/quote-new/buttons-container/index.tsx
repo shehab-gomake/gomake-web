@@ -15,7 +15,6 @@ import { PaymentModal } from "./payment/payment-modal";
 import { PaymentBtn } from "./payment/payment-button";
 import { CancelReceiptModal } from "./payment/cancel-receipt-modal/cancel-receipt-modal";
 import { OrderNowModal } from "../total-price-and-vat/order-now-modal";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useGomakeRouter, useSnackBar } from "@/hooks";
 import { ManagerApprovalModal } from "../total-price-and-vat/manger-approval-modal";
 import { useEffect } from "react";
@@ -340,8 +339,7 @@ const ButtonsContainer = ({
           selectedTab={selectedTabIndex}
         />
         <GoMakeDeleteModal
-          modalType={ModalType.EDIT}
-          icon={<WarningAmberIcon style={classes.iconStyle} />}
+          modalType={ModalType.WARNING}
           title={t("payment.cancelReceipt")}
           yesBtn={t("sales.quote.yesBtn")}
           openModal={openDeleteModal}

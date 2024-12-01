@@ -11,7 +11,6 @@ import {
   ThreeOptionsModal,
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { HeaderTitle } from "@/widgets";
 import { DocumentLogsWidget } from "./widgets/documents-logs-widget/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
@@ -24,7 +23,7 @@ import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
@@ -301,12 +300,12 @@ const QuotesListPageWidget = ({
                         {Object.keys(router.query).filter(
                           (key) => key !== "pageNumber"
                         ).length > 0 && (
-                            <div
-                              style={{ position: "absolute", top: -5, right: -1 }}
-                            >
-                              <DotIcon />
-                            </div>
-                          )}
+                          <div
+                            style={{ position: "absolute", top: -5, right: -1 }}
+                          >
+                            <DotIcon />
+                          </div>
+                        )}
                       </IconButton>
                       <GoMakeMenu
                         handleClose={handleClose}
@@ -428,7 +427,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder &&
                               documentType !== DOCUMENT_TYPE.receipt && (
                                 <div style={classes.statusFilterContainer}>
@@ -474,7 +473,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder && (
                                 <div
                                   style={{
@@ -576,7 +575,7 @@ const QuotesListPageWidget = ({
                 documentType === DOCUMENT_TYPE.quote
                   ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
                   : documentType === DOCUMENT_TYPE.order
-                    ? [
+                  ? [
                       "6%",
                       "5%",
                       "5%",
@@ -592,32 +591,32 @@ const QuotesListPageWidget = ({
                       "5%",
                       "5%",
                     ]
-                    : documentType === DOCUMENT_TYPE.purchaseInvoice ||
-                      documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
-                      ? [
-                        "7%",
-                        "15%",
-                        "10%",
-                        "13%",
-                        "10%",
-                        "10%",
-                        "10%",
-                        "10%",
-                        "10%",
-                        "5%",
-                      ]
-                      : [
-                        "7%",
-                        "8%",
-                        "8%",
-                        "8%",
-                        "10%",
-                        "26%",
-                        "10%",
-                        "10%",
-                        "10%",
-                        "3%",
-                      ]
+                  : documentType === DOCUMENT_TYPE.purchaseInvoice ||
+                    documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+                  ? [
+                      "7%",
+                      "15%",
+                      "10%",
+                      "13%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "5%",
+                    ]
+                  : [
+                      "7%",
+                      "8%",
+                      "8%",
+                      "8%",
+                      "10%",
+                      "26%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "3%",
+                    ]
               }
             />
           </div>
@@ -684,9 +683,6 @@ const QuotesListPageWidget = ({
         />
       )}
       <GoMakeDeleteModal
-        // icon={
-        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        // }
         modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
@@ -699,9 +695,6 @@ const QuotesListPageWidget = ({
         }
       />
       <GoMakeDeleteModal
-        // icon={
-        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        // }
         modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
@@ -712,9 +705,6 @@ const QuotesListPageWidget = ({
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
       />
       <GoMakeDeleteModal
-        // icon={
-        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        // }
         modalType={ModalType.WARNING}
         title={t("sales.quote.titleCloseModal")}
         yesBtn={t("sales.quote.yesBtn")}
@@ -736,9 +726,6 @@ const QuotesListPageWidget = ({
         />
       </GoMakeDeleteModal>
       <GoMakeDeleteModal
-        // icon={
-        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        // }
         modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
@@ -781,17 +768,16 @@ const QuotesListPageWidget = ({
         orderItemValue={selectedQuoteItemValue}
         getAllQuotes={getAllQuotes}
       />
+      {/* !here */}
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
+        modalType={ModalType.WARNING}
         title={t("sales.closeAndTrackTitle")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openCloseAndTrackOrderModal}
         onClose={onClickCloseTrackModal}
         onClickDelete={closeAndTrackOrder}
         style={{ width: "35%" }}
-      ></GoMakeDeleteModal>
+      />
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={`Do you want to print the delivery note with prices ?`}
@@ -808,7 +794,6 @@ const QuotesListPageWidget = ({
         }}
       />
       <GoMakeDeleteModal
-        icon={<WarningAmberIcon style={classes.cancelIconStyle} />}
         modalType={ModalType.WARNING}
         title={t("payment.cancelReceipt")}
         yesBtn={t("sales.quote.yesBtn")}
