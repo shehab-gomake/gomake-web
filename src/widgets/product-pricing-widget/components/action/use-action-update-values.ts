@@ -115,7 +115,6 @@ const useActionUpdateValues = () => {
         }
     }
     const apiCallBackMachine = (res:any) => {
-        debugger
         if (res.success) {
             if(res.data && res.data.item2){
                 setCurrentCalculationSessionId(res.data.item2)

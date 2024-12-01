@@ -4326,25 +4326,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           Id: router?.query?.productId,
         }
       );
-    } 
-    if(router?.query?.profitsProfileRowId){
+    }
+    if (router?.query?.profitsProfileRowId) {
       await getAndSetProfitProfileReviewProductId(
-          callApi,
-          (data) => {
-            const updatedTemplate = updateIsHidden(data, subProducts);
-            setDefaultProductTemplate(updatedTemplate);
-            initProduct(updatedTemplate, materials);
-            let checkParameter = validateParameters(subProducts);
-            if (checkParameter) {
-              setCanCalculation(true);
-            } else {
-              setCanCalculation(false);
-            }
-          },
-          {
-            profitsProfileRowId: router?.query?.profitsProfileRowId,
-            quantity: router?.query?.quantity,
+        callApi,
+        (data) => {
+          const updatedTemplate = updateIsHidden(data, subProducts);
+          setDefaultProductTemplate(updatedTemplate);
+          initProduct(updatedTemplate, materials);
+          let checkParameter = validateParameters(subProducts);
+          if (checkParameter) {
+            setCanCalculation(true);
+          } else {
+            setCanCalculation(false);
           }
+        },
+        {
+          profitsProfileRowId: router?.query?.profitsProfileRowId,
+          quantity: router?.query?.quantity,
+        }
       );
     }
     else {
