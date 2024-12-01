@@ -22,7 +22,8 @@ const PriceProfitHeaderWidget = ({
   selectedPricingProfileSetting,
   setSelectedPricingProfileSetting,
   updateSelectedPrintHousePrices,
-  onClickPrint
+  onClickPrint,
+  resetPrintHousePrice
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -93,7 +94,7 @@ const PriceProfitHeaderWidget = ({
               <div style={classes.menuItemReviewText}>{t("priceProfit.restoreOriginalPrices")}</div>
             </div>
           </MenuItem>
-          <MenuItem>
+          <MenuItem onClick={resetPrintHousePrice}>
             <div style={classes.menuItemReviewContainer}>
               <ResetIcon />
               <div style={classes.menuItemReviewText}>{t("priceProfit.resetOldVersion")}</div>

@@ -19,6 +19,7 @@ const UPDATE_PROFIT_PROFILE_PRODUCT_SELECTED_URL = "/v1/printhouse-config/profit
 const UPDATE_SELECTED_PRINT_HOUSE_PRICES_URL = "/v1/printhouse-config/profit-profile-products/update-selected-print-house-prices";
 const UPDATE_PROFIT_PROFILE_PRODUCT_MATERIAL_URL = "/v1/printhouse-config/profit-profile-products/update-profit-profile-product-material";
 const UPDATE_PROFIT_PROFILE_PRODUCT_MACHINE_URL = "/v1/printhouse-config/profit-profile-products/update-profit-profile-product-machine";
+const RESET_PRINT_HOUSE_PRICE_URL = "/v1/printhouse-config/profit-profile-products/reset-print-house-price";
 
 const GET_PROFITS_PROFILE_PDF_URL = "/v1/printhouse-config/profit-profile-products/get-profits-profile-pdf";
 
@@ -68,7 +69,9 @@ const updateProfitProfileProductSelectedApi: ICallAndSetData = async (callApi, s
 const updateSelectedPrintHousePricesApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_SELECTED_PRINT_HOUSE_PRICES_URL ,setState, data);
 };
-
+const resetPrintHousePriceApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, RESET_PRINT_HOUSE_PRICE_URL ,setState, data);
+};
 const updateProfitProfileProductMaterialApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_PROFIT_PROFILE_PRODUCT_MATERIAL_URL ,setState, data);
 };
@@ -104,5 +107,6 @@ export {
     updateSelectedPrintHousePricesApi,
     updateProfitProfileProductMaterialApi,
     getProfitsProfilePdfApi,
-    updateProfitProfileProductMachineApi
+    updateProfitProfileProductMachineApi,
+    resetPrintHousePriceApi
 }
