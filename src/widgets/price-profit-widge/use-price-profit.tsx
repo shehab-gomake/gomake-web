@@ -1,6 +1,6 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useDisplayProfitProfilesSignalr } from "@/hooks/signalr/use-display-profit-profiles-signalr";
-import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, getProfitsProfilePdfApi, updatePrintHousePriceApi, updateProfitProfileProductHiddenApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi, updateProfitProfileProductSelectedApi, updateSelectedPrintHousePricesApi } from "@/services/api-service/products/product-endpoints";
+import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, getProfitsProfilePdfApi, resetPrintHousePriceApi, updatePrintHousePriceApi, updateProfitProfileProductHiddenApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi, updateProfitProfileProductSelectedApi, updateSelectedPrintHousePricesApi } from "@/services/api-service/products/product-endpoints";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
@@ -184,6 +184,7 @@ const usePriceProfit = () => {
   }, []);
 
   const getAllProfitProfileProductByProductId = useCallback(async (productId: string) => {
+    setProducts([])
     // Abort any ongoing request
     if (requestAbortController) {
       requestAbortController.abort();
@@ -372,6 +373,25 @@ const usePriceProfit = () => {
   const { } = useDisplayProfitProfilesSignalr({ setProducts })
 
 
+  const resetPrintHousePrice = useCallback(async () => {
+    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
+    const callBack = (res) => {
+      if (res?.success) {
+        setProducts(res?.data)
+        handleCloseSetting()
+
+      }
+      else {
+        getAllProfitProfileProductByProductId(productId)
+        handleCloseSetting()
+      }
+    }
+    await resetPrintHousePriceApi(callApi, callBack, {
+      productId: productId,
+    });
+  }, [router])
+
+
 
   return {
     open,
@@ -413,7 +433,8 @@ const usePriceProfit = () => {
     updateProfitProfileProductHidden,
     updateProfitProfileProductSelected,
     updateSelectedPrintHousePrices,
-    onClickPrint
+    onClickPrint,
+    resetPrintHousePrice
   };
 };
 
