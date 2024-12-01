@@ -16,11 +16,13 @@ import { calculationResultState } from "./state";
 import { useState } from "react";
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { FONT_FAMILY } from "@/utils/font-family";
-import { GoMakeAutoComplate, GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
+import { GoMakeDeleteModal } from "@/components";
 import { ActionsListMenu } from "./components/actions-menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SectionNameListMenu } from "./components/sections-menu";
 import { ModalType } from "@/enums";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const PricingWidget = ({
   workFlows,
@@ -123,26 +125,27 @@ const PricingWidget = ({
           <div />
         )}
         <Stack direction={"row"} gap={"10px"}>
-          {
-            isHasSubWorkFlowsOrProductTypeActions &&
-            <div style={classes.autoCompleteSelectedSectionName} onClick={(e) => {
-              handleOpenSectionNameListMenu(e)
-              setIsUnderlined(false)
-            }}>
-              {t("pricingWidget.addAction")}
-              <ArrowDropDownIcon />
-            </div>
-          }
-          {!isHasSubWorkFlowsOrProductTypeActions &&
-            <div style={classes.autoCompleteSelectedSectionName} onClick={(e) => {
-              handleOpenActionsListMenu(e)
-              setIsUnderlined(true)
-            }}>
-              {t("pricingWidget.addAction")}
-              <ArrowDropDownIcon />
-            </div>
-          }
-
+          <PermissionCheck userPermission={Permissions.CUSTOMIZE_WORKFLOW}>
+            {
+              isHasSubWorkFlowsOrProductTypeActions &&
+              <div style={classes.autoCompleteSelectedSectionName} onClick={(e) => {
+                handleOpenSectionNameListMenu(e)
+                setIsUnderlined(false)
+              }}>
+                {t("pricingWidget.addAction")}
+                <ArrowDropDownIcon />
+              </div>
+            }
+            {!isHasSubWorkFlowsOrProductTypeActions &&
+              <div style={classes.autoCompleteSelectedSectionName} onClick={(e) => {
+                handleOpenActionsListMenu(e)
+                setIsUnderlined(true)
+              }}>
+                {t("pricingWidget.addAction")}
+                <ArrowDropDownIcon />
+              </div>
+            }
+          </PermissionCheck>
           <InOutSourceSelect
             onChange={(v: EWorkSource) => {
               setSelectedWorkFlowCalculatedIsLoaded(true)

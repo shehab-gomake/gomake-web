@@ -15,6 +15,9 @@ import { useTranslation } from "react-i18next";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons";
+import { useRecoilValue } from "recoil";
+import { permissionsState } from "@/store";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 interface ISubWorkFlowComponentProps extends ICalculatedWorkFlow {
     isEditableActions?: boolean;
@@ -53,6 +56,7 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
         reOderMainActions(formattedActions)
         setActionsList(reorderedActions);
     };
+    const permissions = useRecoilValue(permissionsState);
     return (
         <>
             <Fade in={true}>
@@ -95,46 +99,78 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
                 </Stack>
             </Fade>
             <Collapse in={isOpen} collapsedSize={0} orientation={'vertical'}>
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId={`actions-${id}`}>
-                        {(provided) => (
-                            <Stack padding={'10px 0'} gap={'10px'} ref={provided.innerRef} {...provided.droppableProps}>
-                                {
-                                    actionsList?.map((action, i) => (
-                                        <Draggable key={action.id} draggableId={action.id} index={i}>
-                                            {(provided) => (
-                                                <Stack
-                                                    direction={'row'}
-                                                    alignItems={'center'}
-                                                    position={'relative'}
-                                                    padding={'0 5px'}
-                                                    zIndex={1000}
-                                                    ref={provided.innerRef}
-                                                    {...provided.draggableProps}
-                                                    {...provided.dragHandleProps}
-                                                >
-                                                    {
-                                                        i + 1 < actions?.length ? <Divider orientation={'vertical'} style={{
-                                                            width: '2px',
-                                                            backgroundColor: '#667085',
-                                                            margin: i === 0 ? '-20px 0 -10px 0' : '-10px 0'
-                                                        }} flexItem /> :
-                                                            <Divider style={classes.subWorkFlowDividerVertical} absolute orientation={"vertical"} />
-                                                    }
-                                                    <Divider orientation={'horizontal'}
-                                                        style={{ width: '30px', height: '2px', backgroundColor: '#667085' }} />
-                                                    {isEditableActions ? <ActionContainerComponent widgetType={widgetType} productType={productType} workFlowId={id} {...action} /> :
-                                                        <ActionComponent {...action} />}
-                                                </Stack>
-                                            )}
-                                        </Draggable>
-                                    ))
-                                }
-                                {provided.placeholder}
-                            </Stack>
-                        )}
-                    </Droppable>
-                </DragDropContext>
+                {permissions.includes(Permissions.CUSTOMIZE_WORKFLOW) ?
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <Droppable droppableId={`actions-${id}`}>
+                            {(provided) => (
+                                <Stack padding={'10px 0'} gap={'10px'} ref={provided.innerRef} {...provided.droppableProps}>
+                                    {
+                                        actionsList?.map((action, i) => (
+                                            <Draggable key={action.id} draggableId={action.id} index={i}>
+                                                {(provided) => (
+                                                    <Stack
+                                                        direction={'row'}
+                                                        alignItems={'center'}
+                                                        position={'relative'}
+                                                        padding={'0 5px'}
+                                                        zIndex={1000}
+                                                        ref={provided.innerRef}
+                                                        {...provided.draggableProps}
+                                                        {...provided.dragHandleProps}
+                                                    >
+                                                        {
+                                                            i + 1 < actions?.length ? <Divider orientation={'vertical'} style={{
+                                                                width: '2px',
+                                                                backgroundColor: '#667085',
+                                                                margin: i === 0 ? '-20px 0 -10px 0' : '-10px 0'
+                                                            }} flexItem /> :
+                                                                <Divider style={classes.subWorkFlowDividerVertical} absolute orientation={"vertical"} />
+                                                        }
+                                                        <Divider orientation={'horizontal'}
+                                                            style={{ width: '30px', height: '2px', backgroundColor: '#667085' }} />
+                                                        {isEditableActions ? <ActionContainerComponent widgetType={widgetType} productType={productType} workFlowId={id} {...action} /> :
+                                                            <ActionComponent {...action} />}
+                                                    </Stack>
+                                                )}
+                                            </Draggable>
+                                        ))
+                                    }
+                                    {provided.placeholder}
+                                </Stack>
+                            )}
+                        </Droppable>
+                    </DragDropContext> : <>
+                        {
+                            actionsList?.map((action, i) => (
+                                <Stack
+                                    direction={'row'}
+                                    alignItems={'center'}
+                                    position={'relative'}
+                                    padding={'0 5px'}
+                                    zIndex={1000}
+                                    key={action.id}
+                                    style={{ marginBottom: "10px" }}
+                                >
+                                    {i + 1 < actions?.length ? (
+                                        <Divider orientation={'vertical'} style={{
+                                            width: '2px',
+                                            backgroundColor: '#667085',
+                                            margin: i === 0 ? '-20px 0 -10px 0' : '-10px 0'
+                                        }} flexItem />
+                                    ) : (
+                                        <Divider style={classes.subWorkFlowDividerVertical} absolute orientation={"vertical"} />
+                                    )}
+                                    <Divider orientation={'horizontal'}
+                                        style={{ width: '30px', height: '2px', backgroundColor: '#667085' }} />
+                                    {isEditableActions ? (
+                                        <ActionContainerComponent widgetType={widgetType} productType={productType} workFlowId={id} {...action} />
+                                    ) : (
+                                        <ActionComponent {...action} />
+                                    )}
+                                </Stack>
+                            ))
+                        }</>}
+
             </Collapse>
         </>
     )
@@ -144,6 +180,7 @@ const SubWorkFlowsComponent = ({ workflows, isEditableActions, widgetType, reOde
     reOderSubWorkFlows
 }: ISubWorkFlowsComponentProps) => {
     const [workflowsList, setWorkflowsList] = useState(workflows);
+    const permissions = useRecoilValue(permissionsState);
     useEffect(() => {
         setWorkflowsList(workflows)
     }, [workflows])
@@ -162,37 +199,52 @@ const SubWorkFlowsComponent = ({ workflows, isEditableActions, widgetType, reOde
     };
 
     return (
-        <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="workflows">
-                {(provided) => (
-                    <Stack gap={'10px'} ref={provided.innerRef} {...provided.droppableProps}>
-                        {workflowsList.map((flow, index) => (
-                            <Draggable key={flow.id} draggableId={flow.id} index={index}>
-                                {(provided) => (
-                                    <div ref={provided.innerRef} {...provided.draggableProps}>
-                                        <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
-                                            {/* Attach dragHandleProps only to the SortIcon */}
-                                            <div style={{ marginTop: "15px" }} {...provided.dragHandleProps}>
-                                                <SortIcon />
+        <>
+            {permissions.includes(Permissions.CUSTOMIZE_WORKFLOW) ?
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="workflows">
+                        {(provided) => (
+                            <Stack gap={'10px'} ref={provided.innerRef} {...provided.droppableProps}>
+                                {workflowsList.map((flow, index) => (
+                                    <Draggable key={flow.id} draggableId={flow.id} index={index}>
+                                        {(provided) => (
+                                            <div ref={provided.innerRef} {...provided.draggableProps}>
+                                                <div style={{ display: "flex", alignItems: "flex-start", gap: "10px" }}>
+                                                    <div style={{ marginTop: "15px" }} {...provided.dragHandleProps}>
+                                                        <SortIcon />
+                                                    </div>
+                                                    <div>
+                                                        <SubWorkFlowComponent
+                                                            widgetType={widgetType}
+                                                            isEditableActions={isEditableActions}
+                                                            reOderMainActions={reOderMainActions}
+                                                            {...flow}
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <SubWorkFlowComponent
-                                                    widgetType={widgetType}
-                                                    isEditableActions={isEditableActions}
-                                                    reOderMainActions={reOderMainActions}
-                                                    {...flow}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </Draggable>
-                        ))}
-                        {provided.placeholder}
-                    </Stack>
-                )}
-            </Droppable>
-        </DragDropContext>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </Stack>
+                        )}
+                    </Droppable>
+                </DragDropContext> : <>
+                    {workflowsList.map((flow, index) => (
+                        <div style={{ marginBottom: "16px" }}>
+                            <SubWorkFlowComponent
+                                widgetType={widgetType}
+                                isEditableActions={isEditableActions}
+                                reOderMainActions={reOderMainActions}
+                                {...flow}
+                            />
+                        </div>
+                    ))}
+                </>
+            }
+        </>
+
     );
 };
 export { SubWorkFlowsComponent, SubWorkFlowComponent }
