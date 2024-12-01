@@ -162,9 +162,7 @@ const TotalPriceAndVatWidit = () => {
               <div style={clasess.numbersStyle}>{quoteItems?.vat}%</div>
             </div>
             <div style={clasess.priceContainer}>
-              <div style={clasess.numbersStyle}>
-                {quoteItems?.totalVAT}
-              </div>
+              <div style={clasess.numbersStyle}>{quoteItems?.totalVAT}</div>
             </div>
           </div>
         </div>
@@ -247,6 +245,7 @@ const TotalPriceAndVatWidit = () => {
           updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
         }
       />
+      {/* !!!!!what is this */}
       <OrderNowModal
         openModal={openOrderNowModal}
         onClose={onClickCloseOrderNowModal}

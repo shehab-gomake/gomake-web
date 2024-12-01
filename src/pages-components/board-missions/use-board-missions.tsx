@@ -87,7 +87,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [productsList, setProductsList] = useState([]);
 
   // const [patternSearch, setPatternSearch] = useState<string>("");
-  const [patternSearch, setPatternSearch] = useState<any>(null); //?new
+  const [patternSearch, setPatternSearch] = useState<any>(null);
 
   //DATE
   const [fromDate, setFromDate] = useState<Date>();
@@ -904,10 +904,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   useEffect(() => {
     if (debouncePatternSearch !== null) {
-      //?new
       const trimmedSearch = debouncePatternSearch?.trim() || "";
       setFinalPatternSearch(trimmedSearch);
-      setPageNumber(1); //?new
+      setPageNumber(1);
       if (trimmedSearch === "") {
         const { finalPatternSearch, ...remainingQuery } = router.query;
         router.push({

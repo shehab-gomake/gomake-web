@@ -25,6 +25,7 @@ import { ArrowUpNewIcon } from "@/icons/arrow-up-new";
 import { ManuallyCloseModal } from "./close-manually-modal";
 import { InvoiceCreationModal } from "../invoice-creation-modal";
 import { ModalType } from "@/enums";
+import { OrderNowPrePaymentModal } from "../total-price-and-vat/order-now-modal/order-now-pre-payment";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -76,7 +77,6 @@ const ButtonsContainer = ({
     getAllUsersCanApproveQuote,
     managersOptions,
     onClickSendAndChat,
-    loading,
     canAddDelivery,
     isInvoice,
     isShowCloseButton,
@@ -99,6 +99,9 @@ const ButtonsContainer = ({
     handleClickPrint,
     openExportReceiptPdfModal,
     onCloseExportReceiptPdfModal,
+    openOrderNowPrePaymentModal,
+    onClickCloseOrderNowPreModal,
+    handleOrderConfirmation,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -326,7 +329,6 @@ const ButtonsContainer = ({
           onClose={onClickCloseOrderNowModal}
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
-          loading={loading}
         />
         <ManagerApprovalModal
           openModal={openMangerApprovalModal}
@@ -388,6 +390,12 @@ const ButtonsContainer = ({
           onClose={onCloseExportReceiptPdfModal}
           onClickYes={() => onClickPrint(true)}
           onClickNo={() => onClickPrint(false)}
+        />
+        <OrderNowPrePaymentModal
+          quoteItemValue={quoteItemValue}
+          openModal={openOrderNowPrePaymentModal}
+          onClose={onClickCloseOrderNowPreModal}
+          handleOrderConfirmation={handleOrderConfirmation}
         />
       </div>
     </div>

@@ -24,7 +24,7 @@ import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
@@ -190,6 +190,9 @@ const QuotesListPageWidget = ({
     searchInputRef,
     openExportReceiptPdfModal,
     onCloseExportReceiptPdfModal,
+    startOrderProduction,
+    openStartProductionModal,
+    onClickCloseStartProductionModal,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -861,6 +864,15 @@ const QuotesListPageWidget = ({
         onClose={onCloseExportReceiptPdfModal}
         onClickYes={() => onClickQuotePdf(selectedDocument?.id, false, true)}
         onClickNo={() => onClickQuotePdf(selectedDocument?.id, false, false)}
+      />
+      <GoMakeDeleteModal
+        hideIcon
+        title={t("sales.tables.startProduction")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openStartProductionModal}
+        onClose={onClickCloseStartProductionModal}
+        subTitle={t("sales.modals.confirmSendToProduction")}
+        onClickDelete={startOrderProduction}
       />
     </>
   );

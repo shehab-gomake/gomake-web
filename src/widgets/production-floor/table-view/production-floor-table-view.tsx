@@ -5,7 +5,6 @@ import { useEffect, useMemo } from "react";
 import { useRecoilValue } from "recoil";
 import { selectedChipIdsState } from "../state/text-search";
 
-//?New
 const ProductionFloorTableView = () => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
   const {
