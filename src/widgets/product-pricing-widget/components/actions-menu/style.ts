@@ -10,7 +10,7 @@ const useStyle = ({isUnderlined}) => {
     return {
       mainContainer: {
         marginTop: isUnderlined?2:-45,
-        marginLeft:isUnderlined?80:224,
+        marginLeft:isUnderlined?RTL?-80:80:224,
       },
       bodyContainer: {
         minWidth: 220,
@@ -36,7 +36,7 @@ const useStyle = ({isUnderlined}) => {
         height: 36,
       },
     };
-  }, [isUnderlined]);
+  }, [isUnderlined,RTL,dir]);
   return {
     classes,
   };
