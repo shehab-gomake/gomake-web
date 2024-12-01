@@ -1,6 +1,19 @@
 import { ETabsIcon } from "@/enums";
-import { ErrorIcon, FinishingIcon, MessageLogsIcon, PricingIcon, PrintingDetailsIcon, SuccessIcon, WarningLogsIcon } from "@/icons";
-import { ApprovalStatus, DELIVERY_NOTE_STATUSES, DOCUMENT_TYPE, QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import {
+  ErrorIcon,
+  FinishingIcon,
+  MessageLogsIcon,
+  PricingIcon,
+  PrintingDetailsIcon,
+  SuccessIcon,
+  WarningLogsIcon,
+} from "@/icons";
+import {
+  ApprovalStatus,
+  DELIVERY_NOTE_STATUSES,
+  DOCUMENT_TYPE,
+  QUOTE_STATUSES,
+} from "@/pages-components/quotes/enums";
 import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
 import { Button } from "@mui/material";
 
@@ -115,28 +128,45 @@ export const _renderDocumentStatus = (status: number, t: any) => {
   }
 };
 
-export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, navigate: any): JSX.Element => {
+export const _renderStatus = (
+  docType: DOCUMENT_TYPE,
+  document: any,
+  t: any,
+  navigate: any
+): JSX.Element => {
   if (document) {
     let statusContent: JSX.Element | null = null;
-    const docTypeText = DOCUMENT_TYPE[docType].charAt(0).toUpperCase() + DOCUMENT_TYPE[docType].slice(1);
+    const docTypeText =
+      DOCUMENT_TYPE[docType].charAt(0).toUpperCase() +
+      DOCUMENT_TYPE[docType].slice(1);
     const openStatus = `${docTypeText}.Open`;
 
     let statusApproval: JSX.Element | null = null;
-    if (docType === DOCUMENT_TYPE.quote && document && document?.approvalStatus && document.approvalStatus !== null) {
-      statusApproval = <>{t(`documentStatus.${ApprovalStatus[document.approvalStatus]}`)}</>;
+    if (
+      docType === DOCUMENT_TYPE.quote &&
+      document &&
+      document?.approvalStatus &&
+      document.approvalStatus !== null
+    ) {
+      statusApproval = (
+        <>{t(`documentStatus.${ApprovalStatus[document.approvalStatus]}`)}</>
+      );
     }
 
     // Handle status with hyphen (-)
-    const statusParts = document?.statusTitleText?.split('-');
-    const translatedStatus = statusParts?.length > 0 ? t(`documentStatus.${statusParts[0]}`) : '';
+    const statusParts = document?.statusTitleText?.split("-");
+    const translatedStatus =
+      statusParts?.length > 0 ? t(`documentStatus.${statusParts[0]}`) : "";
 
-    if (document?.statusTitleText === openStatus ||
+    if (
+      document?.statusTitleText === openStatus ||
       document?.statusTitleText === "DeliveryNote.Open" ||
       document?.statusTitleText === "Invoice.Open" ||
-      document?.statusTitleText === "PurchaseOrder.Open") {
+      document?.statusTitleText === "PurchaseOrder.Open"
+    ) {
       return (
         <div>
-          <div style={{ fontWeight: 'bold' }}>{t("sales.quote.open")}</div>
+          <div style={{ fontWeight: "bold" }}>{t("sales.quote.open")}</div>
           {statusApproval}
         </div>
       );
@@ -144,78 +174,92 @@ export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, nav
       if (document?.agentId) {
         return (
           <div>
-            <div style={{ fontWeight: 'bold' }}>{t("sales.quote.create")}</div>
+            <div style={{ fontWeight: "bold" }}>{t("sales.quote.create")}</div>
             {statusApproval}
           </div>
         );
       } else {
         return (
           <div>
-            <div style={{ fontWeight: 'bold' }}>{t("sales.quote.createdBy", { name: document?.userName })}</div>
+            <div style={{ fontWeight: "bold" }}>
+              {t("sales.quote.createdBy", { name: document?.userName })}
+            </div>
             {statusApproval}
           </div>
         );
       }
-
-    }
-    else if (document.externalDocumentNumber) {
+    } else if (document.externalDocumentNumber) {
       const externalDocument = document.externalDocumentNumber;
       let result: JSX.Element[] = [];
       if (externalDocument.length > 0) {
         result.push(
           <div key="external-doc">
-
-            {t(`documentStatus.${document.titleExternalDocumentNumber}.title`)}: {externalDocument}
+            {t(`documentStatus.${document.titleExternalDocumentNumber}.title`)}:
+            {externalDocument}
           </div>
         );
       }
       statusContent = <>{result}</>;
-    }
-    else if ((document.documentNumbers && document.documentNumbers.length > 0) ||
-      (document.secondDocumentNumbers && document.secondDocumentNumbers.length > 0)) {
+    } else if (
+      (document.documentNumbers && document.documentNumbers.length > 0) ||
+      (document.secondDocumentNumbers &&
+        document.secondDocumentNumbers.length > 0)
+    ) {
+      const firstDocuments = document.documentNumbers
+        ? document.documentNumbers.map((item: any, index: number) => (
+            <span key={index}>
+              <a
+                style={{
+                  minWidth: "auto",
+                  height: "auto",
+                  padding: 0,
+                  color: "#2e3092",
+                  cursor: "pointer",
+                  textDecoration: "none",
+                }}
+                href={`/${
+                  document.titleDocumentNumber.charAt(0).toLowerCase() +
+                  document.titleDocumentNumber.slice(1)
+                }?Id=${item.documentId}`}
+              >
+                {item.documentNumber}
+              </a>
+              {index < document.documentNumbers.length - 1 && ", "}
+            </span>
+          ))
+        : [];
 
-      const firstDocuments = document.documentNumbers ? document.documentNumbers.map((item: any, index: number) => (
-        <span key={index}>
-          <a
-            style={{
-              minWidth: "auto",
-              height: "auto",
-              padding: 0,
-              color: "#2e3092",
-              cursor: "pointer",
-              textDecoration: "none",
-            }}
-            href={`/${document.titleDocumentNumber.charAt(0).toLowerCase() + document.titleDocumentNumber.slice(1)}?Id=${item.documentId}`}>
-            {item.documentNumber}
-          </a>
-          {index < document.documentNumbers.length - 1 && ', '}
-        </span>
-      )) : [];
-
-      const secondDocuments = document.secondDocumentNumbers ? document.secondDocumentNumbers.map((item: any, index: number) => (
-        <span key={index}>
-          <a
-            style={{
-              minWidth: "auto",
-              height: "auto",
-              padding: 0,
-              color: "#2e3092",
-              cursor: "pointer",
-              textDecoration: "none",
-            }}
-            href={`/${document.titleSecondDocumentNumber.charAt(0).toLowerCase() + document.titleSecondDocumentNumber.slice(1)}?Id=${item.documentId}`}>
-            {item.documentNumber}
-          </a>
-          {index < document.secondDocumentNumbers.length - 1 && ', '}
-        </span>
-      )) : [];
+      const secondDocuments = document.secondDocumentNumbers
+        ? document.secondDocumentNumbers.map((item: any, index: number) => (
+            <span key={index}>
+              <a
+                style={{
+                  minWidth: "auto",
+                  height: "auto",
+                  padding: 0,
+                  color: "#2e3092",
+                  cursor: "pointer",
+                  textDecoration: "none",
+                }}
+                href={`/${
+                  document.titleSecondDocumentNumber.charAt(0).toLowerCase() +
+                  document.titleSecondDocumentNumber.slice(1)
+                }?Id=${item.documentId}`}
+              >
+                {item.documentNumber}
+              </a>
+              {index < document.secondDocumentNumbers.length - 1 && ", "}
+            </span>
+          ))
+        : [];
 
       let result: JSX.Element[] = [];
 
       if (firstDocuments.length > 0) {
         result.push(
           <div key="first-documents">
-            {t(`documentStatus.${document.titleDocumentNumber}.title`)}: {firstDocuments}
+            {t(`documentStatus.${document.titleDocumentNumber}.title`)}:{" "}
+            {firstDocuments}
           </div>
         );
       }
@@ -223,7 +267,8 @@ export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, nav
       if (secondDocuments.length > 0) {
         result.push(
           <div key="second-documents">
-            {t(`documentStatus.${document.titleSecondDocumentNumber}.title`)}: {secondDocuments}
+            {t(`documentStatus.${document.titleSecondDocumentNumber}.title`)}:{" "}
+            {secondDocuments}
           </div>
         );
       }
@@ -232,9 +277,11 @@ export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, nav
 
     return (
       <div>
-        <div style={{ fontWeight: 'bold' }}>
+        <div style={{ fontWeight: "bold" }}>
           {translatedStatus}
-          {statusParts && statusParts?.length > 1 ? ` - ${statusParts.slice(1).join('-')}` : ''}
+          {statusParts && statusParts?.length > 1
+            ? ` - ${statusParts.slice(1).join("-")}`
+            : ""}
         </div>
         {statusContent}
       </div>
@@ -242,8 +289,6 @@ export const _renderStatus = (docType: DOCUMENT_TYPE, document: any, t: any, nav
   }
   return <></>;
 };
-
-
 
 export function getParameterByParameterCode(subProductArray, code) {
   for (let i = 0; i < subProductArray.length; i++) {
@@ -296,12 +341,14 @@ export const findParameterByCode = (template, paramCode) => {
   }
 
   return null;
-}
+};
 
 export const findDefaultOption = (parameter) => {
   if (parameter.valuesConfigs && parameter.valuesConfigs.length > 0) {
-    const defaultOption = parameter.valuesConfigs.find(option => option.isDefault === true);
+    const defaultOption = parameter.valuesConfigs.find(
+      (option) => option.isDefault === true
+    );
     return defaultOption || null;
   }
   return null;
-}
+};

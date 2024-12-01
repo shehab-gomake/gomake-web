@@ -21,6 +21,7 @@ import { isSelectedCLoseAsDeleveryNoteState } from "@/pages/customers/customer-s
 import { PauseIcon } from "@/icons/pause-icon";
 import { ResumeIcon } from "@/icons/resume-icon";
 import { PayIcon } from "./icons/pay";
+import { StartProductionIcon } from "./icons/start-productions";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -48,6 +49,7 @@ const useMoreCircle = () => {
     onClickOpenChangeProductionStatusModal,
     onClickPauseOrResume,
     onOpenDuplicateModal,
+    onClickStartProduction,
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
@@ -87,6 +89,8 @@ const useMoreCircle = () => {
     const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
     const isClosedOrder = quote?.statusTitleText === "Order.Closed";
     const isPauseOrder = quote?.statusTitleText === "Order.Paused";
+    const isPrePaymentOrder =
+      isOrder && quote?.statusTitleText === "Order.WaitingForPayment";
 
     return [
       {
@@ -113,7 +117,13 @@ const useMoreCircle = () => {
         ),
       },
       {
-        condition: !isPauseOrder && true,
+        condition: isPrePaymentOrder,
+        onClick: () => onClickStartProduction(quote),
+        icon: <StartProductionIcon />,
+        name: t("sales.tables.startProduction"),
+      },
+      {
+        condition: !isPauseOrder,
         onClick: () => onClickLoggers(quote),
         icon: <LoggerIcon />,
         name: t("sales.quote.loggers"),

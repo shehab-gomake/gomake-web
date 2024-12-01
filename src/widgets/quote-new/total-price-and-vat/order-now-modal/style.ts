@@ -14,7 +14,7 @@ const useStyle = () => {
         alignItems: "center",
       },
       insideStyleNew: {
-        width: "30%",
+        width: "37%",
         minWidth: "500px",
         maxWidth: 860,
         borderRadius: 10,
@@ -42,7 +42,7 @@ const useStyle = () => {
       },
       titleContainer: {
         display: "flex",
-        ...FONT_FAMILY.Inter(600, 18),
+        ...FONT_FAMILY.Inter(600, 20),
         textAlign: "center" as "center",
         color: "var(--colors-text-text-primary-900, #101828)",
         lineHeight: "28px",

@@ -1,17 +1,14 @@
 import { useTranslation } from "react-i18next";
 import { GoMakeModal, GomakePrimaryButton } from "@/components";
 import { useStyle } from "./style";
-import { GoMakeLoadingBackdrop } from "@/widgets/loading-with-shadow/go-make-loading-back-drop";
 import { OrderNowIcon } from "./icons";
 import { Stack } from "@mui/material";
 
-//!here
 const OrderNowModal = ({
   openModal,
   onClose,
   confirmWithoutNotification,
   confirmWithNotification,
-  loading,
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -64,7 +61,6 @@ const OrderNowModal = ({
             </GomakePrimaryButton>
           </div>
         </div>
-        <GoMakeLoadingBackdrop loading={loading} circular={false} />
       </GoMakeModal>
     </>
   );

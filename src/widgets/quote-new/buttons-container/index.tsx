@@ -76,7 +76,6 @@ const ButtonsContainer = ({
     getAllUsersCanApproveQuote,
     managersOptions,
     onClickSendAndChat,
-    loading,
     canAddDelivery,
     isInvoice,
     isShowCloseButton,
@@ -99,10 +98,9 @@ const ButtonsContainer = ({
     handleClickPrint,
     openExportReceiptPdfModal,
     onCloseExportReceiptPdfModal,
-
-    //!new
     openOrderNowPrePaymentModal,
     onClickCloseOrderNowPreModal,
+    handleOrderConfirmation,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -330,7 +328,6 @@ const ButtonsContainer = ({
           onClose={onClickCloseOrderNowModal}
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
-          loading={loading}
         />
         <ManagerApprovalModal
           openModal={openMangerApprovalModal}
@@ -396,8 +393,7 @@ const ButtonsContainer = ({
           quoteItemValue={quoteItemValue}
           openModal={openOrderNowPrePaymentModal}
           onClose={onClickCloseOrderNowPreModal}
-          confirmWithoutNotification={() => alert("yes1")}
-          confirmWithNotification={() => alert("yes2")}
+          handleOrderConfirmation={handleOrderConfirmation}
         />
       </div>
     </div>

@@ -10,12 +10,10 @@ import { Stack } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useState } from "react";
 
-//!here
 const OrderNowPrePaymentModal = ({
   openModal,
   onClose,
-  confirmWithoutNotification,
-  confirmWithNotification,
+  handleOrderConfirmation,
   quoteItemValue,
 }: any) => {
   const { t } = useTranslation();
@@ -83,7 +81,7 @@ const OrderNowPrePaymentModal = ({
                   minWidth: "fit-content",
                 }}
               >
-                {t("Percentage of total")}
+                {t("prePayment.percentageOfTotal")}
               </span>
               <GomakeTextInput
                 type={"number"}
@@ -96,7 +94,7 @@ const OrderNowPrePaymentModal = ({
                     },
                   },
                 }}
-                placeholder={t("Percentage of total")}
+                placeholder={t("prePayment.percentageOfTotal")}
                 value={percentage}
                 onChange={handlePercentageChange}
               />
@@ -109,7 +107,7 @@ const OrderNowPrePaymentModal = ({
                   minWidth: "fit-content",
                 }}
               >
-                {t("Total amount to pay")}
+                {t("prePayment.totalToPay")}
               </span>
               <GomakeTextInput
                 type={"number"}
@@ -122,7 +120,7 @@ const OrderNowPrePaymentModal = ({
                     },
                   },
                 }}
-                placeholder={t("Total amount to pay")}
+                placeholder={t("prePayment.totalToPay")}
                 value={totalAmount}
                 onChange={handleTotalAmountChange}
               />
@@ -132,15 +130,15 @@ const OrderNowPrePaymentModal = ({
           <div style={classes.mainBtnContainer}>
             <GomakePrimaryButton
               style={classes.btnStyle}
-              onClick={confirmWithNotification}
+              onClick={() => handleOrderConfirmation(true, true, totalAmount)}
             >
-              {t("Confirm with payment message")}
+              {t("sales.modals.withPaymentMessage")}
             </GomakePrimaryButton>
             <GomakePrimaryButton
               style={classes.secondBtn}
-              onClick={confirmWithoutNotification}
+              onClick={() => handleOrderConfirmation(false, true, totalAmount)}
             >
-              {t("Confirm without payment message")}
+              {t("sales.modals.withoutPaymentMessage")}
             </GomakePrimaryButton>
             <GomakePrimaryButton
               style={{
@@ -156,6 +154,7 @@ const OrderNowPrePaymentModal = ({
             </GomakePrimaryButton>
           </div>
         </div>
+        {/* <GoMakeLoadingBackdrop loading={loading} circular={false} /> */}
       </GoMakeModal>
     </>
   );
