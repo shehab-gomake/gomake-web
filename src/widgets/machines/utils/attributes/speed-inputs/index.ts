@@ -54,6 +54,13 @@ import {creatingDiesMachine} from "@/widgets/machines/utils/attributes/speed-inp
 import {meshProcessorMachines} from "@/widgets/machines/utils/attributes/speed-inputs/mesh-processors-machines";
 import {silkPrinter} from "@/widgets/machines/utils/attributes/speed-inputs/silk-printer";
 import {cardCutting} from "@/widgets/machines/utils/attributes/speed-inputs/card-cutting";
+import {cartoonCupsMachine} from "@/widgets/machines/utils/attributes/speed-inputs/cartoon-cups-machine";
+import {painting} from "@/widgets/machines/utils/attributes/speed-inputs/painting";
+import {sublimationMachine} from "@/widgets/machines/utils/attributes/speed-inputs/sublimation-machine";
+import {pressMachine} from "@/widgets/machines/utils/attributes/speed-inputs/press-machine";
+import {embroideryMachine} from "@/widgets/machines/utils/attributes/speed-inputs/embroidery-machine";
+import {letterSidesBendingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/letter-sides-bending-machine";
+import {lightBoxesLetters} from "@/widgets/machines/utils/attributes/speed-inputs/light-boxes-letters";
 
 
 const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) => {
@@ -130,7 +137,7 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
             return hardCoverMakingMachine(state);
         case ECategoryId.GLUING_MACHINE:
             return gluingMachine(state);
-        case ECategoryId.PRESSING_MACHINE:
+        case ECategoryId.BOOK_PRESSING_MACHINE:
             return pressingMachine(state);
         case ECategoryId.MANUAL_SEWING_MACHINE:
             return manualSewingMachine(state);
@@ -168,6 +175,20 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
             return silkPrinter(state);
         case ECategoryId.CARD_CUTTING:
             return cardCutting(state);
+        case ECategoryId.CARTOON_CUPS:
+            return cartoonCupsMachine(state);
+        case ECategoryId.PAINTING:
+            return painting(state);
+        case ECategoryId.SUBLIMATION:
+            return sublimationMachine(state);
+        case ECategoryId.PRESS_MACHINE:
+            return pressMachine(state);
+        case ECategoryId.EMBROIDERY_MACHINE:
+            return embroideryMachine(state);
+        case ECategoryId.LETTER_SIDES_BENDING_MACHINE:
+            return letterSidesBendingMachine(state);
+        case ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY:
+            return lightBoxesLetters(state);
         default:
             return [];
     }

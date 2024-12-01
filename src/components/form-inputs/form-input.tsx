@@ -176,7 +176,7 @@ const FormInput = ({
         // setValues((!!input?.values ? input?.values : []) || (!!input?.defaultInDocsTypes ? input?.defaultInDocsTypes : []));
         if (input?.multiple) {
         }
-    }, [input.options]);
+    }, [input.options, input.optionsUrl]);
 
     useEffect(() => {
         setValues(Array.isArray(input.value) ? input.value : []);
@@ -263,7 +263,7 @@ const FormInput = ({
                                         ? checkWhatRenderArray
                                         : undefined
                                 }
-                                multiple={input.multiple ? true : false}
+                                multiple={!!input.multiple}
                                 disableClearable={input?.disableClearable || false}
                                 renderOption={
                                     input.multiple

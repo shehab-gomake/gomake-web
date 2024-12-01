@@ -141,7 +141,7 @@ export const machineCategoriesState = atom<IMachineCategory[]>({
             color: defaultTheme.gray.light["100"]
         },
         {
-            id: ECategoryId.PRESSING_MACHINE,
+            id: ECategoryId.BOOK_PRESSING_MACHINE,
             name: 'machinesCategories.pressing',
             color: defaultTheme.primary.dark["600"]
         },
@@ -207,5 +207,12 @@ export const machineCategoriesState = atom<IMachineCategory[]>({
         },
         {id: ECategoryId.SILK_PRINTER, name: 'machinesCategories.silkPrinter', color: defaultTheme.neutral.dark["700"]},
         {id: ECategoryId.CARD_CUTTING, name: 'machinesCategories.cardCutting', color: defaultTheme.neutral.dark["700"]},
+        {id: ECategoryId.CARTOON_CUPS, name: 'machinesCategories.cartoonCups', color: defaultTheme.neutral.dark["700"]},
+        {id: ECategoryId.PAINTING, name: 'machinesCategories.painting', color: defaultTheme.neutral.dark["700"]},
+        {id: ECategoryId.SUBLIMATION, name: 'machinesCategories.sublimation', color: defaultTheme.neutral.dark["700"]},
+        {id: ECategoryId.PRESS_MACHINE, name: 'machinesCategories.pressMachine', color: defaultTheme.neutral.dark["700"]},
+        {id: ECategoryId.EMBROIDERY_MACHINE, name: 'machinesCategories.embroideryMachine', color: defaultTheme.neutral.dark["700"]},
+        {id: ECategoryId.LETTER_SIDES_BENDING_MACHINE, name: 'machinesCategories.letterSidesBendingMachine', color: defaultTheme.neutral.dark["700"]},
+        {id: ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY, name: 'machinesCategories.lightBoxesLetterAssembly', color: defaultTheme.neutral.dark["700"]},
     ],
 });

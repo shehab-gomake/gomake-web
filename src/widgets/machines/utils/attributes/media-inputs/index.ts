@@ -43,6 +43,13 @@ import {meshProcessorMachine} from "@/widgets/machines/utils/attributes/media-in
 import {silkPrinter} from "@/widgets/machines/utils/attributes/media-inputs/silk-printer";
 import {cardCutting} from "@/widgets/machines/utils/attributes/media-inputs/card-cutting";
 import {widePrinting} from "@/widgets/machines/utils/attributes/media-inputs/wide-printing";
+import {sublimationMachine} from "@/widgets/machines/utils/attributes/media-inputs/sublimation-machine";
+import {pressMachine} from "@/widgets/machines/utils/attributes/media-inputs/press-machine";
+import {
+    advertisingProductsCategories
+} from "@/widgets/machines/utils/attributes/machine-material-categories/advertising-products-categories";
+import {letterSidesBendingMachine} from "@/widgets/machines/utils/attributes/media-inputs/letter-sides-bending-machine";
+import {lightBoxes} from "@/widgets/machines/utils/attributes/media-inputs/light-boxes";
 
 const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) => {
     switch (categoryId) {
@@ -116,7 +123,7 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
             return hardCoverMakingMachine(state);
         case ECategoryId.GLUING_MACHINE:
             return gluingMachine(state);
-        case ECategoryId.PRESSING_MACHINE:
+        case ECategoryId.BOOK_PRESSING_MACHINE:
             return bookCasingInMachine(state);
         case ECategoryId.MANUAL_SEWING_MACHINE:
             return manualSewingMachine(state);
@@ -154,6 +161,16 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
             return silkPrinter(state);
         case ECategoryId.CARD_CUTTING:
             return cardCutting(state);
+        case ECategoryId.SUBLIMATION:
+            return sublimationMachine(state);
+        case ECategoryId.PRESS_MACHINE:
+            return pressMachine(state);
+        case ECategoryId.EMBROIDERY_MACHINE:
+            return advertisingProductsCategories(state);
+        case ECategoryId.LETTER_SIDES_BENDING_MACHINE:
+            return letterSidesBendingMachine(state);
+        case ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY:
+            return lightBoxes(state)
         default:
             return []
     }

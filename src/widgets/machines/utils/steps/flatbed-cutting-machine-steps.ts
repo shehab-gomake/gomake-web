@@ -5,12 +5,18 @@ import {
 } from "@/widgets/machines/components/forms";
 import {MachineDimensionsComponent} from "@/widgets/machines/components/forms/machine-dimensions";
 import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
+import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/other-setting-inputs";
+import {ConnectionComponent} from "@/widgets/machines/components/forms/connection-inputs";
+import {MachineRunComponent} from "@/widgets/machines/components/forms/run";
 
 const flatbedCuttingMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
     {label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'media',  component: MediaSettingComponent},
     {label: 'speed',  component: SpeedComponent},
+    {label: 'marks',  component: OtherSettingsInputsComponent},
+    {label: 'cncTools',  component: MachineRunComponent},
+    {label: 'connection',  component: ConnectionComponent},
 ];
 
 export {flatbedCuttingMachineSteps};

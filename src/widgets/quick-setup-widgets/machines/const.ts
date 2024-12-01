@@ -60,7 +60,7 @@ export const machinesTypeCategories = (machinesType: MachinesTypes): { categorie
                     ECategoryId.ENCAPSULATION_MACHINE,
                     ECategoryId.SIDE_COLORING,
                     ECategoryId.MANUAL_PEELING_STICKERS,
-                    ECategoryId.PRESSING_MACHINE,
+                    ECategoryId.BOOK_PRESSING_MACHINE,
                     ECategoryId.LINKAGE,
                     ECategoryId.THERMAL_PLATE_PROCESSOR,
                     ECategoryId.COLLECTOR
@@ -80,7 +80,7 @@ export const machinesTypeCategories = (machinesType: MachinesTypes): { categorie
                     ECategoryId.SPIRAL_PERFORATION_MACHINE,
                     ECategoryId.HARD_COVER_MAKING_MACHINE,
                     ECategoryId.BOOK_CASING_IN_MACHINE,
-                    ECategoryId.PRESSING_MACHINE,
+                    ECategoryId.BOOK_PRESSING_MACHINE,
                     ECategoryId.MANUAL_SEWING_MACHINE,
                     ECategoryId.COLLECTOR
                 ],

@@ -59,6 +59,13 @@ import {meshProcessorsMachineSteps} from "@/widgets/machines/utils/steps/mesh-pr
 import {silkPrinterSteps} from "@/widgets/machines/utils/steps/silk-printer-steps";
 import {cardCuttingSteps} from "@/widgets/machines/utils/steps/card-cutting-steps";
 import { Permissions } from "@/components/CheckPermission/enum";
+import {cartoonCupsSteps} from "@/widgets/machines/utils/steps/cartoon-cups-steps";
+import {paintingSteps} from "@/widgets/machines/utils/steps/painting-steps";
+import {sublimationMachineSteps} from "@/widgets/machines/utils/steps/sublimation-machine-steps";
+import {pressMachineSteps} from "@/widgets/machines/utils/steps/press-machine-steps";
+import {embroideryMachineSteps} from "@/widgets/machines/utils/steps/embroidery-machine-steps";
+import {letterSidesBendingMachineSteps} from "@/widgets/machines/utils/steps/letter-sides-bending-machine-steps";
+import {lightBoxesSteps} from "@/widgets/machines/utils/steps/light-boxes-steps";
 
 const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:any): IStep[] => {
     let steps: IStep[];
@@ -177,7 +184,7 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:a
         case ECategoryId.GLUING_MACHINE:
             steps = gluingMachineSteps(isAdmin);
             break;
-        case ECategoryId.PRESSING_MACHINE:
+        case ECategoryId.BOOK_PRESSING_MACHINE:
             steps = pressingMachineSteps(isAdmin);
             break;
         case ECategoryId.SHRINK_PACKING_MACHINE:
@@ -227,6 +234,28 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:a
             break;
         case ECategoryId.CARD_CUTTING:
             steps = cardCuttingSteps;
+            break;
+        case ECategoryId.CARTOON_CUPS:
+            steps = cartoonCupsSteps;
+            break;
+        case ECategoryId.PAINTING:
+            steps = paintingSteps;
+            break;
+        case ECategoryId.SUBLIMATION:
+            steps = sublimationMachineSteps;
+            break;
+        case ECategoryId.PRESS_MACHINE:
+            steps = pressMachineSteps;
+            break;
+        case ECategoryId.EMBROIDERY_MACHINE:
+            steps = embroideryMachineSteps;
+            break;
+        case ECategoryId.LETTER_SIDES_BENDING_MACHINE:
+            steps = letterSidesBendingMachineSteps;
+            break;
+        case ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY:
+            steps = lightBoxesSteps;
+            break;
     }
     if (steps && (isAdmin || CheckPermission(Permissions.SHOW_ACTION_AND_MATERIAL_IN_MACHINE))) {
         return [...steps, ...adminActionsMaterialsStep];

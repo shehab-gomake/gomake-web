@@ -44,7 +44,7 @@ const digitalPrinting = (state: Record<string, any>) => {
                     value: state.attributes?.printOverLaminate?.isAvailable ? state.attributes?.printOverLaminate?.isAvailable : ''
                 },
                 {
-                    name: "categories",
+                    name: "",
                     label: "machineAttributes.colorOption",
                     type: "select",
                     placeholder: "machineAttributes.colorOption",
