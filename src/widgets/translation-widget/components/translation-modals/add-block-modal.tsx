@@ -3,38 +3,52 @@ import { useTranslation } from "react-i18next";
 import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useState } from "react";
-import { GoMakeModal, GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
 import { useStyle } from "../style";
-import { useTranslations } from "../../use-translations";
+import { languageOptionsState } from "@/store/languages";
+import { useRecoilValue } from "recoil";
 
-interface IProps {
-    translationFiles: {
-      en: string[];
-      he: string[];
-      ar: string[];
-      de: string[];
-    };
-  }
-const AddBlockModal = ({ translationFiles }: IProps) => {
-    const { t } = useTranslation();
-    const { classes } = useStyle()
-    const [categoryName, setCategoryName] = useState<string>();
-    const { addEmptyBlockToAllFiles , onClickCloseBlockModal , openBlockModal} = useTranslations();
+interface IAddLangModalProps {
+  openModal: boolean;
+  onClose: () => void;
+  onClickAddLang: (langKey: string) => void;
+}
 
-    return (
-        <GoMakeModal
-            insideStyle={classes.categoryModalStyle}
-            openModal={openBlockModal}
-            onClose={onClickCloseBlockModal}
-            modalTitle={t("translations.addNewBlock")}>
-            <Stack style={classes.firstStackStyle}>
-                <GomakeTextInput onChange={(e) => setCategoryName(e.target.value)}  style={classes.addButtonStyle} placeholder={t("translations.addNewBlock")}/>
-                <Stack style={classes.secondStackStyle}>
-                    <SecondaryButton onClick={() => addEmptyBlockToAllFiles(translationFiles,categoryName )} variant={"contained"}>{t("translations.add")}</SecondaryButton>
-                </Stack>
-            </Stack>
-        </GoMakeModal>
-    )
+const AddLangModal = ({
+  openModal,
+  onClose,
+  onClickAddLang,
+}: IAddLangModalProps) => {
+  const { t } = useTranslation();
+  const { classes } = useStyle();
+  const [langKey, setLangKey] = useState<string>();
+  const languages = useRecoilValue(languageOptionsState);
+
+  return (
+    <GoMakeModal
+      insideStyle={classes.categoryModalStyle}
+      openModal={openModal}
+      onClose={onClose}
+      modalTitle={t("translations.addNewLang")}
+    >
+      <Stack style={classes.firstStackStyle}>
+        <GoMakeAutoComplate
+          options={languages}
+          onChange={(e: any, value: any) => setLangKey(value?.value)}
+          placeholder={t("translations.selectLang")}
+        />
+
+        <Stack style={classes.secondStackStyle}>
+          <SecondaryButton
+            onClick={() => onClickAddLang(langKey)}
+            variant={"contained"}
+          >
+            {t("translations.add")}
+          </SecondaryButton>
+        </Stack>
+      </Stack>
+    </GoMakeModal>
+  );
 };
 
-export { AddBlockModal };
+export { AddLangModal };
