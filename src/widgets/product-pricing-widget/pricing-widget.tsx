@@ -16,7 +16,8 @@ import { calculationResultState } from "./state";
 import { useState } from "react";
 import ReadMoreIcon from '@mui/icons-material/ReadMore';
 import { FONT_FAMILY } from "@/utils/font-family";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
+
 import { ActionsListMenu } from "./components/actions-menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SectionNameListMenu } from "./components/sections-menu";

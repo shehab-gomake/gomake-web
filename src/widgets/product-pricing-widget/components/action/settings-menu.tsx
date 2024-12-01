@@ -11,6 +11,7 @@ import { ModalType } from "@/enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
+
 const SettingsMenu = ({
   handleClose,
   open,
@@ -98,7 +99,6 @@ const SettingsMenu = ({
             {t("navigationButtons.delete")}
           </MenuItem>
         </PermissionCheck>
-
 
       </GoMakeMenu>
       <GoMakeDeleteModal
