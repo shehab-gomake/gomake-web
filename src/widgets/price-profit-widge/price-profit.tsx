@@ -47,7 +47,8 @@ const PriceProfitWidge = () => {
     updateProfitProfileProductHidden,
     updateProfitProfileProductSelected,
     updateSelectedPrintHousePrices,
-    onClickPrint
+    onClickPrint,
+    resetPrintHousePrice
   } = usePriceProfit()
   return (
     <div style={classes.mainContainer}>
@@ -65,6 +66,7 @@ const PriceProfitWidge = () => {
         setSelectedPricingProfileSetting={setSelectedPricingProfileSetting}
         updateSelectedPrintHousePrices={updateSelectedPrintHousePrices}
         onClickPrint={onClickPrint}
+        resetPrintHousePrice={resetPrintHousePrice}
       />
       <Divider style={classes.divider} />
       {

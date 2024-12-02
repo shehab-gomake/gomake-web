@@ -72,7 +72,7 @@ const PriceProfitTable = ({
   const { t } = useTranslation()
 
   return (
-    <TableContainer style={{ ...classes.tableContainer, overflowY: 'auto', maxHeight: '700px' }}>
+    <TableContainer style={{ ...classes.tableContainer, overflowY: 'auto', maxHeight: "calc(100vh - 300px)" }}>
       <Table style={classes.table}>
         <TableHead>
           <TableRow style={{ ...classes.tableHead, position: 'sticky', top: 0, zIndex: 1, backgroundColor: '#B1B2E3' }}>

@@ -70,7 +70,6 @@ const useRoles = () => {
   const updateRoleName = async () => {
     const callBack = (res) => {
       if (res.success) {
-        debugger;
         alertSuccessUpdate();
         getAllRoles();
         setModalInputValue("");
