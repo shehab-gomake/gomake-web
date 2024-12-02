@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { MinusIcon } from "@/icons/minus-icon";
 import { PlusNewIcon } from "@/icons";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
@@ -13,7 +13,6 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { ModalType } from "@/enums";
 
 const BusinessNewWidget = ({
@@ -123,8 +122,8 @@ const BusinessNewWidget = ({
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
               : quoteStateValue?.client?.name
-                ? quoteStateValue?.client?.name
-                : t("sales.quote.selectBusinessName")
+              ? quoteStateValue?.client?.name
+              : t("sales.quote.selectBusinessName")
           }
           options={mappedCustomers}
           onBlur={onBlurBusinessName}
@@ -274,31 +273,31 @@ const BusinessNewWidget = ({
         )}
         {values?.documentAddresses?.length > 0
           ? !isQuoteConfirmation &&
-          canEditDocument && (
-            <div style={classes.addNewAddressStyle} onClick={() => null}>
-              <MinusIcon />
-              <div
-                style={classes.addNewAddressTextStyle}
-                onClick={() =>
-                  onClickDeleteAddress(values?.documentAddresses[0])
-                }
-              >
-                {t("sales.quote.removeAddress")}
+            canEditDocument && (
+              <div style={classes.addNewAddressStyle} onClick={() => null}>
+                <MinusIcon />
+                <div
+                  style={classes.addNewAddressTextStyle}
+                  onClick={() =>
+                    onClickDeleteAddress(values?.documentAddresses[0])
+                  }
+                >
+                  {t("sales.quote.removeAddress")}
+                </div>
               </div>
-            </div>
-          )
+            )
           : !isQuoteConfirmation &&
-          canEditAddress && (
-            <div style={classes.addNewAddressStyle}>
-              <PlusNewIcon />
-              <div
-                style={classes.addNewAddressTextStyle}
-                onClick={() => setOpenModal(true)}
-              >
-                {t("sales.quote.addAddress")}
+            canEditAddress && (
+              <div style={classes.addNewAddressStyle}>
+                <PlusNewIcon />
+                <div
+                  style={classes.addNewAddressTextStyle}
+                  onClick={() => setOpenModal(true)}
+                >
+                  {t("sales.quote.addAddress")}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         {!isQuoteConfirmation && (
           <AddressModal
             isUpdate={values?.documentAddresses?.length > 0}
@@ -322,9 +321,6 @@ const BusinessNewWidget = ({
         isFromCartPage={true}
       />
       <GoMakeDeleteModal
-        icon={
-          <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        }
         modalType={ModalType.WARNING}
         openModal={openChangeClientModal}
         onClose={onClickCloseChangeClientModal}

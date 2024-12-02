@@ -13,7 +13,6 @@ import {
 } from "@/components";
 import { HeaderTitle } from "@/widgets";
 import { ArrowDownNewIcon, BudgetIcon, SettingNewIcon } from "@/icons";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useQuoteNew } from "./use-quote";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { useStyle } from "./style";
@@ -327,7 +326,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const { } = useGoMakeTour(quoteSteps, []);
+  const {} = useGoMakeTour(quoteSteps, []);
 
   useEffect(() => {
     if (isInvoice) {
@@ -399,8 +398,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -469,7 +468,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                      quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -816,9 +815,6 @@ const QuoteNewPageWidget = ({
         onClose={onClickCloseSignatureApprovalModal}
       />
       <GoMakeDeleteModal
-        // icon={
-        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        // }
         modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
@@ -831,9 +827,6 @@ const QuoteNewPageWidget = ({
         }
       />
       <GoMakeDeleteModal
-        // icon={
-        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        // }
         modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
@@ -844,9 +837,6 @@ const QuoteNewPageWidget = ({
         onClickDelete={() => updateCancelQuote(QuoteStatuses.CANCELED_PRICE)}
       />
       <GoMakeDeleteModal
-        // icon={
-        //   <WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />
-        // }
         modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
