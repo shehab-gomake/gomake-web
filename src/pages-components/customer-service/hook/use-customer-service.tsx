@@ -25,7 +25,8 @@ const useCustomerService = (isAdmin: boolean) => {
   const [statuses, setStatuses] = useState([]);
   const [ticketState, setTicketState] = useState<JiraIssueType>(null);
   const [fileBase64, setFileBase64] = useState<string>("");
-  const { alertFaultAdded, alertRequiredFields } = useSnackBar();
+  const { alertSuccessAdded, alertFaultAdded, alertRequiredFields } =
+    useSnackBar();
   const [createAnother, setCreateAnother] = useState(false);
   const [selectedSection, setSelectedSection] = useState<Sections | "">("");
   const [selectedSubSection, setSelectedSubSection] = useState<string>("");
@@ -161,7 +162,7 @@ const useCustomerService = (isAdmin: boolean) => {
     const callBack = (res) => {
       if (res.success) {
         getIssues();
-
+        alertSuccessAdded();
         if (createAnother) {
           setFileBase64("");
           setSelectedSection("");
@@ -183,26 +184,6 @@ const useCustomerService = (isAdmin: boolean) => {
           onClickClosModal();
         }
       } else {
-        if (createAnother) {
-          setFileBase64("");
-          setSelectedSection("");
-          setSelectedSubSection("");
-          setTicketState({
-            isAdmin: ticketState.isAdmin,
-            openModal: ticketState.openModal,
-            title: "",
-            description: "",
-            ticketType: undefined,
-            ticketTypeList: [],
-            screenShot: "",
-            gomakeRouteUri: "",
-            section: "",
-            subSection: "",
-          });
-          jiraImageUploadRef.current?.resetAttachment();
-        } else {
-          onClickClosModal();
-        }
         alertFaultAdded();
       }
     };
@@ -264,8 +245,6 @@ const useCustomerService = (isAdmin: boolean) => {
     setFileBase64("");
     setSelectedSection("");
     setSelectedSubSection("");
-
-    // setTicketState({ ...ticketState, ticketType: null, title: "", description: "" });
     setTicketState((prevTicketState) => ({
       ...prevTicketState,
       ticketType: null,

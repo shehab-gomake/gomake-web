@@ -40,6 +40,7 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
       openModal={openModal}
       onClose={onClickClosModal}
       modalTitle={t("customerService.addNewTicket")}
+      withRoundedCloseIcon={false}
     >
       <div style={classes.mainModalContainer}>
         <GoMakeAutoComplate

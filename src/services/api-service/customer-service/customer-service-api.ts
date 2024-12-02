@@ -2,7 +2,7 @@ import { EHttpMethod } from "../enums";
 import { getSetApiData } from "../get-set-api-data";
 
 const GET_ISSUES_URL = "/v1/customer-service/issue";
-const CREATE_ISSUE_URL = "/v1/customer-service/issuef";
+const CREATE_ISSUE_URL = "/v1/customer-service/issue";
 const GET_ALL_PRINTHOUSES = "/v1/customer-service/printHouses";
 const GET_ALL_PRINTHOUSES_ADMIN = "/v1/customer-service/allIssues";
 

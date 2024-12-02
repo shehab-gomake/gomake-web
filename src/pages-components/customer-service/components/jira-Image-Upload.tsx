@@ -45,19 +45,24 @@ const JiraImageUpload = forwardRef(
     const resetAttachment = () => {
       setFileName(t("mailingSettings.noAttachment") || "");
       setIsAttachment(false);
-      onFileSelect(""); // Clear the fileBase64 in the parent state
+      onFileSelect("");
       if (inputRef.current) {
-        inputRef.current.value = ""; // Clear the file input
+        inputRef.current.value = "";
       }
     };
 
-    // Expose resetAttachment method to parent via ref
     useImperativeHandle(ref, () => ({
       resetAttachment,
     }));
 
     return (
       <Stack style={classes.attachmentContainer}>
+        {onUpload && (
+          <AddNewButton
+            onClick={() => inputRef.current?.click()}
+            label={t("mailingSettings.addNewAttachment")}
+          />
+        )}
         {(!onUpload || fileName || isAttachment) && (
           <Stack
             style={classes.attachmentStyle}
@@ -92,12 +97,6 @@ const JiraImageUpload = forwardRef(
           style={{ display: "none" }}
           ref={inputRef}
         />
-        {onUpload && (
-          <AddNewButton
-            onClick={() => inputRef.current?.click()}
-            label={t("mailingSettings.addNewAttachment")}
-          />
-        )}
       </Stack>
     );
   }

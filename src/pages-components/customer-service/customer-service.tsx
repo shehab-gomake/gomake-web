@@ -10,7 +10,6 @@ import { HeaderTitle } from "@/widgets";
 import { Stack } from "@mui/material";
 import { useRouter } from "next/router";
 
-//!here
 const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
