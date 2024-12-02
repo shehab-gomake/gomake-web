@@ -11,6 +11,7 @@ const GET_MATERIAL_TABLE_HEADERS_URL = "/v1/materials/GetMaterialTypeTableHeader
 const DOWNLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/download-material-excel";
 const UPLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/upload-material-excel-file";
 const UPDATE_MATERIALS_IMAGES = "/v1/materials/update-materials-images";
+const UPDATE_SUPPLIER_PRIORITY = "/v1/materials/update-supplier-priority";
 const GET_MATERIAL_CATEGORIES_URL = "/v1/materials/GetMaterialCategories";
 const getDeviceSizeMockURL = "/v1/materials/get-device-size-material";
 const GET_MATERIAL_CATEGORY_DATA_URL = "/v1/materials/GetMaterialCategoryData";
@@ -84,6 +85,20 @@ const updateMaterialsImagesApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.PUT,
     UPDATE_MATERIALS_IMAGES,
+    callBack,
+    data
+  );
+};
+
+const updateSupplierPriorityApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_SUPPLIER_PRIORITY,
     callBack,
     data
   );
@@ -320,5 +335,6 @@ export {
   uploadPrintHouseMaterialApi,
   addDocumentItemFromMaterialApi,
   getDocumentItemDataFromMaterialApi,
-  updateMaterialCategoryNumberingApi
+  updateMaterialCategoryNumberingApi,
+  updateSupplierPriorityApi
 };
