@@ -207,5 +207,6 @@ export const machineCategoriesState = atom<IMachineCategory[]>({
         },
         {id: ECategoryId.SILK_PRINTER, name: 'machinesCategories.silkPrinter', color: defaultTheme.neutral.dark["700"]},
         {id: ECategoryId.CARD_CUTTING, name: 'machinesCategories.cardCutting', color: defaultTheme.neutral.dark["700"]},
+        {id: ECategoryId.ADHESIVE_TAPE, name: 'machinesCategories.adhesiveTape', color: defaultTheme.neutral.dark["700"]},
     ],
 });
