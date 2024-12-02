@@ -36,6 +36,12 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     handleSectionChange,
     createAnother,
     handleCheckboxChange,
+
+    selectedSubSection,
+    setSelectedSubSection,
+    selectedSection,
+    setSelectedSection,
+    jiraImageUploadRef,
   } = useCustomerService(isAdmin);
 
   const router = useRouter();
@@ -103,6 +109,11 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           handleSectionChange={handleSectionChange}
           createAnother={createAnother}
           handleCheckboxChange={handleCheckboxChange}
+          selectedSubSection={selectedSubSection}
+          setSelectedSubSection={setSelectedSubSection}
+          selectedSection={selectedSection}
+          setSelectedSection={setSelectedSection}
+          jiraImageUploadRef={jiraImageUploadRef}
         />
       </div>
     </Stack>

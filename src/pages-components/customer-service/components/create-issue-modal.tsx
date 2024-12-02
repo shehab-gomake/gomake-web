@@ -11,6 +11,7 @@ import { JiraImageUpload } from "./jira-Image-Upload";
 import { SectionsList } from "./sections-list";
 import { Checkbox, Stack } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { useRef } from "react";
 
 const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   openModal,
@@ -23,6 +24,12 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   handleSectionChange,
   createAnother,
   handleCheckboxChange,
+
+  selectedSubSection,
+  setSelectedSubSection,
+  selectedSection,
+  setSelectedSection,
+  jiraImageUploadRef,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -49,10 +56,17 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
           withArrow
         />
         <SectionsList
+          selectedSubSection={selectedSubSection}
+          setSelectedSubSection={setSelectedSubSection}
+          selectedSection={selectedSection}
+          setSelectedSection={setSelectedSection}
           onChange={(val1, val2) => handleSectionChange(val1, val2)}
         />
-        <JiraImageUpload onUpload={true} onFileSelect={setFileBase64} />
-
+        <JiraImageUpload
+          onUpload={true}
+          onFileSelect={setFileBase64}
+          ref={jiraImageUploadRef}
+        />
         <GomakeTextInput
           onChange={(e) =>
             setTicketState({ ...ticketState, title: e.target.value })

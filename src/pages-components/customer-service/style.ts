@@ -8,7 +8,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = (onUpload?: boolean) => {
   const { t } = useTranslation();
-  const { secondColor, primaryColor, grayColor } = useGomakeTheme();
+  const { secondColor, primaryColor } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -133,6 +133,12 @@ const useStyle = (onUpload?: boolean) => {
         display: "flex",
         alignItems: "center",
         width: "max-content",
+      },
+      resetIconStyle: {
+        marginLeft: "8px",
+        color: primaryColor(100),
+        cursor: "pointer",
+        padding: 0,
       },
     };
   }, [i18next.language, t]);

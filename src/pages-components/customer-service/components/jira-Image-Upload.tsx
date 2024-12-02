@@ -1,62 +1,106 @@
+import React, {
+  forwardRef,
+  useImperativeHandle,
+  useState,
+  useRef,
+} from "react";
+import Stack from "@mui/material/Stack";
+import { IconButton } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
-import Stack from "@mui/material/Stack";
-import { useRef, useState } from "react";
 import { AddNewButton } from "@/components/button/add-new-button";
-import { IconButton } from "@mui/material";
 import { FileIcon } from "@/components/icons/file-icon";
+import { Close as ResetIcon } from "@mui/icons-material"; // Add Reset Icon
 
 interface IProps {
   onUpload: boolean;
   onFileSelect: (fileBase64: string) => void;
 }
 
-const JiraImageUpload = ({ onUpload, onFileSelect }: IProps) => {
-  const { t } = useTranslation();
-  const { classes } = useStyle(onUpload);
-  const [fileName, setFileName] = useState(t("mailingSettings.noAttachment") || "");
-  const [isAttachment, setIsAttachment] = useState(false);
-  const inputRef = useRef(null);
+const JiraImageUpload = forwardRef(
+  ({ onUpload, onFileSelect }: IProps, ref) => {
+    const { t } = useTranslation();
+    const { classes } = useStyle(onUpload);
+    const [fileName, setFileName] = useState(
+      t("mailingSettings.noAttachment") || ""
+    );
+    const [isAttachment, setIsAttachment] = useState(false);
+    const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleFileSelect1 = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    let reader = new FileReader();
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      let reader = new FileReader();
 
-    if (file) {
-      setFileName(file.name);
-      reader.onload = async (e) => {
-        setIsAttachment(true);
-        const fileBase64 = e.target.result as string;
-        onFileSelect(fileBase64);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+      if (file) {
+        setFileName(file.name);
+        reader.onload = async (e) => {
+          setIsAttachment(true);
+          const fileBase64 = e.target.result as string;
+          onFileSelect(fileBase64);
+        };
+        reader.readAsDataURL(file);
+      }
+    };
 
-  return (
-    <Stack style={classes.attachmentContainer}>
-      {(!onUpload || fileName || isAttachment) && (
-        <Stack style={classes.attachmentStyle}>
-          <IconButton style={classes.IconButtonStyle}>
-            <FileIcon></FileIcon>
-          </IconButton>
-          <label style={classes.labelStyle}>
-            {isAttachment ? (fileName.length > 30 ? fileName.slice(0, 27) + "..." : fileName) : t("mailingSettings.noAttachment")}
-          </label>
-        </Stack>
-      )}
-      <input
-        type="file"
-        accept=".jpg, .jpeg, .png, .gif, .svg"
-        onChange={handleFileSelect1}
-        style={{ display: "none" }}
-        ref={inputRef}
-      />
-      {onUpload && (
-        <AddNewButton onClick={() => inputRef.current?.click()} label={t("mailingSettings.addNewAttachment")}></AddNewButton>
-      )}
-    </Stack>
-  );
-};
+    const resetAttachment = () => {
+      setFileName(t("mailingSettings.noAttachment") || "");
+      setIsAttachment(false);
+      onFileSelect(""); // Clear the fileBase64 in the parent state
+      if (inputRef.current) {
+        inputRef.current.value = ""; // Clear the file input
+      }
+    };
+
+    // Expose resetAttachment method to parent via ref
+    useImperativeHandle(ref, () => ({
+      resetAttachment,
+    }));
+
+    return (
+      <Stack style={classes.attachmentContainer}>
+        {(!onUpload || fileName || isAttachment) && (
+          <Stack
+            style={classes.attachmentStyle}
+            direction="row"
+            alignItems="center"
+          >
+            <IconButton style={classes.IconButtonStyle}>
+              <FileIcon />
+            </IconButton>
+            <label style={classes.labelStyle}>
+              {isAttachment
+                ? fileName.length > 30
+                  ? fileName.slice(0, 27) + "..."
+                  : fileName
+                : t("mailingSettings.noAttachment")}
+            </label>
+            {isAttachment && (
+              <IconButton
+                style={classes.resetIconStyle}
+                onClick={resetAttachment}
+                title={t("mailingSettings.resetAttachment")}
+              >
+                <ResetIcon fontSize="small" />
+              </IconButton>
+            )}
+          </Stack>
+        )}
+        <input
+          type="file"
+          accept=".jpg, .jpeg, .png, .gif, .svg"
+          onChange={handleFileSelect}
+          style={{ display: "none" }}
+          ref={inputRef}
+        />
+        {onUpload && (
+          <AddNewButton
+            onClick={() => inputRef.current?.click()}
+            label={t("mailingSettings.addNewAttachment")}
+          />
+        )}
+      </Stack>
+    );
+  }
+);
 
 export { JiraImageUpload };

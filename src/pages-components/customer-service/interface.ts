@@ -9,6 +9,12 @@ export interface CreateIssueModalProps {
   handleSectionChange: any;
   createAnother?: any;
   handleCheckboxChange?: () => void;
+
+  selectedSection: any;
+  setSelectedSection: any;
+  selectedSubSection: any;
+  setSelectedSubSection: any;
+  jiraImageUploadRef: any;
 }
 export interface JiraIssueType {
   isAdmin: boolean;

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   createIssueApi,
@@ -7,7 +7,7 @@ import {
   getAllIssuesAdminApi,
 } from "@/services/api-service/customer-service/customer-service-api";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { JiraIssueType, JiraPrintHouse } from "../interface";
+import { JiraIssueType, JiraPrintHouse, Sections } from "../interface";
 import { useTranslation } from "react-i18next";
 import { ticketTypeList } from "../enums";
 import { logSessionData } from "@/utils/sessionManager";
@@ -27,7 +27,11 @@ const useCustomerService = (isAdmin: boolean) => {
   const [fileBase64, setFileBase64] = useState<string>("");
   const { alertFaultAdded, alertRequiredFields } = useSnackBar();
   const [createAnother, setCreateAnother] = useState(false);
-
+  const [selectedSection, setSelectedSection] = useState<Sections | "">("");
+  const [selectedSubSection, setSelectedSubSection] = useState<string>("");
+  const jiraImageUploadRef = useRef<{ resetAttachment: () => void } | null>(
+    null
+  );
   const handleCheckboxChange = () => {
     setCreateAnother(!createAnother);
   };
@@ -42,10 +46,6 @@ const useCustomerService = (isAdmin: boolean) => {
       [key]: value,
     }));
   }, []);
-
-  // const handleSectionChange = (section: string, subSection: string) => {
-  //   setTicketState({ ...ticketState, section, subSection });
-  // };
 
   const handleSectionChange = useCallback(
     (section: string, subSection: string) => {
@@ -163,6 +163,9 @@ const useCustomerService = (isAdmin: boolean) => {
         getIssues();
 
         if (createAnother) {
+          setFileBase64("");
+          setSelectedSection("");
+          setSelectedSubSection("");
           setTicketState({
             isAdmin: ticketState.isAdmin,
             openModal: ticketState.openModal,
@@ -175,13 +178,15 @@ const useCustomerService = (isAdmin: boolean) => {
             section: "",
             subSection: "",
           });
+          jiraImageUploadRef.current?.resetAttachment();
         } else {
           onClickClosModal();
         }
       } else {
-        console.log("befor send ", ticketState);
-
         if (createAnother) {
+          setFileBase64("");
+          setSelectedSection("");
+          setSelectedSubSection("");
           setTicketState({
             isAdmin: ticketState.isAdmin,
             openModal: ticketState.openModal,
@@ -194,15 +199,15 @@ const useCustomerService = (isAdmin: boolean) => {
             section: "",
             subSection: "",
           });
+          jiraImageUploadRef.current?.resetAttachment();
         } else {
           onClickClosModal();
         }
-
         alertFaultAdded();
       }
     };
-
     logSessionData();
+
     await createIssueApi(callApi, callBack, { issueData, fileBase64 });
   };
 
@@ -257,6 +262,9 @@ const useCustomerService = (isAdmin: boolean) => {
 
   const onClickClosModal = () => {
     setFileBase64("");
+    setSelectedSection("");
+    setSelectedSubSection("");
+
     // setTicketState({ ...ticketState, ticketType: null, title: "", description: "" });
     setTicketState((prevTicketState) => ({
       ...prevTicketState,
@@ -308,6 +316,12 @@ const useCustomerService = (isAdmin: boolean) => {
     handleSectionChange,
     createAnother,
     handleCheckboxChange,
+
+    selectedSubSection,
+    setSelectedSubSection,
+    selectedSection,
+    setSelectedSection,
+    jiraImageUploadRef,
   };
 };
 

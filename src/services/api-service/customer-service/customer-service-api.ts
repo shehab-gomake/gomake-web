@@ -24,6 +24,8 @@ const createIssueApi = async (callApi, callback, issueData) => {
     CREATE_ISSUE_URL,
     callback,
     issueData,
+    true,
+    null,
     true
   );
 };
