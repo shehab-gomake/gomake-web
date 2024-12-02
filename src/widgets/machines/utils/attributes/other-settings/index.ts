@@ -17,6 +17,7 @@ import {
     applicationCategories
 } from "@/widgets/machines/utils/attributes/machine-material-categories/application-categories";
 import {lightBoxesMachine} from "@/widgets/machines/utils/attributes/other-settings/light-boxes-machine";
+import {digitalPrinting} from "@/widgets/machines/utils/attributes/other-settings/digital-printing";
 
 
 const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[] => {
@@ -55,6 +56,8 @@ const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[
             return applicationCategories(state);
         case ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY:
             return lightBoxesMachine(state);
+        case ECategoryId.DIGITAL_PRINTING:
+            return digitalPrinting(state);
         default:
             return []
     }

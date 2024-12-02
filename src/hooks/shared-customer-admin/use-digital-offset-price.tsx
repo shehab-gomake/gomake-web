@@ -6,7 +6,7 @@ import { materialsCategoriesState } from "@/store/material-categories";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
   getAndSetChatBotProductId,
-  getAndSetProductById,
+  getAndSetProductById, getAndSetProfitProfileReviewProductId,
 } from "@/services/hooks";
 import {
   currentCalculationConnectionId,
@@ -359,7 +359,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (
         mySelectedWorkFlow &&
         mySelectedWorkFlow.totalPrice &&
-        mySelectedWorkFlow.totalPrice.values
+        mySelectedWorkFlow.totalPrice.values && !isNaN(mySelectedWorkFlow.totalPrice.values[0])
       ) {
         setCurrentProductItemValueTotalPrice(
           parseFloat(mySelectedWorkFlow.totalPrice.values[0])
@@ -444,7 +444,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           : calculationProgress.currentWorkFlowsCount + 1;
       if (
         signalRPricingResult.isCalculationFinished &&
-        signalRPricingResult.totalPrice
+        signalRPricingResult.totalPrice && !isNaN(signalRPricingResult.totalPrice)
       ) {
         setCurrentProductItemValueTotalPrice(
           parseFloat(signalRPricingResult.totalPrice)
@@ -4324,7 +4324,28 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           Id: router?.query?.productId,
         }
       );
-    } else {
+    }
+    if (router?.query?.profitsProfileRowId) {
+      await getAndSetProfitProfileReviewProductId(
+        callApi,
+        (data) => {
+          const updatedTemplate = updateIsHidden(data, subProducts);
+          setDefaultProductTemplate(updatedTemplate);
+          initProduct(updatedTemplate, materials);
+          let checkParameter = validateParameters(subProducts);
+          if (checkParameter) {
+            setCanCalculation(true);
+          } else {
+            setCanCalculation(false);
+          }
+        },
+        {
+          profitsProfileRowId: router?.query?.profitsProfileRowId,
+          quantity: router?.query?.quantity,
+        }
+      );
+    }
+    else {
       await getAndSetProductById(
         callApi,
         (data) => {

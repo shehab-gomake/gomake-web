@@ -11,6 +11,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { DocumentIcon } from "./icons/document";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { DuplicateIcon } from "@/components/icons/icons";
+import { ModalType } from "@/enums";
 
 
 const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
@@ -144,6 +145,7 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
         <div style={clasess.errorMsgStyle}>no sub products founded</div>
       </Popover>
       <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
         openModal={openDeleteRowModal}
         onClose={onClickCloseDeleteRowModal}
         onClickDelete={deleteProductById}
@@ -151,6 +153,7 @@ const MoreMenuWidget = ({ item, updatedProduct, getActions }: any) => {
 
       <GoMakeDeleteModal
         hideIcon={true}
+        modalType={ModalType.DUPLICATE}
         title="Duplicate Product"
         subTitle="do you want to duplicate this product?"
         yesBtn={t("navigationButtons.duplicate")}

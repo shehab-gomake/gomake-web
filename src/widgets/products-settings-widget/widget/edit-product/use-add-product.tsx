@@ -31,7 +31,9 @@ const useAddProduct = () => {
     }
   };
 
-  const [activeTab, setActiveTab] = useState(t("products.addProduct.admin.settings"));
+  const [activeTab, setActiveTab] = useState(
+    t("products.addProduct.admin.settings")
+  );
   const onClickSettingsTab = () => {
     setActiveTab(t("products.addProduct.admin.settings"));
   };
@@ -42,7 +44,8 @@ const useAddProduct = () => {
     setActiveTab(t("products.addProduct.admin.graphic"));
   };
   useEffect(() => {
-    if (router.query.isParameter) setActiveTab(t("products.addProduct.admin.parameters"));
+    if (router.query.isParameter)
+      setActiveTab(t("products.addProduct.admin.parameters"));
   }, [router]);
 
   const tabs = [
@@ -58,19 +61,19 @@ const useAddProduct = () => {
       activeIcon: <PrameterIcon stroke="#ED028C" />,
       onclick: () => onClickParametersTab,
     },
-    {
-      name: t("products.addProduct.admin.graphic"),
-      icon: <GraphicIcon />,
-      activeIcon: <GraphicIcon stroke="#ED028C" />,
-      onclick: () => onClickGraphicTab,
-    },
+    // {
+    //   name: t("products.addProduct.admin.graphic"),
+    //   icon: <GraphicIcon />,
+    //   activeIcon: <GraphicIcon stroke="#ED028C" />,
+    //   onclick: () => onClickGraphicTab,
+    // },
   ];
 
   const getProductById = useCallback(async () => {
     if (router?.query?.id) {
       await getAndSetProductById(callApi, setProductState, {
         Id: router?.query?.id,
-        sourceView: ESourceView.ProductEditView
+        sourceView: ESourceView.ProductEditView,
       });
     }
   }, [router, setProductState, activeIndex]);

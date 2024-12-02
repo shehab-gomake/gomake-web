@@ -85,7 +85,7 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDr
     <div style={classes.mainContainer}>
       {Object.entries(parametersBySection).map(([sectionName, sectionParameters]: [string, any[]]) => (
         <div key={sectionName} style={classes.sectionContainer}>
-          <h3>{sectionName}</h3>
+          <div style={classes.sectionName}>{sectionName}</div>
           <div style={classes.parameterContainer}>
             {sectionParameters.map((parameter: any, index: number) => {
               let displayValue = '';

@@ -12,6 +12,8 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { ProductManagementWidget } from "./widget/product-management";
 import { ShipmentsSetting } from "./widget/shipments-setting";
 import { ITab } from "@/components/tabs/interface";
+import { useRecoilState } from "recoil";
+import { selectedProductsTabState } from "./enums";
 
 const useProductsSettings = () => {
   const { t } = useTranslation();
@@ -19,7 +21,8 @@ const useProductsSettings = () => {
   const { alertFaultGetData, alertFaultDelete, alertSuccessDelete } =
     useSnackBar();
   const [allShipmentTypes, setAllShipmentTypes] = useState([]);
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useRecoilState<number>(selectedProductsTabState);
+
   const [openModal, setOpenModal] = useState(false);
   const { CheckPermission } = useUserPermission();
 
@@ -76,10 +79,6 @@ const useProductsSettings = () => {
           allShipmentTypes={allShipmentTypes}
         />
       ),
-    },
-    {
-      title: t("settings.pricingSetting"),
-      component: <span>coming soon</span>,
     },
   ].filter(Boolean);
 

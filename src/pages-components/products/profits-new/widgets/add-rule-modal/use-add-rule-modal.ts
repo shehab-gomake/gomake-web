@@ -177,8 +177,8 @@ const useAddRuleModal = ({
 
   const BooleanRender = useMemo(() => {
     return [
-      { label: t("modal.yes"), id: true },
-      { label: t("modal.no"), id: false },
+      { label: t("modal.yes"), id: "true" },
+      { label: t("modal.no"), id: "false" },
     ];
   }, []);
 
@@ -490,7 +490,6 @@ const useAddRuleModal = ({
     if (!isValidRules) {
       return;
     }
-    
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/printhouse-config/print-house-action/add-rule/${router?.query?.actionId}/${selectedProperties?.propertyId}/${selectedProperties?.ruleType}`,
@@ -498,15 +497,21 @@ const useAddRuleModal = ({
         ruleName: expression,
         ruleConditionStatements: null,
         exceptionConditionProperties: rules.map((item) => {
-          return {
-            statementId: item.statement2.id,
-            statementValue: getStatementId(item),
+          
+          let condition =  {
+            statementId: getStatementId(item),
+            statementValue: item.statement2.id,
             operator: item.condition.id,
             conditionBetweenStatements: item.linkCondition
               ? item.linkCondition.id
               : "",
             statementCategory: EStatementCategory[item.category.id],
           };
+          if(item.category.id == "Property input" || item.category.id == "Property output"){
+            condition.statementId = item.statement2.id;
+            condition.statementValue = getStatementId(item);
+          }
+          return condition;
         }),
         // exceptionConditionProperties: rules.map((item) => {
         //   return {

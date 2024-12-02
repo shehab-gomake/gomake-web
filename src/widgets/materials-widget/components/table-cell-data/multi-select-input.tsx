@@ -8,6 +8,7 @@ import { Checkbox, Paper } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { ModalType } from "@/enums";
 
 interface IProps {
   parameterKey: string;
@@ -118,6 +119,7 @@ const MultiSelectInput = ({
         )}
       />
       <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
         openModal={openDeleteTableRowModal}
         onClose={onClickCloseDeleteTableRowModal}
         hideIcon

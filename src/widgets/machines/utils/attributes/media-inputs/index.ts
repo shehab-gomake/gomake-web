@@ -171,6 +171,8 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
             return letterSidesBendingMachine(state);
         case ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY:
             return lightBoxes(state)
+        case ECategoryId.ADHESIVE_TAPE:
+            return spiralClosingMachine(state);
         default:
             return []
     }

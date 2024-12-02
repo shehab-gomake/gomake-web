@@ -66,6 +66,7 @@ import {pressMachineSteps} from "@/widgets/machines/utils/steps/press-machine-st
 import {embroideryMachineSteps} from "@/widgets/machines/utils/steps/embroidery-machine-steps";
 import {letterSidesBendingMachineSteps} from "@/widgets/machines/utils/steps/letter-sides-bending-machine-steps";
 import {lightBoxesSteps} from "@/widgets/machines/utils/steps/light-boxes-steps";
+import {adhesiveTapeMachineSteps} from "@/widgets/machines/utils/steps/adhesive-tape-machine-steps";
 
 const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:any): IStep[] => {
     let steps: IStep[];
@@ -255,6 +256,9 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:a
             break;
         case ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY:
             steps = lightBoxesSteps;
+
+        case ECategoryId.ADHESIVE_TAPE:
+            steps = adhesiveTapeMachineSteps(isAdmin);
             break;
     }
     if (steps && (isAdmin || CheckPermission(Permissions.SHOW_ACTION_AND_MATERIAL_IN_MACHINE))) {

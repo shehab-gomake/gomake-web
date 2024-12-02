@@ -113,6 +113,28 @@ const useStyle = () => {
         gap: "10px",
         zIndex:5
       },
+      autoCompleteSelectedAction: {
+        width: 200,
+        height: 36,
+        border: "1px solid #D0D5DD",
+        borderRadius: 8,
+        boxShadow: "none",
+        backgroundColor: "#FFF"
+      },
+      autoCompleteSelectedSectionName: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "8px 12px",
+        width: 140,
+        height: 36,
+        border: "1px solid #D0D5DD",
+        borderRadius: 8,
+        boxShadow: "none",
+        backgroundColor: "#FFF",
+        color:"#344054",
+        ...FONT_FAMILY.Inter(500, 14)
+      }
 
     };
   }, [theme, direction]);

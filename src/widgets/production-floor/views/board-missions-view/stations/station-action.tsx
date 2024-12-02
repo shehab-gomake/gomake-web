@@ -60,6 +60,7 @@ import {
   boardMissionMaterialState,
   materialModalState,
 } from "./material-and-production-time-modal/states";
+import { ModalType } from "@/enums";
 
 interface IProps extends IBoardMissionsStation {
   delay: number;
@@ -647,12 +648,12 @@ const BoardMissionsStationAction = ({
                                     >
                                       {(!!machensFilter
                                         ? machinesList?.filter((value) =>
-                                            value.label
-                                              ?.toLowerCase()
-                                              ?.includes(
-                                                machensFilter?.toLowerCase()
-                                              )
-                                          )
+                                          value.label
+                                            ?.toLowerCase()
+                                            ?.includes(
+                                              machensFilter?.toLowerCase()
+                                            )
+                                        )
                                         : machinesList
                                       )?.map((value, index) => {
                                         return (
@@ -740,12 +741,12 @@ const BoardMissionsStationAction = ({
                                   >
                                     {(!!contactsFilter
                                       ? employeesList?.filter((value) =>
-                                          value.label
-                                            ?.toLowerCase()
-                                            ?.includes(
-                                              contactsFilter?.toLowerCase()
-                                            )
-                                        )
+                                        value.label
+                                          ?.toLowerCase()
+                                          ?.includes(
+                                            contactsFilter?.toLowerCase()
+                                          )
+                                      )
                                       : employeesList
                                     )?.map((value, index) => {
                                       return (
@@ -927,6 +928,7 @@ const BoardMissionsStationAction = ({
       />
       <GoMakeDeleteModal
         hideIcon={true}
+        modalType={ModalType.ADD}
         title={t("customers.modal.updateJobStationModalTitle")}
         yesBtn={t("modal.confirm")}
         openModal={openModal}

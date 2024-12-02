@@ -12,6 +12,7 @@ import { EProductClient } from "./settings-data";
 import { useSettings } from "./use-settings";
 import { useStyle } from "./style";
 import FormatColorResetIcon from "@mui/icons-material/FormatColorReset";
+import { ModalType } from "@/enums";
 
 const SettingsWidget = ({
   onClickParametersTab,
@@ -351,7 +352,7 @@ const SettingsWidget = ({
         {t("products.addProduct.admin.style")}
       </div>
       <div style={clasess.firstContainer}>
-        <div style={clasess.itemOnFirstContainer}>
+        {/* <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.noteColor")}
           </div>
@@ -375,8 +376,8 @@ const SettingsWidget = ({
               </div>
             )}
           </div>
-        </div>
-        <div style={clasess.itemOnFirstContainer}>
+        </div> */}
+        {/* <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.textColor")}
           </div>
@@ -400,8 +401,7 @@ const SettingsWidget = ({
               </div>
             )}
           </div>
-        </div>
-
+        </div> */}
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
             {t("products.addProduct.admin.jobColor")}
@@ -501,6 +501,7 @@ const SettingsWidget = ({
         productSKUState={productSKU}
       />
       <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
         title={t("modal.pricingTypeTitle")}
         yesBtn={t("sales.quote.yesBtn")}
         openModal={openPricingTypeModal}

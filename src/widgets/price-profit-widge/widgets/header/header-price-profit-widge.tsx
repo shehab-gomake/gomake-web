@@ -22,7 +22,8 @@ const PriceProfitHeaderWidget = ({
   selectedPricingProfileSetting,
   setSelectedPricingProfileSetting,
   updateSelectedPrintHousePrices,
-  onClickPrint
+  onClickPrint,
+  resetPrintHousePrice
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -61,7 +62,7 @@ const PriceProfitHeaderWidget = ({
             }
           }}
           style={classes.autoCompleteStyle}
-          placeholder={t("Select Product")}
+          placeholder={t("priceProfit.selectProduct")}
           withArrow={true}
           popupIcon={<ArrowDownNewIcon />}
         />
@@ -77,7 +78,7 @@ const PriceProfitHeaderWidget = ({
           leftIcon={<PrintIcon />}
           rightIcon={<ArrowDownNewIcon color="#fff" />}
           onClick={handleOpenPrint}
-        >{t("Print")}
+        >{t("priceProfit.print")}
         </GomakePrimaryButton>
 
       </div>
@@ -90,19 +91,19 @@ const PriceProfitHeaderWidget = ({
           <MenuItem onClick={() => updateSelectedPrintHousePrices(false)}>
             <div style={classes.menuItemReviewContainer}>
               <ReStoreIcon stroke={"#667085"} />
-              <div style={classes.menuItemReviewText}>Restore original prices</div>
+              <div style={classes.menuItemReviewText}>{t("priceProfit.restoreOriginalPrices")}</div>
             </div>
           </MenuItem>
-          <MenuItem>
+          <MenuItem onClick={resetPrintHousePrice}>
             <div style={classes.menuItemReviewContainer}>
               <ResetIcon />
-              <div style={classes.menuItemReviewText}>Reset old version</div>
+              <div style={classes.menuItemReviewText}>{t("priceProfit.resetOldVersion")}</div>
             </div>
           </MenuItem>
           <MenuItem onClick={() => updateSelectedPrintHousePrices(true)}>
             <div style={classes.menuItemReviewContainer}>
               <UpdatedPriceIcon2 />
-              <div style={classes.menuItemReviewText}>Update all new prices</div>
+              <div style={classes.menuItemReviewText}>{t("priceProfit.updateAllNewPrices")}</div>
             </div>
           </MenuItem>
         </div>
@@ -115,10 +116,10 @@ const PriceProfitHeaderWidget = ({
       >
         <div style={classes.menuContainer}>
           <MenuItem onClick={() => onClickPrint(false)}>
-            <div style={classes.menuItemReviewText}>Print all</div>
+            <div style={classes.menuItemReviewText}>{t("priceProfit.printAll")}</div>
           </MenuItem>
           <MenuItem onClick={() => onClickPrint(true)}>
-            <div style={classes.menuItemReviewText}>Only selected</div>
+            <div style={classes.menuItemReviewText}>{t("priceProfit.onlySelected")}</div>
           </MenuItem>
         </div>
       </GoMakeMenu>

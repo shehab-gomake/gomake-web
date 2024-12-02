@@ -287,14 +287,14 @@ const useNewProfits = () => {
       getProfitsPricingTables();
     }
   }, [actionProfitByActionId]);
-  const renderAdditionType = (additionType:number) => {
-    if(additionType === EAdditionType.Percentage) {
+  const renderAdditionType = (additionType: number) => {
+    if (additionType === EAdditionType.Percentage) {
       return "%"
     }
-    if(additionType === EAdditionType.ValuePerJob) {
+    if (additionType === EAdditionType.ValuePerJob) {
       return t("products.profits.exceptions.valuePerJob")
     }
-    if(additionType === EAdditionType.ValuePerUnit) {
+    if (additionType === EAdditionType.ValuePerUnit) {
       return t("products.profits.exceptions.valuePerUnit")
     }
   }
@@ -304,7 +304,7 @@ const useNewProfits = () => {
     const selectedPricingType = selectedPricingBy?.value;
     const profitValue = selectedAdditionalProfitRow?.profitValue;
     const additionType = selectedAdditionalProfitRow?.additionType
-    
+
     const unitPriceLabel = isOutSource
       ? t("products.profits.pricingListWidget.unitCost")
       : t("products.profits.pricingListWidget.unitPrice");
@@ -316,9 +316,9 @@ const useNewProfits = () => {
     const profitHeader = t("products.profits.pricingListWidget.profit");
     const quantityHeader = t("products.profits.pricingListWidget.quantity");
     const moreHeader = t("products.profits.pricingListWidget.more");
-    const totalPriceWithAdditionProfit = t(
-      "products.profits.pricingListWidget.totalPriceWithAdditionProfit"
-    );
+    // const totalPriceWithAdditionProfit = t(
+    //   "products.profits.pricingListWidget.totalPriceWithAdditionProfit"
+    // );
 
     const pricingLabel = `${selectedPricingBy?.label}${selectedPricingType === EPricingBy.COST ? ` ${ProfitCurrency}` : ""
       }`;
@@ -334,7 +334,7 @@ const useNewProfits = () => {
       pricingLabel,
       selectedPricingType === EPricingBy.COST ? profitHeader : unitPriceLabel,
       `${totalPriceLabel} ${ProfitCurrency}`,
-      `${totalPriceWithAdditionProfit} (${profitValue} ${renderAdditionType(additionType)})`,
+      // `${totalPriceWithAdditionProfit} (${profitValue} ${renderAdditionType(additionType)})`,
 
       moreHeader,
     ];
@@ -348,7 +348,7 @@ const useNewProfits = () => {
             pricingLabel,
             profitHeader,
             `${totalPriceLabel} ${ProfitCurrency}`,
-            `${totalPriceWithAdditionProfit} (${profitValue} ${renderAdditionType(additionType)})`,
+            // `${totalPriceWithAdditionProfit} (${profitValue} ${renderAdditionType(additionType)})`,
             moreHeader,
           ]
           : [

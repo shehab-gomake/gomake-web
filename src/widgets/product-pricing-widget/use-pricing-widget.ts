@@ -3,28 +3,61 @@ import { useTranslation } from "react-i18next";
 import {  useEffect, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 
-import { addOutSourceActionApi, removeOutSourceActionApi, updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { addActionToWorkFlowApi, addOutSourceActionApi, deleteActionToWorkFlowApi, removeOutSourceActionApi, updateActionsOrderInWorkFlowApi, updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { actionListForWorkFlow, currentCalculationConnectionId, foldOptionsState, productItemValueByEditState, viewPricingTab } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 import { calculationResultState, currentProductItemValueDraftId, currentProductItemValuePriceState, currentProductItemValueState, selectedWorkFlowState } from "./state";
 import { EPricingViews, EWorkSource } from "./enums";
 import { getWorkFlowsActionsApi, getWorkFlowsApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
+import { getAllActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow}) => {
 
   const [view, setView] = useRecoilState<EPricingViews>(viewPricingTab);
   const [actionList, setActionList] = useRecoilState(actionListForWorkFlow)
+  const [actionListDropDown, setActionListDropDown] = useState([]);
+  const [actionNameSelected, setActionNameSelected] = useState<any>()
+  const [sectionNameSelected, setSectionNames] = useState<any>()
+  const [isAddNewAction, setIsAddNewAction] = useState(false)
+
+  const onClickCloseAddNewAction = () => {
+    setIsAddNewAction(false)
+  }
+  const onClickAddNewAction = () => {
+    setIsAddNewAction(true)
+  }
+
+
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
   const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState)
-
   const [pageSize, setPageSize] = useState(10)
   const [heightScrolling, setHeightScrolling] = useState(50)
   const [isChangeView, setIsChangeView] = useState(true)
   const [isFirstEntry, setIsFirstEntry] = useState(false)
-  const { alertFaultUpdate } = useSnackBar();
+  const { alertFaultUpdate,alertFaultAdded,alertSuccessAdded } = useSnackBar();
+
+  const [anchorElActionsListMenu, setAnchorElActionsListMenu] = useState<null | HTMLElement>(null);
+  const [anchorElSectionNameListMenu, setAnchorElSectionNameListMenu] = useState<null | HTMLElement>(null);
+  const openActionsListMenu = Boolean(anchorElActionsListMenu);
+  const openSectionNameListMenu = Boolean(anchorElSectionNameListMenu);
+  const handleCloseActionsListMenu = () => {
+    setAnchorElActionsListMenu(null);
+  };
+  const handleCloseSectionNameListMenu = () => {
+    setAnchorElSectionNameListMenu(null);
+  };
+
+  const handleOpenActionsListMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElActionsListMenu(event.currentTarget);
+  };
+  const handleOpenSectionNameListMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElSectionNameListMenu(event.currentTarget);
+  };
+
+
 
   useEffect(() => {
     // Transform actions when component mounts
@@ -243,7 +276,91 @@ const onClickRemoveOutSourceAction = async (actionId) => {
   })
 };
 
+const getActions = async () => {
+  const callBack = (res) => {
+      if (res.success) {
+        setActionListDropDown(res?.data);
+      }
+  };
+  await getAllActionsApi(callApi, callBack);
+};
+useEffect(() => {
+  getActions();
+}, []);
 
+
+const hasSubWorkFlowsOrProductTypeActions = (selectedWorkFlow) => {
+  if (selectedWorkFlow?.subWorkFlows?.length > 0) {
+    return true;
+  } else if (selectedWorkFlow?.subWorkFlows?.length === 0) {
+    return selectedWorkFlow?.actions?.some(action => action.productType);
+  }
+  return false;
+};
+
+const getSectionNames = (selectedWorkFlow) => {
+  const sectionNames = new Set();
+
+  if (hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)) {
+    if (selectedWorkFlow?.subWorkFlows?.length > 0) {
+      selectedWorkFlow.subWorkFlows.forEach(subWorkFlow => {
+        sectionNames.add({
+          productType: subWorkFlow.productType,
+          sectionName: subWorkFlow.sectionName
+        });
+      });
+    } else if (selectedWorkFlow?.subWorkFlows?.length === 0) {
+      selectedWorkFlow.actions.forEach(action => {
+        if (action.productType) {
+          sectionNames.add({
+            productType: action.productType,
+            sectionName: action.sectionName
+          });
+        }
+      });
+    }
+  }
+
+  return Array.from(sectionNames);
+};
+
+const onClickAddActionToWorkFlow = async () => {
+  const callBack = (res) => {
+      if (res.success) {
+        alertSuccessAdded();
+      }
+      else{
+        alertFaultAdded();
+      }
+  };
+  await addActionToWorkFlowApi(callApi, callBack, {
+    signalRConnectionId: connectionId,
+    productType: sectionNameSelected?.sectionName?sectionNameSelected?.productType:null,
+    actionId: actionNameSelected?.id,
+    sectionName: sectionNameSelected?.sectionName?sectionNameSelected?.sectionName:null,
+  })
+};
+
+const reOderMainActions = async (data) => {
+  const callBack = (res) => {
+      if (res.success) {
+      }
+  };
+  await updateActionsOrderInWorkFlowApi(callApi, callBack, {
+    signalRConnectionId: connectionId,
+    actionOrderIndexList: data
+  })
+};
+const reOderSubWorkFlows = async (data) => {
+  const callBack = (res) => {
+      if (res.success) {
+      }
+  };
+  await updateActionsOrderInWorkFlowApi(callApi, callBack, {
+    signalRConnectionId: connectionId,
+    subProductOrderIndex: data
+  })
+};
 
 
   return {
@@ -271,7 +388,28 @@ const onClickRemoveOutSourceAction = async (actionId) => {
     allCountSelectedTabWorkFlow,
     t,
     onClickAddOutSourceAction,
-    onClickRemoveOutSourceAction
+    onClickRemoveOutSourceAction,
+    actionListDropDown,
+    hasSubWorkFlowsOrProductTypeActions,
+    getSectionNames,
+    sectionNameSelected,
+    setSectionNames,
+    actionNameSelected,
+    setActionNameSelected,
+    isAddNewAction,
+    onClickCloseAddNewAction,
+    onClickAddNewAction,
+    onClickAddActionToWorkFlow,
+    anchorElActionsListMenu,
+    openActionsListMenu,
+    handleCloseActionsListMenu,
+    handleOpenActionsListMenu,
+    anchorElSectionNameListMenu,
+    openSectionNameListMenu,
+    handleCloseSectionNameListMenu,
+    handleOpenSectionNameListMenu,
+    reOderMainActions,
+    reOderSubWorkFlows
   }
 }
 

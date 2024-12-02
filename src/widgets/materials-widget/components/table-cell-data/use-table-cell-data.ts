@@ -84,7 +84,7 @@ const useTableCellData = (isAdmin:boolean) => {
             key: materialCategory?.toString(),
             isUpdateAndFixPrice: isUpdateAndFixPrice,
         });
-      }, [])
+      }, [materialCategory])
     return {
         updateCellData,
         machinesOptions,

@@ -11,6 +11,7 @@ import { useStyle } from "./style";
 import { useRecoilValue } from "recoil";
 import { useExceptions } from "../exceptions/use-exception";
 import { profitsState } from "../../store/profits";
+import { ModalType } from "@/enums";
 
 const UpdateExceptionModal = () => {
   const { t } = useTranslation();
@@ -216,6 +217,7 @@ const UpdateExceptionModal = () => {
         </div>
       </GoMakeModal>
       <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
         title={t("products.profits.exceptions.deleteExceptionProfit")}
         yesBtn={t("materials.buttons.delete")}
         openModal={profitsStateValue.openDeleteExceptionProfitModal}

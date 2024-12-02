@@ -570,6 +570,12 @@ const initState: Record<string, Record<string, any>> = {
         category: ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY,
         price: {price: 0, currency: 0},
         attributes: {}
+
+    },
+    [ECategoryId.ADHESIVE_TAPE]: {
+        category: ECategoryId.ADHESIVE_TAPE,
+        price: {price: 0, currency: 0},
+        attributes: {}
     },
 }
 export {initState};
