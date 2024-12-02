@@ -59,6 +59,7 @@ import {meshProcessorsMachineSteps} from "@/widgets/machines/utils/steps/mesh-pr
 import {silkPrinterSteps} from "@/widgets/machines/utils/steps/silk-printer-steps";
 import {cardCuttingSteps} from "@/widgets/machines/utils/steps/card-cutting-steps";
 import { Permissions } from "@/components/CheckPermission/enum";
+import {adhesiveTapeMachineSteps} from "@/widgets/machines/utils/steps/adhesive-tape-machine-steps";
 
 const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:any): IStep[] => {
     let steps: IStep[];
@@ -227,6 +228,10 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:a
             break;
         case ECategoryId.CARD_CUTTING:
             steps = cardCuttingSteps;
+            break;
+        case ECategoryId.ADHESIVE_TAPE:
+            steps = adhesiveTapeMachineSteps(isAdmin);
+            break;
     }
     if (steps && (isAdmin || CheckPermission(Permissions.SHOW_ACTION_AND_MATERIAL_IN_MACHINE))) {
         return [...steps, ...adminActionsMaterialsStep];
