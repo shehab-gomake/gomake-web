@@ -78,7 +78,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     await updateSupplierPriorityApi(callApi, callBack, {
       materialTypeKey: materialType,
       categoryKey: materialCategory,
-      list: list
+      suppliers: list
     });
   };
 

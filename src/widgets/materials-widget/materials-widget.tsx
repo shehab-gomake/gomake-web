@@ -316,10 +316,10 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         onClose={onClickClosePriceModal}
         hideIcon
         modalType={ModalType.EDIT}
-        title={t("this update will effects the profit profile")}
-        subTitle={t("do you want to fix the profits to save the prices in the profit profile ?")}
-        yesBtn={t("Yes fix the profits")}
-        cancelBtn={t("No don't fix the profits")}
+        title={t("materials.modals.editPriceModalTitle")}
+        subTitle={t("materials.modals.editPriceModalSubTitle")}
+        yesBtn={t("materials.modals.editPriceModalYesBtn")}
+        cancelBtn={t("materials.modals.editPriceModalCancelBtn")}
         onClickDelete={async () => {
           updateProfitProfileProductHidden(true)
         }}
