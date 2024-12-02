@@ -6,7 +6,6 @@ import { useButtonsConfirmContainer } from "./use-buttons-container";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { AttachIcon } from "@/components/icons/attach-icon";
 import { CancelBtnMenu } from "../cancel-btn-menu";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { QuoteStatuses } from "../total-price-and-vat/enums";
 import { OtherReasonModal } from "../total-price-and-vat/other-reason-modal";
 import { ApproveSignatureModal } from "../total-price-and-vat/approve-signature-modal";
@@ -15,7 +14,8 @@ import { ModalType } from "@/enums";
 const ButtonsConfirmContainer = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { onClickCloseRejectModal,
+  const {
+    onClickCloseRejectModal,
     onClickOpenRejectModal,
     openRejectModal,
     handleRejectBtnClick,
@@ -35,7 +35,7 @@ const ButtonsConfirmContainer = () => {
     onClickCloseApproveModal,
     approveSignatureModal,
     onClickOpenApproveSignatureModal,
-    onClickCloseApproveSignatureModal
+    onClickCloseApproveSignatureModal,
   } = useButtonsConfirmContainer();
 
   return (
@@ -44,24 +44,29 @@ const ButtonsConfirmContainer = () => {
         <SecondaryButton
           onClick={handleRejectBtnClick}
           variant="outlined"
-          style={isButtonClicked ? classes.rejectBtnClicked : classes.rejectBtn}>
+          style={isButtonClicked ? classes.rejectBtnClicked : classes.rejectBtn}
+        >
           {t("sales.quote.rejectOffer")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"
           style={classes.btnStyle}
           onClick={onClickPrint}
-        >{t("sales.quote.print")}
+        >
+          {t("sales.quote.print")}
         </SecondaryButton>
         <SecondaryButton
           variant="outlined"
           startIcon={<AttachIcon />}
-          style={classes.btnStyle}>{t("sales.quote.attachFiles")}
+          style={classes.btnStyle}
+        >
+          {t("sales.quote.attachFiles")}
         </SecondaryButton>
         <SecondaryButton
           variant="contained"
           style={classes.btnStyle}
-          onClick={onClickOpenApproveModal}>
+          onClick={onClickOpenApproveModal}
+        >
           {t("sales.quote.approveOffer")}
         </SecondaryButton>
       </div>
@@ -69,10 +74,18 @@ const ButtonsConfirmContainer = () => {
         handleClose={handleRejectBtnClose}
         open={openRejectBtn}
         anchorEl={anchorElRejectBtn}
-        onClickOpenModal={() => onClickOpenOtherModal(QuoteStatuses.CANCELED_OTHER)}
-        onClickOpenDeliveryTimeModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_DELIVERY_TIME)}
-        onClickOpenPriceModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_PRICE)}
-        onClickOpenIrrelevantModal={() => onClickOpenRejectModal(QuoteStatuses.CANCELED_IRRELEVANT)}
+        onClickOpenModal={() =>
+          onClickOpenOtherModal(QuoteStatuses.CANCELED_OTHER)
+        }
+        onClickOpenDeliveryTimeModal={() =>
+          onClickOpenRejectModal(QuoteStatuses.CANCELED_DELIVERY_TIME)
+        }
+        onClickOpenPriceModal={() =>
+          onClickOpenRejectModal(QuoteStatuses.CANCELED_PRICE)
+        }
+        onClickOpenIrrelevantModal={() =>
+          onClickOpenRejectModal(QuoteStatuses.CANCELED_IRRELEVANT)
+        }
       />
       <OtherReasonModal
         openModal={openOtherReasonModal}
@@ -81,7 +94,6 @@ const ButtonsConfirmContainer = () => {
         onClickCancelOffer={onClickReject}
       />
       <GoMakeDeleteModal
-        // icon={<WarningAmberIcon style={{ width: 60, height: 60, color: "red" }} />}
         modalType={ModalType.EDIT}
         title={t("sales.quote.titleCancelModal")}
         yesBtn={t("sales.quote.yesBtn")}
@@ -102,13 +114,11 @@ const ButtonsConfirmContainer = () => {
         // onClickDelete={onClickApprove}
         onClickDelete={onClickOpenApproveSignatureModal}
         hideIcon={true}
-
       />
       <ApproveSignatureModal
         openModal={approveSignatureModal}
         onClose={onClickCloseApproveSignatureModal}
         onClickApprove={onClickApprove}
-
       />
     </div>
   );
