@@ -1,6 +1,6 @@
 version: 0.2
 env:
-  variables:
+  exported-variables:
     API_SERVER: $API_SERVER
     ENVIROMENT: $ENVIROMENT
     ERP_SERVER: $ERP_SERVER
