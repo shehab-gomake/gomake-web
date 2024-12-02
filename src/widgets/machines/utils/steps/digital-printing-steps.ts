@@ -6,6 +6,7 @@ import {
 import {MachineDimensionsComponent} from "@/widgets/machines/components/forms/machine-dimensions";
 import {BeatsInputsComponent} from "@/widgets/machines/components/forms/beats-inputs";
 import {SpeedComponent} from "@/widgets/machines/components/forms/speed";
+import {OtherSettingsInputsComponent} from "@/widgets/machines/components/forms/other-setting-inputs";
 
 const printingMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
@@ -15,6 +16,7 @@ const printingMachineSteps: IStep[] = [
     {label: 'feedersStackers',  component: FeedersStackersComponent},
     {label: 'colors',  component: ColorsInputsComponent},
     {label: 'beats',  component: BeatsInputsComponent},
+    {label: 'printOverLaminate',  component: OtherSettingsInputsComponent},
 ];
 
 export {printingMachineSteps};
