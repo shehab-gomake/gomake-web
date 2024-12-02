@@ -256,7 +256,7 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:a
             break;
         case ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY:
             steps = lightBoxesSteps;
-
+        break;
         case ECategoryId.ADHESIVE_TAPE:
             steps = adhesiveTapeMachineSteps(isAdmin);
             break;
