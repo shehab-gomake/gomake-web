@@ -1,13 +1,8 @@
 version: 0.2
-env:
-  variables:
-    API_SERVER: $API_SERVER
-    ENVIROMENT: $ENVIROMENT
-    ERP_SERVER: $ERP_SERVER
+
 phases:
   pre_build:
     commands:
-      - printenv > .env
       - echo Logging in to Amazon ECR...
       - aws --version
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin 776797999133.dkr.ecr.eu-central-1.amazonaws.com
