@@ -7,7 +7,6 @@ import { CreateIssueModal } from "./components/create-issue-modal";
 import { IssuesHeaderSection } from "./components/header-section";
 import { useEffect } from "react";
 import { HeaderTitle } from "@/widgets";
-
 import { Stack } from "@mui/material";
 import { useRouter } from "next/router";
 
@@ -29,12 +28,19 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     onChangeStatus,
     statusFilter,
     filteredIssues,
-    statusKey,
     columnWidths,
     ticketState,
     setTicketState,
     setFileBase64,
     handleSectionChange,
+    createAnother,
+    handleCheckboxChange,
+
+    selectedSubSection,
+    setSelectedSubSection,
+    selectedSection,
+    setSelectedSection,
+    jiraImageUploadRef,
   } = useCustomerService(isAdmin);
 
   const router = useRouter();
@@ -72,7 +78,6 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
             {t("customerService.addNewTicket")}
           </GomakePrimaryButton>
         </div>
-
         {isAdmin && (
           <IssuesHeaderSection
             isAdmin={isAdmin}
@@ -83,11 +88,9 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
             statuses={statuses}
             onChangeStatus={onChangeStatus}
             selectedStatus={statusFilter}
-            statusKey={statusKey}
           />
         )}
         <PrimaryTable
-          // stickyFirstCol={true}
           stickyHeader={true}
           columnWidths={columnWidths}
           rows={filteredIssues}
@@ -103,6 +106,13 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           ticketState={ticketState}
           setFileBase64={setFileBase64}
           handleSectionChange={handleSectionChange}
+          createAnother={createAnother}
+          handleCheckboxChange={handleCheckboxChange}
+          selectedSubSection={selectedSubSection}
+          setSelectedSubSection={setSelectedSubSection}
+          selectedSection={selectedSection}
+          setSelectedSection={setSelectedSection}
+          jiraImageUploadRef={jiraImageUploadRef}
         />
       </div>
     </Stack>

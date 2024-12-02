@@ -8,29 +8,57 @@ const GET_ALL_PRINTHOUSES_ADMIN = "/v1/customer-service/allIssues";
 
 //Fetches all issues for non-admin users.
 const getAllIssuesApi = async (callApi, setState) => {
-  const res = await getSetApiData(callApi, EHttpMethod.GET, GET_ISSUES_URL, setState);
+  const res = await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ISSUES_URL,
+    setState
+  );
   return res;
 };
 
 const createIssueApi = async (callApi, callback, issueData) => {
-  return await getSetApiData(callApi, EHttpMethod.POST, CREATE_ISSUE_URL, callback, issueData, true);
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    CREATE_ISSUE_URL,
+    callback,
+    issueData,
+    true,
+    null,
+    true
+  );
 };
 
 //Fetches the list of all print houses.
 const getAllPrintHousesApi = async (callApi, setState) => {
-  const res = await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_PRINTHOUSES, setState);
+  const res = await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_PRINTHOUSES,
+    setState
+  );
   return res.data;
 };
 
 //Fetches all issues for a specific print house.
 const getAllPrintHousesIssuesApi = async (callApi, setState) => {
-  const res = await getSetApiData(callApi, EHttpMethod.GET, GET_ALL_PRINTHOUSES_ADMIN, setState);
+  const res = await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_PRINTHOUSES_ADMIN,
+    setState
+  );
   return res;
 };
 
 //Fetches all issues for admin users.
 //If a print house is selected, it includes the printHouseName in the query parameters.
-const getAllIssuesAdminApi = async (callApi, setState, selectedPrintHouseName) => {
+const getAllIssuesAdminApi = async (
+  callApi,
+  setState,
+  selectedPrintHouseName
+) => {
   const url = selectedPrintHouseName
     ? `${GET_ALL_PRINTHOUSES_ADMIN}?printHouseName=${selectedPrintHouseName}`
     : `${GET_ALL_PRINTHOUSES_ADMIN}`;
@@ -38,4 +66,10 @@ const getAllIssuesAdminApi = async (callApi, setState, selectedPrintHouseName) =
   return res;
 };
 
-export { getAllIssuesApi, createIssueApi, getAllPrintHousesApi, getAllIssuesAdminApi, getAllPrintHousesIssuesApi };
+export {
+  getAllIssuesApi,
+  createIssueApi,
+  getAllPrintHousesApi,
+  getAllIssuesAdminApi,
+  getAllPrintHousesIssuesApi,
+};

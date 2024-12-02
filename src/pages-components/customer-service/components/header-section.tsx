@@ -1,10 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
 import { GoMakeAutoComplate } from "@/components";
-import { Skeleton } from "@mui/material";
+import { Skeleton, Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { IissuesHeaderSectionProps, JiraPrintHouse } from "../interface";
-import { use, useEffect } from "react";
+import { IissuesHeaderSectionProps } from "../interface";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
@@ -16,28 +15,29 @@ const IssuesHeaderSection = ({
   statuses,
   onChangeStatus,
   selectedStatus,
-  statusKey,
 }: IissuesHeaderSectionProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const statusList = statuses?.map((status: string) => ({ label: status, id: status })) || [];
 
   return (
     <div style={classes.subHeaderContainer}>
       <div style={classes.filterContainer}>
-        <PermissionCheck userPermission={Permissions.SHOW_ADMIN_CUSTOMER_SERVICE}>
+        <PermissionCheck
+          userPermission={Permissions.SHOW_ADMIN_CUSTOMER_SERVICE}
+        >
           {printHouses?.length > 0 ? (
             <div style={classes.filterSectionContainer}>
-              <div style={classes.labelFilterStyle}>{t("customerService.printHouses")}</div>
+              <div style={classes.labelFilterStyle}>
+                {t("customerService.printHouses")}
+              </div>
               <GoMakeAutoComplate
+                key={`print-house-select-${selectedPrintHouseName || "null"}`}
+                value={selectedPrintHouseName || null}
                 options={printHouses}
                 style={classes.dropDownListStyle}
                 placeholder={t("customerService.selectPrintHouse")}
                 onChange={onChangePrintHouse}
-                value={selectedPrintHouseName}
-                getOptionLabel={(option) => option?.name || ""}
                 withArrow={true}
-                key={statusKey}
               />
             </div>
           ) : (
@@ -45,18 +45,19 @@ const IssuesHeaderSection = ({
           )}
         </PermissionCheck>
 
-        {statusList?.length > 0 ? (
+        {statuses?.length > 0 ? (
           <div style={classes.filterSectionContainer}>
-            <div style={classes.labelFilterStyle}>{t("customerService.status")}</div>
+            <div style={classes.labelFilterStyle}>
+              {t("customerService.status")}
+            </div>
             <GoMakeAutoComplate
-              options={statusList}
+              key={`status-select-${selectedStatus || "null"}`}
+              options={statuses}
               style={classes.dropDownListStyle}
               placeholder={t("customerService.selectStatus")}
               onChange={onChangeStatus}
               value={selectedStatus}
-              getOptionLabel={(option) => option?.label || ""}
               withArrow={true}
-              key={statusKey}
             />
           </div>
         ) : (
