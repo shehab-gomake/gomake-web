@@ -65,12 +65,12 @@ const useMaterialFilters = () => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
-        setMaterialsSuppliers(
-          materialSuppliers.map((supplier) => ({
-            ...supplier,
-            isDefault: supplier.value === supplierId,
-          }))
-        );
+        // setMaterialsSuppliers(
+        //   materialSuppliers.map((supplier) => ({
+        //     ...supplier,
+        //     isDefault: supplier.value === supplierId,
+        //   }))
+        // );
       } else {
         alertFaultUpdate();
       }
