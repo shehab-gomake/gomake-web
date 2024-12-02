@@ -8,7 +8,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = (onUpload?: boolean) => {
   const { t } = useTranslation();
-  const { secondColor, primaryColor } = useGomakeTheme();
+  const { secondColor, primaryColor, grayColor } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -34,6 +34,7 @@ const useStyle = (onUpload?: boolean) => {
       },
       dropDownListStyle: {
         width: convertWidthToVW(500),
+        maxWidth: "300px",
         borderRadius: 4,
         height: 40,
         backgroundColor: "#FFF",
@@ -124,6 +125,14 @@ const useStyle = (onUpload?: boolean) => {
         ...FONT_FAMILY.Lexend(400, 12),
         color: primaryColor(300),
         overflow: "hidden",
+      },
+
+      inputLbl: {
+        color: "#a4a4a4",
+        ...FONT_FAMILY.Lexend(400, 14),
+        display: "flex",
+        alignItems: "center",
+        width: "max-content",
       },
     };
   }, [i18next.language, t]);

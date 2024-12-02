@@ -10,7 +10,6 @@ interface SectionsListProps {
 }
 
 const SectionsList = ({ onChange }: SectionsListProps) => {
-  const { classes } = useStyle();
   const { t } = useTranslation();
 
   const [selectedSection, setSelectedSection] = useState<Sections | "">("");
@@ -21,13 +20,13 @@ const SectionsList = ({ onChange }: SectionsListProps) => {
 
   const handleMainSectionChange = (e: any, value: Sections) => {
     setSelectedSection(value);
-    setSelectedSubSection("");
-    onChange(value, "");
+    setSelectedSubSection(""); // Clear the sub-section when the main section changes
+    onChange(value, ""); // Call onChange with an empty sub-section
   };
 
   const handleSubSectionChange = (e: any, value: string) => {
     setSelectedSubSection(value);
-    onChange(selectedSection, value);
+    onChange(selectedSection, value); // Pass the updated sub-section to onChange
   };
 
   return (

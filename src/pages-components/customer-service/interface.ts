@@ -7,6 +7,8 @@ export interface CreateIssueModalProps {
   setTicketState: any;
   setFileBase64: any;
   handleSectionChange: any;
+  createAnother?: any;
+  handleCheckboxChange?: () => void;
 }
 export interface JiraIssueType {
   isAdmin: boolean;
@@ -20,6 +22,7 @@ export interface JiraIssueType {
   section: string;
   subSection: string;
 }
+
 export interface JiraPrintHouse {
   id: string;
   name: string;
@@ -35,7 +38,6 @@ export interface IissuesHeaderSectionProps {
   statuses: any;
   onChangeStatus: any;
   selectedStatus: any;
-  statusKey: string;
 }
 export interface TicketTypeList {
   label: string;
