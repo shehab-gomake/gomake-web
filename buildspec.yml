@@ -1,14 +1,12 @@
 version: 0.2
 env:
-  variables:
+  exported-variables:
     API_SERVER: $API_SERVER
     ENVIROMENT: $ENVIROMENT
     ERP_SERVER: $ERP_SERVER
 phases:
   pre_build:
     commands:
-      - echo $API_SERVER
-      - echo $API_SERVER > .env
       - printenv > .env
       - echo Logging in to Amazon ECR...
       - aws --version
