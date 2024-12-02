@@ -221,7 +221,7 @@ const useAddProduct = ({ clasess }) => {
           ...parameter,
           isShowToClient: !parameter?.isShowToClient,
         },
-        updateActionType: EUpdateActionType.showToClient,
+        updatedActionType: EUpdateActionType.showToClient,
         updateType,
       });
     },
@@ -240,7 +240,7 @@ const useAddProduct = ({ clasess }) => {
           ...parameter,
           isHidden: !parameter?.isHidden,
         },
-        updateActionType: EUpdateActionType.hidden,
+        updatedActionType: EUpdateActionType.hidden,
         updateType,
       });
     },
@@ -259,7 +259,7 @@ const useAddProduct = ({ clasess }) => {
           ...parameter,
           isRequired: !parameter?.isRequired,
         },
-        updateActionType: EUpdateActionType.required,
+        updatedActionType: EUpdateActionType.required,
         updateType,
       });
     },
@@ -278,7 +278,7 @@ const useAddProduct = ({ clasess }) => {
           ...parameter,
           isLock: !parameter?.isLock,
         },
-        updateActionType: EUpdateActionType.lock,
+        updatedActionType: EUpdateActionType.lock,
         updateType,
       });
     },
