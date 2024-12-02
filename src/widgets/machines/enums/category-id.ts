@@ -53,5 +53,6 @@ export enum ECategoryId {
     CREATING_DIES_MACHINE = '52',
     MESH_PROCESSORS = '53',
     SILK_PRINTER = '54',
-    CARD_CUTTING = '55'
+    CARD_CUTTING = '55',
+    ADHESIVE_TAPE = '63',
 }

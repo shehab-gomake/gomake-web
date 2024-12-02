@@ -26,37 +26,6 @@ const digitalPrinting = (state: Record<string, any>) => {
         ...mediaWeightSettings(state),
         ...mediaThicknessSettings(state,EMeasurementUnits.UM),
         ...sheetsCategoriesList(state),
-        {
-            name: 'machineAttributes.printOverLaminate',
-            parameterKey: 'printOverLaminate',
-            machineInputType: 'multiInput',
-            value: state.attributes?.printOverLaminate ? state.attributes?.printOverLaminate : {},
-            isValid: true,
-            inputs: [
-                {
-                    name: "isAvailable",
-                    label: "machineAttributes.available",
-                    type: "switch",
-                    placeholder: "machineAttributes.available",
-                    required: true,
-                    parameterKey: "isAvailable",
-                    options: [],
-                    value: state.attributes?.printOverLaminate?.isAvailable ? state.attributes?.printOverLaminate?.isAvailable : ''
-                },
-                {
-                    name: "categories",
-                    label: "machineAttributes.colorOption",
-                    type: "select",
-                    placeholder: "machineAttributes.colorOption",
-                    required: true,
-                    parameterKey: "colorOption",
-                    options: [{value: '1', text: 'machineAttributes.foilOverlayColor' }, {value: '2', text: 'machineAttributes.scratchOfOverLayColor' }],
-                    value: state?.attributes?.printOverLaminate?.colorOption,
-                    multiple: true,
-                    disabled: !state.attributes?.printOverLaminate?.isAvailable
-                },
-            ]
-        },
     ]
 }
 
