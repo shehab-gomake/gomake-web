@@ -89,6 +89,7 @@ const MachineMaterialInput = (props: IInput) => {
     return (
         <div style={{...classes.inputsContainer, width: '100%'}}>
             {
+                !props.disabled &&
                 materialCategories.length > 0 && materialInputs.map((property: any) => (
                     <InputContainer key={property.parameterKey} attribute={property}
                                     newValue={onSelectCategory}
