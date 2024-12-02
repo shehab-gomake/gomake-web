@@ -27,23 +27,23 @@ const applyingGlueCategories = (state: Record<string, any>) => {
                     parameterKey: "categories",
                     options: [],
                     value: state?.attributes?.applyingGlue?.categories,
-                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=cut',
+                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=Glues',
                     multiple: true,
                     disabled: !state.attributes?.applyingGlue?.isAvailable
                 },
-                {
-                    name: "glueType",
-                    label: "machineAttributes.glueType",
-                    type: "select",
-                    placeholder: "machineAttributes.glueType",
-                    required: true,
-                    parameterKey: "categories",
-                    options: [],
-                    value: state?.attributes?.applyingGlue?.glueType,
-                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=cut',
-                    multiple: true,
-                    disabled: !state.attributes?.applyingGlue?.isAvailable
-                },
+                // {
+                //     name: "glueType",
+                //     label: "machineAttributes.glueType",
+                //     type: "select",
+                //     placeholder: "machineAttributes.glueType",
+                //     required: true,
+                //     parameterKey: "categories",
+                //     options: [],
+                //     value: state?.attributes?.applyingGlue?.glueType,
+                //     optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=cut',
+                //     multiple: true,
+                //     disabled: !state.attributes?.applyingGlue?.isAvailable
+                // },
             ]
         },
     ]

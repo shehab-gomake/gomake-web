@@ -18,19 +18,19 @@ const cutCategories = (state: Record<string, any>) => {
                     options: [],
                     value: state.attributes?.cutTool?.isAvailable ? state.attributes?.cutTool?.isAvailable : ''
                 },
-                {
-                    name: "categories",
-                    label: "machineAttributes.categories",
-                    type: "select",
-                    placeholder: "machineAttributes.categories",
-                    required: true,
-                    parameterKey: "categories",
-                    options: [],
-                    value: state?.attributes?.cutTool?.categories,
-                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=cut',
-                    multiple: true,
-                    disabled: !state.attributes?.cutTool?.isAvailable
-                },
+                // {
+                //     name: "categories",
+                //     label: "machineAttributes.categories",
+                //     type: "select",
+                //     placeholder: "machineAttributes.categories",
+                //     required: true,
+                //     parameterKey: "categories",
+                //     options: [],
+                //     value: state?.attributes?.cutTool?.categories,
+                //     optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=cut',
+                //     multiple: true,
+                //     disabled: !state.attributes?.cutTool?.isAvailable
+                // },
             ]
         },
     ]

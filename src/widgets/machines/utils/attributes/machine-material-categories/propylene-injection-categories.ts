@@ -27,23 +27,23 @@ const propyleneInjectionCategories = (state: Record<string, any>) => {
                     parameterKey: "categories",
                     options: [],
                     value: state?.attributes?.propyleneTool?.categories,
-                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=cut',
+                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=Propylene',
                     multiple: true,
                     disabled: !state.attributes?.propyleneTool?.isAvailable
                 },
-                {
-                    name: "glueType",
-                    label: "machineAttributes.propyleneType",
-                    type: "select",
-                    placeholder: "machineAttributes.propyleneType",
-                    required: true,
-                    parameterKey: "categories",
-                    options: [],
-                    value: state?.attributes?.propyleneTool?.propyleneType,
-                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=cut',
-                    multiple: true,
-                    disabled: !state.attributes?.propyleneTool?.isAvailable
-                },
+                // {
+                //     name: "glueType",
+                //     label: "machineAttributes.propyleneType",
+                //     type: "select",
+                //     placeholder: "machineAttributes.propyleneType",
+                //     required: true,
+                //     parameterKey: "categories",
+                //     options: [],
+                //     value: state?.attributes?.propyleneTool?.propyleneType,
+                //     optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=cut',
+                //     multiple: true,
+                //     disabled: !state.attributes?.propyleneTool?.isAvailable
+                // },
             ]
         },
     ]

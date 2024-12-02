@@ -18,19 +18,19 @@ const vCutCategories = (state: Record<string, any>) => {
                     options: [],
                     value: state.attributes?.vCutTool?.isAvailable ? state.attributes?.vCutTool?.isAvailable : ''
                 },
-                {
-                    name: "categories",
-                    label: "machineAttributes.categories",
-                    type: "select",
-                    placeholder: "machineAttributes.categories",
-                    required: true,
-                    parameterKey: "categories",
-                    options: [],
-                    value: state?.attributes?.vCutTool?.categories,
-                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=cut',
-                    multiple: true,
-                    disabled: !state.attributes?.vCutTool?.isAvailable
-                },
+                // {
+                //     name: "categories",
+                //     label: "machineAttributes.categories",
+                //     type: "select",
+                //     placeholder: "machineAttributes.categories",
+                //     required: true,
+                //     parameterKey: "categories",
+                //     options: [],
+                //     value: state?.attributes?.vCutTool?.categories,
+                //     optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=cut',
+                //     multiple: true,
+                //     disabled: !state.attributes?.vCutTool?.isAvailable
+                // },
             ]
         },
     ]
