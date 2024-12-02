@@ -134,7 +134,7 @@ const usePrintHouseMachines = () => {
                 removeAction(ENGRAVING_ACTION_ID);
             }
 
-            const isCuttingAvailable = !!mState.attributes?.cutTool?.isAvailable;
+            const isCuttingAvailable = !!mState.attributes?.cutTool?.isAvailable || mState.attributes?.kissCutTool?.isAvailable || mState.attributes?.vCutTool?.isAvailable;
             const hasCuttingAction = actions.includes(CUTTING_ACTION_ID);
             if (isCuttingAvailable && !hasCuttingAction) {
                 addAction(CUTTING_ACTION_ID);
@@ -147,7 +147,9 @@ const usePrintHouseMachines = () => {
         mState.attributes?.engravingTool?.isAvailable,
         mState.attributes?.scoringTool?.isAvailable,
         mState.attributes?.scoring?.isAvailable,
-        mState.attributes?.perforation?.isAvailable
+        mState.attributes?.perforation?.isAvailable,
+        mState.attributes?.kissCutTool?.isAvailable,
+        mState.attributes?.vCutTool?.isAvailable
     ]);
 
     return {
