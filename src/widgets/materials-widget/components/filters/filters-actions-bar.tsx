@@ -51,7 +51,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   } | null>({ value: "", label: "", isDefault: false });
 
   const [items, setItems] = useState(materialSuppliers);
-
+  console.log("items", items)
   useEffect(() => {
     if (materialSuppliers?.length > 0) {
       setItems(materialSuppliers)
@@ -98,9 +98,20 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   };
 
   useEffect(() => {
-    const index = materialSuppliers.map((s) => s.value).indexOf(supplierId);
-    setSupplierName(index !== -1 ? materialSuppliers[index] : null);
+    if (materialSuppliers?.length > 0) {
+      const index = materialSuppliers.map((s) => s.value).indexOf(supplierId);
+      if (index !== -1) {
+        setSupplierName(materialSuppliers[index]);
+        onSelectSupplier(materialSuppliers[index]?.value)
+      }
+      else {
+        setSupplierName(materialSuppliers[0]);
+        onSelectSupplier(materialSuppliers[0]?.value)
+      }
+
+    }
   }, [supplierId, materialSuppliers]);
+
 
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
 
@@ -229,7 +240,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             }}>
             <div
               style={{ ...FONT_FAMILY.Lexend(500, 16) }}>
-              {supplierName?.label}
+              {supplierName?.label ? supplierName?.label : t("materials.sheetPaper.selectSupplier")}
             </div>
           </button>
         ) : (

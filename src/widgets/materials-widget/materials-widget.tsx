@@ -186,12 +186,17 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             pageNumber,
             pageSize
           ).then();
-        } else {
-          getPrintHouseMaterialCategorySuppliers(
-            materialType?.toString(),
-            materialCategory?.toString()
-          ).then();
         }
+        getPrintHouseMaterialCategorySuppliers(
+          materialType?.toString(),
+          materialCategory?.toString()
+        ).then();
+        // else {
+        //   getPrintHouseMaterialCategorySuppliers(
+        //     materialType?.toString(),
+        //     materialCategory?.toString()
+        //   ).then();
+        // }
       }
     }
   }, [
