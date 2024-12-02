@@ -12,9 +12,10 @@ const letterSidesBendingMachine = (state: Record<string, any>) => {
             required: true,
             parameterKey: "mediaType",
             value: state?.attributes?.mediaType,
-            options: [{value: 1, text: 'type 1'}, {value: 2, text: 'type 2'}],
+            options: [],
             machineInputType: 'input',
             isValid: true,
+            optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=lettersAndLightBoxSideRoll'
         },
         ...mediaWidthSettings(state, EMeasurementUnits.CM),
         ...mediaThicknessSettings(state,EMeasurementUnits.MM),

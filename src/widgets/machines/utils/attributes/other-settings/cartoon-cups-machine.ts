@@ -11,7 +11,7 @@ const cartoonCupsMachine = (state: Record<string, any>) => {
             values: state?.price?.dieCuts ? state?.price?.dieCuts : 0,
             options: [],
             isValid: true,
-            optionsUrl: '/v1/enum/get-enums/currency',
+            optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=DieCut',
             multiple: true,
         },
     ]

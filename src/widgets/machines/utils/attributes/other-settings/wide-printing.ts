@@ -22,6 +22,7 @@ const widePrinting = (state: Record<string, any>) => {
             options: [],
             value: state?.attributes?.printOverLaminate?.markType,
             multiple: true,
+            disabled: !state?.attributes?.available
         },
         {
             name: "markLength",
@@ -32,7 +33,8 @@ const widePrinting = (state: Record<string, any>) => {
             parameterKey: "markLength",
             options: [],
             value: state?.attributes?.markLength,
-            unit: EMeasurementUnits.CM
+            unit: EMeasurementUnits.CM,
+            disabled: !state?.attributes?.available
         },
         {
             name: "markWidth ",
@@ -43,8 +45,8 @@ const widePrinting = (state: Record<string, any>) => {
             parameterKey: "markWidth",
             options: [],
             value: state?.attributes?.markWidth,
-            unit: EMeasurementUnits.CM
-
+            unit: EMeasurementUnits.CM,
+            disabled: !state?.attributes?.available
         },
     ];
 }

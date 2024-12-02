@@ -27,7 +27,7 @@ const applicationCategories = (state: Record<string, any>) => {
                     parameterKey: "categories",
                     options: [],
                     value: state?.attributes?.applicationUnit?.categories,
-                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=cut',
+                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=application',
                     multiple: true,
                     disabled: !state.attributes?.applicationUnit?.isAvailable
                 },

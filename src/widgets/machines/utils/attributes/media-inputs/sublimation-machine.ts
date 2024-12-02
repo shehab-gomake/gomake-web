@@ -9,6 +9,10 @@ import {mediaMinMarginWidth} from "@/widgets/machines/utils/attributes/media-inp
 import {mediaDimensionsSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-dimensions-settings";
 import {mediaWeightSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-weight-settings";
 import {mediaThicknessSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-thickness-settings";
+import {dtfRollsCategories} from "@/widgets/machines/utils/attributes/machine-material-categories/dtf-rolls-categories";
+import {
+    dtfSheetsCategories
+} from "@/widgets/machines/utils/attributes/machine-material-categories/dtf-sheets-categories";
 
 const sublimationMachine = (state: Record<string, any>) => {
     return [
@@ -27,20 +31,6 @@ const sublimationMachine = (state: Record<string, any>) => {
             isValid: true,
             multiple: true
         },
-        {
-            name: "materialType",
-            label: "machineAttributes.materialType",
-            type: "select",
-            placeholder: "machineAttributes.materialType",
-            required: true,
-            parameterKey: "materialType",
-            value: state?.attributes?.materialType,
-            options: [{value: '1', text: 'DTF Roll'}, {value: '2', text: 'DTF Sheets'}],
-            values: state?.attributes?.materialType,
-            machineInputType: 'input',
-            isValid: true,
-            multiple: true
-        },
         ...mediaMinMarginWidth(state),
         ...mediaDimensionsSettings(state),
         ...mediaWeightSettings(state),
@@ -48,7 +38,9 @@ const sublimationMachine = (state: Record<string, any>) => {
         ...mediaSheetsCategories(state),
         ...mediaWideFormatCategories(state),
         ...mediaFlatbedCategories(state),
-        ...mediaAdvertisingProductsCategories(state)
+        ...mediaAdvertisingProductsCategories(state),
+        ...dtfRollsCategories(state),
+        ...dtfSheetsCategories(state),
     ]
 }
 

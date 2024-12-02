@@ -16,6 +16,7 @@ import {cncMachine} from "@/widgets/machines/utils/attributes/other-settings/cnc
 import {
     applicationCategories
 } from "@/widgets/machines/utils/attributes/machine-material-categories/application-categories";
+import {lightBoxesMachine} from "@/widgets/machines/utils/attributes/other-settings/light-boxes-machine";
 
 
 const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[] => {
@@ -51,7 +52,9 @@ const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[
         case ECategoryId.FLATBED_CUTTING_MACHINE:
             return cncMachine(state);
         case ECategoryId.SUBLIMATION:
-            return applicationCategories(state)
+            return applicationCategories(state);
+        case ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY:
+            return lightBoxesMachine(state);
         default:
             return []
     }

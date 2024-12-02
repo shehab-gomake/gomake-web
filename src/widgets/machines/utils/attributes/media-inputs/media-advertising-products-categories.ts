@@ -28,7 +28,7 @@ const mediaAdvertisingProductsCategories = (state: Record<string, any>) => {
                     parameterKey: "categories",
                     options: [],
                     value: state?.attributes?.advertisingProducts?.categories,
-                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=advertisingProducts',
+                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=Advertising Products',
                     multiple: true,
                     disabled: !state.attributes?.advertisingProducts?.isAvailable
                 },

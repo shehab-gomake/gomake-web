@@ -17,7 +17,8 @@ const pressMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.advertisingProducts",
                     required: true,
                     parameterKey: "advertisingProducts",
-                    options: []
+                    options: [],
+                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=Advertising Products'
                 },
                 {
                     name: "stations",
@@ -44,7 +45,8 @@ const pressMachine = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.advertisingProducts",
                     required: true,
                     parameterKey: "advertisingProducts",
-                    options: []
+                    options: [],
+                    optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=Advertising Products'
                 },
                 {
                     name: "pressTime",
