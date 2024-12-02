@@ -22,6 +22,7 @@
     "@mui/joy": "^5.0.0-beta.24",
     "@mui/lab": "^5.0.0-alpha.173",
     "@mui/material": "^5.16.6",
+    "@mui/x-date-pickers": "^7.23.0",
     "@reactour/tour": "^3.6.1",
     "@types/react-dom": "18.0.11",
     "@uidotdev/usehooks": "^2.0.1",
