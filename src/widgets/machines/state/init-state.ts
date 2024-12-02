@@ -451,8 +451,8 @@ const initState: Record<string, Record<string, any>> = {
         price: {price: 0, currency: 0},
         attributes: {}
     },
-    [ECategoryId.PRESSING_MACHINE]: {
-        category: ECategoryId.PRESSING_MACHINE,
+    [ECategoryId.BOOK_PRESSING_MACHINE]: {
+        category: ECategoryId.BOOK_PRESSING_MACHINE,
         price: {price: 0, currency: 0},
         attributes: {}
     },
@@ -535,6 +535,42 @@ const initState: Record<string, Record<string, any>> = {
         category: ECategoryId.CARD_CUTTING,
         price: {price: 0, currency: 0},
         attributes: {}
+    },
+    [ECategoryId.CARTOON_CUPS]: {
+        category: ECategoryId.CARTOON_CUPS,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.PAINTING]: {
+        category: ECategoryId.PAINTING,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.SUBLIMATION]: {
+        category: ECategoryId.SUBLIMATION,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.PRESS_MACHINE]: {
+        category: ECategoryId.PRESS_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.EMBROIDERY_MACHINE]: {
+        category: ECategoryId.EMBROIDERY_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.LETTER_SIDES_BENDING_MACHINE]: {
+        category: ECategoryId.LETTER_SIDES_BENDING_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
+    [ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY]: {
+        category: ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY,
+        price: {price: 0, currency: 0},
+        attributes: {}
+
     },
     [ECategoryId.ADHESIVE_TAPE]: {
         category: ECategoryId.ADHESIVE_TAPE,

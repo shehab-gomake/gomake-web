@@ -2,6 +2,9 @@ import {flatbedWidePrinting} from "@/widgets/machines/utils/attributes/media-inp
 import {mediaSheetsCategories} from "@/widgets/machines/utils/attributes/media-inputs/media-sheets-categories";
 import {mediaWideFormatCategories} from "@/widgets/machines/utils/attributes/media-inputs/media-wide-format-categories";
 import {mediaFlatbedCategories} from "@/widgets/machines/utils/attributes/media-inputs/media-flatbed-categories";
+import {
+    mediaAdvertisingProductsCategories
+} from "@/widgets/machines/utils/attributes/media-inputs/media-advertising-products-categories";
 
 const widePrinting = (state: Record<string, any>) => {
     return [
@@ -9,6 +12,7 @@ const widePrinting = (state: Record<string, any>) => {
         ...mediaSheetsCategories(state),
         ...mediaWideFormatCategories(state),
         ...mediaFlatbedCategories(state),
+        ...mediaAdvertisingProductsCategories(state)
     ]
 }
 

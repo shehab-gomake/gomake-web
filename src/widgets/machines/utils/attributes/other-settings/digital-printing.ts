@@ -1,3 +1,5 @@
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+
 const digitalPrinting = (state: Record<string, any>) => {
     return [
         {
@@ -9,6 +11,18 @@ const digitalPrinting = (state: Record<string, any>) => {
             parameterKey: "printOverLaminateIsAvailable",
             options: [],
             value: state.attributes?.printOverLaminateIsAvailable ? state.attributes?.printOverLaminateIsAvailable : ''
+        },
+        {
+            name: "",
+            label: "machineAttributes.speedAdjustment",
+            type: "text",
+            placeholder: "machineAttributes.speedAdjustment",
+            required: true,
+            parameterKey: "printOverlaySpeedAdjustment",
+            options: [],
+            value: state?.attributes?.printOverlaySpeedAdjustment,
+            disabled: !state?.attributes?.printOverLaminateIsAvailable,
+            unit: EMeasurementUnits.PERCENTAGE
         },
         {
             name: "machineAttributes.foilOverLayColor",

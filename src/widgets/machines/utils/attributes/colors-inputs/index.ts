@@ -8,6 +8,7 @@ import {flatbedWidePrinting} from "@/widgets/machines/utils/attributes/colors-in
 import {pastingBlocksMachine} from "@/widgets/machines/utils/attributes/colors-inputs/pasting-blocks-machine";
 import {enhancementMachine} from "@/widgets/machines/utils/attributes/colors-inputs/enhancement-machine";
 import {sideColoringMachine} from "@/widgets/machines/utils/attributes/colors-inputs/side-coloring-machine";
+import {sublimationMachine} from "@/widgets/machines/utils/attributes/colors-inputs/sublimation-machine";
 
 
 const getCategoryColorsInputs = (categoryId: string, state: Record<string, any>) => {
@@ -36,6 +37,8 @@ const getCategoryColorsInputs = (categoryId: string, state: Record<string, any>)
             return enhancementMachine(state);
         case ECategoryId.ROLL_DIGITAL_ENHANCEMENT_MACHINE:
             return enhancementMachine(state);
+        case ECategoryId.SUBLIMATION:
+            return sublimationMachine(state);
         default:
             return []
     }

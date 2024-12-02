@@ -35,5 +35,9 @@ export enum EMeasurementUnits {
     SQUARE_METER_P_HOUR = 'squareMeterPerHour',
     SQUARE_CM_P_MIN = 'squareCMPerHour',
     PAPER_SETS_PER_HOUR  = 'paperSetsPerHour',
-    METER_PER_HOUR = 'meterPerHour'
+    METER_PER_HOUR = 'meterPerHour',
+    CUPS_PER_HOUR = 'cupsPerHour',
+    SQUARE_CM_HOUR = 'squareCMPerH',
+    LETTERS_PER_HOUR = 'lettersHour',
+    PROFILE_PER_HOUR = 'profileHour'
 }

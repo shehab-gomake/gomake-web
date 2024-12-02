@@ -5,6 +5,9 @@ import {foldingGluingMachine} from "@/widgets/machines/utils/attributes/run-inpu
 import {bookletMachine} from "@/widgets/machines/utils/attributes/run-inputs/booklet-machine";
 import {rollFinishMachine} from "@/widgets/machines/utils/attributes/run-inputs/roll-finish-machine";
 import {foldingMachine} from "@/widgets/machines/utils/attributes/run-inputs/folding-machine";
+import {cncMachine} from "@/widgets/machines/utils/attributes/run-inputs/cnc-machine";
+import {sublimationMachine} from "@/widgets/machines/utils/attributes/run-inputs/sublimation-machine";
+import {lightBoxesMachine} from "@/widgets/machines/utils/attributes/run-inputs/light-boxes-machine";
 
 const getCategoryRunInputs = (categoryId: string, state: Record<string, any>): any[] => {
     switch (categoryId) {
@@ -26,6 +29,12 @@ const getCategoryRunInputs = (categoryId: string, state: Record<string, any>): a
             return bookletMachine(state);
         case ECategoryId.ROLL_FINISH_MACHINE:
             return rollFinishMachine(state);
+        case ECategoryId.FLATBED_CUTTING_MACHINE:
+            return cncMachine(state);
+        case ECategoryId.SUBLIMATION:
+            return sublimationMachine(state);
+        case ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY:
+            return lightBoxesMachine(state);
         default:
             return []
     }
