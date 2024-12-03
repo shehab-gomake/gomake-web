@@ -51,10 +51,12 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   } | null>({ value: "", label: "", isDefault: false });
 
   const [items, setItems] = useState(materialSuppliers);
-  console.log("items", items)
   useEffect(() => {
     if (materialSuppliers?.length > 0) {
       setItems(materialSuppliers)
+    }
+    else {
+      setItems([])
     }
   }, [materialSuppliers])
 
@@ -108,7 +110,10 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         setSupplierName(materialSuppliers[0]);
         onSelectSupplier(materialSuppliers[0]?.value)
       }
-
+    }
+    else {
+      setSupplierName(null);
+      onSelectSupplier("")
     }
   }, [supplierId, materialSuppliers]);
 
