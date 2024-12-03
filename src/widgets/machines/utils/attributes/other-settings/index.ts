@@ -11,6 +11,13 @@ import {analogEnhancementMachine} from "@/widgets/machines/utils/attributes/othe
 import {collectorMachine} from "@/widgets/machines/utils/attributes/other-settings/collector-machine";
 import {widePrinting} from "@/widgets/machines/utils/attributes/other-settings/wide-printing";
 import {laminationMachine} from "@/widgets/machines/utils/attributes/other-settings/lamination-machine";
+import {cartoonCupsMachine} from "@/widgets/machines/utils/attributes/other-settings/cartoon-cups-machine";
+import {cncMachine} from "@/widgets/machines/utils/attributes/other-settings/cnc-machine";
+import {
+    applicationCategories
+} from "@/widgets/machines/utils/attributes/machine-material-categories/application-categories";
+import {lightBoxesMachine} from "@/widgets/machines/utils/attributes/other-settings/light-boxes-machine";
+import {digitalPrinting} from "@/widgets/machines/utils/attributes/other-settings/digital-printing";
 
 
 const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[] => {
@@ -41,6 +48,16 @@ const getCategoryInputs = (categoryId: string, state: Record<string, any>): any[
             return widePrinting(state);
         case ECategoryId.LAMINATION_MACHINE:
             return laminationMachine(state);
+        case ECategoryId.CARTOON_CUPS:
+            return cartoonCupsMachine(state);
+        case ECategoryId.FLATBED_CUTTING_MACHINE:
+            return cncMachine(state);
+        case ECategoryId.SUBLIMATION:
+            return applicationCategories(state);
+        case ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY:
+            return lightBoxesMachine(state);
+        case ECategoryId.DIGITAL_PRINTING:
+            return digitalPrinting(state);
         default:
             return []
     }
