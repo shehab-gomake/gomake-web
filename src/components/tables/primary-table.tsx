@@ -217,7 +217,7 @@ const PrimaryTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedRows.map((row, rowIndex) => (
+            {sortedRows?.map((row, rowIndex) => (
               <TableRow
                 key={`row_${rowIndex}`}
                 style={{
