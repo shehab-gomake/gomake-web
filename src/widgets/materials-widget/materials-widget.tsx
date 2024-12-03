@@ -311,7 +311,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         onClickYes={() => onDeleteCategoryRow(selectedTableRow?.id)}
         onClickNo={() => toggleIsActive(selectedTableRow?.id, "Active", selectedTableRow?.isActive)}
       />
-      <GoMakeDeleteModal
+      {/* <GoMakeDeleteModal
         openModal={openPriceModal}
         onClose={onClickClosePriceModal}
         hideIcon
@@ -326,7 +326,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         onClickCancel={async () => {
           updateProfitProfileProductHidden(false)
         }}
-      />
+      /> */}
     </div>
   );
 };
