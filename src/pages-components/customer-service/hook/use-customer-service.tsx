@@ -11,6 +11,7 @@ import { JiraIssueType, JiraPrintHouse, Sections } from "../interface";
 import { useTranslation } from "react-i18next";
 import { ticketTypeList } from "../enums";
 import { logSessionData } from "@/utils/sessionManager";
+import { useDebounce } from "use-debounce";
 
 const useCustomerService = (isAdmin: boolean) => {
   const { t } = useTranslation();
@@ -25,14 +26,21 @@ const useCustomerService = (isAdmin: boolean) => {
   const [statuses, setStatuses] = useState([]);
   const [ticketState, setTicketState] = useState<JiraIssueType>(null);
   const [fileBase64, setFileBase64] = useState<string>("");
-  const { alertSuccessAdded, alertFaultAdded, alertRequiredFields } =
-    useSnackBar();
+  const {
+    alertFault,
+    alertSuccessAdded,
+    alertFaultAdded,
+    alertRequiredFields,
+  } = useSnackBar();
   const [createAnother, setCreateAnother] = useState(false);
   const [selectedSection, setSelectedSection] = useState<Sections | "">("");
   const [selectedSubSection, setSelectedSubSection] = useState<string>("");
   const jiraImageUploadRef = useRef<{ resetAttachment: () => void } | null>(
     null
   );
+  const [patternSearch, setPatternSearch] = useState<string>("");
+  const [debouncedPatternSearch] = useDebounce(patternSearch, 300);
+
   const handleCheckboxChange = () => {
     setCreateAnother(!createAnother);
   };
@@ -119,8 +127,23 @@ const useCustomerService = (isAdmin: boolean) => {
   }, [callApi]);
 
   const createIssue = async () => {
-    if (!ticketState) {
-      alertRequiredFields();
+    if (isAdmin && !selectedPrintHouseName && !selectedModalPrintHouseName) {
+      alertFault("customerService.selectPrintHouseAlert");
+      return;
+    }
+
+    if (!ticketState?.ticketType) {
+      alertFault("customerService.ticketTypeRequired");
+      return;
+    }
+
+    if (!ticketState?.title) {
+      alertFault("customerService.titleRequired");
+      return;
+    }
+
+    if (!ticketState?.description) {
+      alertFault("customerService.descriptionRequired");
       return;
     }
 
@@ -167,6 +190,7 @@ const useCustomerService = (isAdmin: boolean) => {
           setFileBase64("");
           setSelectedSection("");
           setSelectedSubSection("");
+          setSelectedModalPrintHouseName("");
           setTicketState({
             isAdmin: ticketState.isAdmin,
             openModal: ticketState.openModal,
@@ -189,7 +213,13 @@ const useCustomerService = (isAdmin: boolean) => {
     };
     logSessionData();
 
-    await createIssueApi(callApi, callBack, { issueData, fileBase64 });
+    await createIssueApi(callApi, callBack, {
+      issueData,
+      fileBase64,
+      ...(isAdmin && {
+        printHouseName: selectedModalPrintHouseName || selectedPrintHouseName,
+      }),
+    });
   };
 
   const onChangePrintHouse = useCallback((e, value) => {
@@ -215,6 +245,16 @@ const useCustomerService = (isAdmin: boolean) => {
       filtered = filtered.filter((issue) => issue[7] === statusFilter);
     }
 
+    // Search input filter by title / description
+    if (debouncedPatternSearch.trim()) {
+      const lowercasedSearch = debouncedPatternSearch.toLowerCase();
+      filtered = filtered.filter(
+        (issue) =>
+          issue[2]?.toLowerCase().includes(lowercasedSearch) ||
+          issue[3]?.toLowerCase().includes(lowercasedSearch)
+      );
+    }
+
     // Sort issues so that "Done" is at the end
     const sortedIssues = filtered.sort((a, b) => {
       if (a[7] === "Done" && b[7] !== "Done") return 1;
@@ -223,11 +263,11 @@ const useCustomerService = (isAdmin: boolean) => {
     });
 
     setFilteredIssues(sortedIssues);
-  }, [AllIssues, selectedPrintHouseName, statusFilter]);
+  }, [AllIssues, selectedPrintHouseName, statusFilter, debouncedPatternSearch]);
 
   useEffect(() => {
     filterIssues();
-  }, [AllIssues, selectedPrintHouseName, statusFilter]);
+  }, [AllIssues, selectedPrintHouseName, statusFilter, debouncedPatternSearch]);
 
   const tableHeaders = [
     isAdmin ? t("customerService.printHouses") : null,
@@ -245,6 +285,7 @@ const useCustomerService = (isAdmin: boolean) => {
     setFileBase64("");
     setSelectedSection("");
     setSelectedSubSection("");
+    setSelectedModalPrintHouseName(""); //?new
     setTicketState((prevTicketState) => ({
       ...prevTicketState,
       ticketType: null,
@@ -267,6 +308,13 @@ const useCustomerService = (isAdmin: boolean) => {
     if (isAdmin) {
       getAllPrintHouses();
     }
+  }, []);
+
+  //?new
+  const [selectedModalPrintHouseName, setSelectedModalPrintHouseName] =
+    useState("");
+  const onChangeModalPrintHouse = useCallback((e, value) => {
+    setSelectedModalPrintHouseName(value?.label);
   }, []);
 
   return {
@@ -301,6 +349,10 @@ const useCustomerService = (isAdmin: boolean) => {
     selectedSection,
     setSelectedSection,
     jiraImageUploadRef,
+    patternSearch,
+    setPatternSearch,
+    onChangeModalPrintHouse,
+    selectedModalPrintHouseName,
   };
 };
 

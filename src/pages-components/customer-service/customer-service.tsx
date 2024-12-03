@@ -35,12 +35,16 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     handleSectionChange,
     createAnother,
     handleCheckboxChange,
-
     selectedSubSection,
     setSelectedSubSection,
     selectedSection,
     setSelectedSection,
     jiraImageUploadRef,
+    patternSearch,
+    setPatternSearch,
+
+    onChangeModalPrintHouse,
+    selectedModalPrintHouseName,
   } = useCustomerService(isAdmin);
 
   const router = useRouter();
@@ -88,6 +92,8 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
             statuses={statuses}
             onChangeStatus={onChangeStatus}
             selectedStatus={statusFilter}
+            setPatternSearch={setPatternSearch}
+            patternSearch={patternSearch}
           />
         )}
         <PrimaryTable
@@ -98,6 +104,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           maxHeight={"calc(100vh - 280px)"}
         />
         <CreateIssueModal
+          isAdmin={isAdmin}
           setTicketState={setTicketState}
           openModal={openModal}
           ticketTypeList={ticketTypeList}
@@ -113,6 +120,9 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           selectedSection={selectedSection}
           setSelectedSection={setSelectedSection}
           jiraImageUploadRef={jiraImageUploadRef}
+          printHouses={printHouses}
+          onChangePrintHouse={onChangeModalPrintHouse}
+          selectedPrintHouseName={selectedModalPrintHouseName}
         />
       </div>
     </Stack>

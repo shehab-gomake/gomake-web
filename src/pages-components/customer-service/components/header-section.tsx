@@ -3,9 +3,10 @@ import { useStyle } from "../style";
 import { GoMakeAutoComplate } from "@/components";
 import { Skeleton, Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { IissuesHeaderSectionProps } from "../interface";
+import { IIssuesHeaderSectionProps } from "../interface";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 
 const IssuesHeaderSection = ({
   handleClean,
@@ -15,7 +16,9 @@ const IssuesHeaderSection = ({
   statuses,
   onChangeStatus,
   selectedStatus,
-}: IissuesHeaderSectionProps) => {
+  setPatternSearch,
+  patternSearch,
+}: IIssuesHeaderSectionProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
 
@@ -67,6 +70,12 @@ const IssuesHeaderSection = ({
           {t("customers.buttons.clean")}
         </SecondaryButton>
       </div>
+      <SearchInputComponent
+        onChange={(e) => {
+          setPatternSearch(e);
+        }}
+        value={patternSearch}
+      />
     </div>
   );
 };

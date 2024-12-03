@@ -34,7 +34,7 @@ const useStyle = (onUpload?: boolean) => {
       },
       dropDownListStyle: {
         width: convertWidthToVW(500),
-        maxWidth: "300px",
+        maxWidth: "200px",
         borderRadius: 4,
         height: 40,
         backgroundColor: "#FFF",
