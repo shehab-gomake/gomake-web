@@ -110,15 +110,7 @@ const useCustomerService = (isAdmin: boolean) => {
       }
     };
     if (isAdmin) {
-      if (selectedPrintHouse) {
-        await getAllIssuesAdminApi(
-          callApi,
-          callBack,
-          selectedPrintHouse?.label
-        );
-      } else {
-        await getAllIssuesAdminApi(callApi, callBack, null);
-      }
+      await getAllIssuesAdminApi(callApi, callBack, null);
     } else {
       await getAllIssuesApi(callApi, callBack);
     }
@@ -358,9 +350,9 @@ const useCustomerService = (isAdmin: boolean) => {
 
   useEffect(() => {
     if (!isAdmin || printHouses.length > 0) {
-      getIssues();
+      getIssues(); // Trigger getIssues only when printHouses are ready
     }
-  }, [isAdmin, printHouses, getIssues]);
+  }, [isAdmin, printHouses]);
 
   return {
     tableHeaders,
