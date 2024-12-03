@@ -32,7 +32,7 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
 
   printHouses,
   onChangePrintHouse,
-  selectedPrintHouseName,
+  selectedPrintHouse,
   isAdmin,
 }) => {
   const { classes } = useStyle();
@@ -52,8 +52,8 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
             options={printHouses}
             style={{ height: "40px", width: "100%", border: "none" }}
             placeholder={t("customerService.selectPrintHouse")}
-            key={`print-house-select-${selectedPrintHouseName || "null"}`}
-            value={selectedPrintHouseName || null}
+            key={`print-house-select-${selectedPrintHouse?.value || "null"}`}
+            value={selectedPrintHouse || null}
             onChange={onChangePrintHouse}
             withArrow
           />

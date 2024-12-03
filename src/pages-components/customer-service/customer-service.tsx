@@ -23,7 +23,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     createIssue,
     onChangePrintHouse,
     printHouses,
-    selectedPrintHouseName,
+    selectedPrintHouse,
     statuses,
     onChangeStatus,
     statusFilter,
@@ -42,9 +42,8 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     jiraImageUploadRef,
     patternSearch,
     setPatternSearch,
-
     onChangeModalPrintHouse,
-    selectedModalPrintHouseName,
+    selectedModalPrintHouse,
   } = useCustomerService(isAdmin);
 
   const router = useRouter();
@@ -87,7 +86,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
             isAdmin={isAdmin}
             printHouses={printHouses}
             onChangePrintHouse={onChangePrintHouse}
-            selectedPrintHouseName={selectedPrintHouseName}
+            selectedPrintHouse={selectedPrintHouse}
             handleClean={handleClean}
             statuses={statuses}
             onChangeStatus={onChangeStatus}
@@ -102,6 +101,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           rows={filteredIssues}
           headers={tableHeaders}
           maxHeight={"calc(100vh - 280px)"}
+          withSort={true}
         />
         <CreateIssueModal
           isAdmin={isAdmin}
@@ -122,7 +122,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           jiraImageUploadRef={jiraImageUploadRef}
           printHouses={printHouses}
           onChangePrintHouse={onChangeModalPrintHouse}
-          selectedPrintHouseName={selectedModalPrintHouseName}
+          selectedPrintHouse={selectedModalPrintHouse}
         />
       </div>
     </Stack>

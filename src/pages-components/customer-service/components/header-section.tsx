@@ -12,7 +12,7 @@ const IssuesHeaderSection = ({
   handleClean,
   printHouses,
   onChangePrintHouse,
-  selectedPrintHouseName,
+  selectedPrintHouse,
   statuses,
   onChangeStatus,
   selectedStatus,
@@ -34,8 +34,10 @@ const IssuesHeaderSection = ({
                 {t("customerService.printHouses")}
               </div>
               <GoMakeAutoComplate
-                key={`print-house-select-${selectedPrintHouseName || "null"}`}
-                value={selectedPrintHouseName || null}
+                key={`print-house-select-${
+                  selectedPrintHouse?.value || "null"
+                }`}
+                value={selectedPrintHouse || null}
                 options={printHouses}
                 style={classes.dropDownListStyle}
                 placeholder={t("customerService.selectPrintHouse")}

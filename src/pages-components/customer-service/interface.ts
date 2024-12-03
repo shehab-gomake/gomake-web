@@ -20,7 +20,7 @@ export interface CreateIssueModalProps {
 
   printHouses: JiraPrintHouse[];
   onChangePrintHouse?: (e: any, value: string) => void;
-  selectedPrintHouseName?: string;
+  selectedPrintHouse?: any;
   isAdmin: boolean;
 }
 export interface JiraIssueType {
@@ -37,8 +37,12 @@ export interface JiraIssueType {
 }
 
 export interface JiraPrintHouse {
-  id: string;
-  name: string;
+  // id: string;
+  // name: string;
+  // domain: string;
+
+  value: string;
+  label: string;
   domain: string;
 }
 
@@ -46,7 +50,7 @@ export interface IIssuesHeaderSectionProps {
   isAdmin: boolean;
   printHouses: JiraPrintHouse[];
   onChangePrintHouse?: (e: any, value: string) => void;
-  selectedPrintHouseName?: string;
+  selectedPrintHouse?: any;
   handleClean?: () => void;
   statuses: any;
   onChangeStatus: any;
