@@ -11,7 +11,6 @@ import { JiraImageUpload } from "./jira-Image-Upload";
 import { SectionsList } from "./sections-list";
 import { Checkbox, Stack } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { useRef } from "react";
 
 const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   openModal,
@@ -30,6 +29,11 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   selectedSection,
   setSelectedSection,
   jiraImageUploadRef,
+
+  printHouses,
+  onChangePrintHouse,
+  selectedPrintHouse,
+  isAdmin,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -43,6 +47,17 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
       withRoundedCloseIcon={false}
     >
       <div style={classes.mainModalContainer}>
+        {isAdmin && (
+          <GoMakeAutoComplate
+            options={printHouses}
+            style={{ height: "40px", width: "100%", border: "none" }}
+            placeholder={t("customerService.selectPrintHouse")}
+            key={`print-house-select-${selectedPrintHouse?.value || "null"}`}
+            value={selectedPrintHouse || null}
+            onChange={onChangePrintHouse}
+            withArrow
+          />
+        )}
         <GoMakeAutoComplate
           key={
             ticketState?.ticketType ? ticketState?.ticketType?.value : "reset"

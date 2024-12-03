@@ -1,17 +1,17 @@
 import { EHttpMethod } from "../enums";
 import { getSetApiData } from "../get-set-api-data";
 
-const GET_ISSUES_URL = "/v1/customer-service/issue";
-const CREATE_ISSUE_URL = "/v1/customer-service/issue";
-const GET_ALL_PRINTHOUSES = "/v1/customer-service/printHouses";
-const GET_ALL_PRINTHOUSES_ADMIN = "/v1/customer-service/allIssues";
+const GET_ALL_ISSUES_URL = "/v1/customer-service/get-all-print-houses-issues";
+const CREATE_ISSUE_URL = "/v1/customer-service/create-issue";
+const GET_ALL_PRINT_HOUSES = "/v1/customer-service/printHouses";
+const GET_ALL_PRINT_HOUSES_ADMIN = "/v1/customer-service/allIssues";
 
 //Fetches all issues for non-admin users.
 const getAllIssuesApi = async (callApi, setState) => {
   const res = await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    GET_ISSUES_URL,
+    GET_ALL_ISSUES_URL,
     setState
   );
   return res;
@@ -35,7 +35,7 @@ const getAllPrintHousesApi = async (callApi, setState) => {
   const res = await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    GET_ALL_PRINTHOUSES,
+    GET_ALL_PRINT_HOUSES,
     setState
   );
   return res.data;
@@ -46,7 +46,7 @@ const getAllPrintHousesIssuesApi = async (callApi, setState) => {
   const res = await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    GET_ALL_PRINTHOUSES_ADMIN,
+    GET_ALL_PRINT_HOUSES_ADMIN,
     setState
   );
   return res;
@@ -60,8 +60,8 @@ const getAllIssuesAdminApi = async (
   selectedPrintHouseName
 ) => {
   const url = selectedPrintHouseName
-    ? `${GET_ALL_PRINTHOUSES_ADMIN}?printHouseName=${selectedPrintHouseName}`
-    : `${GET_ALL_PRINTHOUSES_ADMIN}`;
+    ? `${GET_ALL_PRINT_HOUSES_ADMIN}?printHouseName=${selectedPrintHouseName}`
+    : `${GET_ALL_PRINT_HOUSES_ADMIN}`;
   const res = await getSetApiData(callApi, EHttpMethod.GET, url, setState);
   return res;
 };

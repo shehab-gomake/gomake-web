@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export interface CreateIssueModalProps {
   openModal: boolean;
   ticketTypeList: TicketTypeList[];
@@ -10,11 +12,16 @@ export interface CreateIssueModalProps {
   createAnother?: any;
   handleCheckboxChange?: () => void;
 
-  selectedSection: any;
-  setSelectedSection: any;
-  selectedSubSection: any;
-  setSelectedSubSection: any;
+  selectedSection: "" | Sections;
+  setSelectedSection: Dispatch<SetStateAction<"" | Sections>>;
+  selectedSubSection: string;
+  setSelectedSubSection: Dispatch<SetStateAction<string>>;
   jiraImageUploadRef: any;
+
+  printHouses: JiraPrintHouse[];
+  onChangePrintHouse?: (e: any, value: string) => void;
+  selectedPrintHouse?: any;
+  isAdmin: boolean;
 }
 export interface JiraIssueType {
   isAdmin: boolean;
@@ -30,20 +37,26 @@ export interface JiraIssueType {
 }
 
 export interface JiraPrintHouse {
-  id: string;
-  name: string;
+  // id: string;
+  // name: string;
+  // domain: string;
+
+  value: string;
+  label: string;
   domain: string;
 }
 
-export interface IissuesHeaderSectionProps {
+export interface IIssuesHeaderSectionProps {
   isAdmin: boolean;
   printHouses: JiraPrintHouse[];
   onChangePrintHouse?: (e: any, value: string) => void;
-  selectedPrintHouseName?: string;
+  selectedPrintHouse?: any;
   handleClean?: () => void;
   statuses: any;
   onChangeStatus: any;
   selectedStatus: any;
+  setPatternSearch: Dispatch<SetStateAction<string>>;
+  patternSearch: string;
 }
 export interface TicketTypeList {
   label: string;

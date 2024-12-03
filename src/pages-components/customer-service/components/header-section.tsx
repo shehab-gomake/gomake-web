@@ -3,19 +3,22 @@ import { useStyle } from "../style";
 import { GoMakeAutoComplate } from "@/components";
 import { Skeleton, Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { IissuesHeaderSectionProps } from "../interface";
+import { IIssuesHeaderSectionProps } from "../interface";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 
 const IssuesHeaderSection = ({
   handleClean,
   printHouses,
   onChangePrintHouse,
-  selectedPrintHouseName,
+  selectedPrintHouse,
   statuses,
   onChangeStatus,
   selectedStatus,
-}: IissuesHeaderSectionProps) => {
+  setPatternSearch,
+  patternSearch,
+}: IIssuesHeaderSectionProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
 
@@ -31,8 +34,10 @@ const IssuesHeaderSection = ({
                 {t("customerService.printHouses")}
               </div>
               <GoMakeAutoComplate
-                key={`print-house-select-${selectedPrintHouseName || "null"}`}
-                value={selectedPrintHouseName || null}
+                key={`print-house-select-${
+                  selectedPrintHouse?.value || "null"
+                }`}
+                value={selectedPrintHouse || null}
                 options={printHouses}
                 style={classes.dropDownListStyle}
                 placeholder={t("customerService.selectPrintHouse")}
@@ -67,6 +72,12 @@ const IssuesHeaderSection = ({
           {t("customers.buttons.clean")}
         </SecondaryButton>
       </div>
+      <SearchInputComponent
+        onChange={(e) => {
+          setPatternSearch(e);
+        }}
+        value={patternSearch}
+      />
     </div>
   );
 };

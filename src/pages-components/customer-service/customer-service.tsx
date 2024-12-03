@@ -23,7 +23,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     createIssue,
     onChangePrintHouse,
     printHouses,
-    selectedPrintHouseName,
+    selectedPrintHouse,
     statuses,
     onChangeStatus,
     statusFilter,
@@ -35,12 +35,15 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     handleSectionChange,
     createAnother,
     handleCheckboxChange,
-
     selectedSubSection,
     setSelectedSubSection,
     selectedSection,
     setSelectedSection,
     jiraImageUploadRef,
+    patternSearch,
+    setPatternSearch,
+    onChangeModalPrintHouse,
+    selectedModalPrintHouse,
   } = useCustomerService(isAdmin);
 
   const router = useRouter();
@@ -83,11 +86,13 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
             isAdmin={isAdmin}
             printHouses={printHouses}
             onChangePrintHouse={onChangePrintHouse}
-            selectedPrintHouseName={selectedPrintHouseName}
+            selectedPrintHouse={selectedPrintHouse}
             handleClean={handleClean}
             statuses={statuses}
             onChangeStatus={onChangeStatus}
             selectedStatus={statusFilter}
+            setPatternSearch={setPatternSearch}
+            patternSearch={patternSearch}
           />
         )}
         <PrimaryTable
@@ -96,8 +101,10 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           rows={filteredIssues}
           headers={tableHeaders}
           maxHeight={"calc(100vh - 280px)"}
+          withSort={true}
         />
         <CreateIssueModal
+          isAdmin={isAdmin}
           setTicketState={setTicketState}
           openModal={openModal}
           ticketTypeList={ticketTypeList}
@@ -113,6 +120,9 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           selectedSection={selectedSection}
           setSelectedSection={setSelectedSection}
           jiraImageUploadRef={jiraImageUploadRef}
+          printHouses={printHouses}
+          onChangePrintHouse={onChangeModalPrintHouse}
+          selectedPrintHouse={selectedModalPrintHouse}
         />
       </div>
     </Stack>
