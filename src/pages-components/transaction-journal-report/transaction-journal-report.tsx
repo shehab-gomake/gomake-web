@@ -236,7 +236,6 @@ const TransactionJournalReportWidget = ({
         onCloseModal={onClickCloseCreateTransactionModal}
         openModal={isOpenCreateTransactionModal}
       />
-      {/* !!here */}
       <AdjustmentsLedgerReportModal
         customerId={customer?.id}
         onCloseModal={onClickCloseAdjustmentsModal}

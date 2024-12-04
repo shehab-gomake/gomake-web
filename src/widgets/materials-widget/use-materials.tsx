@@ -110,7 +110,6 @@ const useMaterials = (isAdmin: boolean) => {
   );
   const { updateCellData } = useTableCellData(isAdmin);
   const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
-  const supplierId = useRecoilValue(selectedSupplierIdState);
   const toggleIsActive = async (id, parameterKey, value) => {
     await updateCellData(id, parameterKey, !value);
     getMaterialCategoryData(
@@ -134,7 +133,10 @@ const useMaterials = (isAdmin: boolean) => {
   const setFlagState = useSetRecoilState(flagState);
   const { t } = useTranslation();
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
+  const [supplierId, setSupplierId] = useRecoilState(selectedSupplierIdState);
   const onSelectCategory = (category: string) => {
+    setMaterialCategoryData([])
+    setSupplierId("")
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";
     push(path + `/${materialType}?materialCategory=${category}`);
