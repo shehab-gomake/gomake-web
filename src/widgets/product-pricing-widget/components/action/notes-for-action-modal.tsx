@@ -1,7 +1,14 @@
 import { GoMakeModal, GomakePrimaryButton } from "@/components";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../../style";
-import { CSSProperties, Suspense, useEffect, useMemo, useState } from "react";
+import {
+  CSSProperties,
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { debounce } from "@mui/material";
 import dynamic from "next/dynamic";
 
@@ -14,6 +21,7 @@ interface NotesForActionModalProps {
   value: string;
   setValue: (value: string) => void;
   modalTitle?: string;
+  id?: string | number;
 }
 
 const NotesForActionModal = ({
@@ -24,6 +32,7 @@ const NotesForActionModal = ({
   value,
   setValue,
   modalTitle,
+  id,
 }: NotesForActionModalProps) => {
   const { classes } = useStyle();
   const [myValue, setMyValue] = useState<string>("");
@@ -35,12 +44,11 @@ const NotesForActionModal = ({
     setMyValue(value);
   }, [value]);
 
-  const handleTextChange = useMemo(
-    () =>
-      debounce((value) => {
-        setMyValue(value);
-        setValue(value);
-      }, 300),
+  const handleTextChange = useCallback(
+    debounce((value: string) => {
+      setMyValue(value);
+      setValue(value);
+    }, 300),
     [setValue]
   );
 
@@ -111,8 +119,9 @@ const NotesForActionModal = ({
               formats={formats}
               style={style}
               value={myValue}
-              onChange={handleTextChange}
-              id="editor"
+              // onChange={handleTextChange}
+              onChange={(value) => handleTextChange(value)}
+              id={`editor-quill-${id || "default"}`}
               placeholder={t("textEditor.placeholder")}
             />
             <GomakePrimaryButton
