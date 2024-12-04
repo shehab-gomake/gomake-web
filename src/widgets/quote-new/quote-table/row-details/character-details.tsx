@@ -68,12 +68,14 @@ const CharacterDetails = ({
         )}
       </div>
       <NotesForActionModal
+        key={`notes-modal-${documentItemId}`}
         openModal={isEdit}
         onClose={handleClose}
         value={data}
         setValue={setData}
         onSend={handleSave}
         modalTitle={t("sales.cart.editDetails")}
+        id={documentItemId}
       />
     </>
   );
