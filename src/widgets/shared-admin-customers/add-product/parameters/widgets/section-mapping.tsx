@@ -86,7 +86,9 @@ const SectionMappingWidget = ({
     }
   };
 
-  const handleUpdate = (actionType: ParameterActionType, parameter: any) => {
+  const handleUpdate = (actionType: ParameterActionType, parameter: any, updateType?: UpdateTypes) => {
+
+    console.log("updateTypesssssssss", updateType)
     if (selectedUpdateType === null) {
       alertFault(t("products.parameters.pleaseSelectOneOption"));
       return;
@@ -98,7 +100,7 @@ const SectionMappingWidget = ({
           section?.id,
           subSection?.id,
           parameter,
-          selectedUpdateType
+          updateType === 0 ? updateType : selectedUpdateType
         );
         break;
       case ParameterActionType.REQUIRED:
@@ -106,7 +108,7 @@ const SectionMappingWidget = ({
           section?.id,
           subSection?.id,
           parameter,
-          selectedUpdateType
+          updateType === 0 ? updateType : selectedUpdateType
         );
         break;
       case ParameterActionType.EDITABLE:
@@ -114,7 +116,7 @@ const SectionMappingWidget = ({
           section?.id,
           subSection?.id,
           parameter,
-          selectedUpdateType
+          updateType === 0 ? updateType : selectedUpdateType
         );
         break;
       case ParameterActionType.SHOW_IN_DETAILS:
@@ -122,8 +124,7 @@ const SectionMappingWidget = ({
           section?.id,
           subSection?.id,
           parameter,
-          selectedUpdateType,
-          selectedUpdateType
+          updateType === 0 ? updateType : selectedUpdateType,
         );
         break;
       default:
@@ -173,7 +174,7 @@ const SectionMappingWidget = ({
                         if (!dontAskNextTime) {
                           handleOpenModal();
                         } else {
-                          handleUpdate(ParameterActionType.VISIBLE, parameter);
+                          handleUpdate(ParameterActionType.VISIBLE, parameter, UpdateTypes.PRODUCT_ONLY);
                         }
                         setSelectedActionType(ParameterActionType.VISIBLE);
                         setSelectedParameter(parameter);
@@ -191,7 +192,7 @@ const SectionMappingWidget = ({
                           if (!dontAskNextTime) {
                             handleOpenModal();
                           } else {
-                            handleUpdate(ParameterActionType.REQUIRED, parameter);
+                            handleUpdate(ParameterActionType.REQUIRED, parameter, UpdateTypes.PRODUCT_ONLY);
                           }
                           setSelectedActionType(ParameterActionType.REQUIRED);
                           setSelectedParameter(parameter);
@@ -207,7 +208,7 @@ const SectionMappingWidget = ({
                         if (!dontAskNextTime) {
                           handleOpenModal();
                         } else {
-                          handleUpdate(ParameterActionType.EDITABLE, parameter);
+                          handleUpdate(ParameterActionType.EDITABLE, parameter, UpdateTypes.PRODUCT_ONLY);
                         }
                         setSelectedActionType(ParameterActionType.EDITABLE);
                         setSelectedParameter(parameter);
@@ -224,7 +225,7 @@ const SectionMappingWidget = ({
                         if (!dontAskNextTime) {
                           handleOpenModal();
                         } else {
-                          handleUpdate(ParameterActionType.SHOW_IN_DETAILS, parameter);
+                          handleUpdate(ParameterActionType.SHOW_IN_DETAILS, parameter, UpdateTypes.PRODUCT_ONLY);
                         }
                         setSelectedActionType(
                           ParameterActionType.SHOW_IN_DETAILS
