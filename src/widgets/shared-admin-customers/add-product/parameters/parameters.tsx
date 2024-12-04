@@ -31,6 +31,8 @@ const ParameterWidget = () => {
     template,
     selectedSubSection,
     selectedSectonId,
+    selectedOption,
+    selectedSubSectionId,
     selectedParameter,
     openModal,
     expanded,
@@ -44,12 +46,15 @@ const ParameterWidget = () => {
     onOpeneMultiParameterModal,
     setSettingParameters,
     settingParameters,
-
+    isMaterialParameter,
     setSelectedUpdateType,
     selectedUpdateType,
     handleCloseModal,
     isUpdateModalOpen,
     handleUpdateParametersValue,
+    setDontAskNextTime,
+    dontAskNextTime,
+    selectedSectionId
   } = useAddProduct({ clasess });
 
   return (
@@ -198,7 +203,9 @@ const ParameterWidget = () => {
         onClose={handleCloseModal}
         selectedUpdateType={selectedUpdateType}
         setSelectedUpdateType={setSelectedUpdateType}
-        onUpdate={handleUpdateParametersValue}
+        onUpdate={() => handleUpdateParametersValue(isMaterialParameter, selectedSectionId, selectedSubSectionId, selectedParameter, selectedOption)}
+        setDontAskNextTime={setDontAskNextTime}
+        dontAskNextTime={dontAskNextTime}
       />
     </>
   );

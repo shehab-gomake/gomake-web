@@ -307,6 +307,9 @@ const useStyle = () => {
         alignItems: "center",
         textTransform: "capitalize" as "capitalize",
       },
+      dontAskNextTime: {
+        ...FONT_FAMILY.Lexend(500, 16),
+      },
     };
   }, [i18next.language, t]);
   return {
