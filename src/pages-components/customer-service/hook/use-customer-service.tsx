@@ -1,6 +1,5 @@
-import { use, useCallback, useEffect, useState } from "react";
-
-import { useGomakeAxios } from "@/hooks";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   createIssueApi,
   getAllIssuesApi,
@@ -8,10 +7,11 @@ import {
   getAllIssuesAdminApi,
 } from "@/services/api-service/customer-service/customer-service-api";
 import { useUserProfile } from "@/hooks/use-user-profile";
-import { JiraIssueType, JiraPrintHouse, TicketTypeList } from "../interface";
+import { JiraIssueType, JiraPrintHouse, Sections } from "../interface";
 import { useTranslation } from "react-i18next";
 import { ticketTypeList } from "../enums";
 import { logSessionData } from "@/utils/sessionManager";
+import { useDebounce } from "use-debounce";
 
 const useCustomerService = (isAdmin: boolean) => {
   const { t } = useTranslation();
@@ -20,21 +20,40 @@ const useCustomerService = (isAdmin: boolean) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [AllIssues, setAllIssues] = useState([]);
   const [printHouses, setPrintHouses] = useState<JiraPrintHouse[]>([]);
-  const [selectedPrintHouseName, setSelectedPrintHouseName] = useState("");
+  const [selectedPrintHouse, setSelectedPrintHouse] = useState<any>("");
+  const [selectedModalPrintHouse, setSelectedModalPrintHouse] =
+    useState<any>("");
   const [filteredIssues, setFilteredIssues] = useState([]);
   const [statusFilter, setStatusFilter] = useState(null);
   const [statuses, setStatuses] = useState([]);
-  const [statusKey, setStatusKey] = useState<string>("flag");
   const [ticketState, setTicketState] = useState<JiraIssueType>(null);
   const [fileBase64, setFileBase64] = useState<string>("");
+  const { alertFault, alertSuccessAdded, alertFaultAdded, alertFaultGetData } =
+    useSnackBar();
+  const [createAnother, setCreateAnother] = useState(false);
+  const [selectedSection, setSelectedSection] = useState<Sections | "">("");
+  const [selectedSubSection, setSelectedSubSection] = useState<string>("");
+  const jiraImageUploadRef = useRef<{ resetAttachment: () => void } | null>(
+    null
+  );
+  const [patternSearch, setPatternSearch] = useState<string>("");
+  const [debouncedPatternSearch] = useDebounce(patternSearch, 300);
+
+  const handleCheckboxChange = () => {
+    setCreateAnother(!createAnother);
+  };
+
+  const onChangePrintHouse = useCallback((e, value) => {
+    setSelectedPrintHouse(value);
+  }, []);
+
+  const onChangeModalPrintHouse = useCallback((e, value) => {
+    setSelectedModalPrintHouse(value);
+  }, []);
 
   const columnWidths = isAdmin
     ? ["10%", "10%", "10%", "40%", "10%", "10%", "10%"]
     : ["0%", "10%", "10%", "50%", "10%", "10%", "10%"];
-
-  // const onChangeInputs = (key, value) => {
-  //   setTicketState({ ...ticketState, [key]: value });
-  // };
 
   const onChangeInputs = useCallback((key, value) => {
     setTicketState((prevTicketState) => ({
@@ -42,10 +61,6 @@ const useCustomerService = (isAdmin: boolean) => {
       [key]: value,
     }));
   }, []);
-
-  // const handleSectionChange = (section: string, subSection: string) => {
-  //   setTicketState({ ...ticketState, section, subSection });
-  // };
 
   const handleSectionChange = useCallback(
     (section: string, subSection: string) => {
@@ -62,7 +77,11 @@ const useCustomerService = (isAdmin: boolean) => {
     const callBack = (res) => {
       if (res.success) {
         const formattedData = res.data.map((item) => [
-          isAdmin ? item?.printHouseName : null,
+          isAdmin
+            ? printHouses.find((ph) => ph.domain === item?.printHouseName)
+                ?.label ||
+              (item?.printHouseName ?? null)
+            : null,
           item?.created ? new Date(item.created).toLocaleDateString() : "N/A",
           item?.summary,
           item?.description?.content[0]?.content[0]?.text || "",
@@ -73,69 +92,85 @@ const useCustomerService = (isAdmin: boolean) => {
         ]);
         setAllIssues(formattedData);
         const uniqueStatuses = Array.from(
-          new Set(formattedData.map((issue) => issue[6]))
+          formattedData
+            .reduce((map, item) => {
+              const value = item[7];
+              const label = t(item[7]);
+              if (!map.has(value)) {
+                map.set(value, { value, label });
+              }
+              return map;
+            }, new Map())
+            .values()
         );
         setStatuses(uniqueStatuses);
       } else {
         setAllIssues([]);
+        setStatuses([]);
       }
     };
     if (isAdmin) {
-      if (selectedPrintHouseName) {
-        await getAllIssuesAdminApi(callApi, callBack, selectedPrintHouseName);
-      } else {
-        await getAllIssuesAdminApi(callApi, callBack, null);
-      }
+      await getAllIssuesAdminApi(callApi, callBack, null);
     } else {
       await getAllIssuesApi(callApi, callBack);
     }
-  }, [callApi, isAdmin, selectedPrintHouseName]);
-
-  const filterIssues = (issues, filter) => {
-    const filtered = filter
-      ? issues.filter((issue) => issue[6] === filter)
-      : issues;
-
-    // Sort filtered issues so that "Done" status is at the end
-    const sortedIssues = filtered.sort((a, b) => {
-      if (a[7] === "Done" && b[7] !== "Done") return 1; // Move a to the end
-      if (a[7] !== "Done" && b[7] === "Done") return -1; // Move b to the end
-      return 0; // Keep original order for other statuses
-    });
-
-    setFilteredIssues(sortedIssues);
-  };
+  }, [callApi, isAdmin, selectedPrintHouse, printHouses]);
 
   const getAllPrintHouses = useCallback(async () => {
     const callBack = (res) => {
       if (res.success && res.data) {
-        setPrintHouses(res.data);
+        const formattedPrintHouses = res.data.map((item) => ({
+          value: item.id,
+          label: item.name,
+          domain: item?.domain,
+        }));
+        setPrintHouses(formattedPrintHouses);
       } else {
-        console.error("Failed to fetch print houses or no data found", res);
+        alertFaultGetData();
       }
     };
     await getAllPrintHousesApi(callApi, callBack);
   }, [callApi]);
 
   const createIssue = async () => {
+    if (isAdmin && !selectedPrintHouse && !selectedModalPrintHouse) {
+      alertFault("customerService.selectPrintHouseAlert");
+      return;
+    }
+
+    if (!ticketState?.ticketType) {
+      alertFault("customerService.ticketTypeRequired");
+      return;
+    }
+
+    if (!ticketState?.title) {
+      alertFault("customerService.titleRequired");
+      return;
+    }
+
+    if (!ticketState?.description) {
+      alertFault("customerService.descriptionRequired");
+      return;
+    }
+
     let issueData: any = {
       fields: {
         project: { key: "GCS" },
-        summary: ticketState.title,
+        summary: ticketState?.title,
 
         issuetype: {
-          id: ticketState.ticketType.value || "10004",
+          id: ticketState?.ticketType?.value || "10004",
         },
         priority: {
           id: "3",
         },
         customfield_10089: profileState.firstName + " " + profileState.lastName,
-        customfield_10090: ticketState.gomakeRouteUri,
-        customfield_10092: ticketState.section + "/" + ticketState.subSection,
+        customfield_10090: ticketState?.gomakeRouteUri,
+        customfield_10092: ticketState?.section + "/" + ticketState?.subSection,
       },
     };
 
-    if (ticketState.description) {
+    if (ticketState?.description) {
       issueData.fields.description = {
         type: "doc",
         version: 1,
@@ -156,29 +191,115 @@ const useCustomerService = (isAdmin: boolean) => {
     const callBack = (res) => {
       if (res.success) {
         getIssues();
-        onClickClosModal();
+        alertSuccessAdded();
+        if (createAnother) {
+          setFileBase64("");
+          setSelectedSection("");
+          setSelectedSubSection("");
+          setSelectedModalPrintHouse("");
+          setTicketState({
+            isAdmin: ticketState.isAdmin,
+            openModal: ticketState.openModal,
+            title: "",
+            description: "",
+            ticketType: undefined,
+            ticketTypeList: [],
+            screenShot: "",
+            gomakeRouteUri: "",
+            section: "",
+            subSection: "",
+          });
+          jiraImageUploadRef.current?.resetAttachment();
+        } else {
+          onClickClosModal();
+        }
       } else {
-        console.error("Failed to create issue", res);
+        alertFaultAdded();
       }
     };
-
     logSessionData();
-    await createIssueApi(callApi, callBack, { issueData, fileBase64 });
+
+    await createIssueApi(callApi, callBack, {
+      issueData,
+      fileBase64,
+      ...(isAdmin && {
+        printHouseDomain:
+          selectedModalPrintHouse?.domain || selectedPrintHouse?.domain,
+      }),
+    });
   };
 
-  const onChangePrintHouse = useCallback((e, value) => {
-    setSelectedPrintHouseName(value?.name);
-    setStatuses([]);
-    setStatusFilter(null);
+  const onChangeStatus = useCallback((e, value) => {
+    setStatusFilter(value?.value || null);
   }, []);
 
-  const onChangeStatus = useCallback((e, value) => {
-    setStatusFilter(value?.id || null);
-  }, []);
+  // const filterIssues = useCallback(() => {
+  //   let filtered = AllIssues;
+
+  //   // Filter by selected print house
+  //   if (selectedPrintHouse) {
+  //     filtered = filtered.filter(
+  //       (issue) => issue[0] === selectedPrintHouse?.label
+  //     );
+  //   }
+
+  //   // Filter by status
+  //   if (statusFilter) {
+  //     filtered = filtered.filter((issue) => issue[7] === statusFilter);
+  //   }
+
+  //   // Search input filter by title / description
+  //   if (debouncedPatternSearch.trim()) {
+  //     const lowercasedSearch = debouncedPatternSearch.toLowerCase();
+  //     filtered = filtered.filter(
+  //       (issue) =>
+  //         issue[2]?.toLowerCase().includes(lowercasedSearch) ||
+  //         issue[3]?.toLowerCase().includes(lowercasedSearch)
+  //     );
+  //   }
+
+  //   // Sort issues so that "Done" is at the end
+  //   const sortedIssues = filtered.sort((a, b) => {
+  //     if (a[7] === "Done" && b[7] !== "Done") return 1;
+  //     if (a[7] !== "Done" && b[7] === "Done") return -1;
+  //     return 0;
+  //   });
+
+  //   setFilteredIssues(sortedIssues);
+  // }, [AllIssues, selectedPrintHouse, statusFilter, debouncedPatternSearch]);
+
+  const filterIssues = useCallback(() => {
+    const lowercasedSearch = debouncedPatternSearch.trim().toLowerCase();
+
+    const filtered = AllIssues.filter((issue) => {
+      // Filter by selected print house
+      if (selectedPrintHouse && issue[0] !== selectedPrintHouse?.label)
+        return false;
+
+      // Filter by status
+      if (statusFilter && issue[7] !== statusFilter) return false;
+
+      // Search input filter by title/description
+      if (
+        lowercasedSearch &&
+        !issue[2]?.toLowerCase().includes(lowercasedSearch) &&
+        !issue[3]?.toLowerCase().includes(lowercasedSearch)
+      )
+        return false;
+
+      return true;
+    }).sort((a, b) => {
+      if (a[7] === "Done" && b[7] !== "Done") return 1;
+      if (a[7] !== "Done" && b[7] === "Done") return -1;
+      return 0;
+    });
+
+    setFilteredIssues(filtered);
+  }, [AllIssues, selectedPrintHouse, statusFilter, debouncedPatternSearch]);
 
   useEffect(() => {
-    filterIssues(AllIssues, statusFilter);
-  }, [statusFilter, AllIssues]);
+    filterIssues();
+  }, [AllIssues, selectedPrintHouse, statusFilter, debouncedPatternSearch]);
 
   const tableHeaders = [
     isAdmin ? t("customerService.printHouses") : null,
@@ -189,11 +310,14 @@ const useCustomerService = (isAdmin: boolean) => {
     t("customerService.issueNumber"),
     t("customerService.reporterName"),
     t("customerService.status"),
+    isAdmin ? "" : null,
   ];
 
   const onClickClosModal = () => {
     setFileBase64("");
-    // setTicketState({ ...ticketState, ticketType: null, title: "", description: "" });
+    setSelectedSection("");
+    setSelectedSubSection("");
+    setSelectedModalPrintHouse("");
     setTicketState((prevTicketState) => ({
       ...prevTicketState,
       ticketType: null,
@@ -202,28 +326,38 @@ const useCustomerService = (isAdmin: boolean) => {
     }));
     setOpenModal(false);
   };
-  const onClickOpenModal = (transaction) => {
+  const onClickOpenModal = () => {
     setOpenModal(true);
   };
 
   const handleClean = useCallback(() => {
-    setSelectedPrintHouseName(null);
+    setSelectedPrintHouse(null);
     setStatusFilter(null);
-    setStatusKey("flag2");
   }, []);
 
+  // useEffect(() => {
+  //   getIssues();
+  //   if (isAdmin) {
+  //     getAllPrintHouses();
+  //   }
+  // }, []);
+
   useEffect(() => {
-    getIssues();
     if (isAdmin) {
-      getAllPrintHouses();
+      getAllPrintHouses(); // Load printHouses first
     }
-  }, []);
+  }, [isAdmin]);
+
+  useEffect(() => {
+    if (!isAdmin || printHouses.length > 0) {
+      getIssues(); // Trigger getIssues only when printHouses are ready
+    }
+  }, [isAdmin, printHouses]);
 
   return {
     tableHeaders,
     AllIssues,
     handleClean,
-    statusKey,
     openModal,
     ticketTypeList,
     onClickClosModal,
@@ -231,9 +365,9 @@ const useCustomerService = (isAdmin: boolean) => {
     createIssue,
     onChangePrintHouse,
     printHouses,
-    selectedPrintHouseName,
+    selectedPrintHouse,
     getIssues,
-    setSelectedPrintHouseName,
+    setSelectedPrintHouse,
     statuses,
     onChangeStatus,
     statusFilter,
@@ -244,6 +378,18 @@ const useCustomerService = (isAdmin: boolean) => {
     setTicketState,
     setFileBase64,
     handleSectionChange,
+    createAnother,
+    handleCheckboxChange,
+
+    selectedSubSection,
+    setSelectedSubSection,
+    selectedSection,
+    setSelectedSection,
+    jiraImageUploadRef,
+    patternSearch,
+    setPatternSearch,
+    onChangeModalPrintHouse,
+    selectedModalPrintHouse,
   };
 };
 

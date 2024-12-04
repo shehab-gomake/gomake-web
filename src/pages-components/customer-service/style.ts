@@ -34,6 +34,7 @@ const useStyle = (onUpload?: boolean) => {
       },
       dropDownListStyle: {
         width: convertWidthToVW(500),
+        maxWidth: "200px",
         borderRadius: 4,
         height: 40,
         backgroundColor: "#FFF",
@@ -124,6 +125,20 @@ const useStyle = (onUpload?: boolean) => {
         ...FONT_FAMILY.Lexend(400, 12),
         color: primaryColor(300),
         overflow: "hidden",
+      },
+
+      inputLbl: {
+        color: "#a4a4a4",
+        ...FONT_FAMILY.Lexend(400, 14),
+        display: "flex",
+        alignItems: "center",
+        width: "max-content",
+      },
+      resetIconStyle: {
+        marginLeft: "8px",
+        color: primaryColor(100),
+        cursor: "pointer",
+        padding: 0,
       },
     };
   }, [i18next.language, t]);

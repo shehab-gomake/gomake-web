@@ -7,7 +7,6 @@ import { CreateIssueModal } from "./components/create-issue-modal";
 import { IssuesHeaderSection } from "./components/header-section";
 import { useEffect } from "react";
 import { HeaderTitle } from "@/widgets";
-
 import { Stack } from "@mui/material";
 import { useRouter } from "next/router";
 
@@ -24,17 +23,27 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     createIssue,
     onChangePrintHouse,
     printHouses,
-    selectedPrintHouseName,
+    selectedPrintHouse,
     statuses,
     onChangeStatus,
     statusFilter,
     filteredIssues,
-    statusKey,
     columnWidths,
     ticketState,
     setTicketState,
     setFileBase64,
     handleSectionChange,
+    createAnother,
+    handleCheckboxChange,
+    selectedSubSection,
+    setSelectedSubSection,
+    selectedSection,
+    setSelectedSection,
+    jiraImageUploadRef,
+    patternSearch,
+    setPatternSearch,
+    onChangeModalPrintHouse,
+    selectedModalPrintHouse,
   } = useCustomerService(isAdmin);
 
   const router = useRouter();
@@ -72,29 +81,30 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
             {t("customerService.addNewTicket")}
           </GomakePrimaryButton>
         </div>
-
         {isAdmin && (
           <IssuesHeaderSection
             isAdmin={isAdmin}
             printHouses={printHouses}
             onChangePrintHouse={onChangePrintHouse}
-            selectedPrintHouseName={selectedPrintHouseName}
+            selectedPrintHouse={selectedPrintHouse}
             handleClean={handleClean}
             statuses={statuses}
             onChangeStatus={onChangeStatus}
             selectedStatus={statusFilter}
-            statusKey={statusKey}
+            setPatternSearch={setPatternSearch}
+            patternSearch={patternSearch}
           />
         )}
         <PrimaryTable
-          // stickyFirstCol={true}
           stickyHeader={true}
           columnWidths={columnWidths}
           rows={filteredIssues}
           headers={tableHeaders}
           maxHeight={"calc(100vh - 280px)"}
+          withSort={true}
         />
         <CreateIssueModal
+          isAdmin={isAdmin}
           setTicketState={setTicketState}
           openModal={openModal}
           ticketTypeList={ticketTypeList}
@@ -103,6 +113,16 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           ticketState={ticketState}
           setFileBase64={setFileBase64}
           handleSectionChange={handleSectionChange}
+          createAnother={createAnother}
+          handleCheckboxChange={handleCheckboxChange}
+          selectedSubSection={selectedSubSection}
+          setSelectedSubSection={setSelectedSubSection}
+          selectedSection={selectedSection}
+          setSelectedSection={setSelectedSection}
+          jiraImageUploadRef={jiraImageUploadRef}
+          printHouses={printHouses}
+          onChangePrintHouse={onChangeModalPrintHouse}
+          selectedPrintHouse={selectedModalPrintHouse}
         />
       </div>
     </Stack>

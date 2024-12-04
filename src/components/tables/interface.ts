@@ -13,6 +13,7 @@ export interface ITableProps {
   isLastItemTotal?: boolean;
   columnWidths?: string[];
   onDragEnd?: any;
+  withSort?: boolean;
 }
 
 export interface ISecondaryTableProps {

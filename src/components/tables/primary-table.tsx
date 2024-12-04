@@ -1,5 +1,6 @@
 import { styled } from "@mui/material/styles";
 import {
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -14,6 +15,9 @@ import { ITableProps } from "@/components/tables/interface";
 import { useStyle } from "@/components/tables/style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTranslation } from "react-i18next";
+import { useMemo, useState } from "react";
+import { ArrowUpward, ArrowDownward } from "@mui/icons-material"; // Import the icons
+import { adaptMarginRight } from "@/utils/adapter";
 
 const PrimaryTableCell = styled(TableCell)(() => {
   const { primaryColor } = useGomakeTheme();
@@ -113,10 +117,12 @@ const PrimaryTable = ({
   columnWidths,
   dataTour,
   isLastItemTotal = false,
+  withSort = false, // New prop for enabling sorting
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
+
   const TableCell =
     variant === "ClassicTable" ? ClassicTableCell : PrimaryTableCell;
 
@@ -126,6 +132,40 @@ const PrimaryTable = ({
       : variant === "OddEvenTable"
       ? OddEvenTableRow
       : PrimaryTableRow;
+
+  // State for sorting
+  const [sortConfig, setSortConfig] = useState<{
+    key: number;
+    direction: "asc" | "desc";
+  } | null>(null);
+
+  // Sorting logic
+  const sortedRows = useMemo(() => {
+    if (!sortConfig) return rows;
+
+    return [...rows].sort((a, b) => {
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
+
+      if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [rows, sortConfig]);
+
+  const handleSort = (index: number) => {
+    setSortConfig((prev) => {
+      if (prev?.key === index) {
+        // Toggle direction
+        return {
+          key: index,
+          direction: prev.direction === "asc" ? "desc" : "asc",
+        };
+      }
+      // New sort column
+      return { key: index, direction: "asc" };
+    });
+  };
 
   return (
     <Paper
@@ -140,37 +180,62 @@ const PrimaryTable = ({
         <Table data-tour={dataTour} stickyHeader={stickyHeader}>
           <TableHead>
             <TableRow>
-              {headers?.map((header, index) => {
-                if (index === 0 && stickyHeader) {
-                  return <TableCell align={"center"}>{header}</TableCell>;
-                } else {
-                  return <TableCell align={"center"}>{header}</TableCell>;
-                }
-              })}
+              {headers?.map((header, index) => (
+                <TableCell
+                  align="center"
+                  key={`header_${index}`}
+                  style={{
+                    cursor: withSort ? "pointer" : "default",
+                    userSelect: "none",
+                  }}
+                  onClick={() => withSort && handleSort(index)} // Only activate sort if withSort is true
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {header}
+                    {/* Show sorting icon only when it's the sorted header */}
+                    {withSort && header !== "" && sortConfig?.key === index && (
+                      <IconButton
+                        size="small"
+                        style={{ ...adaptMarginRight(dir, 4) }}
+                      >
+                        {sortConfig.direction === "asc" ? (
+                          <ArrowUpward sx={{ fontSize: "18px" }} />
+                        ) : (
+                          <ArrowDownward sx={{ fontSize: "18px" }} />
+                        )}
+                      </IconButton>
+                    )}
+                  </div>
+                </TableCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows?.map((row, index) => (
+            {sortedRows?.map((row, rowIndex) => (
               <TableRow
-                key={`row_${index}`}
+                key={`row_${rowIndex}`}
                 style={{
                   backgroundColor:
-                    isLastItemTotal && index === rows.length - 1
+                    isLastItemTotal && rowIndex === rows.length - 1
                       ? "#EFDDFF"
                       : "inherit",
                 }}
               >
-                {row.map((cell, index) => {
+                {row.map((cell, cellIndex) => {
                   const cellStyle = columnWidths
-                    ? {
-                        width: columnWidths?.[index],
-                      }
+                    ? { width: columnWidths[cellIndex] }
                     : {};
-                  if (index === 0 && stickyFirstCol) {
+                  if (cellIndex === 0 && stickyFirstCol) {
                     return <TableCell style={classes.sticky}>{cell}</TableCell>;
                   } else {
                     return (
-                      <TableCell align={"center"} style={cellStyle}>
+                      <TableCell align="center" style={cellStyle}>
                         {cell}
                       </TableCell>
                     );
