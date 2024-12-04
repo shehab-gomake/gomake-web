@@ -1,10 +1,12 @@
 import { GoMakeModal, GomakePrimaryButton } from "@/components";
 import { CircleCheckbox } from "@/components/check-box/circle-check-box";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { Button, Stack } from "@mui/material";
+import { Button, Checkbox, Stack } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
 import { UpdateTypes } from "./section-mapping";
+import { CheckboxIcon } from "@/icons";
+import { CheckboxCheckedIcon } from "@/icons";
 
 interface UpdateParameterModalProps {
   openModal: boolean;
@@ -12,6 +14,8 @@ interface UpdateParameterModalProps {
   onUpdate: any;
   selectedUpdateType: UpdateTypes | null;
   setSelectedUpdateType: any;
+  setDontAskNextTime: any;
+  dontAskNextTime: boolean;
 }
 
 const UpdateParameterModal = ({
@@ -20,6 +24,8 @@ const UpdateParameterModal = ({
   onUpdate,
   selectedUpdateType,
   setSelectedUpdateType,
+  setDontAskNextTime,
+  dontAskNextTime
 }: UpdateParameterModalProps) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -59,6 +65,7 @@ const UpdateParameterModal = ({
               {t("products.parameters.samePricingType")}
             </span>
           </Stack>
+
           {/* <Stack direction={"row"} width={"100%"} alignItems={"center"}>
             <CircleCheckbox
               checked={selectedUpdateType === UpdateTypes.ALL_PRODUCTS}
@@ -69,6 +76,16 @@ const UpdateParameterModal = ({
             </span>
           </Stack> */}
         </Stack>
+        <Checkbox
+          checked={dontAskNextTime}
+          onChange={() => setDontAskNextTime(!dontAskNextTime)}
+          icon={<CheckboxIcon />}
+          checkedIcon={<CheckboxCheckedIcon />}
+          disabled={selectedUpdateType === null}
+        />
+        <span style={clasess.dontAskNextTime}>
+          {t("products.parameters.dontAskNextTime")}
+        </span>
         <Stack direction={"row"} gap={"10px"}>
           <Button style={clasess.cancelButton} onClick={onClose}>
             {t("modal.cancel")}

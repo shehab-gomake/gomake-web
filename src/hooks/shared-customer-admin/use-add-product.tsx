@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { v4 as uuidv4 } from "uuid";
 
 import { getAndSetProductById } from "@/services/hooks";
@@ -23,7 +23,7 @@ import {
 import { useMaterials } from "../use-materials";
 import { EButtonTypes, EParameterTypes } from "@/enums";
 import cloneDeep from "lodash.clonedeep";
-import { selectParameterButtonState } from "@/store";
+import { dontAskNextTimeState, selectedUpdateTypeState, selectParameterButtonState } from "@/store";
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { findParameterByCode } from "@/utils/helpers";
 import { SettingsIcon } from "@/icons/settings";
@@ -642,43 +642,45 @@ const useAddProduct = ({ clasess }) => {
   const [selectedOption, setSelectedOption] = useState<any>({});
   const [selectedSectionId, setSelectedSectionId] = useState<any>({});
   const [selectedSubSectionId, setSelectedSubSectionId] = useState<any>({});
-  const [selectedUpdateType, setSelectedUpdateType] =
-    useState<UpdateTypes | null>(null);
+  const [selectedUpdateType, setSelectedUpdateType] = useRecoilState(selectedUpdateTypeState);
+  const [dontAskNextTime, setDontAskNextTime] = useRecoilState(dontAskNextTimeState);
 
   const handleCloseModal = () => {
     setIsUpdateModalOpen(false);
-    setSelectedUpdateType(null);
+    // setSelectedUpdateType(null);
     setSelectedOption(null);
     setSelectedSectionId(null);
     setSelectedSubSectionId(null);
   };
 
   const handleOpenModal = () => {
-    setIsUpdateModalOpen(true);
+    if (!dontAskNextTime) {
+      setIsUpdateModalOpen(true);
+    }
   };
 
   const [isMaterialParameter, setIsMaterialParameter] =
     useState<boolean>(false);
-  const handleUpdateParametersValue = () => {
+  const handleUpdateParametersValue = (isMaterial: boolean, sectionId: string, subSectionId: string, parameter: any, option: any, updateType?: UpdateTypes) => {
     if (selectedUpdateType === null) {
       alertFault(t("products.parameters.pleaseSelectOneOption"));
       return;
     }
-    if (isMaterialParameter)
+    if (isMaterial)
       updatedParameterMaterialTypeValuesConfigsHidden(
-        selectedSectionId,
-        selectedSubSectionId,
-        selectedParameter,
-        selectedOption,
-        selectedUpdateType
+        sectionId,
+        subSectionId,
+        parameter,
+        option,
+        updateType === 0 ? updateType : selectedUpdateType
       );
     else
       updatedProductParameterValuesConfigsHidden(
-        selectedSectionId,
-        selectedSubSectionId,
-        selectedParameter,
-        selectedOption,
-        selectedUpdateType
+        sectionId,
+        subSectionId,
+        parameter,
+        option,
+        updateType === 0 ? updateType : selectedUpdateType
       );
 
     handleCloseModal();
@@ -711,7 +713,7 @@ const useAddProduct = ({ clasess }) => {
           disabled={parameter?.isHidden}
         />
       );
-    } 
+    }
     else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
       return (
         <GomakeTextInput
@@ -730,7 +732,7 @@ const useAddProduct = ({ clasess }) => {
           disabled={parameter?.isHidden}
         />
       );
-    } 
+    }
     else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.MACHINES_SELECT) {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
@@ -780,7 +782,11 @@ const useAddProduct = ({ clasess }) => {
                           setSelectedSubSectionId(subSectionId);
                           setSelectedParameter(parameter);
                           setSelectedOption(option);
-                          handleOpenModal();
+                          if (!dontAskNextTime) {
+                            handleOpenModal();
+                          } else {
+                            handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
+                          }
                         }}
                       >
                         <HiddenIcon />
@@ -794,7 +800,11 @@ const useAddProduct = ({ clasess }) => {
                           setSelectedSubSectionId(subSectionId);
                           setSelectedParameter(parameter);
                           setSelectedOption(option);
-                          handleOpenModal();
+                          if (!dontAskNextTime) {
+                            handleOpenModal();
+                          } else {
+                            handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
+                          }
                         }}
                       >
                         <NotHiddenIcon />
@@ -826,7 +836,7 @@ const useAddProduct = ({ clasess }) => {
           )}
         </div>
       );
-    } 
+    }
     else if (parameter?.parameterType === EParameterTypes.SWITCH) {
       return (
         <SecondSwitch
@@ -842,7 +852,7 @@ const useAddProduct = ({ clasess }) => {
           }}
         />
       );
-    } 
+    }
     else if (parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS) {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
@@ -879,7 +889,11 @@ const useAddProduct = ({ clasess }) => {
                         setSelectedSubSectionId(subSectionId);
                         setSelectedParameter(parameter);
                         setSelectedOption(option);
-                        handleOpenModal();
+                        if (!dontAskNextTime) {
+                          handleOpenModal();
+                        } else {
+                          handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
+                        }
                       }}
                     >
                       <HiddenIcon />
@@ -893,7 +907,11 @@ const useAddProduct = ({ clasess }) => {
                         setSelectedSubSectionId(subSectionId);
                         setSelectedParameter(parameter);
                         setSelectedOption(option);
-                        handleOpenModal();
+                        if (!dontAskNextTime) {
+                          handleOpenModal();
+                        } else {
+                          handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
+                        }
                       }}
                     >
                       <NotHiddenIcon />
@@ -1013,7 +1031,11 @@ const useAddProduct = ({ clasess }) => {
                           setSelectedSubSectionId(subSectionId);
                           setSelectedParameter(parameter);
                           setSelectedOption(option);
-                          handleOpenModal();
+                          if (!dontAskNextTime) {
+                            handleOpenModal();
+                          } else {
+                            handleUpdateParametersValue(true, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
+                          }
                         }}
                       >
                         <HiddenIcon />
@@ -1027,7 +1049,11 @@ const useAddProduct = ({ clasess }) => {
                           setSelectedSubSectionId(subSectionId);
                           setSelectedParameter(parameter);
                           setSelectedOption(option);
-                          handleOpenModal();
+                          if (!dontAskNextTime) {
+                            handleOpenModal();
+                          } else {
+                            handleUpdateParametersValue(true, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
+                          }
                         }}
                       >
                         <NotHiddenIcon />
@@ -1111,7 +1137,6 @@ const useAddProduct = ({ clasess }) => {
     activeTab,
     tabs,
     selectedSubSection,
-    selectedSectonId,
     selectedParameter,
     openModal,
     expanded,
@@ -1131,6 +1156,13 @@ const useAddProduct = ({ clasess }) => {
     handleCloseModal,
     isUpdateModalOpen,
     handleUpdateParametersValue,
+    setDontAskNextTime,
+    dontAskNextTime,
+    isMaterialParameter,
+    selectedSectonId,
+    selectedOption,
+    selectedSubSectionId,
+    selectedSectionId
   };
 };
 

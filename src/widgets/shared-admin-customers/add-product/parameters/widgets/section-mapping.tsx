@@ -15,6 +15,9 @@ import { useTranslation } from "react-i18next";
 import { UpdateParameterModal } from "./update-parameter-modal";
 import { useState } from "react";
 import { useSnackBar } from "@/hooks";
+import { useRecoilState } from "recoil";
+import { selectedUpdateTypeState } from "@/store/selected-update-type";
+import { dontAskNextTimeState } from "@/store";
 
 export enum UpdateTypes {
   PRODUCT_ONLY = 0,
@@ -47,8 +50,10 @@ const SectionMappingWidget = ({
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedParameter, setSelectedParameter] = useState(null);
   const [selectedActionType, setSelectedActionType] = useState(null);
-  const [selectedUpdateType, setSelectedUpdateType] =
-    useState<UpdateTypes | null>(null);
+  const [selectedUpdateType, setSelectedUpdateType] = useRecoilState(selectedUpdateTypeState);
+  const [dontAskNextTime, setDontAskNextTime] = useRecoilState(dontAskNextTimeState);
+
+  console.log("selectedUpdateType", selectedUpdateType)
 
   const renderIconWithTooltip = (
     condition,
@@ -72,51 +77,54 @@ const SectionMappingWidget = ({
 
   const handleCloseModal = () => {
     setIsUpdateModalOpen(false);
-    setSelectedUpdateType(null);
+    // setSelectedUpdateType(null);
   };
 
   const handleOpenModal = () => {
-    setIsUpdateModalOpen(true);
+    if (!dontAskNextTime) {
+      setIsUpdateModalOpen(true);
+    }
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = (actionType: ParameterActionType, parameter: any, updateType?: UpdateTypes) => {
+
+    console.log("updateTypesssssssss", updateType)
     if (selectedUpdateType === null) {
       alertFault(t("products.parameters.pleaseSelectOneOption"));
       return;
     }
 
-    switch (selectedActionType) {
+    switch (actionType) {
       case ParameterActionType.VISIBLE:
         updatedProductParameterHidden(
           section?.id,
           subSection?.id,
-          selectedParameter,
-          selectedUpdateType
+          parameter,
+          updateType === 0 ? updateType : selectedUpdateType
         );
         break;
       case ParameterActionType.REQUIRED:
         updatedProductParameteRequierd(
           section?.id,
           subSection?.id,
-          selectedParameter,
-          selectedUpdateType
+          parameter,
+          updateType === 0 ? updateType : selectedUpdateType
         );
         break;
       case ParameterActionType.EDITABLE:
         updatedProductParameteLocked(
           section?.id,
           subSection?.id,
-          selectedParameter,
-          selectedUpdateType
+          parameter,
+          updateType === 0 ? updateType : selectedUpdateType
         );
         break;
       case ParameterActionType.SHOW_IN_DETAILS:
         updatedProductParameterShowToClient(
           section?.id,
           subSection?.id,
-          selectedParameter,
-          selectedUpdateType,
-          selectedUpdateType
+          parameter,
+          updateType === 0 ? updateType : selectedUpdateType,
         );
         break;
       default:
@@ -146,15 +154,15 @@ const SectionMappingWidget = ({
                     </div>
                     {parameter?.parameterType ===
                       EParameterTypes.SELECT_CHILDS_PARAMETERS && (
-                      <div
-                        style={clasess.plusIconStyle}
-                        onClick={() =>
-                          onOpenModal(parameter, section?.id, subSection?.id)
-                        }
-                      >
-                        <SettingIcon width={20} height={20} />
-                      </div>
-                    )}
+                        <div
+                          style={clasess.plusIconStyle}
+                          onClick={() =>
+                            onOpenModal(parameter, section?.id, subSection?.id)
+                          }
+                        >
+                          <SettingIcon width={20} height={20} />
+                        </div>
+                      )}
 
                     {renderIconWithTooltip(
                       parameter?.isHidden,
@@ -163,9 +171,14 @@ const SectionMappingWidget = ({
                       "hidden",
                       "visible",
                       () => {
+                        if (!dontAskNextTime) {
+                          handleOpenModal();
+                        } else {
+                          handleUpdate(ParameterActionType.VISIBLE, parameter, UpdateTypes.PRODUCT_ONLY);
+                        }
                         setSelectedActionType(ParameterActionType.VISIBLE);
                         setSelectedParameter(parameter);
-                        handleOpenModal();
+
                       }
                     )}
                     {parameter?.parameterType !== EParameterTypes.SWITCH &&
@@ -176,9 +189,13 @@ const SectionMappingWidget = ({
                         "required",
                         "notRequired",
                         () => {
+                          if (!dontAskNextTime) {
+                            handleOpenModal();
+                          } else {
+                            handleUpdate(ParameterActionType.REQUIRED, parameter, UpdateTypes.PRODUCT_ONLY);
+                          }
                           setSelectedActionType(ParameterActionType.REQUIRED);
                           setSelectedParameter(parameter);
-                          handleOpenModal();
                         }
                       )}
                     {renderIconWithTooltip(
@@ -188,9 +205,14 @@ const SectionMappingWidget = ({
                       "readOnly",
                       "editable",
                       () => {
+                        if (!dontAskNextTime) {
+                          handleOpenModal();
+                        } else {
+                          handleUpdate(ParameterActionType.EDITABLE, parameter, UpdateTypes.PRODUCT_ONLY);
+                        }
                         setSelectedActionType(ParameterActionType.EDITABLE);
                         setSelectedParameter(parameter);
-                        handleOpenModal();
+
                       }
                     )}
                     {renderIconWithTooltip(
@@ -200,11 +222,14 @@ const SectionMappingWidget = ({
                       "shownInDetails",
                       "hiddenFromDetails",
                       () => {
+                        if (!dontAskNextTime) {
+                          handleOpenModal();
+                        } else {
+                          handleUpdate(ParameterActionType.SHOW_IN_DETAILS, parameter, UpdateTypes.PRODUCT_ONLY);
+                        }
                         setSelectedActionType(
                           ParameterActionType.SHOW_IN_DETAILS
                         );
-                        setSelectedParameter(parameter);
-                        handleOpenModal();
                       }
                     )}
                   </div>
@@ -229,7 +254,9 @@ const SectionMappingWidget = ({
         onClose={handleCloseModal}
         selectedUpdateType={selectedUpdateType}
         setSelectedUpdateType={setSelectedUpdateType}
-        onUpdate={handleUpdate}
+        onUpdate={() => handleUpdate(selectedActionType, selectedParameter)}
+        setDontAskNextTime={setDontAskNextTime}
+        dontAskNextTime={dontAskNextTime}
       />
     </div>
   );
