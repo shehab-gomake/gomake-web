@@ -661,7 +661,7 @@ const useAddProduct = ({ clasess }) => {
 
   const [isMaterialParameter, setIsMaterialParameter] =
     useState<boolean>(false);
-  const handleUpdateParametersValue = (isMaterial: boolean, sectionId: string, subSectionId: string, parameter: any, option: any) => {
+  const handleUpdateParametersValue = (isMaterial: boolean, sectionId: string, subSectionId: string, parameter: any, option: any, updateType?: UpdateTypes) => {
     if (selectedUpdateType === null) {
       alertFault(t("products.parameters.pleaseSelectOneOption"));
       return;
@@ -672,7 +672,7 @@ const useAddProduct = ({ clasess }) => {
         subSectionId,
         parameter,
         option,
-        selectedUpdateType
+        updateType === 0 ? updateType : selectedUpdateType
       );
     else
       updatedProductParameterValuesConfigsHidden(
@@ -680,7 +680,7 @@ const useAddProduct = ({ clasess }) => {
         subSectionId,
         parameter,
         option,
-        selectedUpdateType
+        updateType === 0 ? updateType : selectedUpdateType
       );
 
     handleCloseModal();
@@ -785,7 +785,7 @@ const useAddProduct = ({ clasess }) => {
                           if (!dontAskNextTime) {
                             handleOpenModal();
                           } else {
-                            handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option,);
+                            handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
                           }
                         }}
                       >
@@ -803,7 +803,7 @@ const useAddProduct = ({ clasess }) => {
                           if (!dontAskNextTime) {
                             handleOpenModal();
                           } else {
-                            handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option,);
+                            handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
                           }
                         }}
                       >
@@ -892,7 +892,7 @@ const useAddProduct = ({ clasess }) => {
                         if (!dontAskNextTime) {
                           handleOpenModal();
                         } else {
-                          handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option,);
+                          handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
                         }
                       }}
                     >
@@ -910,7 +910,7 @@ const useAddProduct = ({ clasess }) => {
                         if (!dontAskNextTime) {
                           handleOpenModal();
                         } else {
-                          handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option,);
+                          handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
                         }
                       }}
                     >
@@ -1034,7 +1034,7 @@ const useAddProduct = ({ clasess }) => {
                           if (!dontAskNextTime) {
                             handleOpenModal();
                           } else {
-                            handleUpdateParametersValue(true, sectionId, subSectionId, parameter, option,);
+                            handleUpdateParametersValue(true, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
                           }
                         }}
                       >
@@ -1052,7 +1052,7 @@ const useAddProduct = ({ clasess }) => {
                           if (!dontAskNextTime) {
                             handleOpenModal();
                           } else {
-                            handleUpdateParametersValue(true, sectionId, subSectionId, parameter, option,);
+                            handleUpdateParametersValue(true, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
                           }
                         }}
                       >

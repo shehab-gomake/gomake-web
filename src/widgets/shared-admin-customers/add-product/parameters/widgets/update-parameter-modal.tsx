@@ -81,6 +81,7 @@ const UpdateParameterModal = ({
           onChange={() => setDontAskNextTime(!dontAskNextTime)}
           icon={<CheckboxIcon />}
           checkedIcon={<CheckboxCheckedIcon />}
+          disabled={selectedUpdateType === null}
         />
         <span style={clasess.dontAskNextTime}>
           {t("products.parameters.dontAskNextTime")}
