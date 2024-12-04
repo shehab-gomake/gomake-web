@@ -1,5 +1,5 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { CheckboxCheckedIcon, CheckboxIcon, ReloadIcon } from "@/icons";
 import { Checkbox, Divider, Typography } from "@mui/material";
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
@@ -32,6 +32,9 @@ const RightSideWidget = ({
   sampleType,
   errorMsg,
   calculationServerErrorState,
+  canCalculation,
+  calculationProduct,
+  subProducts,
 
 }: any) => {
   const {
@@ -200,6 +203,15 @@ const RightSideWidget = ({
           </div>
           <span style={clasess.totalCurrancyStyle}>{systemCurrency}</span>
         </div>
+        <div
+          onClick={() => {
+            if (canCalculation) {
+              calculationProduct(subProducts);
+            }
+          }}
+          style={clasess.reloadTotalPrice}><ReloadIcon /> {t(
+            "products.offsetPrice.admin.updateTotalPrice"
+          )}</div>
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==

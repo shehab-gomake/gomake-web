@@ -947,6 +947,17 @@ const useStyle = () => {
       checkboxLabelStyle:{
         ...FONT_FAMILY.Lexend(600,14),
         
+      },
+      reloadTotalPrice:{
+        ...FONT_FAMILY.Inter(600, 12),
+        color: secondColor(500),
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 5,
+        cursor: "pointer",
+        paddingBottom: 10,
       }
     };
   }, [i18next.language, t, direction,screenWidth]);
