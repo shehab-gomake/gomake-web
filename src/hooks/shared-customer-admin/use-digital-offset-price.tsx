@@ -5192,7 +5192,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     isFlowChanged,
     getSelectedWorkFlow,
     selectedWorkFlowCalculatedIsLoaded,
-    setSelectedWorkFlowCalculatedIsLoaded
+    setSelectedWorkFlowCalculatedIsLoaded,
+    canCalculation,
+    calculationProduct,
+    subProducts,
   };
 };
 
