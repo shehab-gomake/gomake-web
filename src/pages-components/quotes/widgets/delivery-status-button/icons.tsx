@@ -32,4 +32,44 @@ const ChangeIcon = () => {
   );
 };
 
-export { ChangeIcon };
+const NextArrowIcon = ({ color }: any) => {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4.16602 10H15.8327M15.8327 10L9.99935 4.16667M15.8327 10L9.99935 15.8333"
+        stroke={color || "#344054"}
+        stroke-width="1.66667"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+};
+
+const PrevArrowIcon = ({ color }: any) => {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M15.8337 10H4.16699M4.16699 10L10.0003 15.8333M4.16699 10L10.0003 4.16667"
+        stroke={color || "#344054"}
+        stroke-width="1.66667"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+};
+
+export { ChangeIcon, PrevArrowIcon, NextArrowIcon };

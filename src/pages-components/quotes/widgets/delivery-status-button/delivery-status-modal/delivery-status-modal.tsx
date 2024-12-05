@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { GoMakeModal, GomakePrimaryButton } from "@/components";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { GoMakeSelect } from "@/components/auto-complete/go-make-select";
@@ -6,6 +6,7 @@ import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
 import { IUpdateDeliveryStatusModalProps } from "../interfaces";
 import { useDeliveryStatusModal } from "./use-delivery-status-modal";
 import { useStyle } from "../style";
+import GoMakePagination from "./test-pagination";
 
 const UpdateDeliveryStatusModal = ({
   delStatusColor,
@@ -25,6 +26,12 @@ const UpdateDeliveryStatusModal = ({
     options,
     client,
     setClient,
+    page,
+    totalPages,
+    handlePageClick,
+    handleNextPage,
+    handlePrevPage,
+    visiblePages,
   } = useDeliveryStatusModal();
 
   const handleCloseModal = () => {
@@ -37,7 +44,6 @@ const UpdateDeliveryStatusModal = ({
       (index) => mockRows[index][0]
     );
     console.log("Selected IDs:", selectedIds);
-    console.log("Selected rows:", selectedRows);
   };
 
   return (
@@ -141,57 +147,23 @@ const UpdateDeliveryStatusModal = ({
           rowCheckboxCondition={(row) => row[5] !== "Delivered"}
         />
 
+        {/* Pagination */}
+
+        <GoMakePagination
+          page={page}
+          totalPages={totalPages}
+          visiblePages={visiblePages}
+          handlePrevPage={handlePrevPage}
+          handleNextPage={handleNextPage}
+          handlePageClick={handlePageClick}
+        />
+
         <GomakePrimaryButton
           style={classes.nextBtn}
           onClick={() => console.log("the state is ", deliveryState)}
         >
           {t("Next")}
         </GomakePrimaryButton>
-
-        {/* Pagination */}
-        {/* <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginTop: "16px",
-          }}
-        >
-          <Button
-            onClick={handlePrevPage}
-            disabled={page === 1}
-            variant="outlined"
-            size="small"
-          >
-            {t("Prev")}
-          </Button>
-          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-            {visiblePages.map((pageNumber, index) =>
-              pageNumber === "..." ? (
-                <span key={index} style={{ padding: "0 8px" }}>
-                  ...
-                </span>
-              ) : (
-                <Button
-                  key={index}
-                  onClick={() => handlePageClick(pageNumber as number)}
-                  variant={page === pageNumber ? "contained" : "outlined"}
-                  size="small"
-                >
-                  {pageNumber}
-                </Button>
-              )
-            )}
-          </div>
-          <Button
-            onClick={handleNextPage}
-            disabled={page === totalPages}
-            variant="outlined"
-            size="small"
-          >
-            {t("Next")}
-          </Button>
-        </div> */}
       </Stack>
     </GoMakeModal>
   );
