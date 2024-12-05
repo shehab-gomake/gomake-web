@@ -43,7 +43,7 @@ const MachinesSideList = ({
     children,
     isAdmin,
 }: ISideListProps) => {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [, setAnchorEl] = useState<null | HTMLElement>(null);
     const { classes } = useStyle();
     const [filter, setFilter] = useState<string>();
     const { duplicateMachine, deleteMachine } = usePrintHouseAddMachine();
@@ -91,6 +91,8 @@ const MachinesSideList = ({
                 onChange={handleFilterChange}
                 value={filter}
             />
+            <Stack overflow={'auto'} height={'100%'} maxHeight={'calc(100% - 90px)'}>
+
             <List
                 style={classes.listContainer}
                 component="nav"
@@ -128,6 +130,7 @@ const MachinesSideList = ({
                     </ListButton>
                 ))}
             </List>
+            </Stack>
             {!!children && <div style={classes.buttonWrapper}>{children}</div>}
         </Box>
     );

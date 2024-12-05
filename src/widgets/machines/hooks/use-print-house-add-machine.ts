@@ -85,7 +85,6 @@ const usePrintHouseAddMachine = () => {
             if (res.success) {
                 setUpdatedMachine(res.data);
                 alertSuccessUpdate();
-                setOpenOptionsModal(true);
             } else {
                 alertFaultUpdate();
             }
