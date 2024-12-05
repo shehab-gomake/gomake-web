@@ -1,13 +1,15 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { AddNewIcon, RemoveIcon } from "@/icons";
 import { EHttpMethod } from "@/services/api-service/enums";
+import { subProductsParametersState } from "@/store/general-parameters-state";
 import { _renderActiveIcon, _renderUnActiveIcon } from "@/utils/constants";
 import { DoneIcon } from "@/widgets";
 
-import cloneDeep from "lodash.clonedeep";
+import { Tooltip } from "@mui/material";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
-
+import { useRecoilValue } from "recoil";
+import EmergencyIcon from '@mui/icons-material/Error';
 const TabsMappingWidget = ({
   clasess,
   index,
@@ -30,6 +32,33 @@ const TabsMappingWidget = ({
   } = useSnackBar();
   const router = useRouter();
 
+  const subProducts = useRecoilValue<any>(subProductsParametersState);
+
+  const hasMissingRequiredParameters = (item) => {
+    if (Array.isArray(item?.subSections)) {
+      for (const subSection of item.subSections) {
+        const subProduct = subProducts.find(sp => sp.type === subSection?.type) || {};
+        const subProductParameters = subProduct.parameters || [];
+        const subProductParameterCodes = subProductParameters.map(p => p.parameterCode);
+        const subProductParameterSectionIds = subProductParameters.map(p => p.sectionId);
+        const subProductParameterSubSectionIds = subProductParameters.map(p => p.subSectionId);
+
+        if (Array.isArray(subSection?.parameters)) {
+          for (const parameter of subSection.parameters) {
+            if (
+              parameter.isRequired &&
+              !subProductParameterCodes.includes(parameter.code) &&
+              subProductParameterSectionIds.includes(item.id) && // Ensure sectionId matches
+              subProductParameterSubSectionIds.includes(subSection.id) // Ensure subSectionId matches
+            ) {
+              return true; // Missing required parameter found
+            }
+          }
+        }
+      }
+    }
+    return false; // No missing required parameters
+  };
 
   const duplicateSectionFunction = useCallback(
     async (item) => {
@@ -90,6 +119,12 @@ const TabsMappingWidget = ({
           }
         >
           {item.name}
+          {!isAdmin && hasMissingRequiredParameters(item) && <span style={{ color: 'red', marginLeft: 5, }}>
+            <Tooltip title="Missing required parameters" style={{ marginTop: 5 }}>
+              <EmergencyIcon style={{ width: 18, height: 18 }} />
+            </Tooltip>
+          </span>}
+
         </div>
         {item.isCanDuplicated && !item.index && !item.isCanDeleted ? (
           <div

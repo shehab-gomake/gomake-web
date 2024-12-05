@@ -439,7 +439,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                 marginRight: 55,
               }}
             >
-              { widgetType === EWidgetProductType.EDIT ? (
+              {widgetType === EWidgetProductType.EDIT ? (
                 <GomakePrimaryButton
                   style={
                     isLoadging
