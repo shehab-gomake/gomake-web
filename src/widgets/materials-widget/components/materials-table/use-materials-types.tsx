@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGomakeAxios } from "@/hooks";
 import { getMaterialsTypesApi } from "@/services/api-service/materials/materials-endpoints";
 import { PrimaryButton } from "@/components/button/primary-button";
@@ -18,28 +18,27 @@ const useMaterialsTypes = (isAdmin: boolean) => {
     const { t } = useTranslation();
     const { primaryColor } = useGomakeTheme();
     const tableHeaders = [t("materials.materialsType"), t("materials.edit"), t("properties.more")];
-    const [filterStatus, setFilterStatus] = useState<{
-        label: string;
-        value: EFilterStatus;
-    }>({
-        label: "All",
-        value: EFilterStatus.All,
-    });
-
-    const filterStatusList = [
+    const filterStatusList = useMemo(() => [
         {
-            label: "All",
+            label: t("navigationButtons.all"),
             value: EFilterStatus.All,
         },
         {
-            label: "Active",
+            label: t("navigationButtons.active"),
             value: EFilterStatus.Active,
         },
         {
-            label: "Inactive",
+            label: t("navigationButtons.inactive"),
             value: EFilterStatus.Inactive,
         },
-    ];
+    ], [t]);
+    const [filterStatus, setFilterStatus] = useState<{
+        label: string;
+        value: EFilterStatus;
+    }>();
+    useEffect(() => {
+        setFilterStatus(filterStatusList[0])
+    }, [filterStatusList])
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {

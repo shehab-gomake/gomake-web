@@ -43,7 +43,7 @@ const MaterialsTableComponent = (props: IMaterialsTableComponentProps) => {
         <HeaderTitleWithSearch title={props.isAdmin ? t("tabs.materialsAdmin") : t("tabs.materials")} onChange={onFilterChange}
           children={
             <div style={classes.filterByStatus} onClick={handleClick}>
-              <Filter2Icon /> Filter by status: {filterStatus.label}
+              <Filter2Icon /> {t("navigationButtons.filterByStatus")}: {filterStatus?.label}
             </div>
           }
         />
