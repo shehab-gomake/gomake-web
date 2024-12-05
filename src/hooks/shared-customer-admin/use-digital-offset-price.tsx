@@ -3283,6 +3283,38 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
                 });
               }
+              if (
+                  parameterValue &&
+                  parameterValue.selectedParameterValues &&
+                  parameterValue.selectedParameterValues.length > 0
+              ) {
+                parameterValue.selectedParameterValues.forEach((selectedParam) => {
+                  if (selectedParam.valueIds && selectedParam.valueIds.length > 0) {
+                    const param = relatedParameter.settingParameters.find(
+                        (param) => param.id === selectedParam.parameterId
+                    );
+                    parameters.push({
+                      parameterId: param.id,
+                      sectionId: sectionId,
+                      subSectionId: subSectionId,
+                      ParameterType: param.parameterType,
+                      isQuantityParameter: param?.isQuantityParameter,
+                      parameterName: param.name,
+                      actionId: param.actionId,
+                      values: selectedParam.valueIds,
+                      valueIds: selectedParam.valueIds,
+                      valuesConfigs: selectedParam?.valuesConfigs,
+                      unitKey: param?.unitKey,
+                      unitType: param?.unitType,
+                      actionIndex,
+                      parameterCode: param?.code,
+                      isGeneralInfoInProductionFloor:
+                      param?.isGeneralInfoInProductionFloor,
+                    });
+                  }
+                });
+              }
+
               // Recursively add related parameters for the newly added parameter
               addRelatedParametersWithDefaultValues(
                 relatedParameter.id,
