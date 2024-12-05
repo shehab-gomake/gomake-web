@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { useRecoilValue } from "recoil";
 import EmergencyIcon from '@mui/icons-material/Error';
+import { useTranslation } from "react-i18next";
 const TabsMappingWidget = ({
   clasess,
   index,
@@ -31,7 +32,7 @@ const TabsMappingWidget = ({
     alertFaultDelete,
   } = useSnackBar();
   const router = useRouter();
-
+  const { t } = useTranslation();
   const subProducts = useRecoilValue<any>(subProductsParametersState);
 
   const hasMissingRequiredParameters = (item) => {
@@ -120,7 +121,7 @@ const TabsMappingWidget = ({
         >
           {item.name}
           {!isAdmin && hasMissingRequiredParameters(item) && <span style={{ color: 'red', marginLeft: 5, }}>
-            <Tooltip title="Missing required parameters" style={{ marginTop: 5 }}>
+            <Tooltip title={t("products.offsetPrice.admin.missingRequiredParameters")} style={{ marginTop: 5 }}>
               <EmergencyIcon style={{ width: 18, height: 18 }} />
             </Tooltip>
           </span>}
