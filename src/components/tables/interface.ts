@@ -1,5 +1,9 @@
 import { ReactNode } from "react";
-export type TABLE_TYPE = "PrimaryTable " | "ClassicTable" | "OddEvenTable";
+export type TABLE_TYPE =
+  | "PrimaryTable "
+  | "ClassicTable"
+  | "OddEvenTable"
+  | "RoundTable";
 
 export interface ITableProps {
   rows: ReactNode[][];

@@ -102,6 +102,34 @@ const StyledTableContainer = styled(TableContainer)(() => ({
   },
 }));
 
+const RoundTableCell = styled(TableCell)(() => {
+  return {
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: "#F9FAFB",
+      borderBottom: "1px solid #EAECF0 !important",
+      color: "#475467",
+      padding: "5px 5px",
+      ...FONT_FAMILY.Lexend(500, 13),
+
+      height: "40px !important",
+    },
+    [`&.${tableCellClasses.body}`]: {
+      color: "#292D32",
+      padding: "3px 0",
+      height: 47,
+      ...FONT_FAMILY.Lexend(400, 14),
+    },
+  };
+});
+
+const RoundTableRow = styled(TableRow)(() => {
+  return {
+    "&:last-child td, &:last-child th": {
+      border: 0,
+    },
+  };
+});
+
 const PrimaryTable = ({
   rows,
   headers,
@@ -117,14 +145,21 @@ const PrimaryTable = ({
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
+
   const TableCell =
-    variant === "ClassicTable" ? ClassicTableCell : PrimaryTableCell;
+    variant === "ClassicTable"
+      ? ClassicTableCell
+      : variant === "RoundTable"
+      ? RoundTableCell
+      : PrimaryTableCell;
 
   const TableRow =
     variant === "ClassicTable"
       ? ClassicTableRow
       : variant === "OddEvenTable"
       ? OddEvenTableRow
+      : variant === "RoundTable"
+      ? RoundTableRow
       : PrimaryTableRow;
 
   return (
@@ -134,6 +169,10 @@ const PrimaryTable = ({
         overflow: "hidden",
         boxShadow: withoutShadow && "none",
         height: "100%",
+        ...(variant === "RoundTable" && {
+          borderRadius: "12px",
+          border: "1px solid #EAECF0 !important",
+        }),
       }}
     >
       <StyledTableContainer style={classes.tableContainer}>

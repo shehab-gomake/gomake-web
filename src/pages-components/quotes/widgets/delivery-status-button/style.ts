@@ -45,6 +45,25 @@ const useStyle = ({ color }) => {
         color: "#000000",
         paddingBottom: "10px",
       },
+      labelStyle: {
+        color: "#344054",
+        fontStyle: "normal",
+        lineHeight: "20px",
+        ...FONT_FAMILY.Inter(500, 14),
+      },
+      nextBtn: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "var(--spacing-sm, 6px)",
+        borderRadius: "var(--radius-md, 8px)",
+        // border:
+        //   "1px solid var(--Component-colors-Components-Buttons-Primary-button-primary-border, #2E3092)",
+        // background:
+        //   "var(--Component-colors-Components-Buttons-Primary-button-primary-bg, #2E3092)",
+        // boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
+        height: "35px",
+      },
     };
   }, [theme]);
   return {
