@@ -1,5 +1,5 @@
 import { styled } from "@mui/material/styles";
-import { Step, StepContent, StepIcon, StepLabel, StepLabelProps, Stepper } from "@mui/material";
+import { Step, StepContent, StepIcon, StepLabel, Stepper } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { IStep } from "@/widgets/machines/utils/interface/step";
@@ -11,7 +11,7 @@ import { useStyle } from "@/widgets/machines/components/stepper/style";
 import { useTranslation } from "react-i18next";
 import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import Stack from "@mui/material/Stack";
-const StyledStepLabel = styled(StepLabel)((props: StepLabelProps) => {
+const StyledStepLabel = styled(StepLabel)(() => {
     const { neutralColor } = useGomakeTheme();
     return {
         '& .Mui-disabled': {
@@ -64,7 +64,7 @@ const MachineStepper = ({
     const { classes } = useStyle();
     const { t } = useTranslation();
     return (
-        <Stack className="custom-scrollbar" style={{ maxHeight: 600, overflow: "auto" }}>
+        <Stack className="custom-scrollbar" style={{  overflow: "auto" }}>
             <Stepper connector={null} activeStep={activeStep} orientation="vertical">
                 {steps.map((step: IStep, index: number) => {
                     const stepProps: { completed?: boolean } = {};

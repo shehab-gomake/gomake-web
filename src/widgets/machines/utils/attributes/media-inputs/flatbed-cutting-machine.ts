@@ -1,8 +1,5 @@
 import {mediaSheetLossInput} from "@/widgets/machines/utils/attributes/media-inputs/media-sheet-loss-input";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
-import {mediaSheetsCategories} from "@/widgets/machines/utils/attributes/media-inputs/media-sheets-categories";
-import {mediaWideFormatCategories} from "@/widgets/machines/utils/attributes/media-inputs/media-wide-format-categories";
-import {mediaFlatbedCategories} from "@/widgets/machines/utils/attributes/media-inputs/media-flatbed-categories";
 
 const flatbedCuttingMachine = (state: Record<string, any>) => {
     return [
@@ -76,9 +73,6 @@ const flatbedCuttingMachine = (state: Record<string, any>) => {
                 },
             ]
         },
-        ...mediaSheetsCategories(state),
-        ...mediaWideFormatCategories(state),
-        ...mediaFlatbedCategories(state),
     ]
 }
 
