@@ -266,15 +266,37 @@ const useStyle = () => {
         borderRadius: 4,
         height: 40,
         border: "0px",
+        backgroundColor: "#fff",
         ...FONT_FAMILY.Lexend(500, 14),
         color: "#000",
+        boxShadow: "none",
+      },
+      requiredTextInputStyle: {
+        width: "220px",
+        borderRadius: 4,
+        borderBottom: "1px solid red",
+        backgroundColor: "#fff",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: "#000",
+        boxShadow: "none",
       },
       dropDownListStyle: {
         width: "220px",
         borderRadius: 4,
         height: 40,
         border: "0px",
+        backgroundColor: "#fff",
         ...FONT_FAMILY.Lexend(500, 14),
+        boxShadow: "none",
+      },
+      requiredDropDownListStyle: {
+        width: "220px",
+        borderRadius: 4,
+        height: 40,
+        borderBottom: "1px solid red",
+        backgroundColor: "#fff",
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: "#000",
       },
       clientDropDownListStyle: {
         height: 40,
@@ -808,6 +830,12 @@ const useStyle = () => {
         border: "none", 
         paddingLeft: 15
        },
+       requiredAdvertisingProductCategoryAutoComplete:{
+        height: 40, 
+        minWidth: 400, 
+        paddingLeft: 15,
+        borderBottom: "1px solid red",
+       },
        advertisingProductCategorySearch:{
         position: "absolute" as "absolute",
         ...leftRightAdapter(t("direction"), 10),
@@ -947,6 +975,17 @@ const useStyle = () => {
       checkboxLabelStyle:{
         ...FONT_FAMILY.Lexend(600,14),
         
+      },
+      reloadTotalPrice:{
+        ...FONT_FAMILY.Inter(600, 12),
+        color: secondColor(500),
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 5,
+        cursor: "pointer",
+        paddingBottom: 10,
       }
     };
   }, [i18next.language, t, direction,screenWidth]);

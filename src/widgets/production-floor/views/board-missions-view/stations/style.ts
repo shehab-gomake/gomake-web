@@ -13,6 +13,7 @@ const useStyle = () => {
       detailTitle: {
         ...FONT_FAMILY.Lexend(500, 14),
         color: neutralColor(500),
+        width: "max-content",
       },
       detailValue: {
         ...FONT_FAMILY.Inter(500, 14),

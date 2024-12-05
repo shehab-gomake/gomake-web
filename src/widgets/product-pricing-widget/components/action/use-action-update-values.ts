@@ -27,7 +27,7 @@ interface AttributesData {
     printHouseMaterialSizeId?:string;
     emplyeeId?:string;
     emplyeeName?:string;
-    FoldOptionValueId?:string;
+    foldOptionValueId?:string;
 }
 const useActionUpdateValues = () => {
     const actions = useRecoilValue(jobActionsState);
@@ -169,6 +169,18 @@ const useActionUpdateValues = () => {
         }).then()
     }
 
+    const selectNewFold = (FoldOptionValueId: string, actionId: string, productType: string, actionIndex: number) => {
+        console.log("FoldOptionValueId", FoldOptionValueId)
+        updateProductItemDraftActionMachine(callApi, apiCallBackMaterial, {
+            actionId: actionId,
+            foldOptionValueId: FoldOptionValueId,
+            productType: productType,
+            productItemValueId: currentProductItemValue,
+            actionIndex: actionIndex,
+            signalRConnectionId: connectionId
+        }).then()
+    }
+
     const updateWorkFlowForMachine = () => {
             changeWorkFlw(callApi, apiCallBack, {
             actionId: attributesData.actionId,
@@ -296,6 +308,7 @@ const updateWorkFlowForFold = (actionId,productType,actionIndex,FoldOptionValueI
         selectNewEmployee,
         selectNewMaterials,
         updateActionData,
+        selectNewFold,
         open,
         anchorEl,
         handleClick,
