@@ -13,6 +13,13 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
       },
+      searchInput: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        width: "100%",
+      },
     };
   }, []);
   return {
