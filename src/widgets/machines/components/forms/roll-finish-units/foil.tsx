@@ -92,7 +92,7 @@ const inputs = (state) => {
             machineInputType: 'materialInput',
             value: state?.attributes?.foilGlues,
             isValid: true,
-            materialType: 'colors'
+            materialType: 'glues'
         } :
     {
         name: '',
