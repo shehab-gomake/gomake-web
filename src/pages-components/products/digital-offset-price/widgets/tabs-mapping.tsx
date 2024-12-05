@@ -1,5 +1,5 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { AddNewIcon, RemoveIcon } from "@/icons";
+import { AddNewIcon, RemoveIcon, WarnIcon } from "@/icons";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { subProductsParametersState } from "@/store/general-parameters-state";
 import { _renderActiveIcon, _renderUnActiveIcon } from "@/utils/constants";
@@ -120,11 +120,17 @@ const TabsMappingWidget = ({
           }
         >
           {item.name}
-          {!isAdmin && hasMissingRequiredParameters(item) && <span style={{ color: 'red', marginLeft: 5, }}>
-            <Tooltip title={t("products.offsetPrice.admin.missingRequiredParameters")} style={{ marginTop: 5 }}>
-              <EmergencyIcon style={{ width: 18, height: 18 }} />
+          {!isAdmin && hasMissingRequiredParameters(item) &&
+            <Tooltip title={<div style={{ fontSize: 16 }}>
+              {t("products.offsetPrice.admin.missingRequiredParameters")}
+              <br />
+              <span style={{ fontSize: 12 }}>
+                {t("products.offsetPrice.admin.missingRequiredParametersTooltip")}
+              </span>
+            </div>} style={{ marginTop: 5 }}>
+              <span> <WarnIcon /></span>
             </Tooltip>
-          </span>}
+          }
 
         </div>
         {item.isCanDuplicated && !item.index && !item.isCanDeleted ? (
