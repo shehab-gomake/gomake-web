@@ -37,7 +37,7 @@ const useMaterialsTypes = (isAdmin: boolean) => {
         value: EFilterStatus;
     }>();
     useEffect(() => {
-        setFilterStatus(filterStatusList[0])
+        setFilterStatus(filterStatusList[1])
     }, [filterStatusList])
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
