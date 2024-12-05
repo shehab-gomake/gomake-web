@@ -57,12 +57,15 @@ const useStyle = ({ color }) => {
         alignItems: "center",
         gap: "var(--spacing-sm, 6px)",
         borderRadius: "var(--radius-md, 8px)",
-        // border:
-        //   "1px solid var(--Component-colors-Components-Buttons-Primary-button-primary-border, #2E3092)",
-        // background:
-        //   "var(--Component-colors-Components-Buttons-Primary-button-primary-bg, #2E3092)",
-        // boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
         height: "35px",
+      },
+      menuPaperStyle: {
+        marginTop: "4px",
+        border: "1px solid #EAECF0",
+        borderRadius: "8px",
+        background: "var(--Colors-Background-bg-primary, #FFF)",
+        boxShadow:
+          "0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03)",
       },
     };
   }, [theme]);

@@ -31,6 +31,15 @@ const UpdateDeliveryStatusModal = ({
     onCloseModal();
     setDeliveryState(initialDeliveryState);
   };
+
+  const handleSelectionChange = (selectedRows: Set<number>) => {
+    const selectedIds = Array.from(selectedRows).map(
+      (index) => mockRows[index][0]
+    );
+    console.log("Selected IDs:", selectedIds);
+    console.log("Selected rows:", selectedRows);
+  };
+
   return (
     <GoMakeModal
       modalTitle={`Order #${documentItem?.number}`}
@@ -127,6 +136,9 @@ const UpdateDeliveryStatusModal = ({
           rows={mockRows}
           headers={tableHeaders}
           variant={"RoundTable"}
+          enableCheckboxes={true}
+          onSelectionChange={handleSelectionChange}
+          rowCheckboxCondition={(row) => row[5] !== "Delivered"}
         />
 
         <GomakePrimaryButton
