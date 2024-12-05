@@ -1,5 +1,4 @@
 import { useStyle } from "@/widgets/machines/components/categories-table/style";
-import { useEffect, useState } from "react";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import { useTranslation } from "react-i18next";
@@ -11,50 +10,31 @@ import { MoreMenuWidget } from "./more-menu";
 interface IMaterialsTableComponentProps {
   isAdmin: boolean;
 }
-enum EFilterStatus {
+export enum EFilterStatus {
   All,
   Active,
   Inactive,
 };
-const MaterialsTableComponent = (props: IMaterialsTableComponentProps) => {
 
-  const { getAllMaterials, getTableRows, onFilterChange, handleCloseMoreMenu, anchorElMenuTable, selectedMaterial } = useMaterialsTypes(props.isAdmin);
+const MaterialsTableComponent = (props: IMaterialsTableComponentProps) => {
+  const {
+    getTableRows,
+    onFilterChange,
+    handleCloseMoreMenu,
+    setFilterStatus,
+    handleClick,
+    handleClose,
+    getAllMaterials,
+    anchorElMenuTable,
+    selectedMaterial,
+    filterStatus,
+    filterStatusList,
+    tableHeaders,
+    anchorEl,
+    open,
+  } = useMaterialsTypes(props.isAdmin);
   const { t } = useTranslation();
   const { classes } = useStyle();
-  const tableHeaders = [t("materials.materialsType"), t("materials.edit"), t("properties.more")];
-  const [filterStatus, setFilterStatus] = useState<{
-    label: string;
-    value: EFilterStatus;
-  }>({
-    label: "All",
-    value: EFilterStatus.All,
-  });
-
-  const filterStatusList = [
-    {
-      label: "All",
-      value: EFilterStatus.All,
-    },
-    {
-      label: "Active",
-      value: EFilterStatus.Active,
-    },
-    {
-      label: "Inactive",
-      value: EFilterStatus.Inactive,
-    },
-  ];
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  useEffect(() => {
-    getAllMaterials().then();
-  }, []);
 
   return (
     <div style={classes.mainContainer}>
@@ -91,6 +71,7 @@ const MaterialsTableComponent = (props: IMaterialsTableComponentProps) => {
         open={!!anchorElMenuTable}
         anchorEl={anchorElMenuTable}
         selectedMaterial={selectedMaterial}
+        getAllMaterials={getAllMaterials}
       />
     </div>
   );

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "@/hooks";
 import { getMaterialsTypesApi } from "@/services/api-service/materials/materials-endpoints";
 import { PrimaryButton } from "@/components/button/primary-button";
@@ -9,13 +9,48 @@ import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { MoreIcon } from "@/components/icons/icons";
 import { IconButton } from "@mui/material";
+import { EFilterStatus } from "./materials-table";
 
 const useMaterialsTypes = (isAdmin: boolean) => {
     const { callApi } = useGomakeAxios();
     const [filter, setFilter] = useState<string>("");
-    const [materialsTypes, setMaterialsTypes] = useState<{ materialTypeKey: string; materialTypeName: string }[]>([]);
+    const [materialsTypes, setMaterialsTypes] = useState<{ materialTypeKey: string; materialTypeName: string; isActive: boolean }[]>([]);
     const { t } = useTranslation();
     const { primaryColor } = useGomakeTheme();
+    const tableHeaders = [t("materials.materialsType"), t("materials.edit"), t("properties.more")];
+    const [filterStatus, setFilterStatus] = useState<{
+        label: string;
+        value: EFilterStatus;
+    }>({
+        label: "All",
+        value: EFilterStatus.All,
+    });
+
+    const filterStatusList = [
+        {
+            label: "All",
+            value: EFilterStatus.All,
+        },
+        {
+            label: "Active",
+            value: EFilterStatus.Active,
+        },
+        {
+            label: "Inactive",
+            value: EFilterStatus.Inactive,
+        },
+    ];
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+    useEffect(() => {
+        getAllMaterials().then();
+    }, []);
     const materialsSteps: StepType[] = [
         {
             selector: '[data-tour="materialsTable"]',
@@ -51,10 +86,19 @@ const useMaterialsTypes = (isAdmin: boolean) => {
     const getTableRows = useCallback(() => {
         const basePath = isAdmin ? '/materials-admin' : '/materials'
 
-        const materials = !!filter ?
-            materialsTypes.filter(material => material.materialTypeName.toLowerCase().includes(filter.toLowerCase()))
-            : materialsTypes;
-        return materials.map((material) => [
+        const filteredMaterials = materialsTypes.filter(material => {
+            const matchesFilter = !filter || material.materialTypeName.toLowerCase().includes(filter.toLowerCase());
+            const matchesStatus = filterStatus.value === EFilterStatus.All ||
+                (filterStatus.value === EFilterStatus.Active && material.isActive) ||
+                (filterStatus.value === EFilterStatus.Inactive && !material.isActive);
+
+            return matchesFilter && matchesStatus;
+        });
+
+        // const materials = !!filter ?
+        //     materialsTypes.filter(material => material.materialTypeName.toLowerCase().includes(filter.toLowerCase()))
+        //     : materialsTypes;
+        return filteredMaterials.map((material) => [
             <>{material.materialTypeName}</>,
             <PrimaryButton
                 data-tour={material.materialTypeKey === 'sheets' ? 'sheetMaterialsEdit' : undefined}
@@ -72,15 +116,22 @@ const useMaterialsTypes = (isAdmin: boolean) => {
                 <MoreIcon />
             </IconButton>
         ]);
-    }, [materialsTypes, filter])
+    }, [materialsTypes, filter, filterStatus])
     return {
-        getAllMaterials,
         getTableRows,
         onFilterChange,
-        handleOpenMoreMenu,
         handleCloseMoreMenu,
+        setFilterStatus,
+        handleClick,
+        handleClose,
+        getAllMaterials,
         anchorElMenuTable,
-        selectedMaterial
+        selectedMaterial,
+        filterStatus,
+        filterStatusList,
+        tableHeaders,
+        anchorEl,
+        open,
     }
 }
 
