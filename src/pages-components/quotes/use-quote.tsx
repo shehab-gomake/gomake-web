@@ -66,6 +66,7 @@ import {
 } from "./widgets/send-payment-modal/states";
 import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pay-api";
 import { useRouter } from "next/router";
+import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
 
 interface Query {
   customerId?: string;
@@ -449,6 +450,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
+            //!here
+
             const jobsElement = CheckPermission(
               Permissions.SHOW_BOARD_MISSIONS
             ) ? (
@@ -505,6 +508,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   " " +
                   getCurrencyUnitText(quote?.currency),
               quote?.notes,
+              <ClickableStatusButton id={quote?.id} documentItem={quote} />,
               _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
@@ -1210,6 +1214,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 {t("sales.quote.cost")}
               </PermissionCheck>
             ),
+
           docType === DOCUMENT_TYPE.receipt
             ? t("sales.quote.paymentMethod")
             : t("sales.quote.worksName"),
@@ -1217,6 +1222,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ? t("customers.modal.paymentStatus")
             : t("sales.quote.totalPrice"),
           t("sales.quote.notes"),
+
+          docType === DOCUMENT_TYPE.order && t("Delivery status"), // New header added
+
           t("sales.quote.status"),
           t("sales.quote.more"),
         ].filter(Boolean);
