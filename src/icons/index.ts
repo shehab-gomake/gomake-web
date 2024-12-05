@@ -69,6 +69,7 @@ export * from "./print-icon"
 export * from "./filter-icon"
 export * from "./warning-2"
 export * from "./modal"
+export * from "./warn"
 export * from "./filter2-icon"
 export * from "./reload"
 
