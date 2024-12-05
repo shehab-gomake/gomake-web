@@ -96,6 +96,9 @@ const PriceListPageWidget = ({ widgetType }) => {
     getSelectedWorkFlow,
     selectedWorkFlowCalculatedIsLoaded,
     setSelectedWorkFlowCalculatedIsLoaded,
+    canCalculation,
+    calculationProduct,
+    subProducts,
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const router = useRouter();
@@ -390,6 +393,9 @@ const PriceListPageWidget = ({ widgetType }) => {
               sampleType={sampleType}
               errorMsg={errorMsg}
               calculationServerErrorState={calculationServerErrorState}
+              canCalculation={canCalculation}
+              calculationProduct={calculationProduct}
+              subProducts={subProducts}
             />
           </div>
 

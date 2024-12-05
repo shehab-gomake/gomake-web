@@ -27,6 +27,9 @@ const UPLOAD_PRINT_HOUSE_MATERIAL_IMAGE_URL = "/v1/materials/upload-print-house-
 const ADD_DOCUMENT_ITEM_FROM_MATERIALS = "/v1/printhouse-config/materials/add-document-item-from-material";
 const GET_DOCUMENT_ITEM_DATA_FROM_MATERIALS = "/v1/materials/get-document-item-data-from-material";
 
+const TOGGLE_MATERIAL_TYPE_ACTIVE_URL = "/v1/materials/toggle-material-type-active";
+
+
 const getMaterialTableHeadersApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -316,6 +319,20 @@ const getDocumentItemDataFromMaterialApi: ICallAndSetData = async (
   );
 };
 
+const toggleMaterialTypeActiveApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    TOGGLE_MATERIAL_TYPE_ACTIVE_URL,
+    callBack,
+    data
+  );
+};
+
 export {
   getMaterialsTypesApi,
   getMaterialTableHeadersApi,
@@ -336,5 +353,6 @@ export {
   addDocumentItemFromMaterialApi,
   getDocumentItemDataFromMaterialApi,
   updateMaterialCategoryNumberingApi,
-  updateSupplierPriorityApi
+  updateSupplierPriorityApi,
+  toggleMaterialTypeActiveApi
 };
