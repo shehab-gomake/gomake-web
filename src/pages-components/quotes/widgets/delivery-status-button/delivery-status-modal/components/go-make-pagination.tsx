@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@mui/material";
 
-import { NextArrowIcon, PrevArrowIcon } from "../icons";
+import { NextArrowIcon, PrevArrowIcon } from "../../icons";
 import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 
@@ -23,6 +23,8 @@ const GoMakePagination: React.FC<GoMakePaginationProps> = ({
   handlePageClick,
 }) => {
   const { t } = useTranslation();
+  const dir = t("direction");
+  const isRTL = dir === "rtl";
 
   return (
     <div
@@ -55,7 +57,11 @@ const GoMakePagination: React.FC<GoMakePaginationProps> = ({
           textTransform: "none" as "none",
         }}
       >
-        <PrevArrowIcon color={page === 1 ? "#B0B0B0" : "#344054"} />
+        {isRTL ? (
+          <NextArrowIcon color={page === totalPages ? "#B0B0B0" : "#344054"} />
+        ) : (
+          <PrevArrowIcon color={page === 1 ? "#B0B0B0" : "#344054"} />
+        )}
         {t("Previous")}
       </Button>
 
@@ -111,7 +117,11 @@ const GoMakePagination: React.FC<GoMakePaginationProps> = ({
         }}
       >
         {t("Next")}
-        <NextArrowIcon color={page === totalPages ? "#B0B0B0" : "#344054"} />
+        {isRTL ? (
+          <PrevArrowIcon color={page === 1 ? "#B0B0B0" : "#344054"} />
+        ) : (
+          <NextArrowIcon color={page === totalPages ? "#B0B0B0" : "#344054"} />
+        )}
       </Button>
     </div>
   );

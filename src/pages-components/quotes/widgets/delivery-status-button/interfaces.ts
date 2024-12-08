@@ -8,7 +8,6 @@ export interface ITaskCategoryLabelProps {
 export interface IUpdateDeliveryStatusModalProps {
   openModal: boolean;
   onCloseModal: () => void;
-  delStatusColor: any;
   documentItem: any;
 }
 

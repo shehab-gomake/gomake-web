@@ -450,8 +450,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               />,
             ];
           } else if (docType === DOCUMENT_TYPE.order) {
-            //!here
-
             const jobsElement = CheckPermission(
               Permissions.SHOW_BOARD_MISSIONS
             ) ? (

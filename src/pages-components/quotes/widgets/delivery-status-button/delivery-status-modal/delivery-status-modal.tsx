@@ -5,16 +5,16 @@ import { GoMakeSelect } from "@/components/auto-complete/go-make-select";
 import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
 import { IUpdateDeliveryStatusModalProps } from "../interfaces";
 import { useDeliveryStatusModal } from "./use-delivery-status-modal";
-import { useStyle } from "../style";
-import GoMakePagination from "./test-pagination";
+import { useStyle } from "./style";
+import GoMakePagination from "./components/go-make-pagination";
+import { SignatureModal } from "./components/signature-modal";
 
 const UpdateDeliveryStatusModal = ({
-  delStatusColor,
   documentItem,
   openModal,
   onCloseModal,
 }: IUpdateDeliveryStatusModalProps) => {
-  const { classes } = useStyle({ color: delStatusColor });
+  const { classes } = useStyle();
   const {
     t,
     tableHeaders,
@@ -32,6 +32,9 @@ const UpdateDeliveryStatusModal = ({
     handleNextPage,
     handlePrevPage,
     visiblePages,
+    isSignatureModalOpen,
+    openSignatureModal,
+    closeSignatureModal,
   } = useDeliveryStatusModal();
 
   const handleCloseModal = () => {
@@ -148,23 +151,27 @@ const UpdateDeliveryStatusModal = ({
         />
 
         {/* Pagination */}
-
-        <GoMakePagination
+        {/* <GoMakePagination
           page={page}
           totalPages={totalPages}
           visiblePages={visiblePages}
           handlePrevPage={handlePrevPage}
           handleNextPage={handleNextPage}
           handlePageClick={handlePageClick}
-        />
+        /> */}
 
         <GomakePrimaryButton
           style={classes.nextBtn}
-          onClick={() => console.log("the state is ", deliveryState)}
+          onClick={openSignatureModal}
         >
           {t("Next")}
         </GomakePrimaryButton>
       </Stack>
+      <SignatureModal
+        openModal={isSignatureModalOpen}
+        onCloseModal={closeSignatureModal}
+        onCloseUpdateModal={handleCloseModal}
+      />
     </GoMakeModal>
   );
 };

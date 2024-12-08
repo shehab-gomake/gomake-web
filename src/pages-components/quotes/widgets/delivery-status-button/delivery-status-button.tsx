@@ -3,7 +3,6 @@ import { MenuItem, Menu, Typography } from "@mui/material";
 import { ChangeIcon } from "./icons";
 import { useStyle } from "./style";
 import { useDeliveryStatusButton } from "./use-delivery-status";
-
 import { ITaskCategoryLabelProps } from "./interfaces";
 import { UpdateDeliveryStatusModal } from "./delivery-status-modal/delivery-status-modal";
 
@@ -66,7 +65,6 @@ const ClickableStatusButton = ({
       <UpdateDeliveryStatusModal
         openModal={openDeliveryModal}
         onCloseModal={onCloseDeliveryModal}
-        delStatusColor={delStatusColor}
         documentItem={documentItem}
       />
     </>
