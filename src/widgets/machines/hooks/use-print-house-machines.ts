@@ -16,6 +16,7 @@ const usePrintHouseMachines = () => {
     const PERFORATION_ACTION_ID = '1d4603d8-f1ab-4cfd-b5ba-6f9e4374f4c2';
     const ENGRAVING_ACTION_ID = '08acc2fa-7958-4760-9472-7099868c6d09';
     const CUTTING_ACTION_ID = 'a6c12b45-7dc3-48b2-9176-8d8749cd79f5';
+    const ENHANCEMENT_ACTION_ID = '5c755d21-a728-40d5-af2e-c31e02bebc1d'
     const getAndSetMachines = () => {
         getMachinesByCategoryId(categoryId as ECategoryId).then((res) => {
             if (res?.data?.data?.data?.length > 0) {
@@ -97,6 +98,28 @@ const usePrintHouseMachines = () => {
         }))
 
     }
+    const addMaterial = (materialId: string) => {
+        setMachineState(prevState => ({
+            ...prevState,
+            attributes: {
+                ...prevState.attributes,
+                materials: [...prevState?.attributes?.materials, materialId]
+
+            }
+        }))
+
+    }
+    const removeMaterial = (materialId: string) => {
+        setMachineState((prevState) => ({
+            ...prevState,
+            attributes: {
+                ...prevState.attributes,
+                materials: prevState?.attributes?.materials?.filter(action => action !== materialId)
+
+            }
+        }))
+
+    }
 
 
 
@@ -141,6 +164,15 @@ const usePrintHouseMachines = () => {
             } else if (!isCuttingAvailable && hasCuttingAction) {
                 removeAction(CUTTING_ACTION_ID);
             }
+        }else if (mState.category === ECategoryId.LAMINATION_MACHINE) {
+            const isFoilAvailable = !!mState?.attributes?.isAvailableFoilUnit;
+            if (isFoilAvailable) {
+                addAction(ENHANCEMENT_ACTION_ID);
+                addMaterial('7');
+            } else  {
+                removeAction(ENHANCEMENT_ACTION_ID);
+                removeMaterial('7')
+            }
         }
     }, [
         mState?.attributes?.cutTool?.isAvailable,
@@ -149,7 +181,8 @@ const usePrintHouseMachines = () => {
         mState.attributes?.scoring?.isAvailable,
         mState.attributes?.perforation?.isAvailable,
         mState.attributes?.kissCutTool?.isAvailable,
-        mState.attributes?.vCutTool?.isAvailable
+        mState.attributes?.vCutTool?.isAvailable,
+        mState?.attributes?.isAvailableFoilUnit
     ]);
 
     return {
