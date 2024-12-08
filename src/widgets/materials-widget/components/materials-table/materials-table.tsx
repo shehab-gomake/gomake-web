@@ -1,31 +1,77 @@
 import { useStyle } from "@/widgets/machines/components/categories-table/style";
-import { useEffect } from "react";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
 import { useTranslation } from "react-i18next";
 import { useMaterialsTypes } from "@/widgets/materials-widget/components/materials-table/use-materials-types";
+import { Filter2Icon } from "@/icons/filter2-icon";
+import { GoMakeMenu } from "@/components";
+import { MenuItem } from "@mui/material";
+import { MoreMenuWidget } from "./more-menu";
 interface IMaterialsTableComponentProps {
   isAdmin: boolean;
 }
+export enum EFilterStatus {
+  All,
+  Active,
+  Inactive,
+};
+
 const MaterialsTableComponent = (props: IMaterialsTableComponentProps) => {
-  const { getAllMaterials, getTableRows, onFilterChange } = useMaterialsTypes(props.isAdmin);
+  const {
+    getTableRows,
+    onFilterChange,
+    handleCloseMoreMenu,
+    setFilterStatus,
+    handleClick,
+    handleClose,
+    getAllMaterials,
+    anchorElMenuTable,
+    selectedMaterial,
+    filterStatus,
+    filterStatusList,
+    tableHeaders,
+    anchorEl,
+    open,
+  } = useMaterialsTypes(props.isAdmin);
   const { t } = useTranslation();
   const { classes } = useStyle();
-  const tableHeaders = [t("materials.materialsType"), t("materials.edit")];
-
-  useEffect(() => {
-    getAllMaterials().then();
-  }, []);
 
   return (
     <div style={classes.mainContainer}>
-      <HeaderTitleWithSearch title={props.isAdmin ? t("tabs.materialsAdmin") : t("tabs.materials")} onChange={onFilterChange} />
+      <div style={classes.headerContainer}>
+
+        <HeaderTitleWithSearch title={props.isAdmin ? t("tabs.materialsAdmin") : t("tabs.materials")} onChange={onFilterChange}
+          children={
+            <div style={classes.filterByStatus} onClick={handleClick}>
+              <Filter2Icon /> {t("navigationButtons.filterByStatus")}: {filterStatus?.label}
+            </div>
+          }
+        />
+
+      </div>
       <PrimaryTable
         stickyFirstCol={false}
         stickyHeader={false}
         rows={getTableRows()}
         headers={tableHeaders}
         dataTour={'materialsTable'}
+      />
+      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl} style={classes.filterMenuContainer} >
+        {filterStatusList.map((item) => (
+          <MenuItem className="action-menu-item" style={classes.filterMenuItem} key={item.value} onClick={() => {
+            setFilterStatus(item)
+            handleClose()
+          }}>
+            {item.label}
+          </MenuItem>
+        ))}
+      </GoMakeMenu>
+      <MoreMenuWidget
+        handleClose={handleCloseMoreMenu}
+        open={!!anchorElMenuTable}
+        anchorEl={anchorElMenuTable}
+        selectedMaterial={selectedMaterial}
+        getAllMaterials={getAllMaterials}
       />
     </div>
   );

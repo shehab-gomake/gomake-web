@@ -24,7 +24,7 @@ const SelectChildParameterWidget = ({
           placeholder={parameter.name}
           key={multiParameterModal && parameter?.code === "PrintingColors" ? parameter?.valuesConfigs + temp[index]?.values : parameter?.valuesConfigs}
           // key={parameter?.valuesConfigs + temp[index]?.values}
-          style={clasess.dropDownListStyle}
+          style={parameter?.isRequired ? clasess.requiredDropDownListStyle : clasess.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
           defaultValue={
             index !== -1 ? { updateName: temp[index].values } : defaultObject

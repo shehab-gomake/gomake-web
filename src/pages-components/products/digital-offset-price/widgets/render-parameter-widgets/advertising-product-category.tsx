@@ -20,7 +20,7 @@ const AdvertisingProductCategoryParameterWidget = ({
           return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
         })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
         key={parameter?.valuesConfigs + temp[index]?.values}
-        style={clasess.advertisingProductCategoryAutoComplete}
+        style={parameter?.isRequired ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
         placeholder={parameter?.name}
         onChange={(e: any, value: any) => {
           onChangeSubProductsForPrice(
