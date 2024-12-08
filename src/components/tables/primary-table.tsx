@@ -131,143 +131,6 @@ const StyledTableContainer = styled(TableContainer)(() => ({
   },
 }));
 
-// const PrimaryTable = ({
-//   rows,
-//   headers,
-//   stickyHeader,
-//   stickyFirstCol,
-//   maxHeight,
-//   variant,
-//   withoutShadow,
-//   columnWidths,
-//   dataTour,
-//   isLastItemTotal = false,
-//   onSelectionChange,
-//   enableCheckboxes = false,
-// }: ITableProps) => {
-//   const { t } = useTranslation();
-//   const dir: "rtl" | "ltr" = t("direction");
-//   const { classes } = useStyle(maxHeight, dir);
-
-//   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set()); // Using a Set to keep track of selected rows
-//   const handleRowSelection = (rowIndex: number) => {
-//     setSelectedRows((prevSelectedRows) => {
-//       const newSelectedRows = new Set(prevSelectedRows);
-//       if (newSelectedRows.has(rowIndex)) {
-//         newSelectedRows.delete(rowIndex);
-//       } else {
-//         newSelectedRows.add(rowIndex);
-//       }
-
-//       onSelectionChange?.(newSelectedRows); // Trigger the callback
-//       return newSelectedRows;
-//     });
-//   };
-
-//   const handleSelectAll = () => {
-//     if (selectedRows?.size === rows?.length) {
-//       setSelectedRows(new Set()); // Deselect all
-//       onSelectionChange?.(new Set());
-//     } else {
-//       const allSelected = new Set<number>();
-//       rows.forEach((_, index) => allSelected.add(index));
-//       setSelectedRows(allSelected);
-//       onSelectionChange?.(allSelected); // Trigger the callback
-//     }
-//   };
-
-//   const TableCell =
-//     variant === "ClassicTable"
-//       ? ClassicTableCell
-//       : variant === "RoundTable"
-//       ? RoundTableCell
-//       : PrimaryTableCell;
-
-//   const TableRow =
-//     variant === "ClassicTable"
-//       ? ClassicTableRow
-//       : variant === "OddEvenTable"
-//       ? OddEvenTableRow
-//       : variant === "RoundTable"
-//       ? RoundTableRow
-//       : PrimaryTableRow;
-
-//   return (
-//     <Paper
-//       sx={{
-//         width: "100%",
-//         overflow: "hidden",
-//         boxShadow: withoutShadow && "none",
-//         height: "100%",
-//         ...(variant === "RoundTable" && {
-//           borderRadius: "12px",
-//           border: "1px solid #EAECF0 !important",
-//         }),
-//       }}
-//     >
-//       <StyledTableContainer style={classes.tableContainer}>
-//         <Table data-tour={dataTour} stickyHeader={stickyHeader}>
-//           <TableHead>
-//             <TableRow>
-//               {/* Header Checkbox */}
-//               {enableCheckboxes && (
-//                 <TableCell padding="checkbox">
-//                   <PrimaryCheckbox
-//                     checked={selectedRows?.size === rows?.length}
-//                     onChange={handleSelectAll}
-//                     inputProps={{ "aria-label": "select all" }}
-//                   />
-//                 </TableCell>
-//               )}
-//               {headers?.map((header, index) => (
-//                 <TableCell key={index} align="center">
-//                   {header}
-//                 </TableCell>
-//               ))}
-//             </TableRow>
-//           </TableHead>
-//           <TableBody>
-//             {rows?.map((row, index) => (
-//               <TableRow
-//                 key={`row_${index}`}
-//                 style={{
-//                   backgroundColor:
-//                     isLastItemTotal && index === rows.length - 1
-//                       ? "#EFDDFF"
-//                       : "inherit",
-//                 }}
-//               >
-//                 {/* Row Checkbox */}
-//                 {enableCheckboxes && (
-//                   <TableCell padding="checkbox">
-//                     <PrimaryCheckbox
-//                       checked={selectedRows?.has(index)}
-//                       onChange={() => handleRowSelection(index)}
-//                       inputProps={{ "aria-label": `select row ${index}` }}
-//                     />
-//                   </TableCell>
-//                 )}
-//                 {row.map((cell, cellIndex) => {
-//                   const cellStyle = columnWidths
-//                     ? {
-//                         width: columnWidths?.[cellIndex],
-//                       }
-//                     : {};
-//                   return (
-//                     <TableCell align="center" style={cellStyle} key={cellIndex}>
-//                       {cell}
-//                     </TableCell>
-//                   );
-//                 })}
-//               </TableRow>
-//             ))}
-//           </TableBody>
-//         </Table>
-//       </StyledTableContainer>
-//     </Paper>
-//   );
-// };
-
 const PrimaryTable = ({
   rows,
   headers,
@@ -279,7 +142,6 @@ const PrimaryTable = ({
   columnWidths,
   dataTour,
   isLastItemTotal = false,
-
   enableCheckboxes = false,
   onSelectionChange,
   rowCheckboxCondition = () => true,
@@ -371,6 +233,7 @@ const PrimaryTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
+            {/* Row Checkbox */}
             {rows?.map((row, index) => (
               <TableRow
                 key={`row_${index}`}
@@ -381,16 +244,6 @@ const PrimaryTable = ({
                       : "inherit",
                 }}
               >
-                {/* Row Checkbox */}
-                {/* {enableCheckboxes && rowCheckboxCondition(row) && (
-                  <TableCell padding="checkbox">
-                    <PrimaryCheckbox
-                      checked={selectedRows.has(index)}
-                      onChange={() => handleRowSelection(index)}
-                      inputProps={{ "aria-label": `select row ${index}` }}
-                    />
-                  </TableCell>
-                )} */}
                 {enableCheckboxes && (
                   <TableCell padding="checkbox">
                     {rowCheckboxCondition(row) ? (
@@ -402,7 +255,7 @@ const PrimaryTable = ({
                     ) : null}
                   </TableCell>
                 )}
-                {row.map((cell, cellIndex) => {
+                {/* {row.map((cell, cellIndex) => {
                   const cellStyle = columnWidths
                     ? {
                         width: columnWidths?.[cellIndex],
@@ -413,6 +266,20 @@ const PrimaryTable = ({
                       {cell}
                     </TableCell>
                   );
+                })} */}
+                {row.map((cell, cellIndex) => {
+                  const cellStyle = columnWidths
+                    ? { width: columnWidths[cellIndex] }
+                    : {};
+                  if (cellIndex === 0 && stickyFirstCol) {
+                    return <TableCell style={classes.sticky}>{cell}</TableCell>;
+                  } else {
+                    return (
+                      <TableCell align="center" style={cellStyle}>
+                        {cell}
+                      </TableCell>
+                    );
+                  }
                 })}
               </TableRow>
             ))}
