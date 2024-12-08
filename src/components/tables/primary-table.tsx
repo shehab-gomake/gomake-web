@@ -275,7 +275,11 @@ const PrimaryTable = ({
                     return <TableCell style={classes.sticky}>{cell}</TableCell>;
                   } else {
                     return (
-                      <TableCell align="center" style={cellStyle}>
+                      <TableCell
+                        align="center"
+                        style={cellStyle}
+                        key={cellIndex}
+                      >
                         {cell}
                       </TableCell>
                     );

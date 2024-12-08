@@ -21,7 +21,7 @@ const useStyle = () => {
         alignItems: "center",
         gap: "var(--spacing-sm, 6px)",
         borderRadius: "var(--radius-md, 8px)",
-        height: "35px",
+        height: "40px",
       },
       conBtn: {
         display: "flex",

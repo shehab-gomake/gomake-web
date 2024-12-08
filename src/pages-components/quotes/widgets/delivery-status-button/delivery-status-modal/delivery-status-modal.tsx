@@ -1,13 +1,17 @@
 import { Button, Stack } from "@mui/material";
-import { GoMakeModal, GomakePrimaryButton } from "@/components";
+import { GoMakeModal } from "@/components";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { GoMakeSelect } from "@/components/auto-complete/go-make-select";
 import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
 import { IUpdateDeliveryStatusModalProps } from "../interfaces";
-import { useDeliveryStatusModal } from "./use-delivery-status-modal";
+import {
+  DeliveryStatus,
+  useDeliveryStatusModal,
+} from "./use-delivery-status-modal";
 import { useStyle } from "./style";
-import GoMakePagination from "./components/go-make-pagination";
 import { SignatureModal } from "./components/signature-modal";
+import { PrimaryButton } from "@/components/button/primary-button";
+import React from "react";
 
 const UpdateDeliveryStatusModal = ({
   documentItem,
@@ -26,27 +30,16 @@ const UpdateDeliveryStatusModal = ({
     options,
     client,
     setClient,
-    page,
-    totalPages,
-    handlePageClick,
-    handleNextPage,
-    handlePrevPage,
-    visiblePages,
     isSignatureModalOpen,
     openSignatureModal,
     closeSignatureModal,
+    extractDeliveryStatus,
+    handleSelectionChange,
   } = useDeliveryStatusModal();
 
   const handleCloseModal = () => {
     onCloseModal();
     setDeliveryState(initialDeliveryState);
-  };
-
-  const handleSelectionChange = (selectedRows: Set<number>) => {
-    const selectedIds = Array.from(selectedRows).map(
-      (index) => mockRows[index][0]
-    );
-    console.log("Selected IDs:", selectedIds);
   };
 
   return (
@@ -147,7 +140,10 @@ const UpdateDeliveryStatusModal = ({
           variant={"RoundTable"}
           enableCheckboxes={true}
           onSelectionChange={handleSelectionChange}
-          rowCheckboxCondition={(row) => row[5] !== "Delivered"}
+          rowCheckboxCondition={(row) => {
+            const status = extractDeliveryStatus(row[5]);
+            return status !== "Delivered";
+          }}
         />
 
         {/* Pagination */}
@@ -160,12 +156,13 @@ const UpdateDeliveryStatusModal = ({
           handlePageClick={handlePageClick}
         /> */}
 
-        <GomakePrimaryButton
+        <PrimaryButton
+          variant="contained"
           style={classes.nextBtn}
           onClick={openSignatureModal}
         >
           {t("Next")}
-        </GomakePrimaryButton>
+        </PrimaryButton>
       </Stack>
       <SignatureModal
         openModal={isSignatureModalOpen}

@@ -1,12 +1,12 @@
-import { GoMakeModal, GomakePrimaryButton } from "@/components";
+import { GoMakeModal } from "@/components";
 import { useStyle } from "../style";
 import { Button, Stack } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { DeleteIcon, SaveIcon, SendIcon, WArrowIcon } from "../../icons";
 import { PrimaryButton } from "@/components/button/primary-button";
-import SignatureCanvas from "react-signature-canvas";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useSnackBar } from "@/hooks";
+import SignatureCanvas from "react-signature-canvas";
 
 export interface ISignatureModalProps {
   openModal: boolean;
@@ -101,7 +101,10 @@ const SignatureModal = ({
         <PrimaryButton
           variant="contained"
           style={classes.conBtn}
-          onClick={onCloseUpdateModal}
+          onClick={() => {
+            onCloseModal();
+            onCloseUpdateModal();
+          }}
           startIcon={<WArrowIcon />}
         >
           {t("Continue without signature")}
