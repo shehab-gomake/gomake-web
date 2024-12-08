@@ -44,6 +44,7 @@ const useStyle = ({modalType}: {modalType: ModalType}) => {
         color: "#101828",
         marginBottom: 4,
         textAlign: "center" as "center",
+        width: "85%",
       },
       closeIcon: {
         display: "flex",
