@@ -9,7 +9,6 @@ import { Tooltip } from "@mui/material";
 import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { useRecoilValue } from "recoil";
-import EmergencyIcon from '@mui/icons-material/Error';
 import { useTranslation } from "react-i18next";
 const TabsMappingWidget = ({
   clasess,
@@ -49,16 +48,16 @@ const TabsMappingWidget = ({
             if (
               parameter.isRequired &&
               !subProductParameterCodes.includes(parameter.code) &&
-              subProductParameterSectionIds.includes(item.id) && // Ensure sectionId matches
-              subProductParameterSubSectionIds.includes(subSection.id) // Ensure subSectionId matches
+              subProductParameterSectionIds.includes(item.id) &&
+              subProductParameterSubSectionIds.includes(subSection.id)
             ) {
-              return true; // Missing required parameter found
+              return true;
             }
           }
         }
       }
     }
-    return false; // No missing required parameters
+    return false;
   };
 
   const duplicateSectionFunction = useCallback(
