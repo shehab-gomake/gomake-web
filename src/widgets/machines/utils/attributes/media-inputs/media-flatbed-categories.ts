@@ -1,11 +1,11 @@
 
-const mediaFlatbedCategories = (state: Record<string, any>) => {
+const mediaFlatbedCategories = (state: Record<string, any>, parameterKey = 'flatbedsCategories') => {
     return [
         {
             name: '',
-            parameterKey: 'flatbedsCategories',
+            parameterKey: parameterKey,
             machineInputType: 'multiInput',
-            value: state.attributes?.flatbedsCategories ? state.attributes?.flatbedsCategories : {},
+            value: state.attributes[parameterKey] ? state.attributes[parameterKey] : {},
             isValid: true,
             inputs: [
                 {
@@ -16,7 +16,7 @@ const mediaFlatbedCategories = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "isAvailable",
                     options: [],
-                    value: state.attributes?.flatbedsCategories?.isAvailable ? state.attributes?.flatbedsCategories?.isAvailable : ''
+                    value: state.attributes[parameterKey]?.isAvailable ? state.attributes[parameterKey]?.isAvailable : ''
                 },
                 {
                     name: "categories",
@@ -26,10 +26,10 @@ const mediaFlatbedCategories = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "categories",
                     options: [],
-                    value: state?.attributes?.flatbedsCategories?.categories,
+                    value: state?.attributes[parameterKey]?.categories,
                     optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=flatbeds',
                     multiple: true,
-                    disabled: !state.attributes?.flatbedsCategories?.isAvailable
+                    disabled: !state.attributes[parameterKey]?.isAvailable
                 },
             ]
         },

@@ -45,19 +45,6 @@ const inputs = (state) => {
                     value: state.attributes?.embossingSelective?.setupTime ? state.attributes?.embossingSelective?.varnishTypes : '',
                     disabled: !state.attributes?.embossingSelective?.isAvailable || state.attributes?.embossingSelective?.digitalAnalog === 1
                 },
-                {
-                    name: "",
-                    label: "machineAttributes.heightLevels",
-                    type: "select",
-                    placeholder: "machineAttributes.heightLevels",
-                    required: true,
-                    parameterKey: "heightLevels",
-                    options: [],
-                    unit: EMeasurementUnits.INCH,
-                    optionsUrl: '/v1/print-house-config/parameters/height-levels',
-                    values: state.attributes?.embossingSelective?.heightLevels ? state.attributes?.embossingSelective?.heightLevels : '',
-                    disabled: !state.attributes?.embossingSelective?.isAvailable
-                },
             ]
         },
         {
@@ -71,7 +58,29 @@ const inputs = (state) => {
             machineInputType: 'materialInput',
             value: state?.attributes?.foilVarnishTypes,
             isValid: true,
-            materialType: 'colors'
+            materialType: 'varnish',
+            disabled: !state.attributes?.embossingSelective?.isAvailable
+
+        },
+        {
+            name: 'machineAttributes.heightLevels',
+            parameterKey: 'heightLevelsList',
+            value: state?.attributes?.heightLevelsList ? state?.attributes?.heightLevelsList : [],
+            machineInputType: 'multiArrayInput',
+            isValid: state?.attributes?.heightLevelsList?.length > 0,
+            disabled: !state.attributes?.embossingSelective?.isAvailable,
+            inputs: [
+                {
+                    name: "",
+                    label: "machineAttributes.heightLevel",
+                    type: "text",
+                    placeholder: "machineAttributes.heightLevel",
+                    required: true,
+                    parameterKey: "value",
+                    options: [],
+                    unit: EMeasurementUnits.MM
+                },
+            ]
         },
     ]
 }

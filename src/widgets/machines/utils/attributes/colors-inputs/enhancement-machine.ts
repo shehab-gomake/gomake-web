@@ -23,7 +23,8 @@ const enhancementMachine = (state: Record<string, any>) => {
             value: state?.attributes?.foilOperationMode,
             options: [{value: 1, text: 'Continuous'}, {value: 2, text: 'regional'}],
             machineInputType: 'input',
-            isValid: true
+            isValid: true,
+            disabled: !state?.attributes?.foilAvailable,
         },
         {
             name: "foilOptions",
@@ -34,8 +35,10 @@ const enhancementMachine = (state: Record<string, any>) => {
             parameterKey: "foilOptions",
             value: state?.attributes?.foilOptions,
             options: [{value: 1, text: 'Flat'}, {value: 2, text: 'Height',}, {value: 2, text: 'Flat & Height',}],
+            optionsUrl: '/v1/print-house-config/parameters/foil-options',
             machineInputType: 'input',
-            isValid: true
+            isValid: true,
+            disabled: !state?.attributes?.foilAvailable
         },
     ]
 };
