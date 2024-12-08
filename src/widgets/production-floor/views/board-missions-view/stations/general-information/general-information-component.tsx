@@ -30,7 +30,7 @@ const GeneralInformationComponent = () => {
         isLoading ?
             <Stack gap={'10px'}>
                 <h3>{t("pricingWidget.generalInformation")}</h3>
-                <Stack direction={'row'} gap={'16px'}>
+                <Stack direction={'row'} gap={'16px'} flexWrap={'wrap'}>
                     {
                         data?.flatMap((parameter, index, array) => {
                             const key = `parameter-${index}`;

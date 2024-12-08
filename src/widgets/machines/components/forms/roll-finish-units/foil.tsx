@@ -64,7 +64,7 @@ const inputs = (state) => {
                     parameterKey: "foilOptions",
                     options: [],
                     optionsUrl: '/v1/print-house-config/parameters/foil-options',
-                    values: state.attributes?.foilUnit?.foilOptions ? state.attributes?.foilUnit?.foilOptions : '',
+                    value: state.attributes?.foilUnit?.foilOptions ? state.attributes?.foilUnit?.foilOptions : '',
                     disabled: !state.attributes?.foilUnit?.isAvailable
                 },
                 {
@@ -92,7 +92,7 @@ const inputs = (state) => {
             machineInputType: 'materialInput',
             value: state?.attributes?.foilGlues,
             isValid: true,
-            materialType: 'colors'
+            materialType: 'glues'
         } :
     {
         name: '',

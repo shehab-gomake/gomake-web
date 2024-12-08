@@ -1,11 +1,11 @@
 
-const mediaWideFormatCategories = (state: Record<string, any>) => {
+const mediaWideFormatCategories = (state: Record<string, any>, parameterKey = 'wideFormatCategories') => {
     return [
         {
             name: '',
-            parameterKey: 'wideFormatCategories',
+            parameterKey: parameterKey,
             machineInputType: 'multiInput',
-            value: state.attributes?.wideFormatCategories ? state.attributes?.wideFormatCategories : {},
+            value: state.attributes[parameterKey] ? state.attributes[parameterKey] : {},
             isValid: true,
             inputs: [
                 {
@@ -16,7 +16,7 @@ const mediaWideFormatCategories = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "isAvailable",
                     options: [],
-                    value: state.attributes?.wideFormatCategories?.isAvailable ? state.attributes?.wideFormatCategories?.isAvailable : ''
+                    value: state.attributes[parameterKey]?.isAvailable ? state.attributes[parameterKey]?.isAvailable : ''
                 },
                 {
                     name: "categories",
@@ -26,10 +26,10 @@ const mediaWideFormatCategories = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "categories",
                     options: [],
-                    value: state?.attributes?.wideFormatCategories?.categories,
+                    value: state?.attributes[parameterKey]?.categories,
                     optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=wideFormatMaterial',
                     multiple: true,
-                    disabled: !state.attributes?.wideFormatCategories?.isAvailable
+                    disabled: !state.attributes[parameterKey]?.isAvailable
                 },
             ]
         },

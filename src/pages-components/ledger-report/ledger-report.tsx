@@ -102,7 +102,6 @@ const LedgerReportWidget = ({
         onChangeUpdateClientContact={onChangeUpdateClientContact}
         SendCustomerLedgerToMailApi={SendCustomerLedgerToMailApi}
       />
-      {/* !here */}
       <AdjustmentsLedgerReportModal
         customerId={customerId || customer?.id}
         onCloseModal={onClickCloseAdjustmentsModal}

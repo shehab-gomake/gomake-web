@@ -235,6 +235,7 @@ const TotalPriceAndVatWidit = () => {
           updateCancelQuote(QuoteStatuses.CANCELED_DELIVERY_TIME)
         }
       />
+      {/* !!!!!what is this */}
       <OrderNowModal
         openModal={openOrderNowModal}
         onClose={onClickCloseOrderNowModal}

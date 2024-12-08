@@ -1,11 +1,11 @@
 
-const mediaSheetsCategories = (state: Record<string, any>) => {
+const mediaSheetsCategories = (state: Record<string, any>, parameterKey = 'sheetCategories' ) => {
     return [
         {
             name: '',
-            parameterKey: 'sheetCategories',
+            parameterKey: parameterKey,
             machineInputType: 'multiInput',
-            value: state.attributes?.sheetCategories ? state.attributes?.sheetCategories : {},
+            value: state.attributes[parameterKey] ? state.attributes[parameterKey] : {},
             isValid: true,
             inputs: [
                 {
@@ -16,7 +16,7 @@ const mediaSheetsCategories = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "isAvailable",
                     options: [],
-                    value: state.attributes?.sheetCategories?.isAvailable ? state.attributes?.sheetCategories?.isAvailable : ''
+                    value: state.attributes[parameterKey]?.isAvailable ? state.attributes[parameterKey]?.isAvailable : ''
                 },
                 {
                     name: "categories",
@@ -26,10 +26,10 @@ const mediaSheetsCategories = (state: Record<string, any>) => {
                     required: true,
                     parameterKey: "categories",
                     options: [],
-                    value: state?.attributes?.sheetCategories?.categories,
+                    value: state?.attributes[parameterKey]?.categories,
                     optionsUrl: '/v1/materials/get-all-print-house-material-categories?material=sheets',
                     multiple: true,
-                    disabled: !state.attributes?.sheetCategories?.isAvailable
+                    disabled: !state.attributes[parameterKey]?.isAvailable
                 },
             ]
         },

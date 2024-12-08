@@ -3,67 +3,97 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { secondColor,primaryColor } = useGomakeTheme();
+  const { secondColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       insideStyle: {
-        width: 860,
-        borderRadius: 5,
-        height: "400px",
+        width: 700,
+        borderRadius: 8,
+        height: "fit-content",
+        justifyContent: "center",
+        alignItems: "center",
       },
-      headerStyle:{
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        
+      insideStyleNew: {
+        width: "37%",
+        minWidth: "500px",
+        maxWidth: 860,
+        borderRadius: 10,
+        height: "fit-content",
       },
-      mainContainer:{
+      headerStyle: {
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      mainContainer: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "center",
         alignItems: "center",
         width: "100%",
-        gap:30,
-        marginTop:20
+        gap: 25,
+        marginTop: 15,
       },
-      iconContainer:{
+      iconContainer: {
         width: 120,
-        height: 120, 
-        color: secondColor(500)
+        height: 120,
+        color: secondColor(500),
       },
-      titleContainer:{
+      titleContainer: {
         display: "flex",
-        ...FONT_FAMILY.Lexend(500,21),
-        color:primaryColor(500),
-        width: "66%",
-        textAlign: "center" as "center"
+        ...FONT_FAMILY.Inter(600, 20),
+        textAlign: "center" as "center",
+        color: "var(--colors-text-text-primary-900, #101828)",
+        lineHeight: "28px",
       },
-      mainBtnContainer:{
+      subTitleContainer: {
+        display: "flex",
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: "#475467",
+        textAlign: "center" as "center",
+        padding: "0px 30px",
+      },
+      mainBtnContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap:20,
-        width:"100%",
+        gap: 10,
+        width: "100%",
       },
-      cancelContainer:{
+      cancelContainer: {
         display: "flex",
         height: 40,
-        width:"28%"
+        width: "28%",
       },
-      withNotificationContainer:{
-        display: "flex",
-        lineHeight: "20px",
-        height: 40,
-        width:"42%"
-      },
-      withoutNotificationContainer:{
+      withNotificationContainer: {
         display: "flex",
         lineHeight: "20px",
         height: 40,
-        width:"40%"
-      }
+        width: "42%",
+      },
+      withoutNotificationContainer: {
+        display: "flex",
+        lineHeight: "20px",
+        height: 40,
+        width: "40%",
+      },
+      btnStyle: {
+        borderRadius: "8px",
+        height: "40px",
+        lineHeight: "18px",
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
+      secondBtn: {
+        borderRadius: "8px",
+        height: "40px",
+        color: "#272977",
+        border: "1px solid  #272977",
+        background: "white",
+        lineHeight: "18px",
+        ...FONT_FAMILY.Lexend(500, 14),
+      },
     };
   }, []);
   return {
