@@ -58,6 +58,8 @@ const RightSideWidget = ({
   ];
   const [logsArray, setLogsArray] = useState(mergedArray);
 
+
+
   useEffect(() => {
     const uniqueArray = mergedArray.filter((item, index, self) => {
       const itemValuesArray = JSON.parse(item.values || "[]");
@@ -454,50 +456,39 @@ const RightSideWidget = ({
                   {t("products.offsetPrice.admin.general")} Server Error
                 </div>
               )} */}
-
               {logsArray?.map((item) => {
-                if (item.actionName) {
-                  return (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "flex-start",
-                        alignItems: "flex-start",
-                        width: "100%",
-                        gap: 5,
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-start",
-                          alignItems: "center",
-                          gap: 5,
-                        }}
-                      >
-                        {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
-                        <div
-                          style={{
-                            ...clasess.titleLogsTextStyle,
-                          }}
-                        >
-                          <div style={{ width: 85 }}>{item.actionName}:</div>
-                        </div>
-                      </div>
-
-                      <div style={clasess.textLogstyle}>
+                if (item.actionName || item.actionName === null) {
+                  const renderExceptionMessage = (exceptionKey, values) => {
+                    if (exceptionKey && values?.length > 0) {
+                      return (
                         <span style={{ color: "black" }}>
-                          {t(
-                            "CalculationExceptions." +
-                            item?.exception?.exceptionKey
+                          {t("CalculationExceptions." + exceptionKey).replace(
+                            /\{\{(\d+)\}\}/g,
+                            (_, index) => values[index] || ""
                           )}
                         </span>
-                      </div>
-                    </div>
-                  );
-                } else if (item.actionName === null) {
+                      );
+                    }
+                    else if (exceptionKey) {
+                      return (
+                        <span style={{ color: "black" }}>
+                          {t("CalculationExceptions." + exceptionKey)}
+                        </span>
+                      );
+                    }
+                    return null;
+                  };
+
+                  const renderValues = (values) => {
+                    if (!item?.exception?.exceptionKey && values?.length > 0) {
+                      return (
+                        <span style={{ color: "black" }}>
+                          {values.join(", ")}
+                        </span>
+                      );
+                    }
+                    return null;
+                  };
                   return (
                     <div
                       style={{
@@ -512,30 +503,21 @@ const RightSideWidget = ({
                       {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
 
                       <div style={{ width: "100%", marginTop: -3 }}>
-                        {item?.exception?.values &&
-                          item?.exception?.values?.length > 0 ? (
-                          <span style={{ color: "black" }}>
-                            {item?.exception?.exceptionMessage +
-                              t(
-                                "CalculationExceptions." +
-                                item?.exception?.exceptionKey
-                              ).replace(
-                                /\{\{(\d+)\}\}/g,
-                                (_, index) =>
-                                  item?.exception?.values[index] || ""
-                              )}
-                          </span>
-                        ) : (
-                          <span style={{ color: "black" }}>
-                            {t(
-                              "CalculationExceptions." +
-                              item?.exception?.exceptionKey
-                            )}
-                          </span>
+                        {item.actionName !== undefined && (
+                          <div style={{ ...clasess.titleLogsTextStyle }}>
+                            <div style={{ width: "fit-content" }}>
+                              {item.actionName || ""}:
+                            </div>
+                            <div style={{ width: "fit-content" }}>
+                              {item?.exception?.exceptionMessage || ""}
+                            </div>
+                            {renderExceptionMessage(item?.exception?.exceptionKey, item?.exception?.values)}
+                            {renderValues(item?.exception?.values)}
+                          </div>
                         )}
                       </div>
                     </div>
-                  );
+                  )
                 }
                 else {
                   return (
