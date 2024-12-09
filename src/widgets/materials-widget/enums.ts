@@ -15,7 +15,7 @@ export enum EMaterialsActions {
   UploadExcel,
   UploadMaterialsPictures,
   CreatePurchaseOrder,
-  sku
+  sku,
 }
 
 export enum EMaterialActiveFilter {
@@ -27,4 +27,11 @@ export enum EMaterialActiveFilter {
 export enum EFilterType {
   TEXT,
   SELECT,
+}
+
+export enum MaterialStockUnit {
+  Units = 0,
+  Liter,
+  Meter,
+  SquareMeter,
 }

@@ -11,10 +11,6 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { GeneralInformationComponent } from "./general-information/general-information-component";
-import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
-import { materialModalState } from "./material-and-production-time-modal/states";
-import { updatePrintHouseMaterialStockFromJobApi } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
 
 const BoardMissionsStationsComponent = () => {
   const {
@@ -39,53 +35,6 @@ const BoardMissionsStationsComponent = () => {
   );
   const isLoading = !boardMissionsDetails?.boardMissionId && sortedStations;
 
-  const [openMaterialsModal, setOpenMaterialsModal] =
-    useRecoilState<any>(materialModalState);
-  const { callApi } = useGomakeAxios();
-  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
-
-  const onUpdateMaterialStock = async (updatedState: {
-    currentStationId: string;
-    boardMissionActionId: string;
-    productionTime: string;
-    materials: {
-      ProductType: string;
-      WorkFlowActionId: string;
-      materialKey: string;
-      currentValue: string;
-    }[];
-  }) => {
-    const callBack = (res) => {
-      if (res.success) {
-        alertSuccessUpdate();
-        setOpenMaterialsModal(false);
-
-        setStations(
-          stations.map((station) => {
-            if (
-              station.boardMissionActionId == updatedState.boardMissionActionId
-            ) {
-              return {
-                ...station,
-                boardMissionActionTimer: {
-                  isTimerRunning: false,
-                  totalRunningTime: Number(updatedState.productionTime),
-                },
-              };
-            }
-            return { ...station };
-          })
-        );
-      } else {
-        alertFaultUpdate();
-      }
-    };
-    await updatePrintHouseMaterialStockFromJobApi(
-      callApi,
-      callBack,
-      updatedState
-    );
-  };
   return (
     <div
       style={{
@@ -180,11 +129,6 @@ const BoardMissionsStationsComponent = () => {
           </>
         )}
       </Stack>
-      <MaterialsAndProductionTimeModalWidget
-        openModal={openMaterialsModal}
-        onClose={() => setOpenMaterialsModal(false)}
-        onUpdate={onUpdateMaterialStock}
-      />
     </div>
   );
 };
