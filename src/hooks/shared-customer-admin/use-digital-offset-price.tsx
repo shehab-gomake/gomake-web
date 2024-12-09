@@ -362,7 +362,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         mySelectedWorkFlow.totalPrice &&
         mySelectedWorkFlow.totalPrice.values && !isNaN(mySelectedWorkFlow.totalPrice.values[0])
       ) {
-        debugger
         setCurrentProductItemValueTotalPrice(
           parseFloat(mySelectedWorkFlow.totalPrice.values[0])
         );
@@ -444,7 +443,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           calculationProgress.currentWorkFlowsCount
           ? signalRPricingResult.currentWorkFlowIndex
           : calculationProgress.currentWorkFlowsCount + 1;
-      debugger
       if (
         signalRPricingResult.isCalculationFinished &&
         signalRPricingResult.totalPrice && !isNaN(signalRPricingResult.totalPrice)
@@ -3285,14 +3283,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 });
               }
               if (
-                parameterValue &&
-                parameterValue.selectedParameterValues &&
-                parameterValue.selectedParameterValues.length > 0
+
+                  parameterValue &&
+                  parameterValue.selectedParameterValues &&
+                  parameterValue.selectedParameterValues.length > 0
               ) {
                 parameterValue.selectedParameterValues.forEach((selectedParam) => {
                   if (selectedParam.valueIds && selectedParam.valueIds.length > 0) {
                     const param = relatedParameter.settingParameters.find(
-                      (param) => param.id === selectedParam.parameterId
+
+                        (param) => param.id === selectedParam.parameterId
                     );
                     parameters.push({
                       parameterId: param.id,
@@ -3310,7 +3310,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       actionIndex,
                       parameterCode: param?.code,
                       isGeneralInfoInProductionFloor:
-                        param?.isGeneralInfoInProductionFloor,
+
+                      param?.isGeneralInfoInProductionFloor,
                     });
                   }
                 });

@@ -50,7 +50,7 @@ const DropDownListParameterWidget = ({
   const [selectedValue, setSelectedValue] = useState(
     index !== -1 ? { updateName: temp[index].values } : parameter.valuesConfigs.find(item => item.isDefault)
   );
-
+  console.log("selectedValue", selectedValue?.updateName)
   useEffect(() => {
     // If the parameter changes, update the selectedValue accordingly
     setSelectedValue(
@@ -102,7 +102,7 @@ const DropDownListParameterWidget = ({
           return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
         })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
         placeholder={parameter.name}
-        style={parameter?.isRequired ? clasess.requiredDropDownListStyle : clasess.dropDownListStyle}
+        style={parameter?.isRequired && !selectedValue?.updateName ? clasess.requiredDropDownListStyle : clasess.dropDownListStyle}
         getOptionLabel={(option) => option.updateName}
         value={selectedValue} // Controlled value, reflecting the current state
         onChange={handleValueChange}
