@@ -19,6 +19,7 @@ import { productsForDropDownList } from "@/store";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { updateSupplierPriorityApi } from "@/services/api-service/materials/materials-endpoints";
+import { SortIcon } from "@/icons";
 
 interface FiltersActionsBarProps {
   isAdmin: boolean;
@@ -275,10 +276,11 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
                           style={{
                             display: 'flex',
                             alignItems: 'center',
+                            gap: 8,
                             ...provided.draggableProps.style,
                           }}
                         >
-                          <DragIndicatorIcon style={{ marginRight: 8 }} />
+                          <SortIcon />
                           {item.label}
                         </MenuItem>
                       )}
