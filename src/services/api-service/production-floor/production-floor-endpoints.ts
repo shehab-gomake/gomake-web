@@ -26,8 +26,6 @@ const GET_PRINT_HOUSE_ACTIONS_REQUIER_EMPLOYEE_URL =
 const GET_BOARDS_MISSIONS_GROUPS_URL = "/v1/erp-service/board-missions/groups/";
 const GET_BOARDS_MISSIONS_STATIONS_URL =
   "/v1/erp-service/board-missions/board-missions-stations/";
-const UPDATE_BOARD_MISSIONS_ACTION_DONE =
-  "/v1/erp-service/board-missions-actions/move-to-done/";
 const CANCEL_BOARD_MISSIONS_ACTION_DONE =
   "/v1/erp-service/board-missions-actions/back-to-in-process/";
 const UPDATE_BOARD_MISSIONS_ACTION_EMPLOYEE =
@@ -250,28 +248,6 @@ const getBoardsMissionsStations: ICallAndSetData = async (
     GET_BOARDS_MISSIONS_STATIONS_URL +
       data.boardMissionsId +
       (data.productType ? "?productType=" + data.productType : ""),
-    callBack
-  );
-};
-
-//!old
-const updateBoardMissionsActionDone: ICallAndSetData = async (
-  callApi,
-  callBack,
-  data: {
-    boardMissionsActionId: string;
-    productType: string;
-    isSendMessage: boolean;
-  }
-) => {
-  return await getSetApiData(
-    callApi,
-    EHttpMethod.PUT,
-    UPDATE_BOARD_MISSIONS_ACTION_DONE +
-      data.boardMissionsActionId +
-      "?isSendMessage=" +
-      !!data.isSendMessage +
-      (data.productType ? "&productType=" + data.productType : ""),
     callBack
   );
 };
@@ -656,7 +632,6 @@ export {
   getAllActionsRequireEmployeeApi,
   getBoardsMissionsGroupsByID,
   getBoardsMissionsStations,
-  updateBoardMissionsActionDone,
   cancelBoardMissionsActionDone,
   toggleBoardMissionsActionTimer,
   boardMissionsAddNote,

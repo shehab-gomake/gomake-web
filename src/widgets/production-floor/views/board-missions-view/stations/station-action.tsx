@@ -32,18 +32,12 @@ import {
   cancelBoardMissionsActionDone,
   getBoardMissionActionMaterialsApi,
   toggleBoardMissionsActionTimer,
-  updateBoardMissionsActionDone,
   updateBoardMissionsActionDoneWithMaterialsApi,
-  updatePrintHouseMaterialStockFromJobApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Button from "@mui/material/Button";
-import {
-  GoMakeDeleteModal,
-  GomakeTextInput,
-  ThreeOptionsModal,
-} from "@/components";
+import { GomakeTextInput } from "@/components";
 import { useBoardMissionsUpdatedOutputs } from "./use-board-missions-updated-outputs";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { ActionTimer } from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
@@ -63,7 +57,6 @@ import {
   materialModalState,
 } from "./material-and-production-time-modal/states";
 import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
-import { ModalType } from "@/enums";
 
 interface IProps extends IBoardMissionsStation {
   delay: number;
@@ -74,7 +67,6 @@ interface IProps extends IBoardMissionsStation {
   isHideTimeAndDate?: boolean;
 }
 
-//!here
 const BoardMissionsStationAction = ({
   id,
   actionId,
@@ -106,7 +98,7 @@ const BoardMissionsStationAction = ({
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData } =
     useSnackBar();
-  const [openReadyModal, setIsReadyModal] = useState<boolean>(false);
+  // const [openReadyModal, setIsReadyModal] = useState<boolean>(false);
   const [boardMissions, setBoardMissions] = useRecoilState(
     boardMissionsDetailsState
   );
@@ -125,33 +117,6 @@ const BoardMissionsStationAction = ({
     onClickGetMachineForAction,
   } = useBoardMissionsUpdatedOutputs();
   const { CheckPermission } = useUserPermission();
-
-  //!here old
-
-  // const [openModal, setOpenMpdal] = useState(false);
-  // const onClickOpenModal = (e) => {
-  //   if (isLastStation && isOrderCompleted) {
-  //     setIsReadyModal(true);
-  //   } else {
-  //     e.stopPropagation();
-  //     setOpenMpdal(true);
-  //   }
-  // };
-
-  // const onClickCloseModal = () => {
-  //   setOpenMpdal(false);
-  // };
-
-  //!here new
-  const onClickOpenDoneModal = (e) => {
-    debugger;
-    if (isLastStation && isOrderCompleted) {
-      setIsReadyModal(true);
-    } else {
-      e.stopPropagation();
-      getBoardMissionActionMaterials(boardMissionActionId).then();
-    }
-  };
 
   const inputsParameters = outputs.filter(
     (parameter) =>
@@ -177,45 +142,6 @@ const BoardMissionsStationAction = ({
       parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
-
-  //!thisss old
-  const onClickDone = async (
-    boardMissionsActionId: string,
-    sendMSg?: boolean
-  ) => {
-    setLoading(true);
-    const callBack = (res) => {
-      setLoading(false);
-
-      if (res.success) {
-        setState(res.data);
-        setOpenMaterialsModal(true);
-        const currentActionId = res.data.currentStationId;
-        setStations(
-          stations.map((station) => {
-            if (station.boardMissionActionId == boardMissionActionId) {
-              return { ...station, isDone: true };
-            }
-            return { ...station };
-          })
-        );
-        setBoardMissions({
-          ...boardMissions,
-          currentBoardMissionActionId: currentActionId,
-        });
-        setOpenPackagingModal(true);
-        alertSuccessUpdate();
-      } else {
-        alertFaultUpdate();
-        setLoading(false);
-      }
-    };
-    await updateBoardMissionsActionDone(callApi, callBack, {
-      boardMissionsActionId: boardMissionsActionId,
-      productType: boardMissions.productType,
-      isSendMessage: !!sendMSg,
-    });
-  };
 
   const onClickBackToProcess = async (boardMissionsActionId: string) => {
     setLoading(true);
@@ -364,7 +290,7 @@ const BoardMissionsStationAction = ({
     );
   };
 
-  //?new !done
+  const [isReadyModal, setIsReadyModal] = useState<boolean>(false);
   const setState = useSetRecoilState<any>(boardMissionMaterialState);
   const [openMaterialsModal, setOpenMaterialsModal] =
     useRecoilState<any>(materialModalState);
@@ -380,7 +306,16 @@ const BoardMissionsStationAction = ({
     setActiveStation(null);
   };
 
-  //!done
+  const onClickOpenDoneModal = (e) => {
+    e.stopPropagation();
+    if (isLastStation && isOrderCompleted) {
+      setIsReadyModal(true);
+    } else {
+      setIsReadyModal(false);
+    }
+    getBoardMissionActionMaterials(boardMissionActionId).then();
+  };
+
   const getBoardMissionActionMaterials = async (
     boardMissionsActionId: string
   ) => {
@@ -400,7 +335,6 @@ const BoardMissionsStationAction = ({
     });
   };
 
-  //!done
   const onClickDoneWithMaterials = async (
     updatedState: {
       currentStationId: string;
@@ -413,7 +347,7 @@ const BoardMissionsStationAction = ({
         currentValue: string;
       }[];
     },
-    sendMSg?
+    sendMSg?: boolean
   ) => {
     setLoading(true);
     const callBack = (res) => {
@@ -563,7 +497,6 @@ const BoardMissionsStationAction = ({
                             padding: 0,
                             borderRadius: "12px",
                           }}
-                          // onClick={onClickOpenModal} //!old
                           onClick={onClickOpenDoneModal}
                         >
                           <CheckIcon />
@@ -1009,7 +942,6 @@ const BoardMissionsStationAction = ({
                         padding: 0,
                         borderRadius: "12px",
                       }}
-                      // onClick={onClickOpenModal} //!old
                       onClick={onClickOpenDoneModal}
                     >
                       <CheckIcon />
@@ -1022,44 +954,14 @@ const BoardMissionsStationAction = ({
         </Fade>
       )}
 
-      <ThreeOptionsModal
-        modalType={ModalType.WARNING}
-        title={t("boardMissions.markDoneModalTitle")}
-        subTitle={t("boardMissions.markDoneModalSubTitle")}
-        yesBtn={"boardMissions.markDoneModalYes"}
-        noBtn={"boardMissions.markDoneModalNo"}
-        openModal={openReadyModal}
-        onClose={() => setIsReadyModal(false)}
-        // onClickYes={() => onClickDone(boardMissionActionId, true)}
-        // onClickNo={() => onClickDone(boardMissionActionId, false)}
-
-        onClickYes={() => onClickDoneWithMaterials(null, true)}
-        onClickNo={() => onClickDoneWithMaterials(null, false)}
-        insideStyle={{ zIndex: 999999 }}
-      />
-
-      {/* !hereee */}
-      {/* <GoMakeDeleteModal
-        hideIcon={true}
-        modalType={ModalType.ADD}
-        title={t("customers.modal.updateJobStationModalTitle")}
-        yesBtn={t("modal.confirm")}
-        openModal={openModal}
-        onClose={onClickCloseModal}
-        onClickDelete={() => {
-          onClickDone(boardMissionActionId).then();
-        }}
-      /> */}
-
       {activeStation && (
         <MaterialsAndProductionTimeModalWidget
           openModal={openMaterialsModal}
           onClose={handleCloseModal}
           onUpdate={onClickDoneWithMaterials}
-          test={activeStation?.boardMissionActionId}
+          showIsReady={isReadyModal}
         />
       )}
-
       <PrintPackingSlipModalWidget
         boardMissionId={boardMissions.boardMissionId}
         quantity={boardMissions.quantity}

@@ -14,24 +14,23 @@ import { MaterialStockUnit } from "@/widgets/materials-widget/enums";
 interface IProps {
   openModal: boolean;
   onClose: () => void;
-  onUpdate?: (updatedState: any, test: any) => void;
-  test?: any;
+  onUpdate: (updatedState: any, isSendMessage?: boolean) => void;
+  showIsReady?: boolean;
 }
 
-//!here
 const MaterialsAndProductionTimeModalWidget = ({
   openModal,
   onClose,
   onUpdate,
-  test,
+  showIsReady = false,
 }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [state, setState] = useRecoilState<any>(boardMissionMaterialState);
 
+  const convertMinutesToSeconds = (minutes: number) => minutes * 60;
   const convertSecondsToMinutes = (seconds: string | number) =>
     Math.floor(Number(seconds) / 60);
-  const convertMinutesToSeconds = (minutes: number) => minutes * 60;
 
   const handleMaterialChange = (index: number, newValue: string) => {
     setState((prevState) => ({
@@ -42,8 +41,8 @@ const MaterialsAndProductionTimeModalWidget = ({
     }));
   };
 
-  const handleUpdate = () => {
-    onUpdate(state, test);
+  const handleUpdate = (isSendingMessage?: boolean | null) => {
+    onUpdate(state, isSendingMessage);
     onClose();
   };
 
@@ -64,13 +63,32 @@ const MaterialsAndProductionTimeModalWidget = ({
     <GoMakeModal
       openModal={openModal}
       onClose={onClose}
-      modalTitle={t("boardMissions.materialsAndPTModalTitle")}
-      insideStyle={classes.materialsQuantityModalStyle}
+      withClose={showIsReady ? false : true}
+      isMiddleTitle={showIsReady ? true : false}
+      modalTitle={
+        showIsReady
+          ? t("boardMissions.markDoneModalTitle")
+          : t("boardMissions.materialsAndPTModalTitle")
+      }
+      insideStyle={{
+        ...classes.materialsQuantityModalStyle,
+        ...(showIsReady && { width: "fit-content" }),
+      }}
       style={{ zIndex: 999999 }}
       withRoundedCloseIcon={false}
-      modalTitleStyle={{ ...FONT_FAMILY.Inter(600, 18), color: "#000000" }}
+      modalTitleStyle={{
+        ...(showIsReady
+          ? { ...FONT_FAMILY.Inter(600, 16), textAlign: "center" }
+          : FONT_FAMILY.Inter(600, 18)),
+        color: "#000000",
+      }}
     >
       <Stack direction="column" gap="30px">
+        {showIsReady && (
+          <div style={classes.subTitle}>
+            {t("boardMissions.markDoneModalSubTitle")}
+          </div>
+        )}
         <Stack
           direction="column"
           gap="15px"
@@ -142,32 +160,53 @@ const MaterialsAndProductionTimeModalWidget = ({
             </Stack>
           )}
         </Stack>
-
         {/* Buttons */}
         <Stack direction="row" gap="15px" justifyContent="flex-end">
-          <GomakePrimaryButton
-            style={{
-              width: "50%",
-              borderRadius: "8px",
-              height: "44px",
-            }}
-            onClick={handleUpdate}
-          >
-            {t("modal.update")}
-          </GomakePrimaryButton>
-          <GomakePrimaryButton
-            style={{
-              width: "50%",
-              borderRadius: "8px",
-              height: "44px",
-              background: "white",
-              color: "#000000",
-              border: "1px solid  #D0D5DD",
-            }}
-            onClick={onClose}
-          >
-            {t("modal.cancel")}
-          </GomakePrimaryButton>
+          {showIsReady ? (
+            <>
+              <GomakePrimaryButton
+                style={classes.yesBtn}
+                onClick={() => handleUpdate(true)}
+              >
+                {t("boardMissions.markDoneModalYes")}
+              </GomakePrimaryButton>
+              <GomakePrimaryButton
+                style={classes.noBtn}
+                onClick={() => handleUpdate(false)}
+              >
+                {t("boardMissions.markDoneModalNo")}
+              </GomakePrimaryButton>
+              <GomakePrimaryButton style={classes.cancelBtn} onClick={onClose}>
+                {t("modal.cancel")}
+              </GomakePrimaryButton>
+            </>
+          ) : (
+            <>
+              <GomakePrimaryButton
+                style={{
+                  width: "50%",
+                  borderRadius: "8px",
+                  height: "44px",
+                }}
+                onClick={handleUpdate}
+              >
+                {t("modal.update")}
+              </GomakePrimaryButton>
+              <GomakePrimaryButton
+                style={{
+                  width: "50%",
+                  borderRadius: "8px",
+                  height: "44px",
+                  background: "white",
+                  color: "#000000",
+                  border: "1px solid  #D0D5DD",
+                }}
+                onClick={onClose}
+              >
+                {t("modal.cancel")}
+              </GomakePrimaryButton>
+            </>
+          )}
         </Stack>
       </Stack>
     </GoMakeModal>
