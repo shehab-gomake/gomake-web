@@ -810,6 +810,11 @@ const useStyle = () => {
         color: "#504FA1",
       },
       titleLogsTextStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        gap: 2,
         ...FONT_FAMILY.Lexend(400, 14),
       },
       iconLogsTextStyle: {
