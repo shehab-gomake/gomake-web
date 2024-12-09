@@ -52,9 +52,6 @@ const SectionMappingWidget = ({
   const [selectedActionType, setSelectedActionType] = useState(null);
   const [selectedUpdateType, setSelectedUpdateType] = useRecoilState(selectedUpdateTypeState);
   const [dontAskNextTime, setDontAskNextTime] = useRecoilState(dontAskNextTimeState);
-
-  console.log("selectedUpdateType", selectedUpdateType)
-
   const renderIconWithTooltip = (
     condition,
     trueIcon,
@@ -87,8 +84,6 @@ const SectionMappingWidget = ({
   };
 
   const handleUpdate = (actionType: ParameterActionType, parameter: any, updateType?: UpdateTypes) => {
-
-    console.log("updateTypesssssssss", updateType)
     if (selectedUpdateType === null) {
       alertFault(t("products.parameters.pleaseSelectOneOption"));
       return;

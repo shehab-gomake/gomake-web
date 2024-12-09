@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon, ReloadIcon } from "@/icons";
-import { Checkbox, Divider, Typography } from "@mui/material";
+import { Checkbox, Divider, IconButton, Tooltip, Typography } from "@mui/material";
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
@@ -203,17 +203,19 @@ const RightSideWidget = ({
               />
             )}
           </div>
-          <span style={clasess.totalCurrancyStyle}>{systemCurrency}</span>
+          <span style={clasess.totalCurrancyStyle}>{systemCurrency}
+            <Tooltip
+              title={t(
+                "products.offsetPrice.admin.updateTotalPrice"
+              )}>
+              <IconButton onClick={() => {
+                calculationProduct(subProducts);
+              }}>
+                <ReloadIcon />
+              </IconButton>
+            </Tooltip>
+          </span>
         </div>
-        <div
-          onClick={() => {
-            if (canCalculation) {
-              calculationProduct(subProducts);
-            }
-          }}
-          style={clasess.reloadTotalPrice}><ReloadIcon /> {t(
-            "products.offsetPrice.admin.updateTotalPrice"
-          )}</div>
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
