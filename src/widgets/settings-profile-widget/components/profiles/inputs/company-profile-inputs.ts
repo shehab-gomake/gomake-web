@@ -41,6 +41,17 @@ const companyProfileInputs = (state: ICompanyProfile, currencies) => {
             value: state?.systemCurrency,
             isValid: true,
         },
+        {
+            name: "employeeWorkingHourCost",
+            label: "profileSettings.employeeWorkingHourCost",
+            type: "number",
+            placeholder: "profileSettings.employeeWorkingHourCost",
+            required: false,
+            parameterKey: "employeeWorkingHourCost",
+            options: [],
+            value: state.employeeWorkingHourCost,
+            isValid: !!state.employeeWorkingHourCost,
+        },
     ];
 }
 
