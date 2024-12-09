@@ -173,6 +173,11 @@ const useStyle = () => {
         minHeight: 48,
         borderBottom: "none",
       },
+      activeTabContainer3: {
+        backgroundColor: "rgba(178, 57, 0, 0.04)",
+        minHeight: 48,
+        borderBottom: "none",
+      },
       headerAccordionContainer: {
         display: "flex",
         flexDirection: "row" as "row",
