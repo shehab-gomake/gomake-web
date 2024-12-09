@@ -217,7 +217,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setIsJobNameValue(false);
   };
   useEffect(() => {
-    console.log("productTypesNumber", productTypesNumber)
     if (quantityTypes?.length > 0) {
       setWorkTypes(quantityTypes);
     } else if (productTypesNumber === 1 || productTypesNumber === 0) {
@@ -2291,7 +2290,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           multiParameterModal={multiParameterModal}
         />
       );
-    } else if (
+    }
+    else if (
       parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS
     ) {
       let disabled = false;
@@ -3284,15 +3284,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
               if (
 
-                  parameterValue &&
-                  parameterValue.selectedParameterValues &&
-                  parameterValue.selectedParameterValues.length > 0
+                parameterValue &&
+                parameterValue.selectedParameterValues &&
+                parameterValue.selectedParameterValues.length > 0
               ) {
                 parameterValue.selectedParameterValues.forEach((selectedParam) => {
                   if (selectedParam.valueIds && selectedParam.valueIds.length > 0) {
                     const param = relatedParameter.settingParameters.find(
 
-                        (param) => param.id === selectedParam.parameterId
+                      (param) => param.id === selectedParam.parameterId
                     );
                     parameters.push({
                       parameterId: param.id,
@@ -3311,7 +3311,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       parameterCode: param?.code,
                       isGeneralInfoInProductionFloor:
 
-                      param?.isGeneralInfoInProductionFloor,
+                        param?.isGeneralInfoInProductionFloor,
                     });
                   }
                 });
