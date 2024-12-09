@@ -30,8 +30,10 @@ import {
   boardMissionsUpdateActionEmployee,
   boardMissionsUpdateActionMachine,
   cancelBoardMissionsActionDone,
+  getBoardMissionActionMaterialsApi,
   toggleBoardMissionsActionTimer,
   updateBoardMissionsActionDone,
+  updateBoardMissionsActionDoneWithMaterialsApi,
   updatePrintHouseMaterialStockFromJobApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -60,6 +62,7 @@ import {
   boardMissionMaterialState,
   materialModalState,
 } from "./material-and-production-time-modal/states";
+import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
 import { ModalType } from "@/enums";
 
 interface IProps extends IBoardMissionsStation {
@@ -71,6 +74,7 @@ interface IProps extends IBoardMissionsStation {
   isHideTimeAndDate?: boolean;
 }
 
+//!here
 const BoardMissionsStationAction = ({
   id,
   actionId,
@@ -100,19 +104,18 @@ const BoardMissionsStationAction = ({
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+  const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData } =
+    useSnackBar();
   const [openReadyModal, setIsReadyModal] = useState<boolean>(false);
   const [boardMissions, setBoardMissions] = useRecoilState(
     boardMissionsDetailsState
   );
   const [stations, setStations] = useRecoilState(boardMissionsStationsState);
-  const [openPackagingModal, setOpenPackagingModal] = useState(false);
+  const [openPackagingModal, setOpenPackagingModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [timerLoading, setTimerLoading] = useState<boolean>(false);
   const [isOrderCompleted] = useRecoilState(isOrderCompletedState);
-
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
-  const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
 
   const {
@@ -123,20 +126,33 @@ const BoardMissionsStationAction = ({
   } = useBoardMissionsUpdatedOutputs();
   const { CheckPermission } = useUserPermission();
 
-  const [openModal, setOpenMpdal] = useState(false);
+  //!here old
 
-  const onClickOpenModal = (e) => {
+  // const [openModal, setOpenMpdal] = useState(false);
+  // const onClickOpenModal = (e) => {
+  //   if (isLastStation && isOrderCompleted) {
+  //     setIsReadyModal(true);
+  //   } else {
+  //     e.stopPropagation();
+  //     setOpenMpdal(true);
+  //   }
+  // };
+
+  // const onClickCloseModal = () => {
+  //   setOpenMpdal(false);
+  // };
+
+  //!here new
+  const onClickOpenDoneModal = (e) => {
+    debugger;
     if (isLastStation && isOrderCompleted) {
       setIsReadyModal(true);
     } else {
       e.stopPropagation();
-      setOpenMpdal(true);
+      getBoardMissionActionMaterials(boardMissionActionId).then();
     }
   };
 
-  const onClickCloseModal = (e) => {
-    setOpenMpdal(false);
-  };
   const inputsParameters = outputs.filter(
     (parameter) =>
       parameter &&
@@ -162,8 +178,7 @@ const BoardMissionsStationAction = ({
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
 
-  const setState = useSetRecoilState<any>(boardMissionMaterialState);
-  const setOpenMaterialsModal = useSetRecoilState<any>(materialModalState);
+  //!thisss old
   const onClickDone = async (
     boardMissionsActionId: string,
     sendMSg?: boolean
@@ -176,7 +191,6 @@ const BoardMissionsStationAction = ({
         setState(res.data);
         setOpenMaterialsModal(true);
         const currentActionId = res.data.currentStationId;
-        //stations.find(x=>x.boardMissionActionId == currentActionId).;
         setStations(
           stations.map((station) => {
             if (station.boardMissionActionId == boardMissionActionId) {
@@ -350,6 +364,97 @@ const BoardMissionsStationAction = ({
     );
   };
 
+  //?new !done
+  const setState = useSetRecoilState<any>(boardMissionMaterialState);
+  const [openMaterialsModal, setOpenMaterialsModal] =
+    useRecoilState<any>(materialModalState);
+  const [activeStation, setActiveStation] = useState(null);
+
+  const handleOpenModal = (station) => {
+    setActiveStation(station);
+    setOpenMaterialsModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenMaterialsModal(false);
+    setActiveStation(null);
+  };
+
+  //!done
+  const getBoardMissionActionMaterials = async (
+    boardMissionsActionId: string
+  ) => {
+    const callBack = (res) => {
+      setLoading(false);
+
+      if (res.success) {
+        setState(res.data);
+        handleOpenModal(boardMissionsActionId);
+      } else {
+        alertFaultGetData();
+      }
+    };
+    await getBoardMissionActionMaterialsApi(callApi, callBack, {
+      boardMissionsActionId: boardMissionsActionId,
+      productType: boardMissions.productType,
+    });
+  };
+
+  //!done
+  const onClickDoneWithMaterials = async (
+    updatedState: {
+      currentStationId: string;
+      boardMissionActionId: string;
+      productionTime: string;
+      materials: {
+        ProductType: string;
+        WorkFlowActionId: string;
+        materialKey: string;
+        currentValue: string;
+      }[];
+    },
+    sendMSg?
+  ) => {
+    setLoading(true);
+    const callBack = (res) => {
+      setLoading(false);
+      if (res.success) {
+        alertSuccessUpdate();
+        const currentActionId = res?.data?.currentStationId;
+        setStations(
+          stations.map((station) => {
+            if (station?.boardMissionActionId === boardMissionActionId) {
+              return {
+                ...station,
+                isDone: true,
+                boardMissionActionTimer: {
+                  isTimerRunning: false,
+                  totalRunningTime: Number(updatedState.productionTime),
+                },
+              };
+            }
+            return {
+              ...station,
+            };
+          })
+        );
+        setBoardMissions({
+          ...boardMissions,
+          currentBoardMissionActionId: currentActionId,
+        });
+        setOpenPackagingModal(true);
+      } else {
+        alertFaultUpdate();
+        setLoading(false);
+      }
+    };
+    await updateBoardMissionsActionDoneWithMaterialsApi(callApi, callBack, {
+      updatedState,
+      productType: boardMissions.productType,
+      isSendMessage: !!sendMSg,
+    });
+  };
+
   return (
     <>
       {isHaveSubACtions ? (
@@ -458,7 +563,8 @@ const BoardMissionsStationAction = ({
                             padding: 0,
                             borderRadius: "12px",
                           }}
-                          onClick={onClickOpenModal}
+                          // onClick={onClickOpenModal} //!old
+                          onClick={onClickOpenDoneModal}
                         >
                           <CheckIcon />
                         </PrimaryButton>
@@ -648,12 +754,12 @@ const BoardMissionsStationAction = ({
                                     >
                                       {(!!machensFilter
                                         ? machinesList?.filter((value) =>
-                                          value.label
-                                            ?.toLowerCase()
-                                            ?.includes(
-                                              machensFilter?.toLowerCase()
-                                            )
-                                        )
+                                            value.label
+                                              ?.toLowerCase()
+                                              ?.includes(
+                                                machensFilter?.toLowerCase()
+                                              )
+                                          )
                                         : machinesList
                                       )?.map((value, index) => {
                                         return (
@@ -741,12 +847,12 @@ const BoardMissionsStationAction = ({
                                   >
                                     {(!!contactsFilter
                                       ? employeesList?.filter((value) =>
-                                        value.label
-                                          ?.toLowerCase()
-                                          ?.includes(
-                                            contactsFilter?.toLowerCase()
-                                          )
-                                      )
+                                          value.label
+                                            ?.toLowerCase()
+                                            ?.includes(
+                                              contactsFilter?.toLowerCase()
+                                            )
+                                        )
                                       : employeesList
                                     )?.map((value, index) => {
                                       return (
@@ -903,7 +1009,8 @@ const BoardMissionsStationAction = ({
                         padding: 0,
                         borderRadius: "12px",
                       }}
-                      onClick={onClickOpenModal}
+                      // onClick={onClickOpenModal} //!old
+                      onClick={onClickOpenDoneModal}
                     >
                       <CheckIcon />
                     </PrimaryButton>
@@ -916,17 +1023,23 @@ const BoardMissionsStationAction = ({
       )}
 
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
         yesBtn={"boardMissions.markDoneModalYes"}
         noBtn={"boardMissions.markDoneModalNo"}
         openModal={openReadyModal}
         onClose={() => setIsReadyModal(false)}
-        onClickYes={() => onClickDone(boardMissionActionId, true)}
-        onClickNo={() => onClickDone(boardMissionActionId, false)}
+        // onClickYes={() => onClickDone(boardMissionActionId, true)}
+        // onClickNo={() => onClickDone(boardMissionActionId, false)}
+
+        onClickYes={() => onClickDoneWithMaterials(null, true)}
+        onClickNo={() => onClickDoneWithMaterials(null, false)}
         insideStyle={{ zIndex: 999999 }}
       />
-      <GoMakeDeleteModal
+
+      {/* !hereee */}
+      {/* <GoMakeDeleteModal
         hideIcon={true}
         modalType={ModalType.ADD}
         title={t("customers.modal.updateJobStationModalTitle")}
@@ -936,12 +1049,24 @@ const BoardMissionsStationAction = ({
         onClickDelete={() => {
           onClickDone(boardMissionActionId).then();
         }}
-      />
+      /> */}
+
+      {activeStation && (
+        <MaterialsAndProductionTimeModalWidget
+          openModal={openMaterialsModal}
+          onClose={handleCloseModal}
+          onUpdate={onClickDoneWithMaterials}
+          test={activeStation?.boardMissionActionId}
+        />
+      )}
+
       <PrintPackingSlipModalWidget
         boardMissionId={boardMissions.boardMissionId}
         quantity={boardMissions.quantity}
         openModal={openPackagingModal}
-        onClose={() => setOpenPackagingModal(false)}
+        onClose={() => {
+          setOpenPackagingModal(false);
+        }}
       />
     </>
   );

@@ -9,20 +9,29 @@ import { useStyle } from "@/pages-components/board-missions/style";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useRecoilState } from "recoil";
 import { boardMissionMaterialState } from "./states";
+import { MaterialStockUnit } from "@/widgets/materials-widget/enums";
 
 interface IProps {
   openModal: boolean;
   onClose: () => void;
-  onUpdate?: (updatedState: any) => void;
+  onUpdate?: (updatedState: any, test: any) => void;
+  test?: any;
 }
+
+//!here
 const MaterialsAndProductionTimeModalWidget = ({
   openModal,
   onClose,
   onUpdate,
+  test,
 }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [state, setState] = useRecoilState<any>(boardMissionMaterialState);
+
+  const convertSecondsToMinutes = (seconds: string | number) =>
+    Math.floor(Number(seconds) / 60);
+  const convertMinutesToSeconds = (minutes: number) => minutes * 60;
 
   const handleMaterialChange = (index: number, newValue: string) => {
     setState((prevState) => ({
@@ -33,133 +42,29 @@ const MaterialsAndProductionTimeModalWidget = ({
     }));
   };
 
+  const handleUpdate = () => {
+    onUpdate(state, test);
+    onClose();
+  };
+
   const handleProductionTimeChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setState((prevState) => ({
-      ...prevState,
-      productionTime: event.target.value,
-    }));
+    const newValueInMinutes = parseInt(event.target.value, 10);
+
+    if (!isNaN(newValueInMinutes)) {
+      setState((prevState) => ({
+        ...prevState,
+        productionTime: convertMinutesToSeconds(newValueInMinutes), // Store in seconds
+      }));
+    }
   };
 
-  // const materialInputs = useMemo(
-  //   () =>
-  //     materials?.map((material, index) => (
-  //       <Stack
-  //         key={index}
-  //         direction="row"
-  //         alignItems="center"
-  //         gap="10px"
-  //         style={{ width: "100%" }}
-  //       >
-  //         <div style={{ width: "50%" }}>
-  //           <h3 style={classes.filterLabelStyle}>{material?.materialKey}</h3>
-  //         </div>
-
-  //         <div style={{ width: "50%" }}>
-  //           <GomakeTextInput
-  //             key={`input-${material.materialKey}-${index}`}
-  //             style={classes.textInputStyle}
-  //             value={material?.currentValue}
-  //             onChange={(e) => handleMaterialChange(index, e.target.value)}
-  //             type="number"
-  //             placeholder={t("boardMissions.quantity")}
-  //           />
-  //         </div>
-  //       </Stack>
-  //     )),
-  //   [materials, classes, t]
-  // );
-
-  //   return (
-  //     <GoMakeModal
-  //       openModal={openModal}
-  //       onClose={onClose}
-  //       modalTitle={t("Enter actual materials quantity and production time")}
-  //       insideStyle={classes.materialsQuantityModalStyle}
-  //       style={{ zIndex: 999999 }}
-  //       withRoundedCloseIcon={false}
-  //       modalTitleStyle={{ ...FONT_FAMILY.Inter(600, 18), color: "#000000" }}
-  //     >
-  //       <Stack direction="column" gap="30px">
-  //         <Stack
-  //           direction="column"
-  //           gap="15px"
-  //           maxHeight={"200px"}
-  //           overflow={"scroll"}
-  //           padding={"0px 10px"}
-  //           sx={{
-  //             "::-webkit-scrollbar": {
-  //               width: "8px",
-  //             },
-  //             "::-webkit-scrollbar-thumb": {
-  //               backgroundColor: "#CCCDCF",
-  //               borderRadius: "4px",
-  //               cursor: "pointer",
-  //             },
-  //             "::-webkit-scrollbar-thumb:hover": {
-  //               backgroundColor: "#888",
-  //             },
-  //           }}
-  //         >
-  //           {/* Production Time Input */}
-  //           <div style={{ width: "100%" }}>
-  //             <h3 style={classes.filterLabelStyle}>
-  //               {t("boardMissions.productionTime")}
-  //             </h3>
-  //             <GomakeTextInput
-  //               style={classes.textInputStyle}
-  //               value={productionTime}
-  //               onChange={handleProductionTimeChange}
-  //               type="number"
-  //               placeholder={t("boardMissions.productionTime")}
-  //             />
-  //           </div>
-
-  //           {/* Materials Mapping */}
-  //           {materialInputs}
-  //         </Stack>
-
-  //         {/* Buttons */}
-  //         <Stack direction="row" gap="15px" justifyContent="flex-end">
-  //           <GomakePrimaryButton
-  //             style={{
-  //               width: "50%",
-  //               borderRadius: "8px",
-  //               height: "44px",
-  //             }}
-  //             onClick={handleUpdate}
-  //           >
-  //             {t("modal.update")}
-  //           </GomakePrimaryButton>
-  //           <GomakePrimaryButton
-  //             style={{
-  //               width: "50%",
-  //               borderRadius: "8px",
-  //               height: "44px",
-  //               background: "white",
-  //               color: "#000000",
-  //               border: "1px solid  #D0D5DD",
-  //             }}
-  //             onClick={onClose}
-  //           >
-  //             {t("modal.cancel")}
-  //           </GomakePrimaryButton>
-  //         </Stack>
-  //       </Stack>
-  //     </GoMakeModal>
-  //   );
-  // };
-
-  const handleUpdate = () => {
-    onUpdate(state);
-    onClose();
-  };
   return (
     <GoMakeModal
       openModal={openModal}
       onClose={onClose}
-      modalTitle={t("Enter actual materials quantity and production time")}
+      modalTitle={t("boardMissions.materialsAndPTModalTitle")}
       insideStyle={classes.materialsQuantityModalStyle}
       style={{ zIndex: 999999 }}
       withRoundedCloseIcon={false}
@@ -193,7 +98,7 @@ const MaterialsAndProductionTimeModalWidget = ({
             </h3>
             <GomakeTextInput
               style={classes.textInputStyle}
-              value={state?.productionTime || 0}
+              value={convertSecondsToMinutes(state?.productionTime || 0)}
               onChange={handleProductionTimeChange}
               type="number"
               placeholder={t("boardMissions.productionTime")}
@@ -213,7 +118,9 @@ const MaterialsAndProductionTimeModalWidget = ({
                 >
                   <div style={{ width: "50%" }}>
                     <h3 style={classes.filterLabelStyle}>
-                      {material?.materialKey}
+                      {`${material?.materialKey} (${
+                        MaterialStockUnit[material?.unit]
+                      })`}
                     </h3>
                   </div>
 
@@ -266,4 +173,5 @@ const MaterialsAndProductionTimeModalWidget = ({
     </GoMakeModal>
   );
 };
+
 export { MaterialsAndProductionTimeModalWidget };
