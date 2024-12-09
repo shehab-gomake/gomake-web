@@ -56,6 +56,11 @@ const useMaterialsCategories = (isAdmin: boolean) => {
         setCategoryNumbering(res.data?.categoryNumbering)
 
       }
+      else {
+        setMaterialCategoryData([])
+        setPagesCount(0);
+        setMaterialTableFilters([])
+      }
     };
     const isActive =
       activeFilter === EMaterialActiveFilter.ACTIVE
