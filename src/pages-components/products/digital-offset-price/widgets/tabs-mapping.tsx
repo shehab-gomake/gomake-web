@@ -106,9 +106,29 @@ const TabsMappingWidget = ({
           {index === activeIndex ? (
             _renderActiveIcon(item.icon)
           ) : index >= activeIndex ? (
-            _renderUnActiveIcon(item.icon)
+            !isAdmin && hasMissingRequiredParameters(item) ?
+              <Tooltip title={<div style={{ fontSize: 16 }}>
+                {t("products.offsetPrice.admin.missingRequiredParameters")}
+                <br />
+                <span style={{ fontSize: 12 }}>
+                  {t("products.offsetPrice.admin.missingRequiredParametersTooltip")}
+                </span>
+              </div>} style={{ marginTop: 5 }}>
+                <span> <WarnIcon /></span>
+              </Tooltip> :
+              _renderUnActiveIcon(item.icon)
           ) : (
-            <DoneIcon />
+            !isAdmin && hasMissingRequiredParameters(item) ?
+              <Tooltip title={<div style={{ fontSize: 16 }}>
+                {t("products.offsetPrice.admin.missingRequiredParameters")}
+                <br />
+                <span style={{ fontSize: 12 }}>
+                  {t("products.offsetPrice.admin.missingRequiredParametersTooltip")}
+                </span>
+              </div>} style={{ marginTop: 5 }}>
+                <span> <WarnIcon /></span>
+              </Tooltip> :
+              <DoneIcon />
           )}
         </div>
         <div
@@ -119,7 +139,7 @@ const TabsMappingWidget = ({
           }
         >
           {item.name}
-          {!isAdmin && hasMissingRequiredParameters(item) &&
+          {/* {!isAdmin && hasMissingRequiredParameters(item) &&
             <Tooltip title={<div style={{ fontSize: 16 }}>
               {t("products.offsetPrice.admin.missingRequiredParameters")}
               <br />
@@ -129,7 +149,7 @@ const TabsMappingWidget = ({
             </div>} style={{ marginTop: 5 }}>
               <span> <WarnIcon /></span>
             </Tooltip>
-          }
+          } */}
 
         </div>
         {item.isCanDuplicated && !item.index && !item.isCanDeleted ? (
