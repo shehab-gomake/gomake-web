@@ -8,7 +8,7 @@ const useStyle = () => {
   const { t } = useTranslation();
   const { primaryColor, successColor, secondColor, errorColor, neutralColor } =
     useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -16,8 +16,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        marginBottom: 20
-
+        marginBottom: 20,
       },
       subHeaderContainer: {
         display: "flex",
@@ -201,10 +200,39 @@ const useStyle = () => {
         alignItems: "center",
         cursor: "pointer",
       },
+      filtersContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "space-between",
+        alignItems: "flex-start",
+        gap: 20,
+        width: "15vw",
+        padding: "10px",
+        flexWrap: "wrap" as "wrap",
+      },
+      backBtnContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center" as "center",
+        gap: 5,
+      },
+      buttonsFilterContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-end",
+        alignItems: "flex-end",
+        alignSelf: "flex-end",
+      },
+      clearBtnStyle: {
+        height: 40,
+        backgroundColor: "#FFF",
+        color: "black",
+      },
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };
