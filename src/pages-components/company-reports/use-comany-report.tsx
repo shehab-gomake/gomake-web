@@ -5,11 +5,11 @@ import { getAllDataPrintHousesReports } from "@/services/api-service/company-rep
 import { generateCalculateProductsExcelForPrintHousesApi } from "@/services/hooks";
 import { OptionsComponent } from "@/pages-components/company-reports/components/options-component";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import { printHousesState } from "@/pages-components/company-reports/components/types/state";
+import { printHousesState } from "@/pages-components/company-reports/components/utils/state";
 import {
   IPrintHouse,
   PrintHousePayStatus,
-} from "./components/types/interfaces";
+} from "./components/utils/interfaces";
 import { makePaymentApi } from "@/services/api-service/profiles/company-profile-api";
 
 const initialPrintHouseState: IPrintHouse = {

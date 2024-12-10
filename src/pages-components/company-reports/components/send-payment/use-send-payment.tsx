@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useState } from "react";
-import { initSendPaymentState, SendPaymentState } from "../types/interfaces";
+import { initSendPaymentState, SendPaymentState } from "../utils/interfaces";
 import { sendPaymentPageApi } from "@/services/api-service/company-report/get-print-houses-report";
 import { useRecoilValue } from "recoil";
 import { loadgingState } from "@/store/loading";
