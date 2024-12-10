@@ -4,7 +4,7 @@ import { useStyle } from "./style";
 import { HeaderTitle } from "@/widgets";
 import { useEffect, useMemo } from "react";
 import { GoMakeAutoComplate } from "@/components";
-import { PrintHousePayStatus } from "./components/types/interfaces";
+import { PrintHousePayStatus } from "./components/utils/interfaces";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { Stack } from "@mui/material";
 import { useDebounce } from "use-debounce";
