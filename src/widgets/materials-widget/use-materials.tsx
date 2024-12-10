@@ -134,7 +134,11 @@ const useMaterials = (isAdmin: boolean) => {
   const { t } = useTranslation();
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
   const [supplierId, setSupplierId] = useRecoilState(selectedSupplierIdState);
+  const [selectedMaterialCategory, setSelectedMaterialCategory] = useState<any>();
+  const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
   const onSelectCategory = (category: string) => {
+    setIsFirstTime(false);
+    setSelectedMaterialCategory(category);
     setMaterialCategoryData([])
     setSupplierId("")
     setDefaultSupplier("");
@@ -366,6 +370,17 @@ const useMaterials = (isAdmin: boolean) => {
     resetMaterialCategoryData();
     const callBack = (res) => {
       if (res.success) {
+        const supplier = res?.data[0]
+        if (isFirstTime && supplier) {
+          getMaterialCategoryData(
+            materialType?.toString(),
+            materialCategory?.toString(),
+            materialFilter,
+            supplier?.id,
+            pageNumber,
+            14
+          ).then();
+        }
         setMaterialCategorySuppliers(
           res?.data?.map((supplier) => {
             if (supplier.isDefault) {
@@ -431,7 +446,8 @@ const useMaterials = (isAdmin: boolean) => {
     getClientsMaterials,
     productList,
     onClickCloseDeleteTableRowWhenHaveMoreSupplierModal,
-    toggleIsActive
+    toggleIsActive,
+    selectedMaterialCategory,
   };
 };
 
