@@ -3916,33 +3916,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
               param.valuesConfigs = [];
               const mergeAndFormatValuesConfigs = (valuesConfigs, additionalValuesConfigs, data) => {
-                // Find the matching additionalValuesConfigs entry
                 const additionalConfig = additionalValuesConfigs.find(
                   (config) => config.key === data.valueIds
                 );
-
                 if (!additionalConfig) {
-                  // If no matching key is found, return the original valuesConfigs
                   return valuesConfigs;
                 }
-
-                // Extract additional valuesConfigs
                 const additionalValues = additionalConfig.valuesConfigs;
-
-                // Prepare the final array
                 const updatedValuesConfigs = [];
-
-                // Iterate over valuesConfigs and process matches
                 const transformedAdditionalValues = additionalValues
                   .filter((additionalItem) => {
-                    // Find if any id from valuesConfigs matches the materialValueIds[0]?.valueId
                     const matchedIndex = valuesConfigs.findIndex(
                       (valueConfig) =>
                         valueConfig.id === additionalItem.materialValueIds?.[0]?.valueId
                     );
-
                     if (matchedIndex !== -1) {
-                      // If a match is found, transform the additional item to match the valuesConfigs format
                       const transformedItem = {
                         id: additionalItem.materialValueIds[0].valueId,
                         activateAction: additionalItem.activateAction,
@@ -3954,22 +3942,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         updateName: additionalItem.materialValueIds[0].valueId,
                         values: [additionalItem.materialValueIds[0].valueId],
                         additionalAttribute: [],
-                        currency: "ILS", // Add default or derived currency if needed
+                        currency: "", // Add default or derived currency if needed
                       };
 
                       updatedValuesConfigs.push(transformedItem);
-
-                      // Remove the matched item from valuesConfigs
                       valuesConfigs.splice(matchedIndex, 1);
                     }
 
                     return false;
                   });
 
-                // Combine remaining valuesConfigs with the transformed items
                 return [...valuesConfigs, ...updatedValuesConfigs];
               }
-              //param.isHidden = false;
               paramMaterialValues?.forEach((val) => {
                 param.valuesConfigs.push({
                   id: val.valueId,
