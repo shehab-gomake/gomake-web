@@ -3942,22 +3942,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         updateName: additionalItem.materialValueIds[0].valueId,
                         values: [additionalItem.materialValueIds[0].valueId],
                         additionalAttribute: [],
-                        currency: "ILS", // Add default or derived currency if needed
+                        currency: "", // Add default or derived currency if needed
                       };
 
                       updatedValuesConfigs.push(transformedItem);
-
-                      // Remove the matched item from valuesConfigs
                       valuesConfigs.splice(matchedIndex, 1);
                     }
 
                     return false;
                   });
 
-                // Combine remaining valuesConfigs with the transformed items
                 return [...valuesConfigs, ...updatedValuesConfigs];
               }
-              //param.isHidden = false;
               paramMaterialValues?.forEach((val) => {
                 param.valuesConfigs.push({
                   id: val.valueId,
