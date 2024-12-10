@@ -3916,33 +3916,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
               param.valuesConfigs = [];
               const mergeAndFormatValuesConfigs = (valuesConfigs, additionalValuesConfigs, data) => {
-                // Find the matching additionalValuesConfigs entry
                 const additionalConfig = additionalValuesConfigs.find(
                   (config) => config.key === data.valueIds
                 );
-
                 if (!additionalConfig) {
-                  // If no matching key is found, return the original valuesConfigs
                   return valuesConfigs;
                 }
-
-                // Extract additional valuesConfigs
                 const additionalValues = additionalConfig.valuesConfigs;
-
-                // Prepare the final array
                 const updatedValuesConfigs = [];
-
-                // Iterate over valuesConfigs and process matches
                 const transformedAdditionalValues = additionalValues
                   .filter((additionalItem) => {
-                    // Find if any id from valuesConfigs matches the materialValueIds[0]?.valueId
                     const matchedIndex = valuesConfigs.findIndex(
                       (valueConfig) =>
                         valueConfig.id === additionalItem.materialValueIds?.[0]?.valueId
                     );
-
                     if (matchedIndex !== -1) {
-                      // If a match is found, transform the additional item to match the valuesConfigs format
                       const transformedItem = {
                         id: additionalItem.materialValueIds[0].valueId,
                         activateAction: additionalItem.activateAction,
