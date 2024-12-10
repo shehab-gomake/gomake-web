@@ -260,7 +260,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       false
     );
   };
-
   useEffect(() => {
     if (calculationResult && widgetType != EWidgetProductType.EDIT) {
       setCalculationResult(calculationResult);
@@ -911,6 +910,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameter?.parameterType ===
                   EParameterTypes.ADVERTISING_PRODUCT_NAME ||
                   parameter?.parameterType === EParameterTypes.BUTTON
+                  || parameter?.parameterType === EParameterTypes.MACHINES_SELECT
                 ) {
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
@@ -1403,7 +1403,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter?.parameterType ===
                     EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                     parameter?.parameterType ===
-                    EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME ||
+                    parameter?.parameterType ===
+                    EParameterTypes.MACHINES_SELECT) &&
                   (!parameter?.valuesConfigs ||
                     parameter?.valuesConfigs.length === 0)
                 ) {
@@ -3099,7 +3101,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           // Handle the case where parameterType is 5
           if (
             relatedParameter.parameterType === 5 ||
-            relatedParameter.parameterType === 0
+            relatedParameter.parameterType === 0 ||
+            relatedParameter.parameterType === 12
           ) {
             const defaultConfig = relatedParameter.valuesConfigs?.find(
               (config) => config.isDefault
