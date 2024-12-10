@@ -26,10 +26,9 @@ const useProductManagement = () => {
   const { callApi } = useGomakeAxios();
   const { clasess } = useStyle();
   const { t } = useTranslation();
-  //!here
   const [allProducts, setAllProducts] = useState<any>();
-
   const [term, setTerm] = useState<any>("");
+  const [selectedSKU, setSelectedSKU] = useState<string>("");
   const [productSearched, setProductSearched] = useState([]);
   const [selectProfitsModal, setSelectProfitsModal] = useState<ProductClient>();
   const { navigate } = useGomakeRouter();
@@ -244,26 +243,31 @@ const useProductManagement = () => {
     t("products.productManagement.admin.more"),
   ];
 
-  const filterArray = (array: any[], searchText: string) =>
+  const filterArray = (array: any[], searchText: string, selectedSKU: any) =>
     array.filter((item) => {
-      // Search in main product fields
-      const mainMatches = matchSorter(item.row.slice(0, 2), searchText); // Search only in first two columns (code, name)
+      // Search in main product fields (first two cells :  code and name)
+      const mainMatches = matchSorter(item.row.slice(0, 2), searchText);
 
       // Search in subProducts fields
       const subProductMatches = item?.subProducts?.some((subProduct: any) =>
         subProduct?.name?.toLowerCase()?.includes(searchText?.toLowerCase())
       );
 
-      // Return true if either matches
-      return mainMatches.length > 0 || subProductMatches;
+      // Search for selectedSKU match in the first cell of the row
+      const selectedSKUMatch = selectedSKU
+        ? String(item?.row?.[0]) === String(selectedSKU)
+        : true;
+
+      // Ensure that searchText, selectedSKU, and subProducts are matched together
+      return (mainMatches.length > 0 || subProductMatches) && selectedSKUMatch;
     });
 
   useEffect(() => {
     if (allProducts?.length) {
-      const temp = filterArray(allProducts, term);
+      const temp = filterArray(allProducts, term, selectedSKU);
       setProductSearched(temp);
     }
-  }, [term, allProducts]);
+  }, [term, allProducts, selectedSKU]);
 
   const handleGoBack = () => {
     router.back();
@@ -299,6 +303,8 @@ const useProductManagement = () => {
     editProductId,
     setEditProductId,
     setProductAddProfitRuleId,
+    selectedSKU,
+    setSelectedSKU,
   };
 };
 

@@ -35,6 +35,8 @@ const ProductManagementWidget = () => {
     editProductId,
     setEditProductId,
     setProductAddProfitRuleId,
+    selectedSKU,
+    setSelectedSKU,
   } = useProductManagement();
 
   return (
@@ -55,19 +57,12 @@ const ProductManagementWidget = () => {
                     `${option.name} - ${option.code}`
                   }
                   onChange={(e: any, value: any) => {
-                    setTerm(value?.code);
+                    setSelectedSKU(value?.code);
                   }}
                 />
               </div>
             </div>
           ) : (
-            // <div>
-            //   <HeaderTitle
-            //     title={router.query.productName}
-            //     marginTop={1}
-            //     marginBottom={1}
-            //   />
-            // </div>
             <div
               style={{
                 display: "flex",
@@ -99,7 +94,7 @@ const ProductManagementWidget = () => {
         </div>
       </div>
       <>
-        {term ? (
+        {term || selectedSKU ? (
           <PrimaryTable
             stickyFirstCol={false}
             // rows={productSearched}
