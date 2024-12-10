@@ -25,6 +25,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useDebounce } from "@/utils/use-debounce";
 import { useSnackBar } from "@/hooks";
+import { isValidCustomer } from "@/utils/helpers";
 export interface IStatus {
   label: string;
   value: string;
@@ -267,47 +268,6 @@ const useCustomers = (
     setValClientType(null);
     setPageNumber(1);
   }, []);
-
-  const isValidCustomer = (
-    customer,
-    filteredContacts,
-    filteredAddresses,
-    filteredUsers
-  ) => {
-    if (!(customer && customer.name && customer.clientTypeId)) {
-      return false;
-    }
-    if (filteredContacts) {
-      for (const contact of filteredContacts) {
-        if (!contact.firstName) {
-          return false;
-        }
-      }
-    }
-    if (filteredAddresses) {
-      for (const address of filteredAddresses) {
-        if (!address.address1) {
-          return false;
-        }
-      }
-    }
-
-    if (filteredUsers) {
-      for (const user of filteredUsers) {
-        if (!user.email) {
-          return false;
-        }
-      }
-    }
-    if (filteredUsers) {
-      for (const user of filteredUsers?.filter((user) => !user.id)) {
-        if (!user.password) {
-          return false;
-        }
-      }
-    }
-    return true;
-  };
 
   const [openErrorsModal, setOpenErrorsModal] = useState<boolean>(false);
   const [errorMessages, setErrorMessages] = useState<ErrorMessage[]>([]);
