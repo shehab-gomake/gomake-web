@@ -8,10 +8,11 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { AddRuleModal } from "@/pages-components/products/profits-new/widgets/add-rule-modal";
-import { ETypeException, EValueType } from "@/pages-components/products/profits-new/enums/profites-enum";
 import {
-  EditProductProfitRulesModal
-} from "@/widgets/properties/properties-modals/edit-rule-modal/edit-product-rule-modal";
+  ETypeException,
+  EValueType,
+} from "@/pages-components/products/profits-new/enums/profites-enum";
+import { EditProductProfitRulesModal } from "@/widgets/properties/properties-modals/edit-rule-modal/edit-product-rule-modal";
 
 const ProductManagementWidget = () => {
   const { t } = useTranslation();
@@ -33,7 +34,7 @@ const ProductManagementWidget = () => {
     addProductProfitRule,
     editProductId,
     setEditProductId,
-    setProductAddProfitRuleId
+    setProductAddProfitRuleId,
   } = useProductManagement();
 
   return (
@@ -50,7 +51,9 @@ const ProductManagementWidget = () => {
                   options={allProductSKU}
                   placeholder={t("products.addProduct.admin.modalProductSKU")}
                   style={clasess.dropDownListStyle}
-                  getOptionLabel={(option: any) => `${option.name} - ${option.code}`}
+                  getOptionLabel={(option: any) =>
+                    `${option.name} - ${option.code}`
+                  }
                   onChange={(e: any, value: any) => {
                     setTerm(value?.code);
                   }}
@@ -99,7 +102,8 @@ const ProductManagementWidget = () => {
         {term ? (
           <PrimaryTable
             stickyFirstCol={false}
-            rows={productSearched}
+            // rows={productSearched}
+            rows={productSearched.map((item) => item.row)} // Only pass the row data
             headers={tableHeaders}
             maxHeight={"calc(100vh - 303px)"}
             stickyHeader={true}
@@ -107,7 +111,8 @@ const ProductManagementWidget = () => {
         ) : (
           <PrimaryTable
             stickyFirstCol={false}
-            rows={allProducts}
+            // rows={allProducts}
+            rows={allProducts?.map((product) => product?.row) || []}
             headers={tableHeaders}
             maxHeight={"calc(100vh - 303px)"}
             stickyHeader={true}
@@ -140,21 +145,27 @@ const ProductManagementWidget = () => {
         openModal={openAddProfitRule}
         onCloseModal={() => setOpenProfitRule(false)}
         isPropertiesWidge={true}
-        selectedProperties={{ ruleType: 0, valueType: EValueType.PROFIT, propertyName: 'Profit' }}
-        getProperitesService={''}
+        selectedProperties={{
+          ruleType: 0,
+          valueType: EValueType.PROFIT,
+          propertyName: "Profit",
+        }}
+        getProperitesService={""}
         typeExceptionSelected={ETypeException.PROFIT}
-        onCreate={(v) => addProductProfitRule(v).then(() => setOpenProfitRule(false))}
+        onCreate={(v) =>
+          addProductProfitRule(v).then(() => setOpenProfitRule(false))
+        }
       />
       <EditProductProfitRulesModal
         openModal={openEditProfitRule}
         onClose={() => {
           setEditProfitRule(false);
-          setEditProductId('');
+          setEditProductId("");
         }}
         onOpenAddRuleModal={() => {
           setOpenProfitRule(true);
           setProductAddProfitRuleId(editProductId);
-          setEditProductId('')
+          setEditProductId("");
         }}
         productId={editProductId}
       />
