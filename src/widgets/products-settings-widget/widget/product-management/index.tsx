@@ -1,6 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
-import { GoMakeAutoComplate } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeMenu,
+  GomakePrimaryButton,
+} from "@/components";
 import { useProductManagement } from "./use-product-management";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { PrimaryTable } from "@/components/tables/primary-table";
@@ -13,11 +17,15 @@ import {
   EValueType,
 } from "@/pages-components/products/profits-new/enums/profites-enum";
 import { EditProductProfitRulesModal } from "@/widgets/properties/properties-modals/edit-rule-modal/edit-product-rule-modal";
+import { IconButton } from "@mui/material";
+import { InputAdornment } from "@mui/material";
+import TuneIcon from "@mui/icons-material/Tune";
+import { DotIcon } from "@/icons";
 
 const ProductManagementWidget = () => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const {
     tableHeaders,
     allProducts,
@@ -37,61 +45,102 @@ const ProductManagementWidget = () => {
     setProductAddProfitRuleId,
     selectedSKU,
     setSelectedSKU,
+    handleClose,
+    handleClick,
+    open,
+    anchorEl,
+    onClickClearFilter,
   } = useProductManagement();
 
+  const { productId } = router.query;
+
   return (
-    <div style={clasess.mainContainer}>
-      <div style={clasess.subHeaderContainer}>
-        <div style={clasess.subHeaderLeftSide}>
-          {!router.query.productId ? (
-            <div style={clasess.selectProductContainer}>
-              <div style={clasess.selectProductTextStyle}>
-                {t("products.productManagement.admin.selectProductSKU")}
-              </div>
-              <div style={{ width: 250 }}>
-                <GoMakeAutoComplate
-                  options={allProductSKU}
-                  placeholder={t("products.addProduct.admin.modalProductSKU")}
-                  style={clasess.dropDownListStyle}
-                  getOptionLabel={(option: any) =>
-                    `${option.name} - ${option.code}`
-                  }
-                  onChange={(e: any, value: any) => {
-                    setSelectedSKU(value?.code);
-                  }}
-                />
-              </div>
-            </div>
-          ) : (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "flex-start",
-                alignItems: "center",
-                gap: 5,
-              }}
-            >
+    <div style={classes.mainContainer}>
+      <div style={classes.subHeaderContainer}>
+        <div style={classes.subHeaderLeftSide}>
+          {productId && (
+            <div style={classes.backBtnContainer}>
               <PrimaryButton
                 variant={"text"}
                 onClick={handleGoBack}
                 startIcon={
                   dir === "ltr" ? <ArrowBackIcon /> : <ArrowForwardIcon />
                 }
-                style={clasess.backButtonStyle}
+                style={classes.backButtonStyle}
               >
                 {t("materials.buttons.back")}
               </PrimaryButton>
-              <h1 style={clasess.header}>
+              <h1 style={classes.header}>
                 {t("products.addProduct.admin.subProducts")}
               </h1>
-              <h4 style={clasess.subHeader}>/ {router?.query?.productName}</h4>
+              <h4 style={classes.subHeader}>/ {router?.query?.productName}</h4>
             </div>
           )}
         </div>
-        <div style={clasess.subHeaderRightSide}>
-          <SearchInputComponent onChange={setTerm} />
-        </div>
+        <SearchInputComponent
+          filtersButton={
+            !productId && (
+              <InputAdornment position="start">
+                <div>
+                  <IconButton onClick={handleClick}>
+                    <TuneIcon />
+                    {selectedSKU && (
+                      <div style={{ position: "absolute", top: -5, right: -1 }}>
+                        <DotIcon />
+                      </div>
+                    )}
+                  </IconButton>
+                  <GoMakeMenu
+                    handleClose={handleClose}
+                    open={open}
+                    anchorEl={anchorEl}
+                  >
+                    <div style={classes.filtersContainer}>
+                      <div style={classes.selectProductContainer}>
+                        <div style={classes.selectProductTextStyle}>
+                          {t(
+                            "products.productManagement.admin.selectProductSKU"
+                          )}
+                        </div>
+                        <div style={{ width: 250 }}>
+                          <GoMakeAutoComplate
+                            key={selectedSKU}
+                            options={allProductSKU}
+                            placeholder={t(
+                              "products.addProduct.admin.modalProductSKU"
+                            )}
+                            style={classes.dropDownListStyle}
+                            getOptionLabel={(option: any) =>
+                              `${option.name} - ${option.code}`
+                            }
+                            onChange={(e: any, value: any) => {
+                              setSelectedSKU(value?.code);
+                            }}
+                            value={
+                              allProductSKU?.find(
+                                (item) => item.code === selectedSKU
+                              ) || null
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div style={classes.buttonsFilterContainer}>
+                        <GomakePrimaryButton
+                          style={classes.clearBtnStyle}
+                          onClick={onClickClearFilter}
+                        >
+                          {t("sales.quote.clear")}
+                        </GomakePrimaryButton>
+                      </div>
+                    </div>
+                  </GoMakeMenu>
+                </div>
+              </InputAdornment>
+            )
+          }
+          value={term}
+          onChange={setTerm}
+        />
       </div>
       <>
         {term || selectedSKU ? (
@@ -107,7 +156,7 @@ const ProductManagementWidget = () => {
           <PrimaryTable
             stickyFirstCol={false}
             // rows={allProducts}
-            rows={allProducts?.map((product) => product?.row) || []}
+            rows={allProducts?.map((product) => product?.row) || []} // Only pass the row data
             headers={tableHeaders}
             maxHeight={"calc(100vh - 303px)"}
             stickyHeader={true}
@@ -115,22 +164,22 @@ const ProductManagementWidget = () => {
         )}
       </>
 
-      {/* <div style={clasess.filtersSwichContainer}>
-        <div style={clasess.filterSwichContainer}>
+      {/* <div style={classes.filtersSwichContainer}>
+        <div style={classes.filterSwichContainer}>
           <SecondSwitch />
-          <div style={clasess.labelTextContainer}>
+          <div style={classes.labelTextContainer}>
             Price correction 1 for quantities
           </div>
         </div>
-        <div style={clasess.filterSwichContainer}>
+        <div style={classes.filterSwichContainer}>
           <SecondSwitch />
-          <div style={clasess.labelTextContainer}>
+          <div style={classes.labelTextContainer}>
             Price correction 2 for quantities
           </div>
         </div>
-        <div style={clasess.filterSwichContainer}>
+        <div style={classes.filterSwichContainer}>
           <SecondSwitch />
-          <div style={clasess.labelTextContainer}>
+          <div style={classes.labelTextContainer}>
             Takes a maximum for the quantity in purchase orders
           </div>
         </div>

@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { matchSorter } from "match-sorter";
-
 import { getAllProductsMongoDB, getAlltProductSKU } from "@/services/hooks";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
-
 import { useStyle } from "./style";
 import { MoreMenuWidget } from "../more-circle";
 import { GoMakeAutoComplate } from "@/components";
@@ -24,7 +22,7 @@ import { EditingIcon } from "../more-circle/icons/editing";
 const useProductManagement = () => {
   const router = useRouter();
   const { callApi } = useGomakeAxios();
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const { t } = useTranslation();
   const [allProducts, setAllProducts] = useState<any>();
   const [term, setTerm] = useState<any>("");
@@ -42,6 +40,17 @@ const useProductManagement = () => {
     await getAlltProductSKU(callApi, setAllProductSKU);
   }, []);
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const updatedProduct = useCallback(async (product: any) => {
     const res: any = await callApi(
       EHttpMethod.PUT,
@@ -58,6 +67,7 @@ const useProductManagement = () => {
       return false;
     }
   }, []);
+
   const UpdateProfitsModal = useCallback(async (product: any, profitsModal) => {
     const res: any = await callApi(
       EHttpMethod.PUT,
@@ -74,6 +84,7 @@ const useProductManagement = () => {
       return false;
     }
   }, []);
+
   const _renderPricingType = (item: number) => {
     if (item === EProductClient.BY_CLIENT_TYPE) {
       return t("products.addProduct.admin.byClientType");
@@ -83,6 +94,7 @@ const useProductManagement = () => {
       return t("products.addProduct.admin.allCustomers");
     }
   };
+
   const productProfitesList: ProductClient[] = useMemo(
     () => [
       {
@@ -113,7 +125,7 @@ const useProductManagement = () => {
         item?.code,
         item?.name,
         _renderPricingType(item.pricingType),
-        <div style={clasess.profitProductsCellStyle}>
+        <div style={classes.profitProductsCellStyle}>
           <div
             style={{
               textAlignLast: "center",
@@ -125,7 +137,7 @@ const useProductManagement = () => {
               key={item?.id}
               options={productProfitesList}
               placeholder={t("products.addProduct.admin.pricingType")}
-              style={clasess.dropDownListByTableStyle}
+              style={classes.dropDownListByTableStyle}
               value={productProfitesList?.find(
                 (profit) => profit.id === item.profitsModal
               )}
@@ -193,7 +205,7 @@ const useProductManagement = () => {
           )}
         </div>,
         <div
-          style={clasess.subPrductContainer}
+          style={classes.subPrductContainer}
           onClick={(e: any) =>
             item.subProductsCount > 0 &&
             navigate(
@@ -207,11 +219,11 @@ const useProductManagement = () => {
 
         <div style={{ display: "inline-flex" }}>
           {item?.status === false ? (
-            <div style={clasess.inActiveTabStyle}>
+            <div style={classes.inActiveTabStyle}>
               {t("usersSettings.inactive")}
             </div>
           ) : (
-            <div style={clasess.activeTabStyle}>
+            <div style={classes.activeTabStyle}>
               {t("usersSettings.active")}
             </div>
           )}
@@ -286,6 +298,11 @@ const useProductManagement = () => {
       productId: productAddProfitRuleId,
     });
   };
+
+  const onClickClearFilter = () => {
+    setSelectedSKU("");
+  };
+
   return {
     tableHeaders,
     allProducts,
@@ -305,6 +322,11 @@ const useProductManagement = () => {
     setProductAddProfitRuleId,
     selectedSKU,
     setSelectedSKU,
+    handleClose,
+    handleClick,
+    open,
+    anchorEl,
+    onClickClearFilter,
   };
 };
 
