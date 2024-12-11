@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon, ReloadIcon } from "@/icons";
-import { Checkbox, Divider, Typography } from "@mui/material";
+import { Checkbox, Divider, IconButton, Tooltip, Typography } from "@mui/material";
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
@@ -203,17 +203,19 @@ const RightSideWidget = ({
               />
             )}
           </div>
-          <span style={clasess.totalCurrancyStyle}>{systemCurrency}</span>
+          <span style={clasess.totalCurrancyStyle}>{systemCurrency}
+            <Tooltip
+              title={t(
+                "products.offsetPrice.admin.updateTotalPrice"
+              )}>
+              <IconButton onClick={() => {
+                calculationProduct(subProducts);
+              }}>
+                <ReloadIcon />
+              </IconButton>
+            </Tooltip>
+          </span>
         </div>
-        <div
-          onClick={() => {
-            if (canCalculation) {
-              calculationProduct(subProducts);
-            }
-          }}
-          style={clasess.reloadTotalPrice}><ReloadIcon /> {t(
-            "products.offsetPrice.admin.updateTotalPrice"
-          )}</div>
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
@@ -461,33 +463,26 @@ const RightSideWidget = ({
                   const renderExceptionMessage = (exceptionKey, values) => {
                     if (exceptionKey && values?.length > 0) {
                       return (
-                        <span style={{ color: "black" }}>
-                          {t("CalculationExceptions." + exceptionKey).replace(
-                            /\{\{(\d+)\}\}/g,
-                            (_, index) => values[index] || ""
-                          )}
-                        </span>
+                        t("CalculationExceptions." + exceptionKey).replace(
+                          /\{\{(\d+)\}\}/g,
+                          (_, index) => values[index] || ""
+                        )
                       );
                     }
                     else if (exceptionKey) {
                       return (
-                        <span style={{ color: "black" }}>
-                          {t("CalculationExceptions." + exceptionKey)}
-                        </span>
+                        t("CalculationExceptions." + exceptionKey)
                       );
                     }
-                    return null;
+                    return "";
                   };
 
                   const renderValues = (values) => {
                     if (!item?.exception?.exceptionKey && values?.length > 0) {
-                      return (
-                        <span style={{ color: "black" }}>
-                          {values.join(", ")}
-                        </span>
-                      );
+                      return values.join(", ")
+
                     }
-                    return null;
+                    return "";
                   };
                   return (
                     <div
@@ -500,21 +495,13 @@ const RightSideWidget = ({
                         gap: 5,
                       }}
                     >
-                      {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
-
-                      <div style={{ width: "100%", marginTop: -3 }}>
-                        {item.actionName !== undefined && (
-                          <div style={{ ...clasess.titleLogsTextStyle }}>
-                            <div style={{ width: "fit-content" }}>
-                              {item.actionName || ""}:
-                            </div>
-                            <div style={{ width: "fit-content" }}>
-                              {item?.exception?.exceptionMessage || ""}
-                            </div>
-                            {renderExceptionMessage(item?.exception?.exceptionKey, item?.exception?.values)}
-                            {renderValues(item?.exception?.values)}
-                          </div>
-                        )}
+                      <div>
+                        {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
+                      </div>
+                      <div style={{ marginTop: -1.5, display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+                        <div style={{ ...clasess.titleLogsTextStyle }}>
+                          {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "}${renderExceptionMessage(item?.exception?.exceptionKey, item?.exception?.values)}${renderValues(item?.exception?.values)}`}
+                        </div>
                       </div>
                     </div>
                   )

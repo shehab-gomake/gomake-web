@@ -618,7 +618,6 @@ const ActionContainerComponent = ({
                             >
                               <GoMakeAutoComplate
                                 onChange={(e, v) => {
-                                  console.log("v", v)
                                   selectNewFold(
                                     v?.id,
                                     actionId,

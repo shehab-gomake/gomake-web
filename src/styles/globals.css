@@ -344,10 +344,10 @@ input::placeholder {
 .MuiTooltip-tooltip {
   background: #0C111D;
   color: #FFFFFF;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
-  min-width: 180px;
-  width: 100%;
+  /* min-width: 180px; */
+  /* width: 100%; */
 }
 
 df-messenger {

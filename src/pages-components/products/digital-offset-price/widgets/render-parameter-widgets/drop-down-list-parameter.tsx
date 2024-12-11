@@ -50,7 +50,6 @@ const DropDownListParameterWidget = ({
   const [selectedValue, setSelectedValue] = useState(
     index !== -1 ? { updateName: temp[index].values } : parameter.valuesConfigs.find(item => item.isDefault)
   );
-  console.log("selectedValue", selectedValue?.updateName)
   useEffect(() => {
     // If the parameter changes, update the selectedValue accordingly
     setSelectedValue(

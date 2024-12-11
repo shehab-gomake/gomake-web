@@ -1,10 +1,8 @@
-import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { AdvertisingIcon, CheckboxCheckedIcon, CheckboxIcon, ReChooseIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
-import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { subProductsParametersState } from "@/store";
-import { getCurrencySymbol } from "@/utils/helpers";
 
 const AdvertisingProductNameParameterWidget = ({
   parameter,
@@ -16,7 +14,6 @@ const AdvertisingProductNameParameterWidget = ({
 }: any) => {
   const [selectedId, setSelectedId] = useState(null);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
-
   const getParameterByCode = (subProducts, code) => {
     for (let subProduct of subProducts) {
       for (let parameter of subProduct.parameters) {
@@ -115,17 +112,19 @@ const AdvertisingProductNameParameterWidget = ({
           const height = attributes.height;
           const price = attributes.price;
           const isChecked = selectedId === item.id;
-
           return (
             <div
               style={clasess.advertisingProductCard}
               key={item.id}
               onClick={() => handleCheckboxChange(item, !isChecked)}
             >
-              <img
-                style={{ ...clasess.advertisingProductImg, objectFit: 'contain' }}
-                src={imageUrl}
-              />
+              {
+                imageUrl ? <img
+                  style={{ ...clasess.advertisingProductImg, objectFit: 'contain' }}
+                  src={imageUrl}
+                /> : <AdvertisingIcon />
+              }
+
               <div
                 style={clasess.advertisingProductUnderImgContainer}
               >
@@ -135,9 +134,9 @@ const AdvertisingProductNameParameterWidget = ({
                   <div style={clasess.advertisingProductNameStyle}>
                     {item?.updateName}
                   </div>
-                  <div style={clasess.advertisingProductPriceStyle}>
+                  {/* <div style={clasess.advertisingProductPriceStyle}>
                     {getCurrencySymbol(item?.currency)} {price}
-                  </div>
+                  </div> */}
                 </div>
                 <div>
                   <div style={clasess.advertisingProductUnitsStyle}>
@@ -160,6 +159,7 @@ const AdvertisingProductNameParameterWidget = ({
           );
         })}
       </div>
+
     </div>
   );
 };
