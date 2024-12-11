@@ -26,7 +26,7 @@ const AccordionMappingWidget = ({
   const hasMatchingParameter = (parameterList, subSection) => {
     for (let param of subSection.parameters) {
       let matchingParameter = parameterList?.find(
-        (p) => p.parameterId === param.id && p.subSectionId === subSection.id
+        (p) => p.parameterId === param.id && p.subSectionId === subSection.id && !param.isHiddenInSetting
       );
       if (matchingParameter || param.oldSystemValue) {
         return true;
@@ -41,7 +41,7 @@ const AccordionMappingWidget = ({
       const subProductParameterSubSectionIds = subProductParameters.map(p => p.subSectionId);
       for (const parameter of subSection.parameters) {
         if (
-          parameter.isRequired && !parameter.isHidden &&
+          parameter.isRequired && !parameter.isHidden && !parameter.isHiddenInSetting &&
           !subProductParameterCodes.includes(parameter.code) &&
           subProductParameterSubSectionIds.includes(subSection.id)
         ) {
