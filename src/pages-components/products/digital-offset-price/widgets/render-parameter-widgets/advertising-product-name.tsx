@@ -3,8 +3,6 @@ import { Checkbox } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { subProductsParametersState } from "@/store";
-import { leftLeftAdapter } from "@/utils/adapter";
-import { useTranslation } from "react-i18next";
 
 const AdvertisingProductNameParameterWidget = ({
   parameter,
@@ -16,7 +14,6 @@ const AdvertisingProductNameParameterWidget = ({
 }: any) => {
   const [selectedId, setSelectedId] = useState(null);
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
-  const { t } = useTranslation();
   const getParameterByCode = (subProducts, code) => {
     for (let subProduct of subProducts) {
       for (let parameter of subProduct.parameters) {
@@ -115,7 +112,6 @@ const AdvertisingProductNameParameterWidget = ({
           const height = attributes.height;
           const price = attributes.price;
           const isChecked = selectedId === item.id;
-          console.log("imageUrl", parameter?.valuesConfigs)
           return (
             <div
               style={clasess.advertisingProductCard}

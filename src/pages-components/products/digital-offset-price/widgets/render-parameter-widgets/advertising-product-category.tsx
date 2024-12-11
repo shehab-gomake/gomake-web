@@ -15,7 +15,6 @@ const AdvertisingProductCategoryParameterWidget = ({
     (item) => item.isDefault === true
   );
 
-  console.log("parameter", temp[index]?.valueIds[0])
   return (
     <div style={clasess.advertisingProductCategoryMain}>
       <GoMakeAutoComplate

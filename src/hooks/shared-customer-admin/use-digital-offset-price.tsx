@@ -14,7 +14,6 @@ import {
   isActionEmployeeUpdatedState,
   isChangePriceForEditState,
   isLoadgingState,
-  itemParmetersValuesState,
   listEmployeesAtom,
   loadingWithShadowState,
   productItemValueByEditState,
@@ -89,9 +88,7 @@ import { AdvertisingProductNameParameterWidget } from "@/pages-components/produc
 import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-outputs";
 import { useMaterials } from "../use-materials";
 import { ESourceView } from "@/enums/products";
-import { ReChooseIcon } from "@/icons";
-import { leftLeftAdapter } from "@/utils/adapter";
-import { IconButton, Tooltip } from "@mui/material";
+
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
