@@ -2403,198 +2403,119 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         />
       );
     }
+
     return (
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          flexWrap: "wrap",
-          gap: 10,
-        }}
-      >
-        <div
-          style={
-            inRow ? clasess.parameterRowContainer : clasess.parameterContainer
-          }
-        >
-          <div
-            style={
-              errorText && parameter?.isRequired && !value?.values?.[0]
-                ? clasess.parameterRequierdLabelStyle
-                : value?.values?.[0] === "true"
-                  ? inunderParameter
-                    ? clasess.parameterunderParameterStyle
-                    : clasess.parameterType3ActiveLabelStyle
-                  : inunderParameter
-                    ? clasess.underParameterLabelStyle
-                    : clasess.parameterLabelStyle
-            }
+      <>
+        {
+          !parameter?.isHiddenInSetting && <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: 10,
+            }}
           >
-            {parameter?.name}
-            <small>&nbsp;{parameter?.defaultUnit}</small>
-            {parameter?.isRequired ? (
-              <span style={clasess.spanRequierd}> *</span>
-            ) : null}
-          </div>
-          <div
-            style={
-              inRow ? { width: "5%" } : clasess.renderParameterTypeContainer
-            }
-          >
-            {Comp}
-          </div>
-          {!inunderParameter && (
-            <div style={clasess.oldSystemValueText}>
-              {parameter?.oldSystemValue}
+            <div
+              style={
+                inRow ? clasess.parameterRowContainer : clasess.parameterContainer
+              }
+            >
+              <div
+                style={
+                  errorText && parameter?.isRequired && !value?.values?.[0]
+                    ? clasess.parameterRequierdLabelStyle
+                    : value?.values?.[0] === "true"
+                      ? inunderParameter
+                        ? clasess.parameterunderParameterStyle
+                        : clasess.parameterType3ActiveLabelStyle
+                      : inunderParameter
+                        ? clasess.underParameterLabelStyle
+                        : clasess.parameterLabelStyle
+                }
+              >
+                {parameter?.name}
+                <small>&nbsp;{parameter?.defaultUnit}</small>
+                {parameter?.isRequired ? (
+                  <span style={clasess.spanRequierd}> *</span>
+                ) : null}
+              </div>
+              <div
+                style={
+                  inRow ? { width: "5%" } : clasess.renderParameterTypeContainer
+                }
+              >
+                {Comp}
+              </div>
+              {!inunderParameter && (
+                <div style={clasess.oldSystemValueText}>
+                  {parameter?.oldSystemValue}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <>
-          {parameter?.relatedParameters?.length > 0 &&
-            inModal &&
-            subSection.optionToDuplicateContent && (
-              <>
-                {parameter?.relatedParameters
-                  .filter((relatedParameter) =>
-                    subSection.parameters.some(
-                      (p) => p.id === relatedParameter.parameterId
-                    )
-                  )
-                  .filter(
-                    (relatedParameter) =>
-                      !underParameterIds.some(
-                        (underParam) =>
-                          underParam.myParameter?.id ===
-                          relatedParameter.parameterId
+            <>
+              {parameter?.relatedParameters?.length > 0 &&
+                inModal &&
+                subSection.optionToDuplicateContent && (
+                  <>
+                    {parameter?.relatedParameters
+                      .filter((relatedParameter) =>
+                        subSection.parameters.some(
+                          (p) => p.id === relatedParameter.parameterId
+                        )
                       )
-                  )
-                  .map((relatedParameter) => {
-                    const subProduct = subProducts?.find(
-                      (x) => x.type === subSection?.type
-                    );
-                    const parm = subProduct?.parameters?.find(
-                      (param) =>
-                        param.parameterId === parameter.id &&
-                        param.actionIndex === parameter.actionIndex
-                    );
-                    const myParameter = list?.find(
-                      (p) =>
-                        p.id === relatedParameter.parameterId &&
-                        p.actionIndex === relatedParameter.actionIndex
-                    );
-
-                    if (relatedParameter.activateByAllValues && parm?.values) {
-                      if (relatedParameter.activateByAllValues) {
-                        if (subSection.optionToDuplicateContent) {
-                          const { parameterId, actionIndex } = relatedParameter;
-                          const myParameter = list?.find(
-                            (p) =>
-                              p.id === parameterId &&
-                              p.actionIndex === actionIndex
-                          );
-                          return (
-                            <React.Fragment>
-                              {relatedParameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
-                              <div key={parameterId}>
-                                {_renderParameterType(
-                                  myParameter,
-                                  subSection,
-                                  section,
-                                  subSection?.parameters,
-                                  myParameter?.value,
-                                  list,
-                                  true,
-                                  false,
-                                  false
-                                )}
-                              </div>
-                            </React.Fragment>
-
-                          );
-                        }
-                      }
-                      let productCopy = cloneDeep(productTemplate);
-                      const sectionCopy = productCopy.sections?.find(
-                        (x) => x.id === section.id
-                      );
-                      const subSectionCopy = sectionCopy.subSections?.find(
-                        (x) => x.id === subSection.id
-                      );
-                      const param = subSectionCopy.parameters?.find(
-                        (x) => x.id === relatedParameter.parameterId
-                      );
-                      if (param.isHidden == false) {
-                        return;
-                      }
-                      param.isHidden = false;
-                      setProductTemplate(productCopy);
-                    } else if (
-                      parameter?.parameterType ===
-                      EParameterTypes.DROP_DOWN_LIST ||
-                      parameter?.parameterType ===
-                      EParameterTypes.SELECT_MATERIALS
-                    ) {
-                      const valueInArray =
-                        relatedParameter.selectedValueIds?.find(
-                          (c) => c == parm?.valueIds
+                      .filter(
+                        (relatedParameter) =>
+                          !underParameterIds.some(
+                            (underParam) =>
+                              underParam.myParameter?.id ===
+                              relatedParameter.parameterId
+                          )
+                      )
+                      .map((relatedParameter) => {
+                        const subProduct = subProducts?.find(
+                          (x) => x.type === subSection?.type
+                        );
+                        const parm = subProduct?.parameters?.find(
+                          (param) =>
+                            param.parameterId === parameter.id &&
+                            param.actionIndex === parameter.actionIndex
+                        );
+                        const myParameter = list?.find(
+                          (p) =>
+                            p.id === relatedParameter.parameterId &&
+                            p.actionIndex === relatedParameter.actionIndex
                         );
 
-                      if (valueInArray) {
-                        if (subSection.optionToDuplicateContent) {
-                          const { parameterId, actionIndex } = relatedParameter;
-                          const myParameter = list?.find(
-                            (p) =>
-                              p.id === parameterId &&
-                              p.actionIndex === actionIndex
-                          );
-                          return (
-                            <React.Fragment>
-                              {myParameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
-                              <div key={parameterId}>
-                                {_renderParameterType(
-                                  myParameter,
-                                  subSection,
-                                  section,
-                                  subSection?.parameters,
-                                  myParameter?.value,
-                                  list,
-                                  true,
-                                  false,
-                                  false
-                                )}
-                              </div>
-                            </React.Fragment>
-                          );
-                        }
-                        if (relatedParameter.activateByAllValues) {
-                          if (subSection.optionToDuplicateContent) {
-                            const { parameterId, actionIndex } =
-                              relatedParameter;
-                            const myParameter = list?.find(
-                              (p) =>
-                                p.id === parameterId &&
-                                p.actionIndex === actionIndex
-                            );
-                            return (
-                              <React.Fragment>
-                                {myParameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
-                                <div key={parameterId}>
-                                  {_renderParameterType(
-                                    myParameter,
-                                    subSection,
-                                    section,
-                                    subSection?.parameters,
-                                    myParameter?.value,
-                                    list,
-                                    true,
-                                    false,
-                                    false
-                                  )}
-                                </div>
-                              </React.Fragment>
-                            );
-                          }
+                        if (relatedParameter.activateByAllValues && parm?.values) {
+                          if (relatedParameter.activateByAllValues) {
+                            if (subSection.optionToDuplicateContent) {
+                              const { parameterId, actionIndex } = relatedParameter;
+                              const myParameter = list?.find(
+                                (p) =>
+                                  p.id === parameterId &&
+                                  p.actionIndex === actionIndex
+                              );
+                              return (
+                                <React.Fragment>
+                                  {relatedParameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
+                                  <div key={parameterId}>
+                                    {_renderParameterType(
+                                      myParameter,
+                                      subSection,
+                                      section,
+                                      subSection?.parameters,
+                                      myParameter?.value,
+                                      list,
+                                      true,
+                                      false,
+                                      false
+                                    )}
+                                  </div>
+                                </React.Fragment>
 
+                              );
+                            }
+                          }
                           let productCopy = cloneDeep(productTemplate);
                           const sectionCopy = productCopy.sections?.find(
                             (x) => x.id === section.id
@@ -2603,124 +2524,208 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             (x) => x.id === subSection.id
                           );
                           const param = subSectionCopy.parameters?.find(
-                            (x) => x.id === relatedParameter.parameterId && x.actionIndex == relatedParameter.actionIndex
+                            (x) => x.id === relatedParameter.parameterId
                           );
                           if (param.isHidden == false) {
                             return;
                           }
                           param.isHidden = false;
                           setProductTemplate(productCopy);
-                        }
+                        } else if (
+                          parameter?.parameterType ===
+                          EParameterTypes.DROP_DOWN_LIST ||
+                          parameter?.parameterType ===
+                          EParameterTypes.SELECT_MATERIALS
+                        ) {
+                          const valueInArray =
+                            relatedParameter.selectedValueIds?.find(
+                              (c) => c == parm?.valueIds
+                            );
 
-                        let productCopy = cloneDeep(productTemplate);
-                        const sectionCopy = productCopy.sections?.find(
-                          (x) => x.id === section.id
-                        );
-                        const subSectionCopy = sectionCopy.subSections?.find(
-                          (x) => x.id === subSection.id
-                        );
-                        const param = subSectionCopy.parameters?.find(
-                          (x) => x.id === relatedParameter.parameterId && x.actionIndex == relatedParameter.actionIndex
-                        );
-                        if (param.isHidden == false) {
-                          return;
-                        }
-                        param.isHidden = false;
-                        setProductTemplate(productCopy);
-                      }
+                          if (valueInArray) {
+                            if (subSection.optionToDuplicateContent) {
+                              const { parameterId, actionIndex } = relatedParameter;
+                              const myParameter = list?.find(
+                                (p) =>
+                                  p.id === parameterId &&
+                                  p.actionIndex === actionIndex
+                              );
+                              return (
+                                <React.Fragment>
+                                  {myParameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
+                                  <div key={parameterId}>
+                                    {_renderParameterType(
+                                      myParameter,
+                                      subSection,
+                                      section,
+                                      subSection?.parameters,
+                                      myParameter?.value,
+                                      list,
+                                      true,
+                                      false,
+                                      false
+                                    )}
+                                  </div>
+                                </React.Fragment>
+                              );
+                            }
+                            if (relatedParameter.activateByAllValues) {
+                              if (subSection.optionToDuplicateContent) {
+                                const { parameterId, actionIndex } =
+                                  relatedParameter;
+                                const myParameter = list?.find(
+                                  (p) =>
+                                    p.id === parameterId &&
+                                    p.actionIndex === actionIndex
+                                );
+                                return (
+                                  <React.Fragment>
+                                    {myParameter.isStartNewLine ? <div style={{ flexBasis: '100%', height: 0 }} /> : <></>}
+                                    <div key={parameterId}>
+                                      {_renderParameterType(
+                                        myParameter,
+                                        subSection,
+                                        section,
+                                        subSection?.parameters,
+                                        myParameter?.value,
+                                        list,
+                                        true,
+                                        false,
+                                        false
+                                      )}
+                                    </div>
+                                  </React.Fragment>
+                                );
+                              }
 
-                      if (
-                        relatedParameter.activateByAllValues &&
-                        parm?.values
-                      ) {
-                        let productCopy = cloneDeep(productTemplate);
-                        const sectionCopy = productCopy.sections?.find(
-                          (x) => x.id === section.id
-                        );
-                        const subSectionCopy = sectionCopy.subSections?.find(
-                          (x) => x.id === subSection.id
-                        );
-                        const param = subSectionCopy.parameters?.find(
-                          (x) => x.id === relatedParameter.parameterId && x.actionIndex == relatedParameter.actionIndex
-                        );
-                        if (param.isHidden == false) {
-                          return;
-                        }
-                        param.isHidden = false;
-                        setProductTemplate(productCopy);
-                      } else {
-                        let productCopy = cloneDeep(productTemplate);
-                        const sectionCopy = productCopy.sections.find(
-                          (x) => x.id === section.id
-                        );
-                        const subSectionCopy = sectionCopy.subSections.find(
-                          (x) => x.id === subSection.id
-                        );
-                        const param = subSectionCopy.parameters.find(
-                          (x) => x.id === relatedParameter.parameterId && x.actionIndex == relatedParameter.actionIndex
-                        );
-                        if (param && param.isHidden == true) {
-                          return;
-                        }
-                        if (param) {
-                          param.isHidden = true;
-                          setProductTemplate(productCopy);
-                        }
+                              let productCopy = cloneDeep(productTemplate);
+                              const sectionCopy = productCopy.sections?.find(
+                                (x) => x.id === section.id
+                              );
+                              const subSectionCopy = sectionCopy.subSections?.find(
+                                (x) => x.id === subSection.id
+                              );
+                              const param = subSectionCopy.parameters?.find(
+                                (x) => x.id === relatedParameter.parameterId && x.actionIndex == relatedParameter.actionIndex
+                              );
+                              if (param.isHidden == false) {
+                                return;
+                              }
+                              param.isHidden = false;
+                              setProductTemplate(productCopy);
+                            }
+
+                            let productCopy = cloneDeep(productTemplate);
+                            const sectionCopy = productCopy.sections?.find(
+                              (x) => x.id === section.id
+                            );
+                            const subSectionCopy = sectionCopy.subSections?.find(
+                              (x) => x.id === subSection.id
+                            );
+                            const param = subSectionCopy.parameters?.find(
+                              (x) => x.id === relatedParameter.parameterId && x.actionIndex == relatedParameter.actionIndex
+                            );
+                            if (param.isHidden == false) {
+                              return;
+                            }
+                            param.isHidden = false;
+                            setProductTemplate(productCopy);
+                          }
+
+                          if (
+                            relatedParameter.activateByAllValues &&
+                            parm?.values
+                          ) {
+                            let productCopy = cloneDeep(productTemplate);
+                            const sectionCopy = productCopy.sections?.find(
+                              (x) => x.id === section.id
+                            );
+                            const subSectionCopy = sectionCopy.subSections?.find(
+                              (x) => x.id === subSection.id
+                            );
+                            const param = subSectionCopy.parameters?.find(
+                              (x) => x.id === relatedParameter.parameterId && x.actionIndex == relatedParameter.actionIndex
+                            );
+                            if (param.isHidden == false) {
+                              return;
+                            }
+                            param.isHidden = false;
+                            setProductTemplate(productCopy);
+                          } else {
+                            let productCopy = cloneDeep(productTemplate);
+                            const sectionCopy = productCopy.sections.find(
+                              (x) => x.id === section.id
+                            );
+                            const subSectionCopy = sectionCopy.subSections.find(
+                              (x) => x.id === subSection.id
+                            );
+                            const param = subSectionCopy.parameters.find(
+                              (x) => x.id === relatedParameter.parameterId && x.actionIndex == relatedParameter.actionIndex
+                            );
+                            if (param && param.isHidden == true) {
+                              return;
+                            }
+                            if (param) {
+                              param.isHidden = true;
+                              setProductTemplate(productCopy);
+                            }
 
 
-                      }
-                    } else {
-                      const valueInArray =
-                        relatedParameter.selectedValueIds?.find(
-                          (c) => c == parm?.values
-                        );
-                      if (
-                        (valueInArray && myParameter) ||
-                        (!parm &&
-                          relatedParameter &&
-                          relatedParameter.selectedValueIds &&
-                          relatedParameter.selectedValueIds.length > 0 &&
-                          relatedParameter.selectedValueIds[0] === "false")
-                      ) {
-                        let productCopy = cloneDeep(productTemplate);
-                        const sectionCopy = productCopy.sections?.find(
-                          (x) => x.id === section.id
-                        );
-                        const subSectionCopy = sectionCopy.subSections?.find(
-                          (x) => x.id === subSection.id
-                        );
-                        const param = subSectionCopy.parameters?.find(
-                          (x) => x.id === relatedParameter.parameterId
-                        );
+                          }
+                        } else {
+                          const valueInArray =
+                            relatedParameter.selectedValueIds?.find(
+                              (c) => c == parm?.values
+                            );
+                          if (
+                            (valueInArray && myParameter) ||
+                            (!parm &&
+                              relatedParameter &&
+                              relatedParameter.selectedValueIds &&
+                              relatedParameter.selectedValueIds.length > 0 &&
+                              relatedParameter.selectedValueIds[0] === "false")
+                          ) {
+                            let productCopy = cloneDeep(productTemplate);
+                            const sectionCopy = productCopy.sections?.find(
+                              (x) => x.id === section.id
+                            );
+                            const subSectionCopy = sectionCopy.subSections?.find(
+                              (x) => x.id === subSection.id
+                            );
+                            const param = subSectionCopy.parameters?.find(
+                              (x) => x.id === relatedParameter.parameterId
+                            );
 
-                        if (param.isHidden == false) {
-                          return;
+                            if (param.isHidden == false) {
+                              return;
+                            }
+                            param.isHidden = false;
+                            setProductTemplate(productCopy);
+                          } else {
+                            let productCopy = cloneDeep(productTemplate);
+                            const sectionCopy = productCopy.sections.find(
+                              (x) => x.id === section.id
+                            );
+                            const subSectionCopy = sectionCopy.subSections.find(
+                              (x) => x.id === subSection.id
+                            );
+                            const param = subSectionCopy.parameters.find(
+                              (x) => x.id === relatedParameter.parameterId
+                            );
+                            if (param.isHidden == true) {
+                              return;
+                            }
+                            param.isHidden = true;
+                            setProductTemplate(productCopy);
+                          }
                         }
-                        param.isHidden = false;
-                        setProductTemplate(productCopy);
-                      } else {
-                        let productCopy = cloneDeep(productTemplate);
-                        const sectionCopy = productCopy.sections.find(
-                          (x) => x.id === section.id
-                        );
-                        const subSectionCopy = sectionCopy.subSections.find(
-                          (x) => x.id === subSection.id
-                        );
-                        const param = subSectionCopy.parameters.find(
-                          (x) => x.id === relatedParameter.parameterId
-                        );
-                        if (param.isHidden == true) {
-                          return;
-                        }
-                        param.isHidden = true;
-                        setProductTemplate(productCopy);
-                      }
-                    }
-                  })}
-              </>
-            )}
-        </>
-      </div>
+                      })}
+                  </>
+                )}
+            </>
+          </div>
+        }
+      </>
     );
   };
   const processRelatedParameters2 = (
