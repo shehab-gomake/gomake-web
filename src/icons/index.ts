@@ -72,3 +72,5 @@ export * from "./modal"
 export * from "./reload"
 export * from "./warn"
 export * from "./filter2-icon"
+export * from "./advertising-icon"
+

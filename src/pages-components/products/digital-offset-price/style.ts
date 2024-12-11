@@ -832,17 +832,23 @@ const useStyle = () => {
         width: "67%",
       },
       advertisingProductCategoryMain:{
-        position: "relative"
+        position: "relative",
+        width: "100%",
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
       },
       advertisingProductCategoryAutoComplete:{ 
         height: 40, 
-        minWidth: 400, 
+       maxWidth: 400, 
+       minWidth: 400, 
         border: "none", 
         paddingLeft: 15
        },
        requiredAdvertisingProductCategoryAutoComplete:{
         height: 40, 
-        minWidth: 400, 
+        maxWidth: 400, 
         paddingLeft: 15,
         borderBottom: "1px solid red",
        },
@@ -853,7 +859,8 @@ const useStyle = () => {
       },
       advertisingProductNameMain:{
         minWidth: 1000, 
-        width: "100%"
+        width: "100%",
+        position: "relative"
       },
       advertisingProductNameListContainer:{ 
         display: "flex", 
@@ -882,7 +889,7 @@ const useStyle = () => {
         flexDirection: "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        padding: 12,
+        padding: 8,
         gap: 6,
         height: 54,
       },
@@ -894,7 +901,7 @@ const useStyle = () => {
         width: "100%",
       },
       advertisingProductNameStyle:{ 
-        ...FONT_FAMILY.Lexend(600, 10) 
+        ...FONT_FAMILY.Lexend(600, 13) 
       },
       advertisingProductPriceStyle:{ 
         ...FONT_FAMILY.Lexend(600, 10), 
@@ -902,7 +909,8 @@ const useStyle = () => {
       },
       advertisingProductUnitsStyle:{ 
         ...FONT_FAMILY.Lexend(500, 10), 
-        color: "#727272" 
+        color: "#727272",
+        marginBottom: 5
       },
       checkBoxContainer:{
         position: "absolute",
