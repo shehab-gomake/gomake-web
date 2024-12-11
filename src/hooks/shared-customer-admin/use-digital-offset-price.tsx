@@ -89,6 +89,9 @@ import { AdvertisingProductNameParameterWidget } from "@/pages-components/produc
 import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-outputs";
 import { useMaterials } from "../use-materials";
 import { ESourceView } from "@/enums/products";
+import { ReChooseIcon } from "@/icons";
+import { leftLeftAdapter } from "@/utils/adapter";
+import { IconButton, Tooltip } from "@mui/material";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
@@ -2360,21 +2363,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
     ) {
       Comp = (
-        <AdvertisingProductCategoryParameterWidget
-          parameter={parameter}
-          clasess={clasess}
-          index={index}
-          temp={temp}
-          onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-          subSection={subSection}
-          section={section}
-          selectedValueConfig={selectedValueConfig}
-          inModal={inModal}
-          setSelectedValueConfig={setSelectedValueConfig}
-          onOpeneMultiParameterModal={onOpeneMultiParameterModal}
-          subSectionParameters={subSectionParameters}
-          list={list}
-        />
+        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%", }}>
+          <AdvertisingProductCategoryParameterWidget
+            parameter={parameter}
+            clasess={clasess}
+            index={index}
+            temp={temp}
+            onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+            subSection={subSection}
+            section={section}
+            selectedValueConfig={selectedValueConfig}
+            inModal={inModal}
+            setSelectedValueConfig={setSelectedValueConfig}
+            onOpeneMultiParameterModal={onOpeneMultiParameterModal}
+            subSectionParameters={subSectionParameters}
+            list={list}
+          />
+
+        </div>
+
       );
     } else if (
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME

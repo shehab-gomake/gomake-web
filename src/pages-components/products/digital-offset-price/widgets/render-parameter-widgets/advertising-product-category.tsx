@@ -1,5 +1,6 @@
 import { GoMakeAutoComplate } from "@/components";
-import { SearchIcon } from "@/icons";
+import { ReChooseIcon } from "@/icons";
+import { IconButton, Tooltip } from "@mui/material";
 
 const AdvertisingProductCategoryParameterWidget = ({
   parameter,
@@ -13,6 +14,8 @@ const AdvertisingProductCategoryParameterWidget = ({
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
+
+  console.log("parameter", temp[index]?.valueIds[0])
   return (
     <div style={clasess.advertisingProductCategoryMain}>
       <GoMakeAutoComplate
@@ -20,7 +23,7 @@ const AdvertisingProductCategoryParameterWidget = ({
           return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
         })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
         key={parameter?.valuesConfigs + temp[index]?.values}
-        style={parameter?.isRequired ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
+        style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
         placeholder={parameter?.name}
         onChange={(e: any, value: any) => {
           onChangeSubProductsForPrice(
@@ -61,10 +64,15 @@ const AdvertisingProductCategoryParameterWidget = ({
           );
         }}
       />
-      <div style={clasess.advertisingProductCategorySearch}>
-        <SearchIcon width={20} height={20} />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", width: 600 }}>
+        <Tooltip title="">
+          <IconButton onClick={() => {
+            window.open(`/materials/${parameter?.materialPath[0]}?materialCategory=${temp[index]?.valueIds[0]}`, "_blank");
+          }}>
+            <ReChooseIcon />
+          </IconButton>
+        </Tooltip>
       </div>
-
     </div>
   );
 };
