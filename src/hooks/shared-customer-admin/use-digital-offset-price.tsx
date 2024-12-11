@@ -260,7 +260,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       false
     );
   };
-
   useEffect(() => {
     if (calculationResult && widgetType != EWidgetProductType.EDIT) {
       setCalculationResult(calculationResult);
@@ -911,6 +910,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameter?.parameterType ===
                   EParameterTypes.ADVERTISING_PRODUCT_NAME ||
                   parameter?.parameterType === EParameterTypes.BUTTON
+                  || parameter?.parameterType === EParameterTypes.MACHINES_SELECT
                 ) {
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
@@ -1403,7 +1403,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameter?.parameterType ===
                     EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                     parameter?.parameterType ===
-                    EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME ||
+                    parameter?.parameterType ===
+                    EParameterTypes.MACHINES_SELECT) &&
                   (!parameter?.valuesConfigs ||
                     parameter?.valuesConfigs.length === 0)
                 ) {
@@ -3099,7 +3101,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           // Handle the case where parameterType is 5
           if (
             relatedParameter.parameterType === 5 ||
-            relatedParameter.parameterType === 0
+            relatedParameter.parameterType === 0 ||
+            relatedParameter.parameterType === 12
           ) {
             const defaultConfig = relatedParameter.valuesConfigs?.find(
               (config) => config.isDefault
@@ -3912,7 +3915,45 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 )?.data;
               }
               param.valuesConfigs = [];
-              //param.isHidden = false;
+              const mergeAndFormatValuesConfigs = (valuesConfigs, additionalValuesConfigs, data) => {
+                const additionalConfig = additionalValuesConfigs.find(
+                  (config) => config.key === data.valueIds
+                );
+                if (!additionalConfig) {
+                  return valuesConfigs;
+                }
+                const additionalValues = additionalConfig.valuesConfigs;
+                const updatedValuesConfigs = [];
+                const transformedAdditionalValues = additionalValues
+                  .filter((additionalItem) => {
+                    const matchedIndex = valuesConfigs.findIndex(
+                      (valueConfig) =>
+                        valueConfig.id === additionalItem.materialValueIds?.[0]?.valueId
+                    );
+                    if (matchedIndex !== -1) {
+                      const transformedItem = {
+                        id: additionalItem.materialValueIds[0].valueId,
+                        activateAction: additionalItem.activateAction,
+                        isDefault: additionalItem.isDefault,
+                        isDeleted: additionalItem.isDeleted,
+                        isHidden: additionalItem.isHidden,
+                        materialValueIds: additionalItem.materialValueIds,
+                        selectedParameterValues: additionalItem.selectedParameterValues,
+                        updateName: additionalItem.materialValueIds[0].valueId,
+                        values: [additionalItem.materialValueIds[0].valueId],
+                        additionalAttribute: [],
+                        currency: "", // Add default or derived currency if needed
+                      };
+
+                      updatedValuesConfigs.push(transformedItem);
+                      valuesConfigs.splice(matchedIndex, 1);
+                    }
+
+                    return false;
+                  });
+
+                return [...valuesConfigs, ...updatedValuesConfigs];
+              }
               paramMaterialValues?.forEach((val) => {
                 param.valuesConfigs.push({
                   id: val.valueId,
@@ -3931,6 +3972,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               param.valuesConfigs = param.valuesConfigs.filter(
                 (x) => x.values && x.values.length > 0
               );
+              param.valuesConfigs = mergeAndFormatValuesConfigs(param.valuesConfigs, param.additionalValuesConfigs, data);
               if (
                 param?.valuesConfigs &&
                 param?.valuesConfigs?.length === 1 &&
