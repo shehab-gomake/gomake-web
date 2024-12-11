@@ -11,19 +11,19 @@ const useStyle = () => {
       mainContainer: {
         position: "relative" as "relative",
         display: "flex",
-        flexDirection: 'row' as 'row',
+        flexDirection: "row" as "row",
         //height:"700px"
-       height:convertHeightToVH(800)
+        height: convertHeightToVH(800),
       },
       container: {
         position: "relative" as "relative",
         display: "flex",
-        flexDirection: 'column' as 'column',
+        flexDirection: "column" as "column",
         width: "60%",
-        height:"100%",
-        overflowY: 'scroll' as 'scroll',
+        height: "100%",
+        overflowY: "scroll" as "scroll",
       },
-      documentContainerStyle:{
+      documentContainerStyle: {
         width: "40%",
         flex: 5,
         height: "100%",
@@ -31,29 +31,29 @@ const useStyle = () => {
         boxShadow: "0px 4px 40px 0px rgba(0, 0, 0, 0.08)",
         position: "relative" as "relative",
         padding: 20,
-       // minHeight: "690px"
+        // minHeight: "690px"
       },
       containerIframeComponent: {
         flex: 4,
         backgroundColor: "red",
-        borderShadow: '4px 4px 40px 4px rgba(0, 0, 0, 0.08)',
+        borderShadow: "4px 4px 40px 4px rgba(0, 0, 0, 0.08)",
       },
       scrollbar: {
-        marginLeft: '30px',
-        height: '300px',
-        width: '65px',
-        background: '#F5F5F5',
-        overflowY: 'scroll' as 'scroll',
-        marginBottom: '25px',
+        marginLeft: "30px",
+        height: "300px",
+        width: "65px",
+        background: "#F5F5F5",
+        overflowY: "scroll" as "scroll",
+        marginBottom: "25px",
       },
       forceOverflow: {
-        minHeight: '450px',
+        minHeight: "450px",
       },
       header: {
-        position: 'sticky' as 'sticky',
+        position: "sticky" as "sticky",
         top: 0,
-        width: '100%',
-        backgroundColor: '#FFF',
+        width: "100%",
+        backgroundColor: "#FFF",
         zIndex: 1,
         padding: 1,
         paddingTop: 0,
@@ -82,39 +82,38 @@ const useStyle = () => {
         border: "none",
         minHeight: "150px",
         padding: "5px 7px",
-        boxShadow: '0px 1px 10px rgba(0, 0, 0, 0.08)',
+        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
         alignItems: "flex-start",
         gap: "16px",
         borderRadius: "4px",
 
         fontStyle: "normal",
         lineHeight: "normal",
-        ...FONT_FAMILY.Lexend(500, 12)
+        ...FONT_FAMILY.Lexend(500, 12),
       },
       actionBtn: {
         backgroundColor: secondColor(500),
-        color: '#FFFFFF',
-        '&:hover': {
+        color: "#FFFFFF",
+        "&:hover": {
           backgroundColor: secondColor(700),
         },
-        textTransform: 'capitalize'
-
+        textTransform: "capitalize",
       },
       cleanBtnStyle: {
-        backgroundColor: "#F8F8F8"
+        backgroundColor: "#F8F8F8",
       },
       footerStyle: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-end",
         gap: 16,
-        position: 'sticky' as 'sticky',
-        bottom: '0',
-        left: '0',
+        position: "sticky" as "sticky",
+        bottom: "0",
+        left: "0",
         backgroundColor: "white",
-        right: '0',
-        padding: '16px'
-      }
+        right: "0",
+        padding: "16px",
+      },
     };
   }, [theme]);
   return {
