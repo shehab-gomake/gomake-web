@@ -202,7 +202,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const onClickOpenCurrentStationModal = () => {
     setSaveCurrentStation(true);
   };
-
   useEffect(() => {
     setValuesState([]);
   }, []);
@@ -969,8 +968,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           parameterType: parameter?.parameterType,
                           isQuantityParameter: parameter?.isQuantityParameter,
                           ...(value && {
-                            valueIds: [defValue],
-                            values: [value?.updateName],
+                            valueIds: [value?.materialValueIds[0]?.valueId],
+                            values: [value?.materialValueIds[0]?.valueId],
                           }),
                           sectionId: section?.id,
                           subSectionId: subSection?.id,

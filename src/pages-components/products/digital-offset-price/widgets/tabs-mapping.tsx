@@ -46,7 +46,7 @@ const TabsMappingWidget = ({
         if (Array.isArray(subSection?.parameters)) {
           for (const parameter of subSection.parameters) {
             if (
-              parameter.isRequired &&
+              parameter.isRequired && !parameter.isHiddenInSetting &&
               !subProductParameterCodes.includes(parameter.code) &&
               subProductParameterSectionIds.includes(item.id) &&
               subProductParameterSubSectionIds.includes(subSection.id)
