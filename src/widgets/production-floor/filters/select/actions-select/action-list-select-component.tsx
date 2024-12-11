@@ -3,6 +3,7 @@ import {
   FormEvent,
   ReactElement,
   useCallback,
+  useEffect,
   useRef,
 } from "react";
 import { Button, FormGroup, Paper } from "@mui/material";
@@ -52,6 +53,7 @@ const ActionsListComponent = ({
     handleCloseList,
     toggleCollapse,
     openCollapse,
+    scrollRef,
   } = useActionsList({ source, onClickApply, filterGroups, setFilterGroups });
 
   const { classes } = useStyle({ source });
@@ -143,7 +145,7 @@ const ActionsListComponent = ({
                     onChange={handleFilterChange}
                   />
                 </div>
-                <ScrollableDiv>
+                <ScrollableDiv ref={scrollRef}>
                   {getList().map((option, index) => {
                     return (
                       <CollapseOptionComponent
