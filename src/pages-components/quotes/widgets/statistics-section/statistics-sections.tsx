@@ -29,7 +29,6 @@ const getValueByKey = (statistics: ICard[], key: string) => {
   return card ? card.value : "";
 };
 
-//!here
 const CardsSection = (props: ICardsSection) => {
   const { t } = useTranslation();
   const { classes } = useStyle();

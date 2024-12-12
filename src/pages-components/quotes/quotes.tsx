@@ -14,7 +14,7 @@ import { SearchInputComponent } from "@/components/form-inputs/search-input-comp
 import { HeaderTitle } from "@/widgets";
 import { DocumentLogsWidget } from "./widgets/documents-logs-widget/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
-import { Button, Stack } from "@mui/material";
+import { Button, Skeleton, Stack } from "@mui/material";
 import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
@@ -23,9 +23,6 @@ import { useEffect } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
-import { CardComponent } from "./widgets/statistics-section/card";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { GoMakeCurrency } from "@/icons/go-make-currency";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
@@ -40,7 +37,12 @@ import { ExcelMenu } from "./widgets/excel-menu/excel-menu";
 import { DotIcon } from "@/icons";
 import { ModalType } from "@/enums";
 import TuneIcon from "@mui/icons-material/Tune";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import {
+  ItemsCountIcon,
+  PlusIcon,
+  WalletIcon,
+} from "./widgets/icons/header-section-icons";
+import { TotalCardComponent } from "./widgets/statistics-section/total-card";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -51,7 +53,6 @@ const QuotesListPageWidget = ({
   isFromHomePage = false,
 }: IProps) => {
   const { classes } = useStyle();
-  const { secondColor } = useGomakeTheme();
   const router = useRouter();
 
   const {
@@ -191,7 +192,6 @@ const QuotesListPageWidget = ({
     getValueByKey,
     isOrder,
     isQuote,
-    isReceipt,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -217,11 +217,16 @@ const QuotesListPageWidget = ({
 
   const renderCreateNewButton = (onClickHandler) => (
     <Button
-      style={classes.createNew}
+      sx={{
+        ...classes.createNewDocument,
+        "& .MuiButton-startIcon": {
+          ...(RTL
+            ? { marginLeft: "4px", marginRight: 0 }
+            : { marginRight: "4px", marginLeft: 0 }),
+        },
+      }}
       onClick={onClickHandler}
-      startIcon={
-        <AddCircleOutlineIcon style={{ color: "black", fontSize: "24px" }} />
-      }
+      startIcon={<PlusIcon />}
     >
       {t("sales.quote.createNew")}
     </Button>
@@ -229,12 +234,31 @@ const QuotesListPageWidget = ({
 
   const renderOrderCard = (onclickCreateNew) => (
     <>
-      <CardComponent
-        text={t("sales.quote.totalPrice")}
-        number={getValueByKey(allStatistics, "totalPrice")}
-        textColor={secondColor(100)}
-        icon={<GoMakeCurrency color={secondColor(100)} />}
-      />
+      {allQuotes ? (
+        <>
+          <TotalCardComponent
+            text={`${t("sales.list.totalItemsCounts", {
+              documentType: t(`sales.list.${DOCUMENT_TYPE[documentType]}`),
+            })}`}
+            number={allStatistics?.totalItems}
+            icon={<ItemsCountIcon />}
+          />
+          <TotalCardComponent
+            text={t("sales.quote.totalPrice")}
+            number={getValueByKey(
+              allStatistics?.documentStatisticsList,
+              "totalPrice"
+            )}
+            icon={<WalletIcon />}
+            withCurrency={true}
+          />
+        </>
+      ) : (
+        <>
+          <Skeleton variant="rectangular" sx={classes.skeltonStyle} />
+          <Skeleton variant="rectangular" sx={classes.skeltonStyle} />
+        </>
+      )}
       {renderCreateNewButton(onclickCreateNew)}
     </>
   );
@@ -260,7 +284,7 @@ const QuotesListPageWidget = ({
               <div style={classes.rowStyle}>
                 {isQuote && (
                   <CardsSection
-                    statistics={allStatistics}
+                    statistics={allStatistics?.documentStatisticsList}
                     activeCard={activeCard}
                     onClick={onclickCreateNew}
                     onClickCard={handleCardClick}
@@ -268,17 +292,11 @@ const QuotesListPageWidget = ({
                   />
                 )}
                 {!isQuote &&
-                  !isReceipt &&
                   !isOrdersTracking &&
                   renderOrderCard(
                     isOrder
                       ? onclickCreateNew
                       : () => navigate(`/${documentPath}?isNewCreation=true`)
-                  )}
-
-                {isReceipt &&
-                  renderCreateNewButton(() =>
-                    navigate(`/${documentPath}?isNewCreation=true`)
                   )}
               </div>
             </div>
@@ -621,7 +639,6 @@ const QuotesListPageWidget = ({
               }
             />
           </div>
-
           <GoMakePagination
             onChangePageNumber={(event, value) => {
               setPage(value);

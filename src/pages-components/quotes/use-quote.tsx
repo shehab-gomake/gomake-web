@@ -126,7 +126,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [logsModalTitle, setLogsModalTitle] = useState<string>();
   const [selectedQuote, setSelectedQuote] = useState<any>();
   const [allDocuments, setAllDocuments] = useState([]);
-  const [allStatistics, setAllStatistics] = useState([]);
+  const [allStatistics, setAllStatistics] = useState<{
+    documentStatisticsList: any[];
+    totalItems: number;
+  }>({
+    documentStatisticsList: [],
+    totalItems: 0,
+  });
   const [activeCard, setActiveCard] = useState(null);
   const [page, setPage] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
@@ -634,7 +640,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
-        setAllStatistics(res?.data?.documentStatisticsList);
+
+        setAllStatistics({
+          documentStatisticsList: res?.data?.documentStatisticsList ?? [],
+          totalItems: totalItems ?? 0,
+        });
       }
     };
     const currentPageNumber = router.query.pageNumber;
@@ -1020,7 +1030,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
-        setAllStatistics(res?.data?.documentStatisticsList);
+        setAllStatistics({
+          documentStatisticsList: res?.data?.documentStatisticsList ?? [],
+          totalItems: totalItems ?? 0,
+        });
       }
     };
     if (docType === DOCUMENT_TYPE.receipt) {
@@ -2293,8 +2306,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const getValueByKey = (statistics: ICard[], key: string) => {
     const card = statistics?.find((item) => item.key === key);
-    return card ? card.value : "";
+    return card ? card.value : "0";
   };
+
   return {
     showCustomerModal,
     customerForEdit,
