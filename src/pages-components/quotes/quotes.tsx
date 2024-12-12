@@ -275,6 +275,11 @@ const QuotesListPageWidget = ({
                       ? onclickCreateNew
                       : () => navigate(`/${documentPath}?isNewCreation=true`)
                   )}
+
+                {isReceipt &&
+                  renderCreateNewButton(() =>
+                    navigate(`/${documentPath}?isNewCreation=true`)
+                  )}
               </div>
             </div>
             {/* search */}
