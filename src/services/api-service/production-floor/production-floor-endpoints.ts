@@ -69,7 +69,6 @@ const UPDATE_PRINT_HOUSE_MATERIAL_STOCK_FROM_JOB_URL =
 const GET_PRINT_HOUSE_ACTIONS_URL =
   "/v1/printhouse-config/actions/get-all-actions";
 
-//?new
 const GET_BOARD_MISSIONS_ACTION_MATERIALS =
   "/v1/erp-service/board-missions-actions/get-board-mission-action-materials/";
 
@@ -570,7 +569,6 @@ const getAllActionsApi: ICallAndSetData = async (callApi, callBack) => {
   );
 };
 
-//?new
 const getBoardMissionActionMaterialsApi: ICallAndSetData = async (
   callApi,
   callBack,

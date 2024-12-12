@@ -26,8 +26,6 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         gap: 24,
         paddingTop: 20,
-
-        //?new
         overflowY: "auto" as "auto",
         maxHeight: "calc(84vh - 120px)",
       },
