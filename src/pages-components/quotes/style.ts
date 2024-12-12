@@ -8,7 +8,8 @@ import { convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { theme, secondColor, errorColor, successColor, primaryColor } = useGomakeTheme();
+  const { theme, secondColor, errorColor, successColor, primaryColor } =
+    useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -25,14 +26,14 @@ const useStyle = () => {
         flexWrap: "wrap" as "wrap",
         gap: 10,
         justifyContent: "space-between",
-        width: "100%"
+        width: "100%",
       },
-      rowStyle:{
+      rowStyle: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap:10,
+        gap: 10,
       },
       filtersContainer: {
         display: "flex",
@@ -59,7 +60,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: 10,
-        minWidth:"fit-content",
+        minWidth: "fit-content",
         width: "150px",
       },
       buttonsFilterContainer: {
@@ -84,9 +85,9 @@ const useStyle = () => {
       clearBtnStyle: {
         height: 40,
         backgroundColor: "#FFF",
-      //  border: `1px solid ${secondColor(500)}`,
+        //  border: `1px solid ${secondColor(500)}`,
         color: "black",
-       // width: "50%",
+        // width: "50%",
       },
       paginationStyle: {
         display: "flex",
@@ -149,7 +150,6 @@ const useStyle = () => {
         gap: 5,
       },
 
-
       /// TEST ///
       menuItemContainer: {
         display: "flex",
@@ -170,17 +170,38 @@ const useStyle = () => {
       },
       iconStyle: {
         position: "absolute" as "absolute",
-        ...leftRightAdapter(t("direction"), 10),   
+        ...leftRightAdapter(t("direction"), 10),
       },
       cancelIconStyle: {
         width: 62,
         height: 62,
-        color: "#a1a2cd"
+        color: "#a1a2cd",
       },
       searchInput: {
         height: 40,
         minWidth: convertWidthToVW(200),
         borderRadius: 10,
+      },
+      createNewDocument: {
+        display: "inline-flex",
+        padding: "0px 12px",
+        justifyContent: "center",
+        alignItems: "center",
+        gap: "4px",
+        borderRadius: "8px",
+        border: "1px solid #2E3092",
+        background: "#FFF",
+        boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
+        textTransform: "none" as "none",
+        color: primaryColor(600),
+        ...FONT_FAMILY.Inter(500, 14),
+        lineHeight: "18px",
+        height: "40px",
+      },
+      skeltonStyle: {
+        width: "180px",
+        height: "100%",
+        borderRadius: "8px",
       },
     };
   }, [i18next.language, t, theme]);
