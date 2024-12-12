@@ -219,7 +219,7 @@ const SettingsWidget = ({
                 value={
                   typeof productState?.productSKUId === "string"
                     ? defultProductSKU
-                    : productState.productSKU
+                    : productState.productSKUId
                 }
                 onChange={(e: any, value: any) => {
                   onChangeStateProduct("productSKUId", value);
