@@ -132,7 +132,7 @@ const CreditCardTab = ({
                                     onChange={(e, value) => handleChangeInputs("transactionType", value?.value)}
                                 />
                             </div>
-                            {creditCard?.transactionType && creditCard?.transactionType === 2 && (
+                            {creditCard?.transactionType && (creditCard?.transactionType === 2 || creditCard?.transactionType === 6) && (
                                 <div style={{ width: "45%" }}>
                                     <GoMakeAutoComplate
                                         key={"numberOfPayments"}
@@ -208,7 +208,7 @@ const CreditCardTab = ({
                                     onChange={(e, value) => handleChangeInputs("transactionType", value?.value)}
                                 />
                             </div>
-                            {creditCard?.transactionType && creditCard?.transactionType === 2 && (
+                            {creditCard?.transactionType && (creditCard?.transactionType === 2 || creditCard?.transactionType === 6) && (
                                 <div style={{ width: "45%" }}>
                                     <GoMakeAutoComplate
                                         key={"numberOfPayments-2"}
