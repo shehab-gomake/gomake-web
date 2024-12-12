@@ -15,19 +15,14 @@ import { HeaderTitle } from "@/widgets";
 import { DocumentLogsWidget } from "./widgets/documents-logs-widget/logs-widget";
 import { DOCUMENT_TYPE } from "./enums";
 import { Button, Stack } from "@mui/material";
-import {
-  CardsSection,
-  ICard,
-} from "./widgets/statistics-section/statistics-sections";
+import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { useEffect } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
-import TuneIcon from "@mui/icons-material/Tune";
 import { CardComponent } from "./widgets/statistics-section/card";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { GoMakeCurrency } from "@/icons/go-make-currency";
@@ -44,6 +39,8 @@ import { createGlobalStyle } from "styled-components";
 import { ExcelMenu } from "./widgets/excel-menu/excel-menu";
 import { DotIcon } from "@/icons";
 import { ModalType } from "@/enums";
+import TuneIcon from "@mui/icons-material/Tune";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -191,6 +188,10 @@ const QuotesListPageWidget = ({
     startOrderProduction,
     openStartProductionModal,
     onClickCloseStartProductionModal,
+    getValueByKey,
+    isOrder,
+    isQuote,
+    isReceipt,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -205,10 +206,6 @@ const QuotesListPageWidget = ({
     !isFromHomePage && getAllProducts();
   }, []);
 
-  const getValueByKey = (statistics: ICard[], key: string) => {
-    const card = statistics?.find((item) => item.key === key);
-    return card ? card.value : "";
-  };
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === "rtl";
   const GlobalStyle = createGlobalStyle`
@@ -217,6 +214,30 @@ const QuotesListPageWidget = ({
     right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
   }
 `;
+
+  const renderCreateNewButton = (onClickHandler) => (
+    <Button
+      style={classes.createNew}
+      onClick={onClickHandler}
+      startIcon={
+        <AddCircleOutlineIcon style={{ color: "black", fontSize: "24px" }} />
+      }
+    >
+      {t("sales.quote.createNew")}
+    </Button>
+  );
+
+  const renderOrderCard = (onclickCreateNew) => (
+    <>
+      <CardComponent
+        text={t("sales.quote.totalPrice")}
+        number={getValueByKey(allStatistics, "totalPrice")}
+        textColor={secondColor(100)}
+        icon={<GoMakeCurrency color={secondColor(100)} />}
+      />
+      {renderCreateNewButton(onclickCreateNew)}
+    </>
+  );
 
   return (
     <>
@@ -229,6 +250,7 @@ const QuotesListPageWidget = ({
           height="100%"
         >
           <div style={classes.mainContainer}>
+            {/* header section */}
             <div style={classes.headerStyle}>
               <HeaderTitle
                 title={documentLabel}
@@ -236,7 +258,7 @@ const QuotesListPageWidget = ({
                 marginBottom={1}
               />
               <div style={classes.rowStyle}>
-                {documentType === DOCUMENT_TYPE.quote && (
+                {isQuote && (
                   <CardsSection
                     statistics={allStatistics}
                     activeCard={activeCard}
@@ -245,42 +267,13 @@ const QuotesListPageWidget = ({
                     onSecondClickCard={handleSecondCardClick}
                   />
                 )}
-                {documentType === DOCUMENT_TYPE.order && !isOrdersTracking && (
-                  <>
-                    <CardComponent
-                      text={t("sales.quote.totalPrice")}
-                      number={getValueByKey(allStatistics, "totalPrice")}
-                      textColor={secondColor(100)}
-                      icon={<GoMakeCurrency color={secondColor(100)} />}
-                    />
-                    <Button
-                      style={classes.createNew}
-                      onClick={onclickCreateNew}
-                      startIcon={
-                        <AddCircleOutlineIcon
-                          style={{ color: "black", fontSize: "24px" }}
-                        />
-                      }
-                    >
-                      {t("sales.quote.createNew")}
-                    </Button>
-                  </>
-                )}
-                {documentType !== DOCUMENT_TYPE.quote &&
-                  documentType !== DOCUMENT_TYPE.order && (
-                    <Button
-                      style={classes.createNew}
-                      onClick={() =>
-                        navigate(`/${documentPath}?isNewCreation=true`)
-                      }
-                      startIcon={
-                        <AddCircleOutlineIcon
-                          style={{ color: "black", fontSize: "24px" }}
-                        />
-                      }
-                    >
-                      {t("sales.quote.createNew")}
-                    </Button>
+                {!isQuote &&
+                  !isReceipt &&
+                  !isOrdersTracking &&
+                  renderOrderCard(
+                    isOrder
+                      ? onclickCreateNew
+                      : () => navigate(`/${documentPath}?isNewCreation=true`)
                   )}
               </div>
             </div>
@@ -353,7 +346,7 @@ const QuotesListPageWidget = ({
                                 value={agentId}
                               />
                             </div>
-                            {documentType === DOCUMENT_TYPE.quote && (
+                            {isQuote && (
                               <div style={classes.statusFilterContainer}>
                                 <div style={classes.filterLabelStyle}>
                                   {t("sales.quote.status")}
@@ -372,7 +365,7 @@ const QuotesListPageWidget = ({
                                 />
                               </div>
                             )}
-                            {documentType === DOCUMENT_TYPE.quote && (
+                            {isQuote && (
                               <div style={classes.statusFilterContainer}>
                                 <div style={classes.filterLabelStyle}>
                                   {t("sales.quote.approvalStatus")}
@@ -393,7 +386,7 @@ const QuotesListPageWidget = ({
                                 />
                               </div>
                             )}
-                            {documentType === DOCUMENT_TYPE.order && (
+                            {isOrder && (
                               <div style={classes.statusFilterContainer}>
                                 <h3 style={classes.filterLabelStyle}>
                                   {t("boardMissions.productionStatus")}
@@ -410,7 +403,7 @@ const QuotesListPageWidget = ({
                                 />
                               </div>
                             )}
-                            {documentType !== DOCUMENT_TYPE.quote && (
+                            {!isQuote && (
                               <div style={classes.statusFilterContainer}>
                                 <h3 style={classes.filterLabelStyle}>
                                   {t("sales.quote.accountingStatus")}
@@ -447,7 +440,7 @@ const QuotesListPageWidget = ({
                                   />
                                 </div>
                               )}
-                            {documentType === DOCUMENT_TYPE.order && (
+                            {isOrder && (
                               <div style={classes.statusFilterContainer}>
                                 <h3 style={classes.filterLabelStyle}>
                                   {t("sales.quote.canceledOrders")}
@@ -460,7 +453,7 @@ const QuotesListPageWidget = ({
                                 />
                               </div>
                             )}
-                            {documentType === DOCUMENT_TYPE.order && (
+                            {isOrder && (
                               <div style={classes.statusFilterContainer}>
                                 <h3 style={classes.filterLabelStyle}>
                                   {t("sales.quote.pausedOrders")}
@@ -567,6 +560,7 @@ const QuotesListPageWidget = ({
                 onExportTableClick={ExportDocumentTableToExcel}
               />
             </div>
+            {/* document table */}
             <PrimaryTable
               stickyFirstCol={false}
               stickyHeader={true}
@@ -574,9 +568,9 @@ const QuotesListPageWidget = ({
               rows={allQuotes}
               headers={tableHeaders}
               columnWidths={
-                documentType === DOCUMENT_TYPE.quote
+                isQuote
                   ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
-                  : documentType === DOCUMENT_TYPE.order
+                  : isOrder
                   ? [
                       "6%",
                       "5%",
@@ -622,6 +616,7 @@ const QuotesListPageWidget = ({
               }
             />
           </div>
+
           <GoMakePagination
             onChangePageNumber={(event, value) => {
               setPage(value);
@@ -770,7 +765,6 @@ const QuotesListPageWidget = ({
         orderItemValue={selectedQuoteItemValue}
         getAllQuotes={getAllQuotes}
       />
-      {/* !here */}
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("sales.closeAndTrackTitle")}
@@ -817,10 +811,9 @@ const QuotesListPageWidget = ({
               `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
             );
           } else {
-            const path =
-              documentType === DOCUMENT_TYPE.order
-                ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+            const path = isOrder
+              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
             navigate(path);
           }
         }}
