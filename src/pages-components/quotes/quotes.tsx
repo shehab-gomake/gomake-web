@@ -771,7 +771,6 @@ const QuotesListPageWidget = ({
         orderItemValue={selectedQuoteItemValue}
         getAllQuotes={getAllQuotes}
       />
-      {/* !here */}
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("sales.closeAndTrackTitle")}

@@ -11,10 +11,15 @@ const ClickableStatusButton = ({
   label = "Delivered",
   delStatusColor = "#099250",
   id,
-  documentItem,
+  document,
 }: ITaskCategoryLabelProps) => {
-  const { t, openDeliveryModal, onOpenDeliveryModal, onCloseDeliveryModal } =
-    useDeliveryStatusButton();
+  const {
+    t,
+    openDeliveryModal,
+    onCloseDeliveryModal,
+    getDocumentDeliveryItems,
+    documentItems,
+  } = useDeliveryStatusButton();
   const dir = t("direction");
   const isRtl = dir === "rtl";
   const { classes } = useStyle({ color: delStatusColor });
@@ -29,7 +34,7 @@ const ClickableStatusButton = ({
   };
 
   const handleChangeStatusClick = (event: MouseEvent<HTMLElement>) => {
-    onOpenDeliveryModal();
+    getDocumentDeliveryItems(document?.documentType, document?.id);
     handleMenuClose();
   };
 
@@ -66,7 +71,8 @@ const ClickableStatusButton = ({
       <UpdateDeliveryStatusModal
         openModal={openDeliveryModal}
         onCloseModal={onCloseDeliveryModal}
-        documentItem={documentItem}
+        document={document}
+        documentItems={documentItems}
       />
     </>
   );

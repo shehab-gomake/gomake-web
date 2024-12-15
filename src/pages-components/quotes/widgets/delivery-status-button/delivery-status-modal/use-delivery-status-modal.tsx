@@ -13,7 +13,7 @@ export enum DeliveryStatus {
   CANCELED = "Canceled",
 }
 
-const useDeliveryStatusModal = () => {
+const useDeliveryStatusModal = (documentItems) => {
   const { t } = useTranslation();
   const dir = t("direction");
   const isRTL = dir === "rtl";
@@ -232,11 +232,23 @@ const useDeliveryStatusModal = () => {
   const openSignatureModal = () => setIsSignatureModalOpen(true);
   const closeSignatureModal = () => setIsSignatureModalOpen(false);
 
+  // const handleSelectionChange = (selectedRows: Set<number>) => {
+  //   const selectedIdsNew = Array.from(selectedRows).map((index) =>
+  //     extractDeliveryStatusRowId(documentItems[index][5])
+  //   );
+  //   console.log("Selected IDs: ", selectedIdsNew);
+  // };
+
   const handleSelectionChange = (selectedRows: Set<number>) => {
-    const selectedIdsNew = Array.from(selectedRows).map((index) =>
-      extractDeliveryStatusRowId(mockRows[index][5])
-    );
-    console.log("Selected IDs: ", selectedIdsNew);
+    const selectedData = Array.from(selectedRows).map((index) => {
+      const deliveryStatusElement = documentItems[index][5];
+      return {
+        id: extractDeliveryStatusRowId(deliveryStatusElement),
+        isSelected: extractDeliveryStatusIsSelected(deliveryStatusElement),
+      };
+    });
+
+    console.log("Selected Data: ", selectedData);
   };
 
   const extractDeliveryStatus = (
@@ -254,7 +266,6 @@ const useDeliveryStatusModal = () => {
   const extractDeliveryStatusRowId = (
     deliveryStatusElement: React.ReactNode
   ): string => {
-    debugger;
     if (
       React.isValidElement(deliveryStatusElement) &&
       deliveryStatusElement.props?.id
@@ -262,6 +273,18 @@ const useDeliveryStatusModal = () => {
       return deliveryStatusElement.props?.id;
     }
     return "";
+  };
+
+  const extractDeliveryStatusIsSelected = (
+    deliveryStatusElement: React.ReactNode
+  ): boolean => {
+    if (
+      React.isValidElement(deliveryStatusElement) &&
+      deliveryStatusElement.props["data-is-selected"] !== undefined
+    ) {
+      return deliveryStatusElement.props["data-is-selected"];
+    }
+    return false;
   };
 
   return {
@@ -288,6 +311,7 @@ const useDeliveryStatusModal = () => {
     closeSignatureModal,
     extractDeliveryStatus,
     handleSelectionChange,
+    extractDeliveryStatusIsSelected,
   };
 };
 

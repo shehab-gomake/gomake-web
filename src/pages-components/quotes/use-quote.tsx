@@ -506,7 +506,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   " " +
                   getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              <ClickableStatusButton id={quote?.id} documentItem={quote} />,
+              <ClickableStatusButton id={quote?.id} document={quote} />,
               _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}

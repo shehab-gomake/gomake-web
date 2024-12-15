@@ -2,13 +2,14 @@ export interface ITaskCategoryLabelProps {
   id: string;
   label?: string;
   delStatusColor?: string;
-  documentItem?: any;
+  document: any;
 }
 
 export interface IUpdateDeliveryStatusModalProps {
   openModal: boolean;
   onCloseModal: () => void;
-  documentItem: any;
+  document: any;
+  documentItems: any;
 }
 
 export interface DeliveryStateDetails {

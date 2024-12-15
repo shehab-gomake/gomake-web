@@ -1,22 +1,20 @@
-import { Button, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import { GoMakeModal } from "@/components";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { GoMakeSelect } from "@/components/auto-complete/go-make-select";
 import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
 import { IUpdateDeliveryStatusModalProps } from "../interfaces";
-import {
-  DeliveryStatus,
-  useDeliveryStatusModal,
-} from "./use-delivery-status-modal";
+import { useDeliveryStatusModal } from "./use-delivery-status-modal";
 import { useStyle } from "./style";
 import { SignatureModal } from "./components/signature-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
-import React from "react";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const UpdateDeliveryStatusModal = ({
-  documentItem,
+  document,
   openModal,
   onCloseModal,
+  documentItems,
 }: IUpdateDeliveryStatusModalProps) => {
   const { classes } = useStyle();
   const {
@@ -34,8 +32,9 @@ const UpdateDeliveryStatusModal = ({
     openSignatureModal,
     closeSignatureModal,
     extractDeliveryStatus,
+    extractDeliveryStatusIsSelected,
     handleSelectionChange,
-  } = useDeliveryStatusModal();
+  } = useDeliveryStatusModal(documentItems);
 
   const handleCloseModal = () => {
     onCloseModal();
@@ -44,7 +43,9 @@ const UpdateDeliveryStatusModal = ({
 
   return (
     <GoMakeModal
-      modalTitle={`Order #${documentItem?.number}`}
+      modalTitle={`${t(
+        `sales.quote.${DOCUMENT_TYPE[document?.documentType]}`
+      )} #${document?.number}`}
       insideStyle={{ width: "70%", height: "fit-content" }}
       openModal={openModal}
       onClose={handleCloseModal}
@@ -61,7 +62,7 @@ const UpdateDeliveryStatusModal = ({
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
             <span style={classes.labelStyle}>Recipient</span>
             <GoMakeSelect
-              key={`select-client-${documentItem?.id}`}
+              key={`select-client-${document?.id}`}
               style={{
                 width: 170,
                 height: "40px",
@@ -75,7 +76,7 @@ const UpdateDeliveryStatusModal = ({
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
             <span style={classes.labelStyle}>Recipient name</span>
             <GoMakeTextInput
-              key={`receipt-name-${documentItem?.id}`}
+              key={`receipt-name-${document?.id}`}
               style={{
                 width: 170,
                 height: "40px",
@@ -135,15 +136,20 @@ const UpdateDeliveryStatusModal = ({
           stickyFirstCol={false}
           stickyHeader={true}
           maxHeight={"calc(100vh - 300px)"}
-          rows={mockRows}
+          // rows={mockRows}
+          rows={documentItems}
           headers={tableHeaders}
           variant={"RoundTable"}
           enableCheckboxes={true}
           onSelectionChange={handleSelectionChange}
           rowCheckboxCondition={(row) => {
-            const status = extractDeliveryStatus(row[5]);
-            return status !== "Delivered";
+            return !extractDeliveryStatusIsSelected(row[5]);
           }}
+
+          // rowCheckboxCondition={(row) => {
+          //   const status = extractDeliveryStatus(row[5]);
+          //   return status === "Delivered";
+          // }}
         />
 
         {/* Pagination */}
