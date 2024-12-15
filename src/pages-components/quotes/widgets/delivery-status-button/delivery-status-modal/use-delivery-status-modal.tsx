@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { DeliveryStateDetails } from "../interfaces";
-import { FONT_FAMILY } from "@/utils/font-family";
+import { useSnackBar } from "@/hooks";
 import React from "react";
 
 export enum DeliveryStatus {
@@ -22,11 +22,21 @@ export enum DocumentDeliveryStatuses {
 const useDeliveryStatusModal = (documentItems) => {
   const { t } = useTranslation();
   const dir = t("direction");
-
+  const { alertFault } = useSnackBar();
   const [client, setClient] = useState();
   const [selectedItems, setSelectedItems] = useState<
     { itemId: string; deliveredQuantity: number }[]
   >([]);
+  const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
+
+  const initialDeliveryState: DeliveryStateDetails = {
+    deliveryDate: new Date(),
+    recipientName: "",
+    recipientNumber: "",
+    recipientMail: "",
+  };
+  const [deliveryState, setDeliveryState] =
+    useState<DeliveryStateDetails>(initialDeliveryState);
 
   const tableHeaders = [
     t("sales.documentDeliveries.itemCode"),
@@ -37,7 +47,6 @@ const useDeliveryStatusModal = (documentItems) => {
     t("sales.documentDeliveries.deliveryStatus"),
     t("sales.documentDeliveries.signature"),
     t("sales.documentDeliveries.deliveryDetailes"),
-    // t("Action"),
   ];
 
   const options = useMemo(
@@ -47,16 +56,6 @@ const useDeliveryStatusModal = (documentItems) => {
     ],
     []
   );
-
-  const initialDeliveryState: DeliveryStateDetails = {
-    deliveryDate: new Date(),
-    recipientName: "",
-    recipientNumber: "",
-    recipientMail: "",
-  };
-
-  const [deliveryState, setDeliveryState] =
-    useState<DeliveryStateDetails>(initialDeliveryState);
 
   const handleChangeDeliveryInputs = (key, value) => {
     setDeliveryState((prev) => ({
@@ -117,21 +116,21 @@ const useDeliveryStatusModal = (documentItems) => {
   const visiblePages = getVisiblePages(page, totalPages);
 
   // for signature modal
-  const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
-  const openSignatureModal = () => setIsSignatureModalOpen(true);
-  const closeSignatureModal = () => setIsSignatureModalOpen(false);
 
-  // const handleSelectionChange = (selectedRows: Set<number>) => {
-  //   const selectedIdsNew = Array.from(selectedRows).map((index) =>
-  //     extractDeliveryStatusRowId(documentItems[index][5])
-  //   );
-  //   console.log("Selected IDs: ", selectedIdsNew);
-  // };
+  const openSignatureModal = () => {
+    if (Array.isArray(selectedItems) && selectedItems.length === 0) {
+      alertFault("reports.pleaseSelectOneItem");
+      return;
+    }
+    setIsSignatureModalOpen(true);
+  };
+
+  const closeSignatureModal = () => setIsSignatureModalOpen(false);
 
   const handleSelectionChange = (selectedRows: Set<number>) => {
     const selectedData = Array.from(selectedRows).map((index) => {
       const deliveryStatusElement = documentItems[index][5];
-      const deliveredQuantityElement = documentItems[index][4];
+      const deliveredQuantityElement = documentItems[index][4]?.props?.value;
 
       return {
         itemId: extractDeliveryStatusRowId(deliveryStatusElement),
@@ -140,7 +139,6 @@ const useDeliveryStatusModal = (documentItems) => {
     });
 
     setSelectedItems(selectedData);
-    console.log("Selected Data: ", selectedData);
   };
 
   //get the status

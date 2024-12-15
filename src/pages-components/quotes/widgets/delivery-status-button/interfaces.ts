@@ -8,6 +8,9 @@ export interface IUpdateDeliveryStatusModalProps {
   onCloseModal: () => void;
   document: any;
   documentItems: any;
+  editableQuantities?: any;
+  setEditableQuantities?: any;
+  setDocumentItems?: any;
 }
 
 export interface DeliveryStateDetails {

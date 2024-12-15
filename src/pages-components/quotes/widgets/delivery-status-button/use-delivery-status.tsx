@@ -1,12 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { getDocumentDeliveryItemsApi } from "@/services/api-service/erp-service/document-deliveries-apis";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { FONT_FAMILY } from "@/utils/font-family";
-import {
-  DeliveryStatus,
-  DocumentDeliveryStatuses,
-} from "./delivery-status-modal/use-delivery-status-modal";
+import { DocumentDeliveryStatuses } from "./delivery-status-modal/use-delivery-status-modal";
 import { toRgba } from "@/utils/helpers";
 import { CanceledIcon, DeliveredIcon, PendingIcon } from "./icons";
 import { CharacterDetails } from "@/widgets/quote-new/quote-table/row-details/character-details";
@@ -18,7 +15,7 @@ const useDeliveryStatusButton = () => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData } = useSnackBar();
   const [documentItems, setDocumentItems] = useState<any>();
-
+  const [editableQuantities, setEditableQuantities] = useState({});
   const [openDeliveryModal, setOpenDeliveryModal] = useState<boolean>(false);
   const onOpenDeliveryModal = () => {
     setOpenDeliveryModal(true);
@@ -26,6 +23,7 @@ const useDeliveryStatusButton = () => {
 
   const onCloseDeliveryModal = () => {
     setOpenDeliveryModal(false);
+    setEditableQuantities({});
   };
 
   const _renderDeliveryStatus = (
@@ -91,28 +89,17 @@ const useDeliveryStatusButton = () => {
     }
   };
 
+  const handleQuantityChange = (id, value) => {
+    setEditableQuantities((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
   const getDocumentDeliveryItems = async (documentType, documentId) => {
     const callBack = (res) => {
       if (res.success) {
-        const mapDocumentDeliveryItems = res?.data?.map((documentItem: any) => [
-          <span style={{ color: "black", ...FONT_FAMILY.Inter(500, 14) }}>
-            #{documentItem?.code}
-          </span>,
-          documentItem?.productName,
-          <CharacterDetails
-            details={documentItem?.details}
-            showLessHeightFit={true}
-            canUpdate={false}
-          />,
-          "-",
-          documentItem?.quantity,
-          _renderDeliveryStatus(documentItem?.deliveryStatus, documentItem?.id),
-          documentItem?.agentName,
-          documentItem?.number,
-          documentItem?.notes,
-        ]);
-
-        setDocumentItems(mapDocumentDeliveryItems);
+        setDocumentItems(res.data);
         onOpenDeliveryModal();
       } else {
         alertFaultGetData();
@@ -125,6 +112,32 @@ const useDeliveryStatusButton = () => {
     });
   };
 
+  const renderTableRows = useCallback(() => {
+    return documentItems?.map((documentItem) => [
+      <span style={{ color: "black", ...FONT_FAMILY.Inter(500, 14) }}>
+        #{documentItem?.code}
+      </span>,
+      documentItem?.productName,
+      <CharacterDetails
+        details={documentItem?.details}
+        showLessHeightFit={true}
+        canUpdate={false}
+      />,
+      "-",
+      <input
+        type="number"
+        key={`quantity-${documentItem?.id}`}
+        value={editableQuantities[documentItem.id] || documentItem?.quantity}
+        onChange={(e) => handleQuantityChange(documentItem.id, e.target.value)}
+        style={{ width: "60px", textAlign: "center" }}
+      />,
+      _renderDeliveryStatus(documentItem?.deliveryStatus, documentItem?.id),
+      documentItem?.agentName,
+      documentItem?.number,
+      documentItem?.notes,
+    ]);
+  }, [documentItems, editableQuantities, handleQuantityChange]);
+
   return {
     t,
     openDeliveryModal,
@@ -133,6 +146,10 @@ const useDeliveryStatusButton = () => {
     getDocumentDeliveryItems,
     documentItems,
     _renderDeliveryStatusColor,
+    renderTableRows,
+    editableQuantities,
+    setDocumentItems,
+    setEditableQuantities,
   };
 };
 

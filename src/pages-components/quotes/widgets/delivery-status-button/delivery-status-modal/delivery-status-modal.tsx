@@ -15,6 +15,9 @@ const UpdateDeliveryStatusModal = ({
   openModal,
   onCloseModal,
   documentItems,
+  editableQuantities,
+  setEditableQuantities,
+  setDocumentItems,
 }: IUpdateDeliveryStatusModalProps) => {
   const { classes } = useStyle();
   const {
@@ -182,6 +185,9 @@ const UpdateDeliveryStatusModal = ({
         documentId={document?.id}
         documentType={document?.documentType}
         selectedItems={selectedItems}
+        editableQuantities={editableQuantities}
+        setEditableQuantities={setEditableQuantities}
+        setDocumentItems={setDocumentItems}
       />
     </GoMakeModal>
   );

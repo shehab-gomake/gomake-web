@@ -13,10 +13,12 @@ export interface ISignatureModalProps {
   openModal: boolean;
   onCloseModal: () => void;
   onCloseUpdateModal: () => void;
-
   documentType: number;
   documentId: string;
   selectedItems: any;
+  editableQuantities?: any;
+  setEditableQuantities?: any;
+  setDocumentItems?: any;
 }
 
 const SignatureModal = ({
@@ -26,10 +28,13 @@ const SignatureModal = ({
   documentId,
   documentType,
   selectedItems,
+  editableQuantities,
+  setEditableQuantities,
+  setDocumentItems,
 }: ISignatureModalProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  const { alertFault } = useSnackBar();
+  const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const { callApi } = useGomakeAxios();
 
   const sigPad = useRef<SignatureCanvas | null>(null);
@@ -42,36 +47,43 @@ const SignatureModal = ({
     // if (sigPad.current && sigPad.current.isEmpty()) {
     //   alertFault(t("sales.cart.signatureEmptyError"));
     // }
-
     const dataURL = sigPad.current.getTrimmedCanvas().toDataURL("image/png");
+
+    if (sigPad.current.isEmpty()) {
+      onClickSave(null);
+      return;
+    }
+
     onClickSave(dataURL);
   };
 
-  // const onClickSave = async (dataURL) => {
-  //   console.log("signImage : ", dataURL);
-  //   console.log(`signImage:${dataURL}
-  //     documentId:${documentId}
-  //     documentType:${documentType}
-  //     selectedItems:${selectedItems}`);
-
-  //   // //!in case success
-  //   // onCloseModal();
-  //   // onCloseUpdateModal();
-  // };
-
   const onClickSave = async (signImage) => {
-    const callBack = (res) => {};
+    const updatedSelectedData = selectedItems.map((item) => ({
+      ...item,
+      deliveredQuantity:
+        editableQuantities[item.itemId] || item.deliveredQuantity,
+    }));
 
+    const callBack = (res) => {
+      if (res.success) {
+        debugger;
+        setEditableQuantities({});
+
+        setDocumentItems(res.data);
+
+        alertSuccessUpdate();
+        onCloseModal();
+      } else {
+        alertFaultUpdate();
+      }
+    };
     await createDocumentDeliveryApi(callApi, callBack, {
       documentType,
       documentId,
       signImage,
-      items: selectedItems,
+      // items: selectedItems,
+      items: updatedSelectedData,
     });
-  };
-
-  const handleSend = () => {
-    console.log("send to customer");
   };
 
   return (

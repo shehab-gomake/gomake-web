@@ -550,7 +550,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 return (
                   <a
                     key={index}
-                    // onClick={() => navigate(renderURLDocumentType(item?.sourceDocumentType, item.documentId))}
                     href={`${renderURLDocumentType(
                       item?.sourceDocumentType,
                       item.documentId
@@ -896,6 +895,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   " " +
                   getCurrencyUnitText(quote?.currency),
               quote?.notes,
+              <ClickableStatusButton id={quote?.id} document={quote} />,
               _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
@@ -1222,9 +1222,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ? t("customers.modal.paymentStatus")
             : t("sales.quote.totalPrice"),
           t("sales.quote.notes"),
-
           docType === DOCUMENT_TYPE.order &&
-            t("sales.documentDeliveries.deliveryStatus"), // New header added
+            t("sales.documentDeliveries.deliveryStatus"),
 
           t("sales.quote.status"),
           t("sales.quote.more"),

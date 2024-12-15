@@ -14,8 +14,11 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
     openDeliveryModal,
     onCloseDeliveryModal,
     getDocumentDeliveryItems,
-    documentItems,
     _renderDeliveryStatusColor,
+    renderTableRows,
+    editableQuantities,
+    setEditableQuantities,
+    setDocumentItems,
   } = useDeliveryStatusButton();
   const dir = t("direction");
   const isRtl = dir === "rtl";
@@ -77,7 +80,10 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
         openModal={openDeliveryModal}
         onCloseModal={onCloseDeliveryModal}
         document={document}
-        documentItems={documentItems}
+        documentItems={renderTableRows()}
+        editableQuantities={editableQuantities}
+        setEditableQuantities={setEditableQuantities}
+        setDocumentItems={setDocumentItems}
       />
     </>
   );
