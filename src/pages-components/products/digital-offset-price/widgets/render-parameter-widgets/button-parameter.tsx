@@ -354,7 +354,6 @@ const ButtonParameterWidget = ({
       const selectedShape = materialData?.data?.find((data) => {
         return data?.id === isSelectedShape?.valueIds[0];
       });
-      console.log("sssaa", selectedShape)
       setSelectedShape(selectedShape);
     }
 
@@ -374,7 +373,6 @@ const ButtonParameterWidget = ({
     setSelectedShape(transformedShape);
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts, isParameterSettings);
-  console.log("hasDieCutOrDieKissCut", { isSelectedShape, selectedShape, hasDieCutOrDieKissCut })
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
     if (isStraightKnife) {
       Comp = (

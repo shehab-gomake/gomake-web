@@ -17,9 +17,6 @@ const GalleryModalMapping = ({
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
-
-  console.log("isDiesParameter", isDiesParameter?.valuesConfigs)
-
   return (
     <div
       key={index}
