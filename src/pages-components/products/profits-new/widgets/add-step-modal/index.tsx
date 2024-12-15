@@ -23,7 +23,9 @@ const AddStepModal = ({
   const [errorMsg, setErrorMsg] = useState<string>("");
   const totalPriceLabel = router.query.isOutSource
     ? t("products.profits.pricingListWidget.totalCost")
-    : t("products.profits.pricingListWidget.totalPrice");
+    : selectedPricingBy?.value === 1
+      ? t("products.profits.pricingListWidget.totalPrice")
+      : t("products.profits.pricingListWidget.unitPrice")
   return (
     <>
       <GoMakeModal
@@ -70,7 +72,7 @@ const AddStepModal = ({
                   totalPrice !== null &&
                   totalPrice !== 0
                 ) {
-                  addNewStepForActionProfitRow(value, totalPrice);
+                  addNewStepForActionProfitRow(value, selectedPricingBy?.value === 1 ? totalPrice : value * totalPrice);
                   onCloseModal();
                   setTotalPrice(null);
                   setValue(null);
