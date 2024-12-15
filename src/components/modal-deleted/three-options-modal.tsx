@@ -1,12 +1,11 @@
-import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, Modal, Tooltip } from "@mui/material";
 import { GomakePrimaryButton } from "../button";
 import { useStyle } from "./style";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { ModalType } from "@/enums";
 import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
 import { RoundedCloseIcon } from "../modal/icon/close";
+import { WarningModalIcon } from "@/icons";
 
 const ThreeOptionsModal = ({
   openModal,
@@ -49,7 +48,7 @@ const ThreeOptionsModal = ({
           )}
           {!hideIcon && (
             <div style={classes.icon}>
-              {props?.icon || <WarningAmberIcon style={classes.iconStyle} />}
+              {props?.icon || <WarningModalIcon />}
             </div>
           )}
           <div style={classes.title}>{title}</div>
