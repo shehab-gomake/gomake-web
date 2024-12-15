@@ -32,6 +32,7 @@ const UpdateDeliveryStatusModal = ({
     closeSignatureModal,
     extractDeliveryStatus,
     handleSelectionChange,
+    selectedItems,
   } = useDeliveryStatusModal(documentItems);
 
   const handleCloseModal = () => {
@@ -178,6 +179,9 @@ const UpdateDeliveryStatusModal = ({
         openModal={isSignatureModalOpen}
         onCloseModal={closeSignatureModal}
         onCloseUpdateModal={handleCloseModal}
+        documentId={document?.id}
+        documentType={document?.documentType}
+        selectedItems={selectedItems}
       />
     </GoMakeModal>
   );

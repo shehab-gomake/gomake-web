@@ -5,23 +5,33 @@ import { useTranslation } from "react-i18next";
 import { DeleteIcon, SaveIcon, SendIcon, WArrowIcon } from "../../icons";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useRef } from "react";
-import { useSnackBar } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import SignatureCanvas from "react-signature-canvas";
+import { createDocumentDeliveryApi } from "@/services/api-service/erp-service/document-deliveries-apis";
 
 export interface ISignatureModalProps {
   openModal: boolean;
   onCloseModal: () => void;
   onCloseUpdateModal: () => void;
+
+  documentType: number;
+  documentId: string;
+  selectedItems: any;
 }
 
 const SignatureModal = ({
   openModal,
   onCloseModal,
   onCloseUpdateModal,
+  documentId,
+  documentType,
+  selectedItems,
 }: ISignatureModalProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { alertFault } = useSnackBar();
+  const { callApi } = useGomakeAxios();
+
   const sigPad = useRef<SignatureCanvas | null>(null);
 
   const clear = () => {
@@ -29,17 +39,35 @@ const SignatureModal = ({
   };
 
   const save = () => {
-    if (sigPad.current && sigPad.current.isEmpty()) {
-      alertFault(t("sales.cart.signatureEmptyError"));
-    }
+    // if (sigPad.current && sigPad.current.isEmpty()) {
+    //   alertFault(t("sales.cart.signatureEmptyError"));
+    // }
 
     const dataURL = sigPad.current.getTrimmedCanvas().toDataURL("image/png");
     onClickSave(dataURL);
-    console.log(dataURL);
   };
 
-  const onClickSave = async (dataURL) => {
-    console.log("the dataURL of signature: ", dataURL);
+  // const onClickSave = async (dataURL) => {
+  //   console.log("signImage : ", dataURL);
+  //   console.log(`signImage:${dataURL}
+  //     documentId:${documentId}
+  //     documentType:${documentType}
+  //     selectedItems:${selectedItems}`);
+
+  //   // //!in case success
+  //   // onCloseModal();
+  //   // onCloseUpdateModal();
+  // };
+
+  const onClickSave = async (signImage) => {
+    const callBack = (res) => {};
+
+    await createDocumentDeliveryApi(callApi, callBack, {
+      documentType,
+      documentId,
+      signImage,
+      items: selectedItems,
+    });
   };
 
   const handleSend = () => {
@@ -101,11 +129,7 @@ const SignatureModal = ({
         <PrimaryButton
           variant="contained"
           style={classes.conBtn}
-          onClick={() => {
-            save();
-            onCloseModal();
-            onCloseUpdateModal();
-          }}
+          onClick={save}
           startIcon={<WArrowIcon />}
         >
           {/* {t("sales.documentDeliveries.continueWithoutSignature")} */}
