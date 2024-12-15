@@ -513,7 +513,7 @@ const PriceListPageWidget = ({ widgetType }) => {
         setSettingParameters={setSettingParameters}
       />
 
-      <GoMakeDeleteModal
+      {/* <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         subTitle={t("sales.quote.changePriceSubTitle")}
         title={t("sales.quote.changePriceTitle")}
@@ -527,7 +527,7 @@ const PriceListPageWidget = ({ widgetType }) => {
           setCurrentProductItemValueTotalPrice(+lastProductItemValueTotalPrice);
           onClickCloseChangePriceModal();
         }}
-      />
+      /> */}
       <GoMakeModal
         modalTitle={" "}
         withClose={false}
