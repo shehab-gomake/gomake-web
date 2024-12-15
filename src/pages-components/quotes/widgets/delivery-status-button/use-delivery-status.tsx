@@ -3,10 +3,12 @@ import { useState } from "react";
 import { getDocumentDeliveryItemsApi } from "@/services/api-service/erp-service/document-deliveries-apis";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { DeliveryStatus } from "./delivery-status-modal/use-delivery-status-modal";
+import {
+  DeliveryStatus,
+  DocumentDeliveryStatuses,
+} from "./delivery-status-modal/use-delivery-status-modal";
 import { toRgba } from "@/utils/helpers";
 import { CanceledIcon, DeliveredIcon, PendingIcon } from "./icons";
-import parse from "html-react-parser";
 import { CharacterDetails } from "@/widgets/quote-new/quote-table/row-details/character-details";
 
 const useDeliveryStatusButton = () => {
@@ -27,28 +29,30 @@ const useDeliveryStatusButton = () => {
   };
 
   const _renderDeliveryStatus = (
-    statusEnum: DeliveryStatus,
-    statusColor: string,
-    id: string,
-    isSelected?: boolean
+    statusEnum: DocumentDeliveryStatuses,
+    id: string
   ): React.ReactNode => {
     const icon = (() => {
       switch (statusEnum) {
-        case DeliveryStatus.DELIVERED:
-          return <DeliveredIcon />; // Delivered icon
-        case DeliveryStatus.PENDING:
-          return <PendingIcon />; // Pending icon
-        case DeliveryStatus.CANCELED:
-          return <CanceledIcon />; // Shipped icon
+        case DocumentDeliveryStatuses.FullyDelivered:
+          return <DeliveredIcon />;
+        case DocumentDeliveryStatuses.PartiallyDelivered:
+          return <DeliveredIcon />;
+        case DocumentDeliveryStatuses.Pasued:
+          return <PendingIcon />;
+        case DocumentDeliveryStatuses.Canceled:
+          return <CanceledIcon />;
+        case DocumentDeliveryStatuses.NotDelivered:
+          return "❔";
         default:
           return "❔"; // Default icon
       }
     })();
 
+    let statusColor = _renderDeliveryStatusColor(statusEnum);
     return (
       <span
         id={id}
-        data-is-selected={isSelected} // Use a `data-*` attribute
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -64,9 +68,27 @@ const useDeliveryStatusButton = () => {
         }}
       >
         {icon}
-        {statusEnum}
+        {/* {DocumentDeliveryStatuses[statusEnum]} */}
+        {t(`sales.documentDeliveries.${DocumentDeliveryStatuses[statusEnum]}`)}
       </span>
     );
+  };
+
+  const _renderDeliveryStatusColor = (statusEnum: DocumentDeliveryStatuses) => {
+    switch (statusEnum) {
+      case DocumentDeliveryStatuses.NotDelivered:
+        return "#667085";
+      case DocumentDeliveryStatuses.PartiallyDelivered:
+        return "#099250";
+      case DocumentDeliveryStatuses.FullyDelivered:
+        return "#099250";
+      case DocumentDeliveryStatuses.Pasued:
+        return "#FFD700";
+      case DocumentDeliveryStatuses.Canceled:
+        return "#f44336"; // Purple
+      default:
+        return "#808080"; // Gray
+    }
   };
 
   const getDocumentDeliveryItems = async (documentType, documentId) => {
@@ -84,12 +106,7 @@ const useDeliveryStatusButton = () => {
           />,
           "-",
           documentItem?.quantity,
-          _renderDeliveryStatus(
-            DeliveryStatus.DELIVERED,
-            "#17B26A",
-            documentItem?.id,
-            documentItem?.isSelected
-          ),
+          _renderDeliveryStatus(documentItem?.deliveryStatus, documentItem?.id),
           documentItem?.agentName,
           documentItem?.number,
           documentItem?.notes,
@@ -115,6 +132,7 @@ const useDeliveryStatusButton = () => {
     onCloseDeliveryModal,
     getDocumentDeliveryItems,
     documentItems,
+    _renderDeliveryStatusColor,
   };
 };
 

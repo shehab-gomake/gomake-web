@@ -1223,7 +1223,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             : t("sales.quote.totalPrice"),
           t("sales.quote.notes"),
 
-          docType === DOCUMENT_TYPE.order && t("Delivery status"), // New header added
+          docType === DOCUMENT_TYPE.order &&
+            t("sales.documentDeliveries.deliveryStatus"), // New header added
 
           t("sales.quote.status"),
           t("sales.quote.more"),

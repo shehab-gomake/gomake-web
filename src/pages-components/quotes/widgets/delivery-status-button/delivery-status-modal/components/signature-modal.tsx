@@ -35,6 +35,7 @@ const SignatureModal = ({
 
     const dataURL = sigPad.current.getTrimmedCanvas().toDataURL("image/png");
     onClickSave(dataURL);
+    console.log(dataURL);
   };
 
   const onClickSave = async (dataURL) => {
@@ -47,7 +48,7 @@ const SignatureModal = ({
 
   return (
     <GoMakeModal
-      modalTitle={"Signature"}
+      modalTitle={t("sales.documentDeliveries.signature")}
       insideStyle={{ width: "640px", height: "fit-content" }}
       openModal={openModal}
       onClose={onCloseModal}
@@ -67,26 +68,25 @@ const SignatureModal = ({
               }}
             />
           </div>
-
           <Button
             variant="text"
-            style={classes.clearBtn}
+            sx={classes.clearBtn}
             onClick={clear}
             startIcon={<DeleteIcon />}
             aria-label={t("Clear signature")}
           >
-            {t("Clear")}
+            {t("sales.quote.clear")}
           </Button>
         </Stack>
 
-        <Stack direction={"row"} gap={"12px"}>
+        {/* <Stack direction={"row"} gap={"12px"}>
           <PrimaryButton
             variant="outlined"
             style={classes.conBtn}
             onClick={save}
             startIcon={<SaveIcon />}
           >
-            {t("Save signature")}
+            {t("sales.documentDeliveries.saveSignature")}
           </PrimaryButton>
           <PrimaryButton
             variant="outlined"
@@ -94,20 +94,22 @@ const SignatureModal = ({
             onClick={handleSend}
             startIcon={<SendIcon />}
           >
-            {t("Send to customer")}
+            {t("sales.documentDeliveries.sendToCustomer")}
           </PrimaryButton>
-        </Stack>
+        </Stack> */}
 
         <PrimaryButton
           variant="contained"
           style={classes.conBtn}
           onClick={() => {
+            save();
             onCloseModal();
             onCloseUpdateModal();
           }}
           startIcon={<WArrowIcon />}
         >
-          {t("Continue without signature")}
+          {/* {t("sales.documentDeliveries.continueWithoutSignature")} */}
+          {t("sales.documentDeliveries.continue")}
         </PrimaryButton>
       </Stack>
     </GoMakeModal>

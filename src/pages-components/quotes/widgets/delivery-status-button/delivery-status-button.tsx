@@ -5,24 +5,23 @@ import { useStyle } from "./style";
 import { useDeliveryStatusButton } from "./use-delivery-status";
 import { ITaskCategoryLabelProps } from "./interfaces";
 import { UpdateDeliveryStatusModal } from "./delivery-status-modal/delivery-status-modal";
+import { DocumentDeliveryStatuses } from "./delivery-status-modal/use-delivery-status-modal";
 
 //!here
-const ClickableStatusButton = ({
-  label = "Delivered",
-  delStatusColor = "#099250",
-  id,
-  document,
-}: ITaskCategoryLabelProps) => {
+const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
   const {
     t,
     openDeliveryModal,
     onCloseDeliveryModal,
     getDocumentDeliveryItems,
     documentItems,
+    _renderDeliveryStatusColor,
   } = useDeliveryStatusButton();
   const dir = t("direction");
   const isRtl = dir === "rtl";
-  const { classes } = useStyle({ color: delStatusColor });
+  const { classes } = useStyle({
+    color: _renderDeliveryStatusColor(document?.deliveryStatus),
+  });
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenuClick = (event: MouseEvent<HTMLElement>) => {
@@ -41,7 +40,11 @@ const ClickableStatusButton = ({
   return (
     <>
       <span onClick={handleMenuClick} style={classes.spanStyle}>
-        {label}
+        {t(
+          `sales.documentDeliveries.${
+            DocumentDeliveryStatuses[document?.deliveryStatus]
+          }`
+        )}
       </span>
       <Menu
         key={`Status-menu-${id}`}
@@ -65,7 +68,9 @@ const ClickableStatusButton = ({
           onClick={handleChangeStatusClick}
         >
           <ChangeIcon />
-          <Typography style={classes.menuText}>{t("Change status")}</Typography>
+          <Typography style={classes.menuText}>
+            {t("sales.documentDeliveries.changeStatus")}
+          </Typography>
         </MenuItem>
       </Menu>
       <UpdateDeliveryStatusModal

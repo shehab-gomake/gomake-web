@@ -1,7 +1,5 @@
 export interface ITaskCategoryLabelProps {
   id: string;
-  label?: string;
-  delStatusColor?: string;
   document: any;
 }
 

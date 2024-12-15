@@ -1,16 +1,14 @@
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { toRgba } from "@/utils/helpers";
 
 const useStyle = ({ color }) => {
-  const { t } = useTranslation();
-  const { theme, primaryColor, secondColor } = useGomakeTheme();
+  const { theme, primaryColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       spanStyle: {
-        display: "flex",
+        display: "inline-flex",
         cursor: "pointer",
         color: color || primaryColor(500),
         backgroundColor: toRgba(color || primaryColor(50), 0.1),

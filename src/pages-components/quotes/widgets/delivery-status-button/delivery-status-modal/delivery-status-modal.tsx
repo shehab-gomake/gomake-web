@@ -24,7 +24,6 @@ const UpdateDeliveryStatusModal = ({
     deliveryState,
     setDeliveryState,
     initialDeliveryState,
-    mockRows,
     options,
     client,
     setClient,
@@ -32,7 +31,6 @@ const UpdateDeliveryStatusModal = ({
     openSignatureModal,
     closeSignatureModal,
     extractDeliveryStatus,
-    extractDeliveryStatusIsSelected,
     handleSelectionChange,
   } = useDeliveryStatusModal(documentItems);
 
@@ -60,7 +58,9 @@ const UpdateDeliveryStatusModal = ({
           gap={"10px"}
         >
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
-            <span style={classes.labelStyle}>Recipient</span>
+            <span style={classes.labelStyle}>
+              {t("sales.documentDeliveries.recipient")}
+            </span>
             <GoMakeSelect
               key={`select-client-${document?.id}`}
               style={{
@@ -74,7 +74,9 @@ const UpdateDeliveryStatusModal = ({
             />
           </Stack>
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
-            <span style={classes.labelStyle}>Recipient name</span>
+            <span style={classes.labelStyle}>
+              {t("sales.documentDeliveries.recipientName")}
+            </span>
             <GoMakeTextInput
               key={`receipt-name-${document?.id}`}
               style={{
@@ -89,7 +91,9 @@ const UpdateDeliveryStatusModal = ({
             />
           </Stack>
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
-            <span style={classes.labelStyle}>Recipient number</span>
+            <span style={classes.labelStyle}>
+              {t("sales.documentDeliveries.recipientNumber")}
+            </span>
             <GoMakeTextInput
               style={{
                 width: 170,
@@ -103,7 +107,9 @@ const UpdateDeliveryStatusModal = ({
             />
           </Stack>
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
-            <span style={classes.labelStyle}>Recipient mail</span>
+            <span style={classes.labelStyle}>
+              {t("sales.documentDeliveries.recipientMail")}
+            </span>
             <GoMakeTextInput
               style={{
                 width: 170,
@@ -117,7 +123,9 @@ const UpdateDeliveryStatusModal = ({
             />
           </Stack>
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
-            <span style={classes.labelStyle}>Delivery date</span>
+            <span style={classes.labelStyle}>
+              {t("sales.documentDeliveries.deliveryDate")}
+            </span>
             <GoMakeTextInput
               style={{
                 width: 170,
@@ -143,13 +151,9 @@ const UpdateDeliveryStatusModal = ({
           enableCheckboxes={true}
           onSelectionChange={handleSelectionChange}
           rowCheckboxCondition={(row) => {
-            return !extractDeliveryStatusIsSelected(row[5]);
+            const status = extractDeliveryStatus(row[5]);
+            return status !== "FullyDelivered";
           }}
-
-          // rowCheckboxCondition={(row) => {
-          //   const status = extractDeliveryStatus(row[5]);
-          //   return status === "Delivered";
-          // }}
         />
 
         {/* Pagination */}
@@ -167,7 +171,7 @@ const UpdateDeliveryStatusModal = ({
           style={classes.nextBtn}
           onClick={openSignatureModal}
         >
-          {t("Next")}
+          {t("sales.documentDeliveries.next")}
         </PrimaryButton>
       </Stack>
       <SignatureModal

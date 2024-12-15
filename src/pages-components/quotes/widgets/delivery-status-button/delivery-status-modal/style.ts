@@ -1,7 +1,11 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
+  const { t } = useTranslation();
+  const direction = t("direction");
+
   const classes = useMemo(() => {
     return {
       modalTitle: {
@@ -37,6 +41,12 @@ const useStyle = () => {
         color: "#475467",
         width: "fit-content",
         ...FONT_FAMILY.Inter(600, 14),
+        "& .MuiButton-startIcon": {
+          ...(direction === "rtl" && {
+            marginRight: "-4px",
+            marginLeft: "4px",
+          }),
+        },
       },
       menuPaperStyle: {
         marginTop: "4px",

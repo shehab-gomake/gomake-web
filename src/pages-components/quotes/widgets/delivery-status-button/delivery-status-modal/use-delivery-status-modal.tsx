@@ -13,6 +13,14 @@ export enum DeliveryStatus {
   CANCELED = "Canceled",
 }
 
+export enum DocumentDeliveryStatuses {
+  NotDelivered = 1,
+  PartiallyDelivered,
+  FullyDelivered,
+  Canceled,
+  Pasued,
+}
+
 const useDeliveryStatusModal = (documentItems) => {
   const { t } = useTranslation();
   const dir = t("direction");
@@ -62,15 +70,15 @@ const useDeliveryStatusModal = (documentItems) => {
   };
 
   const tableHeaders = [
-    t("Item code"),
-    t("Item name"),
-    t("Description"),
-    t("Date"),
-    t("Quantity"),
-    t("Delivery status"),
-    t("Signature"),
-    t("Delivery details"),
-    t("Action"),
+    t("sales.documentDeliveries.itemCode"),
+    t("sales.documentDeliveries.itemName"),
+    t("sales.documentDeliveries.description"),
+    t("sales.documentDeliveries.date"),
+    t("sales.documentDeliveries.quantity"),
+    t("sales.documentDeliveries.deliveryStatus"),
+    t("sales.documentDeliveries.signature"),
+    t("sales.documentDeliveries.deliveryDetailes"),
+    // t("Action"),
   ];
 
   const mockRows: React.ReactNode[][] = [

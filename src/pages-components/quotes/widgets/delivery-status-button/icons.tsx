@@ -103,20 +103,20 @@ const PendingIcon = () => {
     >
       <path
         d="M5.98438 11C8.7458 11 10.9844 8.76142 10.9844 6C10.9844 3.23858 8.7458 1 5.98438 1C3.22295 1 0.984375 3.23858 0.984375 6C0.984375 8.76142 3.22295 11 5.98438 11Z"
-        stroke="#F04438"
+        stroke="#FFD700"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M5.36 7.26502V4.73502C5.36 4.49502 5.26 4.40002 5.005 4.40002H4.355C4.1 4.40002 4 4.49502 4 4.73502V7.26502C4 7.50502 4.1 7.60002 4.355 7.60002H5C5.26 7.60002 5.36 7.50502 5.36 7.26502Z"
-        stroke="#F04438"
+        stroke="#FFD700"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
       <path
         d="M7.99953 7.26502V4.73502C7.99953 4.49502 7.89953 4.40002 7.64453 4.40002H6.99953C6.74453 4.40002 6.64453 4.49502 6.64453 4.73502V7.26502C6.64453 7.50502 6.74453 7.60002 6.99953 7.60002H7.64453C7.89953 7.60002 7.99953 7.50502 7.99953 7.26502Z"
-        stroke="#F04438"
+        stroke="#FFD700"
         stroke-linecap="round"
         stroke-linejoin="round"
       />
@@ -135,7 +135,7 @@ const CanceledIcon = () => {
     >
       <path
         d="M8.5 3.5L3.5 8.5M3.5 3.5L8.5 8.5"
-        stroke="#667085"
+        stroke="#f44336"
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"
