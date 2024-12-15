@@ -11,6 +11,7 @@ const GET_MATERIAL_TABLE_HEADERS_URL = "/v1/materials/GetMaterialTypeTableHeader
 const DOWNLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/download-material-excel";
 const UPLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/upload-material-excel-file";
 const UPDATE_MATERIALS_IMAGES = "/v1/materials/update-materials-images";
+const UPDATE_SUPPLIER_PRIORITY = "/v1/materials/update-supplier-priority";
 const GET_MATERIAL_CATEGORIES_URL = "/v1/materials/GetMaterialCategories";
 const getDeviceSizeMockURL = "/v1/materials/get-device-size-material";
 const GET_MATERIAL_CATEGORY_DATA_URL = "/v1/materials/GetMaterialCategoryData";
@@ -25,6 +26,9 @@ const CREATE_PURCHASE_ORDER_URL = "/v1/materials/create-purchase-order";
 const UPLOAD_PRINT_HOUSE_MATERIAL_IMAGE_URL = "/v1/materials/upload-print-house-material-image";
 const ADD_DOCUMENT_ITEM_FROM_MATERIALS = "/v1/printhouse-config/materials/add-document-item-from-material";
 const GET_DOCUMENT_ITEM_DATA_FROM_MATERIALS = "/v1/materials/get-document-item-data-from-material";
+
+const TOGGLE_MATERIAL_TYPE_ACTIVE_URL = "/v1/materials/toggle-material-type-active";
+
 
 const getMaterialTableHeadersApi: ICallAndSetData = async (
   callApi,
@@ -84,6 +88,20 @@ const updateMaterialsImagesApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.PUT,
     UPDATE_MATERIALS_IMAGES,
+    callBack,
+    data
+  );
+};
+
+const updateSupplierPriorityApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_SUPPLIER_PRIORITY,
     callBack,
     data
   );
@@ -301,6 +319,20 @@ const getDocumentItemDataFromMaterialApi: ICallAndSetData = async (
   );
 };
 
+const toggleMaterialTypeActiveApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    TOGGLE_MATERIAL_TYPE_ACTIVE_URL,
+    callBack,
+    data
+  );
+};
+
 export {
   getMaterialsTypesApi,
   getMaterialTableHeadersApi,
@@ -320,5 +352,7 @@ export {
   uploadPrintHouseMaterialApi,
   addDocumentItemFromMaterialApi,
   getDocumentItemDataFromMaterialApi,
-  updateMaterialCategoryNumberingApi
+  updateMaterialCategoryNumberingApi,
+  updateSupplierPriorityApi,
+  toggleMaterialTypeActiveApi
 };

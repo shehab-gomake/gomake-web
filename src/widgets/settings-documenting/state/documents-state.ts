@@ -26,7 +26,7 @@ export const openModalState = atom<boolean>({
 });
 
 export const documentTypeState = atom<DocumentType[]>({
-  key: 'documentTypeState',
+  key: "documentTypeState",
   default: {} as DocumentType[],
 });
 
@@ -36,18 +36,23 @@ export const documentTypeState = atom<DocumentType[]>({
 // });
 
 export const documentDesignState = atom<IDocumentDesign>({
-  key: 'documentDesignState',
+  key: "documentDesignState",
   default: {
-    docType: '14', // Assuming "14" is the key for "All"
+    docType: "14", // Assuming "14" is the key for "All"
   } as IDocumentDesign,
 });
 
+// export const documentDesignState = atom<any>({
+//   key: "documentDesignState",
+//   default: {},
+// });
+
 export const documentDesignURLState = atom({
-  key: 'documentDesignURLState',
+  key: "documentDesignURLState",
   default: "",
 });
 
 export const documentDesignTypeTextState = atom({
-  key: 'documentDesignTypeTextState',
+  key: "documentDesignTypeTextState",
   default: "",
 });

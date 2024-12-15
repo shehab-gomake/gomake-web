@@ -14,7 +14,6 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: true
         },
-        state?.attributes?.embossingAvailable ?
         {
             name: "machineAttributes.varnish",
             label: "machineAttributes.varnish",
@@ -27,20 +26,15 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
             machineInputType: 'materialInput',
             value: state?.attributes?.varnishTypes ? state?.attributes?.varnishTypes : [],
             isValid: true,
-            materialType: 'varnish'
-        } : {
-                name: '',
-                label: '',
-                value: '',
-                parameterKey: '',
-                disabled: true
-            },
+            materialType: 'varnish',
+        },
         {
             name: 'machineAttributes.heightLevels',
             parameterKey: 'heightLevels',
             value: state?.attributes?.heightLevels ? state?.attributes?.heightLevels : [],
             machineInputType: 'multiArrayInput',
             isValid: state?.attributes?.heightLevels?.length > 0,
+            disabled: !state?.attributes?.embossingAvailable,
             inputs: [
                 {
                     name: "",

@@ -27,7 +27,7 @@ interface AttributesData {
     printHouseMaterialSizeId?:string;
     emplyeeId?:string;
     emplyeeName?:string;
-    FoldOptionValueId?:string;
+    foldOptionValueId?:string;
 }
 const useActionUpdateValues = () => {
     const actions = useRecoilValue(jobActionsState);
@@ -117,16 +117,25 @@ const useActionUpdateValues = () => {
     const apiCallBackMachine = (res:any) => {
         if (res.success) {
             if(res.data && res.data.item2){
-                setCurrentCalculationSessionId(res.data.item2)
+                if(res.data?.item1?.exceptionType===0){
+                    onClickOpenModalMachine()
+                }
+                else{
+                    setCurrentCalculationSessionId(res.data.item2)
+                }
             }
             alertSuccessUpdate()
         }else {
             onClickOpenModalMachine()
         }
     }
-    const apiCallBackMaterial = (res: {success: boolean}) => {
+    const apiCallBackMaterial = (res) => {
         if (res.success) {
-            alertSuccessUpdate()
+            if(res.data?.item1?.exceptionType===0){
+                onClickOpenModalMaterial()
+            }else{
+                alertSuccessUpdate()
+            }
         }else {
             onClickOpenModalMaterial()
         }
@@ -162,6 +171,17 @@ const useActionUpdateValues = () => {
         updateProductItemDraftActionMachine(callApi, apiCallBackMaterial, {
             actionId: actionId,
             printHouseMaterialSizeId: printHouseMaterialSizeId,
+            productType: productType,
+            productItemValueId: currentProductItemValue,
+            actionIndex: actionIndex,
+            signalRConnectionId: connectionId
+        }).then()
+    }
+
+    const selectNewFold = (FoldOptionValueId: string, actionId: string, productType: string, actionIndex: number) => {
+        updateProductItemDraftActionMachine(callApi, apiCallBackMaterial, {
+            actionId: actionId,
+            foldOptionValueId: FoldOptionValueId,
             productType: productType,
             productItemValueId: currentProductItemValue,
             actionIndex: actionIndex,
@@ -296,6 +316,7 @@ const updateWorkFlowForFold = (actionId,productType,actionIndex,FoldOptionValueI
         selectNewEmployee,
         selectNewMaterials,
         updateActionData,
+        selectNewFold,
         open,
         anchorEl,
         handleClick,

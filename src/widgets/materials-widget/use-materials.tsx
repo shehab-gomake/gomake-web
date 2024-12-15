@@ -110,7 +110,6 @@ const useMaterials = (isAdmin: boolean) => {
   );
   const { updateCellData } = useTableCellData(isAdmin);
   const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
-  const supplierId = useRecoilValue(selectedSupplierIdState);
   const toggleIsActive = async (id, parameterKey, value) => {
     await updateCellData(id, parameterKey, !value);
     getMaterialCategoryData(
@@ -134,7 +133,14 @@ const useMaterials = (isAdmin: boolean) => {
   const setFlagState = useSetRecoilState(flagState);
   const { t } = useTranslation();
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
+  const [supplierId, setSupplierId] = useRecoilState(selectedSupplierIdState);
+  const [selectedMaterialCategory, setSelectedMaterialCategory] = useState<any>();
+  const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
   const onSelectCategory = (category: string) => {
+    setIsFirstTime(false);
+    setSelectedMaterialCategory(category);
+    setMaterialCategoryData([])
+    setSupplierId("")
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";
     push(path + `/${materialType}?materialCategory=${category}`);
@@ -364,6 +370,17 @@ const useMaterials = (isAdmin: boolean) => {
     resetMaterialCategoryData();
     const callBack = (res) => {
       if (res.success) {
+        const supplier = res?.data[0]
+        if (isFirstTime && supplier) {
+          getMaterialCategoryData(
+            materialType?.toString(),
+            materialCategory?.toString(),
+            materialFilter,
+            supplier?.id,
+            pageNumber,
+            14
+          ).then();
+        }
         setMaterialCategorySuppliers(
           res?.data?.map((supplier) => {
             if (supplier.isDefault) {
@@ -429,7 +446,8 @@ const useMaterials = (isAdmin: boolean) => {
     getClientsMaterials,
     productList,
     onClickCloseDeleteTableRowWhenHaveMoreSupplierModal,
-    toggleIsActive
+    toggleIsActive,
+    selectedMaterialCategory,
   };
 };
 

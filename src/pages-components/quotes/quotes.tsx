@@ -188,6 +188,9 @@ const QuotesListPageWidget = ({
     searchInputRef,
     openExportReceiptPdfModal,
     onCloseExportReceiptPdfModal,
+    startOrderProduction,
+    openStartProductionModal,
+    onClickCloseStartProductionModal,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -856,6 +859,15 @@ const QuotesListPageWidget = ({
         onClose={onCloseExportReceiptPdfModal}
         onClickYes={() => onClickQuotePdf(selectedDocument?.id, false, true)}
         onClickNo={() => onClickQuotePdf(selectedDocument?.id, false, false)}
+      />
+      <GoMakeDeleteModal
+        hideIcon
+        title={t("sales.tables.startProduction")}
+        yesBtn={t("sales.quote.yesBtn")}
+        openModal={openStartProductionModal}
+        onClose={onClickCloseStartProductionModal}
+        subTitle={t("sales.modals.confirmSendToProduction")}
+        onClickDelete={startOrderProduction}
       />
     </>
   );

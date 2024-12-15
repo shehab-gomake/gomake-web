@@ -13,7 +13,7 @@ const StyledTextField = styled(TextField, {
   input: {
     boxSizing: "border-box",
     borderRadius: props?.style?.borderRadius || 4,
-    height: props?.style?.height || 56,
+    height: props?.style?.height || 37,
     fontFamily: "Heebo",
     fontStyle: "normal",
     fontWeight: 500,

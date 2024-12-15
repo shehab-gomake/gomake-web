@@ -24,12 +24,12 @@ const useMaterialsCategories = (isAdmin: boolean) => {
     materialTableFiltersState
   );
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
-  useEffect(() => {
-    if (inActiveFilter) {
-      setActiveFilter(EMaterialActiveFilter.INACTIVE)
+  // useEffect(() => {
+  //   if (inActiveFilter) {
+  //     setActiveFilter(EMaterialActiveFilter.INACTIVE)
 
-    }
-  }, [inActiveFilter])
+  //   }
+  // }, [inActiveFilter])
   const [pagesCount, setPagesCount] = useState(0);
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
   const [categoryNumbering, setCategoryNumbering] = useRecoilState(categoryNumberingState);
@@ -55,6 +55,11 @@ const useMaterialsCategories = (isAdmin: boolean) => {
         setInActiveFilter(res.data?.setInActiveFilter)
         setCategoryNumbering(res.data?.categoryNumbering)
 
+      }
+      else {
+        setMaterialCategoryData([])
+        setPagesCount(0);
+        setMaterialTableFilters([])
       }
     };
     const isActive =

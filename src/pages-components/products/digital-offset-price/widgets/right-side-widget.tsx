@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
-import { Checkbox, Divider, Typography } from "@mui/material";
+import { CheckboxCheckedIcon, CheckboxIcon, ReloadIcon } from "@/icons";
+import { Checkbox, Divider, IconButton, Tooltip, Typography } from "@mui/material";
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
@@ -32,6 +32,9 @@ const RightSideWidget = ({
   sampleType,
   errorMsg,
   calculationServerErrorState,
+  canCalculation,
+  calculationProduct,
+  subProducts,
 
 }: any) => {
   const {
@@ -54,6 +57,8 @@ const RightSideWidget = ({
     ...(calculationExceptionsLogs || []),
   ];
   const [logsArray, setLogsArray] = useState(mergedArray);
+
+
 
   useEffect(() => {
     const uniqueArray = mergedArray.filter((item, index, self) => {
@@ -198,7 +203,18 @@ const RightSideWidget = ({
               />
             )}
           </div>
-          <span style={clasess.totalCurrancyStyle}>{systemCurrency}</span>
+          <span style={clasess.totalCurrancyStyle}>{systemCurrency}
+            <Tooltip
+              title={t(
+                "products.offsetPrice.admin.updateTotalPrice"
+              )}>
+              <IconButton onClick={() => {
+                calculationProduct(subProducts);
+              }}>
+                <ReloadIcon />
+              </IconButton>
+            </Tooltip>
+          </span>
         </div>
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
@@ -442,9 +458,32 @@ const RightSideWidget = ({
                   {t("products.offsetPrice.admin.general")} Server Error
                 </div>
               )} */}
-
               {logsArray?.map((item) => {
-                if (item.actionName) {
+                if (item.actionName || item.actionName === null) {
+                  const renderExceptionMessage = (exceptionKey, values) => {
+                    if (exceptionKey && values?.length > 0) {
+                      return (
+                        t("CalculationExceptions." + exceptionKey).replace(
+                          /\{\{(\d+)\}\}/g,
+                          (_, index) => values[index] || ""
+                        )
+                      );
+                    }
+                    else if (exceptionKey) {
+                      return (
+                        t("CalculationExceptions." + exceptionKey)
+                      );
+                    }
+                    return "";
+                  };
+
+                  const renderValues = (values) => {
+                    if (!item?.exception?.exceptionKey && values?.length > 0) {
+                      return values.join(", ")
+
+                    }
+                    return "";
+                  };
                   return (
                     <div
                       style={{
@@ -456,74 +495,16 @@ const RightSideWidget = ({
                         gap: 5,
                       }}
                     >
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "row",
-                          justifyContent: "flex-start",
-                          alignItems: "center",
-                          gap: 5,
-                        }}
-                      >
+                      <div>
                         {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
-                        <div
-                          style={{
-                            ...clasess.titleLogsTextStyle,
-                          }}
-                        >
-                          <div style={{ width: 85 }}>{item.actionName}:</div>
+                      </div>
+                      <div style={{ marginTop: -1.5, display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+                        <div style={{ ...clasess.titleLogsTextStyle }}>
+                          {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "}${renderExceptionMessage(item?.exception?.exceptionKey, item?.exception?.values)}${renderValues(item?.exception?.values)}`}
                         </div>
                       </div>
-
-                      <div style={clasess.textLogstyle}>
-                        <span style={{ color: "black" }}>
-                          {t(
-                            "CalculationExceptions." +
-                            item?.exception?.exceptionKey
-                          )}
-                        </span>
-                      </div>
                     </div>
-                  );
-                } else if (item.actionName === null) {
-                  return (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "flex-start",
-                        alignItems: "flex-start",
-                        width: "100%",
-                        gap: 5,
-                      }}
-                    >
-                      {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
-
-                      <div style={{ width: "100%", marginTop: -3 }}>
-                        {item?.exception?.values &&
-                          item?.exception?.values?.length > 0 ? (
-                          <span style={{ color: "black" }}>
-                            {item?.exception?.exceptionMessage +
-                              t(
-                                "CalculationExceptions." +
-                                item?.exception?.exceptionKey
-                              ).replace(
-                                /\{\{(\d+)\}\}/g,
-                                (_, index) =>
-                                  item?.exception?.values[index] || ""
-                              )}
-                          </span>
-                        ) : (
-                          <span style={{ color: "black" }}>
-                            {t(
-                              "CalculationExceptions." +
-                              item?.exception?.exceptionKey
-                            )}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
+                  )
                 }
                 else {
                   return (

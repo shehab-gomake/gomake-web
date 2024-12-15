@@ -1,20 +1,24 @@
 import { GoMakeAutoComplate } from "@/components/auto-complete";
-import { useStyle } from "../style";
 import { useTranslation } from "react-i18next";
 import { sections } from "../enums";
 import { Sections } from "../interface";
-import { useState } from "react";
 
 interface SectionsListProps {
   onChange: (section: string, subSection: string) => void;
+  selectedSection: any;
+  setSelectedSection: any;
+  selectedSubSection: any;
+  setSelectedSubSection: any;
 }
 
-const SectionsList = ({ onChange }: SectionsListProps) => {
-  const { classes } = useStyle();
+const SectionsList = ({
+  onChange,
+  selectedSubSection,
+  setSelectedSubSection,
+  selectedSection,
+  setSelectedSection,
+}: SectionsListProps) => {
   const { t } = useTranslation();
-
-  const [selectedSection, setSelectedSection] = useState<Sections | "">("");
-  const [selectedSubSection, setSelectedSubSection] = useState<string>("");
 
   const mainSections = Object.keys(sections) as Sections[];
   const getSecondarySections = (section: Sections) => sections[section];
@@ -33,20 +37,22 @@ const SectionsList = ({ onChange }: SectionsListProps) => {
   return (
     <>
       <GoMakeAutoComplate
+        key={`select--section-${selectedSection}`}
         options={mainSections}
         style={{ height: "40px", width: "100%", border: "none" }}
         placeholder={t("customerService.chooseMainSection")}
         onChange={handleMainSectionChange}
-        value={selectedSection}
+        value={selectedSection || null}
         withArrow
       />
       {selectedSection && (
         <GoMakeAutoComplate
+          key={`select-sub-section-${selectedSubSection}`}
           options={getSecondarySections(selectedSection)}
           style={{ height: "40px", width: "100%", border: "none" }}
           placeholder={t("customerService.chooseSubSection")}
           onChange={handleSubSectionChange}
-          value={selectedSubSection}
+          value={selectedSubSection || null}
           withArrow
         />
       )}

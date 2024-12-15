@@ -17,7 +17,7 @@ export interface ITableProps {
   isLastItemTotal?: boolean;
   columnWidths?: string[];
   onDragEnd?: any;
-
+  withSort?: boolean;
   onSelectionChange?: (selectedRows: Set<number>) => void;
   enableCheckboxes?: boolean;
   rowCheckboxCondition?: (any) => boolean;

@@ -58,6 +58,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [, setShowPrintJobsModal] = useRecoilState(newOrderIdToPrintJobsState);
   const [openReceiptCreationModal, setOpenReceiptCreationModal] =
     useState(false);
+  const [openOrderNowPrePaymentModal, setOpenOrderNowPrePaymentModal] =
+    useState(false);
+
+  const onClickCloseOrderNowPreModal = () => {
+    setOpenOrderNowPrePaymentModal(false);
+  };
 
   const onClickOpenReceiptCreation = () => {
     setOpenReceiptCreationModal(true);
@@ -90,7 +96,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         if (!checkPhones && !checkEmails) {
           alertFault("home.admin.pleaseSelectPhoneOrEmail");
         } else {
-          setOpenOrderNowModal(true);
+          if (quoteItemValue?.isPrepaymentClient)
+            setOpenOrderNowPrePaymentModal(true);
+          else setOpenOrderNowModal(true);
         }
       } else {
         alertFault("home.admin.pleaseSelectClient");
@@ -127,44 +135,39 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     setOpenCancelReceiptModal(false);
   };
 
-  const [loading, setLoading] = useState(false);
-  const onClickConfirmWithoutNotification = async () => {
-    setLoading(true);
+  const handleOrderConfirmation = async (
+    sendMessage: boolean,
+    isPrepaymentClient: boolean = false,
+    totalPrePaymentAmount: number = 0
+  ) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         onClickCloseOrderNowModal();
-        setShowPrintJobsModal(res.data.orderID);
-        navigate(`/jobs?orderNumber=${res?.data?.number}`);
+        if (isPrepaymentClient) {
+          navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
+          //navigate("/orders");
+        } else {
+          setShowPrintJobsModal(res.data.orderID);
+          navigate(`/jobs?orderNumber=${res?.data?.number}`);
+        }
       } else {
         alertFaultUpdate();
       }
-      setLoading(false);
     };
-    await createOrderApi(callApi, callBack, {
+
+    const requestBody = {
       quoteId: quoteItemValue?.id,
-      sendMessage: false,
-    });
+      sendMessage,
+      ...(isPrepaymentClient && { totalPrePaymentAmount }),
+    };
+
+    await createOrderApi(callApi, callBack, requestBody);
   };
 
-  const onClickConfirmWithNotification = async () => {
-    setLoading(true);
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessUpdate();
-        onClickCloseOrderNowModal();
-        setShowPrintJobsModal(res.data.orderID);
-        navigate(`/jobs?orderNumber=${res?.data?.number}`);
-      } else {
-        alertFaultUpdate();
-      }
-      setLoading(false);
-    };
-    await createOrderApi(callApi, callBack, {
-      quoteId: quoteItemValue?.id,
-      sendMessage: true,
-    });
-  };
+  const onClickConfirmWithoutNotification = () =>
+    handleOrderConfirmation(false);
+  const onClickConfirmWithNotification = () => handleOrderConfirmation(true);
 
   const onClickPrint = async (withInvoices?: boolean) => {
     const downloadPdf = (url) => {
@@ -439,7 +442,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     getAllUsersCanApproveQuote,
     managersOptions,
     onClickSendAndChat,
-    loading,
     canAddDelivery,
     isInvoice,
     isShowCloseButton,
@@ -464,6 +466,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     onOpenExportReceiptPdfModal,
     onCloseExportReceiptPdfModal,
     handleClickPrint,
+
+    openOrderNowPrePaymentModal,
+    onClickCloseOrderNowPreModal,
+    handleOrderConfirmation,
   };
 };
 

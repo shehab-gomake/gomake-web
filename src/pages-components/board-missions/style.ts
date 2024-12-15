@@ -132,6 +132,42 @@ const useStyle = () => {
         gap: "10px",
         zIndex: 999999,
       },
+      yesBtn: {
+        height: 44,
+        lineHeight: "18px",
+        borderRadius: "8px",
+        ...FONT_FAMILY.Lexend(600, 16),
+        backgroundColor: "#2E3092",
+        border: `1px solid #2E3092`,
+        color: "#FFF",
+      },
+      noBtn: {
+        textAlign: "center",
+        height: 44,
+        borderRadius: "8px",
+        lineHeight: "18px",
+        ...FONT_FAMILY.Lexend(600, 16),
+        backgroundColor: "#FFF",
+        color: "#272977",
+        border: `1px solid #7375CD`,
+      },
+      cancelBtn: {
+        height: 44,
+        borderRadius: "8px",
+        ...FONT_FAMILY.Lexend(600, 16),
+        backgroundColor: "#FFF",
+        color: "#344054",
+        border: `1px solid #D0D5DD`,
+        width: "33%",
+      },
+      subTitle: {
+        ...FONT_FAMILY.Lexend(400, 13),
+        color: "#475467",
+        textAlign: "center" as "center",
+        marginBottom: 10,
+        width: "70%",
+        alignSelf: "center" as "center",
+      },
     };
   }, [theme]);
   return {

@@ -1,4 +1,4 @@
-import { SendPaymentState } from "../types/interfaces";
+import { SendPaymentState } from "../utils/interfaces";
 
 const SendPaymentInputs = (state: SendPaymentState) => {
   return [

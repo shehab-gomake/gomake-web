@@ -42,6 +42,7 @@ html * {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(-90deg);
   }
@@ -51,10 +52,12 @@ html * {
   width: 0;
   height: 0;
 }
+
 .MuiAutocomplete-listbox {
   max-height: 300px;
   overflow-y: auto;
 }
+
 .MuiAutocomplete-listbox::-webkit-scrollbar {
   width: 8px;
 }
@@ -71,6 +74,7 @@ html * {
 .MuiAutocomplete-listbox::-webkit-scrollbar-thumb:hover {
   background-color: #b0b0b0;
 }
+
 .scrollBlue::-webkit-scrollbar {
   display: unset !important;
   background: #2e3092;
@@ -210,7 +214,7 @@ input::placeholder {
   text-align: unset !important;
 }
 
-.dots-loader > div {
+.dots-loader>div {
   animation: dots-loader 0.6s infinite alternate;
 }
 
@@ -338,11 +342,12 @@ input::placeholder {
 }
 
 .MuiTooltip-tooltip {
-  background: #ebecff;
-  color: #1c1d58;
-  font-size: 16px;
+  background: #0C111D;
+  color: #FFFFFF;
+  font-size: 14px;
   font-weight: 500;
-  max-width: 180px;
+  /* min-width: 180px; */
+  /* width: 100%; */
 }
 
 df-messenger {
@@ -451,6 +456,7 @@ df-messenger {
   width: 11px !important;
   height: 11px !important;
 }
+
 .small.custom-scrollbar::-webkit-scrollbar {
   width: 5px !important;
   height: 5px !important;
@@ -520,13 +526,15 @@ df-messenger {
 .rs-input {
   padding-right: 10px !important;
 }
+
 .MuiInputBase-root input {
   border: none !important;
 }
 
 .moreIconContainer {
   opacity: 0;
-  transition: opacity 0.3s ease; /* Smooth transition */
+  transition: opacity 0.3s ease;
+  /* Smooth transition */
   position: absolute;
   right: 10px;
   top: 25px;

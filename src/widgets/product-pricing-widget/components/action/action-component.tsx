@@ -205,6 +205,7 @@ const ActionContainerComponent = ({
     getActionEmloyeeList,
     selectNewMachine,
     selectNewMaterials,
+    selectNewFold,
     selectNewEmployee,
     anchorEl,
     open,
@@ -367,7 +368,7 @@ const ActionContainerComponent = ({
                       >
                         <Divider orientation={"vertical"} flexItem color={"#000"} />
                         <GoMakeAutoComplate
-                          placeholder={"Select supplier"}
+                          placeholder={t("materials.sheetPaper.selectSupplier")}
                           value={getSupplierId()}
                           style={{ width: "200px" }}
                           onChange={handleSupplierChange}
@@ -397,7 +398,7 @@ const ActionContainerComponent = ({
                                     ? machineName.slice(0, 20) + "..."
                                     : machineName}
                                 </> : <>
-                                  Selecte New Machine
+                                  {t("materials.sheetPaper.SelecteNewMachine")}
                                 </>
                               }
 
@@ -430,7 +431,7 @@ const ActionContainerComponent = ({
                                 }}
                                 style={{ width: "200px" }}
                                 options={machinesList}
-                                placeholder={"Choose machine"}
+                                placeholder={t("materials.sheetPaper.chooseMachine")}
                                 value={machineName}
                               />
                               <IconButton
@@ -468,7 +469,7 @@ const ActionContainerComponent = ({
                               variant={"text"}
                               style={classes.sectionTitle}
                             >
-                              {employeeName ? employeeName : <>Select New Employee</>}
+                              {employeeName ? employeeName : <>{t("materials.sheetPaper.selectNewEmployee")}</>}
                             </Button>
                           ) : (
                             <Stack
@@ -487,7 +488,7 @@ const ActionContainerComponent = ({
                                 }}
                                 style={{ width: "200px" }}
                                 options={employeesList}
-                                placeholder={"Choose Employee"}
+                                placeholder={t("materials.sheetPaper.chooseEmployee")}
                                 value={employeeName}
                               />
                               <IconButton
@@ -533,7 +534,7 @@ const ActionContainerComponent = ({
                                 {materials[0]?.materialCategories[0]?.name?.length > 20
                                   ? materials[0]?.materialCategories[0]?.name.slice(0, 20) + "..."
                                   : materials[0]?.materialCategories[0]?.name}</> : <>
-                                Select New Material
+                                {t("materials.sheetPaper.selectNewMaterial")}
                               </>}
 
                             </Button>
@@ -565,7 +566,7 @@ const ActionContainerComponent = ({
                                 }}
                                 style={{ width: "200px" }}
                                 options={materialsList}
-                                placeholder={"Choose material"}
+                                placeholder={t("materials.sheetPaper.chooseMaterial")}
                                 value={materials[0]?.materialCategories[0]?.name}
                               />
                               <IconButton
@@ -604,7 +605,9 @@ const ActionContainerComponent = ({
                               variant={"text"}
                               style={classes.sectionTitle}
                             >
-                              {foldOptionValueId ? selectedfold?.name : <>Select New Folds</>}
+                              {foldOptionValueId ? selectedfold?.name : <>
+                                {t("materials.sheetPaper.selectNewFolds")}
+                              </>}
                             </Button>
                           ) : (
                             <Stack
@@ -615,12 +618,25 @@ const ActionContainerComponent = ({
                             >
                               <GoMakeAutoComplate
                                 onChange={(e, v) => {
-                                  updateWorkFlowForFold(actionId, productType, actionIndex, v?.id, id)
+                                  selectNewFold(
+                                    v?.id,
+                                    actionId,
+                                    productType,
+                                    actionIndex
+                                  );
+                                  setAttributesData({
+                                    actionId,
+                                    productType,
+                                    actionIndex,
+                                    foldOptionValueId: v?.id,
+                                    printingActionId: id,
+
+                                  })
                                   setChooseFold(false);
                                 }}
                                 style={{ width: "200px" }}
                                 options={foldOptions}
-                                placeholder={"Choose Fold option"}
+                                placeholder={t("materials.sheetPaper.chooseFoldOption")}
                                 getOptionLabel={(option) => option.name}
                                 value={selectedfold}
                               />

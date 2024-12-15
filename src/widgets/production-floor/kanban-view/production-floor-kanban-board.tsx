@@ -6,7 +6,6 @@ import { useEffect, useMemo } from "react";
 import { selectedChipIdsState } from "../state/text-search";
 import { useProductionFloorTable } from "../table-view/use-production-floor-table";
 
-//?New
 const ProductionFloorKanbanBoard = () => {
   const { data } = useProductionFloorKanban();
   const {

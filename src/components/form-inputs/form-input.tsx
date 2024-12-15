@@ -127,6 +127,7 @@ const FormInput = ({
 
     useEffect(() => {
         if (input.optionsUrl && !dataLoaded) {
+            setDataLoaded(true);
             callApi("GET", input.optionsUrl).then((res) => {
                 if (res?.success) {
                     setOptions(
@@ -136,7 +137,6 @@ const FormInput = ({
                         }))
                     );
                 }
-                setDataLoaded(true);
             });
         } else if (input.options && input.options.length > 0 && options.length === 0) {
             setOptions(

@@ -75,36 +75,82 @@ export const hasValues = (obj) => {
   }
 };
 
+//!old
+// const isValidCustomer = (
+//   customer,
+//   filteredContacts,
+//   filteredAddresses,
+//   filteredUsers
+// ) => {
+//   if (!(customer && customer.name && customer.clientTypeId)) {
+//     return false;
+//   }
+//   if (filteredContacts) {
+//     for (const contact of filteredContacts) {
+//       if (!contact.firstName) {
+//         return false;
+//       }
+//     }
+//   }
+//   if (filteredAddresses) {
+//     for (const address of filteredAddresses) {
+//       if (!address.address1) {
+//         return false;
+//       }
+//     }
+//   }
+
+//   if (filteredUsers) {
+//     for (const user of filteredUsers) {
+//       if (!user.email) {
+//         return false;
+//       }
+//     }
+//   }
+//   if (filteredUsers) {
+//     for (const user of filteredUsers?.filter((user) => !user.id)) {
+//       if (!user.password) {
+//         return false;
+//       }
+//     }
+//   }
+//   return true;
+// };
+
 export const isValidCustomer = (
   customer,
   filteredContacts,
   filteredAddresses,
   filteredUsers
 ) => {
-  if (!(customer && customer.name && customer.clientTypeId)) {
+  const hasRequiredCustomerInfo =
+    customer &&
+    customer.name &&
+    customer.clientTypeId &&
+    customer.buisnessNumber;
+  if (!hasRequiredCustomerInfo) return false;
+
+  // Helper function to validate an array of objects with a required property
+  const isValidArray = (array, property) => {
+    return array.every((item) => item[property]);
+  };
+
+  // Validate contacts
+  if (filteredContacts && !isValidArray(filteredContacts, "firstName"))
     return false;
-  }
-  for (const contact of filteredContacts) {
-    if (!contact.firstName) {
-      return false;
-    }
-  }
-  for (const address of filteredAddresses) {
-    if (!address.address1) {
-      return false;
-    }
-  }
-  for (const user of filteredUsers) {
-    if (!user.email) {
-      return false;
-    }
-  }
-  //new users
-  for (const user of filteredUsers?.filter((user) => !user.id)) {
-    if (!user.password) {
-      return false;
-    }
-  }
+
+  // Validate addresses
+  if (filteredAddresses && !isValidArray(filteredAddresses, "address1"))
+    return false;
+
+  // Validate users' email addresses
+  if (filteredUsers && !isValidArray(filteredUsers, "email")) return false;
+
+  // Validate users without IDs for password presence
+  const usersWithoutIds = filteredUsers?.filter((user) => !user.id);
+  if (usersWithoutIds && !isValidArray(usersWithoutIds, "password"))
+    return false;
+
   return true;
 };
 
@@ -158,11 +204,13 @@ export const toRgba = (color: string, opacity: number) => {
   return rgbaColor;
 };
 
-export const checkIfDieCutOrDieKissCutExists = (subProducts, isParameterSettings) => {
+export const checkIfDieCutOrDieKissCutExists = (
+  subProducts,
+  isParameterSettings
+) => {
   if (isParameterSettings) {
     return true;
-  }
-  else{
+  } else {
     for (const subProduct of subProducts) {
       if (subProduct.parameters) {
         const dieCutParam = subProduct.parameters.find(
@@ -178,7 +226,6 @@ export const checkIfDieCutOrDieKissCutExists = (subProducts, isParameterSettings
     }
     return false;
   }
-  
 };
 
 export const checkArrayNotEmptyOrPhoneNotEmpty = (array) => {

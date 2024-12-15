@@ -81,6 +81,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     selectedTableRow,
     materialName,
     toggleIsActive,
+    selectedMaterialCategory,
   } = useMaterials(props.isAdmin);
 
   const subCategory = materialCategories.find(
@@ -163,7 +164,14 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   useEffect(() => {
     getMaterialCategories(materialType).then();
     getMaterialTableHeaders(materialType?.toString()).then();
+
   }, [materialType]);
+  useEffect(() => {
+    getPrintHouseMaterialCategorySuppliers(
+      materialType?.toString(),
+      materialCategory?.toString()
+    ).then();
+  }, [materialCategory]);
 
   useEffect(() => {
     if (!!materialType && !!materialCategory) {
@@ -177,7 +185,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           pageSize
         ).then();
       } else {
-        if (supplierId) {
+        if (supplierId && selectedMaterialCategory?.toString() === materialCategory?.toString()) {
           getMaterialCategoryData(
             materialType?.toString(),
             materialCategory?.toString(),
@@ -186,12 +194,8 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             pageNumber,
             pageSize
           ).then();
-        } else {
-          getPrintHouseMaterialCategorySuppliers(
-            materialType?.toString(),
-            materialCategory?.toString()
-          ).then();
         }
+
       }
     }
   }, [
@@ -306,22 +310,22 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         onClickYes={() => onDeleteCategoryRow(selectedTableRow?.id)}
         onClickNo={() => toggleIsActive(selectedTableRow?.id, "Active", selectedTableRow?.isActive)}
       />
-      <GoMakeDeleteModal
+      {/* <GoMakeDeleteModal
         openModal={openPriceModal}
         onClose={onClickClosePriceModal}
         hideIcon
         modalType={ModalType.EDIT}
-        title={t("this update will effects the profit profile")}
-        subTitle={t("do you want to fix the profits to save the prices in the profit profile ?")}
-        yesBtn={t("Yes fix the profits")}
-        cancelBtn={t("No don't fix the profits")}
+        title={t("materials.modals.editPriceModalTitle")}
+        subTitle={t("materials.modals.editPriceModalSubTitle")}
+        yesBtn={t("materials.modals.editPriceModalYesBtn")}
+        cancelBtn={t("materials.modals.editPriceModalCancelBtn")}
         onClickDelete={async () => {
           updateProfitProfileProductHidden(true)
         }}
         onClickCancel={async () => {
           updateProfitProfileProductHidden(false)
         }}
-      />
+      /> */}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { CheckBoxAccordion, EditIcon } from "@/icons";
+import { CheckBoxAccordion, EditIcon, WarnIcon } from "@/icons";
 import { Accordion, AccordionDetails, AccordionSummary } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { SectionMappingWidget } from "./section-mapping";
@@ -26,7 +26,7 @@ const AccordionMappingWidget = ({
   const hasMatchingParameter = (parameterList, subSection) => {
     for (let param of subSection.parameters) {
       let matchingParameter = parameterList?.find(
-        (p) => p.parameterId === param.id && p.subSectionId === subSection.id
+        (p) => p.parameterId === param.id && p.subSectionId === subSection.id && !param.isHiddenInSetting
       );
       if (matchingParameter || param.oldSystemValue) {
         return true;
@@ -34,6 +34,26 @@ const AccordionMappingWidget = ({
     }
     return false;
   };
+  const hasMissingRequiredParameters = (parameterList, item) => {
+    if (Array.isArray(subSection?.parameters)) {
+      const subProductParameters = parameterList || [];
+      const subProductParameterCodes = subProductParameters.map(p => p.parameterCode);
+      const subProductParameterSubSectionIds = subProductParameters.map(p => p.subSectionId);
+      for (const parameter of subSection.parameters) {
+        if (
+          parameter.isRequired && !parameter.isHidden && !parameter.isHiddenInSetting &&
+          !subProductParameterCodes.includes(parameter.code) &&
+          subProductParameterSubSectionIds.includes(subSection.id)
+        ) {
+          return true;
+        }
+      }
+    }
+    else {
+      return false;
+    }
+  };
+  const hasMissing = hasMissingRequiredParameters(parameterList, subSection);
   const hasMatching = hasMatchingParameter(parameterList, subSection);
   return (
     <Accordion
@@ -46,26 +66,29 @@ const AccordionMappingWidget = ({
         expandIcon={<ExpandMoreIcon />}
         style={
           expanded === `panel_${index}`
-            ? hasMatching
+            ? hasMissing ? clasess.activeTabContainer3 : hasMatching
               ? clasess.activeTabContainer2
               : clasess.activeTabContainer
-            : hasMatching
-            ? clasess.activeTabContainer2
-            : null
+            : hasMissing ? clasess.activeTabContainer3 : hasMatching ? clasess.activeTabContainer2 : null
         }
       >
         <div style={clasess.headerAccordionContainer}>
           {expanded === `panel_${index}` ? (
-            hasMatching ? (
+            hasMissing ? (
+              <WarnIcon />
+            ) : hasMatching ? (
               <CheckBoxAccordion />
             ) : (
               <EditIcon stroke={"rgba(18, 19, 58, 1)"} />
             )
-          ) : hasMatching ? (
-            <CheckBoxAccordion />
-          ) : (
-            <EditIcon />
-          )}
+          ) :
+            hasMissing ? (
+              <WarnIcon />
+            ) : hasMatching ? (
+              <CheckBoxAccordion />
+            ) : (
+              <EditIcon />
+            )}
 
           <div
             style={

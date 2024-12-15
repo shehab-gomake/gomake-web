@@ -56,4 +56,5 @@ export interface ICompanyProfile {
   mailServiceEmail?: string;
   printnodeUsername?: string;
   printnodePassword?: string;
+  employeeWorkingHourCost?: string;
 }

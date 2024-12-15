@@ -1,5 +1,6 @@
 import { styled } from "@mui/material/styles";
 import {
+  IconButton,
   Paper,
   Table,
   TableBody,
@@ -14,8 +15,10 @@ import { ITableProps } from "@/components/tables/interface";
 import { useStyle } from "@/components/tables/style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
 import { PrimaryCheckbox } from "../check-box/primary-check-box";
+import { useMemo, useState } from "react";
+import { ArrowUpward, ArrowDownward } from "@mui/icons-material"; // Import the icons
+import { adaptMarginRight } from "@/utils/adapter";
 
 const PrimaryTableCell = styled(TableCell)(() => {
   const { primaryColor } = useGomakeTheme();
@@ -142,6 +145,7 @@ const PrimaryTable = ({
   columnWidths,
   dataTour,
   isLastItemTotal = false,
+  withSort = false, // New prop for enabling sorting
   enableCheckboxes = false,
   onSelectionChange,
   rowCheckboxCondition = () => true,
@@ -149,6 +153,7 @@ const PrimaryTable = ({
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
+
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
 
   const handleRowSelection = (rowIndex: number) => {
@@ -195,6 +200,40 @@ const PrimaryTable = ({
       ? RoundTableRow
       : PrimaryTableRow;
 
+  // State for sorting
+  const [sortConfig, setSortConfig] = useState<{
+    key: number;
+    direction: "asc" | "desc";
+  } | null>(null);
+
+  // Sorting logic
+  const sortedRows = useMemo(() => {
+    if (!sortConfig) return rows;
+
+    return [...rows].sort((a, b) => {
+      const aValue = a[sortConfig.key];
+      const bValue = b[sortConfig.key];
+
+      if (aValue < bValue) return sortConfig.direction === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortConfig.direction === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [rows, sortConfig]);
+
+  const handleSort = (index: number) => {
+    setSortConfig((prev) => {
+      if (prev?.key === index) {
+        // Toggle direction
+        return {
+          key: index,
+          direction: prev.direction === "asc" ? "desc" : "asc",
+        };
+      }
+      // New sort column
+      return { key: index, direction: "asc" };
+    });
+  };
+
   return (
     <Paper
       sx={{
@@ -210,36 +249,153 @@ const PrimaryTable = ({
     >
       <StyledTableContainer style={classes.tableContainer}>
         <Table data-tour={dataTour} stickyHeader={stickyHeader}>
-          <TableHead>
-            <TableRow>
-              {/* Header Checkbox */}
-              {enableCheckboxes && (
-                <TableCell padding="checkbox">
-                  <PrimaryCheckbox
-                    checked={
-                      selectedRows?.size ===
-                      rows?.filter(rowCheckboxCondition).length
-                    }
-                    onChange={handleSelectAll}
-                    inputProps={{ "aria-label": "select all" }}
-                  />
-                </TableCell>
-              )}
-              {headers?.map((header, index) => (
-                <TableCell key={index} align="center">
-                  {header}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
+            {/*old*/}
+          {/*<TableHead>*/}
+          {/*  <TableRow>*/}
+          {/*    {headers?.map((header, index) => {*/}
+          {/*      if (index === 0 && stickyHeader) {*/}
+          {/*        return <TableCell align={"center"}>{header}</TableCell>;*/}
+          {/*      } else {*/}
+          {/*        return <TableCell align={"center"}>{header}</TableCell>;*/}
+          {/*      }*/}
+          {/*    })}*/}
+          {/*  </TableRow>*/}
+          {/*</TableHead>*/}
+
+
+
+            {/*braanch 2496*/}
+            {/*<TableHead>*/}
+            {/*    <TableRow>*/}
+            {/*        /!* Header Checkbox *!/*/}
+            {/*        {enableCheckboxes && (*/}
+            {/*            <TableCell padding="checkbox">*/}
+            {/*                <PrimaryCheckbox*/}
+            {/*                    checked={*/}
+            {/*                        selectedRows?.size ===*/}
+            {/*                        rows?.filter(rowCheckboxCondition).length*/}
+            {/*                    }*/}
+            {/*                    onChange={handleSelectAll}*/}
+            {/*                    inputProps={{ "aria-label": "select all" }}*/}
+            {/*                />*/}
+            {/*            </TableCell>*/}
+            {/*        )}*/}
+            {/*        {headers?.map((header, index) => (*/}
+            {/*            <TableCell key={index} align="center">*/}
+            {/*                {header}*/}
+            {/*            </TableCell>*/}
+            {/*        ))}*/}
+            {/*    </TableRow>*/}
+            {/*</TableHead>*/}
+
+
+{/*main*/}
+
+            {/*<TableHead>*/}
+            {/*    <TableRow>*/}
+            {/*        {headers?.map((header, index) => (*/}
+            {/*            <TableCell*/}
+            {/*                align="center"*/}
+            {/*                key={`header_${index}`}*/}
+            {/*                style={{*/}
+            {/*                    cursor: withSort ? "pointer" : "default",*/}
+            {/*                    userSelect: "none",*/}
+            {/*                }}*/}
+            {/*                onClick={() => withSort && handleSort(index)} // Only activate sort if withSort is true*/}
+            {/*            >*/}
+            {/*                <div*/}
+            {/*                    style={{*/}
+            {/*                        display: "flex",*/}
+            {/*                        justifyContent: "center",*/}
+            {/*                        alignItems: "center",*/}
+            {/*                    }}*/}
+            {/*                >*/}
+            {/*                    {header}*/}
+            {/*                    /!* Show sorting icon only when it's the sorted header *!/*/}
+            {/*                    {withSort && header !== "" && sortConfig?.key === index && (*/}
+            {/*                        <IconButton*/}
+            {/*                            size="small"*/}
+            {/*                            style={{ ...adaptMarginRight(dir, 4) }}*/}
+            {/*                        >*/}
+            {/*                            {sortConfig.direction === "asc" ? (*/}
+            {/*                                <ArrowUpward sx={{ fontSize: "18px" }} />*/}
+            {/*                            ) : (*/}
+            {/*                                <ArrowDownward sx={{ fontSize: "18px" }} />*/}
+            {/*                            )}*/}
+            {/*                        </IconButton>*/}
+            {/*                    )}*/}
+            {/*                </div>*/}
+            {/*            </TableCell>*/}
+            {/*        ))}*/}
+            {/*    </TableRow>*/}
+            {/*</TableHead>*/}
+
+
+            <TableHead>
+                <TableRow>
+                    {/* Checkbox column (from old branch) */}
+                    {enableCheckboxes && (
+                        <TableCell padding="checkbox">
+                            <PrimaryCheckbox
+                                checked={
+                                    selectedRows?.size ===
+                                    rows?.filter(rowCheckboxCondition).length
+                                }
+                                onChange={handleSelectAll}
+                                inputProps={{ "aria-label": "select all" }}
+                            />
+                        </TableCell>
+                    )}
+
+                    {/* Headers */}
+                    {headers?.map((header, index) => (
+                        <TableCell
+                            key={`header_${index}`}
+                            align="center"
+                            style={{
+                                cursor: withSort ? "pointer" : "default",
+                                userSelect: "none",
+                                ...(index === 0 && stickyHeader ? { position: "sticky", top: 0 } : {}),
+                            }}
+                            onClick={() => withSort && handleSort(index)} // Only activate sort if withSort is true
+                        >
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                            >
+                                {header}
+                                {/* Show sorting icon only when it's the sorted header */}
+                                {withSort && header !== "" && sortConfig?.key === index && (
+                                    <IconButton
+                                        size="small"
+                                        style={{ ...adaptMarginRight(dir, 4) }}
+                                    >
+                                        {sortConfig.direction === "asc" ? (
+                                            <ArrowUpward sx={{ fontSize: "18px" }} />
+                                        ) : (
+                                            <ArrowDownward sx={{ fontSize: "18px" }} />
+                                        )}
+                                    </IconButton>
+                                )}
+                            </div>
+                        </TableCell>
+                    ))}
+                </TableRow>
+            </TableHead>
+            
+            
+            
           <TableBody>
-            {/* Row Checkbox */}
-            {rows?.map((row, index) => (
+              {/* Row Checkbox */}
+              {sortedRows?.map((row, rowIndex) => (
               <TableRow
-                key={`row_${index}`}
+                key={`row_${rowIndex}`}
                 style={{
                   backgroundColor:
-                    isLastItemTotal && index === rows.length - 1
+                    isLastItemTotal && rowIndex === rows.length - 1
                       ? "#EFDDFF"
                       : "inherit",
                 }}
@@ -248,25 +404,13 @@ const PrimaryTable = ({
                   <TableCell padding="checkbox">
                     {rowCheckboxCondition(row) ? (
                       <PrimaryCheckbox
-                        checked={selectedRows.has(index)}
-                        onChange={() => handleRowSelection(index)}
-                        inputProps={{ "aria-label": `select row ${index}` }}
+                        checked={selectedRows.has(rowIndex)}
+                        onChange={() => handleRowSelection(rowIndex)}
+                        inputProps={{ "aria-label": `select row ${rowIndex}` }}
                       />
                     ) : null}
                   </TableCell>
                 )}
-                {/* {row.map((cell, cellIndex) => {
-                  const cellStyle = columnWidths
-                    ? {
-                        width: columnWidths?.[cellIndex],
-                      }
-                    : {};
-                  return (
-                    <TableCell align="center" style={cellStyle} key={cellIndex}>
-                      {cell}
-                    </TableCell>
-                  );
-                })} */}
                 {row.map((cell, cellIndex) => {
                   const cellStyle = columnWidths
                     ? { width: columnWidths[cellIndex] }

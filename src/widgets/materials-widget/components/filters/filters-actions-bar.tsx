@@ -1,10 +1,10 @@
-import { GoMakeAutoComplate, SecondSwitch } from "@/components";
+import { GoMakeAutoComplate } from "@/components";
 import { ActionMenu } from "@/widgets/materials-widget/components/actions-menu/action-menu";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMaterialFilters } from "@/widgets/materials-widget/components/filters/use-material-filters";
 import Button from "@mui/material/Button";
-import { Paper } from "@mui/material";
+import { Menu, MenuItem } from "@mui/material";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import {
   materialsClientsState,
@@ -16,6 +16,11 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useGomakeAxios } from "@/hooks";
 import { Stack } from "@mui/material";
 import { productsForDropDownList } from "@/store";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import { updateSupplierPriorityApi } from "@/services/api-service/materials/materials-endpoints";
+import { SortIcon } from "@/icons";
+
 interface FiltersActionsBarProps {
   isAdmin: boolean;
   subCategory?: string;
@@ -32,12 +37,11 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     materialSuppliers,
     supplierId,
     onSelectSupplier,
-    onSetDefaultSupplier,
     materialTableFilters,
     setFilterValue,
     getFilterValue,
     materialCategory,
-    filters
+    materialType
   } = useMaterialFilters();
   const { callApi } = useGomakeAxios();
   const [selectedOption, setSelectedOptions] = useState([])
@@ -47,10 +51,73 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     isDefault: boolean;
   } | null>({ value: "", label: "", isDefault: false });
 
+  const [items, setItems] = useState(materialSuppliers);
   useEffect(() => {
-    const index = materialSuppliers.map((s) => s.value).indexOf(supplierId);
-    setSupplierName(index !== -1 ? materialSuppliers[index] : null);
+    if (materialSuppliers?.length > 0) {
+      setItems(materialSuppliers)
+    }
+    else {
+      setItems([])
+    }
+  }, [materialSuppliers])
+
+  const [anchorEl, setAnchorEl] = useState<any>(null);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+
+  const updateMaterialsImages = async (list) => {
+    const callBack = (res) => {
+      if (res.success) {
+
+      } else {
+
+      }
+    };
+    await updateSupplierPriorityApi(callApi, callBack, {
+      materialTypeKey: materialType,
+      categoryKey: materialCategory,
+      suppliers: list
+    });
+  };
+
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+
+    const reorderedItems = Array.from(items);
+    const [movedItem] = reorderedItems.splice(result.source.index, 1);
+    reorderedItems.splice(result.destination.index, 0, movedItem);
+    updateMaterialsImages(reorderedItems?.map((item, index) => {
+      return {
+        supplierId: item.value,
+        order: index + 1
+      }
+    }))
+    setItems(reorderedItems);
+  };
+
+  useEffect(() => {
+    if (materialSuppliers?.length > 0) {
+      const index = materialSuppliers.map((s) => s.value).indexOf(supplierId);
+      if (index !== -1) {
+        setSupplierName(materialSuppliers[index]);
+        onSelectSupplier(materialSuppliers[index]?.value)
+      }
+      else {
+        setSupplierName(materialSuppliers[0]);
+        onSelectSupplier(materialSuppliers[0]?.value)
+      }
+    }
+    else {
+      setSupplierName(null);
+      onSelectSupplier("")
+    }
   }, [supplierId, materialSuppliers]);
+
 
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
 
@@ -114,8 +181,6 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             );
           }
           if (key === "machines") {
-            let filtersTemp = filters.find((item) => item.key === key)
-            const filteredItems = filterItemsById(options, filtersTemp)
             return (
               <GoMakeAutoComplate
                 key={materialCategory + "-" + key}
@@ -163,62 +228,85 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
       }
       <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
         {props.isAdmin === false ? (
-          <GoMakeAutoComplate
-            key={`supplier_${props?.subCategory + supplierName}`}
-            style={{ width: "200px" }}
-            options={materialSuppliers.filter((item, index, self) =>
-              index === self.findIndex((t) => (
-                t.value === item.value
-              )))}
-            placeholder={t("materials.sheetPaper.selectSupplier")}
-            onChange={(e: any, value: any) => {
-              onSelectSupplier(value.value);
-            }}
-            value={supplierName ? supplierName : ""}
-            disableClearable={true}
-            renderOption={(props: any, option: any) => {
-              return (
-                <Stack direction={"row"}>
-                  <div {...props} style={{ width: "100%" }}>
-                    {option.label}
-                  </div>
-                  <div>
-                    <SecondSwitch
-                      checked={option?.isDefault}
-                      onChange={() => {
-                        onSetDefaultSupplier(option.value).then();
-                      }}
-                    />
-                  </div>
-                </Stack>
-              );
-            }}
-            PaperComponent={(props) => {
-              return (
-                <Paper elevation={8} {...props}>
-                  {props?.children}
-                  <Button
-                    sx={{
-                      width: "100%",
-                      backgroundColor: primaryColor(10),
-                      color: secondColor(500),
-                      ...FONT_FAMILY.Lexend(500, 16),
-                    }}
-                    onMouseDown={() => {
-                      setOpenAddSupplierModal(true);
-                    }}
-                  >
-                    {t("materials.sheetPaper.addNewSupplier")}
-                  </Button>
-                </Paper>
-              );
-            }}
-          />
+          <button
+            onClick={(e) => handleOpen(e)}
+            style={{
+              width: "fit-content",
+              height: "40px",
+              border: "1px solid #E0E0E0",
+              borderRadius: "5px",
+              padding: "5px",
+              backgroundColor: "#FFF",
+              minWidth: "140px",
+              boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+              borderBottom: "2px solid rgb(237, 2, 140)",
+              paddingLeft: "12px",
+              cursor: 'pointer',
+              textAlign: "left"
+            }}>
+            <div
+              style={{ ...FONT_FAMILY.Lexend(500, 16) }}>
+              {supplierName?.label ? supplierName?.label : t("materials.sheetPaper.selectSupplier")}
+            </div>
+          </button>
         ) : (
           <></>
         )}
         <ActionMenu isAdmin={props.isAdmin} />
+        <Menu
+          open={Boolean(anchorEl)}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+        >
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="menu-droppable">
+              {(provided) => (
+                <div ref={provided.innerRef} {...provided.droppableProps}>
+                  {items.map((item, index) => (
+                    <Draggable key={item.value} draggableId={item.value} index={index}>
+                      {(provided) => (
+                        <MenuItem
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          onClick={() => {
+                            onSelectSupplier(item.value);
+                            handleClose();
+                          }}
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                            ...provided.draggableProps.style,
+                          }}
+                        >
+                          <SortIcon />
+                          {item.label}
+                        </MenuItem>
+                      )}
+                    </Draggable>
+                  ))}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          </DragDropContext>
+          <Button
+            sx={{
+              width: "100%",
+              backgroundColor: primaryColor(10),
+              color: secondColor(500),
+              ...FONT_FAMILY.Lexend(500, 16),
+            }}
+            onMouseDown={() => {
+              setOpenAddSupplierModal(true);
+            }}
+          >
+            {t("materials.sheetPaper.addNewSupplier")}
+          </Button>
+        </Menu>
       </Stack>
+
     </Stack>
   );
 };

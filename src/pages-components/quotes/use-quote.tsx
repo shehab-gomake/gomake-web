@@ -10,7 +10,6 @@ import { ApprovalStatus, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import {
   getAllProductsForDropDownList,
-  getAndSetAllCustomers,
   getAndSetClientTypes,
 } from "@/services/hooks";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
@@ -39,6 +38,7 @@ import {
   OpenCanceledDocumentApi,
   OpenDocumentApi,
   pauseOrdResumeOrderApi,
+  startOrderProductionApi,
   updateDocumentApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "./enums";
@@ -99,7 +99,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { navigate } = useGomakeRouter();
   const { errorColor } = useGomakeTheme();
   // const [patternSearch, setPatternSearch] = useState("");
-  const [patternSearch, setPatternSearch] = useState<any>(null); //?new
+  const [patternSearch, setPatternSearch] = useState<any>(null);
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
@@ -532,6 +532,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
                 onClickPauseOrResume={onClickPauseOrResume}
                 onOpenDuplicateModal={onOpenDuplicateModal}
+                onClickStartProduction={onClickOpenStartProductionModal}
               />,
             ];
           } else {
@@ -920,6 +921,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
                 onClickPauseOrResume={onClickPauseOrResume}
                 onOpenDuplicateModal={onOpenDuplicateModal}
+                onClickStartProduction={onClickOpenStartProductionModal}
               />,
             ];
           } else {
@@ -1802,6 +1804,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [openCloseOrderModal, setOpenCloseOrderModal] = useState(false);
   const [openDeliveryTimeCancelModal, setOpenDeliveryTimeCancelModal] =
     useState(false);
+  const [openStartProductionModal, setOpenStartProductionModal] =
+    useState(false);
 
   // Use this state when opening any modal from the "More" menu list.
   const [selectedDocument, setSelectedDocument] = useState<any>({});
@@ -1820,6 +1824,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenPriceCancelModal(true);
   };
   const onClickClosePriceModal = () => {
+    setSelectedDocument(null);
     setOpenPriceCancelModal(false);
   };
 
@@ -1837,7 +1842,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenDeliveryTimeCancelModal(true);
   };
   const onClickCloseDeliveryTimeModal = () => {
+    setSelectedDocument(null);
     setOpenDeliveryTimeCancelModal(false);
+  };
+
+  const onClickOpenStartProductionModal = (order) => {
+    setSelectedDocument(order);
+    setOpenStartProductionModal(true);
+  };
+
+  const onClickCloseStartProductionModal = () => {
+    setSelectedDocument(null);
+    setOpenStartProductionModal(false);
   };
 
   const updateCancelQuote = async (quoteStatus: number) => {
@@ -1900,6 +1916,20 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   };
 
+  const startOrderProduction = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        isFromHomePage ? getAllDocuments(docType) : getAllQuotes();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await startOrderProductionApi(callApi, callBack, {
+      orderId: selectedDocument?.id,
+    });
+  };
+
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState([]);
   const onClickOpenCustomerModal = (customerId: any) => {
@@ -1959,7 +1989,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
-  ///////////////////////// SEND PAYMENT //////////////////////////
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [sendPayment, setSendPayment] =
@@ -2399,6 +2428,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     searchInputRef,
     openExportReceiptPdfModal,
     onCloseExportReceiptPdfModal,
+
+    startOrderProduction,
+    openStartProductionModal,
+    onClickCloseStartProductionModal,
   };
 };
 
