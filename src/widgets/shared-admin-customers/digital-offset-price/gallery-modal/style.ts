@@ -67,6 +67,7 @@ const useStyle = () => {
         marginBottom: 20,
       },
       shapeContainer: {
+        position: "relative" as "relative",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
@@ -77,6 +78,7 @@ const useStyle = () => {
         gap: 12,
         cursor: "pointer",
         "box-shadow": "0px 4px 20px 0px rgba(0, 0, 0, 0.08)",
+        zIndex: 99
       },
       fixdCard: {
         display: "flex",
@@ -111,6 +113,7 @@ const useStyle = () => {
         height: 55,
       },
       shapeSelectedContainer: {
+        position: "relative" as "relative",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
@@ -121,6 +124,7 @@ const useStyle = () => {
         gap: 12,
         border: `1px solid ${secondColor(500)}`,
         cursor: "pointer",
+        zIndex: 99
       },
       shapeNameStyle: {
         ...FONT_FAMILY.Lexend(500, 20),

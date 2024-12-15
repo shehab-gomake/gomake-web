@@ -8,7 +8,7 @@ import { useRecoilState } from "recoil";
 import lodashClonedeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { checkIfDieCutOrDieKissCutExists } from "@/utils/helpers";
+import { checkIfDieCutOrDieKissCutExists, findParameterByCode } from "@/utils/helpers";
 const ButtonParameterWidget = ({
   clasess,
   parameter,
@@ -18,7 +18,9 @@ const ButtonParameterWidget = ({
   index,
   straightKnife,
   isParameterSettings = false,
-  allMaterials
+  allMaterials,
+  template,
+  getProductById
 }: any) => {
   let Comp;
   const [materialData, setMaterialData] = useRecoilState<any>(materialBtnDataState);
@@ -36,19 +38,26 @@ const ButtonParameterWidget = ({
         (parameter) => parameter.parameterId === straightKnife.id
       )
   );
+  const dieCutParameterForSettings = findParameterByCode(template, "DieCut")
+  const dieKissCutParameterForSettings = findParameterByCode(template, "DieKissCut")
 
+  const isDiesParameter = dieCutParameterForSettings || dieKissCutParameterForSettings
 
   const updatedProductParameteDefaultValue = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
+      const updatedValuesConfigs = isDiesParameter.valuesConfigs.map((config: any) => ({
+        ...config,
+        isDefault: false,
+      }));
+
       await updateProductParameterEndPoint(sectionId, subSectionId, {
         parameter: {
           ...parameter,
-          valuesConfigs: []
+          valuesConfigs: updatedValuesConfigs,
         },
       });
     },
-
-    [router]
+    [router, isDiesParameter]
   );
   const updateProductParameterEndPoint = async (
     sectionId: string,
@@ -68,6 +77,7 @@ const ButtonParameterWidget = ({
     );
     if (res?.success) {
       alertSuccessAdded()
+      getProductById();
     } else {
       alertFaultAdded()
     }
@@ -317,7 +327,6 @@ const ButtonParameterWidget = ({
       }
     }
     else {
-
       const isSelectedShape = subProductsParameters?.find((param) => {
         return (
           param?.parameterId === parameter?.id &&
@@ -327,19 +336,25 @@ const ButtonParameterWidget = ({
       if (isSelectedShape) {
         setIsSelectedShape(isSelectedShape);
       }
+
     }
 
   }, [subProductsParameters, isParameterSettings, parameter]);
   useEffect(() => {
-    if (isParameterSettings && isSelectedShape) {
+    if (isParameterSettings) {
       const selectedShape = materialData?.data?.find((data) => {
-        return data?.id === isSelectedShape[0]?.id;
+        const myDefaultShape = isSelectedShape?.find((config) => config?.isDefault)
+        return data?.id === myDefaultShape?.id;
       });
-      setSelectedShape(selectedShape);
+      if (selectedShape) {
+        setSelectedShape(selectedShape);
+
+      }
     } else {
       const selectedShape = materialData?.data?.find((data) => {
         return data?.id === isSelectedShape?.valueIds[0];
       });
+      console.log("sssaa", selectedShape)
       setSelectedShape(selectedShape);
     }
 
@@ -351,14 +366,15 @@ const ButtonParameterWidget = ({
     const materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
 
     if (!materialDataPath) return;
-
-    const selectedShapeId = isParameterSettings ? isSelectedShape?.[0]?.id : isSelectedShape?.valueIds?.[0];
+    // const myDefaultShape = isSelectedShape?.find((config) => config?.isDefault)
+    const selectedShapeId = isParameterSettings ? isSelectedShape?.find((config) => config?.isDefault)?.id : isSelectedShape?.valueIds?.[0];
     const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
     const transformedShape: any = transformSelectedShape(selectedMaterial);
     if (!transformedShape) return;
     setSelectedShape(transformedShape);
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts, isParameterSettings);
+  console.log("hasDieCutOrDieKissCut", { isSelectedShape, selectedShape, hasDieCutOrDieKissCut })
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
     if (isStraightKnife) {
       Comp = (
@@ -395,7 +411,9 @@ const ButtonParameterWidget = ({
         </div>
       );
     }
-    else if (isSelectedShape && selectedShape && hasDieCutOrDieKissCut) {
+
+    else if (isSelectedShape && selectedShape?.id !== undefined && hasDieCutOrDieKissCut) {
+
       Comp = (
         <div style={clasess.btnSelectedStyle}>
           <img

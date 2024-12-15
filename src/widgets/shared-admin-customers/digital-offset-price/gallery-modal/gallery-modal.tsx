@@ -28,6 +28,7 @@ const GalleryModal = ({
     selectedShape,
     fixedCartData,
     createParameterForCalculation,
+    createParameterForCalculationHidden,
     onClickChoosParameter,
     getProductQuoteItemById,
     onChangeSearch,
@@ -42,7 +43,9 @@ const GalleryModal = ({
     value,
     isLoading,
     selectParameterButton,
-    setMaterialData
+    filteredMaterialData,
+    setMaterialData,
+    isDiesParameter
   } = useGalleryModal({
     onClose,
     onChangeSubProductsForPrice,
@@ -51,8 +54,9 @@ const GalleryModal = ({
     isParameterSettings,
     getProductById,
     template,
-    _getParameter
+    _getParameter,
   });
+
 
   return (
     <>
@@ -132,11 +136,17 @@ const GalleryModal = ({
                         createParameterForCalculation={
                           createParameterForCalculation
                         }
+                        createParameterForCalculationHidden={
+                          createParameterForCalculationHidden
+                        }
                         onClickChoosParameter={onClickChoosParameter}
+                        isParameterSettings={isParameterSettings}
+                        template={template}
+                        isDiesParameter={isDiesParameter}
                       />
                     );
                   })
-                  : materialData?.data?.map((item, index) => {
+                  : filteredMaterialData?.map((item, index) => {
                     return (
                       <GalleryModalMapping
                         index={index}
@@ -145,7 +155,13 @@ const GalleryModal = ({
                         createParameterForCalculation={
                           createParameterForCalculation
                         }
+                        createParameterForCalculationHidden={
+                          createParameterForCalculationHidden
+                        }
                         onClickChoosParameter={onClickChoosParameter}
+                        isParameterSettings={isParameterSettings}
+                        template={template}
+                        isDiesParameter={isDiesParameter}
                       />
                     );
                   })}
