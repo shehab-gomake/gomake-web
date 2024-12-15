@@ -860,7 +860,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
 
                 } else if (
-                  parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST
+                  parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.MACHINES_SELECT
                 ) {
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
@@ -909,7 +909,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameter?.parameterType ===
                   EParameterTypes.ADVERTISING_PRODUCT_NAME ||
                   parameter?.parameterType === EParameterTypes.BUTTON
-                  || parameter?.parameterType === EParameterTypes.MACHINES_SELECT
+
                 ) {
                   const value = parameter?.valuesConfigs?.find(
                     (item) => item?.isDefault == true
@@ -1398,13 +1398,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   (parameter?.parameterType ===
                     EParameterTypes.DROP_DOWN_LIST ||
                     parameter?.parameterType ===
+                    EParameterTypes.MACHINES_SELECT ||
+                    parameter?.parameterType ===
                     EParameterTypes.SELECT_MATERIALS ||
                     parameter?.parameterType ===
                     EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                     parameter?.parameterType ===
-                    EParameterTypes.ADVERTISING_PRODUCT_NAME ||
-                    parameter?.parameterType ===
-                    EParameterTypes.MACHINES_SELECT) &&
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
                   (!parameter?.valuesConfigs ||
                     parameter?.valuesConfigs.length === 0)
                 ) {
@@ -2530,17 +2530,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           }
                           param.isHidden = false;
                           setProductTemplate(productCopy);
-                        } else if (
+                        }
+                        else if (
                           parameter?.parameterType ===
                           EParameterTypes.DROP_DOWN_LIST ||
                           parameter?.parameterType ===
-                          EParameterTypes.SELECT_MATERIALS
+                          EParameterTypes.SELECT_MATERIALS ||
+                          parameter?.parameterType ===
+                          EParameterTypes.MACHINES_SELECT
                         ) {
                           const valueInArray =
                             relatedParameter.selectedValueIds?.find(
                               (c) => c == parm?.valueIds
                             );
-
                           if (valueInArray) {
                             if (subSection.optionToDuplicateContent) {
                               const { parameterId, actionIndex } = relatedParameter;
@@ -2664,10 +2666,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             if (param && param.isHidden == true) {
                               return;
                             }
-                            if (param) {
-                              param.isHidden = true;
-                              setProductTemplate(productCopy);
-                            }
+                            // if (param) {
+                            //   param.isHidden = true;
+                            //   setProductTemplate(productCopy);
+                            // }
 
 
                           }
@@ -2878,7 +2880,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         );
       } else if (
         parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
-        parameter?.parameterType === EParameterTypes.SELECT_MATERIALS
+        parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
+        parameter?.parameterType === EParameterTypes.MACHINES_SELECT
       ) {
         const valueInArray = relatedParameter.selectedValueIds?.find(
           (c) => c == parm?.valueIds
@@ -5044,10 +5047,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (section && section.subSections) {
         const subSection = section.subSections.find(x => x.id == param.subSectionId);
         if (subSection && subSection.parameters) {
-          matchingTemplateParam = subSection.parameters.find(templateParam => templateParam.id === param.parameterId && templateParam.actionIndex === param.actionIndex && !templateParam?.isHiddenInSetting)
+          matchingTemplateParam = subSection.parameters.find(templateParam =>
+            templateParam.id === param.parameterId &&
+            templateParam.actionIndex === param.actionIndex &&
+            !templateParam?.isHiddenInSetting
+          );
         }
       }
-      // Check if the parameter is not hidden (isHidden = false)
+      // if (matchingTemplateParam?.parameterType === 12) {
+      //   return true;
+      // }
+
+      // For other parameters, check if they're not hidden
       return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
     });
   }
