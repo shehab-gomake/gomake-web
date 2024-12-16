@@ -969,7 +969,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           isQuantityParameter: parameter?.isQuantityParameter,
                           ...(value && {
                             valueIds: [value?.materialValueIds[0]?.valueId],
-                            values: [value?.materialValueIds[0]?.valueId],
+                            values: [value?.updateName],
                           }),
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
