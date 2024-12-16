@@ -368,6 +368,7 @@ const ActionContainerComponent = ({
                       >
                         <Divider orientation={"vertical"} flexItem color={"#000"} />
                         <GoMakeAutoComplate
+                          key={supplierId + suppliers}
                           placeholder={t("materials.sheetPaper.selectSupplier")}
                           value={getSupplierId()}
                           style={{ width: "200px" }}
