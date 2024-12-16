@@ -98,9 +98,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   } = useSnackBar();
   const router = useRouter();
   const documentPath = DOCUMENT_TYPE[docType];
-
   const searchInputRef = useRef(null);
-
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
@@ -110,7 +108,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
   const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList();
-
   const [patternSearch, setPatternSearch] = useState<any>(null);
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const [statusId, setStatusId] = useState<any>();
@@ -150,20 +147,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [fromLogsDate, setFromLogsDate] = useState<Date>();
   const [toLogsDate, setToLogsDate] = useState<Date>();
   const agentsCategories = useRecoilValue(agentsCategoriesState);
-  const documentPath = DOCUMENT_TYPE[docType];
-  const isReceipt = docType === DOCUMENT_TYPE.receipt;
-  const isOrder = docType === DOCUMENT_TYPE.order;
-  const isInvoice = docType === DOCUMENT_TYPE.invoice;
-  const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote;
-  const isInvoiceRefund = docType === DOCUMENT_TYPE.invoiceRefund;
-  const isDeliveryNoteRefund = docType === DOCUMENT_TYPE.deliveryNoteRefund;
-  const { CheckPermission } = useUserPermission();
-  const { query, pathname } = useRouter();
-  const router = useRouter();
-  const { quoteNumber } = query;
-  const { renderOptions, checkWhatRenderArray, isFetching } =
-    useCustomerDropDownList();
-  const searchInputRef = useRef(null);
   const [accountingStatus, setAccountingStatus] = useState<{
     label: string;
     value: PStatus;
@@ -180,13 +163,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     useState(false);
   const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState<any>();
   const [documentCloseNumber, setDocumentCloseNumber] = useState("");
-  const agentsCategories = useRecoilValue(agentsCategoriesState);
   const selectedClient = useRecoilValue<any>(selectedClientState);
   const isSelectedCLoseAsDeleveryNote = useRecoilValue(
     isSelectedCLoseAsDeleveryNoteState
   );
 
-  //?new
   const isQuote = docType === DOCUMENT_TYPE.quote;
   const isOrder = docType === DOCUMENT_TYPE.order;
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
@@ -194,6 +175,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isDeliveryNoteRefund = docType === DOCUMENT_TYPE.deliveryNoteRefund;
   const isInvoice = docType === DOCUMENT_TYPE.invoice;
   const isInvoiceRefund = docType === DOCUMENT_TYPE.invoiceRefund;
+  const isPurchaseOrder = docType === DOCUMENT_TYPE.purchaseOrder;
+  const isPurchaseInvoice = docType === DOCUMENT_TYPE.purchaseInvoice;
+  const isPurchaseInvoiceRefund =
+    docType === DOCUMENT_TYPE.purchaseInvoiceRefund;
 
   const handleDocumentNumberChange = (event) => {
     setDocumentCloseNumber(event.target.value);
@@ -389,7 +374,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const data = res?.data?.data;
         const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => {
-          if (docType === DOCUMENT_TYPE.purchaseOrder) {
+          if (isPurchaseOrder) {
             return [
               GetDateFormat(quote?.creationDate),
               quote?.number,
@@ -417,10 +402,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
               />,
             ];
-          } else if (
-            docType === DOCUMENT_TYPE.purchaseInvoice ||
-            docType === DOCUMENT_TYPE.purchaseInvoiceRefund
-          ) {
+          } else if (isPurchaseInvoice || isPurchaseInvoiceRefund) {
             const purchaseOrderNumbers = quote?.orderNumbers
               ? quote?.orderNumbers.join(", ")
               : "";
@@ -451,7 +433,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
               />,
             ];
-          } else if (docType === DOCUMENT_TYPE.quote) {
+          } else if (isQuote) {
             return [
               GetDateFormat(quote?.createdDate),
               <div
@@ -790,7 +772,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const data = res?.data?.data;
         const totalItems = res?.data?.totalItems;
         const mapData = data?.map((quote: any) => {
-          if (docType === DOCUMENT_TYPE.purchaseOrder) {
+          if (isPurchaseOrder) {
             return [
               GetDateFormat(quote?.creationDate),
               quote?.number,
@@ -818,10 +800,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
               />,
             ];
-          } else if (
-            docType === DOCUMENT_TYPE.purchaseInvoice ||
-            docType === DOCUMENT_TYPE.purchaseInvoiceRefund
-          ) {
+          } else if (isPurchaseInvoice || isPurchaseInvoiceRefund) {
             const purchaseOrderNumbers = quote?.orderNumbers
               ? quote?.orderNumbers.join(", ")
               : "";
@@ -852,7 +831,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
               />,
             ];
-          } else if (docType === DOCUMENT_TYPE.quote) {
+          } else if (isQuote) {
             return [
               GetDateFormat(quote?.createdDate),
               <div
@@ -1065,7 +1044,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         });
       }
     };
-    if (docType === DOCUMENT_TYPE.receipt) {
+    if (isReceipt) {
       await getAllReceiptsApi(callApi, callBack, {
         model: {
           pageNumber: page,
@@ -1185,111 +1164,94 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   }, [pageSize, router]);
 
-  const tableHeaders =
-    docType === DOCUMENT_TYPE.purchaseOrder
-      ? [
-          t("sales.quote.creationDate"),
-          t("sales.quote.purchaseOrderNumber"),
-          t("sales.quote.orderNumber"),
-          t("sales.quote.supplierName"),
-          t("sales.quote.client"),
-          t("sales.quote.itemsNumber"),
-          t("sales.quote.totalPrice"),
-          t("sales.quote.notes"),
-          t("sales.quote.status"),
-          t("sales.quote.more"),
-        ]
-      : docType === DOCUMENT_TYPE.purchaseInvoice ||
-        docType === DOCUMENT_TYPE.purchaseInvoiceRefund
-      ? [
-          t("sales.quote.creationDate"),
-          t("sales.quote.purchaseInvoiceNumber"),
-          t("sales.quote.invoiceNumber"),
-          t("sales.quote.purchaseOrderNumber"),
-          t("sales.quote.supplierName"),
-          t("sales.quote.itemsNumber"),
-          t("sales.quote.totalPrice"),
-          t("sales.quote.notes"),
-          t("sales.quote.status"),
-          t("sales.quote.more"),
-        ]
-      : docType === DOCUMENT_TYPE.quote
-      ? [
-          t("sales.quote.createdDate"),
-          t("sales.quote.client"),
-          t("sales.quote.agent"),
-          t("documentingDesign.TableSetting.number"),
-          t("sales.quote.worksName"),
-          t("sales.quote.totalPrice"),
-          t("sales.quote.notes"),
-          t("sales.quote.status"),
-          t("sales.quote.more"),
-        ]
-      : [
-          t("sales.quote.createdDate"),
-          t("sales.quote.client"),
-          t("sales.quote.agent"),
-          (() => {
-            switch (docType) {
-              case DOCUMENT_TYPE.order:
-                return t("sales.quote.orderNumber");
-              // case DOCUMENT_TYPE.deliveryNote:
-              //   return t("documentingDesign.TableSetting.number");
-              // case DOCUMENT_TYPE.deliveryNoteRefund:
-              //   return t("sales.quote.deliveryNoteNumber");
-              // case DOCUMENT_TYPE.invoice:
-              //   return t("sales.quote.invoiceNumber");
-              // case DOCUMENT_TYPE.invoiceRefund:
-              //   return t("sales.quote.invoiceNumber");
-              // case DOCUMENT_TYPE.receipt:
-              //   return t("sales.quote.receiptNumber");
-              default:
-                return t("documentingDesign.TableSetting.number");
-            }
-          })(),
-          isOrder
-            ? t("sales.quote.quoteNumber")
-            : docType === DOCUMENT_TYPE.receipt
-            ? null
-            : t("sales.quote.sourceDocument"),
+  const tableHeaders = isPurchaseOrder
+    ? [
+        t("sales.quote.creationDate"),
+        t("sales.quote.purchaseOrderNumber"),
+        t("sales.quote.orderNumber"),
+        t("sales.quote.supplierName"),
+        t("sales.quote.client"),
+        t("sales.quote.itemsNumber"),
+        t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ]
+    : isPurchaseInvoice || isPurchaseInvoiceRefund
+    ? [
+        t("sales.quote.creationDate"),
+        t("sales.quote.purchaseInvoiceNumber"),
+        t("sales.quote.invoiceNumber"),
+        t("sales.quote.purchaseOrderNumber"),
+        t("sales.quote.supplierName"),
+        t("sales.quote.itemsNumber"),
+        t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ]
+    : isQuote
+    ? [
+        t("sales.quote.createdDate"),
+        t("sales.quote.client"),
+        t("sales.quote.agent"),
+        t("documentingDesign.TableSetting.number"),
+        t("sales.quote.worksName"),
+        t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ]
+    : [
+        t("sales.quote.createdDate"),
+        t("sales.quote.client"),
+        t("sales.quote.agent"),
+        (() => {
+          switch (docType) {
+            case DOCUMENT_TYPE.order:
+              return t("sales.quote.orderNumber");
+            // case DOCUMENT_TYPE.deliveryNote:
+            //   return t("documentingDesign.TableSetting.number");
+            // case DOCUMENT_TYPE.deliveryNoteRefund:
+            //   return t("sales.quote.deliveryNoteNumber");
+            // case DOCUMENT_TYPE.invoice:
+            //   return t("sales.quote.invoiceNumber");
+            // case DOCUMENT_TYPE.invoiceRefund:
+            //   return t("sales.quote.invoiceNumber");
+            // case DOCUMENT_TYPE.receipt:
+            //   return t("sales.quote.receiptNumber");
+            default:
+              return t("documentingDesign.TableSetting.number");
+          }
+        })(),
+        isOrder
+          ? t("sales.quote.quoteNumber")
+          : isReceipt
+          ? null
+          : t("sales.quote.sourceDocument"),
 
-                    isOrder && t("sales.quote.purchaseNumber"),
-                    isOrder && t("sales.quote.productionStatus"),
-                    isOrder && t("sales.quote.jobs"),
-                    isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
-                        <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
-                            {t("sales.quote.cost")}
-                        </PermissionCheck>
-                    ),
-                //sla,
-          docType === DOCUMENT_TYPE.order && t("sales.quote.purchaseNumber"),
-          docType === DOCUMENT_TYPE.order && t("sales.quote.productionStatus"),
-          docType === DOCUMENT_TYPE.order && t("sales.quote.jobs"),
-          docType === DOCUMENT_TYPE.order &&
-            CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
-              <PermissionCheck
-                userPermission={Permissions.SHOW_COSTS_IN_ORDERS}
-              >
-                {t("sales.quote.cost")}
-              </PermissionCheck>
-            ),
-
-          docType === DOCUMENT_TYPE.receipt
-            ? t("sales.quote.paymentMethod")
-            : t("sales.quote.worksName"),
-          isOrdersTracking
-            ? t("customers.modal.paymentStatus")
-            : t("sales.quote.totalPrice"),
-          t("sales.quote.notes"),
-          (isOrder ||
-            isInvoice ||
-            isInvoiceRefund ||
-            isDeliveryNote ||
-            isDeliveryNoteRefund) &&
-            t("sales.documentDeliveries.deliveryStatus"),
-          t("sales.quote.status"),
-          t("sales.quote.more"),
-        ].filter(Boolean);
+        isOrder && t("sales.quote.purchaseNumber"),
+        isOrder && t("sales.quote.productionStatus"),
+        isOrder && t("sales.quote.jobs"),
+        isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
+          <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
+            {t("sales.quote.cost")}
+          </PermissionCheck>
+        ),
+        isReceipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
+        isOrdersTracking
+          ? t("customers.modal.paymentStatus")
+          : t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        (isOrder ||
+          isInvoice ||
+          isInvoiceRefund ||
+          isDeliveryNote ||
+          isDeliveryNoteRefund) &&
+          t("sales.documentDeliveries.deliveryStatus"),
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ].filter(Boolean);
 
   const logsTableHeaders = [
     t("sales.quote.actionDate"),
