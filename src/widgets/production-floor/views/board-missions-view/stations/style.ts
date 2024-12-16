@@ -28,29 +28,27 @@ const useStyle = () => {
         borderRadius: 16,
         width: "100%",
         backgroundColor: primaryColor(300),
-
-
       },
       addNoteBtn: {
-        color: '#344054',
-        borderColor: '#D0D5DD',
-        borderRadius: '8px',
-        height: '33px',
-        lineHeight:"15px",
-        '& .MuiButton-startIcon': {
-          ...(direction === 'rtl' && { margin: '8px 0' }),
+        color: "#344054",
+        borderColor: "#D0D5DD",
+        borderRadius: "8px",
+        height: "33px",
+        lineHeight: "15px",
+        "& .MuiButton-startIcon": {
+          ...(direction === "rtl" && { margin: "8px 0" }),
         },
-        '&:hover': {
+        "&:hover": {
           backgroundColor: "transparent",
-          borderColor: '#D0D5DD',
+          borderColor: "#D0D5DD",
         },
-        '&:focus': {
-          outline: 'none',
-          borderColor: '#D0D5DD',
+        "&:focus": {
+          outline: "none",
+          borderColor: "#D0D5DD",
         },
-        '&:active': {
-          outline: 'none',
-          borderColor: '#D0D5DD',
+        "&:active": {
+          outline: "none",
+          borderColor: "#D0D5DD",
         },
       },
       actionContainerBorder: "2px solid " + primaryColor(500),

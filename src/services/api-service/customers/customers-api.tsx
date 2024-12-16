@@ -12,6 +12,7 @@ const TOGGLE_CUSTOMER_STATUS_URL =
 const IMPORT_CLIENT_URL = "/v1/crm-service/customer/import-client";
 const EXPORT_CLIENT_URL = "/v1/crm-service/customer/export-client";
 const GET_ALL_SIMILAR_CUSTOMER_URL = "/v1/customers/search-similar-clients";
+const GET_CLIENT_CONTACTS_URL = "/v1/crm-service/customer/get-client-contacts";
 
 const importClientApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -145,6 +146,20 @@ const getAllSimilarCustomerApi: ICallAndSetData = async (
   );
 };
 
+const getClientContactsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_CLIENT_CONTACTS_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getAndSetCustomerById,
   getAndSetCustomersPagination,
@@ -152,4 +167,5 @@ export {
   toggleCustomerStatus,
   importClientApi,
   getAllSimilarCustomerApi,
+  getClientContactsApi,
 };

@@ -1,5 +1,6 @@
 import { printHouseProfile } from "@/store/print-house-profile";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { useRecoilValue } from "recoil";
@@ -11,6 +12,7 @@ interface IProps {
   autoFocus?: boolean;
   customStyle?: React.CSSProperties; // Add the style property
   defaultCountry?: string;
+  variant?: "default" | "circular";
 }
 
 const PhoneInputComponent = ({
@@ -19,8 +21,14 @@ const PhoneInputComponent = ({
   autoFocus,
   customStyle,
   defaultCountry,
+  variant = "default",
 }: IProps) => {
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
+
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const LTR = dir === "ltr";
+
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -34,6 +42,22 @@ const PhoneInputComponent = ({
           : customStyle.height
       } !important`
     : "40px !important";
+
+  const GlobalStyleCircular = createGlobalStyle`
+    .react-international-phone-input-container .react-international-phone-input {
+      height: ${inputHeight};
+      width: 100%;
+      border-radius: ${LTR ? "0px 8px 8px 0px" : "8px 0px 0px 8px"};
+      border: 1px solid #D0D5DD !important;
+      box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+    }
+    .react-international-phone-input-container .react-international-phone-country-selector-button {
+      height: ${inputHeight};
+      border-radius: ${LTR ? "8px 0px 0px 8px" : "0px 8px 8px 0px"};
+      border: 1px solid #D0D5DD !important;
+      box-shadow: 0px 1px 2px 0px rgba(4, 24, 65, 0.05);
+    }
+  `;
 
   const GlobalStyle = createGlobalStyle`
 .react-international-phone-input-container .react-international-phone-input {
@@ -52,7 +76,7 @@ const PhoneInputComponent = ({
 
   return (
     <div onKeyPress={handleKeyPress}>
-      <GlobalStyle />
+      {variant === "circular" ? <GlobalStyleCircular /> : <GlobalStyle />}
       <PhoneInput
         key={defaultCountry}
         defaultCountry={
