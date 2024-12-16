@@ -24,6 +24,7 @@ export enum Permissions {
   SHOW_COSTS_IN_CALCULATIONS = "ShowCostsInCalculations",
   //SHOW_PROFITS_IN_CALCULATIONS = "ShowProfitsInCalculations",
   CUSTOMIZE_WORKFLOW = "CustomizeWorkflow",
+  SHOW_QUOTE_STATISTICS = "ShowQuotesStatistics",
 
   //Materials group
   EDIT_MATERIAL = "EditMaterial",
@@ -101,6 +102,7 @@ export enum Permissions {
   SHOW_DELIVERY_NOTES_REFUND = "ShowDeliveryNotesRefund",
   SHOW_INVOICES = "ShowInvoices",
   SHOW_INVOICES_REFUND = "ShowInvoicesRefund",
+  SHOW_ERP_DOCUMENTS_TABLE_SUMMERY = "ShowErpDocumentsTableSummery",
 
   //purchase group
   SHOW_PURCHASE_ORDERS = "ShowPurchaseOrders",
@@ -121,6 +123,7 @@ export enum Permissions {
   SHOW_CREDIT_CARD_TRANSACTIONS = "ShowCreditCardTransactions",
   SHOW_ACCOUNTING_TRANSACTION_REPORT = "ShowAccountingTransactionReport",
   SHOW_ADJUSTMENTS_REPORT = "ShowAdjustmentsReport",
+  SHOW_HOME_PAGE_STATISTICS = "ShowHomePageStatistics",
 }
 
 export const DocumentPermission = {
