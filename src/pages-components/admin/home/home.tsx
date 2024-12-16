@@ -11,103 +11,115 @@ import { StepType } from "@reactour/tour";
 import Stack from "@mui/material/Stack";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { ChatBotComponent } from "@/components/chat-bot/chat-bot";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const HomePageComponentForAdmin = ({ isAdmin }) => {
-    const { classes } = useStyle();
-    const { Title, setIsDisplay, isDisplay, flag, selectedClient, t } = useHome();
-    const allReports = useRecoilValue<any>(homeReportsState);
-    const homeSteps: StepType[] = [
-        {
-            selector: '[data-tour="quote-widget"]',
-            content: 'Let\'s dive into our first price and product production demo together!',
-            position: 'bottom'
-        },
-        {
-            selector: '[data-tour="select-customer"]',
-            content: <Stack textAlign={'center'} justifyContent={'center'} alignItems={'center'} gap={'5px'}>
-                <span>Please select a customer.</span>
-                <span>We've already added a customer named</span>
-                <span>New Quote</span>
-                <span>for your convenience.</span>
-            </Stack>,
-            position: 'right',
-            styles: {
-                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
-            }
-        },
-        {
-            selector: '[data-tour="select-type"]',
-            content: 'select customer type',
-            position: 'right',
-            styles: {
-                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
-            }
-        },
-        {
-            selector: '[data-tour="select-product"]',
-            content: 'Now, please select a product from the list.',
-            position: 'right',
-            styles: {
-                maskWrapper: (base) => ({ ...base, zIndex: 1 }),
-            }
-        },
-        {
-            selector: '[data-tour="create-quote"]',
-            content: <Stack justifyContent={'center'} alignItems={'center'} gap={'5px'}>
-                <span>Let's begin our quote.</span>
-                <span>Click on 'Create quote' to get started.</span>
-                <span>Please ensure that the paper product is added to the quote.</span>
-                <span>This step is necessary to proceed with the process.</span>
-            </Stack>,
-            position: 'bottom',
-        },
-    ]
+  const { classes } = useStyle();
+  const { Title, setIsDisplay, isDisplay, flag, selectedClient, t } = useHome();
+  const allReports = useRecoilValue<any>(homeReportsState);
+  const homeSteps: StepType[] = [
+    {
+      selector: '[data-tour="quote-widget"]',
+      content:
+        "Let's dive into our first price and product production demo together!",
+      position: "bottom",
+    },
+    {
+      selector: '[data-tour="select-customer"]',
+      content: (
+        <Stack
+          textAlign={"center"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          gap={"5px"}
+        >
+          <span>Please select a customer.</span>
+          <span>We've already added a customer named</span>
+          <span>New Quote</span>
+          <span>for your convenience.</span>
+        </Stack>
+      ),
+      position: "right",
+      styles: {
+        maskWrapper: (base) => ({ ...base, zIndex: 1 }),
+      },
+    },
+    {
+      selector: '[data-tour="select-type"]',
+      content: "select customer type",
+      position: "right",
+      styles: {
+        maskWrapper: (base) => ({ ...base, zIndex: 1 }),
+      },
+    },
+    {
+      selector: '[data-tour="select-product"]',
+      content: "Now, please select a product from the list.",
+      position: "right",
+      styles: {
+        maskWrapper: (base) => ({ ...base, zIndex: 1 }),
+      },
+    },
+    {
+      selector: '[data-tour="create-quote"]',
+      content: (
+        <Stack justifyContent={"center"} alignItems={"center"} gap={"5px"}>
+          <span>Let's begin our quote.</span>
+          <span>Click on 'Create quote' to get started.</span>
+          <span>
+            Please ensure that the paper product is added to the quote.
+          </span>
+          <span>This step is necessary to proceed with the process.</span>
+        </Stack>
+      ),
+      position: "bottom",
+    },
+  ];
 
-    const { } = useGoMakeTour(homeSteps, []);
+  const {} = useGoMakeTour(homeSteps, []);
 
-    useEffect(() => {
-        setIsDisplay(flag);
-    }, [selectedClient]);
+  useEffect(() => {
+    setIsDisplay(flag);
+  }, [selectedClient]);
 
-    return (
-        <div style={classes.mainContainer}>
-            <div style={classes.firstRowContainer}>
-                <ChatBotComponent />
-                <div style={classes.titleStyle}>{Title}</div>
-                <div style={classes.containerStyle}>
-                    <div style={classes.widgetStyle}>
-                        <QuoteWidget isAdmin={isAdmin} />
-                    </div>
-                    <div style={classes.widgetStyle}>
-                        {
-                            allReports ? (
-                                <CardsWidget />
-                            ) :
-                                (
-                                    <Skeleton variant="rectangular" sx={classes.skeltonStyle} />
-                                )
-                        }
-                    </div>
-                </div>
-            </div>
-            {isDisplay && (
-                <div style={classes.secondRowContainer}>
-                    <div style={classes.titleStyle}>
-                        {t("sales.quote.documents")}{" "}
-                        <span style={{ color: "rgb(213, 214, 233)" }}>
-                            / {selectedClient?.name}
-                        </span>
-                    </div>
-                    <div style={{ marginBottom: 20 }}>
-                        <HomeTableWidget />
-                    </div>
-                </div>
-            )}
+  return (
+    <div style={classes.mainContainer}>
+      <div style={classes.firstRowContainer}>
+        <ChatBotComponent />
+        <div style={classes.titleStyle}>{Title}</div>
+        <div style={classes.containerStyle}>
+          <div style={classes.widgetStyle}>
+            <QuoteWidget isAdmin={isAdmin} />
+          </div>
+          <div style={classes.widgetStyle}>
+            <PermissionCheck
+              userPermission={Permissions.SHOW_HOME_PAGE_STATISTICS}
+            >
+              {allReports ? (
+                <CardsWidget />
+              ) : (
+                <Skeleton variant="rectangular" sx={classes.skeltonStyle} />
+              )}
+            </PermissionCheck>
+          </div>
         </div>
-    );
+      </div>
+      {isDisplay && (
+        <div style={classes.secondRowContainer}>
+          <div style={classes.titleStyle}>
+            {t("sales.quote.documents")}{" "}
+            <span style={{ color: "rgb(213, 214, 233)" }}>
+              / {selectedClient?.name}
+            </span>
+          </div>
+          <div style={{ marginBottom: 20 }}>
+            <HomeTableWidget />
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
-
-
-
 
 export { HomePageComponentForAdmin };
