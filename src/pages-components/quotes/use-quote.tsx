@@ -136,6 +136,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const agentsCategories = useRecoilValue(agentsCategoriesState);
   const documentPath = DOCUMENT_TYPE[docType];
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
+  const isOrder = docType === DOCUMENT_TYPE.order;
+  const isInvoice = docType === DOCUMENT_TYPE.invoice;
+  const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote;
+  const isInvoiceRefund = docType === DOCUMENT_TYPE.invoiceRefund;
+  const isDeliveryNoteRefund = docType === DOCUMENT_TYPE.deliveryNoteRefund;
   const { CheckPermission } = useUserPermission();
   const { query, pathname } = useRouter();
   const router = useRouter();
@@ -573,6 +578,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
+
+              isInvoice || isDeliveryNote ? (
+                <ClickableStatusButton id={quote?.id} document={quote} />
+              ) : (
+                <div>—</div>
+              ),
               _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
@@ -629,6 +640,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         setAllStatistics(res?.data?.documentStatisticsList);
       }
     };
+
     const currentPageNumber = router.query.pageNumber;
     const currentStatusId = router.query.statusId;
     const currentFinalPatternSearch = router.query.finalPatternSearch;
@@ -962,6 +974,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
+              isInvoice || isDeliveryNote ? (
+                <ClickableStatusButton id={quote?.id} document={quote} />
+              ) : (
+                <div>—</div>
+              ),
               _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
@@ -1222,9 +1239,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ? t("customers.modal.paymentStatus")
             : t("sales.quote.totalPrice"),
           t("sales.quote.notes"),
-          docType === DOCUMENT_TYPE.order &&
+          (isOrder ||
+            isInvoice ||
+            isInvoiceRefund ||
+            isDeliveryNote ||
+            isDeliveryNoteRefund) &&
             t("sales.documentDeliveries.deliveryStatus"),
-
           t("sales.quote.status"),
           t("sales.quote.more"),
         ].filter(Boolean);
