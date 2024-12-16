@@ -12,6 +12,7 @@ import { useStyle } from "./style";
 import { SignatureModal } from "./components/signature-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
 
 const UpdateDeliveryStatusModal = ({
   document,
@@ -92,7 +93,6 @@ const UpdateDeliveryStatusModal = ({
               onChange={handleClientContactChange}
             />
           </Stack>
-
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
             <span style={classes.labelStyle}>
               {t("sales.documentDeliveries.recipientName")}
@@ -114,16 +114,15 @@ const UpdateDeliveryStatusModal = ({
             <span style={classes.labelStyle}>
               {t("sales.documentDeliveries.recipientNumber")}
             </span>
-            <GoMakeTextInput
-              style={{
+
+            <PhoneInputComponent
+              customStyle={{
                 width: 170,
                 height: "40px",
               }}
               value={deliveryState?.contactPhone}
-              onChange={(e) =>
-                handleChangeDeliveryInputs("contactPhone", e.target.value)
-              }
-              placeholder={t("sales.documentDeliveries.recipientNumber")}
+              onChange={(e) => handleChangeDeliveryInputs("contactPhone", e)}
+              variant="circular"
             />
           </Stack>
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
