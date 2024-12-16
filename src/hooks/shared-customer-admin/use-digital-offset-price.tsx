@@ -3874,7 +3874,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
               return !materialRelatedParameters.some(
                 (materialParameter) =>
-                  materialParameter.id === subProduct.parameterId
+                  materialParameter.id === subProduct.parameterId &&
+                  subProduct.sectionId === sectionId &&
+                  subProduct.subSectionId === subSectionId
               );
             });
           }
@@ -3902,7 +3904,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       x.actionIndex === actionIndex
                   );
                   let prevPathParamDefaultValue = temp.find(
-                    (x) => x.parameterId === prevPathParam.id && x.actionIndex === actionIndex
+                    (x) => x.parameterId === prevPathParam.id && x.actionIndex === actionIndex && x.sectionId === sectionId && x.subSectionId === subSectionId
                   );
 
                   if (
