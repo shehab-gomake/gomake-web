@@ -15,7 +15,10 @@ const createDocumentDeliveryApi: ICallAndSetData = async (
     EHttpMethod.POST,
     CREATE_DOCUMENT_DELIVERY_URL,
     setState,
-    data
+    data,
+    true,
+    null,
+    true
   );
 };
 

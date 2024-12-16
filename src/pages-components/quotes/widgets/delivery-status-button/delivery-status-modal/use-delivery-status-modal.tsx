@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
-import { DeliveryStateDetails } from "../interfaces";
+import { DeliveryStateDetails } from "../utils/interfaces";
 import { useSnackBar } from "@/hooks";
 import React from "react";
 
@@ -23,17 +23,17 @@ const useDeliveryStatusModal = (documentItems) => {
   const { t } = useTranslation();
   const dir = t("direction");
   const { alertFault } = useSnackBar();
-  const [client, setClient] = useState();
+  const [clientContact, setClientContact] = useState();
   const [selectedItems, setSelectedItems] = useState<
     { itemId: string; deliveredQuantity: number }[]
   >([]);
   const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
 
   const initialDeliveryState: DeliveryStateDetails = {
-    deliveryDate: new Date(),
-    recipientName: "",
-    recipientNumber: "",
-    recipientMail: "",
+    // deliveryDate: new Date(),
+    contactName: "",
+    contactPhone: "",
+    contactEmail: "",
   };
   const [deliveryState, setDeliveryState] =
     useState<DeliveryStateDetails>(initialDeliveryState);
@@ -58,6 +58,19 @@ const useDeliveryStatusModal = (documentItems) => {
     []
   );
 
+  const handleClientContactChange = (event, value) => {
+    setClientContact(value);
+    if (value) {
+      handleChangeDeliveryInputs("contactName", value.label);
+      handleChangeDeliveryInputs("contactPhone", value.phone);
+      handleChangeDeliveryInputs("contactEmail", value.mail);
+    } else {
+      handleChangeDeliveryInputs("contactName", "");
+      handleChangeDeliveryInputs("contactPhone", "");
+      handleChangeDeliveryInputs("contactEmail", "");
+    }
+  };
+
   const handleChangeDeliveryInputs = (key, value) => {
     setDeliveryState((prev) => ({
       ...prev,
@@ -66,7 +79,6 @@ const useDeliveryStatusModal = (documentItems) => {
   };
 
   // for signature modal
-
   const openSignatureModal = () => {
     if (Array.isArray(selectedItems) && selectedItems.length === 0) {
       alertFault("reports.pleaseSelectOneItem");
@@ -79,9 +91,8 @@ const useDeliveryStatusModal = (documentItems) => {
 
   const handleSelectionChange = (selectedRows: Set<number>) => {
     const selectedData = Array.from(selectedRows).map((index) => {
-      const deliveryStatusElement = documentItems[index][5];
-      const deliveredQuantityElement = documentItems[index][4]?.props?.value;
-
+      const deliveryStatusElement = documentItems[index][4];
+      const deliveredQuantityElement = documentItems[index][3]?.props?.value;
       return {
         itemId: extractDeliveryStatusRowId(deliveryStatusElement),
         deliveredQuantity: deliveredQuantityElement,
@@ -94,14 +105,14 @@ const useDeliveryStatusModal = (documentItems) => {
   //get the status
   const extractDeliveryStatus = (
     deliveryStatusElement: React.ReactNode
-  ): string => {
+  ): number => {
     if (
       React.isValidElement(deliveryStatusElement) &&
-      deliveryStatusElement.props?.children?.[1]
+      deliveryStatusElement.props?.["data-status-enum"]
     ) {
-      return deliveryStatusElement.props.children?.[1];
+      return deliveryStatusElement.props["data-status-enum"];
     }
-    return "";
+    return 0;
   };
 
   //get the id
@@ -126,14 +137,16 @@ const useDeliveryStatusModal = (documentItems) => {
     setDeliveryState,
     initialDeliveryState,
     options,
-    client,
-    setClient,
+    clientContact,
+    setClientContact,
     isSignatureModalOpen,
     openSignatureModal,
     closeSignatureModal,
     extractDeliveryStatus,
     handleSelectionChange,
     selectedItems,
+    setSelectedItems,
+    handleClientContactChange,
   };
 };
 

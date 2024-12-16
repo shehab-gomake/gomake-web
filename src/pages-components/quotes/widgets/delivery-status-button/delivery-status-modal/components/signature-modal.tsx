@@ -2,7 +2,7 @@ import { GoMakeModal } from "@/components";
 import { useStyle } from "../style";
 import { Button, Stack } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { DeleteIcon, SaveIcon, SendIcon, WArrowIcon } from "../../icons";
+import { DeleteIcon, SaveIcon, SendIcon, WArrowIcon } from "../../utils/icons";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useRef } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
@@ -12,25 +12,27 @@ import { createDocumentDeliveryApi } from "@/services/api-service/document-deliv
 export interface ISignatureModalProps {
   openModal: boolean;
   onCloseModal: () => void;
-  onCloseUpdateModal: () => void;
   documentType: number;
   documentId: string;
   selectedItems: any;
+  setSelectedItems: any;
   editableQuantities?: any;
   setEditableQuantities?: any;
   setDocumentItems?: any;
+  deliveryState?: any;
 }
 
 const SignatureModal = ({
   openModal,
   onCloseModal,
-  onCloseUpdateModal,
   documentId,
   documentType,
   selectedItems,
+  setSelectedItems,
   editableQuantities,
   setEditableQuantities,
   setDocumentItems,
+  deliveryState,
 }: ISignatureModalProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -66,11 +68,9 @@ const SignatureModal = ({
 
     const callBack = (res) => {
       if (res.success) {
-        debugger;
         setEditableQuantities({});
-
+        setSelectedItems([]);
         setDocumentItems(res.data);
-
         alertSuccessUpdate();
         onCloseModal();
       } else {
@@ -81,8 +81,8 @@ const SignatureModal = ({
       documentType,
       documentId,
       signImage,
-      // items: selectedItems,
       items: updatedSelectedData,
+      ...deliveryState,
     });
   };
 

@@ -1,11 +1,12 @@
 import { MouseEvent } from "react";
 import { MenuItem, Menu, Typography } from "@mui/material";
-import { ChangeIcon } from "./icons";
+import { ChangeIcon } from "./utils/icons";
 import { useStyle } from "./style";
 import { useDeliveryStatusButton } from "./use-delivery-status";
-import { ITaskCategoryLabelProps } from "./interfaces";
+import { ITaskCategoryLabelProps } from "./utils/interfaces";
 import { UpdateDeliveryStatusModal } from "./delivery-status-modal/delivery-status-modal";
 import { DocumentDeliveryStatuses } from "./delivery-status-modal/use-delivery-status-modal";
+import { useClientContactsList } from "@/hooks/use-client-contacts";
 
 const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
   const {
@@ -22,6 +23,8 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
     handleMenuClick,
     anchorChangeEl,
   } = useDeliveryStatusButton();
+  const { getClientContacts, clientContacts } = useClientContactsList();
+
   const dir = t("direction");
   const isRtl = dir === "rtl";
   const { classes } = useStyle({
@@ -30,6 +33,7 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
 
   const handleChangeStatusClick = (event: MouseEvent<HTMLElement>) => {
     getDocumentDeliveryItems(document?.documentType, document?.id);
+    getClientContacts(document?.customerId);
     handleMenuClose();
   };
 
@@ -77,6 +81,7 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
         editableQuantities={editableQuantities}
         setEditableQuantities={setEditableQuantities}
         setDocumentItems={setDocumentItems}
+        clientContacts={clientContacts}
       />
     </>
   );

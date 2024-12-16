@@ -3,8 +3,11 @@ import { GoMakeModal } from "@/components";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { GoMakeSelect } from "@/components/auto-complete/go-make-select";
 import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
-import { IUpdateDeliveryStatusModalProps } from "../interfaces";
-import { useDeliveryStatusModal } from "./use-delivery-status-modal";
+import { IUpdateDeliveryStatusModalProps } from "../utils/interfaces";
+import {
+  DocumentDeliveryStatuses,
+  useDeliveryStatusModal,
+} from "./use-delivery-status-modal";
 import { useStyle } from "./style";
 import { SignatureModal } from "./components/signature-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
@@ -18,6 +21,7 @@ const UpdateDeliveryStatusModal = ({
   editableQuantities,
   setEditableQuantities,
   setDocumentItems,
+  clientContacts,
 }: IUpdateDeliveryStatusModalProps) => {
   const { classes } = useStyle();
   const {
@@ -28,19 +32,30 @@ const UpdateDeliveryStatusModal = ({
     setDeliveryState,
     initialDeliveryState,
     options,
-    client,
-    setClient,
+    clientContact,
+    setClientContact,
     isSignatureModalOpen,
     openSignatureModal,
     closeSignatureModal,
     extractDeliveryStatus,
     handleSelectionChange,
     selectedItems,
+    setSelectedItems,
+    handleClientContactChange,
   } = useDeliveryStatusModal(documentItems);
 
   const handleCloseModal = () => {
     onCloseModal();
     setDeliveryState(initialDeliveryState);
+    setClientContact(null);
+  };
+
+  //!not sure about the condition
+  const areAllItemsNotDelivered = () => {
+    return documentItems?.some(
+      (item) =>
+        extractDeliveryStatus(item[4]) === DocumentDeliveryStatuses.NotDelivered
+    );
   };
 
   return (
@@ -71,12 +86,13 @@ const UpdateDeliveryStatusModal = ({
                 width: 170,
                 height: "40px",
               }}
-              options={options}
+              options={clientContacts}
               placeholder={"Select recipient"}
-              value={client}
-              onChange={(event, value) => setClient(value)}
+              value={clientContact}
+              onChange={handleClientContactChange}
             />
           </Stack>
+
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
             <span style={classes.labelStyle}>
               {t("sales.documentDeliveries.recipientName")}
@@ -87,11 +103,11 @@ const UpdateDeliveryStatusModal = ({
                 width: 170,
                 height: "40px",
               }}
-              value={deliveryState?.recipientName}
+              value={deliveryState?.contactName}
               onChange={(e) =>
-                handleChangeDeliveryInputs("recipientName", e.target.value)
+                handleChangeDeliveryInputs("contactName", e.target.value)
               }
-              placeholder="Recipient name"
+              placeholder={t("sales.documentDeliveries.recipientName")}
             />
           </Stack>
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
@@ -103,11 +119,11 @@ const UpdateDeliveryStatusModal = ({
                 width: 170,
                 height: "40px",
               }}
-              value={deliveryState?.recipientNumber}
+              value={deliveryState?.contactPhone}
               onChange={(e) =>
-                handleChangeDeliveryInputs("recipientNumber", e.target.value)
+                handleChangeDeliveryInputs("contactPhone", e.target.value)
               }
-              placeholder="Recipient number"
+              placeholder={t("sales.documentDeliveries.recipientNumber")}
             />
           </Stack>
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
@@ -119,14 +135,14 @@ const UpdateDeliveryStatusModal = ({
                 width: 170,
                 height: "40px",
               }}
-              value={deliveryState?.recipientMail}
+              value={deliveryState?.contactEmail}
               onChange={(e) =>
-                handleChangeDeliveryInputs("recipientMail", e.target.value)
+                handleChangeDeliveryInputs("contactEmail", e.target.value)
               }
-              placeholder="Recipient mail"
+              placeholder={t("sales.documentDeliveries.recipientMail")}
             />
           </Stack>
-          <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
+          {/* <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
             <span style={classes.labelStyle}>
               {t("sales.documentDeliveries.deliveryDate")}
             </span>
@@ -141,7 +157,7 @@ const UpdateDeliveryStatusModal = ({
                 handleChangeDeliveryInputs("deliveryDate", e.target.value)
               }
             />
-          </Stack>
+          </Stack> */}
         </Stack>
         <PrimaryTable
           stickyFirstCol={false}
@@ -153,14 +169,18 @@ const UpdateDeliveryStatusModal = ({
           enableCheckboxes={true}
           onSelectionChange={handleSelectionChange}
           rowCheckboxCondition={(row) => {
-            const status = extractDeliveryStatus(row[5]);
-            return status !== "FullyDelivered";
+            const status = extractDeliveryStatus(row[4]);
+            return (
+              status !== DocumentDeliveryStatuses.FullyDelivered &&
+              status !== DocumentDeliveryStatuses.PartiallyDelivered
+            );
           }}
         />
         <PrimaryButton
           variant="contained"
           style={classes.nextBtn}
           onClick={openSignatureModal}
+          disabled={!areAllItemsNotDelivered()}
         >
           {t("sales.documentDeliveries.next")}
         </PrimaryButton>
@@ -168,13 +188,14 @@ const UpdateDeliveryStatusModal = ({
       <SignatureModal
         openModal={isSignatureModalOpen}
         onCloseModal={closeSignatureModal}
-        onCloseUpdateModal={handleCloseModal}
         documentId={document?.id}
         documentType={document?.documentType}
         selectedItems={selectedItems}
+        setSelectedItems={setSelectedItems}
         editableQuantities={editableQuantities}
         setEditableQuantities={setEditableQuantities}
         setDocumentItems={setDocumentItems}
+        deliveryState={deliveryState}
       />
     </GoMakeModal>
   );

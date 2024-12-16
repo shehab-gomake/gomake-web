@@ -11,11 +11,13 @@ export interface IUpdateDeliveryStatusModalProps {
   editableQuantities?: any;
   setEditableQuantities?: any;
   setDocumentItems?: any;
+
+  clientContacts?: any;
 }
 
 export interface DeliveryStateDetails {
-  deliveryDate: Date;
-  recipientName: string;
-  recipientNumber: string;
-  recipientMail: string;
+  //  deliveryDate?: Date;
+  contactEmail: string;
+  contactPhone: string;
+  contactName: string;
 }

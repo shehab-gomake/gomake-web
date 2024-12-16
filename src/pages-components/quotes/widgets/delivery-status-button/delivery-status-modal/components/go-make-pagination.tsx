@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@mui/material";
 
-import { NextArrowIcon, PrevArrowIcon } from "../../icons";
+import { NextArrowIcon, PrevArrowIcon } from "../../utils/icons";
 import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 

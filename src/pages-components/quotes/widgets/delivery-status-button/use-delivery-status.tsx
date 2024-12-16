@@ -4,13 +4,14 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DocumentDeliveryStatuses } from "./delivery-status-modal/use-delivery-status-modal";
 import { toRgba } from "@/utils/helpers";
-import { CanceledIcon, DeliveredIcon, PendingIcon } from "./icons";
+import { CanceledIcon, DeliveredIcon, PendingIcon } from "./utils/icons";
 import { CharacterDetails } from "@/widgets/quote-new/quote-table/row-details/character-details";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
 import { getDocumentDeliveryItemsApi } from "@/services/api-service/document-deliveries/get-document-delivery-items";
 import { IconButton } from "@mui/material";
 import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
+import { useDateFormat } from "@/hooks/use-date-format";
 
 const useDeliveryStatusButton = () => {
   const { t } = useTranslation();
@@ -18,6 +19,7 @@ const useDeliveryStatusButton = () => {
   const isRTL = dir === "rtl";
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData } = useSnackBar();
+  const { getFormattedLocalDate } = useDateFormat();
   const [documentItems, setDocumentItems] = useState<any>();
   const [editableQuantities, setEditableQuantities] = useState({});
   const [openDeliveryModal, setOpenDeliveryModal] = useState<boolean>(false);
@@ -67,6 +69,7 @@ const useDeliveryStatusButton = () => {
     return (
       <span
         id={id}
+        data-status-enum={statusEnum}
         style={{
           display: "inline-flex",
           alignItems: "center",
@@ -82,7 +85,6 @@ const useDeliveryStatusButton = () => {
         }}
       >
         {icon}
-        {/* {DocumentDeliveryStatuses[statusEnum]} */}
         {t(`sales.documentDeliveries.${DocumentDeliveryStatuses[statusEnum]}`)}
       </span>
     );
@@ -137,62 +139,37 @@ const useDeliveryStatusButton = () => {
     documentItem
   ) => {
     setAnchorEl(event.currentTarget);
-    setSelectedItemDetails(documentItem?.deliveryDetails);
+    setSelectedItemDetails(documentItem);
   };
 
   const handleCloseDetails = () => {
     setAnchorEl(null);
   };
 
-  const renderTableRows = useCallback(() => {
-    return documentItems?.map((documentItem) => [
-      <span style={{ color: "black", ...FONT_FAMILY.Inter(500, 14) }}>
-        #{documentItem?.code}
-      </span>,
-      documentItem?.productName,
-      <CharacterDetails
-        details={documentItem?.details}
-        showLessHeightFit={true}
-        canUpdate={false}
-      />,
-      <input
-        type="number"
-        key={`quantity-${documentItem?.id}`}
-        value={editableQuantities[documentItem.id] || documentItem?.quantity}
-        onChange={(e) => handleQuantityChange(documentItem.id, e.target.value)}
+  const RecipientDetail = ({
+    label,
+    value,
+  }: {
+    label: string;
+    value: string;
+  }) => (
+    <Typography style={{ marginTop: "8px", color: "black" }}>
+      <span style={{ ...FONT_FAMILY.Inter(600, 15) }}>{label}</span>
+      <div
         style={{
-          width: "70px",
-          textAlign: "center",
-          border: "none",
-          height: "25px",
-          outline: "none",
-        }}
-      />,
-      _renderDeliveryStatus(documentItem?.deliveryStatus, documentItem?.id),
-      documentItem?.signImage,
-      documentItem?.signedAt,
-      <span
-        onClick={(e) => handleDetailsClick(e, documentItem)}
-        style={{
-          cursor: "pointer",
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          display: "inline-block",
-          maxWidth: "200px",
-          padding: "0px 20px",
+          marginTop: "6px",
+          color: "gray",
+          lineHeight: "24px",
+          ...FONT_FAMILY.Inter(400, 15),
         }}
       >
-        {`${t("sales.documentDeliveries.recipientName")}: ${
-          selectedItemDetails?.contactName || "N/A"
-        }, `}
-        {`${t("sales.documentDeliveries.recipientMail")}: ${
-          selectedItemDetails?.contactEmail || "N/A"
-        }, `}
-        {`${t("sales.documentDeliveries.recipientNumber")}: ${
-          selectedItemDetails?.contactPhone || "N/A"
-        }`}
-      </span>,
+        {value || "N/A"}
+      </div>
+    </Typography>
+  );
+
+  const renderPopover = () =>
+    open && (
       <Popover
         open={open}
         anchorEl={anchorEl}
@@ -225,62 +202,95 @@ const useDeliveryStatusButton = () => {
         >
           <CloseIcon width={20} height={20} />
         </IconButton>
-
         <div>
-          <Typography>
-            <span style={{ ...FONT_FAMILY.Inter(600, 15) }}>
-              {/* Recipient’s name */}
-              {t("sales.documentDeliveries.recipientName")}
-            </span>
-            <div
-              style={{
-                marginTop: "6px",
-                color: "gray",
-                lineHeight: "24px",
-                ...FONT_FAMILY.Inter(400, 15),
-              }}
-            >
-              {selectedItemDetails?.contactName || "N/A"}
-              {/* Lama anbtawe */}
-            </div>
-          </Typography>
-          <Typography style={{ marginTop: "8px", color: "black" }}>
-            <span style={{ ...FONT_FAMILY.Inter(600, 15) }}>
-              {/* Recipient’s email */}
-              {t("sales.documentDeliveries.recipientMail")}
-            </span>
-            <div
-              style={{
-                marginTop: "6px",
-                color: "gray",
-                lineHeight: "24px",
-                ...FONT_FAMILY.Inter(400, 15),
-              }}
-            >
-              {/* {selectedItemDetails?.contactEmail || "N/A" } */}
-              lama@gomake.net
-            </div>
-          </Typography>
-          <Typography style={{ marginTop: "8px", color: "black" }}>
-            <span style={{ ...FONT_FAMILY.Inter(600, 15) }}>
-              {/* Recipient’s mobile */}
-              {t("sales.documentDeliveries.recipientName")}
-            </span>
-            <div
-              style={{
-                marginTop: "6px",
-                color: "gray",
-                lineHeight: "24px",
-                ...FONT_FAMILY.Inter(400, 15),
-              }}
-            >
-              {/* {selectedItemDetails?.contactPhone || "N/A"} */}
-              0545568623
-            </div>
-          </Typography>
+          <RecipientDetail
+            label={t("sales.documentDeliveries.recipientName")}
+            value={selectedItemDetails?.contactName}
+          />
+          <RecipientDetail
+            label={t("sales.documentDeliveries.recipientMail")}
+            value={selectedItemDetails?.contactEmail}
+          />
+          <RecipientDetail
+            label={t("sales.documentDeliveries.recipientNumber")}
+            value={selectedItemDetails?.contactPhone}
+          />
         </div>
-      </Popover>,
-    ]);
+      </Popover>
+    );
+
+  const renderTableRows = useCallback(() => {
+    return documentItems?.map((documentItem) => {
+      const {
+        deliveryStatus,
+        id,
+        code,
+        quantity,
+        signImage,
+        signedAt,
+        contactName,
+        contactEmail,
+        contactPhone,
+      } = documentItem || {};
+
+      const isDeliveredItem =
+        deliveryStatus === DocumentDeliveryStatuses.FullyDelivered ||
+        deliveryStatus === DocumentDeliveryStatuses.PartiallyDelivered;
+
+      return [
+        <span style={{ color: "black", ...FONT_FAMILY.Inter(500, 14) }}>
+          #{code}
+        </span>,
+        documentItem?.productName,
+        <CharacterDetails
+          details={documentItem?.details}
+          showLessHeightFit={true}
+          canUpdate={false}
+        />,
+        <input
+          type="number"
+          key={`quantity-${id}`}
+          value={editableQuantities[id] || quantity}
+          disabled={isDeliveredItem}
+          onChange={(e) => handleQuantityChange(id, e.target.value)}
+          style={{
+            width: "70px",
+            textAlign: "center",
+            border: "none",
+            height: "25px",
+            outline: "none",
+          }}
+        />,
+        _renderDeliveryStatus(deliveryStatus, id),
+        <img src={signImage} style={{ width: "80px", maxHeight: "40px" }} />,
+        signedAt && getFormattedLocalDate(signedAt),
+        isDeliveredItem ? (
+          <span
+            onClick={(e) => handleDetailsClick(e, documentItem)}
+            style={{
+              cursor: "pointer",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "inline-block",
+              maxWidth: "200px",
+              padding: "0px 20px",
+            }}
+          >
+            {`${t("sales.documentDeliveries.recipientName")}: ${
+              contactName || "N/A"
+            }, `}
+            {`${t("sales.documentDeliveries.recipientMail")}: ${
+              contactEmail || "N/A"
+            }, `}
+            {`${t("sales.documentDeliveries.recipientNumber")}: ${
+              contactPhone || "N/A"
+            }`}
+          </span>
+        ) : null,
+        renderPopover(),
+      ];
+    });
   }, [documentItems, editableQuantities, handleQuantityChange]);
 
   return {
