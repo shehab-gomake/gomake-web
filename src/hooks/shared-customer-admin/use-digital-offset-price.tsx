@@ -960,6 +960,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     if (defValue) {
                       let existsSubProductParameter = subProduct.parameters.find(x => x.parameterId === parameter.id && x.sectionId === section.id && x.subSectionId === subSection.id && x.actionIndex === parameter?.actionIndex);
                       if (!existsSubProductParameter) {
+                        console.log("parssssameter", value)
+
                         subProduct.parameters.push({
                           parameterId: parameter?.id,
                           parameterName: parameter?.name,
@@ -969,7 +971,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           isQuantityParameter: parameter?.isQuantityParameter,
                           ...(value && {
                             valueIds: [value?.materialValueIds[0]?.valueId],
-                            values: [value?.materialValueIds[0]?.valueId],
+                            values: [value?.updateName],
                           }),
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
