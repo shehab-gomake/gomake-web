@@ -66,6 +66,7 @@ import {
 } from "./widgets/send-payment-modal/states";
 import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pay-api";
 import { useRouter } from "next/router";
+import { ICard } from "./widgets/statistics-section/statistics-sections";
 import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
 
 interface Query {
@@ -95,13 +96,23 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertFaultGetData,
     alertSuccessUpdate,
   } = useSnackBar();
+  const router = useRouter();
+  const documentPath = DOCUMENT_TYPE[docType];
+
+  const searchInputRef = useRef(null);
+
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
+  const { CheckPermission } = useUserPermission();
+  const { query, pathname } = useRouter();
+  const { quoteNumber } = query;
   const { errorColor } = useGomakeTheme();
-  // const [patternSearch, setPatternSearch] = useState("");
+  const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
+  const { renderOptions, checkWhatRenderArray, isFetching } =
+    useCustomerDropDownList();
+
   const [patternSearch, setPatternSearch] = useState<any>(null);
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
-  const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
   const [statusId, setStatusId] = useState<any>();
   const [approvalStatusId, setApprovalStatusId] = useState<any>();
   const [quoteStatusId, setQuoteStatusId] = useState<any>();
@@ -116,12 +127,17 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [logsModalTitle, setLogsModalTitle] = useState<string>();
   const [selectedQuote, setSelectedQuote] = useState<any>();
   const [allDocuments, setAllDocuments] = useState([]);
-  const [allStatistics, setAllStatistics] = useState([]);
+  const [allStatistics, setAllStatistics] = useState<{
+    documentStatisticsList: any[];
+    totalItems: number;
+  }>({
+    documentStatisticsList: [],
+    totalItems: 0,
+  });
   const [activeCard, setActiveCard] = useState(null);
   const [page, setPage] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  const selectedClient = useRecoilValue<any>(selectedClientState);
   const [openAddRule, setOpenAddRule] = useState<boolean>(false);
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
@@ -152,7 +168,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     label: string;
     value: PStatus;
   } | null>();
-
   const [productionStatus, setProductionStatus] = useState<{
     label: string;
     value: PStatus;
@@ -165,10 +180,20 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     useState(false);
   const [selectedQuoteItemValue, setSelectedQuoteItemValue] = useState<any>();
   const [documentCloseNumber, setDocumentCloseNumber] = useState("");
-
+  const agentsCategories = useRecoilValue(agentsCategoriesState);
+  const selectedClient = useRecoilValue<any>(selectedClientState);
   const isSelectedCLoseAsDeleveryNote = useRecoilValue(
     isSelectedCLoseAsDeleveryNoteState
   );
+
+  //?new
+  const isQuote = docType === DOCUMENT_TYPE.quote;
+  const isOrder = docType === DOCUMENT_TYPE.order;
+  const isReceipt = docType === DOCUMENT_TYPE.receipt;
+  const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote;
+  const isDeliveryNoteRefund = docType === DOCUMENT_TYPE.deliveryNoteRefund;
+  const isInvoice = docType === DOCUMENT_TYPE.invoice;
+  const isInvoiceRefund = docType === DOCUMENT_TYPE.invoiceRefund;
 
   const handleDocumentNumberChange = (event) => {
     setDocumentCloseNumber(event.target.value);
@@ -454,7 +479,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
               />,
             ];
-          } else if (docType === DOCUMENT_TYPE.order) {
+          } else if (isOrder) {
             const jobsElement = CheckPermission(
               Permissions.SHOW_BOARD_MISSIONS
             ) ? (
@@ -637,7 +662,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
-        setAllStatistics(res?.data?.documentStatisticsList);
+
+        setAllStatistics({
+          documentStatisticsList: res?.data?.documentStatisticsList ?? [],
+          totalItems: totalItems ?? 0,
+        });
       }
     };
 
@@ -851,7 +880,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
               />,
             ];
-          } else if (docType === DOCUMENT_TYPE.order) {
+          } else if (isOrder) {
             const jobsElement = CheckPermission(
               Permissions.SHOW_BOARD_MISSIONS
             ) ? (
@@ -1030,7 +1059,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
-        setAllStatistics(res?.data?.documentStatisticsList);
+        setAllStatistics({
+          documentStatisticsList: res?.data?.documentStatisticsList ?? [],
+          totalItems: totalItems ?? 0,
+        });
       }
     };
     if (docType === DOCUMENT_TYPE.receipt) {
@@ -1215,11 +1247,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 return t("documentingDesign.TableSetting.number");
             }
           })(),
-          docType === DOCUMENT_TYPE.order
+          isOrder
             ? t("sales.quote.quoteNumber")
             : docType === DOCUMENT_TYPE.receipt
             ? null
             : t("sales.quote.sourceDocument"),
+
+                    isOrder && t("sales.quote.purchaseNumber"),
+                    isOrder && t("sales.quote.productionStatus"),
+                    isOrder && t("sales.quote.jobs"),
+                    isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
+                        <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
+                            {t("sales.quote.cost")}
+                        </PermissionCheck>
+                    ),
+                //sla,
           docType === DOCUMENT_TYPE.order && t("sales.quote.purchaseNumber"),
           docType === DOCUMENT_TYPE.order && t("sales.quote.productionStatus"),
           docType === DOCUMENT_TYPE.order && t("sales.quote.jobs"),
@@ -2255,10 +2297,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
           );
         } else {
-          const path =
-            docType === DOCUMENT_TYPE.order
-              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+          const path = isOrder
+            ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+            : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
           navigate(path);
         }
       } else {
@@ -2310,6 +2351,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onOpenDuplicateModal = (mission: any) => {
     setSelectedDocument(mission);
     setOpenDuplicateModal(true);
+  };
+
+  const getValueByKey = (statistics: ICard[], key: string) => {
+    const card = statistics?.find((item) => item.key === key);
+    return card ? card.value : "0";
   };
 
   return {
@@ -2448,10 +2494,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     searchInputRef,
     openExportReceiptPdfModal,
     onCloseExportReceiptPdfModal,
-
     startOrderProduction,
     openStartProductionModal,
     onClickCloseStartProductionModal,
+    getValueByKey,
+    isOrder,
+    isQuote,
+    isReceipt,
   };
 };
 
