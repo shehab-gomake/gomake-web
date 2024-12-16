@@ -143,12 +143,10 @@ const UpdateDeliveryStatusModal = ({
             />
           </Stack>
         </Stack>
-
         <PrimaryTable
           stickyFirstCol={false}
           stickyHeader={true}
           maxHeight={"calc(100vh - 300px)"}
-          // rows={mockRows}
           rows={documentItems}
           headers={tableHeaders}
           variant={"RoundTable"}
@@ -159,17 +157,6 @@ const UpdateDeliveryStatusModal = ({
             return status !== "FullyDelivered";
           }}
         />
-
-        {/* Pagination */}
-        {/* <GoMakePagination
-          page={page}
-          totalPages={totalPages}
-          visiblePages={visiblePages}
-          handlePrevPage={handlePrevPage}
-          handleNextPage={handleNextPage}
-          handlePageClick={handlePageClick}
-        /> */}
-
         <PrimaryButton
           variant="contained"
           style={classes.nextBtn}

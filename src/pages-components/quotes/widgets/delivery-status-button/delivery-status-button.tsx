@@ -1,4 +1,4 @@
-import { useState, MouseEvent } from "react";
+import { MouseEvent } from "react";
 import { MenuItem, Menu, Typography } from "@mui/material";
 import { ChangeIcon } from "./icons";
 import { useStyle } from "./style";
@@ -7,7 +7,6 @@ import { ITaskCategoryLabelProps } from "./interfaces";
 import { UpdateDeliveryStatusModal } from "./delivery-status-modal/delivery-status-modal";
 import { DocumentDeliveryStatuses } from "./delivery-status-modal/use-delivery-status-modal";
 
-//!here
 const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
   const {
     t,
@@ -19,21 +18,15 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
     editableQuantities,
     setEditableQuantities,
     setDocumentItems,
+    handleMenuClose,
+    handleMenuClick,
+    anchorChangeEl,
   } = useDeliveryStatusButton();
   const dir = t("direction");
   const isRtl = dir === "rtl";
   const { classes } = useStyle({
     color: _renderDeliveryStatusColor(document?.deliveryStatus),
   });
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleMenuClick = (event: MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleChangeStatusClick = (event: MouseEvent<HTMLElement>) => {
     getDocumentDeliveryItems(document?.documentType, document?.id);
@@ -51,8 +44,8 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
       </span>
       <Menu
         key={`Status-menu-${id}`}
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
+        anchorEl={anchorChangeEl}
+        open={Boolean(anchorChangeEl)}
         onClose={handleMenuClose}
         anchorOrigin={{
           vertical: "bottom",

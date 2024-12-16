@@ -7,7 +7,7 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { useRef } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import SignatureCanvas from "react-signature-canvas";
-import { createDocumentDeliveryApi } from "@/services/api-service/erp-service/document-deliveries-apis";
+import { createDocumentDeliveryApi } from "@/services/api-service/document-deliveries/create-document-delivery";
 
 export interface ISignatureModalProps {
   openModal: boolean;
