@@ -10,6 +10,8 @@ import DoDisturbAltIcon from "@mui/icons-material/DoDisturbAlt";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { GoMakeCurrency } from "@/icons/go-make-currency";
 import { EStatisticsLabels, QUOTE_STATUSES } from "../../enums";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 export interface ICard {
   key: string;
@@ -34,6 +36,7 @@ const CardsSection = (props: ICardsSection) => {
   const { classes } = useStyle();
   const { primaryColor, secondColor, warningColor, successColor, errorColor } =
     useGomakeTheme();
+  const { CheckPermission } = useUserPermission();
 
   return (
     <Stack
@@ -42,55 +45,68 @@ const CardsSection = (props: ICardsSection) => {
       alignItems={"center"}
       flexWrap={"wrap-reverse"}
     >
-      <CardComponent
-        key={EStatisticsLabels.WAITING}
-        onClick={() =>
-          props.onClickCard(EStatisticsLabels.WAITING, QUOTE_STATUSES.Waiting)
-        }
-        isActive={props.activeCard === EStatisticsLabels.WAITING}
-        text={t("sales.quote.waiting")}
-        number={getValueByKey(props.statistics, "waitingCount")}
-        textColor={warningColor(300)}
-        icon={<HourglassTopIcon />}
-        onSecondClick={props.onSecondClickCard}
-      />
-      <CardComponent
-        key={EStatisticsLabels.APPROVED}
-        onClick={() =>
-          props.onClickCard(EStatisticsLabels.APPROVED, QUOTE_STATUSES.Approved)
-        }
-        isActive={props.activeCard === EStatisticsLabels.APPROVED}
-        text={t("sales.quote.approved")}
-        number={getValueByKey(props.statistics, "approvedCount")}
-        textColor={successColor(300)}
-        icon={<DoneAllIcon />}
-        onSecondClick={props.onSecondClickCard}
-      />
-      <CardComponent
-        key={EStatisticsLabels.CANCELED}
-        onClick={() =>
-          props.onClickCard(EStatisticsLabels.CANCELED, QUOTE_STATUSES.Canceled)
-        }
-        isActive={props.activeCard === EStatisticsLabels.CANCELED}
-        text={t("sales.quote.canceled")}
-        number={getValueByKey(props.statistics, "canceledCount")}
-        textColor={errorColor(300)}
-        icon={<DoDisturbAltIcon />}
-        onSecondClick={props.onSecondClickCard}
-      />
-      <div style={classes.verticalLine} />
-      <CardComponent
-        text={t("sales.quote.successRate")}
-        number={getValueByKey(props.statistics, "successRate") + "%"}
-        textColor={primaryColor(300)}
-        icon={<TrendingUpIcon />}
-      />
-      <CardComponent
-        text={t("sales.quote.totalPrice")}
-        number={getValueByKey(props.statistics, "totalPrice")}
-        textColor={secondColor(100)}
-        icon={<GoMakeCurrency color={secondColor(100)} />}
-      />
+      {CheckPermission(Permissions.SHOW_QUOTE_STATISTICS) && (
+        <>
+          <CardComponent
+            key={EStatisticsLabels.WAITING}
+            onClick={() =>
+              props.onClickCard(
+                EStatisticsLabels.WAITING,
+                QUOTE_STATUSES.Waiting
+              )
+            }
+            isActive={props.activeCard === EStatisticsLabels.WAITING}
+            text={t("sales.quote.waiting")}
+            number={getValueByKey(props.statistics, "waitingCount")}
+            textColor={warningColor(300)}
+            icon={<HourglassTopIcon />}
+            onSecondClick={props.onSecondClickCard}
+          />
+          <CardComponent
+            key={EStatisticsLabels.APPROVED}
+            onClick={() =>
+              props.onClickCard(
+                EStatisticsLabels.APPROVED,
+                QUOTE_STATUSES.Approved
+              )
+            }
+            isActive={props.activeCard === EStatisticsLabels.APPROVED}
+            text={t("sales.quote.approved")}
+            number={getValueByKey(props.statistics, "approvedCount")}
+            textColor={successColor(300)}
+            icon={<DoneAllIcon />}
+            onSecondClick={props.onSecondClickCard}
+          />
+          <CardComponent
+            key={EStatisticsLabels.CANCELED}
+            onClick={() =>
+              props.onClickCard(
+                EStatisticsLabels.CANCELED,
+                QUOTE_STATUSES.Canceled
+              )
+            }
+            isActive={props.activeCard === EStatisticsLabels.CANCELED}
+            text={t("sales.quote.canceled")}
+            number={getValueByKey(props.statistics, "canceledCount")}
+            textColor={errorColor(300)}
+            icon={<DoDisturbAltIcon />}
+            onSecondClick={props.onSecondClickCard}
+          />
+          <div style={classes.verticalLine} />
+          <CardComponent
+            text={t("sales.quote.successRate")}
+            number={getValueByKey(props.statistics, "successRate") + "%"}
+            textColor={primaryColor(300)}
+            icon={<TrendingUpIcon />}
+          />
+          <CardComponent
+            text={t("sales.quote.totalPrice")}
+            number={getValueByKey(props.statistics, "totalPrice")}
+            textColor={secondColor(100)}
+            icon={<GoMakeCurrency color={secondColor(100)} />}
+          />
+        </>
+      )}
       <Button
         style={classes.createNew}
         onClick={props.onClick}

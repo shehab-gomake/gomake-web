@@ -43,6 +43,8 @@ import {
   WalletIcon,
 } from "./widgets/icons/header-section-icons";
 import { TotalCardComponent } from "./widgets/statistics-section/total-card";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { PermissionCheck } from "@/components/CheckPermission";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -234,31 +236,36 @@ const QuotesListPageWidget = ({
 
   const renderOrderCard = (onclickCreateNew) => (
     <>
-      {allQuotes ? (
-        <>
-          <TotalCardComponent
-            text={`${t("sales.list.totalItemsCounts", {
-              documentType: t(`sales.list.${DOCUMENT_TYPE[documentType]}`),
-            })}`}
-            number={allStatistics?.totalItems}
-            icon={<ItemsCountIcon />}
-          />
-          <TotalCardComponent
-            text={t("sales.quote.totalPrice")}
-            number={getValueByKey(
-              allStatistics?.documentStatisticsList,
-              "totalPrice"
-            )}
-            icon={<WalletIcon />}
-            withCurrency={true}
-          />
-        </>
-      ) : (
-        <>
-          <Skeleton variant="rectangular" sx={classes.skeltonStyle} />
-          <Skeleton variant="rectangular" sx={classes.skeltonStyle} />
-        </>
-      )}
+      <PermissionCheck
+        userPermission={Permissions.SHOW_ERP_DOCUMENTS_TABLE_SUMMERY}
+      >
+        {allQuotes ? (
+          <>
+            <TotalCardComponent
+              text={`${t("sales.list.totalItemsCounts", {
+                documentType: t(`sales.list.${DOCUMENT_TYPE[documentType]}`),
+              })}`}
+              number={allStatistics?.totalItems}
+              icon={<ItemsCountIcon />}
+            />
+            <TotalCardComponent
+              text={t("sales.quote.totalPrice")}
+              number={getValueByKey(
+                allStatistics?.documentStatisticsList,
+                "totalPrice"
+              )}
+              icon={<WalletIcon />}
+              withCurrency={true}
+            />
+          </>
+        ) : (
+          <>
+            <Skeleton variant="rectangular" sx={classes.skeltonStyle} />
+            <Skeleton variant="rectangular" sx={classes.skeltonStyle} />
+          </>
+        )}
+      </PermissionCheck>
+
       {renderCreateNewButton(onclickCreateNew)}
     </>
   );
