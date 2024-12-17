@@ -17,6 +17,8 @@ import { FinancesWidget } from "../finances";
 
 import { BudgetIcon } from "@/icons";
 import { PriceProfitWidge } from "../price-profit-widge";
+import { PreferencesIcon } from "@/components/icons/preferences-icons";
+import { SettingsPreferencesWidget } from "../settings-preferences/preferences";
 export const list: IListItem[] = [
   {
     component: SettingsProfileWidget,
@@ -81,7 +83,13 @@ export const list: IListItem[] = [
     path: "finances",
     permission: Permissions.SHOW_FINANCE,
   },
-
+  {
+    component: SettingsPreferencesWidget,
+    text: "settings.preferences",
+    value: "10",
+    icon: PreferencesIcon,
+    path: "preferences",
+  },
   {
     component: TranslationsWidget,
     text: "settings.translations",
