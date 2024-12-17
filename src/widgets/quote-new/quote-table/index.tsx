@@ -23,6 +23,7 @@ const QuoteForPriceTable = ({
   changedocumentItems,
   getCalculateQuoteItem,
   onClickDuplicateWithDifferentQTY,
+  onClickQuickDuplicate,
   onClickDeleteQouteItem,
   quoteItems,
   changeQuoteItems,
@@ -107,6 +108,7 @@ const QuoteForPriceTable = ({
                     onClickDuplicateWithDifferentQTY={
                       onClickDuplicateWithDifferentQTY
                     }
+                    onClickQuickDuplicate={onClickQuickDuplicate}
                     onClickDeleteQouteItem={onClickDeleteQouteItem}
                     documentType={documentType}
                     getQuote={getQuote}

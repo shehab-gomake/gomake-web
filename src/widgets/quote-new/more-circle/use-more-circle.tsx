@@ -17,6 +17,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 const useMoreCircle = ({
   quoteItem,
   onClickDuplicateWithDifferentQTY,
+  onClickQuickDuplicate,
   onClickDeleteQouteItem,
   documentType,
 }) => {
@@ -37,38 +38,26 @@ const useMoreCircle = ({
 
   // Construct the href for editing a quote item
   const getEditDocumentItemHref = (quoteItem, documentType) =>
-    `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${
-      quoteItemValue?.customerID
-    }&customerName=${quoteItemValue?.client?.name}&productId=${
-      quoteItem?.productID
-    }&documentItemId=${
-      quoteItem?.id
-    }&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${
-      router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""
+    `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID
+    }&customerName=${quoteItemValue?.client?.name}&productId=${quoteItem?.productID
+    }&documentItemId=${quoteItem?.id
+    }&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""
     }`;
 
   // Construct the href for duplicating a quote item
   const getDuplicateDocumentItemHref = (quoteItem, documentType) =>
-    `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${
-      quoteItemValue?.customerID
-    }&customerName=${quoteItemValue?.client?.name}&productId=${
-      quoteItem?.productID
-    }&documentItemId=${
-      quoteItem?.id
-    }&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${
-      router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""
+    `/products/duplicate?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID
+    }&customerName=${quoteItemValue?.client?.name}&productId=${quoteItem?.productID
+    }&documentItemId=${quoteItem?.id
+    }&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""
     }&duplicateType=${DuplicateType.SameOrder}`;
 
   // Construct the href for analysis
   const getAnalysisDocumentItemHref = (quoteItem, documentType) =>
-    `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${
-      quoteItemValue?.customerID
-    }&customerName=${quoteItemValue?.client?.name}&productId=${
-      quoteItem?.productID
-    }&documentItemId=${
-      quoteItem?.id
-    }&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${
-      router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""
+    `/products/edit?clientTypeId=${quoteItem?.clientTypeId}&customerId=${quoteItemValue?.customerID
+    }&customerName=${quoteItemValue?.client?.name}&productId=${quoteItem?.productID
+    }&documentItemId=${quoteItem?.id
+    }&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""
     }&isAnalysis=true`;
 
   const menuList = [
@@ -97,6 +86,12 @@ const useMoreCircle = ({
         documentType !== DOCUMENT_TYPE.purchaseInvoice &&
         documentType !== DOCUMENT_TYPE.purchaseOrder &&
         documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund,
+    },
+    {
+      name: "quickDuplicate",
+      icon: <DuplicateMenuIcon />,
+      onclick: () => onClickQuickDuplicate(quoteItem),
+      condition: true
     },
     {
       name: "duplicateItemWithDifferentQTY",
