@@ -153,7 +153,7 @@ const useAuthLayoutHook = (
             Permission: Permissions.SHOW_PURCHASE_INVOICES,
           },
           {
-            key: "purchase invoice",
+            key: "purchase invoice refund",
             title: "tabs.purchaseInvoiceRefund",
             path: "/purchaseInvoiceRefunds",
             Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,

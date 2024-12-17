@@ -69,7 +69,7 @@ const EditModal = ({
               {t("documentingSettings.name")}
             </h3>
             <GomakeTextInput
-              placeholder={t("documentingSettings.enterName")}
+              placeholder={t("documentingSettings.name")}
               value={state.name}
               onChange={(e) => handleChange("name", e.target.value)}
             />
@@ -81,14 +81,14 @@ const EditModal = ({
             </h3>
             {inputType === "text" && (
               <GomakeTextInput
-                placeholder={t("documentingSettings.enterText")}
+                placeholder={t("documentingSettings.value")}
                 value={state.value}
                 onChange={(e) => handleChange("value", e.target.value)}
               />
             )}
             {inputType === "number" && (
               <GomakeTextInput
-                placeholder={t("documentingSettings.enterNumber")}
+                placeholder={t("documentingSettings.value")}
                 type="number"
                 value={state.value}
                 onChange={(e) => handleChange("value", e.target.value)}
@@ -98,7 +98,7 @@ const EditModal = ({
               <GoMakeAutoComplate
                 withArrow
                 style={{ border: 0 }}
-                placeholder={t("documentingSettings.selectOption")}
+                placeholder={t("documentingSettings.value")}
                 options={selectOptions}
                 value={state.value}
                 onChange={(selected) =>
@@ -112,7 +112,7 @@ const EditModal = ({
         <div>
           <h3 style={classes.inputLabelStyle}>{t("reports.description")}</h3>
           <GomakeTextInput
-            placeholder={t("documentingSettings.enterDescription")}
+            placeholder={t("preferences.enterDescription")}
             multiline
             style={classes.descriptionStyle}
             value={state.description}
