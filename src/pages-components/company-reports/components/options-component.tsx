@@ -9,7 +9,6 @@ import { useState } from "react";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
-  importDocumentsApi,
   importMachinesApi,
   importMaterialsApi,
   importOutputsApi,
@@ -19,12 +18,13 @@ import {
 } from "@/services/api-service/import-data/import-data-endpoints";
 import Stack from "@mui/material/Stack";
 import { PaymentHistoryComponent } from "@/pages-components/company-reports/payment-history/payment-history";
-import { IPrintHouse } from "@/pages-components/company-reports/components/types/interfaces";
+import { IPrintHouse } from "@/pages-components/company-reports/components/utils/interfaces";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
-import { printHousesState } from "@/pages-components/company-reports/components/types/state";
+import { printHousesState } from "@/pages-components/company-reports/components/utils/state";
 import { useStyle } from "@/pages-components/company-reports/style";
 import styled from "styled-components";
+import importDocumentsApi from "./utils/import-documents-excel-file-api";
 
 const ScrollableDiv = styled.div`
   display: flex;
@@ -189,7 +189,11 @@ const OptionsComponent = ({
       return;
     }
     setIsUploading(true);
-    const fileBase64 = await convertFileToBase64(selectedFile);
+    const formData = new FormData();
+    formData.append("file", selectedFile);
+    if (printHouse?.id) {
+      formData.append("printHouseId", printHouse.id);
+    }
 
     const callBack = (res) => {
       if (res.success) {
@@ -200,33 +204,13 @@ const OptionsComponent = ({
           setOpenErrorsModal(true);
         }
       } else {
-        alertFault("importData.fileUploadFailed");
+        alertFault(res?.error?.ErrorMessage ?? "importData.fileUploadFailed");
       }
     };
 
-    await importDocumentsApi(callApi, callBack, {
-      fileBase64,
-      printHouseId: printHouse?.id,
-    });
-    setIsUploading(false);
-  };
+    await importDocumentsApi(callBack, formData);
 
-  const convertFileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        let result = reader.result as string;
-        const base64Prefix =
-          "data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,";
-        // Remove the prefix if present
-        if (result.startsWith(base64Prefix)) {
-          result = result.replace(base64Prefix, "");
-        }
-        resolve(result);
-      };
-      reader.onerror = (error) => reject(error);
-    });
+    setIsUploading(false);
   };
 
   return (

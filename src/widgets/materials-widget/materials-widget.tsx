@@ -81,6 +81,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     selectedTableRow,
     materialName,
     toggleIsActive,
+    selectedMaterialCategory,
   } = useMaterials(props.isAdmin);
 
   const subCategory = materialCategories.find(
@@ -163,7 +164,14 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   useEffect(() => {
     getMaterialCategories(materialType).then();
     getMaterialTableHeaders(materialType?.toString()).then();
+
   }, [materialType]);
+  useEffect(() => {
+    getPrintHouseMaterialCategorySuppliers(
+      materialType?.toString(),
+      materialCategory?.toString()
+    ).then();
+  }, [materialCategory]);
 
   useEffect(() => {
     if (!!materialType && !!materialCategory) {
@@ -177,7 +185,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           pageSize
         ).then();
       } else {
-        if (supplierId) {
+        if (supplierId && selectedMaterialCategory?.toString() === materialCategory?.toString()) {
           getMaterialCategoryData(
             materialType?.toString(),
             materialCategory?.toString(),
@@ -187,16 +195,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             pageSize
           ).then();
         }
-        getPrintHouseMaterialCategorySuppliers(
-          materialType?.toString(),
-          materialCategory?.toString()
-        ).then();
-        // else {
-        //   getPrintHouseMaterialCategorySuppliers(
-        //     materialType?.toString(),
-        //     materialCategory?.toString()
-        //   ).then();
-        // }
+
       }
     }
   }, [

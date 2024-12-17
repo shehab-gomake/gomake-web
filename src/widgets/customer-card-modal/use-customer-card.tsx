@@ -195,7 +195,9 @@ const useCustomerCard = ({
       addresses: filteredAddresses,
       users: filteredUsers,
       cardTypeId: cardTypeId,
-      currency: customer?.currency ? customer?.currency : systemCurrency,
+
+      currency: customer?.currency ?? systemCurrency,
+      discountType: customer?.discountType ?? null,
     };
 
     // Check if email is valid
@@ -243,6 +245,8 @@ const useCustomerCard = ({
       contacts: filteredContacts,
       addresses: filteredAddresses,
       users: filteredUsers,
+      currency: customer?.currency ?? systemCurrency,
+      discountType: customer?.discountType ?? null,
     };
 
     // Check if email is valid

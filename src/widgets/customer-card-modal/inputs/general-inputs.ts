@@ -1,7 +1,22 @@
-import {emailRegex} from "@/utils/regex";
+import { emailRegex } from "@/utils/regex";
 
-const generalInputs = (typeClient, state , languagesOptions) => {
+enum DiscountType {
+  NONE = 1,
+  byProduct,
+  bySku,
+}
 
+const generalInputs = (typeClient, state, languagesOptions, t) => {
+  const DiscountTypesList: { value: number; text: string }[] = [
+    {
+      value: DiscountType.byProduct,
+      text: t(`customers.modal.${DiscountType[DiscountType.byProduct]}`),
+    },
+    {
+      value: DiscountType.bySku,
+      text: t(`customers.modal.${DiscountType[DiscountType.bySku]}`),
+    },
+  ];
   return [
     {
       name: "phone1",
@@ -56,8 +71,8 @@ const generalInputs = (typeClient, state , languagesOptions) => {
       parameterKey: "mail",
       options: [],
       value: state?.mail,
-      isValid: !!state?.mail, 
-      regex: emailRegex
+      isValid: !!state?.mail,
+      regex: emailRegex,
     },
     {
       name: "fax",
@@ -82,7 +97,17 @@ const generalInputs = (typeClient, state , languagesOptions) => {
       value: state?.agentId,
       isValid: true,
     },
-
+    {
+      name: "default discount type",
+      label: "customers.modal.defaultDiscountType",
+      type: "select",
+      placeholder: "customers.modal.defaultDiscountType",
+      required: false,
+      parameterKey: "discountType",
+      options: DiscountTypesList,
+      value: state?.discountType,
+      isValid: true,
+    },
     {
       name: "isActive",
       label: "customers.modal.active",

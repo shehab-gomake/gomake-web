@@ -45,8 +45,11 @@ const TabsMappingWidget = ({
 
         if (Array.isArray(subSection?.parameters)) {
           for (const parameter of subSection.parameters) {
+              if(parameter.code == "ChangingDatatype"){
+                  debugger
+              }
             if (
-              parameter.isRequired &&
+              parameter.isRequired && !parameter.isHiddenInSetting && !parameter.isHidden &&
               !subProductParameterCodes.includes(parameter.code) &&
               subProductParameterSectionIds.includes(item.id) &&
               subProductParameterSubSectionIds.includes(subSection.id)

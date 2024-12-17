@@ -271,7 +271,8 @@ const usePaymentMethodsTabs = () => {
     
     const transactionTypes = [
         { label: t("payment.regular"), value: 1 },
-        { label: t("payment.installments"), value: 2 }
+        { label: t("payment.installments"), value: 2 },
+        { label: t("payment.credit"), value: 6 }
     ];
 
     const numberOfPayments = Array.from({ length: 13 }, (_, index) => ({

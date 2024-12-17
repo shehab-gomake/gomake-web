@@ -254,7 +254,7 @@ const RightSideWidget = ({
             })}
           </div>
         )}
-        {widgetType === EWidgetProductType.EDIT ? (
+        {widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE ? (
           <div
             style={{
               display: "flex",

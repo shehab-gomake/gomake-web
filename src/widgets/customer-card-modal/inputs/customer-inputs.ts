@@ -10,8 +10,8 @@ const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
       options: [],
       value: state?.code,
       isValid: true,
-     // readonly: codeFlag ?? true,
-     readonly : true
+      // readonly: codeFlag ?? true,
+      readonly: true,
     },
     {
       name: "name",
@@ -35,7 +35,7 @@ const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
       label: "customers.modal.vatNO",
       type: "text",
       placeholder: "customers.modal.vatNO",
-      required: false,
+      required: true,
       parameterKey: "buisnessNumber",
       options: [],
       value: state?.buisnessNumber,

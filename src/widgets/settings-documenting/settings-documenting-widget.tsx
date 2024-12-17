@@ -5,19 +5,30 @@ import { DocumentNumbering } from "./documentNumbering/document-numbering-settin
 import { DocumentDesignSetting } from "./documentDesign/document-design-settings";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
+import { useResetRecoilState } from "recoil";
+import { documentDesignState } from "./state/documents-state";
 
 const SettingsDocumentingWidget = () => {
-    const { t } = useTranslation();
-    const { CheckPermission } = useUserPermission();
+  const { t } = useTranslation();
+  const { CheckPermission } = useUserPermission();
+  const resetDocumentDesign = useResetRecoilState(documentDesignState);
 
-    const tabs: ITab[] = [
-        CheckPermission(Permissions.SHOW_DOCUMENT_NUMBERING) && { title: t("documentingSettings.documentNumbering"), component: <DocumentNumbering /> },
-        CheckPermission(Permissions.SHOW_DOCUMENT_DESIGN) && { title: t("documentingSettings.documentDesign"), component: <DocumentDesignSetting /> }
-    ];
+  const onSelectTab = (index: number) => {
+    index === 0 && resetDocumentDesign();
+  };
 
-    return (
-        <PrimaryTabsComponent tabs={tabs} />
-    );
+  const tabs: ITab[] = [
+    CheckPermission(Permissions.SHOW_DOCUMENT_NUMBERING) && {
+      title: t("documentingSettings.documentNumbering"),
+      component: <DocumentNumbering />,
+    },
+    CheckPermission(Permissions.SHOW_DOCUMENT_DESIGN) && {
+      title: t("documentingSettings.documentDesign"),
+      component: <DocumentDesignSetting />,
+    },
+  ];
+
+  return <PrimaryTabsComponent tabs={tabs} onSelectTab={onSelectTab} />;
 };
 
-export { SettingsDocumentingWidget }; 
+export { SettingsDocumentingWidget };

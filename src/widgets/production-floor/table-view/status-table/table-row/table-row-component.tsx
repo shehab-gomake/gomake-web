@@ -184,6 +184,7 @@ const TableRowComponent = ({
           {
             <ApprovalFileStatusComponent
               fileStatus={boardMission.showGraphicsApprovalAlert}
+              t={t}
             />
           }
         </SecondaryTableCell>

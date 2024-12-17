@@ -1,5 +1,5 @@
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import {
   actionsListState,
@@ -56,6 +56,7 @@ const useActionsList = ({
     useRecoilState(machinesListState);
   const [actionsList, setActionsList] = useState<IActionMachines[]>([]);
   const actionsListRef = useRef<IActionMachines[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const handleClick = () => {
     setOpen(!open);
@@ -113,8 +114,10 @@ const useActionsList = ({
   }, [actions, productionFilter, open, source, dashboardMachines]);
 
   const onSelectMachine = (stationId: string, machineId: string) => {
-    setActionsList(
-      actionsList?.map((station) =>
+    const scrollPosition = scrollRef.current?.scrollTop || 0;
+
+    setActionsList((prevActionsList) =>
+      prevActionsList?.map((station) =>
         station.actionId === stationId
           ? {
               ...station,
@@ -130,16 +133,14 @@ const useActionsList = ({
           : station
       )
     );
+
+    // Restore scroll position after state update
+    requestAnimationFrame(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollPosition;
+      }
+    });
   };
-
-  // const onSelectStation = (stationId: string, checked: boolean) => {
-  //     setActionsList(prevState => prevState?.map(station => stationId === station.actionId ? {
-  //         ...station,
-  //         checked: !checked,
-  //         machines: station.machines?.map(machine => ({...machine, checked: !checked}))
-  //     } : station));
-
-  // }
 
   const onSelectStation = (stationId: string, checked: boolean) => {
     setActionsList((prevState) => {
@@ -291,12 +292,24 @@ const useActionsList = ({
     {}
   );
 
-  const toggleCollapse = (actionId: string) => {
-    setOpenCollapse((prev) => ({
-      ...prev,
-      [actionId]: !prev[actionId],
-    }));
-  };
+  const toggleCollapse = useCallback(
+    (id: string) => {
+      const scrollPosition = scrollRef.current?.scrollTop || 0;
+
+      setOpenCollapse((prev) => {
+        const newState = { ...prev, [id]: !prev[id] };
+
+        requestAnimationFrame(() => {
+          if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollPosition;
+          }
+        });
+
+        return newState;
+      });
+    },
+    [setOpenCollapse]
+  );
 
   const handleCloseList = () => {
     setOpen(false);
@@ -326,6 +339,8 @@ const useActionsList = ({
     handleCloseList,
     toggleCollapse,
     openCollapse,
+
+    scrollRef,
   };
 };
 
