@@ -2335,6 +2335,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           index={index}
           straightKnife={straightKnife}
           allMaterials={allMaterials}
+          template={productTemplate}
+          getProductById={getProductById}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {

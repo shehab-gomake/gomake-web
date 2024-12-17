@@ -1078,6 +1078,8 @@ const useAddProduct = ({ clasess }) => {
           straightKnife={straightKnife}
           isParameterSettings={true}
           allMaterials={allMaterials}
+          template={template}
+          getProductById={getProductById}
         />
       );
     }

@@ -16,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { filterState } from "@/widgets/materials-widget/state";
 import { useRouter } from "next/router";
+import { selectedShapeForHiddenState } from "./gallery-modal-store-hidden";
 
 const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife, isParameterSettings, getProductById, template, _getParameter }) => {
   const { callApi } = useGomakeAxios();
@@ -25,8 +26,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const selectParameterButton = useRecoilValue<any>(selectParameterButtonState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
-  const [selectedShape, setSelectedShape] =
-    useRecoilState<any>(selectedShapeState);
+  const [selectedShape, setSelectedShape] = useRecoilState<any>(selectedShapeState);
   const [materialData, setMaterialData] =
     useRecoilState<any>(materialBtnDataState);
 
@@ -36,6 +36,20 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const [isLoading, setIsLoading] = useState(false)
   const [materialTableFilters, setMaterialTableFilters] = useState([])
   const [shapeCodeDefualt, setShapeCodeDefualt] = useState<any>({})
+
+  const dieCutParameterForSettings = findParameterByCode(template, "DieCut")
+  const dieKissCutParameterForSettings = findParameterByCode(template, "DieKissCut")
+
+  const isDiesParameter = dieCutParameterForSettings || dieKissCutParameterForSettings
+
+  const filteredMaterialData = !isParameterSettings
+    ? materialData?.data?.filter(item => {
+      const config = isDiesParameter?.valuesConfigs.find(config => config.id === item.id);
+      return config ? !config.isHidden : true;
+    })
+    : materialData?.data;
+
+
   useEffect(() => {
     if (isParameterSettings) {
       const shapeParameterForSettings = findParameterByCode(template, "Shape")
@@ -140,6 +154,32 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
       setIsstraightKnifeSelected(false)
     }
     setSelectedShape(parameter);
+
+  };
+  const createParameterForCalculationHidden = async (valueConfig) => {
+    const existingConfig = isDiesParameter?.valuesConfigs.find(
+      (config) => config.id === valueConfig.id
+    );
+    const updatedShape = {
+      ...valueConfig,
+      isHidden: !existingConfig?.isHidden,
+    };
+
+    await updateProductParameterEndPoint(
+      selectParameterButton?.sectionId,
+      selectParameterButton?.subSectionId,
+      {
+        parameter: {
+          ...isDiesParameter,
+          valuesConfigs: [
+            ...isDiesParameter?.valuesConfigs.filter(
+              (config) => config.id !== valueConfig.id
+            ),
+            updatedShape,
+          ],
+        },
+      }
+    );
   };
   const searchByNameOrType = (items, searchText) => {
     searchText = searchText?.toLowerCase();
@@ -153,17 +193,19 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     return result;
   }
 
-  const searchResult = searchByNameOrType(materialData?.data, materialDataFilter);
+  const searchResult = searchByNameOrType(filteredMaterialData, materialDataFilter);
   const onChangeSearch = (value: string) => {
     setMaterialDataFilter(value);
   };
-  const [changeDefaultValue, setChangeDefaultValue] = useState("");
+  const [changeDefaultValue, setChangeDefaultValue] = useState<any>();
   useEffect(() => {
     if (selectedShape) {
       const updatedShape = { ...selectedShape, isDefault: true };
       setChangeDefaultValue(updatedShape);
     }
   }, [selectedShape])
+
+
   const onClickChoosParameter = () => {
     setMaterialDataFilter("")
     if (isParameterSettings) {
@@ -206,6 +248,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const [isstraightKnifeSelected, setIsstraightKnifeSelected] = useState(false)
   const onClickStraight = () => {
     createParameterForCalculation(null)
+    createParameterForCalculationHidden(null)
     setIsstraightKnifeSelected(true)
     onChangeSubProductsForPrice(
       straightKnife?.id,
@@ -271,19 +314,27 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   }, [widthParameter, heightParameter, shapeParameter, LabelShapeParameter, selectParameterButton]);
   const updatedProductParameteDefaultValue = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
-      if (changeDefaultValue !== parameter?.defaultValue) {
+      const isDefaultParameter = isDiesParameter?.valuesConfigs.find((config) => config?.isDefault);
+      if (changeDefaultValue?.id !== isDefaultParameter?.id) {
+        // Update all isDefault to false
+        const updatedValuesConfigs = isDiesParameter?.valuesConfigs.map(config => ({
+          ...config,
+          isDefault: false
+        }));
+
         await updateProductParameterEndPoint(sectionId, subSectionId, {
           parameter: {
-            ...parameter,
-            valuesConfigs: [changeDefaultValue]
+            ...isDiesParameter,
+            valuesConfigs: [...updatedValuesConfigs, changeDefaultValue]
           },
         });
         setChangeDefaultValue("");
       }
     },
-
     [router, changeDefaultValue]
   );
+
+
   const updateProductParameterEndPoint = async (
     sectionId: string,
     subSectionId: string,
@@ -370,6 +421,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     materialData,
     selectedShape,
     createParameterForCalculation,
+    createParameterForCalculationHidden,
     onClickChoosParameter,
     fixedCartData,
     getProductQuoteItemById,
@@ -387,7 +439,9 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     value,
     isLoading,
     selectParameterButton,
-    setMaterialData
+    setMaterialData,
+    filteredMaterialData,
+    isDiesParameter
   };
 };
 
