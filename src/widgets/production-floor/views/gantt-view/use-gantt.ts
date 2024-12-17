@@ -45,6 +45,14 @@ const useGantt = () => {
                 endDate: moment(time)
             })
         }
+        const updatedItems = items.map((item) =>
+            item.id === itemId
+                ? edge === "left"
+                    ? { ...item, start_time: moment(time) }
+                    : { ...item, end_time: moment(time) }
+                : item
+        );
+        setItems(updatedItems);
     };
 
     const handleItemMove = async (itemId, dragTime, newGroupOrder) => {
