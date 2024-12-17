@@ -969,7 +969,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           isQuantityParameter: parameter?.isQuantityParameter,
                           ...(value && {
                             valueIds: [value?.materialValueIds[0]?.valueId],
-                            values: [value?.materialValueIds[0]?.valueId],
+                            values: [value?.updateName],
                           }),
                           sectionId: section?.id,
                           subSectionId: subSection?.id,
@@ -2335,6 +2335,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           index={index}
           straightKnife={straightKnife}
           allMaterials={allMaterials}
+          template={productTemplate}
+          getProductById={getProductById}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
@@ -3872,7 +3874,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
               return !materialRelatedParameters.some(
                 (materialParameter) =>
-                  materialParameter.id === subProduct.parameterId
+                  materialParameter.id === subProduct.parameterId &&
+                  subProduct.sectionId === sectionId &&
+                  subProduct.subSectionId === subSectionId
               );
             });
           }
@@ -3900,7 +3904,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       x.actionIndex === actionIndex
                   );
                   let prevPathParamDefaultValue = temp.find(
-                    (x) => x.parameterId === prevPathParam.id && x.actionIndex === actionIndex
+                    (x) => x.parameterId === prevPathParam.id && x.actionIndex === actionIndex && x.sectionId === sectionId && x.subSectionId === subSectionId
                   );
 
                   if (
@@ -4536,7 +4540,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (!productTemplate?.sections) {
         return true;
       }
-      for (const section of productTemplate?.sections) {
+      let sections = productTemplate?.sections.filter((x) => !x.isHidden);
+      for (const section of sections) {
+
         for (const subSection of section.subSections) {
           for (const parameter of subSection.parameters) {
             if (!parameter.isHidden && parameter.isRequired) {
