@@ -4538,7 +4538,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (!productTemplate?.sections) {
         return true;
       }
-      for (const section of productTemplate?.sections) {
+      let sections = productTemplate?.sections.filter((x) => !x.isHidden);
+      for (const section of sections) {
+
         for (const subSection of section.subSections) {
           for (const parameter of subSection.parameters) {
             if (!parameter.isHidden && parameter.isRequired) {
