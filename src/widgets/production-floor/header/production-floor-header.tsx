@@ -115,13 +115,13 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups }: any) => {
           <PrimaryButton
             style={{ width: "40px", height: "40px", padding: 0 }}
             variant={
-              view === EProductionFloorView.DASHBOARD ? "contained" : "outlined"
+              view === EProductionFloorView.GANTT ? "contained" : "outlined"
             }
             // onClick={() => {
             //   setView(EProductionFloorView.DASHBOARD);
             //   navigateToProductionFloor();
             // }}
-            onClick={() => updateViewInUrl(EProductionFloorView.DASHBOARD)}
+            onClick={() => updateViewInUrl(EProductionFloorView.GANTT)}
           >
             <AvTimerIcon />
           </PrimaryButton>
