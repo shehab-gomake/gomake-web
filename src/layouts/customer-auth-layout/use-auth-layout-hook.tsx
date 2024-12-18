@@ -267,11 +267,13 @@ const useAuthLayoutHook = (
             key: "accountingTransactionReport",
             title: "tabs.accountingTransactionReport",
             path: "/accounting-transaction-report",
+            Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
           },
           {
             key: "adjustmentsReport",
             title: "tabs.adjustmentsReport",
             path: "/adjustments-report",
+            Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
           },
         ],
         icon: () => {
