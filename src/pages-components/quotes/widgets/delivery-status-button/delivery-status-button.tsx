@@ -7,6 +7,8 @@ import { ITaskCategoryLabelProps } from "./utils/interfaces";
 import { UpdateDeliveryStatusModal } from "./delivery-status-modal/delivery-status-modal";
 import { DocumentDeliveryStatuses } from "./delivery-status-modal/use-delivery-status-modal";
 import { useClientContactsList } from "@/hooks/use-client-contacts";
+import { GoMakeDeleteModal } from "@/components";
+import { ModalType } from "@/enums";
 
 const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
   const {
@@ -22,6 +24,11 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
     handleMenuClose,
     handleMenuClick,
     anchorChangeEl,
+
+    onCloseDeleteModal,
+    selectedItem,
+    removeDocumentDelivery,
+    openDeleteModal,
   } = useDeliveryStatusButton();
   const { getClientContacts, clientContacts } = useClientContactsList();
 
@@ -82,6 +89,12 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
         setEditableQuantities={setEditableQuantities}
         setDocumentItems={setDocumentItems}
         clientContacts={clientContacts}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
+        openModal={openDeleteModal}
+        onClose={onCloseDeleteModal}
+        onClickDelete={() => removeDocumentDelivery(selectedItem)}
       />
     </>
   );

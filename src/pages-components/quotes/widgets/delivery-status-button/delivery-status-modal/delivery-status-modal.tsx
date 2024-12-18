@@ -88,7 +88,7 @@ const UpdateDeliveryStatusModal = ({
                 height: "40px",
               }}
               options={clientContacts}
-              placeholder={"Select recipient"}
+              placeholder={t("sales.documentDeliveries.selectRecipient")}
               value={clientContact}
               onChange={handleClientContactChange}
             />
@@ -97,6 +97,7 @@ const UpdateDeliveryStatusModal = ({
             <span style={classes.labelStyle}>
               {t("sales.documentDeliveries.recipientName")}
             </span>
+
             <GoMakeTextInput
               key={`receipt-name-${document?.id}`}
               style={{
