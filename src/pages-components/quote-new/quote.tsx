@@ -270,7 +270,8 @@ const QuoteNewPageWidget = ({
     setSelectedBudget,
     onCloseQuickDuplicate,
     onClickQuickDuplicate,
-    openQuickDuplicateModal
+    openQuickDuplicateModal,
+    quoteItemId
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -721,6 +722,11 @@ const QuoteNewPageWidget = ({
       <DuplicateQuickModal
         openModal={openQuickDuplicateModal}
         onClose={onCloseQuickDuplicate}
+        quoteItemId={quoteItemId}
+        documentType={documentType}
+        getQuote={getQuote}
+
+
       />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}

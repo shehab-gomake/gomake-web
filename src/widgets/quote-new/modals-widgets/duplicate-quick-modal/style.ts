@@ -76,6 +76,53 @@ const useStyle = () => {
         justifyContent: "flex-end",
         alignItems: "center",
         gap: 3
+      },
+      checkboxContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+      },
+      checkboxLabel:{
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: "#101828"
+      },
+      buttonContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        gap: 12,
+        width: "100%"
+      },
+      cancelButton:{
+        backgroundColor: "#FFFFFF",
+        border: `1px solid #D0D5DD`,
+        boxShadow: "0px 1px 2px 0px #1018280D",
+        borderRadius: 8,
+        height:44,
+        color: "#344054",
+        ...FONT_FAMILY.Lexend(600, 16)
+      },
+      addButton:{
+        borderRadius: 8,
+        height:44,
+        color: "#FFFFFF",
+        boxShadow: "0px 1px 2px 0px #1018280D",
+        ...FONT_FAMILY.Lexend(600, 16),
+        width: "100%",
+      },
+      addButtonContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 8
+      },
+      addButtonText:{
+        ...FONT_FAMILY.Lexend(600, 16),
+        color: "#FFFFFF",
+        marginTop: 6
       }
       
     };

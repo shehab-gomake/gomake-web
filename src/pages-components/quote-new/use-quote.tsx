@@ -2151,6 +2151,7 @@ const useQuoteNew = ({
     setSelectedBudget,
     onCloseQuickDuplicate,
     onClickQuickDuplicate,
+    quoteItemId,
     openQuickDuplicateModal
   };
 };

@@ -73,4 +73,4 @@ export * from "./reload"
 export * from "./warn"
 export * from "./filter2-icon"
 export * from "./advertising-icon"
-
+export * from "./cart-whithout-bg"
