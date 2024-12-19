@@ -54,8 +54,9 @@ const UnderlinedTabs = styled(Tabs)(
     const { selectedColor } = props;
     return {
       "& .MuiTabs-indicator": {
-        borderBottom: `2px solid ${selectedColor === "secondary" ? secondColor(500) : primaryColor(500)
-          }`,
+        borderBottom: `2px solid ${
+          selectedColor === "secondary" ? secondColor(500) : primaryColor(500)
+        }`,
       },
       "& .MuiButtonBase-root": {
         textTransform: "initial",
@@ -93,27 +94,25 @@ const PrimaryTabsComponent = ({
   selectedColor,
   variant,
   selectedTabIndex = 0,
-  withBackGround=false
+  withBackGround = false,
 }: ITabsProps) => {
   const { classes } = useStyle();
   const [value, setValue] = useRecoilState<number>(selectedHorizontalTabState);
   const TabComponent = variant === "ButtonedTabs" ? ButtonTab : UnderlinedTab;
-  const TabsContainer = variant === "ButtonedTabs" ? ButtonTabs : UnderlinedTabs;
+  const TabsContainer =
+    variant === "ButtonedTabs" ? ButtonTabs : UnderlinedTabs;
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
 
     if (!!onSelectTab) {
       onSelectTab(newValue);
-
     }
   };
-
 
   useEffect(() => {
     setValue(selectedTabIndex);
   }, [selectedTabIndex, setValue]);
-
 
   return (
     <>
@@ -125,7 +124,7 @@ const PrimaryTabsComponent = ({
         top={0}
         zIndex={9}
         marginBottom={2}
-        bgcolor={ withBackGround && '#ffffff'} 
+        bgcolor={withBackGround && "#ffffff"}
       >
         <TabsContainer
           value={value}
@@ -133,8 +132,12 @@ const PrimaryTabsComponent = ({
           selectedColor={selectedColor}
           aria-label="tabs example"
         >
-          {tabs?.map((tab) => (
-            <TabComponent label={tab?.title} selectedColor={selectedColor} />
+          {tabs?.map((tab, index) => (
+            <TabComponent
+              key={`tab-${index}`}
+              label={tab?.title}
+              selectedColor={selectedColor}
+            />
           ))}
         </TabsContainer>
         <div>{children}</div>

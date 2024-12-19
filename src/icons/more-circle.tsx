@@ -16,8 +16,8 @@ const MoreCircleIcon = (props: any) => {
         strokeLinejoin="round"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M12.4167 8.00354V7.99456V8.00354Z"
         fill="white"
       />
@@ -29,8 +29,8 @@ const MoreCircleIcon = (props: any) => {
         strokeLinejoin="round"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M12.4167 12.0045V11.9955V12.0045Z"
         fill="white"
       />
@@ -42,8 +42,8 @@ const MoreCircleIcon = (props: any) => {
         strokeLinejoin="round"
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M12.4167 16.0055V15.9965V16.0055Z"
         fill="white"
       />
