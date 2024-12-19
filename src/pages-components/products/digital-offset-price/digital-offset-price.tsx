@@ -15,6 +15,7 @@ import {
   MakeShapeModal,
   MultiParameterModal,
 } from "@/widgets/shared-admin-customers/digital-offset-price";
+import { Permissions } from "@/components/CheckPermission/enum";
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
 import { createTheme, Tabs, ThemeProvider } from "@mui/material";
@@ -32,6 +33,8 @@ import { useRouter } from "next/router";
 import React from "react";
 import { MissionModalWidget } from "./widgets/mission-modal-widget";
 import { ModalType } from "@/enums";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { permissionsState } from "@/store/permissions";
 
 const PriceListPageWidget = ({ widgetType }) => {
   const { clasess } = useStyle();
@@ -100,7 +103,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     calculationProduct,
     subProducts,
   } = useDigitalOffsetPrice({ clasess, widgetType });
-
+  const permissions = useRecoilValue(permissionsState);
   const router = useRouter();
   const visibleSections = productTemplate?.sections?.filter(
     (section) => !section.isHidden
@@ -283,7 +286,7 @@ const PriceListPageWidget = ({ widgetType }) => {
               <div style={clasess.tabsContainer}>
                 <ThemeProvider theme={theme}>
                   <Tabs variant="scrollable" scrollButtons={"auto"}>
-                    {[...visibleSections, PricingTab]?.map((item, index) => (
+                    {[...visibleSections, ...(permissions.includes(Permissions.SHOW_PRICING_TAB) ? [PricingTab] : [])]?.map((item, index) => (
                       <TabsMappingWidget
                         key={`tab-${index}`}
                         clasess={clasess}
@@ -310,21 +313,24 @@ const PriceListPageWidget = ({ widgetType }) => {
                 }}
               >
                 <div style={clasess.sectionsContainer}>
-                  {[...visibleSections, PricingTab]?.map((section, index) => {
+                  {[...visibleSections, ...(permissions.includes(Permissions.SHOW_PRICING_TAB) ? [PricingTab] : [])]?.map((section, index) => {
                     if (index === activeIndex) {
                       if (
                         section.name === t("products.offsetPrice.admin.Pricing")
                       ) {
                         return (
-                          <PricingWidget
-                            getOutSourcingSuppliers={getOutSourcingSuppliers}
-                            actions={jobActions}
-                            workFlows={workFlows}
-                            widgetType={widgetType}
-                            getSelectedWorkFlow={getSelectedWorkFlow}
-                            selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
-                            setSelectedWorkFlowCalculatedIsLoaded={setSelectedWorkFlowCalculatedIsLoaded}
-                          />
+                          <PermissionCheck userPermission={Permissions.SHOW_PRICING_TAB}>
+                            <PricingWidget
+                              getOutSourcingSuppliers={getOutSourcingSuppliers}
+                              actions={jobActions}
+                              workFlows={workFlows}
+                              widgetType={widgetType}
+                              getSelectedWorkFlow={getSelectedWorkFlow}
+                              selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+                              setSelectedWorkFlowCalculatedIsLoaded={setSelectedWorkFlowCalculatedIsLoaded}
+                            />
+                          </PermissionCheck>
+
                         );
                       } else {
                         return section?.subSections
@@ -424,7 +430,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                     {t("products.offsetPrice.admin.previousBtn")}
                   </GomakePrimaryButton>
                 )}
-                {[...productTemplate?.sections, PricingTab].length - 1 !==
+                {[...productTemplate?.sections, ...(permissions.includes(Permissions.SHOW_PRICING_TAB) ? [PricingTab] : [])].length - 1 !==
                   activeIndex && (
                     <div data-tour="next-button">
                       <GomakePrimaryButton

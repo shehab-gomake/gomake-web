@@ -3,6 +3,8 @@ import { Menu, MenuItem } from "@mui/material";
 import { ExcelSheetIcon } from "@/icons";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 interface ExcelMenuProps {
   onGenerateReportClick: () => void;
@@ -47,16 +49,19 @@ const ExcelMenu = ({
             : { vertical: "top", horizontal: "right" }
         }
       >
-        <MenuItem
-          onClick={() => {
-            handleMenuClose();
-            onGenerateReportClick();
-          }}
-        >
-          <div style={classes.rowTextStyle}>
-            {t("sales.list.generateReport")}
-          </div>
-        </MenuItem>
+        <PermissionCheck userPermission={Permissions.GENERATE_REPORT}>
+          <MenuItem
+            onClick={() => {
+              handleMenuClose();
+              onGenerateReportClick();
+            }}
+          >
+            <div style={classes.rowTextStyle}>
+              {t("sales.list.generateReport")}
+            </div>
+          </MenuItem>
+        </PermissionCheck>
+
         <MenuItem
           onClick={() => {
             handleMenuClose();
