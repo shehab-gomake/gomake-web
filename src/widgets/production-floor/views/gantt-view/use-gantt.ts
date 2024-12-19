@@ -2,22 +2,37 @@ import {useState} from "react";
 import moment from "moment";
 import {getTimeLineJobsApi, updateJobTimeApi} from "@/services/api-service/jobs-time-line/jobs-time-line-endpoints";
 import {useGomakeAxios} from "@/hooks";
+import {IGanttGroup, IGanttJob} from "@/widgets/production-floor/views/gantt-view/interface";
 
 const useGantt = () => {
     const {callApi} = useGomakeAxios();
-
+    const [currentMonth, setCurrentMonth] = useState(moment()); // Track the currently displayed month
     const [timeRange, setTimeRange] = useState({
         defaultTimeStart: moment().startOf("hour"),
         defaultTimeEnd: moment().endOf("hour"),
     });
 
     const [openGroups, setOpenGroups] = useState({});
-    const [groups, setGroups] = useState([]);
-    const [items, setItems] = useState([]);
+    const [groups, setGroups] = useState<IGanttGroup[]>([]);
+    const [items, setItems] = useState<IGanttJob[]>([]);
 
     const getData = async (month) => {
-        const startOfMonth = moment().month(month).startOf("month").toISOString();
-        const endOfMonth = moment().month(month).endOf("month").toISOString();
+        // Calculate start and end dates for the selected month in UTC
+        const startOfMonth = moment()
+            .year(currentMonth.year()) // Ensure the year aligns with the selected month
+            .month(month) // Set the correct month
+            .startOf("month") // Start of the month
+            .utc() // Convert to UTC
+            .toISOString();
+
+        const endOfMonth = moment()
+            .year(currentMonth.year()) // Ensure the year aligns with the selected month
+            .month(month) // Set the correct month
+            .endOf("month") // End of the month
+            .utc() // Convert to UTC
+            .toISOString();
+
+        console.log({ startDate: startOfMonth, endDate: endOfMonth }); // Debugging payload
 
         const callBack = (res) => {
             if (res.success) {
@@ -32,7 +47,7 @@ const useGantt = () => {
             }
         };
 
-        await getTimeLineJobsApi(callApi, callBack, {startDate: startOfMonth, endDate: endOfMonth});
+        await getTimeLineJobsApi(callApi, callBack, { startDate: startOfMonth, endDate: endOfMonth });
     };
 
     const handleItemResize = async (itemId, time, edge) => {
@@ -84,6 +99,35 @@ const useGantt = () => {
         setItems(updatedItems);
     };
 
+    // Fetch data for the current month when the component mounts or the month changes
+
+    // Toggle group expansion
+    const toggleGroup = (id) => {
+        setOpenGroups((prevState) => ({...prevState, [id]: !prevState[id]}));
+    };
+
+    const handleZoom = ({visibleTimeStart, visibleTimeEnd}) => {
+        const startMoment = moment(visibleTimeStart);
+        const endMoment = moment(visibleTimeEnd);
+
+        const monthsDifference = endMoment.diff(startMoment, 'months');
+        const daysDifference = endMoment.diff(startMoment, 'days');
+        // const yearsDifference = endMoment.diff(startMoment, 'years');
+
+        // Determine the zoom level based on the time difference
+        if (monthsDifference > 1) {
+            // alert("year");
+        } else if (monthsDifference === 1) {
+            setCurrentMonth(startMoment);
+        } else if (daysDifference >= 1) {
+            // alert("day");
+        } else {
+            // alert("day"); // Default to day if no significant difference
+        }
+    };
+
+
+
     return {
         timeRange,
         setTimeRange,
@@ -95,7 +139,11 @@ const useGantt = () => {
         setOpenGroups,
         getData,
         handleItemResize,
-        handleItemMove
+        handleItemMove,
+        toggleGroup,
+        handleZoom,
+        currentMonth,
+        setCurrentMonth
     };
 };
 
