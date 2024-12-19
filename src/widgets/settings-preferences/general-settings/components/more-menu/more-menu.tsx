@@ -4,14 +4,14 @@ import { OptionsButton } from "@/components/options-button/options-button";
 import { useStyle } from "../style";
 
 interface IGeneralSettingsMenuProps {
-  name: string;
+  preferenceItem: any;
   onClickEdit: (text: string) => void;
 }
 const GeneralSettingsMenu = ({
-  name,
+  preferenceItem,
   onClickEdit,
 }: IGeneralSettingsMenuProps) => {
-  const { menuList } = useMoreMenu({ name, onClickEdit });
+  const { menuList } = useMoreMenu({ preferenceItem, onClickEdit });
   const { classes } = useStyle();
   return (
     <OptionsButton>

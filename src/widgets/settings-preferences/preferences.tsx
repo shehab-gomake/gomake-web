@@ -3,7 +3,6 @@ import { ITab } from "@/components/tabs/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { GeneralSettingsComponent } from "./general-settings/general-settings";
 
-//!here
 const SettingsPreferencesWidget = () => {
   const { t } = useTranslation();
 

@@ -9,40 +9,53 @@ import { Stack } from "@mui/material";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
+import { PreferenceValueType } from "../../use-general-settings";
 
 interface IEditModalProps {
   openModal: boolean;
   onClose: () => void;
-  selectedText: string;
   selectedSetting: any;
-  inputType: "text" | "number" | "select";
-  selectOptions?: { label: string; value: string | number }[];
   onUpdate: (updatedSetting: any) => void;
 }
 const EditModal = ({
   openModal,
   onClose,
-  selectedText,
   selectedSetting,
-  inputType,
-  selectOptions = [],
   onUpdate,
 }: IEditModalProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+
   const initialState = {
-    name: selectedText,
+    name: selectedSetting?.name || "",
     value: selectedSetting?.value || "",
     description: selectedSetting?.description || "",
   };
+
   const [state, setState] = useState(initialState);
+
+  const preferenceOptions =
+    selectedSetting?.preferenceValues?.map(
+      (item: { id: string | number; value: string }) => ({
+        label: item.value,
+        value: item.id,
+      })
+    ) || [];
+
+  const booleanOptions = [
+    { label: t("modal.yes"), value: "true" },
+    { label: t("modal.no"), value: "false" },
+  ];
 
   const handleChange = (field: string, value: string | number) => {
     setState((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleUpdate = () => {
-    const updatedSetting = { ...selectedSetting, ...state };
+    const updatedSetting = {
+      updatedValue: state?.value,
+      preferenceId: selectedSetting?.preferenceId,
+    };
     onUpdate(updatedSetting);
     onClose();
   };
@@ -50,14 +63,22 @@ const EditModal = ({
   useEffect(() => {
     if (!openModal) {
       setState(initialState);
+    } else {
+      setState({
+        name: selectedSetting?.name || "",
+        value: selectedSetting?.value || "",
+        description: selectedSetting?.description || "",
+      });
     }
-  }, [openModal, selectedText, selectedSetting]);
+  }, [openModal, selectedSetting]);
 
   return (
     <GoMakeModal
       openModal={openModal}
       onClose={onClose}
-      modalTitle={`Edit setting - ${selectedText}`}
+      modalTitle={t("preferences.editSetting", {
+        preferenceName: `${selectedSetting?.name}`,
+      })}
       withRoundedCloseIcon={false}
       modalTitleStyle={classes.modalTitleStyle}
       insideStyle={classes.editModalStyle}
@@ -69,54 +90,71 @@ const EditModal = ({
               {t("documentingSettings.name")}
             </h3>
             <GomakeTextInput
+              key={`name-${selectedSetting?.preferenceId}`}
               placeholder={t("documentingSettings.name")}
-              value={state.name}
-              onChange={(e) => handleChange("name", e.target.value)}
+              value={state?.name}
+              disabled={true}
             />
           </div>
-
           <div style={{ width: "50%" }}>
             <h3 style={classes.inputLabelStyle}>
               {t("documentingSettings.value")}
             </h3>
-            {inputType === "text" && (
+            {selectedSetting?.preferenceType === PreferenceValueType.Number && (
               <GomakeTextInput
-                placeholder={t("documentingSettings.value")}
-                value={state.value}
-                onChange={(e) => handleChange("value", e.target.value)}
-              />
-            )}
-            {inputType === "number" && (
-              <GomakeTextInput
+                key={`value-number-${selectedSetting?.preferenceId}`}
                 placeholder={t("documentingSettings.value")}
                 type="number"
-                value={state.value}
+                value={state?.value}
                 onChange={(e) => handleChange("value", e.target.value)}
               />
             )}
-            {inputType === "select" && (
+            {selectedSetting?.preferenceType === PreferenceValueType.Select && (
               <GoMakeAutoComplate
+                key={`value-select-${selectedSetting?.preferenceId}`}
                 withArrow
                 style={{ border: 0 }}
                 placeholder={t("documentingSettings.value")}
-                options={selectOptions}
-                value={state.value}
-                onChange={(selected) =>
-                  handleChange("value", selected?.value || "")
+                options={preferenceOptions}
+                value={
+                  preferenceOptions.find((opt) => opt.value === state.value) ||
+                  null
                 }
+                onChange={(e: any, value: any) => {
+                  handleChange("value", value?.value);
+                }}
+              />
+            )}
+            {selectedSetting?.preferenceType ===
+              PreferenceValueType.Boolean && (
+              <GoMakeAutoComplate
+                key={`value-select-boolean-${selectedSetting?.preferenceId}`}
+                withArrow
+                style={{ border: 0 }}
+                placeholder={t("documentingSettings.value")}
+                options={booleanOptions}
+                value={
+                  booleanOptions.find((opt) => opt.value === state.value) ||
+                  null
+                }
+                onChange={(e: any, value: any) => {
+                  handleChange("value", value?.value);
+                }}
               />
             )}
           </div>
         </Stack>
-
         <div>
-          <h3 style={classes.inputLabelStyle}>{t("reports.description")}</h3>
+          <h3 style={classes.inputLabelStyle}>
+            {t("usersSettings.description")}
+          </h3>
           <GomakeTextInput
+            key={`description-${selectedSetting?.preferenceId}`}
             placeholder={t("preferences.enterDescription")}
             multiline
             style={classes.descriptionStyle}
-            value={state.description}
-            onChange={(e) => handleChange("description", e.target.value)}
+            value={state?.description}
+            disabled={true}
           />
         </div>
         <PrimaryButton variant="contained" onClick={handleUpdate}>
