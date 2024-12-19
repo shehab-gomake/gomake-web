@@ -171,7 +171,10 @@ const DuplicateQuickModal = ({
             />
             <div style={clasess.checkboxLabel}>{t("products.addProduct.admin.createSameJobNumber")}</div>
           </div>
-          <div style={clasess.buttonContainer} onClick={onClose}>
+          <div style={clasess.buttonContainer} onClick={() => {
+            setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }])
+            onClose()
+          }}>
             <GomakePrimaryButton style={clasess.cancelButton}>
               {t("sales.quote.cancel")}
             </GomakePrimaryButton>
