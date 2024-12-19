@@ -46,22 +46,22 @@ const TimelineWidget = () => {
             }));
     }, [groups, openGroups]);
 
-
     return (
         <div>
-                <Timeline
-                    groups={filteredGroups.length > 0 ? filteredGroups : [{ id: 'empty', title: 'No Groups Available' }]}
-                    items={items.length > 0 ? items : []}
-                    defaultTimeStart={timeRange.defaultTimeStart}
-                    defaultTimeEnd={timeRange.defaultTimeEnd}
-                    sidebarWidth={200}
-                    onItemMove={handleItemMove}
-                    onItemResize={handleItemResize}
-                    itemRenderer={JobComponent}
-                    onZoom={handleZoom}
-                    canResize={'right'}
-                    minResizeWidth={500*500}
-                />
+            <Timeline
+                groups={filteredGroups.length > 0 ? filteredGroups : [{id: 'empty', title: 'No Groups Available'}]}
+                items={items.length > 0 ? items : []}
+                defaultTimeStart={timeRange.defaultTimeStart}
+                defaultTimeEnd={timeRange.defaultTimeEnd}
+                sidebarWidth={200}
+                onItemMove={handleItemMove}
+                onItemResize={handleItemResize}
+                onZoom={handleZoom}
+                canResize={'right'}
+                itemRenderer={(props) => {
+                    return <JobComponent {...props} isSelected={props.itemContext.selected}/>
+                }}
+            />
         </div>
     );
 };
