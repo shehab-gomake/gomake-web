@@ -27,7 +27,7 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
 
     onCloseDeleteModal,
     selectedItem,
-    removeDocumentDelivery,
+    removeDocumentDeliveryItem,
     openDeleteModal,
   } = useDeliveryStatusButton();
   const { getClientContacts, clientContacts } = useClientContactsList();
@@ -94,7 +94,7 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
         modalType={ModalType.DELETE}
         openModal={openDeleteModal}
         onClose={onCloseDeleteModal}
-        onClickDelete={() => removeDocumentDelivery(selectedItem)}
+        onClickDelete={() => removeDocumentDeliveryItem(selectedItem)}
       />
     </>
   );

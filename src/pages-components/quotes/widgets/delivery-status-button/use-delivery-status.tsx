@@ -19,6 +19,7 @@ import { IconButton } from "@mui/material";
 import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { removeDocumentDeliveryApi } from "@/services/api-service/document-deliveries/remove-document-delivery";
+import { removeDocumentDeliveryItemApi } from "@/services/api-service/document-deliveries/remove-document-delivery-item";
 
 const useDeliveryStatusButton = () => {
   const { t } = useTranslation();
@@ -153,7 +154,7 @@ const useDeliveryStatusButton = () => {
     });
   };
 
-  const removeDocumentDelivery = async (documentId) => {
+  const removeDocumentDeliveryItem = async (documentDItemId) => {
     const callBack = (res) => {
       if (res.success) {
         setDocumentItems(res.data);
@@ -163,8 +164,8 @@ const useDeliveryStatusButton = () => {
       }
     };
 
-    await removeDocumentDeliveryApi(callApi, callBack, {
-      documentId,
+    await removeDocumentDeliveryItemApi(callApi, callBack, {
+      documentDItemId,
     });
   };
 
@@ -269,6 +270,7 @@ const useDeliveryStatusButton = () => {
         contactName,
         contactEmail,
         contactPhone,
+        deliveredQuantity,
       } = documentItem || {};
 
       const isDeliveredItem =
@@ -285,20 +287,24 @@ const useDeliveryStatusButton = () => {
           showLessHeightFit={true}
           canUpdate={false}
         />,
-        <input
-          type="number"
-          key={`quantity-${id}`}
-          value={editableQuantities[id] || quantity}
-          disabled={isDeliveredItem}
-          onChange={(e) => handleQuantityChange(id, e.target.value)}
-          style={{
-            width: "70px",
-            textAlign: "center",
-            border: "none",
-            height: "25px",
-            outline: "none",
-          }}
-        />,
+        isDeliveredItem ? (
+          `${deliveredQuantity}/${quantity}`
+        ) : (
+          <input
+            type="number"
+            key={`quantity-${id}`}
+            value={editableQuantities[id] || quantity}
+            disabled={isDeliveredItem}
+            onChange={(e) => handleQuantityChange(id, e.target.value)}
+            style={{
+              width: "70px",
+              textAlign: "center",
+              border: "none",
+              height: "25px",
+              outline: "none",
+            }}
+          />
+        ),
         _renderDeliveryStatus(deliveryStatus, id),
         <img src={signImage} style={{ width: "80px", maxHeight: "40px" }} />,
         signedAt && getFormattedLocalDate(signedAt),
@@ -327,7 +333,7 @@ const useDeliveryStatusButton = () => {
           </span>
         ) : null,
         renderPopover(),
-        !isDeliveredItem && (
+        isDeliveredItem && (
           <IconButton
             key={`delete-${id}`}
             onClick={() => onOpenDeleteModal(id)}
@@ -357,7 +363,7 @@ const useDeliveryStatusButton = () => {
     anchorChangeEl,
     onCloseDeleteModal,
     selectedItem,
-    removeDocumentDelivery,
+    removeDocumentDeliveryItem,
     openDeleteModal,
   };
 };
