@@ -30,7 +30,7 @@ export const list: IListItem[] = [
     component: PriceProfitWidge,
     text: "settings.priceProfit",
     value: "8",
-    // permission: Permissions.TRANSLATION_ADMIN, ASK MOHAND
+    permission: Permissions.SHOW_PRICING_PROFILE,
     icon: BudgetIcon,
     path: "price-profit",
   },
