@@ -1,18 +1,20 @@
-const JobComponent = ({item, getItemProps}) => {
+const JobComponent = ({item, getItemProps, isSelected}) => {
     const isEditable = item.isEditable;
     return (
         <div
             {...getItemProps({
                 style: {
-                    backgroundColor: isEditable ? item.bgColor : "#2E3091",
+                    background: isEditable ? item.bgColor : "#2E3091",
                     pointerEvents: isEditable ? "auto" : "none",
                     color: "white",
                     borderRadius: "4px",
-                    border: "1px solid inherit",
+                    border: 0,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: 'center',
                     gap: '10px',
+                    opacity: isSelected ? 0.5 : 1, // Reduce opacity if selected,
+                    transition: "opacity 0.2s, border 0.2s", // Smooth transitions
                 },
             })}
         >
