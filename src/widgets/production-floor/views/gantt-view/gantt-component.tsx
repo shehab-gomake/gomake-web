@@ -1,10 +1,11 @@
 import React, {useEffect, useMemo} from "react";
-import Timeline from "react-calendar-timeline";
+import Timeline, {TimelineHeaders, SidebarHeader, DateHeader} from "react-calendar-timeline";
 import {useGantt} from "@/widgets/production-floor/views/gantt-view/use-gantt";
 import Stack from "@mui/material/Stack";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {JobComponent} from "@/widgets/production-floor/views/gantt-view/job-component";
+import moment from "moment";
 
 const TimelineWidget = () => {
     const {
@@ -17,7 +18,8 @@ const TimelineWidget = () => {
         handleItemMove,
         currentMonth,
         toggleGroup,
-        handleZoom
+        handleZoom,
+        onTimeChange
     } = useGantt();
 
     useEffect(() => {
@@ -61,7 +63,17 @@ const TimelineWidget = () => {
                 itemRenderer={(props) => {
                     return <JobComponent {...props} isSelected={props.itemContext.selected}/>
                 }}
-            />
+                onTimeChange={onTimeChange}
+            >
+                {/*<TimelineHeaders>*/}
+                {/*    <SidebarHeader>*/}
+                {/*        {({ getRootProps }) => {*/}
+                {/*            return <div {...getRootProps({style: {display: 'flex', justifyContent: 'center', alignItems: 'center',}})}>stations</div>*/}
+                {/*        }}*/}
+                {/*    </SidebarHeader>*/}
+                {/*    <DateHeader unit={'primaryHeader'}/>*/}
+                {/*</TimelineHeaders>*/}
+            </Timeline>
         </div>
     );
 };
