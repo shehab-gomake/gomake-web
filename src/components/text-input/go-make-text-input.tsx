@@ -14,20 +14,21 @@ const StyledTextField = styled(TextField)((props: any) => ({
   boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
 
   "& .MuiOutlinedInput-root": {
-    paddingRight: "9px!important",
+    // paddingRight: "9px!important",
     height: props?.style?.height || 40,
     fontFamily: "Heebo",
     fontWeight: 500,
     width: "100%",
     ...props?.style,
-
     "& fieldset": {
       border: "transparent",
     },
-
     "& input::placeholder": {
       color: "#B1B1B1",
       opacity: 1,
+      fontFamily: "Heebo",
+      fontStyle: "normal",
+      fontWeight: 500,
     },
   },
   ...props?.style,
@@ -67,7 +68,6 @@ const GoMakeTextInput = ({
   defaultValue,
   disabled,
   type,
-
   multiline,
   InputProps,
   autoFocus,
@@ -108,7 +108,6 @@ const GoMakeTextInput = ({
       multiline={multiline}
       InputProps={InputProps}
       // @ts-ignore
-
       onMouseLeave={onMouseLeave}
       defaultValue={defaultValue}
       onBlur={onBlur}

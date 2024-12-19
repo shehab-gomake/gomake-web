@@ -48,6 +48,8 @@ const useDeliveryStatusModal = (documentItems) => {
     t("sales.documentDeliveries.signedAt"),
     t("sales.documentDeliveries.deliveryDetailes"),
     "",
+    t("usersSettings.actions"),
+    "",
   ];
 
   const options = useMemo(

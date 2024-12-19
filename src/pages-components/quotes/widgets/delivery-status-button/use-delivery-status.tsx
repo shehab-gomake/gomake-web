@@ -4,7 +4,13 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DocumentDeliveryStatuses } from "./delivery-status-modal/use-delivery-status-modal";
 import { toRgba } from "@/utils/helpers";
-import { CanceledIcon, DeliveredIcon, PendingIcon } from "./utils/icons";
+import {
+  CanceledIcon,
+  DeleteIcon,
+  DeliveredIcon,
+  NotDeliveredIcon,
+  PendingIcon,
+} from "./utils/icons";
 import { CharacterDetails } from "@/widgets/quote-new/quote-table/row-details/character-details";
 import Popover from "@mui/material/Popover";
 import Typography from "@mui/material/Typography";
@@ -12,13 +18,16 @@ import { getDocumentDeliveryItemsApi } from "@/services/api-service/document-del
 import { IconButton } from "@mui/material";
 import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
 import { useDateFormat } from "@/hooks/use-date-format";
+import { removeDocumentDeliveryApi } from "@/services/api-service/document-deliveries/remove-document-delivery";
+import { removeDocumentDeliveryItemApi } from "@/services/api-service/document-deliveries/remove-document-delivery-item";
 
 const useDeliveryStatusButton = () => {
   const { t } = useTranslation();
   const dir = t("direction");
   const isRTL = dir === "rtl";
   const { callApi } = useGomakeAxios();
-  const { alertFaultGetData } = useSnackBar();
+  const { alertFaultGetData, alertFaultDelete, alertSuccessDelete } =
+    useSnackBar();
   const { getFormattedLocalDate } = useDateFormat();
   const [documentItems, setDocumentItems] = useState<any>();
   const [editableQuantities, setEditableQuantities] = useState({});
@@ -26,6 +35,9 @@ const useDeliveryStatusButton = () => {
   const [anchorChangeEl, setAnchorChangeEl] = useState<null | HTMLElement>(
     null
   );
+
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+  const [selectedItem, setSelectedItem] = useState<string>("");
 
   const handleMenuClick = (event) => {
     setAnchorChangeEl(event.currentTarget);
@@ -44,6 +56,16 @@ const useDeliveryStatusButton = () => {
     setEditableQuantities({});
   };
 
+  const onOpenDeleteModal = (id: string) => {
+    setOpenDeleteModal(true);
+    setSelectedItem(id);
+  };
+
+  const onCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+    setSelectedItem("");
+  };
+
   const _renderDeliveryStatus = (
     statusEnum: DocumentDeliveryStatuses,
     id: string
@@ -53,13 +75,13 @@ const useDeliveryStatusButton = () => {
         case DocumentDeliveryStatuses.FullyDelivered:
           return <DeliveredIcon />;
         case DocumentDeliveryStatuses.PartiallyDelivered:
-          return <DeliveredIcon />;
+          return <DeliveredIcon color={"#f0ca45"} />;
         case DocumentDeliveryStatuses.Pasued:
           return <PendingIcon />;
         case DocumentDeliveryStatuses.Canceled:
           return <CanceledIcon />;
         case DocumentDeliveryStatuses.NotDelivered:
-          return "❔";
+          return <NotDeliveredIcon />;
         default:
           return "❔"; // Default icon
       }
@@ -79,9 +101,11 @@ const useDeliveryStatusButton = () => {
           ...FONT_FAMILY.Inter(500, 12),
           borderRadius: "var(--radius-full, 9999px)",
           border: `1px solid ${statusColor}`,
-          padding: isRTL ? "0px 5px 0px 8px" : "0px 8px 0px 5px",
+          padding: isRTL ? "1px 5px 1px 8px" : "1px 8px 1px 5px",
           textAlign: "center",
           gap: "4px",
+          minWidth: "fit-content",
+          whiteSpace: "nowrap",
         }}
       >
         {icon}
@@ -93,17 +117,17 @@ const useDeliveryStatusButton = () => {
   const _renderDeliveryStatusColor = (statusEnum: DocumentDeliveryStatuses) => {
     switch (statusEnum) {
       case DocumentDeliveryStatuses.NotDelivered:
-        return "#667085";
+        return "#e15656";
       case DocumentDeliveryStatuses.PartiallyDelivered:
-        return "#099250";
+        return "#f0ca45";
       case DocumentDeliveryStatuses.FullyDelivered:
-        return "#099250";
+        return "#66d671";
       case DocumentDeliveryStatuses.Pasued:
         return "#FFD700";
       case DocumentDeliveryStatuses.Canceled:
-        return "#f44336"; // Purple
+        return "#f44336";
       default:
-        return "#808080"; // Gray
+        return "#808080";
     }
   };
 
@@ -127,6 +151,21 @@ const useDeliveryStatusButton = () => {
     await getDocumentDeliveryItemsApi(callApi, callBack, {
       documentType,
       documentId,
+    });
+  };
+
+  const removeDocumentDeliveryItem = async (documentDItemId) => {
+    const callBack = (res) => {
+      if (res.success) {
+        setDocumentItems(res.data);
+        alertSuccessDelete();
+      } else {
+        alertFaultDelete();
+      }
+    };
+
+    await removeDocumentDeliveryItemApi(callApi, callBack, {
+      documentDItemId,
     });
   };
 
@@ -231,6 +270,7 @@ const useDeliveryStatusButton = () => {
         contactName,
         contactEmail,
         contactPhone,
+        deliveredQuantity,
       } = documentItem || {};
 
       const isDeliveredItem =
@@ -247,20 +287,24 @@ const useDeliveryStatusButton = () => {
           showLessHeightFit={true}
           canUpdate={false}
         />,
-        <input
-          type="number"
-          key={`quantity-${id}`}
-          value={editableQuantities[id] || quantity}
-          disabled={isDeliveredItem}
-          onChange={(e) => handleQuantityChange(id, e.target.value)}
-          style={{
-            width: "70px",
-            textAlign: "center",
-            border: "none",
-            height: "25px",
-            outline: "none",
-          }}
-        />,
+        isDeliveredItem ? (
+          `${deliveredQuantity}/${quantity}`
+        ) : (
+          <input
+            type="number"
+            key={`quantity-${id}`}
+            value={editableQuantities[id] || quantity}
+            disabled={isDeliveredItem}
+            onChange={(e) => handleQuantityChange(id, e.target.value)}
+            style={{
+              width: "70px",
+              textAlign: "center",
+              border: "none",
+              height: "25px",
+              outline: "none",
+            }}
+          />
+        ),
         _renderDeliveryStatus(deliveryStatus, id),
         <img src={signImage} style={{ width: "80px", maxHeight: "40px" }} />,
         signedAt && getFormattedLocalDate(signedAt),
@@ -289,6 +333,15 @@ const useDeliveryStatusButton = () => {
           </span>
         ) : null,
         renderPopover(),
+        isDeliveredItem && (
+          <IconButton
+            key={`delete-${id}`}
+            onClick={() => onOpenDeleteModal(id)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        ),
+        "",
       ];
     });
   }, [documentItems, editableQuantities, handleQuantityChange]);
@@ -308,6 +361,10 @@ const useDeliveryStatusButton = () => {
     handleMenuClose,
     handleMenuClick,
     anchorChangeEl,
+    onCloseDeleteModal,
+    selectedItem,
+    removeDocumentDeliveryItem,
+    openDeleteModal,
   };
 };
 
