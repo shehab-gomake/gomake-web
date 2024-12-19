@@ -18,7 +18,8 @@ const useStyle = () => {
         alignItems: "flex-start",
         justifyContent: "flex-start",
         width: "100%",
-        gap: 24
+        gap: 24,
+        marginTop: 24
       },
       groupContainer: {
         display: "flex",
