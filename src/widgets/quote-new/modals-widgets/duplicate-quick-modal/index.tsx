@@ -9,7 +9,6 @@ import { Checkbox, Divider } from "@mui/material";
 import { DuplicateModalIcon } from "./icons/duplicate-icon";
 import { CartWithoutBgIcon, CheckboxCheckedIcon } from "@/icons";
 import { CheckboxIcon } from "@/icons";
-import { CartIcon } from "@/icons/cart-icon";
 import { quickDuplicateApi } from "@/services/api-service/generic-doc/documents-api";
 import { useSnackBar } from "@/hooks";
 import { useGomakeAxios } from "@/hooks";
@@ -24,7 +23,6 @@ const DuplicateQuickModal = ({
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const [groups, setGroups] = useState<any>([{ id: 1, parameters: [{ name: "", value: "" }] }]);
-  console.log("groups", groups)
   const addGroup = () => {
     const newGroup = {
       id: groups.length + 1,
@@ -67,6 +65,14 @@ const DuplicateQuickModal = ({
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
 
   const onClickQuickDuplicate = async () => {
+    const hasEmptyParameter = groups.some(group =>
+      group.parameters.some(param => param.name === "" || param.value === "")
+    );
+
+    if (hasEmptyParameter) {
+      alertFaultUpdate();
+      return;
+    }
     const items = groups.map(group => ({
       parameters: group.parameters.map(param => ({
         parameterId: param?.name.value, // Example ID, replace with actual logic if needed
@@ -76,7 +82,9 @@ const DuplicateQuickModal = ({
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
+        setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }])
         getQuote()
+        onClose()
       } else {
         alertFaultUpdate();
       }
@@ -88,7 +96,7 @@ const DuplicateQuickModal = ({
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={t("properties.parameter")}
+        modalTitle={t("products.addProduct.admin.advancedDuplicate")}
         onClose={() => {
           onClose()
           setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }])
@@ -100,7 +108,7 @@ const DuplicateQuickModal = ({
             <div key={group.id} style={{ width: "100%" }}>
               <div style={clasess.groupContainer}>
                 <div>
-                  <div style={clasess.groupTitle}>{`Group ${group.id}`}</div>
+                  <div style={clasess.groupTitle}>{t("products.addProduct.admin.product")}{` ${group.id}`}</div>
                 </div>
                 <div style={clasess.groupActions}>
                   <div onClick={addGroup} style={clasess.groupAction}>
@@ -116,27 +124,27 @@ const DuplicateQuickModal = ({
               {group.parameters.map((param, index) => (
                 <div key={index} style={clasess.groupParameter}>
                   <div style={clasess.groupParameterDropdown}>
-                    <div>Parameter</div>
+                    <div>{t("products.parameters.admin.parameter")}</div>
                     <GoMakeAutoComplate
                       key={param?.name}
                       options={[
-                        { label: "Job Name", value: "a330193f-492c-40a8-86f3-8edf5c8f0d5e" },
-                        { label: "Quantity", value: "4991945c-5e07-4773-8f11-2e3483b70b53" },
-                        { label: "Width", value: "4ba9a275-4fbc-4313-b284-e9b1cf8b452e" },
-                        { label: "Length", value: "d2c965d3-6b08-4380-9d4b-17c361d7e484" },
+                        { label: t("boardMissions.jobName"), value: "a330193f-492c-40a8-86f3-8edf5c8f0d5e" },
+                        { label: t("boardMissions.quantity"), value: "4991945c-5e07-4773-8f11-2e3483b70b53" },
+                        { label: t("machineAttributes.width"), value: "4ba9a275-4fbc-4313-b284-e9b1cf8b452e" },
+                        { label: t("machineAttributes.length"), value: "d2c965d3-6b08-4380-9d4b-17c361d7e484" },
                       ]}
                       onChange={(e, value) => handleDropdownChange(groupIndex, index, value)}
                       value={param?.name}
                       style={clasess.groupParameterInput}
-                      placeholder="Select parameter"
+                      placeholder={t("products.profits.exceptions.selectParameter")}
                       withArrow={true}
                     />
                   </div>
                   <div style={clasess.groupParameterDropdown}>
-                    <div>Value</div>
+                    <div>{t("documentingSettings.value")}</div>
                     <GomakeTextInput
                       style={clasess.groupParameterInput}
-                      placeholder="Enter the value"
+                      placeholder={t("products.profits.exceptions.enterValue")}
                       value={param?.value}
                       onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value)}
                     />
@@ -161,16 +169,16 @@ const DuplicateQuickModal = ({
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
             />
-            <div style={clasess.checkboxLabel}>Create with the same job number</div>
+            <div style={clasess.checkboxLabel}>{t("products.addProduct.admin.createSameJobNumber")}</div>
           </div>
           <div style={clasess.buttonContainer} onClick={onClose}>
             <GomakePrimaryButton style={clasess.cancelButton}>
-              Cancel
+              {t("sales.quote.cancel")}
             </GomakePrimaryButton>
             <GomakePrimaryButton style={clasess.addButton} onClick={onClickQuickDuplicate}>
               <div style={clasess.addButtonContainer}>
                 <CartWithoutBgIcon />
-                <div style={clasess.addButtonText}>  Add to cart</div>
+                <div style={clasess.addButtonText}>  {t("products.offsetPrice.admin.addOrderBtn")}</div>
               </div>
             </GomakePrimaryButton>
           </div>

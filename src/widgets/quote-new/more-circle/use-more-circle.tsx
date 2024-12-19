@@ -88,7 +88,7 @@ const useMoreCircle = ({
         documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund,
     },
     {
-      name: "quickDuplicate",
+      name: "advancedDuplicate",
       icon: <DuplicateMenuIcon />,
       onclick: () => onClickQuickDuplicate(quoteItem),
       condition: true
