@@ -7,7 +7,7 @@ const JobComponent = ({item, getItemProps, isSelected}) => {
                     background: isEditable ? item.bgColor : "#2E3091",
                     pointerEvents: isEditable ? "auto" : "none",
                     color: "white",
-                    borderRadius: "4px",
+                    borderRadius: 0,
                     border: 0,
                     display: "flex",
                     alignItems: "center",

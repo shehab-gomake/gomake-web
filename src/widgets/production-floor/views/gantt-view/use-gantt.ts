@@ -8,8 +8,8 @@ const useGantt = () => {
     const {callApi} = useGomakeAxios();
     const [currentMonth, setCurrentMonth] = useState(moment()); // Track the currently displayed month
     const [timeRange, setTimeRange] = useState({
-        defaultTimeStart: moment().startOf("hour"),
-        defaultTimeEnd: moment().endOf("hour"),
+        defaultTimeStart: moment().startOf("day"),
+        defaultTimeEnd: moment().startOf("day").add(10, 'hours'),
     });
 
     const [openGroups, setOpenGroups] = useState({});
@@ -32,7 +32,7 @@ const useGantt = () => {
             .utc() // Convert to UTC
             .toISOString();
 
-        console.log({ startDate: startOfMonth, endDate: endOfMonth }); // Debugging payload
+        console.log({startDate: startOfMonth, endDate: endOfMonth}); // Debugging payload
 
         const callBack = (res) => {
             if (res.success) {
@@ -47,7 +47,7 @@ const useGantt = () => {
             }
         };
 
-        await getTimeLineJobsApi(callApi, callBack, { startDate: startOfMonth, endDate: endOfMonth });
+        await getTimeLineJobsApi(callApi, callBack, {startDate: startOfMonth, endDate: endOfMonth});
     };
 
     const handleItemResize = async (itemId, time, edge) => {
@@ -56,15 +56,15 @@ const useGantt = () => {
             await updateJobTimeApi(callApi, () => {
             }, {
                 id: updatedItem.id,
-                startDate: updatedItem.start_time,
-                endDate: moment(time)
+                startDate: updatedItem.start_time.toDate().toLocaleString(),
+                endDate: new Date(time).toLocaleString()
             })
         }
         const updatedItems = items.map((item) =>
             item.id === itemId
                 ? edge === "left"
-                    ? { ...item, start_time: moment(time) }
-                    : { ...item, end_time: moment(time) }
+                    ? {...item, start_time: moment(time)}
+                    : {...item, end_time: moment(time)}
                 : item
         );
         setItems(updatedItems);
@@ -72,7 +72,7 @@ const useGantt = () => {
 
     const handleItemMove = async (itemId, dragTime, newGroupOrder) => {
         const updatedItem = items.find(j => j.id === itemId);
-        if (updatedItem ) {
+        if (updatedItem) {
             await updateJobTimeApi(callApi, () => {
             }, {
                 id: updatedItem.id,
@@ -126,7 +126,9 @@ const useGantt = () => {
         }
     };
 
-
+    const onTimeChange = (visibleTimeStart, visibleTimeEnd, updateScrollCanvas) => {
+        updateScrollCanvas(visibleTimeStart, visibleTimeEnd)
+    }
 
     return {
         timeRange,
@@ -143,7 +145,8 @@ const useGantt = () => {
         toggleGroup,
         handleZoom,
         currentMonth,
-        setCurrentMonth
+        setCurrentMonth,
+        onTimeChange
     };
 };
 
