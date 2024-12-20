@@ -19,7 +19,8 @@ const TimelineWidget = () => {
         currentMonth,
         toggleGroup,
         handleZoom,
-        onTimeChange
+        onTimeChange,
+        visibleTimeRange
     } = useGantt();
 
     useEffect(() => {
@@ -64,15 +65,35 @@ const TimelineWidget = () => {
                     return <JobComponent {...props} isSelected={props.itemContext.selected}/>
                 }}
                 onTimeChange={onTimeChange}
+                visibleTimeStart={visibleTimeRange.start}
+                visibleTimeEnd={visibleTimeRange.end}
             >
-                {/*<TimelineHeaders>*/}
-                {/*    <SidebarHeader>*/}
-                {/*        {({ getRootProps }) => {*/}
-                {/*            return <div {...getRootProps({style: {display: 'flex', justifyContent: 'center', alignItems: 'center',}})}>stations</div>*/}
-                {/*        }}*/}
-                {/*    </SidebarHeader>*/}
-                {/*    <DateHeader unit={'primaryHeader'}/>*/}
-                {/*</TimelineHeaders>*/}
+                <TimelineHeaders>
+                    <SidebarHeader>
+                        {({ getRootProps }) => {
+                            return <div {...getRootProps()}>Left</div>
+                        }}
+                    </SidebarHeader>
+                    <DateHeader
+                        unit="primaryHeader"/>
+                    <DateHeader  labelFormat={([start, end], unit) => {
+                        const momentStart = moment(start);
+                        switch (unit) {
+                            case "year":
+                                return `${start.getFullYear()}`;
+                            case "month":
+                                return `${momentStart.format("MMMM")}`;
+                            case "day":
+                                return `${momentStart.format("DD")}`;
+                            case "hour":
+                                return `${momentStart.format("hh:mm A")}`;
+                            case "minute":
+                                return `${momentStart.format("mm")}`;
+                            default:
+                                return "";
+                        }
+                    }} />
+                </TimelineHeaders>
             </Timeline>
         </div>
     );
