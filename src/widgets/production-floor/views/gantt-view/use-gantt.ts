@@ -11,7 +11,10 @@ const useGantt = () => {
         defaultTimeStart: moment().startOf("day"),
         defaultTimeEnd: moment().startOf("day").add(10, 'hours'),
     });
-
+    const [visibleTimeRange, setVisibleTimeRange] = useState({
+        start: timeRange.defaultTimeStart.valueOf(),
+        end: timeRange.defaultTimeEnd.valueOf(),
+    });
     const [openGroups, setOpenGroups] = useState({});
     const [groups, setGroups] = useState<IGanttGroup[]>([]);
     const [items, setItems] = useState<IGanttJob[]>([]);
@@ -107,18 +110,31 @@ const useGantt = () => {
     };
 
     const handleZoom = ({visibleTimeStart, visibleTimeEnd}) => {
-        const startMoment = moment(visibleTimeStart);
-        const endMoment = moment(visibleTimeEnd);
+        const startTime  = moment(visibleTimeStart);
+        const endTime  = moment(visibleTimeEnd);
+        const durationHours = endTime.diff(startTime, "hours");
+        const monthsDifference = endTime.diff(startTime, 'months');
+        const daysDifference = endTime.diff(startTime, 'days');
 
-        const monthsDifference = endMoment.diff(startMoment, 'months');
-        const daysDifference = endMoment.diff(startMoment, 'days');
-        // const yearsDifference = endMoment.diff(startMoment, 'years');
-
+        if (durationHours <= 24 && durationHours > 6) {
+            // Adjust to show only 6 hours from startTime
+            const newEndTime = startTime.clone().add(6, "hours").valueOf();
+            setVisibleTimeRange({
+                start: startTime.valueOf(),
+                end: newEndTime,
+            });
+        } else {
+            // Update the time range state for other cases
+            setVisibleTimeRange({
+                start: visibleTimeStart,
+                end: visibleTimeEnd,
+            });
+        }
         // Determine the zoom level based on the time difference
         if (monthsDifference > 1) {
             // alert("year");
         } else if (monthsDifference === 1) {
-            setCurrentMonth(startMoment);
+            setCurrentMonth(startTime);
         } else if (daysDifference >= 1) {
             // alert("day");
         } else {
@@ -128,6 +144,7 @@ const useGantt = () => {
 
     const onTimeChange = (visibleTimeStart, visibleTimeEnd, updateScrollCanvas) => {
         updateScrollCanvas(visibleTimeStart, visibleTimeEnd)
+        setVisibleTimeRange({start: visibleTimeStart, end: visibleTimeEnd})
     }
 
     return {
@@ -146,7 +163,8 @@ const useGantt = () => {
         handleZoom,
         currentMonth,
         setCurrentMonth,
-        onTimeChange
+        onTimeChange,
+        visibleTimeRange
     };
 };
 
