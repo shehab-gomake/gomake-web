@@ -17,4 +17,6 @@ export interface IGanttJob {
     bgColor: string;
     statusColor: string;
     isEditable: boolean;
+    selected?: boolean;
+    isHasSelected?: boolean;
 }
