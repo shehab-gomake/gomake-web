@@ -37,6 +37,12 @@ const useStyle = () => {
         height: 40,
         backgroundColor: secondColor(500),
       },
+
+      btnStyle: {
+        width: "40%",
+        borderRadius: "8px",
+        height: "40px",
+      },
       autoComplateRowContainer: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -61,6 +67,12 @@ const useStyle = () => {
         width: "100%",
         border: "none",
         height: 45,
+        "& .MuiInputBase-root input": {
+          borderRadius: "8px !important",
+          border: "1px solid #EAECF0",
+          boxShadow: "none",
+          height: 45,
+        },
       },
     };
   }, [theme]);
