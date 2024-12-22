@@ -51,6 +51,11 @@ const UpdateDeliveryStatusModal = ({
     setClientContact(null);
   };
 
+  const handleCloseSignModal = () => {
+    closeSignatureModal();
+    handleCloseModal();
+  };
+
   //!not sure about the condition
   const areAllItemsNotDelivered = () => {
     return documentItems?.some(
@@ -97,7 +102,6 @@ const UpdateDeliveryStatusModal = ({
             <span style={classes.labelStyle}>
               {t("sales.documentDeliveries.recipientName")}
             </span>
-
             <GoMakeTextInput
               key={`receipt-name-${document?.id}`}
               style={{
@@ -115,7 +119,6 @@ const UpdateDeliveryStatusModal = ({
             <span style={classes.labelStyle}>
               {t("sales.documentDeliveries.recipientNumber")}
             </span>
-
             <PhoneInputComponent
               customStyle={{
                 width: 170,
@@ -142,22 +145,6 @@ const UpdateDeliveryStatusModal = ({
               placeholder={t("sales.documentDeliveries.recipientMail")}
             />
           </Stack>
-          {/* <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
-            <span style={classes.labelStyle}>
-              {t("sales.documentDeliveries.deliveryDate")}
-            </span>
-            <GoMakeTextInput
-              style={{
-                width: 170,
-                height: "40px",
-              }}
-              type={"date"}
-              value={deliveryState?.deliveryDate}
-              onChange={(e) =>
-                handleChangeDeliveryInputs("deliveryDate", e.target.value)
-              }
-            />
-          </Stack> */}
         </Stack>
         <PrimaryTable
           stickyFirstCol={false}
@@ -188,6 +175,7 @@ const UpdateDeliveryStatusModal = ({
       <SignatureModal
         openModal={isSignatureModalOpen}
         onCloseModal={closeSignatureModal}
+        onCloseAllModals={handleCloseSignModal}
         documentId={document?.id}
         documentType={document?.documentType}
         selectedItems={selectedItems}

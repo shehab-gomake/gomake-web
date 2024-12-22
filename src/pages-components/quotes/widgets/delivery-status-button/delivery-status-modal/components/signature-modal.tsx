@@ -12,6 +12,7 @@ import { createDocumentDeliveryApi } from "@/services/api-service/document-deliv
 export interface ISignatureModalProps {
   openModal: boolean;
   onCloseModal: () => void;
+  onCloseAllModals: () => void;
   documentType: number;
   documentId: string;
   selectedItems: any;
@@ -26,6 +27,7 @@ const SignatureModal = ({
   openModal,
   onCloseModal,
   documentId,
+  onCloseAllModals,
   documentType,
   selectedItems,
   setSelectedItems,
@@ -38,7 +40,6 @@ const SignatureModal = ({
   const { t } = useTranslation();
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const { callApi } = useGomakeAxios();
-
   const sigPad = useRef<SignatureCanvas | null>(null);
 
   const clear = () => {
@@ -46,9 +47,6 @@ const SignatureModal = ({
   };
 
   const save = () => {
-    // if (sigPad.current && sigPad.current.isEmpty()) {
-    //   alertFault(t("sales.cart.signatureEmptyError"));
-    // }
     const dataURL = sigPad.current.getTrimmedCanvas().toDataURL("image/png");
 
     if (sigPad.current.isEmpty()) {
@@ -72,7 +70,7 @@ const SignatureModal = ({
         setSelectedItems([]);
         setDocumentItems(res.data);
         alertSuccessUpdate();
-        onCloseModal();
+        onCloseAllModals();
       } else {
         alertFaultUpdate();
       }

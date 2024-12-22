@@ -69,6 +69,7 @@ import { useRouter } from "next/router";
 import { ICard } from "./widgets/statistics-section/statistics-sections";
 import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
 import { DocumentDeliveryStatuses } from "./widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
+import { useDocumentsSignalR } from "@/hooks/signalr/use-documents-signalr";
 
 interface Query {
   customerId?: string;
@@ -360,9 +361,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         approvalStatus: approvalStatusId?.value,
         closeStatus: accountingStatus?.value,
         productionStatus: productionStatus?.value,
-
         // deliveryStatus: deliveryStatus?.value,
-
         patternSearch: finalPatternSearch,
         customerId: customerId?.id,
         dateRange,
@@ -786,6 +785,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickQuotePdf,
     onClickDocumentLogs,
   ]);
+
+  //!here
+  const {} = useDocumentsSignalR({ getAllQuotes, docType });
 
   const getAllQuotesInitial = async () => {
     const callBack = (res) => {
