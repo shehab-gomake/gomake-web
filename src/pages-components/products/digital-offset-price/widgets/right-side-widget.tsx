@@ -12,6 +12,8 @@ import { useClientTypesList } from "@/hooks/use-client-types";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRecoilValue } from "recoil";
 import { additionalProductItemsState } from "@/widgets/product-pricing-widget/state";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { permissionsState } from "@/store";
 
 const RightSideWidget = ({
   clasess,
@@ -57,6 +59,7 @@ const RightSideWidget = ({
     ...(calculationExceptionsLogs || []),
   ];
   const [logsArray, setLogsArray] = useState(mergedArray);
+  const permissions = useRecoilValue(permissionsState);
 
 
 
@@ -196,7 +199,12 @@ const RightSideWidget = ({
               <GomakeTextInput
                 value={currentProductItemValueTotalPrice ?? "---------"}
                 onChange={(e: any) => {
-                  setCurrentProductItemValueTotalPrice(e.target.value);
+                  if (!permissions.includes(Permissions.UPDATE_CALCULATED_PRICE)) {
+                    setCurrentProductItemValueTotalPrice(currentProductItemValueTotalPrice);
+                  }
+                  else {
+                    setCurrentProductItemValueTotalPrice(e.target.value);
+                  }
                 }}
                 key={"TotalPriceInput"}
                 style={clasess.inputPriceStyle}
