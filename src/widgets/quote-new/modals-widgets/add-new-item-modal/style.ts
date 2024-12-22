@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { secondColor ,errorColor, theme } = useGomakeTheme();
+  const { secondColor, errorColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -52,6 +52,15 @@ const useStyle = () => {
         padding: 10,
         ...FONT_FAMILY.Lexend(500, 14),
         color: errorColor(500),
+      },
+      filterLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        marginBottom: 7,
+      },
+      textInput: {
+        width: "100%",
+        border: "none",
+        height: 45,
       },
     };
   }, [theme]);
