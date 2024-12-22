@@ -75,10 +75,10 @@ const TimelineWidget = () => {
                 onTimeChange={onTimeChange}
                 visibleTimeStart={visibleTimeRange.start}
                 visibleTimeEnd={visibleTimeRange.end}
-                onItemSelect={handleItemSelect} // Handle item selection
+                onItemSelect={handleItemSelect}
                 onItemDeselect={() => setItems(prev => prev.map(item => ({...item, selected: false, isHasSelected: false})))}
                 selected={items.filter(item => !!item.selected).map(i => i.id)}
-
+                dragSnap={1000 * 60}
             >
                 <TimelineHeaders>
                     <SidebarHeader>
