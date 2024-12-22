@@ -4,7 +4,7 @@ import {
   useGomakeRouter,
   useSnackBar,
 } from "@/hooks";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApprovalStatus, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
@@ -68,6 +68,7 @@ import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pa
 import { useRouter } from "next/router";
 import { ICard } from "./widgets/statistics-section/statistics-sections";
 import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
+import { DocumentDeliveryStatuses } from "./widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
 
 interface Query {
   customerId?: string;
@@ -80,6 +81,7 @@ interface Query {
   fromDate?: string;
   toDate?: string;
   accountingStatus?: string;
+  deliveryStatus?: string;
   productionStatus?: string;
   isCanceled?: boolean;
   isPaused?: boolean;
@@ -155,6 +157,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     label: string;
     value: PStatus;
   } | null>();
+
+  const [deliveryStatus, setDeliveryStatus] = useState<{
+    label: string;
+    value: any;
+  } | null>();
+
   const [productsList, setProductsList] = useState([]);
   const [productIds, setProductIds] = useState<string[]>([]);
   const [minPrice, setMinPrice] = useState("");
@@ -352,6 +360,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         approvalStatus: approvalStatusId?.value,
         closeStatus: accountingStatus?.value,
         productionStatus: productionStatus?.value,
+
+        // deliveryStatus: deliveryStatus?.value,
+
         patternSearch: finalPatternSearch,
         customerId: customerId?.id,
         dateRange,
@@ -680,6 +691,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           (status) => status.value === Number(router.query.accountingStatus)
         )
       : null;
+
+    const currentDeliveryStatusStatus = router.query.deliveryStatus
+      ? deliveryStatuses.find(
+          (status) => status.value === Number(router.query.deliveryStatus)
+        )
+      : null;
+
     const currentProductionStatus = router.query.productionStatus
       ? productionStatuses.find(
           (status) => status.value === Number(router.query.productionStatus)
@@ -719,6 +737,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
           closeStatus:
             currentAccountingStatus?.value || accountingStatus?.value,
+          deliveryStatus:
+            currentDeliveryStatusStatus?.value || deliveryStatus?.value,
           productionStatus:
             currentProductionStatus?.value || productionStatus?.value,
           patternSearch:
@@ -752,6 +772,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     approvalStatusId,
     quoteStatusId,
     accountingStatus,
+    deliveryStatus,
     productionStatus,
     dateRange,
     minPrice,
@@ -1102,6 +1123,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (accountingStatus)
       query.accountingStatus = accountingStatus.value.toString();
     else delete query.accountingStatus;
+
+    if (deliveryStatus) query.deliveryStatus = deliveryStatus.value.toString();
+    else delete query.deliveryStatus;
 
     if (productionStatus)
       query.productionStatus = productionStatus.value.toString();
@@ -1741,6 +1765,24 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     { label: t("sales.quote.closed"), value: AStatus.CLOSED },
   ];
 
+  const deliveryStatuses = useMemo(
+    () => [
+      {
+        label: t("sales.documentDeliveries.NotDelivered"),
+        value: DocumentDeliveryStatuses.NotDelivered,
+      },
+      {
+        label: t("sales.documentDeliveries.PartiallyDelivered"),
+        value: DocumentDeliveryStatuses.PartiallyDelivered,
+      },
+      {
+        label: t("sales.documentDeliveries.FullyDelivered"),
+        value: DocumentDeliveryStatuses.FullyDelivered,
+      },
+    ],
+    [t]
+  );
+
   const approvalStatuses: { value: number; label: string }[] = Object.values(
     ApprovalStatus
   )
@@ -1785,6 +1827,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       statusId: quoteStatusId?.value || statusId?.value,
       approvalStatus: approvalStatusId?.value,
       closeStatus: accountingStatus?.value && accountingStatus?.value,
+      deliveryStatus: deliveryStatus?.value && deliveryStatus?.value,
       productionStatus: productionStatus?.value && productionStatus?.value,
       patternSearch: finalPatternSearch && finalPatternSearch,
       customerId: customerId?.id && customerId?.id,
@@ -1810,6 +1853,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     approvalStatusId,
     statusId,
     accountingStatus,
+    deliveryStatus,
     productionStatus,
     finalPatternSearch,
     customerId,
@@ -2179,6 +2223,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       toDate,
       finalPatternSearch,
       accountingStatus,
+      deliveryStatus,
       productionStatus,
       isCanceled,
       pageNumber,
@@ -2226,6 +2271,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         ); // Cast to unknown first
       }
     }
+
+    if (deliveryStatus) {
+      const deliveryStatusToSet = deliveryStatuses.find(
+        (status) => status.value === Number(deliveryStatus)
+      );
+      if (deliveryStatusToSet) {
+        setDeliveryStatus(
+          deliveryStatusToSet as unknown as { label: string; value: PStatus }
+        );
+      }
+    }
+
     if (productionStatus) {
       const productionStatusToSet = productionStatuses.find(
         (status) => status.value === Number(productionStatus)
@@ -2463,6 +2520,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isOrder,
     isQuote,
     isReceipt,
+    isDeliveryNote,
+    isInvoice,
+    deliveryStatuses,
+    deliveryStatus,
+    setDeliveryStatus,
   };
 };
 
