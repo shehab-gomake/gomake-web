@@ -1,5 +1,9 @@
 import { ReactNode } from "react";
-export type TABLE_TYPE = "PrimaryTable " | "ClassicTable" | "OddEvenTable";
+export type TABLE_TYPE =
+  | "PrimaryTable "
+  | "ClassicTable"
+  | "OddEvenTable"
+  | "RoundTable";
 
 export interface ITableProps {
   rows: ReactNode[][];
@@ -14,6 +18,9 @@ export interface ITableProps {
   columnWidths?: string[];
   onDragEnd?: any;
   withSort?: boolean;
+  onSelectionChange?: (selectedRows: Set<number>) => void;
+  enableCheckboxes?: boolean;
+  rowCheckboxCondition?: (any) => boolean;
 }
 
 export interface ISecondaryTableProps {

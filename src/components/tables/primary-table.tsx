@@ -15,8 +15,9 @@ import { ITableProps } from "@/components/tables/interface";
 import { useStyle } from "@/components/tables/style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTranslation } from "react-i18next";
+import { PrimaryCheckbox } from "../check-box/primary-check-box";
 import { useMemo, useState } from "react";
-import { ArrowUpward, ArrowDownward } from "@mui/icons-material"; // Import the icons
+import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { adaptMarginRight } from "@/utils/adapter";
 
 const PrimaryTableCell = styled(TableCell)(() => {
@@ -48,10 +49,8 @@ const PrimaryTableRow = styled(TableRow)(() => {
 });
 
 const OddEvenTableRow = styled(TableRow)(() => {
-  const { neutralColor } = useGomakeTheme();
   return {
     "&:nth-of-type(even)": {
-      // backgroundColor: `${neutralColor(100)} !important`,
       backgroundColor: `#ececec8a !important`,
     },
     "&:last-child td, &:last-child th": {
@@ -82,6 +81,35 @@ const ClassicTableRow = styled(TableRow)(() => {
     },
     "&:first-child td, &:first-child th": {
       borderBottom: "1px solid #e0e0e0",
+    },
+  };
+});
+
+const RoundTableCell = styled(TableCell)(() => {
+  return {
+    [`&.${tableCellClasses.head}`]: {
+      ...FONT_FAMILY.Lexend(500, 13),
+      backgroundColor: "#F9FAFB",
+      borderBottom: "1px solid #EAECF0 !important",
+      color: "#475467",
+      padding: "5px 5px",
+      height: "40px !important",
+    },
+    [`&.${tableCellClasses.body}`]: {
+      color: "#292D32",
+      // padding: "3px 0",
+      padding: "5px 5px",
+
+      height: 47,
+      ...FONT_FAMILY.Lexend(400, 14),
+    },
+  };
+});
+
+const RoundTableRow = styled(TableRow)(() => {
+  return {
+    "&:last-child td, &:last-child th": {
+      border: 0,
     },
   };
 });
@@ -117,27 +145,64 @@ const PrimaryTable = ({
   columnWidths,
   dataTour,
   isLastItemTotal = false,
-  withSort = false, // New prop for enabling sorting
+  withSort = false,
+  enableCheckboxes = false,
+  onSelectionChange,
+  rowCheckboxCondition = () => true,
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
+  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+  // State for sorting
+  const [sortConfig, setSortConfig] = useState<{
+    key: number;
+    direction: "asc" | "desc";
+  } | null>(null);
+
+  const handleRowSelection = (rowIndex: number) => {
+    setSelectedRows((prevSelectedRows) => {
+      const newSelectedRows = new Set(prevSelectedRows);
+      if (newSelectedRows.has(rowIndex)) {
+        newSelectedRows.delete(rowIndex);
+      } else {
+        newSelectedRows.add(rowIndex);
+      }
+      // Trigger the onSelectionChange callback
+      onSelectionChange?.(newSelectedRows);
+      return newSelectedRows;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedRows?.size === rows?.filter(rowCheckboxCondition).length) {
+      setSelectedRows(new Set());
+      onSelectionChange?.(new Set());
+    } else {
+      const allSelected = new Set<number>();
+      rows.forEach((_, index) => {
+        if (rowCheckboxCondition(rows[index])) allSelected.add(index);
+      });
+      setSelectedRows(allSelected);
+      onSelectionChange?.(allSelected);
+    }
+  };
 
   const TableCell =
-    variant === "ClassicTable" ? ClassicTableCell : PrimaryTableCell;
+    variant === "ClassicTable"
+      ? ClassicTableCell
+      : variant === "RoundTable"
+      ? RoundTableCell
+      : PrimaryTableCell;
 
   const TableRow =
     variant === "ClassicTable"
       ? ClassicTableRow
       : variant === "OddEvenTable"
       ? OddEvenTableRow
+      : variant === "RoundTable"
+      ? RoundTableRow
       : PrimaryTableRow;
-
-  // State for sorting
-  const [sortConfig, setSortConfig] = useState<{
-    key: number;
-    direction: "asc" | "desc";
-  } | null>(null);
 
   // Sorting logic
   const sortedRows = useMemo(() => {
@@ -174,19 +239,40 @@ const PrimaryTable = ({
         overflow: "hidden",
         boxShadow: withoutShadow && "none",
         height: "100%",
+        ...(variant === "RoundTable" && {
+          borderRadius: "12px",
+          border: "1px solid #EAECF0 !important",
+        }),
       }}
     >
       <StyledTableContainer style={classes.tableContainer}>
         <Table data-tour={dataTour} stickyHeader={stickyHeader}>
           <TableHead>
             <TableRow>
+              {/* Checkbox column */}
+              {enableCheckboxes && (
+                <TableCell padding="checkbox">
+                  <PrimaryCheckbox
+                    checked={
+                      selectedRows?.size ===
+                      rows?.filter(rowCheckboxCondition).length
+                    }
+                    onChange={handleSelectAll}
+                    inputProps={{ "aria-label": "select all" }}
+                  />
+                </TableCell>
+              )}
+              {/* Headers */}
               {headers?.map((header, index) => (
                 <TableCell
-                  align="center"
                   key={`header_${index}`}
+                  align="center"
                   style={{
                     cursor: withSort ? "pointer" : "default",
                     userSelect: "none",
+                    ...(index === 0 && stickyHeader
+                      ? { position: "sticky", top: 0 }
+                      : {}),
                   }}
                   onClick={() => withSort && handleSort(index)} // Only activate sort if withSort is true
                 >
@@ -217,6 +303,7 @@ const PrimaryTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
+            {/* Row Checkbox */}
             {sortedRows?.map((row, rowIndex) => (
               <TableRow
                 key={`row_${rowIndex}`}
@@ -227,6 +314,17 @@ const PrimaryTable = ({
                       : "inherit",
                 }}
               >
+                {enableCheckboxes && (
+                  <TableCell padding="checkbox">
+                    {rowCheckboxCondition(row) ? (
+                      <PrimaryCheckbox
+                        checked={selectedRows.has(rowIndex)}
+                        onChange={() => handleRowSelection(rowIndex)}
+                        inputProps={{ "aria-label": `select row ${rowIndex}` }}
+                      />
+                    ) : null}
+                  </TableCell>
+                )}
                 {row.map((cell, cellIndex) => {
                   const cellStyle = columnWidths
                     ? { width: columnWidths[cellIndex] }
@@ -235,7 +333,11 @@ const PrimaryTable = ({
                     return <TableCell style={classes.sticky}>{cell}</TableCell>;
                   } else {
                     return (
-                      <TableCell align="center" style={cellStyle}>
+                      <TableCell
+                        align="center"
+                        style={cellStyle}
+                        key={cellIndex}
+                      >
                         {cell}
                       </TableCell>
                     );
