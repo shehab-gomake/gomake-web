@@ -9,7 +9,7 @@ const JobComponent = ({item, getItemProps}) => {
                     pointerEvents: isEditable ? "auto" : "none",
                     color: "white",
                     borderRadius: 0,
-                    border: 0,
+                    border: '1px solid #F6F6F6',
                     display: "flex",
                     alignItems: "center",
                     justifyContent: 'center',
