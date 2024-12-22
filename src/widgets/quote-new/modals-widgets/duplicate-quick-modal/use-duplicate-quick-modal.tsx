@@ -3,9 +3,12 @@ import { useState } from "react";
 import { quickDuplicateApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios } from "@/hooks";
 import { useSnackBar } from "@/hooks";
+import { useRecoilState } from "recoil";
+import { quoteItemState } from "@/store/quote-item";
 
 const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId }) => {
   const { callApi } = useGomakeAxios();
+  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [groups, setGroups] = useState<any>([{ id: 1, parameters: [{ name: "", value: "" }] }]);
   const addGroup = () => {
@@ -65,9 +68,11 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId }
     }));
     const callBack = (res) => {
       if (res?.success) {
+        console.log("res?.data", res?.data)
         alertSuccessUpdate();
         setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }])
-        getQuote()
+        setQuoteItemValue((prev) => ({ ...prev, documentItems: [...prev?.documentItems, ...res?.data] }))
+        // getQuote()
         onClose()
       } else {
         alertFaultUpdate();
