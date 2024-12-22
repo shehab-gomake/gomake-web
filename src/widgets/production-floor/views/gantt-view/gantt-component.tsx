@@ -11,6 +11,7 @@ const TimelineWidget = () => {
     const {
         groups,
         items,
+        setItems,
         timeRange,
         openGroups,
         getData,
@@ -22,6 +23,13 @@ const TimelineWidget = () => {
         onTimeChange,
         visibleTimeRange
     } = useGantt();
+    const handleItemSelect = (itemId) => {
+        const selectedItem = items.find((item) => item.id === itemId);
+        if (selectedItem) {
+        setItems(prev => prev.map(item => ({...item, selected: selectedItem?.title === item.title, isHasSelected: true})))
+        }
+    };
+
 
     useEffect(() => {
         getData(currentMonth.month()).then();
@@ -29,7 +37,7 @@ const TimelineWidget = () => {
 
     const filteredGroups = useMemo(() => {
         return groups
-            .filter((group) => group.isRoot || openGroups[group.parent])
+            .filter((group) => group.isRoot || openGroups[group.parent] || items.some(item => item.group === group.id && item.isHasSelected && item.selected))
             .map((group) => ({
                 ...group,
                 title: group.isRoot ? (
@@ -47,7 +55,7 @@ const TimelineWidget = () => {
                     <div style={{paddingLeft: 20, backgroundColor: "#FFF"}}>{group.title}</div>
                 ),
             }));
-    }, [groups, openGroups]);
+    }, [groups, openGroups, items]);
 
     return (
         <div>
@@ -62,16 +70,25 @@ const TimelineWidget = () => {
                 onZoom={handleZoom}
                 canResize={'right'}
                 itemRenderer={(props) => {
-                    return <JobComponent {...props} isSelected={props.itemContext.selected}/>
+                    return <JobComponent {...props}/>
                 }}
                 onTimeChange={onTimeChange}
                 visibleTimeStart={visibleTimeRange.start}
                 visibleTimeEnd={visibleTimeRange.end}
+                onItemSelect={handleItemSelect} // Handle item selection
+                onItemDeselect={() => setItems(prev => prev.map(item => ({...item, selected: false, isHasSelected: false})))}
+                selected={items.filter(item => !!item.selected).map(i => i.id)}
+
             >
                 <TimelineHeaders>
                     <SidebarHeader>
                         {({ getRootProps }) => {
-                            return <div {...getRootProps()}>Left</div>
+                            return <div {...getRootProps()} style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                width: '200px'
+                            }}>stations</div>
                         }}
                     </SidebarHeader>
                     <DateHeader

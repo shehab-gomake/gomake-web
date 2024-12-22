@@ -1,4 +1,5 @@
-const JobComponent = ({item, getItemProps, isSelected}) => {
+
+const JobComponent = ({item, getItemProps}) => {
     const isEditable = item.isEditable;
     return (
         <div
@@ -13,8 +14,7 @@ const JobComponent = ({item, getItemProps, isSelected}) => {
                     alignItems: "center",
                     justifyContent: 'center',
                     gap: '10px',
-                    opacity: isSelected ? 0.5 : 1, // Reduce opacity if selected,
-                    transition: "opacity 0.2s, border 0.2s", // Smooth transitions
+                    opacity: isEditable && item.isHasSelected && !item.selected ? 0.3 : 1, // Reduce opacity if selected,
                 },
             })}
         >
