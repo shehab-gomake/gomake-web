@@ -49,16 +49,18 @@ interface IActionContainerComponentProps extends IWorkFlowAction {
   widgetType?: EWidgetProductType,
   selectedWorkFlowCalculatedIsLoaded?: boolean
   sectionName?: string
+  isFromSetting?: boolean
 }
 
 interface IActionsComponentProps {
   actions: IWorkFlowAction[];
   workFlowId?: string;
-  productType: string | null;
-  widgetType: EWidgetProductType,
+  productType?: string | null;
+  widgetType?: EWidgetProductType,
   selectedWorkFlowCalculatedIsLoaded?: boolean,
   sectionName?: string
-  reOderMainActions: (data: any) => void
+  reOderMainActions?: (data: any) => void
+  isFromSetting?: boolean
 }
 
 const Actions = ({
@@ -67,7 +69,8 @@ const Actions = ({
   productType,
   widgetType,
   selectedWorkFlowCalculatedIsLoaded,
-  reOderMainActions
+  reOderMainActions,
+  isFromSetting = false
 }: IActionsComponentProps) => {
   const [actionsList, setActionsList] = useState(actions);
   useEffect(() => {
@@ -116,6 +119,7 @@ const Actions = ({
                               workFlowId={workFlowId}
                               selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
                               delay={index * 800}
+                              isFromSetting={isFromSetting}
                               {...action}
                             />
                           </div>
@@ -138,6 +142,7 @@ const Actions = ({
                   workFlowId={workFlowId}
                   selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
                   delay={index * 800}
+                  isFromSetting={isFromSetting}
                   {...action}
                 />
               </div>
@@ -184,7 +189,8 @@ const ActionContainerComponent = ({
   isNeedFolds,
   foldOptionValueId,
   selectedWorkFlowCalculatedIsLoaded,
-  sectionName
+  sectionName,
+  isFromSetting
 }: IActionContainerComponentProps) => {
 
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
@@ -334,7 +340,7 @@ const ActionContainerComponent = ({
           >
 
             <Stack
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => setIsOpen(!isOpen && !isFromSetting)}
               style={{
                 ...classes.actionContainer,
                 border: isOpen ? classes.actionContainerBorder : "unset",
@@ -733,38 +739,40 @@ const ActionContainerComponent = ({
                           source={source}
                           name={t("machineAttributes.cost")}
                         />
-                        <Divider
-                          orientation={"vertical"}
-                          style={{ height: "50%", margin: "auto 0" }}
-                          flexItem
-                        />
-                        <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
-                          <EditableKeyValueViewComponent
-                            onUpdate={handleProfitUpdate}
-                            {...profit}
-                            values={profitValue}
-                            source={source}
-                            name={t("products.profits.pricingListWidget.profit")}
+                        {!isFromSetting && <>
+                          <Divider
+                            orientation={"vertical"}
+                            style={{ height: "50%", margin: "auto 0" }}
+                            flexItem
                           />
-                          <span>
-                            {`(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
-                              })`}
-                          </span>
-                        </Stack>
-                        <Divider
-                          orientation={"vertical"}
-                          style={{ height: "50%", margin: "auto 0" }}
-                          flexItem
-                        />
+                          <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+                            <EditableKeyValueViewComponent
+                              onUpdate={handleProfitUpdate}
+                              {...profit}
+                              values={profitValue}
+                              source={source}
+                              name={t("products.profits.pricingListWidget.profit")}
+                            />
+                            <span>
+                              {`(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
+                                })`}
+                            </span>
+                          </Stack>
+                          <Divider
+                            orientation={"vertical"}
+                            style={{ height: "50%", margin: "auto 0" }}
+                            flexItem
+                          />
 
-                        <EditableKeyValueViewComponent
-                          onUpdate={handleUpdatePrice}
-                          {...totalPrice}
-                          values={totalPriceValue}
-                          source={source}
-                          valueColor={secondColor(500)}
-                          name={t("sales.quote.price")}
-                        />
+                          <EditableKeyValueViewComponent
+                            onUpdate={handleUpdatePrice}
+                            {...totalPrice}
+                            values={totalPriceValue}
+                            source={source}
+                            valueColor={secondColor(500)}
+                            name={t("sales.quote.price")}
+                          />
+                        </>}
                       </>
                     }
                   </PermissionCheck>

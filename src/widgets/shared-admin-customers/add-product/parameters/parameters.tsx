@@ -8,6 +8,7 @@ import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
 import { GalleryModal, MultiParameterModal } from "../../digital-offset-price";
 import { UpdateParameterModal } from "./widgets/update-parameter-modal";
+import { WorkFlowsWidget } from "../work-flows-widget";
 
 const ParameterWidget = () => {
   const { clasess } = useStyle();
@@ -56,7 +57,12 @@ const ParameterWidget = () => {
     dontAskNextTime,
     selectedSectionId
   } = useAddProduct({ clasess });
-
+  const visibleSections = template?.sections
+  const WorkFlowsTab = {
+    id: "c66465de-95d6-4ea3-bd3f-7efe6664cb0555",
+    name: t("Work Flows"),
+    icon: "pricing",
+  };
   return (
     <>
       {template && (
@@ -65,7 +71,7 @@ const ParameterWidget = () => {
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
                 <Tabs variant="scrollable" scrollButtons={"auto"}>
-                  {template?.sections.map((item, index) => {
+                  {[...visibleSections, WorkFlowsTab].map((item, index) => {
                     return (
                       <TabsMappingWidget
                         key={`tab-${index}`}
@@ -88,61 +94,69 @@ const ParameterWidget = () => {
                 style={{ height: "55vh", overflow: "scroll", width: "100%" }}
               >
                 <div style={clasess.sectionsContainer}>
-                  {template?.sections?.map((section, index) => {
+                  {[...visibleSections, WorkFlowsTab]?.map((section, index) => {
                     if (index === activeIndex) {
-                      return section?.subSections?.map((subSection, index) => {
-                        if (subSection?.isAccordion) {
-                          return (
-                            <AccordionMappingWidget
-                              index={index}
-                              expanded={expanded}
-                              clasess={clasess}
-                              handleChange={handleChange}
-                              subSection={subSection}
-                              onOpenModal={onOpenModal}
-                              section={section}
-                              updatedProductParameterHidden={
-                                updatedProductParameterHidden
-                              }
-                              updatedProductParameterShowToClient={
-                                updatedProductParameterShowToClient
-                              }
-                              updatedProductParameteRequierd={
-                                updatedProductParameteRequierd
-                              }
-                              updatedProductParameteLocked={
-                                updatedProductParameteLocked
-                              }
-                              _renderParameterType={_renderParameterType}
-                              relatedParameters={relatedParameters}
-                            />
-                          );
-                        } else {
-                          return (
-                            <SectionMappingWidget
-                              index={index}
-                              clasess={clasess}
-                              subSection={subSection}
-                              onOpenModal={onOpenModal}
-                              section={section}
-                              updatedProductParameterHidden={
-                                updatedProductParameterHidden
-                              }
-                              updatedProductParameterShowToClient={
-                                updatedProductParameterShowToClient
-                              }
-                              updatedProductParameteRequierd={
-                                updatedProductParameteRequierd
-                              }
-                              updatedProductParameteLocked={
-                                updatedProductParameteLocked
-                              }
-                              _renderParameterType={_renderParameterType}
-                              relatedParameters={relatedParameters}
-                            />
-                          );
-                        }
-                      });
+                      if (
+                        section.name === t("Work Flows")
+                      ) {
+                        return (
+                          <WorkFlowsWidget />
+                        )
+                      } else {
+                        return section?.subSections?.map((subSection, index) => {
+                          if (subSection?.isAccordion) {
+                            return (
+                              <AccordionMappingWidget
+                                index={index}
+                                expanded={expanded}
+                                clasess={clasess}
+                                handleChange={handleChange}
+                                subSection={subSection}
+                                onOpenModal={onOpenModal}
+                                section={section}
+                                updatedProductParameterHidden={
+                                  updatedProductParameterHidden
+                                }
+                                updatedProductParameterShowToClient={
+                                  updatedProductParameterShowToClient
+                                }
+                                updatedProductParameteRequierd={
+                                  updatedProductParameteRequierd
+                                }
+                                updatedProductParameteLocked={
+                                  updatedProductParameteLocked
+                                }
+                                _renderParameterType={_renderParameterType}
+                                relatedParameters={relatedParameters}
+                              />
+                            );
+                          } else {
+                            return (
+                              <SectionMappingWidget
+                                index={index}
+                                clasess={clasess}
+                                subSection={subSection}
+                                onOpenModal={onOpenModal}
+                                section={section}
+                                updatedProductParameterHidden={
+                                  updatedProductParameterHidden
+                                }
+                                updatedProductParameterShowToClient={
+                                  updatedProductParameterShowToClient
+                                }
+                                updatedProductParameteRequierd={
+                                  updatedProductParameteRequierd
+                                }
+                                updatedProductParameteLocked={
+                                  updatedProductParameteLocked
+                                }
+                                _renderParameterType={_renderParameterType}
+                                relatedParameters={relatedParameters}
+                              />
+                            );
+                          }
+                        });
+                      }
                     }
                   })}
                 </div>

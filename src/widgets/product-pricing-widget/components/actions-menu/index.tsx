@@ -11,15 +11,16 @@ const ActionsListMenu = ({
   setActionNameSelected,
   onClickAddNewAction,
   handleCloseSectionNameListMenu,
-  isUnderlined
-}) => {
+  isUnderlined,
+  isFromSetting = false
+}: any) => {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const filteredActions = actionListDropDown?.filter(action =>
     action.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const { classes } = useStyle({ isUnderlined });
+  const { classes } = useStyle({ isUnderlined, isFromSetting });
   return (
     <GoMakeMenu
       handleClose={() => {
