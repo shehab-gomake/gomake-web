@@ -1160,6 +1160,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setStatusId(null);
     setApprovalStatusId(null);
     setAccountingStatus(null);
+    setDeliveryStatus(null);
     setProductionStatus(null);
     setFromDate(null);
     setToDate(null);
