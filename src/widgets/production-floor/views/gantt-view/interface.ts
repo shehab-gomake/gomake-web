@@ -19,4 +19,10 @@ export interface IGanttJob {
     isEditable: boolean;
     selected?: boolean;
     isHasSelected?: boolean;
+    orderNumber: string;
+    productName: string;
+    boardMissionNumber: string;
+    clientName: string;
+    productType: string;
+    numberOfJobsInOrder?: number | string;
 }
