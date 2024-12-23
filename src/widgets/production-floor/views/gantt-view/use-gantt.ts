@@ -8,8 +8,8 @@ const useGantt = () => {
     const {callApi} = useGomakeAxios();
     const [currentMonth, setCurrentMonth] = useState(moment()); // Track the currently displayed month
     const [timeRange, setTimeRange] = useState({
-        defaultTimeStart: moment().startOf("day"),
-        defaultTimeEnd: moment().startOf("day").add(10, 'hours'),
+        defaultTimeStart: moment().startOf("hour").add(-2, 'hours'),
+        defaultTimeEnd: moment().startOf("hour").add(3, 'hours'),
     });
     const [visibleTimeRange, setVisibleTimeRange] = useState({
         start: timeRange.defaultTimeStart.valueOf(),
