@@ -644,13 +644,9 @@ const useAddProduct = ({ classes }) => {
     }, 100);
   };
 
-  //!here
   const [openExternalIdsModal, setOpenExternalIdsModal] = useState(false);
-  const onOpenExternalIdsModal = (parameter, sectionId, subSectionId) => {
+  const onOpenExternalIdsModal = (parameter) => {
     setSelectedParameter(parameter);
-    setSelectedSectonId(sectionId);
-    setSelectedSubSection(subSectionId);
-    console.log(parameter?.valuesConfigs);
     setTimeout(() => {
       setOpenExternalIdsModal(true);
     }, 100);

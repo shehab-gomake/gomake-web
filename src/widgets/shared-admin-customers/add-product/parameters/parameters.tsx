@@ -191,13 +191,6 @@ const ParameterWidget = () => {
             openModal={openExternalIdsModal}
             onClose={onCloseExternalIdsModal}
             selectedParameter={selectedParameter}
-            modalTitle={`${selectedParameter?.name} values`}
-            selectedSectonId={selectedSectonId}
-            selectedSubSection={selectedSubSection}
-            setSelectedParameter={setSelectedParameter}
-            updatedValuesConfigsForParameters={
-              updatedValuesConfigsForParameters
-            }
           />
         </>
       )}

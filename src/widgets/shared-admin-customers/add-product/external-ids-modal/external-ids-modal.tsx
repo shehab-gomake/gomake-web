@@ -1,294 +1,88 @@
 import { useTranslation } from "react-i18next";
-import {
-  GoMakeModal,
-  GomakePrimaryButton,
-  GomakeTextInput,
-} from "@/components";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-
-import { useStyle } from "./style";
-import { PlusIcon, ReOrderIcon, RemoveIcon } from "@/icons";
+import { GoMakeModal, GomakeTextInput } from "@/components";
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
-import { useSnackBar } from "@/hooks";
 import { PrimaryButton } from "@/components/button/primary-button";
+import { useStyle } from "./style";
 
-const ExternalValuesIdModal = ({
-  openModal,
-  onClose,
-  modalTitle,
-  selectedParameter,
-  updatedValuesConfigsForParameters,
-  selectedSectonId,
-  selectedSubSection,
-}: any) => {
+const ExternalValuesIdModal = ({ openModal, onClose, selectedParameter }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
-  const { setSnackbarStateValue } = useSnackBar();
-  const [state, setState] = useState({
-    valuesConfigs: selectedParameter.valuesConfigs,
-    childsParameters: selectedParameter.childsParameters,
-  });
+  const modalTitle = `${selectedParameter?.name} values`;
 
-  const isUpdateNameRepeated = (updateName, currentIndex) => {
-    const formattedUpdateName = updateName.replace(/\s/g, ""); // Remove spaces from the new updateName
-    return state.valuesConfigs.some(
-      (item, index) =>
-        item.updateName.replace(/\s/g, "") === formattedUpdateName &&
-        index !== currentIndex
-    );
-  };
-
-  function checkUpdateNames(array) {
-    for (let item of array) {
-      if (!item.updateName || item.updateName.trim() === "") {
-        return false; // If any updateName is empty or only whitespace, return false
-      }
-    }
-    return true; // If all updateNames are non-empty, return true
-  }
+  const [valuesConfigs, setValuesConfigs] = useState(
+    selectedParameter?.valuesConfigs || []
+  );
 
   useEffect(() => {
     if (selectedParameter?.valuesConfigs) {
-      setState({
-        valuesConfigs: [...selectedParameter.valuesConfigs],
-        childsParameters: selectedParameter.childsParameters,
-      });
+      setValuesConfigs([...selectedParameter.valuesConfigs]);
     }
   }, [selectedParameter]);
 
-  const changeItems = (index: number, filedName: string, value: any) => {
-    setState((prev) => {
-      let temp = [...prev.valuesConfigs];
+  const changeItems = (index, fieldName, value) => {
+    setValuesConfigs((prev) => {
+      const temp = [...prev];
       temp[index] = {
         ...temp[index],
-        [filedName]: value,
+        [fieldName]: value,
       };
-      return {
-        ...prev,
-        valuesConfigs: temp,
-      };
+      return temp;
     });
   };
-  const reorder = (list: any, startIndex: any, endIndex: any) => {
-    const result = Array.from(list);
-    const [removed] = result.splice(startIndex, 1);
-    result.splice(endIndex, 0, removed);
 
-    return result;
-  };
-
-  const onDragEnd = (result) => {
-    if (!result.destination) {
-      return;
-    }
-    const updatedItems = reorder(
-      state.valuesConfigs,
-      result.source.index,
-      result.destination.index
+  const handleUpdate = () => {
+    const updatedList = valuesConfigs?.map(
+      ({ id, externalId, updateName }) => ({
+        valueId: id,
+        valueName: updateName,
+        externalId,
+      })
     );
+    console.log("Updated Values Configs:", updatedList, valuesConfigs);
+  };
 
-    setState({
-      ...state,
-      valuesConfigs: updatedItems,
-    });
-  };
-  const deleteRow = (selectedRow: any) => {
-    const temp = [...state?.valuesConfigs];
-    const index = temp.findIndex((obj: any) => obj?.id === selectedRow?.id);
-    if (index !== -1) {
-      temp.splice(index, 1);
-    }
-    setState({
-      ...state,
-      valuesConfigs: temp,
-    });
-  };
-  const getItemStyle = (isDragging, draggableStyle) => ({
-    padding: 5 * 2,
-    margin: `0 0 ${5}px 0`,
-    mrginLeft: -100,
-    userSelect: "none",
-    display: "flex",
-    flexDirection: "row" as "row",
-    justifyContent: "flex-start",
-    alignItems: "center",
-    width: "100%",
-    gap: 15,
-    flexWrap: "wrap" as "wrap",
-    marginBottom: 25,
-    backgroundColor: isDragging ? "#FAFAFA" : "",
-    ...draggableStyle,
-    top: 0,
-    left: 0,
-    position: "relative",
-  });
-  const getListStyle = (isDraggingOver) => ({
-    width: "100%",
-  });
   return (
-    <>
-      <GoMakeModal
-        openModal={openModal}
-        modalTitle={modalTitle}
-        onClose={onClose}
-        insideStyle={classes.insideStyle}
+    <GoMakeModal
+      openModal={openModal}
+      modalTitle={modalTitle}
+      onClose={onClose}
+      modalTitleStyle={classes.modalTitle}
+      withRoundedCloseIcon={false}
+      insideStyle={classes.insideStyle}
+    >
+      <div
+        className="custom-scrollbar"
+        style={{ height: 330, overflow: "scroll", padding: "0px 10px" }}
       >
-        <div>
-          <div style={{ height: 330, overflow: "scroll" }}>
-            <div style={classes.addBtnStyle}>
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  let temp = [...state.valuesConfigs];
-                  temp.push({
-                    id: uuidv4(),
-                    isHidden: true,
-                    isDefault: false,
-                    isDeleted: false,
-                    updateName: "",
-                    materialValueIds: [],
-                    values: {},
-                  });
-                  setState({
-                    ...state,
-                    valuesConfigs: temp,
-                  });
-                }}
-              >
-                <PlusIcon width={25} height={25} />
-              </div>
-            </div>
-            <div>
-              <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="droppable">
-                  {(provided: any, snapshot: any) => {
-                    return (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        style={getListStyle(snapshot.isDraggingOver)}
-                      >
-                        {state?.valuesConfigs?.map((item, index) => (
-                          <Draggable
-                            key={item.id}
-                            draggableId={item.id}
-                            index={index}
-                          >
-                            {(provided: any, snapshot: any) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                style={getItemStyle(
-                                  snapshot.isDragging,
-                                  provided.draggableProps.style
-                                )}
-                                // style={classes.addNewValueContainer}
-                              >
-                                <div
-                                  style={{
-                                    cursor: "grab",
-                                  }}
-                                >
-                                  <ReOrderIcon />
-                                </div>
-
-                                <div style={classes.textInputContainer}>
-                                  <GomakeTextInput
-                                    style={classes.textInputStyle}
-                                    placeholder={t(
-                                      "products.profits.exceptions.enterValue"
-                                    )}
-                                    onChange={(e) =>
-                                      changeItems(
-                                        index,
-                                        "updateName",
-                                        e.target.value
-                                      )
-                                    }
-                                    defaultValue={item?.updateName}
-                                    onBlur={() => {
-                                      if (
-                                        isUpdateNameRepeated(
-                                          item?.updateName,
-                                          index
-                                        )
-                                      ) {
-                                        setSnackbarStateValue({
-                                          state: true,
-                                          message: t(
-                                            "products.offsetPrice.admin.valueErrorMsg",
-                                            { value: item.updateName }
-                                          ),
-                                          type: "error",
-                                        });
-                                      }
-                                    }}
-                                  />
-                                </div>
-
-                                {state?.childsParameters?.map(
-                                  (value: any, indexChild: number) => {
-                                    return (
-                                      <div
-                                        style={classes.textInputContainer}
-                                        key={`child_${indexChild}`}
-                                      >
-                                        <GomakeTextInput
-                                          style={classes.textInputStyle}
-                                          placeholder={`Enter ${value?.name}`}
-                                          onChange={(e) => {
-                                            changeItems(index, "values", {
-                                              ...state.valuesConfigs[index]
-                                                .values,
-                                              [value?.id]: e.target.value,
-                                            });
-                                          }}
-                                          defaultValue={
-                                            state.valuesConfigs[index].values[
-                                              value?.id
-                                            ]
-                                          }
-                                        />
-                                      </div>
-                                    );
-                                  }
-                                )}
-                                <div
-                                  style={{ cursor: "pointer" }}
-                                  onClick={() => deleteRow(item)}
-                                >
-                                  <RemoveIcon />
-                                </div>
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    );
-                  }}
-                </Droppable>
-              </DragDropContext>
-            </div>
-          </div>
-
+        {valuesConfigs.map((item, index) => (
           <div
-            style={{
-              marginTop: 10,
-              display: "flex",
-              justifyContent: "center",
-              width: "100%",
-            }}
+            key={item?.id}
+            style={{ display: "flex", alignItems: "center", marginBottom: 8 }}
           >
-            <PrimaryButton variant="contained" onClick={() => alert("update")}>
-              Update
-            </PrimaryButton>
+            <span
+              style={{
+                width: "120px",
+                minWidth: "max-content",
+              }}
+            >
+              {item?.updateName}
+            </span>
+            <GomakeTextInput
+              style={{ width: "70%" }}
+              placeholder={t("products.profits.exceptions.enterValue")}
+              onChange={(e) => changeItems(index, "externalId", e.target.value)}
+              defaultValue={item?.externalId || ""}
+            />
           </div>
-        </div>
-      </GoMakeModal>
-    </>
+        ))}
+      </div>
+      <div style={classes.updateBtn}>
+        <PrimaryButton variant="contained" onClick={handleUpdate}>
+          {t("modal.update")}
+        </PrimaryButton>
+      </div>
+    </GoMakeModal>
   );
 };
+
 export { ExternalValuesIdModal };

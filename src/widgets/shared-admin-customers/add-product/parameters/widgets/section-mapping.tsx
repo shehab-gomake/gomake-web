@@ -253,17 +253,15 @@ const SectionMappingWidget = ({
                       }
                     )}
                     {/* !here */}
-                    {parameter?.parameterType ===
-                      EParameterTypes.DROP_DOWN_LIST && (
+                    {(parameter?.parameterType ===
+                      EParameterTypes.SELECT_CHILDS_PARAMETERS ||
+                      parameter?.parameterType ===
+                        EParameterTypes.SELECT_MATERIALS ||
+                      parameter?.parameterType ===
+                        EParameterTypes.DROP_DOWN_LIST) && (
                       <div
                         style={classes.plusIconStyle}
-                        onClick={() =>
-                          onOpenExternalIdsModal(
-                            parameter,
-                            section?.id,
-                            subSection?.id
-                          )
-                        }
+                        onClick={() => onOpenExternalIdsModal(parameter)}
                       >
                         <EditIcon />
                       </div>
