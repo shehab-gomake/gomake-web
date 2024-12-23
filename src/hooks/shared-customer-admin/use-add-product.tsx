@@ -23,14 +23,18 @@ import {
 import { useMaterials } from "../use-materials";
 import { EButtonTypes, EParameterTypes } from "@/enums";
 import cloneDeep from "lodash.clonedeep";
-import { dontAskNextTimeState, selectedUpdateTypeState, selectParameterButtonState } from "@/store";
+import {
+  dontAskNextTimeState,
+  selectedUpdateTypeState,
+  selectParameterButtonState,
+} from "@/store";
 import { ButtonParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/button-parameter";
 import { findParameterByCode } from "@/utils/helpers";
 import { SettingsIcon } from "@/icons/settings";
 import { UpdateTypes } from "@/widgets/shared-admin-customers/add-product/parameters/widgets/section-mapping";
 import { ESourceView, EUpdateActionType } from "@/enums/products";
 
-const useAddProduct = ({ clasess }) => {
+const useAddProduct = ({ classes }) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultAdded, alertSuccessAdded, alertFault } = useSnackBar();
   const [expanded, setExpanded] = useState<string | false>("");
@@ -116,6 +120,7 @@ const useAddProduct = ({ clasess }) => {
   const onClickGraphicTab = () => {
     setActiveTab("Graphic");
   };
+
   const tabs = [
     {
       name: "Settings",
@@ -622,13 +627,14 @@ const useAddProduct = ({ clasess }) => {
 
   const [openModal, setOpenModal] = useState(false);
   const [selectedParameter, setSelectedParameter] = useState<any>({});
-
   const [selectedSectonId, setSelectedSectonId] = useState({});
   const [selectedSubSection, setSelectedSubSection] = useState({});
+
   const onCloseModal = () => {
     setSelectedParameter({});
     setOpenModal(false);
   };
+
   const onOpenModal = (parameter, sectionId, subSectionId) => {
     setSelectedParameter(parameter);
     setSelectedSectonId(sectionId);
@@ -638,12 +644,31 @@ const useAddProduct = ({ clasess }) => {
     }, 100);
   };
 
+  //!here
+  const [openExternalIdsModal, setOpenExternalIdsModal] = useState(false);
+  const onOpenExternalIdsModal = (parameter, sectionId, subSectionId) => {
+    setSelectedParameter(parameter);
+    setSelectedSectonId(sectionId);
+    setSelectedSubSection(subSectionId);
+    console.log(parameter?.valuesConfigs);
+    setTimeout(() => {
+      setOpenExternalIdsModal(true);
+    }, 100);
+  };
+  const onCloseExternalIdsModal = () => {
+    setSelectedParameter({});
+    setOpenExternalIdsModal(false);
+  };
+
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState<any>({});
   const [selectedSectionId, setSelectedSectionId] = useState<any>({});
   const [selectedSubSectionId, setSelectedSubSectionId] = useState<any>({});
-  const [selectedUpdateType, setSelectedUpdateType] = useRecoilState(selectedUpdateTypeState);
-  const [dontAskNextTime, setDontAskNextTime] = useRecoilState(dontAskNextTimeState);
+  const [selectedUpdateType, setSelectedUpdateType] = useRecoilState(
+    selectedUpdateTypeState
+  );
+  const [dontAskNextTime, setDontAskNextTime] =
+    useRecoilState(dontAskNextTimeState);
 
   const handleCloseModal = () => {
     setIsUpdateModalOpen(false);
@@ -661,7 +686,14 @@ const useAddProduct = ({ clasess }) => {
 
   const [isMaterialParameter, setIsMaterialParameter] =
     useState<boolean>(false);
-  const handleUpdateParametersValue = (isMaterial: boolean, sectionId: string, subSectionId: string, parameter: any, option: any, updateType?: UpdateTypes) => {
+  const handleUpdateParametersValue = (
+    isMaterial: boolean,
+    sectionId: string,
+    subSectionId: string,
+    parameter: any,
+    option: any,
+    updateType?: UpdateTypes
+  ) => {
     if (selectedUpdateType === null) {
       alertFault(t("products.parameters.pleaseSelectOneOption"));
       return;
@@ -686,6 +718,7 @@ const useAddProduct = ({ clasess }) => {
     handleCloseModal();
   };
 
+  //!note here
   const _renderParameterType = (
     sectionId,
     subSectionId,
@@ -698,7 +731,7 @@ const useAddProduct = ({ clasess }) => {
     if (parameter?.parameterType === EParameterTypes.INPUT_NUMBER) {
       return (
         <GomakeTextInput
-          style={clasess.textInputStyle}
+          style={classes.textInputStyle}
           defaultValue={parameter.defaultValue}
           placeholder={parameter.name}
           onChange={(e: any) => setChangeDefaultValue(e.target.value)}
@@ -713,11 +746,10 @@ const useAddProduct = ({ clasess }) => {
           disabled={parameter?.isHidden}
         />
       );
-    }
-    else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
+    } else if (parameter?.parameterType === EParameterTypes.INPUT_TEXT) {
       return (
         <GomakeTextInput
-          style={clasess.textInputStyle}
+          style={classes.textInputStyle}
           defaultValue={parameter.defaultValue}
           placeholder={parameter.name}
           type="text"
@@ -732,8 +764,10 @@ const useAddProduct = ({ clasess }) => {
           disabled={parameter?.isHidden}
         />
       );
-    }
-    else if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST || parameter?.parameterType === EParameterTypes.MACHINES_SELECT) {
+    } else if (
+      parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
+      parameter?.parameterType === EParameterTypes.MACHINES_SELECT
+    ) {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
       );
@@ -752,7 +786,7 @@ const useAddProduct = ({ clasess }) => {
             options={parameter?.valuesConfigs}
             disabled={parameter?.isHidden}
             placeholder={parameter.name}
-            style={clasess.dropDownListStyle}
+            style={classes.dropDownListStyle}
             getOptionLabel={(option: any) => option.updateName}
             defaultValue={defaultObject}
             onChange={(e: any, value: any) => {
@@ -765,7 +799,7 @@ const useAddProduct = ({ clasess }) => {
             }}
             renderOption={(props: any, option: any) => {
               return (
-                <div style={clasess.optionsContainer}>
+                <div style={classes.optionsContainer}>
                   <div
                     {...props}
                     style={{ width: "100%", alignSelf: "center", marginTop: 5 }}
@@ -785,7 +819,14 @@ const useAddProduct = ({ clasess }) => {
                           if (!dontAskNextTime) {
                             handleOpenModal();
                           } else {
-                            handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
+                            handleUpdateParametersValue(
+                              false,
+                              sectionId,
+                              subSectionId,
+                              parameter,
+                              option,
+                              UpdateTypes.PRODUCT_ONLY
+                            );
                           }
                         }}
                       >
@@ -803,7 +844,14 @@ const useAddProduct = ({ clasess }) => {
                           if (!dontAskNextTime) {
                             handleOpenModal();
                           } else {
-                            handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
+                            handleUpdateParametersValue(
+                              false,
+                              sectionId,
+                              subSectionId,
+                              parameter,
+                              option,
+                              UpdateTypes.PRODUCT_ONLY
+                            );
                           }
                         }}
                       >
@@ -836,8 +884,7 @@ const useAddProduct = ({ clasess }) => {
           )}
         </div>
       );
-    }
-    else if (parameter?.parameterType === EParameterTypes.SWITCH) {
+    } else if (parameter?.parameterType === EParameterTypes.SWITCH) {
       return (
         <SecondSwitch
           disabled={parameter?.isHidden}
@@ -852,8 +899,9 @@ const useAddProduct = ({ clasess }) => {
           }}
         />
       );
-    }
-    else if (parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS) {
+    } else if (
+      parameter?.parameterType === EParameterTypes.SELECT_CHILDS_PARAMETERS
+    ) {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
       );
@@ -862,7 +910,7 @@ const useAddProduct = ({ clasess }) => {
           options={parameter?.valuesConfigs}
           disabled={parameter?.isHidden}
           placeholder={parameter.name}
-          style={clasess.dropDownListStyle}
+          style={classes.dropDownListStyle}
           getOptionLabel={(option: any) => option.updateName}
           defaultValue={defaultObject}
           onChange={(e: any, value: any) => {
@@ -875,7 +923,7 @@ const useAddProduct = ({ clasess }) => {
           }}
           renderOption={(props: any, option: any) => {
             return (
-              <div style={clasess.optionsContainer}>
+              <div style={classes.optionsContainer}>
                 <div {...props} style={{ width: "100%" }}>
                   {option.updateName}
                 </div>
@@ -892,7 +940,14 @@ const useAddProduct = ({ clasess }) => {
                         if (!dontAskNextTime) {
                           handleOpenModal();
                         } else {
-                          handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
+                          handleUpdateParametersValue(
+                            false,
+                            sectionId,
+                            subSectionId,
+                            parameter,
+                            option,
+                            UpdateTypes.PRODUCT_ONLY
+                          );
                         }
                       }}
                     >
@@ -910,7 +965,14 @@ const useAddProduct = ({ clasess }) => {
                         if (!dontAskNextTime) {
                           handleOpenModal();
                         } else {
-                          handleUpdateParametersValue(false, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
+                          handleUpdateParametersValue(
+                            false,
+                            sectionId,
+                            subSectionId,
+                            parameter,
+                            option,
+                            UpdateTypes.PRODUCT_ONLY
+                          );
                         }
                       }}
                     >
@@ -926,7 +988,7 @@ const useAddProduct = ({ clasess }) => {
     } else if (
       parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
       parameter?.parameterType ===
-      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+        EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
     ) {
       if (allMaterials?.length > 0) {
@@ -997,7 +1059,7 @@ const useAddProduct = ({ clasess }) => {
             options={options?.length > 0 ? options : []}
             disabled={parameter?.isHidden}
             placeholder={parameter.name}
-            style={clasess.dropDownListStyle}
+            style={classes.dropDownListStyle}
             defaultValue={selectedOption}
             getOptionLabel={(option: any) => option.value}
             onChange={(e: any, value: any) => {
@@ -1017,7 +1079,7 @@ const useAddProduct = ({ clasess }) => {
               }
 
               return (
-                <div style={clasess.optionsContainer}>
+                <div style={classes.optionsContainer}>
                   <div {...props} style={{ width: "100%" }}>
                     {option?.value}
                   </div>
@@ -1034,7 +1096,14 @@ const useAddProduct = ({ clasess }) => {
                           if (!dontAskNextTime) {
                             handleOpenModal();
                           } else {
-                            handleUpdateParametersValue(true, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
+                            handleUpdateParametersValue(
+                              true,
+                              sectionId,
+                              subSectionId,
+                              parameter,
+                              option,
+                              UpdateTypes.PRODUCT_ONLY
+                            );
                           }
                         }}
                       >
@@ -1052,7 +1121,14 @@ const useAddProduct = ({ clasess }) => {
                           if (!dontAskNextTime) {
                             handleOpenModal();
                           } else {
-                            handleUpdateParametersValue(true, sectionId, subSectionId, parameter, option, UpdateTypes.PRODUCT_ONLY);
+                            handleUpdateParametersValue(
+                              true,
+                              sectionId,
+                              subSectionId,
+                              parameter,
+                              option,
+                              UpdateTypes.PRODUCT_ONLY
+                            );
                           }
                         }}
                       >
@@ -1069,7 +1145,7 @@ const useAddProduct = ({ clasess }) => {
     } else if (parameter?.parameterType === EParameterTypes.BUTTON) {
       return (
         <ButtonParameterWidget
-          clasess={clasess}
+          classes={classes}
           parameter={parameter}
           selectBtnTypeToAction={selectBtnTypeToAction}
           subSection={subSection}
@@ -1103,6 +1179,7 @@ const useAddProduct = ({ clasess }) => {
       onOpeneGalleryModal();
     }
   };
+
   return {
     setOpenModal,
     setSelectedParameter,
@@ -1164,7 +1241,12 @@ const useAddProduct = ({ clasess }) => {
     selectedSectonId,
     selectedOption,
     selectedSubSectionId,
-    selectedSectionId
+    selectedSectionId,
+
+    //!here
+    onOpenExternalIdsModal,
+    onCloseExternalIdsModal,
+    openExternalIdsModal,
   };
 };
 

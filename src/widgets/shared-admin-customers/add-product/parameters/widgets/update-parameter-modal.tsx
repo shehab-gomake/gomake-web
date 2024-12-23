@@ -25,10 +25,10 @@ const UpdateParameterModal = ({
   selectedUpdateType,
   setSelectedUpdateType,
   setDontAskNextTime,
-  dontAskNextTime
+  dontAskNextTime,
 }: UpdateParameterModalProps) => {
   const { t } = useTranslation();
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
 
   return (
     <>
@@ -42,7 +42,7 @@ const UpdateParameterModal = ({
         }}
         modalTitleColor={"#000000"}
         withRoundedCloseIcon={false}
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
       >
         <Stack direction={"column"} gap={"5px"} paddingBottom={"20px"}>
           <Stack direction={"row"} width={"100%"} alignItems={"center"}>
@@ -50,7 +50,7 @@ const UpdateParameterModal = ({
               checked={selectedUpdateType === UpdateTypes.PRODUCT_ONLY}
               onChange={() => setSelectedUpdateType(UpdateTypes.PRODUCT_ONLY)}
             />
-            <span style={clasess.optionsTitle}>
+            <span style={classes.optionsTitle}>
               {t("products.parameters.productOnly")}
             </span>
           </Stack>
@@ -61,7 +61,7 @@ const UpdateParameterModal = ({
                 setSelectedUpdateType(UpdateTypes.SAME_PRICING_TYPE)
               }
             />
-            <span style={clasess.optionsTitle}>
+            <span style={classes.optionsTitle}>
               {t("products.parameters.samePricingType")}
             </span>
           </Stack>
@@ -71,7 +71,7 @@ const UpdateParameterModal = ({
               checked={selectedUpdateType === UpdateTypes.ALL_PRODUCTS}
               onChange={() => setSelectedUpdateType(UpdateTypes.ALL_PRODUCTS)}
             />
-            <span style={clasess.optionsTitle}>
+            <span style={classes.optionsTitle}>
               {t("products.parameters.allProducts")}
             </span>
           </Stack> */}
@@ -83,11 +83,11 @@ const UpdateParameterModal = ({
           checkedIcon={<CheckboxCheckedIcon />}
           disabled={selectedUpdateType === null}
         />
-        <span style={clasess.dontAskNextTime}>
+        <span style={classes.dontAskNextTime}>
           {t("products.parameters.dontAskNextTime")}
         </span>
         <Stack direction={"row"} gap={"10px"}>
-          <Button style={clasess.cancelButton} onClick={onClose}>
+          <Button style={classes.cancelButton} onClick={onClose}>
             {t("modal.cancel")}
           </Button>
           <GomakePrimaryButton

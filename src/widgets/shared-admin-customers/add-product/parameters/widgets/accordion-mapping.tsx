@@ -5,7 +5,7 @@ import { SectionMappingWidget } from "./section-mapping";
 const AccordionMappingWidget = ({
   expanded,
   index,
-  clasess,
+  classes,
   handleChange,
   subSection,
   onOpenModal,
@@ -15,7 +15,8 @@ const AccordionMappingWidget = ({
   updatedProductParameteLocked,
   _renderParameterType,
   relatedParameters,
-  updatedProductParameterShowToClient
+  updatedProductParameterShowToClient,
+  onOpenExternalIdsModal,
 }) => {
   return (
     <Accordion
@@ -26,10 +27,10 @@ const AccordionMappingWidget = ({
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         style={
-          expanded === `panel_${index}` ? clasess.activeTabContainer : null
+          expanded === `panel_${index}` ? classes.activeTabContainer : null
         }
       >
-        <div style={clasess.headerAccordionContainer}>
+        <div style={classes.headerAccordionContainer}>
           {expanded === `panel_${index}` ? (
             <EditIcon stroke={"rgba(18, 19, 58, 1)"} />
           ) : (
@@ -39,8 +40,8 @@ const AccordionMappingWidget = ({
           <div
             style={
               expanded === `panel_${index}`
-                ? clasess.subSectionAccordionActiveStyle
-                : clasess.subSectionAccordionStyle
+                ? classes.subSectionAccordionActiveStyle
+                : classes.subSectionAccordionStyle
             }
           >
             {subSection.name}
@@ -50,16 +51,19 @@ const AccordionMappingWidget = ({
       <AccordionDetails>
         <SectionMappingWidget
           index={index}
-          clasess={clasess}
+          classes={classes}
           subSection={subSection}
           onOpenModal={onOpenModal}
+          onOpenExternalIdsModal={onOpenExternalIdsModal}
           section={section}
           updatedProductParameterHidden={updatedProductParameterHidden}
           updatedProductParameteRequierd={updatedProductParameteRequierd}
           _renderParameterType={_renderParameterType}
           relatedParameters={relatedParameters}
           updatedProductParameteLocked={updatedProductParameteLocked}
-          updatedProductParameterShowToClient={updatedProductParameterShowToClient}
+          updatedProductParameterShowToClient={
+            updatedProductParameterShowToClient
+          }
         />
       </AccordionDetails>
     </Accordion>

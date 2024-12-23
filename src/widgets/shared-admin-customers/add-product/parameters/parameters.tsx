@@ -8,9 +8,10 @@ import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
 import { GalleryModal, MultiParameterModal } from "../../digital-offset-price";
 import { UpdateParameterModal } from "./widgets/update-parameter-modal";
+import { ExternalValuesIdModal } from "../external-ids-modal";
 
 const ParameterWidget = () => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const {
     setSelectedParameter,
     onCloseModal,
@@ -43,7 +44,6 @@ const ParameterWidget = () => {
     straightKnife,
     multiParameterModal,
     onCloseMultiParameterModal,
-    onOpeneMultiParameterModal,
     setSettingParameters,
     settingParameters,
     isMaterialParameter,
@@ -54,22 +54,25 @@ const ParameterWidget = () => {
     handleUpdateParametersValue,
     setDontAskNextTime,
     dontAskNextTime,
-    selectedSectionId
-  } = useAddProduct({ clasess });
+    selectedSectionId,
+    onOpenExternalIdsModal,
+    onCloseExternalIdsModal,
+    openExternalIdsModal,
+  } = useAddProduct({ classes });
 
   return (
     <>
       {template && (
         <>
-          <div style={clasess.mainRowContainer}>
-            <div style={clasess.leftSideContainer}>
-              <div style={clasess.tabsContainer}>
+          <div style={classes.mainRowContainer}>
+            <div style={classes.leftSideContainer}>
+              <div style={classes.tabsContainer}>
                 <Tabs variant="scrollable" scrollButtons={"auto"}>
                   {template?.sections.map((item, index) => {
                     return (
                       <TabsMappingWidget
                         key={`tab-${index}`}
-                        clasess={clasess}
+                        classes={classes}
                         index={index}
                         handleTabClick={handleTabClick}
                         activeIndex={activeIndex}
@@ -87,7 +90,7 @@ const ParameterWidget = () => {
                 className="custom-scrollbar"
                 style={{ height: "55vh", overflow: "scroll", width: "100%" }}
               >
-                <div style={clasess.sectionsContainer}>
+                <div style={classes.sectionsContainer}>
                   {template?.sections?.map((section, index) => {
                     if (index === activeIndex) {
                       return section?.subSections?.map((subSection, index) => {
@@ -96,10 +99,11 @@ const ParameterWidget = () => {
                             <AccordionMappingWidget
                               index={index}
                               expanded={expanded}
-                              clasess={clasess}
+                              classes={classes}
                               handleChange={handleChange}
                               subSection={subSection}
                               onOpenModal={onOpenModal}
+                              onOpenExternalIdsModal={onOpenExternalIdsModal}
                               section={section}
                               updatedProductParameterHidden={
                                 updatedProductParameterHidden
@@ -118,12 +122,14 @@ const ParameterWidget = () => {
                             />
                           );
                         } else {
+                          //!hereeeeeeeeeeeeeeeeee
                           return (
                             <SectionMappingWidget
                               index={index}
-                              clasess={clasess}
+                              classes={classes}
                               subSection={subSection}
                               onOpenModal={onOpenModal}
+                              onOpenExternalIdsModal={onOpenExternalIdsModal}
                               section={section}
                               updatedProductParameterHidden={
                                 updatedProductParameterHidden
@@ -149,10 +155,10 @@ const ParameterWidget = () => {
               </div>
             </div>
           </div>
-          <div style={clasess.addPreviousContainer}>
+          <div style={classes.addPreviousContainer}>
             {activeIndex != 0 ? (
               <GomakePrimaryButton
-                style={clasess.previousBtnStyle}
+                style={classes.previousBtnStyle}
                 onClick={handlePreviousClick}
               >
                 {t("products.offsetPrice.admin.previousBtn")}
@@ -160,7 +166,7 @@ const ParameterWidget = () => {
             ) : null}
             {[...template?.sections].length - 1 != activeIndex ? (
               <GomakePrimaryButton
-                style={clasess.nextBtnStyle}
+                style={classes.nextBtnStyle}
                 onClick={handleNextClick}
               >
                 {t("products.offsetPrice.admin.nextBtn")}
@@ -170,6 +176,20 @@ const ParameterWidget = () => {
           <ChildParameterModal
             openModal={openModal}
             onClose={onCloseModal}
+            selectedParameter={selectedParameter}
+            modalTitle={`${selectedParameter?.name} values`}
+            selectedSectonId={selectedSectonId}
+            selectedSubSection={selectedSubSection}
+            setSelectedParameter={setSelectedParameter}
+            updatedValuesConfigsForParameters={
+              updatedValuesConfigsForParameters
+            }
+          />
+
+          {/* !here */}
+          <ExternalValuesIdModal
+            openModal={openExternalIdsModal}
+            onClose={onCloseExternalIdsModal}
             selectedParameter={selectedParameter}
             modalTitle={`${selectedParameter?.name} values`}
             selectedSectonId={selectedSectonId}
@@ -203,7 +223,15 @@ const ParameterWidget = () => {
         onClose={handleCloseModal}
         selectedUpdateType={selectedUpdateType}
         setSelectedUpdateType={setSelectedUpdateType}
-        onUpdate={() => handleUpdateParametersValue(isMaterialParameter, selectedSectionId, selectedSubSectionId, selectedParameter, selectedOption)}
+        onUpdate={() =>
+          handleUpdateParametersValue(
+            isMaterialParameter,
+            selectedSectionId,
+            selectedSubSectionId,
+            selectedParameter,
+            selectedOption
+          )
+        }
         setDontAskNextTime={setDontAskNextTime}
         dontAskNextTime={dontAskNextTime}
       />

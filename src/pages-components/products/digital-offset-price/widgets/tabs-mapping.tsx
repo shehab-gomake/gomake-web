@@ -11,7 +11,7 @@ import { useCallback } from "react";
 import { useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
 const TabsMappingWidget = ({
-  clasess,
+  classes,
   index,
   handleTabClick,
   activeIndex,
@@ -37,19 +37,28 @@ const TabsMappingWidget = ({
   const hasMissingRequiredParameters = (item) => {
     if (Array.isArray(item?.subSections)) {
       for (const subSection of item.subSections) {
-        const subProduct = subProducts.find(sp => sp.type === subSection?.type) || {};
+        const subProduct =
+          subProducts.find((sp) => sp.type === subSection?.type) || {};
         const subProductParameters = subProduct.parameters || [];
-        const subProductParameterCodes = subProductParameters.map(p => p.parameterCode);
-        const subProductParameterSectionIds = subProductParameters.map(p => p.sectionId);
-        const subProductParameterSubSectionIds = subProductParameters.map(p => p.subSectionId);
+        const subProductParameterCodes = subProductParameters.map(
+          (p) => p.parameterCode
+        );
+        const subProductParameterSectionIds = subProductParameters.map(
+          (p) => p.sectionId
+        );
+        const subProductParameterSubSectionIds = subProductParameters.map(
+          (p) => p.subSectionId
+        );
 
         if (Array.isArray(subSection?.parameters)) {
           for (const parameter of subSection.parameters) {
-              if(parameter.code == "ChangingDatatype"){
-                  debugger
-              }
+            if (parameter.code == "ChangingDatatype") {
+              debugger;
+            }
             if (
-              parameter.isRequired && !parameter.isHiddenInSetting && !parameter.isHidden &&
+              parameter.isRequired &&
+              !parameter.isHiddenInSetting &&
+              !parameter.isHidden &&
               !subProductParameterCodes.includes(parameter.code) &&
               subProductParameterSectionIds.includes(item.id) &&
               subProductParameterSubSectionIds.includes(subSection.id)
@@ -101,7 +110,7 @@ const TabsMappingWidget = ({
   return (
     <div>
       <div
-        style={clasess.tabContainer}
+        style={classes.tabContainer}
         key={index}
         onClick={() => handleTabClick(index)}
       >
@@ -109,36 +118,58 @@ const TabsMappingWidget = ({
           {index === activeIndex ? (
             _renderActiveIcon(item.icon)
           ) : index >= activeIndex ? (
-            !isAdmin && hasMissingRequiredParameters(item) ?
-              <Tooltip title={<div style={{ fontSize: 16 }}>
-                {t("products.offsetPrice.admin.missingRequiredParameters")}
-                <br />
-                <span style={{ fontSize: 12 }}>
-                  {t("products.offsetPrice.admin.missingRequiredParametersTooltip")}
+            !isAdmin && hasMissingRequiredParameters(item) ? (
+              <Tooltip
+                title={
+                  <div style={{ fontSize: 16 }}>
+                    {t("products.offsetPrice.admin.missingRequiredParameters")}
+                    <br />
+                    <span style={{ fontSize: 12 }}>
+                      {t(
+                        "products.offsetPrice.admin.missingRequiredParametersTooltip"
+                      )}
+                    </span>
+                  </div>
+                }
+                style={{ marginTop: 5 }}
+              >
+                <span>
+                  {" "}
+                  <WarnIcon />
                 </span>
-              </div>} style={{ marginTop: 5 }}>
-                <span> <WarnIcon /></span>
-              </Tooltip> :
+              </Tooltip>
+            ) : (
               _renderUnActiveIcon(item.icon)
+            )
+          ) : !isAdmin && hasMissingRequiredParameters(item) ? (
+            <Tooltip
+              title={
+                <div style={{ fontSize: 16 }}>
+                  {t("products.offsetPrice.admin.missingRequiredParameters")}
+                  <br />
+                  <span style={{ fontSize: 12 }}>
+                    {t(
+                      "products.offsetPrice.admin.missingRequiredParametersTooltip"
+                    )}
+                  </span>
+                </div>
+              }
+              style={{ marginTop: 5 }}
+            >
+              <span>
+                {" "}
+                <WarnIcon />
+              </span>
+            </Tooltip>
           ) : (
-            !isAdmin && hasMissingRequiredParameters(item) ?
-              <Tooltip title={<div style={{ fontSize: 16 }}>
-                {t("products.offsetPrice.admin.missingRequiredParameters")}
-                <br />
-                <span style={{ fontSize: 12 }}>
-                  {t("products.offsetPrice.admin.missingRequiredParametersTooltip")}
-                </span>
-              </div>} style={{ marginTop: 5 }}>
-                <span> <WarnIcon /></span>
-              </Tooltip> :
-              <DoneIcon />
+            <DoneIcon />
           )}
         </div>
         <div
           style={
             index === activeIndex
-              ? clasess.tabNameActiveStyle
-              : clasess.tabNameStyle
+              ? classes.tabNameActiveStyle
+              : classes.tabNameStyle
           }
         >
           {item.name}
@@ -153,12 +184,13 @@ const TabsMappingWidget = ({
               <span> <WarnIcon /></span>
             </Tooltip>
           } */}
-
         </div>
         {item.isCanDuplicated && !item.index && !item.isCanDeleted ? (
           <div
             onClick={() =>
-              isAdmin ? duplicateSectionFunction(item) : onDuplicateSection(item)
+              isAdmin
+                ? duplicateSectionFunction(item)
+                : onDuplicateSection(item)
             }
           >
             <AddNewIcon />
@@ -178,9 +210,9 @@ const TabsMappingWidget = ({
         ) : null}
       </div>
       {index === activeIndex ? (
-        <div style={clasess.selectedTabLine} />
+        <div style={classes.selectedTabLine} />
       ) : (
-        <div style={clasess.selectedTabNotLine} />
+        <div style={classes.selectedTabNotLine} />
       )}
     </div>
   );
