@@ -10,7 +10,11 @@ import { useClientContactsList } from "@/hooks/use-client-contacts";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
 
-const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
+const ClickableStatusButton = ({
+  id,
+  document,
+  documentType,
+}: ITaskCategoryLabelProps) => {
   const {
     t,
     openDeliveryModal,
@@ -39,7 +43,7 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
   });
 
   const handleChangeStatusClick = (event: MouseEvent<HTMLElement>) => {
-    getDocumentDeliveryItems(document?.documentType, document?.id);
+    getDocumentDeliveryItems(documentType, document?.id);
     getClientContacts(document?.customerId);
     handleMenuClose();
   };
@@ -89,6 +93,7 @@ const ClickableStatusButton = ({ id, document }: ITaskCategoryLabelProps) => {
         setEditableQuantities={setEditableQuantities}
         setDocumentItems={setDocumentItems}
         clientContacts={clientContacts}
+        documentType={documentType}
       />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}

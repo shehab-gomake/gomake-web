@@ -1,6 +1,9 @@
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+
 export interface ITaskCategoryLabelProps {
   id: string;
   document: any;
+  documentType: DOCUMENT_TYPE;
 }
 
 export interface IUpdateDeliveryStatusModalProps {
@@ -11,8 +14,8 @@ export interface IUpdateDeliveryStatusModalProps {
   editableQuantities?: any;
   setEditableQuantities?: any;
   setDocumentItems?: any;
-
   clientContacts?: any;
+  documentType: DOCUMENT_TYPE;
 }
 
 export interface DeliveryStateDetails {

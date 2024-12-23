@@ -194,6 +194,11 @@ const QuotesListPageWidget = ({
     getValueByKey,
     isOrder,
     isQuote,
+    isDeliveryNote,
+    isInvoice,
+    deliveryStatuses,
+    deliveryStatus,
+    setDeliveryStatus,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -447,6 +452,25 @@ const QuotesListPageWidget = ({
                                   )}
                                   onChange={handleAccountingStatusChange}
                                   value={accountingStatus}
+                                />
+                              </div>
+                            )}
+                            {(isOrder || isDeliveryNote || isInvoice) && (
+                              <div style={classes.statusFilterContainer}>
+                                <div style={classes.filterLabelStyle}>
+                                  {t("sales.documentDeliveries.deliveryStatus")}
+                                </div>
+                                <GoMakeAutoComplate
+                                  key={deliveryStatus?.value}
+                                  options={deliveryStatuses}
+                                  style={classes.textInputStyle}
+                                  placeholder={t(
+                                    "sales.documentDeliveries.deliveryStatus"
+                                  )}
+                                  onChange={(e: any, value: any) => {
+                                    setDeliveryStatus(value);
+                                  }}
+                                  value={deliveryStatus}
                                 />
                               </div>
                             )}

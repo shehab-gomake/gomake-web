@@ -8,11 +8,13 @@ import { useRef } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import SignatureCanvas from "react-signature-canvas";
 import { createDocumentDeliveryApi } from "@/services/api-service/document-deliveries/create-document-delivery";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 export interface ISignatureModalProps {
   openModal: boolean;
   onCloseModal: () => void;
-  documentType: number;
+  onCloseAllModals: () => void;
+  documentType: DOCUMENT_TYPE;
   documentId: string;
   selectedItems: any;
   setSelectedItems: any;
@@ -26,6 +28,7 @@ const SignatureModal = ({
   openModal,
   onCloseModal,
   documentId,
+  onCloseAllModals,
   documentType,
   selectedItems,
   setSelectedItems,
@@ -38,7 +41,6 @@ const SignatureModal = ({
   const { t } = useTranslation();
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const { callApi } = useGomakeAxios();
-
   const sigPad = useRef<SignatureCanvas | null>(null);
 
   const clear = () => {
@@ -46,9 +48,6 @@ const SignatureModal = ({
   };
 
   const save = () => {
-    // if (sigPad.current && sigPad.current.isEmpty()) {
-    //   alertFault(t("sales.cart.signatureEmptyError"));
-    // }
     const dataURL = sigPad.current.getTrimmedCanvas().toDataURL("image/png");
 
     if (sigPad.current.isEmpty()) {
@@ -72,7 +71,7 @@ const SignatureModal = ({
         setSelectedItems([]);
         setDocumentItems(res.data);
         alertSuccessUpdate();
-        onCloseModal();
+        onCloseAllModals();
       } else {
         alertFaultUpdate();
       }
