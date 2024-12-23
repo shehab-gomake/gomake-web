@@ -110,8 +110,8 @@ const useGantt = () => {
     };
 
     const handleZoom = ({visibleTimeStart, visibleTimeEnd}) => {
-        const startTime  = moment(visibleTimeStart);
-        const endTime  = moment(visibleTimeEnd);
+        const startTime = moment(visibleTimeStart);
+        const endTime = moment(visibleTimeEnd);
         const durationHours = endTime.diff(startTime, "hours");
         const monthsDifference = endTime.diff(startTime, 'months');
         const daysDifference = endTime.diff(startTime, 'days');
@@ -146,7 +146,34 @@ const useGantt = () => {
         updateScrollCanvas(visibleTimeStart, visibleTimeEnd)
         setVisibleTimeRange({start: visibleTimeStart, end: visibleTimeEnd})
     }
-
+    const scrollTimeline = (direction) => {
+        const visibleDuration = visibleTimeRange.end - visibleTimeRange.start;
+        const startTime = moment(visibleTimeRange.start);
+        const endTime = moment(visibleTimeRange.end);
+        let scrollAmount: number; // Adjust scroll step (e.g., 1/3 of current duration)
+        const durationHours = endTime.diff(startTime, "hours");
+        const monthsDifference = endTime.diff(startTime, 'months');
+        if (durationHours === 1) {
+            scrollAmount = visibleDuration;
+        } else if (durationHours <= 24) {
+            scrollAmount = visibleDuration / 6;
+        } else if (monthsDifference <= 1) {
+            scrollAmount = visibleDuration / 30
+        } else {
+            scrollAmount = visibleDuration / 12
+        }
+        if (direction === 'left') {
+            setVisibleTimeRange(prevState => ({
+                start: prevState.start - scrollAmount,
+                end: prevState.end - scrollAmount
+            }));
+        } else if (direction === 'right') {
+            setVisibleTimeRange(prevState => ({
+                start: prevState.start + scrollAmount,
+                end: prevState.end + scrollAmount
+            }));
+        }
+    };
     return {
         timeRange,
         setTimeRange,
@@ -164,7 +191,8 @@ const useGantt = () => {
         currentMonth,
         setCurrentMonth,
         onTimeChange,
-        visibleTimeRange
+        visibleTimeRange,
+        scrollTimeline
     };
 };
 
