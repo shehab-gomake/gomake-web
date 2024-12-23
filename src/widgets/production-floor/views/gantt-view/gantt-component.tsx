@@ -7,6 +7,9 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {JobComponent} from "@/widgets/production-floor/views/gantt-view/job-component";
 import moment from "moment";
 import {FONT_FAMILY} from "@/utils/font-family";
+import {IconButton} from "@mui/material";
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 
 const TimelineWidget = () => {
     const {
@@ -22,12 +25,17 @@ const TimelineWidget = () => {
         toggleGroup,
         handleZoom,
         onTimeChange,
-        visibleTimeRange
+        visibleTimeRange,
+        scrollTimeline
     } = useGantt();
     const handleItemSelect = (itemId) => {
         const selectedItem = items.find((item) => item.id === itemId);
         if (selectedItem) {
-        setItems(prev => prev.map(item => ({...item, selected: selectedItem?.title === item.title, isHasSelected: true})))
+            setItems(prev => prev.map(item => ({
+                ...item,
+                selected: selectedItem?.title === item.title,
+                isHasSelected: true
+            })))
         }
     };
 
@@ -54,13 +62,20 @@ const TimelineWidget = () => {
                         {group.title}
                     </Stack>
                 ) : (
-                    <div style={{paddingLeft: 20, backgroundColor: "#FFF", ...FONT_FAMILY.Inter(500, 12)}}>{group.title}</div>
+                    <div style={{
+                        paddingLeft: 20,
+                        backgroundColor: "#FFF", ...FONT_FAMILY.Inter(500, 12)
+                    }}>{group.title}</div>
                 ),
             }));
     }, [groups, openGroups, items]);
 
     return (
         <div>
+            <Stack direction={'row'} justifyContent={'space-between'}>
+                <IconButton onClick={() => scrollTimeline('left')}><KeyboardArrowLeftIcon/></IconButton>
+                <IconButton onClick={() => scrollTimeline('right')}><ChevronRightIcon/></IconButton>
+            </Stack>
             <Timeline
                 groups={filteredGroups.length > 0 ? filteredGroups : [{id: 'empty', title: 'No Groups Available'}]}
                 items={items.length > 0 ? items : []}
@@ -78,7 +93,11 @@ const TimelineWidget = () => {
                 visibleTimeStart={visibleTimeRange.start}
                 visibleTimeEnd={visibleTimeRange.end}
                 onItemSelect={handleItemSelect}
-                onItemDeselect={() => setItems(prev => prev.map(item => ({...item, selected: false, isHasSelected: false})))}
+                onItemDeselect={() => setItems(prev => prev.map(item => ({
+                    ...item,
+                    selected: false,
+                    isHasSelected: false
+                })))}
                 selected={items.filter(item => !!item.selected).map(i => i.id)}
                 dragSnap={1000 * 60}
             >
@@ -86,7 +105,7 @@ const TimelineWidget = () => {
                     style={{...FONT_FAMILY.Inter(500, 12)}}
                 >
                     <SidebarHeader>
-                        {({ getRootProps }) => {
+                        {({getRootProps}) => {
                             return <div {...getRootProps()} style={{
                                 display: 'flex',
                                 justifyContent: 'center',
@@ -98,7 +117,7 @@ const TimelineWidget = () => {
                     </SidebarHeader>
                     <DateHeader
                         unit="primaryHeader"/>
-                    <DateHeader  labelFormat={([start, end], unit) => {
+                    <DateHeader labelFormat={([start, end], unit) => {
                         const momentStart = moment(start);
                         switch (unit) {
                             case "year":
@@ -114,7 +133,7 @@ const TimelineWidget = () => {
                             default:
                                 return "";
                         }
-                    }} />
+                    }}/>
                 </TimelineHeaders>
             </Timeline>
         </div>
