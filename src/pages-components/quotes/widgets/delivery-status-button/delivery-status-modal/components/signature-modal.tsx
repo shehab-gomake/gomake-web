@@ -8,12 +8,13 @@ import { useRef } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import SignatureCanvas from "react-signature-canvas";
 import { createDocumentDeliveryApi } from "@/services/api-service/document-deliveries/create-document-delivery";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 export interface ISignatureModalProps {
   openModal: boolean;
   onCloseModal: () => void;
   onCloseAllModals: () => void;
-  documentType: number;
+  documentType: DOCUMENT_TYPE;
   documentId: string;
   selectedItems: any;
   setSelectedItems: any;
