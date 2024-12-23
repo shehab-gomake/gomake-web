@@ -6,6 +6,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import {JobComponent} from "@/widgets/production-floor/views/gantt-view/job-component";
 import moment from "moment";
+import {FONT_FAMILY} from "@/utils/font-family";
 
 const TimelineWidget = () => {
     const {
@@ -40,19 +41,20 @@ const TimelineWidget = () => {
             .filter((group) => group.isRoot || openGroups[group.parent] || items.some(item => item.group === group.id && item.isHasSelected && item.selected))
             .map((group) => ({
                 ...group,
+                height: 40,
                 title: group.isRoot ? (
                     <Stack
                         bgcolor={openGroups[group.id] ? "#F6F6F6" : "#FFF"}
                         onClick={() => toggleGroup(group.id)}
                         direction="row"
                         alignItems="center"
-                        style={{cursor: "pointer"}}
+                        style={{cursor: "pointer", ...FONT_FAMILY.Inter(500, 12)}}
                     >
                         {openGroups[group.id] ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                         {group.title}
                     </Stack>
                 ) : (
-                    <div style={{paddingLeft: 20, backgroundColor: "#FFF"}}>{group.title}</div>
+                    <div style={{paddingLeft: 20, backgroundColor: "#FFF", ...FONT_FAMILY.Inter(500, 12)}}>{group.title}</div>
                 ),
             }));
     }, [groups, openGroups, items]);
@@ -80,14 +82,17 @@ const TimelineWidget = () => {
                 selected={items.filter(item => !!item.selected).map(i => i.id)}
                 dragSnap={1000 * 60}
             >
-                <TimelineHeaders>
+                <TimelineHeaders
+                    style={{...FONT_FAMILY.Inter(500, 12)}}
+                >
                     <SidebarHeader>
                         {({ getRootProps }) => {
                             return <div {...getRootProps()} style={{
                                 display: 'flex',
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                width: '200px'
+                                width: '200px',
+                                ...FONT_FAMILY.Inter(500, 12)
                             }}>stations</div>
                         }}
                     </SidebarHeader>
