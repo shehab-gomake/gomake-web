@@ -150,7 +150,7 @@ const useGantt = () => {
         const visibleDuration = visibleTimeRange.end - visibleTimeRange.start;
         const startTime = moment(visibleTimeRange.start);
         const endTime = moment(visibleTimeRange.end);
-        let scrollAmount: number; // Adjust scroll step (e.g., 1/3 of current duration)
+        let scrollAmount: number;
         const durationHours = endTime.diff(startTime, "hours");
         const monthsDifference = endTime.diff(startTime, 'months');
         if (durationHours === 1) {
