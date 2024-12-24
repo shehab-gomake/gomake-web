@@ -1,11 +1,17 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon, ReloadIcon } from "@/icons";
-import { Checkbox, Divider, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Checkbox,
+  Divider,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { useRightSideWidget } from "./use-right-side-widget";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { _renderIconLogs } from "@/utils/constants";
 import { useRouter } from "next/router";
 import { useClientTypesList } from "@/hooks/use-client-types";
@@ -14,6 +20,8 @@ import { useRecoilValue } from "recoil";
 import { additionalProductItemsState } from "@/widgets/product-pricing-widget/state";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { permissionsState } from "@/store";
+import { Box, Slider } from "@mui/material";
+import { priceChangePercentsState } from "@/store/min-max-price-change-percents";
 
 const RightSideWidget = ({
   clasess,
@@ -37,7 +45,6 @@ const RightSideWidget = ({
   canCalculation,
   calculationProduct,
   subProducts,
-
 }: any) => {
   const {
     currentProductItemValueTotalPrice,
@@ -61,8 +68,6 @@ const RightSideWidget = ({
   const [logsArray, setLogsArray] = useState(mergedArray);
   const permissions = useRecoilValue(permissionsState);
 
-
-
   useEffect(() => {
     const uniqueArray = mergedArray.filter((item, index, self) => {
       const itemValuesArray = JSON.parse(item.values || "[]");
@@ -74,7 +79,7 @@ const RightSideWidget = ({
             t.actionName === item.actionName &&
             t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
             t?.exception?.exceptionMessage ===
-            item?.exception?.exceptionMessage &&
+              item?.exception?.exceptionMessage &&
             JSON.parse(t.values || "[]")
               .sort()
               .join(",") === itemValuesSorted
@@ -127,6 +132,32 @@ const RightSideWidget = ({
     docType === DOCUMENT_TYPE.quote
       ? t("sales.quote.quoteNumber")
       : t("sales.quote.orderNumber");
+
+  // !here
+  const priceChangePercents = useRecoilValue(priceChangePercentsState);
+  const [sliderValue, setSliderValue] = useState(
+    currentProductItemValueTotalPrice
+  );
+
+  useEffect(() => {
+    setSliderValue(currentProductItemValueTotalPrice);
+  }, [currentProductItemValueTotalPrice]);
+
+  const minDiscount =
+    currentProductItemValueTotalPrice -
+    (currentProductItemValueTotalPrice *
+      (priceChangePercents?.minPercent || 0)) /
+      100;
+
+  const maxIncrease =
+    currentProductItemValueTotalPrice +
+    (currentProductItemValueTotalPrice *
+      (priceChangePercents?.maxPercent || 0)) /
+      100;
+
+  const handleSliderChange = (event, newValue) => {
+    setSliderValue(newValue);
+  };
 
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -199,10 +230,13 @@ const RightSideWidget = ({
               <GomakeTextInput
                 value={currentProductItemValueTotalPrice ?? "---------"}
                 onChange={(e: any) => {
-                  if (!permissions.includes(Permissions.UPDATE_CALCULATED_PRICE)) {
-                    setCurrentProductItemValueTotalPrice(currentProductItemValueTotalPrice);
-                  }
-                  else {
+                  if (
+                    !permissions.includes(Permissions.UPDATE_CALCULATED_PRICE)
+                  ) {
+                    setCurrentProductItemValueTotalPrice(
+                      currentProductItemValueTotalPrice
+                    );
+                  } else {
                     setCurrentProductItemValueTotalPrice(e.target.value);
                   }
                 }}
@@ -211,14 +245,14 @@ const RightSideWidget = ({
               />
             )}
           </div>
-          <span style={clasess.totalCurrancyStyle}>{systemCurrency}
-            <Tooltip
-              title={t(
-                "products.offsetPrice.admin.updateTotalPrice"
-              )}>
-              <IconButton onClick={() => {
-                calculationProduct(subProducts);
-              }}>
+          <span style={clasess.totalCurrancyStyle}>
+            {systemCurrency}
+            <Tooltip title={t("products.offsetPrice.admin.updateTotalPrice")}>
+              <IconButton
+                onClick={() => {
+                  calculationProduct(subProducts);
+                }}
+              >
                 <ReloadIcon />
               </IconButton>
             </Tooltip>
@@ -227,7 +261,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-          calculationProgress.totalWorkFlowsCount && (
+            calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -255,14 +289,16 @@ const RightSideWidget = ({
               )
                 ? 0
                 : (
-                  (currentProductItemValueTotalPrice || 0) /
-                  (quantity?.values[0] || 1)
-                )?.toFixed(4),
+                    (currentProductItemValueTotalPrice || 0) /
+                    (quantity?.values[0] || 1)
+                  )?.toFixed(4),
               unitPrice: systemCurrency,
             })}
           </div>
         )}
-        {widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE ? (
+
+        {widgetType === EWidgetProductType.EDIT ||
+        widgetType === EWidgetProductType.DUPLICATE ? (
           <div
             style={{
               display: "flex",
@@ -311,6 +347,36 @@ const RightSideWidget = ({
             )}
           </div>
         ) : null}
+        {currentProductItemValueTotalPrice && (
+          <Box sx={{ width: 300, textAlign: "center", margin: "20px auto" }}>
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <Typography sx={clasess.labelsStyle}>
+                {Math.round(minDiscount)}
+                {systemCurrency}
+              </Typography>
+              <Typography sx={clasess.labelsStyle}>
+                {Math.round(maxIncrease)}
+                {systemCurrency}
+              </Typography>
+            </Box>
+            <Slider
+              value={sliderValue}
+              onChange={handleSliderChange}
+              aria-label="Price Change Slider"
+              min={Math.round(minDiscount)}
+              max={Math.round(maxIncrease)}
+              step={1}
+            />
+            <Typography sx={clasess.labelsStyle}>
+              New price: {Math.round(sliderValue)}
+              {systemCurrency}
+            </Typography>
+          </Box>
+        )}
         <Divider />
         {additionalProductItems?.length > 0 && (
           <div style={clasess.additionalProductItems}>
@@ -457,9 +523,7 @@ const RightSideWidget = ({
           ) : (
             <div style={clasess.logsContainer}>
               {errorMsg && (
-                <div style={clasess.generalMsgTextStyle}>
-                  {errorMsg}
-                </div>
+                <div style={clasess.generalMsgTextStyle}>{errorMsg}</div>
               )}
               {/* {calculationServerErrorState && (
                 <div style={clasess.generalMsgTextStyle}>
@@ -469,25 +533,19 @@ const RightSideWidget = ({
               {logsArray?.map((item) => {
                 const renderExceptionMessage = (exceptionKey, values) => {
                   if (exceptionKey && values?.length > 0) {
-                    return (
-                      t("CalculationExceptions." + exceptionKey).replace(
-                        /\{\{(\d+)\}\}/g,
-                        (_, index) => values[index] || ""
-                      )
+                    return t("CalculationExceptions." + exceptionKey).replace(
+                      /\{\{(\d+)\}\}/g,
+                      (_, index) => values[index] || ""
                     );
-                  }
-                  else if (exceptionKey) {
-                    return (
-                      t("CalculationExceptions." + exceptionKey)
-                    );
+                  } else if (exceptionKey) {
+                    return t("CalculationExceptions." + exceptionKey);
                   }
                   return "";
                 };
 
                 const renderValues = (values) => {
                   if (!item?.exception?.exceptionKey && values?.length > 0) {
-                    return values.join(", ")
-
+                    return values.join(", ");
                   }
                   return "";
                 };
@@ -506,15 +564,26 @@ const RightSideWidget = ({
                       <div>
                         {_renderIconLogs(item.exception?.exceptionType, 16, 16)}
                       </div>
-                      <div style={{ marginTop: -1.5, display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+                      <div
+                        style={{
+                          marginTop: -1.5,
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "}${renderExceptionMessage(item?.exception?.exceptionKey, item?.exception?.values)}${renderValues(item?.exception?.values)}`}
+                          {`${item.actionName ? item.actionName + ": " : ""}${
+                            item?.exception?.exceptionMessage || " "
+                          }${renderExceptionMessage(
+                            item?.exception?.exceptionKey,
+                            item?.exception?.values
+                          )}${renderValues(item?.exception?.values)}`}
                         </div>
                       </div>
                     </div>
-                  )
-                }
-                else {
+                  );
+                } else {
                   return (
                     <div
                       style={{
@@ -526,12 +595,22 @@ const RightSideWidget = ({
                         gap: 5,
                       }}
                     >
-                      <div>
-                        {_renderIconLogs(item?.exceptionType, 16, 16)}
-                      </div>
-                      <div style={{ marginTop: -1.5, display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+                      <div>{_renderIconLogs(item?.exceptionType, 16, 16)}</div>
+                      <div
+                        style={{
+                          marginTop: -1.5,
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "flex-start",
+                        }}
+                      >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item?.exceptionMessage || " "}${renderExceptionMessage(item?.exceptionKey, item?.values)}${renderValues(item?.values)}`}
+                          {`${
+                            item?.exceptionMessage || " "
+                          }${renderExceptionMessage(
+                            item?.exceptionKey,
+                            item?.values
+                          )}${renderValues(item?.values)}`}
                         </div>
                       </div>
                     </div>

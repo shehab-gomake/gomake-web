@@ -786,7 +786,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickDocumentLogs,
   ]);
 
-  //!here
   const {} = useDocumentsSignalR({ getAllQuotes, docType });
 
   const getAllQuotesInitial = async () => {
