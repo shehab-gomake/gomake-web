@@ -66,6 +66,7 @@ export enum Permissions {
   SHOW_FINANCE = "ShowFinance",
   SHOW_SHIPMENT_TYPES = "ShowShipmentTypes",
   SHOW_PRICING_PROFILE = "ShowPricingProfile",
+  SHOW_PREFERENCES = "ShowPreferences",
 
   //orders group
   SHOW_ORDERS = "ShowOrders",
