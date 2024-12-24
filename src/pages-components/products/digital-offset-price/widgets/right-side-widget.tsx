@@ -133,7 +133,6 @@ const RightSideWidget = ({
       ? t("sales.quote.quoteNumber")
       : t("sales.quote.orderNumber");
 
-  // !here
   const priceChangePercents = useRecoilValue(priceChangePercentsState);
   const [sliderValue, setSliderValue] = useState(
     currentProductItemValueTotalPrice
