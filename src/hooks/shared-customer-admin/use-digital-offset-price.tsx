@@ -2740,7 +2740,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subProducts
   ) => {
     if (subSection.optionToDuplicateContent) {
-      return;
+      //return;
     }
     const relatedParametersfilterd = parameter?.relatedParameters?.filter(
       (relatedParameter) =>
