@@ -21,7 +21,7 @@ const useRightSideWidget = ({ includeVAT }) => {
   useEffect(() => {
     setCalculationExceptionsLogs([])
   }, [])
-  const isLoading = useRecoilValue(isLoadgingState);
+  const [isLoading, setIsLoading] = useRecoilState(isLoadgingState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
   const systemVAT = useRecoilValue<number>(systemVATState);
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
@@ -36,6 +36,11 @@ const useRightSideWidget = ({ includeVAT }) => {
       }
     }
   }, [systemCurrency, currencies]);
+  useEffect(() => {
+    if (calculationExceptionsLogs?.length > 0) {
+      setIsLoading(false)
+    }
+  }, [calculationExceptionsLogs])
   const [
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
