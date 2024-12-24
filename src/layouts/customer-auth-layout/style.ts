@@ -51,7 +51,7 @@ const useStyle = ({
         paddingBottom: navStatus?.isClosed ? 8 : 40,
         overflowY: "scroll" as "scroll",
         position: "relative" as "relative",
-        zIndex: SIDE_MENU_Layout,
+        //  zIndex: SIDE_MENU_Layout,
       },
       rightContainer: {
         width: "100%",

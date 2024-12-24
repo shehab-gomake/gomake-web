@@ -153,7 +153,7 @@ const useAuthLayoutHook = (
             Permission: Permissions.SHOW_PURCHASE_INVOICES,
           },
           {
-            key: "purchase invoice",
+            key: "purchase invoice refund",
             title: "tabs.purchaseInvoiceRefund",
             path: "/purchaseInvoiceRefunds",
             Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
@@ -267,11 +267,13 @@ const useAuthLayoutHook = (
             key: "accountingTransactionReport",
             title: "tabs.accountingTransactionReport",
             path: "/accounting-transaction-report",
+            Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
           },
           {
             key: "adjustmentsReport",
             title: "tabs.adjustmentsReport",
             path: "/adjustments-report",
+            Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
           },
         ],
         icon: () => {

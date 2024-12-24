@@ -84,17 +84,17 @@ const RowMappingWidget = ({
   const canUpdatePrices = router.query.isNewCreation
     ? true
     : item?.isEditable &&
-      CheckDocumentPermission(
-        documentType,
-        DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
-      );
+    CheckDocumentPermission(
+      documentType,
+      DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
+    );
   const canUpdateDeliveryPrices = router.query.isNewCreation
     ? true
     : item?.isEditable &&
-      CheckDocumentPermission(
-        documentType,
-        DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES
-      );
+    CheckDocumentPermission(
+      documentType,
+      DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES
+    );
   const canUpdatePricesBasedOnType =
     item?.productType === 1 ? canUpdateDeliveryPrices : canUpdatePrices;
 
@@ -113,9 +113,9 @@ const RowMappingWidget = ({
         }}
       >
         {!isPrePaymentPage &&
-        isQuoteConfirmation &&
-        !quoteConfirm?.isConfirmed &&
-        quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled ? (
+          isQuoteConfirmation &&
+          !quoteConfirm?.isConfirmed &&
+          quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled ? (
           <div style={classes.checkBoxContainer}>
             <Checkbox
               icon={<CheckboxIcon />}
@@ -158,10 +158,9 @@ const RowMappingWidget = ({
           <span style={{ display: "block", color: "#5859A8" }}>
             {item?.sourceDocumentType
               ? `${t(
-                  `SourceDocument.${
-                    ERPDocumentsTypesEnum[item?.sourceDocumentType]
-                  }`
-                )} ${t("general.shortForNum")}`
+                `SourceDocument.${ERPDocumentsTypesEnum[item?.sourceDocumentType]
+                }`
+              )} ${t("general.shortForNum")}`
               : ""}
           </span>
           <span style={{ display: "block" }}>
@@ -188,7 +187,7 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {item?.productName}
+        {item?.productName === "Delivery" ? t("home.tabs.Delivery") : item?.productName}
       </PrimaryTableCell>
       {quoteItems?.isShowDetails && (
         <PrimaryTableCell

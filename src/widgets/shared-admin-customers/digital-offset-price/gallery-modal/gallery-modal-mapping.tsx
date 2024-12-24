@@ -1,12 +1,19 @@
+import { IconButton, Tooltip } from "@mui/material";
+import { HiddenIcon, NotHiddenIcon } from "../../add-product";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import { findParameterByCode } from "@/utils/helpers";
 
 const GalleryModalMapping = ({
   index,
   item,
   selectedShape,
   createParameterForCalculation,
-  onClickChoosParameter
+  onClickChoosParameter,
+  createParameterForCalculationHidden,
+  isParameterSettings,
+  template,
+  isDiesParameter
 }) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -61,6 +68,28 @@ const GalleryModalMapping = ({
             {t("products.galleryModal.type")}: {item?.rowData?.type?.value?.join(', ')}
           </div> : <></>
 
+      }
+      {
+        isParameterSettings && <div style={{
+          position: "absolute",
+          bottom: 0,
+          right: 10,
+          zIndex: 1000
+        }}>
+          <Tooltip title={isDiesParameter?.valuesConfigs.find(config => config.id === item?.id)?.isHidden ? "visible" : "hidden"}>
+            <IconButton onClick={(event) => {
+              event.stopPropagation();
+              createParameterForCalculationHidden(item)
+            }}>
+              {isDiesParameter?.valuesConfigs.find(config => config.id === item?.id) ? (
+                isDiesParameter.valuesConfigs.find(config => config.id === item?.id).isHidden ? <HiddenIcon /> : <NotHiddenIcon />
+              ) : (
+                <NotHiddenIcon />
+              )}
+
+            </IconButton>
+          </Tooltip>
+        </div>
       }
 
     </div>

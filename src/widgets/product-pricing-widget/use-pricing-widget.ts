@@ -299,29 +299,25 @@ const hasSubWorkFlowsOrProductTypeActions = (selectedWorkFlow) => {
 };
 
 const getSectionNames = (selectedWorkFlow) => {
-  const sectionNames = new Set();
+  const sectionNamesMap = new Map();
 
   if (hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)) {
     if (selectedWorkFlow?.subWorkFlows?.length > 0) {
       selectedWorkFlow.subWorkFlows.forEach(subWorkFlow => {
-        sectionNames.add({
-          productType: subWorkFlow.productType,
-          sectionName: subWorkFlow.sectionName
-        });
+        if (!sectionNamesMap.has(subWorkFlow.productType)) {
+          sectionNamesMap.set(subWorkFlow.productType, subWorkFlow.sectionName);
+        }
       });
     } else if (selectedWorkFlow?.subWorkFlows?.length === 0) {
       selectedWorkFlow.actions.forEach(action => {
-        if (action.productType) {
-          sectionNames.add({
-            productType: action.productType,
-            sectionName: action.sectionName
-          });
+        if (action.productType && !sectionNamesMap.has(action.productType)) {
+          sectionNamesMap.set(action.productType, action.sectionName);
         }
       });
     }
   }
 
-  return Array.from(sectionNames);
+  return Array.from(sectionNamesMap, ([productType, sectionName]) => ({ productType, sectionName }));
 };
 
 const onClickAddActionToWorkFlow = async () => {

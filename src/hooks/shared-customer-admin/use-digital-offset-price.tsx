@@ -2336,6 +2336,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           index={index}
           straightKnife={straightKnife}
           allMaterials={allMaterials}
+          template={productTemplate}
+          getProductById={getProductById}
         />
       );
     } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
@@ -2738,7 +2740,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subProducts
   ) => {
     if (subSection.optionToDuplicateContent) {
-      return;
+      //return;
     }
     const relatedParametersfilterd = parameter?.relatedParameters?.filter(
       (relatedParameter) =>
@@ -4539,7 +4541,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (!productTemplate?.sections) {
         return true;
       }
-      for (const section of productTemplate?.sections) {
+      let sections = productTemplate?.sections.filter((x) => !x.isHidden);
+      for (const section of sections) {
+
         for (const subSection of section.subSections) {
           for (const parameter of subSection.parameters) {
             if (!parameter.isHidden && parameter.isRequired) {

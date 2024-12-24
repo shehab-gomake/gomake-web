@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 
-const useStyleCharacterDetails = ({ showAll }) => {
+const useStyleCharacterDetails = ({ showAll, showLessHeightFit }) => {
   const classes = useMemo(() => {
     return {
       mainContainer: {
-        height: showAll ? 100 : 74,
+        height: showAll ? 100 : showLessHeightFit ? "fit-content" : 74,
         overflowY: "scroll" as "scroll",
         borderRight: showAll ? "1px solid  #F135A3" : "none",
         padding: "5px 10px 0px 10px",
@@ -29,7 +29,7 @@ const useStyleCharacterDetails = ({ showAll }) => {
         ...FONT_FAMILY.Lexend(500, 14),
       },
     };
-  }, []);
+  }, [showAll]);
   return {
     classes,
   };

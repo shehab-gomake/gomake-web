@@ -9,6 +9,7 @@ import { PackageIcon } from "@/icons/package-icon";
 import { GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { PStatus } from "../enums";
+import { Permissions } from "@/components/CheckPermission/enum";
 import {
   addBoardMissionsToFileUploaderApi,
   printJobUsingPrintNodeApi,
@@ -22,6 +23,7 @@ import {
 import { MarkAsUnReadyIcon } from "./icons/mark-as-un-ready";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { EditIcon } from "@/icons";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const useMoreCircle = ({
   mission,
@@ -95,10 +97,14 @@ const useMoreCircle = ({
     };
     await printJobUsingPrintNodeApi(callApi, callBack, jobId);
   };
+  const { CheckPermission } = useUserPermission();
+
+  const isSendPaymentToClient = CheckPermission(Permissions.SHOW_PRODUCTION_FLOOR);
+  const isShowLogs = CheckPermission(Permissions.SHOW_LOGS);
 
   const menuList = [
     {
-      condition: true,
+      condition: true && isSendPaymentToClient,
       name: (
         <a
           style={classes.menuTitleStyle}
@@ -114,7 +120,7 @@ const useMoreCircle = ({
         ),
     },
     {
-      condition: mission?.isEditable,
+      condition: mission?.isEditable && isSendPaymentToClient,
       name: (
         <a style={classes.menuTitleStyle} href={handleClickEdit(mission)}>
           {t("materials.buttons.edit")}
@@ -124,25 +130,25 @@ const useMoreCircle = ({
       onclick: () => navigate(handleClickEdit(mission)),
     },
     {
-      condition: true,
+      condition: true && isSendPaymentToClient,
       name: t("boardMissions.pdfWorkMission"),
       icon: <PDFIcon />,
       onclick: () => onClickWorkMissionPdf(mission?.id, mission?.actionId),
     },
     {
-      condition: true,
+      condition: true && isSendPaymentToClient,
       name: t("boardMissions.pdfProductionOrderSummary"),
       icon: <PDFIcon />,
       onclick: () => onClickOrderSummeryPdf(mission?.id),
     },
     {
-      condition: true,
+      condition: true && isSendPaymentToClient,
       name: t("boardMissions.printProductionPdf"),
       icon: <PDFIcon />,
       onclick: () => GetPrintingTicketPDF(mission),
     },
     {
-      condition: true,
+      condition: true && isSendPaymentToClient,
       name: t("boardMissions.printPackagingSlip"),
       icon: <PackageIcon />,
       onclick:
@@ -157,7 +163,7 @@ const useMoreCircle = ({
       onclick: () => onClickDuplicate(mission),
     },
     {
-      condition: mission?.status === PStatus.IN_PROCESS,
+      condition: mission?.status === PStatus.IN_PROCESS && isSendPaymentToClient,
       name: !mission?.isReady
         ? t("boardMissions.markAsReady")
         : t("boardMissions.markAsUnReady"),
@@ -175,7 +181,7 @@ const useMoreCircle = ({
     //   onclick: () => onClickReturnToProduction(mission),
     // },
     {
-      condition: true,
+      condition: true && isSendPaymentToClient && isShowLogs,
       name: t("home.loggers"),
       icon: <LoggerIcon />,
       onclick: () => {
@@ -186,7 +192,7 @@ const useMoreCircle = ({
       },
     },
     {
-      condition: true,
+      condition: true && isSendPaymentToClient,
       name: t("sales.quote.print"),
       icon: <PDFIcon />,
       onclick: () => {
@@ -194,7 +200,7 @@ const useMoreCircle = ({
       },
     },
     !!companyProfile.filesApiAddress && {
-      condition: true,
+      condition: true && isSendPaymentToClient,
       name: t("fileUploader.uploadFile"),
       icon: <PDFIcon />,
       onclick: () => addBoardMissionsToFileUploader(mission),
