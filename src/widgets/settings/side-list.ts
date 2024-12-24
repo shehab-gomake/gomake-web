@@ -89,6 +89,7 @@ export const list: IListItem[] = [
     value: "10",
     icon: PreferencesIcon,
     path: "preferences",
+    permission: Permissions.SHOW_PREFERENCES,
   },
   {
     component: TranslationsWidget,
