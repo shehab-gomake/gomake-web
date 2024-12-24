@@ -40,7 +40,7 @@ export interface Employee {
 }
 
 export interface IUserData {
-  recordID: unknown;
+  recordID?: unknown;
   id?: string;
   username: string;
   password: string;
