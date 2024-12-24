@@ -18,6 +18,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import PriceOfferWidget from "@/widgets/price-offer-widget/price-offer-widget";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 import { ECalculationStatus, ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
+import { useOrdersSignalr, useQuotesSignalr } from "@/hooks";
 
 const RowMappingWidget = ({
   item,
@@ -42,6 +43,8 @@ const RowMappingWidget = ({
   const [isConfirmation, setIsConfirmation] = useState(null);
   const [isSelected, setIsSelected] = useState(item?.isSelected);
   const { getCurrencyUnitText } = useQuoteGetData();
+  const { } = useQuotesSignalr({ getQuote });
+  const { } = useOrdersSignalr({ getQuote });
   const handleChangeSelectedItem = (checked, itemId) => {
     setIsSelected(checked);
     onChangeSelectedItemRowForQoute(checked, itemId);
