@@ -467,31 +467,31 @@ const RightSideWidget = ({
                 </div>
               )} */}
               {logsArray?.map((item) => {
+                const renderExceptionMessage = (exceptionKey, values) => {
+                  if (exceptionKey && values?.length > 0) {
+                    return (
+                      t("CalculationExceptions." + exceptionKey).replace(
+                        /\{\{(\d+)\}\}/g,
+                        (_, index) => values[index] || ""
+                      )
+                    );
+                  }
+                  else if (exceptionKey) {
+                    return (
+                      t("CalculationExceptions." + exceptionKey)
+                    );
+                  }
+                  return "";
+                };
+
+                const renderValues = (values) => {
+                  if (!item?.exception?.exceptionKey && values?.length > 0) {
+                    return values.join(", ")
+
+                  }
+                  return "";
+                };
                 if (item.actionName || item.actionName === null) {
-                  const renderExceptionMessage = (exceptionKey, values) => {
-                    if (exceptionKey && values?.length > 0) {
-                      return (
-                        t("CalculationExceptions." + exceptionKey).replace(
-                          /\{\{(\d+)\}\}/g,
-                          (_, index) => values[index] || ""
-                        )
-                      );
-                    }
-                    else if (exceptionKey) {
-                      return (
-                        t("CalculationExceptions." + exceptionKey)
-                      );
-                    }
-                    return "";
-                  };
-
-                  const renderValues = (values) => {
-                    if (!item?.exception?.exceptionKey && values?.length > 0) {
-                      return values.join(", ")
-
-                    }
-                    return "";
-                  };
                   return (
                     <div
                       style={{
@@ -526,27 +526,13 @@ const RightSideWidget = ({
                         gap: 5,
                       }}
                     >
-                      {_renderIconLogs(item?.exceptionType, 16, 16)}
-
-                      <div style={{ width: "100%", marginTop: -3 }}>
-                        {item?.values &&
-                          item?.values?.length > 0 ? (
-                          <span style={{ color: "black" }}>
-                            {item?.exceptionMessage +
-                              t(
-                                "CalculationExceptions." +
-                                item?.exceptionKey
-                              ).replace(
-                                /\{\{(\d+)\}\}/g,
-                                (_, index) =>
-                                  item?.values[index] || ""
-                              )}
-                          </span>
-                        ) : (
-                          <span style={{ color: "black" }}>
-                            {t("CalculationExceptions." + item?.exceptionKey)}
-                          </span>
-                        )}
+                      <div>
+                        {_renderIconLogs(item?.exceptionType, 16, 16)}
+                      </div>
+                      <div style={{ marginTop: -1.5, display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+                        <div style={{ ...clasess.titleLogsTextStyle }}>
+                          {`${item?.exceptionMessage || " "}${renderExceptionMessage(item?.exceptionKey, item?.values)}${renderValues(item?.values)}`}
+                        </div>
                       </div>
                     </div>
                   );
