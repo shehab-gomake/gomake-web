@@ -9,6 +9,7 @@ import { MoreMenuWidgetWithChilds } from "../more-circle-with-childs";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useRouter } from "next/router";
+import { useState } from "react";
 
 const RowMappingChildWidget = ({
   item,
@@ -23,6 +24,8 @@ const RowMappingChildWidget = ({
   childList,
   documentType,
   isQuoteConfirmation = false,
+  parentItem,
+  onChangeSelectedItemRowForQoute
 }: any) => {
   const { classes } = useStyle({ headerHeight });
   const {
@@ -51,15 +54,21 @@ const RowMappingChildWidget = ({
     childInex,
   });
   const router = useRouter();
-  const {CheckDocumentPermission } = useUserPermission();
-  const canUpdatePrices = router.query.isNewCreation ? true : 
-  (item?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES));
+  const { CheckDocumentPermission } = useUserPermission();
+  const [isSelected, setIsSelected] = useState(item?.isSelected);
+
+  const handleChangeSelectedItem = (checked, itemId) => {
+    setIsSelected(checked);
+    onChangeSelectedItemRowForQoute(checked, itemId);
+  };
+  const canUpdatePrices = router.query.isNewCreation ? true :
+    (item?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES));
 
   return (
     <TableRow
       key={item.id}
       style={{
-        background: index % 2 === 0 ? "#FFFFFF" : "#F8FAFB",
+        background: index % 3 === 0 ? "#FFFFFF" : "#F8FAFB",
       }}
     >
       <PrimaryTableCell
@@ -80,6 +89,10 @@ const RowMappingChildWidget = ({
           <Checkbox
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
+            checked={isSelected}
+            onChange={(e) =>
+              handleChangeSelectedItem(e.target.checked, item?.id)
+            }
           />
           {index}
         </div>

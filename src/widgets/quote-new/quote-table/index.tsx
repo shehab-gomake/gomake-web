@@ -127,6 +127,7 @@ const QuoteForPriceTable = ({
                           <RowMappingChildWidget
                             key={childItem.id}
                             item={childItem}
+                            parentItem={item}
                             index={indexs}
                             columnWidths={adjustedColumnWidths}
                             headerHeight={headerHeight}
@@ -138,6 +139,7 @@ const QuoteForPriceTable = ({
                             childList={item?.childsDocumentItems}
                             isQuoteConfirmation={isQuoteConfirmation}
                             documentType={documentType}
+                            onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
                           />
                         );
                       }
