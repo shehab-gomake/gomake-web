@@ -29,7 +29,10 @@ const DuplicateQuickModal = ({
     deleteGroup,
     handleDropdownChange,
     handleTextInputChange,
-    onClickQuickDuplicate } = useDuplicateQuickModal({ getQuote, onClose, documentType, quoteItemId })
+    onClickQuickDuplicate,
+    isRelatedJobs,
+    setIsRelatedJobs
+  } = useDuplicateQuickModal({ getQuote, onClose, documentType, quoteItemId })
   return (
     <>
       <GoMakeModal
@@ -106,6 +109,8 @@ const DuplicateQuickModal = ({
             <Checkbox
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon fill="#2E3092" />}
+              onChange={(e) => setIsRelatedJobs(e.target.checked)}
+              value={isRelatedJobs}
             />
             <div style={clasess.checkboxLabel}>{t("products.addProduct.admin.createSameJobNumber")}</div>
           </div>

@@ -8,6 +8,7 @@ import { quoteItemState } from "@/store/quote-item";
 
 const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId }) => {
   const { callApi } = useGomakeAxios();
+  const [isRelatedJobs, setIsRelatedJobs] = useState(false);
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [groups, setGroups] = useState<any>([{ id: 1, parameters: [{ name: "", value: "" }] }]);
@@ -68,7 +69,6 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId }
     }));
     const callBack = (res) => {
       if (res?.success) {
-        console.log("res?.data", res?.data)
         alertSuccessUpdate();
         setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }])
         setQuoteItemValue((prev) => ({ ...prev, documentItems: [...prev?.documentItems, ...res?.data] }))
@@ -79,7 +79,7 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId }
       }
     };
     await quickDuplicateApi(callApi, callBack,
-      { documentType: documentType, document: { documentItemId: quoteItemId, items } });
+      { documentType: documentType, document: { documentItemId: quoteItemId, items, isRelatedJobs } });
   };
   return {
     groups,
@@ -90,7 +90,9 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId }
     deleteGroup,
     handleDropdownChange,
     handleTextInputChange,
-    onClickQuickDuplicate
+    onClickQuickDuplicate,
+    isRelatedJobs,
+    setIsRelatedJobs
   };
 };
 
