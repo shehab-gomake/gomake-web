@@ -52,6 +52,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ModalType } from "@/enums";
+import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -267,6 +268,10 @@ const QuoteNewPageWidget = ({
     updateDocumentBudget,
     selectedBudget,
     setSelectedBudget,
+    onCloseQuickDuplicate,
+    onClickQuickDuplicate,
+    openQuickDuplicateModal,
+    quoteItemId
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -328,7 +333,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const {} = useGoMakeTour(quoteSteps, []);
+  const { } = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -372,8 +377,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -442,7 +447,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                      quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -610,6 +615,7 @@ const QuoteNewPageWidget = ({
                   onClickDuplicateWithDifferentQTY={
                     onClickDuplicateWithDifferentQTY
                   }
+                  onClickQuickDuplicate={onClickQuickDuplicate}
                   onClickDeleteQouteItem={onClickDeleteQouteItem}
                   quoteItems={isQuoteConfirmation ? quoteConfirm : quoteItems}
                   changeQuoteItems={changeQuoteItems}
@@ -712,6 +718,15 @@ const QuoteNewPageWidget = ({
         duplicateQuoteItemWithAnotherQuantity={
           duplicateQuoteItemWithAnotherQuantity
         }
+      />
+      <DuplicateQuickModal
+        openModal={openQuickDuplicateModal}
+        onClose={onCloseQuickDuplicate}
+        quoteItemId={quoteItemId}
+        documentType={documentType}
+        getQuote={getQuote}
+
+
       />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
