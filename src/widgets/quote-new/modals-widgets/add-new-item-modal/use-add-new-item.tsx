@@ -12,7 +12,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
-import { addItemApi } from "@/services/api-service/generic-doc/documents-api";
+import { addGenericProductToDocumentApi, addItemApi } from "@/services/api-service/generic-doc/documents-api";
 
 const useAddNewItem = ({ onClose, getQuote, documentType }) => {
   const { callApi } = useGomakeAxios();
@@ -311,6 +311,24 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
     });
   };
 
+  const addGenericProductToDocument = async (data) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        getQuote();
+      } else {
+        alertFaultAdded();
+      }
+    };
+    await addGenericProductToDocumentApi(callApi, callBack, {
+      item: {
+        productName: data?.productName,
+        productCode: data?.code,
+        documentId: quoteItemValue?.id,
+      },
+      documentType: documentType,
+    });
+  };
+
   //!here need more changes
   const onClickCreateQuoteForCustomer = () => {
     if (router.query.isNewCreation) {
@@ -334,27 +352,18 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
         } else addItemForQuotes();
       } else {
         if (active === false) {
-          const updatedQuoteItemValue = { ...quoteItemValue };
-          const newItem = { ...genericItem };
-          updatedQuoteItemValue.documentItems = [
-            ...updatedQuoteItemValue.documentItems,
-            newItem,
-          ];
-          setQuoteItemValue(updatedQuoteItemValue);
+          addGenericProductToDocument(genericItem)
           handleCloseModal();
         } else {
           if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
             addDocumentItemFromMaterial();
           } else {
             navigate(
-              `/products/create?clientTypeId=${
-                quoteItemValue?.client?.clientTypeId
-              }&customerId=${quoteItemValue?.customerID}&customerName=${
-                quoteItemValue?.client?.name
-              }&productId=${selectedProduct?.id}&documentType=${documentType}${
-                quoteItemValue?.number
-                  ? `&documentNumber=${quoteItemValue?.number}`
-                  : ""
+              `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId
+              }&customerId=${quoteItemValue?.customerID}&customerName=${quoteItemValue?.client?.name
+              }&productId=${selectedProduct?.id}&documentType=${documentType}${quoteItemValue?.number
+                ? `&documentNumber=${quoteItemValue?.number}`
+                : ""
               }${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
             );
           }
