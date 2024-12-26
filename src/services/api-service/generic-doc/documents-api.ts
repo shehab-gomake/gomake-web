@@ -52,6 +52,7 @@ const GET_CALCULATE_DOCUMENT_ITEM_URL =
 const GET_CALCULATE_DOCUMENT_URL =
   "/v1/erp-service/documents/calculate-document";
 const ADD_ITEM_URL = "/v1/erp-service/documents/add-item";
+const ADD_GENERIC_PRODUCT_TO_DOCUMENT_URL = "/v1/erp-service/documents/add-generic-product-to-document";
 const UPDATE_DOCUMENT_URL = "/v1/erp-service/documents/update-document";
 const UPDATE_OCCASIONAL_CLIENT_NAME_URL =
   "/v1/erp-service/documents/update-occasional-client-name";
@@ -465,6 +466,16 @@ const addItemApi: ICallAndSetData = async (callApi, setState, data) => {
     callApi,
     EHttpMethod.POST,
     ADD_ITEM_URL,
+    setState,
+    data
+  );
+};
+
+const addGenericProductToDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_GENERIC_PRODUCT_TO_DOCUMENT_URL,
     setState,
     data
   );
@@ -1124,4 +1135,5 @@ export {
   pauseOrdResumeOrderApi,
   createDocumentApi,
   startOrderProductionApi,
+  addGenericProductToDocumentApi
 };
