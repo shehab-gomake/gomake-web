@@ -103,3 +103,9 @@ export enum EAdditionType {
   ValuePerJob,
   ValuePerUnit,
 }
+
+export enum ECalculationStatus {
+  Calculating,
+  Done,
+  Failed,
+}

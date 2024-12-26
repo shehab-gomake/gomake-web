@@ -12,6 +12,8 @@ import { useClientTypesList } from "@/hooks/use-client-types";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRecoilValue } from "recoil";
 import { additionalProductItemsState } from "@/widgets/product-pricing-widget/state";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { permissionsState } from "@/store";
 
 const RightSideWidget = ({
   clasess,
@@ -57,6 +59,7 @@ const RightSideWidget = ({
     ...(calculationExceptionsLogs || []),
   ];
   const [logsArray, setLogsArray] = useState(mergedArray);
+  const permissions = useRecoilValue(permissionsState);
 
 
 
@@ -196,7 +199,12 @@ const RightSideWidget = ({
               <GomakeTextInput
                 value={currentProductItemValueTotalPrice ?? "---------"}
                 onChange={(e: any) => {
-                  setCurrentProductItemValueTotalPrice(e.target.value);
+                  if (!permissions.includes(Permissions.UPDATE_CALCULATED_PRICE)) {
+                    setCurrentProductItemValueTotalPrice(currentProductItemValueTotalPrice);
+                  }
+                  else {
+                    setCurrentProductItemValueTotalPrice(e.target.value);
+                  }
                 }}
                 key={"TotalPriceInput"}
                 style={clasess.inputPriceStyle}
@@ -459,31 +467,31 @@ const RightSideWidget = ({
                 </div>
               )} */}
               {logsArray?.map((item) => {
+                const renderExceptionMessage = (exceptionKey, values) => {
+                  if (exceptionKey && values?.length > 0) {
+                    return (
+                      t("CalculationExceptions." + exceptionKey).replace(
+                        /\{\{(\d+)\}\}/g,
+                        (_, index) => values[index] || ""
+                      )
+                    );
+                  }
+                  else if (exceptionKey) {
+                    return (
+                      t("CalculationExceptions." + exceptionKey)
+                    );
+                  }
+                  return "";
+                };
+
+                const renderValues = (values) => {
+                  if (!item?.exception?.exceptionKey && values?.length > 0) {
+                    return values.join(", ")
+
+                  }
+                  return "";
+                };
                 if (item.actionName || item.actionName === null) {
-                  const renderExceptionMessage = (exceptionKey, values) => {
-                    if (exceptionKey && values?.length > 0) {
-                      return (
-                        t("CalculationExceptions." + exceptionKey).replace(
-                          /\{\{(\d+)\}\}/g,
-                          (_, index) => values[index] || ""
-                        )
-                      );
-                    }
-                    else if (exceptionKey) {
-                      return (
-                        t("CalculationExceptions." + exceptionKey)
-                      );
-                    }
-                    return "";
-                  };
-
-                  const renderValues = (values) => {
-                    if (!item?.exception?.exceptionKey && values?.length > 0) {
-                      return values.join(", ")
-
-                    }
-                    return "";
-                  };
                   return (
                     <div
                       style={{
@@ -518,27 +526,13 @@ const RightSideWidget = ({
                         gap: 5,
                       }}
                     >
-                      {_renderIconLogs(item?.exceptionType, 16, 16)}
-
-                      <div style={{ width: "100%", marginTop: -3 }}>
-                        {item?.values &&
-                          item?.values?.length > 0 ? (
-                          <span style={{ color: "black" }}>
-                            {item?.exceptionMessage +
-                              t(
-                                "CalculationExceptions." +
-                                item?.exceptionKey
-                              ).replace(
-                                /\{\{(\d+)\}\}/g,
-                                (_, index) =>
-                                  item?.values[index] || ""
-                              )}
-                          </span>
-                        ) : (
-                          <span style={{ color: "black" }}>
-                            {t("CalculationExceptions." + item?.exceptionKey)}
-                          </span>
-                        )}
+                      <div>
+                        {_renderIconLogs(item?.exceptionType, 16, 16)}
+                      </div>
+                      <div style={{ marginTop: -1.5, display: "flex", flexDirection: "row", alignItems: "flex-start" }}>
+                        <div style={{ ...clasess.titleLogsTextStyle }}>
+                          {`${item?.exceptionMessage || " "}${renderExceptionMessage(item?.exceptionKey, item?.values)}${renderValues(item?.values)}`}
+                        </div>
                       </div>
                     </div>
                   );

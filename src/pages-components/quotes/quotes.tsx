@@ -194,6 +194,11 @@ const QuotesListPageWidget = ({
     getValueByKey,
     isOrder,
     isQuote,
+    isDeliveryNote,
+    isInvoice,
+    deliveryStatuses,
+    deliveryStatus,
+    setDeliveryStatus,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -450,6 +455,25 @@ const QuotesListPageWidget = ({
                                 />
                               </div>
                             )}
+                            {(isOrder || isDeliveryNote || isInvoice) && (
+                              <div style={classes.statusFilterContainer}>
+                                <div style={classes.filterLabelStyle}>
+                                  {t("sales.documentDeliveries.deliveryStatus")}
+                                </div>
+                                <GoMakeAutoComplate
+                                  key={deliveryStatus?.value}
+                                  options={deliveryStatuses}
+                                  style={classes.textInputStyle}
+                                  placeholder={t(
+                                    "sales.documentDeliveries.deliveryStatus"
+                                  )}
+                                  onChange={(e: any, value: any) => {
+                                    setDeliveryStatus(value);
+                                  }}
+                                  value={deliveryStatus}
+                                />
+                              </div>
+                            )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
                                 DOCUMENT_TYPE.purchaseInvoiceRefund &&
@@ -610,10 +634,11 @@ const QuotesListPageWidget = ({
                       "8%",
                       "8%",
                       "3%",
-                      "20%",
+                      "10%",
                       "7%",
                       "7%",
                       "7%",
+                      "10%",
                       "5%",
                       "5%",
                     ]

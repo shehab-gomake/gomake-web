@@ -23,6 +23,7 @@ const QuoteForPriceTable = ({
   changedocumentItems,
   getCalculateQuoteItem,
   onClickDuplicateWithDifferentQTY,
+  onClickQuickDuplicate,
   onClickDeleteQouteItem,
   quoteItems,
   changeQuoteItems,
@@ -107,6 +108,7 @@ const QuoteForPriceTable = ({
                     onClickDuplicateWithDifferentQTY={
                       onClickDuplicateWithDifferentQTY
                     }
+                    onClickQuickDuplicate={onClickQuickDuplicate}
                     onClickDeleteQouteItem={onClickDeleteQouteItem}
                     documentType={documentType}
                     getQuote={getQuote}
@@ -125,6 +127,7 @@ const QuoteForPriceTable = ({
                           <RowMappingChildWidget
                             key={childItem.id}
                             item={childItem}
+                            parentItem={item}
                             index={indexs}
                             columnWidths={adjustedColumnWidths}
                             headerHeight={headerHeight}
@@ -136,6 +139,7 @@ const QuoteForPriceTable = ({
                             childList={item?.childsDocumentItems}
                             isQuoteConfirmation={isQuoteConfirmation}
                             documentType={documentType}
+                            onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
                           />
                         );
                       }
