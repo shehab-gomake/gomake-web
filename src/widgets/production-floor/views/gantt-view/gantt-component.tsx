@@ -71,11 +71,8 @@ const TimelineWidget = () => {
     }, [groups, openGroups, items]);
 
     return (
-        <div>
-            <Stack direction={'row'} justifyContent={'space-between'}>
-                <IconButton onClick={() => scrollTimeline('left')}><KeyboardArrowLeftIcon/></IconButton>
-                <IconButton onClick={() => scrollTimeline('right')}><ChevronRightIcon/></IconButton>
-            </Stack>
+        <div style={{position: 'relative'}}>
+                <IconButton style={{position: 'absolute', right: -10, top: 8, zIndex: 99999}} onClick={() => scrollTimeline('right')}><ChevronRightIcon/></IconButton>
             <Timeline
                 groups={filteredGroups.length > 0 ? filteredGroups : [{id: 'empty', title: 'No Groups Available'}]}
                 items={items.length > 0 ? items : []}
@@ -111,8 +108,12 @@ const TimelineWidget = () => {
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 width: '200px',
-                                ...FONT_FAMILY.Inter(500, 12)
-                            }}>stations</div>
+                                ...FONT_FAMILY.Inter(500, 14),
+                                position: "relative",
+                            }}>
+                                stations
+                <IconButton style={{position: 'absolute', right: 0}} onClick={() => scrollTimeline('left')}><KeyboardArrowLeftIcon/></IconButton>
+                            </div>
                         }}
                     </SidebarHeader>
                     <DateHeader
