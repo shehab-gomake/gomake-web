@@ -300,8 +300,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let copy = lodashClonedeep(subProducts);
     setSubProductsCopy(copy);
   }, [subProducts]);
-
   useEffect(() => {
+
     if (
       calculationResult &&
       calculationResult.productItemValueDraftId === currentCalculationSessionId
@@ -664,7 +664,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
       });
     });
-    initProduct(temp, allMaterials);
+    setProductTemplate(temp)
+    // initProduct(temp, allMaterials);
   };
 
   useEffect(() => {
@@ -1774,7 +1775,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setSaveCurrentStation(false);
       setcalculationServerErrorState(false);
       // setCurrentSignalRConnectionId(null);
-      setCurrentCalculationSessionId("");
+      // setCurrentCalculationSessionId("");
       setRequestAbortController(null);
       setBillingMethod(null);
       setGraphicDesigner(null);
@@ -2740,7 +2741,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subProducts
   ) => {
     if (subSection.optionToDuplicateContent) {
-      return;
+      //return;
     }
     const relatedParametersfilterd = parameter?.relatedParameters?.filter(
       (relatedParameter) =>
@@ -4712,6 +4713,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             if (!id) {
               setcalculationServerErrorState(true);
               setLoading(false);
+              setCurrentCalculationSessionId(null);
             }
             setCurrentCalculationSessionId(id);
             setCalculationProgress({
