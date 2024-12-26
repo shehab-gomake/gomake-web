@@ -1,5 +1,5 @@
 import { PrimaryTableCell } from "@/components/tables/primary-table";
-import { Checkbox, TableRow } from "@mui/material";
+import { Checkbox, Divider, TableRow } from "@mui/material";
 import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -10,6 +10,7 @@ import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { CharacterDetails } from "../quote-table/row-details/character-details";
 
 const RowMappingChildWidget = ({
   item,
@@ -25,8 +26,11 @@ const RowMappingChildWidget = ({
   documentType,
   isQuoteConfirmation = false,
   parentItem,
-  onChangeSelectedItemRowForQoute
+  onChangeSelectedItemRowForQoute,
+  quoteItems,
+  getQuote
 }: any) => {
+
   const { classes } = useStyle({ headerHeight });
   const {
     isUpdateAmount,
@@ -56,7 +60,8 @@ const RowMappingChildWidget = ({
   const router = useRouter();
   const { CheckDocumentPermission } = useUserPermission();
   const [isSelected, setIsSelected] = useState(item?.isSelected);
-
+  const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
+  console.log("childList", { childList, childInex })
   const handleChangeSelectedItem = (checked, itemId) => {
     setIsSelected(checked);
     onChangeSelectedItemRowForQoute(checked, itemId);
@@ -84,8 +89,27 @@ const RowMappingChildWidget = ({
             flexDirection: "row",
             justifyContent: "flex-start",
             alignItems: "center",
+            position: 'relative'
           }}
         >
+          <Divider orientation={'vertical'}
+            style={{
+              width: '2px',
+              height: childList?.length - 1 !== childInex ? '86px' : '43px',
+              backgroundColor: "#99A9CA",
+              position: 'absolute',
+              top: -25,
+              // marginRight: -10,
+              // marginTop: 1,
+            }} />
+          <Divider orientation={'horizontal'}
+            style={{
+              width: '15px',
+              height: '2px',
+              backgroundColor: '#99A9CA',
+              marginRight: -10,
+              marginTop: 1,
+            }} />
           <Checkbox
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
@@ -110,6 +134,7 @@ const RowMappingChildWidget = ({
           width: columnWidths[2],
           ...FONT_FAMILY.Inter(600, 14),
           color: "#5859A8",
+          borderBottom: childList?.length - 1 !== childInex && "none",
           ...classes.cellContainerStyle,
         }}
       ></PrimaryTableCell>
@@ -119,7 +144,25 @@ const RowMappingChildWidget = ({
           textAlign: "start",
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
-      ></PrimaryTableCell>
+      >
+        {quoteItems?.isShowDetails && (
+          <PrimaryTableCell
+            style={{
+              width: columnWidths[3],
+              textAlign: "start",
+              borderBottom: "none",
+              borderTop: "none",
+            }}
+          >
+            <CharacterDetails
+              details={item?.details}
+              getQuote={getQuote}
+              documentItemId={item?.id}
+              canUpdate={canUpdate}
+            />
+          </PrimaryTableCell>
+        )}
+      </PrimaryTableCell>
       <PrimaryTableCell
         style={{
           width: columnWidths[4],

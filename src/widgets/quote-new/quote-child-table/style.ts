@@ -1,9 +1,14 @@
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { adaptRight } from "@/utils/adapter";
+import { direction } from "html2canvas/dist/types/css/property-descriptors/direction";
+import { useTranslation } from "react-i18next";
 
 const useStyle = ({ headerHeight }) => {
   const { grayColor } = useGomakeTheme();
+  const { t } = useTranslation();
+  const direction = t("direction");
   const classes = useMemo(() => {
     return {
       tableRowStyle: {
@@ -61,6 +66,15 @@ const useStyle = ({ headerHeight }) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+      },
+      subWorkFlowDividerVertical: {
+        width: "2px",
+        backgroundColor: "#99A9CA",
+        margin: "-20px 40px",
+        // top: 5,
+        bottom: "39.5%",
+        height: "20%",
+        ...adaptRight(direction, 5),
       },
     };
   }, []);

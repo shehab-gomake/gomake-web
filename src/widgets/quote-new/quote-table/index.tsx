@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -57,6 +57,15 @@ const QuoteForPriceTable = ({
     documentType === DOCUMENT_TYPE.invoice ||
     documentType === DOCUMENT_TYPE.invoiceRefund;
 
+  const [visibleChilds, setVisibleChilds] = useState<{ [key: number]: boolean }>({});
+
+  // Function to toggle visibility of child items for a specific parent item
+  const toggleChildVisibility = (parentIndex: number) => {
+    setVisibleChilds((prev) => ({
+      ...prev,
+      [parentIndex]: !prev[parentIndex],
+    }));
+  };
   return (
     <div>
       <TableContainer
@@ -118,8 +127,10 @@ const QuoteForPriceTable = ({
                       onChangeSelectedItemRowForQoute
                     }
                     quoteItems={quoteItems}
+                    isShowChilds={visibleChilds[parentIndex]}
+                    setIsShowChilds={() => toggleChildVisibility(parentIndex)}
                   />
-                  {item?.childsDocumentItems &&
+                  {item?.childsDocumentItems && visibleChilds[parentIndex] &&
                     item?.childsDocumentItems?.map(
                       (childItem: any, childIndex: number) => {
                         indexs++;
@@ -140,6 +151,8 @@ const QuoteForPriceTable = ({
                             isQuoteConfirmation={isQuoteConfirmation}
                             documentType={documentType}
                             onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
+                            quoteItems={quoteItems}
+                            getQuote
                           />
                         );
                       }

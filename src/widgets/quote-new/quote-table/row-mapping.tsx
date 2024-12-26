@@ -1,7 +1,7 @@
 import { PrimaryTableCell } from "@/components/tables/primary-table";
-import { Checkbox, TableRow } from "@mui/material";
+import { Checkbox, IconButton, TableRow } from "@mui/material";
 import { useStyle } from "./style";
-import { CalculatingIcon, CheckboxCheckedIcon, CheckboxIcon, NotCalculatingIcon } from "@/icons";
+import { ArrowDownWithCircle, ArrowUpWithCircle, CalculatingIcon, CheckboxCheckedIcon, CheckboxIcon, NotCalculatingIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { CharacterDetails } from "./row-details/character-details";
 import { InputUpdatedValues } from "../input-updated-values";
@@ -37,6 +37,8 @@ const RowMappingWidget = ({
   isPrePaymentPage,
   onChangeSelectedItemRowForQoute,
   quoteItems,
+  isShowChilds,
+  setIsShowChilds,
 }) => {
   const router = useRouter();
   const { classes } = useStyle({ headerHeight });
@@ -142,6 +144,12 @@ const RowMappingWidget = ({
           </div>
         ) : isQuote && !isPrePaymentPage && !isQuoteConfirmation ? (
           <span style={classes.checkBoxContainer}>
+            {item?.childsDocumentItems?.length > 0 &&
+              <>
+                <IconButton onClick={() => setIsShowChilds(!isShowChilds)}>
+                  {isShowChilds ? <ArrowUpWithCircle /> : <ArrowDownWithCircle />}
+                </IconButton>
+              </>}
             <Checkbox
               icon={<CheckboxIcon />}
               checkedIcon={
@@ -210,6 +218,7 @@ const RowMappingWidget = ({
             width: columnWidths[3],
             textAlign: "start",
             borderBottom: item?.childsDocumentItems && "none",
+
           }}
         >
           <CharacterDetails
