@@ -61,7 +61,6 @@ const RowMappingChildWidget = ({
   const { CheckDocumentPermission } = useUserPermission();
   const [isSelected, setIsSelected] = useState(item?.isSelected);
   const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
-  console.log("childList", { childList, childInex })
   const handleChangeSelectedItem = (checked, itemId) => {
     setIsSelected(checked);
     onChangeSelectedItemRowForQoute(checked, itemId);
@@ -73,7 +72,7 @@ const RowMappingChildWidget = ({
     <TableRow
       key={item.id}
       style={{
-        background: index % 3 === 0 ? "#FFFFFF" : "#F8FAFB",
+        background: index % 2 === 1 ? "#FFFFFF" : "#F8FAFB",
       }}
     >
       <PrimaryTableCell
@@ -99,8 +98,6 @@ const RowMappingChildWidget = ({
               backgroundColor: "#99A9CA",
               position: 'absolute',
               top: -25,
-              // marginRight: -10,
-              // marginTop: 1,
             }} />
           <Divider orientation={'horizontal'}
             style={{
