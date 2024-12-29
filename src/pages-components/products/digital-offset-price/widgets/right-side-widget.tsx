@@ -21,6 +21,7 @@ import { additionalProductItemsState } from "@/widgets/product-pricing-widget/st
 import { Permissions } from "@/components/CheckPermission/enum";
 import { permissionsState } from "@/store";
 import { Box, Slider } from "@mui/material";
+import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 
 const RightSideWidget = ({
   clasess,
@@ -293,13 +294,12 @@ const RightSideWidget = ({
             })}
           </div>
         )} */}
-
         {sliderCurrentProductItemValueTotalPrice && (
           <div style={clasess.orderContainer}>
             {t("products.offsetPrice.admin.orderToral", {
               prieceNum: quantity?.values[0],
               price: isNaN(
-                sliderCurrentProductItemValueTotalPrice / quantity?.values[0] //!new
+                sliderCurrentProductItemValueTotalPrice / quantity?.values[0]
               )
                 ? 0
                 : (
@@ -361,36 +361,38 @@ const RightSideWidget = ({
             )}
           </div>
         ) : null}
-        {currentProductItemValueTotalPrice && (
-          <Box sx={{ width: 300, textAlign: "center", margin: "20px auto" }}>
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Typography sx={clasess.labelsStyle}>
-                {Math.round(minDiscount)}
-                {systemCurrency}
-              </Typography>
-              <Typography sx={clasess.labelsStyle}>
-                {Math.round(maxIncrease)}
-                {systemCurrency}
-              </Typography>
-            </Box>
-            <Slider
-              value={sliderCurrentProductItemValueTotalPrice}
-              onChange={handleSliderChange}
-              aria-label="Price Change Slider"
-              min={Math.round(minDiscount)}
-              max={Math.round(maxIncrease)}
-              step={1}
-            />
-            {/* <Typography sx={clasess.labelsStyle}>
+        <PermissionCheck userPermission={Permissions.UPDATE_CALCULATED_PRICE}>
+          {currentProductItemValueTotalPrice && (
+            <Box sx={{ width: 300, textAlign: "center", margin: "20px auto" }}>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Typography sx={clasess.labelsStyle}>
+                  {Math.round(minDiscount)}
+                  {systemCurrency}
+                </Typography>
+                <Typography sx={clasess.labelsStyle}>
+                  {Math.round(maxIncrease)}
+                  {systemCurrency}
+                </Typography>
+              </Box>
+              <Slider
+                value={sliderCurrentProductItemValueTotalPrice}
+                onChange={handleSliderChange}
+                aria-label="Price Change Slider"
+                min={Math.round(minDiscount)}
+                max={Math.round(maxIncrease)}
+                step={1}
+              />
+              {/* <Typography sx={clasess.labelsStyle}>
               New price: {Math.round(sliderCurrentProductItemValueTotalPrice)}
               {systemCurrency}
             </Typography> */}
-          </Box>
-        )}
+            </Box>
+          )}
+        </PermissionCheck>
         <Divider />
         {additionalProductItems?.length > 0 && (
           <div style={clasess.additionalProductItems}>
