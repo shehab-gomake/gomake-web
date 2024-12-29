@@ -11,7 +11,7 @@ import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
 import { useRightSideWidget } from "./use-right-side-widget";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { _renderIconLogs } from "@/utils/constants";
 import { useRouter } from "next/router";
 import { useClientTypesList } from "@/hooks/use-client-types";
@@ -21,7 +21,6 @@ import { additionalProductItemsState } from "@/widgets/product-pricing-widget/st
 import { Permissions } from "@/components/CheckPermission/enum";
 import { permissionsState } from "@/store";
 import { Box, Slider } from "@mui/material";
-import { priceChangePercentsState } from "@/store/min-max-price-change-percents";
 
 const RightSideWidget = ({
   clasess,
@@ -47,6 +46,8 @@ const RightSideWidget = ({
   subProducts,
 }: any) => {
   const {
+    t,
+    direction,
     currentProductItemValueTotalPrice,
     lastProductItemValueTotalPrice,
     calculationProgress,
@@ -57,9 +58,14 @@ const RightSideWidget = ({
     selectedWorkFlow,
     calculationExceptionsLogs,
     setCurrentProductItemValueTotalPrice,
-    t,
+    handleSliderChange,
+    maxIncrease,
+    minDiscount,
+    sliderCurrentProductItemValueTotalPrice,
+    setSliderCurrentProductItemValueTotalPrice,
+    alertFault,
   } = useRightSideWidget({ includeVAT });
-  const direction = t("direction");
+
   const additionalProductItems = useRecoilValue(additionalProductItemsState);
   const mergedArray = [
     ...(selectedWorkFlow?.exceptions || []),
@@ -133,30 +139,11 @@ const RightSideWidget = ({
       ? t("sales.quote.quoteNumber")
       : t("sales.quote.orderNumber");
 
-  const priceChangePercents = useRecoilValue(priceChangePercentsState);
-  const [sliderValue, setSliderValue] = useState(
-    currentProductItemValueTotalPrice
-  );
-
   useEffect(() => {
-    setSliderValue(currentProductItemValueTotalPrice);
+    setSliderCurrentProductItemValueTotalPrice(
+      currentProductItemValueTotalPrice
+    );
   }, [currentProductItemValueTotalPrice]);
-
-  const minDiscount =
-    currentProductItemValueTotalPrice -
-    (currentProductItemValueTotalPrice *
-      (priceChangePercents?.minPercent || 0)) /
-      100;
-
-  const maxIncrease =
-    currentProductItemValueTotalPrice +
-    (currentProductItemValueTotalPrice *
-      (priceChangePercents?.maxPercent || 0)) /
-      100;
-
-  const handleSliderChange = (event, newValue) => {
-    setSliderValue(newValue);
-  };
 
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -227,16 +214,27 @@ const RightSideWidget = ({
               <DotsLoader />
             ) : (
               <GomakeTextInput
-                value={currentProductItemValueTotalPrice ?? "---------"}
+                // value={currentProductItemValueTotalPrice ?? "---------"}
+                value={sliderCurrentProductItemValueTotalPrice ?? "---------"} //!new
+                onBlur={(e: any) => {
+                  const inputValue = Number(e.target.value);
+
+                  if (inputValue < minDiscount || inputValue > maxIncrease) {
+                    alertFault("Value is out of the allowed range!");
+                    setSliderCurrentProductItemValueTotalPrice(
+                      currentProductItemValueTotalPrice
+                    ); // Reset to valid value
+                  }
+                }}
                 onChange={(e: any) => {
                   if (
                     !permissions.includes(Permissions.UPDATE_CALCULATED_PRICE)
                   ) {
-                    setCurrentProductItemValueTotalPrice(
+                    setSliderCurrentProductItemValueTotalPrice(
                       currentProductItemValueTotalPrice
-                    );
+                    ); //!new
                   } else {
-                    setCurrentProductItemValueTotalPrice(e.target.value);
+                    setSliderCurrentProductItemValueTotalPrice(e.target.value); //!new
                   }
                 }}
                 key={"TotalPriceInput"}
@@ -279,7 +277,7 @@ const RightSideWidget = ({
               />
             </div>
           )}
-        {currentProductItemValueTotalPrice && (
+        {/* {currentProductItemValueTotalPrice && (
           <div style={clasess.orderContainer}>
             {t("products.offsetPrice.admin.orderToral", {
               prieceNum: quantity?.values[0],
@@ -289,6 +287,23 @@ const RightSideWidget = ({
                 ? 0
                 : (
                     (currentProductItemValueTotalPrice || 0) /
+                    (quantity?.values[0] || 1)
+                  )?.toFixed(4),
+              unitPrice: systemCurrency,
+            })}
+          </div>
+        )} */}
+
+        {sliderCurrentProductItemValueTotalPrice && (
+          <div style={clasess.orderContainer}>
+            {t("products.offsetPrice.admin.orderToral", {
+              prieceNum: quantity?.values[0],
+              price: isNaN(
+                sliderCurrentProductItemValueTotalPrice / quantity?.values[0] //!new
+              )
+                ? 0
+                : (
+                    (sliderCurrentProductItemValueTotalPrice || 0) /
                     (quantity?.values[0] || 1)
                   )?.toFixed(4),
               unitPrice: systemCurrency,
@@ -363,17 +378,17 @@ const RightSideWidget = ({
               </Typography>
             </Box>
             <Slider
-              value={sliderValue}
+              value={sliderCurrentProductItemValueTotalPrice}
               onChange={handleSliderChange}
               aria-label="Price Change Slider"
               min={Math.round(minDiscount)}
               max={Math.round(maxIncrease)}
               step={1}
             />
-            <Typography sx={clasess.labelsStyle}>
-              New price: {Math.round(sliderValue)}
+            {/* <Typography sx={clasess.labelsStyle}>
+              New price: {Math.round(sliderCurrentProductItemValueTotalPrice)}
               {systemCurrency}
-            </Typography>
+            </Typography> */}
           </Box>
         )}
         <Divider />
