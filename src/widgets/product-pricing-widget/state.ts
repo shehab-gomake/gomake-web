@@ -24,7 +24,7 @@ export const selectedWorkFlowState = selector<ICalculatedWorkFlow>({
   key: "selectedWorkFlowState",
   get: ({ get }) => {
     const workFlows = get(workFlowsState);
-    return workFlows?.find((flow) => flow.selected && flow.isCompleteWorkFlow );
+    return workFlows?.find((flow) => flow.selected && flow.isCompleteWorkFlow);
   },
 });
 export const jobDetailsState = atom<any[]>({
@@ -90,4 +90,9 @@ export const calculationExceptionsLogsState = atom<IExceptionsLog[]>({
 export const additionalProductItemsState = atom<any[]>({
   key: "additionalProductItemsState",
   default: [],
+});
+
+export const sliderCurrentProductItemValuePriceState = atom<number>({
+  key: "sliderCurrentProductItemValuePriceState",
+  default: null,
 });

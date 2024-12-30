@@ -35,9 +35,12 @@ export interface Employee {
   printerId?: number;
   printerBin?: string;
   userLang?: string;
+  minPriceChangePercents?: number | null;
+  maxPriceChangePercents?: number | null;
 }
 
 export interface IUserData {
+  recordID?: unknown;
   id?: string;
   username: string;
   password: string;

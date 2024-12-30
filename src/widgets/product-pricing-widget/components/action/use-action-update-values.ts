@@ -36,6 +36,7 @@ const useActionUpdateValues = () => {
     const [openModalMachine,setOpenModalMachine]=useState(false);
     const [openModalMaterial,setOpenModalMaterial]=useState(false);
     const [currentCalculationSessionId, setCurrentCalculationSessionId] = useRecoilState<any>(currentCalculationSessionIdState);
+
     const onClickOpenModalMachine=()=>{
         setOpenModalMachine(true)
     }
@@ -117,16 +118,27 @@ const useActionUpdateValues = () => {
     const apiCallBackMachine = (res:any) => {
         if (res.success) {
             if(res.data && res.data.item2){
-                setCurrentCalculationSessionId(res.data.item2)
+                if(res.data?.item1?.exceptionType===0){
+                    onClickOpenModalMachine()
+                }
+                else{
+                    setCurrentCalculationSessionId(res.data.item2)
+                }
             }
+            setCurrentCalculationSessionId(res.data.item2)
             alertSuccessUpdate()
         }else {
             onClickOpenModalMachine()
         }
     }
-    const apiCallBackMaterial = (res: {success: boolean}) => {
+    const apiCallBackMaterial = (res) => {
         if (res.success) {
-            alertSuccessUpdate()
+            if(res.data?.item1?.exceptionType===0){
+                onClickOpenModalMaterial()
+            }else{
+                setCurrentCalculationSessionId(res.data.item2)
+                alertSuccessUpdate()
+            }
         }else {
             onClickOpenModalMaterial()
         }
@@ -170,7 +182,6 @@ const useActionUpdateValues = () => {
     }
 
     const selectNewFold = (FoldOptionValueId: string, actionId: string, productType: string, actionIndex: number) => {
-        console.log("FoldOptionValueId", FoldOptionValueId)
         updateProductItemDraftActionMachine(callApi, apiCallBackMaterial, {
             actionId: actionId,
             foldOptionValueId: FoldOptionValueId,

@@ -717,58 +717,59 @@ const ActionContainerComponent = ({
                       />
                     </>
                   }
-                  <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
-                    {
+                  
+                  {
                       source !== EWorkSource.OUT &&
                       <>
-                        <Divider
-                          orientation={"vertical"}
-                          style={{ height: "50%", margin: "auto 0" }}
-                          flexItem
-                        />
-                        <EditableKeyValueViewComponent
-                          onUpdate={handleCostUpdate}
-                          {...totalCost}
-                          values={totalCostValue}
-                          source={source}
-                          name={t("machineAttributes.cost")}
-                        />
-                        <Divider
-                          orientation={"vertical"}
-                          style={{ height: "50%", margin: "auto 0" }}
-                          flexItem
-                        />
-                        <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
-                          <EditableKeyValueViewComponent
-                            onUpdate={handleProfitUpdate}
-                            {...profit}
-                            values={profitValue}
-                            source={source}
-                            name={t("products.profits.pricingListWidget.profit")}
+                        <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
+                          <Divider
+                              orientation={"vertical"}
+                              style={{ height: "50%", margin: "auto 0" }}
+                              flexItem
                           />
-                          <span>
+                          <EditableKeyValueViewComponent
+                              onUpdate={handleCostUpdate}
+                              {...totalCost}
+                              values={totalCostValue}
+                              source={source}
+                              name={t("machineAttributes.cost")}
+                          />
+                          <Divider
+                              orientation={"vertical"}
+                              style={{ height: "50%", margin: "auto 0" }}
+                              flexItem
+                          />
+                          <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+                            <EditableKeyValueViewComponent
+                                onUpdate={handleProfitUpdate}
+                                {...profit}
+                                values={profitValue}
+                                source={source}
+                                name={t("products.profits.pricingListWidget.profit")}
+                            />
+                            <span>
                             {`(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
-                              })`}
+                            })`}
                           </span>
-                        </Stack>
-                        <Divider
-                          orientation={"vertical"}
-                          style={{ height: "50%", margin: "auto 0" }}
-                          flexItem
-                        />
+                          </Stack>
+                          <Divider
+                              orientation={"vertical"}
+                              style={{ height: "50%", margin: "auto 0" }}
+                              flexItem
+                          />
 
+                        </PermissionCheck>
+                        
                         <EditableKeyValueViewComponent
-                          onUpdate={handleUpdatePrice}
-                          {...totalPrice}
-                          values={totalPriceValue}
-                          source={source}
-                          valueColor={secondColor(500)}
-                          name={t("sales.quote.price")}
+                            onUpdate={handleUpdatePrice}
+                            {...totalPrice}
+                            values={totalPriceValue}
+                            source={source}
+                            valueColor={secondColor(500)}
+                            name={t("sales.quote.price")}
                         />
                       </>
-                    }
-                  </PermissionCheck>
-
+                  }
                   <Divider orientation={"vertical"} flexItem />
                   <div onClick={(e) => e.stopPropagation()}>
                     <InOutSourceSelect value={source} onChange={handleSourceChange} />

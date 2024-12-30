@@ -1,46 +1,78 @@
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import cloneDeep from "lodash.clonedeep";
 
-import { addActionToWorkFlowApi, addOutSourceActionApi, deleteActionToWorkFlowApi, removeOutSourceActionApi, updateActionsOrderInWorkFlowApi, updateProductItemValueOutsource } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
-import { actionListForWorkFlow, currentCalculationConnectionId, foldOptionsState, productItemValueByEditState, viewPricingTab } from "@/store";
+import {
+  addActionToWorkFlowApi,
+  addOutSourceActionApi,
+  deleteActionToWorkFlowApi,
+  removeOutSourceActionApi,
+  updateActionsOrderInWorkFlowApi,
+  updateProductItemValueOutsource,
+} from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import {
+  actionListForWorkFlow,
+  currentCalculationConnectionId,
+  foldOptionsState,
+  productItemValueByEditState,
+  viewPricingTab,
+} from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-import { calculationResultState, currentProductItemValueDraftId, currentProductItemValuePriceState, currentProductItemValueState, selectedWorkFlowState } from "./state";
+import {
+  calculationResultState,
+  currentProductItemValueDraftId,
+  currentProductItemValuePriceState,
+  currentProductItemValueState,
+  selectedWorkFlowState,
+  sliderCurrentProductItemValuePriceState,
+} from "./state";
 import { EPricingViews, EWorkSource } from "./enums";
-import { getWorkFlowsActionsApi, getWorkFlowsApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
+import {
+  getWorkFlowsActionsApi,
+  getWorkFlowsApi,
+} from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { getAllActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
-const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow}) => {
-
+const usePricingWidget = ({
+  getOutSourcingSuppliers,
+  workFlows,
+  widgetType,
+  selectedWorkFlowCalculatedIsLoaded,
+  getSelectedWorkFlow,
+}) => {
   const [view, setView] = useRecoilState<EPricingViews>(viewPricingTab);
-  const [actionList, setActionList] = useRecoilState(actionListForWorkFlow)
+  const [actionList, setActionList] = useRecoilState(actionListForWorkFlow);
   const [actionListDropDown, setActionListDropDown] = useState([]);
-  const [actionNameSelected, setActionNameSelected] = useState<any>()
-  const [sectionNameSelected, setSectionNames] = useState<any>()
-  const [isAddNewAction, setIsAddNewAction] = useState(false)
+  const [actionNameSelected, setActionNameSelected] = useState<any>();
+  const [sectionNameSelected, setSectionNames] = useState<any>();
+  const [isAddNewAction, setIsAddNewAction] = useState(false);
 
   const onClickCloseAddNewAction = () => {
-    setIsAddNewAction(false)
-  }
+    setIsAddNewAction(false);
+  };
   const onClickAddNewAction = () => {
-    setIsAddNewAction(true)
-  }
-
+    setIsAddNewAction(true);
+  };
 
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const selectedWorkFlow = useRecoilValue(selectedWorkFlowState);
-  const productItemValueByEdit = useRecoilValue<any>(productItemValueByEditState)
-  const [pageSize, setPageSize] = useState(10)
-  const [heightScrolling, setHeightScrolling] = useState(50)
-  const [isChangeView, setIsChangeView] = useState(true)
-  const [isFirstEntry, setIsFirstEntry] = useState(false)
-  const { alertFaultUpdate,alertFaultAdded,alertSuccessAdded } = useSnackBar();
+  const productItemValueByEdit = useRecoilValue<any>(
+    productItemValueByEditState
+  );
+  const [pageSize, setPageSize] = useState(10);
+  const [heightScrolling, setHeightScrolling] = useState(50);
+  const [isChangeView, setIsChangeView] = useState(true);
+  const [isFirstEntry, setIsFirstEntry] = useState(false);
+  const { alertFaultUpdate, alertFaultAdded, alertSuccessAdded } =
+    useSnackBar();
 
-  const [anchorElActionsListMenu, setAnchorElActionsListMenu] = useState<null | HTMLElement>(null);
-  const [anchorElSectionNameListMenu, setAnchorElSectionNameListMenu] = useState<null | HTMLElement>(null);
+  const [anchorElActionsListMenu, setAnchorElActionsListMenu] =
+    useState<null | HTMLElement>(null);
+  const [anchorElSectionNameListMenu, setAnchorElSectionNameListMenu] =
+    useState<null | HTMLElement>(null);
   const openActionsListMenu = Boolean(anchorElActionsListMenu);
   const openSectionNameListMenu = Boolean(anchorElSectionNameListMenu);
   const handleCloseActionsListMenu = () => {
@@ -53,46 +85,55 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
   const handleOpenActionsListMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElActionsListMenu(event.currentTarget);
   };
-  const handleOpenSectionNameListMenu = (event: React.MouseEvent<HTMLElement>) => {
+  const handleOpenSectionNameListMenu = (
+    event: React.MouseEvent<HTMLElement>
+  ) => {
     setAnchorElSectionNameListMenu(event.currentTarget);
   };
 
-
-
   useEffect(() => {
     // Transform actions when component mounts
-    selectedWorkFlow?.actions.map(action => {
+    selectedWorkFlow?.actions.map((action) => {
       if (!action.isCalculated) {
-        const originalAction = selectedWorkFlow?.actions.find(a => a.id === action.id);
+        const originalAction = selectedWorkFlow?.actions.find(
+          (a) => a.id === action.id
+        );
         return {
           ...action,
           profit: { ...originalAction.profit },
           totalCost: { ...originalAction.totalCost },
           totalPrice: { ...originalAction.totalPrice },
           totalProductionTime: { ...originalAction.totalProductionTime },
-
         };
       }
       return action;
     });
-
   }, [selectedWorkFlow?.actions]);
-  const [currentProductItemValue, setCurrentProductItemValue] = useRecoilState<any>(currentProductItemValueState);
-  const productItemValueDraftId = useRecoilValue<string>(currentProductItemValueDraftId);
+  const [currentProductItemValue, setCurrentProductItemValue] =
+    useRecoilState<any>(currentProductItemValueState);
+  const productItemValueDraftId = useRecoilValue<string>(
+    currentProductItemValueDraftId
+  );
 
   const [tabs, setTabs] = useState([]);
   const connectionId = useRecoilValue(currentCalculationConnectionId);
 
-  const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(currentProductItemValuePriceState);
+  const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(
+    currentProductItemValuePriceState
+  );
   const calculationResult = useRecoilValue(calculationResultState);
   const [isUpdateResolved, setIsUpdateResolved] = useState(false);
+  const setSliderCurrentProductItemValueTotalPrice = useSetRecoilState<number>(
+    sliderCurrentProductItemValuePriceState
+  );
 
   useEffect(() => {
     if (isUpdateResolved) {
       setCurrentProductItemValueTotalPrice(calculationResult?.totalPrice);
+      setSliderCurrentProductItemValueTotalPrice(calculationResult?.totalPrice); //!new
       setIsUpdateResolved(false);
     }
-  }, [ calculationResult,selectedWorkFlowCalculatedIsLoaded]);
+  }, [calculationResult, selectedWorkFlowCalculatedIsLoaded]);
 
   const updateProductItemValue = async (sourceType: number) => {
     const callBack = (res) => {
@@ -106,26 +147,27 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
     await updateProductItemValueOutsource(callApi, callBack, {
       productItemValueId: productItemValueDraftId,
       signalRConnectionId: connectionId,
-      sourceType
+      sourceType,
     });
   };
 
-  const withPartially = selectedWorkFlow?.actions?.some((action) => action.source === EWorkSource.OUT)
+  const withPartially = selectedWorkFlow?.actions?.some(
+    (action) => action.source === EWorkSource.OUT
+  );
   useEffect(() => {
     getOutSourcingSuppliers();
   }, []);
 
   useEffect(() => {
     if (productItemValueByEdit?.sourceType === EWorkSource.OUT) {
-      setView(EPricingViews.OUTSOURCE_WORKFLOW)
+      setView(EPricingViews.OUTSOURCE_WORKFLOW);
+    } else if (productItemValueByEdit?.sourceType === EWorkSource.INTERNAL) {
+      setView(EPricingViews.SELECTED_WORKFLOW);
     }
-    else if(productItemValueByEdit?.sourceType === EWorkSource.INTERNAL){
-      setView(EPricingViews.SELECTED_WORKFLOW)
-    }
-  }, [productItemValueByEdit])
-  
+  }, [productItemValueByEdit]);
+
   useEffect(() => {
-     if (!selectedWorkFlow) {
+    if (!selectedWorkFlow) {
       setView(EPricingViews.OUTSOURCE_WORKFLOW);
     } else if (currentProductItemValue) {
       let temp = cloneDeep(currentProductItemValue);
@@ -133,25 +175,26 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
       const productItemValue = cloneDeep(currentProductItemValue);
       productItemValue.id = productItemValueDraftId;
       setCurrentProductItemValue(productItemValue);
-
     }
-  }, [selectedWorkFlow,]);
-  useEffect(()=>{
-    if(selectedWorkFlow?.isOutSourceWorkFlow){
-      setView(EPricingViews.OUTSOURCE_WORKFLOW)
-    }else{
-      setView(EPricingViews.SELECTED_WORKFLOW)
+  }, [selectedWorkFlow]);
+  useEffect(() => {
+    if (selectedWorkFlow?.isOutSourceWorkFlow) {
+      setView(EPricingViews.OUTSOURCE_WORKFLOW);
+    } else {
+      setView(EPricingViews.SELECTED_WORKFLOW);
     }
-  },[selectedWorkFlow])
+  }, [selectedWorkFlow]);
 
   const reorderedTabs = [
-    ...(tabs.find(tab => tab.key === "general") ? [tabs.find(tab => tab.key === "general")] : []), // "Flows Pending" tab if exists
-    ...tabs.filter(tab => tab.key !== "general") // Other tabs
+    ...(tabs.find((tab) => tab.key === "general")
+      ? [tabs.find((tab) => tab.key === "general")]
+      : []), // "Flows Pending" tab if exists
+    ...tabs.filter((tab) => tab.key !== "general"), // Other tabs
   ];
-  const [selectedTab, setSelectedTab] = useState<any>()
-  const allCountSelectedTabWorkFlow = selectedTab?.count + 1
+  const [selectedTab, setSelectedTab] = useState<any>();
+  const allCountSelectedTabWorkFlow = selectedTab?.count + 1;
 
-  const [filterWorkFlow, setFilterWorkFlow] = useState<any>()
+  const [filterWorkFlow, setFilterWorkFlow] = useState<any>();
 
   const sortedArray = workFlows.slice().sort((a, b) => {
     if (a.selected === b.selected) {
@@ -165,19 +208,45 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
 
   useEffect(() => {
     const newTabs = workFlows.reduce((accumulator, currentItem) => {
-      if (currentItem.isCompleteWorkFlow === false && currentItem.productType !== null) {
-        const existingTab = accumulator.find(tab => tab.tabName === currentItem.sectionName && tab.key === currentItem.productType);
+      if (
+        currentItem.isCompleteWorkFlow === false &&
+        currentItem.productType !== null
+      ) {
+        const existingTab = accumulator.find(
+          (tab) =>
+            tab.tabName === currentItem.sectionName &&
+            tab.key === currentItem.productType
+        );
         if (!existingTab) {
-          accumulator.push({ tabName: currentItem.sectionName, key: currentItem.productType });
+          accumulator.push({
+            tabName: currentItem.sectionName,
+            key: currentItem.productType,
+          });
         }
-      } else if (currentItem.isCompleteWorkFlow === false && currentItem.productType === null) {
-        const existingTab = accumulator.find(tab => tab.tabName === t("pricingWidget.flowsPending") && tab.key === "general");
+      } else if (
+        currentItem.isCompleteWorkFlow === false &&
+        currentItem.productType === null
+      ) {
+        const existingTab = accumulator.find(
+          (tab) =>
+            tab.tabName === t("pricingWidget.flowsPending") &&
+            tab.key === "general"
+        );
         if (!existingTab) {
-          accumulator.push({ tabName: t("pricingWidget.flowsPending"), key: "general" });
+          accumulator.push({
+            tabName: t("pricingWidget.flowsPending"),
+            key: "general",
+          });
         }
-      }
-      else if (currentItem.isCompleteWorkFlow === true && currentItem.productType === null && currentItem.subWorkFlows.length === 0) {
-        const existingTab = accumulator.find(tab => tab.tabName === t("pricingWidget.flows") && tab.key === "other");
+      } else if (
+        currentItem.isCompleteWorkFlow === true &&
+        currentItem.productType === null &&
+        currentItem.subWorkFlows.length === 0
+      ) {
+        const existingTab = accumulator.find(
+          (tab) =>
+            tab.tabName === t("pricingWidget.flows") && tab.key === "other"
+        );
         if (!existingTab) {
           accumulator.push({ tabName: t("pricingWidget.flows"), key: "other" });
         }
@@ -187,7 +256,7 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
 
     setTabs(newTabs);
   }, [workFlows]);
-  const [selectedWorkFlowsByTabList, settledWorkFlowsByTabList] = useState([])
+  const [selectedWorkFlowsByTabList, settledWorkFlowsByTabList] = useState([]);
 
   const fetchWorkflows = async (productType, newPageSize) => {
     setIsFirstEntry(false);
@@ -195,7 +264,7 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
       if (res?.success) {
         settledWorkFlowsByTabList(res?.data);
       } else {
-        console.error('Failed to fetch workflows');
+        console.error("Failed to fetch workflows");
       }
     };
     await getWorkFlowsApi(callApi, callBack, {
@@ -208,7 +277,7 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
     setView(EPricingViews.OTHERS_WORKFLOWS);
     setSelectedTab(productType?.name);
     setPageSize(10);
-    setHeightScrolling(50)
+    setHeightScrolling(50);
     settledWorkFlowsByTabList([]);
     fetchWorkflows(productType, 10);
   };
@@ -220,12 +289,12 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
   }, [pageSize, selectedTab]);
 
   const handleScroll = () => {
-    setIsFirstEntry(true)
+    setIsFirstEntry(true);
     setPageSize((prevPageSize) => prevPageSize + 10);
-  }
+  };
 
-  const getWorkFlowsByTab = async productType => {
-    const callBack = res => {
+  const getWorkFlowsByTab = async (productType) => {
+    const callBack = (res) => {
       if (res?.success) {
         settledWorkFlowsByTabList(res.data);
       } else {
@@ -235,129 +304,138 @@ const usePricingWidget = ({ getOutSourcingSuppliers, workFlows , widgetType,sele
     await getWorkFlowsApi(callApi, callBack, {
       signalRConnectionId: connectionId,
       pageSize: pageSize,
-      productType: productType
+      productType: productType,
     });
   };
 
   const getWorkFlowsActions = async (workFlowId) => {
-    setActionList([])
+    setActionList([]);
     const callBack = (res) => {
       if (res?.success) {
-        setActionList(res?.data)
+        setActionList(res?.data);
       } else {
         // alertFaultUpdate();
       }
-    }
-    await getWorkFlowsActionsApi(callApi, callBack, { signalRConnectionId: connectionId, workFlowId })
-  }
-
+    };
+    await getWorkFlowsActionsApi(callApi, callBack, {
+      signalRConnectionId: connectionId,
+      workFlowId,
+    });
+  };
 
   const onClickAddOutSourceAction = async () => {
     const callBack = (res) => {
-        if (res.success) {
-        }
+      if (res.success) {
+      }
     };
     await addOutSourceActionApi(callApi, callBack, {
       productItemValueId: productItemValueDraftId,
       signalRConnectionId: connectionId,
-      sourceType: EWorkSource.OUT
-    })
-};
-
-const onClickRemoveOutSourceAction = async (actionId) => {
-  const callBack = (res) => {
-      if (res.success) {
-        getSelectedWorkFlow()
-      }
+      sourceType: EWorkSource.OUT,
+    });
   };
-  await removeOutSourceActionApi(callApi, callBack, {
-    actionId ,
-    signalRConnectionId: connectionId,
-  })
-};
 
-const getActions = async () => {
-  const callBack = (res) => {
+  const onClickRemoveOutSourceAction = async (actionId) => {
+    const callBack = (res) => {
+      if (res.success) {
+        getSelectedWorkFlow();
+      }
+    };
+    await removeOutSourceActionApi(callApi, callBack, {
+      actionId,
+      signalRConnectionId: connectionId,
+    });
+  };
+
+  const getActions = async () => {
+    const callBack = (res) => {
       if (res.success) {
         setActionListDropDown(res?.data);
       }
+    };
+    await getAllActionsApi(callApi, callBack);
   };
-  await getAllActionsApi(callApi, callBack);
-};
-useEffect(() => {
-  getActions();
-}, []);
+  useEffect(() => {
+    getActions();
+  }, []);
 
-
-const hasSubWorkFlowsOrProductTypeActions = (selectedWorkFlow) => {
-  if (selectedWorkFlow?.subWorkFlows?.length > 0) {
-    return true;
-  } else if (selectedWorkFlow?.subWorkFlows?.length === 0) {
-    return selectedWorkFlow?.actions?.some(action => action.productType);
-  }
-  return false;
-};
-
-const getSectionNames = (selectedWorkFlow) => {
-  const sectionNamesMap = new Map();
-
-  if (hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)) {
+  const hasSubWorkFlowsOrProductTypeActions = (selectedWorkFlow) => {
     if (selectedWorkFlow?.subWorkFlows?.length > 0) {
-      selectedWorkFlow.subWorkFlows.forEach(subWorkFlow => {
-        if (!sectionNamesMap.has(subWorkFlow.productType)) {
-          sectionNamesMap.set(subWorkFlow.productType, subWorkFlow.sectionName);
-        }
-      });
+      return true;
     } else if (selectedWorkFlow?.subWorkFlows?.length === 0) {
-      selectedWorkFlow.actions.forEach(action => {
-        if (action.productType && !sectionNamesMap.has(action.productType)) {
-          sectionNamesMap.set(action.productType, action.sectionName);
-        }
-      });
+      return selectedWorkFlow?.actions?.some((action) => action.productType);
     }
-  }
+    return false;
+  };
 
-  return Array.from(sectionNamesMap, ([productType, sectionName]) => ({ productType, sectionName }));
-};
+  const getSectionNames = (selectedWorkFlow) => {
+    const sectionNamesMap = new Map();
 
-const onClickAddActionToWorkFlow = async () => {
-  const callBack = (res) => {
+    if (hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)) {
+      if (selectedWorkFlow?.subWorkFlows?.length > 0) {
+        selectedWorkFlow.subWorkFlows.forEach((subWorkFlow) => {
+          if (!sectionNamesMap.has(subWorkFlow.productType)) {
+            sectionNamesMap.set(
+              subWorkFlow.productType,
+              subWorkFlow.sectionName
+            );
+          }
+        });
+      } else if (selectedWorkFlow?.subWorkFlows?.length === 0) {
+        selectedWorkFlow.actions.forEach((action) => {
+          if (action.productType && !sectionNamesMap.has(action.productType)) {
+            sectionNamesMap.set(action.productType, action.sectionName);
+          }
+        });
+      }
+    }
+
+    return Array.from(sectionNamesMap, ([productType, sectionName]) => ({
+      productType,
+      sectionName,
+    }));
+  };
+
+  const onClickAddActionToWorkFlow = async () => {
+    const callBack = (res) => {
       if (res.success) {
         alertSuccessAdded();
-      }
-      else{
+      } else {
         alertFaultAdded();
       }
+    };
+    await addActionToWorkFlowApi(callApi, callBack, {
+      signalRConnectionId: connectionId,
+      productType: sectionNameSelected?.sectionName
+        ? sectionNameSelected?.productType
+        : null,
+      actionId: actionNameSelected?.id,
+      sectionName: sectionNameSelected?.sectionName
+        ? sectionNameSelected?.sectionName
+        : null,
+    });
   };
-  await addActionToWorkFlowApi(callApi, callBack, {
-    signalRConnectionId: connectionId,
-    productType: sectionNameSelected?.sectionName?sectionNameSelected?.productType:null,
-    actionId: actionNameSelected?.id,
-    sectionName: sectionNameSelected?.sectionName?sectionNameSelected?.sectionName:null,
-  })
-};
 
-const reOderMainActions = async (data) => {
-  const callBack = (res) => {
+  const reOderMainActions = async (data) => {
+    const callBack = (res) => {
       if (res.success) {
       }
+    };
+    await updateActionsOrderInWorkFlowApi(callApi, callBack, {
+      signalRConnectionId: connectionId,
+      actionOrderIndexList: data,
+    });
   };
-  await updateActionsOrderInWorkFlowApi(callApi, callBack, {
-    signalRConnectionId: connectionId,
-    actionOrderIndexList: data
-  })
-};
-const reOderSubWorkFlows = async (data) => {
-  const callBack = (res) => {
+  const reOderSubWorkFlows = async (data) => {
+    const callBack = (res) => {
       if (res.success) {
       }
+    };
+    await updateActionsOrderInWorkFlowApi(callApi, callBack, {
+      signalRConnectionId: connectionId,
+      subProductOrderIndex: data,
+    });
   };
-  await updateActionsOrderInWorkFlowApi(callApi, callBack, {
-    signalRConnectionId: connectionId,
-    subProductOrderIndex: data
-  })
-};
-
 
   return {
     view,
@@ -405,8 +483,8 @@ const reOderSubWorkFlows = async (data) => {
     handleCloseSectionNameListMenu,
     handleOpenSectionNameListMenu,
     reOderMainActions,
-    reOderSubWorkFlows
-  }
-}
+    reOderSubWorkFlows,
+  };
+};
 
-export { usePricingWidget }
+export { usePricingWidget };
