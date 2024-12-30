@@ -12,7 +12,8 @@ const ActionsListMenu = ({
   onClickAddNewAction,
   handleCloseSectionNameListMenu,
   isUnderlined,
-  isFromSetting = false
+  isFromSetting = false,
+  addActionToProduct
 }: any) => {
   const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
@@ -43,10 +44,16 @@ const ActionsListMenu = ({
           filteredActions?.map((action, index) => (
             <div key={index} style={classes.menuTabStyle} className="action-menu-item"
               onClick={() => {
-                setActionNameSelected(action)
-                onClickAddNewAction()
+                if (isFromSetting) {
+                  addActionToProduct(action)
+                }
+                else {
+                  setActionNameSelected(action)
+                  onClickAddNewAction()
+                  handleCloseSectionNameListMenu()
+                }
                 handleClose()
-                handleCloseSectionNameListMenu()
+
               }}>
               {action?.name}
             </div>

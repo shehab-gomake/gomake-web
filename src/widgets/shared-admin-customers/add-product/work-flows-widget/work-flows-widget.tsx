@@ -18,7 +18,8 @@ const WorkFlowsWidget = () => {
     setActionNameSelected,
     handleCloseActionsListMenu,
     handleOpenActionsListMenu,
-    onClickAddNewAction
+    onClickAddNewAction,
+    addActionToProduct
   } = useWorkFlows();
   return (
     <div style={clasess.mainContainer}>
@@ -42,6 +43,7 @@ const WorkFlowsWidget = () => {
         onClickAddNewAction={onClickAddNewAction}
         isUnderlined={true}
         isFromSetting={true}
+        addActionToProduct={addActionToProduct}
 
       />
     </div>

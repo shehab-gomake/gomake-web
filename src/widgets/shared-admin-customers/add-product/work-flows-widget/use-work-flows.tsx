@@ -2,6 +2,8 @@ import { useEffect } from "react";
 import { getAllActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
 import { useState } from "react";
+import { addActionToProductApi } from "@/services/api-service/products/product-endpoints";
+import { useRouter } from "next/router";
 
 const useWorkFlows = () => {
   const { callApi } = useGomakeAxios();
@@ -2223,6 +2225,9 @@ const useWorkFlows = () => {
   ]
   const [actionListDropDown, setActionListDropDown] = useState([]);
   const [actionNameSelected, setActionNameSelected] = useState<any>()
+  const router = useRouter();
+  console.log("actionNameSelected", actionNameSelected)
+
   const [isAddNewAction, setIsAddNewAction] = useState(false)
   const [anchorElActionsListMenu, setAnchorElActionsListMenu] = useState<null | HTMLElement>(null);
   const openActionsListMenu = Boolean(anchorElActionsListMenu);
@@ -2247,6 +2252,21 @@ const useWorkFlows = () => {
   useEffect(() => {
     getActions();
   }, []);
+
+  const addActionToProduct = async (actionNameSelected: any) => {
+    const productId = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
+    const callBack = (res) => {
+      console.log("res", res)
+      if (res.success) {
+      }
+    }
+    await addActionToProductApi(callApi, callBack, {
+      productId: productId,
+      actionId: actionNameSelected?.id,
+      // productType: "string",
+      // sectionName: "string"
+    });
+  }
   return {
     generalInformation,
     actions,
@@ -2256,7 +2276,8 @@ const useWorkFlows = () => {
     setActionNameSelected,
     handleCloseActionsListMenu,
     handleOpenActionsListMenu,
-    onClickAddNewAction
+    onClickAddNewAction,
+    addActionToProduct
   };
 };
 
