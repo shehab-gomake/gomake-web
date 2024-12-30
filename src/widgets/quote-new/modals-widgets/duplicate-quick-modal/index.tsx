@@ -44,7 +44,6 @@ const DuplicateQuickModal = ({
     }
   }, [quoteItem, openModal])
 
-  console.log("groups", groups)
   return (
     <>
       <GoMakeModal

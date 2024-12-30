@@ -59,7 +59,6 @@ const useMoreCircle = ({
     }&documentItemId=${quoteItem?.id
     }&documentType=${documentType}&documentNumber=${quoteItemValue?.number}${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""
     }&isAnalysis=true`;
-
   const menuList = [
     {
       name: "edit",
@@ -91,7 +90,7 @@ const useMoreCircle = ({
       name: "advancedDuplicate",
       icon: <DuplicateMenuIcon />,
       onclick: () => onClickQuickDuplicate(quoteItem),
-      condition: true
+      condition: quoteItem?.isShowAdvancedDuplicate
     },
     {
       name: "duplicateItemWithDifferentQTY",
