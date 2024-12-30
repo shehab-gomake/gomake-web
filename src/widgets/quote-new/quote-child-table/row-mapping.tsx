@@ -1,5 +1,5 @@
 import { PrimaryTableCell } from "@/components/tables/primary-table";
-import { Checkbox, TableRow } from "@mui/material";
+import { Checkbox, Divider, TableRow } from "@mui/material";
 import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -10,6 +10,8 @@ import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { CharacterDetails } from "../quote-table/row-details/character-details";
+import { ECalculationStatus } from "@/enums";
 
 const RowMappingChildWidget = ({
   item,
@@ -25,8 +27,12 @@ const RowMappingChildWidget = ({
   documentType,
   isQuoteConfirmation = false,
   parentItem,
-  onChangeSelectedItemRowForQoute
+  onChangeSelectedItemRowForQoute,
+  quoteItems,
+  getQuote,
+  _renderIconcalculationStatus
 }: any) => {
+
   const { classes } = useStyle({ headerHeight });
   const {
     isUpdateAmount,
@@ -56,7 +62,7 @@ const RowMappingChildWidget = ({
   const router = useRouter();
   const { CheckDocumentPermission } = useUserPermission();
   const [isSelected, setIsSelected] = useState(item?.isSelected);
-
+  const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
   const handleChangeSelectedItem = (checked, itemId) => {
     setIsSelected(checked);
     onChangeSelectedItemRowForQoute(checked, itemId);
@@ -68,7 +74,7 @@ const RowMappingChildWidget = ({
     <TableRow
       key={item.id}
       style={{
-        background: index % 3 === 0 ? "#FFFFFF" : "#F8FAFB",
+        background: index % 2 === 1 ? "#FFFFFF" : "#F8FAFB",
       }}
     >
       <PrimaryTableCell
@@ -78,24 +84,50 @@ const RowMappingChildWidget = ({
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "flex-start",
-            alignItems: "center",
-          }}
-        >
-          <Checkbox
-            icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon />}
-            checked={isSelected}
-            onChange={(e) =>
-              handleChangeSelectedItem(e.target.checked, item?.id)
-            }
-          />
-          {index}
-        </div>
+        {
+          item?.isShowDuplicateWithSameJob && <>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                alignItems: "center",
+                position: 'relative'
+              }}
+            >
+              <Divider orientation={'vertical'}
+                style={{
+                  width: '2px',
+                  height: childList?.length - 1 !== childInex ? '86px' : '43px',
+                  backgroundColor: "#99A9CA",
+                  position: 'absolute',
+                  top: -25,
+                }} />
+              <Divider orientation={'horizontal'}
+                style={{
+                  width: '15px',
+                  height: '2px',
+                  backgroundColor: '#99A9CA',
+                  marginRight: -10,
+                  marginTop: 1,
+                }} />
+
+              <Checkbox
+                icon={<CheckboxIcon />}
+                checkedIcon={<CheckboxCheckedIcon />}
+                checked={isSelected}
+                onChange={(e) =>
+                  handleChangeSelectedItem(e.target.checked, item?.id)
+                }
+              />
+              {index}
+            </div>
+          </>
+        }
+        {
+          !item?.isShowDuplicateWithSameJob && index
+        }
+
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -110,6 +142,7 @@ const RowMappingChildWidget = ({
           width: columnWidths[2],
           ...FONT_FAMILY.Inter(600, 14),
           color: "#5859A8",
+          borderBottom: childList?.length - 1 !== childInex && "none",
           ...classes.cellContainerStyle,
         }}
       ></PrimaryTableCell>
@@ -119,7 +152,25 @@ const RowMappingChildWidget = ({
           textAlign: "start",
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
-      ></PrimaryTableCell>
+      >
+        {quoteItems?.isShowDetails && (
+          <PrimaryTableCell
+            style={{
+              width: columnWidths[3],
+              textAlign: "start",
+              borderBottom: "none",
+              borderTop: "none",
+            }}
+          >
+            <CharacterDetails
+              details={item?.details}
+              getQuote={getQuote}
+              documentItemId={item?.id}
+              canUpdate={canUpdate}
+            />
+          </PrimaryTableCell>
+        )}
+      </PrimaryTableCell>
       <PrimaryTableCell
         style={{
           width: columnWidths[4],
@@ -128,13 +179,13 @@ const RowMappingChildWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          <InputUpdatedValues
+          {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
             value={item.quantity}
             onBlur={onBlurAmount}
             isUpdate={canUpdatePrices && isUpdateAmount}
             setIsUpdate={setIsUpdateAmount}
             onInputChange={(e) => onInputChangeAmount(e)}
-          />
+          /> : "-"}
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -145,13 +196,14 @@ const RowMappingChildWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          <InputUpdatedValues
-            value={item.price}
-            onBlur={onBlurPrice}
-            isUpdate={canUpdatePrices && isUpdatePrice}
-            setIsUpdate={setIsUpdatePrice}
-            onInputChange={(e) => onInputChangePrice(e)}
-          />
+          {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ?
+            <InputUpdatedValues
+              value={item.price}
+              onBlur={onBlurPrice}
+              isUpdate={canUpdatePrices && isUpdatePrice}
+              setIsUpdate={setIsUpdatePrice}
+              onInputChange={(e) => onInputChangePrice(e)}
+            /> : "-"}
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -162,13 +214,13 @@ const RowMappingChildWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          <InputUpdatedValues
+          {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
             value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
             isUpdate={canUpdatePrices && isUpdateDiscount}
             setIsUpdate={setIsUpdateDiscount}
             onInputChange={(e) => onInputChangeDiscount(e)}
-          />
+          /> : "-"}
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -179,13 +231,14 @@ const RowMappingChildWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          <InputUpdatedValues
+          {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
             value={item.finalPrice}
             onBlur={onBlurFinalPrice}
             isUpdate={canUpdatePrices && isUpdateFinalPrice}
             setIsUpdate={setIsUpdateFinalPrice}
             onInputChange={(e) => onInputChangeFinalPrice(e)}
-          />
+          /> :
+            _renderIconcalculationStatus(item?.calculationStatus)}
         </div>
       </PrimaryTableCell>
       {!isQuoteConfirmation && <PrimaryTableCell

@@ -52,7 +52,8 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
-
+  const [requestAbortController, setRequestAbortController] =
+    useState<AbortController>(null);
   const getAllClientContacts = useCallback(async () => {
     if (quoteItemValue?.customerID) {
       await getAndSetClientContacts(callApi, setClientContactsValue, {
@@ -93,79 +94,78 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   };
 
   // in case of an error all these routes have been moved from use-quote.tsx to current hook (use-quote-get-data.tsx)
-  const getQuote = async () => {
-    if (
-      router?.query?.isNewCreation &&
-      docType === DOCUMENT_TYPE.receipt &&
-      router?.query?.documentNumber &&
-      router?.query?.ClientId
-    ) {
-      return; // No need to call anything , in case we open receipt page from pay option from invoice list
+  const getQuote = useCallback(async () => {
+    if (requestAbortController) {
+      requestAbortController.abort();
     }
-    if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
-      const callBack = (res) => {
-        if (res?.success) {
-          const _data = res?.data || {};
-          setQuoteItemValue(_data);
-        } else {
-          alertFaultGetData();
-        }
-      };
-      await getClientPaymentItemsApi(callApi, callBack);
-    } else if (router?.query?.isNewCreation) {
-      const requestBody: any = {
-        documentType: docType,
-      };
-      if (router?.query.orderId) {
-        requestBody.orderId = router.query.orderId;
-      }
-      if (router?.query.deliveryNoteId) {
-        requestBody.deliveryNoteID = router.query.deliveryNoteId;
-      }
-      if (router?.query.documentToDuplicateId) {
-        requestBody.documentToDuplicateId = router.query.documentToDuplicateId;
-      }
-      if (router?.query.documentId) {
-        requestBody.documentId = router.query.documentId;
-      }
-      if (router?.query.budgetId) {
-        requestBody.budgetId = router.query.budgetId;
-      }
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/erp-service/documents/get-new-document-data`,
-        requestBody
-      );
 
-      if (res?.success) {
-        const _data = res?.data?.data?.result || {};
-        setQuoteItemValue(_data);
-      } else {
-        alertFaultGetData();
+    try {
+      if (
+        router?.query?.isNewCreation &&
+        docType === DOCUMENT_TYPE.receipt &&
+        router?.query?.documentNumber &&
+        router?.query?.ClientId
+      ) {
+        return; // No need to call anything if opening receipt page from pay option
       }
-    } else if (docType === DOCUMENT_TYPE.receipt) {
-      const callBack = (res) => {
+
+      if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
+        const callBack = (res) => {
+          if (res?.success) {
+            const _data = res?.data || {};
+            setQuoteItemValue(_data);
+          } else {
+            alertFaultGetData();
+          }
+        };
+        await getClientPaymentItemsApi(callApi, callBack);
+      } else if (router?.query?.isNewCreation) {
+        const requestBody = {
+          documentType: docType,
+          ...(router?.query.orderId && { orderId: router.query.orderId }),
+          ...(router?.query.deliveryNoteId && { deliveryNoteID: router.query.deliveryNoteId }),
+          ...(router?.query.documentToDuplicateId && { documentToDuplicateId: router.query.documentToDuplicateId }),
+          ...(router?.query.documentId && { documentId: router.query.documentId }),
+          ...(router?.query.budgetId && { budgetId: router.query.budgetId }),
+        };
+
+        const res = await callApi(
+          EHttpMethod.POST,
+          `/v1/erp-service/documents/get-new-document-data`,
+          requestBody,
+        );
+
         if (res?.success) {
-          const _data = res?.data || {};
+          const _data = res?.data?.data?.result || {};
           setQuoteItemValue(_data);
         } else {
           alertFaultGetData();
         }
-      };
-      await getReceiptByIdApi(callApi, callBack, {
-        receiptId: router?.query?.Id,
-      });
-    } else {
-      const callBack = (res) => {
-        if (res?.success) {
-          let indexs = 0;
-          const _data = res?.data || {};
-          const mapData = _data?.documentItems?.map(
-            (item: any, index: number) => {
+      } else if (docType === DOCUMENT_TYPE.receipt) {
+        const callBack = (res) => {
+          if (res?.success) {
+            const _data = res?.data || {};
+            setQuoteItemValue(_data);
+          } else {
+            alertFaultGetData();
+          }
+        };
+        await getReceiptByIdApi(callApi, callBack, {
+          receiptId: router?.query?.Id,
+        });
+      } else {
+        const newRequestAbortController = new AbortController();
+        setRequestAbortController(newRequestAbortController);
+
+        const callBack = (res) => {
+          if (res?.success) {
+            let indexs = 0;
+            const _data = res?.data || {};
+            const mapData = _data?.documentItems?.map((item, index) => {
               indexs++;
               const parentIndex = indexs;
               const _childsDocumentItemsMapping =
-                item?.childsDocumentItems?.map((child: any, index2: number) => {
+                item?.childsDocumentItems?.map((child, index2) => {
                   indexs++;
                   return {
                     id: indexs,
@@ -182,12 +182,8 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
                 details: (
                   <div
                     style={
-                      _childsDocumentItemsMapping != null
-                        ? {
-                            height: "100%",
-                            overflowY: "scroll",
-                            paddingRight: 5,
-                          }
+                      _childsDocumentItemsMapping
+                        ? { height: "100%", overflowY: "scroll", paddingRight: 5 }
                         : { height: 36, overflowY: "scroll", paddingRight: 5 }
                     }
                   >
@@ -201,20 +197,149 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
                 quoteItemId: item?.id,
                 childsDocumentItems: _childsDocumentItemsMapping,
               };
-            }
-          );
-          _data.documentItemsMapping = mapData;
-          setQuoteItemValue(_data);
-        } else {
-          alertFaultGetData();
-        }
-      };
-      await getDocumentApi(callApi, callBack, {
-        documentType: docType,
-        Id: router?.query?.Id,
-      });
+            });
+            _data.documentItemsMapping = mapData;
+            setQuoteItemValue(_data);
+          } else {
+            alertFaultGetData();
+          }
+        };
+
+        await getDocumentApi(callApi, callBack, {
+          documentType: docType,
+          Id: router?.query?.Id,
+        }, false, newRequestAbortController);
+      }
+    } catch (error) {
+      if (error.name === "AbortError") {
+        console.log("Request aborted.");
+      } else {
+        alertFaultGetData();
+      }
     }
-  };
+  }, [callApi, docType, requestAbortController, router, setQuoteItemValue]);
+  // const getQuote = async () => {
+  //   if (
+  //     router?.query?.isNewCreation &&
+  //     docType === DOCUMENT_TYPE.receipt &&
+  //     router?.query?.documentNumber &&
+  //     router?.query?.ClientId
+  //   ) {
+  //     return; // No need to call anything , in case we open receipt page from pay option from invoice list
+  //   }
+  //   if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
+  //     const callBack = (res) => {
+  //       if (res?.success) {
+  //         const _data = res?.data || {};
+  //         setQuoteItemValue(_data);
+  //       } else {
+  //         alertFaultGetData();
+  //       }
+  //     };
+  //     await getClientPaymentItemsApi(callApi, callBack);
+  //   } else if (router?.query?.isNewCreation) {
+  //     const requestBody: any = {
+  //       documentType: docType,
+  //     };
+  //     if (router?.query.orderId) {
+  //       requestBody.orderId = router.query.orderId;
+  //     }
+  //     if (router?.query.deliveryNoteId) {
+  //       requestBody.deliveryNoteID = router.query.deliveryNoteId;
+  //     }
+  //     if (router?.query.documentToDuplicateId) {
+  //       requestBody.documentToDuplicateId = router.query.documentToDuplicateId;
+  //     }
+  //     if (router?.query.documentId) {
+  //       requestBody.documentId = router.query.documentId;
+  //     }
+  //     if (router?.query.budgetId) {
+  //       requestBody.budgetId = router.query.budgetId;
+  //     }
+  //     const res = await callApi(
+  //       EHttpMethod.POST,
+  //       `/v1/erp-service/documents/get-new-document-data`,
+  //       requestBody
+  //     );
+
+  //     if (res?.success) {
+  //       const _data = res?.data?.data?.result || {};
+  //       setQuoteItemValue(_data);
+  //     } else {
+  //       alertFaultGetData();
+  //     }
+  //   } else if (docType === DOCUMENT_TYPE.receipt) {
+  //     const callBack = (res) => {
+  //       if (res?.success) {
+  //         const _data = res?.data || {};
+  //         setQuoteItemValue(_data);
+  //       } else {
+  //         alertFaultGetData();
+  //       }
+  //     };
+  //     await getReceiptByIdApi(callApi, callBack, {
+  //       receiptId: router?.query?.Id,
+  //     });
+  //   } else {
+  //     const callBack = (res) => {
+  //       if (res?.success) {
+  //         let indexs = 0;
+  //         const _data = res?.data || {};
+  //         const mapData = _data?.documentItems?.map(
+  //           (item: any, index: number) => {
+  //             indexs++;
+  //             const parentIndex = indexs;
+  //             const _childsDocumentItemsMapping =
+  //               item?.childsDocumentItems?.map((child: any, index2: number) => {
+  //                 indexs++;
+  //                 return {
+  //                   id: indexs,
+  //                   amount: child?.quantity,
+  //                   unitPrice: child?.price,
+  //                   discount: child?.discount,
+  //                   finalPrice: child?.finalPrice,
+  //                   quoteItemId: child?.id,
+  //                 };
+  //               });
+  //             return {
+  //               id: parentIndex,
+  //               itemName: item?.productName,
+  //               details: (
+  //                 <div
+  //                   style={
+  //                     _childsDocumentItemsMapping != null
+  //                       ? {
+  //                           height: "100%",
+  //                           overflowY: "scroll",
+  //                           paddingRight: 5,
+  //                         }
+  //                       : { height: 36, overflowY: "scroll", paddingRight: 5 }
+  //                   }
+  //                 >
+  //                   {item?.content}
+  //                 </div>
+  //               ),
+  //               amount: item?.quantity,
+  //               unitPrice: item?.price,
+  //               discount: item?.discount,
+  //               finalPrice: item?.finalPrice,
+  //               quoteItemId: item?.id,
+  //               childsDocumentItems: _childsDocumentItemsMapping,
+  //             };
+  //           }
+  //         );
+  //         _data.documentItemsMapping = mapData;
+  //         setQuoteItemValue(_data);
+  //       } else {
+  //         alertFaultGetData();
+  //       }
+  //     };
+  //     await getDocumentApi(callApi, callBack, {
+  //       documentType: docType,
+  //       Id: router?.query?.Id,
+  //     });
+  //   }
+  // };
 
   const onClickAddNewAddress = useCallback(
     async (item: any, isUpdate: boolean) => {
@@ -235,11 +360,11 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         const result = await getAllClientAddress();
         isUpdate
           ? updateClientAddress(
-              result.find((item) => item.id === res.data.data.result)
-            )
+            result.find((item) => item.id === res.data.data.result)
+          )
           : onClickAddAddress(
-              result.find((item) => item.id === res.data.data.result)
-            );
+            result.find((item) => item.id === res.data.data.result)
+          );
       } else {
         alertFaultAdded();
       }

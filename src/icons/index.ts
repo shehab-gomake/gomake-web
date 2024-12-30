@@ -76,3 +76,6 @@ export * from "./advertising-icon"
 export * from "./cart-whithout-bg"
 export * from "./Calculating-icon"
 export * from "./not-calculating-icon"
+export * from "./arrow-up-with-circle"
+export * from "./arrow-down-with-circle"
+

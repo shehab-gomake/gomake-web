@@ -156,6 +156,7 @@ const useQuoteNew = ({
   const [openAddNewContactModal, setOpenAddNewContactModal] = useState(false);
   const [openCopyFromOrderModal, setOpenCopyFromOrderModal] = useState(false);
   const [quoteItemId, setQuateItemId] = useState();
+  const [quoteItem, setQuoteItem] = useState();
   const [openDuplicateWithDifferentQTYModal, setOpenDuplicateWithDifferentQTYModal] = useState(false);
   const [openQuickDuplicateModal, setOpenQuickDuplicateModal] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
@@ -944,6 +945,8 @@ const useQuoteNew = ({
   const onClickDuplicateWithDifferentQTY = (quoteItem) => {
     onOpenDuplicateWithDifferentQTY();
     setQuateItemId(quoteItem?.id);
+    setQuoteItem(quoteItem)
+
   };
   const onOpenQuickDuplicate = () => {
     setOpenQuickDuplicateModal(true);
@@ -954,6 +957,7 @@ const useQuoteNew = ({
   const onClickQuickDuplicate = (quoteItem) => {
     onOpenQuickDuplicate();
     setQuateItemId(quoteItem?.id);
+    setQuoteItem(quoteItem)
   };
 
 
@@ -1107,6 +1111,7 @@ const useQuoteNew = ({
   const onClickDeleteQouteItem = (quoteItem) => {
     onOpenDeleteItemModal();
     setQuateItemId(quoteItem?.id);
+    setQuoteItem(quoteItem)
   };
 
   const getCalculateQuote = async (calculationType: number, data: number) => {
@@ -2152,7 +2157,8 @@ const useQuoteNew = ({
     onCloseQuickDuplicate,
     onClickQuickDuplicate,
     quoteItemId,
-    openQuickDuplicateModal
+    openQuickDuplicateModal,
+    quoteItem
   };
 };
 

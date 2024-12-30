@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -14,6 +14,10 @@ import { RowMappingWidget } from "./row-mapping";
 import { RowMappingChildWidget } from "../quote-child-table/row-mapping";
 import { TotalPriceComp } from "../total-price";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { NotCalculatingIcon } from "@/icons";
+import { ECalculationStatus } from "@/enums";
+import { CalculatingIcon } from "@/icons";
+import { useTranslation } from "react-i18next";
 
 const QuoteForPriceTable = ({
   documentItems,
@@ -35,6 +39,7 @@ const QuoteForPriceTable = ({
   isPrePaymentPage,
   onChangeSelectedItemRowForQoute,
 }) => {
+  const { t } = useTranslation();
   let indexs = 0;
   const { classes } = useStyle({ headerHeight });
   const PrimaryTableCell = styled(TableCell)(() => {
@@ -57,6 +62,26 @@ const QuoteForPriceTable = ({
     documentType === DOCUMENT_TYPE.invoice ||
     documentType === DOCUMENT_TYPE.invoiceRefund;
 
+  const [visibleChilds, setVisibleChilds] = useState<{ [key: number]: boolean }>({});
+
+  // Function to toggle visibility of child items for a specific parent item
+  const toggleChildVisibility = (parentIndex: number) => {
+    setVisibleChilds((prev) => ({
+      ...prev,
+      [parentIndex]: !prev[parentIndex],
+    }));
+  };
+  const _renderIconcalculationStatus = (calculationStatus) => {
+    if (calculationStatus === ECalculationStatus.Calculating) {
+      return <div style={{ display: "flex", alignItems: "center", gap: "5px" }}><CalculatingIcon /><a>{t("general.calculating")}</a></div>;;
+    }
+    if (calculationStatus === ECalculationStatus.Failed) {
+      return <div style={{ display: "flex", alignItems: "center", gap: "5px", color: "#344054", }}><NotCalculatingIcon />{t("general.error")}!
+        <span style={{ color: "#2E3092", textDecoration: "underline", cursor: "pointer" }} onClick={() => getQuote()}>{t("general.tryAgain")}</span>
+      </div>
+
+    }
+  }
   return (
     <div>
       <TableContainer
@@ -118,8 +143,11 @@ const QuoteForPriceTable = ({
                       onChangeSelectedItemRowForQoute
                     }
                     quoteItems={quoteItems}
+                    isShowChilds={visibleChilds[parentIndex]}
+                    setIsShowChilds={() => toggleChildVisibility(parentIndex)}
+                    _renderIconcalculationStatus={_renderIconcalculationStatus}
                   />
-                  {item?.childsDocumentItems &&
+                  {item?.childsDocumentItems && visibleChilds[parentIndex] &&
                     item?.childsDocumentItems?.map(
                       (childItem: any, childIndex: number) => {
                         indexs++;
@@ -140,6 +168,9 @@ const QuoteForPriceTable = ({
                             isQuoteConfirmation={isQuoteConfirmation}
                             documentType={documentType}
                             onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
+                            quoteItems={quoteItems}
+                            getQuote={getQuote}
+                            _renderIconcalculationStatus={_renderIconcalculationStatus}
                           />
                         );
                       }

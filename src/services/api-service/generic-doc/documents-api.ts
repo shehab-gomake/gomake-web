@@ -127,13 +127,15 @@ const CREATE_DOCUMENT_URL = "/v1/erp-service/documents/create-document";
 const START_ORDER_PRODUCTION_URL =
   "/v1/erp-service/documents/start-order-production";
 
-const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+const getDocumentApi: ICallAndSetData = async (callApi, setState, data,loading, abortController) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
     GET_DOCUMENT_URL,
     setState,
-    data
+    data,
+    loading,
+    abortController
   );
 };
 
