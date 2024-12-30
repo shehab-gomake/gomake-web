@@ -49,6 +49,7 @@ const RightSideWidget = ({
   const {
     t,
     direction,
+    isRtl,
     currentProductItemValueTotalPrice,
     lastProductItemValueTotalPrice,
     calculationProgress,
@@ -215,8 +216,12 @@ const RightSideWidget = ({
               <DotsLoader />
             ) : (
               <GomakeTextInput
+                direction={direction}
                 // value={currentProductItemValueTotalPrice ?? "---------"}
-                value={sliderCurrentProductItemValueTotalPrice ?? "---------"} //!new
+                value={
+                  sliderCurrentProductItemValueTotalPrice?.toFixed(3) ??
+                  "---------"
+                }
                 onBlur={(e: any) => {
                   const inputValue = Number(e.target.value);
 
@@ -353,7 +358,8 @@ const RightSideWidget = ({
               <div style={clasess.priceRecoveryContainer}>
                 <div style={clasess.secondText}>
                   {t("products.offsetPrice.admin.lastPrice")}{" "}
-                  {lastProductItemValueTotalPrice}
+                  {/* {lastProductItemValueTotalPrice} */}
+                  {lastProductItemValueTotalPrice.toFixed(3)}
                 </div>
               </div>
             ) : (
@@ -368,6 +374,7 @@ const RightSideWidget = ({
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
+                sx={{ direction: direction }}
               >
                 <Typography sx={clasess.labelsStyle}>
                   {Math.round(minDiscount)}
@@ -382,9 +389,16 @@ const RightSideWidget = ({
                 value={sliderCurrentProductItemValueTotalPrice}
                 onChange={handleSliderChange}
                 aria-label="Price Change Slider"
-                min={Math.round(minDiscount)}
-                max={Math.round(maxIncrease)}
+                min={Math.round(Number(minDiscount))}
+                max={Math.round(Number(maxIncrease))}
                 step={1}
+                sx={{
+                  direction: direction,
+                  transform: isRtl ? "scaleX(-1)" : "none",
+                  "& .MuiSlider-track": {
+                    direction: direction,
+                  },
+                }}
               />
             </Box>
           )}

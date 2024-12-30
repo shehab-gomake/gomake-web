@@ -68,6 +68,7 @@ const useRightSideWidget = ({ includeVAT }) => {
 
   const { t } = useTranslation();
   const direction = t("direction");
+  const isRtl = direction === "rtl";
 
   useEffect(() => {
     if (currentProductItemValueTotalPrice != null) {
@@ -113,13 +114,25 @@ const useRightSideWidget = ({ includeVAT }) => {
       Number(priceChangePercents?.maxPercent || 0)) /
       100;
 
-  const handleSliderChange = (event, newValue) => {
+  const handleSliderChangeOld = (event, newValue) => {
     setSliderCurrentProductItemValueTotalPrice(newValue);
+  };
+
+  const handleSliderChange = (event, newValue) => {
+    const validMaxIncrease = Math.round(Number(maxIncrease));
+    const validMinDiscount = Math.round(Number(minDiscount));
+
+    const adjustedValue = isRtl
+      ? validMaxIncrease - newValue + validMinDiscount
+      : newValue;
+
+    setSliderCurrentProductItemValueTotalPrice(adjustedValue);
   };
 
   return {
     t,
     direction,
+    isRtl,
     currentProductItemValueTotalPrice,
     lastProductItemValueTotalPrice,
     calculationProgress,
