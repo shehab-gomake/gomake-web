@@ -23,7 +23,7 @@ const RESET_PRINT_HOUSE_PRICE_URL = "/v1/printhouse-config/profit-profile-produc
 
 const GET_PROFITS_PROFILE_PDF_URL = "/v1/printhouse-config/profit-profile-products/get-profits-profile-pdf";
 
-
+const RE_CALCULATE_PRICE_URL = "/v1/printhouse-config/products/calculate-products";
 
 const addProductProfitRuleApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, ADD_PRODUCT_PROFIT_RULE_URL, setState, data);
@@ -90,6 +90,9 @@ const getProfitsProfilePdfApi: ICallAndSetData = async (callApi, setState, data)
     );
   };
 
+  const reCalculatePriceApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, RE_CALCULATE_PRICE_URL ,setState, data);
+};
 
 export {
     addProductProfitRuleApi,
@@ -108,5 +111,6 @@ export {
     updateProfitProfileProductMaterialApi,
     getProfitsProfilePdfApi,
     updateProfitProfileProductMachineApi,
-    resetPrintHousePriceApi
+    resetPrintHousePriceApi,
+    reCalculatePriceApi
 }
