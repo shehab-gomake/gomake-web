@@ -22,6 +22,8 @@ export enum Permissions {
   UPDATE_QUOTE_DISCOUNT = "UpdateQuoteDiscount",
   UPDATE_QUOTE_DELIVERY_ITEM_PRICES = "UpdateQuoteDeliveryItemPrices",
   SHOW_COSTS_IN_CALCULATIONS = "ShowCostsInCalculations",
+  ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
+
   //SHOW_PROFITS_IN_CALCULATIONS = "ShowProfitsInCalculations",
   CUSTOMIZE_WORKFLOW = "CustomizeWorkflow",
   SHOW_QUOTE_STATISTICS = "ShowQuotesStatistics",
@@ -109,7 +111,7 @@ export enum Permissions {
   SHOW_INVOICES = "ShowInvoices",
   SHOW_INVOICES_REFUND = "ShowInvoicesRefund",
   SHOW_ERP_DOCUMENTS_TABLE_SUMMERY = "ShowErpDocumentsTableSummery",
-  ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
+  // ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
 
   //purchase group
   SHOW_PURCHASE_ORDERS = "ShowPurchaseOrders",

@@ -277,6 +277,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
     isSelected: false,
     productType: 0,
     productID: selectedProduct?.id,
+    calculationStatus: 1,
   };
 
   const genericItem = {
@@ -291,7 +292,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
     productName: productName,
     isSelected: false,
     productType: 0,
-    // isEditable: true,
+    calculationStatus: 1,
   };
 
   const addItemForQuotes = async () => {
@@ -341,7 +342,8 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
         getDocumentItemDataFromMaterial();
       } else {
         const updatedQuoteItemValue = { ...quoteItemValue };
-        const newItem = { ...item, id: uuidv4() };
+        const newItem = active === true ? { ...item } : { ...genericItem };
+
         updatedQuoteItemValue.documentItems = [
           ...updatedQuoteItemValue.documentItems,
           newItem,
