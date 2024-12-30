@@ -271,7 +271,8 @@ const QuoteNewPageWidget = ({
     onCloseQuickDuplicate,
     onClickQuickDuplicate,
     openQuickDuplicateModal,
-    quoteItemId
+    quoteItemId,
+    quoteItem
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -723,6 +724,7 @@ const QuoteNewPageWidget = ({
         openModal={openQuickDuplicateModal}
         onClose={onCloseQuickDuplicate}
         quoteItemId={quoteItemId}
+        quoteItem={quoteItem}
         documentType={documentType}
         getQuote={getQuote}
 

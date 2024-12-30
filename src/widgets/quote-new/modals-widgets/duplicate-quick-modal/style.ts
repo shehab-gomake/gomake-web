@@ -55,10 +55,26 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "flex-start",
-        width: "44%",
+        width: "30%",
+        gap: 6
+      },
+      groupParameterDropdown2: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "flex-start",
+        alignItems: "flex-start",
+        width: "62%",
         gap: 6
       },
       groupParameterInput: {
+        width: "100%",
+        height: 40,
+        borderRadius: 8,
+        border: `1px solid #D0D5DD`,
+        backgroundColor: "transparent",
+        boxShadow:"none"
+      },
+      groupParameterInput2: {
         width: "100%",
         height: 40,
         borderRadius: 8,
