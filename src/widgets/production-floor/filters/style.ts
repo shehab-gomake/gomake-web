@@ -65,6 +65,14 @@ const useStyle = () => {
         lineHeight: "24px",
         ...FONT_FAMILY.Inter(500, 16),
       },
+      labelList: {
+        display: "inline-block",
+        maxWidth: "280px", // Set desired max width
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        verticalAlign: "middle",
+      },
     };
   }, [theme, t]);
   return {

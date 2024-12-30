@@ -11,7 +11,7 @@ const ProductionFloorKanbanBoard = () => {
   const {
     search,
     setFilteredMissionsBySearch,
-    getAllBoardMissions,
+    getAllBoardMissionsFromSearch,
     setMissionsList,
   } = useProductionFloorTable();
 
@@ -60,7 +60,7 @@ const ProductionFloorKanbanBoard = () => {
     setFilteredMissionsBySearch(filteredMissions);
     if (filteredMissions?.length === 0) {
       const delayFetch = setTimeout(() => {
-        getAllBoardMissions();
+        getAllBoardMissionsFromSearch();
       }, 1000);
       return () => clearTimeout(delayFetch);
     } else {
