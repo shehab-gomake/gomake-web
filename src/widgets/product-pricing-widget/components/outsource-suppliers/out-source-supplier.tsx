@@ -14,132 +14,200 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { systemCurrencyState } from "@/store";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import { currentProductItemValuePriceState } from "../../state";
+import {
+  currentProductItemValuePriceState,
+  sliderCurrentProductItemValuePriceState,
+} from "../../state";
 
 interface IProps {
-    value: number;
-    unit: string;
-    onUpdate: (v: number) => void;
-    valueColor?: string;
-    label: string;
-    isEditable: boolean;
+  value: number;
+  unit: string;
+  onUpdate: (v: number) => void;
+  valueColor?: string;
+  label: string;
+  isEditable: boolean;
 }
 
 const OutSourceSupplierComponent = ({
-    supplierName,
-    supplierId,
-    cost,
-    status,
-    workHours,
-    finalPrice,
-    profit,
-    widgetType
+  supplierName,
+  supplierId,
+  cost,
+  status,
+  workHours,
+  finalPrice,
+  profit,
+  widgetType,
 }: IOutSourceSupplier) => {
+  const { t } = useTranslation();
+  const { classes } = useStyle();
+  const { secondColor } = useGomakeTheme();
+  const [supplier, setSupplier] = useState<IOutSourceSupplier | null>();
+  const {
+    updatePrice,
+    updateWorkHours,
+    updateProfit,
+    updateCost,
+    addItem,
+    updateQuoteItem,
+  } = useOutsourceSupplier({ supplier, setSupplier });
+  const handleDeliveryTimeUpdate = (newValue: number) => {
+    updateWorkHours(supplierId, +newValue);
+  };
 
-    const { t } = useTranslation();
-    const { classes } = useStyle();
-    const { secondColor } = useGomakeTheme();
-    const [supplier, setSupplier] = useState<IOutSourceSupplier | null>();
-    const { updatePrice, updateWorkHours, updateProfit, updateCost, addItem, updateQuoteItem } = useOutsourceSupplier({ supplier, setSupplier });
-    const handleDeliveryTimeUpdate = (newValue: number) => {
-        updateWorkHours(supplierId, +newValue);
+  const handleCostUpdate = (newCost: number) => {
+    updateCost(supplierId, newCost);
+  };
+  const handleProfitUpdate = (profit: number) => {
+    updateProfit(supplierId, +profit);
+  };
+  const handleUpdatePrice = (price: number) => {
+    updatePrice(supplierId, price);
+  };
+
+  const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(
+    currentProductItemValuePriceState
+  );
+  const setSliderCurrentProductItemValueTotalPrice = useSetRecoilState<number>(
+    sliderCurrentProductItemValuePriceState
+  );
+
+  useEffect(() => {
+    if (finalPrice > 0) {
+      setCurrentProductItemValueTotalPrice(finalPrice);
+      setSliderCurrentProductItemValueTotalPrice(finalPrice); //!new
     }
+  }, [finalPrice]);
 
-    const handleCostUpdate = (newCost: number) => {
-        updateCost(supplierId, newCost);
-    }
-    const handleProfitUpdate = (profit: number) => {
-        updateProfit(supplierId, +profit)
-    }
-    const handleUpdatePrice = (price: number) => {
-        updatePrice(supplierId, price);
-    }
+  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
 
-    const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(currentProductItemValuePriceState);
-
-    useEffect(() => {
-        if (finalPrice > 0) {
-            setCurrentProductItemValueTotalPrice(finalPrice)
-        }
-    }, [finalPrice])
-
-    const systemCurrency = useRecoilValue<any>(systemCurrencyState);
-
-    return (
-        <Fade in={true} timeout={700}>
-            <Stack direction={"row"} alignItems={'center'} justifyContent={'space-between'}
-                style={{ ...classes.actionContainer, padding: '10px 16px' }}>
-                <Stack alignItems={'center'} direction={"row"} gap={'10px'} flexWrap={'wrap'}>
-                    <span style={classes.sectionTitle}>{supplierName}</span>
-                    <Divider orientation={'vertical'} flexItem />
-                    <EditableValue unit={'W.H'} isEditable={status === EOutsourceSupplierStatus.Manually}
-                        label={t('pricingWidget.endTime')} value={workHours} onUpdate={handleDeliveryTimeUpdate} />
-                    <Divider orientation={'vertical'} flexItem />
-                    <EditableValue unit={systemCurrency} isEditable={status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.cost')}
-                        value={cost} onUpdate={handleCostUpdate} />
-                    <Divider orientation={'vertical'} flexItem />
-                    <EditableValue unit={'%'} isEditable={status === EOutsourceSupplierStatus.Manually} label={t('pricingWidget.profit')}
-                        value={profit} onUpdate={handleProfitUpdate} />
-                    <Divider orientation={'vertical'} flexItem />
-                    <EditableValue unit={systemCurrency} isEditable={status === EOutsourceSupplierStatus.Manually}
-                        valueColor={secondColor(500)} label={t('pricingWidget.finalPrice')} value={finalPrice}
-                        onUpdate={handleUpdatePrice} />
-                </Stack>
-                {cost !== 0 && (
-                    <PrimaryButton
-                        onClick={() => widgetType === EWidgetProductType.EDIT ? updateQuoteItem(supplierId) : addItem(supplierId)}
-                        style={{ width: 'fit-content', height: 35 }}
-                        variant={'contained'}
-                    >
-                        {widgetType === EWidgetProductType.EDIT ? t("materials.buttons.edit") : t('pricingWidget.add')}
-                    </PrimaryButton>
-                )}
-            </Stack>
-        </Fade>
-    )
-}
-
-
-const EditableValue = ({ value, onUpdate, valueColor, label, isEditable, unit }: IProps) => {
-    const [edit, setEdit] = useState<boolean>(false);
-    const [editValue, setEditValue] = useState<number>(0);
-    const { classes } = useStyle();
-    const handleValueClick = (e) => {
-        e.stopPropagation();
-        if (isEditable) {
-            setEdit(true);
-        }
-    }
-
-    const handleCancelUpdate = () => {
-        setEdit(false);
-        setEditValue(0);
-    }
-
-    const onInputChange = (v: string) => {
-        setEditValue(+v);
-    };
-
-    const handleValueUpdate = () => {
-        onUpdate(editValue);
-        setEdit(false);
-    }
-
-    return (
-        <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
-            <span style={classes.detailTitle}>{label}</span>
-            {edit ? <UpdateValueInput value={editValue.toString()} onUpdate={handleValueUpdate}
-                onInputChange={onInputChange}
-                clickedOut={handleValueUpdate} onCancel={handleCancelUpdate} /> :
-                <Button onClick={handleValueClick} variant={'text'} style={valueColor ? {
-                    ...classes.detailValue,
-                    color: valueColor
-                } : classes.detailValue}>{`${value} ${unit}`}</Button>
-            }
+  return (
+    <Fade in={true} timeout={700}>
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        style={{ ...classes.actionContainer, padding: "10px 16px" }}
+      >
+        <Stack
+          alignItems={"center"}
+          direction={"row"}
+          gap={"10px"}
+          flexWrap={"wrap"}
+        >
+          <span style={classes.sectionTitle}>{supplierName}</span>
+          <Divider orientation={"vertical"} flexItem />
+          <EditableValue
+            unit={"W.H"}
+            isEditable={status === EOutsourceSupplierStatus.Manually}
+            label={t("pricingWidget.endTime")}
+            value={workHours}
+            onUpdate={handleDeliveryTimeUpdate}
+          />
+          <Divider orientation={"vertical"} flexItem />
+          <EditableValue
+            unit={systemCurrency}
+            isEditable={status === EOutsourceSupplierStatus.Manually}
+            label={t("pricingWidget.cost")}
+            value={cost}
+            onUpdate={handleCostUpdate}
+          />
+          <Divider orientation={"vertical"} flexItem />
+          <EditableValue
+            unit={"%"}
+            isEditable={status === EOutsourceSupplierStatus.Manually}
+            label={t("pricingWidget.profit")}
+            value={profit}
+            onUpdate={handleProfitUpdate}
+          />
+          <Divider orientation={"vertical"} flexItem />
+          <EditableValue
+            unit={systemCurrency}
+            isEditable={status === EOutsourceSupplierStatus.Manually}
+            valueColor={secondColor(500)}
+            label={t("pricingWidget.finalPrice")}
+            value={finalPrice}
+            onUpdate={handleUpdatePrice}
+          />
         </Stack>
-    );
-}
+        {cost !== 0 && (
+          <PrimaryButton
+            onClick={() =>
+              widgetType === EWidgetProductType.EDIT
+                ? updateQuoteItem(supplierId)
+                : addItem(supplierId)
+            }
+            style={{ width: "fit-content", height: 35 }}
+            variant={"contained"}
+          >
+            {widgetType === EWidgetProductType.EDIT
+              ? t("materials.buttons.edit")
+              : t("pricingWidget.add")}
+          </PrimaryButton>
+        )}
+      </Stack>
+    </Fade>
+  );
+};
 
+const EditableValue = ({
+  value,
+  onUpdate,
+  valueColor,
+  label,
+  isEditable,
+  unit,
+}: IProps) => {
+  const [edit, setEdit] = useState<boolean>(false);
+  const [editValue, setEditValue] = useState<number>(0);
+  const { classes } = useStyle();
+  const handleValueClick = (e) => {
+    e.stopPropagation();
+    if (isEditable) {
+      setEdit(true);
+    }
+  };
 
-export { OutSourceSupplierComponent }
+  const handleCancelUpdate = () => {
+    setEdit(false);
+    setEditValue(0);
+  };
 
+  const onInputChange = (v: string) => {
+    setEditValue(+v);
+  };
+
+  const handleValueUpdate = () => {
+    onUpdate(editValue);
+    setEdit(false);
+  };
+
+  return (
+    <Stack direction={"row"} gap={"10px"} alignItems={"center"}>
+      <span style={classes.detailTitle}>{label}</span>
+      {edit ? (
+        <UpdateValueInput
+          value={editValue.toString()}
+          onUpdate={handleValueUpdate}
+          onInputChange={onInputChange}
+          clickedOut={handleValueUpdate}
+          onCancel={handleCancelUpdate}
+        />
+      ) : (
+        <Button
+          onClick={handleValueClick}
+          variant={"text"}
+          style={
+            valueColor
+              ? {
+                  ...classes.detailValue,
+                  color: valueColor,
+                }
+              : classes.detailValue
+          }
+        >{`${value} ${unit}`}</Button>
+      )}
+    </Stack>
+  );
+};
+
+export { OutSourceSupplierComponent };
