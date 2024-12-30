@@ -108,6 +108,7 @@ const MANUALLY_CLOSE_DOCUMENT_URL =
 const SEND_QUOTE_APPROVAL_TO_MANAGER =
   "/v1/erp-service/documents/send-quote-approval-to-manager";
 const PAY_ORDER_IN_URL = "/v1/erp-service/documents/pay-order-in-tracking";
+const QUICK_DUPLICATE_URL = "/v1/erp-service/documents/quick-duplicate";
 const CLOSE_AND_TRACK_ORDER_URL =
   "/v1/erp-service/documents/close-and-track-order";
 const UPDATE_DOCUMENT_TITLE_URL =
@@ -914,6 +915,20 @@ const makePaymentForOrderApi: ICallAndSetData = async (
   );
 };
 
+const quickDuplicateApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    QUICK_DUPLICATE_URL,
+    setState,
+    data
+  );
+};
+
 const closeAndTrackOrderApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1135,5 +1150,6 @@ export {
   pauseOrdResumeOrderApi,
   createDocumentApi,
   startOrderProductionApi,
-  addGenericProductToDocumentApi
+  addGenericProductToDocumentApi,
+  quickDuplicateApi
 };
