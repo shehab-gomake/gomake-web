@@ -11,7 +11,13 @@ const useStyle = () => {
         justifyContent: "space-between",
         width: "100%",
         gap:10,
-        padding:16
+        padding:16,
+        position:"relative" as "relative"
+      },
+      reCalculateContainer:{
+        position:"absolute" as "absolute",
+        top:16,
+        right:16
       },
       parameterContainer:{
         display: 'flex',
