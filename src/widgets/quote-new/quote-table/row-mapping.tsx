@@ -1,7 +1,7 @@
 import { PrimaryTableCell } from "@/components/tables/primary-table";
-import { Checkbox, TableRow } from "@mui/material";
+import { Checkbox, IconButton, TableRow } from "@mui/material";
 import { useStyle } from "./style";
-import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { ArrowDownWithCircle, ArrowUpWithCircle, CalculatingIcon, CheckboxCheckedIcon, CheckboxIcon, NotCalculatingIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { CharacterDetails } from "./row-details/character-details";
 import { InputUpdatedValues } from "../input-updated-values";
@@ -17,7 +17,9 @@ import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import PriceOfferWidget from "@/widgets/price-offer-widget/price-offer-widget";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
-import { ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
+import { ECalculationStatus, ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
+import { useOrdersSignalr, useQuotesSignalr } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 const RowMappingWidget = ({
   item,
@@ -27,6 +29,7 @@ const RowMappingWidget = ({
   changedocumentItems,
   getCalculateQuoteItem,
   onClickDuplicateWithDifferentQTY,
+  onClickQuickDuplicate,
   onClickDeleteQouteItem,
   parentIndex,
   documentType,
@@ -35,18 +38,24 @@ const RowMappingWidget = ({
   isPrePaymentPage,
   onChangeSelectedItemRowForQoute,
   quoteItems,
+  isShowChilds,
+  setIsShowChilds,
+  _renderIconcalculationStatus,
 }) => {
   const router = useRouter();
+  const { t } = useTranslation();
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
   const [isSelected, setIsSelected] = useState(item?.isSelected);
   const { getCurrencyUnitText } = useQuoteGetData();
+  const { } = useQuotesSignalr({ getQuote });
+  const { } = useOrdersSignalr({ getQuote });
   const handleChangeSelectedItem = (checked, itemId) => {
     setIsSelected(checked);
     onChangeSelectedItemRowForQoute(checked, itemId);
   };
+
   const {
-    t,
     isUpdateAmount,
     isUpdateDiscount,
     isUpdatePrice,
@@ -127,19 +136,30 @@ const RowMappingWidget = ({
           </div>
         ) : isQuote && !isPrePaymentPage && !isQuoteConfirmation ? (
           <span style={classes.checkBoxContainer}>
-            <Checkbox
-              icon={<CheckboxIcon />}
-              checkedIcon={
-                <CheckboxCheckedIcon
-                  fill={item?.isConfirmedByClient && "green"}
-                />
-              }
-              checked={isSelected}
-              disabled={item?.isConfirmedByClient ? true : false}
-              onChange={(e) =>
-                handleChangeSelectedItem(e.target.checked, item?.id)
-              }
-            />
+            {item?.childsDocumentItems?.length > 0 &&
+              <IconButton onClick={() => setIsShowChilds(!isShowChilds)}>
+                {isShowChilds ? <ArrowUpWithCircle /> : <ArrowDownWithCircle />}
+              </IconButton>
+            }
+            {!item?.childsDocumentItems &&
+              <div style={{ width: "32px", height: "32px" }} />
+            }
+            {
+              item?.isShowDuplicateWithSameJob && <Checkbox
+                icon={<CheckboxIcon />}
+                checkedIcon={
+                  <CheckboxCheckedIcon
+                    fill={item?.isConfirmedByClient && "green"}
+                  />
+                }
+                checked={isSelected}
+                disabled={item?.isConfirmedByClient ? true : false}
+                onChange={(e) =>
+                  handleChangeSelectedItem(e.target.checked, item?.id)
+                }
+              />
+            }
+
             {parentIndex}
           </span>
         ) : (
@@ -195,6 +215,7 @@ const RowMappingWidget = ({
             width: columnWidths[3],
             textAlign: "start",
             borderBottom: item?.childsDocumentItems && "none",
+
           }}
         >
           <CharacterDetails
@@ -213,7 +234,7 @@ const RowMappingWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          <InputUpdatedValues
+          {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
             value={item.quantity}
             onBlur={onBlurAmount}
             isUpdate={canUpdatePricesBasedOnType && isUpdateAmount}
@@ -221,7 +242,7 @@ const RowMappingWidget = ({
               isQuoteConfirmation ? setIsConfirmation : setIsUpdateAmount
             }
             onInputChange={(e) => onInputChangeAmount(e)}
-          />
+          /> : "-"}
         </div>
       </PrimaryTableCell>
 
@@ -232,16 +253,19 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
+
         <div style={classes.cellTextInputStyle}>
-          <InputUpdatedValues
-            value={item.price}
-            onBlur={onBlurPrice}
-            isUpdate={canUpdatePricesBasedOnType && isUpdatePrice}
-            setIsUpdate={
-              isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice
-            }
-            onInputChange={(e) => onInputChangePrice(e)}
-          />
+          {
+            (item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
+              value={item.price}
+              onBlur={onBlurPrice}
+              isUpdate={canUpdatePricesBasedOnType && isUpdatePrice}
+              setIsUpdate={
+                isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice
+              }
+              onInputChange={(e) => onInputChangePrice(e)}
+            /> : "-"}
+
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -252,7 +276,7 @@ const RowMappingWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          <InputUpdatedValues
+          {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
             value={item.discount ? item.discount : "0"}
             onBlur={onBlurDiscount}
             isUpdate={canUpdatePricesBasedOnType && isUpdateDiscount}
@@ -260,7 +284,8 @@ const RowMappingWidget = ({
               isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount
             }
             onInputChange={(e) => onInputChangeDiscount(e)}
-          />
+          /> : "-"}
+
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -288,15 +313,19 @@ const RowMappingWidget = ({
               onInputChangeFinalPrice={onInputChangeFinalPrice}
             />
           ) : (
-            <InputUpdatedValues
-              value={item.finalPrice}
-              onBlur={onBlurFinalPrice}
-              isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice}
-              setIsUpdate={
-                isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice
-              }
-              onInputChange={(e) => onInputChangeFinalPrice(e)}
-            />
+            <>
+              {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
+                value={item.finalPrice}
+                onBlur={onBlurFinalPrice}
+                isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice}
+                setIsUpdate={
+                  isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice
+                }
+                onInputChange={(e) => onInputChangeFinalPrice(e)}
+              /> :
+                _renderIconcalculationStatus(item?.calculationStatus)}
+
+            </>
           )}
         </div>
       </PrimaryTableCell>
@@ -314,6 +343,7 @@ const RowMappingWidget = ({
               onClickDuplicateWithDifferentQTY={
                 onClickDuplicateWithDifferentQTY
               }
+              onClickQuickDuplicate={onClickQuickDuplicate}
               onClickDeleteQouteItem={onClickDeleteQouteItem}
               documentType={documentType}
             />

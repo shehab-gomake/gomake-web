@@ -36,6 +36,7 @@ const useActionUpdateValues = () => {
     const [openModalMachine,setOpenModalMachine]=useState(false);
     const [openModalMaterial,setOpenModalMaterial]=useState(false);
     const [currentCalculationSessionId, setCurrentCalculationSessionId] = useRecoilState<any>(currentCalculationSessionIdState);
+
     const onClickOpenModalMachine=()=>{
         setOpenModalMachine(true)
     }
@@ -124,6 +125,7 @@ const useActionUpdateValues = () => {
                     setCurrentCalculationSessionId(res.data.item2)
                 }
             }
+            setCurrentCalculationSessionId(res.data.item2)
             alertSuccessUpdate()
         }else {
             onClickOpenModalMachine()
@@ -134,6 +136,7 @@ const useActionUpdateValues = () => {
             if(res.data?.item1?.exceptionType===0){
                 onClickOpenModalMaterial()
             }else{
+                setCurrentCalculationSessionId(res.data.item2)
                 alertSuccessUpdate()
             }
         }else {

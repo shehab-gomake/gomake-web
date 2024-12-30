@@ -1,9 +1,5 @@
 import { useTranslation } from "react-i18next";
-import {
-  GoMakeModal,
-  GomakePrimaryButton,
-  GomakeTextInput,
-} from "@/components";
+import { GoMakeModal, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -14,8 +10,8 @@ import { Popover } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { Stack, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import { PrimaryButton } from "@/components/button/primary-button";
+import { Permissions } from "@/components/CheckPermission/enum";
 
-//!here
 const ProductTypeSelector = ({ active, onChange, primaryColor, t }) => (
   <RadioGroup
     row
@@ -23,23 +19,25 @@ const ProductTypeSelector = ({ active, onChange, primaryColor, t }) => (
     onChange={onChange}
     sx={{ gap: 2, padding: "0px 10px" }}
   >
-    {["Exist product", "Generic product"].map((label, index) => (
-      <FormControlLabel
-        key={label}
-        value={index === 0}
-        control={
-          <Radio
-            sx={{
-              "& .MuiSvgIcon-root": {
-                color: primaryColor(500),
-                fontSize: 18,
-              },
-            }}
-          />
-        }
-        label={t(label)}
-      />
-    ))}
+    {[t("sales.cart.existProduct"), t("sales.cart.newProduct")].map(
+      (label, index) => (
+        <FormControlLabel
+          key={label}
+          value={index === 0}
+          control={
+            <Radio
+              sx={{
+                "& .MuiSvgIcon-root": {
+                  color: primaryColor(500),
+                  fontSize: 18,
+                },
+              }}
+            />
+          }
+          label={t(label)}
+        />
+      )
+    )}
   </RadioGroup>
 );
 
@@ -52,14 +50,12 @@ const GenericProductInput = ({
   styles,
 }) => (
   <Stack direction="row" gap="20px">
-    {/* <h3 style={classes.filterLabelStyle}>{t("Product Name")}</h3> */}
     <GomakeTextInput
       sx={styles.textInput}
       value={productName}
       onChange={(e) => setProductName(e.target.value)}
       placeholder={t("products.addProduct.admin.enterName")}
     />
-    {/* <h3 style={classes.filterLabelStyle}>{t("Product Code")}</h3> */}
     <GomakeTextInput
       sx={styles.textInput}
       value={productCode}
@@ -73,6 +69,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { primaryColor } = useGomakeTheme();
+
   const {
     handleProductChange,
     combinedData,
@@ -92,6 +89,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
     productCode,
     setProductCode,
     handleCloseModal,
+    CheckPermission,
   } = useAddNewItem({ onClose, getQuote, documentType });
 
   return (
@@ -102,21 +100,27 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
         onClose={handleCloseModal}
         insideStyle={classes.insideStyle}
         withRoundedCloseIcon={false}
+        modalTitleStyle={
+          !CheckPermission(Permissions.ADD_NEW_PRODUCT_FROM_CART)
+            ? { paddingBottom: "20px" }
+            : undefined
+        }
       >
-        <div style={classes.mainContainer}>
-          <ProductTypeSelector
-            active={active}
-            onChange={handleChange}
-            primaryColor={primaryColor}
-            t={t}
-          />
+        <Stack style={classes.mainContainer}>
+          {CheckPermission(Permissions.ADD_NEW_PRODUCT_FROM_CART) && (
+            <ProductTypeSelector
+              active={active}
+              onChange={handleChange}
+              primaryColor={primaryColor}
+              t={t}
+            />
+          )}
           {active ? (
             <GoMakeTreeSelect
               value={selectedProduct}
               options={combinedData}
               onChange={handleProductChange}
               placeholder={t("home.admin.selectProductOrMaterial")}
-              style={{ marginTop: 15 }}
             />
           ) : (
             <GenericProductInput
@@ -149,7 +153,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
               <div style={classes.errorMsgStyle}>{_renderErrorMessage()}</div>
             </Popover>
           </div>
-        </div>
+        </Stack>
       </GoMakeModal>
     </>
   );

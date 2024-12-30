@@ -69,7 +69,7 @@ const useStyle = () => {
         height: 45,
         "& .MuiInputBase-root input": {
           borderRadius: "8px !important",
-          border: "1px solid #EAECF0",
+          border: "1px solid rgb(234, 240, 234) !important",
           boxShadow: "none",
           height: 45,
         },

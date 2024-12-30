@@ -362,7 +362,7 @@ const RightSideWidget = ({
           </div>
         ) : null}
         <PermissionCheck userPermission={Permissions.UPDATE_CALCULATED_PRICE}>
-          {currentProductItemValueTotalPrice && (
+          {currentProductItemValueTotalPrice && minDiscount !== maxIncrease && (
             <Box sx={{ width: 300, textAlign: "center", margin: "20px auto" }}>
               <Box
                 display="flex"
@@ -386,10 +386,6 @@ const RightSideWidget = ({
                 max={Math.round(maxIncrease)}
                 step={1}
               />
-              {/* <Typography sx={clasess.labelsStyle}>
-              New price: {Math.round(sliderCurrentProductItemValueTotalPrice)}
-              {systemCurrency}
-            </Typography> */}
             </Box>
           )}
         </PermissionCheck>
