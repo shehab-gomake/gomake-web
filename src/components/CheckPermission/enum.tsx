@@ -109,6 +109,7 @@ export enum Permissions {
   SHOW_INVOICES = "ShowInvoices",
   SHOW_INVOICES_REFUND = "ShowInvoicesRefund",
   SHOW_ERP_DOCUMENTS_TABLE_SUMMERY = "ShowErpDocumentsTableSummery",
+  ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
 
   //purchase group
   SHOW_PURCHASE_ORDERS = "ShowPurchaseOrders",

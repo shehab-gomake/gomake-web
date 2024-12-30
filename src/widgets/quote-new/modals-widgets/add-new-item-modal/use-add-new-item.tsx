@@ -12,7 +12,11 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
-import { addGenericProductToDocumentApi, addItemApi } from "@/services/api-service/generic-doc/documents-api";
+import {
+  addGenericProductToDocumentApi,
+  addItemApi,
+} from "@/services/api-service/generic-doc/documents-api";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const useAddNewItem = ({ onClose, getQuote, documentType }) => {
   const { callApi } = useGomakeAxios();
@@ -21,6 +25,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const { navigate } = useGomakeRouter();
   const router = useRouter();
+  const { CheckPermission } = useUserPermission();
 
   const [combinedData, setCombinedData] = useState<any>([]);
   const [quoteItemValue, setQuoteItemValue] =
@@ -212,6 +217,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
 
     return true;
   };
+
   const getDocumentItemDataFromMaterial = async () => {
     const callBack = (res) => {
       if (res.success) {
@@ -329,7 +335,6 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
     });
   };
 
-  //!here need more changes
   const onClickCreateQuoteForCustomer = () => {
     if (router.query.isNewCreation) {
       if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
@@ -352,18 +357,21 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
         } else addItemForQuotes();
       } else {
         if (active === false) {
-          addGenericProductToDocument(genericItem)
+          addGenericProductToDocument(genericItem);
           handleCloseModal();
         } else {
           if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
             addDocumentItemFromMaterial();
           } else {
             navigate(
-              `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId
-              }&customerId=${quoteItemValue?.customerID}&customerName=${quoteItemValue?.client?.name
-              }&productId=${selectedProduct?.id}&documentType=${documentType}${quoteItemValue?.number
-                ? `&documentNumber=${quoteItemValue?.number}`
-                : ""
+              `/products/create?clientTypeId=${
+                quoteItemValue?.client?.clientTypeId
+              }&customerId=${quoteItemValue?.customerID}&customerName=${
+                quoteItemValue?.client?.name
+              }&productId=${selectedProduct?.id}&documentType=${documentType}${
+                quoteItemValue?.number
+                  ? `&documentNumber=${quoteItemValue?.number}`
+                  : ""
               }${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
             );
           }
@@ -394,6 +402,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
     productCode,
     setProductCode,
     handleCloseModal,
+    CheckPermission,
   };
 };
 
