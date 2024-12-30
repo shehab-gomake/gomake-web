@@ -11,7 +11,7 @@ import { DuplicateModalIcon } from "./icons/duplicate-icon";
 import { DeleteModalIcon } from "./icons/delete-icon";
 import { AddModalIcon } from "./icons/add-icon";
 import { useStyle } from "./style";
-import { useEffect, useState } from "react";
+import { useEffect, } from "react";
 
 const DuplicateQuickModal = ({
   openModal,
@@ -43,7 +43,6 @@ const DuplicateQuickModal = ({
       getProductSizes()
     }
   }, [quoteItem, openModal])
-
   return (
     <>
       <GoMakeModal
@@ -122,7 +121,7 @@ const DuplicateQuickModal = ({
                               placeholder={t("products.profits.exceptions.enterValue")}
                               value={param?.width ? param?.width : ""}
                               onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value, "width")}
-                              disabled={param?.width ? true : false}
+                              disabled={param?.width && param?.value?.id !== "f37799c1-1372-4722-a3d8-3503cea0179c" ? true : false}
                             />
                           </div>
                           <div style={{ width: "100%" }}>
@@ -132,7 +131,7 @@ const DuplicateQuickModal = ({
                               placeholder={t("products.profits.exceptions.enterValue")}
                               value={param?.length ? param?.length : ""}
                               onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value, "length")}
-                              disabled={param?.length ? true : false}
+                              disabled={param?.length && param?.value?.id !== "f37799c1-1372-4722-a3d8-3503cea0179c" ? true : false}
                             />
                           </div>
                         </div> :

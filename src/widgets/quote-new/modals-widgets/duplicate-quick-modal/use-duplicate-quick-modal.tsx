@@ -47,12 +47,6 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
     setGroups(newGroups);
   };
 
-  // const handleTextInputChange = (groupIndex, paramIndex, value) => {
-  //   const newGroups = [...groups];
-  //   newGroups[groupIndex].parameters[paramIndex].value = value;
-  //   setGroups(newGroups);
-  // };
-
   const handleTextInputChange = (groupIndex, paramIndex, value, field = "value") => {
     const newGroups = [...groups];
     newGroups[groupIndex].parameters[paramIndex][field] = value;
@@ -63,8 +57,8 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
     return groupList.map(group => ({
       ...group,
       parameters: group?.parameters.flatMap(param => {
+        console.log("param", param)
         if (typeof param.value === "object" && param.value !== null) {
-          // Transform when the value is an object
           return [
             {
               name: param.name,
@@ -75,14 +69,14 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
                 label: "length",
                 value: "d2c965d3-6b08-4380-9d4b-17c361d7e484", // Replace with actual unique identifier if needed
               },
-              value: param.value.length, // Extract the length
+              value: param.length, // Extract the length
             },
             {
               name: {
                 label: "width",
                 value: "4ba9a275-4fbc-4313-b284-e9b1cf8b452e", // Replace with actual unique identifier if needed
               },
-              value: param.value.width, // Extract the width
+              value: param.width, // Extract the width
             },
           ];
         } else {
@@ -92,12 +86,6 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
       }),
     }));
   }
-
-
-  // useEffect(() => {
-  //   const transformedGroupList = transformGroupList(groups);
-  //   console.log("transformedGroupList", { transformedGroupList, groups })
-  // }, [groups])
 
   const onClickQuickDuplicate = async () => {
     const transformedGroupList = transformGroupList(groups);
