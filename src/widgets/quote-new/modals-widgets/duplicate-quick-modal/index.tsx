@@ -11,17 +11,20 @@ import { DuplicateModalIcon } from "./icons/duplicate-icon";
 import { DeleteModalIcon } from "./icons/delete-icon";
 import { AddModalIcon } from "./icons/add-icon";
 import { useStyle } from "./style";
+import { useEffect, useState } from "react";
 
 const DuplicateQuickModal = ({
   openModal,
   onClose,
   quoteItemId,
   documentType,
-  getQuote
+  getQuote,
+  quoteItem
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const { groups,
+  const {
+    groups,
     setGroups,
     addGroup,
     addParameter,
@@ -31,8 +34,17 @@ const DuplicateQuickModal = ({
     handleTextInputChange,
     onClickQuickDuplicate,
     isRelatedJobs,
-    setIsRelatedJobs
-  } = useDuplicateQuickModal({ getQuote, onClose, documentType, quoteItemId })
+    setIsRelatedJobs,
+    getProductSizes,
+    productSizes
+  } = useDuplicateQuickModal({ getQuote, onClose, documentType, quoteItemId, quoteItem })
+  useEffect(() => {
+    if (quoteItem?.productID && openModal) {
+      getProductSizes()
+    }
+  }, [quoteItem, openModal])
+
+  console.log("groups", groups)
   return (
     <>
       <GoMakeModal
@@ -71,8 +83,9 @@ const DuplicateQuickModal = ({
                       options={[
                         { label: t("boardMissions.jobName"), value: "a330193f-492c-40a8-86f3-8edf5c8f0d5e" },
                         { label: t("boardMissions.quantity"), value: "4991945c-5e07-4773-8f11-2e3483b70b53" },
-                        { label: t("machineAttributes.width"), value: "4ba9a275-4fbc-4313-b284-e9b1cf8b452e" },
-                        { label: t("machineAttributes.length"), value: "d2c965d3-6b08-4380-9d4b-17c361d7e484" },
+                        { label: t("machineAttributes.size"), value: "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4" },
+                        // { label: t("machineAttributes.width"), value: "4ba9a275-4fbc-4313-b284-e9b1cf8b452e" },
+                        // { label: t("machineAttributes.length"), value: "d2c965d3-6b08-4380-9d4b-17c361d7e484" },
                       ]}
                       onChange={(e, value) => handleDropdownChange(groupIndex, index, value)}
                       value={param?.name}
@@ -81,14 +94,60 @@ const DuplicateQuickModal = ({
                       withArrow={true}
                     />
                   </div>
-                  <div style={clasess.groupParameterDropdown}>
-                    <div>{t("documentingSettings.value")}</div>
-                    <GomakeTextInput
-                      style={clasess.groupParameterInput}
-                      placeholder={t("products.profits.exceptions.enterValue")}
-                      value={param?.value}
-                      onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value)}
-                    />
+                  <div style={clasess.groupParameterDropdown2}>
+                    {
+                      param?.name?.value === "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4" ?
+                        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 10, width: "100%" }}>
+                          <div style={{ width: "100%" }}>
+                            <div>{t("documentingSettings.value")}</div>
+                            <GoMakeAutoComplate
+                              options={productSizes}
+                              onChange={(e, value) => {
+                                if (value) {
+                                  handleTextInputChange(groupIndex, index, value.width, "width");
+                                  handleTextInputChange(groupIndex, index, value, "value");
+                                  handleTextInputChange(groupIndex, index, value.length, "length");
+                                }
+                              }}
+                              value={param?.value}
+                              getOptionLabel={(option) => option?.name}
+                              style={clasess.groupParameterInput2}
+                              placeholder={t("products.profits.exceptions.selectParameter")}
+                              withArrow={true}
+                            />
+                          </div>
+                          <div style={{ width: "100%" }}>
+                            <div>{t("machineAttributes.width")}</div>
+                            <GomakeTextInput
+                              style={clasess.groupParameterInput2}
+                              placeholder={t("products.profits.exceptions.enterValue")}
+                              value={param?.width ? param?.width : ""}
+                              onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value, "width")}
+                              disabled={param?.width ? true : false}
+                            />
+                          </div>
+                          <div style={{ width: "100%" }}>
+                            <div>{t("machineAttributes.length")}</div>
+                            <GomakeTextInput
+                              style={clasess.groupParameterInput2}
+                              placeholder={t("products.profits.exceptions.enterValue")}
+                              value={param?.length ? param?.length : ""}
+                              onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value, "length")}
+                              disabled={param?.length ? true : false}
+                            />
+                          </div>
+                        </div> :
+                        <>
+                          <div>{t("documentingSettings.value")}</div>
+                          <GomakeTextInput
+                            style={clasess.groupParameterInput2}
+                            placeholder={t("products.profits.exceptions.enterValue")}
+                            value={param?.value}
+                            onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value)}
+                            type={param?.name?.value === "4991945c-5e07-4773-8f11-2e3483b70b53" ? "number" : "text"}
+                          />
+                        </>
+                    }
                   </div>
                   <div style={clasess.groupParameterAddContainer}>
                     <div onClick={() => addParameter(groupIndex)} style={clasess.groupParameterAdd}>

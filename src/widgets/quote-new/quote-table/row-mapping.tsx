@@ -19,6 +19,7 @@ import PriceOfferWidget from "@/widgets/price-offer-widget/price-offer-widget";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 import { ECalculationStatus, ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
 import { useOrdersSignalr, useQuotesSignalr } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 const RowMappingWidget = ({
   item,
@@ -39,8 +40,10 @@ const RowMappingWidget = ({
   quoteItems,
   isShowChilds,
   setIsShowChilds,
+  _renderIconcalculationStatus,
 }) => {
   const router = useRouter();
+  const { t } = useTranslation();
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
   const [isSelected, setIsSelected] = useState(item?.isSelected);
@@ -51,19 +54,8 @@ const RowMappingWidget = ({
     setIsSelected(checked);
     onChangeSelectedItemRowForQoute(checked, itemId);
   };
-  const _renderIconcalculationStatus = (calculationStatus) => {
-    if (calculationStatus === ECalculationStatus.Calculating) {
-      return <div style={{ display: "flex", alignItems: "center", gap: "5px" }}><CalculatingIcon /><a>Calculating ...</a></div>;;
-    }
-    if (calculationStatus === ECalculationStatus.Failed) {
-      return <div style={{ display: "flex", alignItems: "center", gap: "5px", color: "#344054", }}><NotCalculatingIcon />Error!
-        <span style={{ color: "#2E3092", textDecoration: "underline", cursor: "pointer" }} onClick={() => getQuote()}>Try again</span>
-      </div>
 
-    }
-  }
   const {
-    t,
     isUpdateAmount,
     isUpdateDiscount,
     isUpdatePrice,
@@ -145,24 +137,29 @@ const RowMappingWidget = ({
         ) : isQuote && !isPrePaymentPage && !isQuoteConfirmation ? (
           <span style={classes.checkBoxContainer}>
             {item?.childsDocumentItems?.length > 0 &&
-              <>
-                <IconButton onClick={() => setIsShowChilds(!isShowChilds)}>
-                  {isShowChilds ? <ArrowUpWithCircle /> : <ArrowDownWithCircle />}
-                </IconButton>
-              </>}
-            <Checkbox
-              icon={<CheckboxIcon />}
-              checkedIcon={
-                <CheckboxCheckedIcon
-                  fill={item?.isConfirmedByClient && "green"}
-                />
-              }
-              checked={isSelected}
-              disabled={item?.isConfirmedByClient ? true : false}
-              onChange={(e) =>
-                handleChangeSelectedItem(e.target.checked, item?.id)
-              }
-            />
+              <IconButton onClick={() => setIsShowChilds(!isShowChilds)}>
+                {isShowChilds ? <ArrowUpWithCircle /> : <ArrowDownWithCircle />}
+              </IconButton>
+            }
+            {!item?.childsDocumentItems &&
+              <div style={{ width: "32px", height: "32px" }} />
+            }
+            {
+              item?.isShowDuplicateWithSameJob && <Checkbox
+                icon={<CheckboxIcon />}
+                checkedIcon={
+                  <CheckboxCheckedIcon
+                    fill={item?.isConfirmedByClient && "green"}
+                  />
+                }
+                checked={isSelected}
+                disabled={item?.isConfirmedByClient ? true : false}
+                onChange={(e) =>
+                  handleChangeSelectedItem(e.target.checked, item?.id)
+                }
+              />
+            }
+
             {parentIndex}
           </span>
         ) : (
