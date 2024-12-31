@@ -27,6 +27,12 @@ const RE_CALCULATE_PRICE_URL = "/v1/printhouse-config/products/calculate-product
 const GET_PRODUCT_SIZES_URL = "/v1/printhouse-config/products/get-product-sizes";
 
 
+const ADD_ACTION_TO_PRODUCT_URL = "/v1/printhouse-config/products/add-action-to-product";
+const UPDATE_PRODUCT_ACTION_URL = "/v1/printhouse-config/products/update-product-action";
+const UPDATE_ACTIONS_ORDER_IN_PRODUCT_URL =  "/v1/printhouse-config/products/update-actions-order-in-product";
+const DELETE_ACTION_FROM_PRODUCT_URL =  "/v1/printhouse-config/products/delete-action-from-product";
+
+const GET_PRODUCT_ACTIONS_URL = "/v1/printhouse-config/products/get-product-actions";
 
 const addProductProfitRuleApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, ADD_PRODUCT_PROFIT_RULE_URL, setState, data);
@@ -92,7 +98,25 @@ const getProfitsProfilePdfApi: ICallAndSetData = async (callApi, setState, data)
       data
     );
   };
+  const addActionToProductApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.POST, ADD_ACTION_TO_PRODUCT_URL, setState, data);
+};
 
+const updateProductActionApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_PRODUCT_ACTION_URL, setState, data);
+};
+
+const updateActionsOrderInProductApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, UPDATE_ACTIONS_ORDER_IN_PRODUCT_URL, setState, data);
+};
+
+const deleteActionFromProductApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.DELETE, `${DELETE_ACTION_FROM_PRODUCT_URL}?productId=${data?.productId}&actionId=${data?.actionId}`, setState, data);
+};
+
+const getProductActionsApi: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, `${GET_PRODUCT_ACTIONS_URL}`, setState, data);
+};
   const reCalculatePriceApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.PUT, RE_CALCULATE_PRICE_URL ,setState, data);
 };
@@ -120,6 +144,11 @@ export {
     getProfitsProfilePdfApi,
     updateProfitProfileProductMachineApi,
     resetPrintHousePriceApi,
+    addActionToProductApi,
+    updateProductActionApi,
+    updateActionsOrderInProductApi,
+    deleteActionFromProductApi,
+    getProductActionsApi
     getProductSizesApi,
     reCalculatePriceApi
 }
