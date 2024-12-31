@@ -26,6 +26,18 @@ const useStyle = () => {
         right:10,
         cursor:"pointer",
       },
+      reCalculateContainerRTL:{
+        display:"flex",
+        alignItems:"center",
+        justifyContent:"center",
+        borderRadius:8,
+        border:"1px solid #D0D5DD",
+        padding:"8px 12px",
+        position:"absolute" as "absolute",
+        top:10,
+        left:10,
+        cursor:"pointer",
+      },
       parameterContainer:{
         display: 'flex',
         flexDirection: "row" as "row",
