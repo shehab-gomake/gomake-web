@@ -9,6 +9,7 @@ import { exampleTypeState } from "@/store/example-type";
 import { priceChangePercentsState } from "@/store/min-max-price-change-percents";
 import { currenciesSymbols } from "@/widgets/materials-widget/state";
 import {
+  calculatedPriceProductItemValueState,
   calculationExceptionsLogsState,
   calculationProgressState,
   currentProductItemValuePriceState,
@@ -16,17 +17,18 @@ import {
   selectedWorkFlowState,
   sliderCurrentProductItemValuePriceState,
 } from "@/widgets/product-pricing-widget/state";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { EWidgetProductType } from "../enums";
 
-const useRightSideWidget = ({ includeVAT }) => {
+const useRightSideWidget = ({ includeVAT, widgetType }) => {
+  const { t } = useTranslation();
+  const direction = t("direction");
+  const isRtl = direction === "rtl";
   const { alertFault } = useSnackBar();
   const [calculationExceptionsLogs, setCalculationExceptionsLogs] =
     useRecoilState<any>(calculationExceptionsLogsState);
-  useEffect(() => {
-    setCalculationExceptionsLogs([]);
-  }, []);
   const [isLoading, setIsLoading] = useRecoilState(isLoadgingState);
   const subProducts = useRecoilValue<any>(subProductsParametersState);
   const systemVAT = useRecoilValue<number>(systemVATState);
@@ -34,6 +36,29 @@ const useRightSideWidget = ({ includeVAT }) => {
   const [systemCurrency, setSystemCurrency] =
     useRecoilState<any>(systemCurrencyState);
   const currencies = useRecoilValue(currenciesSymbols);
+  const [
+    currentProductItemValueTotalPrice,
+    setCurrentProductItemValueTotalPrice,
+  ] = useRecoilState<number>(currentProductItemValuePriceState);
+  const lastProductItemValueTotalPrice = useRecoilValue<number>(
+    lastProductItemValuePriceState
+  );
+  const calculationProgress = useRecoilValue(calculationProgressState);
+  const exampleTypeValues = useRecoilValue(exampleTypeState);
+  const priceChangePercents = useRecoilValue(priceChangePercentsState);
+  const calculatedPriceProductItemValue = useRecoilValue<number>(
+    calculatedPriceProductItemValueState
+  );
+  const [
+    sliderCurrentProductItemValueTotalPrice,
+    setSliderCurrentProductItemValueTotalPrice,
+  ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
+  const [priceIncludeVat, setPriceIncludeVat] = useState<any>();
+
+  useEffect(() => {
+    setCalculationExceptionsLogs([]);
+  }, []);
+
   useEffect(() => {
     if (currencies?.length > 0) {
       const data = currencies.find((c) => c.value === systemCurrency);
@@ -42,20 +67,13 @@ const useRightSideWidget = ({ includeVAT }) => {
       }
     }
   }, [systemCurrency, currencies]);
+
   useEffect(() => {
     if (calculationExceptionsLogs?.length > 0) {
       setIsLoading(false);
     }
   }, [calculationExceptionsLogs]);
-  const [
-    currentProductItemValueTotalPrice,
-    setCurrentProductItemValueTotalPrice,
-  ] = useRecoilState<number>(currentProductItemValuePriceState);
 
-  const lastProductItemValueTotalPrice = useRecoilValue<number>(
-    lastProductItemValuePriceState
-  );
-  const calculationProgress = useRecoilValue(calculationProgressState);
   const quantity = useMemo(() => {
     if (subProducts) {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
@@ -64,62 +82,43 @@ const useRightSideWidget = ({ includeVAT }) => {
       );
     }
   }, [subProducts]);
-  const exampleTypeValues = useRecoilValue(exampleTypeState);
-
-  const { t } = useTranslation();
-  const direction = t("direction");
-
-  useEffect(() => {
-    if (currentProductItemValueTotalPrice != null) {
-      if (includeVAT == null) {
-        return;
-      }
-      if (includeVAT) {
-        setCurrentProductItemValueTotalPrice(
-          currentProductItemValueTotalPrice * (1 + systemVAT)
-        );
-
-        setSliderCurrentProductItemValueTotalPrice(
-          currentProductItemValueTotalPrice * (1 + systemVAT)
-        );
-      } else {
-        setCurrentProductItemValueTotalPrice(
-          currentProductItemValueTotalPrice / (1 + systemVAT)
-        );
-
-        setSliderCurrentProductItemValueTotalPrice(
-          currentProductItemValueTotalPrice / (1 + systemVAT)
-        );
-      }
-    }
-  }, [includeVAT]);
 
   /* Slider */
-  const priceChangePercents = useRecoilValue(priceChangePercentsState);
-  const [
-    sliderCurrentProductItemValueTotalPrice,
-    setSliderCurrentProductItemValueTotalPrice,
-  ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
+  const priceToUse =
+    widgetType === EWidgetProductType.EDIT ||
+    widgetType === EWidgetProductType.DUPLICATE
+      ? calculatedPriceProductItemValue
+      : currentProductItemValueTotalPrice;
 
   const minDiscount =
-    currentProductItemValueTotalPrice -
-    (currentProductItemValueTotalPrice *
-      (priceChangePercents?.minPercent || 0)) /
-      100;
+    priceToUse - (priceToUse * (priceChangePercents?.minPercent || 0)) / 100;
 
   const maxIncrease =
-    Number(currentProductItemValueTotalPrice) +
-    (Number(currentProductItemValueTotalPrice) *
-      Number(priceChangePercents?.maxPercent || 0)) /
-      100;
+    Number(priceToUse) +
+    (Number(priceToUse) * Number(priceChangePercents?.maxPercent || 0)) / 100;
 
   const handleSliderChange = (event, newValue) => {
-    setSliderCurrentProductItemValueTotalPrice(newValue);
+    const validMaxIncrease = Math.round(Number(maxIncrease));
+    const validMinDiscount = Math.round(Number(minDiscount));
+    const adjustedValue = isRtl
+      ? validMaxIncrease - newValue + validMinDiscount
+      : newValue;
+
+    setSliderCurrentProductItemValueTotalPrice(adjustedValue);
   };
+
+  useEffect(() => {
+    if (sliderCurrentProductItemValueTotalPrice !== null) {
+      setPriceIncludeVat(
+        sliderCurrentProductItemValueTotalPrice * (1 + systemVAT)
+      );
+    }
+  }, [sliderCurrentProductItemValueTotalPrice]);
 
   return {
     t,
     direction,
+    isRtl,
     currentProductItemValueTotalPrice,
     lastProductItemValueTotalPrice,
     calculationProgress,
@@ -136,6 +135,7 @@ const useRightSideWidget = ({ includeVAT }) => {
     sliderCurrentProductItemValueTotalPrice,
     setSliderCurrentProductItemValueTotalPrice,
     alertFault,
+    priceIncludeVat,
   };
 };
 
