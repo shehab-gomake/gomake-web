@@ -15,9 +15,16 @@ const useStyle = () => {
         position:"relative" as "relative"
       },
       reCalculateContainer:{
+        display:"flex",
+        alignItems:"center",
+        justifyContent:"center",
+        borderRadius:8,
+        border:"1px solid #D0D5DD",
+        padding:"8px 12px",
         position:"absolute" as "absolute",
-        top:16,
-        right:16
+        top:10,
+        right:10,
+        cursor:"pointer",
       },
       parameterContainer:{
         display: 'flex',
