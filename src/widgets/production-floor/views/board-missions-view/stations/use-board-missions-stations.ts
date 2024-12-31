@@ -8,6 +8,7 @@ import {
   boardMissionsSubWorkFlowsState,
   isOrderCompletedState,
   isReadyBoardMissionsState,
+  relatedOrderItemsComponentState,
   stationGeneralInformationProductionFloorState,
   stationGeneralInformationState,
 } from "@/widgets/production-floor/views/board-missions-view/stations/state";
@@ -26,6 +27,7 @@ const useBoardMissionsStations = () => {
   const [, setInformationProductionFloor] = useRecoilState(
     stationGeneralInformationProductionFloorState
   );
+  const [, setRelatedOrderItems] = useRecoilState(relatedOrderItemsComponentState);
 
   const [subWorkFlows, setSubWorkFlows] = useRecoilState(
     boardMissionsSubWorkFlowsState
@@ -44,6 +46,7 @@ const useBoardMissionsStations = () => {
         setInformationProductionFloor(
           res?.data?.generalInformationProductionFloor
         );
+        setRelatedOrderItems(res?.data?.relatedOrderItems);
         setIsReady(res?.data?.isReady);
         setIsOrderCompleted(res?.data?.isOrderCompleted);
       }
