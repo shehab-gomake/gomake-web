@@ -78,7 +78,7 @@ const TotalPriceComp = ({
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
-          {`${t("sales.quote.vat")} (17%)`}
+          {`${t("sales.quote.vat")} (${Number(quoteItems?.vat) * 100}%)`}
         </div>
         <div style={{ ...classes.oddRowContainer, width: "23%" }}>
           {quoteItems?.totalVAT + " " + getCurrencyUnitText(quoteItems?.currency)}
