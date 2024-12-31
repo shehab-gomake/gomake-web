@@ -44,6 +44,7 @@ import { ButtonParameterWidget } from "@/pages-components/products/digital-offse
 
 import {
   additionalProductItemsState,
+  calculatedPriceProductItemValueState,
   calculationExceptionsLogsState,
   calculationProgressState,
   calculationResultState,
@@ -320,6 +321,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     selectedWorkFlowCalculatedIsLoaded,
     setSelectedWorkFlowCalculatedIsLoaded,
   ] = useState<boolean>(false);
+
+  const setCalculatedPriceProductItemValue = useSetRecoilState<number>(
+    calculatedPriceProductItemValueState
+  );
 
   const getSelectedWorkFlow = async () => {
     // setSelectedWorkFlowCalculatedIsLoaded(true)
@@ -4601,6 +4606,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
     }
   };
+
   const getProductQuoteItemById = async (materials) => {
     if (connectionId) {
       const callBack = (res) => {
@@ -4614,6 +4620,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setValuesState(res?.data?.productItemValue?.workTypes);
           setWorkTypes(res?.data?.productItemValue?.workTypes);
           setMissionsListForEdit(res?.data?.missions);
+          setCalculatedPriceProductItemValue(res?.data?.calculatedPrice);
         } else {
           alertFaultUpdate();
         }

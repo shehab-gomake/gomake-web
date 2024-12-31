@@ -59,14 +59,14 @@ const RightSideWidget = ({
     quantity,
     selectedWorkFlow,
     calculationExceptionsLogs,
-    setCurrentProductItemValueTotalPrice,
     handleSliderChange,
     maxIncrease,
     minDiscount,
     sliderCurrentProductItemValueTotalPrice,
     setSliderCurrentProductItemValueTotalPrice,
     alertFault,
-  } = useRightSideWidget({ includeVAT });
+    priceIncludeVat,
+  } = useRightSideWidget({ includeVAT, widgetType });
 
   const additionalProductItems = useRecoilValue(additionalProductItemsState);
   const mergedArray = [
@@ -217,11 +217,7 @@ const RightSideWidget = ({
             ) : (
               <GomakeTextInput
                 direction={direction}
-                // value={currentProductItemValueTotalPrice ?? "---------"}
-                value={
-                  sliderCurrentProductItemValueTotalPrice?.toFixed(3) ??
-                  "---------"
-                }
+                value={sliderCurrentProductItemValueTotalPrice ?? "---------"}
                 onBlur={(e: any) => {
                   const inputValue = Number(e.target.value);
 
@@ -238,9 +234,9 @@ const RightSideWidget = ({
                   ) {
                     setSliderCurrentProductItemValueTotalPrice(
                       currentProductItemValueTotalPrice
-                    ); //!new
+                    );
                   } else {
-                    setSliderCurrentProductItemValueTotalPrice(e.target.value); //!new
+                    setSliderCurrentProductItemValueTotalPrice(e.target.value);
                   }
                 }}
                 key={"TotalPriceInput"}
@@ -283,22 +279,6 @@ const RightSideWidget = ({
               />
             </div>
           )}
-        {/* {currentProductItemValueTotalPrice && (
-          <div style={clasess.orderContainer}>
-            {t("products.offsetPrice.admin.orderToral", {
-              prieceNum: quantity?.values[0],
-              price: isNaN(
-                currentProductItemValueTotalPrice / quantity?.values[0]
-              )
-                ? 0
-                : (
-                    (currentProductItemValueTotalPrice || 0) /
-                    (quantity?.values[0] || 1)
-                  )?.toFixed(4),
-              unitPrice: systemCurrency,
-            })}
-          </div>
-        )} */}
         {sliderCurrentProductItemValueTotalPrice && (
           <div style={clasess.orderContainer}>
             {t("products.offsetPrice.admin.orderToral", {
@@ -367,6 +347,7 @@ const RightSideWidget = ({
             )}
           </div>
         ) : null}
+        {/* Slider */}
         <PermissionCheck userPermission={Permissions.UPDATE_CALCULATED_PRICE}>
           {currentProductItemValueTotalPrice && minDiscount !== maxIncrease && (
             <Box sx={{ width: 300, textAlign: "center", margin: "20px auto" }}>
@@ -403,6 +384,7 @@ const RightSideWidget = ({
             </Box>
           )}
         </PermissionCheck>
+        {/* Slider */}
         <Divider />
         {additionalProductItems?.length > 0 && (
           <div style={clasess.additionalProductItems}>
@@ -434,7 +416,6 @@ const RightSideWidget = ({
             ))}
           </div>
         )}
-
         <div style={clasess.urgentEstimateContainer}>
           {workFlowSelected &&
             workFlowSelected?.totalRealProductionTime?.values[0].length > 0 && (
@@ -444,19 +425,27 @@ const RightSideWidget = ({
                 })}
               </div>
             )}
+
           <div style={clasess.priceRecoveryContainer}>
             <Checkbox
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
-              onChange={() => {
-                setIncludeVAT(!includeVAT);
-              }}
+              onChange={() => setIncludeVAT(!includeVAT)}
               checked={includeVAT}
             />
             <div style={clasess.secondText}>
               {t("products.offsetPrice.admin.includeVAT")}
             </div>
+            {includeVAT && (
+              <>
+                <div style={clasess.priceDisplay}>
+                  : {Number(priceIncludeVat).toFixed(2)}
+                </div>{" "}
+                <span style={clasess.currencyDisplay}>{systemCurrency}</span>
+              </>
+            )}
           </div>
+
           <div style={clasess.priceRecoveryContainer}>
             <Checkbox
               icon={<CheckboxIcon />}
@@ -471,7 +460,6 @@ const RightSideWidget = ({
             </div>
           </div>
         </div>
-
         <div style={clasess.switchAdditionsContainer}>
           <div style={clasess.tabsTypesContainer}>
             {tabs?.map((tab) => {

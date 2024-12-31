@@ -514,6 +514,11 @@ const useStyle = () => {
         maxHeight: 35,
         boxShadow: "none",
         textAlign: "center" as "center",
+        direction: direction,
+        unicodeBidi: "plaintext",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
       },
       priceRecoveryContainer: {
         display: "flex",
@@ -1014,6 +1019,14 @@ const useStyle = () => {
         gap: 5,
         cursor: "pointer",
         paddingBottom: 10,
+      },
+      priceDisplay: {
+        fontWeight: "bold",
+        color: primaryColor(500),
+      },
+      currencyDisplay: {
+        ...FONT_FAMILY.Inter(500, 12),
+        color: primaryColor(500),
       },
     };
   }, [i18next.language, t, direction, screenWidth]);
