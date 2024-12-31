@@ -148,7 +148,7 @@ export {
     updateProductActionApi,
     updateActionsOrderInProductApi,
     deleteActionFromProductApi,
-    getProductActionsApi
+    getProductActionsApi,
     getProductSizesApi,
     reCalculatePriceApi
 }
