@@ -88,12 +88,13 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDr
 
   return (
     <div style={classes.mainContainer}>
-      <div style={classes.reCalculateContainer}>
-        <Tooltip title={t("priceProfit.reCalculatePrice")}>
+      <div style={classes.reCalculateContainer} onClick={reCalculatePrice}>
+        {/* <Tooltip title={t("priceProfit.reCalculatePrice")}>
           <IconButton onClick={reCalculatePrice}>
             <ReloadIcon width={18} height={18} />
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
+        {t("priceProfit.calculatePrice")}
       </div>
       {Object.entries(parametersBySection).map(([sectionName, sectionParameters]: [string, any[]]) => (
         <div key={sectionName} style={classes.sectionContainer}>
