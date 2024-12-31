@@ -50,6 +50,8 @@ interface IActionContainerComponentProps extends IWorkFlowAction {
   selectedWorkFlowCalculatedIsLoaded?: boolean
   sectionName?: string
   isFromSetting?: boolean
+  deleteActionFromProduct?: (selectedAction: any) => void
+  updateProductAction?: (data: any) => void
 }
 
 interface IActionsComponentProps {
@@ -61,6 +63,9 @@ interface IActionsComponentProps {
   sectionName?: string
   reOderMainActions?: (data: any) => void
   isFromSetting?: boolean
+  deleteActionFromProduct?: (selectedAction: any) => void
+  updateActionsOrderInProduct?: (actions: any) => void
+  updateProductAction?: (data: any) => void
 }
 
 const Actions = ({
@@ -70,7 +75,10 @@ const Actions = ({
   widgetType,
   selectedWorkFlowCalculatedIsLoaded,
   reOderMainActions,
-  isFromSetting = false
+  isFromSetting = false,
+  deleteActionFromProduct,
+  updateActionsOrderInProduct,
+  updateProductAction
 }: IActionsComponentProps) => {
   const [actionsList, setActionsList] = useState(actions);
   useEffect(() => {
@@ -87,7 +95,13 @@ const Actions = ({
       orderIndex: index
     }));
     setActionsList(reorderedActions)
-    reOderMainActions(formattedActions)
+    if (isFromSetting) {
+      updateActionsOrderInProduct(formattedActions)
+
+    }
+    else {
+      reOderMainActions(formattedActions)
+    }
   };
   const permissions = useRecoilValue(permissionsState);
   return (
@@ -120,6 +134,8 @@ const Actions = ({
                               selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
                               delay={index * 800}
                               isFromSetting={isFromSetting}
+                              deleteActionFromProduct={deleteActionFromProduct}
+                              updateProductAction={updateProductAction}
                               {...action}
                             />
                           </div>
@@ -143,6 +159,8 @@ const Actions = ({
                   selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
                   delay={index * 800}
                   isFromSetting={isFromSetting}
+                  deleteActionFromProduct={deleteActionFromProduct}
+                  updateProductAction={updateProductAction}
                   {...action}
                 />
               </div>
@@ -190,7 +208,9 @@ const ActionContainerComponent = ({
   foldOptionValueId,
   selectedWorkFlowCalculatedIsLoaded,
   sectionName,
-  isFromSetting
+  isFromSetting,
+  deleteActionFromProduct,
+  updateProductAction
 }: IActionContainerComponentProps) => {
 
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
@@ -206,13 +226,9 @@ const ActionContainerComponent = ({
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
   const {
-    getActionMachinesList,
-    getActionMaterialsList,
-    getActionEmloyeeList,
     selectNewMachine,
     selectNewMaterials,
     selectNewFold,
-    selectNewEmployee,
     anchorEl,
     open,
     handleClick,
@@ -232,7 +248,6 @@ const ActionContainerComponent = ({
     employeesList,
     machinesList,
     materialsList,
-    updateWorkFlowForFold,
     foldOptions
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
@@ -275,15 +290,23 @@ const ActionContainerComponent = ({
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
   const handleDeliveryTimeUpdate = (newValue: string) => {
-    updateActionData(
-      id,
-      +newValue,
-      "totalProductionTime",
-      productType
-    ).then();
+    if (isFromSetting) {
+      updateProductAction({ actionId, value: newValue, fieldName: "totalProductionTime" })
+    } else {
+      updateActionData(
+        id,
+        +newValue,
+        "totalProductionTime",
+        productType
+      ).then();
+    }
   };
   const handleCostUpdate = (newCost: string) => {
-    updateActionData(id, +newCost, "totalCost", productType).then();
+    if (isFromSetting) {
+      updateProductAction({ actionId, value: newCost, fieldName: "totalcost" })
+    } else {
+      updateActionData(id, +newCost, "totalCost", productType).then();
+    }
   };
 
   const handleProfitUpdate = (profit: string) => {
@@ -295,10 +318,18 @@ const ActionContainerComponent = ({
   };
 
   const handleSourceChange = (source: EWorkSource) => {
-    updateActionData(id, source, "source", productType).then();
+    if (isFromSetting) {
+      updateProductAction({ actionId, value: source, fieldName: "source" })
+    } else {
+      updateActionData(id, source, "source", productType).then();
+    }
   };
   const handleSupplierChange = (e, value) => {
-    updateActionData(id, value?.value, "supplierId", productType).then();
+    if (isFromSetting) {
+      updateProductAction({ actionId, value: value?.value, fieldName: "supplierid" })
+    } else {
+      updateActionData(id, value?.value, "supplierId", productType).then();
+    }
   };
   const calculateProfitInMoney = () => {
     const totalPriceValues = totalPriceValue ? totalPriceValue : 0;
@@ -377,7 +408,7 @@ const ActionContainerComponent = ({
                           key={supplierId + suppliers}
                           placeholder={t("materials.sheetPaper.selectSupplier")}
                           value={getSupplierId()}
-                          style={{ width: "200px" }}
+                          style={{ width: "200px", }}
                           onChange={handleSupplierChange}
                           options={suppliersState?.map((s) => ({
                             value: s.supplierId,
@@ -419,21 +450,25 @@ const ActionContainerComponent = ({
                             >
                               <GoMakeAutoComplate
                                 onChange={(e, v) => {
-                                  selectNewMachine(
-                                    v?.value,
-                                    actionId,
-                                    productType,
-                                    actionIndex
-                                  );
-                                  setAttributesData({
-                                    actionId,
-                                    productType,
-                                    actionIndex,
-                                    machineName: v?.label,
-                                    machineId: v?.value,
-                                    printingActionId: id,
+                                  if (isFromSetting) {
+                                    updateProductAction({ actionId, value: v?.value, fieldName: "machineid", machineName: v?.label })
+                                  } else {
+                                    selectNewMachine(
+                                      v?.value,
+                                      actionId,
+                                      productType,
+                                      actionIndex
+                                    );
+                                    setAttributesData({
+                                      actionId,
+                                      productType,
+                                      actionIndex,
+                                      machineName: v?.label,
+                                      machineId: v?.value,
+                                      printingActionId: id,
 
-                                  })
+                                    })
+                                  }
                                   setChooseMachine(false);
                                 }}
                                 style={{ width: "200px" }}
@@ -487,11 +522,18 @@ const ActionContainerComponent = ({
                             >
                               <GoMakeAutoComplate
                                 onChange={(e, v) => {
-                                  if (widgetType === EWidgetProductType.EDIT) {
-                                    setIsActionEmployeeUpdated(true);
+                                  if (isFromSetting) {
+                                    updateProductAction({ actionId, emplyeeName: v?.label, value: v?.value, fieldName: "employeeid" })
+                                    setChooseEmployee(false);
                                   }
-                                  updateWorkFlowForEmployees(actionId, productType, actionIndex, v?.label, v?.value, id)
-                                  setChooseEmployee(false);
+                                  else {
+                                    if (widgetType === EWidgetProductType.EDIT) {
+                                      setIsActionEmployeeUpdated(true);
+                                    }
+                                    updateWorkFlowForEmployees(actionId, productType, actionIndex, v?.label, v?.value, id)
+                                    setChooseEmployee(false);
+                                  }
+
                                 }}
                                 style={{ width: "200px" }}
                                 options={employeesList}
@@ -691,7 +733,7 @@ const ActionContainerComponent = ({
                         style={{ height: "50%", margin: "auto 0" }}
                         flexItem
                       />
-                      <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
+                      {!isFromSetting && <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
                         <EditableKeyValueViewComponent
                           onUpdate={handleProfitUpdate}
                           {...profit}
@@ -706,21 +748,25 @@ const ActionContainerComponent = ({
                             : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
                             })`}
                         </span>
-                      </Stack>
-                      <Divider
-                        orientation={"vertical"}
-                        style={{ height: "50%", margin: "auto 0" }}
-                        flexItem
-                      />
+                      </Stack>}
+                      {
+                        !isFromSetting && <Divider
+                          orientation={"vertical"}
+                          style={{ height: "50%", margin: "auto 0" }}
+                          flexItem
+                        />
+                      }
 
-                      <EditableKeyValueViewComponent
-                        onUpdate={handleUpdatePrice}
-                        {...totalPrice}
-                        values={totalPriceValue}
-                        source={source}
-                        valueColor={secondColor(500)}
-                        name={t("sales.quote.price")}
-                      />
+                      {
+                        !isFromSetting && <EditableKeyValueViewComponent
+                          onUpdate={handleUpdatePrice}
+                          {...totalPrice}
+                          values={totalPriceValue}
+                          source={source}
+                          valueColor={secondColor(500)}
+                          name={t("sales.quote.price")}
+                        />
+                      }
                     </>
                   }
                   <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
@@ -739,12 +785,12 @@ const ActionContainerComponent = ({
                           source={source}
                           name={t("machineAttributes.cost")}
                         />
+                        <Divider
+                          orientation={"vertical"}
+                          style={{ height: "50%", margin: "auto 0" }}
+                          flexItem
+                        />
                         {!isFromSetting && <>
-                          <Divider
-                            orientation={"vertical"}
-                            style={{ height: "50%", margin: "auto 0" }}
-                            flexItem
-                          />
                           <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
                             <EditableKeyValueViewComponent
                               onUpdate={handleProfitUpdate}
@@ -777,7 +823,7 @@ const ActionContainerComponent = ({
                     }
                   </PermissionCheck>
 
-                  <Divider orientation={"vertical"} flexItem />
+                  {!isFromSetting && <Divider orientation={"vertical"} flexItem />}
                   <div onClick={(e) => e.stopPropagation()}>
                     <InOutSourceSelect value={source} onChange={handleSourceChange} />
                   </div>
@@ -812,12 +858,12 @@ const ActionContainerComponent = ({
                       height={24}
                     />
                   </IconButton>
-                  <IconButton
+                  {!isFromSetting && <IconButton
                     onClick={() => setIsOpen(!isOpen)}
                     style={classes.toggleActionButton}
                   >
                     {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                  </IconButton>
+                  </IconButton>}
                 </div>
               </Stack>
               <Collapse
@@ -881,6 +927,8 @@ const ActionContainerComponent = ({
                 id={id}
                 productType={productType}
                 sectionName={sectionName}
+                deleteActionFromProduct={deleteActionFromProduct}
+                isFromSetting={isFromSetting}
               />
               <GoMakeDeleteModal
                 modalType={ModalType.ADD}

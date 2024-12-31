@@ -60,7 +60,7 @@ const ParameterWidget = () => {
   const visibleSections = template?.sections
   const WorkFlowsTab = {
     id: "c66465de-95d6-4ea3-bd3f-7efe6664cb0555",
-    name: t("Work Flows"),
+    name: t("pricingWidget.workFlow"),
     icon: "pricing",
   };
   return (
@@ -97,7 +97,7 @@ const ParameterWidget = () => {
                   {[...visibleSections, WorkFlowsTab]?.map((section, index) => {
                     if (index === activeIndex) {
                       if (
-                        section.name === t("Work Flows")
+                        section.name === t("pricingWidget.workFlow")
                       ) {
                         return (
                           <WorkFlowsWidget />

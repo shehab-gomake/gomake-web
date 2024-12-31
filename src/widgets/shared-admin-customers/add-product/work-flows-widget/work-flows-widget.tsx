@@ -10,8 +10,9 @@ const WorkFlowsWidget = () => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
-    generalInformation,
-    actions,
+    // generalInformation,
+    // actions,
+    productActions,
     actionListDropDown,
     anchorElActionsListMenu,
     openActionsListMenu,
@@ -19,8 +20,13 @@ const WorkFlowsWidget = () => {
     handleCloseActionsListMenu,
     handleOpenActionsListMenu,
     onClickAddNewAction,
-    addActionToProduct
+    addActionToProduct,
+    deleteActionFromProduct,
+    updateActionsOrderInProduct,
+    updateProductAction
   } = useWorkFlows();
+
+
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.autoCompleteSelectedSectionName} onClick={(e) => {
@@ -29,9 +35,18 @@ const WorkFlowsWidget = () => {
         {t("pricingWidget.addAction")}
         <ArrowDropDownIcon />
       </div>
-      <GeneralInformationComponent details={generalInformation} />
-      <div>
-        <Actions actions={actions} isFromSetting={true} />
+      {/* <GeneralInformationComponent details={generalInformation} /> */}
+      <div style={{ width: "100%" }}>
+        {
+          productActions?.length > 0 &&
+          <Actions
+            actions={productActions}
+            isFromSetting={true}
+            deleteActionFromProduct={deleteActionFromProduct}
+            updateActionsOrderInProduct={updateActionsOrderInProduct}
+            updateProductAction={updateProductAction}
+          />
+        }
       </div>
 
       <ActionsListMenu
@@ -44,6 +59,7 @@ const WorkFlowsWidget = () => {
         isUnderlined={true}
         isFromSetting={true}
         addActionToProduct={addActionToProduct}
+
 
       />
     </div>
