@@ -1,15 +1,21 @@
 
 import { useStyle } from "./style";
 import { ParameterListWidget } from "./parameter-list-widget";
+import { IconButton, Tooltip } from "@mui/material";
+import { ReloadIcon } from "@/icons";
+import { useTranslation } from "react-i18next";
 
-const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDropdownMaterialValue, updateTextInputValue, updateProfitProfileProductParameter }: {
+const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDropdownMaterialValue, updateTextInputValue, updateProfitProfileProductParameter, reCalculatePrice }: {
   parameters: any,
   updateDropdownValue: (value: any, index: number) => void,
   updateDropdownMaterialValue: (value: any, index: number) => void,
   updateTextInputValue: (value: string, index: number) => void,
-  updateProfitProfileProductParameter: (data: any, value: any) => void
+  updateProfitProfileProductParameter: (data: any, value: any) => void,
+  reCalculatePrice: () => void
 }) => {
   const { classes } = useStyle();
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const parametersBySection = parameters.reduce((acc: any, parameter: any) => {
     if (!acc[parameter.sectionName]) {
       acc[parameter.sectionName] = [];
@@ -83,6 +89,14 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDr
 
   return (
     <div style={classes.mainContainer}>
+      <div style={dir === "rtl" ? classes.reCalculateContainerRTL : classes.reCalculateContainer} onClick={reCalculatePrice}>
+        {/* <Tooltip title={t("priceProfit.reCalculatePrice")}>
+          <IconButton onClick={reCalculatePrice}>
+            <ReloadIcon width={18} height={18} />
+          </IconButton>
+        </Tooltip> */}
+        {t("priceProfit.calculatePrice")}
+      </div>
       {Object.entries(parametersBySection).map(([sectionName, sectionParameters]: [string, any[]]) => (
         <div key={sectionName} style={classes.sectionContainer}>
           <div style={classes.sectionName}>{sectionName}</div>

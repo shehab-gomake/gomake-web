@@ -1,23 +1,79 @@
 import { useTranslation } from "react-i18next";
-import {
-  GoMakeModal,
-  GomakePrimaryButton,
-} from "@/components";
+import { GoMakeModal, GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
-import 'primereact/resources/themes/saga-blue/theme.css';
-import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
+import "primereact/resources/themes/saga-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 import { useAddNewItem } from "./use-add-new-item";
 import { Popover } from "@mui/material";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { Stack, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import { PrimaryButton } from "@/components/button/primary-button";
+import { Permissions } from "@/components/CheckPermission/enum";
+
+const ProductTypeSelector = ({ active, onChange, primaryColor, t }) => (
+  <RadioGroup
+    row
+    value={active}
+    onChange={onChange}
+    sx={{ gap: 2, padding: "0px 10px" }}
+  >
+    {[t("sales.cart.existProduct"), t("sales.cart.newProduct")].map(
+      (label, index) => (
+        <FormControlLabel
+          key={label}
+          value={index === 0}
+          control={
+            <Radio
+              sx={{
+                "& .MuiSvgIcon-root": {
+                  color: primaryColor(500),
+                  fontSize: 18,
+                },
+              }}
+            />
+          }
+          label={t(label)}
+        />
+      )
+    )}
+  </RadioGroup>
+);
+
+const GenericProductInput = ({
+  productName,
+  setProductName,
+  productCode,
+  setProductCode,
+  t,
+  styles,
+}) => (
+  <Stack direction="row" gap="20px">
+    <GomakeTextInput
+      sx={styles.textInput}
+      value={productName}
+      onChange={(e) => setProductName(e.target.value)}
+      placeholder={t("products.addProduct.admin.enterName")}
+    />
+    <GomakeTextInput
+      sx={styles.textInput}
+      value={productCode}
+      onChange={(e) => setProductCode(e.target.value)}
+      placeholder={t("products.addProduct.admin.enterCode")}
+    />
+  </Stack>
+);
 
 const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
+  const { primaryColor } = useGomakeTheme();
+
   const {
-    handleProductChange, 
-    combinedData, 
-    selectedProduct, 
+    handleProductChange,
+    combinedData,
+    selectedProduct,
     onClickCreateQuoteForCustomer,
     handleClose,
     handleClick,
@@ -25,39 +81,65 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
     id,
     isDisabled,
     anchorEl,
-   _renderErrorMessage } = useAddNewItem({ onClose, getQuote, documentType });
+    _renderErrorMessage,
+    handleChange,
+    active,
+    productName,
+    setProductName,
+    productCode,
+    setProductCode,
+    handleCloseModal,
+    CheckPermission,
+  } = useAddNewItem({ onClose, getQuote, documentType });
 
   return (
     <>
       <GoMakeModal
         openModal={openModal}
         modalTitle={t("sales.quote.addNewItem")}
-        onClose={onClose}
+        onClose={handleCloseModal}
         insideStyle={classes.insideStyle}
+        withRoundedCloseIcon={false}
+        modalTitleStyle={
+          !CheckPermission(Permissions.ADD_NEW_PRODUCT_FROM_CART)
+            ? { paddingBottom: "20px" }
+            : undefined
+        }
       >
-        <div style={classes.mainContainer}>
-          <div style={classes.autoComplateRowContainer}>
-            <div style={{ width: "93%", marginTop: 15 }}>
-              <GoMakeTreeSelect
-                value={selectedProduct}
-                options={combinedData}
-                onChange={handleProductChange}
-                placeholder={t("home.admin.selectProductOrMaterial")}
-              />
-            </div>
-          </div>
+        <Stack style={classes.mainContainer}>
+          {CheckPermission(Permissions.ADD_NEW_PRODUCT_FROM_CART) && (
+            <ProductTypeSelector
+              active={active}
+              onChange={handleChange}
+              primaryColor={primaryColor}
+              t={t}
+            />
+          )}
+          {active ? (
+            <GoMakeTreeSelect
+              value={selectedProduct}
+              options={combinedData}
+              onChange={handleProductChange}
+              placeholder={t("home.admin.selectProductOrMaterial")}
+            />
+          ) : (
+            <GenericProductInput
+              productName={productName}
+              setProductName={setProductName}
+              productCode={productCode}
+              setProductCode={setProductCode}
+              t={t}
+              styles={classes}
+            />
+          )}
           <div style={classes.btnContainer}>
-            <GomakePrimaryButton
-              style={classes.sendBtn}
-              onClick={
-                isDisabled
-                  ? handleClick
-                  : onClickCreateQuoteForCustomer
-              }
+            <PrimaryButton
+              variant="contained"
+              style={classes.btnStyle}
+              onClick={isDisabled ? handleClick : onClickCreateQuoteForCustomer}
             >
               {t("sales.quote.add")}
-            </GomakePrimaryButton>
-
+            </PrimaryButton>
             <Popover
               id={id}
               open={open}
@@ -71,7 +153,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
               <div style={classes.errorMsgStyle}>{_renderErrorMessage()}</div>
             </Popover>
           </div>
-        </div>
+        </Stack>
       </GoMakeModal>
     </>
   );

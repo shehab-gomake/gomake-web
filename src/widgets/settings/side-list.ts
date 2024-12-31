@@ -17,6 +17,8 @@ import { FinancesWidget } from "../finances";
 
 import { BudgetIcon } from "@/icons";
 import { PriceProfitWidge } from "../price-profit-widge";
+import { PreferencesIcon } from "@/components/icons/preferences-icons";
+import { SettingsPreferencesWidget } from "../settings-preferences/preferences";
 export const list: IListItem[] = [
   {
     component: SettingsProfileWidget,
@@ -30,7 +32,7 @@ export const list: IListItem[] = [
     component: PriceProfitWidge,
     text: "settings.priceProfit",
     value: "8",
-    // permission: Permissions.TRANSLATION_ADMIN, ASK MOHAND
+    permission: Permissions.SHOW_PRICING_PROFILE,
     icon: BudgetIcon,
     path: "price-profit",
   },
@@ -81,7 +83,14 @@ export const list: IListItem[] = [
     path: "finances",
     permission: Permissions.SHOW_FINANCE,
   },
-
+  {
+    component: SettingsPreferencesWidget,
+    text: "settings.preferences",
+    value: "10",
+    icon: PreferencesIcon,
+    path: "preferences",
+    permission: Permissions.SHOW_PREFERENCES,
+  },
   {
     component: TranslationsWidget,
     text: "settings.translations",

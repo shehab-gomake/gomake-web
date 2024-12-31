@@ -769,7 +769,7 @@ const ActionContainerComponent = ({
                       }
                     </>
                   }
-                  <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
+  <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
                     {
                       source !== EWorkSource.OUT &&
                       <>

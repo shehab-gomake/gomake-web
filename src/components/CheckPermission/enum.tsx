@@ -22,9 +22,13 @@ export enum Permissions {
   UPDATE_QUOTE_DISCOUNT = "UpdateQuoteDiscount",
   UPDATE_QUOTE_DELIVERY_ITEM_PRICES = "UpdateQuoteDeliveryItemPrices",
   SHOW_COSTS_IN_CALCULATIONS = "ShowCostsInCalculations",
+  ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
+
   //SHOW_PROFITS_IN_CALCULATIONS = "ShowProfitsInCalculations",
   CUSTOMIZE_WORKFLOW = "CustomizeWorkflow",
   SHOW_QUOTE_STATISTICS = "ShowQuotesStatistics",
+  UPDATE_CALCULATED_PRICE = "UpdateCalculatedPrice",
+  SHOW_PRICING_TAB = "ShowPricingTab",
 
   //Materials group
   EDIT_MATERIAL = "EditMaterial",
@@ -63,6 +67,8 @@ export enum Permissions {
   SHOW_PERMISSIONS = "ShowPermissions",
   SHOW_FINANCE = "ShowFinance",
   SHOW_SHIPMENT_TYPES = "ShowShipmentTypes",
+  SHOW_PRICING_PROFILE = "ShowPricingProfile",
+  SHOW_PREFERENCES = "ShowPreferences",
 
   //orders group
   SHOW_ORDERS = "ShowOrders",
@@ -78,6 +84,8 @@ export enum Permissions {
   UPDATE_PURCHASE_ORDER_ITEM = "UpdatePurchaseOrderItem",
   UPDATE_ORDER_DISCOUNT = "UpdateOrderDiscount",
   UPDATE_PURCHASE_ORDER_DISCOUNT = "UpdatePurchaseOrderDiscount",
+  SEND_PAYMENT_TO_CLIENT = "SendPaymentToClient",
+  UPDATE_DELIVERY_STATUS = "UpdateDeliveryStatus",
 
   //production floor group
   SHOW_PRODUCTION_FLOOR = "ShowProductionFloor",
@@ -103,6 +111,7 @@ export enum Permissions {
   SHOW_INVOICES = "ShowInvoices",
   SHOW_INVOICES_REFUND = "ShowInvoicesRefund",
   SHOW_ERP_DOCUMENTS_TABLE_SUMMERY = "ShowErpDocumentsTableSummery",
+  // ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
 
   //purchase group
   SHOW_PURCHASE_ORDERS = "ShowPurchaseOrders",
@@ -124,6 +133,8 @@ export enum Permissions {
   SHOW_ACCOUNTING_TRANSACTION_REPORT = "ShowAccountingTransactionReport",
   SHOW_ADJUSTMENTS_REPORT = "ShowAdjustmentsReport",
   SHOW_HOME_PAGE_STATISTICS = "ShowHomePageStatistics",
+  SHOW_LOGS = "ShowLogs",
+  GENERATE_REPORT = "GenerateReport",
 }
 
 export const DocumentPermission = {

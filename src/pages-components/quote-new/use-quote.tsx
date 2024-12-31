@@ -156,10 +156,9 @@ const useQuoteNew = ({
   const [openAddNewContactModal, setOpenAddNewContactModal] = useState(false);
   const [openCopyFromOrderModal, setOpenCopyFromOrderModal] = useState(false);
   const [quoteItemId, setQuateItemId] = useState();
-  const [
-    openDuplicateWithDifferentQTYModal,
-    setOpenDuplicateWithDifferentQTYModal,
-  ] = useState(false);
+  const [quoteItem, setQuoteItem] = useState();
+  const [openDuplicateWithDifferentQTYModal, setOpenDuplicateWithDifferentQTYModal] = useState(false);
+  const [openQuickDuplicateModal, setOpenQuickDuplicateModal] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [amountValue, setAmountValue] = useState();
   const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
@@ -289,8 +288,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -946,7 +945,22 @@ const useQuoteNew = ({
   const onClickDuplicateWithDifferentQTY = (quoteItem) => {
     onOpenDuplicateWithDifferentQTY();
     setQuateItemId(quoteItem?.id);
+    setQuoteItem(quoteItem)
+
   };
+  const onOpenQuickDuplicate = () => {
+    setOpenQuickDuplicateModal(true);
+  };
+  const onCloseQuickDuplicate = () => {
+    setOpenQuickDuplicateModal(false);
+  };
+  const onClickQuickDuplicate = (quoteItem) => {
+    onOpenQuickDuplicate();
+    setQuateItemId(quoteItem?.id);
+    setQuoteItem(quoteItem)
+  };
+
+
 
   const duplicateQuoteItemWithAnotherQuantity = async () => {
     const callBack = (res) => {
@@ -1028,7 +1042,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1097,6 +1111,7 @@ const useQuoteNew = ({
   const onClickDeleteQouteItem = (quoteItem) => {
     onOpenDeleteItemModal();
     setQuateItemId(quoteItem?.id);
+    setQuoteItem(quoteItem)
   };
 
   const getCalculateQuote = async (calculationType: number, data: number) => {
@@ -2139,6 +2154,11 @@ const useQuoteNew = ({
     updateDocumentBudget,
     selectedBudget,
     setSelectedBudget,
+    onCloseQuickDuplicate,
+    onClickQuickDuplicate,
+    quoteItemId,
+    openQuickDuplicateModal,
+    quoteItem
   };
 };
 

@@ -5,30 +5,36 @@ import { useTranslation } from "react-i18next";
 
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { adaptLeft, adaptPaddingLeft, adaptPaddingRight, adaptRight, leftRightAdapter } from "@/utils/adapter";
+import {
+  adaptLeft,
+  adaptPaddingLeft,
+  adaptPaddingRight,
+  adaptRight,
+  leftRightAdapter,
+} from "@/utils/adapter";
 const useStyle = () => {
   const { t } = useTranslation();
   const direction = t("direction");
   const { primaryColor, secondColor, errorColor, neutralColor, successColor } =
     useGomakeTheme();
-    const [screenWidth, setScreenWidth] = useState<number | null>(null);
-    useEffect(() => {
-      // Function to update screen width
-      const updateScreenWidth = () => {
-        setScreenWidth(window.innerWidth);
-      };
-  
-      // Initial call to set the screen width
-      updateScreenWidth();
-  
-      // Add event listener to listen for window resize
-      window.addEventListener('resize', updateScreenWidth);
-  
-      // Cleanup the event listener when the component unmounts
-      return () => {
-        window.removeEventListener('resize', updateScreenWidth);
-      };
-    }, []);
+  const [screenWidth, setScreenWidth] = useState<number | null>(null);
+  useEffect(() => {
+    // Function to update screen width
+    const updateScreenWidth = () => {
+      setScreenWidth(window.innerWidth);
+    };
+
+    // Initial call to set the screen width
+    updateScreenWidth();
+
+    // Add event listener to listen for window resize
+    window.addEventListener("resize", updateScreenWidth);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("resize", updateScreenWidth);
+    };
+  }, []);
 
   const clasess = useMemo(() => {
     return {
@@ -76,7 +82,7 @@ const useStyle = () => {
         paddingBottom: 150,
       },
 
-      rightSideMainContainerSkelton:{
+      rightSideMainContainerSkelton: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
@@ -106,8 +112,7 @@ const useStyle = () => {
         gap: 40,
         marginBottom: 20,
         width: "100%",
-        maxWidth:(screenWidth-600)
-        
+        maxWidth: screenWidth - 600,
       },
       tabContainer: {
         display: "flex",
@@ -243,7 +248,7 @@ const useStyle = () => {
         gap: 10,
         width: "100%",
       },
-      oldSystemValueText:{
+      oldSystemValueText: {
         ...FONT_FAMILY.Lexend(500, 14),
       },
       WastebasketNewStyle: {
@@ -308,10 +313,10 @@ const useStyle = () => {
         border: "0px",
         ...FONT_FAMILY.Lexend(500, 14),
         width: "100%",
-        padding: "8px 16px", 
+        padding: "8px 16px",
         borderRadius: "4px",
-        backgroundColor:  "#fff", 
-        color: "inherit", 
+        backgroundColor: "#fff",
+        color: "inherit",
         display: "flex",
         // boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
       },
@@ -320,10 +325,10 @@ const useStyle = () => {
         border: "0px",
         ...FONT_FAMILY.Lexend(500, 14),
         width: "100%",
-        padding: "8px 16px", 
+        padding: "8px 16px",
         borderRadius: "4px",
-        backgroundColor:  "#fff", 
-        color: "inherit", 
+        backgroundColor: "#fff",
+        color: "inherit",
         boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
       },
       renderParameterTypeContainer: {
@@ -411,14 +416,14 @@ const useStyle = () => {
         width: "100%",
         marginBottom: 18,
       },
-      additionalProductItems:{
+      additionalProductItems: {
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start",
         alignItems: "center",
-        marginTop: 10
+        marginTop: 10,
       },
-      additionalProductItemsContainer:{
+      additionalProductItemsContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "space-between",
@@ -426,16 +431,16 @@ const useStyle = () => {
         width: "100%",
         marginBottom: 10,
       },
-      additionalProductItem:{
+      additionalProductItem: {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(700, 16),
       },
-      additionalPrices:{
-        display:"flex",
-        flexDirection:"row" as "row",
-        justifyContent:"flex-start",
+      additionalPrices: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
         alignItems: "center",
-        gap:10
+        gap: 10,
       },
       orderContainer: {
         display: "flex",
@@ -445,7 +450,21 @@ const useStyle = () => {
         textAlign: "center" as "center",
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(500, 14),
+      },
+
+      vatContainer: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: "center",
+        textAlign: "center" as "center",
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(500, 13),
         marginBottom: 16,
+      },
+      labelsStyle: {
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(500, 14),
       },
       progress: {
         marginBottom: 8,
@@ -505,14 +524,19 @@ const useStyle = () => {
         maxHeight: 35,
         boxShadow: "none",
         textAlign: "center" as "center",
+        direction: direction,
+        unicodeBidi: "plaintext",
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
       },
       priceRecoveryContainer: {
         display: "flex",
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        marginLeft: direction==="ltr" ? -8 : 0,
-        marginRight: direction==="ltr" ? 0 : -8,
+        marginLeft: direction === "ltr" ? -8 : 0,
+        marginRight: direction === "ltr" ? 0 : -8,
         marginBottom: 0,
       },
       switchAdditionsContainer: {
@@ -546,9 +570,9 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
         cursor: "pointer",
-        width:"100%",
-        minWidth:"fit-content",
-        height:40
+        width: "100%",
+        minWidth: "fit-content",
+        height: 40,
       },
       activeLogsTabStyle: {
         display: "flex",
@@ -560,9 +584,9 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 16),
         borderRadius: 4,
         cursor: "pointer",
-        width:"100%",
-        minWidth:"fit-content",
-        height:40
+        width: "100%",
+        minWidth: "fit-content",
+        height: 40,
       },
       unActiveTabStyle: {
         display: "flex",
@@ -575,16 +599,16 @@ const useStyle = () => {
         border: `1px solid ${primaryColor(500)}`,
         borderRadius: 4,
         cursor: "pointer",
-        width:"100%",
-        minWidth:"fit-content",
-        height:40
+        width: "100%",
+        minWidth: "fit-content",
+        height: 40,
       },
       addOrderBtn: {
         backgroundColor: secondColor(500),
         height: 40,
         padding: 20,
       },
-      addOrderDisabledBtn:{
+      addOrderDisabledBtn: {
         backgroundColor: "#ccc",
         height: 40,
         padding: 20,
@@ -803,7 +827,7 @@ const useStyle = () => {
         overflowX: "hidden",
         gap: 10,
       },
-      detailsContainer:{
+      detailsContainer: {
         ...FONT_FAMILY.Lexend(500, 16),
       },
       generalMsgTextStyle: {
@@ -831,7 +855,7 @@ const useStyle = () => {
         color: secondColor(500),
         width: "67%",
       },
-      advertisingProductCategoryMain:{
+      advertisingProductCategoryMain: {
         position: "relative",
         width: "100%",
         display: "flex",
@@ -839,52 +863,52 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
       },
-      advertisingProductCategoryAutoComplete:{ 
-        height: 40, 
-       maxWidth: 400, 
-       minWidth: 400, 
-        border: "none", 
-        paddingLeft: 15
-       },
-       requiredAdvertisingProductCategoryAutoComplete:{
-        height: 40, 
-        maxWidth: 400, 
+      advertisingProductCategoryAutoComplete: {
+        height: 40,
+        maxWidth: 400,
+        minWidth: 400,
+        border: "none",
+        paddingLeft: 15,
+      },
+      requiredAdvertisingProductCategoryAutoComplete: {
+        height: 40,
+        maxWidth: 400,
         paddingLeft: 15,
         borderBottom: "1px solid red",
-       },
-       advertisingProductCategorySearch:{
+      },
+      advertisingProductCategorySearch: {
         position: "absolute" as "absolute",
         ...leftRightAdapter(t("direction"), 10),
         top: 10,
       },
-      advertisingProductNameMain:{
-        minWidth: 1000, 
+      advertisingProductNameMain: {
+        minWidth: 1000,
         width: "100%",
-        position: "relative"
+        position: "relative",
       },
-      advertisingProductNameListContainer:{ 
-        display: "flex", 
-        flexDirection: "row", 
-        justifyContent: "flex-start", 
-        alignItems: "center", 
-        gap: 24, 
-        flexWrap: "wrap" 
+      advertisingProductNameListContainer: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 24,
+        flexWrap: "wrap",
       },
-      advertisingProductCard:{
+      advertisingProductCard: {
         width: 165,
         height: 160,
         position: "relative",
         borderRadius: 6,
         background: "#FFF",
-        cursor: "pointer"
+        cursor: "pointer",
       },
-      advertisingProductImg:{
+      advertisingProductImg: {
         width: 165,
         height: 100,
         borderTopRightRadius: 6,
         borderTopLeftRadius: 6,
       },
-      advertisingProductUnderImgContainer:{
+      advertisingProductUnderImgContainer: {
         display: "flex",
         flexDirection: "column",
         justifyContent: "flex-start",
@@ -893,43 +917,43 @@ const useStyle = () => {
         gap: 6,
         height: 54,
       },
-      advertisingProductNamePriceContainer:{
+      advertisingProductNamePriceContainer: {
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
         width: "100%",
       },
-      advertisingProductNameStyle:{ 
-        ...FONT_FAMILY.Lexend(600, 13) 
+      advertisingProductNameStyle: {
+        ...FONT_FAMILY.Lexend(600, 13),
       },
-      advertisingProductPriceStyle:{ 
-        ...FONT_FAMILY.Lexend(600, 10), 
-        color: "#ED028C" 
+      advertisingProductPriceStyle: {
+        ...FONT_FAMILY.Lexend(600, 10),
+        color: "#ED028C",
       },
-      advertisingProductUnitsStyle:{ 
-        ...FONT_FAMILY.Lexend(500, 10), 
+      advertisingProductUnitsStyle: {
+        ...FONT_FAMILY.Lexend(500, 10),
         color: "#727272",
-        marginBottom: 5
+        marginBottom: 5,
       },
-      checkBoxContainer:{
+      checkBoxContainer: {
         position: "absolute",
         top: 0,
         right: 0,
       },
       skeletonContainer: {
-        padding: '16px',
-        display: 'flex',
-        flexDirection: 'column' as "column",
-        gap: '16px',  
+        padding: "16px",
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "16px",
       },
       titleStyle: {
         display: "flex",
         ...FONT_FAMILY.Lexend(600, 18),
-        color:  primaryColor(500),
-       // color:  "black",
+        color: primaryColor(500),
+        // color:  "black",
         lineHeight: "30px",
-        marginBottom:"5px"
+        marginBottom: "5px",
       },
       btnsContainer: {
         display: "flex",
@@ -938,34 +962,36 @@ const useStyle = () => {
         alignItems: "center",
         gap: 11,
         width: "100%",
-        marginTop: 15
+        marginTop: 15,
       },
       confirmBtn: {
-       // width: "50%",
-       height: 35,
-       lineHeight:"10px",
+        // width: "50%",
+        height: 35,
+        lineHeight: "10px",
         borderRadius: "10px",
         ...FONT_FAMILY.Lexend(500, 10),
-        color:"#FFFFFF",
-        
+        color: "#FFFFFF",
       },
       cancelBtn: {
-      //  width: "50%",
+        //  width: "50%",
         height: 35,
         borderRadius: "10px",
         ...FONT_FAMILY.Lexend(500, 10),
-        color:"#FFFFFF",
-       
+        color: "#FFFFFF",
       },
-      modalTitleForMission:{
-        margin: 15, 
+      modalTitleForMission: {
+        margin: 15,
         marginTop: 0,
         color: primaryColor(500),
-         ...FONT_FAMILY.Lexend(700, 16),
+        ...FONT_FAMILY.Lexend(700, 16),
       },
-      modalCloseForMission:{ position: "absolute", right: 0, top: 0 },
-      mainContainerForMission:{ display: "flex", flexDirection: "column", gap: 10 },
-      missionItemContainer:{
+      modalCloseForMission: { position: "absolute", right: 0, top: 0 },
+      mainContainerForMission: {
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+      },
+      missionItemContainer: {
         ...FONT_FAMILY.Lexend(500, 14),
         display: "flex",
         flexDirection: "row",
@@ -973,28 +999,27 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
       },
-      missionText:{ width: "fit-content", minWidth: 100 },
-      missionText1:{ width: "fit-content", minWidth: 80 },
-      missionText2:{
+      missionText: { width: "fit-content", minWidth: 100 },
+      missionText1: { width: "fit-content", minWidth: 80 },
+      missionText2: {
         width: "fit-content",
         maxWidth: "fit-content",
         minWidth: 100,
         whiteSpace: "nowrap",
       },
-      deviderContainer:{ paddingLeft: 5, paddingRight: 5 },
-      checkboxModalContainer:{ 
-        display: "flex", 
-        flexDirection: "row", 
-        justifyContent: "flex-start", 
-        alignItems: "center" ,
+      deviderContainer: { paddingLeft: 5, paddingRight: 5 },
+      checkboxModalContainer: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
         marginTop: 15,
-        cursor: "pointer"
+        cursor: "pointer",
       },
-      checkboxLabelStyle:{
-        ...FONT_FAMILY.Lexend(600,14),
-        
+      checkboxLabelStyle: {
+        ...FONT_FAMILY.Lexend(600, 14),
       },
-      reloadTotalPrice:{
+      reloadTotalPrice: {
         ...FONT_FAMILY.Inter(600, 12),
         color: secondColor(500),
         display: "flex",
@@ -1004,9 +1029,17 @@ const useStyle = () => {
         gap: 5,
         cursor: "pointer",
         paddingBottom: 10,
-      }
+      },
+      priceDisplay: {
+        fontWeight: "bold",
+        color: primaryColor(500),
+      },
+      currencyDisplay: {
+        ...FONT_FAMILY.Inter(500, 12),
+        color: primaryColor(500),
+      },
     };
-  }, [i18next.language, t, direction,screenWidth]);
+  }, [i18next.language, t, direction, screenWidth]);
   return {
     clasess,
   };

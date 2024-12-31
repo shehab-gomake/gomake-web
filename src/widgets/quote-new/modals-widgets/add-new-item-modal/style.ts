@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { secondColor ,errorColor, theme } = useGomakeTheme();
+  const { secondColor, errorColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -37,6 +37,12 @@ const useStyle = () => {
         height: 40,
         backgroundColor: secondColor(500),
       },
+
+      btnStyle: {
+        width: "40%",
+        borderRadius: "8px",
+        height: "40px",
+      },
       autoComplateRowContainer: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -52,6 +58,21 @@ const useStyle = () => {
         padding: 10,
         ...FONT_FAMILY.Lexend(500, 14),
         color: errorColor(500),
+      },
+      filterLabelStyle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        marginBottom: 7,
+      },
+      textInput: {
+        width: "100%",
+        border: "none",
+        height: 45,
+        "& .MuiInputBase-root input": {
+          borderRadius: "8px !important",
+          border: "1px solid rgb(234, 240, 234) !important",
+          boxShadow: "none",
+          height: 45,
+        },
       },
     };
   }, [theme]);

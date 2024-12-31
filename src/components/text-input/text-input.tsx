@@ -31,7 +31,9 @@ const StyledTextField = styled(TextField, {
     direction: props.direction,
     ...props.style,
   },
+
   "& .MuiOutlinedInput-root": {
+    width: "100%",
     "&:hover fieldset": {
       border: props.error
         ? `2px solid ${props.errorColor(300)}`

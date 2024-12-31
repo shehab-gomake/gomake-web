@@ -52,6 +52,7 @@ const GET_CALCULATE_DOCUMENT_ITEM_URL =
 const GET_CALCULATE_DOCUMENT_URL =
   "/v1/erp-service/documents/calculate-document";
 const ADD_ITEM_URL = "/v1/erp-service/documents/add-item";
+const ADD_GENERIC_PRODUCT_TO_DOCUMENT_URL = "/v1/erp-service/documents/add-generic-product-to-document";
 const UPDATE_DOCUMENT_URL = "/v1/erp-service/documents/update-document";
 const UPDATE_OCCASIONAL_CLIENT_NAME_URL =
   "/v1/erp-service/documents/update-occasional-client-name";
@@ -107,6 +108,7 @@ const MANUALLY_CLOSE_DOCUMENT_URL =
 const SEND_QUOTE_APPROVAL_TO_MANAGER =
   "/v1/erp-service/documents/send-quote-approval-to-manager";
 const PAY_ORDER_IN_URL = "/v1/erp-service/documents/pay-order-in-tracking";
+const QUICK_DUPLICATE_URL = "/v1/erp-service/documents/quick-duplicate";
 const CLOSE_AND_TRACK_ORDER_URL =
   "/v1/erp-service/documents/close-and-track-order";
 const UPDATE_DOCUMENT_TITLE_URL =
@@ -125,13 +127,15 @@ const CREATE_DOCUMENT_URL = "/v1/erp-service/documents/create-document";
 const START_ORDER_PRODUCTION_URL =
   "/v1/erp-service/documents/start-order-production";
 
-const getDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+const getDocumentApi: ICallAndSetData = async (callApi, setState, data,loading, abortController) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
     GET_DOCUMENT_URL,
     setState,
-    data
+    data,
+    loading,
+    abortController
   );
 };
 
@@ -465,6 +469,16 @@ const addItemApi: ICallAndSetData = async (callApi, setState, data) => {
     callApi,
     EHttpMethod.POST,
     ADD_ITEM_URL,
+    setState,
+    data
+  );
+};
+
+const addGenericProductToDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_GENERIC_PRODUCT_TO_DOCUMENT_URL,
     setState,
     data
   );
@@ -903,6 +917,20 @@ const makePaymentForOrderApi: ICallAndSetData = async (
   );
 };
 
+const quickDuplicateApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    QUICK_DUPLICATE_URL,
+    setState,
+    data
+  );
+};
+
 const closeAndTrackOrderApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1124,4 +1152,6 @@ export {
   pauseOrdResumeOrderApi,
   createDocumentApi,
   startOrderProductionApi,
+  addGenericProductToDocumentApi,
+  quickDuplicateApi
 };
