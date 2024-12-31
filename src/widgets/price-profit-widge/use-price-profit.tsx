@@ -1,6 +1,6 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useDisplayProfitProfilesSignalr } from "@/hooks/signalr/use-display-profit-profiles-signalr";
-import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, getProfitsProfilePdfApi, resetPrintHousePriceApi, updatePrintHousePriceApi, updateProfitProfileProductHiddenApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi, updateProfitProfileProductSelectedApi, updateSelectedPrintHousePricesApi } from "@/services/api-service/products/product-endpoints";
+import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, getProfitsProfilePdfApi, reCalculatePriceApi, resetPrintHousePriceApi, updatePrintHousePriceApi, updateProfitProfileProductHiddenApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi, updateProfitProfileProductSelectedApi, updateSelectedPrintHousePricesApi } from "@/services/api-service/products/product-endpoints";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
@@ -14,7 +14,7 @@ interface PricingProfileSetting {
 
 const usePriceProfit = () => {
   const { callApi } = useGomakeAxios();
-  const { alertFaultGetData } = useSnackBar();
+  const { alertFaultGetData, alertSuccessUpdate } = useSnackBar();
   const [pricingProfileSetting, setPricingProfileSetting] = useState<PricingProfileSetting[]>([])
   const [selectedPricingProfileSetting, setSelectedPricingProfileSetting] = useState<PricingProfileSetting | null>(null)
   const router = useRouter()
@@ -391,6 +391,19 @@ const usePriceProfit = () => {
     });
   }, [router])
 
+  const reCalculatePrice = async () => {
+    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
+
+    const callBack = (res) => {
+      if (res.success) {
+        // alertSuccessUpdate();
+      }
+    }
+    await reCalculatePriceApi(callApi, callBack, {
+      productId
+    })
+  }
+
 
 
   return {
@@ -434,7 +447,8 @@ const usePriceProfit = () => {
     updateProfitProfileProductSelected,
     updateSelectedPrintHousePrices,
     onClickPrint,
-    resetPrintHousePrice
+    resetPrintHousePrice,
+    reCalculatePrice
   };
 };
 
