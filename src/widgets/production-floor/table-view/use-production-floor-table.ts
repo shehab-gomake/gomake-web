@@ -1,6 +1,9 @@
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
-import { setBoardMissionsFiltersApi } from "@/services/api-service/board-missions/board-missions-table";
+import {
+  searchJobsApi,
+  setBoardMissionsFiltersApi,
+} from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   filteredMissionsStateBySearch,
@@ -20,24 +23,23 @@ const useProductionFloorTable = () => {
   const setMissionsList = useSetRecoilState(missionsListState);
   const setLoading = useSetRecoilState(searchLoadingState);
 
-  const getAllBoardMissions = async () => {
+  const getAllBoardMissionsFromSearch = async () => {
     setLoading(true);
     const callBack = (res) => {
       setLoading(false);
       if (res?.success) {
-        const _data = res?.data?.data;
+        debugger;
+        const _data = res?.data;
+
         setMissionsList(_data || []);
       } else {
         alertFaultGetData();
       }
     };
-    await setBoardMissionsFiltersApi(
+    await searchJobsApi(
       callApi,
       callBack,
       {
-        productsIds: [],
-        pageNumber: 1,
-        pageSize: 30,
         search,
       },
       false
@@ -48,7 +50,7 @@ const useProductionFloorTable = () => {
     data,
     search,
     setFilteredMissionsBySearch,
-    getAllBoardMissions,
+    getAllBoardMissionsFromSearch,
     setMissionsList,
   };
 };
