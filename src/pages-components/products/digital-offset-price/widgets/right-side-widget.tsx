@@ -49,6 +49,7 @@ const RightSideWidget = ({
   const {
     t,
     direction,
+    isRtl,
     currentProductItemValueTotalPrice,
     lastProductItemValueTotalPrice,
     calculationProgress,
@@ -58,14 +59,14 @@ const RightSideWidget = ({
     quantity,
     selectedWorkFlow,
     calculationExceptionsLogs,
-    setCurrentProductItemValueTotalPrice,
     handleSliderChange,
     maxIncrease,
     minDiscount,
     sliderCurrentProductItemValueTotalPrice,
     setSliderCurrentProductItemValueTotalPrice,
     alertFault,
-  } = useRightSideWidget({ includeVAT });
+    priceIncludeVat,
+  } = useRightSideWidget({ includeVAT, widgetType });
 
   const additionalProductItems = useRecoilValue(additionalProductItemsState);
   const mergedArray = [
@@ -215,8 +216,8 @@ const RightSideWidget = ({
               <DotsLoader />
             ) : (
               <GomakeTextInput
-                // value={currentProductItemValueTotalPrice ?? "---------"}
-                value={sliderCurrentProductItemValueTotalPrice ?? "---------"} //!new
+                direction={direction}
+                value={sliderCurrentProductItemValueTotalPrice ?? "---------"}
                 onBlur={(e: any) => {
                   const inputValue = Number(e.target.value);
 
@@ -233,9 +234,9 @@ const RightSideWidget = ({
                   ) {
                     setSliderCurrentProductItemValueTotalPrice(
                       currentProductItemValueTotalPrice
-                    ); //!new
+                    );
                   } else {
-                    setSliderCurrentProductItemValueTotalPrice(e.target.value); //!new
+                    setSliderCurrentProductItemValueTotalPrice(e.target.value);
                   }
                 }}
                 key={"TotalPriceInput"}
@@ -278,37 +279,27 @@ const RightSideWidget = ({
               />
             </div>
           )}
-        {/* {currentProductItemValueTotalPrice && (
-          <div style={clasess.orderContainer}>
-            {t("products.offsetPrice.admin.orderToral", {
-              prieceNum: quantity?.values[0],
-              price: isNaN(
-                currentProductItemValueTotalPrice / quantity?.values[0]
-              )
-                ? 0
-                : (
-                    (currentProductItemValueTotalPrice || 0) /
-                    (quantity?.values[0] || 1)
-                  )?.toFixed(4),
-              unitPrice: systemCurrency,
-            })}
-          </div>
-        )} */}
         {sliderCurrentProductItemValueTotalPrice && (
-          <div style={clasess.orderContainer}>
-            {t("products.offsetPrice.admin.orderToral", {
-              prieceNum: quantity?.values[0],
-              price: isNaN(
-                sliderCurrentProductItemValueTotalPrice / quantity?.values[0]
-              )
-                ? 0
-                : (
-                    (sliderCurrentProductItemValueTotalPrice || 0) /
-                    (quantity?.values[0] || 1)
-                  )?.toFixed(4),
-              unitPrice: systemCurrency,
-            })}
-          </div>
+          <>
+            <div style={clasess.orderContainer}>
+              {t("products.offsetPrice.admin.orderToral", {
+                prieceNum: quantity?.values[0],
+                price: isNaN(
+                  sliderCurrentProductItemValueTotalPrice / quantity?.values[0]
+                )
+                  ? 0
+                  : (
+                      (sliderCurrentProductItemValueTotalPrice || 0) /
+                      (quantity?.values[0] || 1)
+                    )?.toFixed(4),
+                unitPrice: systemCurrency,
+              })}
+            </div>
+            <div style={clasess.vatContainer}>
+              {t("products.offsetPrice.admin.includeVAT")}:{" "}
+              {Number(priceIncludeVat).toFixed(2)} {systemCurrency}
+            </div>
+          </>
         )}
 
         {widgetType === EWidgetProductType.EDIT ||
@@ -353,7 +344,8 @@ const RightSideWidget = ({
               <div style={clasess.priceRecoveryContainer}>
                 <div style={clasess.secondText}>
                   {t("products.offsetPrice.admin.lastPrice")}{" "}
-                  {lastProductItemValueTotalPrice}
+                  {/* {lastProductItemValueTotalPrice} */}
+                  {lastProductItemValueTotalPrice.toFixed(3)}
                 </div>
               </div>
             ) : (
@@ -361,6 +353,7 @@ const RightSideWidget = ({
             )}
           </div>
         ) : null}
+        {/* Slider */}
         <PermissionCheck userPermission={Permissions.UPDATE_CALCULATED_PRICE}>
           {currentProductItemValueTotalPrice && minDiscount !== maxIncrease && (
             <Box sx={{ width: 300, textAlign: "center", margin: "20px auto" }}>
@@ -368,6 +361,7 @@ const RightSideWidget = ({
                 display="flex"
                 justifyContent="space-between"
                 alignItems="center"
+                sx={{ direction: direction }}
               >
                 <Typography sx={clasess.labelsStyle}>
                   {Math.round(minDiscount)}
@@ -382,13 +376,21 @@ const RightSideWidget = ({
                 value={sliderCurrentProductItemValueTotalPrice}
                 onChange={handleSliderChange}
                 aria-label="Price Change Slider"
-                min={Math.round(minDiscount)}
-                max={Math.round(maxIncrease)}
+                min={Math.round(Number(minDiscount))}
+                max={Math.round(Number(maxIncrease))}
                 step={1}
+                sx={{
+                  direction: direction,
+                  transform: isRtl ? "scaleX(-1)" : "none",
+                  "& .MuiSlider-track": {
+                    direction: direction,
+                  },
+                }}
               />
             </Box>
           )}
         </PermissionCheck>
+        {/* Slider */}
         <Divider />
         {additionalProductItems?.length > 0 && (
           <div style={clasess.additionalProductItems}>
@@ -420,7 +422,6 @@ const RightSideWidget = ({
             ))}
           </div>
         )}
-
         <div style={clasess.urgentEstimateContainer}>
           {workFlowSelected &&
             workFlowSelected?.totalRealProductionTime?.values[0].length > 0 && (
@@ -435,19 +436,6 @@ const RightSideWidget = ({
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
               onChange={() => {
-                setIncludeVAT(!includeVAT);
-              }}
-              checked={includeVAT}
-            />
-            <div style={clasess.secondText}>
-              {t("products.offsetPrice.admin.includeVAT")}
-            </div>
-          </div>
-          <div style={clasess.priceRecoveryContainer}>
-            <Checkbox
-              icon={<CheckboxIcon />}
-              checkedIcon={<CheckboxCheckedIcon />}
-              onChange={() => {
                 setUrgentOrder(!urgentOrder);
               }}
               checked={urgentOrder}
@@ -457,7 +445,6 @@ const RightSideWidget = ({
             </div>
           </div>
         </div>
-
         <div style={clasess.switchAdditionsContainer}>
           <div style={clasess.tabsTypesContainer}>
             {tabs?.map((tab) => {
