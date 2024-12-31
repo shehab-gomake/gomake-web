@@ -450,6 +450,16 @@ const useStyle = () => {
         textAlign: "center" as "center",
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(500, 14),
+      },
+
+      vatContainer: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        alignSelf: "center",
+        textAlign: "center" as "center",
+        color: primaryColor(500),
+        ...FONT_FAMILY.Lexend(500, 13),
         marginBottom: 16,
       },
       labelsStyle: {

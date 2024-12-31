@@ -108,17 +108,12 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   };
 
   useEffect(() => {
-    if (sliderCurrentProductItemValueTotalPrice != null) {
-      if (includeVAT == null) {
-        return;
-      }
-      if (includeVAT) {
-        setPriceIncludeVat(
-          sliderCurrentProductItemValueTotalPrice * (1 + systemVAT)
-        );
-      }
+    if (sliderCurrentProductItemValueTotalPrice !== null) {
+      setPriceIncludeVat(
+        sliderCurrentProductItemValueTotalPrice * (1 + systemVAT)
+      );
     }
-  }, [includeVAT, sliderCurrentProductItemValueTotalPrice]);
+  }, [sliderCurrentProductItemValueTotalPrice]);
 
   return {
     t,

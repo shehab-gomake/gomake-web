@@ -280,20 +280,26 @@ const RightSideWidget = ({
             </div>
           )}
         {sliderCurrentProductItemValueTotalPrice && (
-          <div style={clasess.orderContainer}>
-            {t("products.offsetPrice.admin.orderToral", {
-              prieceNum: quantity?.values[0],
-              price: isNaN(
-                sliderCurrentProductItemValueTotalPrice / quantity?.values[0]
-              )
-                ? 0
-                : (
-                    (sliderCurrentProductItemValueTotalPrice || 0) /
-                    (quantity?.values[0] || 1)
-                  )?.toFixed(4),
-              unitPrice: systemCurrency,
-            })}
-          </div>
+          <>
+            <div style={clasess.orderContainer}>
+              {t("products.offsetPrice.admin.orderToral", {
+                prieceNum: quantity?.values[0],
+                price: isNaN(
+                  sliderCurrentProductItemValueTotalPrice / quantity?.values[0]
+                )
+                  ? 0
+                  : (
+                      (sliderCurrentProductItemValueTotalPrice || 0) /
+                      (quantity?.values[0] || 1)
+                    )?.toFixed(4),
+                unitPrice: systemCurrency,
+              })}
+            </div>
+            <div style={clasess.vatContainer}>
+              {t("products.offsetPrice.admin.includeVAT")}:{" "}
+              {Number(priceIncludeVat).toFixed(2)} {systemCurrency}
+            </div>
+          </>
         )}
 
         {widgetType === EWidgetProductType.EDIT ||
@@ -425,27 +431,6 @@ const RightSideWidget = ({
                 })}
               </div>
             )}
-
-          <div style={clasess.priceRecoveryContainer}>
-            <Checkbox
-              icon={<CheckboxIcon />}
-              checkedIcon={<CheckboxCheckedIcon />}
-              onChange={() => setIncludeVAT(!includeVAT)}
-              checked={includeVAT}
-            />
-            <div style={clasess.secondText}>
-              {t("products.offsetPrice.admin.includeVAT")}
-            </div>
-            {includeVAT && (
-              <>
-                <div style={clasess.priceDisplay}>
-                  : {Number(priceIncludeVat).toFixed(2)}
-                </div>{" "}
-                <span style={clasess.currencyDisplay}>{systemCurrency}</span>
-              </>
-            )}
-          </div>
-
           <div style={clasess.priceRecoveryContainer}>
             <Checkbox
               icon={<CheckboxIcon />}
