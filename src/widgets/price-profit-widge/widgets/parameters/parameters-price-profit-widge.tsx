@@ -15,6 +15,7 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDr
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const parametersBySection = parameters.reduce((acc: any, parameter: any) => {
     if (!acc[parameter.sectionName]) {
       acc[parameter.sectionName] = [];
@@ -88,7 +89,7 @@ const ParmaetersPriceProfitWidget = ({ parameters, updateDropdownValue, updateDr
 
   return (
     <div style={classes.mainContainer}>
-      <div style={classes.reCalculateContainer} onClick={reCalculatePrice}>
+      <div style={dir === "rtl" ? classes.reCalculateContainerRTL : classes.reCalculateContainer} onClick={reCalculatePrice}>
         {/* <Tooltip title={t("priceProfit.reCalculatePrice")}>
           <IconButton onClick={reCalculatePrice}>
             <ReloadIcon width={18} height={18} />
