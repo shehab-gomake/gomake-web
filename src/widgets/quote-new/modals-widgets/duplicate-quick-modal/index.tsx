@@ -43,6 +43,7 @@ const DuplicateQuickModal = ({
       getProductSizes()
     }
   }, [quoteItem, openModal])
+  console.log("groups", groups)
   return (
     <>
       <GoMakeModal
@@ -121,7 +122,7 @@ const DuplicateQuickModal = ({
                               placeholder={t("products.profits.exceptions.enterValue")}
                               value={param?.width ? param?.width : ""}
                               onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value, "width")}
-                              disabled={param?.width && param?.value?.id !== "f37799c1-1372-4722-a3d8-3503cea0179c" ? true : false}
+                              disabled={param?.width && param?.value?.width !== null ? true : false}
                             />
                           </div>
                           <div style={{ width: "100%" }}>
@@ -131,7 +132,7 @@ const DuplicateQuickModal = ({
                               placeholder={t("products.profits.exceptions.enterValue")}
                               value={param?.length ? param?.length : ""}
                               onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value, "length")}
-                              disabled={param?.length && param?.value?.id !== "f37799c1-1372-4722-a3d8-3503cea0179c" ? true : false}
+                              disabled={param?.length && param?.value?.length !== null ? true : false}
                             />
                           </div>
                         </div> :
