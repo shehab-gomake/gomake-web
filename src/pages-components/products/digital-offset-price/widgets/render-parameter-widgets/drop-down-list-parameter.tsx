@@ -4,6 +4,10 @@ import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 import { EParameterTypes } from "@/enums";
+import { ReChooseIcon } from "@/icons/re-choose-icon";
+import { IconButton } from "@mui/material";
+import { GoToMaterialsIcon } from "@/icons";
+import { useTranslation } from "react-i18next";
 
 // Custom tooltip component for long text options
 const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
@@ -47,6 +51,7 @@ const DropDownListParameterWidget = ({
   setDeviceSize,
   multiParameterModal
 }: any) => {
+  const { t } = useTranslation();
   const [selectedValue, setSelectedValue] = useState(
     index !== -1 ? { updateName: temp[index].values } : parameter.valuesConfigs.find(item => item.isDefault)
   );
@@ -94,6 +99,8 @@ const DropDownListParameterWidget = ({
   return (
 
     <div data-tour={parameter?.id} style={parameter?.setSettingIcon && inModal ? { ...clasess.dropDownListWithSettingIcon, minWidth: '250px' } : clasess.dropDownListWithSettingIcon}>
+
+
       <GoMakeAutoComplate
         disabled={parameter?.isLock}
         key={selectedValue}
@@ -111,6 +118,17 @@ const DropDownListParameterWidget = ({
           </li>
         )}
       />
+      {parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY &&
+        <div>
+          <Tooltip title={t("tabs.materials")}>
+            <IconButton onClick={() => {
+              window.open(`/materials/${parameter?.materialPath[0]}?materialCategory=${temp[index]?.valueIds[0]}`, "_blank");
+            }}>
+              <GoToMaterialsIcon />
+            </IconButton>
+          </Tooltip>
+        </div>
+      }
       {parameter?.setSettingIcon && inModal && (
         <div
           style={{ cursor: "pointer" }}
