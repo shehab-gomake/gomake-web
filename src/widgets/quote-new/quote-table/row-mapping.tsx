@@ -145,7 +145,7 @@ const RowMappingWidget = ({
               <div style={{ width: "32px", height: "32px" }} />
             }
             {
-              item?.isShowDuplicateWithSameJob && <Checkbox
+              <Checkbox
                 icon={<CheckboxIcon />}
                 checkedIcon={
                   <CheckboxCheckedIcon
