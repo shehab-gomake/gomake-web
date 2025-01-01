@@ -14,7 +14,12 @@ import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
 import { Checkbox } from "@mui/material";
 import { getCurrencies } from "@/services/api-service/general/enums";
-import { useRecoilState, useRecoilValue, useResetRecoilState, useSetRecoilState } from "recoil";
+import {
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from "recoil";
 import {
   activeFilterState,
   currenciesState,
@@ -49,14 +54,15 @@ import { NumberStringInput } from "./components/table-cell-data/number-string-in
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
-  const { productList } = useAllProductsDropDownList()
+  const { productList } = useAllProductsDropDownList();
   const { materialType, materialCategory } = query;
-  const [selectedTableRow, setSelectedTableRow] = useState<IMaterialCategoryRow>();
+  const [selectedTableRow, setSelectedTableRow] =
+    useState<IMaterialCategoryRow>();
 
   const [materialHeaders, setMaterialHeaders] =
-    useRecoilState<{ key: string; value: string; unit?: string, isForAdmin?: boolean }[]>(
-      materialHeadersState
-    );
+    useRecoilState<
+      { key: string; value: string; unit?: string; isForAdmin?: boolean }[]
+    >(materialHeadersState);
   const [materialCategories, setMaterialCategories] = useRecoilState<
     {
       categoryKey: string;
@@ -69,8 +75,9 @@ const useMaterials = (isAdmin: boolean) => {
     IMaterialCategoryRow[]
   >(materialCategoryDataState);
 
-  const resetMaterialCategoryData = useResetRecoilState(materialCategoryDataState);
-
+  const resetMaterialCategoryData = useResetRecoilState(
+    materialCategoryDataState
+  );
 
   const [isAllMaterialsChecked, setIsAllMaterialsChecked] =
     useRecoilState<boolean>(isAllMaterialsCheckedState);
@@ -85,14 +92,18 @@ const useMaterials = (isAdmin: boolean) => {
     setSelectedCategory(category);
     setOpenDeleteRowModal(true);
   };
-  const [openDeleteTableRowModal, setOpenDeleteTableRowModal] = useState<boolean>(false);
-  const [openDeleteTableRowWhenHaveMoreSupplierModal, setOpenDeleteTableRowWhenHaveMoreSupplierModal] = useState<boolean>(false);
+  const [openDeleteTableRowModal, setOpenDeleteTableRowModal] =
+    useState<boolean>(false);
+  const [
+    openDeleteTableRowWhenHaveMoreSupplierModal,
+    setOpenDeleteTableRowWhenHaveMoreSupplierModal,
+  ] = useState<boolean>(false);
   const onClickCloseDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(false);
   };
 
   const onClickOpenDeleteTableRowModal = (dataRow) => {
-    setSelectedTableRow(dataRow)
+    setSelectedTableRow(dataRow);
     setOpenDeleteTableRowModal(true);
   };
 
@@ -101,7 +112,7 @@ const useMaterials = (isAdmin: boolean) => {
   };
 
   const onClickOpenDeleteTableRowWhenHaveMoreSupplierModal = (dataRow) => {
-    setSelectedTableRow(dataRow)
+    setSelectedTableRow(dataRow);
     setOpenDeleteTableRowWhenHaveMoreSupplierModal(true);
   };
 
@@ -134,34 +145,34 @@ const useMaterials = (isAdmin: boolean) => {
   const { t } = useTranslation();
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
   const [supplierId, setSupplierId] = useRecoilState(selectedSupplierIdState);
-  const [selectedMaterialCategory, setSelectedMaterialCategory] = useState<any>();
+  const [selectedMaterialCategory, setSelectedMaterialCategory] =
+    useState<any>();
   const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
   const onSelectCategory = (category: string) => {
     setIsFirstTime(false);
     setSelectedMaterialCategory(category);
-    setMaterialCategoryData([])
-    setSupplierId("")
+    setMaterialCategoryData([]);
+    setSupplierId("");
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";
     push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
     // setActiveFilter(EMaterialActiveFilter.ACTIVE);
-    setIsAllMaterialsChecked(false)
-    setMaterialFilter([])
-    setPageNumber(1)
+    setIsAllMaterialsChecked(false);
+    setMaterialFilter([]);
+    setPageNumber(1);
   };
   const onDeleteCategory = async (categoryKey) => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessDelete();
-        setMaterialCategoryData([])
+        setMaterialCategoryData([]);
         getMaterialCategories(materialType).then();
       } else {
         alertFaultDelete();
       }
     };
     if (isAdmin) {
-
       await deleteMaterialCategoryApi(callApi, callBack, {
         materialTypeKey: materialType.toString(),
         categoryKey: categoryKey,
@@ -194,10 +205,12 @@ const useMaterials = (isAdmin: boolean) => {
       ...category,
       text: category.categoryName,
       value: category.categoryKey,
-      icon: () => <SideLeftMenuWidget
-        onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
-        category={category}
-      />
+      icon: () => (
+        <SideLeftMenuWidget
+          onClickOpenDeleteRowModal={onClickOpenDeleteRowModal}
+          category={category}
+        />
+      ),
     }));
   }, [materialCategories]);
 
@@ -230,9 +243,9 @@ const useMaterials = (isAdmin: boolean) => {
         materialCategoryData.map((row) =>
           materialsIds.includes(row.id)
             ? {
-              ...row,
-              checked: !checked,
-            }
+                ...row,
+                checked: !checked,
+              }
             : { ...row, checked: false }
         )
       );
@@ -274,7 +287,9 @@ const useMaterials = (isAdmin: boolean) => {
         onChange={(event, checked) => onChangeHeaderCheckBox(checked)}
         checked={isAllSelected()}
       />,
-      ...(isAdmin ? materialHeaders.filter(x => x.key !== "stock") : materialHeaders.filter((header) => !header.isForAdmin)
+      ...(isAdmin
+        ? materialHeaders.filter((x) => x.key !== "stock")
+        : materialHeaders.filter((header) => !header.isForAdmin)
       ).map((header) =>
         header.unit ? (
           <div>
@@ -282,14 +297,13 @@ const useMaterials = (isAdmin: boolean) => {
             <span>{header.value}</span> <small>{header.unit}</small>
           </div>
         ) : (
-          <div style={{ textTransform: 'capitalize' }}>{header.value}</div>
+          <div style={{ textTransform: "capitalize" }}>{header.value}</div>
         )
       ),
       t("usersSettings.isActive"),
       t("properties.more"),
     ];
   }, [materialHeaders, materialCategoryData]);
-
 
   const tableRows = useMemo(() => {
     return materialCategoryData.map((dataRow) => {
@@ -312,7 +326,9 @@ const useMaterials = (isAdmin: boolean) => {
           isAdmin={isAdmin}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
           onChangeRowCheckBox={onChangeRowCheckBox}
-          onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={onClickOpenDeleteTableRowWhenHaveMoreSupplierModal}
+          onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={
+            onClickOpenDeleteTableRowWhenHaveMoreSupplierModal
+          }
           toggleIsActive={toggleIsActive}
         />,
       ];
@@ -338,19 +354,28 @@ const useMaterials = (isAdmin: boolean) => {
             onChangeRowCheckBox={onChangeRowCheckBox}
           />
         )),
-        dataRow?.isActive ? t("usersSettings.active") : t("usersSettings.inactive"),
+        dataRow?.isActive
+          ? t("usersSettings.active")
+          : t("usersSettings.inactive"),
         <MaterialMenuWidget
           dataRow={dataRow}
           isAdmin={isAdmin}
           onClickOpenDeleteTableRowModal={onClickOpenDeleteTableRowModal}
           onChangeRowCheckBox={onChangeRowCheckBox}
-          onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={onClickOpenDeleteTableRowWhenHaveMoreSupplierModal}
+          onClickOpenDeleteTableRowWhenHaveMoreSupplierModal={
+            onClickOpenDeleteTableRowWhenHaveMoreSupplierModal
+          }
           toggleIsActive={toggleIsActive}
         />,
       ];
     });
-  }, [materialHeaders, materialCategoryData, isAdmin, activeFilter, materialFilter]);
-
+  }, [
+    materialHeaders,
+    materialCategoryData,
+    isAdmin,
+    activeFilter,
+    materialFilter,
+  ]);
 
   const getCurrenciesApi = async () => {
     const callBack = (res) => {
@@ -370,7 +395,7 @@ const useMaterials = (isAdmin: boolean) => {
     resetMaterialCategoryData();
     const callBack = (res) => {
       if (res.success) {
-        const supplier = res?.data[0]
+        const supplier = res?.data[0];
         if (isFirstTime && supplier) {
           getMaterialCategoryData(
             materialType?.toString(),
@@ -381,6 +406,7 @@ const useMaterials = (isAdmin: boolean) => {
             14
           ).then();
         }
+
         setMaterialCategorySuppliers(
           res?.data?.map((supplier) => {
             if (supplier.isDefault) {
@@ -390,6 +416,7 @@ const useMaterials = (isAdmin: boolean) => {
               isDefault: supplier.isDefault,
               value: supplier.id,
               label: supplier.name,
+              order: supplier?.order,
             };
           })
         );
@@ -413,7 +440,6 @@ const useMaterials = (isAdmin: boolean) => {
       onlyCreateOrderClients: true,
     });
   }, []);
-
 
   return {
     materialCategory,
