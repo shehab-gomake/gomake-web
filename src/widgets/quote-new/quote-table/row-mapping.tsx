@@ -136,11 +136,11 @@ const RowMappingWidget = ({
           </div>
         ) : isQuote && !isPrePaymentPage && !isQuoteConfirmation ? (
           <span style={classes.checkBoxContainer}>
-            {item?.childsDocumentItems?.length > 0 &&
-              <IconButton onClick={() => setIsShowChilds(!isShowChilds)}>
+            {item?.childsDocumentItems?.length > 0 && (
+              <IconButton onClick={() => setIsShowChilds((prev) => !prev)}>
                 {isShowChilds ? <ArrowUpWithCircle /> : <ArrowDownWithCircle />}
               </IconButton>
-            }
+            )}
             {!item?.childsDocumentItems &&
               <div style={{ width: "32px", height: "32px" }} />
             }
