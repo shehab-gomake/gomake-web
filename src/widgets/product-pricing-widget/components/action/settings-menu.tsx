@@ -23,7 +23,9 @@ const SettingsMenu = ({
   categoryId,
   productType,
   id,
-  sectionName
+  sectionName,
+  deleteActionFromProduct,
+  isFromSetting
 }) => {
   const { t } = useTranslation();
   const currentSignalRConnectionId = useRecoilValue(currentCalculationConnectionId);
@@ -93,7 +95,14 @@ const SettingsMenu = ({
         )}
         <PermissionCheck userPermission={Permissions.CUSTOMIZE_WORKFLOW}>
           <Divider />
-          <MenuItem style={{ display: "flex", alignItems: "center", gap: "10px" }} onClick={onClickOpenDeleteModal}>
+          <MenuItem style={{ display: "flex", alignItems: "center", gap: "10px" }} onClick={() => {
+            if (isFromSetting) {
+              deleteActionFromProduct(actionId)
+            }
+            else {
+              onClickOpenDeleteModal()
+            }
+          }}>
             <DeleteSettingsIcon />
             {t("navigationButtons.delete")}
           </MenuItem>
