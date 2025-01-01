@@ -15,8 +15,8 @@ export const currenciesState = atom<{ label: string; value: string }[]>({
   default: [],
 });
 export const currenciesSymbols = atom<{ label: string; value: string }[]>({
-    key: "currenciesSymbolsState",
-    default: [],
+  key: "currenciesSymbolsState",
+  default: [],
 });
 export const materialHeadersState = atom<
   {
@@ -81,7 +81,7 @@ export const selectedCategoryModalState = atom({
 });
 
 export const materialCategorySuppliersState = atom<
-  { value: string; label: string; isDefault: boolean }[]
+  { value: string; label: string; isDefault: boolean; order?: number }[]
 >({
   key: "materialCategorySuppliersState",
   default: [],
@@ -147,17 +147,17 @@ export const categoryNumberingState = atom<{}>({
 });
 
 export const isAllMaterialsCheckedState = atom<boolean>({
-    key: "isAllMaterialsCheckedState",
-    default: false,
+  key: "isAllMaterialsCheckedState",
+  default: false,
 });
 export const materialsUnCheckedState = atom<string[]>({
-    key: "materialsUnCheckedState",
-    default: [],
+  key: "materialsUnCheckedState",
+  default: [],
 });
 
 export const selectedMaterialIdForUpdateState = atom<string>({
-    key: "selectedMaterialIdForUpdateState",
-    default: "",
+  key: "selectedMaterialIdForUpdateState",
+  default: "",
 });
 
 export const materialTypeTableState = atom<any>({
