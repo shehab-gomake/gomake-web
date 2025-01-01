@@ -22,10 +22,11 @@ const AdvertisingProductNameParameterWidget = ({
         }
       }
     }
-    return null; // Return null if no matching parameter is found
+    return null;
   };
 
   const result = getParameterByCode(subProducts, "AdvertisingProductName");
+  const AdvertisingCategory = getParameterByCode(subProducts, "AdvertisingProductCategory");
 
   useEffect(() => {
     if (result) {
@@ -98,67 +99,72 @@ const AdvertisingProductNameParameterWidget = ({
 
   return (
     <div style={clasess.advertisingProductNameMain}>
-      <div style={clasess.advertisingProductNameListContainer}>
-        {parameter?.valuesConfigs?.map((item) => {
-          const additionalAttribute = item?.additionalAttribute || [];
-          const attributes = additionalAttribute.reduce((acc, attr) => {
-            acc[attr.valueId] = attr.value;
-            return acc;
-          }, {});
+      {
+        <div style={clasess.advertisingProductNameListContainer}>
+          {AdvertisingCategory && parameter?.valuesConfigs?.map((item) => {
+            const additionalAttribute = item?.additionalAttribute || [];
+            const attributes = additionalAttribute.reduce((acc, attr) => {
+              acc[attr.valueId] = attr.value;
+              return acc;
+            }, {});
 
-          const imageUrl = attributes.image;
-          const width = attributes.width;
-          const length = attributes.length;
-          const height = attributes.height;
-          const price = attributes.price;
-          const isChecked = selectedId === item.id;
-          return (
-            <div
-              style={clasess.advertisingProductCard}
-              key={item.id}
-              onClick={() => handleCheckboxChange(item, !isChecked)}
-            >
-              {
-                imageUrl ? <img
-                  style={{ ...clasess.advertisingProductImg, objectFit: 'contain' }}
-                  src={imageUrl}
-                /> : <AdvertisingIcon />
-              }
-
+            const imageUrl = attributes.image;
+            const width = attributes.width;
+            const length = attributes.length;
+            const height = attributes.height;
+            const price = attributes.price;
+            const isChecked = selectedId === item.id;
+            return (
               <div
-                style={clasess.advertisingProductUnderImgContainer}
+                style={clasess.advertisingProductCard}
+                key={item.id}
+                onClick={() => handleCheckboxChange(item, !isChecked)}
               >
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  {
+                    imageUrl ? <img
+                      style={{ ...clasess.advertisingProductImg, objectFit: 'contain' }}
+                      src={imageUrl}
+                    /> : <AdvertisingIcon />
+                  }
+                </div>
+
                 <div
-                  style={clasess.advertisingProductNamePriceContainer}
+                  style={clasess.advertisingProductUnderImgContainer}
                 >
-                  <div style={clasess.advertisingProductNameStyle}>
-                    {item?.updateName}
-                  </div>
-                  {/* <div style={clasess.advertisingProductPriceStyle}>
+                  <div
+                    style={clasess.advertisingProductNamePriceContainer}
+                  >
+                    <div style={clasess.advertisingProductNameStyle}>
+                      {item?.updateName}
+                    </div>
+                    {/* <div style={clasess.advertisingProductPriceStyle}>
                     {getCurrencySymbol(item?.currency)} {price}
                   </div> */}
-                </div>
-                <div>
-                  <div style={clasess.advertisingProductUnitsStyle}>
-                    {width}*{length}*{height}
+                  </div>
+                  <div>
+                    <div style={clasess.advertisingProductUnitsStyle}>
+                      {width}*{length}*{height}
+                    </div>
                   </div>
                 </div>
+                <div
+                  style={clasess.checkBoxContainer}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Checkbox
+                    onChange={(e, checked) => handleCheckboxChange(item, checked)}
+                    icon={<CheckboxIcon />}
+                    checkedIcon={<CheckboxCheckedIcon />}
+                    checked={isChecked}
+                  />
+                </div>
               </div>
-              <div
-                style={clasess.checkBoxContainer}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Checkbox
-                  onChange={(e, checked) => handleCheckboxChange(item, checked)}
-                  icon={<CheckboxIcon />}
-                  checkedIcon={<CheckboxCheckedIcon />}
-                  checked={isChecked}
-                />
-              </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      }
+
 
     </div>
   );
