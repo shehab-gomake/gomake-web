@@ -221,12 +221,12 @@ const RightSideWidget = ({
                 onBlur={(e: any) => {
                   const inputValue = Number(e.target.value);
 
-                  if (inputValue < minDiscount || inputValue > maxIncrease) {
+                  /*if (inputValue < minDiscount || inputValue > maxIncrease) {
                     alertFault("Value is out of the allowed range!");
                     setSliderCurrentProductItemValueTotalPrice(
                       currentProductItemValueTotalPrice
                     ); // Reset to valid value
-                  }
+                  }*/
                 }}
                 onChange={(e: any) => {
                   if (
