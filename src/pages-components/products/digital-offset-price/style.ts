@@ -903,7 +903,7 @@ const useStyle = () => {
         cursor: "pointer",
       },
       advertisingProductImg: {
-        width: 165,
+        width: 85,
         height: 100,
         borderTopRightRadius: 6,
         borderTopLeftRadius: 6,

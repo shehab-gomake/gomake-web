@@ -78,4 +78,4 @@ export * from "./Calculating-icon"
 export * from "./not-calculating-icon"
 export * from "./arrow-up-with-circle"
 export * from "./arrow-down-with-circle"
-
+export * from "./go-to-materials"
