@@ -3910,6 +3910,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             } else if (quantityTypes.length < typesNum) {
               const array = [];
               for (let i = quantityTypes.length + 1; i <= typesNum; i++) {
+                let quantity = 0;
+                if(valuesState && valuesState.length && valuesState[0]?.quantity){
+                  quantity = valuesState[0]?.quantity;
+                }else{
+                  quantity = Number(quantityValue);
+                }
                 array.push({
                   name: workName + " " + i,
                   quantity: valuesState[0]?.quantity || Number(quantityValue),
