@@ -43,7 +43,7 @@ const GeneralInformationComponent = ({
         )}
         <ParametersMapping parameters={parameterOutputs} />
         <Divider orientation={"vertical"} flexItem />
-        {tableOutputs.map((parameter) => (
+        {tableOutputs?.map((parameter) => (
           <TableOutPutComponent {...parameter} />
         ))}
       </Stack>
