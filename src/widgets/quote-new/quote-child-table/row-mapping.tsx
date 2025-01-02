@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { CharacterDetails } from "../quote-table/row-details/character-details";
 import { ECalculationStatus } from "@/enums";
+import { useTranslation } from "react-i18next";
 
 const RowMappingChildWidget = ({
   item,
@@ -60,6 +61,7 @@ const RowMappingChildWidget = ({
     childInex,
   });
   const router = useRouter();
+  const { t } = useTranslation();
   const { CheckDocumentPermission } = useUserPermission();
   const [isSelected, setIsSelected] = useState(item?.isSelected);
   const canUpdate = router.query.isNewCreation ? true : item?.isEditable;
@@ -134,18 +136,22 @@ const RowMappingChildWidget = ({
           width: columnWidths[1],
           ...classes.cellContainerStyle,
           color: "#000000",
-          borderBottom: childList?.length - 1 !== childInex && "none",
+          borderBottom: item?.childsDocumentItems && "none",
         }}
-      ></PrimaryTableCell>
+      >
+        {item?.code || item?.productCode || "000"}
+      </PrimaryTableCell>
       <PrimaryTableCell
         style={{
           width: columnWidths[2],
           ...FONT_FAMILY.Inter(600, 14),
           color: "#5859A8",
-          borderBottom: childList?.length - 1 !== childInex && "none",
           ...classes.cellContainerStyle,
+          borderBottom: item?.childsDocumentItems && "none",
         }}
-      ></PrimaryTableCell>
+      >
+        {item?.productName === "Delivery" ? t("home.tabs.Delivery") : item?.productName}
+      </PrimaryTableCell>
       <PrimaryTableCell
         style={{
           width: columnWidths[3],
