@@ -33,7 +33,6 @@ const DELETE_ACTION_FROM_PRODUCT_URL =  "/v1/printhouse-config/products/delete-a
 
 const GET_PRODUCT_ACTIONS_URL = "/v1/printhouse-config/products/get-product-actions";
 
-
 const addProductProfitRuleApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, ADD_PRODUCT_PROFIT_RULE_URL, setState, data);
 };
@@ -123,6 +122,7 @@ const getProductActionsApi: ICallAndSetData = async (callApi, setState, data) =>
   const getProductSizesApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_PRODUCT_SIZES_URL, setState, data);
 };
+
 
 export {
     addProductProfitRuleApi,

@@ -26,6 +26,7 @@ const useMaterialFilters = () => {
   const [materialSuppliers, setMaterialsSuppliers] = useRecoilState(
     materialCategorySuppliersState
   );
+
   const [supplierId, setSupplierId] = useRecoilState(selectedSupplierIdState);
   const materialData = useRecoilValue(materialCategoryDataState);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
@@ -35,7 +36,7 @@ const useMaterialFilters = () => {
   const { t } = useTranslation();
   const [filters, setFilters] = useRecoilState<any>(filterState);
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
-  
+
   const activeFilterOptions = [
     { value: EMaterialActiveFilter.ALL, label: t("materialsStatus.all") },
     { value: EMaterialActiveFilter.ACTIVE, label: t("materialsStatus.active") },
@@ -51,7 +52,7 @@ const useMaterialFilters = () => {
     );
 
     return option?.label;
-  }, [activeFilter,activeFilterOptions]);
+  }, [activeFilter, activeFilterOptions]);
 
   const onActiveFilterChange = (value: any) => {
     setActiveFilter(value);
@@ -99,25 +100,26 @@ const useMaterialFilters = () => {
     setFilters(updatedFilters);
     setPageNumber(1);
   };
-  
-  const getFilterValue = (key:string) =>{
-    return filters?.find(x=>x.key === key);
-  }
+
+  const getFilterValue = (key: string) => {
+    return filters?.find((x) => x.key === key);
+  };
   return {
     onActiveFilterChange,
     activeFilter,
     activeFilterOptions,
     activeFilterLabel,
     materialSuppliers,
+    setMaterialsSuppliers,
     onSelectSupplier,
     supplierId,
     onSetDefaultSupplier,
     materialTableFilters,
     setFilterValue,
     getFilterValue,
-    materialType, 
+    materialType,
     materialCategory,
-    filters
+    filters,
   };
 };
 

@@ -84,25 +84,41 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const onClickOpenOrderNowModal = () => {
     if (!isSelectedAtLeastOne) {
       alertFault("reports.pleaseSelectOneItem");
-    } else {
-      let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
-        quoteItemValue?.documentContacts
-      );
-      let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(
-        quoteItemValue?.documentContacts
-      );
+      return;
+    }
 
-      if (quoteItemValue?.client?.isCreateOrder) {
-        if (!checkPhones && !checkEmails) {
-          alertFault("home.admin.pleaseSelectPhoneOrEmail");
-        } else {
-          if (quoteItemValue?.isPrepaymentClient)
-            setOpenOrderNowPrePaymentModal(true);
-          else setOpenOrderNowModal(true);
-        }
-      } else {
-        alertFault("home.admin.pleaseSelectClient");
-      }
+    const hasItemsRequiringEditing = quoteItemValue?.documentItems?.some(
+      (item) => item?.isRequiredEditing
+    );
+    if (hasItemsRequiringEditing) {
+      alertFault("alerts.itemsMustBeEdited");
+      return;
+    }
+
+    const hasValidPhone = checkArrayNotEmptyOrPhoneNotEmpty(
+      quoteItemValue?.documentContacts || []
+    );
+    const hasValidEmail = checkArrayNotEmptyOrEmailNotEmpty(
+      quoteItemValue?.documentContacts || []
+    );
+
+    // Check if client is present and can create orders
+    if (!quoteItemValue?.client?.isCreateOrder) {
+      alertFault("home.admin.pleaseSelectClient");
+      return;
+    }
+
+    // Ensure phone or email is provided
+    if (!hasValidPhone && !hasValidEmail) {
+      alertFault("home.admin.pleaseSelectPhoneOrEmail");
+      return;
+    }
+
+    // Open appropriate modal
+    if (quoteItemValue?.isPrepaymentClient) {
+      setOpenOrderNowPrePaymentModal(true);
+    } else {
+      setOpenOrderNowModal(true);
     }
   };
 

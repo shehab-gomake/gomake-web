@@ -1,6 +1,6 @@
 import { GoMakeAutoComplate } from "@/components";
 import { ActionMenu } from "@/widgets/materials-widget/components/actions-menu/action-menu";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMaterialFilters } from "@/widgets/materials-widget/components/filters/use-material-filters";
 import Button from "@mui/material/Button";
@@ -17,7 +17,6 @@ import { useGomakeAxios } from "@/hooks";
 import { Stack } from "@mui/material";
 import { productsForDropDownList } from "@/store";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 import { updateSupplierPriorityApi } from "@/services/api-service/materials/materials-endpoints";
 import { SortIcon } from "@/icons";
 
@@ -25,99 +24,114 @@ interface FiltersActionsBarProps {
   isAdmin: boolean;
   subCategory?: string;
 }
+
 const FiltersActionsBar = (props: FiltersActionsBarProps) => {
   const { t } = useTranslation();
+  const { callApi } = useGomakeAxios();
+  const [anchorEl, setAnchorEl] = useState<any>(null);
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
   const { primaryColor, secondColor } = useGomakeTheme();
-
   const {
     onActiveFilterChange,
     activeFilterLabel,
     activeFilterOptions,
     materialSuppliers,
+    setMaterialsSuppliers,
     supplierId,
     onSelectSupplier,
     materialTableFilters,
     setFilterValue,
     getFilterValue,
     materialCategory,
-    materialType
+    materialType,
   } = useMaterialFilters();
-  const { callApi } = useGomakeAxios();
-  const [selectedOption, setSelectedOptions] = useState([])
+
+  const [selectedOption, setSelectedOptions] = useState([]);
+  const [items, setItems] = useState(materialSuppliers);
   const [supplierName, setSupplierName] = useState<{
     value: string;
     label: string;
     isDefault: boolean;
   } | null>({ value: "", label: "", isDefault: false });
 
-  const [items, setItems] = useState(materialSuppliers);
-  useEffect(() => {
-    if (materialSuppliers?.length > 0) {
-      setItems(materialSuppliers)
-    }
-    else {
-      setItems([])
-    }
-  }, [materialSuppliers])
-
-  const [anchorEl, setAnchorEl] = useState<any>(null);
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const handleOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-
   const updateMaterialsImages = async (list) => {
     const callBack = (res) => {
       if (res.success) {
+        const updatedList = materialSuppliers.map((item) => {
+          // Find the corresponding new list entry
+          const match = list.find(
+            (newItem) => newItem?.supplierId === item.value
+          );
+          // Update the order if a match is found
+          return match ? { ...item, order: match.order } : item;
+        });
 
-      } else {
-
+        setMaterialsSuppliers(updatedList);
       }
     };
     await updateSupplierPriorityApi(callApi, callBack, {
       materialTypeKey: materialType,
       categoryKey: materialCategory,
-      suppliers: list
+      suppliers: list,
     });
   };
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
 
-    const reorderedItems = Array.from(items);
-    const [movedItem] = reorderedItems.splice(result.source.index, 1);
+    const sortedItems = [...items].sort((a, b) => a.order - b.order);
+    const reorderedItems = [...sortedItems];
+
+    const movedItem = reorderedItems[result.source.index];
+
+    reorderedItems.splice(result.source.index, 1);
+
     reorderedItems.splice(result.destination.index, 0, movedItem);
-    updateMaterialsImages(reorderedItems?.map((item, index) => {
-      return {
+
+    const updatedItems = reorderedItems.map((item, index) => ({
+      ...item,
+      order: index + 1,
+    }));
+
+    updateMaterialsImages(
+      updatedItems.map((item) => ({
         supplierId: item.value,
-        order: index + 1
-      }
-    }))
-    setItems(reorderedItems);
+        order: item?.order,
+      }))
+    );
+
+    // Update the local state
+    setItems(updatedItems);
   };
 
   useEffect(() => {
     if (materialSuppliers?.length > 0) {
-      const index = materialSuppliers.map((s) => s.value).indexOf(supplierId);
-      if (index !== -1) {
-        setSupplierName(materialSuppliers[index]);
-        onSelectSupplier(materialSuppliers[index]?.value)
-      }
-      else {
-        setSupplierName(materialSuppliers[0]);
-        onSelectSupplier(materialSuppliers[0]?.value)
-      }
+      setItems(materialSuppliers);
+    } else {
+      setItems([]);
     }
-    else {
-      setSupplierName(null);
-      onSelectSupplier("")
-    }
-  }, [supplierId, materialSuppliers]);
+  }, [materialSuppliers]);
 
+  useEffect(() => {
+    if (materialSuppliers?.length > 0) {
+      const firstSupplier =
+        materialSuppliers.find((s) => s.order === 1) || materialSuppliers[0];
+
+      setSupplierName(firstSupplier);
+      onSelectSupplier(firstSupplier?.value);
+    } else {
+      setSupplierName(null);
+      onSelectSupplier("");
+    }
+  }, [materialSuppliers]);
 
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
 
@@ -134,20 +148,14 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     label: `${client.name} - ${client.code}`,
   }));
 
-  const productValue = useRecoilValue(productsForDropDownList)
+  const productValue = useRecoilValue(productsForDropDownList);
 
-  function filterItemsById(options, values) {
-    // Create a Set from values array for quick lookup
-    const valuesSet = new Set(values?.values);
-
-    // Filter options array by checking if the id exists in the values set
-    return options.filter(option => valuesSet.has(option.id));
-  }
   const productsOptions = productValue?.map((product) => ({
     ...product,
     value: product.id,
     label: product.name,
   }));
+
   return (
     <Stack direction={"row"} gap={2} alignItems={"center"}>
       {materialTableFilters &&
@@ -185,13 +193,12 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
               <GoMakeAutoComplate
                 key={materialCategory + "-" + key}
                 onChange={(e, v) => {
-                  setSelectedOptions(v)
+                  setSelectedOptions(v);
                   setFilterValue(
                     key,
                     v.map((item) => item.id)
-                  )
-                }
-                }
+                  );
+                }}
                 value={selectedOption?.map((item: any) => {
                   return {
                     label: item?.label,
@@ -217,15 +224,17 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             );
           }
         })}
-      {
-        !props.isAdmin ? <GoMakeAutoComplate
+      {!props.isAdmin ? (
+        <GoMakeAutoComplate
           style={{ width: "150px" }}
           options={activeFilterOptions}
           value={activeFilterLabel()}
           onChange={(e: any, value: any) => onActiveFilterChange(value?.value)}
           disableClearable={true}
-        /> : <></>
-      }
+        />
+      ) : (
+        <></>
+      )}
       <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
         {props.isAdmin === false ? (
           <button
@@ -241,18 +250,21 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
               boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
               borderBottom: "2px solid rgb(237, 2, 140)",
               paddingLeft: "12px",
-              cursor: 'pointer',
-              textAlign: "left"
-            }}>
-            <div
-              style={{ ...FONT_FAMILY.Lexend(500, 16) }}>
-              {supplierName?.label ? supplierName?.label : t("materials.sheetPaper.selectSupplier")}
+              cursor: "pointer",
+              textAlign: "left",
+            }}
+          >
+            <div style={{ ...FONT_FAMILY.Lexend(500, 16) }}>
+              {supplierName?.label
+                ? supplierName?.label
+                : t("materials.sheetPaper.selectSupplier")}
             </div>
           </button>
         ) : (
           <></>
         )}
         <ActionMenu isAdmin={props.isAdmin} />
+        {/* !here */}
         <Menu
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}
@@ -262,30 +274,38 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             <Droppable droppableId="menu-droppable">
               {(provided) => (
                 <div ref={provided.innerRef} {...provided.droppableProps}>
-                  {items.map((item, index) => (
-                    <Draggable key={item.value} draggableId={item.value} index={index}>
-                      {(provided) => (
-                        <MenuItem
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          onClick={() => {
-                            onSelectSupplier(item.value);
-                            handleClose();
-                          }}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 8,
-                            ...provided.draggableProps.style,
-                          }}
-                        >
-                          <SortIcon />
-                          {item.label}
-                        </MenuItem>
-                      )}
-                    </Draggable>
-                  ))}
+                  {items
+                    .slice()
+                    .sort((a, b) => a?.order - b?.order)
+                    .map((item, index) => (
+                      <Draggable
+                        key={item.value}
+                        draggableId={item.value}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <MenuItem
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            onClick={() => {
+                              setSupplierName(item); //?new
+                              onSelectSupplier(item?.value);
+                              handleClose();
+                            }}
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: 8,
+                              ...provided.draggableProps.style,
+                            }}
+                          >
+                            <SortIcon />
+                            {item.label}
+                          </MenuItem>
+                        )}
+                      </Draggable>
+                    ))}
                   {provided.placeholder}
                 </div>
               )}
@@ -306,7 +326,6 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           </Button>
         </Menu>
       </Stack>
-
     </Stack>
   );
 };

@@ -87,7 +87,7 @@ const RightSideWidget = ({
             t.actionName === item.actionName &&
             t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
             t?.exception?.exceptionMessage ===
-              item?.exception?.exceptionMessage &&
+            item?.exception?.exceptionMessage &&
             JSON.parse(t.values || "[]")
               .sort()
               .join(",") === itemValuesSorted
@@ -219,13 +219,14 @@ const RightSideWidget = ({
                 direction={direction}
                 value={sliderCurrentProductItemValueTotalPrice ?? "---------"}
                 onBlur={(e: any) => {
-                  const inputValue = Number(e.target.value);
-
-                  if (inputValue < minDiscount || inputValue > maxIncrease) {
-                    alertFault("Value is out of the allowed range!");
-                    setSliderCurrentProductItemValueTotalPrice(
-                      currentProductItemValueTotalPrice
-                    ); // Reset to valid value
+                  if (currentProductItemValueTotalPrice > 0) {
+                    const inputValue = Number(e.target.value);
+                    if (inputValue < minDiscount || inputValue > maxIncrease) {
+                      alertFault("Value is out of the allowed range!");
+                      setSliderCurrentProductItemValueTotalPrice(
+                        currentProductItemValueTotalPrice
+                      ); // Reset to valid value
+                    }
                   }
                 }}
                 onChange={(e: any) => {
@@ -260,7 +261,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-            calculationProgress.totalWorkFlowsCount && (
+          calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -289,9 +290,9 @@ const RightSideWidget = ({
                 )
                   ? 0
                   : (
-                      (sliderCurrentProductItemValueTotalPrice || 0) /
-                      (quantity?.values[0] || 1)
-                    )?.toFixed(4),
+                    (sliderCurrentProductItemValueTotalPrice || 0) /
+                    (quantity?.values[0] || 1)
+                  )?.toFixed(4),
                 unitPrice: systemCurrency,
               })}
             </div>
@@ -303,7 +304,7 @@ const RightSideWidget = ({
         )}
 
         {widgetType === EWidgetProductType.EDIT ||
-        widgetType === EWidgetProductType.DUPLICATE ? (
+          widgetType === EWidgetProductType.DUPLICATE ? (
           <div
             style={{
               display: "flex",
@@ -572,12 +573,11 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item.actionName ? item.actionName + ": " : ""}${
-                            item?.exception?.exceptionMessage || " "
-                          }${renderExceptionMessage(
-                            item?.exception?.exceptionKey,
-                            item?.exception?.values
-                          )}${renderValues(item?.exception?.values)}`}
+                          {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "
+                            }${renderExceptionMessage(
+                              item?.exception?.exceptionKey,
+                              item?.exception?.values
+                            )}${renderValues(item?.exception?.values)}`}
                         </div>
                       </div>
                     </div>
@@ -604,12 +604,11 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${
-                            item?.exceptionMessage || " "
-                          }${renderExceptionMessage(
-                            item?.exceptionKey,
-                            item?.values
-                          )}${renderValues(item?.values)}`}
+                          {`${item?.exceptionMessage || " "
+                            }${renderExceptionMessage(
+                              item?.exceptionKey,
+                              item?.values
+                            )}${renderValues(item?.values)}`}
                         </div>
                       </div>
                     </div>
