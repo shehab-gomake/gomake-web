@@ -25,15 +25,13 @@ const GET_PROFITS_PROFILE_PDF_URL = "/v1/printhouse-config/profit-profile-produc
 
 const GET_PRODUCT_SIZES_URL = "/v1/printhouse-config/products/get-product-sizes";
 
-
+const RE_CALCULATE_PRICE_URL = "/v1/printhouse-config/products/calculate-products";
 const ADD_ACTION_TO_PRODUCT_URL = "/v1/printhouse-config/products/add-action-to-product";
 const UPDATE_PRODUCT_ACTION_URL = "/v1/printhouse-config/products/update-product-action";
 const UPDATE_ACTIONS_ORDER_IN_PRODUCT_URL =  "/v1/printhouse-config/products/update-actions-order-in-product";
 const DELETE_ACTION_FROM_PRODUCT_URL =  "/v1/printhouse-config/products/delete-action-from-product";
 
 const GET_PRODUCT_ACTIONS_URL = "/v1/printhouse-config/products/get-product-actions";
-
-const RE_CALCULATE_PRICE_URL = "/v1/printhouse-config/products/calculate-products";
 
 const addProductProfitRuleApi: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.POST, ADD_PRODUCT_PROFIT_RULE_URL, setState, data);

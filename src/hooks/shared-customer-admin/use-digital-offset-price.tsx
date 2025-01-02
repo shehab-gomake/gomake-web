@@ -1530,13 +1530,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameter.valuesConfigs = [];
                 }
                 parameter.valuesConfigs.forEach((val) => {
-                  if (val.materialValueIds && val.materialValueIds.length > 0) {
-                    val.valueIds = [];
-                    val.values = [];
-                    val.materialValueIds.forEach((materialValue) => {
-                      val.valueIds.push(materialValue.valueId);
-                      val.values.push(materialValue.valueId);
-                    });
+                  if (val?.isDefault) {
+                    if (val.materialValueIds && val.materialValueIds.length > 0) {
+                      val.valueIds = [];
+                      val.values = [];
+                      val.materialValueIds.forEach((materialValue) => {
+                        val.valueIds.push(materialValue.valueId);
+                        val.values.push(materialValue.valueId);
+                      });
+                    }
                   }
                 });
                 if (
@@ -2440,7 +2442,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           getProductById={getProductById}
         />
       );
-    } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
+    } else if (parameter?.parameterType === EParameterTypes.SELECT_MATERIALS || parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY) {
       Comp = (
         <DropDownListParameterWidget
           parameter={parameter}
@@ -2460,37 +2462,39 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setDeviceSize={setDeviceSize}
         />
       );
-    } else if (
-      parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
-    ) {
-      Comp = (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-          }}
-        >
-          <AdvertisingProductCategoryParameterWidget
-            parameter={parameter}
-            clasess={clasess}
-            index={index}
-            temp={temp}
-            onChangeSubProductsForPrice={onChangeSubProductsForPrice}
-            subSection={subSection}
-            section={section}
-            selectedValueConfig={selectedValueConfig}
-            inModal={inModal}
-            setSelectedValueConfig={setSelectedValueConfig}
-            onOpeneMultiParameterModal={onOpeneMultiParameterModal}
-            subSectionParameters={subSectionParameters}
-            list={list}
-          />
-        </div>
-      );
-    } else if (
+    }
+    // else if (
+    //   parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+    // ) {
+    //   Comp = (
+    //     <div
+    //       style={{
+    //         display: "flex",
+    //         flexDirection: "row",
+    //         alignItems: "center",
+    //         justifyContent: "space-between",
+    //         width: "100%",
+    //       }}
+    //     >
+    //       <AdvertisingProductCategoryParameterWidget
+    //         parameter={parameter}
+    //         clasess={clasess}
+    //         index={index}
+    //         temp={temp}
+    //         onChangeSubProductsForPrice={onChangeSubProductsForPrice}
+    //         subSection={subSection}
+    //         section={section}
+    //         selectedValueConfig={selectedValueConfig}
+    //         inModal={inModal}
+    //         setSelectedValueConfig={setSelectedValueConfig}
+    //         onOpeneMultiParameterModal={onOpeneMultiParameterModal}
+    //         subSectionParameters={subSectionParameters}
+    //         list={list}
+    //       />
+    //     </div>
+    //   );
+    // } 
+    else if (
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
     ) {
       Comp = (
@@ -3912,9 +3916,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             } else if (quantityTypes.length < typesNum) {
               const array = [];
               for (let i = quantityTypes.length + 1; i <= typesNum; i++) {
+                let quantity = 0;
+                if(valuesState && valuesState.length && valuesState[0]?.quantity){
+                  quantity = valuesState[0]?.quantity;
+                }else{
+                  quantity = Number(quantityValue);
+                }
                 array.push({
                   name: workName + " " + i,
-                  quantity: valuesState[0]?.quantity || Number(quantityValue),
+                  quantity: quantity,
                 });
 
                 setValuesState([...quantityTypes, ...array]);
@@ -4788,10 +4798,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const newRequestAbortController = new AbortController();
         setRequestAbortController(newRequestAbortController);
         let subProductsCopy = cloneDeep(currentSubProducts);
+
         let generalParameters = subProductsCopy.find(
           (x) => !x.type
         )?.parameters;
+
         let calculationSubProducts = subProductsCopy.filter((x) => x.type);
+
         generalParameters?.forEach((x) => (x.valuesConfigs = null));
         calculationSubProducts.forEach((x) =>
           x.parameters.forEach((y) => (y.valuesConfigs = null))
@@ -5215,6 +5228,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             );
           }
         }
+        if (matchingTemplateParam?.parameterType === 12) {
+          return true;
+        }
         // Check if the parameter is not hidden (isHidden = false)
         return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
       });
@@ -5245,9 +5261,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
         }
       }
-      // if (matchingTemplateParam?.parameterType === 12) {
-      //   return true;
-      // }
+      if (matchingTemplateParam?.parameterType === 12) {
+        return true;
+      }
 
       // For other parameters, check if they're not hidden
       return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;

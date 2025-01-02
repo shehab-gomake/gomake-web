@@ -273,7 +273,8 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
   useEffect(() => {
     const updateContainerWidth = () => {
       if (scrollContainerRef.current) {
-        setContainerWidth(scrollContainerRef.current.clientWidth);
+        // setContainerWidth(scrollContainerRef.current.clientWidth );
+        setContainerWidth(scrollContainerRef.current.clientWidth + 300);
       }
     };
     updateContainerWidth();

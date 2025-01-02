@@ -20,9 +20,9 @@ const useStyle = () => {
         padding: "12px 0",
       },
       filtersCardBox: {
-        width: "60%",
+        width: "90%",
         maxHeight: "100px",
-        maxWidth: "60%",
+        maxWidth: "90%",
         overflowX: "scroll",
         overflowY: "scroll",
         display: "flex",

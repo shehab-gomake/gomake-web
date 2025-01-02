@@ -769,7 +769,18 @@ const ActionContainerComponent = ({
                       }
                     </>
                   }
-                  <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
+                        
+                        <EditableKeyValueViewComponent
+                            onUpdate={handleUpdatePrice}
+                            {...totalPrice}
+                            values={totalPriceValue}
+                            source={source}
+                            valueColor={secondColor(500)}
+                            name={t("sales.quote.price")}
+                        />
+                      </>
+                  }
+                 <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
                     {
                       source !== EWorkSource.OUT &&
                       <>
