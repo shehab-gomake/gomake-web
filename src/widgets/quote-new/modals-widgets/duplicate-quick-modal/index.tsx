@@ -43,6 +43,7 @@ const DuplicateQuickModal = ({
       getProductSizes()
     }
   }, [quoteItem, openModal])
+  console.log("groups", groups)
   return (
     <>
       <GoMakeModal
@@ -96,7 +97,7 @@ const DuplicateQuickModal = ({
                     {
                       param?.name?.value === "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4" ?
                         <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 10, width: "100%" }}>
-                          <div style={{ width: "100%" }}>
+                          {productSizes?.length > 0 && <div style={{ width: "100%" }}>
                             <div>{t("documentingSettings.value")}</div>
                             <GoMakeAutoComplate
                               options={productSizes}
@@ -113,7 +114,7 @@ const DuplicateQuickModal = ({
                               placeholder={t("products.profits.exceptions.selectParameter")}
                               withArrow={true}
                             />
-                          </div>
+                          </div>}
                           <div style={{ width: "100%" }}>
                             <div>{t("machineAttributes.width")}</div>
                             <GomakeTextInput
@@ -121,7 +122,7 @@ const DuplicateQuickModal = ({
                               placeholder={t("products.profits.exceptions.enterValue")}
                               value={param?.width ? param?.width : ""}
                               onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value, "width")}
-                              disabled={param?.width && param?.value?.id !== "f37799c1-1372-4722-a3d8-3503cea0179c" ? true : false}
+                              disabled={param?.width && param?.value && param?.value?.width !== null ? true : false}
                             />
                           </div>
                           <div style={{ width: "100%" }}>
@@ -131,7 +132,7 @@ const DuplicateQuickModal = ({
                               placeholder={t("products.profits.exceptions.enterValue")}
                               value={param?.length ? param?.length : ""}
                               onChange={(e) => handleTextInputChange(groupIndex, index, e.target.value, "length")}
-                              disabled={param?.length && param?.value?.id !== "f37799c1-1372-4722-a3d8-3503cea0179c" ? true : false}
+                              disabled={param?.length && param?.value && param?.value?.length !== null ? true : false}
                             />
                           </div>
                         </div> :

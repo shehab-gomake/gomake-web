@@ -1510,6 +1510,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                   parameter?.parameterType ===
                   EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
+
                 (!parameter?.valuesConfigs ||
                   parameter?.valuesConfigs.length === 0)
               ) {
@@ -1526,13 +1527,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameter.valuesConfigs = [];
                 }
                 parameter.valuesConfigs.forEach((val) => {
-                  if (val.materialValueIds && val.materialValueIds.length > 0) {
-                    val.valueIds = [];
-                    val.values = [];
-                    val.materialValueIds.forEach((materialValue) => {
-                      val.valueIds.push(materialValue.valueId);
-                      val.values.push(materialValue.valueId);
-                    });
+                  if (val?.isDefault) {
+                    if (val.materialValueIds && val.materialValueIds.length > 0) {
+                      val.valueIds = [];
+                      val.values = [];
+                      val.materialValueIds.forEach((materialValue) => {
+                        val.valueIds.push(materialValue.valueId);
+                        val.values.push(materialValue.valueId);
+                      });
+                    }
                   }
                 });
                 if (
@@ -4792,10 +4795,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const newRequestAbortController = new AbortController();
         setRequestAbortController(newRequestAbortController);
         let subProductsCopy = cloneDeep(currentSubProducts);
+
         let generalParameters = subProductsCopy.find(
           (x) => !x.type
         )?.parameters;
+
         let calculationSubProducts = subProductsCopy.filter((x) => x.type);
+
         generalParameters?.forEach((x) => (x.valuesConfigs = null));
         calculationSubProducts.forEach((x) =>
           x.parameters.forEach((y) => (y.valuesConfigs = null))
@@ -5212,6 +5218,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             );
           }
         }
+        if (matchingTemplateParam?.parameterType === 12) {
+          return true;
+        }
         // Check if the parameter is not hidden (isHidden = false)
         return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
       });
@@ -5242,9 +5251,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
         }
       }
-      // if (matchingTemplateParam?.parameterType === 12) {
-      //   return true;
-      // }
+      if (matchingTemplateParam?.parameterType === 12) {
+        return true;
+      }
 
       // For other parameters, check if they're not hidden
       return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;

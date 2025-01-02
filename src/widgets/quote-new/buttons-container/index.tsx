@@ -126,7 +126,7 @@ const ButtonsContainer = ({
   };
 
   useEffect(() => {
-    quoteItemValue?.isNeedApproval && getAllUsersCanApproveQuote();
+    isQuote && getAllUsersCanApproveQuote();
   }, []);
 
   return (
@@ -305,23 +305,34 @@ const ButtonsContainer = ({
             {t("materials.buttons.reject")}
           </GomakePrimaryButton>
         )}
-        {isQuote &&
-          (quoteItemValue?.isNeedApproval ? (
+
+        {isQuote && (
+          <>
             <GomakePrimaryButton
               style={classes.btnOrderNowContainer}
-              onClick={onClickOpenMangerApprovalModal}
+              onClick={
+                quoteItemValue?.isNeedApproval
+                  ? onClickOpenMangerApprovalModal
+                  : onClickOpenOrderNowModal
+              }
             >
-              {t("sales.quote.managerApproval")}
-              {/* {t("sales.quote.sendToSalesManager")} */}
+              {t(
+                quoteItemValue?.isNeedApproval
+                  ? "sales.quote.managerApproval"
+                  : "sales.quote.orderNowTitle"
+              )}
             </GomakePrimaryButton>
-          ) : (
-            <GomakePrimaryButton
-              style={classes.btnOrderNowContainer}
-              onClick={onClickOpenOrderNowModal}
-            >
-              {t("sales.quote.orderNowTitle")}
-            </GomakePrimaryButton>
-          ))}
+
+            {!quoteItemValue?.isNeedApproval && (
+              <GomakePrimaryButton
+                style={classes.btnOrderNowContainer}
+                onClick={onClickOpenMangerApprovalModal}
+              >
+                {t("sales.quote.managerApproval")}
+              </GomakePrimaryButton>
+            )}
+          </>
+        )}
         <OrderNowModal
           openModal={openOrderNowModal}
           onClose={onClickCloseOrderNowModal}
