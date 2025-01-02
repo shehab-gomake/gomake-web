@@ -3918,7 +3918,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
                 array.push({
                   name: workName + " " + i,
-                  quantity: valuesState[0]?.quantity || Number(quantityValue),
+                  quantity: quantity,
                 });
 
                 setValuesState([...quantityTypes, ...array]);
