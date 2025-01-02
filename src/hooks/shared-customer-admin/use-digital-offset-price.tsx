@@ -4831,8 +4831,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               generalParameters,
               productTemplate
             );
-          console.log("updatedGeneralParameters", updatedGeneralParameters);
-
           if (calculationSubProducts && calculationSubProducts.length > 0) {
             calculationSubProducts.forEach((subProduct) => {
               subProduct.parameters =
