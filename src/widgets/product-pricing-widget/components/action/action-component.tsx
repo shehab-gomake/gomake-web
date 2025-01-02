@@ -769,7 +769,7 @@ const ActionContainerComponent = ({
                       }
                     </>
                   }
-  <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
+                  <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
                     {
                       source !== EWorkSource.OUT &&
                       <>
@@ -908,7 +908,7 @@ const ActionContainerComponent = ({
                         currentProductItemValue={currentProductItemValue}
                         productType={productType}
                       />
-                      {tableOutputs.map((parameter) => (
+                      {tableOutputs?.map((parameter) => (
                         <TableOutPutComponent {...parameter} />
                       ))}
                     </Stack>
