@@ -40,6 +40,7 @@ const ButtonsContainer = ({
   handleAcceptBtnClick,
   onClickOpenChangeProductionStatusModal,
   onClickSendReceiptToClient,
+  handleSendUsingWhatsAppWeb
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -398,6 +399,7 @@ const ButtonsContainer = ({
           onClose={onClickCloseReceiptCreation}
           openModal={openReceiptCreationModal}
           docType={documentType}
+          handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
           onClickSendDocumentToClient={onClickSendReceiptToClient}
         />
         <ThreeOptionsModal

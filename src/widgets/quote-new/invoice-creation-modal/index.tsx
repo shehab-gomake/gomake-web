@@ -13,13 +13,15 @@ interface InvoiceCreationModal {
   onClose: () => void;
   docType: any;
   onClickSendDocumentToClient: (value) => void;
+  handleSendUsingWhatsAppWeb: () => void;
 }
 
 const InvoiceCreationModal = ({
   openModal,
   onClose,
   docType,
-  onClickSendDocumentToClient,
+  onClickSendDocumentToClient, 
+  handleSendUsingWhatsAppWeb
 }: InvoiceCreationModal) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -53,6 +55,7 @@ const InvoiceCreationModal = ({
         <div style={classes.mainContainer}>
           <SendInvoiceSection
             handleSendDocument={onClickSendDocumentToClient}
+            handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
             docType={docType}
           />
           <OtherOptionsSection
