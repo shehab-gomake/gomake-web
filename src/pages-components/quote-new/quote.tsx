@@ -272,7 +272,8 @@ const QuoteNewPageWidget = ({
     onClickQuickDuplicate,
     openQuickDuplicateModal,
     quoteItemId,
-    quoteItem
+    quoteItem,
+    handleSendUsingWhatsAppWeb
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -673,6 +674,7 @@ const QuoteNewPageWidget = ({
                   onClickOpenChangeProductionStatusModal
                 }
                 onClickSendReceiptToClient={onClickSendReceiptToClient}
+                handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
               />
             </div>
           )}
@@ -888,6 +890,7 @@ const QuoteNewPageWidget = ({
         openModal={openInvoiceCreationModal}
         docType={documentType}
         onClickSendDocumentToClient={onClickSendQuoteToClient}
+        handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
       />
     </>
   );

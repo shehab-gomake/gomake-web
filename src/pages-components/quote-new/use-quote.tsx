@@ -72,6 +72,7 @@ import {
   checkArrayNotEmptyOrPhoneNotEmpty,
   isAtLeastOneSelected,
 } from "@/utils/helpers";
+import {useWhatsAppWeb} from "@/pages-components/quote-new/use-whats-app-web";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -96,6 +97,7 @@ const useQuoteNew = ({
   } = useSnackBar();
   const router = useRouter();
   const { callApi } = useGomakeAxios();
+  const { openWhatsAppWebLink } = useWhatsAppWeb();
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
@@ -1329,7 +1331,8 @@ const useQuoteNew = ({
         } else {
           alertFault("sales.quote.phoneContectErrorMsg");
         }
-      } else {
+      }
+      else if (messageType === 0) {
         let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(
           quoteItemValue?.documentContacts
         );
@@ -1351,6 +1354,36 @@ const useQuoteNew = ({
         } else {
           alertFault("sales.quote.mailContectErrorMsg");
         }
+      }
+      else if (messageType === 2){
+        let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
+            quoteItemValue?.documentContacts
+        );
+        let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(
+            quoteItemValue?.documentContacts
+        );
+        if(!checkPhones){
+          alertFault("sales.quote.phoneContectErrorMsg");
+          return;
+        }
+        if(!checkEmails){
+          alertFault("sales.quote.mailContectErrorMsg");
+          return;
+        }
+        const callBack = (res) => {
+          if (res?.success) {
+            alertSuccessAdded();
+          } else {
+            alertFaultAdded();
+          }
+        };
+        await sendDocumentToClientApi(callApi, callBack, {
+          documentType: docType,
+          document: {
+            documentId: quoteItemValue?.id,
+            messageType,
+          },
+        });
       }
     }
   };
@@ -1952,6 +1985,26 @@ const useQuoteNew = ({
     },
     [docType, quoteItemValue, allClientActiveBudgets]
   );
+  const handleSendUsingWhatsAppWeb = () =>{
+    debugger
+    let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
+        quoteItemValue?.documentContacts
+    );
+    if(!checkPhones) {
+      alertFault("sales.quote.phoneContectErrorMsg");
+      return;
+    }
+    const phoneNumber = quoteItemValue?.documentContacts[0].contactPhone;
+    const callBack = (res) => {
+      openWhatsAppWebLink(res?.data,phoneNumber,isWhatsAppWeb)
+    };
+    getWhatsAppMessageApi(callApi, callBack, {
+      documentId: quoteItemValue?.id,
+      documentType: docType,
+    });
+    
+    //setOpenWatsAppModal(true)
+  }
   return {
     dateRef,
     taxDateRef,
@@ -2158,7 +2211,8 @@ const useQuoteNew = ({
     onClickQuickDuplicate,
     quoteItemId,
     openQuickDuplicateModal,
-    quoteItem
+    quoteItem,
+    handleSendUsingWhatsAppWeb
   };
 };
 
