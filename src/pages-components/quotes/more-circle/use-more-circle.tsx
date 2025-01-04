@@ -121,7 +121,12 @@ const useMoreCircle = () => {
         ),
       },
       {
-        condition: isPrePaymentOrder,
+        condition:
+            !isPauseOrder &&
+            isOrder &&
+            quote?.isCanClose &&
+            quote?.isWaitingForPayment &&
+            CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
         onClick: () => onClickStartProduction(quote),
         icon: <StartProductionIcon />,
         name: t("sales.tables.startProduction"),
@@ -172,7 +177,8 @@ const useMoreCircle = () => {
         condition:
           !isPauseOrder &&
           isOrder &&
-          quote?.isCanClose &&
+          quote?.isCanClose && 
+          !quote?.isWaitingForPayment &&
           CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
         onClick: () => navigate(`/jobs?finalPatternSearch=${quote?.number}`),
         icon: <JobsIcon />,
