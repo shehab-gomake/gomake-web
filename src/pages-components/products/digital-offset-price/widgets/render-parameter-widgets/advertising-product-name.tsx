@@ -128,7 +128,6 @@ const AdvertisingProductNameParameterWidget = ({
                     /> : <AdvertisingIcon />
                   }
                 </div>
-
                 <div
                   style={clasess.advertisingProductUnderImgContainer}
                 >

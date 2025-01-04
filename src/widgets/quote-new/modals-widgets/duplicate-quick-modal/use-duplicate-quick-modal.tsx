@@ -57,28 +57,33 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
     return groupList.map(group => ({
       ...group,
       parameters: group?.parameters.flatMap(param => {
-        console.log("param", param)
-        if (typeof param.value === "object" && param.value !== null) {
-          return [
-            {
+        if (typeof param.value === "object" || (param.length && param.width)) {
+          const result = [];
+          if (typeof param.value === "object") {
+            result.push({
               name: param.name,
               value: param.value.id, // Extract the ID
-            },
-            {
-              name: {
-                label: "length",
-                value: "d2c965d3-6b08-4380-9d4b-17c361d7e484", // Replace with actual unique identifier if needed
+            });
+          }
+          if (param.length && param.width) {
+            result.push(
+              {
+                name: {
+                  label: "length",
+                  value: "d2c965d3-6b08-4380-9d4b-17c361d7e484", // Replace with actual unique identifier if needed
+                },
+                value: param.length, // Extract the length
               },
-              value: param.length, // Extract the length
-            },
-            {
-              name: {
-                label: "width",
-                value: "4ba9a275-4fbc-4313-b284-e9b1cf8b452e", // Replace with actual unique identifier if needed
-              },
-              value: param.width, // Extract the width
-            },
-          ];
+              {
+                name: {
+                  label: "width",
+                  value: "4ba9a275-4fbc-4313-b284-e9b1cf8b452e", // Replace with actual unique identifier if needed
+                },
+                value: param.width, // Extract the width
+              }
+            );
+          }
+          return result;
         } else {
           // Leave unchanged if value is not an object
           return param;
@@ -90,7 +95,7 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
   const onClickQuickDuplicate = async () => {
     const transformedGroupList = transformGroupList(groups);
     const hasEmptyParameter = transformedGroupList.some(group =>
-      group.parameters.some(param => param.name === "" || param.value === "")
+      group.parameters.some(param => param.name === "")
     );
 
     if (hasEmptyParameter) {
@@ -121,6 +126,7 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
 
         }
         onClose()
+        getQuote()
       } else {
         alertFaultUpdate();
       }

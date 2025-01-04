@@ -62,15 +62,19 @@ const QuoteForPriceTable = ({
     documentType === DOCUMENT_TYPE.invoice ||
     documentType === DOCUMENT_TYPE.invoiceRefund;
 
-  const [visibleChilds, setVisibleChilds] = useState<{ [key: number]: boolean }>({});
-
+  const [visibleChilds, setVisibleChilds] = useState<{ [key: number]: boolean }>(
+    documentItems?.reduce((acc, _, index) => ({ ...acc, [index]: true }), {}) || {}
+  );
+  console.log("visibleChilds", visibleChilds)
   // Function to toggle visibility of child items for a specific parent item
   const toggleChildVisibility = (parentIndex: number) => {
     setVisibleChilds((prev) => ({
       ...prev,
-      [parentIndex]: !prev[parentIndex],
+      [parentIndex]: !prev[parentIndex], // Toggle the visibility
     }));
   };
+
+
   const _renderIconcalculationStatus = (calculationStatus) => {
     if (calculationStatus === ECalculationStatus.Calculating) {
       return <div style={{ display: "flex", alignItems: "center", gap: "5px" }}><CalculatingIcon /><a>{t("general.calculating")}</a></div>;;
@@ -143,11 +147,11 @@ const QuoteForPriceTable = ({
                       onChangeSelectedItemRowForQoute
                     }
                     quoteItems={quoteItems}
-                    isShowChilds={visibleChilds[parentIndex]}
+                    isShowChilds={visibleChilds[parentIndex]} // Access visibleChilds with correct parentIndex
                     setIsShowChilds={() => toggleChildVisibility(parentIndex)}
                     _renderIconcalculationStatus={_renderIconcalculationStatus}
                   />
-                  {item?.childsDocumentItems && visibleChilds[parentIndex] &&
+                  {item?.childsDocumentItems && !visibleChilds[parentIndex] &&
                     item?.childsDocumentItems?.map(
                       (childItem: any, childIndex: number) => {
                         indexs++;

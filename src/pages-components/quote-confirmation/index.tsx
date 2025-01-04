@@ -5,7 +5,7 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import { QuoteNewPageWidget } from "../quote-new/quote";
 import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 import { useQuoteConfirmation } from "./use-quote-confirmation";
-import { updateTokenStorage } from "@/services/storage-data";
+import {updateTempUserTokenStorage, updateTokenStorage} from "@/services/storage-data";
 
 interface IProps {
   isPrePaymentPage?: boolean;
@@ -34,7 +34,7 @@ const QuoteConfirmationPageWidget = ({ isPrePaymentPage = false }: IProps) => {
       if (isPrePaymentPage) {
         const userToken = await getTempUserToken();
         if (userToken) {
-          updateTokenStorage(userToken);
+          updateTempUserTokenStorage(userToken);
           await getPrePaymentById();
         }
       } else {

@@ -308,6 +308,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     let copy = lodashClonedeep(subProducts);
     setSubProductsCopy(copy);
   }, [subProducts]);
+  const [isCanGetSelected, setIsCanGetSelected] = useState(false);
   useEffect(() => {
 
     if (
@@ -316,7 +317,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     ) {
       getSelectedWorkFlow();
     }
-  }, [calculationResult, currentCalculationSessionId]);
+    if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
+      getSelectedWorkFlow();
+    }
+  }, [calculationResult, currentCalculationSessionId, productTemplate]);
   const [
     selectedWorkFlowCalculatedIsLoaded,
     setSelectedWorkFlowCalculatedIsLoaded,
@@ -326,22 +330,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     calculatedPriceProductItemValueState
   );
 
-  const getSelectedWorkFlow = async () => {
-    // setSelectedWorkFlowCalculatedIsLoaded(true)
-    const docType = router?.query?.documentType ?? "0";
-    const documentItemId = router?.query?.documentItemId;
-    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
-    if (documentItemId) {
-      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${priceRecovery}`;
-    }
-    const res: any = await callApi("GET", url, {}, false);
+  const _setDataFromSelectedWorkFlow = (res) => {
     if (!res.success) {
       setCalculationProgress({
         totalWorkFlowsCount: 0,
         currentWorkFlowsCount: 0,
       });
-
-      //setLoading(false);
       setcalculationServerErrorState(true);
       return;
     }
@@ -375,12 +369,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         mySelectedWorkFlow.totalPrice.values &&
         !isNaN(mySelectedWorkFlow.totalPrice.values[0])
       ) {
-        setCurrentProductItemValueTotalPrice(
-          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
-        );
-        setSliderCurrentProductItemValueTotalPrice(
-          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
-        ); //!new
+        setCurrentProductItemValueTotalPrice(parseFloat(mySelectedWorkFlow.totalPrice.values[0]));
+        setSliderCurrentProductItemValueTotalPrice(parseFloat(mySelectedWorkFlow.totalPrice.values[0]));
       }
     }
 
@@ -396,6 +386,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setSelectedWorkFlowCalculatedIsLoaded(false);
     }
     setSelectedWorkFlowCalculatedIsLoaded(false);
+  }
+
+  const getSelectedWorkFlow = async () => {
+    // setSelectedWorkFlowCalculatedIsLoaded(true)
+    const docType = router?.query?.documentType ?? "0";
+    const documentItemId = router?.query?.documentItemId;
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
+    if (documentItemId) {
+      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${priceRecovery}`;
+    }
+    const res: any = await callApi("GET", url, {}, false);
+    _setDataFromSelectedWorkFlow(res);
+
+
   };
 
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
@@ -1526,13 +1530,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameter.valuesConfigs = [];
                 }
                 parameter.valuesConfigs.forEach((val) => {
-                  if (val.materialValueIds && val.materialValueIds.length > 0) {
-                    val.valueIds = [];
-                    val.values = [];
-                    val.materialValueIds.forEach((materialValue) => {
-                      val.valueIds.push(materialValue.valueId);
-                      val.values.push(materialValue.valueId);
-                    });
+                  if (val?.isDefault) {
+                    if (val.materialValueIds && val.materialValueIds.length > 0) {
+                      val.valueIds = [];
+                      val.values = [];
+                      val.materialValueIds.forEach((materialValue) => {
+                        val.valueIds.push(materialValue.valueId);
+                        val.values.push(materialValue.valueId);
+                      });
+                    }
                   }
                 });
                 if (
@@ -1968,7 +1974,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     const itemQuantity = quantity ? +quantity?.values[0] : 1;
-    if (currentProductItemValueTotalPrice && itemQuantity) {
+    if (!isNaN(sliderCurrentProductItemValueTotalPrice) && itemQuantity) {
       const productItemValue = {
         signalRConnectionId: connectionId,
         productItemValueId: productItemValueDraftId,
@@ -4792,10 +4798,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const newRequestAbortController = new AbortController();
         setRequestAbortController(newRequestAbortController);
         let subProductsCopy = cloneDeep(currentSubProducts);
+
         let generalParameters = subProductsCopy.find(
           (x) => !x.type
         )?.parameters;
+
         let calculationSubProducts = subProductsCopy.filter((x) => x.type);
+
         generalParameters?.forEach((x) => (x.valuesConfigs = null));
         calculationSubProducts.forEach((x) =>
           x.parameters.forEach((y) => (y.valuesConfigs = null))
@@ -4836,7 +4845,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
           const res: any = await callApi(
             "POST",
-            `/v1/calculation-service/calculations/calculate-productV2`,
+            productTemplate?.isHaveFixedAction ? '/v1/erp-service/product-item-value/create-default-work-flow' : `/v1/calculation-service/calculations/calculate-productV2`,
             {
               calculationSessionId: newCalculationSessionId,
               signalRConnectionId: connectionId,
@@ -4869,20 +4878,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
             //setLoading(false);
           } else {
-            const id = res?.data?.data?.data;
-            if (!id) {
-              setcalculationServerErrorState(true);
+            if (productTemplate?.isHaveFixedAction) {
+              _setDataFromSelectedWorkFlow(res);
+              setIsCanGetSelected(true);
               setLoading(false);
-              setCurrentCalculationSessionId(null);
             }
-            setCurrentCalculationSessionId(id);
-            setCalculationProgress({
-              totalWorkFlowsCount: 0,
-              currentWorkFlowsCount: 0,
-            });
-            //setLoading(true);
-            if (id === "00000000-0000-0000-0000-000000000000") {
-              setLoading(false);
+            else {
+              const id = res?.data?.data?.data;
+              if (!id) {
+                setcalculationServerErrorState(true);
+                setLoading(false);
+                setCurrentCalculationSessionId(null);
+              }
+              setCurrentCalculationSessionId(id);
+              setCalculationProgress({
+                totalWorkFlowsCount: 0,
+                currentWorkFlowsCount: 0,
+              });
+              //setLoading(true);
+              if (id === "00000000-0000-0000-0000-000000000000") {
+                setLoading(false);
+              }
             }
           }
         }
@@ -5212,6 +5228,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             );
           }
         }
+        if (matchingTemplateParam?.parameterType === 12) {
+          return true;
+        }
         // Check if the parameter is not hidden (isHidden = false)
         return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
       });
@@ -5242,9 +5261,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
         }
       }
-      // if (matchingTemplateParam?.parameterType === 12) {
-      //   return true;
-      // }
+      if (matchingTemplateParam?.parameterType === 12) {
+        return true;
+      }
 
       // For other parameters, check if they're not hidden
       return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
