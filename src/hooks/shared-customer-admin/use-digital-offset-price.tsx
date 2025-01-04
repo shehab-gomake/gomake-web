@@ -1974,7 +1974,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     const itemQuantity = quantity ? +quantity?.values[0] : 1;
-    if (currentProductItemValueTotalPrice && itemQuantity) {
+    if (!isNaN(sliderCurrentProductItemValueTotalPrice) && itemQuantity) {
       const productItemValue = {
         signalRConnectionId: connectionId,
         productItemValueId: productItemValueDraftId,

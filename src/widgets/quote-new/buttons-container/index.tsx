@@ -308,6 +308,14 @@ const ButtonsContainer = ({
 
         {isQuote && (
           <>
+            {!quoteItemValue?.isNeedApproval && (
+                <GomakePrimaryButton
+                    style={classes.btnOrderNowContainer}
+                    onClick={onClickOpenMangerApprovalModal}
+                >
+                  {t("sales.quote.managerApproval")}
+                </GomakePrimaryButton>
+            )}
             <GomakePrimaryButton
               style={classes.btnOrderNowContainer}
               onClick={
@@ -323,14 +331,7 @@ const ButtonsContainer = ({
               )}
             </GomakePrimaryButton>
 
-            {!quoteItemValue?.isNeedApproval && (
-              <GomakePrimaryButton
-                style={classes.btnOrderNowContainer}
-                onClick={onClickOpenMangerApprovalModal}
-              >
-                {t("sales.quote.managerApproval")}
-              </GomakePrimaryButton>
-            )}
+            
           </>
         )}
         <OrderNowModal
