@@ -10,8 +10,7 @@ const useStyle = ({isUnderlined, isFromSetting}) => {
     return {
       mainContainer: {
         marginTop: isUnderlined?2:-45,
-        marginLeft:isFromSetting?0:isUnderlined?RTL?-80:80:RTL?144:224,
-
+        marginLeft:isFromSetting?0:isUnderlined?RTL?-80:80:RTL?144:224
       },
       bodyContainer: {
         minWidth: 220,
