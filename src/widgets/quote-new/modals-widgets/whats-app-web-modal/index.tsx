@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-
 import {
   GoMakeAutoComplate,
   GoMakeModal,
@@ -10,7 +9,7 @@ import {
 
 import { useStyle } from "./style";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import {useWhatsAppWeb} from "@/pages-components/quote-new/use-whats-app-web";
+import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
 
 const WhatsAppWebModal = ({
   openModal,
@@ -20,27 +19,27 @@ const WhatsAppWebModal = ({
   whatsappMassage,
   isWhatsAppWeb,
   getWhatsAppMessageForReceipt,
-  documentType
+  documentType,
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const [, setSelectedClient] = useState<any>();
   const [phoneNumber, setPhoneNumber] = useState("");
   const { openWhatsAppWebLink } = useWhatsAppWeb();
+
   useEffect(() => {
     if (openModal) {
       if (documentType === DOCUMENT_TYPE.receipt) {
-        getWhatsAppMessageForReceipt()
-      }
-      else {
+        getWhatsAppMessageForReceipt();
+      } else {
         getWhatsAppMessage();
-
       }
     }
   }, [openModal]);
 
   const handleWhatsAppClick = () => {
-    openWhatsAppWebLink(whatsappMassage,phoneNumber,isWhatsAppWeb)
+    //openWhatsAppWebLink(whatsappMassage, phoneNumber, isWhatsAppWeb);
+    openWhatsAppWebLink(whatsappMassage, phoneNumber);
   };
 
   return (
