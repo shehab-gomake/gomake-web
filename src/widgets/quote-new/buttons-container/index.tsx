@@ -40,7 +40,7 @@ const ButtonsContainer = ({
   handleAcceptBtnClick,
   onClickOpenChangeProductionStatusModal,
   onClickSendReceiptToClient,
-  handleSendUsingWhatsAppWeb
+  handleSendUsingWhatsAppWeb,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -141,7 +141,7 @@ const ButtonsContainer = ({
             leftIcon={<CreditCardIcon color={"#344054"} />}
             onClick={() =>
               navigate(
-                `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.number}&ClientId=${quoteItemValue?.customerID}`
+                `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.accountingNumber}&ClientId=${quoteItemValue?.customerID}`
               )
             }
             style={classes.btnContainer}
@@ -310,12 +310,12 @@ const ButtonsContainer = ({
         {isQuote && (
           <>
             {!quoteItemValue?.isNeedApproval && (
-                <GomakePrimaryButton
-                    style={classes.btnOrderNowContainer}
-                    onClick={onClickOpenMangerApprovalModal}
-                >
-                  {t("sales.quote.managerApproval")}
-                </GomakePrimaryButton>
+              <GomakePrimaryButton
+                style={classes.btnOrderNowContainer}
+                onClick={onClickOpenMangerApprovalModal}
+              >
+                {t("sales.quote.managerApproval")}
+              </GomakePrimaryButton>
             )}
             <GomakePrimaryButton
               style={classes.btnOrderNowContainer}
@@ -331,8 +331,6 @@ const ButtonsContainer = ({
                   : "sales.quote.orderNowTitle"
               )}
             </GomakePrimaryButton>
-
-            
           </>
         )}
         <OrderNowModal
