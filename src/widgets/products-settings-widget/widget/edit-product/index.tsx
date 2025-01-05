@@ -6,6 +6,9 @@ import { PrimaryButton } from "@/components/button/primary-button";
 
 import { useAddProduct } from "./use-add-product";
 import { useStyle } from "./style";
+import { WorkFlowsWidget } from "@/widgets/shared-admin-customers/add-product/work-flows-widget";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const EditProductWidget = () => {
   const { clasess } = useStyle();
@@ -20,7 +23,11 @@ const EditProductWidget = () => {
     dir,
     handleGoBack,
   } = useAddProduct();
-
+  // const WorkFlowsTab = {
+  //   id: "c66465de-95d6-4ea3-bd3f-7efe6664cb0555",
+  //   name: t("pricingWidget.workFlow"),
+  //   icon: "pricing",
+  // };
   return (
     <>
       <div style={clasess.mainContainer}>
@@ -50,7 +57,7 @@ const EditProductWidget = () => {
           )}
         </div>
         <div style={clasess.headerTabsContainer}>
-          {tabs?.map((item, index) => {
+          {tabs?.filter((item) => item.permission)?.map((item, index) => {
             return (
               <div
                 key={index}
@@ -82,6 +89,10 @@ const EditProductWidget = () => {
           />
         ) : activeTab === t("products.addProduct.admin.parameters") ? (
           <ParameterWidget />
+        ) : activeTab === t("pricingWidget.workFlow") ? (
+          <PermissionCheck userPermission={Permissions.ADD_WORK_FLOW_TO_PRODUCT}>
+            <WorkFlowsWidget />
+          </PermissionCheck>
         ) : (
           <GraphicWidget />
         )}

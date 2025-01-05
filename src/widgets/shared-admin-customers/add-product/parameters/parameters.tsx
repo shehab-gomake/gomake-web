@@ -58,11 +58,7 @@ const ParameterWidget = () => {
     selectedSectionId
   } = useAddProduct({ clasess });
   const visibleSections = template?.sections
-  const WorkFlowsTab = {
-    id: "c66465de-95d6-4ea3-bd3f-7efe6664cb0555",
-    name: t("pricingWidget.workFlow"),
-    icon: "pricing",
-  };
+
   return (
     <>
       {template && (
@@ -71,7 +67,7 @@ const ParameterWidget = () => {
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
                 <Tabs variant="scrollable" scrollButtons={"auto"}>
-                  {[...visibleSections, WorkFlowsTab].map((item, index) => {
+                  {[...visibleSections].map((item, index) => {
                     return (
                       <TabsMappingWidget
                         key={`tab-${index}`}
@@ -94,15 +90,9 @@ const ParameterWidget = () => {
                 style={{ height: "55vh", overflow: "scroll", width: "100%" }}
               >
                 <div style={clasess.sectionsContainer}>
-                  {[...visibleSections, WorkFlowsTab]?.map((section, index) => {
+                  {[...visibleSections]?.map((section, index) => {
                     if (index === activeIndex) {
-                      if (
-                        section.name === t("pricingWidget.workFlow")
-                      ) {
-                        return (
-                          <WorkFlowsWidget />
-                        )
-                      } else {
+                      {
                         return section?.subSections?.map((subSection, index) => {
                           if (subSection?.isAccordion) {
                             return (
