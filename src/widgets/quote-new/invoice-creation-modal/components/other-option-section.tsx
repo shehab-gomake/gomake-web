@@ -79,7 +79,7 @@ const OtherOptionsSection = ({
 
   const onClickPay = () =>
     navigate(
-      `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.number}&ClientId=${quoteItemValue?.customerID}`
+      `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.accountingNumber}&ClientId=${quoteItemValue?.customerID}`
     );
 
   const onClickCreateNewInvoice = () => {

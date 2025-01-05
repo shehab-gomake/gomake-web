@@ -13,7 +13,7 @@ const SendBtnMenu = ({
   documentState,
   setIsWhatsAppWeb,
   documentType,
-  onClickSendReceiptToClient
+  onClickSendReceiptToClient,
 }) => {
   const { t } = useTranslation();
 
@@ -34,9 +34,8 @@ const SendBtnMenu = ({
         <MenuItem
           onClick={() => {
             if (documentType === DOCUMENT_TYPE.receipt) {
-              onClickSendReceiptToClient(0)
-            }
-            else {
+              onClickSendReceiptToClient(0);
+            } else {
               onClickSendQuoteToClient(0);
             }
             handleClose();
@@ -49,9 +48,8 @@ const SendBtnMenu = ({
         <MenuItem
           onClick={() => {
             if (documentType === DOCUMENT_TYPE.receipt) {
-              onClickSendReceiptToClient(1)
-            }
-            else {
+              onClickSendReceiptToClient(1);
+            } else {
               onClickSendQuoteToClient(1);
             }
             handleClose();

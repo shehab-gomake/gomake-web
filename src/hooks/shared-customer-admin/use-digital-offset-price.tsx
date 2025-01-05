@@ -1530,15 +1530,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameter.valuesConfigs = [];
                 }
                 parameter.valuesConfigs.forEach((val) => {
-                  if (val?.isDefault) {
-                    if (val.materialValueIds && val.materialValueIds.length > 0) {
-                      val.valueIds = [];
-                      val.values = [];
-                      val.materialValueIds.forEach((materialValue) => {
-                        val.valueIds.push(materialValue.valueId);
-                        val.values.push(materialValue.valueId);
-                      });
-                    }
+                  if (val.materialValueIds && val.materialValueIds.length > 0) {
+                    val.valueIds = [];
+                    val.values = [];
+                    val.materialValueIds.forEach((materialValue) => {
+                      val.valueIds.push(materialValue.valueId);
+                      val.values.push(materialValue.valueId);
+                    });
                   }
                 });
                 if (
@@ -1588,7 +1586,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         };
                     });
                   }
-                } else {
+                }
+                else {
                   parameter.valuesConfigs = parameter.valuesConfigs.filter(
                     (x) => x.valueIds && x.valueIds.length > 0
                   );
@@ -1622,7 +1621,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           (existsValue.currency = val?.currency);
                       }
                     });
+
                   }
+                  const materialOrderMap = {};
+                  materialData?.forEach((item, index) => {
+                    materialOrderMap[item.valueId] = index;
+                  });
+
+                  parameter.valuesConfigs.sort((a, b) => {
+                    return materialOrderMap[a.id] - materialOrderMap[b.id];
+                  });
+
                 }
               }
 
@@ -3917,9 +3926,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               const array = [];
               for (let i = quantityTypes.length + 1; i <= typesNum; i++) {
                 let quantity = 0;
-                if(valuesState && valuesState.length && valuesState[0]?.quantity){
+                if (valuesState && valuesState.length && valuesState[0]?.quantity) {
                   quantity = valuesState[0]?.quantity;
-                }else{
+                } else {
                   quantity = Number(quantityValue);
                 }
                 array.push({
