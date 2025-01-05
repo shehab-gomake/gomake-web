@@ -37,7 +37,7 @@ const EditModal = ({
   const preferenceOptions =
     selectedSetting?.preferenceValues?.map(
       (item: { id: string | number; value: string }) => ({
-        label: item.value,
+        label: t(`preferences.${item?.value}`),
         value: item.id,
       })
     ) || [];
@@ -77,7 +77,7 @@ const EditModal = ({
       openModal={openModal}
       onClose={onClose}
       modalTitle={t("preferences.editSetting", {
-        preferenceName: `${selectedSetting?.name}`,
+        preferenceName: t(`preferences.${selectedSetting?.name}`),
       })}
       withRoundedCloseIcon={false}
       modalTitleStyle={classes.modalTitleStyle}
@@ -92,7 +92,8 @@ const EditModal = ({
             <GomakeTextInput
               key={`name-${selectedSetting?.preferenceId}`}
               placeholder={t("documentingSettings.name")}
-              value={state?.name}
+              // value={state?.name}
+              value={t(`preferences.${state?.name}`)}
               disabled={true}
             />
           </div>
@@ -153,7 +154,8 @@ const EditModal = ({
             placeholder={t("preferences.enterDescription")}
             multiline
             style={classes.descriptionStyle}
-            value={state?.description}
+            // value={state?.description}
+            value={t(`preferences.${state?.description.trim()}`)}
             disabled={true}
           />
         </div>
