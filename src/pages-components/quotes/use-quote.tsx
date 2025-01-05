@@ -670,7 +670,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       }
     };
 
-    debugger;
     const currentPageNumber = router.query.pageNumber;
     const currentStatusId = router.query.statusId;
     const currentFinalPatternSearch = router.query.finalPatternSearch;

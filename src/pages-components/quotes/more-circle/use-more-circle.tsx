@@ -93,8 +93,12 @@ const useMoreCircle = () => {
       isOrder && quote?.statusTitleText === "Order.WaitingForPayment";
 
     const isShowLogs = CheckPermission(Permissions.SHOW_LOGS);
-    const isSendPaymentToClient = CheckPermission(Permissions.SEND_PAYMENT_TO_CLIENT);
-    const isShowPurchaseOrders = CheckPermission(Permissions.SHOW_PURCHASE_ORDERS);
+    const isSendPaymentToClient = CheckPermission(
+      Permissions.SEND_PAYMENT_TO_CLIENT
+    );
+    const isShowPurchaseOrders = CheckPermission(
+      Permissions.SHOW_PURCHASE_ORDERS
+    );
 
     return [
       {
@@ -108,7 +112,10 @@ const useMoreCircle = () => {
         name: t("sales.quote.edit"),
       },
       {
-        condition: !isPauseOrder && documentType !== DOCUMENT_TYPE.quote && quote?.isEditable,
+        condition:
+          !isPauseOrder &&
+          documentType !== DOCUMENT_TYPE.quote &&
+          quote?.isEditable,
         onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
         icon: <EditingIcon />,
         name: (
@@ -122,11 +129,11 @@ const useMoreCircle = () => {
       },
       {
         condition:
-            !isPauseOrder &&
-            isOrder &&
-            quote?.isCanClose &&
-            quote?.isWaitingForPayment &&
-            CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
+          !isPauseOrder &&
+          isOrder &&
+          quote?.isCanClose &&
+          quote?.isWaitingForPayment &&
+          CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
         onClick: () => onClickStartProduction(quote),
         icon: <StartProductionIcon />,
         name: t("sales.tables.startProduction"),
@@ -177,7 +184,7 @@ const useMoreCircle = () => {
         condition:
           !isPauseOrder &&
           isOrder &&
-          quote?.isCanClose && 
+          quote?.isCanClose &&
           !quote?.isWaitingForPayment &&
           CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
         onClick: () => navigate(`/jobs?finalPatternSearch=${quote?.number}`),
@@ -193,7 +200,11 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          !isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder && quote?.isEditable,
+          !isPauseOrder &&
+          isOrder &&
+          quote?.isCanClose &&
+          !isCanceledOrder &&
+          quote?.isEditable,
         onClick: () => {
           quote?.productionStatus
             ? navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`)
@@ -205,8 +216,12 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          ((!isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder) ||
-            (isDeliveryNote && quote?.isCanClose)) && quote?.isEditable,
+          ((!isPauseOrder &&
+            isOrder &&
+            quote?.isCanClose &&
+            !isCanceledOrder) ||
+            (isDeliveryNote && quote?.isCanClose)) &&
+          quote?.isEditable,
         onClick: () => {
           if (isOrder) {
             if (quote?.productionStatus) {
@@ -224,7 +239,11 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          !isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder && isShowPurchaseOrders,
+          !isPauseOrder &&
+          isOrder &&
+          quote?.isCanClose &&
+          !isCanceledOrder &&
+          isShowPurchaseOrders,
         onClick: () => navigate(`/purchaseOrders?orderNumber=${quote?.number}`),
         icon: <TickMoveIcon />,
         name: t("sales.quote.purchaseOrders"),
@@ -263,9 +282,13 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          ((!isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder) ||
+          ((!isPauseOrder &&
+            isOrder &&
+            quote?.isCanClose &&
+            !isCanceledOrder) ||
             (isDeliveryNote && quote?.isCanClose) ||
-            (isInvoice && quote?.isCanClose)) && quote?.isEditable,
+            (isInvoice && quote?.isCanClose)) &&
+          quote?.isEditable,
         onClick: () =>
           quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
             ? onClickOpenCloseOrderNotesModal(quote)
@@ -295,14 +318,18 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          ((!isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder) ||
-            (isReceipt && quote?.status !== "Receipt.Canceled")) && quote?.isEditable,
+          ((!isPauseOrder &&
+            isOrder &&
+            quote?.isCanClose &&
+            !isCanceledOrder) ||
+            (isReceipt && quote?.status !== "Receipt.Canceled")) &&
+          quote?.isEditable,
         onClick: () =>
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-              ? onOpenCancelReceiptModalRefund(quote)
-              : onOpenCancelReceiptModal(quote),
+            ? onOpenCancelReceiptModalRefund(quote)
+            : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
@@ -310,14 +337,18 @@ const useMoreCircle = () => {
         condition: !isPauseOrder && isInvoice && quote?.isCanClose,
         onClick: () =>
           navigate(
-            `/receipt?isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`
+            `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`
           ),
         icon: <PayIcon />,
         name: t("sales.quote.pay"),
       },
       {
         condition:
-          !isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder && isSendPaymentToClient,
+          !isPauseOrder &&
+          isOrder &&
+          quote?.isCanClose &&
+          !isCanceledOrder &&
+          isSendPaymentToClient,
         onClick: () => onClickSendPayment(quote),
         icon: <PaymentIcon />,
         name: t("sales.quote.sendPayment"),
@@ -333,7 +364,11 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          isOrder && !isCanceledOrder && !isPauseOrder && !isClosedOrder && quote?.isEditable,
+          isOrder &&
+          !isCanceledOrder &&
+          !isPauseOrder &&
+          !isClosedOrder &&
+          quote?.isEditable,
         onClick: () => onClickPauseOrResume(quote?.id),
         icon: <PauseIcon />,
         name: t("sales.quote.pause"),
