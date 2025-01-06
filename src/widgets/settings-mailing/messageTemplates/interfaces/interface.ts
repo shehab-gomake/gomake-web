@@ -23,5 +23,6 @@ export interface ISMSTemplate {
     bccMail: string,
     fileBase64: string | ArrayBuffer,
     isMailToPrintHouse?: boolean,
+    isSendGridVerificated?: boolean,
 }
 
