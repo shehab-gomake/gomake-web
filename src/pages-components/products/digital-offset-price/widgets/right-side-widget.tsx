@@ -219,7 +219,7 @@ const RightSideWidget = ({
                 direction={direction}
                 value={sliderCurrentProductItemValueTotalPrice ?? "---------"}
                 onBlur={(e: any) => {
-                  if (currentProductItemValueTotalPrice > 0) {
+                  /*if (currentProductItemValueTotalPrice > 0) {
                     const inputValue = Number(e.target.value);
                     if (inputValue < minDiscount || inputValue > maxIncrease) {
                       alertFault("Value is out of the allowed range!");
@@ -227,7 +227,7 @@ const RightSideWidget = ({
                         currentProductItemValueTotalPrice
                       ); // Reset to valid value
                     }
-                  }
+                  }*/
                 }}
                 onChange={(e: any) => {
                   if (
