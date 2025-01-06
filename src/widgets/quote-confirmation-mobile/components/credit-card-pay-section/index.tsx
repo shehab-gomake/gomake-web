@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { loadgingState } from "@/store/loading";
 import { useRecoilValue } from "recoil";
 
-const CreditCardPaySection = ({ isFromBigScreen = false }) => {
+const CreditCardPaySection = ({ isFromBigScreen = false, documentType }) => {
   const { classes } = useStyle({ isFromBigScreen });
   const {
     t,
@@ -23,7 +23,7 @@ const CreditCardPaySection = ({ isFromBigScreen = false }) => {
     handleExpiryDateChange,
     handleProceedCheckout,
     isPaymentSuccess,
-  } = useCreditCardPaySection();
+  } = useCreditCardPaySection({ documentType });
   const loading = useRecoilValue(loadgingState);
 
   useEffect(() => {
@@ -78,6 +78,7 @@ const CreditCardPaySection = ({ isFromBigScreen = false }) => {
             onChange={(e) =>
               handleChangeInputs("transactionSum", e.target.value)
             }
+            readOnly
           />
           <div style={{ width: "70%" }}>
             <GoMakeAutoComplate

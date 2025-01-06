@@ -5,17 +5,24 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import { QuoteNewPageWidget } from "../quote-new/quote";
 import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 import { useQuoteConfirmation } from "./use-quote-confirmation";
-import {updateTempUserTokenStorage, updateTokenStorage} from "@/services/storage-data";
+import {
+  updateTempUserTokenStorage,
+  updateTokenStorage,
+} from "@/services/storage-data";
 
 interface IProps {
   isPrePaymentPage?: boolean;
+  documentType?: DOCUMENT_TYPE;
 }
 
-const QuoteConfirmationPageWidget = ({ isPrePaymentPage = false }: IProps) => {
+const QuoteConfirmationPageWidget = ({
+  isPrePaymentPage = false,
+  documentType,
+}: IProps) => {
   const { classes } = useStyle();
   const [isMobile, setIsMobile] = useState(false);
   const { getTempUserToken, getPrePaymentById, getQuoteConfirmation } =
-    useQuoteConfirmation();
+    useQuoteConfirmation({ documentType });
 
   useEffect(() => {
     updateScreenWidth();
@@ -54,12 +61,11 @@ const QuoteConfirmationPageWidget = ({ isPrePaymentPage = false }: IProps) => {
         <QuoteConfirmationMobileWidget
           isMobile={isMobile}
           isPrePaymentPage={isPrePaymentPage}
+          documentType={documentType}
         />
       ) : (
         <QuoteNewPageWidget
-          documentType={
-            isPrePaymentPage ? DOCUMENT_TYPE.order : DOCUMENT_TYPE.quote
-          }
+          documentType={isPrePaymentPage ? documentType : DOCUMENT_TYPE.quote}
           isQuoteConfirmation={true}
           isPrePaymentPage={isPrePaymentPage}
         />

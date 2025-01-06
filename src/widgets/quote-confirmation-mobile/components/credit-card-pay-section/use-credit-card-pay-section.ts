@@ -34,7 +34,11 @@ interface PaymentDetails {
   isCustomerPresent?: boolean;
 }
 
-const useCreditCardPaySection = () => {
+interface IProps {
+  documentType?: DOCUMENT_TYPE;
+}
+
+const useCreditCardPaySection = ({ documentType }: IProps = {}) => {
   const { t } = useTranslation();
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const { alertSuccess, alertFault } = useSnackBar();
@@ -133,7 +137,7 @@ const useCreditCardPaySection = () => {
     const finalPaymentDetailsState = {
       ...paymentDetailsState,
       documentID: quoteConfirm?.id,
-      documentType: DOCUMENT_TYPE.order,
+      documentType: documentType,
       paymentRequestId: quoteConfirm?.paymentRequestId,
       clientID: quoteConfirm?.customerID,
     };

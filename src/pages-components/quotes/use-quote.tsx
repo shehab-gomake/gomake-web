@@ -625,6 +625,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendPayment={onClickSendPayment}
               />,
             ];
           }
@@ -1041,6 +1042,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendPayment={onClickSendPayment}
               />,
             ];
           }
@@ -2097,7 +2099,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       };
       sendDocumentToClientForPaymentApi(callApi, callBack, {
         id: document?.id,
-        documentType: DOCUMENT_TYPE.order,
+        documentType: docType,
       });
     });
   };

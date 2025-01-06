@@ -10,10 +10,13 @@ import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import cloneDeep from "lodash.clonedeep";
 import { getPrePaymentByIdApi } from "@/services/api-service/pay/pay-api";
-import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useTranslation } from "react-i18next";
+import { DOCUMENT_TYPE } from "../quotes/enums";
 
-const useQuoteConfirmation = () => {
+interface IProps {
+  documentType?: DOCUMENT_TYPE;
+}
+const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
   const router = useRouter();
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
@@ -63,7 +66,7 @@ const useQuoteConfirmation = () => {
     };
     await getPrePaymentByIdApi(callApi, callBack, {
       recordId: router?.query?.recordId,
-      documentType: DOCUMENT_TYPE.order,
+      documentType,
     });
   };
 
