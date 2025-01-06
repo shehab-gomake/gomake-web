@@ -173,6 +173,7 @@ const RowMappingChildWidget = ({
               getQuote={getQuote}
               documentItemId={item?.id}
               canUpdate={canUpdate}
+              documentType={documentType}
             />
           </PrimaryTableCell>
         )}
