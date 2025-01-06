@@ -5,7 +5,10 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import { QuoteNewPageWidget } from "../quote-new/quote";
 import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 import { useQuoteConfirmation } from "./use-quote-confirmation";
-import {updateTempUserTokenStorage, updateTokenStorage} from "@/services/storage-data";
+import {
+  updateTempUserTokenStorage,
+  updateTokenStorage,
+} from "@/services/storage-data";
 
 interface IProps {
   isPrePaymentPage?: boolean;
@@ -14,8 +17,12 @@ interface IProps {
 const QuoteConfirmationPageWidget = ({ isPrePaymentPage = false }: IProps) => {
   const { classes } = useStyle();
   const [isMobile, setIsMobile] = useState(false);
-  const { getTempUserToken, getPrePaymentById, getQuoteConfirmation } =
-    useQuoteConfirmation();
+  const {
+    getTempUserToken,
+    getPrePaymentById,
+    getQuoteConfirmation,
+    quoteConfirm,
+  } = useQuoteConfirmation();
 
   useEffect(() => {
     updateScreenWidth();
@@ -48,7 +55,22 @@ const QuoteConfirmationPageWidget = ({ isPrePaymentPage = false }: IProps) => {
   return (
     <div style={classes.firstContainer}>
       <div style={isMobile ? classes.iconMobileStyle : classes.iconStyle}>
-        <GoMakeIcon />
+        {quoteConfirm?.printHouseLogo ? (
+          <img
+            src={quoteConfirm.printHouseLogo}
+            alt="Print House Logo"
+            style={{
+              width: 50,
+              height: 50,
+              objectFit: "contain",
+              borderRadius: "8px",
+              padding: "4px",
+              backgroundColor: "#8283be",
+            }}
+          />
+        ) : (
+          <GoMakeIcon />
+        )}
       </div>
       {isMobile ? (
         <QuoteConfirmationMobileWidget
