@@ -77,6 +77,8 @@ const createPaymentTransactionApi: ICallAndSetData = async (
     CREATE_PAYMENT_TRANSACTION_URL,
     setState,
     data,
+    true,
+    null,
     true
   );
 };
