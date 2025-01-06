@@ -108,6 +108,7 @@ const useQuoteConfirmation = () => {
     handleItemCheck,
     getPrePaymentById,
     getTempUserToken,
+    quoteConfirm,
   };
 };
 
