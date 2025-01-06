@@ -20,6 +20,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { languageOptionsState, languagesState } from "@/store/languages";
 import { GoMakeAutoComplate } from "@/components";
 import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 export interface IProps {
   onClickSave: (value: any) => void;
@@ -113,15 +114,33 @@ const EmailSettings = ({ onClickSave }: IProps) => {
           </Stack>
         ) : (
           <Stack direction={"column"} gap={"18px"}>
-            <Stack direction={"row"} width={"180px"} alignItems={"flex-start"}>
-              {mailInputs1(state).map((item) => (
-                <FormInput
-                  input={item as IInput}
-                  changeState={onChangeInputs}
-                  error={false}
-                  readonly={false}
-                />
-              ))}
+            <Stack direction={"column"} gap={"5px"}>
+              <Stack direction={"row"} width={"180px"} alignItems={"flex-start"}>
+                {mailInputs1(state).map((item) => (
+                  <FormInput
+                    input={item as IInput}
+                    changeState={onChangeInputs}
+                    error={false}
+                    readonly={false}
+                  />
+
+                ))}
+
+              </Stack>
+              <div
+                style={{
+                  marginTop: "10px",
+                  padding: "0px 5px",
+                  ...FONT_FAMILY.Inter(600, 13),
+                  color: state.isSendGridVerificated
+                    ? "green"
+                    : "red",
+                }}
+              >
+                {state.isSendGridVerificated
+                  ? t("usersSettings.emailVerified")
+                  : t("usersSettings.emailNotVerified")}
+              </div>
             </Stack>
             <Stack direction={"row"} gap={"12px"} alignItems={"flex-start"}>
               {mailInputs2(state).map((item) => (
