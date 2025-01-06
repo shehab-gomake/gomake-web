@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
-const useCharacterDetails = ({ details, getQuote, documentItemId }) => {
+const useCharacterDetails = ({ details, getQuote, documentItemId, documentType }) => {
   const router = useRouter();
   const { t } = useTranslation();
   const dir = t("direction");
@@ -69,7 +69,7 @@ const useCharacterDetails = ({ details, getQuote, documentItemId }) => {
         }
       };
       await updateDocumentItemContentApi(callApi, callBack, {
-        documentType: DOCUMENT_TYPE.quote,
+        documentType: documentType ?? DOCUMENT_TYPE.quote,
         contact: {
           documentItemId: documentItemId,
           content: data,
