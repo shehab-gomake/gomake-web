@@ -1085,6 +1085,7 @@ const useQuoteNew = ({
             isSelected: false,
             productID: deliveryItem?.productID,
             productType: 1,
+            calculationStatus:null
           };
           updatedQuoteItemValue.documentItems = [
             ...updatedQuoteItemValue.documentItems,
