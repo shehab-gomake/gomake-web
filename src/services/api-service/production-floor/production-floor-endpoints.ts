@@ -582,9 +582,9 @@ const getBoardMissionActionMaterialsApi: ICallAndSetData = async (
     EHttpMethod.GET,
     GET_BOARD_MISSIONS_ACTION_MATERIALS +
       data.boardMissionsActionId +
-      (data.productType ? "&productType=" + data.productType : ""),
+      (data.productType ? "?productType=" + data.productType : ""),
     callBack,
-    data,
+      {},
     true,
     null,
     true

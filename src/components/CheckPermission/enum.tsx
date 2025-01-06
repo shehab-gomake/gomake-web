@@ -69,6 +69,7 @@ export enum Permissions {
   SHOW_SHIPMENT_TYPES = "ShowShipmentTypes",
   SHOW_PRICING_PROFILE = "ShowPricingProfile",
   SHOW_PREFERENCES = "ShowPreferences",
+  ADD_WORK_FLOW_TO_PRODUCT = "AddWorkFlowToProduct",
 
   //orders group
   SHOW_ORDERS = "ShowOrders",

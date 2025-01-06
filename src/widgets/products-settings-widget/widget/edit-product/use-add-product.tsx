@@ -3,8 +3,10 @@ import { useTranslation } from "react-i18next";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { getAndSetProductById } from "@/services/hooks";
-import { GraphicIcon, PrameterIcon, SettingIcon } from "@/widgets";
+import { GraphicIcon, PrameterIcon, PricingIcon, SettingIcon } from "@/widgets";
 import { ESourceView } from "@/enums/products";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
@@ -43,23 +45,35 @@ const useAddProduct = () => {
   const onClickGraphicTab = () => {
     setActiveTab(t("products.addProduct.admin.graphic"));
   };
+  const onClickWorkFlowsTab = () => {
+    setActiveTab(t("pricingWidget.workFlow"));
+  };
   useEffect(() => {
     if (router.query.isParameter)
       setActiveTab(t("products.addProduct.admin.parameters"));
   }, [router]);
-
+  const { CheckPermission } = useUserPermission();
   const tabs = [
     {
       name: t("products.addProduct.admin.settings"),
       icon: <SettingIcon stroke="#1C1D58" />,
       activeIcon: <SettingIcon />,
       onclick: () => onClickSettingsTab,
+      permission: true,
     },
     {
       name: t("products.addProduct.admin.parameters"),
       icon: <PrameterIcon />,
       activeIcon: <PrameterIcon stroke="#ED028C" />,
       onclick: () => onClickParametersTab,
+      permission: true,
+    },
+    {
+      name: t("pricingWidget.workFlow"),
+      icon: <PricingIcon />,
+      activeIcon: <PricingIcon stroke="#ED028C" />,
+      onclick: () => onClickWorkFlowsTab,
+      permission: CheckPermission(Permissions.ADD_WORK_FLOW_TO_PRODUCT),
     },
     // {
     //   name: t("products.addProduct.admin.graphic"),
