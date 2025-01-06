@@ -9,9 +9,6 @@ const useMoreMenu = ({ preferenceItem, onClickEdit }: any) => {
       onclick: () => {
         onClickEdit(preferenceItem);
       },
-      // onclick: () => {
-      //   alert(preferenceItem?.preferenceId);
-      // },
       icon: <EditingIcon />,
       name: t("sales.quote.edit"),
     },
