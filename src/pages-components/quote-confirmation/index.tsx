@@ -12,9 +12,13 @@ import {
 
 interface IProps {
   isPrePaymentPage?: boolean;
+  documentType?: DOCUMENT_TYPE;
 }
 
-const QuoteConfirmationPageWidget = ({ isPrePaymentPage = false }: IProps) => {
+const QuoteConfirmationPageWidget = ({
+  isPrePaymentPage = false,
+  documentType,
+}: IProps) => {
   const { classes } = useStyle();
   const [isMobile, setIsMobile] = useState(false);
   const {
@@ -22,7 +26,9 @@ const QuoteConfirmationPageWidget = ({ isPrePaymentPage = false }: IProps) => {
     getPrePaymentById,
     getQuoteConfirmation,
     quoteConfirm,
-  } = useQuoteConfirmation();
+    documentTitle,
+  } = useQuoteConfirmation({ documentType });
+
 
   useEffect(() => {
     updateScreenWidth();
@@ -76,12 +82,12 @@ const QuoteConfirmationPageWidget = ({ isPrePaymentPage = false }: IProps) => {
         <QuoteConfirmationMobileWidget
           isMobile={isMobile}
           isPrePaymentPage={isPrePaymentPage}
+          documentType={documentType}
+          documentTitle={documentTitle}
         />
       ) : (
         <QuoteNewPageWidget
-          documentType={
-            isPrePaymentPage ? DOCUMENT_TYPE.order : DOCUMENT_TYPE.quote
-          }
+          documentType={isPrePaymentPage ? documentType : DOCUMENT_TYPE.quote}
           isQuoteConfirmation={true}
           isPrePaymentPage={isPrePaymentPage}
         />

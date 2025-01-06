@@ -13,26 +13,27 @@ const useStyle = () => {
       secondContainer: {
         display: "flex",
         flexDirection: "column" as "column",
-        width: "70%",
+        // width: "70%",
+        width: "85%",
         marginTop: "10px",
         marginBottom: "10px",
-        borderRadius: "8px"
+        borderRadius: "8px",
       },
       tableHeader: {
         width: "50%",
         background: "#F2F4F7",
         display: "flex",
-       // justifyContent: "center",
+        // justifyContent: "center",
         alignItems: "center",
       },
       tableCell: {
-        width: "50%"
+        width: "50%",
       },
       inputStyle: {
         width: "100%",
         boxShadow: "none",
         ...FONT_FAMILY.Inter(400, 14),
-        lineHeight: "20px"
+        lineHeight: "20px",
       },
 
       inputPriceStyle: {
@@ -40,12 +41,13 @@ const useStyle = () => {
         boxShadow: "none",
         ...FONT_FAMILY.Inter(600, 14),
         lineHeight: "20px",
-        color: "#F135A3"
+        color: "#F135A3",
       },
       firstDiv: {
         display: "flex",
         flexDirection: "row" as "row",
-        width: "100%", border: "2px solid #EAECF0",
+        width: "100%",
+        border: "2px solid #EAECF0",
         borderRadius: "8px 8px 0px 0px",
         justifyContent: "center",
       },
@@ -55,21 +57,21 @@ const useStyle = () => {
         width: "100%",
         borderBottom: "2px solid #EAECF0",
         borderLeft: "2px solid #EAECF0",
-        borderRight: "2px solid #EAECF0"
+        borderRight: "2px solid #EAECF0",
       },
       thirdDiv: {
         display: "flex",
         flexDirection: "row" as "row",
         width: "100%",
         borderLeft: "2px solid #EAECF0",
-        borderRight: "2px solid #EAECF0"
+        borderRight: "2px solid #EAECF0",
       },
       fourthDiv: {
         display: "flex",
         flexDirection: "row" as "row",
         width: "100%",
         border: "2px solid #EAECF0",
-        borderRadius: "0px 0px 8px 8px"
+        borderRadius: "0px 0px 8px 8px",
       },
       headerStyle: {
         ...FONT_FAMILY.Inter(500, 14),
