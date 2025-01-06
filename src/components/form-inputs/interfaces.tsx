@@ -21,6 +21,7 @@ export interface IInput {
   materialType?: string;
   disableClearable?: boolean;
   defaultInDocsTypes?: any;
+  secondValue?: string;
 }
 export interface IFormInput {
   input: IInput;
