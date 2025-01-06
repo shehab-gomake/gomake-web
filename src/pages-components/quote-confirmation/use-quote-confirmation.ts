@@ -18,6 +18,7 @@ interface IProps {
 }
 const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
   const router = useRouter();
+  const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(
@@ -104,6 +105,26 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
     setQuoteConfirm(quoteCopy);
     calculateSelectedItems(quoteCopy);
   };
+
+  const documentsTitles = [
+    {
+      label: t("sales.quote.quote"),
+      value: DOCUMENT_TYPE.quote,
+    },
+    {
+      label: t("sales.quote.order"),
+      value: DOCUMENT_TYPE.order,
+    },
+    {
+      label: t("sales.quote.invoice"),
+      value: DOCUMENT_TYPE.invoice,
+    },
+  ];
+
+  const documentTitle = documentsTitles.find(
+    (item) => item.value === documentType
+  )?.label;
+
   return {
     getQuoteConfirmation,
     checkedItems,
@@ -111,6 +132,7 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
     handleItemCheck,
     getPrePaymentById,
     getTempUserToken,
+    documentTitle,
   };
 };
 

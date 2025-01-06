@@ -8,7 +8,8 @@ import { loadgingState } from "@/store/loading";
 import { useRecoilValue } from "recoil";
 
 const CreditCardPaySection = ({ isFromBigScreen = false, documentType }) => {
-  const { classes } = useStyle({ isFromBigScreen });
+  const customWidth = isFromBigScreen ? "70%" : "85%";
+  const { classes } = useStyle({ isFromBigScreen, customWidth });
   const {
     t,
     quoteConfirm,
@@ -80,7 +81,7 @@ const CreditCardPaySection = ({ isFromBigScreen = false, documentType }) => {
             }
             readOnly
           />
-          <div style={{ width: "70%" }}>
+          <div style={{ width: customWidth }}>
             <GoMakeAutoComplate
               key={"transactionType"}
               value={transactionTypes.find(
@@ -97,7 +98,7 @@ const CreditCardPaySection = ({ isFromBigScreen = false, documentType }) => {
           </div>
           {paymentDetailsState?.transactionType &&
             paymentDetailsState?.transactionType === 2 && (
-              <div style={{ width: "70%" }}>
+              <div style={{ width: customWidth }}>
                 <GoMakeAutoComplate
                   key={"numberOfPayments"}
                   value={paymentDetailsState?.numberOfPayments}

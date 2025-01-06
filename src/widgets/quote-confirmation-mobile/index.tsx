@@ -12,13 +12,17 @@ const QuoteConfirmationMobileWidget = ({
   isMobile,
   isPrePaymentPage,
   documentType,
+  documentTitle,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
 
   return (
     <div style={classes.mainContainer}>
-      <InfoContainer isPrePaymentPage={isPrePaymentPage} />
+      <InfoContainer
+        isPrePaymentPage={isPrePaymentPage}
+        documentTitle={documentTitle}
+      />
       <QuoteItems isPrePaymentPage={isPrePaymentPage} />
       <TotalPriceAndVatContainer />
       {!isPrePaymentPage && (
