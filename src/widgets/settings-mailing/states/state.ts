@@ -17,6 +17,7 @@ export const initState: ISMSTemplate = {
   bccMail: "",
   fileBase64: null,
   lang : "",
+  isSendGridVerificated: false,
 };
 
 export const smsTemplateState = atom<ISMSTemplate>({
