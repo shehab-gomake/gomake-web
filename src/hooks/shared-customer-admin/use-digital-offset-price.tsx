@@ -146,7 +146,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setAdditionalProductItems = useSetRecoilState<any>(
     additionalProductItemsState
   );
+  console.log("productItemValueDraftId", productItemValueDraftId);
   const [isFlowChanged, stIsFlowChanged] = useState(false);
+  const [isOpenCreateDefaultWorkFlow, setIsOpenCreateDefaultWorkFlow] = useState(false);
+  const onClickOpenCreateDefaultWorkFlow = () => {
+    setIsOpenCreateDefaultWorkFlow(true);
+  }
+  const onClickCloseCreateDefaultWorkFlow = () => {
+    setIsOpenCreateDefaultWorkFlow(false);
+  }
+
   const [
     currentProductItemValueTotalPrice,
     setCurrentProductItemValueTotalPrice,
@@ -4918,6 +4927,54 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     },
     700
   );
+  const createDefaultWorkFlowApi = async () => {
+    let subProductsCopy = cloneDeep(subProducts);
+
+    let generalParameters = subProductsCopy.find(
+      (x) => !x.type
+    )?.parameters;
+
+    let calculationSubProducts = subProductsCopy.filter((x) => x.type);
+
+    generalParameters?.forEach((x) => (x.valuesConfigs = null));
+    calculationSubProducts.forEach((x) =>
+      x.parameters.forEach((y) => (y.valuesConfigs = null))
+    );
+    const newCalculationSessionId = uuidv4();
+    setCurrentCalculationSessionId(newCalculationSessionId);
+    const itemParmetersValues = getItemParameterValues();
+    const updatedGeneralParameters =
+      removeHiddenParametersFromSubProductsParameters(
+        generalParameters,
+        productTemplate
+      );
+
+    const res: any = await callApi(
+      "POST",
+      '/v1/erp-service/product-item-value/create-default-work-flow',
+      {
+        calculationSessionId: newCalculationSessionId,
+        signalRConnectionId: connectionId,
+        clientId: router?.query?.customerId,
+        clientTypeId: router?.query?.clientTypeId,
+        productId: router?.query?.productId,
+        generalParameters: updatedGeneralParameters,
+        subProducts: calculationSubProducts,
+        itemParmetersValues: itemParmetersValues,
+        workTypes: workTypes,
+        isChargeForNewDie: isChargeForNewDie,
+        productType: productTemplate?.productType,
+        templateId: productTemplate?.templateId,
+      },
+      false,
+    );
+    if (res?.success) {
+      _setDataFromSelectedWorkFlow(res);
+      setIsCanGetSelected(true);
+      setLoading(false);
+    }
+  }
+
 
   const getOutSourcingSuppliers = () => {
     const callBack = (res) => {
@@ -5081,42 +5138,36 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
   const straightKnife = findParameterByCode(productTemplate, "IsStraightKnife");
 
-  // const navigateForRouter = () => {
-  //   let checkParameter = validateParameters(subProducts);
-  //   if (!!checkParameter) {
-  //     setErrorMsg("");
-  //     if (router?.query?.actionId) {
-  //       createProfitTestCase();
-  //     } else {
-  //       addItemForQuotes();
-  //     }
-  //   } else {
-  //     setErrorMsg(t("products.offsetPrice.admin.errorReq"));
-  //   }
-  // };
   const navigateForRouter = () => {
-    // First, validate the workflows
-    const workflowValidation = validateWorkflows(workFlows[0]);
+    if (!productItemValueDraftId) {
+      onClickOpenCreateDefaultWorkFlow();
+      createDefaultWorkFlowApi();
+    }
+    else {
+      const workflowValidation = validateWorkflows(workFlows[0]);
 
-    if (workflowValidation.isValid) {
-      // If workflows are valid, proceed to validate parameters
-      let checkParameter = validateParameters(subProducts);
+      if (workflowValidation.isValid) {
+        // If workflows are valid, proceed to validate parameters
+        let checkParameter = validateParameters(subProducts);
 
-      if (checkParameter) {
-        setErrorMsg("");
-        if (router?.query?.actionId) {
-          createProfitTestCase();
+        if (checkParameter) {
+          setErrorMsg("");
+          if (router?.query?.actionId) {
+            createProfitTestCase();
+          } else {
+            addItemForQuotes();
+          }
         } else {
-          addItemForQuotes();
+          setErrorMsg(t("products.offsetPrice.admin.errorReq"));
         }
       } else {
-        setErrorMsg(t("products.offsetPrice.admin.errorReq"));
+        // If workflows are not valid, set error message
+        // You can combine all error messages into a single string if needed
+        setErrorMsg(workflowValidation.errors.join(", "));
       }
-    } else {
-      // If workflows are not valid, set error message
-      // You can combine all error messages into a single string if needed
-      setErrorMsg(workflowValidation.errors.join(", "));
     }
+    // First, validate the workflows
+
   };
 
   useEffect(() => {
@@ -5507,6 +5558,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     canCalculation,
     calculationProduct,
     subProducts,
+    isOpenCreateDefaultWorkFlow,
+    onClickOpenCreateDefaultWorkFlow,
+    onClickCloseCreateDefaultWorkFlow,
+    addItemForQuotes,
   };
 };
 
