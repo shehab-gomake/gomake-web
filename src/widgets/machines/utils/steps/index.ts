@@ -262,7 +262,7 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:a
             steps = adhesiveTapeMachineSteps(isAdmin);
             break;
     }
-    steps = [...steps, ...connectedMachinesStep]
+    //steps = [...steps, ...connectedMachinesStep]
     if (steps && (isAdmin || CheckPermission(Permissions.SHOW_ACTION_AND_MATERIAL_IN_MACHINE))) {
         return [...steps, ...adminActionsMaterialsStep];
     } else {
