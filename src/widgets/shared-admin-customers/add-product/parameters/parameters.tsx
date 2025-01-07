@@ -60,8 +60,8 @@ const ParameterWidget = () => {
     onCloseExternalIdsModal,
     openExternalIdsModal,
   } = useAddProduct({ classes });
-  
-  const visibleSections = template?.sections
+
+  const visibleSections = template?.sections;
 
   return (
     <>
@@ -193,7 +193,9 @@ const ParameterWidget = () => {
           <ExternalValuesIdModal
             openModal={openExternalIdsModal}
             onClose={onCloseExternalIdsModal}
-            selectedParameter={selectedParameter}
+            parameter={selectedParameter}
+            sectionId={selectedSectonId}
+            subSectionId={selectedSubSection}
           />
         </>
       )}

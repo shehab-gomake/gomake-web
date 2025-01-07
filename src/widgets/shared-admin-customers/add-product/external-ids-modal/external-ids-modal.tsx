@@ -3,21 +3,35 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { useEffect, useState } from "react";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "./style";
+import { EParameterTypes } from "@/enums";
 
-const ExternalValuesIdModal = ({ openModal, onClose, selectedParameter }) => {
+//!here
+const ExternalValuesIdModal = ({
+  openModal,
+  onClose,
+  parameter,
+  sectionId,
+  subSectionId,
+}) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
-  const modalTitle = `${selectedParameter?.name} values`;
+
+  const isMaterial =
+    parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
+    parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+    parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME;
+
+  const modalTitle = `${parameter?.name} values`;
 
   const [valuesConfigs, setValuesConfigs] = useState(
-    selectedParameter?.valuesConfigs || []
+    parameter?.valuesConfigs || []
   );
 
   useEffect(() => {
-    if (selectedParameter?.valuesConfigs) {
-      setValuesConfigs([...selectedParameter.valuesConfigs]);
+    if (parameter?.valuesConfigs) {
+      setValuesConfigs([...parameter.valuesConfigs]);
     }
-  }, [selectedParameter]);
+  }, [parameter]);
 
   const changeItems = (index, fieldName, value) => {
     setValuesConfigs((prev) => {
@@ -32,13 +46,21 @@ const ExternalValuesIdModal = ({ openModal, onClose, selectedParameter }) => {
 
   const handleUpdate = () => {
     const updatedList = valuesConfigs?.map(
-      ({ id, externalId, updateName }) => ({
-        valueId: id,
-        valueName: updateName,
-        externalId,
+      ({ id, externalId, updateName, valueId }) => ({
+        id,
+        value: isMaterial ? valueId : updateName,
+        externalCode: externalId,
       })
     );
-    console.log("Updated Values Configs:", updatedList, valuesConfigs);
+    // console.log("Updated Values Configs:", updatedList);
+    // console.log("valuesConfigs", valuesConfigs);
+
+    //!we also need
+    //parameterId :parameter?.id
+    // productId: router?.query?.id,
+    //updateType:
+    //sectionId:sectionId
+    //subSectionId:subSectionId
   };
 
   return (
@@ -65,7 +87,7 @@ const ExternalValuesIdModal = ({ openModal, onClose, selectedParameter }) => {
                 minWidth: "max-content",
               }}
             >
-              {item?.updateName}
+              {isMaterial ? item?.valueId : item?.updateName}
             </span>
             <GomakeTextInput
               style={{ width: "70%" }}

@@ -66,6 +66,7 @@ const useAddProduct = ({ classes }) => {
     section,
     subSectionParameters
   ) => {
+    debugger;
     setMultiParameterModal(true);
     const value = paameters?.valuesConfigs?.find((value) => value?.isDefault);
     setSettingParameters({
@@ -645,12 +646,89 @@ const useAddProduct = ({ classes }) => {
   };
 
   const [openExternalIdsModal, setOpenExternalIdsModal] = useState(false);
-  const onOpenExternalIdsModal = (parameter) => {
-    setSelectedParameter(parameter);
+
+  //!here most important
+  const onOpenExternalIdsModal = (
+    parameter,
+    subSectionParameters,
+    sectionId,
+    subSectionId
+  ) => {
+    //Check if parameterType is material
+    const isMaterial =
+      parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
+      parameter?.parameterType ===
+        EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+      parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME;
+
+    // Creating new valuesConfigs for materials
+    let materialsOptions = [];
+    const materialPath = parameter.materialPath;
+    const currentMaterialPath = materialPath[materialPath.length - 1];
+    const parentMaterialPath = materialPath.slice(0, -1);
+    let allMaterialsCopy = cloneDeep(allMaterials);
+    if (parentMaterialPath && parentMaterialPath.length > 0) {
+      allMaterialsCopy = allMaterialsCopy?.find((material) =>
+        compareStrings(material.pathName, parentMaterialPath[0])
+      );
+      for (let i = 0; i < parentMaterialPath.length; i++) {
+        const currentPath = parentMaterialPath.slice(0, i + 1).toString();
+        const parentParameter = subSectionParameters.find(
+          (x) => x.materialPath && x.materialPath.toString() == currentPath
+        );
+        if (parentParameter) {
+          const parentParameterDefaultValueConfig =
+            parentParameter?.valuesConfigs?.find(
+              (item) => item.isDefault === true
+            );
+          if (parentParameterDefaultValueConfig) {
+            const parentParameterValue =
+              parentParameterDefaultValueConfig.materialValueIds[0].valueId;
+            allMaterialsCopy = allMaterialsCopy?.data.find(
+              (x) => x.valueId === parentParameterValue
+            );
+          } else {
+            allMaterialsCopy = {
+              data: [],
+            };
+          }
+        }
+      }
+      if (allMaterialsCopy) {
+        materialsOptions = [];
+        materialsOptions.push(...allMaterialsCopy.data);
+      }
+    } else {
+      allMaterialsCopy = allMaterialsCopy?.find((material) =>
+        compareStrings(material.pathName, currentMaterialPath)
+      );
+      if (
+        allMaterialsCopy &&
+        allMaterialsCopy.data &&
+        allMaterialsCopy.data.length > 0
+      ) {
+        materialsOptions.push(...allMaterialsCopy?.data);
+      }
+    }
+
+    // setSelectedParameter
+    if (isMaterial) {
+      const updatedParameter = {
+        ...parameter,
+        valuesConfigs: materialsOptions,
+      };
+      setSelectedParameter(updatedParameter);
+    } else {
+      setSelectedParameter(parameter);
+    }
+    setSelectedSectonId(sectionId);
+    setSelectedSubSection(subSectionId);
+
     setTimeout(() => {
       setOpenExternalIdsModal(true);
     }, 100);
   };
+
   const onCloseExternalIdsModal = () => {
     setSelectedParameter({});
     setOpenExternalIdsModal(false);
@@ -714,7 +792,7 @@ const useAddProduct = ({ classes }) => {
     handleCloseModal();
   };
 
-  //!note here
+  //!here basics
   const _renderParameterType = (
     sectionId,
     subSectionId,
@@ -859,6 +937,7 @@ const useAddProduct = ({ classes }) => {
               );
             }}
           />
+          {/* !here */}
           {parameter?.setSettingIcon && (
             <div
               style={{ cursor: "pointer" }}
@@ -901,6 +980,7 @@ const useAddProduct = ({ classes }) => {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
       );
+      //!hereeeeeeeeeeeeeeeeee
       return (
         <GoMakeAutoComplate
           options={parameter?.valuesConfigs}
@@ -982,6 +1062,7 @@ const useAddProduct = ({ classes }) => {
         />
       );
     } else if (
+      //!here materials
       parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
       parameter?.parameterType ===
         EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
@@ -1238,8 +1319,6 @@ const useAddProduct = ({ classes }) => {
     selectedOption,
     selectedSubSectionId,
     selectedSectionId,
-
-    //!here
     onOpenExternalIdsModal,
     onCloseExternalIdsModal,
     openExternalIdsModal,

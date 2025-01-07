@@ -98,8 +98,6 @@ const SectionMappingWidget = ({
       alertFault(t("products.parameters.pleaseSelectOneOption"));
       return;
     }
-
-    debugger;
     switch (actionType) {
       case ParameterActionType.VISIBLE:
         updatedProductParameterHidden(
@@ -146,10 +144,7 @@ const SectionMappingWidget = ({
         {subSection?.parameters
           ?.filter((x) => !x.isHiddenInSetting)
           ?.map((parameter, paramIndex) => {
-            // const isHiddenIcon = relatedParameters?.some(
-            //   (relatedParam) => relatedParam.parameterId === parameter.id
-            // );
-
+            const ShowEditExternalCodeValue = true; //!here
             return (
               <div key={paramIndex}>
                 <div style={classes.parameterContainer}>
@@ -261,13 +256,21 @@ const SectionMappingWidget = ({
                         EParameterTypes.DROP_DOWN_LIST) && (
                       <div
                         style={classes.plusIconStyle}
-                        onClick={() => onOpenExternalIdsModal(parameter)}
+                        onClick={() =>
+                          onOpenExternalIdsModal(
+                            parameter,
+                            subSection?.parameters,
+                            section?.id,
+                            subSection?.id
+                          )
+                        }
                       >
                         <EditIcon />
                       </div>
                     )}
                   </div>
                   <div style={classes.renderParameterTypeContainer}>
+                    {/* !here */}
                     {_renderParameterType(
                       section?.id,
                       subSection?.id,
