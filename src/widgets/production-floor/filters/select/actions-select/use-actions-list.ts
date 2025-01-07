@@ -169,7 +169,7 @@ const useActionsList = ({
   const getActions = async () => {
     const callBack = (res) => {
       if (res.success) {
-        setActions(res?.data?.filter((s) => s.machines.length > 0));
+        setActions(res?.data);
         setDashboardMachines(
           res?.data.flatMap((station) =>
             station.machines.map((machine) => ({
