@@ -17,7 +17,7 @@ import { useState } from "react";
 import { useSnackBar } from "@/hooks";
 import { useRecoilState } from "recoil";
 import { selectedUpdateTypeState } from "@/store/selected-update-type";
-import { dontAskNextTimeState } from "@/store";
+import { doNotAskNextTimeState } from "@/store";
 import { EditIcon } from "../../icons/edit-icon";
 
 export enum UpdateTypes {
@@ -55,8 +55,9 @@ const SectionMappingWidget = ({
   const [selectedUpdateType, setSelectedUpdateType] = useRecoilState(
     selectedUpdateTypeState
   );
-  const [dontAskNextTime, setDontAskNextTime] =
-    useRecoilState(dontAskNextTimeState);
+  const [doNotAskNextTime, setDoNotAskNextTime] = useRecoilState(
+    doNotAskNextTimeState
+  );
 
   const renderIconWithTooltip = (
     condition,
@@ -84,7 +85,7 @@ const SectionMappingWidget = ({
   };
 
   const handleOpenModal = () => {
-    if (!dontAskNextTime) {
+    if (!doNotAskNextTime) {
       setIsUpdateModalOpen(true);
     }
   };
@@ -144,7 +145,16 @@ const SectionMappingWidget = ({
         {subSection?.parameters
           ?.filter((x) => !x.isHiddenInSetting)
           ?.map((parameter, paramIndex) => {
-            const ShowEditExternalCodeValue = true; //!here
+            const ShowEditExternalCodeValue =
+              parameter?.parameterType ===
+                EParameterTypes.SELECT_CHILDS_PARAMETERS ||
+              parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
+              parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
+              parameter?.parameterType ===
+                EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+              parameter?.parameterType ===
+                EParameterTypes.ADVERTISING_PRODUCT_NAME;
+
             return (
               <div key={paramIndex}>
                 <div style={classes.parameterContainer}>
@@ -171,7 +181,7 @@ const SectionMappingWidget = ({
                       "hidden",
                       "visible",
                       () => {
-                        if (!dontAskNextTime) {
+                        if (!doNotAskNextTime) {
                           handleOpenModal();
                         } else {
                           handleUpdate(
@@ -192,7 +202,7 @@ const SectionMappingWidget = ({
                         "required",
                         "notRequired",
                         () => {
-                          if (!dontAskNextTime) {
+                          if (!doNotAskNextTime) {
                             handleOpenModal();
                           } else {
                             handleUpdate(
@@ -212,7 +222,7 @@ const SectionMappingWidget = ({
                       "readOnly",
                       "editable",
                       () => {
-                        if (!dontAskNextTime) {
+                        if (!doNotAskNextTime) {
                           handleOpenModal();
                         } else {
                           handleUpdate(
@@ -232,7 +242,7 @@ const SectionMappingWidget = ({
                       "shownInDetails",
                       "hiddenFromDetails",
                       () => {
-                        if (!dontAskNextTime) {
+                        if (!doNotAskNextTime) {
                           handleOpenModal();
                         } else {
                           handleUpdate(
@@ -247,13 +257,7 @@ const SectionMappingWidget = ({
                         setSelectedParameter(parameter);
                       }
                     )}
-                    {/* !here */}
-                    {(parameter?.parameterType ===
-                      EParameterTypes.SELECT_CHILDS_PARAMETERS ||
-                      parameter?.parameterType ===
-                        EParameterTypes.SELECT_MATERIALS ||
-                      parameter?.parameterType ===
-                        EParameterTypes.DROP_DOWN_LIST) && (
+                    {ShowEditExternalCodeValue && (
                       <div
                         style={classes.plusIconStyle}
                         onClick={() =>
@@ -270,7 +274,6 @@ const SectionMappingWidget = ({
                     )}
                   </div>
                   <div style={classes.renderParameterTypeContainer}>
-                    {/* !here */}
                     {_renderParameterType(
                       section?.id,
                       subSection?.id,
@@ -292,8 +295,8 @@ const SectionMappingWidget = ({
         selectedUpdateType={selectedUpdateType}
         setSelectedUpdateType={setSelectedUpdateType}
         onUpdate={() => handleUpdate(selectedActionType, selectedParameter)}
-        setDontAskNextTime={setDontAskNextTime}
-        dontAskNextTime={dontAskNextTime}
+        setDoNotAskNextTime={setDoNotAskNextTime}
+        doNotAskNextTime={doNotAskNextTime}
       />
     </div>
   );

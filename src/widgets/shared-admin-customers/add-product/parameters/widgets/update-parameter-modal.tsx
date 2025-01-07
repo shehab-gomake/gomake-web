@@ -7,6 +7,7 @@ import { useStyle } from "../style";
 import { UpdateTypes } from "./section-mapping";
 import { CheckboxIcon } from "@/icons";
 import { CheckboxCheckedIcon } from "@/icons";
+import { useSnackBar } from "@/hooks";
 
 interface UpdateParameterModalProps {
   openModal: boolean;
@@ -14,8 +15,10 @@ interface UpdateParameterModalProps {
   onUpdate: any;
   selectedUpdateType: UpdateTypes | null;
   setSelectedUpdateType: any;
-  setDontAskNextTime: any;
-  dontAskNextTime: boolean;
+  hideDoNotAskBox?: boolean;
+  setDoNotAskNextTime?: any;
+  doNotAskNextTime?: boolean;
+  showThirdOption?: boolean;
 }
 
 const UpdateParameterModal = ({
@@ -24,11 +27,15 @@ const UpdateParameterModal = ({
   onUpdate,
   selectedUpdateType,
   setSelectedUpdateType,
-  setDontAskNextTime,
-  dontAskNextTime,
+  hideDoNotAskBox = false,
+  showThirdOption = false,
+
+  setDoNotAskNextTime,
+  doNotAskNextTime,
 }: UpdateParameterModalProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
+  const { alertFault } = useSnackBar();
 
   return (
     <>
@@ -65,27 +72,32 @@ const UpdateParameterModal = ({
               {t("products.parameters.samePricingType")}
             </span>
           </Stack>
-
-          {/* <Stack direction={"row"} width={"100%"} alignItems={"center"}>
-            <CircleCheckbox
-              checked={selectedUpdateType === UpdateTypes.ALL_PRODUCTS}
-              onChange={() => setSelectedUpdateType(UpdateTypes.ALL_PRODUCTS)}
-            />
-            <span style={classes.optionsTitle}>
-              {t("products.parameters.allProducts")}
-            </span>
-          </Stack> */}
+          {showThirdOption && (
+            <Stack direction={"row"} width={"100%"} alignItems={"center"}>
+              <CircleCheckbox
+                checked={selectedUpdateType === UpdateTypes.ALL_PRODUCTS}
+                onChange={() => setSelectedUpdateType(UpdateTypes.ALL_PRODUCTS)}
+              />
+              <span style={classes.optionsTitle}>
+                {t("products.parameters.allProducts")}
+              </span>
+            </Stack>
+          )}
         </Stack>
-        <Checkbox
-          checked={dontAskNextTime}
-          onChange={() => setDontAskNextTime(!dontAskNextTime)}
-          icon={<CheckboxIcon />}
-          checkedIcon={<CheckboxCheckedIcon />}
-          disabled={selectedUpdateType === null}
-        />
-        <span style={classes.dontAskNextTime}>
-          {t("products.parameters.dontAskNextTime")}
-        </span>
+        {!hideDoNotAskBox && (
+          <>
+            <Checkbox
+              checked={doNotAskNextTime}
+              onChange={() => setDoNotAskNextTime(!doNotAskNextTime)}
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+              disabled={selectedUpdateType === null}
+            />
+            <span style={classes.doNotAskNextTime}>
+              {t("products.parameters.dontAskNextTime")}
+            </span>
+          </>
+        )}
         <Stack direction={"row"} gap={"10px"}>
           <Button style={classes.cancelButton} onClick={onClose}>
             {t("modal.cancel")}

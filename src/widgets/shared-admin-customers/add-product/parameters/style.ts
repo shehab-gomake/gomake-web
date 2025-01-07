@@ -307,7 +307,7 @@ const useStyle = () => {
         alignItems: "center",
         textTransform: "capitalize" as "capitalize",
       },
-      dontAskNextTime: {
+      doNotAskNextTime: {
         ...FONT_FAMILY.Lexend(500, 16),
       },
     };

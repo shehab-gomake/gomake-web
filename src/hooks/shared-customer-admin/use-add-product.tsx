@@ -24,7 +24,7 @@ import { useMaterials } from "../use-materials";
 import { EButtonTypes, EParameterTypes } from "@/enums";
 import cloneDeep from "lodash.clonedeep";
 import {
-  dontAskNextTimeState,
+  doNotAskNextTimeState,
   selectedUpdateTypeState,
   selectParameterButtonState,
 } from "@/store";
@@ -66,7 +66,6 @@ const useAddProduct = ({ classes }) => {
     section,
     subSectionParameters
   ) => {
-    debugger;
     setMultiParameterModal(true);
     const value = paameters?.valuesConfigs?.find((value) => value?.isDefault);
     setSettingParameters({
@@ -394,7 +393,6 @@ const useAddProduct = ({ classes }) => {
     },
     [router]
   );
-
   const updatedParameterMaterialTypeValuesConfigsDefault = useCallback(
     async (
       sectionId: string,
@@ -647,7 +645,6 @@ const useAddProduct = ({ classes }) => {
 
   const [openExternalIdsModal, setOpenExternalIdsModal] = useState(false);
 
-  //!here most important
   const onOpenExternalIdsModal = (
     parameter,
     subSectionParameters,
@@ -711,6 +708,15 @@ const useAddProduct = ({ classes }) => {
       }
     }
 
+    if (
+      (isMaterial && materialsOptions?.length === 0) ||
+      (!isMaterial &&
+        (!parameter?.valuesConfigs || parameter?.valuesConfigs.length === 0))
+    ) {
+      alertFault("alerts.noValues");
+      return;
+    }
+
     // setSelectedParameter
     if (isMaterial) {
       const updatedParameter = {
@@ -741,8 +747,9 @@ const useAddProduct = ({ classes }) => {
   const [selectedUpdateType, setSelectedUpdateType] = useRecoilState(
     selectedUpdateTypeState
   );
-  const [dontAskNextTime, setDontAskNextTime] =
-    useRecoilState(dontAskNextTimeState);
+  const [doNotAskNextTime, setDoNotAskNextTime] = useRecoilState(
+    doNotAskNextTimeState
+  );
 
   const handleCloseModal = () => {
     setIsUpdateModalOpen(false);
@@ -753,7 +760,7 @@ const useAddProduct = ({ classes }) => {
   };
 
   const handleOpenModal = () => {
-    if (!dontAskNextTime) {
+    if (!doNotAskNextTime) {
       setIsUpdateModalOpen(true);
     }
   };
@@ -792,7 +799,6 @@ const useAddProduct = ({ classes }) => {
     handleCloseModal();
   };
 
-  //!here basics
   const _renderParameterType = (
     sectionId,
     subSectionId,
@@ -890,7 +896,7 @@ const useAddProduct = ({ classes }) => {
                           setSelectedSubSectionId(subSectionId);
                           setSelectedParameter(parameter);
                           setSelectedOption(option);
-                          if (!dontAskNextTime) {
+                          if (!doNotAskNextTime) {
                             handleOpenModal();
                           } else {
                             handleUpdateParametersValue(
@@ -915,7 +921,7 @@ const useAddProduct = ({ classes }) => {
                           setSelectedSubSectionId(subSectionId);
                           setSelectedParameter(parameter);
                           setSelectedOption(option);
-                          if (!dontAskNextTime) {
+                          if (!doNotAskNextTime) {
                             handleOpenModal();
                           } else {
                             handleUpdateParametersValue(
@@ -937,7 +943,6 @@ const useAddProduct = ({ classes }) => {
               );
             }}
           />
-          {/* !here */}
           {parameter?.setSettingIcon && (
             <div
               style={{ cursor: "pointer" }}
@@ -980,7 +985,6 @@ const useAddProduct = ({ classes }) => {
       const defaultObject = parameter.valuesConfigs.find(
         (item) => item.isDefault === true
       );
-      //!hereeeeeeeeeeeeeeeeee
       return (
         <GoMakeAutoComplate
           options={parameter?.valuesConfigs}
@@ -1013,7 +1017,7 @@ const useAddProduct = ({ classes }) => {
                         setSelectedSubSectionId(subSectionId);
                         setSelectedParameter(parameter);
                         setSelectedOption(option);
-                        if (!dontAskNextTime) {
+                        if (!doNotAskNextTime) {
                           handleOpenModal();
                         } else {
                           handleUpdateParametersValue(
@@ -1038,7 +1042,7 @@ const useAddProduct = ({ classes }) => {
                         setSelectedSubSectionId(subSectionId);
                         setSelectedParameter(parameter);
                         setSelectedOption(option);
-                        if (!dontAskNextTime) {
+                        if (!doNotAskNextTime) {
                           handleOpenModal();
                         } else {
                           handleUpdateParametersValue(
@@ -1062,7 +1066,6 @@ const useAddProduct = ({ classes }) => {
         />
       );
     } else if (
-      //!here materials
       parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
       parameter?.parameterType ===
         EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
@@ -1170,7 +1173,7 @@ const useAddProduct = ({ classes }) => {
                           setSelectedSubSectionId(subSectionId);
                           setSelectedParameter(parameter);
                           setSelectedOption(option);
-                          if (!dontAskNextTime) {
+                          if (!doNotAskNextTime) {
                             handleOpenModal();
                           } else {
                             handleUpdateParametersValue(
@@ -1195,7 +1198,7 @@ const useAddProduct = ({ classes }) => {
                           setSelectedSubSectionId(subSectionId);
                           setSelectedParameter(parameter);
                           setSelectedOption(option);
-                          if (!dontAskNextTime) {
+                          if (!doNotAskNextTime) {
                             handleOpenModal();
                           } else {
                             handleUpdateParametersValue(
@@ -1312,8 +1315,8 @@ const useAddProduct = ({ classes }) => {
     handleCloseModal,
     isUpdateModalOpen,
     handleUpdateParametersValue,
-    setDontAskNextTime,
-    dontAskNextTime,
+    setDoNotAskNextTime,
+    doNotAskNextTime,
     isMaterialParameter,
     selectedSectonId,
     selectedOption,

@@ -53,8 +53,8 @@ const ParameterWidget = () => {
     handleCloseModal,
     isUpdateModalOpen,
     handleUpdateParametersValue,
-    setDontAskNextTime,
-    dontAskNextTime,
+    setDoNotAskNextTime,
+    doNotAskNextTime,
     selectedSectionId,
     onOpenExternalIdsModal,
     onCloseExternalIdsModal,
@@ -125,7 +125,6 @@ const ParameterWidget = () => {
                             />
                           );
                         } else {
-                          //!hereeeeeeeeeeeeeeeeee
                           return (
                             <SectionMappingWidget
                               index={index}
@@ -188,8 +187,6 @@ const ParameterWidget = () => {
               updatedValuesConfigsForParameters
             }
           />
-
-          {/* !here */}
           <ExternalValuesIdModal
             openModal={openExternalIdsModal}
             onClose={onCloseExternalIdsModal}
@@ -230,8 +227,8 @@ const ParameterWidget = () => {
             selectedOption
           )
         }
-        setDontAskNextTime={setDontAskNextTime}
-        dontAskNextTime={dontAskNextTime}
+        setDoNotAskNextTime={setDoNotAskNextTime}
+        doNotAskNextTime={doNotAskNextTime}
       />
     </>
   );

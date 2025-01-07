@@ -4,8 +4,13 @@ import { useEffect, useState } from "react";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "./style";
 import { EParameterTypes } from "@/enums";
+import { UpdateParameterModal } from "../parameters/widgets/update-parameter-modal";
+import { useRecoilState } from "recoil";
+import { selectedUpdateTypeState } from "@/store";
+import { useRouter } from "next/router";
+import { updateProductParametersValuesExternalValuesApi } from "@/services/api-service/products/product-endpoints";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 
-//!here
 const ExternalValuesIdModal = ({
   openModal,
   onClose,
@@ -14,18 +19,27 @@ const ExternalValuesIdModal = ({
   subSectionId,
 }) => {
   const { t } = useTranslation();
+  const router = useRouter();
   const { classes } = useStyle();
+  const { callApi } = useGomakeAxios();
+  const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+  // const modalTitle = `${parameter?.name} / ${t(
+  //   "products.parameters.admin.values"
+  // )}`;
+
+  const modalTitle = `${parameter?.name}`;
+  const [openUpdateModal, setOpenUpdateModal] = useState<boolean>(false);
+  const [selectedUpdateType, setSelectedUpdateType] = useRecoilState(
+    selectedUpdateTypeState
+  );
+  const [valuesConfigs, setValuesConfigs] = useState(
+    parameter?.valuesConfigs || []
+  );
 
   const isMaterial =
     parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
     parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
     parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME;
-
-  const modalTitle = `${parameter?.name} values`;
-
-  const [valuesConfigs, setValuesConfigs] = useState(
-    parameter?.valuesConfigs || []
-  );
 
   useEffect(() => {
     if (parameter?.valuesConfigs) {
@@ -44,66 +58,105 @@ const ExternalValuesIdModal = ({
     });
   };
 
-  const handleUpdate = () => {
-    const updatedList = valuesConfigs?.map(
-      ({ id, externalId, updateName, valueId }) => ({
+  const handleUpdate = async () => {
+    const values = valuesConfigs
+      ?.map(({ id, externalValue, updateName, valueId }) => ({
         id,
         value: isMaterial ? valueId : updateName,
-        externalCode: externalId,
-      })
-    );
-    // console.log("Updated Values Configs:", updatedList);
-    // console.log("valuesConfigs", valuesConfigs);
+        externalCode: externalValue,
+      }))
+      .filter(({ externalCode }) => externalCode);
 
-    //!we also need
-    //parameterId :parameter?.id
-    // productId: router?.query?.id,
-    //updateType:
-    //sectionId:sectionId
-    //subSectionId:subSectionId
+    // if (!values || values.length === 0) {
+    //   alertFaultUpdate(); // Alert for empty array
+    //   return;
+    // }
+
+    const updatePayload = {
+      parameterId: parameter?.id,
+      productId: router?.query?.id,
+      updateType: selectedUpdateType,
+      sectionId: sectionId,
+      subSectionId: subSectionId,
+      values,
+    };
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessUpdate();
+        onClose();
+        setOpenUpdateModal(false);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await updateProductParametersValuesExternalValuesApi(
+      callApi,
+      callBack,
+      updatePayload
+    );
   };
 
   return (
-    <GoMakeModal
-      openModal={openModal}
-      modalTitle={modalTitle}
-      onClose={onClose}
-      modalTitleStyle={classes.modalTitle}
-      withRoundedCloseIcon={false}
-      insideStyle={classes.insideStyle}
-    >
-      <div
-        className="custom-scrollbar"
-        style={{ height: 330, overflow: "scroll", padding: "0px 10px" }}
+    <>
+      <GoMakeModal
+        openModal={openModal}
+        modalTitle={modalTitle}
+        onClose={onClose}
+        modalTitleStyle={classes.modalTitle}
+        withRoundedCloseIcon={false}
+        insideStyle={classes.insideStyle}
       >
-        {valuesConfigs.map((item, index) => (
-          <div
-            key={item?.id}
-            style={{ display: "flex", alignItems: "center", marginBottom: 8 }}
-          >
-            <span
+        <div
+          className="custom-scrollbar"
+          style={{
+            height: 330,
+            overflow: "scroll",
+            padding: "0px 10px",
+            width: "100%",
+          }}
+        >
+          {valuesConfigs.map((item, index) => (
+            <div
+              key={isMaterial ? item?.valueId : item?.id}
               style={{
-                width: "120px",
-                minWidth: "max-content",
+                display: "flex",
+                alignItems: "center",
+                marginBottom: 8,
+                justifyContent: "space-between",
+                width: "100%",
               }}
             >
-              {isMaterial ? item?.valueId : item?.updateName}
-            </span>
-            <GomakeTextInput
-              style={{ width: "70%" }}
-              placeholder={t("products.profits.exceptions.enterValue")}
-              onChange={(e) => changeItems(index, "externalId", e.target.value)}
-              defaultValue={item?.externalId || ""}
-            />
-          </div>
-        ))}
-      </div>
-      <div style={classes.updateBtn}>
-        <PrimaryButton variant="contained" onClick={handleUpdate}>
-          {t("modal.update")}
-        </PrimaryButton>
-      </div>
-    </GoMakeModal>
+              <span>{isMaterial ? item?.value : item?.updateName}</span>
+              <GomakeTextInput
+                style={{ width: "50%" }}
+                placeholder={t("products.profits.exceptions.enterValue")}
+                onChange={(e) =>
+                  changeItems(index, "externalValue", e.target.value)
+                }
+                defaultValue={item?.externalValue || ""}
+              />
+            </div>
+          ))}
+        </div>
+        <div style={classes.updateBtn}>
+          <PrimaryButton
+            variant="contained"
+            onClick={() => setOpenUpdateModal(true)}
+          >
+            {t("modal.update")}
+          </PrimaryButton>
+        </div>
+      </GoMakeModal>
+      <UpdateParameterModal
+        openModal={openUpdateModal}
+        onClose={() => setOpenUpdateModal(false)}
+        selectedUpdateType={selectedUpdateType}
+        setSelectedUpdateType={setSelectedUpdateType}
+        onUpdate={handleUpdate}
+        hideDoNotAskBox={true}
+        showThirdOption={true}
+      />
+    </>
   );
 };
 
