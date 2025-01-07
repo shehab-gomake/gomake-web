@@ -132,8 +132,8 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
     handleItemCheck,
     getPrePaymentById,
     getTempUserToken,
-    documentTitle,
     quoteConfirm,
+    documentTitle,
   };
 };
 
