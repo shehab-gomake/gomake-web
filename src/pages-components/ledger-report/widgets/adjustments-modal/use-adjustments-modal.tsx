@@ -104,7 +104,8 @@ const useAdjustmentsModal = ({
   // Function to calculate the total price of selected items
   const calculateTotalPrice = () => {
     const totalFinal = selectedItems.reduce(
-      (total, item) => total + (item.price || 0),
+      (total, item) => total + (Number(item.price) || 0),
+
       0
     );
     return Number(totalFinal) || 0;
@@ -123,6 +124,7 @@ const useAdjustmentsModal = ({
     // Allow "-" or empty input without processing
     if (value === "" || value === "-") {
       currentItem.price = value;
+
       setInputErrors([...inputErrors]);
       return;
     }
@@ -267,6 +269,7 @@ const useAdjustmentsModal = ({
     customer,
     isFetching,
     inputErrors,
+    setSelectedItems,
   };
 };
 
