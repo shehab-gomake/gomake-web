@@ -5,10 +5,9 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import { QuoteNewPageWidget } from "../quote-new/quote";
 import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 import { useQuoteConfirmation } from "./use-quote-confirmation";
-import {
-  updateTempUserTokenStorage,
-  updateTokenStorage,
-} from "@/services/storage-data";
+import { updateTempUserTokenStorage } from "@/services/storage-data";
+
+
 
 interface IProps {
   isPrePaymentPage?: boolean;
@@ -28,7 +27,6 @@ const QuoteConfirmationPageWidget = ({
     quoteConfirm,
     documentTitle,
   } = useQuoteConfirmation({ documentType });
-
 
   useEffect(() => {
     updateScreenWidth();
