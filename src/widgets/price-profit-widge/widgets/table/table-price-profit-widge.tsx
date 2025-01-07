@@ -107,7 +107,7 @@ const PriceProfitTable = ({
             <TableCell sx={classes.tableHeadCellValueTotal}>{t("priceProfit.total")}</TableCell>
             {headers?.map((header, index) => (
               <TableCell sx={classes.tableHeadCellTotalValue} key={index} colSpan={header?.quantities?.length}>
-                {header?.total?.toFixed(3)}
+                {isNaN(header?.total) ? 0 : header?.total?.toFixed(3)}
               </TableCell>
             ))}
           </TableRow>

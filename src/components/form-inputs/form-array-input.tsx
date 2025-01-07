@@ -111,7 +111,7 @@ const FormArrayInput = ({
                                         readonly={disableUpdateValues}
                                         input={{
                                             ...input,
-                                            value: v[input.parameterKey],
+                                            value: input.secondValue ? v[input.secondValue] :  v[input.parameterKey],
                                             disabled: false,
                                             type: disableUpdateValues ? 'text' : input.type
                                         }} error={false}

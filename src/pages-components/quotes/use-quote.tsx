@@ -528,7 +528,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   " " +
                   getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              <ClickableStatusButton id={quote?.id} document={quote} />,
+              <ClickableStatusButton
+                id={quote?.id}
+                document={quote}
+                documentType={docType}
+              />,
               _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
@@ -597,7 +601,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.notes,
 
               isInvoice || isDeliveryNote ? (
-                <ClickableStatusButton id={quote?.id} document={quote} />
+                <ClickableStatusButton
+                  id={quote?.id}
+                  document={quote}
+                  documentType={docType}
+                />
               ) : (
                 <div>—</div>
               ),
@@ -617,6 +625,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendPayment={onClickSendPayment}
               />,
             ];
           }
@@ -786,7 +795,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickDocumentLogs,
   ]);
 
-  //!here
   const {} = useDocumentsSignalR({ getAllQuotes, docType });
 
   const getAllQuotesInitial = async () => {
@@ -938,7 +946,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   " " +
                   getCurrencyUnitText(quote?.currency),
               quote?.notes,
-              <ClickableStatusButton id={quote?.id} document={quote} />,
+              <ClickableStatusButton
+                id={quote?.id}
+                document={quote}
+                documentType={docType}
+              />,
               _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
@@ -1006,7 +1018,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
               quote?.notes,
               isInvoice || isDeliveryNote ? (
-                <ClickableStatusButton id={quote?.id} document={quote} />
+                <ClickableStatusButton
+                  id={quote?.id}
+                  document={quote}
+                  documentType={docType}
+                />
               ) : (
                 <div>—</div>
               ),
@@ -1026,6 +1042,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendPayment={onClickSendPayment}
               />,
             ];
           }
@@ -2082,7 +2099,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       };
       sendDocumentToClientForPaymentApi(callApi, callBack, {
         id: document?.id,
-        documentType: DOCUMENT_TYPE.order,
+        documentType: docType,
       });
     });
   };

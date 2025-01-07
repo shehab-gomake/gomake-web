@@ -21,11 +21,15 @@ export const setItem = (key: string, value: any) => {
 export const getUserToken = () => {
   return getItem("auth-token");
 };
-
+export const getTempUserToken = () => {
+  return getItem("temp-auth-token");
+};
 export const updateTokenStorage = (token: string) => {
   setItem("auth-token", token);
 };
-
+export const updateTempUserTokenStorage = (token: string) => {
+  setItem("temp-auth-token", token);
+};
 export const clearStorage = () => {
   localStorage.clear();
 };

@@ -52,6 +52,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ModalType } from "@/enums";
+import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -267,6 +268,12 @@ const QuoteNewPageWidget = ({
     updateDocumentBudget,
     selectedBudget,
     setSelectedBudget,
+    onCloseQuickDuplicate,
+    onClickQuickDuplicate,
+    openQuickDuplicateModal,
+    quoteItemId,
+    quoteItem,
+    handleSendUsingWhatsAppWeb,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -610,6 +617,7 @@ const QuoteNewPageWidget = ({
                   onClickDuplicateWithDifferentQTY={
                     onClickDuplicateWithDifferentQTY
                   }
+                  onClickQuickDuplicate={onClickQuickDuplicate}
                   onClickDeleteQouteItem={onClickDeleteQouteItem}
                   quoteItems={isQuoteConfirmation ? quoteConfirm : quoteItems}
                   changeQuoteItems={changeQuoteItems}
@@ -630,7 +638,10 @@ const QuoteNewPageWidget = ({
                   <div style={classes.titleStyle}>
                     {t("payment.paymentDetails")}
                   </div>
-                  <CreditCardPaySection isFromBigScreen={true} />
+                  <CreditCardPaySection
+                    isFromBigScreen={true}
+                    documentType={documentType}
+                  />
                 </>
               )}
               {documentType === DOCUMENT_TYPE.receipt && <ReceiptsTable />}
@@ -666,6 +677,7 @@ const QuoteNewPageWidget = ({
                   onClickOpenChangeProductionStatusModal
                 }
                 onClickSendReceiptToClient={onClickSendReceiptToClient}
+                handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
               />
             </div>
           )}
@@ -712,6 +724,14 @@ const QuoteNewPageWidget = ({
         duplicateQuoteItemWithAnotherQuantity={
           duplicateQuoteItemWithAnotherQuantity
         }
+      />
+      <DuplicateQuickModal
+        openModal={openQuickDuplicateModal}
+        onClose={onCloseQuickDuplicate}
+        quoteItemId={quoteItemId}
+        quoteItem={quoteItem}
+        documentType={documentType}
+        getQuote={getQuote}
       />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
@@ -871,6 +891,7 @@ const QuoteNewPageWidget = ({
         openModal={openInvoiceCreationModal}
         docType={documentType}
         onClickSendDocumentToClient={onClickSendQuoteToClient}
+        handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
       />
     </>
   );

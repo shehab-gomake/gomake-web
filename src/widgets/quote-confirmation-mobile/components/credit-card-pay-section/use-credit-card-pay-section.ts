@@ -1,12 +1,11 @@
 import { quoteConfirmationState } from "@/store";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { usePaymentInputs } from "react-payment-inputs";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createPaymentTransactionApi } from "@/services/api-service/pay/pay-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { useRouter } from "next/router";
 
 interface PaymentDetails {
   documentID: string;
@@ -34,10 +33,14 @@ interface PaymentDetails {
   isCustomerPresent?: boolean;
 }
 
-const useCreditCardPaySection = () => {
+interface IProps {
+  documentType?: DOCUMENT_TYPE;
+}
+
+const useCreditCardPaySection = ({ documentType }: IProps = {}) => {
   const { t } = useTranslation();
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-  const { alertSuccess, alertFault } = useSnackBar();
+  const { alertSuccess, alertFault, alertRequiredFields } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const initialPaymentDetails: PaymentDetails = {
     documentID: "",
@@ -57,21 +60,20 @@ const useCreditCardPaySection = () => {
   const [paymentDetailsState, setPaymentDetails] = useState<PaymentDetails>(
     initialPaymentDetails
   );
+  const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
 
   const transactionTypes = [
     { label: t("payment.regular"), value: 1 },
     { label: t("payment.installments"), value: 2 },
   ];
 
-  const numberOfPayments = Array.from({ length: 13 }, (_, index) => ({
-    label: index + 1,
-    value: index + 1,
-  }));
-
-  // const numberOfPayments = Array.from({ length: quoteConfirm?.maxPayments }, (_, index) => ({
-  //     label: index + 1,
-  //     value: index + 1,
-  // }));
+  const numberOfPayments = Array.from(
+    { length: quoteConfirm?.maxPayments ?? 13 },
+    (_, index) => ({
+      label: index + 1,
+      value: index + 1,
+    })
+  );
 
   const handleCardNumberChange = (e) => {
     const formattedInput = e.target.value.replace(/\D/g, "");
@@ -100,16 +102,6 @@ const useCreditCardPaySection = () => {
     });
   };
 
-  const handleExpiryDateCshange = (e) => {
-    const formattedInput = e.target.value.replace(/\D/g, "");
-    if (formattedInput.length <= 4) {
-      setPaymentDetails({
-        ...paymentDetailsState,
-        expDate_MMYY: formattedInput,
-      });
-    }
-  };
-
   const handleCVVChange = (e) => {
     const formattedInput = e.target.value.replace(/\D/g, "");
     if (formattedInput.length <= 3) {
@@ -127,13 +119,17 @@ const useCreditCardPaySection = () => {
     }));
   };
 
-  const [isPaymentSuccess, setIsPaymentSuccess] = useState(false);
-
   const handleProceedCheckout = async () => {
+    const { expDate_MMYY, cvv, cardNumber } = paymentDetailsState;
+    if (!expDate_MMYY || !cvv || !cardNumber) {
+      alertRequiredFields();
+      return;
+    }
+
     const finalPaymentDetailsState = {
       ...paymentDetailsState,
       documentID: quoteConfirm?.id,
-      documentType: DOCUMENT_TYPE.order,
+      documentType: documentType,
       paymentRequestId: quoteConfirm?.paymentRequestId,
       clientID: quoteConfirm?.customerID,
     };

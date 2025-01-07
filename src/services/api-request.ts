@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, ResponseType } from "axios";
 import config from "@/config";
-import { getUserToken } from "./storage-data";
+import {getTempUserToken, getUserToken} from "./storage-data";
 import log from "@/utils/logger";
 import { addRequestToSession } from "@/utils/sessionManager";
 // import { clearStorage } from './storage'
@@ -18,6 +18,10 @@ const apiRequest = async (
     const SERVER = config.api_server;
     const reqUrl = SERVER + url;
     const controller = new AbortController();
+    let userToken = getUserToken();
+    if(!userToken){
+      userToken = getTempUserToken();
+    }
     const options: AxiosRequestConfig = {
       method,
       url: reqUrl,
@@ -28,7 +32,7 @@ const apiRequest = async (
         Accept: "application/json",
         "Content-Type": "application/json",
         "project-name": "business-dashboard",
-        ...(getUserToken() && { Authorization: "Bearer " + getUserToken() }),
+        ...(userToken && { Authorization: "Bearer " + userToken }),
         ...(data.customAuth && { "auth-token": data.customAuth }),
         lang: "en",
         domain: "",

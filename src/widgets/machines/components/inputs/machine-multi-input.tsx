@@ -18,12 +18,14 @@ const MachineMultiInput = ({parameterKey, inputs, name, updateState, value, disa
         if (value) {
             setState(value);
         }
+        console.log(value)
     }, [value])
 
     useEffect(() => {
         if (state) {
             updateState(parameterKey, state);
         }
+        console.log(state)
     }, [state])
 
     return (

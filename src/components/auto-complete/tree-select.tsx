@@ -285,7 +285,7 @@ const GoMakeTreeSelect = ({
         style={{ width: "100%" }}
         //value={value}
         dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-        placeholder="Please select"
+        placeholder={t("modal.pleaseSelect")}
         allowClear
         onChange={onChange}
         treeData={treeData}

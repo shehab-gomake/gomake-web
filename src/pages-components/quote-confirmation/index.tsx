@@ -5,17 +5,30 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import { QuoteNewPageWidget } from "../quote-new/quote";
 import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 import { useQuoteConfirmation } from "./use-quote-confirmation";
-import { updateTokenStorage } from "@/services/storage-data";
+import {
+  updateTempUserTokenStorage,
+  updateTokenStorage,
+} from "@/services/storage-data";
 
 interface IProps {
   isPrePaymentPage?: boolean;
+  documentType?: DOCUMENT_TYPE;
 }
 
-const QuoteConfirmationPageWidget = ({ isPrePaymentPage = false }: IProps) => {
+const QuoteConfirmationPageWidget = ({
+  isPrePaymentPage = false,
+  documentType,
+}: IProps) => {
   const { classes } = useStyle();
   const [isMobile, setIsMobile] = useState(false);
-  const { getTempUserToken, getPrePaymentById, getQuoteConfirmation } =
-    useQuoteConfirmation();
+  const {
+    getTempUserToken,
+    getPrePaymentById,
+    getQuoteConfirmation,
+    quoteConfirm,
+    documentTitle,
+  } = useQuoteConfirmation({ documentType });
+
 
   useEffect(() => {
     updateScreenWidth();
@@ -34,7 +47,7 @@ const QuoteConfirmationPageWidget = ({ isPrePaymentPage = false }: IProps) => {
       if (isPrePaymentPage) {
         const userToken = await getTempUserToken();
         if (userToken) {
-          updateTokenStorage(userToken);
+          updateTempUserTokenStorage(userToken);
           await getPrePaymentById();
         }
       } else {
@@ -48,18 +61,33 @@ const QuoteConfirmationPageWidget = ({ isPrePaymentPage = false }: IProps) => {
   return (
     <div style={classes.firstContainer}>
       <div style={isMobile ? classes.iconMobileStyle : classes.iconStyle}>
-        <GoMakeIcon />
+        {quoteConfirm?.printHouseLogo ? (
+          <img
+            src={quoteConfirm.printHouseLogo}
+            alt="Print House Logo"
+            style={{
+              width: 50,
+              height: 50,
+              objectFit: "contain",
+              borderRadius: "8px",
+              padding: "4px",
+              backgroundColor: "#8283be",
+            }}
+          />
+        ) : (
+          <GoMakeIcon />
+        )}
       </div>
       {isMobile ? (
         <QuoteConfirmationMobileWidget
           isMobile={isMobile}
           isPrePaymentPage={isPrePaymentPage}
+          documentType={documentType}
+          documentTitle={documentTitle}
         />
       ) : (
         <QuoteNewPageWidget
-          documentType={
-            isPrePaymentPage ? DOCUMENT_TYPE.order : DOCUMENT_TYPE.quote
-          }
+          documentType={isPrePaymentPage ? documentType : DOCUMENT_TYPE.quote}
           isQuoteConfirmation={true}
           isPrePaymentPage={isPrePaymentPage}
         />

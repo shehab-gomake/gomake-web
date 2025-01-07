@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 
-const useStyle = ({isUnderlined}) => {
+const useStyle = ({isUnderlined, isFromSetting}) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === 'rtl';
@@ -10,7 +10,7 @@ const useStyle = ({isUnderlined}) => {
     return {
       mainContainer: {
         marginTop: isUnderlined?2:-45,
-        marginLeft:isUnderlined?RTL?-80:80:224,
+        marginLeft:isFromSetting?0:isUnderlined?RTL?-80:80:RTL?144:224
       },
       bodyContainer: {
         minWidth: 220,

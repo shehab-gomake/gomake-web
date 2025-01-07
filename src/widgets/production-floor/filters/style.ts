@@ -20,9 +20,9 @@ const useStyle = () => {
         padding: "12px 0",
       },
       filtersCardBox: {
-        width: "60%",
+        width: "90%",
         maxHeight: "100px",
-        maxWidth: "60%",
+        maxWidth: "90%",
         overflowX: "scroll",
         overflowY: "scroll",
         display: "flex",
@@ -64,6 +64,14 @@ const useStyle = () => {
         fontStyle: "normal",
         lineHeight: "24px",
         ...FONT_FAMILY.Inter(500, 16),
+      },
+      labelList: {
+        display: "inline-block",
+        maxWidth: "280px", // Set desired max width
+        whiteSpace: "nowrap",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        verticalAlign: "middle",
       },
     };
   }, [theme, t]);

@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 const MoreMenuWidget = ({
   quoteItem,
   onClickDuplicateWithDifferentQTY,
+  onClickQuickDuplicate,
   onClickDeleteQouteItem,
   documentType,
 }) => {
@@ -16,6 +17,7 @@ const MoreMenuWidget = ({
   const { open, anchorEl, menuList, handleClose, handleClick } = useMoreCircle({
     quoteItem,
     onClickDuplicateWithDifferentQTY,
+    onClickQuickDuplicate,
     onClickDeleteQouteItem,
     documentType,
   });

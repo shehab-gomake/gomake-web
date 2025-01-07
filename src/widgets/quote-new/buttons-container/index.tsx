@@ -40,6 +40,7 @@ const ButtonsContainer = ({
   handleAcceptBtnClick,
   onClickOpenChangeProductionStatusModal,
   onClickSendReceiptToClient,
+  handleSendUsingWhatsAppWeb,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -126,7 +127,7 @@ const ButtonsContainer = ({
   };
 
   useEffect(() => {
-    quoteItemValue?.isNeedApproval && getAllUsersCanApproveQuote();
+    isQuote && getAllUsersCanApproveQuote();
   }, []);
 
   return (
@@ -140,7 +141,7 @@ const ButtonsContainer = ({
             leftIcon={<CreditCardIcon color={"#344054"} />}
             onClick={() =>
               navigate(
-                `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.number}&ClientId=${quoteItemValue?.customerID}`
+                `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.accountingNumber}&ClientId=${quoteItemValue?.customerID}`
               )
             }
             style={classes.btnContainer}
@@ -305,23 +306,33 @@ const ButtonsContainer = ({
             {t("materials.buttons.reject")}
           </GomakePrimaryButton>
         )}
-        {isQuote &&
-          (quoteItemValue?.isNeedApproval ? (
+
+        {isQuote && (
+          <>
+            {!quoteItemValue?.isNeedApproval && (
+              <GomakePrimaryButton
+                style={classes.btnOrderNowContainer}
+                onClick={onClickOpenMangerApprovalModal}
+              >
+                {t("sales.quote.managerApproval")}
+              </GomakePrimaryButton>
+            )}
             <GomakePrimaryButton
               style={classes.btnOrderNowContainer}
-              onClick={onClickOpenMangerApprovalModal}
+              onClick={
+                quoteItemValue?.isNeedApproval
+                  ? onClickOpenMangerApprovalModal
+                  : onClickOpenOrderNowModal
+              }
             >
-              {t("sales.quote.managerApproval")}
-              {/* {t("sales.quote.sendToSalesManager")} */}
+              {t(
+                quoteItemValue?.isNeedApproval
+                  ? "sales.quote.managerApproval"
+                  : "sales.quote.orderNowTitle"
+              )}
             </GomakePrimaryButton>
-          ) : (
-            <GomakePrimaryButton
-              style={classes.btnOrderNowContainer}
-              onClick={onClickOpenOrderNowModal}
-            >
-              {t("sales.quote.orderNowTitle")}
-            </GomakePrimaryButton>
-          ))}
+          </>
+        )}
         <OrderNowModal
           openModal={openOrderNowModal}
           onClose={onClickCloseOrderNowModal}
@@ -386,6 +397,7 @@ const ButtonsContainer = ({
           onClose={onClickCloseReceiptCreation}
           openModal={openReceiptCreationModal}
           docType={documentType}
+          handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
           onClickSendDocumentToClient={onClickSendReceiptToClient}
         />
         <ThreeOptionsModal

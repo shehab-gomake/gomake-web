@@ -23,6 +23,7 @@ const UpdateDeliveryStatusModal = ({
   setEditableQuantities,
   setDocumentItems,
   clientContacts,
+  documentType,
 }: IUpdateDeliveryStatusModalProps) => {
   const { classes } = useStyle();
   const {
@@ -56,7 +57,6 @@ const UpdateDeliveryStatusModal = ({
     handleCloseModal();
   };
 
-  //!not sure about the condition
   const areAllItemsNotDelivered = () => {
     return documentItems?.some(
       (item) =>
@@ -66,9 +66,9 @@ const UpdateDeliveryStatusModal = ({
 
   return (
     <GoMakeModal
-      modalTitle={`${t(
-        `sales.quote.${DOCUMENT_TYPE[document?.documentType]}`
-      )} #${document?.number}`}
+      modalTitle={`${t(`sales.quote.${DOCUMENT_TYPE[documentType]}`)} #${
+        document?.number
+      }`}
       insideStyle={{ width: "70%", height: "fit-content" }}
       openModal={openModal}
       onClose={handleCloseModal}
@@ -177,7 +177,7 @@ const UpdateDeliveryStatusModal = ({
         onCloseModal={closeSignatureModal}
         onCloseAllModals={handleCloseSignModal}
         documentId={document?.id}
-        documentType={document?.documentType}
+        documentType={documentType}
         selectedItems={selectedItems}
         setSelectedItems={setSelectedItems}
         editableQuantities={editableQuantities}

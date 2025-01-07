@@ -13,7 +13,7 @@ const useDisplayProfitProfilesSignalr = ({setProducts}) => {
         if (connection) {
             connection.on("UpdateProfitProfileProduct", (updatedData) => {
               setProducts((prevProducts) => {
-                const updatedProducts = prevProducts.data.map((product) => {
+                const updatedProducts = prevProducts?.data?.map((product) => {
                   const matchingData = updatedData.find((data) => data.rowId === product.rowId);
                   if (matchingData) {
                     return {
@@ -24,7 +24,7 @@ const useDisplayProfitProfilesSignalr = ({setProducts}) => {
                   return product;
                 });
               
-                const updatedHeaders = prevProducts.headers.map((header) => {
+                const updatedHeaders = prevProducts?.headers?.map((header) => {
                   const totalForQuantity = updatedProducts
                     .filter((product) => product.isSelected) // Include only selected products
                     .reduce((sum, product) => {

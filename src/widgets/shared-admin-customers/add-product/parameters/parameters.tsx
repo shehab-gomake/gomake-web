@@ -9,6 +9,7 @@ import { SectionMappingWidget } from "./widgets/section-mapping";
 import { GalleryModal, MultiParameterModal } from "../../digital-offset-price";
 import { UpdateParameterModal } from "./widgets/update-parameter-modal";
 import { ExternalValuesIdModal } from "../external-ids-modal";
+import { WorkFlowsWidget } from "../work-flows-widget";
 
 const ParameterWidget = () => {
   const { classes } = useStyle();
@@ -59,6 +60,8 @@ const ParameterWidget = () => {
     onCloseExternalIdsModal,
     openExternalIdsModal,
   } = useAddProduct({ classes });
+  
+  const visibleSections = template?.sections
 
   return (
     <>
@@ -68,7 +71,7 @@ const ParameterWidget = () => {
             <div style={classes.leftSideContainer}>
               <div style={classes.tabsContainer}>
                 <Tabs variant="scrollable" scrollButtons={"auto"}>
-                  {template?.sections.map((item, index) => {
+                  {[...visibleSections].map((item, index) => {
                     return (
                       <TabsMappingWidget
                         key={`tab-${index}`}
@@ -91,7 +94,7 @@ const ParameterWidget = () => {
                 style={{ height: "55vh", overflow: "scroll", width: "100%" }}
               >
                 <div style={classes.sectionsContainer}>
-                  {template?.sections?.map((section, index) => {
+                  {[...visibleSections]?.map((section, index) => {
                     if (index === activeIndex) {
                       return section?.subSections?.map((subSection, index) => {
                         if (subSection?.isAccordion) {

@@ -27,6 +27,7 @@ import { useStyle } from "./style";
 import { useRouter } from "next/router";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
+import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -212,6 +213,14 @@ const CustomGroupComponent = ({
   );
 };
 
+const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))({
+  [`& .${tooltipClasses.tooltip}`]: {
+    maxWidth: 600,
+  },
+});
+
 const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
   const { classes } = useStyle();
   const { push } = useRouter();
@@ -264,7 +273,8 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
   useEffect(() => {
     const updateContainerWidth = () => {
       if (scrollContainerRef.current) {
-        setContainerWidth(scrollContainerRef.current.clientWidth);
+        // setContainerWidth(scrollContainerRef.current.clientWidth );
+        setContainerWidth(scrollContainerRef.current.clientWidth + 300);
       }
     };
     updateContainerWidth();
@@ -310,6 +320,41 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     return missionsList.length > 0 ? missionsList : [];
   }, [missionsList]);
 
+  const renderMenuItem = (option, handleClick) => (
+    <MenuItem
+      key={option?.id}
+      sx={classes.missionRowStyle}
+      onClick={() => handleClick(option?.id)}
+    >
+      <CustomWidthTooltip
+        title={`${option?.boardMissionNumber}\\${option?.orderNumber} - ${option?.clientName}`}
+        placement={isRTL ? "left" : "right"}
+        arrow
+      >
+        <span style={classes.labelList}>
+          {`${option?.boardMissionNumber}\\${option?.orderNumber} - ${option?.clientName}`}
+        </span>
+      </CustomWidthTooltip>
+    </MenuItem>
+  );
+
+  const SearchMissionList = ({ missionsList, handleMissionClick }) => (
+    <Paper elevation={3} sx={classes.paperStyle}>
+      <ScrollableDiv>
+        {missionsList?.map((option) =>
+          renderMenuItem(option, handleMissionClick)
+        )}
+      </ScrollableDiv>
+    </Paper>
+  );
+
+  const handleMissionClick = (id) => {
+    push(`/production-floor?boardMissionsId=${id}&step=stations`).then(() => {
+      setSearch("");
+      setMissionsList([]);
+    });
+  };
+
   return (
     <Stack style={classes.headerFilterContainer}>
       <Stack>
@@ -323,28 +368,12 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
             )
           }
         />
-        {filteredMissionsBySearch.length === 0 &&
+        {filteredMissionsBySearch?.length === 0 &&
           getMissionsList().length !== 0 && (
-            <Paper elevation={3} sx={classes.paperStyle}>
-              <ScrollableDiv>
-                {getMissionsList().map((option, index) => (
-                  <MenuItem
-                    key={index}
-                    sx={classes.missionRowStyle}
-                    onClick={() => {
-                      push(
-                        `/production-floor?boardMissionsId=${option.id}&step=stations`
-                      ).then(() => {
-                        setSearch("");
-                        setMissionsList([]);
-                      });
-                    }}
-                  >
-                    {`${option?.number}\\${option?.orderNumber}`}
-                  </MenuItem>
-                ))}
-              </ScrollableDiv>
-            </Paper>
+            <SearchMissionList
+              missionsList={getMissionsList()}
+              handleMissionClick={handleMissionClick}
+            />
           )}
       </Stack>
       <SelectComponent

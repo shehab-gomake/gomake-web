@@ -41,7 +41,7 @@ const useTransactionJournalReport = ({
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const dir = t("direction");
-  const { getFormattedLocalDate } = useDateFormat();
+  const { getFormattedLocalDate, GetDateWithoutHoursFormat } = useDateFormat();
 
   const { documentsTypeList, documentType, handleDocumentTypeChange } =
     useDocumentsType();
@@ -345,8 +345,8 @@ const useTransactionJournalReport = ({
             reference: adjustment?.document?.documentNumber,
             sum: adjustment?.amount,
             adjustmentSum: adjustment?.allocatedAmount,
-            valueDate: getFormattedLocalDate(adjustment?.document?.dueDate),
-            docDate: getFormattedLocalDate(adjustment?.document?.docDate),
+            valueDate: GetDateWithoutHoursFormat(adjustment?.document?.dueDate),
+            docDate: GetDateWithoutHoursFormat(adjustment?.document?.docDate),
           })) || [],
       }));
 
@@ -541,7 +541,16 @@ const useTransactionJournalReport = ({
       if (data?.length > 0) {
         const newData = data?.map((item) => ({
           ...item,
-          fixedPrice: item?.totalPrice?.toFixed(2) ?? item?.price?.toFixed(2),
+          fixedPrice:
+            item?.totalPrice?.toFixed(2) ??
+            (item?.creditOrDebit === 1
+              ? Math.abs(item?.price)?.toFixed(2)
+              : -Math.abs(item?.price)?.toFixed(2)),
+
+          price:
+            item?.creditOrDebit === 1
+              ? Math.abs(item?.price)?.toFixed(2)
+              : -Math.abs(item?.price)?.toFixed(2),
         }));
         setClientPaymentsList(newData);
         alertSuccessGetData();

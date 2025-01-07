@@ -812,6 +812,7 @@ const QuotesListPageWidget = ({
         openPaymentModal={openPaymentModal}
         onClickClosePaymentModal={onClickClosePaymentModal}
         paymentModalTitle={paymentModalTitle}
+        documentType={documentType}
       />
       <MakePaymentModal
         openMakePaymentModal={openMakePaymentModal}
