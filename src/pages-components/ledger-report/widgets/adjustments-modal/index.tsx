@@ -33,21 +33,25 @@ const AdjustmentsLedgerReportModal = ({
     openTransferModal,
     customer,
     isFetching,
+    setSelectedItems,
   } = useAdjustmentsModal({
     clientPaymentsList,
     getClientPaymentItems,
     customerId,
   });
 
+  const handleModalClose = () => {
+    setClientPaymentsList([]);
+    setSelectedItems([]);
+    onCloseModal();
+  };
+
   return (
     <>
       <GoMakeModal
         openModal={openModal}
         modalTitle={t("reports.adjustmentsLists")}
-        onClose={() => {
-          setClientPaymentsList([]);
-          onCloseModal();
-        }}
+        onClose={handleModalClose}
         insideStyle={classes.insideStyle}
       >
         <div style={classes.mainContainer}>
