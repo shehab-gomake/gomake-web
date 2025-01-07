@@ -134,7 +134,6 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
     getTempUserToken,
     quoteConfirm,
     documentTitle,
-
   };
 };
 
