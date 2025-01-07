@@ -5,9 +5,8 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import { QuoteNewPageWidget } from "../quote-new/quote";
 import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 import { useQuoteConfirmation } from "./use-quote-confirmation";
-  updateTempUserTokenStorage,
-  updateTokenStorage,
-} from "@/services/storage-data";
+import { updateTempUserTokenStorage } from "@/services/storage-data";
+
 
 
 interface IProps {
