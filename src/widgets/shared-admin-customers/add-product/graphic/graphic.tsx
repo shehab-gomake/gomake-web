@@ -2,8 +2,8 @@ import { useAddProduct } from "@/hooks";
 import { useStyle } from "./style";
 
 const GraphicWidget = () => {
-  const { clasess } = useStyle();
-  const {} = useAddProduct({ clasess });
+  const { classes } = useStyle();
+  const {} = useAddProduct({ classes });
 
   return (
     <div>

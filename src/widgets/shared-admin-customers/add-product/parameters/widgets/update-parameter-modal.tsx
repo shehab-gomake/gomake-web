@@ -7,6 +7,7 @@ import { useStyle } from "../style";
 import { UpdateTypes } from "./section-mapping";
 import { CheckboxIcon } from "@/icons";
 import { CheckboxCheckedIcon } from "@/icons";
+import { useSnackBar } from "@/hooks";
 
 interface UpdateParameterModalProps {
   openModal: boolean;
@@ -14,8 +15,10 @@ interface UpdateParameterModalProps {
   onUpdate: any;
   selectedUpdateType: UpdateTypes | null;
   setSelectedUpdateType: any;
-  setDontAskNextTime: any;
-  dontAskNextTime: boolean;
+  hideDoNotAskBox?: boolean;
+  setDoNotAskNextTime?: any;
+  doNotAskNextTime?: boolean;
+  showThirdOption?: boolean;
 }
 
 const UpdateParameterModal = ({
@@ -24,11 +27,15 @@ const UpdateParameterModal = ({
   onUpdate,
   selectedUpdateType,
   setSelectedUpdateType,
-  setDontAskNextTime,
-  dontAskNextTime
+  hideDoNotAskBox = false,
+  showThirdOption = false,
+
+  setDoNotAskNextTime,
+  doNotAskNextTime,
 }: UpdateParameterModalProps) => {
   const { t } = useTranslation();
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
+  const { alertFault } = useSnackBar();
 
   return (
     <>
@@ -42,7 +49,7 @@ const UpdateParameterModal = ({
         }}
         modalTitleColor={"#000000"}
         withRoundedCloseIcon={false}
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
       >
         <Stack direction={"column"} gap={"5px"} paddingBottom={"20px"}>
           <Stack direction={"row"} width={"100%"} alignItems={"center"}>
@@ -50,7 +57,7 @@ const UpdateParameterModal = ({
               checked={selectedUpdateType === UpdateTypes.PRODUCT_ONLY}
               onChange={() => setSelectedUpdateType(UpdateTypes.PRODUCT_ONLY)}
             />
-            <span style={clasess.optionsTitle}>
+            <span style={classes.optionsTitle}>
               {t("products.parameters.productOnly")}
             </span>
           </Stack>
@@ -61,33 +68,38 @@ const UpdateParameterModal = ({
                 setSelectedUpdateType(UpdateTypes.SAME_PRICING_TYPE)
               }
             />
-            <span style={clasess.optionsTitle}>
+            <span style={classes.optionsTitle}>
               {t("products.parameters.samePricingType")}
             </span>
           </Stack>
-
-          {/* <Stack direction={"row"} width={"100%"} alignItems={"center"}>
-            <CircleCheckbox
-              checked={selectedUpdateType === UpdateTypes.ALL_PRODUCTS}
-              onChange={() => setSelectedUpdateType(UpdateTypes.ALL_PRODUCTS)}
-            />
-            <span style={clasess.optionsTitle}>
-              {t("products.parameters.allProducts")}
-            </span>
-          </Stack> */}
+          {showThirdOption && (
+            <Stack direction={"row"} width={"100%"} alignItems={"center"}>
+              <CircleCheckbox
+                checked={selectedUpdateType === UpdateTypes.ALL_PRODUCTS}
+                onChange={() => setSelectedUpdateType(UpdateTypes.ALL_PRODUCTS)}
+              />
+              <span style={classes.optionsTitle}>
+                {t("products.parameters.allProducts")}
+              </span>
+            </Stack>
+          )}
         </Stack>
-        <Checkbox
-          checked={dontAskNextTime}
-          onChange={() => setDontAskNextTime(!dontAskNextTime)}
-          icon={<CheckboxIcon />}
-          checkedIcon={<CheckboxCheckedIcon />}
-          disabled={selectedUpdateType === null}
-        />
-        <span style={clasess.dontAskNextTime}>
-          {t("products.parameters.dontAskNextTime")}
-        </span>
+        {!hideDoNotAskBox && (
+          <>
+            <Checkbox
+              checked={doNotAskNextTime}
+              onChange={() => setDoNotAskNextTime(!doNotAskNextTime)}
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+              disabled={selectedUpdateType === null}
+            />
+            <span style={classes.doNotAskNextTime}>
+              {t("products.parameters.dontAskNextTime")}
+            </span>
+          </>
+        )}
         <Stack direction={"row"} gap={"10px"}>
-          <Button style={clasess.cancelButton} onClick={onClose}>
+          <Button style={classes.cancelButton} onClick={onClose}>
             {t("modal.cancel")}
           </Button>
           <GomakePrimaryButton
