@@ -42,48 +42,23 @@ const Row = memo(({ index, style, data }: RowProps) => {
   );
 
   return (
-    <div style={style} key={index}>
-      <TableRow>
-        {isRTL ? (
-          <>
-            <TableCell style={{ textAlign: "center" }}>
-              <GomakeTextInput
-                onChange={handleQuantityChange}
-                style={{ height: "40px", width: "160px" }}
-                value={value.quantity}
-                direction={dir}
-              />
-            </TableCell>
-            <TableCell>
-              <GomakeTextInput
-                onChange={handleNameChange}
-                style={{ height: "40px", width: "160px" }}
-                value={value.name}
-                direction={dir}
-              />
-            </TableCell>
-          </>
-        ) : (
-          <>
-            <TableCell>
-              <GomakeTextInput
-                onChange={handleNameChange}
-                style={{ height: "40px", width: "160px" }}
-                value={value.name}
-                direction={dir}
-              />
-            </TableCell>
-            <TableCell style={{ textAlign: "center" }}>
-              <GomakeTextInput
-                onChange={handleQuantityChange}
-                style={{ height: "40px", width: "160px" }}
-                value={value.quantity}
-                direction={dir}
-              />
-            </TableCell>
-          </>
-        )}
-      </TableRow>
+    <div key={index} style={{ display: "flex", flexDirection: isRTL ? "row-reverse" : "row", ...style }}>
+      <TableCell>
+        <GomakeTextInput
+          onChange={handleNameChange}
+          style={{ height: "40px", width: "160px" }}
+          value={value.name}
+          direction={dir}
+        />
+      </TableCell>
+      <TableCell style={{ textAlign: "center" }}>
+        <GomakeTextInput
+          onChange={handleQuantityChange}
+          style={{ height: "40px", width: "160px" }}
+          value={value.quantity}
+          direction={dir}
+        />
+      </TableCell>
     </div>
   );
 });

@@ -160,8 +160,8 @@ const TableCellData = ({
           id={id}
           isAdmin={isAdmin}
           options={values.map((item) => ({
-            value: item.value,
-            label: item.key,
+            value: item.key,
+            label: item.value,
           }))}
           placeHolder={t("materials.inputs.selectValue")}
         />

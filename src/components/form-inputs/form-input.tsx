@@ -33,7 +33,7 @@ const FormInput = ({
                        loading,
                    }: IFormInput) => {
     const [options, setOptions] = useState([]);
-    const [dataLoaded, setDataLoaded] = useState<boolean>(false);
+    const [, setDataLoaded] = useState<boolean>(false);
     const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
     const {callApi} = useGomakeAxios();
     const {t} = useTranslation();
@@ -126,7 +126,7 @@ const FormInput = ({
     }, [options]);
 
     useEffect(() => {
-        if (input.optionsUrl && !dataLoaded) {
+        if (input.optionsUrl) {
             setDataLoaded(true);
             callApi("GET", input.optionsUrl).then((res) => {
                 if (res?.success) {

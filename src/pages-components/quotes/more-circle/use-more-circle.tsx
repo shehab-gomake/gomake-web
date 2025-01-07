@@ -344,13 +344,11 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          !isPauseOrder &&
-          isOrder &&
+          ((!isPauseOrder && isOrder && !isCanceledOrder) || isInvoice) &&
           quote?.isCanClose &&
-          !isCanceledOrder &&
           isSendPaymentToClient,
         onClick: () => onClickSendPayment(quote),
-        icon: <PaymentIcon />,
+        icon: <PayIcon />,
         name: t("sales.quote.sendPayment"),
       },
       {
@@ -359,7 +357,7 @@ const useMoreCircle = () => {
           isOrdersTracking &&
           parseFloat(quote?.totalPrice) !== parseFloat(quote?.sumApplied),
         onClick: () => onClickMakePayment(quote),
-        icon: <PaymentIcon />,
+        icon: <PayIcon />,
         name: t("sales.quote.makePayment"),
       },
       {

@@ -13,6 +13,7 @@ interface CharacterDetailsProps {
   showAllStyle?: React.CSSProperties;
   showLessHeightFit?: boolean;
   canUpdate?: boolean;
+  documentType?: number;
 }
 
 const CharacterDetails = ({
@@ -23,6 +24,7 @@ const CharacterDetails = ({
   detailsStyle,
   showLessHeightFit = false,
   canUpdate = true,
+  documentType,
 }: CharacterDetailsProps) => {
   const {
     t,
@@ -37,7 +39,7 @@ const CharacterDetails = ({
     handleClose,
     handleSave,
     truncatedDetails,
-  } = useCharacterDetails({ details, getQuote, documentItemId });
+  } = useCharacterDetails({ details, getQuote, documentItemId, documentType });
   const { classes } = useStyleCharacterDetails({ showAll, showLessHeightFit });
 
   return (

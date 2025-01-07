@@ -1,4 +1,4 @@
-import {Button, Card, CardActions, CardContent, IconButton, Link, Typography} from "@mui/material";
+import {Button, Card, CardActions, CardContent, Link} from "@mui/material";
 import {IChatMessage} from "@/widgets/messenger/interfaces/chat-message";
 import {EFileStatus} from "@/widgets/messenger/enums";
 import Stack from "@mui/material/Stack";
@@ -64,7 +64,7 @@ const QuoteApprovalMessageComponent = ({
         </CardContent>
         <CardActions style={{display: 'flex', justifyContent: 'flex-end', flex: 1}}>
             {
-                true ?
+                status === EFileStatus.PENDING ?
                     <>
                         {
                             isCurrentUserSentMsg ? <FileStatusNameComponent status={status}/> :

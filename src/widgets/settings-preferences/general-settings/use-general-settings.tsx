@@ -55,6 +55,7 @@ const useGeneralSettings = () => {
               { label: t("modal.yes"), value: "true" },
               { label: t("modal.no"), value: "false" },
             ];
+
             displayValue =
               booleanOptions.find((opt) => opt.value === item?.value)?.label ||
               item?.value;
@@ -67,9 +68,11 @@ const useGeneralSettings = () => {
                 ?.value || item?.value;
           }
           return [
-            item?.name,
-            item?.description,
-            displayValue,
+            t(`preferences.${item?.name}`),
+            t(`preferences.${item?.description.trim()}`),
+            item?.preferenceType === PreferenceValueType.Select
+              ? t(`preferences.${displayValue}`)
+              : displayValue,
             <GeneralSettingsMenu
               preferenceItem={item}
               onClickEdit={handleOpenModal}
@@ -82,12 +85,59 @@ const useGeneralSettings = () => {
     await getAllPreferencesApi(callApi, callBack);
   };
 
-  const updatePreferences = async (updatedPreference) => {
-    const callBack = (res) => {
+  const updatePreferences = async (updatedPreference: {
+    updatedValue: any;
+    preferenceId: string;
+  }) => {
+    const { updatedValue, preferenceId } = updatedPreference;
+    const callBack = (res: { success: boolean }) => {
       if (res?.success) {
+        // getAllPreferences(); //old
+        setAllPreferences((prevPreferences) =>
+          prevPreferences.map((row) => {
+            const [name, description, , menu] = row;
+            const item = menu.props.preferenceItem;
+
+            if (item.preferenceId === preferenceId) {
+              let displayValue = updatedValue;
+
+              if (item.preferenceType === PreferenceValueType.Boolean) {
+                const booleanOptions = [
+                  { label: t("modal.yes"), value: "true" },
+                  { label: t("modal.no"), value: "false" },
+                ];
+                displayValue =
+                  booleanOptions.find((opt) => opt.value === updatedValue)
+                    ?.label || updatedValue;
+              } else if (item.preferenceType === PreferenceValueType.Select) {
+                displayValue =
+                  item.preferenceValues?.find((opt) => opt.id === updatedValue)
+                    ?.value || updatedValue;
+              }
+
+              return [
+                name,
+                description,
+                item?.preferenceType === PreferenceValueType.Select
+                  ? t(`preferences.${displayValue}`)
+                  : displayValue,
+                <GeneralSettingsMenu
+                  preferenceItem={{ ...item, value: updatedValue }}
+                  onClickEdit={handleOpenModal}
+                />,
+              ];
+            }
+            return row;
+          })
+        );
       }
     };
-    await updatePreferencesApi(callApi, callBack, updatedPreference);
+
+    try {
+      await updatePreferencesApi(callApi, callBack, updatedPreference);
+    } catch (error) {
+      console.error("Error updating preferences:", error);
+    }
   };
 
   return {

@@ -7,8 +7,9 @@ import { useEffect } from "react";
 import { loadgingState } from "@/store/loading";
 import { useRecoilValue } from "recoil";
 
-const CreditCardPaySection = ({ isFromBigScreen = false }) => {
-  const { classes } = useStyle({ isFromBigScreen });
+const CreditCardPaySection = ({ isFromBigScreen = false, documentType }) => {
+  const customWidth = isFromBigScreen ? "70%" : "85%";
+  const { classes } = useStyle({ isFromBigScreen, customWidth });
   const {
     t,
     quoteConfirm,
@@ -23,7 +24,7 @@ const CreditCardPaySection = ({ isFromBigScreen = false }) => {
     handleExpiryDateChange,
     handleProceedCheckout,
     isPaymentSuccess,
-  } = useCreditCardPaySection();
+  } = useCreditCardPaySection({ documentType });
   const loading = useRecoilValue(loadgingState);
 
   useEffect(() => {
@@ -78,8 +79,9 @@ const CreditCardPaySection = ({ isFromBigScreen = false }) => {
             onChange={(e) =>
               handleChangeInputs("transactionSum", e.target.value)
             }
+            readOnly
           />
-          <div style={{ width: "70%" }}>
+          <div style={{ width: customWidth }}>
             <GoMakeAutoComplate
               key={"transactionType"}
               value={transactionTypes.find(
@@ -96,7 +98,7 @@ const CreditCardPaySection = ({ isFromBigScreen = false }) => {
           </div>
           {paymentDetailsState?.transactionType &&
             paymentDetailsState?.transactionType === 2 && (
-              <div style={{ width: "70%" }}>
+              <div style={{ width: customWidth }}>
                 <GoMakeAutoComplate
                   key={"numberOfPayments"}
                   value={paymentDetailsState?.numberOfPayments}

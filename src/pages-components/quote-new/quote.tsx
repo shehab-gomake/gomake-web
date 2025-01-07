@@ -638,7 +638,10 @@ const QuoteNewPageWidget = ({
                   <div style={classes.titleStyle}>
                     {t("payment.paymentDetails")}
                   </div>
-                  <CreditCardPaySection isFromBigScreen={true} />
+                  <CreditCardPaySection
+                    isFromBigScreen={true}
+                    documentType={documentType}
+                  />
                 </>
               )}
               {documentType === DOCUMENT_TYPE.receipt && <ReceiptsTable />}

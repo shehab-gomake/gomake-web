@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const useStyle = ({ isFromBigScreen }) => {
+const useStyle = ({ isFromBigScreen, customWidth }) => {
   const { theme, primaryColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
@@ -15,7 +15,7 @@ const useStyle = ({ isFromBigScreen }) => {
       },
       creditCardInputsContainer: {
         display: "flex",
-        width: "70%",
+        width: customWidth,
         padding: "4px",
         border: `1.5px solid ${primaryColor(300)}`,
         borderRadius: "4px",
@@ -25,7 +25,7 @@ const useStyle = ({ isFromBigScreen }) => {
         ...FONT_FAMILY.Lexend(500, 14),
         border: `1.5px solid ${primaryColor(300)}`,
         borderRadius: "4px",
-        width: "70%",
+        width: customWidth,
         padding: "4px",
       },
       creditCardInputs: {
@@ -43,8 +43,7 @@ const useStyle = ({ isFromBigScreen }) => {
       btnStyle: {
         ...FONT_FAMILY.Inter(600, 14),
         height: 40,
-        //maxWidth: "272px",
-        width: "70%",
+        width: customWidth,
         padding: "8px 14px",
         borderRadius: 8,
         lineHeight: "20px",

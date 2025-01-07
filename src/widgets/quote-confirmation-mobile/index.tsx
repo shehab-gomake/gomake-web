@@ -8,13 +8,21 @@ import { QuoteItems } from "./components/quote-items";
 import { CreditCardPaySection } from "./components/credit-card-pay-section";
 import { useTranslation } from "react-i18next";
 
-const QuoteConfirmationMobileWidget = ({ isMobile, isPrePaymentPage }) => {
+const QuoteConfirmationMobileWidget = ({
+  isMobile,
+  isPrePaymentPage,
+  documentType,
+  documentTitle,
+}) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
 
   return (
     <div style={classes.mainContainer}>
-      <InfoContainer isPrePaymentPage={isPrePaymentPage} />
+      <InfoContainer
+        isPrePaymentPage={isPrePaymentPage}
+        documentTitle={documentTitle}
+      />
       <QuoteItems isPrePaymentPage={isPrePaymentPage} />
       <TotalPriceAndVatContainer />
       {!isPrePaymentPage && (
@@ -27,7 +35,7 @@ const QuoteConfirmationMobileWidget = ({ isMobile, isPrePaymentPage }) => {
         <>
           <div style={classes.borderContainer} />
           <div style={classes.titleStyle}>{t("payment.paymentDetails")}</div>
-          <CreditCardPaySection />
+          <CreditCardPaySection documentType={documentType} />
         </>
       )}
     </div>

@@ -51,6 +51,7 @@ const laminationMachine = (state: Record<string, any>) => {
                 {value: ECategoryId.DIGITAL_ENHANCEMENT_MACHINE, text: t('machinesCategories.digitalEnhancement')},
             ],
             values: state?.attributes?.preFoilMachinePrint,
+            value: state?.attributes?.preFoilMachinePrint,
             disabled: !state?.attributes?.isAvailableFoilUnit,
             multiple: true
         },

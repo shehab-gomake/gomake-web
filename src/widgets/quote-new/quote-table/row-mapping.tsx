@@ -223,6 +223,7 @@ const RowMappingWidget = ({
             getQuote={getQuote}
             documentItemId={item?.id}
             canUpdate={canUpdate}
+            documentType={documentType}
           />
         </PrimaryTableCell>
       )}
