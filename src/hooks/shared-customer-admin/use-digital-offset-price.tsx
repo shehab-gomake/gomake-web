@@ -92,6 +92,7 @@ import { AdvertisingProductNameParameterWidget } from "@/pages-components/produc
 import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-outputs";
 import { useMaterials } from "../use-materials";
 import { ESourceView } from "@/enums/products";
+import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
@@ -146,13 +147,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setAdditionalProductItems = useSetRecoilState<any>(
     additionalProductItemsState
   );
-  console.log("productItemValueDraftId", productItemValueDraftId);
   const [isFlowChanged, stIsFlowChanged] = useState(false);
   const [isOpenCreateDefaultWorkFlow, setIsOpenCreateDefaultWorkFlow] = useState(false);
   const onClickOpenCreateDefaultWorkFlow = () => {
     setIsOpenCreateDefaultWorkFlow(true);
   }
   const onClickCloseCreateDefaultWorkFlow = () => {
+    setCurrentProductItemValueDraftId(null);
     setIsOpenCreateDefaultWorkFlow(false);
   }
 
@@ -312,7 +313,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sliderCurrentProductItemValueTotalPrice,
     setSliderCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
-
   useEffect(() => {
     let copy = lodashClonedeep(subProducts);
     setSubProductsCopy(copy);
@@ -322,14 +322,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     if (
       calculationResult &&
-      calculationResult.productItemValueDraftId === currentCalculationSessionId
+      calculationResult.productItemValueDraftId === currentCalculationSessionId &&
+      !productTemplate?.isHaveFixedAction
     ) {
       getSelectedWorkFlow();
     }
     if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
       getSelectedWorkFlow();
     }
-  }, [calculationResult, currentCalculationSessionId, productTemplate]);
+  }, [calculationResult, currentCalculationSessionId,]);
   const [
     selectedWorkFlowCalculatedIsLoaded,
     setSelectedWorkFlowCalculatedIsLoaded,
@@ -4965,6 +4966,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         isChargeForNewDie: isChargeForNewDie,
         productType: productTemplate?.productType,
         templateId: productTemplate?.templateId,
+        totalPrice: sliderCurrentProductItemValueTotalPrice || 0
       },
       false,
     );
@@ -5408,7 +5410,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     for (let i = 0; i < data.actions.length; i++) {
       const action = data.actions[i];
 
-      if (action.isNeedEmployee && !action.employeeId) {
+      if (action.isNeedEmployee && !action.employeeId && action.source != EWorkSource.OUT) {
         errors.push(
           `${action.actionName}: ${t("validateWorkflows.noEmployee")}`
         );
