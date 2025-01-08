@@ -296,7 +296,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                     ]?.map((item, index) => (
                       <TabsMappingWidget
                         key={`tab-${index}`}
-                        clasess={clasess}
+                        classes={clasess}
                         index={index}
                         handleTabClick={handleTabClick}
                         activeIndex={activeIndex}
