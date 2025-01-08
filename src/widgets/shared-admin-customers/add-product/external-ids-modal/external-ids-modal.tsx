@@ -17,6 +17,7 @@ const ExternalValuesIdModal = ({
   parameter,
   sectionId,
   subSectionId,
+  getProductById,
 }) => {
   const { t } = useTranslation();
   const router = useRouter();
@@ -85,6 +86,7 @@ const ExternalValuesIdModal = ({
         alertSuccessUpdate();
         onClose();
         setOpenUpdateModal(false);
+        getProductById();
       } else {
         alertFaultUpdate();
       }

@@ -193,6 +193,7 @@ const ParameterWidget = () => {
             parameter={selectedParameter}
             sectionId={selectedSectonId}
             subSectionId={selectedSubSection}
+            getProductById={getProductById}
           />
         </>
       )}

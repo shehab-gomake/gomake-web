@@ -151,7 +151,9 @@ const useAddProduct = ({ classes }) => {
       setProductState(data);
     }
   }, [router, template]);
+
   const [relatedParameters, setaRelatedParameters] = useState([]);
+
   useEffect(() => {
     const collectRelatedParameters = (template, result = []) => {
       if (template) {
@@ -706,6 +708,21 @@ const useAddProduct = ({ classes }) => {
       ) {
         materialsOptions.push(...allMaterialsCopy?.data);
       }
+    }
+
+    //Extract externalCode for the materials that come from productParametersExternalValues
+    if (parameter?.productParametersExternalValues) {
+      const externalValuesMap = new Map(
+        parameter.productParametersExternalValues.map((ev) => [
+          ev.valueId,
+          ev.externalCode,
+        ])
+      );
+
+      materialsOptions = materialsOptions.map((materialOption) => ({
+        ...materialOption,
+        externalValue: externalValuesMap.get(materialOption.valueId) || null,
+      }));
     }
 
     if (
