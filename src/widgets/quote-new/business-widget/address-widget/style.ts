@@ -14,11 +14,11 @@ const useStyle = () => {
         height: "auto",
       },
       stackStyle: {
-        display:"flex",
-        width:"330px",
-        gap:"13px"
+        display: "flex",
+        width: "330px",
+        gap: "13px",
       },
-      saveBtn: { 
+      saveBtn: {
         width: "331px",
         height: "40px",
         borderRadius: "8px",
@@ -38,7 +38,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         gap: "10px",
-        width: "15%",
+        // width: "15%",
       },
       labelStyle: {
         ...FONT_FAMILY.Lexend(600, 14),
@@ -59,7 +59,8 @@ const useStyle = () => {
       },
       plusIconContainer: {
         cursor: "pointer",
-        width: 16, height: 20,
+        width: 16,
+        height: 20,
       },
       textInputStyle: {
         background: "#FFFFFF",
@@ -77,8 +78,7 @@ const useStyle = () => {
         borderRadius: 4,
         border: "1px solid #FFFFFF",
         height: 40,
-        width: "300px",
-        
+        width: "95%",
       },
       addContactContainer: {
         display: "flex",
