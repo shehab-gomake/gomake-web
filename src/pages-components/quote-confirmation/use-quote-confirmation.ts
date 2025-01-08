@@ -19,6 +19,7 @@ interface IProps {
 const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
   const router = useRouter();
   const { t } = useTranslation();
+  const direction = t("direction");
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(
@@ -125,6 +126,10 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
     (item) => item.value === documentType
   )?.label;
 
+  const capitalizeFirstLetter = (text) => {
+    return text?.charAt(0).toUpperCase() + text.slice(1);
+  };
+
   return {
     getQuoteConfirmation,
     checkedItems,
@@ -134,6 +139,8 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
     getTempUserToken,
     quoteConfirm,
     documentTitle,
+    direction,
+    capitalizeFirstLetter,
   };
 };
 
