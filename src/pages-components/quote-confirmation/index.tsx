@@ -5,12 +5,8 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import { QuoteNewPageWidget } from "../quote-new/quote";
 import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 import { useQuoteConfirmation } from "./use-quote-confirmation";
-import {
-  updateTempUserTokenStorage,
-  updateTokenStorage,
-} from "@/services/storage-data";
+import { updateTempUserTokenStorage } from "@/services/storage-data";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { adaptPaddingRight } from "@/utils/adapter";
 
 interface IProps {
   isPrePaymentPage?: boolean;
@@ -31,6 +27,7 @@ const QuoteConfirmationPageWidget = ({
     direction,
     capitalizeFirstLetter,
   } = useQuoteConfirmation({ documentType });
+
   const { classes } = useStyle({ direction });
 
   useEffect(() => {
