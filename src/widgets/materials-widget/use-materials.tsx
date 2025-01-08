@@ -148,6 +148,7 @@ const useMaterials = (isAdmin: boolean) => {
   const [selectedMaterialCategory, setSelectedMaterialCategory] =
     useState<any>();
   const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
+
   const onSelectCategory = (category: string) => {
     setIsFirstTime(false);
     setSelectedMaterialCategory(category);
@@ -162,6 +163,7 @@ const useMaterials = (isAdmin: boolean) => {
     setMaterialFilter([]);
     setPageNumber(1);
   };
+
   const onDeleteCategory = async (categoryKey) => {
     const callBack = (res) => {
       if (res.success) {
@@ -474,6 +476,7 @@ const useMaterials = (isAdmin: boolean) => {
     onClickCloseDeleteTableRowWhenHaveMoreSupplierModal,
     toggleIsActive,
     selectedMaterialCategory,
+    setSelectedMaterialCategory,
   };
 };
 
