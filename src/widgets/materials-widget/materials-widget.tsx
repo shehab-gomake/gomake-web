@@ -45,13 +45,21 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const pageSize = 14;
   const activeFilter = useRecoilValue(activeFilterState);
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
-  const { openPriceModal, onClickClosePriceModal, updateProfitProfileProductHidden } = useTableCellData(props.isAdmin);
+  const {
+    openPriceModal,
+    onClickClosePriceModal,
+    updateProfitProfileProductHidden,
+  } = useTableCellData(props.isAdmin);
   const setOpenAddCategoryModal = useSetRecoilState(openAddCategoryModalState);
-  const changeEditCategoryModalState = useSetRecoilState(isEditCategoryModalState);
-  const changeDuplicateCategoryModalState = useSetRecoilState(isDuplicateCategoryModalState);
+  const changeEditCategoryModalState = useSetRecoilState(
+    isEditCategoryModalState
+  );
+  const changeDuplicateCategoryModalState = useSetRecoilState(
+    isDuplicateCategoryModalState
+  );
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const flag = useRecoilValue(flagState);
-  const { productList } = useAllProductsDropDownList()
+  const { productList } = useAllProductsDropDownList();
   const {
     materialCategory,
     materialType,
@@ -82,6 +90,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     materialName,
     toggleIsActive,
     selectedMaterialCategory,
+    setSelectedMaterialCategory,
   } = useMaterials(props.isAdmin);
 
   const subCategory = materialCategories.find(
@@ -91,32 +100,36 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const materialsSteps: StepType[] = [
     {
       selector: '[data-tour="materialsCategories"]',
-      content: 'Here, you can navigate between sheet types and add new types as needed.',
-      position: 'right',
-
+      content:
+        "Here, you can navigate between sheet types and add new types as needed.",
+      position: "right",
     },
     {
       selector: '[data-tour="materialsActions"]',
-      content: 'Click on the menu to discover all options: Edit price, Update all selected prices by percentage, Change currency, Add and duplicate new, and more',
-      position: 'left',
+      content:
+        "Click on the menu to discover all options: Edit price, Update all selected prices by percentage, Change currency, Add and duplicate new, and more",
+      position: "left",
       styles: {
         maskWrapper: (base) => ({ ...base, zIndex: 1 }),
       },
     },
     {
       selector: '[data-tour="menuMachines"]',
-      content: 'Take your time to explore and discover all materials later. Now, let\'s proceed to view the list of machines.\n Please press "Machines" in the bar.',
-      position: 'left',
+      content:
+        'Take your time to explore and discover all materials later. Now, let\'s proceed to view the list of machines.\n Please press "Machines" in the bar.',
+      position: "left",
       styles: {
         maskWrapper: (base) => ({ ...base, zIndex: 1000000 }),
       },
     },
-  ]
-  const { } = useGoMakeTour(materialsSteps, []);
+  ];
+
+  const {} = useGoMakeTour(materialsSteps, []);
+
   const Side = () => (
     <Stack direction={"column"} gap={"10px"}>
       <SideList
-        data-tour={'materialsCategories'}
+        data-tour={"materialsCategories"}
         list={materialsCategoriesList()}
         selectedItem={materialCategory?.toString()}
         onSelect={onSelectCategory}
@@ -126,9 +139,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         <Stack style={classes.buttonsContainerStyle}>
           <PrimaryButton
             onClick={() => {
-              changeEditCategoryModalState(false)
-              changeDuplicateCategoryModalState(false)
-              setOpenAddCategoryModal(true)
+              changeEditCategoryModalState(false);
+              changeDuplicateCategoryModalState(false);
+              setOpenAddCategoryModal(true);
             }}
             variant={"contained"}
           >
@@ -147,10 +160,15 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           (category) => category.categoryKey === materialCategory
         )
       ) {
+        const defaultCategory = materialCategories[0].categoryKey;
+
         replace({
           pathname: materialType.toString(),
-          query: { materialCategory: materialCategories[0].categoryKey },
+          query: { materialCategory: defaultCategory },
         });
+
+        setSelectedMaterialCategory(defaultCategory);
+        // onSelectCategory(defaultCategory); //  is setSelectedMaterialCategory sufficient to update or need onSelectCategory
       }
     }
   }, [materialCategories]);
@@ -164,7 +182,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   useEffect(() => {
     getMaterialCategories(materialType).then();
     getMaterialTableHeaders(materialType?.toString()).then();
-
   }, [materialType]);
   useEffect(() => {
     getPrintHouseMaterialCategorySuppliers(
@@ -185,7 +202,10 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           pageSize
         ).then();
       } else {
-        if (supplierId && selectedMaterialCategory?.toString() === materialCategory?.toString()) {
+        if (
+          supplierId &&
+          selectedMaterialCategory?.toString() === materialCategory?.toString()
+        ) {
           getMaterialCategoryData(
             materialType?.toString(),
             materialCategory?.toString(),
@@ -195,7 +215,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
             pageSize
           ).then();
         }
-
       }
     }
   }, [
@@ -233,11 +252,20 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         </div>
         <FiltersActionsBar isAdmin={props.isAdmin} subCategory={subCategory} />
       </div>
-      <SideBarContainer sideDataTour={'materialsCategories'} bodyDataTour={'materialsTableData'} side={Side()} subHeader={""}>
+      <SideBarContainer
+        sideDataTour={"materialsCategories"}
+        bodyDataTour={"materialsTableData"}
+        side={Side()}
+        subHeader={""}
+      >
         {materialCategory && (
-          <Stack justifyContent={"space-between"} gap={2} display={"flex"} height={"100%"}>
-            <div >
-
+          <Stack
+            justifyContent={"space-between"}
+            gap={2}
+            display={"flex"}
+            height={"100%"}
+          >
+            <div>
               {materialCategoryData.length > 0 ? (
                 <Stack display={"grid"}>
                   <PrimaryTable
@@ -255,8 +283,8 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                     headers={tableHeadersNew()}
                   />
                 </Stack>
-              ) : (
-                !props.isAdmin ? (<div style={classes.noData}>
+              ) : !props.isAdmin ? (
+                <div style={classes.noData}>
                   {t("materials.sheetPaper.supplierAddedSheetYet")}
                   <span
                     style={classes.noDataSpan}
@@ -266,7 +294,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                   >
                     {t("materials.sheetPaper.pleaseAddNow")}
                   </span>
-                </div>) : <></>
+                </div>
+              ) : (
+                <></>
               )}
             </div>
             <div style={{ marginBottom: "5px" }}>
@@ -302,13 +332,21 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         hideIcon
         title={t("materials.modals.deleteModalTitle")}
         yesBtn={t("navigationButtons.delete")}
-        noBtn={selectedTableRow?.isActive
-          ? t("remainWords.convertToInactive")
-          : t("remainWords.convertToActive")}
+        noBtn={
+          selectedTableRow?.isActive
+            ? t("remainWords.convertToInactive")
+            : t("remainWords.convertToActive")
+        }
         openModal={openDeleteTableRowWhenHaveMoreSupplierModal}
         onClose={onClickCloseDeleteTableRowWhenHaveMoreSupplierModal}
         onClickYes={() => onDeleteCategoryRow(selectedTableRow?.id)}
-        onClickNo={() => toggleIsActive(selectedTableRow?.id, "Active", selectedTableRow?.isActive)}
+        onClickNo={() =>
+          toggleIsActive(
+            selectedTableRow?.id,
+            "Active",
+            selectedTableRow?.isActive
+          )
+        }
       />
       {/* <GoMakeDeleteModal
         openModal={openPriceModal}
