@@ -555,7 +555,7 @@ const ActionContainerComponent = ({
                     }
                   </Stack>
                   {
-                    isNeedEmployee && <Divider orientation={"vertical"} flexItem />
+                    isNeedEmployee && source != EWorkSource.OUT && <Divider orientation={"vertical"} flexItem />
                   }
 
 
@@ -567,7 +567,7 @@ const ActionContainerComponent = ({
                     gap={"10px"}
                   >
                     {
-                      isNeedMaterial && (
+                      isNeedMaterial && source != EWorkSource.OUT && (
                         <>
                           {!chooseMaterial ? (
                             <Button
@@ -633,7 +633,7 @@ const ActionContainerComponent = ({
                     }
                   </Stack>
                   {
-                    isNeedMaterial && <Divider orientation={"vertical"} flexItem />
+                    isNeedMaterial && source != EWorkSource.OUT && <Divider orientation={"vertical"} flexItem />
                   }
 
                   <Stack
