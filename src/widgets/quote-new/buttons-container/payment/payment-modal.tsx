@@ -52,6 +52,7 @@ const PaymentModal = ({ openModal, onClose, selectedTab }: IPaymentModalProps) =
                     handleSecondButtonClick={handleSecondButtonClick}
                     handleThirdButtonClick={handleThirdButtonClick}
                     handleSaveAndClose={handleSaveAndClose}
+                    documentItemValue={documentItemValue}
                 />
         },
         documentItemValue?.isBitAccountExist && { title: t("payment.bit"), component: <BitTab /> }
