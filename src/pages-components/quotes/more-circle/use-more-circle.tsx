@@ -11,22 +11,29 @@ import { JobsIcon } from "./icons/jobs";
 import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { PaymentIcon } from "./icons/payment";
 import { useStyle } from "@/pages-components/quotes/more-circle/style";
 import { useRouter } from "next/router";
 import { TrackingIcon } from "./icons/tracking";
 import { UnLockIcon } from "./icons/unlock";
-import { useSetRecoilState } from "recoil";
+import {useRecoilState, useSetRecoilState} from "recoil";
 import { isSelectedCLoseAsDeleveryNoteState } from "@/pages/customers/customer-states";
 import { PauseIcon } from "@/icons/pause-icon";
 import { ResumeIcon } from "@/icons/resume-icon";
 import { PayIcon } from "./icons/pay";
 import { StartProductionIcon } from "./icons/start-productions";
+import {printHouseProfile} from "@/store/print-house-profile";
+import {addBoardMissionsToFileUploaderApi} from "@/services/api-service/board-missions/board-missions-table";
+import {fileUploaderConnectionIdState, openFileUploaderList, pinFileUploaderState} from "@/store/file-uploader-state";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
+  const isSendPaymentToClient = CheckPermission(Permissions.SHOW_PRODUCTION_FLOOR);
+  const [companyProfile] = useRecoilState(printHouseProfile);
+  const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
+  const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
+  const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
 
   const getMenuList = ({
     t,
@@ -71,7 +78,19 @@ const useMoreCircle = () => {
     const setIsSelectedCLoseAsDeleveryNote = useSetRecoilState(
       isSelectedCLoseAsDeleveryNoteState
     );
-
+    const addOrderBoardaMissionsToFileUploader = async (orderId) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          setOpenFileUploader(true);
+          setShowFileUploader(true);
+        } else {
+        }
+      };
+      await addBoardMissionsToFileUploaderApi(callApi, callBack, {
+        orderId: orderId,
+        connectionId: connectionId,
+      });
+    };
     const isQuote = documentType === DOCUMENT_TYPE.quote;
     const isOrder = documentType === DOCUMENT_TYPE.order;
     const isDeliveryNote = documentType === DOCUMENT_TYPE.deliveryNote;
@@ -376,6 +395,12 @@ const useMoreCircle = () => {
         onClick: () => onClickPauseOrResume(quote?.id),
         icon: <ResumeIcon />,
         name: t("sales.quote.resume"),
+      },
+      !!companyProfile.filesApiAddress && {
+        condition: isSendPaymentToClient,
+        name: t("fileUploader.uploadFile"),
+        icon: <PDFIcon />,
+        onclick: () => addOrderBoardaMissionsToFileUploader('orderId'),
       },
     ];
   };
