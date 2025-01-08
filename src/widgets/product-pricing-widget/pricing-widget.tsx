@@ -126,7 +126,7 @@ const PricingWidget = ({
         <Stack direction={"row"} gap={"10px"}>
           <PermissionCheck userPermission={Permissions.CUSTOMIZE_WORKFLOW}>
             {
-              isHasSubWorkFlowsOrProductTypeActions &&
+              isHasSubWorkFlowsOrProductTypeActions && view === EPricingViews.SELECTED_WORKFLOW &&
               <div style={classes.autoCompleteSelectedSectionName} onClick={(e) => {
                 handleOpenSectionNameListMenu(e)
                 setIsUnderlined(false)
@@ -135,7 +135,7 @@ const PricingWidget = ({
                 <ArrowDropDownIcon />
               </div>
             }
-            {!isHasSubWorkFlowsOrProductTypeActions &&
+            {!isHasSubWorkFlowsOrProductTypeActions && view === EPricingViews.SELECTED_WORKFLOW &&
               <div style={classes.autoCompleteSelectedSectionName} onClick={(e) => {
                 handleOpenActionsListMenu(e)
                 setIsUnderlined(true)
