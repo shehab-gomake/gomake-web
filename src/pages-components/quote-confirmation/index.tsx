@@ -9,6 +9,8 @@ import {
   updateTempUserTokenStorage,
   updateTokenStorage,
 } from "@/services/storage-data";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { adaptPaddingRight } from "@/utils/adapter";
 
 interface IProps {
   isPrePaymentPage?: boolean;
@@ -19,7 +21,6 @@ const QuoteConfirmationPageWidget = ({
   isPrePaymentPage = false,
   documentType,
 }: IProps) => {
-  const { classes } = useStyle();
   const [isMobile, setIsMobile] = useState(false);
   const {
     getTempUserToken,
@@ -27,8 +28,10 @@ const QuoteConfirmationPageWidget = ({
     getQuoteConfirmation,
     quoteConfirm,
     documentTitle,
+    direction,
+    capitalizeFirstLetter,
   } = useQuoteConfirmation({ documentType });
-
+  const { classes } = useStyle({ direction });
 
   useEffect(() => {
     updateScreenWidth();
@@ -65,17 +68,22 @@ const QuoteConfirmationPageWidget = ({
           <img
             src={quoteConfirm.printHouseLogo}
             alt="Print House Logo"
-            style={{
-              width: 50,
-              height: 50,
-              objectFit: "contain",
-              borderRadius: "8px",
-              padding: "4px",
-              backgroundColor: "#8283be",
-            }}
+            style={classes.printHouseLogo}
           />
         ) : (
           <GoMakeIcon />
+        )}
+        {isPrePaymentPage && (
+          <span
+            style={{
+              ...classes.printHouseName,
+              ...(isMobile
+                ? FONT_FAMILY.Inter(600, 16)
+                : FONT_FAMILY.Inter(600, 18)),
+            }}
+          >
+            {capitalizeFirstLetter(quoteConfirm?.printHouseName)}
+          </span>
         )}
       </div>
       {isMobile ? (
