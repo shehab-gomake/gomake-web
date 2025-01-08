@@ -181,6 +181,8 @@ const useQuoteNew = ({
   const openCancelBtn = Boolean(anchorElCancelBtn);
   const openSettingMenu = Boolean(anchorElSettingMenu);
   const isQuote = docType === DOCUMENT_TYPE.quote;
+  const isOrder = docType === DOCUMENT_TYPE.order;
+
   const isDeliveryNote =
     docType === DOCUMENT_TYPE.deliveryNote ||
     docType === DOCUMENT_TYPE.deliveryNoteRefund;
@@ -1085,7 +1087,7 @@ const useQuoteNew = ({
             isSelected: false,
             productID: deliveryItem?.productID,
             productType: 1,
-            calculationStatus:null
+            calculationStatus: null,
           };
           updatedQuoteItemValue.documentItems = [
             ...updatedQuoteItemValue.documentItems,
@@ -2215,6 +2217,8 @@ const useQuoteNew = ({
     openQuickDuplicateModal,
     quoteItem,
     handleSendUsingWhatsAppWeb,
+    isOrder,
+    isQuote,
   };
 };
 
