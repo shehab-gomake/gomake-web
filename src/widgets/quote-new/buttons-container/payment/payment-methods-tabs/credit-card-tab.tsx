@@ -5,6 +5,7 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { GoMakeAutoComplate } from "@/components";
+import { useEffect } from "react";
 
 const CreditCardTab = ({
     firstWidget,
@@ -13,10 +14,20 @@ const CreditCardTab = ({
     handleFirstButtonClick,
     handleSecondButtonClick,
     handleThirdButtonClick,
-    handleSaveAndClose
+    handleSaveAndClose,
+    documentItemValue
 }) => {
+
     const { classes } = useStyle();
     const { getCardNumberProps, getCVCProps } = usePaymentInputs();
+    useEffect(() => {
+        if (documentItemValue?.isUsePinPad) {
+            handleThirdButtonClick();
+        }
+        else {
+            handleFirstButtonClick();
+        }
+    }, [documentItemValue?.isUsePinPad]);
     const {
         t,
         handleCardNumberChange,
@@ -36,9 +47,15 @@ const CreditCardTab = ({
         cardTransactionsOptions,
         handleChooseExistingCard
     } = usePaymentMethodsTabs();
-
+    useEffect(() => {
+        handleChangeInputs("customerName", documentItemValue?.creditCardContactFirstName)
+        handleChangeInputs("lastName", documentItemValue?.creditCardContactLastName)
+        handleChangeInputs("phoneNumber", documentItemValue?.creditCardContactPhone)
+        handleChangeInputs("customerEmail", documentItemValue?.creditCardContactEmail)
+        handleChangeInputs("transactionSum", documentItemValue?.creditCardTotal)
+    }, [firstWidget, secondWidget, thirdWidget,]);
     return (
-        <div style={{ display: "flex", flexDirection: "column" as "column", gap: "10px" , paddingTop: cardTransactionsOptions.length > 0 ? "0px" : "10px"}} >
+        <div style={{ display: "flex", flexDirection: "column" as "column", gap: "10px", paddingTop: cardTransactionsOptions.length > 0 ? "0px" : "10px" }} >
             {
                 cardTransactionsOptions.length > 0 && !isTransacted && <div style={{ width: "75%", alignSelf: "center" }}>
                     <GoMakeAutoComplate
@@ -89,6 +106,7 @@ const CreditCardTab = ({
                                 value={totalCreditCard}
                                 onChange={(e) => { handleTotalCreditCardChange(e.target.value); handleChangeInputs("transactionSum", e.target.value) }}
                                 readOnly={isTransacted}
+                                type="number"
                             />
                         </div>
                         <div style={classes.creditCardSecondInputsContainer}>
@@ -125,7 +143,7 @@ const CreditCardTab = ({
                                     key={"transactionType"}
                                     value={transactionTypes.find(
                                         (option) => option.value === creditCard?.transactionType
-                                      )}
+                                    )}
                                     style={classes.selectInputs}
                                     options={transactionTypes}
                                     placeholder={t("payment.transactionssType")}
@@ -145,7 +163,7 @@ const CreditCardTab = ({
                                 </div>
                             )}
                         </div>
-                    </div> 
+                    </div>
                 }
                 {
                     secondWidget &&
@@ -201,7 +219,7 @@ const CreditCardTab = ({
                                     key={"transactionType-2"}
                                     value={transactionTypes.find(
                                         (option) => option.value === creditCard?.transactionType
-                                      )}
+                                    )}
                                     style={classes.selectInputs}
                                     options={transactionTypes}
                                     placeholder={t("payment.transactionType")}
@@ -223,11 +241,11 @@ const CreditCardTab = ({
                         </div>
                     </div>
                 }
-                {!secondWidget && <PrimaryButton variant="contained" style={{ width: "75%", padding: "4px" }} onClick={() => onClickMakePayment(handleSaveAndClose , thirdWidget)} >{t('payment.makePayment')}</PrimaryButton>}
+                {!secondWidget && <PrimaryButton variant="contained" style={{ width: "75%", padding: "4px" }} onClick={() => onClickMakePayment(handleSaveAndClose, thirdWidget)} >{t('payment.makePayment')}</PrimaryButton>}
                 <div style={{ display: "flex", flexDirection: "column", width: "75%" }}>
                     {!firstWidget && <SecondaryButton style={classes.creditButtons} onClick={handleFirstButtonClick}>{t('payment.manualCreditCard')}</SecondaryButton>}
                     {!secondWidget && <SecondaryButton style={classes.creditButtons} onClick={handleSecondButtonClick}>{t('payment.creditDetailsWithoutSwipe')}</SecondaryButton>}
-                    {!thirdWidget && <SecondaryButton style={classes.creditButtons} onClick={handleThirdButtonClick}>{t('payment.processingViaPinPad')}</SecondaryButton>}
+                    {!thirdWidget && documentItemValue?.isUsePinPad && <SecondaryButton style={classes.creditButtons} onClick={handleThirdButtonClick}>{t('payment.processingViaPinPad')}</SecondaryButton>}
                 </div>
             </div>
             }
