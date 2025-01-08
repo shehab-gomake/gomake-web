@@ -1,6 +1,8 @@
+import { adaptPaddingRight } from "@/utils/adapter";
+import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = () => {
+const useStyle = ({ direction }) => {
   const classes = useMemo(() => {
     return {
       firstContainer: {
@@ -17,7 +19,7 @@ const useStyle = () => {
         display: "flex",
         background: "#F4F1F6",
         // padding: "22px 80px",
-        padding: "30px 120px",
+        padding: "30px 110px",
         alignItems: "center",
       },
       iconMobileStyle: {
@@ -26,9 +28,21 @@ const useStyle = () => {
         display: "flex",
         background: "#F4F1F6",
         alignItems: "center",
-        // padding: "22px 0px",
-        padding: "35px 0px",
-        justifyContent: "center",
+        padding: "25px 20px",
+        // padding: "35px 0px",
+        // justifyContent: "center",
+      },
+      printHouseLogo: {
+        width: 50,
+        height: 50,
+        objectFit: "contain" as "contain",
+        borderRadius: "12px",
+        padding: "4px",
+        // backgroundColor: "#8283be",
+      },
+      printHouseName: {
+        color: "#000000",
+        ...adaptPaddingRight(direction, 8),
       },
     };
   }, []);

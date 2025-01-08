@@ -26,7 +26,7 @@ const useAuthLayoutHook = (
   permissionEnumValue?: Permissions,
   allowAnonymous?: boolean
 ) => {
-  const { isAuth } = useGomakeAuth(permissionEnumValue, allowAnonymous);
+  const { isAuth, isLanguageUpdated } = useGomakeAuth(permissionEnumValue, allowAnonymous);
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
@@ -402,9 +402,9 @@ const useAuthLayoutHook = (
 
   useEffect(() => {
     if (typeof isAuth === "boolean") {
-      setCanAccess(isAuth);
+      setCanAccess(isAuth && isLanguageUpdated);
     }
-  }, [isAuth]);
+  }, [isAuth, isLanguageUpdated]);
 
   // const getUserProfile = async () => {
   //   const res = await callApi("GET", "/v1/get-print-house-profile");

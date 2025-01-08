@@ -10,66 +10,82 @@ import { useAddressWidget } from "./use-address-widget";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 interface IProps {
-    isUpdate?: boolean;
-    documentType: DOCUMENT_TYPE;
+  isUpdate?: boolean;
+  documentType: DOCUMENT_TYPE;
 }
-const AddressModal = ({ isUpdate , documentType }: IProps) => {
-    const { classes } = useStyle();
-    const { t,
-        onChangeInputs,
-        addressState,
-        openModal,
-        setOpenModal,
-        addressSelect,
-        selectedAddress,
-        isNewAddressState,
-        onClickAddAddress,
-        onClickAddNewAddress,
-        updateClientAddress,
-        setSelectedAddress } = useAddressWidget(documentType);
-    const buttonLabel = isUpdate ? t("sales.quote.save") : t("sales.quote.add")
+const AddressModal = ({ isUpdate, documentType }: IProps) => {
+  const { classes } = useStyle();
+  const {
+    t,
+    onChangeInputs,
+    addressState,
+    openModal,
+    setOpenModal,
+    addressSelect,
+    selectedAddress,
+    isNewAddressState,
+    onClickAddAddress,
+    onClickAddNewAddress,
+    updateClientAddress,
+    setSelectedAddress,
+  } = useAddressWidget(documentType);
+  const buttonLabel = isUpdate ? t("sales.quote.save") : t("sales.quote.add");
 
-    const handleClick = () => {
-        if (isNewAddressState) {
-            onClickAddNewAddress(addressState, isUpdate);
-        } else if (isUpdate) {
-            updateClientAddress(addressState);
-        } else {
-            onClickAddAddress(addressState);
-        }
-    };
+  const handleClick = () => {
+    if (isNewAddressState) {
+      onClickAddNewAddress(addressState, isUpdate);
+    } else if (isUpdate) {
+      updateClientAddress(addressState);
+    } else {
+      onClickAddAddress(addressState);
+    }
+  };
 
-    return (
-        <div>
-            <GoMakeModal
-                insideStyle={classes.insideStyle}
-                openModal={openModal}
-                onClose={() => { setOpenModal(false); }}
-                withClose={false}
-            >
-                <Stack style={classes.stackStyle}>
-                    <div style={classes.fieldContainer}>
-                        <h3 style={classes.labelStyle}>{t("sales.quote.address")}</h3>
-                        <div style={{padding: '6.5px 14px'}}>
-                            <GoMakeAutoComplate
-                                disableClearable={true}
-                                options={addressSelect}
-                                value={selectedAddress}
-                                style={classes.autoComplateStyle}
-                                placeholder={t("sales.quote.address")}
-                                onChange={(e: any, value: any) => {
-                                    setSelectedAddress(value);
-                                }}
-                            /></div>
-                    </div>
-                    {
-                        addressInputs(addressState, isNewAddressState).map(item => <Stack width={"330px"}><FormInput input={item as IInput} changeState={onChangeInputs} error={false} readonly={false} /></Stack>)
-                    }
-                    <SecondaryButton variant="contained" onClick={handleClick} style={classes.saveBtn}>{buttonLabel}</SecondaryButton>
-                </Stack>
-            </GoMakeModal>
-        </div>
-    );
+  return (
+    <div>
+      <GoMakeModal
+        insideStyle={classes.insideStyle}
+        openModal={openModal}
+        onClose={() => {
+          setOpenModal(false);
+        }}
+        withClose={false}
+      >
+        <Stack style={classes.stackStyle}>
+          <div style={classes.fieldContainer}>
+            <h3 style={classes.labelStyle}>{t("sales.quote.address")}</h3>
+            <GoMakeAutoComplate
+              disableClearable={true}
+              options={addressSelect}
+              value={selectedAddress}
+              style={classes.autoComplateStyle}
+              placeholder={t("sales.quote.address")}
+              onChange={(e: any, value: any) => {
+                setSelectedAddress(value);
+              }}
+            />
+          </div>
+          {addressInputs(addressState, isNewAddressState).map((item) => (
+            <Stack width={"330px"}>
+              <FormInput
+                input={item as IInput}
+                changeState={onChangeInputs}
+                error={false}
+                readonly={false}
+              />
+            </Stack>
+          ))}
+          <SecondaryButton
+            variant="contained"
+            onClick={handleClick}
+            style={classes.saveBtn}
+          >
+            {buttonLabel}
+          </SecondaryButton>
+        </Stack>
+      </GoMakeModal>
+    </div>
+  );
 };
 
 export { AddressModal };

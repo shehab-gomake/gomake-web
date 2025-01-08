@@ -289,35 +289,50 @@ const SettingsWidget = ({
             />
           </div>
         </div>
-        <div style={clasess.itemGropupsContainer}>
+        <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.groups")}
+            {t("products.addProduct.admin.externalCode")}
           </div>
-          <div style={{ width: "100%" }}>
-            {allGroups?.length > 0 && (
-              <GoMakeAutoComplate
-                options={allGroups}
-                placeholder={t("products.addProduct.admin.groups")}
-                style={clasess.multiSelectStyle}
-                multiple
-                onChange={(e: any, value: any) => {
-                  onChangeStateProduct(
-                    "groups",
-                    value?.map((item: any) => item?.id)
-                  );
-                }}
-                value={productState?.groups?.map((item: any) => {
-                  const group = allGroups?.find(
-                    (group: any) => group?.id === item
-                  );
-                  return {
-                    label: group?.label,
-                    id: group?.id,
-                  };
-                })}
-              />
-            )}
+          <div>
+            <GomakeTextInput
+              style={clasess.textInputStyle}
+              placeholder={t("products.addProduct.admin.externalCode")}
+              onChange={(e: any) => {
+                onChangeStateProduct("externalCode", e.target.value);
+              }}
+              value={productState?.externalCode}
+            />
           </div>
+        </div>
+      </div>
+      <div style={clasess.itemGropupsContainer}>
+        <div style={clasess.labelTitleStyle}>
+          {t("products.addProduct.admin.groups")}
+        </div>
+        <div style={{ width: "100%" }}>
+          {allGroups?.length > 0 && (
+            <GoMakeAutoComplate
+              options={allGroups}
+              placeholder={t("products.addProduct.admin.groups")}
+              style={clasess.multiSelectStyle}
+              multiple
+              onChange={(e: any, value: any) => {
+                onChangeStateProduct(
+                  "groups",
+                  value?.map((item: any) => item?.id)
+                );
+              }}
+              value={productState?.groups?.map((item: any) => {
+                const group = allGroups?.find(
+                  (group: any) => group?.id === item
+                );
+                return {
+                  label: group?.label,
+                  id: group?.id,
+                };
+              })}
+            />
+          )}
         </div>
       </div>
 

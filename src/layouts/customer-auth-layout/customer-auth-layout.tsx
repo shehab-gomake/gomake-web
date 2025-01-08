@@ -1,11 +1,11 @@
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilValue, useSetRecoilState} from "recoil";
 import { IAuthLayout } from "./interfaces";
 import { LeftSideLayout } from "./left-side";
 import { useStyle } from "./style";
 import { useAuthLayoutHook } from "./use-auth-layout-hook";
 import { HeaderWidget } from "@/widgets/header";
 import { navStatusState } from "@/store/nav-status";
-import { hoverStatusState } from "@/store";
+import {hoverStatusState} from "@/store";
 import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
 import { GoMakeModal } from "@/components";
 import { useHtmlTour } from "@/layouts/customer-auth-layout/use-html-tour";
@@ -22,7 +22,7 @@ const CustomerAuthLayout = ({
     disableHeaderSideMenu,
     className
 }: IAuthLayout) => {
-    const { canAccess } = useAuthLayoutHook(permissionEnumValue, allowAnonymous);
+    const { canAccess,  } = useAuthLayoutHook(permissionEnumValue, allowAnonymous);
     const { classes } = useStyle({
         isHover: false,
         navStatus: null,
@@ -46,7 +46,10 @@ const CustomerAuthLayout = ({
             <>
                 {canAccess && <div style={{ ...classes.bodyContainer, backgroundColor: '#FFF' }}>{children}</div>}
             </> :
-            <div style={classes.container}>
+            <>
+                {
+                canAccess &&
+                <div style={classes.container}>
                 <LeftSideLayout customGap={customGap} />
                 <div
 
@@ -72,6 +75,8 @@ const CustomerAuthLayout = ({
                     />
                 </GoMakeModal>
             </div>
+                }
+            </>
     );
 };
 

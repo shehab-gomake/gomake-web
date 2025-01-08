@@ -38,6 +38,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
     alertSuccessAdded,
     alertFaultAdded,
     alertFaultGetData,
+    alertRequiredFields,
   } = useSnackBar();
   const [clientAddressValue, setClientAddressValue] =
     useRecoilState<any>(clientAddressState);
@@ -123,16 +124,22 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         const requestBody = {
           documentType: docType,
           ...(router?.query.orderId && { orderId: router.query.orderId }),
-          ...(router?.query.deliveryNoteId && { deliveryNoteID: router.query.deliveryNoteId }),
-          ...(router?.query.documentToDuplicateId && { documentToDuplicateId: router.query.documentToDuplicateId }),
-          ...(router?.query.documentId && { documentId: router.query.documentId }),
+          ...(router?.query.deliveryNoteId && {
+            deliveryNoteID: router.query.deliveryNoteId,
+          }),
+          ...(router?.query.documentToDuplicateId && {
+            documentToDuplicateId: router.query.documentToDuplicateId,
+          }),
+          ...(router?.query.documentId && {
+            documentId: router.query.documentId,
+          }),
           ...(router?.query.budgetId && { budgetId: router.query.budgetId }),
         };
 
         const res = await callApi(
           EHttpMethod.POST,
           `/v1/erp-service/documents/get-new-document-data`,
-          requestBody,
+          requestBody
         );
 
         if (res?.success) {
@@ -183,7 +190,11 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
                   <div
                     style={
                       _childsDocumentItemsMapping
-                        ? { height: "100%", overflowY: "scroll", paddingRight: 5 }
+                        ? {
+                            height: "100%",
+                            overflowY: "scroll",
+                            paddingRight: 5,
+                          }
                         : { height: 36, overflowY: "scroll", paddingRight: 5 }
                     }
                   >
@@ -205,10 +216,16 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           }
         };
 
-        await getDocumentApi(callApi, callBack, {
-          documentType: docType,
-          Id: router?.query?.Id,
-        }, false, newRequestAbortController);
+        await getDocumentApi(
+          callApi,
+          callBack,
+          {
+            documentType: docType,
+            Id: router?.query?.Id,
+          },
+          false,
+          newRequestAbortController
+        );
       }
     } catch (error) {
       if (error.name === "AbortError") {
@@ -343,6 +360,10 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
 
   const onClickAddNewAddress = useCallback(
     async (item: any, isUpdate: boolean) => {
+      if (!item?.addressId || !item?.city) {
+        alertRequiredFields();
+        return;
+      }
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/crm-service/customer/create-address`,
@@ -360,11 +381,11 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         const result = await getAllClientAddress();
         isUpdate
           ? updateClientAddress(
-            result.find((item) => item.id === res.data.data.result)
-          )
+              result.find((item) => item.id === res.data.data.result)
+            )
           : onClickAddAddress(
-            result.find((item) => item.id === res.data.data.result)
-          );
+              result.find((item) => item.id === res.data.data.result)
+            );
       } else {
         alertFaultAdded();
       }
@@ -373,6 +394,10 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   );
 
   const updateClientAddress = async (item: any) => {
+    if (!item?.city) {
+      alertRequiredFields();
+      return;
+    }
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       const updatedAddresses = updatedQuoteItemValue.documentAddresses.map(
@@ -420,6 +445,11 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   };
 
   const onClickAddAddress = async (item: any) => {
+    if (!item?.city) {
+      alertRequiredFields();
+      return;
+    }
+
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       if (!Array.isArray(updatedQuoteItemValue.documentAddresses)) {

@@ -49,7 +49,8 @@ function KanbanColumnComponent({ status, boardsMissions }: IProps) {
             ) ||
             board?.automatedTags?.some((tag) =>
               `${tag.toLowerCase()}`.includes(search.toLowerCase())
-            )
+            ) ||
+            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
         )
       : boardsMissions;
   }, [boardsMissions, search]);
