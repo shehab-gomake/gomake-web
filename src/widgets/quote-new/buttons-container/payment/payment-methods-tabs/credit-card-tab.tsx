@@ -53,7 +53,7 @@ const CreditCardTab = ({
         handleChangeInputs("phoneNumber", documentItemValue?.creditCardContactPhone)
         handleChangeInputs("customerEmail", documentItemValue?.creditCardContactEmail)
         handleChangeInputs("transactionSum", documentItemValue?.creditCardTotal)
-    }, []);
+    }, [firstWidget, secondWidget, thirdWidget,]);
     return (
         <div style={{ display: "flex", flexDirection: "column" as "column", gap: "10px", paddingTop: cardTransactionsOptions.length > 0 ? "0px" : "10px" }} >
             {
@@ -106,6 +106,7 @@ const CreditCardTab = ({
                                 value={totalCreditCard}
                                 onChange={(e) => { handleTotalCreditCardChange(e.target.value); handleChangeInputs("transactionSum", e.target.value) }}
                                 readOnly={isTransacted}
+                                type="number"
                             />
                         </div>
                         <div style={classes.creditCardSecondInputsContainer}>
