@@ -2215,8 +2215,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
         });
 
-
-
         let temp2 = [...subProducts];
         const index2 = temp2.findIndex((item) => item.type === null);
         temp2[index2] = {
@@ -2232,7 +2230,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     });
   };
   useEffect(() => {
-    if (!subProducts) return; // Ensure subProducts is defined
+    if (!subProducts) return;
 
     let copySubProducts = cloneDeep(subProducts);
     const targetSubProduct = copySubProducts.find((item) => item.type === null);
@@ -2260,7 +2258,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setSubProducts(copySubProducts);
     }
   }, [deviceSize]);
-
+  console.log("subProducts", subProducts);
   useEffect(() => {
     if (deviceSize && deviceCategory) {
       getMaterialCategories();
@@ -3321,7 +3319,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               valueIds = defaultConfig.values[0];
             } else if (defaultConfig && defaultConfig.updateName) {
               valueToAdd = defaultConfig.updateName;
-              valueIds = defaultConfig.id;
+              valueIds = relatedParameter.parameterType === 12 ? valueToAdd : defaultConfig.id;
             } else if (
               relatedParameter.valuesConfigs &&
               relatedParameter.valuesConfigs.length === 1 &&
