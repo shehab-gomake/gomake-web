@@ -120,7 +120,7 @@ const GomakeTextInput = ({
         onChange(modifiedEvent);
     };
     const handleWheel = (event) => {
-        if (document.activeElement === event.target) {
+        if (document.activeElement === event.target && type === 'number') {
             event.target.blur();
         }
     };
