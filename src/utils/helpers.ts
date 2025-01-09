@@ -1,3 +1,5 @@
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ISetState } from "@/services/hooks/call-api.interface";
 import get from "lodash.get";
 
@@ -121,13 +123,18 @@ export const isValidCustomer = (
   customer,
   filteredContacts,
   filteredAddresses,
-  filteredUsers
+  filteredUsers,
+  CheckPreferenceValue
 ) => {
   const hasRequiredCustomerInfo =
     customer &&
     customer.name &&
     customer.clientTypeId &&
-    customer.buisnessNumber;
+    (!CheckPreferenceValue(
+      EPreferences.IS_BUSINESS_NUMBER_REQUIRED_IN_CUSTOMERS
+    ) ||
+      customer.buisnessNumber);
+
   if (!hasRequiredCustomerInfo) return false;
 
   // Helper function to validate an array of objects with a required property

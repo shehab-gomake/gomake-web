@@ -18,6 +18,7 @@ import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { emailRegex } from "@/utils/regex";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { getClientsGroupstApi } from "@/services/api-service/suppliers/suppliers-endpoints";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
 const useCustomerCard = ({
   t,
@@ -50,6 +51,7 @@ const useCustomerCard = ({
   const gomakeUser = useRecoilValue<any>(gomakeUserState);
   // const languagesOptions = useRecoilValue(languagesState);
   const languagesOptions = useRecoilValue(languageOptionsState);
+  const { CheckPreferenceValue } = usePrintHousePreferences();
 
   const customerTableHeaders = [
     t("customers.customerCode"),
@@ -218,7 +220,8 @@ const useCustomerCard = ({
         updatedCustomer,
         filteredContacts,
         filteredAddresses,
-        filteredUsers
+        filteredUsers,
+        CheckPreferenceValue
       )
     ) {
       addNewCustomer(updatedCustomer).then((x) => {
@@ -270,7 +273,8 @@ const useCustomerCard = ({
         updatedCustomer,
         filteredContacts,
         filteredAddresses,
-        filteredUsers
+        filteredUsers,
+        CheckPreferenceValue
       )
     ) {
       editCustomer(updatedCustomer, setCustomer).then((x) => {
