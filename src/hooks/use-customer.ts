@@ -24,7 +24,7 @@ const useCustomer = (
   const setUserProfile = useSetRecoilState(userProfileState);
   const setPrintHouseProfile = useSetRecoilState(printHouseProfile);
   const setPriceChangePercents = useSetRecoilState(priceChangePercentsState);
-
+  const [isLanguageUpdated, setIsLanguageUpdated] = useState<boolean>(false)
   const setUserType = useSetRecoilState<any>(userTypeState);
   const [adminsAutoComplate, setAdminsAutoComplate] = useState([]);
   const [permissions, setPermissions] = useRecoilState<any>(permissionsState);
@@ -71,7 +71,7 @@ const useCustomer = (
           "systemLanguage",
           validate?.data?.data?.customer?.systemLang
         );
-        i18n.changeLanguage(validate?.data?.data?.customer?.systemLang).then();
+        i18n.changeLanguage(validate?.data?.data?.customer?.systemLang, ()=>setIsLanguageUpdated(true)).then();
       }
       if (!!user?.redirectTo) {
         navigate(user?.redirectTo);
@@ -146,6 +146,7 @@ const useCustomer = (
     getPermission,
     setPermissions,
     validate,
+    isLanguageUpdated
   };
 };
 

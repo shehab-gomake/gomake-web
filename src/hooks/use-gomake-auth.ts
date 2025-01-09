@@ -5,7 +5,7 @@ import { useCustomer } from "./use-customer";
 
 const useGomakeAuth = (permissionEnumValue,allowAnonymous?:boolean) => {
 
-  const { user, validate } = useCustomer(permissionEnumValue,allowAnonymous);
+  const { user, validate, isLanguageUpdated } = useCustomer(permissionEnumValue,allowAnonymous);
   const [, setCanAccessvalue] = useRecoilState(canAccessState);
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
   const check = useCallback(async () => {
@@ -23,7 +23,7 @@ const useGomakeAuth = (permissionEnumValue,allowAnonymous?:boolean) => {
     check();
   }, []);
 
-  return { user, isAuth };
+  return { user, isAuth, isLanguageUpdated };
 };
 
 export { useGomakeAuth };
