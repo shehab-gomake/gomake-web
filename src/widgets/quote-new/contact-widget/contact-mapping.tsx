@@ -31,7 +31,6 @@ const ContactMapping = ({
   const [isUpdateContactEmail, setIsUpdateContactEmail] = useState(null);
   const [isUpdateContactMobile, setIsUpdateContactMobile] = useState(null);
   const [isConfirmation, setIsConfirmation] = useState(null);
-
   const [isEditingContactName, setIsEditingContactName] = useState(false);
   const [originalContactName, setOriginalContactName] = useState(
     item.contactName
@@ -43,11 +42,14 @@ const ContactMapping = ({
     item.contactPhone
   );
 
-  const enterEditMode = () => {
+  const enterContactNameEditMode = () => {
     setOriginalContactName(item.contactName);
+    setIsEditingContactName(true);
+  };
+
+  const enterEditContactMode = () => {
     setOriginalContactEmail(item.contactMail);
     setOriginalContactMobile(item.contactPhone);
-    setIsEditingContactName(true);
   };
 
   const onBlurContactName = async () => {
@@ -55,15 +57,13 @@ const ContactMapping = ({
   };
 
   const onBlurContactEmail = async (item) => {
-    if (item.contactMail === "") {
-      updateClientContact(item);
-      setIsUpdateContactEmail(null);
-    } else if (!isValidEmail(item.contactMail)) {
+    if (item.contactMail === "" || !isValidEmail(item.contactMail)) {
       alertFault("Invalid email address format or missing contact email");
-    } else {
-      updateClientContact(item);
-      setIsUpdateContactEmail(null);
+      changeItems(index, "contactMail", originalContactEmail);
+    } else if (item.contactMail !== originalContactEmail) {
+      await updateClientContact(item);
     }
+    setIsUpdateContactEmail(null);
   };
 
   const onBlurContactMobile = async (item) => {
@@ -90,7 +90,6 @@ const ContactMapping = ({
     setIsEditingContactName(false);
   };
 
-  //!here
   return (
     <div style={classes.businessContainerStyle}>
       <Stack direction={"row"} alignItems={"center"}>
@@ -152,9 +151,8 @@ const ContactMapping = ({
             }}
           />
         )}
-        {canEditContacts && !isEditingContactName && (
-          <IconButton onClick={enterEditMode}>
-            {/* <EditIcon /> */}
+        {!isQuoteConfirmation && canEditContacts && !isEditingContactName && (
+          <IconButton onClick={enterContactNameEditMode}>
             <EditUnderLineIcon stroke={"#ed028c"} />
           </IconButton>
         )}
@@ -185,9 +183,21 @@ const ContactMapping = ({
         label={t("sales.quote.contactEmail")}
         onBlur={() => onBlurContactEmail(item)}
         isUpdate={canEditContacts && isUpdateContactEmail}
-        setIsUpdate={
-          isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactEmail
-        }
+        setIsUpdate={(value) => {
+          if (isQuoteConfirmation) setIsUpdateContactEmail(null);
+          else {
+            if (value) {
+              // when click edit mode (value===1) we save the original value
+              enterEditContactMode();
+            }
+            if (value === null) {
+              // reset contact mail to the original value in case we click onCancel btn
+              changeItems(index, "contactMail", originalContactEmail);
+            }
+
+            setIsUpdateContactEmail(value);
+          }
+        }}
         onInputChange={(e: any) => {
           changeItems(index, "contactMail", e);
         }}
