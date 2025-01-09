@@ -153,7 +153,8 @@ const SectionMappingWidget = ({
               parameter?.parameterType ===
                 EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
               parameter?.parameterType ===
-                EParameterTypes.ADVERTISING_PRODUCT_NAME;
+                EParameterTypes.ADVERTISING_PRODUCT_NAME ||  parameter?.parameterType ===
+                EParameterTypes.SWITCH;
 
             return (
               <div key={paramIndex}>
