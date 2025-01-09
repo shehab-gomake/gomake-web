@@ -274,6 +274,8 @@ const QuoteNewPageWidget = ({
     quoteItemId,
     quoteItem,
     handleSendUsingWhatsAppWeb,
+    isOrder,
+    isQuote,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -498,7 +500,11 @@ const QuoteNewPageWidget = ({
                         preventOpenCondition={!quoteState.client}
                       />
                       <DateField
-                        label={t("sales.quote.dateOfReference")}
+                        label={
+                          isOrder || isQuote
+                            ? t("sales.quote.deliveryDate")
+                            : t("sales.quote.dateOfReference")
+                        }
                         date={selectDate}
                         handleChange={(newDate) => {
                           setSelectDate(newDate);

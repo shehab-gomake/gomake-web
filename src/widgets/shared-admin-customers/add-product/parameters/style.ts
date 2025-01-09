@@ -12,7 +12,7 @@ const useStyle = () => {
   const { primaryColor, secondColor, errorColor, neutralColor } =
     useGomakeTheme();
 
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       mainContainer: {
         display: "flex",
@@ -307,13 +307,13 @@ const useStyle = () => {
         alignItems: "center",
         textTransform: "capitalize" as "capitalize",
       },
-      dontAskNextTime: {
+      doNotAskNextTime: {
         ...FONT_FAMILY.Lexend(500, 16),
       },
     };
   }, [i18next.language, t]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

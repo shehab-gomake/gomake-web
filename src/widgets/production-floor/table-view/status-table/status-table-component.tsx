@@ -99,7 +99,8 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
             ) ||
             board?.automatedTags?.some((tag) =>
               `${tag.toLowerCase()}`.includes(search.toLowerCase())
-            )
+            ) ||
+            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
         )
       : boards;
   }, [boards, search]);
@@ -134,7 +135,9 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
                   <SecondaryTableRow>
                     {tableHeaders(status.id)?.map((header) => (
                       <SecondaryTableCell
-                        style={{ backgroundColor: status.backgroundColor }}
+                        style={{
+                          backgroundColor: status.backgroundColor,
+                        }}
                         key={"statusTable" + status.id}
                         align={"center"}
                       >

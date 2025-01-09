@@ -9,6 +9,7 @@ import lodashClonedeep from "lodash.clonedeep";
 import { useRouter } from "next/router";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { checkIfDieCutOrDieKissCutExists, findParameterByCode } from "@/utils/helpers";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 const ButtonParameterWidget = ({
   clasess,
   parameter,
@@ -27,6 +28,7 @@ const ButtonParameterWidget = ({
   const router = useRouter()
   const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
   const { callApi } = useGomakeAxios();
+  const { secondColor, } = useGomakeTheme();
   const [subProducts, setProducts] = useRecoilState<any>(subProductsParametersState);
   const subProductsParameters = subProducts?.find((x) => x.type === subSection?.type)?.parameters;
   const [isSelectedShape, setIsSelectedShape] = useState<any>();
@@ -447,7 +449,13 @@ const ButtonParameterWidget = ({
     } else {
       Comp = (
         <GomakePrimaryButton
-          style={clasess.dynamicBtn}
+          // style={clasess.dynamicBtn}
+          style={{
+            height: 40,
+            backgroundColor: "white",
+            border: `1px solid ${secondColor(500)}`,
+            color: secondColor(500),
+          }}
           onClick={() =>
             selectBtnTypeToAction(
               parameter,
@@ -466,7 +474,13 @@ const ButtonParameterWidget = ({
   } else {
     Comp = (
       <GomakePrimaryButton
-        style={clasess.dynamicBtn}
+        // style={clasess.dynamicBtn}
+        style={{
+          height: 40,
+          backgroundColor: "white",
+          border: `1px solid ${secondColor(500)}`,
+          color: secondColor(500),
+        }}
         onClick={() =>
           selectBtnTypeToAction(
             parameter,

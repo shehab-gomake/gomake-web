@@ -102,6 +102,9 @@ const PriceListPageWidget = ({ widgetType }) => {
     canCalculation,
     calculationProduct,
     subProducts,
+    isOpenCreateDefaultWorkFlow,
+    onClickCloseCreateDefaultWorkFlow,
+    addItemForQuotes
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const permissions = useRecoilValue(permissionsState);
@@ -272,7 +275,7 @@ const PriceListPageWidget = ({ widgetType }) => {
       position: "top",
     },
   ];
-  const {} = useGoMakeTour(productSteps, [relatedParameters]);
+  const { } = useGoMakeTour(productSteps, [relatedParameters]);
 
   return (
     <div>
@@ -296,7 +299,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                     ]?.map((item, index) => (
                       <TabsMappingWidget
                         key={`tab-${index}`}
-                        clasess={clasess}
+                        classes={clasess}
                         index={index}
                         handleTabClick={handleTabClick}
                         activeIndex={activeIndex}
@@ -455,15 +458,15 @@ const PriceListPageWidget = ({ widgetType }) => {
                 ].length -
                   1 !==
                   activeIndex && (
-                  <div data-tour="next-button">
-                    <GomakePrimaryButton
-                      style={clasess.nextBtnStyle}
-                      onClick={handleNextClick}
-                    >
-                      {t("products.offsetPrice.admin.nextBtn")}
-                    </GomakePrimaryButton>
-                  </div>
-                )}
+                    <div data-tour="next-button">
+                      <GomakePrimaryButton
+                        style={clasess.nextBtnStyle}
+                        onClick={handleNextClick}
+                      >
+                        {t("products.offsetPrice.admin.nextBtn")}
+                      </GomakePrimaryButton>
+                    </div>
+                  )}
               </div>
             </div>
             <div
@@ -484,7 +487,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                   onClick={() => {
                     if (
                       DOCUMENT_TYPE.order ===
-                        Number(router.query.documentType) &&
+                      Number(router.query.documentType) &&
                       isFlowChanged
                     ) {
                       onClickOpenCurrentStationModal();
@@ -579,6 +582,15 @@ const PriceListPageWidget = ({ widgetType }) => {
           updateQuoteItem={updateQuoteItem}
         />
       </GoMakeModal>
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        subTitle={t("do you want to add this item to the cart. ?")}
+        title={t("this product was not calculated and doesn't have a station ")}
+        yesBtn={t("modal.yes")}
+        openModal={isOpenCreateDefaultWorkFlow}
+        onClose={onClickCloseCreateDefaultWorkFlow}
+        onClickDelete={() => addItemForQuotes()}
+      />
     </div>
   );
 };

@@ -264,7 +264,6 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
           <></>
         )}
         <ActionMenu isAdmin={props.isAdmin} />
-        {/* !here */}
         <Menu
           open={Boolean(anchorEl)}
           anchorEl={anchorEl}

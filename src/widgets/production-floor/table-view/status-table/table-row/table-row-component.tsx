@@ -13,7 +13,16 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { useRef, useState } from "react";
-import { Collapse, Skeleton, TableCell, TableRow } from "@mui/material";
+import {
+  Collapse,
+  Skeleton,
+  styled,
+  TableCell,
+  TableRow,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps,
+} from "@mui/material";
 import { ApprovalFileStatusComponent } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -23,6 +32,7 @@ import { NextStationComponent } from "../stations/next-station";
 import { DateTimeComponent } from "@/components/date-time/date-time-component";
 import { useRouter } from "next/router";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
+import { getTruncatedLabel } from "@/utils/get-truncated-text";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -209,8 +219,11 @@ const TableRowComponent = ({
             <KeyboardDoubleArrowUpIcon style={{ color: errorColor(500) }} />
           )}
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
-          {boardMission?.clientName}
+        <SecondaryTableCell align={"center"} style={{ padding: "0px 5px" }}>
+          {getTruncatedLabel(boardMission?.jobName, 10)}
+        </SecondaryTableCell>
+        <SecondaryTableCell align={"center"} style={{ width: "20px" }}>
+          {getTruncatedLabel(boardMission?.clientName, 15)}
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"} style={{ padding: "0px 10px" }}>
           <ClickableLabelComponent
@@ -263,7 +276,10 @@ const TableRowComponent = ({
             direction={"column-reverse"}
           />
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
+        <SecondaryTableCell
+          align={"center"}
+          style={{ width: "20px", gap: "2px" }}
+        >
           <Stack justifyContent={"center"} direction={"row"} flexWrap={"wrap"}>
             {boardMission?.automatedTags?.map((tag) => (
               <LabelComponent key={tag} label={tag} />
@@ -279,6 +295,7 @@ const TableRowComponent = ({
           />
         </SecondaryTableCell>
       </TableRow>
+
       <TableRow>
         <TableCell colSpan={9} style={{ padding: 0, transition: "padding 1s" }}>
           {

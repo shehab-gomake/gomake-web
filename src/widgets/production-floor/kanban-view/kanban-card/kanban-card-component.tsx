@@ -11,6 +11,7 @@ import { ChangeColorMenu } from "./change-color-menu";
 import { useKanbanCard } from "./use-kanban-card";
 import { SketchPicker } from "react-color";
 import { useRef } from "react";
+import { getTruncatedLabel } from "@/utils/get-truncated-text";
 
 interface IProp {
   board: IBoardMissions;
@@ -82,9 +83,11 @@ const KanbanCardComponent = ({ board }: IProp) => {
         display={"flex"}
         flexWrap={"wrap"}
       >
-        <span style={classes.jobTitle}>
-          {board.jobName || t("boardMissions.jobName")}
-        </span>
+        {getTruncatedLabel(
+          board?.jobName || t("boardMissions.jobName"),
+          15,
+          classes.jobTitle
+        )}
         <OrderJObNumbersComponent
           boardMission={board}
           textColor={color}
@@ -95,6 +98,14 @@ const KanbanCardComponent = ({ board }: IProp) => {
         <Stack direction={"row"} justifyContent={"space-between"} gap={"5px"}>
           <span style={classes.productTitle}>{board?.productName}</span>
           <span style={classes.productTitle}>{board?.clientName}</span>
+          {/* {getTruncatedLabel(board?.productName, 15, {
+            ...FONT_FAMILY.Inter(700, 15),
+            color: "#101828",
+          })}
+          {getTruncatedLabel(board?.clientName, 15, {
+            ...FONT_FAMILY.Inter(700, 15),
+            color: "#101828",
+          })} */}
         </Stack>
         <Stack
           direction={"row"}

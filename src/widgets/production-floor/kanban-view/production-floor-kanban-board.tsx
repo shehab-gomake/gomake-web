@@ -48,7 +48,8 @@ const ProductionFloorKanbanBoard = () => {
           ) ||
           mission.automatedTags?.some((tag) =>
             tag.toLowerCase().includes(search.toLowerCase())
-          )
+          ) ||
+          `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
       : true;
   };
   const allFilteredMissions = filteredDataByMachine.flatMap(

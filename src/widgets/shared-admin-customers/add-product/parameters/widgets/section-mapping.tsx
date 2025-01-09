@@ -17,7 +17,8 @@ import { useState } from "react";
 import { useSnackBar } from "@/hooks";
 import { useRecoilState } from "recoil";
 import { selectedUpdateTypeState } from "@/store/selected-update-type";
-import { dontAskNextTimeState } from "@/store";
+import { doNotAskNextTimeState } from "@/store";
+import { EditIcon } from "../../icons/edit-icon";
 
 export enum UpdateTypes {
   PRODUCT_ONLY = 0,
@@ -34,9 +35,10 @@ enum ParameterActionType {
 
 const SectionMappingWidget = ({
   index,
-  clasess,
+  classes,
   subSection,
   onOpenModal,
+  onOpenExternalIdsModal,
   section,
   updatedProductParameterHidden,
   updatedProductParameteRequierd,
@@ -53,8 +55,9 @@ const SectionMappingWidget = ({
   const [selectedUpdateType, setSelectedUpdateType] = useRecoilState(
     selectedUpdateTypeState
   );
-  const [dontAskNextTime, setDontAskNextTime] =
-    useRecoilState(dontAskNextTimeState);
+  const [doNotAskNextTime, setDoNotAskNextTime] = useRecoilState(
+    doNotAskNextTimeState
+  );
 
   const renderIconWithTooltip = (
     condition,
@@ -82,7 +85,7 @@ const SectionMappingWidget = ({
   };
 
   const handleOpenModal = () => {
-    if (!dontAskNextTime) {
+    if (!doNotAskNextTime) {
       setIsUpdateModalOpen(true);
     }
   };
@@ -96,8 +99,6 @@ const SectionMappingWidget = ({
       alertFault(t("products.parameters.pleaseSelectOneOption"));
       return;
     }
-
-    debugger;
     switch (actionType) {
       case ParameterActionType.VISIBLE:
         updatedProductParameterHidden(
@@ -138,28 +139,35 @@ const SectionMappingWidget = ({
   };
 
   return (
-    <div key={index} style={clasess.subSectionContainer}>
-      <div style={clasess.subSectionTitleStyle}>{subSection.name}</div>
-      <div style={clasess.parametersContainer}>
+    <div key={index} style={classes.subSectionContainer}>
+      <div style={classes.subSectionTitleStyle}>{subSection.name}</div>
+      <div style={classes.parametersContainer}>
         {subSection?.parameters
           ?.filter((x) => !x.isHiddenInSetting)
           ?.map((parameter, paramIndex) => {
-            // const isHiddenIcon = relatedParameters?.some(
-            //   (relatedParam) => relatedParam.parameterId === parameter.id
-            // );
+            const ShowEditExternalCodeValue =
+              parameter?.parameterType ===
+                EParameterTypes.SELECT_CHILDS_PARAMETERS ||
+              parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
+              parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
+              parameter?.parameterType ===
+                EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+              parameter?.parameterType ===
+                EParameterTypes.ADVERTISING_PRODUCT_NAME ||  parameter?.parameterType ===
+                EParameterTypes.SWITCH;
 
             return (
               <div key={paramIndex}>
-                <div style={clasess.parameterContainer}>
-                  <div style={clasess.parameterLabelStyle}>
-                    <div style={clasess.paramNameStyle}>
+                <div style={classes.parameterContainer}>
+                  <div style={classes.parameterLabelStyle}>
+                    <div style={classes.paramNameStyle}>
                       {parameter?.name}
                       <small>&nbsp;{parameter?.defaultUnit}</small>
                     </div>
                     {parameter?.parameterType ===
                       EParameterTypes.SELECT_CHILDS_PARAMETERS && (
                       <div
-                        style={clasess.plusIconStyle}
+                        style={classes.plusIconStyle}
                         onClick={() =>
                           onOpenModal(parameter, section?.id, subSection?.id)
                         }
@@ -167,7 +175,6 @@ const SectionMappingWidget = ({
                         <SettingIcon width={20} height={20} />
                       </div>
                     )}
-
                     {renderIconWithTooltip(
                       parameter?.isHidden,
                       <HiddenIcon />,
@@ -175,7 +182,7 @@ const SectionMappingWidget = ({
                       "hidden",
                       "visible",
                       () => {
-                        if (!dontAskNextTime) {
+                        if (!doNotAskNextTime) {
                           handleOpenModal();
                         } else {
                           handleUpdate(
@@ -196,7 +203,7 @@ const SectionMappingWidget = ({
                         "required",
                         "notRequired",
                         () => {
-                          if (!dontAskNextTime) {
+                          if (!doNotAskNextTime) {
                             handleOpenModal();
                           } else {
                             handleUpdate(
@@ -216,7 +223,7 @@ const SectionMappingWidget = ({
                       "readOnly",
                       "editable",
                       () => {
-                        if (!dontAskNextTime) {
+                        if (!doNotAskNextTime) {
                           handleOpenModal();
                         } else {
                           handleUpdate(
@@ -236,7 +243,7 @@ const SectionMappingWidget = ({
                       "shownInDetails",
                       "hiddenFromDetails",
                       () => {
-                        if (!dontAskNextTime) {
+                        if (!doNotAskNextTime) {
                           handleOpenModal();
                         } else {
                           handleUpdate(
@@ -251,8 +258,23 @@ const SectionMappingWidget = ({
                         setSelectedParameter(parameter);
                       }
                     )}
+                    {ShowEditExternalCodeValue && (
+                      <div
+                        style={classes.plusIconStyle}
+                        onClick={() =>
+                          onOpenExternalIdsModal(
+                            parameter,
+                            subSection?.parameters,
+                            section?.id,
+                            subSection?.id
+                          )
+                        }
+                      >
+                        <EditIcon />
+                      </div>
+                    )}
                   </div>
-                  <div style={clasess.renderParameterTypeContainer}>
+                  <div style={classes.renderParameterTypeContainer}>
                     {_renderParameterType(
                       section?.id,
                       subSection?.id,
@@ -274,8 +296,8 @@ const SectionMappingWidget = ({
         selectedUpdateType={selectedUpdateType}
         setSelectedUpdateType={setSelectedUpdateType}
         onUpdate={() => handleUpdate(selectedActionType, selectedParameter)}
-        setDontAskNextTime={setDontAskNextTime}
-        dontAskNextTime={dontAskNextTime}
+        setDoNotAskNextTime={setDoNotAskNextTime}
+        doNotAskNextTime={doNotAskNextTime}
       />
     </div>
   );

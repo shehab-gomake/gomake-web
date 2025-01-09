@@ -228,6 +228,7 @@ const useSettings = ({
           clients: productState?.clients,
           clientsTypes: productState?.clientsTypes,
           additionProfits: productState?.additionProfits,
+          externalCode: productState?.externalCode,
         }
       );
       if (res?.success) {
@@ -284,6 +285,7 @@ const useSettings = ({
           clients: productState?.clients,
           clientsTypes: productState?.clientsTypes,
           additionProfits: productState?.additionProfits,
+          externalCode: productState?.externalCode,
           //sections: productState?.sections,
         }
       );

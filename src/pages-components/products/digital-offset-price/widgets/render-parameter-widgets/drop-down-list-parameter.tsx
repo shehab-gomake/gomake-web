@@ -25,7 +25,12 @@ const getLabelWithTooltip = (label: string) => {
     let lastSpace = shortLabel.lastIndexOf(" ");
     shortLabel = shortLabel.substring(0, lastSpace) + "...";
     return (
-      <CustomWidthTooltip title={label} placement="right" arrow style={{ maxWidth: 500 }}>
+      <CustomWidthTooltip
+        title={label}
+        placement="right"
+        arrow
+        style={{ maxWidth: 500 }}
+      >
         <span>{shortLabel}</span>
       </CustomWidthTooltip>
     );
@@ -49,11 +54,13 @@ const DropDownListParameterWidget = ({
   list,
   setDeviceCategory,
   setDeviceSize,
-  multiParameterModal
+  multiParameterModal,
 }: any) => {
   const { t } = useTranslation();
   const [selectedValue, setSelectedValue] = useState(
-    index !== -1 ? { updateName: temp[index].values } : parameter.valuesConfigs.find(item => item.isDefault)
+    index !== -1
+      ? { updateName: temp[index].values }
+      : parameter.valuesConfigs.find((item) => item.isDefault)
   );
   useEffect(() => {
     // If the parameter changes, update the selectedValue accordingly
@@ -76,8 +83,7 @@ const DropDownListParameterWidget = ({
     let valueId = null;
     if (parameter?.parameterType == EParameterTypes.MACHINES_SELECT) {
       valueId = value?.updateName;
-    }
-    else {
+    } else {
       valueId = value?.id;
     }
     // Update the subProducts for pricing
@@ -88,7 +94,9 @@ const DropDownListParameterWidget = ({
       parameter?.parameterType,
       parameter?.name,
       parameter?.actionId,
-      value ? { valueIds: valueId, values: value?.updateName } : { valueIds: null, values: null }, // Handle cleared state
+      value
+        ? { valueIds: valueId, values: value?.updateName }
+        : { valueIds: null, values: null }, // Handle cleared state
       subSection?.type,
       index,
       parameter?.actionIndex,
@@ -97,38 +105,57 @@ const DropDownListParameterWidget = ({
   };
 
   return (
-
-    <div data-tour={parameter?.id} style={parameter?.setSettingIcon && inModal ? { ...clasess.dropDownListWithSettingIcon, minWidth: '250px' } : clasess.dropDownListWithSettingIcon}>
-
-
+    <div
+      data-tour={parameter?.id}
+      style={
+        parameter?.setSettingIcon && inModal
+          ? { ...clasess.dropDownListWithSettingIcon, minWidth: "250px" }
+          : clasess.dropDownListWithSettingIcon
+      }
+    >
       <GoMakeAutoComplate
         disabled={parameter?.isLock}
         key={selectedValue}
-        options={parameter?.valuesConfigs?.filter(value => {
-          return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
-        })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
+        options={parameter?.valuesConfigs
+          ?.filter((value) => {
+            return !(
+              value?.materialValueIds?.length === 1 &&
+              value?.materialValueIds[0]?.path === null &&
+              value?.materialValueIds[0]?.valueId === null
+            );
+          })
+          ?.filter((value) => !value.isHidden)
+          ?.filter((value) => value.updateName)}
         placeholder={parameter.name}
-        style={parameter?.isRequired && !selectedValue?.updateName ? clasess.requiredDropDownListStyle : clasess.dropDownListStyle}
+        style={
+          parameter?.isRequired && !selectedValue?.updateName
+            ? clasess.requiredDropDownListStyle
+            : clasess.dropDownListStyle
+        }
         getOptionLabel={(option) => option.updateName}
         value={selectedValue} // Controlled value, reflecting the current state
         onChange={handleValueChange}
         renderOption={(props, option) => (
-          <li {...props}>
-            {getLabelWithTooltip(option.updateName)}
-          </li>
+          <li {...props}>{getLabelWithTooltip(option.updateName)}</li>
         )}
       />
-      {parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY &&
+      {parameter?.parameterType ===
+        EParameterTypes.ADVERTISING_PRODUCT_CATEGORY && (
         <div>
           <Tooltip title={t("tabs.materials")}>
-            <IconButton onClick={() => {
-              window.open(`/materials/${parameter?.materialPath[0]}?materialCategory=${temp[index]?.valueIds[0]}`, "_blank");
-            }}>
+            <IconButton
+              onClick={() => {
+                window.open(
+                  `/materials/${parameter?.materialPath[0]}?materialCategory=${temp[index]?.valueIds[0]}`,
+                  "_blank"
+                );
+              }}
+            >
               <GoToMaterialsIcon />
             </IconButton>
           </Tooltip>
         </div>
-      }
+      )}
       {parameter?.setSettingIcon && inModal && (
         <div
           style={{ cursor: "pointer" }}
