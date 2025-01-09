@@ -1,7 +1,14 @@
 import { PrimaryTableCell } from "@/components/tables/primary-table";
 import { Checkbox, IconButton, TableRow } from "@mui/material";
 import { useStyle } from "./style";
-import { ArrowDownWithCircle, ArrowUpWithCircle, CalculatingIcon, CheckboxCheckedIcon, CheckboxIcon, NotCalculatingIcon } from "@/icons";
+import {
+  ArrowDownWithCircle,
+  ArrowUpWithCircle,
+  CalculatingIcon,
+  CheckboxCheckedIcon,
+  CheckboxIcon,
+  NotCalculatingIcon,
+} from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { CharacterDetails } from "./row-details/character-details";
 import { InputUpdatedValues } from "../input-updated-values";
@@ -17,7 +24,10 @@ import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import PriceOfferWidget from "@/widgets/price-offer-widget/price-offer-widget";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
-import { ECalculationStatus, ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
+import {
+  ECalculationStatus,
+  ERPDocumentsTypesEnum,
+} from "@/enums/document-type-enum";
 import { useOrdersSignalr, useQuotesSignalr } from "@/hooks";
 import { useTranslation } from "react-i18next";
 
@@ -48,8 +58,8 @@ const RowMappingWidget = ({
   const [isConfirmation, setIsConfirmation] = useState(null);
   const [isSelected, setIsSelected] = useState(item?.isSelected);
   const { getCurrencyUnitText } = useQuoteGetData();
-  const { } = useQuotesSignalr({ getQuote });
-  const { } = useOrdersSignalr({ getQuote });
+  const {} = useQuotesSignalr({ getQuote });
+  const {} = useOrdersSignalr({ getQuote });
   const handleChangeSelectedItem = (checked, itemId) => {
     setIsSelected(checked);
     onChangeSelectedItemRowForQoute(checked, itemId);
@@ -93,17 +103,17 @@ const RowMappingWidget = ({
   const canUpdatePrices = router.query.isNewCreation
     ? true
     : item?.isEditable &&
-    CheckDocumentPermission(
-      documentType,
-      DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
-    );
+      CheckDocumentPermission(
+        documentType,
+        DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
+      );
   const canUpdateDeliveryPrices = router.query.isNewCreation
     ? true
     : item?.isEditable &&
-    CheckDocumentPermission(
-      documentType,
-      DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES
-    );
+      CheckDocumentPermission(
+        documentType,
+        DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES
+      );
   const canUpdatePricesBasedOnType =
     item?.productType === 1 ? canUpdateDeliveryPrices : canUpdatePrices;
 
@@ -122,9 +132,9 @@ const RowMappingWidget = ({
         }}
       >
         {!isPrePaymentPage &&
-          isQuoteConfirmation &&
-          !quoteConfirm?.isConfirmed &&
-          quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled ? (
+        isQuoteConfirmation &&
+        !quoteConfirm?.isConfirmed &&
+        quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled ? (
           <div style={classes.checkBoxContainer}>
             <Checkbox
               icon={<CheckboxIcon />}
@@ -141,9 +151,9 @@ const RowMappingWidget = ({
                 {isShowChilds ? <ArrowUpWithCircle /> : <ArrowDownWithCircle />}
               </IconButton>
             )}
-            {!item?.childsDocumentItems &&
+            {!item?.childsDocumentItems && (
               <div style={{ width: "32px", height: "32px" }} />
-            }
+            )}
             {
               <Checkbox
                 icon={<CheckboxIcon />}
@@ -178,9 +188,10 @@ const RowMappingWidget = ({
           <span style={{ display: "block", color: "#5859A8" }}>
             {item?.sourceDocumentType
               ? `${t(
-                `SourceDocument.${ERPDocumentsTypesEnum[item?.sourceDocumentType]
-                }`
-              )} ${t("general.shortForNum")}`
+                  `SourceDocument.${
+                    ERPDocumentsTypesEnum[item?.sourceDocumentType]
+                  }`
+                )} ${t("general.shortForNum")}`
               : ""}
           </span>
           <span style={{ display: "block" }}>
@@ -207,7 +218,9 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {item?.productName === "Delivery" ? t("home.tabs.Delivery") : item?.productName}
+        {item?.productName === "Delivery"
+          ? t("home.tabs.Delivery")
+          : item?.productName}
       </PrimaryTableCell>
       {quoteItems?.isShowDetails && (
         <PrimaryTableCell
@@ -215,7 +228,6 @@ const RowMappingWidget = ({
             width: columnWidths[3],
             textAlign: "start",
             borderBottom: item?.childsDocumentItems && "none",
-
           }}
         >
           <CharacterDetails
@@ -235,15 +247,20 @@ const RowMappingWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
-            value={item.quantity}
-            onBlur={onBlurAmount}
-            isUpdate={canUpdatePricesBasedOnType && isUpdateAmount}
-            setIsUpdate={
-              isQuoteConfirmation ? setIsConfirmation : setIsUpdateAmount
-            }
-            onInputChange={(e) => onInputChangeAmount(e)}
-          /> : "-"}
+          {item?.calculationStatus === null ||
+          item?.calculationStatus === ECalculationStatus.Done ? (
+            <InputUpdatedValues
+              value={item.quantity}
+              onBlur={onBlurAmount}
+              isUpdate={canUpdatePricesBasedOnType && isUpdateAmount}
+              setIsUpdate={
+                isQuoteConfirmation ? setIsConfirmation : setIsUpdateAmount
+              }
+              onInputChange={(e) => onInputChangeAmount(e)}
+            />
+          ) : (
+            "-"
+          )}
         </div>
       </PrimaryTableCell>
 
@@ -254,10 +271,10 @@ const RowMappingWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-
         <div style={classes.cellTextInputStyle}>
-          {
-            (item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
+          {item?.calculationStatus === null ||
+          item?.calculationStatus === ECalculationStatus.Done ? (
+            <InputUpdatedValues
               value={item.price}
               onBlur={onBlurPrice}
               isUpdate={canUpdatePricesBasedOnType && isUpdatePrice}
@@ -265,8 +282,10 @@ const RowMappingWidget = ({
                 isQuoteConfirmation ? setIsConfirmation : setIsUpdatePrice
               }
               onInputChange={(e) => onInputChangePrice(e)}
-            /> : "-"}
-
+            />
+          ) : (
+            "-"
+          )}
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -277,16 +296,20 @@ const RowMappingWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
-            value={item.discount ? item.discount : "0"}
-            onBlur={onBlurDiscount}
-            isUpdate={canUpdatePricesBasedOnType && isUpdateDiscount}
-            setIsUpdate={
-              isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount
-            }
-            onInputChange={(e) => onInputChangeDiscount(e)}
-          /> : "-"}
-
+          {item?.calculationStatus === null ||
+          item?.calculationStatus === ECalculationStatus.Done ? (
+            <InputUpdatedValues
+              value={item.discount ? item.discount : "0"}
+              onBlur={onBlurDiscount}
+              isUpdate={canUpdatePricesBasedOnType && isUpdateDiscount}
+              setIsUpdate={
+                isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount
+              }
+              onInputChange={(e) => onInputChangeDiscount(e)}
+            />
+          ) : (
+            "-"
+          )}
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -315,17 +338,22 @@ const RowMappingWidget = ({
             />
           ) : (
             <>
-              {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
-                value={item.finalPrice}
-                onBlur={onBlurFinalPrice}
-                isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice}
-                setIsUpdate={
-                  isQuoteConfirmation ? setIsConfirmation : setIsUpdateFinalPrice
-                }
-                onInputChange={(e) => onInputChangeFinalPrice(e)}
-              /> :
-                _renderIconcalculationStatus(item?.calculationStatus)}
-
+              {item?.calculationStatus === null ||
+              item?.calculationStatus === ECalculationStatus.Done ? (
+                <InputUpdatedValues
+                  value={item.finalPrice}
+                  onBlur={onBlurFinalPrice}
+                  isUpdate={canUpdatePricesBasedOnType && isUpdateFinalPrice}
+                  setIsUpdate={
+                    isQuoteConfirmation
+                      ? setIsConfirmation
+                      : setIsUpdateFinalPrice
+                  }
+                  onInputChange={(e) => onInputChangeFinalPrice(e)}
+                />
+              ) : (
+                _renderIconcalculationStatus(item?.calculationStatus)
+              )}
             </>
           )}
         </div>

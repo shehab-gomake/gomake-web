@@ -17,7 +17,7 @@ const InputUpdatedValues = ({
   sign,
   inputMainContainerStyle,
   isTwoDigit = false,
-  placeholder
+  placeholder,
 }: IBusinessWidget) => {
   const { clasess } = useStyle({ isUnderLine });
   const [updateValue, setUpdateValue] = useState();
@@ -52,11 +52,13 @@ const InputUpdatedValues = ({
             className="customInput"
             onClick={handleClick}
           >
-            {placeholder ? placeholder : isTwoDigit
+            {placeholder
+              ? placeholder
+              : isTwoDigit
               ? typeof value === "number"
                 ? value.toFixed(2)
                 : value
-              : value}{" "}
+              : value}
             {sign}
           </div>
         )}
