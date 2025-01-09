@@ -42,6 +42,8 @@ const ExternalValuesIdModal = ({
     parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
     parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME;
 
+  const isSwitch = parameter?.parameterType === EParameterTypes.SWITCH;
+
   useEffect(() => {
     if (parameter?.valuesConfigs) {
       setValuesConfigs([...parameter.valuesConfigs]);
@@ -63,7 +65,7 @@ const ExternalValuesIdModal = ({
     const values = valuesConfigs
       ?.map(({ id, externalValue, updateName, valueId }) => ({
         id,
-        value: isMaterial ? valueId : updateName,
+        value: isMaterial || isSwitch ? valueId : updateName,
         externalCode: externalValue,
       }))
       .filter(({ externalCode }) => externalCode);
@@ -119,7 +121,7 @@ const ExternalValuesIdModal = ({
         >
           {valuesConfigs.map((item, index) => (
             <div
-              key={isMaterial ? item?.valueId : item?.id}
+              key={isMaterial || isSwitch ? item?.valueId : item?.id}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -128,7 +130,9 @@ const ExternalValuesIdModal = ({
                 width: "100%",
               }}
             >
-              <span>{isMaterial ? item?.value : item?.updateName}</span>
+              <span>
+                {isMaterial || isSwitch ? item?.value : item?.updateName}
+              </span>
               <GomakeTextInput
                 style={{ width: "50%" }}
                 placeholder={t("products.profits.exceptions.enterValue")}
