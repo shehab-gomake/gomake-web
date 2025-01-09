@@ -6,6 +6,7 @@ import {
   updatePreferencesApi,
 } from "@/services/api-service/preferences/preferences-endpoint";
 import { useGomakeAxios } from "@/hooks";
+import { EPreferences } from "@/enums/prefernces";
 
 export enum PreferenceValueType {
   Number = 0,
@@ -68,6 +69,7 @@ const useGeneralSettings = () => {
                 ?.value || item?.value;
           }
           return [
+            // t(`preferences.${EPreferences[item?.code]}`),
             t(`preferences.${item?.name}`),
             t(`preferences.${item?.description.trim()}`),
             item?.preferenceType === PreferenceValueType.Select
