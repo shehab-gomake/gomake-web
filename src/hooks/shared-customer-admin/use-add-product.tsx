@@ -659,6 +659,7 @@ const useAddProduct = ({ classes }) => {
       parameter?.parameterType ===
         EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME;
+    const isSwitch = parameter?.parameterType === EParameterTypes.SWITCH;
 
     // Creating new valuesConfigs for materials
     let materialsOptions = [];
@@ -666,79 +667,100 @@ const useAddProduct = ({ classes }) => {
     const currentMaterialPath = materialPath[materialPath.length - 1];
     const parentMaterialPath = materialPath.slice(0, -1);
     let allMaterialsCopy = cloneDeep(allMaterials);
-    if (parentMaterialPath && parentMaterialPath.length > 0) {
-      allMaterialsCopy = allMaterialsCopy?.find((material) =>
-        compareStrings(material.pathName, parentMaterialPath[0])
-      );
-      for (let i = 0; i < parentMaterialPath.length; i++) {
-        const currentPath = parentMaterialPath.slice(0, i + 1).toString();
-        const parentParameter = subSectionParameters.find(
-          (x) => x.materialPath && x.materialPath.toString() == currentPath
+
+    if (isMaterial) {
+      if (parentMaterialPath && parentMaterialPath.length > 0) {
+        allMaterialsCopy = allMaterialsCopy?.find((material) =>
+          compareStrings(material.pathName, parentMaterialPath[0])
         );
-        if (parentParameter) {
-          const parentParameterDefaultValueConfig =
-            parentParameter?.valuesConfigs?.find(
-              (item) => item.isDefault === true
-            );
-          if (parentParameterDefaultValueConfig) {
-            const parentParameterValue =
-              parentParameterDefaultValueConfig.materialValueIds[0].valueId;
-            allMaterialsCopy = allMaterialsCopy?.data.find(
-              (x) => x.valueId === parentParameterValue
-            );
-          } else {
-            allMaterialsCopy = {
-              data: [],
-            };
+        for (let i = 0; i < parentMaterialPath.length; i++) {
+          const currentPath = parentMaterialPath.slice(0, i + 1).toString();
+          const parentParameter = subSectionParameters.find(
+            (x) => x.materialPath && x.materialPath.toString() == currentPath
+          );
+          if (parentParameter) {
+            const parentParameterDefaultValueConfig =
+              parentParameter?.valuesConfigs?.find(
+                (item) => item.isDefault === true
+              );
+            if (parentParameterDefaultValueConfig) {
+              const parentParameterValue =
+                parentParameterDefaultValueConfig.materialValueIds[0].valueId;
+              allMaterialsCopy = allMaterialsCopy?.data.find(
+                (x) => x.valueId === parentParameterValue
+              );
+            } else {
+              allMaterialsCopy = {
+                data: [],
+              };
+            }
           }
         }
+        if (allMaterialsCopy) {
+          materialsOptions = [];
+          materialsOptions.push(...allMaterialsCopy.data);
+        }
+      } else {
+        allMaterialsCopy = allMaterialsCopy?.find((material) =>
+          compareStrings(material.pathName, currentMaterialPath)
+        );
+        if (
+          allMaterialsCopy &&
+          allMaterialsCopy.data &&
+          allMaterialsCopy.data.length > 0
+        ) {
+          materialsOptions.push(...allMaterialsCopy?.data);
+        }
       }
-      if (allMaterialsCopy) {
-        materialsOptions = [];
-        materialsOptions.push(...allMaterialsCopy.data);
-      }
-    } else {
-      allMaterialsCopy = allMaterialsCopy?.find((material) =>
-        compareStrings(material.pathName, currentMaterialPath)
-      );
+    }
+
+    if (!isSwitch) {
       if (
-        allMaterialsCopy &&
-        allMaterialsCopy.data &&
-        allMaterialsCopy.data.length > 0
+        (isMaterial && materialsOptions?.length === 0) ||
+        (!isMaterial &&
+          (!parameter?.valuesConfigs || parameter?.valuesConfigs.length === 0))
       ) {
-        materialsOptions.push(...allMaterialsCopy?.data);
+        alertFault("alerts.noValues");
+        return;
       }
     }
 
-    //Extract externalCode for the materials that come from productParametersExternalValues
-    if (parameter?.productParametersExternalValues) {
-      const externalValuesMap = new Map(
-        parameter.productParametersExternalValues.map((ev) => [
-          ev.valueId,
-          ev.externalCode,
-        ])
-      );
+    //Extract externalCode for the materials/switch that come from productParametersExternalValues
+    if (isMaterial || isSwitch) {
+      let valuesConfigs = [];
+      if (parameter?.productParametersExternalValues) {
+        const externalValuesMap = new Map(
+          parameter.productParametersExternalValues.map((ev) => [
+            ev.valueId,
+            ev.externalCode,
+          ])
+        );
 
-      materialsOptions = materialsOptions.map((materialOption) => ({
-        ...materialOption,
-        externalValue: externalValuesMap.get(materialOption.valueId) || null,
-      }));
-    }
-
-    if (
-      (isMaterial && materialsOptions?.length === 0) ||
-      (!isMaterial &&
-        (!parameter?.valuesConfigs || parameter?.valuesConfigs.length === 0))
-    ) {
-      alertFault("alerts.noValues");
-      return;
-    }
-
-    // setSelectedParameter
-    if (isMaterial) {
+        if (isMaterial) {
+          valuesConfigs = materialsOptions.map((materialOption) => ({
+            ...materialOption,
+            externalValue:
+              externalValuesMap.get(materialOption.valueId) || null,
+          }));
+        } else {
+          valuesConfigs = [
+            {
+              value: t("products.parameters.true"),
+              valueId: "true",
+              externalValue: externalValuesMap.get("true") || null,
+            },
+            {
+              value: t("products.parameters.false"),
+              valueId: "false",
+              externalValue: externalValuesMap.get("false") || null,
+            },
+          ];
+        }
+      }
+      // Set the parameter with updated valuesConfigs
       const updatedParameter = {
         ...parameter,
-        valuesConfigs: materialsOptions,
+        valuesConfigs,
       };
       setSelectedParameter(updatedParameter);
     } else {
