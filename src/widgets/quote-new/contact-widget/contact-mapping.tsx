@@ -3,12 +3,11 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { PlusNewIcon, WastebasketNew2 } from "@/icons";
 import { IconButton, Stack } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { PhoneInputUpdatedValues } from "../phone-input-updated-values";
 import { useSnackBar } from "@/hooks";
 import { isValidEmail, isValidPhoneNumber } from "@/utils/helpers";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
-import { EditIcon } from "@/widgets/shared-admin-customers/add-product/icons/edit-icon";
 import { EditUnderLineIcon } from "@/icons/edit-icon-under-line";
 const ContactMapping = ({
   item,
@@ -30,7 +29,6 @@ const ContactMapping = ({
   const [isUpdateContactName, setIsUpdateContactName] = useState(null);
   const [isUpdateContactEmail, setIsUpdateContactEmail] = useState(null);
   const [isUpdateContactMobile, setIsUpdateContactMobile] = useState(null);
-  const [isConfirmation, setIsConfirmation] = useState(null);
   const [isEditingContactName, setIsEditingContactName] = useState(false);
   const [originalContactName, setOriginalContactName] = useState(
     item.contactName
@@ -52,13 +50,16 @@ const ContactMapping = ({
     setOriginalContactMobile(item.contactPhone);
   };
 
-  const onBlurContactName = async () => {
+  const onBlurContactNameSelect = async () => {
     setIsUpdateContactName(null);
   };
 
   const onBlurContactEmail = async (item) => {
-    if (item.contactMail === "" || !isValidEmail(item.contactMail)) {
-      alertFault("Invalid email address format or missing contact email");
+    if (item.contactMail === "" && item.contactMail !== originalContactEmail) {
+      //This case is similar to deleting the mail.
+      await updateClientContact(item);
+    } else if (!isValidEmail(item.contactMail) && item.contactMail !== "") {
+      alertFault("alerts.invalidContactMail");
       changeItems(index, "contactMail", originalContactEmail);
     } else if (item.contactMail !== originalContactEmail) {
       await updateClientContact(item);
@@ -67,22 +68,24 @@ const ContactMapping = ({
   };
 
   const onBlurContactMobile = async (item) => {
-    if (item.contactPhone === "") {
-      updateClientContact(item);
-      setIsUpdateContactMobile(null);
+    if (
+      item.contactPhone === "" &&
+      item.contactPhone !== originalContactMobile
+    ) {
+      //This case is similar to deleting the phone.
+      await updateClientContact(item);
     } else if (!isValidPhoneNumber(item.contactPhone)) {
-      alertFault(
-        "Phone number must be in the format +1234567890 and have a minimum length of 10 digits"
-      );
-    } else {
-      updateClientContact(item);
-      setIsUpdateContactMobile(null);
+      alertFault("alerts.invalidContactPhone");
+      changeItems(index, "contactPhone", originalContactMobile);
+    } else if (item.contactPhone !== originalContactMobile) {
+      await updateClientContact(item);
     }
+    setIsUpdateContactMobile(false);
   };
 
   const onBlurContactNameInput = async (item) => {
     if (!item.contactName) {
-      alertFault("Contact name can't be empty!");
+      alertFault("alerts.invalidContactName");
       changeItems(index, "contactName", originalContactName);
     } else if (item.contactName !== originalContactName) {
       await updateClientContact(item);
@@ -129,11 +132,14 @@ const ContactMapping = ({
               })),
             ]}
             isUpdate={canEditContacts && isUpdateContactName}
-            setIsUpdate={
-              isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactName
-            }
+            setIsUpdate={(value) => {
+              if (isQuoteConfirmation) {
+                setIsUpdateContactName(false);
+              }
+              setIsUpdateContactName(value);
+            }}
             getOptionLabel={(item) => item.text}
-            onBlur={() => onBlurContactName()}
+            onBlur={() => onBlurContactNameSelect()}
             onChange={(e, value) => {
               if (value?.id === "new") {
                 onOpenNewContact(true);
@@ -168,9 +174,18 @@ const ContactMapping = ({
         label={t("sales.quote.mobileContact")}
         onBlur={() => onBlurContactMobile(item)}
         isUpdate={canEditContacts && isUpdateContactMobile}
-        setIsUpdate={
-          isQuoteConfirmation ? setIsConfirmation : setIsUpdateContactMobile
-        }
+        setIsUpdate={(value) => {
+          if (isQuoteConfirmation) setIsUpdateContactMobile(null);
+          else {
+            if (value) {
+              enterEditContactMode();
+            }
+            if (value === null) {
+              changeItems(index, "contactPhone", originalContactMobile);
+            }
+            setIsUpdateContactMobile(value);
+          }
+        }}
         onInputChange={(e: any) => {
           changeItems(index, "contactPhone", e);
         }}
