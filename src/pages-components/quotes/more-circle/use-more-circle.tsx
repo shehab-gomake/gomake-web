@@ -400,7 +400,7 @@ const useMoreCircle = () => {
         condition: isSendPaymentToClient,
         name: t("fileUploader.uploadFile"),
         icon: <PDFIcon />,
-        onclick: () => addOrderBoardaMissionsToFileUploader('orderId'),
+        onclick: () => addOrderBoardaMissionsToFileUploader(quote?.id),
       },
     ];
   };
