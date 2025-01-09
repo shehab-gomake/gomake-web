@@ -190,6 +190,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [deviceCategory, setDeviceCategory] = useState("");
   const [deviceSize, setDeviceSize] = useState("");
 
+
   const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(
     isActionEmployeeUpdatedState
   );
@@ -2131,50 +2132,56 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }
   const getMaterialCategories = async () => {
     let copySubProducts = cloneDeep(subProducts);
-    // i need check the type when the device parameter not in the first section *** Important ***
     const targetSubProduct = copySubProducts.find((item) => item.type === null);
     let temp = [...targetSubProduct.parameters];
-    const sizesParametersArray = [];
 
     const callBack = (res) => {
       if (res?.success) {
         let printedMaterialWidth = res?.data?.printedMaterialWidth;
         let printedMaterialLength = res?.data?.printedMaterialLength;
+
         if (printedMaterialWidth) {
           printedMaterialWidth = parseFloat(printedMaterialWidth).toFixed(2);
         }
         if (printedMaterialLength) {
           printedMaterialLength = parseFloat(printedMaterialLength).toFixed(2);
         }
-        sizesParametersArray.push({
-          parameterCode: "Width",
-          value: printedMaterialWidth,
-        });
-        sizesParametersArray.push({
-          parameterCode: "Height",
-          value: printedMaterialLength,
-        });
+
+        // Create sizesParametersArray with potential null values
+        const sizesParametersArray = [
+          { parameterCode: "Width", value: printedMaterialWidth },
+          { parameterCode: "Height", value: printedMaterialLength },
+        ];
+
 
         // Clone the product template
         let templateCopy = cloneDeep(productTemplate);
 
         // Check if the template contains a parameter with code "size"
-        const sizeParameterExists =
-          findParameterInTemplate(templateCopy, ["size"]).length > 0;
+        const sizeParameterExists = findParameterInTemplate(templateCopy, ["size"]).length > 0;
 
         // Push 'custom' size code if the template has a size parameter
         if (sizeParameterExists) {
           sizesParametersArray.push({ parameterCode: "size", value: "custom" });
         }
+
         sizesParametersArray.forEach((parameter) => {
           let dieCutSizeSubProductParameter = temp.find(
             (x) => x.parameterCode === parameter.parameterCode
           );
-          if (dieCutSizeSubProductParameter) {
+
+          if (parameter.value === null) {
+            if (dieCutSizeSubProductParameter && dieCutSizeSubProductParameter.values[0] !== null) {
+              // If there's a value, just set isDisabled to false
+              dieCutSizeSubProductParameter.isDisabled = false;
+            } else {
+              // Remove the parameter from temp if its value is null
+              temp = temp.filter((x) => x.parameterCode !== parameter.parameterCode);
+            }
+          } else if (dieCutSizeSubProductParameter) {
             dieCutSizeSubProductParameter.values = [parameter.value];
             dieCutSizeSubProductParameter.isDisabled =
-              res?.data?.printedMaterialWidth === null &&
-                res?.data?.printedMaterialLength === null
+              printedMaterialWidth === null && printedMaterialLength === null
                 ? false
                 : true;
           } else {
@@ -2182,7 +2189,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               "Width",
               "Height",
             ]);
-            if (foundParameters?.length > 0) {
+            if (foundParameters.length > 0) {
               foundParameters.forEach((myparameter) => {
                 temp.push({
                   parameterId: myparameter.id,
@@ -2208,6 +2215,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
         });
 
+
+
         let temp2 = [...subProducts];
         const index2 = temp2.findIndex((item) => item.type === null);
         temp2[index2] = {
@@ -2222,6 +2231,36 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       name: deviceSize,
     });
   };
+  useEffect(() => {
+    if (!subProducts) return; // Ensure subProducts is defined
+
+    let copySubProducts = cloneDeep(subProducts);
+    const targetSubProduct = copySubProducts.find((item) => item.type === null);
+
+    if (!targetSubProduct) return; // Ensure targetSubProduct is found
+
+    let temp = [...targetSubProduct.parameters];
+    // Check for devicesize and set isDisabled to false for Width and Height
+    const deviceSizeParameter = temp.find((x) => x.parameterCode === "devicesize");
+
+    if (!deviceSizeParameter) {
+      temp.forEach((param) => {
+        if (param.parameterCode === "Width" || param.parameterCode === "Height") {
+          param.isDisabled = false;
+        }
+      });
+    }
+
+    const index2 = copySubProducts.findIndex((item) => item.type === null);
+    if (index2 !== -1) {
+      copySubProducts[index2] = {
+        type: null,
+        parameters: temp,
+      };
+      setSubProducts(copySubProducts);
+    }
+  }, [deviceSize]);
+
   useEffect(() => {
     if (deviceSize && deviceCategory) {
       getMaterialCategories();
