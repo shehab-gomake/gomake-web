@@ -253,7 +253,7 @@ const SettingsWidget = ({
                     onChangeStateProduct("templateId", value);
                   }
                 }}
-                disabled={isUpdate && !query?.isSubProducts}
+                //disabled={isUpdate && !query?.isSubProducts}
               />
             )}
           </div>
