@@ -147,6 +147,8 @@ const GomakeTextInput = ({
       id={id}
       helperText={helperText}
       dir={direction}
+      onWheel={(e) => e.preventDefault()}
+
     />
   );
 };
