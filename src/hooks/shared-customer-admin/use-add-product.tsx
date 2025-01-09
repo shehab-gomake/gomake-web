@@ -657,7 +657,7 @@ const useAddProduct = ({ classes }) => {
     const isMaterial =
       parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
       parameter?.parameterType ===
-        EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME;
     const isSwitch = parameter?.parameterType === EParameterTypes.SWITCH;
 
@@ -944,7 +944,7 @@ const useAddProduct = ({ classes }) => {
                               subSectionId,
                               parameter,
                               option,
-                              UpdateTypes.PRODUCT_ONLY
+                              selectedUpdateType
                             );
                           }
                         }}
@@ -969,7 +969,7 @@ const useAddProduct = ({ classes }) => {
                               subSectionId,
                               parameter,
                               option,
-                              UpdateTypes.PRODUCT_ONLY
+                              selectedUpdateType
                             );
                           }
                         }}
@@ -1065,7 +1065,7 @@ const useAddProduct = ({ classes }) => {
                             subSectionId,
                             parameter,
                             option,
-                            UpdateTypes.PRODUCT_ONLY
+                            selectedUpdateType
                           );
                         }
                       }}
@@ -1090,7 +1090,7 @@ const useAddProduct = ({ classes }) => {
                             subSectionId,
                             parameter,
                             option,
-                            UpdateTypes.PRODUCT_ONLY
+                            selectedUpdateType
                           );
                         }
                       }}
@@ -1107,7 +1107,7 @@ const useAddProduct = ({ classes }) => {
     } else if (
       parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
       parameter?.parameterType ===
-        EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME
     ) {
       if (allMaterials?.length > 0) {
@@ -1221,7 +1221,7 @@ const useAddProduct = ({ classes }) => {
                               subSectionId,
                               parameter,
                               option,
-                              UpdateTypes.PRODUCT_ONLY
+                              selectedUpdateType
                             );
                           }
                         }}
@@ -1246,7 +1246,7 @@ const useAddProduct = ({ classes }) => {
                               subSectionId,
                               parameter,
                               option,
-                              UpdateTypes.PRODUCT_ONLY
+                              selectedUpdateType
                             );
                           }
                         }}

@@ -6,7 +6,7 @@ import {
   RequiredIcon,
   SettingIcon,
 } from "../../icons";
-import { Tooltip } from "@mui/material";
+import { Stack, Tooltip } from "@mui/material";
 import { LockedIcon } from "../../icons/lock-icon";
 import { NotLockedIcon } from "../../icons/not-lock-icon";
 import { DetailIcon } from "../../icons/detail-icon";
@@ -19,6 +19,8 @@ import { useRecoilState } from "recoil";
 import { selectedUpdateTypeState } from "@/store/selected-update-type";
 import { doNotAskNextTimeState } from "@/store";
 import { EditIcon } from "../../icons/edit-icon";
+import { CircleCheckbox } from "@/components/check-box/circle-check-box";
+import { SecondSwitch } from "@/components";
 
 export enum UpdateTypes {
   PRODUCT_ONLY = 0,
@@ -58,7 +60,6 @@ const SectionMappingWidget = ({
   const [doNotAskNextTime, setDoNotAskNextTime] = useRecoilState(
     doNotAskNextTimeState
   );
-
   const renderIconWithTooltip = (
     condition,
     trueIcon,
@@ -140,21 +141,38 @@ const SectionMappingWidget = ({
 
   return (
     <div key={index} style={classes.subSectionContainer}>
+      {
+        doNotAskNextTime && index === 0 &&
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+          <div style={{ fontSize: "14px", fontWeight: "500" }}>
+            {t("products.parameters.samePricingType")}
+          </div>
+          <SecondSwitch
+            defaultChecked={selectedUpdateType === UpdateTypes.SAME_PRICING_TYPE}
+            checked={selectedUpdateType === UpdateTypes.SAME_PRICING_TYPE}
+            onChange={(e: any, value: any) => {
+              setSelectedUpdateType(value ? UpdateTypes.SAME_PRICING_TYPE : UpdateTypes.PRODUCT_ONLY)
+            }}
+            key={selectedUpdateType}
+          />
+        </div>
+      }
       <div style={classes.subSectionTitleStyle}>{subSection.name}</div>
+
       <div style={classes.parametersContainer}>
         {subSection?.parameters
           ?.filter((x) => !x.isHiddenInSetting)
           ?.map((parameter, paramIndex) => {
             const ShowEditExternalCodeValue =
               parameter?.parameterType ===
-                EParameterTypes.SELECT_CHILDS_PARAMETERS ||
+              EParameterTypes.SELECT_CHILDS_PARAMETERS ||
               parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
               parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
               parameter?.parameterType ===
-                EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+              EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
               parameter?.parameterType ===
-                EParameterTypes.ADVERTISING_PRODUCT_NAME ||  parameter?.parameterType ===
-                EParameterTypes.SWITCH;
+              EParameterTypes.ADVERTISING_PRODUCT_NAME || parameter?.parameterType ===
+              EParameterTypes.SWITCH;
 
             return (
               <div key={paramIndex}>
@@ -166,15 +184,15 @@ const SectionMappingWidget = ({
                     </div>
                     {parameter?.parameterType ===
                       EParameterTypes.SELECT_CHILDS_PARAMETERS && (
-                      <div
-                        style={classes.plusIconStyle}
-                        onClick={() =>
-                          onOpenModal(parameter, section?.id, subSection?.id)
-                        }
-                      >
-                        <SettingIcon width={20} height={20} />
-                      </div>
-                    )}
+                        <div
+                          style={classes.plusIconStyle}
+                          onClick={() =>
+                            onOpenModal(parameter, section?.id, subSection?.id)
+                          }
+                        >
+                          <SettingIcon width={20} height={20} />
+                        </div>
+                      )}
                     {renderIconWithTooltip(
                       parameter?.isHidden,
                       <HiddenIcon />,
@@ -188,7 +206,7 @@ const SectionMappingWidget = ({
                           handleUpdate(
                             ParameterActionType.VISIBLE,
                             parameter,
-                            UpdateTypes.PRODUCT_ONLY
+                            selectedUpdateType
                           );
                         }
                         setSelectedActionType(ParameterActionType.VISIBLE);
@@ -209,7 +227,7 @@ const SectionMappingWidget = ({
                             handleUpdate(
                               ParameterActionType.REQUIRED,
                               parameter,
-                              UpdateTypes.PRODUCT_ONLY
+                              selectedUpdateType
                             );
                           }
                           setSelectedActionType(ParameterActionType.REQUIRED);
@@ -229,7 +247,7 @@ const SectionMappingWidget = ({
                           handleUpdate(
                             ParameterActionType.EDITABLE,
                             parameter,
-                            UpdateTypes.PRODUCT_ONLY
+                            selectedUpdateType
                           );
                         }
                         setSelectedActionType(ParameterActionType.EDITABLE);
@@ -249,7 +267,7 @@ const SectionMappingWidget = ({
                           handleUpdate(
                             ParameterActionType.SHOW_IN_DETAILS,
                             parameter,
-                            UpdateTypes.PRODUCT_ONLY
+                            selectedUpdateType
                           );
                         }
                         setSelectedActionType(
@@ -295,7 +313,7 @@ const SectionMappingWidget = ({
         onClose={handleCloseModal}
         selectedUpdateType={selectedUpdateType}
         setSelectedUpdateType={setSelectedUpdateType}
-        onUpdate={() => handleUpdate(selectedActionType, selectedParameter)}
+        onUpdate={() => handleUpdate(selectedActionType, selectedParameter, selectedUpdateType)}
         setDoNotAskNextTime={setDoNotAskNextTime}
         doNotAskNextTime={doNotAskNextTime}
       />

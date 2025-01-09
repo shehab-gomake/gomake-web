@@ -225,7 +225,8 @@ const ParameterWidget = () => {
             selectedSectionId,
             selectedSubSectionId,
             selectedParameter,
-            selectedOption
+            selectedOption,
+            selectedUpdateType
           )
         }
         setDoNotAskNextTime={setDoNotAskNextTime}
