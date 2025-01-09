@@ -725,14 +725,17 @@ const useAddProduct = ({ classes }) => {
       }));
     }
 
-    if (
-      (isMaterial && materialsOptions?.length === 0) ||
-      (!isMaterial &&
-        (!parameter?.valuesConfigs || parameter?.valuesConfigs.length === 0))
-    ) {
-      alertFault("alerts.noValues");
-      return;
+    if(parameter?.parameterType !== EParameterTypes.SWITCH){
+      if (
+          (isMaterial && materialsOptions?.length === 0) ||
+          (!isMaterial &&
+              (!parameter?.valuesConfigs || parameter?.valuesConfigs.length === 0) )
+      ) {
+        alertFault("alerts.noValues");
+        return;
+      }
     }
+    
 
     // setSelectedParameter
     if (isMaterial) {
@@ -741,7 +744,20 @@ const useAddProduct = ({ classes }) => {
         valuesConfigs: materialsOptions,
       };
       setSelectedParameter(updatedParameter);
-    } else {
+    } else if(parameter?.parameterType === EParameterTypes.SWITCH) {
+      const updatedParameter = {
+        ...parameter,
+        valuesConfigs: [
+          {
+            updateName:"true",
+          },
+          {
+            updateName:"false",
+          }
+        ],
+      };
+      setSelectedParameter(updatedParameter);
+    }else{
       setSelectedParameter(parameter);
     }
     setSelectedSectonId(sectionId);
