@@ -656,7 +656,6 @@ const useAddProduct = ({ classes }) => {
     if(!parameter?.productParametersExternalValues){
       parameter.productParametersExternalValues = []
     }
-    debugger
     //Check if parameterType is material
     const isMaterial =
       parameter?.parameterType === EParameterTypes.SELECT_MATERIALS ||
