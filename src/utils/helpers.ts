@@ -264,3 +264,8 @@ export const checkArrayNotEmptyOrEmailNotEmpty = (array) => {
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
+export const clearPhoneNumberPrefix = (phoneNumber) =>{
+  const pattern = /^(?:\+|00)(1|[2-9]\d{1,2})[-\s]?/;
+  return phoneNumber.replace(pattern, "");
+
+}
