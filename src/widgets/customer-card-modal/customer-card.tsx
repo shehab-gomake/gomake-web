@@ -33,7 +33,8 @@ interface IProps {
     value: any,
     value1: any,
     value2: any,
-    value3: any
+    value3: any,
+    preferences: any,
   ) => boolean;
   customerAction?: CUSTOMER_ACTIONS;
   codeFlag?: boolean;
