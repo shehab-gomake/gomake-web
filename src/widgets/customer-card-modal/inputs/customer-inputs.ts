@@ -1,4 +1,9 @@
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+
 const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+
   return [
     {
       name: "code",
@@ -35,7 +40,9 @@ const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
       label: "customers.modal.vatNO",
       type: "text",
       placeholder: "customers.modal.vatNO",
-      required: true,
+      required: CheckPreferenceValue(
+        EPreferences.IS_BUSINESS_NUMBER_REQUIRED_IN_CUSTOMERS
+      ),
       parameterKey: "buisnessNumber",
       options: [],
       value: state?.buisnessNumber,
