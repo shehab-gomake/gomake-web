@@ -183,124 +183,122 @@ const SectionMappingWidget = ({
                       <small>&nbsp;{parameter?.defaultUnit}</small>
                     </div>
                     {parameter?.parameterType ===
-                      EParameterTypes.SELECT_CHILDS_PARAMETERS && (
-                        <div
-                          style={classes.plusIconStyle}
-                          onClick={() =>
-                            onOpenModal(parameter, section?.id, subSection?.id)
-                          }
-                        >
-                          <SettingIcon width={20} height={20} />
-                        </div>
-                      )}
+                        EParameterTypes.SELECT_CHILDS_PARAMETERS && (
+                            <div
+                                style={classes.plusIconStyle}
+                                onClick={() =>
+                                    onOpenModal(parameter, section?.id, subSection?.id)
+                                }
+                            >
+                              <SettingIcon width={20} height={20}/>
+                            </div>
+                        )}
                     {renderIconWithTooltip(
-                      parameter?.isHidden,
-                      <HiddenIcon />,
-                      <NotHiddenIcon />,
-                      "hidden",
-                      "visible",
-                      () => {
-                        if (!doNotAskNextTime) {
-                          handleOpenModal();
-                        } else {
-                          handleUpdate(
-                            ParameterActionType.VISIBLE,
-                            parameter,
-                            selectedUpdateType
-                          );
-                        }
-                        setSelectedActionType(ParameterActionType.VISIBLE);
-                        setSelectedParameter(parameter);
-                      }
-                    )}
-                    {parameter?.parameterType !== EParameterTypes.SWITCH &&
-                      renderIconWithTooltip(
-                        parameter?.isRequired,
-                        <RequiredIcon />,
-                        <NotRequiredIcon />,
-                        "required",
-                        "notRequired",
+                        parameter?.isHidden,
+                        <HiddenIcon/>,
+                        <NotHiddenIcon/>,
+                        "hidden",
+                        "visible",
                         () => {
                           if (!doNotAskNextTime) {
                             handleOpenModal();
                           } else {
                             handleUpdate(
-                              ParameterActionType.REQUIRED,
-                              parameter,
-                              selectedUpdateType
+                                ParameterActionType.VISIBLE,
+                                parameter,
+                                selectedUpdateType
                             );
                           }
-                          setSelectedActionType(ParameterActionType.REQUIRED);
+                          setSelectedActionType(ParameterActionType.VISIBLE);
                           setSelectedParameter(parameter);
                         }
-                      )}
+                    )}
+                    {parameter?.parameterType !== EParameterTypes.SWITCH &&
+                        renderIconWithTooltip(
+                            parameter?.isRequired,
+                            <RequiredIcon/>,
+                            <NotRequiredIcon/>,
+                            "required",
+                            "notRequired",
+                            () => {
+                              if (!doNotAskNextTime) {
+                                handleOpenModal();
+                              } else {
+                                handleUpdate(
+                                    ParameterActionType.REQUIRED,
+                                    parameter,
+                                    selectedUpdateType
+                                );
+                              }
+                              setSelectedActionType(ParameterActionType.REQUIRED);
+                              setSelectedParameter(parameter);
+                            }
+                        )}
                     {renderIconWithTooltip(
-                      parameter?.isLock,
-                      <LockedIcon />,
-                      <NotLockedIcon />,
-                      "readOnly",
-                      "editable",
-                      () => {
-                        if (!doNotAskNextTime) {
-                          handleOpenModal();
-                        } else {
-                          handleUpdate(
-                            ParameterActionType.EDITABLE,
-                            parameter,
-                            selectedUpdateType
-                          );
+                        parameter?.isLock,
+                        <LockedIcon/>,
+                        <NotLockedIcon/>,
+                        "readOnly",
+                        "editable",
+                        () => {
+                          if (!doNotAskNextTime) {
+                            handleOpenModal();
+                          } else {
+                            handleUpdate(
+                                ParameterActionType.EDITABLE,
+                                parameter,
+                                selectedUpdateType
+                            );
+                          }
+                          setSelectedActionType(ParameterActionType.EDITABLE);
+                          setSelectedParameter(parameter);
                         }
-                        setSelectedActionType(ParameterActionType.EDITABLE);
-                        setSelectedParameter(parameter);
-                      }
                     )}
                     {renderIconWithTooltip(
-                      parameter?.isShowToClient,
-                      <DetailIcon />,
-                      <NotDetailIcon />,
-                      "shownInDetails",
-                      "hiddenFromDetails",
-                      () => {
-                        if (!doNotAskNextTime) {
-                          handleOpenModal();
-                        } else {
-                          handleUpdate(
-                            ParameterActionType.SHOW_IN_DETAILS,
-                            parameter,
-                            selectedUpdateType
+                        parameter?.isShowToClient,
+                        <DetailIcon/>,
+                        <NotDetailIcon/>,
+                        "shownInDetails",
+                        "hiddenFromDetails",
+                        () => {
+                          if (!doNotAskNextTime) {
+                            handleOpenModal();
+                          } else {
+                            handleUpdate(
+                                ParameterActionType.SHOW_IN_DETAILS,
+                                parameter,
+                                selectedUpdateType
+                            );
+                          }
+                          setSelectedActionType(
+                              ParameterActionType.SHOW_IN_DETAILS
                           );
+                          setSelectedParameter(parameter);
                         }
-                        setSelectedActionType(
-                          ParameterActionType.SHOW_IN_DETAILS
-                        );
-                        setSelectedParameter(parameter);
-                      }
                     )}
-                    {ShowEditExternalCodeValue && (
-                      <div
+                    <div
                         style={classes.plusIconStyle}
                         onClick={() =>
-                          onOpenExternalIdsModal(
-                            parameter,
-                            subSection?.parameters,
-                            section?.id,
-                            subSection?.id
-                          )
+                            onOpenExternalIdsModal(
+                                parameter,
+                                subSection?.parameters,
+                                section?.id,
+                                subSection?.id
+                            )
                         }
-                      >
-                        <EditIcon />
-                      </div>
-                    )}
+                    >
+                      <EditIcon/>
+                    </div>
                   </div>
                   <div style={classes.renderParameterTypeContainer}>
                     {_renderParameterType(
-                      section?.id,
-                      subSection?.id,
-                      parameter,
-                      subSection?.parameters,
-                      paramIndex,
-                      section,
-                      subSection
+                        section?.id,
+                        subSection?.id,
+                        parameter,
+                        subSection?.parameters,
+                        paramIndex,
+                        section,
+                        subSection
                     )}
                   </div>
                 </div>

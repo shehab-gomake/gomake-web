@@ -663,7 +663,7 @@ const useAddProduct = ({ classes }) => {
       EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
       parameter?.parameterType === EParameterTypes.ADVERTISING_PRODUCT_NAME;
     const isSwitch = parameter?.parameterType === EParameterTypes.SWITCH;
-
+    const isInput = parameter?.parameterType === EParameterTypes.INPUT_TEXT || parameter?.parameterType === EParameterTypes.INPUT_NUMBER;
     // Creating new valuesConfigs for materials
     let materialsOptions = [];
     const materialPath = parameter.materialPath;
@@ -723,13 +723,13 @@ const useAddProduct = ({ classes }) => {
         (!isMaterial &&
           (!parameter?.valuesConfigs || parameter?.valuesConfigs.length === 0))
       ) {
-        alertFault("alerts.noValues");
-        return;
+        //alertFault("alerts.noValues");
+        ///return;
       }
     }
 
     //Extract externalCode for the materials/switch that come from productParametersExternalValues
-    if (isMaterial || isSwitch) {
+    if (isMaterial || isSwitch || isInput)  {
       let valuesConfigs = [];
       if (parameter?.productParametersExternalValues) {
         const externalValuesMap = new Map(
@@ -745,7 +745,7 @@ const useAddProduct = ({ classes }) => {
             externalValue:
               externalValuesMap.get(materialOption.valueId) || null,
           }));
-        } else {
+        } else if(isSwitch) {
           valuesConfigs = [
             {
               value: t("products.parameters.true"),
@@ -758,6 +758,11 @@ const useAddProduct = ({ classes }) => {
               externalValue: externalValuesMap.get("false") || null,
             },
           ];
+        }else{
+          valuesConfigs = parameter?.productParametersExternalValues.map((x) => ({
+            updateName:x.valueId,
+            externalValue:x.externalCode
+          }));
         }
       }
       // Set the parameter with updated valuesConfigs
