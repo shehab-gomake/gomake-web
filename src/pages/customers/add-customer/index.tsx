@@ -5,7 +5,7 @@ import { AddButton } from "@/components/button/add-button";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "../enums";
 
 interface IProps {
-  isValidCustomer?: (value: any, value1: any, value2: any, value3: any) => boolean;
+  isValidCustomer?: (value: any, value1: any, value2: any, value3: any,preferences:any) => boolean;
   onCustomerAdd: (customer: any) => void;
   typeClient: CLIENT_TYPE;
 }
