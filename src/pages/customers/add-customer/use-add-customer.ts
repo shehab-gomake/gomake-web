@@ -16,11 +16,7 @@ const useAddCustomer = () => {
       return new Promise(async (resolve, reject) => {
         setLoading(true);
         try {
-          const res = await callApi(
-            "POST",
-            `/v1/customessrs/add-customer`,
-            data
-          );
+          const res = await callApi("POST", `/v1/customers/add-customer`, data);
           if (res?.success) {
             setSnackbarStateValue({
               state: true,
