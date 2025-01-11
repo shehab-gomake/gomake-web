@@ -3,6 +3,9 @@ import { useStyle } from "./style";
 import { UpdateValueInput } from "@/components/text-input/update-value-input";
 import { IBusinessWidget } from "@/interfaces";
 import { UpdateValuePhoneInput } from "./update-value-phone-input";
+import {clearPhoneNumberPrefix} from "@/utils/helpers";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
+import {EPreferences} from "@/enums/prefernces";
 
 const PhoneInputUpdatedValues = ({
   label,
@@ -22,7 +25,9 @@ const PhoneInputUpdatedValues = ({
 }: IBusinessWidget) => {
   const { clasess } = useStyle({ isUnderLine });
   const [updateValue, setUpdateValue] = useState();
-
+  const {
+    CheckPreferenceValue
+  } = usePrintHousePreferences()
   useEffect(() => {
     setUpdateValue(value);
   }, [value]);
@@ -34,7 +39,11 @@ const PhoneInputUpdatedValues = ({
       setIsUpdate(1);
     }
   };
-
+  const getPlaceHolder = () => {
+    let clearedValue = CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX) === "false" ? clearPhoneNumberPrefix(value) : value;
+    let clearedPlaceHolder = CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX) === "false" ? clearPhoneNumberPrefix(placeholder) : placeholder;
+    return  clearedPlaceHolder ? clearedPlaceHolder : isTwoDigit ? clearedValue.toFixed(2) : clearedValue
+  }
   return (
     <>
       <div style={inputMainContainerStyle || clasess.inputMainContainer}>
@@ -54,7 +63,7 @@ const PhoneInputUpdatedValues = ({
             className="customInput"
             onClick={handleClick}
           >
-            {placeholder ? placeholder : isTwoDigit ? value.toFixed(2) : value} {sign}
+            {getPlaceHolder()} {sign}
           </div>
         )}
       </div>
