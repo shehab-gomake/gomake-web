@@ -1,6 +1,6 @@
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
-import { CSSProperties, ReactNode, useEffect, useState } from "react";
+import { CSSProperties, ReactNode} from "react";
 
 const StyledTextField = styled(TextField)((props: any) => ({
   direction: props?.direction,
@@ -91,6 +91,11 @@ const GoMakeTextInput = ({
     };
     onChange(modifiedEvent);
   };
+  const handleWheel = (event) => {
+    if (document.activeElement === event.target && type === 'number') {
+      event.target.blur();
+    }
+  };
 
   return (
     <StyledTextField
@@ -116,6 +121,7 @@ const GoMakeTextInput = ({
       id={id}
       helperText={helperText}
       dir={direction}
+      onWheel={handleWheel}
     />
   );
 };
