@@ -1,7 +1,10 @@
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
+import {useGomakeTheme} from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
+  const { primaryColor } = useGomakeTheme();
+
   const classes = useMemo(() => {
     return {
       insideStyle: {
@@ -23,6 +26,7 @@ const useStyle = () => {
         justifyContent: "center",
         width: "100%",
       },
+      iconColor: primaryColor(300),
     };
   }, []);
   return {
