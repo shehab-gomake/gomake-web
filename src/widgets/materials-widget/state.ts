@@ -141,6 +141,16 @@ export const materialsTablePageState = atom<number>({
   default: 1,
 });
 
+export const pagesCountState = atom<number>({
+  key: "pagesCountState",
+  default: 0,
+});
+
+export const inActiveFilterState = atom<boolean>({
+  key: "inActiveFilterState",
+  default: false,
+});
+
 export const categoryNumberingState = atom<{}>({
   key: "categoryNumberingState",
   default: {},
