@@ -400,7 +400,8 @@ const useMaterials = (isAdmin: boolean) => {
     const callBack = (res) => {
       if (res.success) {
         const supplier = res?.data[0];
-        if (isFirstTime && supplier) {
+        setSupplierId(supplier?.id);
+        if (isFirstTime && supplier?.id) {
           getMaterialCategoryData(
             materialType?.toString(),
             materialCategory?.toString(),
