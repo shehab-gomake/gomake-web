@@ -107,14 +107,14 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
         }
       >
         <Stack style={classes.mainContainer}>
-          {CheckPermission(Permissions.ADD_NEW_PRODUCT_FROM_CART) && (
+          {/*CheckPermission(Permissions.ADD_NEW_PRODUCT_FROM_CART) && (
             <ProductTypeSelector
               active={active}
               onChange={handleChange}
               primaryColor={primaryColor}
               t={t}
             />
-          )}
+          )*/}
           {active ? (
             <GoMakeTreeSelect
               value={selectedProduct}
