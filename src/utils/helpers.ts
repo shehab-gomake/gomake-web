@@ -1,5 +1,4 @@
 import { EPreferences } from "@/enums/prefernces";
-import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ISetState } from "@/services/hooks/call-api.interface";
 import get from "lodash.get";
 
@@ -77,48 +76,6 @@ export const hasValues = (obj) => {
   }
 };
 
-//!old
-// const isValidCustomer = (
-//   customer,
-//   filteredContacts,
-//   filteredAddresses,
-//   filteredUsers
-// ) => {
-//   if (!(customer && customer.name && customer.clientTypeId)) {
-//     return false;
-//   }
-//   if (filteredContacts) {
-//     for (const contact of filteredContacts) {
-//       if (!contact.firstName) {
-//         return false;
-//       }
-//     }
-//   }
-//   if (filteredAddresses) {
-//     for (const address of filteredAddresses) {
-//       if (!address.address1) {
-//         return false;
-//       }
-//     }
-//   }
-
-//   if (filteredUsers) {
-//     for (const user of filteredUsers) {
-//       if (!user.email) {
-//         return false;
-//       }
-//     }
-//   }
-//   if (filteredUsers) {
-//     for (const user of filteredUsers?.filter((user) => !user.id)) {
-//       if (!user.password) {
-//         return false;
-//       }
-//     }
-//   }
-//   return true;
-// };
-
 export const isValidCustomer = (
   customer,
   filteredContacts,
@@ -126,16 +83,19 @@ export const isValidCustomer = (
   filteredUsers,
   CheckPreferenceValue
 ) => {
-  const hasRequiredCustomerInfo =
+  debugger;
+
+  const isMissingRequiredCustomerInfo = !(
     customer &&
     customer.name &&
     customer.clientTypeId &&
     (!CheckPreferenceValue(
       EPreferences.IS_BUSINESS_NUMBER_REQUIRED_IN_CUSTOMERS
     ) ||
-      customer.buisnessNumber);
+      customer.buisnessNumber)
+  );
 
-  if (!hasRequiredCustomerInfo) return false;
+  if (isMissingRequiredCustomerInfo) return false;
 
   // Helper function to validate an array of objects with a required property
   const isValidArray = (array, property) => {
@@ -244,7 +204,6 @@ export const checkArrayNotEmptyOrPhoneNotEmpty = (array) => {
       return true;
     }
   }
-
   return false;
 };
 
@@ -257,7 +216,6 @@ export const checkArrayNotEmptyOrEmailNotEmpty = (array) => {
       return true;
     }
   }
-
   return false;
 };
 
