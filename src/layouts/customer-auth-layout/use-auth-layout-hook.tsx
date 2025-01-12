@@ -401,6 +401,10 @@ const useAuthLayoutHook = (
   }, []);
 
   useEffect(() => {
+    if(allowAnonymous){
+      setCanAccess(true)
+      return
+    }
     if (typeof isAuth === "boolean") {
       setCanAccess(isAuth && isLanguageUpdated);
     }
