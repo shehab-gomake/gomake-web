@@ -72,7 +72,11 @@ const WhatsAppWebModal = ({
           <GomakeTextInput
             placeholder={t("sales.quote.phone")}
             style={clasess.textInputStyle}
-            value={CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX) === "false" ? clearPhoneNumberPrefix(phoneNumber) : phoneNumber}
+            value={
+              !CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
+                ? clearPhoneNumberPrefix(phoneNumber)
+                : phoneNumber
+            }
             onChange={(e: any) => {
               setPhoneNumber(e.target.value);
             }}

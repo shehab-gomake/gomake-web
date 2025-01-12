@@ -5,8 +5,8 @@ import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { useRecoilValue } from "recoil";
 import { createGlobalStyle } from "styled-components";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
-import {EPreferences} from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 
 interface IProps {
   onChange: (value: string) => void;
@@ -26,9 +26,7 @@ const PhoneInputComponent = ({
   variant = "default",
 }: IProps) => {
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
-  const {
-    CheckPreferenceValue
-  } = usePrintHousePreferences()
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const LTR = dir === "ltr";
@@ -79,27 +77,28 @@ const PhoneInputComponent = ({
 `;
 //
   return (
-      <div onKeyPress={handleKeyPress}>
-        {variant === "circular" ? <GlobalStyleCircular/> : <GlobalStyle/>}
-        <PhoneInput
-            key={defaultCountry}
-            defaultCountry={
-              defaultCountry
-                  ? defaultCountry
-                  : printHouseProfileState.country?.toLowerCase()
-            }
-            hideDropdown={CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX) === "false"}
-            disableDialCodeAndPrefix={CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX) === "false"}
-            value={value || ""}
-            onChange={(value) => {
-              value.length !== 4 && onChange(value);
-            }}
-            autoFocus={autoFocus}
-            style={{minWidth: 150, ...customStyle}}
-        />
-      </div>
-  )
-  ;
+    <div onKeyPress={handleKeyPress}>
+      {variant === "circular" ? <GlobalStyleCircular /> : <GlobalStyle />}
+      <PhoneInput
+        key={defaultCountry}
+        defaultCountry={
+          defaultCountry
+            ? defaultCountry
+            : printHouseProfileState.country?.toLowerCase()
+        }
+        hideDropdown={!CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)}
+        disableDialCodeAndPrefix={
+          !CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
+        }
+        value={value || ""}
+        onChange={(value) => {
+          value.length !== 4 && onChange(value);
+        }}
+        autoFocus={autoFocus}
+        style={{ minWidth: 150, ...customStyle }}
+      />
+    </div>
+  );
 };
 
 export {PhoneInputComponent};

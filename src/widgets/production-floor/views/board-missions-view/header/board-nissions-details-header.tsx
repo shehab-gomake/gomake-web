@@ -198,7 +198,9 @@ const BoardMissionsDetailsHeader = () => {
                     {t("sales.quote.phone")}
                   </span>
                   <span style={classes.parameterValue}>
-                    {CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX) === "false" ? clearPhoneNumberPrefix(boardMissionsDetails.clientPhone) : boardMissionsDetails.clientPhone}
+                    {!CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
+                      ? clearPhoneNumberPrefix(boardMissionsDetails.clientPhone)
+                      : boardMissionsDetails.clientPhone}
                   </span>
                 </Stack>
                 <Divider flexItem orientation={"vertical"} />
