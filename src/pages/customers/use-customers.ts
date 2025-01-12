@@ -25,9 +25,9 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useDebounce } from "@/utils/use-debounce";
 import { useSnackBar } from "@/hooks";
-import {clearPhoneNumberPrefix, isValidCustomer} from "@/utils/helpers";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
-import {EPreferences} from "@/enums/prefernces";
+import { clearPhoneNumberPrefix, isValidCustomer } from "@/utils/helpers";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 export interface IStatus {
   label: string;
   value: string;
@@ -53,9 +53,7 @@ const useCustomers = (
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
   const [openExportModal, setOpenExportModal] = useState<boolean>(false);
-  const {
-    CheckPreferenceValue
-  } = usePrintHousePreferences()
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   const onOpenExportClientModal = () => {
     setOpenExportModal(true);
   };
@@ -81,12 +79,13 @@ const useCustomers = (
   ];
 
   const getCustomersRows = useCallback(() => {
-    
     return allCustomers?.map((customer) => [
       customer?.customerCode,
       customer?.name,
       customer?.email,
-      CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX) === "false" ? clearPhoneNumberPrefix(customer?.phone) : customer?.phone,
+      !CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
+        ? clearPhoneNumberPrefix(customer?.phone)
+        : customer?.phone,
       customer?.status,
       customer?.hashTag,
     ]);
