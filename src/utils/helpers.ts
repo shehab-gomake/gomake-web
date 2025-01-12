@@ -77,48 +77,6 @@ export const hasValues = (obj) => {
   }
 };
 
-//!old
-// const isValidCustomer = (
-//   customer,
-//   filteredContacts,
-//   filteredAddresses,
-//   filteredUsers
-// ) => {
-//   if (!(customer && customer.name && customer.clientTypeId)) {
-//     return false;
-//   }
-//   if (filteredContacts) {
-//     for (const contact of filteredContacts) {
-//       if (!contact.firstName) {
-//         return false;
-//       }
-//     }
-//   }
-//   if (filteredAddresses) {
-//     for (const address of filteredAddresses) {
-//       if (!address.address1) {
-//         return false;
-//       }
-//     }
-//   }
-
-//   if (filteredUsers) {
-//     for (const user of filteredUsers) {
-//       if (!user.email) {
-//         return false;
-//       }
-//     }
-//   }
-//   if (filteredUsers) {
-//     for (const user of filteredUsers?.filter((user) => !user.id)) {
-//       if (!user.password) {
-//         return false;
-//       }
-//     }
-//   }
-//   return true;
-// };
-
 export const isValidCustomer = (
   customer,
   filteredContacts,
