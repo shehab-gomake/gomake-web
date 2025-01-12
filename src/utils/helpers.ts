@@ -1,5 +1,4 @@
 import { EPreferences } from "@/enums/prefernces";
-import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ISetState } from "@/services/hooks/call-api.interface";
 import get from "lodash.get";
 
@@ -205,7 +204,6 @@ export const checkArrayNotEmptyOrPhoneNotEmpty = (array) => {
       return true;
     }
   }
-
   return false;
 };
 
@@ -218,13 +216,13 @@ export const checkArrayNotEmptyOrEmailNotEmpty = (array) => {
       return true;
     }
   }
-
   return false;
 };
 
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
+
 export const clearPhoneNumberPrefix = (phoneNumber) => {
   if (!phoneNumber) return phoneNumber;
   const pattern = /^(?:\+|00)(1|[2-9]\d{1,2})[-\s]?/;
