@@ -126,16 +126,19 @@ export const isValidCustomer = (
   filteredUsers,
   CheckPreferenceValue
 ) => {
-  const hasRequiredCustomerInfo =
+  debugger;
+
+  const isMissingRequiredCustomerInfo = !(
     customer &&
     customer.name &&
     customer.clientTypeId &&
     (!CheckPreferenceValue(
       EPreferences.IS_BUSINESS_NUMBER_REQUIRED_IN_CUSTOMERS
     ) ||
-      customer.buisnessNumber);
+      customer.buisnessNumber)
+  );
 
-  if (!hasRequiredCustomerInfo) return false;
+  if (isMissingRequiredCustomerInfo) return false;
 
   // Helper function to validate an array of objects with a required property
   const isValidArray = (array, property) => {
@@ -264,9 +267,8 @@ export const checkArrayNotEmptyOrEmailNotEmpty = (array) => {
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
-export const clearPhoneNumberPrefix = (phoneNumber) =>{
-  if(!phoneNumber)
-    return phoneNumber;
+export const clearPhoneNumberPrefix = (phoneNumber) => {
+  if (!phoneNumber) return phoneNumber;
   const pattern = /^(?:\+|00)(1|[2-9]\d{1,2})[-\s]?/;
   const result = phoneNumber.replace(pattern, "");
 
