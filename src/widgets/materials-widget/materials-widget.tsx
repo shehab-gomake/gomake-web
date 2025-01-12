@@ -40,8 +40,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
-  const { getMaterialCategoryData, pagesCount, pageNumber, setPageNumber } =
-    useMaterialsCategories(props.isAdmin);
+  const { getMaterialCategoryData, pagesCount, pageNumber, setPageNumber } = useMaterialsCategories(props.isAdmin);
   const pageSize = 14;
   const activeFilter = useRecoilValue(activeFilterState);
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
@@ -124,8 +123,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     },
   ];
 
-  const {} = useGoMakeTour(materialsSteps, []);
-
+  const { } = useGoMakeTour(materialsSteps, []);
   const Side = () => (
     <Stack direction={"column"} gap={"10px"}>
       <SideList
@@ -226,7 +224,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     activeFilter,
     materialFilter,
   ]);
-
   return (
     <div>
       <div style={classes.headerStyle}>

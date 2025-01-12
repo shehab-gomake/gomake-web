@@ -127,7 +127,7 @@ const useMaterials = (isAdmin: boolean) => {
       materialType?.toString(),
       materialCategory?.toString(),
       materialFilter,
-      supplierId
+      supplierId,
     ).then();
   };
 
@@ -152,7 +152,9 @@ const useMaterials = (isAdmin: boolean) => {
   const onSelectCategory = (category: string) => {
     setIsFirstTime(false);
     setSelectedMaterialCategory(category);
-    setMaterialCategoryData([]);
+    if (category != materialCategory) {
+      setMaterialCategoryData([]);
+    }
     setSupplierId("");
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";
@@ -245,9 +247,9 @@ const useMaterials = (isAdmin: boolean) => {
         materialCategoryData.map((row) =>
           materialsIds.includes(row.id)
             ? {
-                ...row,
-                checked: !checked,
-              }
+              ...row,
+              checked: !checked,
+            }
             : { ...row, checked: false }
         )
       );
