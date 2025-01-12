@@ -592,7 +592,7 @@ const useQuoteNew = ({
       await getClientPaymentItemsApi(
         callApi,
         callBack,
-        { clientId: item?.id },
+        { clientId: item?.id , documentNumber: router?.query?.documentNumber},
         false
       );
     } else if (router?.query?.isNewCreation) {
