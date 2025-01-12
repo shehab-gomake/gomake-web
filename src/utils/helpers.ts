@@ -268,6 +268,7 @@ export const clearPhoneNumberPrefix = (phoneNumber) =>{
   if(!phoneNumber)
     return phoneNumber;
   const pattern = /^(?:\+|00)(1|[2-9]\d{1,2})[-\s]?/;
-  return phoneNumber.replace(pattern, "");
+  const result = phoneNumber.replace(pattern, "");
 
-}
+  return result;
+};

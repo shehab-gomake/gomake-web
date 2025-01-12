@@ -3,9 +3,9 @@ import { useStyle } from "./style";
 import { UpdateValueInput } from "@/components/text-input/update-value-input";
 import { IBusinessWidget } from "@/interfaces";
 import { UpdateValuePhoneInput } from "./update-value-phone-input";
-import {clearPhoneNumberPrefix} from "@/utils/helpers";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
-import {EPreferences} from "@/enums/prefernces";
+import { clearPhoneNumberPrefix } from "@/utils/helpers";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 
 const PhoneInputUpdatedValues = ({
   label,
@@ -21,13 +21,11 @@ const PhoneInputUpdatedValues = ({
   sign,
   inputMainContainerStyle,
   isTwoDigit = false,
-  placeholder
+  placeholder,
 }: IBusinessWidget) => {
   const { clasess } = useStyle({ isUnderLine });
   const [updateValue, setUpdateValue] = useState();
-  const {
-    CheckPreferenceValue
-  } = usePrintHousePreferences()
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   useEffect(() => {
     setUpdateValue(value);
   }, [value]);
@@ -40,10 +38,20 @@ const PhoneInputUpdatedValues = ({
     }
   };
   const getPlaceHolder = () => {
-    let clearedValue = CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX) === "false" ? clearPhoneNumberPrefix(value) : value;
-    let clearedPlaceHolder = CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX) === "false" ? clearPhoneNumberPrefix(placeholder) : placeholder;
-    return  clearedPlaceHolder ? clearedPlaceHolder : isTwoDigit ? clearedValue.toFixed(2) : clearedValue
-  }
+    let clearedValue = !CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
+      ? clearPhoneNumberPrefix(value)
+      : value;
+    let clearedPlaceHolder = !CheckPreferenceValue(
+      EPreferences.SHOW_PHONE_PREFIX
+    )
+      ? clearPhoneNumberPrefix(placeholder)
+      : placeholder;
+    return clearedPlaceHolder
+      ? clearedPlaceHolder
+      : isTwoDigit
+      ? clearedValue.toFixed(2)
+      : clearedValue;
+  };
   return (
     <>
       <div style={inputMainContainerStyle || clasess.inputMainContainer}>
@@ -55,7 +63,6 @@ const PhoneInputUpdatedValues = ({
             onCancel={() => setIsUpdate(null)}
             onUpdate={() => onBlur()?.then()}
             value={updateValue}
-
           />
         ) : (
           <div
