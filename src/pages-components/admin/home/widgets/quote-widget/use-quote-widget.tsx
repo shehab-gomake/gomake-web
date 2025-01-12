@@ -235,6 +235,10 @@ const useQuoteWidget = () => {
   const [customer, setCustomer] = useState([]);
 
   const onCustomerAdd = (customer) => {
+    handleClickToSelectedCustomer(
+      userQuote?.client?.id,
+      customer
+    ).then();
     setOpenCustomerModal(false);
   };
 
