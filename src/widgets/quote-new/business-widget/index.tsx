@@ -259,8 +259,14 @@ const BusinessNewWidget = ({
           <InputUpdatedValues
             value={
               values?.documentAddresses?.length > 0
-                ? `${values?.documentAddresses[0]?.street} ${values?.documentAddresses[0]?.apartment}, ${values?.documentAddresses[0]?.city}`
-                : "no address found"
+                ? [
+                    values?.documentAddresses[0]?.street,
+                    values?.documentAddresses[0]?.apartment,
+                    values?.documentAddresses[0]?.city,
+                  ]
+                    .filter((part) => part && part.trim())
+                    .join(", ") || t("sales.cart.noAddressFound")
+                : t("sales.cart.noAddressFound")
             }
             label={t("customers.modal.address")}
             isUnderLine={true}
