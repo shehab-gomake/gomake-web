@@ -31,15 +31,16 @@ const CustomerAuthLayout = ({
   const setNavStatus = useSetRecoilState(navStatusState);
   const isHover = useRecoilValue(hoverStatusState);
   const { htmlTour, openModal, onCloseModal } = useHtmlTour();
-
   const fileUploaderStream = useFilesUploaderSignalr();
   const messengerStream = useMessengerSignalr();
+
   useEffect(() => {
     return () => {
       fileUploaderStream.closeConnection();
       messengerStream.closeConnection();
     };
   }, []);
+
   return disableHeaderSideMenu ? (
     <>
       {canAccess && (

@@ -6,21 +6,26 @@ import {
   pinFileUploaderState,
   uploadingFilesState,
 } from "@/store/file-uploader-state";
-import { EUploadingFileStatus } from "@/widgets/file-uploader-widget/interface";
+import {
+  EUploadingFileStatus,
+  FileTypeENUM,
+} from "@/widgets/file-uploader-widget/interface";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { useGomakeAxios } from "@/hooks";
 
-const useUploadFiles = (orderItemId, filesPath) => {
+const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
   const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [uploadingFiles, setUploadingFiles] =
     useRecoilState(uploadingFilesState);
-  const [boardMissions] = useRecoilState(boardMissionsDetailsState);
+  const [boardMissions] = useRecoilState(boardMissionsDetailsState); //!here filesPath
   const { callApi } = useGomakeAxios();
 
-  const handleFileUpload = async (file, fileCategory = null) => {
+  const handleFileUpload = async (file, fileType) => {
+    const finalPath =
+      fileType === FileTypeENUM.Printing ? filesPath : graphicsFilePath;
     setShowFileUploader(true);
 
     const filesGroup = uploadingFiles?.find(
@@ -37,7 +42,7 @@ const useUploadFiles = (orderItemId, filesPath) => {
                   {
                     fileName: file?.name,
                     fileStatus: EUploadingFileStatus.UPLOADING,
-                    fileCategory, // Assign the category to the file
+                    fileType,
                   },
                   ...filesGroup.filesInfo,
                 ],
@@ -51,12 +56,13 @@ const useUploadFiles = (orderItemId, filesPath) => {
           orderItemId,
           boardMissionId: boardMissions.boardMissionId,
           filePath: filesPath,
+          graphicsFilePath: graphicsFilePath,
           title: `${boardMissions.boardMissionNumber} | ${boardMissions.orderNumber} | ${boardMissions.clientName}`,
           filesInfo: [
             {
               fileName: file?.name,
               fileStatus: EUploadingFileStatus.UPLOADING,
-              fileCategory, //! new change
+              fileType,
             },
           ],
         },
@@ -67,11 +73,11 @@ const useUploadFiles = (orderItemId, filesPath) => {
     await setOrderItemFileStatus({
       orderItemId,
       filename: file?.name,
-      source: filesPath,
-      // screenShot: response.screenShot,
+      source: finalPath,
       productType: "",
       signalRConnectId: connectionId,
       status: EUploadingFileStatus.UPLOADING,
+      fileType,
     });
 
     // File upload logic remains unchanged
@@ -86,7 +92,7 @@ const useUploadFiles = (orderItemId, filesPath) => {
         currentChunk,
         totalChunks,
         file?.name,
-        fileCategory
+        fileType
       );
 
       if (!response || !response.success) {
@@ -99,7 +105,7 @@ const useUploadFiles = (orderItemId, filesPath) => {
                     {
                       fileName: file?.name,
                       fileStatus: EUploadingFileStatus.ERROR,
-                      fileCategory, //! new change
+                      fileType,
                     },
                     ...filesGroup.filesInfo,
                   ],
@@ -110,11 +116,12 @@ const useUploadFiles = (orderItemId, filesPath) => {
         await setOrderItemFileStatus({
           orderItemId,
           filename: file?.name,
-          source: filesPath,
+          source: finalPath,
           screenShot: "",
           productType: "",
           signalRConnectId: connectionId,
           status: EUploadingFileStatus.ERROR,
+          fileType,
         });
         return;
       }
@@ -130,7 +137,7 @@ const useUploadFiles = (orderItemId, filesPath) => {
                     {
                       fileName: file?.name,
                       fileStatus: EUploadingFileStatus.Uploaded,
-                      fileCategory, //! new change
+                      fileType,
                     },
                     ...filesGroup.filesInfo,
                   ],
@@ -141,11 +148,12 @@ const useUploadFiles = (orderItemId, filesPath) => {
         await setOrderItemFileStatus({
           orderItemId,
           filename: file?.name,
-          source: filesPath,
+          source: finalPath,
           screenShot: response.screenShot,
           productType: "",
           signalRConnectId: connectionId,
           status: EUploadingFileStatus.Uploaded,
+          fileType,
         });
       }
     }
@@ -156,13 +164,12 @@ const useUploadFiles = (orderItemId, filesPath) => {
     chunkIndex,
     totalChunks,
     fileName,
-    fileCategory?
+    fileType
   ) => {
     const formData = new FormData();
     formData.append("file", chunk);
     formData.append("orderItemId", orderItemId);
     formData.append("fileName", fileName);
-    formData.append("path", filesPath);
     formData.append(
       "takeScreenShot",
       chunkIndex + 1 === totalChunks ? "true" : "false"
@@ -171,10 +178,15 @@ const useUploadFiles = (orderItemId, filesPath) => {
     formData.append("totalPackets", totalChunks);
     formData.append("signalRConnectId", connectionId);
 
-    //! new change
-    if (fileCategory !== null && fileCategory !== undefined) {
-      formData.append("fileCategory", fileCategory);
-    }
+    // if (fileType !== null && fileType !== undefined) {
+    //   formData.append("fileType", fileType);
+    // }
+
+    formData.append(
+      "path",
+      fileType === FileTypeENUM.Printing ? filesPath : graphicsFilePath
+    );
+
     try {
       const response = await fetch(
         companyProfile.filesApiAddress + "/api/Files/UploadOrderItemFile",
@@ -195,6 +207,7 @@ const useUploadFiles = (orderItemId, filesPath) => {
     }
   };
 
+  //!thissssss
   const setOrderItemFileStatus = async (dto) => {
     const res: any = await callApi(
       "POST",

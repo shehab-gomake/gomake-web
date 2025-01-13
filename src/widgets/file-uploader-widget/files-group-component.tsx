@@ -1,7 +1,10 @@
 import Stack from "@mui/material/Stack";
 import { FileComponent } from "@/widgets/file-uploader-widget/file-component";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { IUploadingFileGroup } from "@/widgets/file-uploader-widget/interface";
+import {
+  FileTypeENUM,
+  IUploadingFileGroup,
+} from "@/widgets/file-uploader-widget/interface";
 import { useCallback, useRef, useState } from "react";
 import { Divider, IconButton } from "@mui/material";
 import { useUploadFiles } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/use-upload-files";
@@ -17,12 +20,17 @@ const FilesGroupComponent = ({
   filesInfo,
   orderItemId,
   filePath,
+  graphicsFilePath,
   boardMissionId,
 }: IUploadingFileGroup) => {
   const { primaryColor } = useGomakeTheme();
   const [isOverGraphics, setIsOverGraphics] = useState(false);
   const [isOverPrinting, setIsOverPrinting] = useState(false);
-  const { handleFileUpload } = useUploadFiles(orderItemId, filePath);
+  const { handleFileUpload } = useUploadFiles(
+    orderItemId,
+    filePath,
+    graphicsFilePath
+  );
   const { push } = useRouter();
   const fileInputRef = useRef(null);
   const { t } = useTranslation();
@@ -32,7 +40,7 @@ const FilesGroupComponent = ({
     setIsOverGraphics(false);
     const files = event.dataTransfer.files;
     for (let i = 0; i < files.length; i++) {
-      handleFileUpload(files[i], "Graphics").then();
+      handleFileUpload(files[i], FileTypeENUM.Graphics).then();
     }
   };
 
@@ -41,7 +49,7 @@ const FilesGroupComponent = ({
     setIsOverPrinting(false);
     const files = event.dataTransfer.files;
     for (let i = 0; i < files.length; i++) {
-      handleFileUpload(files[i], "Printing").then();
+      handleFileUpload(files[i], FileTypeENUM.Printing).then();
     }
   };
 
@@ -64,23 +72,25 @@ const FilesGroupComponent = ({
   }, []);
 
   const graphicsFiles = filesInfo.filter(
-    (file) => file.fileCategory !== "Printing"
+    (file) => file.fileType === FileTypeENUM.Graphics
   );
   const printingFiles = filesInfo.filter(
-    (file) => file.fileCategory !== "Graphics"
+    (file) => file.fileType === FileTypeENUM.Printing
   );
 
-  const handelChooseFileClick = (fileCategory?: string) => {
+  const handelChooseFileClick = (fileType: FileTypeENUM) => {
+    debugger;
+
     if (fileInputRef.current) {
-      fileInputRef.current.fileCategory = fileCategory || "UnCategorized";
+      fileInputRef.current.fileType = fileType;
       fileInputRef.current.click();
     }
   };
 
   const handleFileSelect = async (e) => {
-    const fileCategory = e.target.fileCategory || "UnCategorized";
+    const fileType = e.target.fileType;
     [...e.target.files].forEach(async (file) => {
-      await handleFileUpload(file, fileCategory); //!new change
+      await handleFileUpload(file, fileType);
     });
   };
 
@@ -138,7 +148,7 @@ const FilesGroupComponent = ({
                   height: "25px",
                   padding: "2px",
                 }}
-                onClick={() => handelChooseFileClick("Graphics")}
+                onClick={() => handelChooseFileClick(FileTypeENUM.Graphics)}
               >
                 <OpenUploadFileIcon />
               </IconButton>
@@ -148,7 +158,7 @@ const FilesGroupComponent = ({
             {graphicsFiles?.length === 0 && (
               <Stack direction={"row"} alignItems={"center"}>
                 <Button
-                  onClick={() => handelChooseFileClick("Graphics")}
+                  onClick={() => handelChooseFileClick(FileTypeENUM.Graphics)}
                   style={{
                     color: primaryColor(700),
                     ...FONT_FAMILY.Lexend(700, 15),
@@ -203,7 +213,7 @@ const FilesGroupComponent = ({
                   height: "25px",
                   padding: "2px",
                 }}
-                onClick={() => handelChooseFileClick("Printing")}
+                onClick={() => handelChooseFileClick(FileTypeENUM.Printing)}
               >
                 <OpenUploadFileIcon />
               </IconButton>
@@ -213,7 +223,7 @@ const FilesGroupComponent = ({
             {printingFiles?.length === 0 && (
               <Stack direction={"row"} alignItems={"center"}>
                 <Button
-                  onClick={() => handelChooseFileClick("Printing")}
+                  onClick={() => handelChooseFileClick(FileTypeENUM.Printing)}
                   style={{
                     color: primaryColor(700),
                     ...FONT_FAMILY.Lexend(700, 15),

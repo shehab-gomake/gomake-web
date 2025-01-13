@@ -15,7 +15,7 @@ import { ITableProps } from "@/components/tables/interface";
 import { useStyle } from "@/components/tables/style";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTranslation } from "react-i18next";
-import SortIcon from '@mui/icons-material/Sort';  // Sort icon import
+import SortIcon from "@mui/icons-material/Sort"; // Sort icon import
 
 const PrimaryTableCell = styled(TableCell)(() => {
   const { primaryColor } = useGomakeTheme();
@@ -49,17 +49,17 @@ const PrimaryTableRow = styled(TableRow)(() => {
 });
 
 const StyledTableContainer = styled(TableContainer)(() => ({
-  overflowX: 'auto',
-  '&::-webkit-scrollbar': {
-    width: '10px',
-    height: '10px',
+  overflowX: "auto",
+  "&::-webkit-scrollbar": {
+    width: "10px",
+    height: "10px",
   },
-  '&::-webkit-scrollbar-track': {
-    background: '#f1f1f1',
+  "&::-webkit-scrollbar-track": {
+    background: "#f1f1f1",
   },
-  '&::-webkit-scrollbar-thumb': {
-    background: '#CCCDCF',
-    borderRadius: '10px',
+  "&::-webkit-scrollbar-thumb": {
+    background: "#CCCDCF",
+    borderRadius: "10px",
   },
 }));
 const ClassicTableCell = styled(TableCell)(() => {
@@ -99,7 +99,7 @@ const PrimaryTableWithDragAndDrop = ({
   columnWidths,
   dataTour,
   isLastItemTotal = false,
-  onDragEnd // Pass onDragEnd from parent to handle drag logic
+  onDragEnd, // Pass onDragEnd from parent to handle drag logic
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -113,16 +113,22 @@ const PrimaryTableWithDragAndDrop = ({
   const getItemStyle = (isDragging, draggableStyle) => ({
     ...draggableStyle,
     // Maintain table layout while dragging
-    width: '100%',
+    width: "100%",
     display: isDragging && "flex",
     flexDirection: isDragging && "row",
     justifyContent: isDragging && "space-between",
     alignItems: isDragging && "center",
-    backgroundColor: isDragging ? '#f4f4f4' : 'inherit',
+    backgroundColor: isDragging ? "#f4f4f4" : "inherit",
   });
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden", boxShadow: withoutShadow && "none" }}>
+    <Paper
+      sx={{
+        width: "100%",
+        overflow: "hidden",
+        boxShadow: withoutShadow && "none",
+      }}
+    >
       <StyledTableContainer style={classes.tableContainer}>
         <DragDropContext onDragEnd={onDragEnd}>
           <Droppable droppableId="droppable">
@@ -153,17 +159,24 @@ const PrimaryTableWithDragAndDrop = ({
                         <TableRow
                           ref={provided.innerRef}
                           {...provided.draggableProps}
-                          style={getItemStyle(snapshot.isDragging, provided.draggableProps.style)}
+                          style={getItemStyle(
+                            snapshot.isDragging,
+                            provided.draggableProps.style
+                          )}
                         >
                           {/* Add SortIcon as the drag handle */}
-                          <TableCell {...provided.dragHandleProps} align="center" style={{ width: '50px' }}>
-                            <SortIcon style={{ cursor: 'grab' }} />
+                          <TableCell
+                            {...provided.dragHandleProps}
+                            align="center"
+                            style={{ width: "50px" }}
+                          >
+                            <SortIcon style={{ cursor: "grab" }} />
                           </TableCell>
                           {row.map((cell, cellIndex) => {
                             const cellStyle = columnWidths
                               ? {
-                                width: columnWidths?.[cellIndex],
-                              }
+                                  width: columnWidths?.[cellIndex],
+                                }
                               : {};
                             return (
                               <TableCell

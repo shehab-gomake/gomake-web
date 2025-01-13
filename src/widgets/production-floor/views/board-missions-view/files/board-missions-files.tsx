@@ -12,29 +12,31 @@ const BoardMissionsFiles = () => {
   const { callApi } = useGomakeAxios();
   const [files, setFiles] = useRecoilState(boardMissionsFilesState);
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
-  const { handleFileUpload } = useUploadFiles(
-    boardMissions.orderItemId,
-    boardMissions.filesPath
-  );
 
-  const [isOver, setIsOver] = useState(false);
-  const handleFileDrop = async (event) => {
-    event.preventDefault();
-    setIsOver(false);
-    const files = event.dataTransfer.files;
-    for (let i = 0; i < files.length; i++) {
-      handleFileUpload(files[i]).then();
-    }
-  };
+  //!here filesPath
+  // const { handleFileUpload } = useUploadFiles(
+  //   boardMissions.orderItemId,
+  //   boardMissions.filesPath,
+  //   "testGraphicsFilePath"
+  // );
+  // const [isOver, setIsOver] = useState(false);
+  // const handleFileDrop = async (event) => {
+  //   event.preventDefault();
+  //   setIsOver(false);
+  //   const files = event.dataTransfer.files;
+  //   for (let i = 0; i < files.length; i++) {
+  //     handleFileUpload(files[i]).then();
+  //   }
+  // };
 
-  const handleDragOver = useCallback((event) => {
-    event.preventDefault();
-    setIsOver(true);
-  }, []);
+  // const handleDragOver = useCallback((event) => {
+  //   event.preventDefault();
+  //   setIsOver(true);
+  // }, []);
 
-  const handleDragLeave = useCallback(() => {
-    setIsOver(false);
-  }, []);
+  // const handleDragLeave = useCallback(() => {
+  //   setIsOver(false);
+  // }, []);
 
   useEffect(() => {
     const callBack = (res) => {
@@ -53,10 +55,10 @@ const BoardMissionsFiles = () => {
 
   return (
     <Stack
-      className={`drop-zone ${isOver ? "dragging" : ""}`}
-      onDrop={handleFileDrop}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
+      // className={`drop-zone ${isOver ? "dragging" : ""}`}
+      // onDrop={handleFileDrop}
+      // onDragOver={handleDragOver}
+      // onDragLeave={handleDragLeave}
       direction={"row"}
       gap={"20px"}
       flex={1}

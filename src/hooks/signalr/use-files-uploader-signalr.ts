@@ -12,7 +12,6 @@ import {
   uploadingFilesState,
 } from "@/store/file-uploader-state";
 
-//!here signalr
 const useFilesUploaderSignalr = () => {
   const { connectionId, data, closeConnection } = useGoMakeSignalr<any>({
     url: config.erp_server + "/hubs/fileUploader",

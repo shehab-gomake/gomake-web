@@ -27,6 +27,7 @@ const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { query } = useRouter();
   const { productType } = query;
+
   const onClickDelete = async () => {
     try {
       setIsLoading(true);
@@ -103,7 +104,13 @@ const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
   };
 
   return (
-    <div style={{ position: "relative", margin: "35px 0", height: "200px" }}>
+    <div
+      style={{
+        position: "relative",
+        // margin: "35px 0",
+        height: "200px",
+      }}
+    >
       <Card
         sx={{
           width: 206,
@@ -160,6 +167,7 @@ const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
             <Paper
               ref={menuRef}
               sx={{
+                zIndex: "99999",
                 position: "absolute",
                 // right: "6px",
                 [direction === "rtl" ? "left" : "right"]: "6px",

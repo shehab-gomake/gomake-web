@@ -2,6 +2,7 @@ export interface IUploadingFileGroup {
   orderItemId: string;
   boardMissionId: string;
   filePath: string;
+  graphicsFilePath?: string;
   title: string;
   filesInfo: IUploadingFile[];
   extension?: any;
@@ -10,7 +11,7 @@ export interface IUploadingFileGroup {
 export interface IUploadingFile {
   fileName: string;
   fileStatus: EUploadingFileStatus;
-  fileCategory?: "Graphics" | "Printing";
+  fileType?: FileTypeENUM;
 }
 
 export enum EUploadingFileStatus {
@@ -18,4 +19,9 @@ export enum EUploadingFileStatus {
   Uploaded,
   ERROR,
   DONE,
+}
+
+export enum FileTypeENUM {
+  Printing = 0,
+  Graphics,
 }

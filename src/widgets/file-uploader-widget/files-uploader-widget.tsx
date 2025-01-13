@@ -48,7 +48,6 @@ const FilesUploaderWidget = () => {
             justifyContent={"space-between"}
             direction={"row"}
             alignItems={"center"}
-            //    width={'400px'}
             style={{
               backgroundColor: grayColor(200),
               color: grayColor(700),
