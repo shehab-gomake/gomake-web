@@ -1,8 +1,7 @@
 import { PrimaryButton } from "@/components/button/primary-button";
 import { CircularProgress, MenuItem, Paper } from "@mui/material";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
-import { useUploadFiles } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/use-upload-files";
 import { useRecoilState } from "recoil";
 import { printHouseProfile } from "@/store/print-house-profile";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
@@ -17,25 +16,29 @@ import {
 import { getDocumentContactsApi } from "@/services/api-service/documents/documents-service-api";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createBoardMissionsChatRoomApi } from "@/services/api-service/chat/quick-blox-chat-endpoints";
+import {
+  fileUploaderConnectionIdState,
+  openFileUploaderList,
+  pinFileUploaderState,
+} from "@/store/file-uploader-state";
+import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 
 const MoreActionsButton = () => {
-  const [open, setOpen] = useState<boolean>(false);
-  const { query, replace, pathname, push } = useRouter();
-  const fileInputRef = useRef(null);
-  const [companyProfile] = useRecoilState(printHouseProfile);
-  const [boardMissions] = useRecoilState(boardMissionsDetailsState);
-  const { handleFileUpload } = useUploadFiles(
-    boardMissions?.orderItemId,
-    boardMissions?.filesPath
-  );
   const { t } = useTranslation();
   const direction = t("direction");
+  const { callApi } = useGomakeAxios();
+  const { query, push } = useRouter();
+  const { alertFaultGetData } = useSnackBar();
   const [loading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [companyProfile] = useRecoilState(printHouseProfile);
+  const [boardMissions] = useRecoilState(boardMissionsDetailsState);
   const [openSendGraphicFileModal, setOpenSendGraphicFileModal] =
     useState<boolean>(false);
   const [contacts, setContacts] = useState<IContact[]>([]);
-  const { callApi } = useGomakeAxios();
-  const { alertFaultGetData } = useSnackBar();
+  const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
+  const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
+  const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
 
   const getBoardMissionChatRoomId = async (selectedContact, setLoading) => {
     setLoading(true);
@@ -57,17 +60,19 @@ const MoreActionsButton = () => {
     setOpen(false);
   };
 
-  //!here like the job button
-  const onClickUpdateFile = () => {
-    replace(
-      { pathname: pathname, query: { ...query, step: "files" } },
-      undefined,
-      { shallow: true }
-    ).then();
-    if (fileInputRef) {
-      fileInputRef.current?.click();
-    }
-    handleClose();
+  const onClickUploadFile = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        handleClose();
+        setOpenFileUploader(true);
+        setShowFileUploader(true);
+      } else {
+      }
+    };
+    await addBoardMissionsToFileUploaderApi(callApi, callBack, {
+      boardMissionsId: query.boardMissionsId,
+      connectionId: connectionId,
+    });
   };
 
   const handleClickEdit = () => {
@@ -82,13 +87,6 @@ const MoreActionsButton = () => {
         boardMissions?.orderNumber
       }&documentId=${boardMissions.orderId}`
     ).then();
-  };
-
-  //!here like the job button
-  const handleFileSelect = (e) => {
-    [...e.target.files]?.forEach(async (file) => {
-      await handleFileUpload(file);
-    });
   };
 
   const getDocumentContacts = async () => {
@@ -127,7 +125,7 @@ const MoreActionsButton = () => {
             }}
           >
             {!!companyProfile.filesApiAddress && (
-              <MenuItem onClick={onClickUpdateFile}>
+              <MenuItem onClick={onClickUploadFile}>
                 {t("productionFloor.uploadFile")}
               </MenuItem>
             )}
@@ -140,14 +138,7 @@ const MoreActionsButton = () => {
           </Paper>
         </ClickOutside>
       )}
-      <input
-        type={"file"}
-        multiple
-        value={""}
-        onChange={handleFileSelect}
-        hidden={true}
-        ref={fileInputRef}
-      />
+
       <SelectContactComponent
         onSend={getBoardMissionChatRoomId}
         contacts={contacts}
