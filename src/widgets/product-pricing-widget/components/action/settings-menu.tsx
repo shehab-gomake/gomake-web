@@ -1,4 +1,4 @@
-import { GoMakeDeleteModal, GoMakeMenu } from "@/components";
+import { GoMakeDeleteModal, GoMakeMenu, ThreeOptionsModal } from "@/components";
 import { Divider, MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -68,7 +68,8 @@ const SettingsMenu = ({
       productType: data?.productType,
       actionId: data?.actionId,
       sectionName: data?.sectionName,
-      printingActionId: data?.id
+      printingActionId: data?.id,
+      updateWorkFlowData: data?.updateWorkFlowData
     })
   };
   return (
@@ -109,11 +110,14 @@ const SettingsMenu = ({
         </PermissionCheck>
 
       </GoMakeMenu>
-      <GoMakeDeleteModal
+      <ThreeOptionsModal
         openModal={openDeleteModal}
         onClose={onClickCloseDeleteModal}
         modalType={ModalType.DELETE}
-        onClickDelete={() => onClickDeleteActionToWorkFlow({ id, actionId, productType, sectionName })}
+        yesBtn={t("products.profits.admin.deleteAndUpdatePrice")}
+        noBtn={t("products.profits.admin.deleteWithoutUpdatePrice")}
+        onClickYes={() => onClickDeleteActionToWorkFlow({ id, actionId, productType, sectionName, updateWorkFlowData: true })}
+        onClickNo={() => onClickDeleteActionToWorkFlow({ id, actionId, productType, sectionName, updateWorkFlowData: false })}
 
 
       />
