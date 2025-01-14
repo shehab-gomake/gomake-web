@@ -6,6 +6,9 @@ import { useStyle } from "./style";
 import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
 import { ModalType } from "@/enums/tabs-icon-enums";
 import { RoundedCloseIcon } from "../modal/icon/close";
+import { _renderSubTitle } from "@/utils/constants";
+import { _renderTitle } from "@/utils/constants";
+import { _renderIcon } from "@/utils/constants";
 
 const GoMakeDeleteModal = ({
   openModal,
@@ -28,59 +31,7 @@ const GoMakeDeleteModal = ({
 
 
 
-  const _renderIcon = (modalType: ModalType) => {
-    if (modalType === ModalType.DELETE) {
-      return <DeleteModalIcon />;
-    }
-    if (modalType === ModalType.DUPLICATE) {
-      return <DuplicateModalIcon />;
-    }
-    if (modalType === ModalType.EDIT) {
-      return <EditModalIcon />;
-    }
-    if (modalType === ModalType.ADD) {
-      return <AddModalIcon />;
-    }
-    if (modalType === ModalType.WARNING) {
-      return <WarningModalIcon />;
-    }
-  };
 
-  const _renderTitle = (modalType: ModalType) => {
-    if (modalType === ModalType.DELETE) {
-      return t("modal.deleteModalTitle");
-    }
-    if (modalType === ModalType.DUPLICATE) {
-      return t("modal.duplicateModalTitle");
-    }
-    if (modalType === ModalType.EDIT) {
-      return t("modal.editModalTitle");
-    }
-    if (modalType === ModalType.ADD) {
-      return t("modal.addModalTitle");
-    }
-    if (modalType === ModalType.WARNING) {
-      return t("modal.warningModalTitle");
-    }
-  };
-
-  const _renderSubTitle = (modalType: ModalType) => {
-    if (modalType === ModalType.DELETE) {
-      return t("modal.deleteModalSubTitle");
-    }
-    if (modalType === ModalType.DUPLICATE) {
-      return t("modal.duplicateModalSubTitle");
-    }
-    if (modalType === ModalType.EDIT) {
-      return t("modal.editModalSubTitle");
-    }
-    if (modalType === ModalType.ADD) {
-      return t("modal.addModalSubTitle");
-    }
-    if (modalType === ModalType.WARNING) {
-      return t("modal.warningModalSubTitle");
-    }
-  };
   const _renderConfirmBtn = (modalType: ModalType) => {
     if (modalType === ModalType.DELETE) {
       return t("modal.delete");

@@ -6,7 +6,6 @@ import cloneDeep from "lodash.clonedeep";
 import {
   addActionToWorkFlowApi,
   addOutSourceActionApi,
-  deleteActionToWorkFlowApi,
   removeOutSourceActionApi,
   updateActionsOrderInWorkFlowApi,
   updateProductItemValueOutsource,
