@@ -12,7 +12,7 @@ import {
   clientContactsState,
   loadingWithShadowState,
   quoteConfirmationState,
-  quoteItemState,
+  quoteItemState, openReceiptCreationModalState,
 } from "@/store";
 import { useQuoteGetData } from "./use-quote-get-data";
 import {
@@ -95,6 +95,8 @@ const useQuoteNew = ({
     alertFaultDelete,
     alertFault,
   } = useSnackBar();
+  
+  
   const router = useRouter();
   const { callApi } = useGomakeAxios();
   const { openWhatsAppWebLink } = useWhatsAppWeb();
@@ -104,6 +106,7 @@ const useQuoteNew = ({
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+  const [openReceiptCreationModal, setOpenReceiptCreationModal] = useRecoilState(openReceiptCreationModalState);
   const [selectDate, setSelectDate] = useState(
     isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
   );
@@ -1320,6 +1323,7 @@ const useQuoteNew = ({
           const callBack = (res) => {
             if (res?.success) {
               alertSuccessAdded();
+              setOpenInvoiceCreationModal(false);
             } else {
               alertFaultAdded();
             }
@@ -1342,6 +1346,7 @@ const useQuoteNew = ({
           const callBack = (res) => {
             if (res?.success) {
               alertSuccessAdded();
+              setOpenInvoiceCreationModal(false);
             } else {
               alertFaultAdded();
             }
@@ -1374,6 +1379,7 @@ const useQuoteNew = ({
         const callBack = (res) => {
           if (res?.success) {
             alertSuccessAdded();
+            setOpenInvoiceCreationModal(false);
           } else {
             alertFaultAdded();
           }
@@ -1398,6 +1404,7 @@ const useQuoteNew = ({
         const callBack = (res) => {
           if (res?.success) {
             alertSuccessAdded();
+            setOpenReceiptCreationModal(false);
           } else {
             alertFaultAdded();
           }
@@ -1419,6 +1426,7 @@ const useQuoteNew = ({
         const callBack = (res) => {
           if (res?.success) {
             alertSuccessAdded();
+            setOpenReceiptCreationModal(false);
           } else {
             alertFaultAdded();
           }
