@@ -1,23 +1,24 @@
-import {IconButton, Stack} from "@mui/material";
-import {ProductionFloorHeader} from "@/widgets/production-floor/header/production-floor-header";
-import {useRecoilState} from "recoil";
-import {EProductionFloorView, productionFloorViewState,} from "@/widgets/production-floor/state/production-floor-view";
-import {useEffect} from "react";
-import {GroupsTable} from "@/widgets/production-floor/views/groups-view/groups-table";
-import {useRouter} from "next/router";
+import { IconButton, Stack } from "@mui/material";
+import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
+import { useRecoilState } from "recoil";
 import {
-  ProductionFloorBoardMissionsViews
-} from "@/widgets/production-floor/views/boards-view/production-floor-board-missions-views";
+  EProductionFloorView,
+  productionFloorViewState,
+} from "@/widgets/production-floor/state/production-floor-view";
+import { useEffect } from "react";
+import { GroupsTable } from "@/widgets/production-floor/views/groups-view/groups-table";
+import { useRouter } from "next/router";
+import { ProductionFloorBoardMissionsViews } from "@/widgets/production-floor/views/boards-view/production-floor-board-missions-views";
 import Drawer from "@mui/material/Drawer";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
-import {BoardMissionsComponent} from "@/widgets/production-floor/views/board-missions-view/board-missions-component";
-import {DashboardWidget} from "@/widgets/dashboard-widget";
-import {FilesUploaderWidget} from "@/widgets/file-uploader-widget/files-uploader-widget";
+import { BoardMissionsComponent } from "@/widgets/production-floor/views/board-missions-view/board-missions-component";
+import { DashboardWidget } from "@/widgets/dashboard-widget";
+import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-uploader-widget";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
-import {useProductionFloorSignalr} from "@/hooks/signalr/use-production-floor-signalr";
-import {ProductionFloorFilters} from "./filters/production-floor-filters";
-import {useProductionFloorData} from "./use-production-floor-data";
-import {TimelineWidget} from "@/widgets/production-floor/views/gantt-view/gantt-component";
+import { useProductionFloorSignalr } from "@/hooks/signalr/use-production-floor-signalr";
+import { ProductionFloorFilters } from "./filters/production-floor-filters";
+import { useProductionFloorData } from "./use-production-floor-data";
+import { TimelineWidget } from "@/widgets/production-floor/views/gantt-view/gantt-component";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -92,8 +93,8 @@ const ProductionFloorWidget = () => {
         {view === EProductionFloorView.DASHBOARD ? (
           <DashboardWidget />
         ) : view === EProductionFloorView.GANTT ? (
-            <TimelineWidget/>
-        ) :view === EProductionFloorView.GROUPS ? (
+          <TimelineWidget />
+        ) : view === EProductionFloorView.GROUPS ? (
           <GroupsTable />
         ) : (
           <ProductionFloorBoardMissionsViews connectionId={connectionId} />

@@ -1,9 +1,3 @@
-import {mediaSheetsCategories} from "@/widgets/machines/utils/attributes/media-inputs/media-sheets-categories";
-import {mediaWideFormatCategories} from "@/widgets/machines/utils/attributes/media-inputs/media-wide-format-categories";
-import {mediaFlatbedCategories} from "@/widgets/machines/utils/attributes/media-inputs/media-flatbed-categories";
-import {
-    mediaAdvertisingProductsCategories
-} from "@/widgets/machines/utils/attributes/media-inputs/media-advertising-products-categories";
 import {mediaLoadingLoss} from "@/widgets/machines/utils/attributes/media-inputs/media-loading-loss";
 import {mediaMinMarginWidth} from "@/widgets/machines/utils/attributes/media-inputs/media-min-margin-width";
 import {mediaDimensionsSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-dimensions-settings";
@@ -35,10 +29,6 @@ const sublimationMachine = (state: Record<string, any>) => {
         ...mediaDimensionsSettings(state),
         ...mediaWeightSettings(state),
         ...mediaThicknessSettings(state),
-        ...mediaSheetsCategories(state),
-        ...mediaWideFormatCategories(state),
-        ...mediaFlatbedCategories(state),
-        ...mediaAdvertisingProductsCategories(state),
         ...dtfRollsCategories(state),
         ...dtfSheetsCategories(state),
     ]

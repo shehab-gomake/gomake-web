@@ -1,12 +1,17 @@
-import { ETabsIcon } from "@/enums";
+import { ETabsIcon, ModalType } from "@/enums";
 import {
+  DeleteModalIcon,
   ErrorIcon,
   FinishingIcon,
   MessageLogsIcon,
   PricingIcon,
   PrintingDetailsIcon,
   SuccessIcon,
+  WarningModalIcon,
   WarningLogsIcon,
+  DuplicateModalIcon,
+  EditModalIcon,
+  AddModalIcon,
 } from "@/icons";
 import {
   ApprovalStatus,
@@ -16,6 +21,7 @@ import {
 } from "@/pages-components/quotes/enums";
 import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
 import { Button } from "@mui/material";
+import { t } from "i18next";
 
 export const _renderActiveIcon = (icon) => {
   if (icon === ETabsIcon.PRINTING_DETAILS) {
@@ -207,50 +213,48 @@ export const _renderStatus = (
     ) {
       const firstDocuments = document.documentNumbers
         ? document.documentNumbers.map((item: any, index: number) => (
-            <span key={index}>
-              <a
-                style={{
-                  minWidth: "auto",
-                  height: "auto",
-                  padding: 0,
-                  color: "#2e3092",
-                  cursor: "pointer",
-                  textDecoration: "none",
-                }}
-                href={`/${
-                  document.titleDocumentNumber.charAt(0).toLowerCase() +
-                  document.titleDocumentNumber.slice(1)
+          <span key={index}>
+            <a
+              style={{
+                minWidth: "auto",
+                height: "auto",
+                padding: 0,
+                color: "#2e3092",
+                cursor: "pointer",
+                textDecoration: "none",
+              }}
+              href={`/${document.titleDocumentNumber.charAt(0).toLowerCase() +
+                document.titleDocumentNumber.slice(1)
                 }?Id=${item.documentId}`}
-              >
-                {item.documentNumber}
-              </a>
-              {index < document.documentNumbers.length - 1 && ", "}
-            </span>
-          ))
+            >
+              {item.documentNumber}
+            </a>
+            {index < document.documentNumbers.length - 1 && ", "}
+          </span>
+        ))
         : [];
 
       const secondDocuments = document.secondDocumentNumbers
         ? document.secondDocumentNumbers.map((item: any, index: number) => (
-            <span key={index}>
-              <a
-                style={{
-                  minWidth: "auto",
-                  height: "auto",
-                  padding: 0,
-                  color: "#2e3092",
-                  cursor: "pointer",
-                  textDecoration: "none",
-                }}
-                href={`/${
-                  document.titleSecondDocumentNumber.charAt(0).toLowerCase() +
-                  document.titleSecondDocumentNumber.slice(1)
+          <span key={index}>
+            <a
+              style={{
+                minWidth: "auto",
+                height: "auto",
+                padding: 0,
+                color: "#2e3092",
+                cursor: "pointer",
+                textDecoration: "none",
+              }}
+              href={`/${document.titleSecondDocumentNumber.charAt(0).toLowerCase() +
+                document.titleSecondDocumentNumber.slice(1)
                 }?Id=${item.documentId}`}
-              >
-                {item.documentNumber}
-              </a>
-              {index < document.secondDocumentNumbers.length - 1 && ", "}
-            </span>
-          ))
+            >
+              {item.documentNumber}
+            </a>
+            {index < document.secondDocumentNumbers.length - 1 && ", "}
+          </span>
+        ))
         : [];
 
       let result: JSX.Element[] = [];
@@ -351,4 +355,61 @@ export const findDefaultOption = (parameter) => {
     return defaultOption || null;
   }
   return null;
+};
+
+
+// /////////////////////// for  modals
+
+export const _renderIcon = (modalType: ModalType) => {
+  if (modalType === ModalType.DELETE) {
+    return <DeleteModalIcon />;
+  }
+  if (modalType === ModalType.DUPLICATE) {
+    return <DuplicateModalIcon />;
+  }
+  if (modalType === ModalType.EDIT) {
+    return <EditModalIcon />;
+  }
+  if (modalType === ModalType.ADD) {
+    return <AddModalIcon />;
+  }
+  if (modalType === ModalType.WARNING) {
+    return <WarningModalIcon />;
+  }
+};
+
+export const _renderTitle = (modalType: ModalType) => {
+  if (modalType === ModalType.DELETE) {
+    return t("modal.deleteModalTitle");
+  }
+  if (modalType === ModalType.DUPLICATE) {
+    return t("modal.duplicateModalTitle");
+  }
+  if (modalType === ModalType.EDIT) {
+    return t("modal.editModalTitle");
+  }
+  if (modalType === ModalType.ADD) {
+    return t("modal.addModalTitle");
+  }
+  if (modalType === ModalType.WARNING) {
+    return t("modal.warningModalTitle");
+  }
+};
+
+export const _renderSubTitle = (modalType: ModalType) => {
+  if (modalType === ModalType.DELETE) {
+    return t("modal.deleteModalSubTitle");
+  }
+  if (modalType === ModalType.DUPLICATE) {
+    return t("modal.duplicateModalSubTitle");
+  }
+  if (modalType === ModalType.EDIT) {
+    return t("modal.editModalSubTitle");
+  }
+  if (modalType === ModalType.ADD) {
+    return t("modal.addModalSubTitle");
+  }
+  if (modalType === ModalType.WARNING) {
+    return t("modal.warningModalSubTitle");
+  }
 };

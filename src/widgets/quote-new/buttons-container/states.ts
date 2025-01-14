@@ -7,7 +7,7 @@ export enum ErpAccountType {
   CreditCardPayment,
   BalanceCancelAccount,
   TaxAccount,
-  IncomAccount
+  IncomAccount,
 }
 
 export interface CheckData {
@@ -35,18 +35,18 @@ export interface TransferTabData {
 export interface prevStateStateData {
   totalTransfer: number;
   transferState: any;
-  creditCardState:any;
-  secondCreditCard:any;
+  creditCardState: any;
+  secondCreditCard: any;
   totalCash: number;
   totalBit: number;
   totalChecks: number;
-  totalCreditCard:number;
+  totalCreditCard: number;
   checksReceipt: CheckData[];
   taxDeduction: number;
-  checkAccountCode:any;
-  cashAccountCode:any;
-  cardWidget:number;
-  selectedCreditTransaction:transactionOptionsData;
+  checkAccountCode: any;
+  cashAccountCode: any;
+  cardWidget: number;
+  selectedCreditTransaction: transactionOptionsData;
 }
 
 export interface CreditCardData {
@@ -54,16 +54,16 @@ export interface CreditCardData {
   expDate_MMYY: string;
   cvv: string;
   transactionSum: number;
-  holderID?:string;
-  customerName?:string;
-  lastName?:string;
-  phoneNumber?:string;
-  customerEmail?:string;
-  transactionType?:any;
-  numberOfPayments?:number;
+  holderID?: string;
+  customerName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  customerEmail?: string;
+  transactionType?: any;
+  numberOfPayments?: number;
 }
 
-export interface ReceiptCreditCardData { 
+export interface ReceiptCreditCardData {
   id?: string;
   receiptId?: string;
   creditCardSum?: number;
@@ -81,32 +81,31 @@ export interface ReceiptCreditCardData {
 
 export const creditCardState = atom<CreditCardData>({
   key: "creditCardState",
-  default:
-  {
+  default: {
     cardNumber: "",
     expDate_MMYY: "",
     cvv: "",
-    transactionSum:0,
+    transactionSum: 0,
     holderID: "",
-    customerName:"",
-    lastName:"",
-    phoneNumber:"",
-    customerEmail:"",
-    transactionType:1,
-    numberOfPayments:0,
+    customerName: "",
+    lastName: "",
+    phoneNumber: "",
+    customerEmail: "",
+    transactionType: 1,
+    numberOfPayments: 0,
   },
 });
 
 export const receiptCreditCardState = atom<ReceiptCreditCardData>({
   key: "receiptCreditCardState",
-  default:{},
+  default: {},
 });
 
 export const checksRowState = atom<CheckData[]>({
   key: "checksRowState",
   default: [
     {
-      dueDate: new Date().toISOString().split('T')[0],
+      dueDate: new Date().toISOString().split("T")[0],
       checkNumber: "",
       bankCode: "",
       branch: "",
@@ -116,11 +115,9 @@ export const checksRowState = atom<CheckData[]>({
   ],
 });
 
-
 export const transferTabState = atom<TransferTabData>({
   key: "transferTabState",
-  default:
-  {
+  default: {
     transferAccount: "",
     transferSum: 0,
     transferReference: "",
@@ -183,17 +180,17 @@ export const prevStateState = atom<prevStateStateData>({
   default: {
     totalTransfer: 0,
     transferState: {},
-    creditCardState:{},
-    secondCreditCard:{},
-    checkAccountCode:"",
-    cashAccountCode:"",
+    creditCardState: {},
+    secondCreditCard: {},
+    checkAccountCode: "",
+    cashAccountCode: "",
     totalCash: 0,
     totalBit: 0,
     totalChecks: 0,
-    totalCreditCard:0,
+    totalCreditCard: 0,
     checksReceipt: [
       {
-        dueDate: new Date().toISOString().split('T')[0],
+        dueDate: new Date().toISOString().split("T")[0],
         checkNumber: "",
         bankCode: "",
         branch: "",
@@ -202,11 +199,10 @@ export const prevStateState = atom<prevStateStateData>({
       },
     ],
     taxDeduction: 0,
-    cardWidget:3,
-    selectedCreditTransaction:null
+    cardWidget: 3,
+    selectedCreditTransaction: null,
   },
 });
-
 
 export const checksAccountCodeState = atom<string>({
   key: "checksAccountCodeState",
