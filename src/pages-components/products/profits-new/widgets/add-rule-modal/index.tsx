@@ -503,7 +503,6 @@ const AddRuleModal = ({
                               })}
                               style={clasess.dropDownListContainer}
                               placeholder={t("properties.statment")}
-                              // getOptionLabel={(value: any) => value?.name}
                               value={rule.statement2}
                               onChange={(e, value) => {
                                 handleChange(index, "statement2", value);
@@ -756,7 +755,8 @@ const AddRuleModal = ({
                   {rule.category?.id === "Property input" && (
                     <>
                       {rules[index]?.statement2?.type === 0 ||
-                        rules[index]?.statement2?.type === 5 ? (
+                        rules[index]?.statement2?.type === 5 ||
+                        rules[index]?.statement2?.type === 4 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}
