@@ -8,18 +8,19 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   categoryNumberingState,
+  inActiveFilterState,
   isAllMaterialsCheckedState,
   materialCategoryDataState,
   materialsTablePageState,
   materialTableFiltersState,
+  pagesCountState,
 } from "@/widgets/materials-widget/state";
 import { EMaterialActiveFilter } from "./enums";
-import { useEffect, useState } from "react";
 import { getPrintHouseMaterialCategoryDataApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { getMaterialCategoryDataApi } from "@/services/api-service/materials/materials-endpoints";
 
 const useMaterialsCategories = (isAdmin: boolean) => {
-  const [inActiveFilter, setInActiveFilter] = useState<boolean>();
+  const [inActiveFilter, setInActiveFilter] = useRecoilState(inActiveFilterState);
   const { callApi } = useGomakeAxios();
   const setMaterialCategoryData = useSetRecoilState<IMaterialCategoryRow[]>(
     materialCategoryDataState
@@ -28,13 +29,8 @@ const useMaterialsCategories = (isAdmin: boolean) => {
     materialTableFiltersState
   );
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
-  // useEffect(() => {
-  //   if (inActiveFilter) {
-  //     setActiveFilter(EMaterialActiveFilter.INACTIVE)
 
-  //   }
-  // }, [inActiveFilter])
-  const [pagesCount, setPagesCount] = useState(0);
+  const [pagesCount, setPagesCount] = useRecoilState(pagesCountState);
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
   const [categoryNumbering, setCategoryNumbering] = useRecoilState(
     categoryNumberingState
@@ -72,8 +68,8 @@ const useMaterialsCategories = (isAdmin: boolean) => {
       activeFilter === EMaterialActiveFilter.ACTIVE
         ? true
         : activeFilter === EMaterialActiveFilter.INACTIVE
-        ? false
-        : null;
+          ? false
+          : null;
     if (isAdmin) {
       const data = await getMaterialCategoryDataApi(callApi, callBack, {
         materialKey: materialType,
@@ -81,7 +77,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
         pageNumber,
         pageSize,
         customFiltersKeyValueList,
-      }).catch((e) => {});
+      }).catch((e) => { });
     } else {
       await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
         materialKey: materialType,
@@ -98,6 +94,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
       });
     }
   };
+
 
   return {
     getMaterialCategoryData,
