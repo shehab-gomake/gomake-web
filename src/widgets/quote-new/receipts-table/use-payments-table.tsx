@@ -247,7 +247,6 @@ const usePaymentsTable = () => {
   };
 
   const revertToPreviousState = () => {
-    debugger;
     setTotalBit(previousState.totalBit);
     setTotalCash(previousState.totalCash);
     setTotalTransfer(previousState.totalTransfer);
@@ -302,17 +301,19 @@ const usePaymentsTable = () => {
   const [thirdWidget, setThirdWidget] =
     useRecoilState<boolean>(thirdWidgetState);
 
+  const setActiveWidget = (first: boolean, second: boolean, third: boolean) => {
+    setFirstWidget(first);
+    setSecondWidget(second);
+    setThirdWidget(third);
+  };
+
   const handleFirstButtonClick = () => {
-    debugger;
     setTotalPayment(totalPayment - totalCreditCard);
     resetTotalCreditCard();
     resetCreditCardState();
     resetSecondCreditCardState();
-
     /*  Open manual credit card method */
-    setFirstWidget(true);
-    setSecondWidget(false);
-    setThirdWidget(false);
+    setActiveWidget(true, false, false);
     /*  Open manual credit card method */
   };
 
@@ -323,9 +324,7 @@ const usePaymentsTable = () => {
     resetSecondCreditCardState();
 
     /*  Open credit details without swipe method */
-    setFirstWidget(false);
-    setSecondWidget(true);
-    setThirdWidget(false);
+    setActiveWidget(false, true, false);
     /*  Open credit details without swipe method */
   };
 
@@ -336,9 +335,7 @@ const usePaymentsTable = () => {
     resetSecondCreditCardState();
 
     /*  Open processing via PinPad method */
-    setFirstWidget(false);
-    setSecondWidget(false);
-    setThirdWidget(true);
+    setActiveWidget(false, false, true);
     /*  Open processing via PinPad method */
   };
 
@@ -466,6 +463,10 @@ const usePaymentsTable = () => {
     isTransacted,
     onClickMakePayment,
     creditCardSate,
+    setFirstWidget,
+    setSecondWidget,
+    setThirdWidget,
+    setActiveWidget,
   };
 };
 

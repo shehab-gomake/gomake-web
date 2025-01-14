@@ -11,6 +11,7 @@ const CreditCardTab = ({
   firstWidget,
   secondWidget,
   thirdWidget,
+  setActiveWidget,
   handleFirstButtonClick,
   handleSecondButtonClick,
   handleThirdButtonClick,
@@ -19,16 +20,6 @@ const CreditCardTab = ({
 }) => {
   const { classes } = useStyle();
   const { getCardNumberProps, getCVCProps } = usePaymentInputs();
-
-  //!here all the problems start from here
-  // useEffect(() => {
-  //   debugger;
-  //   if (documentItemValue?.isUsePinPad) {
-  //     handleThirdButtonClick();
-  //   } else {
-  //     handleFirstButtonClick();
-  //   }
-  // }, [documentItemValue?.isUsePinPad]);
 
   const {
     t,
@@ -49,6 +40,18 @@ const CreditCardTab = ({
     cardTransactionsOptions,
     handleChooseExistingCard,
   } = usePaymentMethodsTabs();
+
+  useEffect(() => {
+    if (!documentItemValue?.creditCardTotal && !totalCreditCard) {
+      if (documentItemValue?.isUsePinPad) {
+        /*  Open processing via PinPad method */
+        setActiveWidget(false, false, true);
+      } else {
+        /*  Open manual credit card method */
+        setActiveWidget(true, false, false);
+      }
+    }
+  }, [documentItemValue?.isUsePinPad]);
 
   useEffect(() => {
     handleChangeInputs(

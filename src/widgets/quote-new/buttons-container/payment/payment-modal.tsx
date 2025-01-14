@@ -35,6 +35,7 @@ const PaymentModal = ({
     handleThirdButtonClick,
     handleSave,
     documentItemValue,
+    setActiveWidget,
   } = usePaymentsTable();
 
   const handleSaveAndClose = (transactionData) => {
@@ -53,6 +54,7 @@ const PaymentModal = ({
           firstWidget={firstWidget}
           secondWidget={secondWidget}
           thirdWidget={thirdWidget}
+          setActiveWidget={setActiveWidget}
           handleFirstButtonClick={handleFirstButtonClick}
           handleSecondButtonClick={handleSecondButtonClick}
           handleThirdButtonClick={handleThirdButtonClick}

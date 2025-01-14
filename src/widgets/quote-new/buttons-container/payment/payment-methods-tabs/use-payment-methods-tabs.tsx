@@ -358,7 +358,7 @@ const usePaymentMethodsTabs = () => {
           creditCardSum: totalCreditCard,
         });
       } else {
-        alertFault(res?.data?.ErrorMessage || "Error!");
+        alertFault(res?.data?.ErrorMessage || "payment.makePaymentError");
       }
       setLoadingWithLockScreen(false);
     };
