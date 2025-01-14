@@ -79,8 +79,6 @@ const FilesGroupComponent = ({
   );
 
   const handelChooseFileClick = (fileType: FileTypeENUM) => {
-    debugger;
-
     if (fileInputRef.current) {
       fileInputRef.current.fileType = fileType;
       fileInputRef.current.click();
@@ -95,7 +93,7 @@ const FilesGroupComponent = ({
   };
 
   return (
-    <Stack minHeight={"50px"} position={"relative"}>
+    <Stack minHeight={"50px"} position={"relative"} width={"500px"}>
       <Stack
         direction={"row"}
         gap={"10px"}
@@ -136,6 +134,7 @@ const FilesGroupComponent = ({
           onDragOver={handleGraphicsDragOver}
           onDragLeave={handleGraphicsDragLeave}
           className={`drop-zone ${isOverGraphics ? "dragging" : ""}`}
+          width={"50%"}
         >
           <Stack direction={"row"} alignItems={"center"}>
             <h3 style={{ ...FONT_FAMILY.Inter(600, 14) }}>
@@ -201,6 +200,7 @@ const FilesGroupComponent = ({
           onDragOver={handlePrintingDragOver}
           onDragLeave={handlePrintingDragLeave}
           className={`drop-zone ${isOverPrinting ? "dragging" : ""}`}
+          width={"50%"}
         >
           <Stack direction={"row"} alignItems={"center"}>
             <h3 style={{ ...FONT_FAMILY.Inter(600, 14) }}>

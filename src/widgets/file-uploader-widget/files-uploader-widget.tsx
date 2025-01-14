@@ -82,7 +82,8 @@ const FilesUploaderWidget = () => {
               {files.map((fileGroup, index) => (
                 <Stack gap={"5px"}>
                   <FilesGroupComponent {...fileGroup} />
-                  {index < files.length - 1 && <Divider />}
+                  <Divider />
+                  {/* {index < files.length - 1 && <Divider />} */}
                 </Stack>
               ))}
             </Stack>
