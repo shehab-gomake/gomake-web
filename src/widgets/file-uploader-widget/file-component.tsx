@@ -29,7 +29,6 @@ const FileComponent = ({ fileName, fileStatus }: IUploadingFile) => {
       >
         <TextSnippetIcon />
         <span
-          dir="rtl"
           style={{
             ...FONT_FAMILY.Inter(500, 14),
             color: grayColor(700),
