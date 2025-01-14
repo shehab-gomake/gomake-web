@@ -61,6 +61,7 @@ const useSupplier = () => {
     getSupplierCurrencies,
     suppliers,
     suppliersCurrencies,
+    supplierList,
     getAllSupplierList,
     checkWhatRenderArray,
     renderSuppliersOptions

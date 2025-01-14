@@ -51,6 +51,7 @@ const useMoreCircle = () => {
     onOpenDuplicateModal,
     onClickStartProduction,
   }) => {
+    console.log("quote", quote);
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
     const { pathname } = useRouter();
@@ -89,8 +90,7 @@ const useMoreCircle = () => {
     const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
     const isClosedOrder = quote?.statusTitleText === "Order.Closed";
     const isPauseOrder = quote?.statusTitleText === "Order.Paused";
-    const isPrePaymentOrder =
-      isOrder && quote?.statusTitleText === "Order.WaitingForPayment";
+    const isPrePaymentOrder = isOrder && quote?.statusTitleText === "Order.WaitingForPayment";
 
     const isShowLogs = CheckPermission(Permissions.SHOW_LOGS);
     const isSendPaymentToClient = CheckPermission(
@@ -116,6 +116,19 @@ const useMoreCircle = () => {
           !isPauseOrder &&
           documentType !== DOCUMENT_TYPE.quote &&
           quote?.isEditable,
+        onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
+        icon: <EditingIcon />,
+        name: (
+          <a
+            style={classes.rowTextStyle}
+            href={`/${documentPath}?Id=${quote?.id}`}
+          >
+            {t("sales.quote.edit")}
+          </a>
+        ),
+      },
+      {
+        condition: isPurchaseOrder,
         onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
         icon: <EditingIcon />,
         name: (
@@ -328,8 +341,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-            ? onOpenCancelReceiptModalRefund(quote)
-            : onOpenCancelReceiptModal(quote),
+              ? onOpenCancelReceiptModalRefund(quote)
+              : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
