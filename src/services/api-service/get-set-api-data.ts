@@ -21,7 +21,9 @@ const getSetApiData = async (
     undefined,
     withShadow
   );
+  // const dataKey = "data.data.data";
   const dataKey = "data.data.data";
+
   const errorsDataKey = "errors";
 
   const _data = get(result, dataKey);
