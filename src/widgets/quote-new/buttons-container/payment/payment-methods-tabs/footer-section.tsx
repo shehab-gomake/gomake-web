@@ -12,11 +12,27 @@ const FooterSection = ({ onCloseModal }: any) => {
     handleSave,
     handleTaxDeductionChange,
     taxDeduction,
+    secondWidget,
+    thirdWidget,
+    totalCreditCard,
+    isTransacted,
+    onClickMakePayment,
+    creditCardSate,
   } = usePaymentsTable();
 
-  const onClickSave = () => {
-    handleSave();
+  const handleSaveAndClose = (transactionData) => {
+    handleSave(transactionData);
     onCloseModal();
+  };
+
+  //!here on click save
+  const onClickSave = () => {
+    if (!isTransacted && totalCreditCard > 0 && !secondWidget) {
+      onClickMakePayment(handleSaveAndClose, thirdWidget);
+    } else {
+      handleSave();
+      onCloseModal();
+    }
   };
 
   return (
@@ -79,6 +95,7 @@ const FooterSection = ({ onCloseModal }: any) => {
           >
             <span style={classes.textStyle}>{t("payment.totalPayment")}</span>
             <input style={classes.inputStyle} value={totalPayment} />
+            {/* !here */}
           </Stack>
 
           {totalSum - totalPayment < 0 && (
