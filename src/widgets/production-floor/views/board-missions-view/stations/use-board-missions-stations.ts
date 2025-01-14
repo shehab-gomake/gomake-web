@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { getBoardsMissionsStations } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
 import { useEffect } from "react";
-import { useRecoilState, useResetRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import {
   boardMissionsStationsState,
   boardMissionsSubWorkFlowsState,
@@ -14,6 +14,8 @@ import {
 } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { useTranslation } from "react-i18next";
+import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers/suppliers-endpoints";
+import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 
 const useBoardMissionsStations = () => {
   const { callApi } = useGomakeAxios();
@@ -22,6 +24,7 @@ const useBoardMissionsStations = () => {
   const isRTL = dir === "rtl";
   const { query, replace, pathname } = useRouter();
   const { boardMissionsId, step, productType } = query;
+  const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
   const [stations, setStations] = useRecoilState(boardMissionsStationsState);
   const [, setInformation] = useRecoilState(stationGeneralInformationState);
   const [, setInformationProductionFloor] = useRecoilState(
@@ -73,6 +76,18 @@ const useBoardMissionsStations = () => {
       initStations();
     };
   }, [boardMissionsId, step, productType]);
+
+  const getOutSourcingSuppliers = () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setOutSuppliers(res.data);
+      }
+    };
+    getOutsourcingSuppliersListApi(callApi, callBack, {}).then();
+  };
+  useEffect(() => {
+    getOutSourcingSuppliers();
+  }, []);
 
   return {
     stations,
