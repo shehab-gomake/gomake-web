@@ -69,6 +69,7 @@ const useMoreCircle = ({
       boardMissionId: mission?.id,
     });
   };
+
   const addBoardMissionsToFileUploader = async (mission) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -82,6 +83,7 @@ const useMoreCircle = ({
       connectionId: connectionId,
     });
   };
+
   const handleClickMarkAsReady = () => {
     if (mission?.isReady) {
       onClickReturnToProduction(mission);
@@ -99,7 +101,9 @@ const useMoreCircle = ({
   };
   const { CheckPermission } = useUserPermission();
 
-  const isSendPaymentToClient = CheckPermission(Permissions.SHOW_PRODUCTION_FLOOR);
+  const isSendPaymentToClient = CheckPermission(
+    Permissions.SHOW_PRODUCTION_FLOOR
+  );
   const isShowLogs = CheckPermission(Permissions.SHOW_LOGS);
 
   const menuList = [
@@ -163,7 +167,8 @@ const useMoreCircle = ({
       onclick: () => onClickDuplicate(mission),
     },
     {
-      condition: mission?.status === PStatus.IN_PROCESS && isSendPaymentToClient,
+      condition:
+        mission?.status === PStatus.IN_PROCESS && isSendPaymentToClient,
       name: !mission?.isReady
         ? t("boardMissions.markAsReady")
         : t("boardMissions.markAsUnReady"),

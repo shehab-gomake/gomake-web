@@ -61,13 +61,14 @@ export interface IBoardMissionsDetails {
   orderItemId: string;
   notes: string[];
   filesPath: string;
+  graphicsFilePath?: string;
   productType: string;
   sectionName: string;
   clientTypeId: string;
   quantity?: number;
   isReady: boolean;
   productionFloorJobColor?: string;
-  showGraphicsApprovalAlert?: 0 | 1 | 2
+  showGraphicsApprovalAlert?: 0 | 1 | 2;
 }
 
 export interface IBoardMissionStep {
