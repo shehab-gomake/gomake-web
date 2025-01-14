@@ -33,7 +33,7 @@ const GeneralTab = ({
   const { t } = useTranslation();
   const divRef = useRef(null);
   useEffect(() => {
-    if (divRef.current) {
+    if (divRef.current && showTable) {
       const divElement = divRef.current;
       const lastChild = divElement.lastElementChild;
       if (lastChild) {
