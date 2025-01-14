@@ -128,19 +128,6 @@ const useMoreCircle = () => {
         ),
       },
       {
-        condition: isPurchaseOrder,
-        onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
-        icon: <EditingIcon />,
-        name: (
-          <a
-            style={classes.rowTextStyle}
-            href={`/${documentPath}?Id=${quote?.id}`}
-          >
-            {t("sales.quote.edit")}
-          </a>
-        ),
-      },
-      {
         condition:
           !isPauseOrder &&
           isOrder &&
