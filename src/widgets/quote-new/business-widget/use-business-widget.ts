@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
@@ -7,7 +7,8 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { addressModalState } from "./address-widget/state";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
-import { useCustomerDropDownList } from "@/hooks";
+import { useCustomerDropDownList, useGomakeAxios, useSupplier } from "@/hooks";
+import { getAndSetAllCustomers } from "@/services/hooks/cart-side/customers/get-all-customers";
 
 const useBusinessWidget = ({ values, documentType }) => {
   const { t } = useTranslation();
@@ -15,6 +16,20 @@ const useBusinessWidget = ({ values, documentType }) => {
   const [isConfirmation, setIsConfirmation] = useState();
   const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList();
+  const { callApi } = useGomakeAxios();
+  const getAllSupplierList = useCallback(async (SearchTerm?) => {
+    await getAndSetAllCustomers(callApi, setSupplierList, {
+      clientType: "S",
+      searchTerm: SearchTerm,
+      onlyCreateOrderClients: false,
+    });
+  }, []);
+  const [supplierList, setSupplierList] = useState([]);
+  useEffect(() => {
+    if (documentType === DOCUMENT_TYPE.purchaseOrder) {
+      getAllSupplierList();
+    }
+  }, []);
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(
     values?.purchaseNumber || t("sales.quote.noPurchaseNumber")
@@ -67,6 +82,11 @@ const useBusinessWidget = ({ values, documentType }) => {
     text: customer?.name,
     id: customer?.id,
     ...customer,
+  }));
+  const mappedSuppliers = supplierList.map((supplier) => ({
+    text: supplier?.name,
+    id: supplier?.id,
+    ...supplier,
   }));
 
   const { CheckDocumentPermission } = useUserPermission();
@@ -139,6 +159,7 @@ const useBusinessWidget = ({ values, documentType }) => {
     setIsUpdateTaxNumber,
     onBlurTaxNumber,
     mappedCustomers,
+    mappedSuppliers,
     openCustomerModal,
     setOpenCustomerModal,
     customer,
