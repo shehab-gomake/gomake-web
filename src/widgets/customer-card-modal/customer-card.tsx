@@ -227,6 +227,7 @@ const CustomerCardWidget = ({
           renderTabPanelTextArea={renderTabPanelTextArea}
           languagesOptions={languagesOptions}
           renderTableSearch={renderTableSearch}
+          showTable={showTable}
         />
       ),
     },

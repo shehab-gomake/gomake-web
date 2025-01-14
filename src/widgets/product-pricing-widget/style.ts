@@ -22,6 +22,10 @@ const useStyle = () => {
         ...FONT_FAMILY.Inter(500, 14),
         color: primaryColor(900),
       },
+      textAreaDetailValue: {
+        ...FONT_FAMILY.Inter(900, 16),
+        color: primaryColor(900),
+      },
       sectionTitle: {
         color: primaryColor(900),
         ...FONT_FAMILY.Lexend(500, 14),

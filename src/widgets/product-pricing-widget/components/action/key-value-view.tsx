@@ -231,7 +231,7 @@ const KeyValueViewComponent = ({
         <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{name}</span>
 
-            <span style={valueColor ? { ...classes.detailValue, color: valueColor } : classes.detailValue}>
+            <span style={valueColor ? { ...(htmlElementType === HtmlElementType.TEXT_AREA ? classes.textAreaDetailValue : classes.detailValue), color: valueColor } : (htmlElementType === HtmlElementType.TEXT_AREA ? classes.textAreaDetailValue : classes.detailValue)}>
                 {!!defaultUnit ? `${truncateText(removeTags(value))} ${defaultUnit}` : truncateText(removeTags(value))}
             </span>
             {

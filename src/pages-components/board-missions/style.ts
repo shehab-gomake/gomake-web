@@ -168,6 +168,10 @@ const useStyle = () => {
         width: "70%",
         alignSelf: "center" as "center",
       },
+      tableAtagStyle:{
+        color: "inherit" as "inherit",
+        textDecoration:"unset" as "unset",
+      }
     };
   }, [theme]);
   return {

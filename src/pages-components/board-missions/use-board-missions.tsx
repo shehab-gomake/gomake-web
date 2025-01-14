@@ -422,14 +422,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               mission?.productType
                 ? `${mission?.number} / ${mission?.productType}`
                 : mission?.number,
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => {
-                  navigate(`/order?Id=${mission?.orderID}`);
-                }}
+              <a
+                  style={classes.tableAtagStyle}
+                  href={`/order?Id=${mission?.orderID}`}
               >
                 {mission?.orderNumber}
-              </div>,
+              </a>,
               mission?.outSourceType === null
                 ? EWorkSource[0]
                 : EWorkSource[mission?.outSourceType],
