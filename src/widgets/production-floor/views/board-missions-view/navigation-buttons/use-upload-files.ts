@@ -20,7 +20,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [uploadingFiles, setUploadingFiles] =
     useRecoilState(uploadingFilesState);
-  const [boardMissions] = useRecoilState(boardMissionsDetailsState); //!here filesPath
+  const [boardMissions] = useRecoilState(boardMissionsDetailsState);
   const { callApi } = useGomakeAxios();
 
   const handleFileUpload = async (file, fileType) => {
@@ -207,7 +207,6 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
     }
   };
 
-  //!thissssss
   const setOrderItemFileStatus = async (dto) => {
     const res: any = await callApi(
       "POST",
