@@ -9,14 +9,13 @@ import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
 import { PrimaryButton } from "@/components/button/primary-button";
 
-//!here
 const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   openModal,
   ticketTypeList,
   onClickClosModal,
   setTicketState,
   ticketState,
-  setFileBase64,
+  setFile,
   handleSectionChange,
   createAnother,
   handleCheckboxChange,
@@ -75,16 +74,13 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
           options={ticketTypeList}
           style={classes.selectStyle}
           placeholder={t("customerService.chooseTheTicketType")}
-          // onChange={(e, val) =>
-          //   setTicketState({ ...ticketState, ticketType: val })
-          // }
           onChange={(e, val) => onChangeInputs("ticketType", val)}
           value={ticketState?.ticketType || null}
           withArrow
         />
         <JiraImageUpload
           onUpload={true}
-          onFileSelect={setFileBase64}
+          onFileSelect={setFile}
           ref={jiraImageUploadRef}
         />
         <GoMakeTextInput

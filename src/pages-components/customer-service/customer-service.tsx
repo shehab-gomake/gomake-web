@@ -20,7 +20,6 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     onClickClosModal,
     onClickOpenModal,
     handleClean,
-    createIssue,
     onChangePrintHouse,
     printHouses,
     selectedPrintHouse,
@@ -31,7 +30,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     columnWidths,
     ticketState,
     setTicketState,
-    setFileBase64,
+    setFile,
     handleSectionChange,
     createAnother,
     handleCheckboxChange,
@@ -113,7 +112,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           onClickClosModal={onClickClosModal}
           createIssue={sendToMonday}
           ticketState={ticketState}
-          setFileBase64={setFileBase64}
+          setFile={setFile}
           handleSectionChange={handleSectionChange}
           createAnother={createAnother}
           handleCheckboxChange={handleCheckboxChange}

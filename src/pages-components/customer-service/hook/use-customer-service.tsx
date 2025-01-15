@@ -32,7 +32,7 @@ const useCustomerService = (isAdmin: boolean) => {
   const [statusFilter, setStatusFilter] = useState(null);
   const [statuses, setStatuses] = useState([]);
   const [ticketState, setTicketState] = useState<JiraIssueType>(null);
-  const [fileBase64, setFileBase64] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
   const { alertFault, alertSuccessAdded, alertFaultAdded, alertFaultGetData } =
     useSnackBar();
   const [createAnother, setCreateAnother] = useState(false);
@@ -137,103 +137,6 @@ const useCustomerService = (isAdmin: boolean) => {
     await getAllPrintHousesApi(callApi, callBack);
   }, [callApi]);
 
-  const createIssue = async () => {
-    if (isAdmin && !selectedPrintHouse && !selectedModalPrintHouse) {
-      alertFault("customerService.selectPrintHouseAlert");
-      return;
-    }
-
-    if (!ticketState?.ticketType) {
-      alertFault("customerService.ticketTypeRequired");
-      return;
-    }
-
-    if (!ticketState?.title) {
-      alertFault("customerService.titleRequired");
-      return;
-    }
-
-    if (!ticketState?.description) {
-      alertFault("customerService.descriptionRequired");
-      return;
-    }
-
-    let issueData: any = {
-      fields: {
-        project: { key: "GCS" },
-        summary: ticketState?.title,
-
-        issuetype: {
-          id: ticketState?.ticketType?.value || "10004",
-        },
-        priority: {
-          id: "3",
-        },
-        customfield_10089: profileState.firstName + " " + profileState.lastName,
-        customfield_10090: ticketState?.gomakeRouteUri,
-        customfield_10092: ticketState?.section + "/" + ticketState?.subSection,
-      },
-    };
-
-    if (ticketState?.description) {
-      issueData.fields.description = {
-        type: "doc",
-        version: 1,
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                text: ticketState.description,
-                type: "text",
-              },
-            ],
-          },
-        ],
-      };
-    }
-
-    const callBack = (res) => {
-      if (res.success) {
-        getIssues();
-        alertSuccessAdded();
-        if (createAnother) {
-          setFileBase64("");
-          setSelectedSection("");
-          setSelectedSubSection("");
-          setSelectedModalPrintHouse("");
-          setTicketState({
-            isAdmin: ticketState.isAdmin,
-            openModal: ticketState.openModal,
-            title: "",
-            description: "",
-            ticketType: undefined,
-            ticketTypeList: [],
-            screenShot: "",
-            gomakeRouteUri: "",
-            section: "",
-            subSection: "",
-          });
-          jiraImageUploadRef.current?.resetAttachment();
-        } else {
-          onClickClosModal();
-        }
-      } else {
-        alertFaultAdded();
-      }
-    };
-    logSessionData();
-
-    await createIssueApi(callApi, callBack, {
-      issueData,
-      fileBase64,
-      ...(isAdmin && {
-        printHouseDomain:
-          selectedModalPrintHouse?.domain || selectedPrintHouse?.domain,
-      }),
-    });
-  };
-
   const onChangeStatus = useCallback((e, value) => {
     setStatusFilter(value?.value || null);
   }, []);
@@ -284,7 +187,7 @@ const useCustomerService = (isAdmin: boolean) => {
   ];
 
   const onClickClosModal = () => {
-    setFileBase64("");
+    setFile(null);
     setSelectedSection("");
     setSelectedSubSection("");
     setSelectedModalPrintHouse("");
@@ -296,6 +199,7 @@ const useCustomerService = (isAdmin: boolean) => {
     }));
     setOpenModal(false);
   };
+
   const onClickOpenModal = () => {
     setOpenModal(true);
   };
@@ -318,7 +222,6 @@ const useCustomerService = (isAdmin: boolean) => {
   }, [isAdmin, printHouses]);
 
   /* Monday Section */
-  //!here
   const sendToMonday = async () => {
     const domain = isAdmin
       ? selectedModalPrintHouse?.domain || selectedPrintHouse?.domain
@@ -350,6 +253,7 @@ const useCustomerService = (isAdmin: boolean) => {
 
     try {
       const apiUrl = "https://api.monday.com/v2";
+      const fileApiUrl = "https://api.monday.com/v2/file";
       const apiToken =
         "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQ0OTc3MDg4OSwiYWFpIjoxMSwidWlkIjo2ODU0NjEzNiwiaWFkIjoiMjAyNC0xMi0xOFQxOTo0MTowNS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjYzNTkxNzQsInJnbiI6ImV1YzEifQ.WEXTXHhRTtJS9XTAXvlyGG8zjSxgE-uIWuhtIluvR1o";
       const boardId = "1767002989";
@@ -373,7 +277,7 @@ const useCustomerService = (isAdmin: boolean) => {
         ticketState?.title || "New task"
       }", column_values: "${columnValuesString}") { id }}`;
 
-      const response = await axios.post(
+      const createItemResponse = await axios.post(
         apiUrl,
         { query: mutation },
         {
@@ -384,15 +288,44 @@ const useCustomerService = (isAdmin: boolean) => {
         }
       );
 
-      if (response.data.errors) {
+      if (createItemResponse.data.errors) {
         alertFaultAdded();
       } else {
+        /****************************/
+        // const itemId = createItemResponse.data.data.create_item.id;
+        // if (file) {
+        //   const formData = new FormData();
+
+        //   formData.append(
+        //     "query",
+        //     `mutation ($file: File!) { add_file_to_column (item_id: ${itemId}, column_id: "files", file: $file) { id } }`
+        //   );
+        //   formData.append("variables[file]", file);
+
+        //   const fileUploadResponse = await axios.post(fileApiUrl, formData, {
+        //     headers: {
+        //       Authorization: apiToken,
+        //       "Content-Type": "multipart/form-data",
+        //     },
+        //   });
+
+        //   if (fileUploadResponse.data.errors) {
+        //     alertFaultAdded();
+        //     console.error(
+        //       "File upload failed:",
+        //       fileUploadResponse.data.errors
+        //     );
+        //     // return;
+        //   }
+        // }
+        /****************************/
+
         getIssues();
         alertSuccessAdded();
 
         // Reset state and form if 'createAnother' is true
         if (createAnother) {
-          setFileBase64("");
+          setFile(null);
           setSelectedSection("");
           setSelectedSubSection("");
           setSelectedModalPrintHouse("");
@@ -427,7 +360,6 @@ const useCustomerService = (isAdmin: boolean) => {
     ticketTypeList,
     onClickClosModal,
     onClickOpenModal,
-    createIssue,
     onChangePrintHouse,
     printHouses,
     selectedPrintHouse,
@@ -441,7 +373,7 @@ const useCustomerService = (isAdmin: boolean) => {
     onChangeInputs,
     ticketState,
     setTicketState,
-    setFileBase64,
+    setFile,
     handleSectionChange,
     createAnother,
     handleCheckboxChange,

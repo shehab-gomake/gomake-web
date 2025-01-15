@@ -7,22 +7,20 @@ export interface CreateIssueModalProps {
   createIssue: () => void;
   ticketState: JiraIssueType;
   setTicketState: any;
-  setFileBase64: any;
+  setFile: any;
   handleSectionChange: any;
   createAnother?: any;
   handleCheckboxChange?: () => void;
-
   selectedSection: "" | Sections;
   setSelectedSection: Dispatch<SetStateAction<"" | Sections>>;
   selectedSubSection: string;
   setSelectedSubSection: Dispatch<SetStateAction<string>>;
   jiraImageUploadRef: any;
-
   printHouses: JiraPrintHouse[];
   onChangePrintHouse?: (e: any, value: string) => void;
   selectedPrintHouse?: any;
   isAdmin: boolean;
-  onChangeInputs?: any; //!new
+  onChangeInputs?: any;
 }
 
 export interface JiraIssueType {
