@@ -103,7 +103,7 @@ const CustomerEditMachines = () => {
                         width: '80%',
                         margin: 'auto'
                     }}>{t('navigationButtons.add')}</SecondaryButton>}
-                subHeader={selectedMachine?.manufacturer + ' - ' + selectedMachine?.model + (selectedMachine?.nickName ? '-' + selectedMachine?.nickName : '')}>
+                subHeader={selectedMachine?.nickName}>
                 {!!selectedMachine?.id &&
                     <MachineStepper steps={machineSteps} activeStep={activeStep} previousStep={navigateBack}
                         nextStep={navigateNext} actionButtonClicked={updateMachine}
