@@ -1,22 +1,22 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useRouter } from "next/router";
-import { useSetRecoilState, useRecoilValue} from "recoil";
-import {filterState, openAddRowModalState, selectedSupplierIdState} from "../../state";
+import { useSetRecoilState, useRecoilValue } from "recoil";
+import { filterState, openAddRowModalState, selectedSupplierIdState } from "../../state";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import {
     addPrintHouseMaterialCategoryRowApi,
     deletePrintHouseMaterialCategoryRowApi
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
-import {addMaterialCategoryRowApi, deleteMaterialCategoryRowApi} from "@/services/api-service/materials/materials-endpoints";
+import { addMaterialCategoryRowApi, deleteMaterialCategoryRowApi } from "@/services/api-service/materials/materials-endpoints";
 
-const useAddCategoryRow = (isAdmin:boolean) => {
+const useAddCategoryRow = (isAdmin: boolean) => {
     const { callApi } = useGomakeAxios();
     const { query } = useRouter();
     const { materialType, materialCategory } = query;
     const { alertSuccessAdded, alertFaultAdded, alertSuccessDelete, alertFaultDelete } = useSnackBar();
     const supplierId = useRecoilValue(selectedSupplierIdState)
     const setOpenModal = useSetRecoilState<boolean>(openAddRowModalState);
-    const {getMaterialCategoryData} =useMaterialsCategories(isAdmin);
+    const { getMaterialCategoryData } = useMaterialsCategories(isAdmin);
     const materialFilter = useRecoilValue(filterState);
 
 
@@ -25,22 +25,22 @@ const useAddCategoryRow = (isAdmin:boolean) => {
             if (res.success) {
                 alertSuccessAdded();
                 setOpenModal(false);
-                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(),[], supplierId).then();
+                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(), [], supplierId).then();
             } else {
                 alertFaultAdded();
             }
         }
-        if(isAdmin){
+        if (isAdmin) {
             await addMaterialCategoryRowApi(callApi, callBack, {
                 materialKey: materialType,
                 categoryKey: materialCategory,
                 rowData: dataRow
             })
-        }else{
+        } else {
             await addPrintHouseMaterialCategoryRowApi(callApi, callBack, {
                 materialKey: materialType,
                 categoryKey: materialCategory,
-                supplierId: supplierId ?? undefined,
+                supplierId: supplierId === "" ? undefined : supplierId ?? undefined,
                 rowData: dataRow
             })
         }
@@ -50,14 +50,14 @@ const useAddCategoryRow = (isAdmin:boolean) => {
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessDelete();
-                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(),materialFilter, supplierId).then();
+                getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(), materialFilter, supplierId).then();
             } else {
                 alertFaultDelete();
             }
         }
-        if(isAdmin){
+        if (isAdmin) {
             await deleteMaterialCategoryRowApi(callApi, callBack, { rowId: id })
-        }else{
+        } else {
             await deletePrintHouseMaterialCategoryRowApi(callApi, callBack, { rowId: id })
         }
     }
