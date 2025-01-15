@@ -181,6 +181,7 @@ const ProfitsNewPageWidget = () => {
               setQuantityOfPackages={setQuantityOfPackages}
               updatePackageUnitQuantity={updatePackageUnitQuantity}
               updatePricingByForActionPackage={updatePricingByForActionPackage}
+              actionProfitByActionId={actionProfitByActionId}
             />
           </div>
         ) : (
