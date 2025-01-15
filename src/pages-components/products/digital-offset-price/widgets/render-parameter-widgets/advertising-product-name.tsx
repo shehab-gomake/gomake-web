@@ -59,59 +59,56 @@ const AdvertisingProductNameParameterWidget = ({
 
   return (
     <div style={clasess.advertisingProductNameMain}>
-      {
-        AdvertisingCategory &&
-        <GoMakeAutoComplate
-          options={parameter?.valuesConfigs?.filter(value => {
-            return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
-          })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
-          key={parameter?.valuesConfigs + temp[index]?.values}
-          style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
-          placeholder={parameter?.name}
-          onChange={(e: any, value: any) => {
-            onChangeSubProductsForPrice(
-              parameter?.id,
-              subSection?.id,
-              section?.id,
-              parameter?.parameterType,
-              parameter?.name,
-              parameter?.actionId,
-              { valueIds: value?.id, values: value?.updateName },
-              subSection?.type,
-              index,
-              parameter?.actionIndex,
-              parameter?.code
-            );
-          }}
-          getOptionLabel={(option: any) => option.updateName}
-          defaultValue={
-            index !== -1 ? { updateName: temp[index].values } : defaultObject
-          }
-          disabled={parameter?.isLock ? parameter?.isLock : false}
-          renderOption={(props, option) => {
-            const image = option.additionalAttribute?.find(
-              (attr) => attr.valueId === 'image'
-            )?.value;
+      <GoMakeAutoComplate
+        options={parameter?.valuesConfigs?.filter(value => {
+          return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+        })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
+        key={parameter?.valuesConfigs + temp[index]?.values}
+        style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
+        placeholder={parameter?.name}
+        onChange={(e: any, value: any) => {
+          onChangeSubProductsForPrice(
+            parameter?.id,
+            subSection?.id,
+            section?.id,
+            parameter?.parameterType,
+            parameter?.name,
+            parameter?.actionId,
+            { valueIds: value?.id, values: value?.updateName },
+            subSection?.type,
+            index,
+            parameter?.actionIndex,
+            parameter?.code
+          );
+        }}
+        getOptionLabel={(option: any) => option.updateName}
+        defaultValue={
+          index !== -1 ? { updateName: temp[index].values } : defaultObject
+        }
+        disabled={parameter?.isLock ? parameter?.isLock : false}
+        renderOption={(props, option) => {
+          const image = option.additionalAttribute?.find(
+            (attr) => attr.valueId === 'image'
+          )?.value;
 
-            return (
-              <li {...props}>
-                {image ? (
-                  <img
-                    src={image}
-                    alt={option.updateName}
-                    style={{ width: '40px', height: '40px', marginRight: '10px', objectFit: 'contain' }}
-                  />
-                ) : (
-                  <div style={{ margin: 10 }}>
-                    <AdvertisingIcon width="40" height="40" />
-                  </div>
-                )}
-                {option.updateName} <span style={{ margin: 10, fontSize: 12, color: "#CCC" }}>({_renderSomeValues(option)})</span>
-              </li>
-            );
-          }}
-        />
-      }
+          return (
+            <li {...props}>
+              {image ? (
+                <img
+                  src={image}
+                  alt={option.updateName}
+                  style={{ width: '40px', height: '40px', margin: '10px', objectFit: 'contain' }}
+                />
+              ) : (
+                <div style={{ margin: 10 }}>
+                  <AdvertisingIcon width="40" height="40" />
+                </div>
+              )}
+              {option.updateName} <span style={{ margin: 10, fontSize: 12, color: "#CCC" }}>({_renderSomeValues(option)})</span>
+            </li>
+          );
+        }}
+      />
     </div>
   );
 };

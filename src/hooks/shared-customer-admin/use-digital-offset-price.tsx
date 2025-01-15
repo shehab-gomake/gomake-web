@@ -2286,7 +2286,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setSubProducts(copySubProducts);
     }
   }, [deviceSize]);
-  console.log("subProducts", subProducts);
   useEffect(() => {
     if (deviceSize && deviceCategory) {
       getMaterialCategories();
