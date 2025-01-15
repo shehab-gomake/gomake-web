@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Stack } from "@mui/material";
 import { generalInputs, lastOrderInputs } from "../../inputs/general-inputs";
 import { useStyle } from "../../style";
-import {useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
 
 interface IProps {
   codeFlag: any;
@@ -15,7 +15,7 @@ interface IProps {
   renderTabPanelTextArea: any;
   languagesOptions: any;
   renderTableSearch: any;
-  showTable: boolean;
+  showTable?: boolean;
 }
 
 const GeneralTab = ({
@@ -40,7 +40,7 @@ const GeneralTab = ({
         lastChild.scrollIntoView({ behavior: 'smooth' });
       }
     }
-  },[showTable])
+  }, [showTable])
   return (
     <div style={classes.tabsContainer} ref={divRef}>
       <div style={classes.customerInfoStyle}>
