@@ -868,12 +868,10 @@ const useStyle = () => {
         maxWidth: 300,
         minWidth: 300,
         border: "none",
-        paddingLeft: 15,
       },
       requiredAdvertisingProductCategoryAutoComplete: {
         height: 40,
         maxWidth: 300,
-        paddingLeft: 15,
         borderBottom: "1px solid red",
       },
       advertisingProductCategorySearch: {
