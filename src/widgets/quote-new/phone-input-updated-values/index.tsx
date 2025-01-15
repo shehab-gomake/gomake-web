@@ -25,7 +25,9 @@ const PhoneInputUpdatedValues = ({
 }: IBusinessWidget) => {
   const { clasess } = useStyle({ isUnderLine });
   const [updateValue, setUpdateValue] = useState();
-  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const {
+    CheckPreferenceValue
+  } = usePrintHousePreferences()
   useEffect(() => {
     setUpdateValue(value);
   }, [value]);

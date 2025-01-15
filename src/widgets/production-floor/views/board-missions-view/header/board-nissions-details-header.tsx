@@ -10,9 +10,9 @@ import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import { IBoardMissionsDetails } from "@/widgets/production-floor/interfaces/board-missions";
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useBoardMissionsDetailsHeader } from "./use-board-nissions-details-header";
-import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
-import { EPreferences } from "@/enums/prefernces";
-import { clearPhoneNumberPrefix } from "@/utils/helpers";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
+import {EPreferences} from "@/enums/prefernces";
+import {clearPhoneNumberPrefix} from "@/utils/helpers";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
@@ -30,7 +30,9 @@ const BoardMissionsDetailsHeader = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const direction = t("direction");
-  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const {
+    CheckPreferenceValue
+  } = usePrintHousePreferences()
   const {
     boards,
     boardFromTable,

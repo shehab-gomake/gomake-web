@@ -10,9 +10,9 @@ import {
 import { useStyle } from "./style";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
-import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
-import { EPreferences } from "@/enums/prefernces";
-import { clearPhoneNumberPrefix } from "@/utils/helpers";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
+import {EPreferences} from "@/enums/prefernces";
+import {clearPhoneNumberPrefix} from "@/utils/helpers";
 
 const WhatsAppWebModal = ({
   openModal,
@@ -29,7 +29,9 @@ const WhatsAppWebModal = ({
   const [, setSelectedClient] = useState<any>();
   const [phoneNumber, setPhoneNumber] = useState("");
   const { openWhatsAppWebLink } = useWhatsAppWeb();
-  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const {
+    CheckPreferenceValue
+  } = usePrintHousePreferences()
   useEffect(() => {
     if (openModal) {
       if (documentType === DOCUMENT_TYPE.receipt) {
