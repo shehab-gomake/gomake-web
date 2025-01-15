@@ -118,7 +118,7 @@ const BusinessNewWidget = ({
       <div style={classes.businessContainerStyle}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
-          defaultFiltering={false}
+          defaultFiltering={documentType === DOCUMENT_TYPE.purchaseOrder ? true : false}
           value={
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
@@ -136,7 +136,12 @@ const BusinessNewWidget = ({
           }
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => onClickOpenChangeClientModal(value)}
-          onChangeTextField={checkWhatRenderArray}
+          onChangeTextField={(e) => {
+            if (documentType === DOCUMENT_TYPE.purchaseOrder) {
+              return
+            }
+            checkWhatRenderArray(e)
+          }}
           isFetching={isFetching}
         />
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
@@ -261,12 +266,12 @@ const BusinessNewWidget = ({
             value={
               values?.documentAddresses?.length > 0
                 ? [
-                    values?.documentAddresses[0]?.street,
-                    values?.documentAddresses[0]?.apartment,
-                    values?.documentAddresses[0]?.city,
-                  ]
-                    .filter((part) => part && part.trim())
-                    .join(", ") || t("sales.cart.noAddressFound")
+                  values?.documentAddresses[0]?.street,
+                  values?.documentAddresses[0]?.apartment,
+                  values?.documentAddresses[0]?.city,
+                ]
+                  .filter((part) => part && part.trim())
+                  .join(", ") || t("sales.cart.noAddressFound")
                 : t("sales.cart.noAddressFound")
             }
             label={t("customers.modal.address")}
