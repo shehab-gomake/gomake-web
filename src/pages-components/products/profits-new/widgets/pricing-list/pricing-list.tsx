@@ -14,6 +14,7 @@ import { SettingsIcon } from "@/icons/settings";
 import { DuplicateMaterial, PercentageMaterial } from "@/icons";
 import { useCopyAction } from "./use-copy-action";
 import { EPricingBy, ETransition } from "../../enums/profites-enum";
+import { useEffect } from "react";
 
 const PricingList = ({
   tableHeaders,
@@ -42,7 +43,8 @@ const PricingList = ({
   setQuantityOfPackages,
   updatePackageUnitQuantity,
   addNewStepForActionProfitRow,
-  updatePricingByForActionPackage
+  updatePricingByForActionPackage,
+  actionProfitByActionId
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -63,8 +65,17 @@ const PricingList = ({
     onCloseProfitModal,
     onOpenProfitModal,
     AddNewProfitForActionProfitsApi,
+    updateOutSourceActionSupplier,
+    supplierList,
+    selectedSupplier,
+    setSelectedSupplier
   } = useCopyAction({ getAllActionProfitRowsByActionId });
-
+  useEffect(() => {
+    if (actionProfitByActionId?.supplerId) {
+      const supplier = supplierList.find((supplier) => supplier.id === actionProfitByActionId?.supplerId)
+      setSelectedSupplier(supplier)
+    }
+  }, [actionProfitByActionId])
   return (
     <div style={classes.pricListWidgetMainContainer}>
       <div style={classes.headerMainCointaner}>
@@ -79,6 +90,22 @@ const PricingList = ({
           >
             <SettingsIcon stroke={"#000000"} width={24} height={24} />
           </IconButton>
+          {
+            router?.query?.isOutSource &&
+            <div style={classes.autoCompleteContainer}>
+              <GoMakeAutoComplate
+                options={supplierList}
+                style={classes.autoCompleteStyleContainer}
+                onChange={(e, value) => {
+                  updateOutSourceActionSupplier(value?.id)
+                }}
+                getOptionLabel={(option) => option.name}
+                placeholder={t("select supplier")}
+                value={selectedSupplier}
+                key={selectedSupplier}
+              />
+            </div>
+          }
           <div style={classes.autoCompleteContainer}>
             <GoMakeAutoComplate
               options={PricingBy}

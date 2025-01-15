@@ -16,6 +16,7 @@ interface IProps {
   languagesOptions: any;
   renderTableSearch: any;
   showTable?: boolean;
+
 }
 
 const GeneralTab = ({
