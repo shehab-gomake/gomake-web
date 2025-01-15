@@ -1,9 +1,11 @@
 import { SectionPages, TicketTypeList } from "./interface";
 
 export const ticketTypeList: TicketTypeList[] = [
-  { label: "Bug", value: "10005" },
-  { label: "New Feature", value: "10004" },
-  { label: "Support", value: "10083" },
+  { label: "Technical support", value: "Technical support" },
+  { label: "Suggest improvement", value: "Suggest improvement" },
+  { label: "Suggest a new feature", value: "Suggest a new feature" },
+  { label: "Report a bug", value: "Report a bug" },
+  { label: "Other question", value: "Other question" },
 ];
 
 export const sections: SectionPages = {
@@ -47,7 +49,20 @@ export const sections: SectionPages = {
     "Deposit Details Page",
   ],
   Contacts: ["Suppliers", "Customers"],
-  Reports: ["Aging Report", "Ledger Report", "Transaction Journal Report", "Daily Payments Report", "Credit Card Transactions"],
+  Reports: [
+    "Aging Report",
+    "Ledger Report",
+    "Transaction Journal Report",
+    "Daily Payments Report",
+    "Credit Card Transactions",
+  ],
   "Materials, Machines, Actions": ["Materials", "Machines", "Actions"],
-  Settings: ["Profile", "Products", "Mailing", "Documenting", "Users", "Finance"],
+  Settings: [
+    "Profile",
+    "Products",
+    "Mailing",
+    "Documenting",
+    "Users",
+    "Finance",
+  ],
 };

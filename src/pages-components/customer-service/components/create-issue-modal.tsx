@@ -61,13 +61,13 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
           placeholder={t("customerService.typeTheTicketTitle")}
           value={ticketState?.title}
         />
-        <SectionsList
+        {/* <SectionsList
           selectedSubSection={selectedSubSection}
           setSelectedSubSection={setSelectedSubSection}
           selectedSection={selectedSection}
           setSelectedSection={setSelectedSection}
           onChange={(val1, val2) => handleSectionChange(val1, val2)}
-        />
+        /> */}
         <GoMakeAutoComplate
           key={
             ticketState?.ticketType ? ticketState?.ticketType?.value : "reset"

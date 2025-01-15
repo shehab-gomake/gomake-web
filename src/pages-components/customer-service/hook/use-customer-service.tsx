@@ -13,11 +13,15 @@ import { ticketTypeList } from "../enums";
 import { logSessionData } from "@/utils/sessionManager";
 import { useDebounce } from "use-debounce";
 import axios from "axios";
+import { useRecoilValue } from "recoil";
+import { printHouseProfile } from "@/store/print-house-profile";
 
 const useCustomerService = (isAdmin: boolean) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { profileState } = useUserProfile();
+  const printHouseProfileState = useRecoilValue(printHouseProfile);
+
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [AllIssues, setAllIssues] = useState([]);
   const [printHouses, setPrintHouses] = useState<JiraPrintHouse[]>([]);
@@ -56,7 +60,6 @@ const useCustomerService = (isAdmin: boolean) => {
     ? ["10%", "10%", "10%", "40%", "10%", "10%", "10%"]
     : ["0%", "10%", "10%", "50%", "10%", "10%", "10%"];
 
-  //!here
   const onChangeInputs = useCallback((key, value) => {
     setTicketState((prevTicketState) => ({
       ...prevTicketState,
@@ -315,7 +318,16 @@ const useCustomerService = (isAdmin: boolean) => {
   }, [isAdmin, printHouses]);
 
   /* Monday Section */
+  //!here
   const sendToMonday = async () => {
+    const domain = isAdmin
+      ? selectedModalPrintHouse?.domain || selectedPrintHouse?.domain
+      : printHouseProfileState?.domain;
+    const formattedDomain =
+      domain.startsWith("http://") || domain.startsWith("https://")
+        ? domain
+        : `https://${domain}`;
+
     if (isAdmin && !selectedPrintHouse && !selectedModalPrintHouse) {
       alertFault("customerService.selectPrintHouseAlert");
       return;
@@ -345,6 +357,11 @@ const useCustomerService = (isAdmin: boolean) => {
 
       let columnValues = {
         long_text: ticketState?.description,
+        status_11: ticketState?.ticketType,
+        link_mkm7eghn: {
+          url: formattedDomain,
+          text: formattedDomain,
+        },
       };
 
       let columnValuesString = JSON.stringify(columnValues).replace(
@@ -401,6 +418,7 @@ const useCustomerService = (isAdmin: boolean) => {
       console.error("Error sending request to Monday.com:", error);
     }
   };
+
   return {
     tableHeaders,
     AllIssues,
