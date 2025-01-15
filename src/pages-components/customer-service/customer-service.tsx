@@ -44,6 +44,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     setPatternSearch,
     onChangeModalPrintHouse,
     selectedModalPrintHouse,
+    onChangeInputs,
   } = useCustomerService(isAdmin);
 
   const router = useRouter();
@@ -123,6 +124,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           printHouses={printHouses}
           onChangePrintHouse={onChangeModalPrintHouse}
           selectedPrintHouse={selectedModalPrintHouse}
+          onChangeInputs={onChangeInputs}
         />
       </div>
     </Stack>

@@ -128,7 +128,6 @@ const useStyle = (onUpload?: boolean) => {
       },
 
       inputLbl: {
-        color: "#a4a4a4",
         ...FONT_FAMILY.Lexend(400, 14),
         display: "flex",
         alignItems: "center",

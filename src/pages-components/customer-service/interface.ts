@@ -22,7 +22,10 @@ export interface CreateIssueModalProps {
   onChangePrintHouse?: (e: any, value: string) => void;
   selectedPrintHouse?: any;
   isAdmin: boolean;
+  onChangeInputs?: any; //!new
 }
+
+//!here
 export interface JiraIssueType {
   isAdmin: boolean;
   openModal: boolean;
@@ -37,10 +40,6 @@ export interface JiraIssueType {
 }
 
 export interface JiraPrintHouse {
-  // id: string;
-  // name: string;
-  // domain: string;
-
   value: string;
   label: string;
   domain: string;
