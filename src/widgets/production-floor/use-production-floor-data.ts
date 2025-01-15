@@ -215,7 +215,7 @@ const useProductionFloorData = () => {
       } else {
       }
     };
-    await getBoardMissionPDF(callApi, callBack, { boardMissionId });
+    await getBoardMissionPDF(callApi, callBack, { boardMissionId:boardMissionId?.id });
   };
 
   const [selectedMission, setSelectedMission] = useState<any>({});
