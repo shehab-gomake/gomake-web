@@ -63,7 +63,7 @@ const JiraImageUpload = forwardRef(
             label={t("mailingSettings.addNewAttachment")}
           />
         )}
-        {(!onUpload || fileName || isAttachment) && (
+        {(!onUpload || fileName) && isAttachment && (
           <Stack
             style={classes.attachmentStyle}
             direction="row"

@@ -92,8 +92,9 @@ const useStyle = (onUpload?: boolean) => {
       multiTextInput: {
         height: "150px",
         width: "100%",
-        border: "none",
-        boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+        // borderRadius: "var(--radius-md, 8px)",
+        // border: "1px solid var(--Colors-Border-border-primary, #D0D5DD)",
+        // boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
         padding: 10,
         overflow: "scroll",
       },
@@ -114,7 +115,7 @@ const useStyle = (onUpload?: boolean) => {
         width: "60%",
         height: "40px",
         borderRadius: "4px",
-        boxShadow: onUpload ? "0px 1px 10px rgba(0, 0, 0, 0.08)" : "none",
+        // boxShadow: onUpload ? "0px 1px 10px rgba(0, 0, 0, 0.08)" : "none",
       },
       IconButtonStyle: {
         background: primaryColor(100),
@@ -138,6 +139,13 @@ const useStyle = (onUpload?: boolean) => {
         color: primaryColor(100),
         cursor: "pointer",
         padding: 0,
+      },
+      selectStyle: {
+        boxShadow: "none",
+        width: "100%",
+        height: "44px",
+        borderRadius: "var(--radius-md, 8px)",
+        border: "1px solid var(--Colors-Border-border-primary, #D0D5DD)",
       },
     };
   }, [i18next.language, t]);

@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { ticketTypeList } from "../enums";
 import { logSessionData } from "@/utils/sessionManager";
 import { useDebounce } from "use-debounce";
+import axios from "axios";
 
 const useCustomerService = (isAdmin: boolean) => {
   const { t } = useTranslation();
@@ -234,41 +235,6 @@ const useCustomerService = (isAdmin: boolean) => {
     setStatusFilter(value?.value || null);
   }, []);
 
-  // const filterIssues = useCallback(() => {
-  //   let filtered = AllIssues;
-
-  //   // Filter by selected print house
-  //   if (selectedPrintHouse) {
-  //     filtered = filtered.filter(
-  //       (issue) => issue[0] === selectedPrintHouse?.label
-  //     );
-  //   }
-
-  //   // Filter by status
-  //   if (statusFilter) {
-  //     filtered = filtered.filter((issue) => issue[7] === statusFilter);
-  //   }
-
-  //   // Search input filter by title / description
-  //   if (debouncedPatternSearch.trim()) {
-  //     const lowercasedSearch = debouncedPatternSearch.toLowerCase();
-  //     filtered = filtered.filter(
-  //       (issue) =>
-  //         issue[2]?.toLowerCase().includes(lowercasedSearch) ||
-  //         issue[3]?.toLowerCase().includes(lowercasedSearch)
-  //     );
-  //   }
-
-  //   // Sort issues so that "Done" is at the end
-  //   const sortedIssues = filtered.sort((a, b) => {
-  //     if (a[7] === "Done" && b[7] !== "Done") return 1;
-  //     if (a[7] !== "Done" && b[7] === "Done") return -1;
-  //     return 0;
-  //   });
-
-  //   setFilteredIssues(sortedIssues);
-  // }, [AllIssues, selectedPrintHouse, statusFilter, debouncedPatternSearch]);
-
   const filterIssues = useCallback(() => {
     const lowercasedSearch = debouncedPatternSearch.trim().toLowerCase();
 
@@ -336,13 +302,6 @@ const useCustomerService = (isAdmin: boolean) => {
     setStatusFilter(null);
   }, []);
 
-  // useEffect(() => {
-  //   getIssues();
-  //   if (isAdmin) {
-  //     getAllPrintHouses();
-  //   }
-  // }, []);
-
   useEffect(() => {
     if (isAdmin) {
       getAllPrintHouses(); // Load printHouses first
@@ -355,6 +314,93 @@ const useCustomerService = (isAdmin: boolean) => {
     }
   }, [isAdmin, printHouses]);
 
+  /* Monday Section */
+  const sendToMonday = async () => {
+    if (isAdmin && !selectedPrintHouse && !selectedModalPrintHouse) {
+      alertFault("customerService.selectPrintHouseAlert");
+      return;
+    }
+
+    if (!ticketState?.ticketType) {
+      alertFault("customerService.ticketTypeRequired");
+      return;
+    }
+
+    if (!ticketState?.title) {
+      alertFault("customerService.titleRequired");
+      return;
+    }
+
+    // if (!ticketState?.description) {
+    //   alertFault("customerService.descriptionRequired");
+    //   return;
+    // }
+
+    try {
+      const apiUrl = "https://api.monday.com/v2";
+      const apiToken =
+        "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQ0OTc3MDg4OSwiYWFpIjoxMSwidWlkIjo2ODU0NjEzNiwiaWFkIjoiMjAyNC0xMi0xOFQxOTo0MTowNS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjYzNTkxNzQsInJnbiI6ImV1YzEifQ.WEXTXHhRTtJS9XTAXvlyGG8zjSxgE-uIWuhtIluvR1o";
+      const boardId = "1767002989";
+      const groupId = "topics";
+
+      let columnValues = {
+        long_text: ticketState?.description,
+      };
+
+      let columnValuesString = JSON.stringify(columnValues).replace(
+        /"/g,
+        '\\"'
+      );
+
+      let mutation = `mutation { create_item (board_id: "${boardId}", group_id: "${groupId}", item_name: "${
+        ticketState?.title || "New task"
+      }", column_values: "${columnValuesString}") { id }}`;
+
+      const response = await axios.post(
+        apiUrl,
+        { query: mutation },
+        {
+          headers: {
+            Authorization: apiToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.errors) {
+        alertFaultAdded();
+      } else {
+        getIssues();
+        alertSuccessAdded();
+
+        // Reset state and form if 'createAnother' is true
+        if (createAnother) {
+          setFileBase64("");
+          setSelectedSection("");
+          setSelectedSubSection("");
+          setSelectedModalPrintHouse("");
+          setTicketState({
+            isAdmin: ticketState.isAdmin,
+            openModal: ticketState.openModal,
+            title: "",
+            description: "",
+            ticketType: undefined,
+            ticketTypeList: [],
+            screenShot: "",
+            gomakeRouteUri: "",
+            section: "",
+            subSection: "",
+          });
+          jiraImageUploadRef.current?.resetAttachment();
+        } else {
+          onClickClosModal();
+        }
+      }
+    } catch (error) {
+      alertFaultAdded();
+      console.error("Error sending request to Monday.com:", error);
+    }
+  };
   return {
     tableHeaders,
     AllIssues,
@@ -391,6 +437,7 @@ const useCustomerService = (isAdmin: boolean) => {
     setPatternSearch,
     onChangeModalPrintHouse,
     selectedModalPrintHouse,
+    sendToMonday,
   };
 };
 

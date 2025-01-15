@@ -25,7 +25,6 @@ export interface CreateIssueModalProps {
   onChangeInputs?: any; //!new
 }
 
-//!here
 export interface JiraIssueType {
   isAdmin: boolean;
   openModal: boolean;

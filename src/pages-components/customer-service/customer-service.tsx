@@ -45,6 +45,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     onChangeModalPrintHouse,
     selectedModalPrintHouse,
     onChangeInputs,
+    sendToMonday,
   } = useCustomerService(isAdmin);
 
   const router = useRouter();
@@ -110,7 +111,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           openModal={openModal}
           ticketTypeList={ticketTypeList}
           onClickClosModal={onClickClosModal}
-          createIssue={createIssue}
+          createIssue={sendToMonday}
           ticketState={ticketState}
           setFileBase64={setFileBase64}
           handleSectionChange={handleSectionChange}
