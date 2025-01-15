@@ -208,7 +208,6 @@ const useProductionFloorData = () => {
   };
 
   const onClickPrintJob = async (boardMissionId) => {
-    console.log("boardMissionId", boardMissionId);
     const callBack = (res) => {
       if (res?.success) {
         const pdfLink = res.data;
