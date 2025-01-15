@@ -109,7 +109,7 @@ const GomakeTextInput = ({
     const {primaryColor, secondColor, errorColor} = useGomakeTheme();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const trimmedValue = e.target.value.trim();
+        const trimmedValue = e.target.value.trimStart();
         const modifiedEvent = {
             ...e,
             target: {

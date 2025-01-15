@@ -51,7 +51,6 @@ const useMoreCircle = () => {
     onOpenDuplicateModal,
     onClickStartProduction,
   }) => {
-    console.log("quote", quote);
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
     const { pathname } = useRouter();
