@@ -239,30 +239,74 @@ const useCustomerService = (isAdmin: boolean) => {
       } else {
         const itemId = createItemResponse?.data?.data?.create_item.id;
 
+        // if (file) {
+        //   const formData = new FormData();
+
+        //   formData.append(
+        //     "query",
+        //     `mutation ($file: File!) { add_file_to_column (item_id: ${itemId}, column_id: "files", file: $file) { id } }`
+        //   );
+        //   formData.append("variables[file]", file);
+
+        //   const fileUploadResponse = await axios.post(fileApiUrl, formData, {
+        //     headers: {
+        //       Authorization: apiToken,
+        //       "Content-Type": "multipart/form-data",
+        //     },
+        //   });
+
+        //   if (fileUploadResponse.data.errors) {
+        //     alertFaultAdded();
+        //     console.error(
+        //       "File upload failed:",
+        //       fileUploadResponse.data.errors
+        //     );
+        //   }
+        // }
+
         if (file) {
-          const formData = new FormData();
+          const fileName = file.name;
+          const lambdaUrl =
+            "https://kbbwamufjfte724rc4fcjopizi0jfwnw.lambda-url.eu-west-3.on.aws/";
+          const reader = new FileReader();
+          reader.onload = async () => {
+            // Convert file to Base64
+            const base64FileContent = reader.result?.toString().split(",")[1];
+            const fileUploadPayload = {
+              fileContent: base64FileContent,
+              fileName: fileName,
+              itemId: itemId,
+            };
 
-          formData.append(
-            "query",
-            `mutation ($file: File!) { add_file_to_column (item_id: ${itemId}, column_id: "files", file: $file) { id } }`
-          );
-          formData.append("variables[file]", file);
+            try {
+              const fileUploadResponse = await axios.post(
+                lambdaUrl,
+                fileUploadPayload,
 
-          const fileUploadResponse = await axios.post(fileApiUrl, formData, {
-            headers: {
-              Authorization: apiToken,
-              "Content-Type": "multipart/form-data",
-            },
-          });
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
 
-          if (fileUploadResponse.data.errors) {
+              if (fileUploadResponse.data.errors) {
+                console.error(
+                  "File upload failed:",
+                  fileUploadResponse.data.errors
+                );
+              }
+            } catch (error) {
+              console.error("An error occurred during the file upload:", error);
+            }
+          };
+
+          reader.onerror = () => {
+            console.error("Error reading file for Base64 conversion.");
             alertFaultAdded();
-            console.error(
-              "File upload failed:",
-              fileUploadResponse.data.errors
-            );
-            // return;
-          }
+          };
+
+          reader.readAsDataURL(file); // Convert file to Base64
         }
 
         getIssues();
