@@ -2,6 +2,8 @@ import { GoMakeAutoComplate } from "@/components/auto-complete";
 import { useTranslation } from "react-i18next";
 import { sections } from "../enums";
 import { Sections } from "../interface";
+import { useStyle } from "../style";
+import { Stack } from "@mui/material";
 
 interface SectionsListProps {
   onChange: (section: string, subSection: string) => void;
@@ -19,6 +21,7 @@ const SectionsList = ({
   setSelectedSection,
 }: SectionsListProps) => {
   const { t } = useTranslation();
+  const { classes } = useStyle();
 
   const mainSections = Object.keys(sections) as Sections[];
   const getSecondarySections = (section: Sections) => sections[section];
@@ -35,11 +38,14 @@ const SectionsList = ({
   };
 
   return (
-    <>
+    <Stack direction={"row"} width={"100%"} gap={"10px"}>
       <GoMakeAutoComplate
         key={`select--section-${selectedSection}`}
         options={mainSections}
-        style={{ height: "40px", width: "100%", border: "none" }}
+        style={{
+          ...classes.selectStyle,
+          width: selectedSection ? "50%" : "100%",
+        }}
         placeholder={t("customerService.chooseMainSection")}
         onChange={handleMainSectionChange}
         value={selectedSection || null}
@@ -49,14 +55,14 @@ const SectionsList = ({
         <GoMakeAutoComplate
           key={`select-sub-section-${selectedSubSection}`}
           options={getSecondarySections(selectedSection)}
-          style={{ height: "40px", width: "100%", border: "none" }}
+          style={{ ...classes.selectStyle, width: "50%" }}
           placeholder={t("customerService.chooseSubSection")}
           onChange={handleSubSectionChange}
           value={selectedSubSection || null}
           withArrow
         />
       )}
-    </>
+    </Stack>
   );
 };
 

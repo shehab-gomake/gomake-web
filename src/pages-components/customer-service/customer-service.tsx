@@ -20,7 +20,6 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     onClickClosModal,
     onClickOpenModal,
     handleClean,
-    createIssue,
     onChangePrintHouse,
     printHouses,
     selectedPrintHouse,
@@ -31,7 +30,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     columnWidths,
     ticketState,
     setTicketState,
-    setFileBase64,
+    setFile,
     handleSectionChange,
     createAnother,
     handleCheckboxChange,
@@ -44,6 +43,8 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     setPatternSearch,
     onChangeModalPrintHouse,
     selectedModalPrintHouse,
+    onChangeInputs,
+    sendToMonday,
   } = useCustomerService(isAdmin);
 
   const router = useRouter();
@@ -109,9 +110,9 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           openModal={openModal}
           ticketTypeList={ticketTypeList}
           onClickClosModal={onClickClosModal}
-          createIssue={createIssue}
+          createIssue={sendToMonday}
           ticketState={ticketState}
-          setFileBase64={setFileBase64}
+          setFile={setFile}
           handleSectionChange={handleSectionChange}
           createAnother={createAnother}
           handleCheckboxChange={handleCheckboxChange}
@@ -123,6 +124,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
           printHouses={printHouses}
           onChangePrintHouse={onChangeModalPrintHouse}
           selectedPrintHouse={selectedModalPrintHouse}
+          onChangeInputs={onChangeInputs}
         />
       </div>
     </Stack>

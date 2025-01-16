@@ -1,22 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import {
-  createIssueApi,
-  getAllIssuesApi,
-  getAllPrintHousesApi,
-  getAllIssuesAdminApi,
-} from "@/services/api-service/customer-service/customer-service-api";
-import { useUserProfile } from "@/hooks/use-user-profile";
+import { getAllPrintHousesApi } from "@/services/api-service/customer-service/customer-service-api";
 import { JiraIssueType, JiraPrintHouse, Sections } from "../interface";
 import { useTranslation } from "react-i18next";
 import { ticketTypeList } from "../enums";
-import { logSessionData } from "@/utils/sessionManager";
 import { useDebounce } from "use-debounce";
+import axios from "axios";
+import { useRecoilValue } from "recoil";
+import { printHouseProfile } from "@/store/print-house-profile";
+import config from "@/config";
 
 const useCustomerService = (isAdmin: boolean) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { profileState } = useUserProfile();
+
+  const apiToken = config.MONDAY_API_TOKEN;
+  const boardId = config.MONDAY_BOARD_ID;
+  const groupId = config.TOPICS_GROUP_ID;
+
+  const printHouseProfileState = useRecoilValue(printHouseProfile);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [AllIssues, setAllIssues] = useState([]);
   const [printHouses, setPrintHouses] = useState<JiraPrintHouse[]>([]);
@@ -27,7 +29,7 @@ const useCustomerService = (isAdmin: boolean) => {
   const [statusFilter, setStatusFilter] = useState(null);
   const [statuses, setStatuses] = useState([]);
   const [ticketState, setTicketState] = useState<JiraIssueType>(null);
-  const [fileBase64, setFileBase64] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
   const { alertFault, alertSuccessAdded, alertFaultAdded, alertFaultGetData } =
     useSnackBar();
   const [createAnother, setCreateAnother] = useState(false);
@@ -73,49 +75,6 @@ const useCustomerService = (isAdmin: boolean) => {
     []
   );
 
-  const getIssues = useCallback(async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        const formattedData = res.data.map((item) => [
-          isAdmin
-            ? printHouses.find((ph) => ph.domain === item?.printHouseName)
-                ?.label ||
-              (item?.printHouseName ?? null)
-            : null,
-          item?.created ? new Date(item.created).toLocaleDateString() : "N/A",
-          item?.summary,
-          item?.description?.content[0]?.content[0]?.text || "",
-          t(item?.issuetype.name),
-          item?.issueNumber,
-          item?.reporterName,
-          t(item?.status),
-        ]);
-        setAllIssues(formattedData);
-        const uniqueStatuses = Array.from(
-          formattedData
-            .reduce((map, item) => {
-              const value = item[7];
-              const label = t(item[7]);
-              if (!map.has(value)) {
-                map.set(value, { value, label });
-              }
-              return map;
-            }, new Map())
-            .values()
-        );
-        setStatuses(uniqueStatuses);
-      } else {
-        setAllIssues([]);
-        setStatuses([]);
-      }
-    };
-    if (isAdmin) {
-      await getAllIssuesAdminApi(callApi, callBack, null);
-    } else {
-      await getAllIssuesApi(callApi, callBack);
-    }
-  }, [callApi, isAdmin, selectedPrintHouse, printHouses]);
-
   const getAllPrintHouses = useCallback(async () => {
     const callBack = (res) => {
       if (res.success && res.data) {
@@ -132,141 +91,9 @@ const useCustomerService = (isAdmin: boolean) => {
     await getAllPrintHousesApi(callApi, callBack);
   }, [callApi]);
 
-  const createIssue = async () => {
-    if (isAdmin && !selectedPrintHouse && !selectedModalPrintHouse) {
-      alertFault("customerService.selectPrintHouseAlert");
-      return;
-    }
-
-    if (!ticketState?.ticketType) {
-      alertFault("customerService.ticketTypeRequired");
-      return;
-    }
-
-    if (!ticketState?.title) {
-      alertFault("customerService.titleRequired");
-      return;
-    }
-
-    if (!ticketState?.description) {
-      alertFault("customerService.descriptionRequired");
-      return;
-    }
-
-    let issueData: any = {
-      fields: {
-        project: { key: "GCS" },
-        summary: ticketState?.title,
-
-        issuetype: {
-          id: ticketState?.ticketType?.value || "10004",
-        },
-        priority: {
-          id: "3",
-        },
-        customfield_10089: profileState.firstName + " " + profileState.lastName,
-        customfield_10090: ticketState?.gomakeRouteUri,
-        customfield_10092: ticketState?.section + "/" + ticketState?.subSection,
-      },
-    };
-
-    if (ticketState?.description) {
-      issueData.fields.description = {
-        type: "doc",
-        version: 1,
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                text: ticketState.description,
-                type: "text",
-              },
-            ],
-          },
-        ],
-      };
-    }
-
-    const callBack = (res) => {
-      if (res.success) {
-        getIssues();
-        alertSuccessAdded();
-        if (createAnother) {
-          setFileBase64("");
-          setSelectedSection("");
-          setSelectedSubSection("");
-          setSelectedModalPrintHouse("");
-          setTicketState({
-            isAdmin: ticketState.isAdmin,
-            openModal: ticketState.openModal,
-            title: "",
-            description: "",
-            ticketType: undefined,
-            ticketTypeList: [],
-            screenShot: "",
-            gomakeRouteUri: "",
-            section: "",
-            subSection: "",
-          });
-          jiraImageUploadRef.current?.resetAttachment();
-        } else {
-          onClickClosModal();
-        }
-      } else {
-        alertFaultAdded();
-      }
-    };
-    logSessionData();
-
-    await createIssueApi(callApi, callBack, {
-      issueData,
-      fileBase64,
-      ...(isAdmin && {
-        printHouseDomain:
-          selectedModalPrintHouse?.domain || selectedPrintHouse?.domain,
-      }),
-    });
-  };
-
   const onChangeStatus = useCallback((e, value) => {
     setStatusFilter(value?.value || null);
   }, []);
-
-  // const filterIssues = useCallback(() => {
-  //   let filtered = AllIssues;
-
-  //   // Filter by selected print house
-  //   if (selectedPrintHouse) {
-  //     filtered = filtered.filter(
-  //       (issue) => issue[0] === selectedPrintHouse?.label
-  //     );
-  //   }
-
-  //   // Filter by status
-  //   if (statusFilter) {
-  //     filtered = filtered.filter((issue) => issue[7] === statusFilter);
-  //   }
-
-  //   // Search input filter by title / description
-  //   if (debouncedPatternSearch.trim()) {
-  //     const lowercasedSearch = debouncedPatternSearch.toLowerCase();
-  //     filtered = filtered.filter(
-  //       (issue) =>
-  //         issue[2]?.toLowerCase().includes(lowercasedSearch) ||
-  //         issue[3]?.toLowerCase().includes(lowercasedSearch)
-  //     );
-  //   }
-
-  //   // Sort issues so that "Done" is at the end
-  //   const sortedIssues = filtered.sort((a, b) => {
-  //     if (a[7] === "Done" && b[7] !== "Done") return 1;
-  //     if (a[7] !== "Done" && b[7] === "Done") return -1;
-  //     return 0;
-  //   });
-
-  //   setFilteredIssues(sortedIssues);
-  // }, [AllIssues, selectedPrintHouse, statusFilter, debouncedPatternSearch]);
 
   const filterIssues = useCallback(() => {
     const lowercasedSearch = debouncedPatternSearch.trim().toLowerCase();
@@ -277,7 +104,7 @@ const useCustomerService = (isAdmin: boolean) => {
         return false;
 
       // Filter by status
-      if (statusFilter && issue[7] !== statusFilter) return false;
+      if (statusFilter && issue[6] !== statusFilter) return false;
 
       // Search input filter by title/description
       if (
@@ -308,13 +135,13 @@ const useCustomerService = (isAdmin: boolean) => {
     t("customerService.description"),
     t("customerService.issueType"),
     t("customerService.issueNumber"),
-    t("customerService.reporterName"),
+    // t("customerService.reporterName"),
     t("customerService.status"),
     isAdmin ? "" : null,
   ];
 
   const onClickClosModal = () => {
-    setFileBase64("");
+    setFile(null);
     setSelectedSection("");
     setSelectedSubSection("");
     setSelectedModalPrintHouse("");
@@ -326,6 +153,7 @@ const useCustomerService = (isAdmin: boolean) => {
     }));
     setOpenModal(false);
   };
+
   const onClickOpenModal = () => {
     setOpenModal(true);
   };
@@ -335,24 +163,234 @@ const useCustomerService = (isAdmin: boolean) => {
     setStatusFilter(null);
   }, []);
 
-  // useEffect(() => {
-  //   getIssues();
-  //   if (isAdmin) {
-  //     getAllPrintHouses();
-  //   }
-  // }, []);
-
   useEffect(() => {
-    if (isAdmin) {
-      getAllPrintHouses(); // Load printHouses first
-    }
-  }, [isAdmin]);
+    getAllPrintHouses();
+  }, []);
 
   useEffect(() => {
     if (!isAdmin || printHouses.length > 0) {
       getIssues(); // Trigger getIssues only when printHouses are ready
     }
   }, [isAdmin, printHouses]);
+
+  /* Monday Section */
+  const sendToMonday = async () => {
+    const domain = isAdmin
+      ? selectedModalPrintHouse?.domain || selectedPrintHouse?.domain
+      : printHouseProfileState?.domain;
+    const formattedDomain =
+      domain.startsWith("http://") || domain.startsWith("https://")
+        ? domain
+        : `https://${domain}`;
+
+    if (isAdmin && !selectedPrintHouse && !selectedModalPrintHouse) {
+      alertFault("customerService.selectPrintHouseAlert");
+      return;
+    }
+
+    if (!ticketState?.ticketType) {
+      alertFault("customerService.ticketTypeRequired");
+      return;
+    }
+
+    if (!ticketState?.title) {
+      alertFault("customerService.titleRequired");
+      return;
+    }
+
+    try {
+      const apiUrl = "https://api.monday.com/v2";
+      const fileApiUrl = "https://api.monday.com/v2/file";
+
+      const printHouseName =
+        printHouses.find((ph) => ph.domain === domain)?.label ||
+        (formattedDomain ?? null);
+
+      let columnValues = {
+        long_text: ticketState?.description,
+        status_11: ticketState?.ticketType,
+        link_mkm7eghn: {
+          url: formattedDomain,
+          text: printHouseName,
+        },
+      };
+
+      let columnValuesString = JSON.stringify(columnValues).replace(
+        /"/g,
+        '\\"'
+      );
+
+      let mutation = `mutation { create_item (board_id: "${boardId}", group_id: "${groupId}", item_name: "${
+        ticketState?.title || "New task"
+      }", column_values: "${columnValuesString}") { id }}`;
+
+      const createItemResponse = await axios.post(
+        apiUrl,
+        { query: mutation },
+        {
+          headers: {
+            Authorization: apiToken,
+          },
+        }
+      );
+
+      if (createItemResponse?.data?.errors) {
+        alertFaultAdded();
+      } else {
+        const itemId = createItemResponse?.data?.data?.create_item.id;
+
+        if (file) {
+          const formData = new FormData();
+
+          formData.append(
+            "query",
+            `mutation ($file: File!) { add_file_to_column (item_id: ${itemId}, column_id: "files", file: $file) { id } }`
+          );
+          formData.append("variables[file]", file);
+
+          const fileUploadResponse = await axios.post(fileApiUrl, formData, {
+            headers: {
+              Authorization: apiToken,
+              "Content-Type": "multipart/form-data",
+            },
+          });
+
+          if (fileUploadResponse.data.errors) {
+            alertFaultAdded();
+            console.error(
+              "File upload failed:",
+              fileUploadResponse.data.errors
+            );
+            // return;
+          }
+        }
+
+        getIssues();
+        alertSuccessAdded();
+
+        // Reset state and form if 'createAnother' is true
+        if (createAnother) {
+          setFile(null);
+          setSelectedSection("");
+          setSelectedSubSection("");
+          setSelectedModalPrintHouse("");
+          setTicketState({
+            isAdmin: ticketState.isAdmin,
+            openModal: ticketState.openModal,
+            title: "",
+            description: "",
+            ticketType: undefined,
+            ticketTypeList: [],
+            screenShot: "",
+            gomakeRouteUri: "",
+            section: "",
+            subSection: "",
+          });
+          jiraImageUploadRef.current?.resetAttachment();
+        } else {
+          onClickClosModal();
+        }
+      }
+    } catch (error) {
+      alertFaultAdded();
+      console.error("Error sending request to Monday.com:", error);
+    }
+  };
+
+  const getIssues = async () => {
+    const apiUrl = "https://api.monday.com/v2";
+    const query = `
+  query {
+    boards(ids: [${boardId}]) {
+      name
+      groups(ids: ["${groupId}"]) {
+        id
+        title
+        items_page(limit: 100) {
+          items {
+            id
+            name
+            column_values {
+              id
+              text
+              value
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+    try {
+      const response = await axios.post(
+        apiUrl,
+        { query },
+        {
+          headers: {
+            Authorization: apiToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.errors) {
+        alertFaultGetData();
+      } else {
+        const issues =
+          response.data.data.boards[0]?.groups[0]?.items_page.items || [];
+
+        const formattedData = issues.map(({ name, id, column_values }) => {
+          const columnData =
+            column_values?.reduce((acc, { id, text, value }) => {
+              if (id === "status_11") acc.status_11 = text;
+              if (id === "status") acc.status = text;
+              if (id === "creation_log") acc.creation_log = text;
+              if (id === "long_text") acc.long_text = text;
+
+              // if (id === "link_mkm7eghn")
+              //   acc.link_mkm7eghn = text?.replace(/^https?:\/\//, "");
+
+              if (id === "link_mkm7eghn") {
+                const parsedValue = value ? JSON.parse(value) : {};
+                acc.link_mkm7eghn = parsedValue?.url
+                  ? parsedValue?.url.replace(/^https?:\/\//, "")
+                  : "";
+              }
+
+              return acc;
+            }, {}) || {};
+          return [
+            isAdmin
+              ? printHouses.find(
+                  (ph) => ph.domain === columnData?.link_mkm7eghn
+                )?.label ||
+                (columnData?.link_mkm7eghn ?? null)
+              : null,
+            columnData.creation_log
+              ? new Date(columnData.creation_log).toLocaleDateString()
+              : "N/A",
+            name,
+            columnData.long_text,
+            columnData.status_11,
+            id, // consider this issue number
+            columnData.status,
+          ];
+        });
+
+        const uniqueStatuses = Array.from(
+          new Set(formattedData.map((item) => item[6])) // item[6]  contain the status
+        )
+          .filter((status) => status !== undefined && status !== null)
+          .map((status) => ({ value: status, label: status }));
+
+        setStatuses(uniqueStatuses.length > 0 ? uniqueStatuses : []);
+        setAllIssues(formattedData);
+      }
+    } catch (error) {
+      console.error("Error fetching issues:", error);
+    }
+  };
 
   return {
     tableHeaders,
@@ -362,7 +400,6 @@ const useCustomerService = (isAdmin: boolean) => {
     ticketTypeList,
     onClickClosModal,
     onClickOpenModal,
-    createIssue,
     onChangePrintHouse,
     printHouses,
     selectedPrintHouse,
@@ -376,7 +413,7 @@ const useCustomerService = (isAdmin: boolean) => {
     onChangeInputs,
     ticketState,
     setTicketState,
-    setFileBase64,
+    setFile,
     handleSectionChange,
     createAnother,
     handleCheckboxChange,
@@ -390,6 +427,7 @@ const useCustomerService = (isAdmin: boolean) => {
     setPatternSearch,
     onChangeModalPrintHouse,
     selectedModalPrintHouse,
+    sendToMonday,
   };
 };
 
