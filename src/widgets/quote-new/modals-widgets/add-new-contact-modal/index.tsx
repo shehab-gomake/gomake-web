@@ -9,10 +9,13 @@ import { quoteItemState } from "@/store";
 import { useState } from "react";
 import { addCustomerContactApi, addDocumentContactApi } from "@/services/api-service/generic-doc/documents-api";
 import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
+import { useRouter } from "next/router";
+import { v4 as uuid } from "uuid";
 
 const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts, documentType }) => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
+  const router = useRouter();
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
@@ -21,6 +24,7 @@ const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts
     contactName: "",
     contactPhone: ""
   });
+
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const [errors, setErrors] = useState<any>({});
   const validateInput = () => {
@@ -89,10 +93,27 @@ const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts
   const createNewContactNew = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        alertSuccessAdded();
-        getQuote();
-        getAllClientContacts()
-        addNewContactNew(res?.data)
+        if (!router.query.isNewCreation) {
+          getQuote();
+          addNewContactNew(res?.data)
+          getAllClientContacts()
+          alertSuccessAdded();
+        }
+        else {
+          getAllClientContacts()
+          const newContact = {
+            id: uuid(),
+            contactName: state.contactName,
+            contactMail: state.contactMail,
+            contactPhone: state.contactPhone,
+          };
+          setQuoteItemValue(prevValue => ({
+            ...prevValue,
+            documentContacts: [...prevValue.documentContacts, newContact]
+          }));
+          alertSuccessAdded();
+        }
+
       } else {
         alertFaultAdded();
       }
