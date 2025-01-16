@@ -78,7 +78,8 @@ const useCustomerService = (isAdmin: boolean) => {
     []
   );
 
-  const getIssues = useCallback(async () => {
+  //!here
+  const getIssuesOld = useCallback(async () => {
     const callBack = (res) => {
       if (res.success) {
         const formattedData = res.data.map((item) => [
@@ -181,7 +182,7 @@ const useCustomerService = (isAdmin: boolean) => {
     t("customerService.description"),
     t("customerService.issueType"),
     t("customerService.issueNumber"),
-    t("customerService.reporterName"),
+    // t("customerService.reporterName"),
     t("customerService.status"),
     isAdmin ? "" : null,
   ];
@@ -259,12 +260,16 @@ const useCustomerService = (isAdmin: boolean) => {
       const boardId = "1767002989";
       const groupId = "topics";
 
+      const printHouseName =
+        printHouses.find((ph) => ph.domain === domain)?.label ||
+        (formattedDomain ?? null);
+
       let columnValues = {
         long_text: ticketState?.description,
         status_11: ticketState?.ticketType,
         link_mkm7eghn: {
           url: formattedDomain,
-          text: formattedDomain,
+          text: printHouseName,
         },
       };
 
@@ -283,7 +288,6 @@ const useCustomerService = (isAdmin: boolean) => {
         {
           headers: {
             Authorization: apiToken,
-            "Content-Type": "application/json",
           },
         }
       );
@@ -292,32 +296,32 @@ const useCustomerService = (isAdmin: boolean) => {
         alertFaultAdded();
       } else {
         /****************************/
-        // const itemId = createItemResponse.data.data.create_item.id;
-        // if (file) {
-        //   const formData = new FormData();
+        const itemId = createItemResponse.data.data.create_item.id;
+        if (file) {
+          const formData = new FormData();
 
-        //   formData.append(
-        //     "query",
-        //     `mutation ($file: File!) { add_file_to_column (item_id: ${itemId}, column_id: "files", file: $file) { id } }`
-        //   );
-        //   formData.append("variables[file]", file);
+          formData.append(
+            "query",
+            `mutation ($file: File!) { add_file_to_column (item_id: ${itemId}, column_id: "files", file: $file) { id } }`
+          );
+          formData.append("variables[file]", file);
 
-        //   const fileUploadResponse = await axios.post(fileApiUrl, formData, {
-        //     headers: {
-        //       Authorization: apiToken,
-        //       "Content-Type": "multipart/form-data",
-        //     },
-        //   });
+          const fileUploadResponse = await axios.post(fileApiUrl, formData, {
+            headers: {
+              Authorization: apiToken,
+              "Content-Type": "multipart/form-data",
+            },
+          });
 
-        //   if (fileUploadResponse.data.errors) {
-        //     alertFaultAdded();
-        //     console.error(
-        //       "File upload failed:",
-        //       fileUploadResponse.data.errors
-        //     );
-        //     // return;
-        //   }
-        // }
+          if (fileUploadResponse.data.errors) {
+            alertFaultAdded();
+            console.error(
+              "File upload failed:",
+              fileUploadResponse.data.errors
+            );
+            // return;
+          }
+        }
         /****************************/
 
         getIssues();
@@ -352,6 +356,90 @@ const useCustomerService = (isAdmin: boolean) => {
     }
   };
 
+  const getIssues = async () => {
+    const apiUrl = "https://api.monday.com/v2";
+    const apiToken =
+      "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQ0OTc3MDg4OSwiYWFpIjoxMSwidWlkIjo2ODU0NjEzNiwiaWFkIjoiMjAyNC0xMi0xOFQxOTo0MTowNS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjYzNTkxNzQsInJnbiI6ImV1YzEifQ.WEXTXHhRTtJS9XTAXvlyGG8zjSxgE-uIWuhtIluvR1o";
+    const boardId = "1767002989";
+    const groupId = "topics";
+
+    try {
+      const response = await axios.post(
+        apiUrl,
+        {
+          query: `
+query {
+boards(ids: [${boardId}]) {
+  name
+  groups(ids: ["${groupId}"]) {
+    id
+    title
+    items_page(limit: 100) {
+      items {
+        id
+        name
+        column_values {
+          id
+          text
+          value
+        }
+      }
+    }
+  }
+}
+}`,
+        },
+        {
+          headers: {
+            Authorization: apiToken,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.errors) {
+        alertFaultGetData();
+      } else {
+        const issues =
+          response.data.data.boards[0]?.groups[0]?.items_page.items || [];
+
+        const formattedData = issues.map(({ name, id, column_values }) => {
+          const columnData =
+            column_values?.reduce((acc, { id, text }) => {
+              if (id === "status_11") acc.status_11 = text;
+              if (id === "status") acc.status = text;
+              if (id === "creation_log") acc.creation_log = text;
+              if (id === "long_text") acc.long_text = text;
+              if (id === "link_mkm7eghn")
+                acc.link_mkm7eghn = text?.replace(/^https?:\/\//, "");
+              return acc;
+            }, {}) || {};
+
+          return [
+            isAdmin
+              ? printHouses.find(
+                  (ph) => ph.domain === columnData?.link_mkm7eghn
+                )?.label ||
+                (columnData?.link_mkm7eghn?.printHouseName ?? null)
+              : null,
+            columnData.creation_log
+              ? new Date(columnData.creation_log).toLocaleDateString()
+              : "N/A",
+            name,
+            columnData.long_text,
+            columnData.status_11,
+            id, // consider this issue number
+            // " ",
+            columnData.status,
+          ];
+        });
+
+        setAllIssues(formattedData);
+      }
+    } catch (error) {
+      console.error("Error fetching issues:", error);
+    }
+  };
   return {
     tableHeaders,
     AllIssues,
