@@ -8,9 +8,6 @@ import { useQuoteConfirmation } from "./use-quote-confirmation";
 import { updateTempUserTokenStorage } from "@/services/storage-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import PageNotFound from "@/pages/404.page";
-import { CircularProgress } from "@mui/material";
-import { adaptLeft } from "@/utils/adapter";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface IProps {
   isPrePaymentPage?: boolean;
@@ -22,8 +19,7 @@ const QuoteConfirmationPageWidget = ({
   documentType,
 }: IProps) => {
   const [isMobile, setIsMobile] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const { primaryColor } = useGomakeTheme();
+
   const {
     t,
     getTempUserToken,
@@ -35,6 +31,7 @@ const QuoteConfirmationPageWidget = ({
     capitalizeFirstLetter,
     isPageNotFound,
     setIsPageNotFound,
+    router,
   } = useQuoteConfirmation({ documentType });
 
   const { classes } = useStyle({ direction });
@@ -55,6 +52,7 @@ const QuoteConfirmationPageWidget = ({
     const handlePrePaymentPage = async () => {
       if (isPrePaymentPage) {
         try {
+          debugger;
           const userToken = await getTempUserToken();
           if (!userToken) {
             setIsPageNotFound(true);
@@ -72,20 +70,6 @@ const QuoteConfirmationPageWidget = ({
 
     handlePrePaymentPage();
   }, [isPrePaymentPage, getTempUserToken]);
-
-  // if (loading && isPrePaymentPage) {
-  //   return (
-  //     <div
-  //       style={{
-  //         position: "absolute",
-  //         bottom: 10,
-  //         ...adaptLeft(t("direction"), 15),
-  //       }}
-  //     >
-  //       <CircularProgress style={{ color: primaryColor(500) }} />
-  //     </div>
-  //   );
-  // }
 
   if (isPageNotFound && isPrePaymentPage) {
     return <PageNotFound hideBackToHomePageBtn={true} />;

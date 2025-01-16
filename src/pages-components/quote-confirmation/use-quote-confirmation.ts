@@ -57,7 +57,7 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
       return userToken;
     }
     return null;
-  }, []);
+  }, [router]);
 
   const getPrePaymentById = async () => {
     const callBack = (res) => {
@@ -66,7 +66,6 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
         setQuoteConfirm(quote);
         quote.clientLang && i18n.changeLanguage(quote.clientLang);
       } else {
-        // alertFaultUpdate();
         setIsPageNotFound(true);
       }
     };
@@ -151,6 +150,7 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
     capitalizeFirstLetter,
     isPageNotFound,
     setIsPageNotFound,
+    router,
   };
 };
 
