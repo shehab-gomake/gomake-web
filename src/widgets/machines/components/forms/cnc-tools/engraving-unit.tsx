@@ -3,6 +3,9 @@ import {IStepFormProps} from "../interface";
 import {InputContainer} from "../../inputs/input-container";
 import {useMachineAttributes} from "../../../hooks/use-machine-attributes";
 import {materialCategories} from "@/widgets/machines/components/forms/cnc-tools/material-categories";
+import {
+    mediaAdvertisingProductsCategories
+} from "@/widgets/machines/utils/attributes/media-inputs/media-advertising-products-categories";
 
 const inputs = (state) => {
     return state.attributes?.isAvailableEngravingUnit ? [
@@ -16,7 +19,8 @@ const inputs = (state) => {
             options: [],
             value: state.attributes?.isAvailableEngravingUnit ? state.attributes?.isAvailableEngravingUnit : ''
         },
-        ...materialCategories(state, 'engravingUnit')
+        ...materialCategories(state, 'engravingUnit'),
+        ...mediaAdvertisingProductsCategories(state),
     ] : [{
         name: "isAvailable",
         label: "machineAttributes.available",
