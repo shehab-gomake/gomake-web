@@ -55,7 +55,7 @@ const useCustomerService = (isAdmin: boolean) => {
 
   const columnWidths = isAdmin
     ? ["10%", "10%", "10%", "40%", "10%", "10%", "10%"]
-    : ["0%", "10%", "10%", "50%", "10%", "10%", "10%"];
+    : ["0%", "12%", "12%", "40%", "12%", "12%", "12%"];
 
   const onChangeInputs = useCallback((key, value) => {
     setTicketState((prevTicketState) => ({
@@ -239,30 +239,74 @@ const useCustomerService = (isAdmin: boolean) => {
       } else {
         const itemId = createItemResponse?.data?.data?.create_item.id;
 
+        // if (file) {
+        //   const formData = new FormData();
+
+        //   formData.append(
+        //     "query",
+        //     `mutation ($file: File!) { add_file_to_column (item_id: ${itemId}, column_id: "files", file: $file) { id } }`
+        //   );
+        //   formData.append("variables[file]", file);
+
+        //   const fileUploadResponse = await axios.post(fileApiUrl, formData, {
+        //     headers: {
+        //       Authorization: apiToken,
+        //       "Content-Type": "multipart/form-data",
+        //     },
+        //   });
+
+        //   if (fileUploadResponse.data.errors) {
+        //     alertFaultAdded();
+        //     console.error(
+        //       "File upload failed:",
+        //       fileUploadResponse.data.errors
+        //     );
+        //   }
+        // }
+
         if (file) {
-          const formData = new FormData();
+          const fileName = file.name;
+          const lambdaUrl =
+            "https://kbbwamufjfte724rc4fcjopizi0jfwnw.lambda-url.eu-west-3.on.aws/";
+          const reader = new FileReader();
+          reader.onload = async () => {
+            // Convert file to Base64
+            const base64FileContent = reader.result?.toString().split(",")[1];
+            const fileUploadPayload = {
+              fileContent: base64FileContent,
+              fileName: fileName,
+              itemId: itemId,
+            };
 
-          formData.append(
-            "query",
-            `mutation ($file: File!) { add_file_to_column (item_id: ${itemId}, column_id: "files", file: $file) { id } }`
-          );
-          formData.append("variables[file]", file);
+            try {
+              const fileUploadResponse = await axios.post(
+                lambdaUrl,
+                fileUploadPayload,
 
-          const fileUploadResponse = await axios.post(fileApiUrl, formData, {
-            headers: {
-              Authorization: apiToken,
-              "Content-Type": "multipart/form-data",
-            },
-          });
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                }
+              );
 
-          if (fileUploadResponse.data.errors) {
+              if (fileUploadResponse.data.errors) {
+                console.error(
+                  "File upload failed:",
+                  fileUploadResponse.data.errors
+                );
+              }
+            } catch (error) {
+              console.error("An error occurred during the file upload:", error);
+            }
+          };
+
+          reader.onerror = () => {
+            console.error("Error reading file for Base64 conversion.");
             alertFaultAdded();
-            console.error(
-              "File upload failed:",
-              fileUploadResponse.data.errors
-            );
-            // return;
-          }
+          };
+
+          reader.readAsDataURL(file); // Convert file to Base64
         }
 
         getIssues();
@@ -347,17 +391,14 @@ const useCustomerService = (isAdmin: boolean) => {
               if (id === "status") acc.status = text;
               if (id === "creation_log") acc.creation_log = text;
               if (id === "long_text") acc.long_text = text;
-
-              // if (id === "link_mkm7eghn")
-              //   acc.link_mkm7eghn = text?.replace(/^https?:\/\//, "");
-
               if (id === "link_mkm7eghn") {
                 const parsedValue = value ? JSON.parse(value) : {};
                 acc.link_mkm7eghn = parsedValue?.url
-                  ? parsedValue?.url.replace(/^https?:\/\//, "")
+                  ? parsedValue.url
+                      .replace(/^https?:\/\//, "")
+                      .replace(/\/$/, "")
                   : "";
               }
-
               return acc;
             }, {}) || {};
           return [
@@ -366,7 +407,8 @@ const useCustomerService = (isAdmin: boolean) => {
                   (ph) => ph.domain === columnData?.link_mkm7eghn
                 )?.label ||
                 (columnData?.link_mkm7eghn ?? null)
-              : null,
+              : columnData?.link_mkm7eghn,
+
             columnData.creation_log
               ? new Date(columnData.creation_log).toLocaleDateString()
               : "N/A",
@@ -385,7 +427,17 @@ const useCustomerService = (isAdmin: boolean) => {
           .map((status) => ({ value: status, label: status }));
 
         setStatuses(uniqueStatuses.length > 0 ? uniqueStatuses : []);
-        setAllIssues(formattedData);
+
+        const filteredFormattedData = isAdmin
+          ? formattedData
+          : formattedData.filter(
+              (item) =>
+                printHouses.find((ph) => ph.domain === item[0])?.domain ===
+                  printHouseProfileState?.domain ||
+                item[0] + "/" === printHouseProfileState?.domain
+            );
+
+        setAllIssues(filteredFormattedData);
       }
     } catch (error) {
       console.error("Error fetching issues:", error);
