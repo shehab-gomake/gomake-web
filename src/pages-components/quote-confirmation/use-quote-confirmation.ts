@@ -25,6 +25,9 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
   const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(
     quoteConfirmationState
   );
+
+  const [isPageNotFound, setIsPageNotFound] = useState(false); // Add state for page not found
+
   const [checkedItems, setCheckedItems] = useState({});
   const { i18n } = useTranslation();
 
@@ -63,7 +66,8 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
         setQuoteConfirm(quote);
         quote.clientLang && i18n.changeLanguage(quote.clientLang);
       } else {
-        alertFaultUpdate();
+        // alertFaultUpdate();
+        setIsPageNotFound(true);
       }
     };
     await getPrePaymentByIdApi(callApi, callBack, {
@@ -127,13 +131,14 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
   )?.label;
 
   const capitalizeFirstLetter = (text) => {
-    if (typeof text !== "string"){
+    if (typeof text !== "string") {
       return text;
     }
     return text?.charAt(0).toUpperCase() + text.slice(1);
   };
 
   return {
+    t,
     getQuoteConfirmation,
     checkedItems,
     setCheckedItems,
@@ -144,6 +149,8 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
     documentTitle,
     direction,
     capitalizeFirstLetter,
+    isPageNotFound,
+    setIsPageNotFound,
   };
 };
 
