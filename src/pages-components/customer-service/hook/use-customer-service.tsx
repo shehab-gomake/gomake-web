@@ -55,7 +55,7 @@ const useCustomerService = (isAdmin: boolean) => {
 
   const columnWidths = isAdmin
     ? ["10%", "10%", "10%", "40%", "10%", "10%", "10%"]
-    : ["0%", "10%", "10%", "50%", "10%", "10%", "10%"];
+    : ["0%", "12%", "12%", "40%", "12%", "12%", "12%"];
 
   const onChangeInputs = useCallback((key, value) => {
     setTicketState((prevTicketState) => ({
@@ -347,17 +347,14 @@ const useCustomerService = (isAdmin: boolean) => {
               if (id === "status") acc.status = text;
               if (id === "creation_log") acc.creation_log = text;
               if (id === "long_text") acc.long_text = text;
-
-              // if (id === "link_mkm7eghn")
-              //   acc.link_mkm7eghn = text?.replace(/^https?:\/\//, "");
-
               if (id === "link_mkm7eghn") {
                 const parsedValue = value ? JSON.parse(value) : {};
                 acc.link_mkm7eghn = parsedValue?.url
-                  ? parsedValue?.url.replace(/^https?:\/\//, "")
+                  ? parsedValue.url
+                      .replace(/^https?:\/\//, "")
+                      .replace(/\/$/, "")
                   : "";
               }
-
               return acc;
             }, {}) || {};
           return [
@@ -366,7 +363,8 @@ const useCustomerService = (isAdmin: boolean) => {
                   (ph) => ph.domain === columnData?.link_mkm7eghn
                 )?.label ||
                 (columnData?.link_mkm7eghn ?? null)
-              : null,
+              : columnData?.link_mkm7eghn,
+
             columnData.creation_log
               ? new Date(columnData.creation_log).toLocaleDateString()
               : "N/A",
@@ -385,7 +383,17 @@ const useCustomerService = (isAdmin: boolean) => {
           .map((status) => ({ value: status, label: status }));
 
         setStatuses(uniqueStatuses.length > 0 ? uniqueStatuses : []);
-        setAllIssues(formattedData);
+
+        const filteredFormattedData = isAdmin
+          ? formattedData
+          : formattedData.filter(
+              (item) =>
+                printHouses.find((ph) => ph.domain === item[0])?.domain ===
+                  printHouseProfileState?.domain ||
+                item[0] + "/" === printHouseProfileState?.domain
+            );
+
+        setAllIssues(filteredFormattedData);
       }
     } catch (error) {
       console.error("Error fetching issues:", error);

@@ -60,6 +60,10 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
     }
   }, [from]);
 
+  const processedRows = isAdmin
+    ? filteredIssues
+    : filteredIssues.map((row) => [null, ...row.slice(1)]); // Replace the first element with null
+
   return (
     <Stack
       direction="column"
@@ -99,7 +103,7 @@ const CustomerServicePageWidget = ({ isAdmin }: { isAdmin: boolean }) => {
         <PrimaryTable
           stickyHeader={true}
           columnWidths={columnWidths}
-          rows={filteredIssues}
+          rows={processedRows}
           headers={tableHeaders}
           maxHeight={"calc(100vh - 280px)"}
           withSort={true}
