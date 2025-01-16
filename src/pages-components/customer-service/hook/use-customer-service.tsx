@@ -1,27 +1,24 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import {
-  createIssueApi,
-  getAllIssuesApi,
-  getAllPrintHousesApi,
-  getAllIssuesAdminApi,
-} from "@/services/api-service/customer-service/customer-service-api";
-import { useUserProfile } from "@/hooks/use-user-profile";
+import { getAllPrintHousesApi } from "@/services/api-service/customer-service/customer-service-api";
 import { JiraIssueType, JiraPrintHouse, Sections } from "../interface";
 import { useTranslation } from "react-i18next";
 import { ticketTypeList } from "../enums";
-import { logSessionData } from "@/utils/sessionManager";
 import { useDebounce } from "use-debounce";
 import axios from "axios";
 import { useRecoilValue } from "recoil";
 import { printHouseProfile } from "@/store/print-house-profile";
+import config from "@/config";
 
 const useCustomerService = (isAdmin: boolean) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { profileState } = useUserProfile();
-  const printHouseProfileState = useRecoilValue(printHouseProfile);
 
+  const apiToken = config.MONDAY_API_TOKEN;
+  const boardId = config.MONDAY_BOARD_ID;
+  const groupId = config.TOPICS_GROUP_ID;
+
+  const printHouseProfileState = useRecoilValue(printHouseProfile);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [AllIssues, setAllIssues] = useState([]);
   const [printHouses, setPrintHouses] = useState<JiraPrintHouse[]>([]);
@@ -201,19 +198,10 @@ const useCustomerService = (isAdmin: boolean) => {
       return;
     }
 
-    // if (!ticketState?.description) {
-    //   alertFault("customerService.descriptionRequired");
-    //   return;
-    // }
-
     try {
       const apiUrl = "https://api.monday.com/v2";
       const fileApiUrl = "https://api.monday.com/v2/file";
-      const apiToken =
-        "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQ0OTc3MDg4OSwiYWFpIjoxMSwidWlkIjo2ODU0NjEzNiwiaWFkIjoiMjAyNC0xMi0xOFQxOTo0MTowNS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjYzNTkxNzQsInJnbiI6ImV1YzEifQ.WEXTXHhRTtJS9XTAXvlyGG8zjSxgE-uIWuhtIluvR1o";
-      const boardId = "1767002989";
-      const groupId = "topics";
-      debugger;
+
       const printHouseName =
         printHouses.find((ph) => ph.domain === domain)?.label ||
         (formattedDomain ?? null);
@@ -246,11 +234,11 @@ const useCustomerService = (isAdmin: boolean) => {
         }
       );
 
-      if (createItemResponse.data.errors) {
+      if (createItemResponse?.data?.errors) {
         alertFaultAdded();
       } else {
-        /****************************/
-        const itemId = createItemResponse.data.data.create_item.id;
+        const itemId = createItemResponse?.data?.data?.create_item.id;
+
         if (file) {
           const formData = new FormData();
 
@@ -276,7 +264,6 @@ const useCustomerService = (isAdmin: boolean) => {
             // return;
           }
         }
-        /****************************/
 
         getIssues();
         alertSuccessAdded();
@@ -312,37 +299,33 @@ const useCustomerService = (isAdmin: boolean) => {
 
   const getIssues = async () => {
     const apiUrl = "https://api.monday.com/v2";
-    const apiToken =
-      "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQ0OTc3MDg4OSwiYWFpIjoxMSwidWlkIjo2ODU0NjEzNiwiaWFkIjoiMjAyNC0xMi0xOFQxOTo0MTowNS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjYzNTkxNzQsInJnbiI6ImV1YzEifQ.WEXTXHhRTtJS9XTAXvlyGG8zjSxgE-uIWuhtIluvR1o";
-    const boardId = "1767002989";
-    const groupId = "topics";
-
-    try {
-      const response = await axios.post(
-        apiUrl,
-        {
-          query: `
-query {
-boards(ids: [${boardId}]) {
-  name
-  groups(ids: ["${groupId}"]) {
-    id
-    title
-    items_page(limit: 100) {
-      items {
+    const query = `
+  query {
+    boards(ids: [${boardId}]) {
+      name
+      groups(ids: ["${groupId}"]) {
         id
-        name
-        column_values {
-          id
-          text
-          value
+        title
+        items_page(limit: 100) {
+          items {
+            id
+            name
+            column_values {
+              id
+              text
+              value
+            }
+          }
         }
       }
     }
   }
-}
-}`,
-        },
+`;
+
+    try {
+      const response = await axios.post(
+        apiUrl,
+        { query },
         {
           headers: {
             Authorization: apiToken,
@@ -377,8 +360,6 @@ boards(ids: [${boardId}]) {
 
               return acc;
             }, {}) || {};
-
-          debugger;
           return [
             isAdmin
               ? printHouses.find(
@@ -393,7 +374,6 @@ boards(ids: [${boardId}]) {
             columnData.long_text,
             columnData.status_11,
             id, // consider this issue number
-            // " ",
             columnData.status,
           ];
         });
