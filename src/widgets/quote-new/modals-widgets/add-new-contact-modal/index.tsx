@@ -93,48 +93,39 @@ const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts
   }
 
   const createNewContactNew = async () => {
-    if (router.query.isNewCreation && documentType === DOCUMENT_TYPE.purchaseOrder) {
-      // Generate a random ID for the new contact
-      const newContactID = uuid();
-
-      // Create a new contact object
-      const newContact = {
-        id: newContactID,
-        contactName: state.contactName,
-        contactMail: state.contactMail,
-        contactPhone: state.contactPhone,
-        documentID: quoteItemValue?.id,
-      };
-
-      // Add the new contact to the documentContacts array
-      setQuoteItemValue(prevValue => ({
-        ...prevValue,
-        documentContacts: [...prevValue.documentContacts, newContact]
-      }));
-
-      alertSuccessAdded();
-      // getQuote();
-      // getAllClientContacts();
-    }
-    else {
-      const callBack = (res) => {
-        if (res?.success) {
-          alertSuccessAdded();
+    const callBack = (res) => {
+      if (res?.success) {
+        if (!router.query.isNewCreation) {
           getQuote();
-          getAllClientContacts()
           addNewContactNew(res?.data)
-        } else {
-          alertFaultAdded();
+          getAllClientContacts()
+          alertSuccessAdded();
         }
-      }
-      await addCustomerContactApi(callApi, callBack, {
-        contactName: state.contactName,
-        contactMail: state.contactMail,
-        contactPhone: state.contactPhone,
-        clientId: quoteItemValue?.customerID,
-      })
-    }
+        else {
+          getAllClientContacts()
+          const newContact = {
+            id: uuid(),
+            contactName: state.contactName,
+            contactMail: state.contactMail,
+            contactPhone: state.contactPhone,
+          };
+          setQuoteItemValue(prevValue => ({
+            ...prevValue,
+            documentContacts: [...prevValue.documentContacts, newContact]
+          }));
+          alertSuccessAdded();
+        }
 
+      } else {
+        alertFaultAdded();
+      }
+    }
+    await addCustomerContactApi(callApi, callBack, {
+      contactName: state.contactName,
+      contactMail: state.contactMail,
+      contactPhone: state.contactPhone,
+      clientId: quoteItemValue?.customerID,
+    })
   }
 
   return (
