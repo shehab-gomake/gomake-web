@@ -11,7 +11,6 @@ import { addCustomerContactApi, addDocumentContactApi } from "@/services/api-ser
 import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
 import { useRouter } from "next/router";
 import { v4 as uuid } from "uuid";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts, documentType }) => {
   const { callApi } = useGomakeAxios();
@@ -25,7 +24,6 @@ const AddNewContactModal = ({ openModal, onClose, getQuote, getAllClientContacts
     contactName: "",
     contactPhone: ""
   });
-  console.log("quoteItemValue", { quoteItemValue, state });
 
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const [errors, setErrors] = useState<any>({});
