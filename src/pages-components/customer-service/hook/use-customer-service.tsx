@@ -78,50 +78,6 @@ const useCustomerService = (isAdmin: boolean) => {
     []
   );
 
-  //!here
-  const getIssuesOld = useCallback(async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        const formattedData = res.data.map((item) => [
-          isAdmin
-            ? printHouses.find((ph) => ph.domain === item?.printHouseName)
-                ?.label ||
-              (item?.printHouseName ?? null)
-            : null,
-          item?.created ? new Date(item.created).toLocaleDateString() : "N/A",
-          item?.summary,
-          item?.description?.content[0]?.content[0]?.text || "",
-          t(item?.issuetype.name),
-          item?.issueNumber,
-          item?.reporterName,
-          t(item?.status),
-        ]);
-        setAllIssues(formattedData);
-        const uniqueStatuses = Array.from(
-          formattedData
-            .reduce((map, item) => {
-              const value = item[7];
-              const label = t(item[7]);
-              if (!map.has(value)) {
-                map.set(value, { value, label });
-              }
-              return map;
-            }, new Map())
-            .values()
-        );
-        setStatuses(uniqueStatuses);
-      } else {
-        setAllIssues([]);
-        setStatuses([]);
-      }
-    };
-    if (isAdmin) {
-      await getAllIssuesAdminApi(callApi, callBack, null);
-    } else {
-      await getAllIssuesApi(callApi, callBack);
-    }
-  }, [callApi, isAdmin, selectedPrintHouse, printHouses]);
-
   const getAllPrintHouses = useCallback(async () => {
     const callBack = (res) => {
       if (res.success && res.data) {
@@ -151,7 +107,7 @@ const useCustomerService = (isAdmin: boolean) => {
         return false;
 
       // Filter by status
-      if (statusFilter && issue[7] !== statusFilter) return false;
+      if (statusFilter && issue[6] !== statusFilter) return false;
 
       // Search input filter by title/description
       if (
@@ -211,10 +167,8 @@ const useCustomerService = (isAdmin: boolean) => {
   }, []);
 
   useEffect(() => {
-    if (isAdmin) {
-      getAllPrintHouses(); // Load printHouses first
-    }
-  }, [isAdmin]);
+    getAllPrintHouses();
+  }, []);
 
   useEffect(() => {
     if (!isAdmin || printHouses.length > 0) {
@@ -259,7 +213,7 @@ const useCustomerService = (isAdmin: boolean) => {
         "eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjQ0OTc3MDg4OSwiYWFpIjoxMSwidWlkIjo2ODU0NjEzNiwiaWFkIjoiMjAyNC0xMi0xOFQxOTo0MTowNS4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MjYzNTkxNzQsInJnbiI6ImV1YzEifQ.WEXTXHhRTtJS9XTAXvlyGG8zjSxgE-uIWuhtIluvR1o";
       const boardId = "1767002989";
       const groupId = "topics";
-
+      debugger;
       const printHouseName =
         printHouses.find((ph) => ph.domain === domain)?.label ||
         (formattedDomain ?? null);
@@ -405,22 +359,32 @@ boards(ids: [${boardId}]) {
 
         const formattedData = issues.map(({ name, id, column_values }) => {
           const columnData =
-            column_values?.reduce((acc, { id, text }) => {
+            column_values?.reduce((acc, { id, text, value }) => {
               if (id === "status_11") acc.status_11 = text;
               if (id === "status") acc.status = text;
               if (id === "creation_log") acc.creation_log = text;
               if (id === "long_text") acc.long_text = text;
-              if (id === "link_mkm7eghn")
-                acc.link_mkm7eghn = text?.replace(/^https?:\/\//, "");
+
+              // if (id === "link_mkm7eghn")
+              //   acc.link_mkm7eghn = text?.replace(/^https?:\/\//, "");
+
+              if (id === "link_mkm7eghn") {
+                const parsedValue = value ? JSON.parse(value) : {};
+                acc.link_mkm7eghn = parsedValue?.url
+                  ? parsedValue?.url.replace(/^https?:\/\//, "")
+                  : "";
+              }
+
               return acc;
             }, {}) || {};
 
+          debugger;
           return [
             isAdmin
               ? printHouses.find(
                   (ph) => ph.domain === columnData?.link_mkm7eghn
                 )?.label ||
-                (columnData?.link_mkm7eghn?.printHouseName ?? null)
+                (columnData?.link_mkm7eghn ?? null)
               : null,
             columnData.creation_log
               ? new Date(columnData.creation_log).toLocaleDateString()
@@ -434,12 +398,20 @@ boards(ids: [${boardId}]) {
           ];
         });
 
+        const uniqueStatuses = Array.from(
+          new Set(formattedData.map((item) => item[6])) // item[6]  contain the status
+        )
+          .filter((status) => status !== undefined && status !== null)
+          .map((status) => ({ value: status, label: status }));
+
+        setStatuses(uniqueStatuses.length > 0 ? uniqueStatuses : []);
         setAllIssues(formattedData);
       }
     } catch (error) {
       console.error("Error fetching issues:", error);
     }
   };
+
   return {
     tableHeaders,
     AllIssues,

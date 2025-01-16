@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
 import { GoMakeAutoComplate } from "@/components";
-import { Skeleton, Stack } from "@mui/material";
+import { Skeleton } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { IIssuesHeaderSectionProps } from "../interface";
 import { PermissionCheck } from "@/components/CheckPermission";
