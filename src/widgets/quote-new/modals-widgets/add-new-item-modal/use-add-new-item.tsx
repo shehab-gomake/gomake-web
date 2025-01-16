@@ -338,8 +338,22 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
 
   const onClickCreateQuoteForCustomer = () => {
     if (router.query.isNewCreation) {
+      console.log("documentType", documentType);
       if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
-        getDocumentItemDataFromMaterial();
+        if (documentType === DOCUMENT_TYPE.purchaseOrder) {
+          const updatedQuoteItemValue = { ...quoteItemValue };
+          const newItem = active === true ? { ...item } : { ...genericItem };
+
+          updatedQuoteItemValue.documentItems = [
+            ...updatedQuoteItemValue.documentItems,
+            newItem,
+          ];
+          setQuoteItemValue(updatedQuoteItemValue);
+          //onClose()
+          handleCloseModal();
+        } else {
+          getDocumentItemDataFromMaterial();
+        }
       } else {
         const updatedQuoteItemValue = { ...quoteItemValue };
         const newItem = active === true ? { ...item } : { ...genericItem };
@@ -366,14 +380,11 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
             addDocumentItemFromMaterial();
           } else {
             navigate(
-              `/products/create?clientTypeId=${
-                quoteItemValue?.client?.clientTypeId
-              }&customerId=${quoteItemValue?.customerID}&customerName=${
-                quoteItemValue?.client?.name
-              }&productId=${selectedProduct?.id}&documentType=${documentType}${
-                quoteItemValue?.number
-                  ? `&documentNumber=${quoteItemValue?.number}`
-                  : ""
+              `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId
+              }&customerId=${quoteItemValue?.customerID}&customerName=${quoteItemValue?.client?.name
+              }&productId=${selectedProduct?.id}&documentType=${documentType}${quoteItemValue?.number
+                ? `&documentNumber=${quoteItemValue?.number}`
+                : ""
               }${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
             );
           }
