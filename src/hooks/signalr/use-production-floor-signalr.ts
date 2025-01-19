@@ -48,7 +48,7 @@ const useProductionFloorSignalr = () => {
         }
       });
     }
-  }, [connection]);
+  }, [connection, connectionId]);
 
   return {
     data,
