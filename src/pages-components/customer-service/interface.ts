@@ -34,6 +34,7 @@ export interface JiraIssueType {
   gomakeRouteUri: string;
   section: string;
   subSection: string;
+  reporter?: string;
 }
 
 export interface JiraPrintHouse {
