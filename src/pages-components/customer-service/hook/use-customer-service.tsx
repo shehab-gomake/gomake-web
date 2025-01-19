@@ -3,7 +3,7 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getAllPrintHousesApi } from "@/services/api-service/customer-service/customer-service-api";
 import { JiraIssueType, JiraPrintHouse, Sections } from "../interface";
 import { useTranslation } from "react-i18next";
-import { ticketTypeList } from "../enums";
+// import { ticketTypeList } from "../enums";
 import { useDebounce } from "use-debounce";
 import axios from "axios";
 import { useRecoilValue } from "recoil";
@@ -156,6 +156,23 @@ const useCustomerService = (isAdmin: boolean) => {
     { label: t("customerService.new"), value: "New" },
   ];
 
+  const ticketTypeList = [
+    {
+      label: t("customerService.technicalSupport"),
+      value: "Technical support",
+    },
+    {
+      label: t("customerService.suggestImprovement"),
+      value: "Suggest improvement",
+    },
+    {
+      label: t("customerService.suggestNewFeature"),
+      value: "Suggest a new feature",
+    },
+    { label: t("customerService.reportBug"), value: "Report a bug" },
+    { label: t("customerService.otherQuestion"), value: "Other question" },
+  ];
+
   const onClickClosModal = () => {
     setFile(null);
     setSelectedSection("");
@@ -216,7 +233,6 @@ const useCustomerService = (isAdmin: boolean) => {
 
     try {
       const apiUrl = "https://api.monday.com/v2";
-      const fileApiUrl = "https://api.monday.com/v2/file";
 
       const printHouseName =
         printHouses.find((ph) => ph.domain === domain)?.label ||
@@ -224,7 +240,7 @@ const useCustomerService = (isAdmin: boolean) => {
 
       let columnValues = {
         long_text: ticketState?.description,
-        status_11: ticketState?.ticketType,
+        status_11: ticketState?.ticketType?.value,
         link_mkm7eghn: {
           url: formattedDomain,
           text: printHouseName,
@@ -254,31 +270,6 @@ const useCustomerService = (isAdmin: boolean) => {
         alertFaultAdded();
       } else {
         const itemId = createItemResponse?.data?.data?.create_item.id;
-
-        // if (file) {
-        //   const formData = new FormData();
-
-        //   formData.append(
-        //     "query",
-        //     `mutation ($file: File!) { add_file_to_column (item_id: ${itemId}, column_id: "files", file: $file) { id } }`
-        //   );
-        //   formData.append("variables[file]", file);
-
-        //   const fileUploadResponse = await axios.post(fileApiUrl, formData, {
-        //     headers: {
-        //       Authorization: apiToken,
-        //       "Content-Type": "multipart/form-data",
-        //     },
-        //   });
-
-        //   if (fileUploadResponse.data.errors) {
-        //     alertFaultAdded();
-        //     console.error(
-        //       "File upload failed:",
-        //       fileUploadResponse.data.errors
-        //     );
-        //   }
-        // }
 
         if (file) {
           const fileName = file.name;
@@ -422,6 +413,10 @@ const useCustomerService = (isAdmin: boolean) => {
             statuses.find((status) => status.value === columnData.status)
               ?.label || null;
 
+          const matchingType =
+            ticketTypeList.find((type) => type.value === columnData.status_11)
+              ?.label || null;
+
           return [
             isAdmin
               ? printHouses.find(
@@ -435,7 +430,7 @@ const useCustomerService = (isAdmin: boolean) => {
               : "N/A",
             name,
             columnData.long_text,
-            columnData.status_11,
+            matchingType,
             id, // consider this issue number
             matchingStatus,
           ];
