@@ -35,6 +35,7 @@ import { downloadPdf } from "@/utils/helpers";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
+import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 
 type StatusOption = {
   label: string;
@@ -187,9 +188,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-      t("boardMissions.costFromOrderItem"),
+    t("boardMissions.costFromOrderItem"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-      t("boardMissions.priceFromOrderItem"),
+    t("boardMissions.priceFromOrderItem"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
@@ -375,6 +376,45 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return await getAllBoardMissions(isClear);
     }
   };
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [customerForEdit, setCustomerForEdit] = useState([]);
+
+  const getCustomerForEdit = async (customerId) => {
+    const callBack = (res) => {
+      if (res.success) {
+        let customer = res.data;
+        if (customer.contacts && customer.contacts.length > 0) {
+          let index = 0;
+          customer.contacts.forEach((x) => {
+            x.index = index;
+            index++;
+          });
+        }
+        if (customer.addresses && customer.addresses.length > 0) {
+          let index = 0;
+          customer.addresses.forEach((x) => {
+            x.index = index;
+            index++;
+          });
+        }
+        if (customer.users && customer.users.length > 0) {
+          let index = 0;
+          customer.users.forEach((x) => {
+            x.index = index;
+            index++;
+          });
+        }
+        setCustomerForEdit(customer);
+        setShowCustomerModal(true);
+      }
+    };
+    await getAndSetCustomerById(callApi, callBack, { customerId: customerId });
+  };
+
+  const onClickOpenCustomerModal = (customerId: any) => {
+    setShowCustomerModal(true);
+    getCustomerForEdit(customerId);
+  };
 
   const getJobStatus = (mission) => {
     if (mission?.isReady) {
@@ -418,13 +458,18 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               </a>,
               GetJobDateFormat(mission?.createdDate),
               GetJobDateFormat(mission?.dueDate),
-              mission?.clientName,
+              <div
+                style={{ cursor: "pointer" }}
+                onClick={() => onClickOpenCustomerModal(mission?.customerID)}
+              >
+                {mission?.clientName}
+              </div>,
               mission?.productType
                 ? `${mission?.number} / ${mission?.productType}`
                 : mission?.number,
               <a
-                  style={classes.tableAtagStyle}
-                  href={`/order?Id=${mission?.orderID}`}
+                style={classes.tableAtagStyle}
+                href={`/order?Id=${mission?.orderID}`}
               >
                 {mission?.orderNumber}
               </a>,
@@ -437,10 +482,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 : []),
               ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                 ? [
-                    mission?.price +
-                      " " +
-                      getCurrencyUnitText(mission?.currency),
-                  ]
+                  mission?.price +
+                  " " +
+                  getCurrencyUnitText(mission?.currency),
+                ]
                 : []),
               mission?.jobName,
               mission?.numberOfBoardMissions,
@@ -471,30 +516,30 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         callBack,
         isClear
           ? {
-              productsIds: [],
-              pageNumber: pageNumber,
-              pageSize: pageSize,
-            }
+            productsIds: [],
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+          }
           : {
-              clientId: customer?.id || router?.query?.clientId,
-              agentId: agent?.id,
-              search: finalPatternSearch,
-              fromDate: fromDate && GetDateFormat(fromDate),
-              toDate: toDate && GetDateFormat(toDate),
+            clientId: customer?.id || router?.query?.clientId,
+            agentId: agent?.id,
+            search: finalPatternSearch,
+            fromDate: fromDate && GetDateFormat(fromDate),
+            toDate: toDate && GetDateFormat(toDate),
 
-              fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
-              toDueDate: toDueDate && GetDateFormat(toDueDate),
+            fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
+            toDueDate: toDueDate && GetDateFormat(toDueDate),
 
-              fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
-              toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+            fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
+            toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
 
-              productsIds: productIds,
-              productionStatus: status?.value,
-              orderStatus: orderStatus?.value,
-              pageNumber: pageNumber,
-              pageSize: pageSize,
-              orderNumber: router?.query?.orderNumber,
-            }
+            productsIds: productIds,
+            productionStatus: status?.value,
+            orderStatus: orderStatus?.value,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            orderNumber: router?.query?.orderNumber,
+          }
       );
     }
   };
@@ -509,7 +554,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             // mission?.dueDate?.split("T")[0],
             GetJobDateFormat(mission?.createdDate),
             GetJobDateFormat(mission?.dueDate),
-            mission?.clientName,
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => onClickOpenCustomerModal(mission?.customerID)}
+            >
+              {mission?.clientName}
+            </div>,
             mission?.supplierName,
             mission?.productType
               ? `${mission?.number} / ${mission?.productType}`
@@ -528,8 +578,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             mission?.isReady
               ? t("boardMissions.done")
               : mission?.boardMissionStatus && mission?.station
-              ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
-              : "",
+                ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
+                : "",
             <MoreMenuWidget
               mission={mission}
               onClickDuplicate={onOpenDuplicateModal}
@@ -552,31 +602,31 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         callBack,
         isClear
           ? {
-              productsIds: [],
-              pageNumber: pageNumber,
-              pageSize: pageSize,
-            }
+            productsIds: [],
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+          }
           : {
-              clientId: customer?.id,
-              agentId: agent?.id,
-              search: finalPatternSearch,
-              fromDate: fromDate && GetDateFormat(fromDate),
-              toDate: toDate && GetDateFormat(toDate),
+            clientId: customer?.id,
+            agentId: agent?.id,
+            search: finalPatternSearch,
+            fromDate: fromDate && GetDateFormat(fromDate),
+            toDate: toDate && GetDateFormat(toDate),
 
-              fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
-              toDueDate: toDueDate && GetDateFormat(toDueDate),
+            fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
+            toDueDate: toDueDate && GetDateFormat(toDueDate),
 
-              fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
-              toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+            fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
+            toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
 
-              productsIds: productIds,
-              productionStatus: status?.value,
-              orderStatus: orderStatus?.value,
-              pageNumber: pageNumber,
-              pageSize: pageSize,
-              supplierId: supplierId?.value,
-              isPurchaseJobs: true,
-            }
+            productsIds: productIds,
+            productionStatus: status?.value,
+            orderStatus: orderStatus?.value,
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+            supplierId: supplierId?.value,
+            isPurchaseJobs: true,
+          }
       );
     }
   };
@@ -585,14 +635,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const { targetOrderId, targetOrderNumber, clientId } = router?.query;
     if (targetOrderId)
       navigate(
-        `/products/duplicate?clientTypeId=${
-          missionItem?.clientTypeId
+        `/products/duplicate?clientTypeId=${missionItem?.clientTypeId
         }&customerId=${clientId}&customerName=${encodeURIComponent(
           missionItem?.clientName || ""
-        )}&productId=${missionItem?.productID}&documentItemId=${
-          missionItem?.orderItemId
-        }&documentType=${
-          DOCUMENT_TYPE.order
+        )}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId
+        }&documentType=${DOCUMENT_TYPE.order
         }&documentNumber=${targetOrderNumber}&documentId=${targetOrderId}&duplicateType=${duplicateType}`
       );
     else
@@ -1010,6 +1057,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     isFetching,
     printOrderJobsUsingPrintNode,
     searchInputRef,
+    showCustomerModal,
+    customerForEdit,
+    setShowCustomerModal,
+    setCustomerForEdit
   };
 };
 
