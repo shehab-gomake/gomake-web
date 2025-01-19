@@ -130,7 +130,6 @@ const useCustomerService = (isAdmin: boolean) => {
     t("customerService.description"),
     t("customerService.issueType"),
     t("customerService.issueNumber"),
-    // t("customerService.reporterName"),
     t("customerService.status"),
     isAdmin ? "" : null,
   ];
