@@ -74,6 +74,7 @@ const useQuickBlox = () => {
             QB.chat.send(roomJid, message, (e, r) => {
                 if (e) {
                     reject(e);
+                    alertFaultUpdate();
                 } else {
                     resolve(r)
                 }
@@ -85,6 +86,7 @@ const useQuickBlox = () => {
             QB.chat.message.delete(messageId, {force: 1},  (e, r) => {
                 if (e) {
                     reject(e);
+                    alertFaultUpdate();
                 } else {
                     resolve(r)
                 }
@@ -132,6 +134,7 @@ const useQuickBlox = () => {
             QB.data.create(APPROVAL_REQUEST_CLASS_NAME, OPTIONS, (err, res) => {
                 if (err) {
                     reject(err)
+                    alertFaultUpdate();
                 } else {
                     resolve(res)
                 }
