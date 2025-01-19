@@ -7,12 +7,18 @@ const nextConfig = {
     ERP_SERVER: process.env.ERP_SERVER,
     ENVIROMENT: process.env.ENVIROMENT,
     GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID,
+    MONDAY_API_TOKEN: process.env.MONDAY_API_TOKEN,
+    MONDAY_BOARD_ID: process.env.MONDAY_BOARD_ID,
+    TOPICS_GROUP_ID: process.env.TOPICS_GROUP_ID,
   },
   publicRuntimeConfig: {
     API_SERVER: process.env.API_SERVER,
     ERP_SERVER: process.env.ERP_SERVER,
     ENVIROMENT: process.env.ENVIROMENT,
     GA_MEASUREMENT_ID: process.env.GA_MEASUREMENT_ID,
+    MONDAY_API_TOKEN: process.env.MONDAY_API_TOKEN,
+    MONDAY_BOARD_ID: process.env.MONDAY_BOARD_ID,
+    TOPICS_GROUP_ID: process.env.TOPICS_GROUP_ID,
   },
   future: {
     webpack5: true,
@@ -25,22 +31,22 @@ const nextConfig = {
     config.resolve.alias.canvas = false;
     config.resolve.fallback = {
       ...config.resolve.fallback,
-      'child_process': false,
-      'nativescript-xmpp-client': false,
-      'fs': false,
-      'net': false,
-      'tls': false,
+      child_process: false,
+      "nativescript-xmpp-client": false,
+      fs: false,
+      net: false,
+      tls: false,
     };
     return config;
   },
   productionBrowserSourceMaps: true,
   pageExtensions: ["page.tsx", "page.ts", "page.jsx", "page.js"],
   experimental: {
-    optimizePackageImports: ['icon-library'],
+    optimizePackageImports: ["icon-library"],
   },
 };
-const withBundleAnalyzer = require('@next/bundle-analyzer')({
-  enabled: process.env.ANALYZE === 'true',
-})
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
 
-module.exports = withBundleAnalyzer(nextConfig)
+module.exports = withBundleAnalyzer(nextConfig);

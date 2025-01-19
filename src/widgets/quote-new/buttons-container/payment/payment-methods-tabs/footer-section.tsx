@@ -17,6 +17,7 @@ const FooterSection = ({ onCloseModal }: any) => {
     totalCreditCard,
     isTransacted,
     onClickMakePayment,
+    transactionSelected,
   } = usePaymentsTable();
 
   const handleSaveAndClose = (transactionData) => {
@@ -25,7 +26,12 @@ const FooterSection = ({ onCloseModal }: any) => {
   };
 
   const onClickSave = () => {
-    if (!isTransacted && totalCreditCard > 0 && !secondWidget) {
+    if (
+      !isTransacted &&
+      totalCreditCard > 0 &&
+      !secondWidget &&
+      !transactionSelected
+    ) {
       onClickMakePayment(handleSaveAndClose, thirdWidget);
     } else {
       handleSave();

@@ -1,38 +1,37 @@
 import TextField from "@mui/material/TextField";
 import { styled } from "@mui/material/styles";
-import { CSSProperties, ReactNode} from "react";
+import { CSSProperties, ReactNode } from "react";
 
-const StyledTextField = styled(TextField)((props: any) => ({
-  direction: props?.direction,
-  display: "flex",
-  alignItems: "center",
-  gap: "var(--spacing-md, 8px)",
-  alignSelf: "stretch",
-  borderRadius: "var(--radius-md, 8px)",
-  border: "1px solid var(--Colors-Border-border-primary, #D0D5DD)",
-  background: "var(--Colors-Background-bg-primary, #FFF)",
-  boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
+const StyledTextField = styled(TextField)(
+  ({ direction }: { direction?: "ltr" | "rtl" }) => ({
+    direction: direction,
+    display: "flex",
+    alignItems: "center",
+    gap: "var(--spacing-md, 8px)",
+    alignSelf: "stretch",
+    borderRadius: "var(--radius-md, 8px)",
+    border: "1px solid var(--Colors-Border-border-primary, #D0D5DD)",
+    background: "var(--Colors-Background-bg-primary, #FFF)",
+    boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
 
-  "& .MuiOutlinedInput-root": {
-    // paddingRight: "9px!important",
-    height: props?.style?.height || 40,
-    fontFamily: "Heebo",
-    fontWeight: 500,
-    width: "100%",
-    ...props?.style,
-    "& fieldset": {
-      border: "transparent",
-    },
-    "& input::placeholder": {
-      color: "#B1B1B1",
-      opacity: 1,
+    "& .MuiOutlinedInput-root": {
+      height: "40px",
       fontFamily: "Heebo",
-      fontStyle: "normal",
       fontWeight: 500,
+      width: "100%",
+      "& fieldset": {
+        border: "transparent",
+      },
+      "& input::placeholder": {
+        color: "#B1B1B1",
+        opacity: 1,
+        fontFamily: "Heebo",
+        fontStyle: "normal",
+        fontWeight: 500,
+      },
     },
-  },
-  ...props?.style,
-}));
+  })
+);
 
 interface GoMakeTextInputProps {
   value?: any;
@@ -91,8 +90,9 @@ const GoMakeTextInput = ({
     };
     onChange(modifiedEvent);
   };
+
   const handleWheel = (event) => {
-    if (document.activeElement === event.target && type === 'number') {
+    if (document.activeElement === event.target && type === "number") {
       event.target.blur();
     }
   };
@@ -100,19 +100,16 @@ const GoMakeTextInput = ({
   return (
     <StyledTextField
       value={value}
-      //   onChange={onChange}
       onChange={handleChange}
       disabled={disabled}
       type={type}
       autoComplete="off"
       autoFocus={autoFocus}
-      style={style}
       error={error}
       placeholder={placeholder}
       onKeyDown={onKeyDown}
       multiline={multiline}
       InputProps={InputProps}
-      // @ts-ignore
       onMouseLeave={onMouseLeave}
       defaultValue={defaultValue}
       onBlur={onBlur}
@@ -122,6 +119,7 @@ const GoMakeTextInput = ({
       helperText={helperText}
       dir={direction}
       onWheel={handleWheel}
+      style={style}
     />
   );
 };
