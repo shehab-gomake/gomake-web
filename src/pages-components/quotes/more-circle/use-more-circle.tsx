@@ -22,7 +22,9 @@ import { ResumeIcon } from "@/icons/resume-icon";
 import { PayIcon } from "./icons/pay";
 import { StartProductionIcon } from "./icons/start-productions";
 import {printHouseProfile} from "@/store/print-house-profile";
-import {addBoardMissionsToFileUploaderApi} from "@/services/api-service/board-missions/board-missions-table";
+import {
+  addOrderBoardMissionsToFileUploaderApi
+} from "@/services/api-service/board-missions/board-missions-table";
 import {fileUploaderConnectionIdState, openFileUploaderList, pinFileUploaderState} from "@/store/file-uploader-state";
 
 const useMoreCircle = () => {
@@ -78,7 +80,7 @@ const useMoreCircle = () => {
     const setIsSelectedCLoseAsDeleveryNote = useSetRecoilState(
       isSelectedCLoseAsDeleveryNoteState
     );
-    const addOrderBoardaMissionsToFileUploader = async (orderId) => {
+    const addOrderBoardMissionsToFileUploader = async (orderId) => {
       const callBack = (res) => {
         if (res?.success) {
           setOpenFileUploader(true);
@@ -86,7 +88,7 @@ const useMoreCircle = () => {
         } else {
         }
       };
-      await addBoardMissionsToFileUploaderApi(callApi, callBack, {
+      await addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
         orderId: orderId,
         connectionId: connectionId,
       });
@@ -400,7 +402,7 @@ const useMoreCircle = () => {
         condition: isSendPaymentToClient,
         name: t("fileUploader.uploadFile"),
         icon: <PDFIcon />,
-        onclick: () => addOrderBoardaMissionsToFileUploader(quote?.id),
+        onclick: () => addOrderBoardMissionsToFileUploader(quote?.id),
       },
     ];
   };

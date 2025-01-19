@@ -20,6 +20,8 @@ const PRINT_JOB_USING_PRINT_NODE_URL =
 const PRINT_ODER_JOBS_USING_PRINT_NODE_URL =
   "/v1/erp-service/board-missions-tables/print-order-jobs-using-print-node/";
 const SEARCH_JOBS_URL = "/v1/erp-service/board-missions/search-jobs";
+const ADD_ORDER_BOARD_MISSIONS_TO_FILE_UPLOADER_URL =
+    "/v1/erp-service/board-missions/add-to-file-uploader";
 
 const setBoardMissionsFiltersApi: ICallAndSetData = async (
   callApi,
@@ -142,6 +144,19 @@ const searchJobsApi: ICallAndSetData = async (
   );
 };
 
+const addOrderBoardMissionsToFileUploaderApi: ICallAndSetData = async (
+    callApi,
+    setState,
+    data
+) => {
+  return await getSetApiData(
+      callApi,
+      EHttpMethod.POST,
+      ADD_ORDER_BOARD_MISSIONS_TO_FILE_UPLOADER_URL,
+      setState,
+      data
+  );
+};
 export {
   setBoardMissionsFiltersApi,
   getOrderSummeryPdfApi,
@@ -152,4 +167,5 @@ export {
   printJobUsingPrintNodeApi,
   printOrderJobUsingPrintNodeApi,
   searchJobsApi,
+  addOrderBoardMissionsToFileUploaderApi
 };
