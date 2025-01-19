@@ -12,7 +12,8 @@ import {
   clientContactsState,
   loadingWithShadowState,
   quoteConfirmationState,
-  quoteItemState, openReceiptCreationModalState,
+  quoteItemState,
+  openReceiptCreationModalState,
 } from "@/store";
 import { useQuoteGetData } from "./use-quote-get-data";
 import {
@@ -95,8 +96,7 @@ const useQuoteNew = ({
     alertFaultDelete,
     alertFault,
   } = useSnackBar();
-  
-  
+
   const router = useRouter();
   const { callApi } = useGomakeAxios();
   const { openWhatsAppWebLink } = useWhatsAppWeb();
@@ -106,10 +106,11 @@ const useQuoteNew = ({
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
-  const [openReceiptCreationModal, setOpenReceiptCreationModal] = useRecoilState(openReceiptCreationModalState);
+  const [openReceiptCreationModal, setOpenReceiptCreationModal] =
+    useRecoilState(openReceiptCreationModalState);
   const [selectDate, setSelectDate] = useState(
     isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
-  );
+  ); // Represents the Delivery Date for Quotes and Orders, and the Due Date for other documents
   const [creationDate, setCreationDate] = useState(
     isQuoteConfirmation
       ? quoteConfirm?.creationDate
@@ -595,7 +596,7 @@ const useQuoteNew = ({
       await getClientPaymentItemsApi(
         callApi,
         callBack,
-        { clientId: item?.id , documentNumber: router?.query?.documentNumber},
+        { clientId: item?.id, documentNumber: router?.query?.documentNumber },
         false
       );
     } else if (router?.query?.isNewCreation) {
@@ -1224,7 +1225,7 @@ const useQuoteNew = ({
   const creationDateRef = useRef(null);
   const dateRef = useRef(null);
   const taxDateRef = useRef(null);
-  const [activeClickAway, setActiveClickAway] = useState(false);
+  const [activeClickAway, setActiveClickAway] = useState(false); //for duaDate/deliveryDate
   const [activeClickAwayForCreationDate, setActiveClickAwayForCreationDate] =
     useState(false);
   const [activeClickAwayForTaxDate, setActiveClickAwayForTaxDate] =

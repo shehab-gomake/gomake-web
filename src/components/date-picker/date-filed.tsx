@@ -1,18 +1,20 @@
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { TextField, Box, Typography, InputAdornment } from "@mui/material";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
 import { useMemo, useState } from "react";
 import { useSnackBar } from "@/hooks";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 interface IDateFieldProps {
   label: string;
-  date: string; // Expected to be in "YYYY-MM-DD" format
-  handleChange: (newDate) => void;
+  date: string;
+  handleChange: (newDate: string | null) => void;
   isEditable?: boolean;
   inputRef?: any;
   preventOpenCondition?: boolean | null;
   preventOpenMessage?: string;
+  withTime?: boolean; // New prop to toggle time selection
 }
 
 const DateField: React.FC<IDateFieldProps> = ({
@@ -23,6 +25,7 @@ const DateField: React.FC<IDateFieldProps> = ({
   inputRef,
   preventOpenCondition = null,
   preventOpenMessage = "home.admin.pleaseSelectCustomer",
+  withTime = false,
 }) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -31,7 +34,11 @@ const DateField: React.FC<IDateFieldProps> = ({
   const [open, setOpen] = useState(false);
 
   const handleDateChange = (newDate: any) => {
-    const formattedDate = newDate ? moment(newDate).format("YYYY-MM-DD") : null;
+    const formattedDate = newDate
+      ? withTime
+        ? moment(newDate).format("YYYY-MM-DDTHH:mm:ss") // Include time
+        : moment(newDate).format("YYYY-MM-DD") // Date only
+      : null;
     handleChange(formattedDate);
   };
 
@@ -39,8 +46,8 @@ const DateField: React.FC<IDateFieldProps> = ({
     if (preventOpenCondition) {
       event.stopPropagation();
       event.preventDefault();
-      alertFault(t(preventOpenMessage));
-      setOpen(false); // Ensure the picker does not open
+      alertFault(preventOpenMessage);
+      setOpen(false);
     } else {
       setOpen(true);
     }
@@ -65,15 +72,14 @@ const DateField: React.FC<IDateFieldProps> = ({
           sx={{
             marginRight: isRTL ? "6px" : isEditable ? "0px" : "-100px",
             marginLeft: !isRTL ? "0px" : isEditable ? "0px" : "-100px",
-
             "& .MuiInputAdornment-root": {
-              marginLeft: isRTL ? "0px" : "-30px",
-              marginRight: isRTL ? "-30px" : "0px",
+              marginLeft: isRTL ? "0px" : withTime ? "-5px" : "-30px",
+              marginRight: isRTL ? (withTime ? "-5px" : "-30px") : "0px",
             },
           }}
         />
       ),
-    [t, isEditable, preventOpenCondition]
+    [t, isEditable, preventOpenCondition, withTime]
   );
 
   return (
@@ -92,17 +98,32 @@ const DateField: React.FC<IDateFieldProps> = ({
       >
         {label}
       </Typography>
-      <DatePicker
-        open={open}
-        onOpen={() => setOpen(true)}
-        onClose={() => setOpen(false)}
-        value={date ? moment(date).toDate() : null}
-        onChange={handleDateChange}
-        disabled={!isEditable}
-        slots={{
-          textField: textFieldSlot,
-        }}
-      />
+      {withTime ? (
+        <DateTimePicker
+          open={open}
+          onOpen={() => setOpen(true)}
+          onClose={() => setOpen(false)}
+          value={date ? moment(date).toDate() : null} //!not sure about the format
+          // onChange={handleDateChange}
+          onAccept={handleDateChange} // Triggered only when "OK" is clicked
+          disabled={!isEditable}
+          slots={{
+            textField: textFieldSlot,
+          }}
+        />
+      ) : (
+        <DatePicker
+          open={open}
+          onOpen={() => setOpen(true)}
+          onClose={() => setOpen(false)}
+          value={date ? moment(date).toDate() : null} //!not sure about the format
+          onChange={handleDateChange}
+          disabled={!isEditable}
+          slots={{
+            textField: textFieldSlot,
+          }}
+        />
+      )}
     </Box>
   );
 };
