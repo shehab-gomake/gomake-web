@@ -2286,7 +2286,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setSubProducts(copySubProducts);
     }
   }, [deviceSize]);
-  console.log("subProducts", subProducts);
   useEffect(() => {
     if (deviceSize && deviceCategory) {
       getMaterialCategories();
@@ -5473,6 +5472,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     for (let i = 0; i < data.actions.length; i++) {
       const action = data.actions[i];
 
+      // Skip validation if deactivateInProductionFloor is true
+      if (action.deactivateInProductionFloor) {
+        continue;
+      }
+
       if (action.isNeedEmployee && !action.employeeId && action.source != EWorkSource.OUT) {
         errors.push(
           `${action.actionName}: ${t("validateWorkflows.noEmployee")}`
@@ -5487,14 +5491,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           `${action.actionName}: ${t("validateWorkflows.noMavhine")}`
         );
       }
-      // if (
-      //   action.isNeedMaterial &&
-      //   (!action.materials || Object.keys(action.materials).length === 0)
-      // ) {
-      //   errors.push(
-      //     `${action.actionName}: ${t("validateWorkflows.noMaterilas")}`
-      //   );
-      // }
       if ((action.source === 1 || action.source === 2) && !action.supplierId) {
         errors.push(
           `${action.actionName}: ${t("validateWorkflows.noSuppliers")}`

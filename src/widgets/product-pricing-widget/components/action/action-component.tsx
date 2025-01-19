@@ -804,25 +804,26 @@ const ActionContainerComponent = ({
                                 })`}
                             </span>
                           </Stack>
-                          <Divider
-                            orientation={"vertical"}
-                            style={{ height: "50%", margin: "auto 0" }}
-                            flexItem
-                          />
 
-                          <EditableKeyValueViewComponent
-                            onUpdate={handleUpdatePrice}
-                            {...totalPrice}
-                            values={totalPriceValue}
-                            source={source}
-                            valueColor={secondColor(500)}
-                            name={t("sales.quote.price")}
-                          />
                         </>}
+
                       </>
                     }
                   </PermissionCheck>
+                  <Divider
+                    orientation={"vertical"}
+                    style={{ height: "50%", margin: "auto 0" }}
+                    flexItem
+                  />
 
+                  <EditableKeyValueViewComponent
+                    onUpdate={handleUpdatePrice}
+                    {...totalPrice}
+                    values={totalPriceValue}
+                    source={source}
+                    valueColor={secondColor(500)}
+                    name={t("sales.quote.price")}
+                  />
                   {!isFromSetting && <Divider orientation={"vertical"} flexItem />}
                   <div onClick={(e) => e.stopPropagation()}>
                     <InOutSourceSelect value={source} onChange={handleSourceChange} />

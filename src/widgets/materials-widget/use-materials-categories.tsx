@@ -18,6 +18,7 @@ import {
 import { EMaterialActiveFilter } from "./enums";
 import { getPrintHouseMaterialCategoryDataApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { getMaterialCategoryDataApi } from "@/services/api-service/materials/materials-endpoints";
+import { useState } from "react";
 
 const useMaterialsCategories = (isAdmin: boolean) => {
   const [inActiveFilter, setInActiveFilter] = useRecoilState(inActiveFilterState);
@@ -30,7 +31,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
   );
   const [activeFilter, setActiveFilter] = useRecoilState(activeFilterState);
 
-  const [pagesCount, setPagesCount] = useRecoilState(pagesCountState);
+  const [pagesCount, setPagesCount] = useState(0);
   const [pageNumber, setPageNumber] = useRecoilState(materialsTablePageState);
   const [categoryNumbering, setCategoryNumbering] = useRecoilState(
     categoryNumberingState

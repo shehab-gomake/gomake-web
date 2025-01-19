@@ -1,9 +1,12 @@
 import {setupTimeInput} from "@/widgets/machines/utils/attributes/speed-inputs/setup-time-input";
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {mediaDimensionsSettings} from "@/widgets/machines/utils/attributes/media-inputs/media-dimensions-settings";
+import {minMaxInput} from "@/widgets/machines/utils/attributes/media-inputs/min-max-input";
 
 const bookletMachine = (state: Record<string, any>) => {
     return [
         ...setupTimeInput(state),
+        ...mediaDimensionsSettings(state),
         {
             name: "",
             label: "machineAttributes.maxThicknessBeforeFolding",
@@ -15,99 +18,10 @@ const bookletMachine = (state: Record<string, any>) => {
             value: state.attributes?.maxThicknessBeforeFolding ? state.attributes?.maxThicknessBeforeFolding : '',
             unit: EMeasurementUnits.MM
         },
-        {
-            name: 'machineAttributes.width',
-            parameterKey: 'width',
-            machineInputType: 'multiInput',
-            isValid: !!state?.attributes?.width?.min &&
-                !!state?.attributes?.width?.max,
-            inputs: [
-                {
-                    name: "",
-                    label: "machineAttributes.min",
-                    type: "text",
-                    placeholder: "machineAttributes.min",
-                    required: true,
-                    parameterKey: "min",
-                    options: [],
-                    value: state.attributes?.width?.min ? state.attributes?.width?.min : '',
-                    unit: EMeasurementUnits.CM
-                },
-                {
-                    name: "",
-                    label: "machineAttributes.max",
-                    type: "text",
-                    placeholder: "machineAttributes.max",
-                    required: true,
-                    parameterKey: "max",
-                    options: [],
-                    value: state.attributes?.width?.max ? state.attributes?.width?.max : '',
-                    unit: EMeasurementUnits.CM
-                },
-            ]
-        },
-        {
-            name: 'machineAttributes.length',
-            parameterKey: 'length',
-            machineInputType: 'multiInput',
-            isValid: !!state?.attributes?.length?.min &&
-                !!state?.attributes?.length?.max,
-            inputs: [
-                {
-                    name: "",
-                    label: "machineAttributes.min",
-                    type: "text",
-                    placeholder: "machineAttributes.min",
-                    required: true,
-                    parameterKey: "min",
-                    options: [],
-                    value: state.attributes?.length?.min ? state.attributes?.length?.min : '',
-                    unit: EMeasurementUnits.CM
-                },
-                {
-                    name: "",
-                    label: "machineAttributes.max",
-                    type: "text",
-                    placeholder: "machineAttributes.max",
-                    required: true,
-                    parameterKey: "max",
-                    options: [],
-                    value: state.attributes?.length?.max ? state.attributes?.length?.max : '',
-                    unit: EMeasurementUnits.CM
-                },
-            ]
-        },
-        {
-            name: 'machineAttributes.paperThickness',
-            parameterKey: 'paperThickness',
-            machineInputType: 'multiInput',
-            isValid: !!state?.attributes?.paperThickness?.min &&
-                !!state?.attributes?.paperThickness?.max,
-            inputs: [
-                {
-                    name: "",
-                    label: "machineAttributes.min",
-                    type: "text",
-                    placeholder: "machineAttributes.min",
-                    required: true,
-                    parameterKey: "min",
-                    options: [],
-                    value: state.attributes?.paperThickness?.min ? state.attributes?.paperThickness?.min : '',
-                    unit: EMeasurementUnits.UM
-                },
-                {
-                    name: "",
-                    label: "machineAttributes.max",
-                    type: "text",
-                    placeholder: "machineAttributes.max",
-                    required: true,
-                    parameterKey: "max",
-                    options: [],
-                    value: state.attributes?.paperThickness?.max ? state.attributes?.paperThickness?.max : '',
-                    unit: EMeasurementUnits.UM
-                },
-            ]
-        },
+        ...minMaxInput(state, 'width', 'width', EMeasurementUnits.CM),
+        ...minMaxInput(state, 'length', 'length', EMeasurementUnits.CM),
+        ...minMaxInput(state, 'paperThickness', 'paperThickness', EMeasurementUnits.UM),
+
         {
             name: "squareSpineOption",
             label: "machineAttributes.squareSpineOption",
