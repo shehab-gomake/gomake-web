@@ -119,12 +119,13 @@ const usePaymentsTable = () => {
   const { onClickMakePayment } = usePaymentMethodsTabs();
   const isNewReceipt = router?.query?.isNewCreation;
   const columnWidths = isNewReceipt
-    ? ["5%", "19%", "19%", "19%", "19%", "19%"]
-    : ["20%", "20%", "20%", "20%", "20%", "20%"];
+    ? ["5%", "15%", "15%", "15%", "15%", "15%", "15%"]
+    : ["16%", "16%", "16%", "16%", "18%", "16%"];
 
   const tableHeaders = [
     isNewReceipt && "#",
     t("payment.documentDate"),
+    t("reports.valueDate"),
     t("payment.documentNumber"),
     t("payment.documentType"),
     t("payment.detail"),
