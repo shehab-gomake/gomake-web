@@ -57,6 +57,7 @@ import {
   materialModalState,
 } from "./material-and-production-time-modal/states";
 import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
+import {convertUtcToLocalIsoString} from "@/components/date-time/date-time-component";
 
 interface IProps extends IBoardMissionsStation {
   delay: number;
@@ -446,7 +447,7 @@ const BoardMissionsStationAction = ({
                     {t("productionFloor.deliveryTime")}
                   </span>
                   <span style={{ ...classes.detailValue, color: "#FFFF" }}>
-                    {DateFormatterDDMMYYYY(dueDate)}
+                    {DateFormatterDDMMYYYY(convertUtcToLocalIsoString(dueDate))}
                   </span>
                 </Stack>
                 <span style={classes.sourceLabel}>
@@ -844,7 +845,7 @@ const BoardMissionsStationAction = ({
                           {t("productionFloor.deliveryTime")}
                         </span>
                         <span style={classes.detailValue}>
-                          {DateFormatterDDMMYYYY(dueDate)}
+                    {DateFormatterDDMMYYYY(convertUtcToLocalIsoString(dueDate))}
                         </span>
                       </Stack>
                       <span style={classes.sourceLabel}>

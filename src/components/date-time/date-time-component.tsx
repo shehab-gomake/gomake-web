@@ -9,7 +9,8 @@ interface IProps {
     style?: CSSProperties;
 }
 const DateTimeComponent = ({dateTime, direction, gap, style}: IProps) => {
-    const { formattedDate: date, formattedTime: time } = SeparateDateFormatterDDMMYYYY(dateTime);
+    const utcDate = convertUtcToLocalIsoString(dateTime);
+    const { formattedDate: date, formattedTime: time } = SeparateDateFormatterDDMMYYYY(utcDate);
     return (
         <Stack style={style} direction={direction} gap={gap}>
             <span>{date}</span>
@@ -17,5 +18,10 @@ const DateTimeComponent = ({dateTime, direction, gap, style}: IProps) => {
         </Stack>
     )
 }
+const convertUtcToLocalIsoString = (utcString: string): string => {
+    const date = new Date(utcString + 'Z'); // Parse the UTC date string
+    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000); // Adjust to local timezone
+    return localDate.toISOString().replace('Z', ''); // Remove the 'Z' to indicate local time
+};
 
-export {DateTimeComponent}
+export {DateTimeComponent, convertUtcToLocalIsoString}
