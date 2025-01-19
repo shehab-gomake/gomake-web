@@ -7,17 +7,15 @@ import {
   IExceptionsLog,
 } from "@/widgets/product-pricing-widget/interface";
 import config from "@/config";
-import { useRecoilState } from "recoil";
 
 const useCalculationsWorkFlowsSignalR = () => {
-
   const { data, connection, connectionId } =
     useGoMakeSignalr<ICalculationSignalRResult>({
-      url: config.erp_server +`/hubs/workFlows`,
+      url: config.erp_server + `/hubs/workFlows`,
       accessToken: getUserToken(),
       methodName: "updateWorkFlows2",
     });
-   
+
   const [signalRPricingResult, setSignalRPricingResult] = useState<any>();
   const [startCalculationData, setStartCalculationData] = useState<any>();
 
@@ -28,9 +26,10 @@ const useCalculationsWorkFlowsSignalR = () => {
   //  const [, setIsChangePriceForEdit] = useRecoilState(isChangePriceForEditState);
   const [calculationExceptionsLogs, setCalculationExceptionsLogs] =
     useState<IExceptionsLog[]>();
-  const [calculationServerError,setCalculationServerErrorState]=useState(false)
+  const [calculationServerError, setCalculationServerErrorState] =
+    useState(false);
 
-  const [isCalculationFinished,setIsCalculationFinished]=useState(false)
+  const [isCalculationFinished, setIsCalculationFinished] = useState(false);
 
   useEffect(() => {
     if (connection) {
@@ -42,7 +41,7 @@ const useCalculationsWorkFlowsSignalR = () => {
         /*if(newData.isDevMode){
           setConnectionSessionId(newData.productItemValueDraftId);
         }*/
-        setStartCalculationData(newData)
+        setStartCalculationData(newData);
         setCalculationExceptionsLogs(newData.calculationExceptions);
       });
       connection.on("updateSelectedWorkFlow", (newData) => {
@@ -57,12 +56,10 @@ const useCalculationsWorkFlowsSignalR = () => {
         setSignalRPricingResult(newData);
       });
       connection.on("calculationServerError", () => {
-        setCalculationServerErrorState(true)
+        setCalculationServerErrorState(true);
       });
-      
     }
   }, [connection]);
-
 
   return {
     calculationResult: signalRWorkFlows,
@@ -73,7 +70,7 @@ const useCalculationsWorkFlowsSignalR = () => {
     signalRPricingResult,
     calculationServerError,
     isCalculationFinished,
-    setIsCalculationFinished
+    setIsCalculationFinished,
   };
 };
 export { useCalculationsWorkFlowsSignalR };

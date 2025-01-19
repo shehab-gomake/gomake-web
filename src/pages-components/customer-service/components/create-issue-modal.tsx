@@ -1,39 +1,35 @@
-import {
-  GoMakeAutoComplate,
-  GoMakeModal,
-  GomakePrimaryButton,
-  GomakeTextInput,
-} from "@/components";
+import { GoMakeAutoComplate, GoMakeModal } from "@/components";
 import { useStyle } from "../style";
 import { CreateIssueModalProps } from "../interface";
 import { useTranslation } from "react-i18next";
 import { JiraImageUpload } from "./jira-Image-Upload";
 import { SectionsList } from "./sections-list";
-import { Checkbox, Stack } from "@mui/material";
-import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { Stack } from "@mui/material";
+import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
+import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
   openModal,
   ticketTypeList,
   onClickClosModal,
-  createIssue,
   setTicketState,
   ticketState,
-  setFileBase64,
+  setFile,
   handleSectionChange,
   createAnother,
   handleCheckboxChange,
-
   selectedSubSection,
   setSelectedSubSection,
   selectedSection,
   setSelectedSection,
   jiraImageUploadRef,
-
   printHouses,
   onChangePrintHouse,
   selectedPrintHouse,
   isAdmin,
+  onChangeInputs,
+  createIssue,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -50,7 +46,7 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
         {isAdmin && (
           <GoMakeAutoComplate
             options={printHouses}
-            style={{ height: "40px", width: "100%", border: "none" }}
+            style={classes.selectStyle}
             placeholder={t("customerService.selectPrintHouse")}
             key={`print-house-select-${selectedPrintHouse?.value || "null"}`}
             value={selectedPrintHouse || null}
@@ -58,69 +54,66 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
             withArrow
           />
         )}
-        <GoMakeAutoComplate
-          key={
-            ticketState?.ticketType ? ticketState?.ticketType?.value : "reset"
-          }
-          options={ticketTypeList}
-          style={{ height: "40px", width: "100%", border: "none" }}
-          placeholder={t("customerService.chooseTheTicketType")}
-          onChange={(e, val) =>
-            setTicketState({ ...ticketState, ticketType: val })
-          }
-          value={ticketState?.ticketType || null}
-          withArrow
+        <GoMakeTextInput
+          key={"ticket-title"}
+          onChange={(e) => onChangeInputs("title", e.target.value)}
+          placeholder={t("customerService.typeTheTicketTitle")}
+          value={ticketState?.title}
         />
-        <SectionsList
+        {/* <SectionsList
           selectedSubSection={selectedSubSection}
           setSelectedSubSection={setSelectedSubSection}
           selectedSection={selectedSection}
           setSelectedSection={setSelectedSection}
           onChange={(val1, val2) => handleSectionChange(val1, val2)}
+        /> */}
+        <GoMakeAutoComplate
+          key={
+            ticketState?.ticketType ? ticketState?.ticketType?.value : "reset"
+          }
+          options={ticketTypeList}
+          style={classes.selectStyle}
+          placeholder={t("customerService.chooseTheTicketType")}
+          onChange={(e, val) => onChangeInputs("ticketType", val)}
+          value={ticketState?.ticketType || null}
+          withArrow
         />
         <JiraImageUpload
           onUpload={true}
-          onFileSelect={setFileBase64}
+          onFileSelect={setFile}
           ref={jiraImageUploadRef}
         />
-        <GomakeTextInput
-          onChange={(e) =>
-            setTicketState({ ...ticketState, title: e.target.value })
-          }
-          style={{ height: "40px", width: "100%", border: "none" }}
-          placeholder={t("customerService.typeTheTicketTitle")}
-          value={ticketState?.title}
-        />
-        <GomakeTextInput
-          onChange={(e) =>
-            setTicketState({ ...ticketState, description: e.target.value })
-          }
+        <GoMakeTextInput
+          onChange={(e) => onChangeInputs("description", e.target.value)}
           style={classes.multiTextInput}
           placeholder={t("customerService.typeTheTicketDescription")}
           value={ticketState?.description}
           multiline
         />
-
         <Stack
           direction={"row"}
           justifyContent={"space-between"}
           width={"100%"}
         >
-          <div style={classes.inputLbl}>
-            <Checkbox
-              icon={<CheckboxIcon />}
-              checkedIcon={<CheckboxCheckedIcon />}
+          <div
+            style={{
+              ...classes.inputLbl,
+              color: createAnother ? "black" : "#a4a4a4",
+            }}
+          >
+            <PrimaryCheckbox
               checked={createAnother}
               onChange={handleCheckboxChange}
             />
             {t("customerService.createAnother")}
           </div>
-          <GomakePrimaryButton
+          <PrimaryButton
+            variant="contained"
             style={classes.btnContainer}
             onClick={createIssue}
           >
             {t("customerService.addTicket")}
-          </GomakePrimaryButton>
+          </PrimaryButton>
         </Stack>
       </div>
     </GoMakeModal>

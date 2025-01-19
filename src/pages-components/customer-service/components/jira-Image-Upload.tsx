@@ -10,11 +10,11 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "../style";
 import { AddNewButton } from "@/components/button/add-new-button";
 import { FileIcon } from "@/components/icons/file-icon";
-import { Close as ResetIcon } from "@mui/icons-material"; // Add Reset Icon
+import { Close as ResetIcon } from "@mui/icons-material";
 
 interface IProps {
   onUpload: boolean;
-  onFileSelect: (fileBase64: string) => void;
+  onFileSelect: (file: File | null) => void;
 }
 
 const JiraImageUpload = forwardRef(
@@ -25,27 +25,25 @@ const JiraImageUpload = forwardRef(
       t("mailingSettings.noAttachment") || ""
     );
     const [isAttachment, setIsAttachment] = useState(false);
+    const [file, setFile] = useState<File | null>(null);
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      let reader = new FileReader();
+      const selectedFile = e.target.files?.[0];
 
-      if (file) {
-        setFileName(file.name);
-        reader.onload = async (e) => {
-          setIsAttachment(true);
-          const fileBase64 = e.target.result as string;
-          onFileSelect(fileBase64);
-        };
-        reader.readAsDataURL(file);
+      if (selectedFile) {
+        setFile(selectedFile);
+        setFileName(selectedFile.name);
+        setIsAttachment(true);
+        onFileSelect(selectedFile);
       }
     };
 
     const resetAttachment = () => {
       setFileName(t("mailingSettings.noAttachment") || "");
       setIsAttachment(false);
-      onFileSelect("");
+      setFile(null);
+      onFileSelect(null);
       if (inputRef.current) {
         inputRef.current.value = "";
       }
@@ -63,7 +61,7 @@ const JiraImageUpload = forwardRef(
             label={t("mailingSettings.addNewAttachment")}
           />
         )}
-        {(!onUpload || fileName || isAttachment) && (
+        {(!onUpload || fileName) && isAttachment && (
           <Stack
             style={classes.attachmentStyle}
             direction="row"
