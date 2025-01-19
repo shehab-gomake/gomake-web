@@ -2,7 +2,6 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
 import {
   searchJobsApi,
-  setBoardMissionsFiltersApi,
 } from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
@@ -28,11 +27,10 @@ const useProductionFloorTable = () => {
     const callBack = (res) => {
       setLoading(false);
       if (res?.success) {
-        debugger;
-        const _data = res?.data;
 
-        setMissionsList(_data || []);
+        setMissionsList(res.data);
       } else {
+        setMissionsList([]);
         alertFaultGetData();
       }
     };
