@@ -33,7 +33,6 @@ const FormInput = ({
                        loading,
                    }: IFormInput) => {
     const [options, setOptions] = useState([]);
-    const [, setDataLoaded] = useState<boolean>(false);
     const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
     const {callApi} = useGomakeAxios();
     const {t} = useTranslation();
@@ -44,8 +43,8 @@ const FormInput = ({
     const machinesCategories = useRecoilValue<any>(materialsMachinesState);
     const clientsCategories = useRecoilValue<any>(materialsClientsState);
     const parametersCategories = useRecoilValue<any>(materialsParametersState);
-
     const productValue = useRecoilValue(productsForDropDownList);
+    const [optionsUrl, setOptionsUrl] = useState<string>('')
     const machinesCategoriesList = machinesCategories.map((machine) => ({
         ...machine,
         value: machine.id,
@@ -127,17 +126,7 @@ const FormInput = ({
 
     useEffect(() => {
         if (input.optionsUrl) {
-            setDataLoaded(true);
-            callApi("GET", input.optionsUrl).then((res) => {
-                if (res?.success) {
-                    setOptions(
-                        res?.data?.data?.data?.map(({value, text}) => ({
-                            label: text,
-                            value,
-                        }))
-                    );
-                }
-            });
+            setOptionsUrl(input.optionsUrl);
         } else if (input.options && input.options.length > 0 && options.length === 0) {
             setOptions(
                 input.options.map(({value, text}) => ({label: text, value}))
@@ -203,6 +192,20 @@ const FormInput = ({
         }
     }, [input.value, options]);
 
+    useEffect(() => {
+        if (!!optionsUrl) {
+            callApi("GET", optionsUrl).then((res) => {
+                if (res?.success) {
+                    setOptions(
+                        res?.data?.data?.data?.map(({value, text}) => ({
+                            label: text,
+                            value,
+                        }))
+                    );
+                }
+            });
+        }
+    }, [optionsUrl])
     return (
         <>
             {!input.disabled && (
