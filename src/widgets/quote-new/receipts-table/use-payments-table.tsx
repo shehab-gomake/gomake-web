@@ -467,6 +467,7 @@ const usePaymentsTable = () => {
     setSecondWidget,
     setThirdWidget,
     setActiveWidget,
+    transactionSelected,
   };
 };
 
