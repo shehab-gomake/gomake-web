@@ -7,6 +7,7 @@ import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobi
 import { useQuoteConfirmation } from "./use-quote-confirmation";
 import { updateTempUserTokenStorage } from "@/services/storage-data";
 import { FONT_FAMILY } from "@/utils/font-family";
+import PageNotFound from "@/pages/404.page";
 
 interface IProps {
   isPrePaymentPage?: boolean;
@@ -18,7 +19,9 @@ const QuoteConfirmationPageWidget = ({
   documentType,
 }: IProps) => {
   const [isMobile, setIsMobile] = useState(false);
+
   const {
+    t,
     getTempUserToken,
     getPrePaymentById,
     getQuoteConfirmation,
@@ -26,6 +29,9 @@ const QuoteConfirmationPageWidget = ({
     documentTitle,
     direction,
     capitalizeFirstLetter,
+    isPageNotFound,
+    setIsPageNotFound,
+    router,
   } = useQuoteConfirmation({ documentType });
 
   const { classes } = useStyle({ direction });
@@ -45,10 +51,17 @@ const QuoteConfirmationPageWidget = ({
   useEffect(() => {
     const handlePrePaymentPage = async () => {
       if (isPrePaymentPage) {
-        const userToken = await getTempUserToken();
-        if (userToken) {
-          updateTempUserTokenStorage(userToken);
-          await getPrePaymentById();
+        try {
+          debugger;
+          const userToken = await getTempUserToken();
+          if (!userToken) {
+            setIsPageNotFound(true);
+          } else {
+            updateTempUserTokenStorage(userToken);
+            await getPrePaymentById();
+          }
+        } catch (error) {
+          setIsPageNotFound(true);
         }
       } else {
         getQuoteConfirmation();
@@ -57,6 +70,10 @@ const QuoteConfirmationPageWidget = ({
 
     handlePrePaymentPage();
   }, [isPrePaymentPage, getTempUserToken]);
+
+  if (isPageNotFound && isPrePaymentPage) {
+    return <PageNotFound hideBackToHomePageBtn={true} />;
+  }
 
   return (
     <div style={classes.firstContainer}>

@@ -5,8 +5,13 @@ import { PageNoteFound } from "@/icons/404-page/page-not-found";
 import { PrimaryButton } from "@/components/button/primary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
-export default function PageNotFound() {
+interface PageNotFoundProps {
+  hideBackToHomePageBtn?: boolean;
+}
 
+export default function PageNotFound({
+  hideBackToHomePageBtn = false,
+}: PageNotFoundProps) {
   const router = useRouter();
 
   const handleGoBack = () => {
@@ -14,7 +19,6 @@ export default function PageNotFound() {
       window.location.reload();
     });
   };
-
 
   return (
     <div>
@@ -32,17 +36,25 @@ export default function PageNotFound() {
         <Typography variant="h2" component="h2" gutterBottom>
           Page Not Found
         </Typography>
-        <Typography variant="h6" component="h2" gutterBottom style={{ color: "#4B4B4B", fontWeight: 400 }}>
-          This page doesn't exist or was removed! We suggest you go back to the home page.
-        </Typography>
-        <PrimaryButton
-          variant={"contained"}
-          onClick={handleGoBack}
-          startIcon={<ArrowBackIcon />}
-          style={{ width: "fit-content" }}
+        <Typography
+          variant="h6"
+          component="h2"
+          gutterBottom
+          style={{ color: "#4B4B4B", fontWeight: 400 }}
         >
-          Back to home
-        </PrimaryButton>
+          This page doesn't exist or was removed! We suggest you go back to the
+          home page.
+        </Typography>
+        {!hideBackToHomePageBtn && (
+          <PrimaryButton
+            variant={"contained"}
+            onClick={handleGoBack}
+            startIcon={<ArrowBackIcon />}
+            style={{ width: "fit-content" }}
+          >
+            Back to home
+          </PrimaryButton>
+        )}
       </Box>
     </div>
   );
