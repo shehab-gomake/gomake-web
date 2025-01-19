@@ -67,6 +67,15 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
           setSelectedSection={setSelectedSection}
           onChange={(val1, val2) => handleSectionChange(val1, val2)}
         /> */}
+
+        {isAdmin && (
+          <GoMakeTextInput
+            key={"ticket-Reporter"}
+            onChange={(e) => onChangeInputs("reporter", e.target.value)}
+            placeholder={t("customerService.typeTheTicketReporter")}
+            value={ticketState?.reporter}
+          />
+        )}
         <GoMakeAutoComplate
           key={
             ticketState?.ticketType ? ticketState?.ticketType?.value : "reset"
@@ -78,6 +87,7 @@ const CreateIssueModal: React.FC<CreateIssueModalProps> = ({
           value={ticketState?.ticketType || null}
           withArrow
         />
+
         <JiraImageUpload
           onUpload={true}
           onFileSelect={setFile}

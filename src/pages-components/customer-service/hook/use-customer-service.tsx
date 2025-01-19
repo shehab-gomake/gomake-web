@@ -3,22 +3,27 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { getAllPrintHousesApi } from "@/services/api-service/customer-service/customer-service-api";
 import { JiraIssueType, JiraPrintHouse, Sections } from "../interface";
 import { useTranslation } from "react-i18next";
-// import { ticketTypeList } from "../enums";
 import { useDebounce } from "use-debounce";
 import axios from "axios";
 import { useRecoilValue } from "recoil";
 import { printHouseProfile } from "@/store/print-house-profile";
 import config from "@/config";
+import {
+  createMondayTaskApi,
+  getAllMondayIssuesApi,
+} from "@/services/api-service/monday/monday-apis";
+import { userProfileState } from "@/store/user-profile";
 
 const useCustomerService = (isAdmin: boolean) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
 
-  const apiToken = config.MONDAY_API_TOKEN;
   const boardId = config.MONDAY_BOARD_ID;
   const groupId = config.TOPICS_GROUP_ID;
 
   const printHouseProfileState = useRecoilValue(printHouseProfile);
+  const userProfile = useRecoilValue(userProfileState);
+
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [AllIssues, setAllIssues] = useState([]);
   const [printHouses, setPrintHouses] = useState<JiraPrintHouse[]>([]);
@@ -206,10 +211,12 @@ const useCustomerService = (isAdmin: boolean) => {
   }, [isAdmin, printHouses]);
 
   /* Monday Section */
+
   const sendToMonday = async () => {
     const domain = isAdmin
       ? selectedModalPrintHouse?.domain || selectedPrintHouse?.domain
       : printHouseProfileState?.domain;
+
     const formattedDomain =
       domain.startsWith("http://") || domain.startsWith("https://")
         ? domain
@@ -230,46 +237,30 @@ const useCustomerService = (isAdmin: boolean) => {
       return;
     }
 
-    try {
-      const apiUrl = "https://api.monday.com/v2";
+    const printHouseName =
+      printHouses.find((ph) => ph.domain === domain)?.label ||
+      (formattedDomain ?? null);
 
-      const printHouseName =
-        printHouses.find((ph) => ph.domain === domain)?.label ||
-        (formattedDomain ?? null);
+    let columnValues = {
+      long_text: ticketState?.description,
+      status_11: ticketState?.ticketType?.value,
+      email_mkm8782f: isAdmin ? ticketState?.reporter : userProfile?.email,
+      link_mkm7eghn: {
+        url: formattedDomain,
+        text: printHouseName,
+      },
+    };
 
-      let columnValues = {
-        long_text: ticketState?.description,
-        status_11: ticketState?.ticketType?.value,
-        link_mkm7eghn: {
-          url: formattedDomain,
-          text: printHouseName,
-        },
-      };
+    let columnValuesString = JSON.stringify(columnValues).replace(/"/g, '\\"');
 
-      let columnValuesString = JSON.stringify(columnValues).replace(
-        /"/g,
-        '\\"'
-      );
+    const mutation = `mutation { create_item (board_id: "${boardId}", group_id: "${groupId}", item_name: "${
+      ticketState?.title || "New task"
+    }", column_values: "${columnValuesString}") { id }}`;
 
-      let mutation = `mutation { create_item (board_id: "${boardId}", group_id: "${groupId}", item_name: "${
-        ticketState?.title || "New task"
-      }", column_values: "${columnValuesString}") { id }}`;
-
-      const createItemResponse = await axios.post(
-        apiUrl,
-        { query: mutation },
-        {
-          headers: {
-            Authorization: apiToken,
-          },
-        }
-      );
-
-      if (createItemResponse?.data?.errors) {
-        alertFaultAdded();
-      } else {
-        const itemId = createItemResponse?.data?.data?.create_item.id;
-
+    const data = { query: mutation };
+    const callBack = (res) => {
+      if (res?.success) {
+        const itemId = res?.data?.data?.create_item.id;
         if (file) {
           const fileName = file.name;
           const lambdaUrl =
@@ -288,7 +279,6 @@ const useCustomerService = (isAdmin: boolean) => {
               const fileUploadResponse = await axios.post(
                 lambdaUrl,
                 fileUploadPayload,
-
                 {
                   headers: {
                     "Content-Type": "application/json",
@@ -329,6 +319,7 @@ const useCustomerService = (isAdmin: boolean) => {
             openModal: ticketState.openModal,
             title: "",
             description: "",
+            reporter: "",
             ticketType: undefined,
             ticketTypeList: [],
             screenShot: "",
@@ -340,55 +331,41 @@ const useCustomerService = (isAdmin: boolean) => {
         } else {
           onClickClosModal();
         }
+      } else {
+        alertFaultAdded();
       }
-    } catch (error) {
-      alertFaultAdded();
-      console.error("Error sending request to Monday.com:", error);
-    }
+    };
+    await createMondayTaskApi(callApi, callBack, data, false);
   };
 
   const getIssues = async () => {
-    const apiUrl = "https://api.monday.com/v2";
     const query = `
-  query {
-    boards(ids: [${boardId}]) {
-      name
-      groups(ids: ["${groupId}"]) {
-        id
-        title
-        items_page(limit: 100) {
-          items {
-            id
-            name
-            column_values {
+    query {
+      boards(ids: [${boardId}]) {
+        name
+        groups(ids: ["${groupId}"]) {
+          id
+          title
+          items_page(limit: 100) {
+            items {
               id
-              text
-              value
+              name
+              column_values {
+                id
+                text
+                value
+              }
             }
           }
         }
       }
     }
-  }
-`;
-
-    try {
-      const response = await axios.post(
-        apiUrl,
-        { query },
-        {
-          headers: {
-            Authorization: apiToken,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.data.errors) {
-        alertFaultGetData();
-      } else {
+  `;
+    const data = { query };
+    const callBack = (res) => {
+      if (res?.success) {
         const issues =
-          response.data.data.boards[0]?.groups[0]?.items_page.items || [];
+          res.data.data.boards[0]?.groups[0]?.items_page.items || [];
 
         const formattedData = issues.map(({ name, id, column_values }) => {
           const columnData =
@@ -445,10 +422,11 @@ const useCustomerService = (isAdmin: boolean) => {
             );
 
         setAllIssues(filteredFormattedData);
+      } else {
+        alertFaultGetData();
       }
-    } catch (error) {
-      console.error("Error fetching issues:", error);
-    }
+    };
+    await getAllMondayIssuesApi(callApi, callBack, data);
   };
 
   return {
@@ -476,7 +454,6 @@ const useCustomerService = (isAdmin: boolean) => {
     handleSectionChange,
     createAnother,
     handleCheckboxChange,
-
     selectedSubSection,
     setSelectedSubSection,
     selectedSection,
