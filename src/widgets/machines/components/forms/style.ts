@@ -9,7 +9,8 @@ const useStyle = () => {
         display: 'flex',
         flexDirection: 'column' as 'column',
         gap: 61,
-        padding: '20px 0'
+        padding: '20px 0',
+        width: '100%'
       },
       inputsContainer: {
         display: 'flex',
