@@ -36,8 +36,11 @@ const useBoardMissionsStations = () => {
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
   const initStations = useResetRecoilState(boardMissionsStationsState);
   const [, setIsOrderCompleted] = useRecoilState(isOrderCompletedState);
-
+  const initProductionInformation = useResetRecoilState(stationGeneralInformationProductionFloorState);
+  const initGeneralInformation = useResetRecoilState(stationGeneralInformationState);
   const getStations = async () => {
+    initGeneralInformation();
+    initProductionInformation();
     const callBack = (res) => {
       if (res?.success) {
         setStations(res?.data?.workFlow?.actions);
