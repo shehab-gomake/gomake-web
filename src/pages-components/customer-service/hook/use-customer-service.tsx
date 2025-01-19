@@ -27,7 +27,6 @@ const useCustomerService = (isAdmin: boolean) => {
     useState<any>("");
   const [filteredIssues, setFilteredIssues] = useState([]);
   const [statusFilter, setStatusFilter] = useState(null);
-  const [statuses, setStatuses] = useState([]);
   const [ticketState, setTicketState] = useState<JiraIssueType>(null);
   const [file, setFile] = useState<File | null>(null);
   const { alertFault, alertSuccessAdded, alertFaultAdded, alertFaultGetData } =
@@ -92,7 +91,7 @@ const useCustomerService = (isAdmin: boolean) => {
   }, [callApi]);
 
   const onChangeStatus = useCallback((e, value) => {
-    setStatusFilter(value?.value || null);
+    setStatusFilter(value || null);
   }, []);
 
   const filterIssues = useCallback(() => {
@@ -104,7 +103,7 @@ const useCustomerService = (isAdmin: boolean) => {
         return false;
 
       // Filter by status
-      if (statusFilter && issue[6] !== statusFilter) return false;
+      if (statusFilter && issue[6] !== statusFilter?.label) return false;
 
       // Search input filter by title/description
       if (
@@ -115,10 +114,6 @@ const useCustomerService = (isAdmin: boolean) => {
         return false;
 
       return true;
-    }).sort((a, b) => {
-      if (a[7] === "Done" && b[7] !== "Done") return 1;
-      if (a[7] !== "Done" && b[7] === "Done") return -1;
-      return 0;
     });
 
     setFilteredIssues(filtered);
@@ -138,6 +133,27 @@ const useCustomerService = (isAdmin: boolean) => {
     // t("customerService.reporterName"),
     t("customerService.status"),
     isAdmin ? "" : null,
+  ];
+
+  const statuses = [
+    {
+      label: t("customerService.workingOnIt"),
+      value: "Working on it",
+    },
+    {
+      label: t("customerService.waitingForResponse"),
+      value: "Waiting for Response",
+    },
+    {
+      label: t("customerService.underReviewWithRnD"),
+      value: "Under Review with R&D",
+    },
+    {
+      label: t("customerService.done"),
+      value: "Done",
+    },
+    { label: t("customerService.backlog"), value: "Backlog" },
+    { label: t("customerService.new"), value: "New" },
   ];
 
   const onClickClosModal = () => {
@@ -401,6 +417,11 @@ const useCustomerService = (isAdmin: boolean) => {
               }
               return acc;
             }, {}) || {};
+
+          const matchingStatus =
+            statuses.find((status) => status.value === columnData.status)
+              ?.label || null;
+
           return [
             isAdmin
               ? printHouses.find(
@@ -416,17 +437,9 @@ const useCustomerService = (isAdmin: boolean) => {
             columnData.long_text,
             columnData.status_11,
             id, // consider this issue number
-            columnData.status,
+            matchingStatus,
           ];
         });
-
-        const uniqueStatuses = Array.from(
-          new Set(formattedData.map((item) => item[6])) // item[6]  contain the status
-        )
-          .filter((status) => status !== undefined && status !== null)
-          .map((status) => ({ value: status, label: status }));
-
-        setStatuses(uniqueStatuses.length > 0 ? uniqueStatuses : []);
 
         const filteredFormattedData = isAdmin
           ? formattedData
