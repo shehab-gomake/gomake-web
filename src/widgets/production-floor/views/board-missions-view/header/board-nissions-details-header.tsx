@@ -10,9 +10,10 @@ import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import { IBoardMissionsDetails } from "@/widgets/production-floor/interfaces/board-missions";
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useBoardMissionsDetailsHeader } from "./use-board-nissions-details-header";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
-import {EPreferences} from "@/enums/prefernces";
-import {clearPhoneNumberPrefix} from "@/utils/helpers";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
+import { clearPhoneNumberPrefix } from "@/utils/helpers";
+import {convertUtcToLocalIsoString} from "@/components/date-time/date-time-component";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
@@ -122,7 +123,7 @@ const BoardMissionsDetailsHeader = () => {
                 <span>
                   {t("productionFloor.started")}{" "}
                   {DateFormatterDDMMYYYY(
-                    boardMissionsDetails.createdDate?.toString()
+                      convertUtcToLocalIsoString(boardMissionsDetails.createdDate?.toString())
                   )}
                 </span>
                 <Divider flexItem orientation={"vertical"} />

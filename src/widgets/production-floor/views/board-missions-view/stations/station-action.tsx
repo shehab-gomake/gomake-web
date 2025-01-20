@@ -57,6 +57,7 @@ import {
   materialModalState,
 } from "./material-and-production-time-modal/states";
 import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
+import {convertUtcToLocalIsoString} from "@/components/date-time/date-time-component";
 import { currentProductItemValueState, outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 import { updateProductItemDraftActionData } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 
@@ -486,7 +487,7 @@ const BoardMissionsStationAction = ({
                     {t("productionFloor.deliveryTime")}
                   </span>
                   <span style={{ ...classes.detailValue, color: "#FFFF" }}>
-                    {DateFormatterDDMMYYYY(dueDate)}
+                    {DateFormatterDDMMYYYY(convertUtcToLocalIsoString(dueDate))}
                   </span>
                 </Stack>
                 <span style={classes.sourceLabel}>
@@ -903,7 +904,7 @@ const BoardMissionsStationAction = ({
                           {t("productionFloor.deliveryTime")}
                         </span>
                         <span style={classes.detailValue}>
-                          {DateFormatterDDMMYYYY(dueDate)}
+                    {DateFormatterDDMMYYYY(convertUtcToLocalIsoString(dueDate))}
                         </span>
                       </Stack>
                       <span style={classes.sourceLabel}>

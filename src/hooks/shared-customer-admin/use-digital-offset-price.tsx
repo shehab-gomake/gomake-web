@@ -1718,13 +1718,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           });
                         }
                       });
-                      param.valuesConfigs = param.valuesConfigs.filter(
-                        (x) => paramMaterialValues.find(m => compareStrings(m.valueId, x.valueIds[0]))
+                      param.valuesConfigs = param?.valuesConfigs?.filter(
+                        (x) => paramMaterialValues?.find(m => compareStrings(m.valueId, x.valueIds[0]))
                       );
-                      param.valuesConfigs = param.valuesConfigs.filter(
+                      param.valuesConfigs = param?.valuesConfigs?.filter(
                         (x) => (x.isDefault || x.isHidden)
                       );
-                      param.valuesConfigs = param.valuesConfigs.filter(
+                      param.valuesConfigs = param?.valuesConfigs?.filter(
                         (x) => x.values && x.values.length > 0
                       );
 

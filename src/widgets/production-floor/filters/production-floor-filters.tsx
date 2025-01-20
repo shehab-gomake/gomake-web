@@ -20,7 +20,6 @@ import { styled } from "@mui/system";
 import { toRgba } from "@/utils/helpers";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { fetchS3JsonContent } from "@/utils/S3Content";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import ClearIcon from "@mui/icons-material/Clear";
 import { useStyle } from "./style";
@@ -317,7 +316,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
   }, [filterGroups, containerWidth]);
 
   const getMissionsList = useCallback(() => {
-    return missionsList.length > 0 ? missionsList : [];
+    return  missionsList;
   }, [missionsList]);
 
   const renderMenuItem = (option, handleClick) => (
@@ -368,8 +367,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
             )
           }
         />
-        {filteredMissionsBySearch?.length === 0 &&
-          getMissionsList().length !== 0 && (
+        {getMissionsList().length !== 0 && !!search && (
             <SearchMissionList
               missionsList={getMissionsList()}
               handleMissionClick={handleMissionClick}
