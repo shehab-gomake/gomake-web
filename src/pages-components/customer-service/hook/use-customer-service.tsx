@@ -240,7 +240,7 @@ const useCustomerService = (isAdmin: boolean) => {
     const printHouseName =
       printHouses.find((ph) => ph.domain === domain)?.label ||
       (formattedDomain ?? null);
-
+    
     let columnValues = {
       long_text: ticketState?.description,
       status_11: ticketState?.ticketType?.value,
@@ -250,9 +250,13 @@ const useCustomerService = (isAdmin: boolean) => {
         text: printHouseName,
       },
     };
-
+    debugger
+    if(columnValues.long_text){
+      columnValues.long_text = columnValues.long_text.replaceAll("\n","\\n");
+      columnValues.long_text = columnValues.long_text.replaceAll('"',"'");
+    }
     let columnValuesString = JSON.stringify(columnValues).replace(/"/g, '\\"');
-
+    
     const mutation = `mutation { create_item (board_id: "${boardId}", group_id: "${groupId}", item_name: "${
       ticketState?.title || "New task"
     }", column_values: "${columnValuesString}") { id }}`;
