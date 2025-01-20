@@ -70,7 +70,7 @@ const DocumentLogsWidget = ({
         maxHeight={400}
         rows={logsTableRows}
         headers={logsTableHeaders}
-        columnWidths={["25%", "25%", "50%"]}
+        columnWidths={["20%", "20%", "40%", "20%"]}
       />
     </Stack>
   );
