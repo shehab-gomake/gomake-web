@@ -26,7 +26,7 @@ const useMessenger = () => {
     const [updatedApprovalRequestId, setUpdatedApprovalRequestId] = useState<{ approvalRequestId: string, newStatus: EFileStatus }>();
     const [usersMetaData, setUsersMetaDta] = useState<IUserMetaData[]>([]);
     const {updateState, setUpdateState} = useMessengerSignalr();
-    const {alertFaultUpdate} = useSnackBar();
+    const {alertFaultUpdate, alertFaultGetData, alertFaultDelete} = useSnackBar();
     const {query, pathname, push} = useRouter();
     const {dialogId, clientId} = query;
     const mobileMediaQuery = useMediaQuery('(max-width:800px)');
@@ -122,7 +122,7 @@ const useMessenger = () => {
             })
             await messenger.messages.send(selectedDialog._id, message as QBChatNewMessage);
         } catch (e) {
-
+            alertFaultUpdate();
         }
 
     }
@@ -132,7 +132,7 @@ const useMessenger = () => {
             await messenger.messages.delete(messageId);
             setMessages(prevState => prevState.filter(msg => msg._id !== messageId));
         } catch (e) {
-
+            alertFaultDelete()
         }
 
     }
@@ -151,7 +151,7 @@ const useMessenger = () => {
             setInputValue('');
             await sendMessage(message as QBChatNewMessage, false)
         } catch (e) {
-
+            alertFaultUpdate();
         }
     };
 
@@ -262,6 +262,7 @@ const useMessenger = () => {
             if (res.success) {
                 sendSystemMessage(senderId, requestId, res.data.status);
             } else {
+                alertFaultUpdate();
 
             }
         };
@@ -302,7 +303,7 @@ const useMessenger = () => {
             const approvalRequestId = await messenger.customObj.getData(id);
             return approvalRequestId.status
         } catch (e) {
-
+            alertFaultGetData();
         }
     }
 
@@ -334,7 +335,7 @@ const useMessenger = () => {
                 }
 
             } catch (e) {
-
+                alertFaultGetData();
             }
         }
         return () => {
