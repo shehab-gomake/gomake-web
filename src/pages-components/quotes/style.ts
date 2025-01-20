@@ -102,7 +102,7 @@ const useStyle = () => {
         color: errorColor(300),
       },
       insideStyle: {
-        width: "600px",
+        width: "50%",
         height: "520px",
       },
       openBtnStyle: {
