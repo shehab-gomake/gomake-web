@@ -139,7 +139,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const setSubProductsCopy = useSetRecoilState<any>(
     subProductsCopyParametersState
   );
-  // const itemParmetersValues = useRecoilValue(itemParmetersValuesState);
   const [currentProductItemValue, setCurrentProductItemValue] =
     useRecoilState<any>(currentProductItemValueState);
   const [productItemValueDraftId, setCurrentProductItemValueDraftId] =
@@ -2958,9 +2957,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     productTemplate,
     subProducts
   ) => {
-    if (subSection.optionToDuplicateContent) {
-      //return;
-    }
+    // if (subSection.optionToDuplicateContent) {
+    //   //return;
+    // }
     const relatedParametersfilterd = parameter?.relatedParameters?.filter(
       (relatedParameter) =>
         subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
@@ -3306,10 +3305,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sectionId: string,
     subSectionId: string,
     parameters: any[],
-    productTemplateCopy
+    productTemplateCopy,
+    actionIndex: number,
+    subSectionType: string
   ) => {
-    // Find the parameter in the productTemplate
-    //const productTemplateCopy = cloneDeep();
     const section = productTemplateCopy.sections.find(
       (section) => section.id === sectionId
     );
@@ -3317,26 +3316,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       (sub) => sub.id === subSectionId
     );
     const parentParameter = subSection?.parameters.find(
-      (param) => param.id === parameterId
+      (param) => param.id === parameterId && param.actionIndex == actionIndex
     );
     // Check if the parameter has related parameters
     if (parentParameter && parentParameter.relatedParameters) {
+
       parentParameter.relatedParameters.forEach((relatedParam) => {
         // Find the related parameter in the subSection
         const relatedParameter = subSection?.parameters.find(
-          (param) => param.id === relatedParam.parameterId
+          (param) => param.id === relatedParam.parameterId && param.actionIndex == relatedParam?.actionIndex
         );
-
         if (relatedParameter) {
           let valueToAdd = null;
           let valueIds = null;
-
           // Handle the case where parameterType is 5
           if (
             relatedParameter.parameterType === 5 ||
             relatedParameter.parameterType === 0 ||
             relatedParameter.parameterType === 12
           ) {
+
             const defaultConfig = relatedParameter.valuesConfigs?.find(
               (config) => config.isDefault
             );
@@ -3367,9 +3366,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           if (valueToAdd !== null) {
             // Check if the related parameter is already in the parameters array
             const relatedIndex = parameters.findIndex(
-              (param) => param.parameterId === relatedParameter.id
+              (param) => param.parameterId === relatedParameter.id && param.actionIndex == relatedParameter?.actionIndex
             );
-
             if (relatedIndex === -1) {
               // Add the related parameter to the parameters array
               parameters.push({
@@ -3563,7 +3561,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 sectionId,
                 subSectionId,
                 parameters,
-                productTemplateCopy
+                productTemplateCopy,
+                actionIndex,
+                subSectionType
               );
             }
           } else if (
@@ -3804,6 +3804,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
       });
     }
+    // let temp2 = [...subProducts];
+    // const index2 = temp2.findIndex((item) => item.type === subSectionType);
+    // temp2[index2] = {
+    //   type: subSectionType,
+    //   sectionId: sectionId,
+    //   sectionName: section.name,
+    //   parameters: parameters,
+    // };
+    // // const updatedSubProducts = removeHiddenParametersFromSubProducts(temp2, productTemplateCopy);
+    // setSubProducts(temp2);
   };
 
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(
@@ -3871,7 +3881,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             sectionId,
             subSectionId,
             temp,
-            productTemplateCopy
+            productTemplateCopy,
+            actionIndex,
+            subSectionType
           );
         } else {
           temp.splice(findIndex, 1);
@@ -3907,7 +3919,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           sectionId,
           subSectionId,
           temp,
-          productTemplateCopy
+          productTemplateCopy,
+          actionIndex,
+          subSectionType
         );
       }
       if (subSectionParameter) {

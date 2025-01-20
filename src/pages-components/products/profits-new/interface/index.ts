@@ -80,6 +80,7 @@ export type PricingListProps = {
   updatePackageUnitQuantity: () => void;
   addNewStepForActionProfitRow: (value: number, totalPrice: number) => void;
   updatePricingByForActionPackage: (value: any) => void;
+  actionProfitByActionId?: any;
 };
 export type PricingListTableProps = {
   tableHeaders: string[];
@@ -202,6 +203,8 @@ export type ProfitLeftSideProps = {
   setQuantityOfPackages: (value: number) => void;
   updatePackageUnitQuantity: () => void;
   updatePricingByForActionPackage: (value: any) => void;
+  actionProfitByActionId?: any;
+
 };
 
 export type selectedOutputsProps = {

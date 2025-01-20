@@ -17,7 +17,7 @@ import {
   ParametersMapping,
   TextAreaActionsMapping,
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import CheckIcon from "@mui/icons-material/Check";
 import { useStyle } from "@/widgets/production-floor/views/board-missions-view/stations/style";
@@ -37,11 +37,11 @@ import {
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Button from "@mui/material/Button";
-import { GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { useBoardMissionsUpdatedOutputs } from "./use-board-missions-updated-outputs";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { ActionTimer } from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
@@ -58,6 +58,8 @@ import {
 } from "./material-and-production-time-modal/states";
 import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
 import {convertUtcToLocalIsoString} from "@/components/date-time/date-time-component";
+import { currentProductItemValueState, outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
+import { updateProductItemDraftActionData } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 
 interface IProps extends IBoardMissionsStation {
   delay: number;
@@ -66,6 +68,7 @@ interface IProps extends IBoardMissionsStation {
   getStations?: any;
   isHaveSubACtions?: boolean;
   isHideTimeAndDate?: boolean;
+  supplierId?: string;
 }
 
 const BoardMissionsStationAction = ({
@@ -92,6 +95,8 @@ const BoardMissionsStationAction = ({
   subActions,
   isHideTimeAndDate,
   supplierName,
+  supplierId,
+  productType
 }: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -103,6 +108,20 @@ const BoardMissionsStationAction = ({
   const [boardMissions, setBoardMissions] = useRecoilState(
     boardMissionsDetailsState
   );
+  const suppliersState = useRecoilValue(outsourceSuppliersState);
+  const suppliers = useMemo(() => {
+    return suppliersState?.map((s) => ({
+      value: s.supplierId,
+      label: s.supplierName,
+    }));
+  }, [suppliersState]);
+  const getSupplierId = useCallback(() => {
+    if (supplierId) {
+      const supplier = suppliers?.find((sup) => sup.value === supplierId);
+      return !!supplier ? supplier.label : "";
+    }
+    return "";
+  }, [supplierId, suppliers, suppliersState]);
   const [stations, setStations] = useRecoilState(boardMissionsStationsState);
   const [openPackagingModal, setOpenPackagingModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
@@ -110,7 +129,6 @@ const BoardMissionsStationAction = ({
   const [isOrderCompleted] = useRecoilState(isOrderCompletedState);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
-
   const {
     employeesList,
     machinesList,
@@ -118,7 +136,7 @@ const BoardMissionsStationAction = ({
     onClickGetMachineForAction,
   } = useBoardMissionsUpdatedOutputs();
   const { CheckPermission } = useUserPermission();
-
+  console.log("stations", stations)
   const inputsParameters = outputs.filter(
     (parameter) =>
       parameter &&
@@ -389,6 +407,28 @@ const BoardMissionsStationAction = ({
       isSendMessage: !!sendMSg,
     });
   };
+  // const updateActionData = async (actionId: string, newValue: number, key: string, productType: string) => {
+  //   const apiCallBack = (res: { success: boolean }) => {
+  //     if (res.success) {
+  //       alertSuccessUpdate()
+  //     } else {
+  //       alertFaultUpdate()
+  //     }
+  //   }
+  //   await updateProductItemDraftActionData(callApi, apiCallBack, {
+  //     productItemValueId: currentProductItemValue,
+  //     actionId: actionId,
+  //     value: newValue,
+  //     fieldName: key,
+  //     productType: productType,
+  //     signalRConnectionId: connectionId
+  //   })
+  // }
+  const handleSupplierChange = (e, value) => {
+    console.log("value", value);
+
+    // updateActionData(id, value?.value, "supplierId", productType).then();
+  };
 
   return (
     <>
@@ -609,7 +649,25 @@ const BoardMissionsStationAction = ({
                     gap={"10px"}
                   >
                     <span>{actionName}</span>
-                    {source === EWorkSource.OUT && supplierName ? (
+                    {source === EWorkSource.OUT && supplierId ? (
+                      // <Stack
+                      //   gap={"10px"}
+                      //   direction={"row"}
+                      //   onClick={(e) => e.stopPropagation()}
+                      // >
+                      //   <Divider orientation={"vertical"} flexItem color={"#000"} />
+                      //   <GoMakeAutoComplate
+                      //     key={supplierId + suppliers}
+                      //     placeholder={t("materials.sheetPaper.selectSupplier")}
+                      //     value={getSupplierId()}
+                      //     style={{ width: "200px", }}
+                      //     onChange={handleSupplierChange}
+                      //     options={suppliersState?.map((s) => ({
+                      //       value: s.supplierId,
+                      //       label: s.supplierName,
+                      //     }))}
+                      //   />
+                      // </Stack>
                       <>
                         <Divider
                           orientation={"vertical"}
@@ -617,7 +675,8 @@ const BoardMissionsStationAction = ({
                           color={"#000"}
                         />
 
-                        <span>{supplierName}</span>
+                        <span>{getSupplierId()}</span>
+                        <Divider orientation={"vertical"} flexItem />
                       </>
                     ) : (
                       isNeedMachine && (

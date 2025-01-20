@@ -79,6 +79,7 @@ const useCustomers = (
   ];
 
   const getCustomersRows = useCallback(() => {
+    
     return allCustomers?.map((customer) => [
       customer?.customerCode,
       customer?.name,
