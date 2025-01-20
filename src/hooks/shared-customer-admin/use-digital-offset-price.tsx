@@ -133,7 +133,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("subProducts", subProducts);
   const [subProductsColorsModal, setSubProductsColorsModal] =
     useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
@@ -3340,7 +3339,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             const defaultConfig = relatedParameter.valuesConfigs?.find(
               (config) => config.isDefault
             );
-            console.log("defaultConfig", defaultConfig);
             if (
               defaultConfig &&
               defaultConfig.values &&
@@ -3370,8 +3368,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             const relatedIndex = parameters.findIndex(
               (param) => param.parameterId === relatedParameter.id && param.actionIndex == relatedParameter?.actionIndex
             );
-            console.log("relatedIndex", { relatedIndex, relatedParameter, valueToAdd, valueIds });
-
             if (relatedIndex === -1) {
               // Add the related parameter to the parameters array
               parameters.push({
@@ -3396,7 +3392,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               const parameterValue = relatedParameter.valuesConfigs.find(
                 (x) => x.id === valueIds
               );
-              console.log("parameters", parameters);
               let actionIndex = relatedParameter.actionIndex;
               if (
                 relatedParameter.materialPath &&
