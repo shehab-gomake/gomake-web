@@ -21,7 +21,7 @@ const PRINT_ODER_JOBS_USING_PRINT_NODE_URL =
   "/v1/erp-service/board-missions-tables/print-order-jobs-using-print-node/";
 const SEARCH_JOBS_URL = "/v1/erp-service/board-missions/search-jobs";
 const ADD_ORDER_BOARD_MISSIONS_TO_FILE_UPLOADER_URL =
-    "/v1/erp-service/board-missions/add-to-file-uploader";
+    "/v1/erp-service/board-missions/add-order-to-file-uploader";
 
 const setBoardMissionsFiltersApi: ICallAndSetData = async (
   callApi,

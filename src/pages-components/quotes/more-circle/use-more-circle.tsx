@@ -1,4 +1,4 @@
-import { useCustomer, useGomakeAxios, useGomakeRouter } from "@/hooks";
+import {useCustomer, useGomakeAxios, useGomakeRouter, useSnackBar} from "@/hooks";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 import { EditingIcon } from "./icons/editing";
@@ -63,6 +63,7 @@ const useMoreCircle = () => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
     const { pathname } = useRouter();
+    const {alertFaultAdded} = useSnackBar();
 
     const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
       const callBack = (res) => {
@@ -86,6 +87,7 @@ const useMoreCircle = () => {
           setOpenFileUploader(true);
           setShowFileUploader(true);
         } else {
+          alertFaultAdded();
         }
       };
       await addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
@@ -398,11 +400,11 @@ const useMoreCircle = () => {
         icon: <ResumeIcon />,
         name: t("sales.quote.resume"),
       },
-      !!companyProfile.filesApiAddress && {
-        condition: isSendPaymentToClient,
+      {
+        condition: !!companyProfile.filesApiAddress,
+        onClick: () => addOrderBoardMissionsToFileUploader(quote?.id),
+        icon: <PDFIcon/>,
         name: t("fileUploader.uploadFile"),
-        icon: <PDFIcon />,
-        onclick: () => addOrderBoardMissionsToFileUploader(quote?.id),
       },
     ];
   };
