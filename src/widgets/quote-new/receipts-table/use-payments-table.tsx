@@ -179,7 +179,13 @@ const usePaymentsTable = () => {
 
   const isTransacted = useRecoilValue<boolean>(isTransactedState);
 
-  const handleSave = (transactionData?) => {
+  const handleSave = (transactionData?, isResetTotal = false) => {
+    const creditCardTotalValue = isResetTotal ? 0 : totalCreditCard; // Use 0 if reset
+
+    const finalTotalPayment = isResetTotal
+      ? totalPayment - totalCreditCard
+      : totalPayment; // Use 0 if reset
+
     const isSecondCreditCardEmpty =
       Object.keys(secondCreditCard).length === 0 &&
       secondCreditCard.constructor === Object;
@@ -196,7 +202,8 @@ const usePaymentsTable = () => {
       wtTaxableAmount: Number(taxDeduction),
       checksAccount: checkAccountCode,
       cashAccount: cashAccountCode,
-      creditCardTotal: totalCreditCard,
+      // creditCardTotal: totalCreditCard,
+      creditCardTotal: creditCardTotalValue,
       receiptCreditCards: isSecondCreditCardEmpty
         ? transactionData
           ? [transactionData]
@@ -204,7 +211,9 @@ const usePaymentsTable = () => {
         : [secondCreditCard],
     };
     setDocumentItemValue(receiptItemCopy);
-    setFinalTotalPayment(totalPayment);
+    //setFinalTotalPayment(totalPayment);
+
+    setFinalTotalPayment(finalTotalPayment);
 
     savePreviousState(); // save previous state
   };
@@ -419,6 +428,13 @@ const usePaymentsTable = () => {
     setOpenMethodsDetailsModal(false);
   };
 
+  const [openTransactionModal, setOpenTransactionModal] =
+    useState<boolean>(false);
+
+  const handleOpenTransactionModal = () => {
+    setOpenTransactionModal(true);
+  };
+
   return {
     t,
     documentItemValue,
@@ -469,6 +485,12 @@ const usePaymentsTable = () => {
     setThirdWidget,
     setActiveWidget,
     transactionSelected,
+
+    openTransactionModal,
+    handleOpenTransactionModal,
+    setOpenTransactionModal,
+    resetTotalCreditCard,
+    resetCreditCardState,
   };
 };
 
