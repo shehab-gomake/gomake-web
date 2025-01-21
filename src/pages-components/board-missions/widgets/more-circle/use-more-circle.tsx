@@ -56,6 +56,7 @@ const useMoreCircle = ({
     });
     anchor.click();
   };
+  console.log(mission);
   const GetPrintingTicketPDF = async (mission) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -156,7 +157,7 @@ const useMoreCircle = ({
       name: t("boardMissions.printPackagingSlip"),
       icon: <PackageIcon />,
       onclick:
-        mission?.status === PStatus.IN_PROCESS
+        mission?.status === PStatus.IN_PROCESS && !mission?.isReady
           ? () => onOpenModal(mission)
           : () => onClickPrintPackagingSlip(mission),
     },
