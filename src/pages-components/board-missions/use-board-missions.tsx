@@ -632,15 +632,15 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const onClickDuplicateMission = (duplicateType: DuplicateType) => {
-    const { targetOrderId, targetOrderNumber, clientId } = router?.query;
+    const { targetOrderId, targetOrderNumber } = router?.query;
     if (targetOrderId)
       navigate(
         `/products/duplicate?clientTypeId=${missionItem?.clientTypeId
-        }&customerId=${clientId}&customerName=${encodeURIComponent(
+        }&customerId=${missionItem?.customerID}&customerName=${encodeURIComponent(
           missionItem?.clientName || ""
         )}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId
         }&documentType=${DOCUMENT_TYPE.order
-        }&documentNumber=${targetOrderNumber}&documentId=${targetOrderId}&duplicateType=${duplicateType}`
+        }&documentNumber=${targetOrderNumber}&documentId=${missionItem?.orderID}&duplicateType=${duplicateType}`
       );
     else
       navigate(
@@ -946,6 +946,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const debouncePatternSearch = useDebounce(patternSearch, 1000);
+
+  useEffect(() => {
+    if (router.query.targetOrderNumber) {
+      setPatternSearch(router.query.targetOrderNumber);
+    }
+  }, []);
 
   useEffect(() => {
     if (debouncePatternSearch !== null) {
