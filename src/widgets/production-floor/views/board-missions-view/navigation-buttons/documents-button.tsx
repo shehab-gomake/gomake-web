@@ -20,6 +20,7 @@ import { ThreeOptionsModal } from "@/components";
 import { isReadyBoardMissionsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
+import { ModalType } from "@/enums";
 
 const DocumentsButton = () => {
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
@@ -206,6 +207,7 @@ const DocumentsButton = () => {
         quantity={boardMissions?.quantity}
       />
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("boardMissions.printAndMoveToReadyTitle")}
         yesBtn={t("boardMissions.printAndTransferToReady")}
         noBtn={t("boardMissions.printOnly")}
@@ -218,6 +220,7 @@ const DocumentsButton = () => {
         onClickNo={() => setOpenPackagesModal(true)}
       />
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
         yesBtn={"boardMissions.markDoneModalYes"}

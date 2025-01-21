@@ -3,11 +3,11 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums";
-const useStyle = ({modalType}: {modalType: ModalType}) => {
+const useStyle = ({ modalType }: { modalType: ModalType }) => {
   const { t } = useTranslation();
-  const {theme, primaryColor,  errorColor } = useGomakeTheme();
+  const { theme, primaryColor, errorColor } = useGomakeTheme();
   const dir: "rtl" | "ltr" = t("direction");
-  const RTL = dir === 'rtl';
+  const RTL = dir === "rtl";
   const classes = useMemo(() => {
     return {
       container: {
@@ -24,7 +24,6 @@ const useStyle = ({modalType}: {modalType: ModalType}) => {
         transform: "translate(-50%, -50%)",
         boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.05)",
         padding: 24,
-
       },
       content: {
         display: "flex",
@@ -64,19 +63,21 @@ const useStyle = ({modalType}: {modalType: ModalType}) => {
       },
       btnsContainer: {
         display: "flex",
-        flexDirection:  "row-reverse" as  "row-reverse",
+        flexDirection: "row-reverse" as "row-reverse",
         justifyContent: "center",
         alignItems: "center",
         gap: 11,
         width: "100%",
       },
       confirmBtn: {
-       height: 44,
-       lineHeight:"10px",
-       borderRadius: "15px",
+        height: 44,
+        lineHeight: "10px",
+        borderRadius: "15px",
         ...FONT_FAMILY.Lexend(600, 16),
         backgroundColor: modalType === ModalType.DELETE ? "#D92D20" : "#2E3092",
-        border: `1px solid ${modalType === ModalType.DELETE ? "#D92D20" : "#2E3092"}`,
+        border: `1px solid ${
+          modalType === ModalType.DELETE ? "#D92D20" : "#2E3092"
+        }`,
         color: "#FFF",
       },
       cancelBtn: {
@@ -86,37 +87,36 @@ const useStyle = ({modalType}: {modalType: ModalType}) => {
         backgroundColor: "#FFF",
         color: "#344054",
         border: `1px solid #D0D5DD`,
-        
       },
-      iconStyle:{
+      iconStyle: {
         width: 60,
         height: 60,
-        color: errorColor(300) 
+        color: errorColor(300),
       },
-      children:{
+      children: {
         marginBottom: 20,
       },
       yesBtn: {
         height: 44,
-        lineHeight:"18px",
-        borderRadius: "8px",
-         ...FONT_FAMILY.Lexend(600, 16),
-         backgroundColor:  "#2E3092",
-         border: `1px solid #2E3092`,
-         color: "#FFF",
-       },
-       noBtn: {
+        lineHeight: "18px",
+        borderRadius: "15px",
+        ...FONT_FAMILY.Lexend(600, 16),
+        backgroundColor: "#2E3092",
+        border: `1px solid #2E3092`,
+        color: "#FFF",
+      },
+      noBtn: {
         textAlign: "center",
         height: 44,
-        borderRadius: "8px",
-        lineHeight:"18px",
+        borderRadius: "15px",
+        lineHeight: "18px",
         ...FONT_FAMILY.Lexend(600, 16),
         backgroundColor: "#FFF",
         color: "#272977",
         border: `1px solid #7375CD`,
-       },
+      },
     };
-  }, [theme,RTL,modalType]);
+  }, [theme, RTL, modalType]);
 
   return {
     classes,

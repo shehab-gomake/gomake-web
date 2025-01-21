@@ -5,8 +5,8 @@ import { useStyle } from "./style";
 import { ModalType } from "@/enums";
 import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
 import { RoundedCloseIcon } from "../modal/icon/close";
-import { AddModalIcon, EditModalIcon, DuplicateModalIcon, DeleteModalIcon, WarningModalIcon } from "@/icons";
 import { _renderIcon, _renderSubTitle, _renderTitle } from "@/utils/constants";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const ThreeOptionsModal = ({
   openModal,
@@ -28,7 +28,6 @@ const ThreeOptionsModal = ({
 }: any) => {
   const { classes } = useStyle({ modalType: modalType });
   const { t } = useTranslation();
-
 
   return (
     <Modal
@@ -54,12 +53,21 @@ const ThreeOptionsModal = ({
               {props.icon || _renderIcon(modalType)}
             </div>
           )}
-          <div style={classes.title}>{title ? t(title) : _renderTitle(modalType)}</div>
-          <div style={classes.subTitle}>{subTitle ? t(subTitle) : _renderSubTitle(modalType)}</div>
+          <div style={classes.title}>
+            {title ? t(title) : _renderTitle(modalType)}
+          </div>
+          <div style={classes.subTitle}>
+            {subTitle ? t(subTitle) : _renderSubTitle(modalType)}
+          </div>
           {children && <div style={classes.children}>{children}</div>}
           <div style={classes.btnsContainer}>
             <GomakePrimaryButton
-              style={classes.yesBtn}
+              style={{
+                ...classes.yesBtn,
+                ...(t(yesBtn).length > 16
+                  ? FONT_FAMILY.Lexend(600, 14)
+                  : FONT_FAMILY.Lexend(600, 16)),
+              }}
               onClick={() => {
                 onClickYes();
                 onClose();
@@ -70,7 +78,12 @@ const ThreeOptionsModal = ({
             {!!noBtn && (
               <>
                 <GomakePrimaryButton
-                  style={classes.noBtn}
+                  style={{
+                    ...classes.noBtn,
+                    ...(t(noBtn).length > 16
+                      ? FONT_FAMILY.Lexend(600, 14)
+                      : FONT_FAMILY.Lexend(600, 16)),
+                  }}
                   onClick={() => {
                     onClickNo();
                     onClose();
