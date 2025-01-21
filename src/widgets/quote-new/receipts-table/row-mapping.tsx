@@ -57,6 +57,15 @@ const RowMappingWidget = ({
       <PrimaryTableCell
         style={{
           width: columnWidths[2],
+          ...classes.cellContainerStyle,
+          color: "#000000",
+        }}
+      >
+        {item?.dueDate ? GetDateWithoutHoursFormat(item?.dueDate) : "-"}
+      </PrimaryTableCell>
+      <PrimaryTableCell
+        style={{
+          width: columnWidths[3],
           ...FONT_FAMILY.Inter(600, 14),
           color: "#5859A8",
           ...classes.cellContainerStyle,
@@ -67,7 +76,7 @@ const RowMappingWidget = ({
 
       <PrimaryTableCell
         style={{
-          width: columnWidths[3],
+          width: columnWidths[4],
           ...classes.cellContainerStyle,
         }}
       >
@@ -75,7 +84,7 @@ const RowMappingWidget = ({
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
-          width: columnWidths[4],
+          width: columnWidths[5],
           ...classes.cellContainerStyle,
         }}
       >

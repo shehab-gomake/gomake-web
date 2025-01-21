@@ -66,22 +66,22 @@ const SubWorkFlowComponent = ({ actions, sectionName, isEditableActions, id, pro
                     }}>
                     <Stack direction={'row'} gap={'10px'} alignItems={'center'} flexWrap={'wrap'}>
                         <span style={{ ...adaptPaddingLeft(direction, 60), width: 180 }}>{sectionName}</span>
-                        <div >
+                        <div style={classes.totalRealProductionTimeStyle}>
                             <span style={classes.nameStyle}>{totalRealProductionTime?.name}</span>
                             <span style={classes.secondPartStyle}>{totalRealProductionTime?.values[0]} {totalRealProductionTime?.defaultUnit}</span>
                         </div>
                         <div style={classes.lineStyle} />
-                        <div>
+                        <div style={classes.totalRealProductionTimeStyle}>
                             <span style={classes.nameStyle}>{totalCost?.name}</span>
                             <span style={classes.secondPartStyle}>{totalCost?.values[0]} {totalCost?.defaultUnit}</span>
                         </div>
                         <div style={classes.lineStyle} />
-                        <div>
+                        <div style={classes.totalRealProductionTimeStyle}>
                             <span style={classes.nameStyle}>{profit?.name}</span>
                             <span style={classes.secondPartStyle}>{profit?.values[0]} {profit?.defaultUnit}</span>
                         </div>
                         <div style={classes.lineStyle} />
-                        <div>
+                        <div style={classes.totalRealProductionTimeStyle}>
                             <span style={classes.nameStyle}>{totalPrice?.name}</span>
                             <span style={classes.secondPartStyle}>{totalPrice?.values[0]} {totalPrice?.defaultUnit}</span>
                         </div>

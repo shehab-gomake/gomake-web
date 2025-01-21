@@ -109,3 +109,19 @@ export enum ECalculationStatus {
   Done,
   Failed,
 }
+
+export enum EMessageStatus
+{
+    processed,
+    dropped,
+    delivered,
+    deferred,
+    bounce,
+    blocked,
+    open,
+    clicked,
+    spamreport,
+    unsubscribe,
+    group_unsubscribe,
+    group_resubscribe
+}

@@ -337,7 +337,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const { } = useGoMakeTour(quoteSteps, []);
+  const {} = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -381,8 +381,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -451,7 +451,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                      quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -499,8 +499,8 @@ const QuoteNewPageWidget = ({
                         inputRef={creationDateRef}
                         preventOpenCondition={!quoteState.client}
                       />
-                      {
-                        documentType !== DOCUMENT_TYPE.purchaseOrder && <DateField
+                      {documentType !== DOCUMENT_TYPE.purchaseOrder && (
+                        <DateField
                           label={
                             isOrder || isQuote
                               ? t("sales.quote.deliveryDate")
@@ -514,8 +514,9 @@ const QuoteNewPageWidget = ({
                           isEditable={quoteItemValue?.isEditable}
                           inputRef={dateRef}
                           preventOpenCondition={!quoteState.client}
+                          withTime={isOrder || isQuote}
                         />
-                      }
+                      )}
                       {isInvoice && (
                         <DateField
                           label={t("sales.quote.taxDate")}

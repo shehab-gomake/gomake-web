@@ -28,6 +28,9 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
 import { DotIcon } from "@/icons";
 import { printHouseUsePrintNode } from "@/store/print-house-profile";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { isValidCustomer } from "@/utils/helpers";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -109,6 +112,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     isFetching,
     printOrderJobsUsingPrintNode,
     searchInputRef,
+    showCustomerModal,
+    customerForEdit,
+    setShowCustomerModal,
+    setCustomerForEdit,
   } = useBoardMissions({ isPurchaseJobs });
   const [newOrderId, setNewOrderId] = useRecoilState(
     newOrderIdToPrintJobsState
@@ -397,6 +404,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         />
       </Stack>
       <ThreeOptionsModal
+        modalType={ModalType.DUPLICATE}
         title={t("boardMissions.duplicateModalTitle")}
         yesBtn={"boardMissions.duplicateModalYes"}
         noBtn={"boardMissions.duplicateModalNo"}
@@ -418,6 +426,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         }
       />
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
         yesBtn={"boardMissions.markDoneModalYes"}
@@ -428,6 +437,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClickNo={() => onClickMoveBoardMissionToDone(false)}
       />
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneFromPrintSlipModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
         yesBtn={"boardMissions.markDoneModalYes"}
@@ -449,6 +459,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClickDelete={onClickBackToProcess}
       />
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("boardMissions.printAndMoveToReadyTitle")}
         yesBtn={t("boardMissions.printAndTransferToReady")}
         noBtn={t("boardMissions.printOnly")}
@@ -478,6 +489,19 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClickConfirm={onClickPrintPackagingSlip}
       />
       <QrListenerWidget listening={true} />
+      <CustomerCardWidget
+        isValidCustomer={isValidCustomer}
+        customerAction={CUSTOMER_ACTIONS.Edit}
+        codeFlag={true}
+        typeClient={CLIENT_TYPE.CUSTOMER}
+        isgetAllCustomers={false}
+        openModal={showCustomerModal}
+        modalTitle={t("customers.modal.editTitle")}
+        onClose={() => setShowCustomerModal(false)}
+        customer={customerForEdit}
+        setCustomer={setCustomerForEdit}
+        showUpdateButton={true}
+      />
     </>
   );
 };

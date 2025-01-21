@@ -67,7 +67,7 @@ const DropDownListParameterWidget = ({
     setSelectedValue(
       index !== -1 && temp[index]?.values
         ? { updateName: temp[index].values }
-        : null
+        : parameter.valuesConfigs.find((item) => item.isDefault)
     );
   }, [index, temp]);
 
@@ -141,21 +141,21 @@ const DropDownListParameterWidget = ({
       />
       {parameter?.parameterType ===
         EParameterTypes.ADVERTISING_PRODUCT_CATEGORY && (
-        <div>
-          <Tooltip title={t("tabs.materials")}>
-            <IconButton
-              onClick={() => {
-                window.open(
-                  `/materials/${parameter?.materialPath[0]}?materialCategory=${temp[index]?.valueIds[0]}`,
-                  "_blank"
-                );
-              }}
-            >
-              <GoToMaterialsIcon />
-            </IconButton>
-          </Tooltip>
-        </div>
-      )}
+          <div>
+            <Tooltip title={t("tabs.materials")}>
+              <IconButton
+                onClick={() => {
+                  window.open(
+                    `/materials/${parameter?.materialPath[0]}?materialCategory=${temp[index]?.valueIds[0]}`,
+                    "_blank"
+                  );
+                }}
+              >
+                <GoToMaterialsIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
+        )}
       {parameter?.setSettingIcon && inModal && (
         <div
           style={{ cursor: "pointer" }}

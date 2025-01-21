@@ -75,7 +75,7 @@ const PhoneInputComponent = ({
   box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.08) !important;
 }
 `;
-
+//
   return (
     <div onKeyPress={handleKeyPress}>
       {variant === "circular" ? <GlobalStyleCircular /> : <GlobalStyle />}
@@ -90,7 +90,7 @@ const PhoneInputComponent = ({
         disableDialCodeAndPrefix={
           !CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
         }
-        disableFormatting={true}
+        disableFormatting={!CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)}
         value={value || ""}
         onChange={(value) => {
           value.length !== 4 && onChange(value);
@@ -102,4 +102,4 @@ const PhoneInputComponent = ({
   );
 };
 
-export { PhoneInputComponent };
+export {PhoneInputComponent};

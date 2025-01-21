@@ -38,7 +38,7 @@ const usePrintHouseMachines = () => {
         }[]
     ) => {
         return machinesList.map((machine) => ({
-            text: `${machine.manufacturer} ${machine.model} - ${machine.nickName}`,
+            text: `${machine.nickName}`,
             value: machine.id,
         }));
     };
@@ -103,7 +103,7 @@ const usePrintHouseMachines = () => {
             ...prevState,
             attributes: {
                 ...prevState.attributes,
-                materials: [...prevState?.attributes?.materials, materialId]
+                materials: !!prevState?.attributes?.materials ?  [...prevState?.attributes?.materials, materialId] : [materialId]
 
             }
         }))
@@ -184,6 +184,58 @@ const usePrintHouseMachines = () => {
         mState.attributes?.vCutTool?.isAvailable,
         mState?.attributes?.isAvailableFoilUnit
     ]);
+
+    useEffect(() => {
+        if (mState.attributes?.advertisingProducts?.isAvailable) {
+            addMaterial('43');
+        }else {
+            removeMaterial('43')
+        }
+        if (mState.attributes?.applicationUnit?.isAvailable) {
+            addMaterial('2');
+        }else {
+            removeMaterial('2')
+        }
+        if (mState.attributes?.applyingGlue?.isAvailable) {
+            addMaterial('9');
+        }else {
+            removeMaterial('9')
+        }
+        if (mState.attributes?.dtfRollsCategories?.isAvailable) {
+            addMaterial('46');
+        }else {
+            removeMaterial('46')
+        }
+        if (mState.attributes?.dtfSheetsCategories?.isAvailable) {
+            addMaterial('47');
+        }else {
+            removeMaterial('47')
+        }
+        if (mState.attributes?.sheetCategories?.isAvailable) {
+            addMaterial('21');
+        }else {
+            removeMaterial('21')
+        }
+        if (mState.attributes?.wideFormatCategories?.isAvailable) {
+            addMaterial('24');
+        }else {
+            removeMaterial('24')
+        }
+        if (mState.attributes?.flatbedsCategories?.isAvailable) {
+            addMaterial('10');
+        }else {
+            removeMaterial('10')
+        }
+    }, [
+        mState.attributes?.advertisingProducts?.isAvailable,
+        mState.attributes?.applicationUnit?.isAvailable,
+        mState.attributes?.applyingGlue?.isAvailable,
+        mState.attributes?.dtfRollsCategories?.isAvailable,
+        mState.attributes?.dtfSheetsCategories?.isAvailable,
+        mState.attributes?.sheetCategories?.isAvailable,
+        mState.attributes?.wideFormatCategories?.isAvailable,
+        mState.attributes?.flatbedsCategories?.isAvailable,
+    ])
 
     return {
         getPrintHouseMachinesList,
