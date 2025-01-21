@@ -118,15 +118,21 @@ const BusinessNewWidget = ({
       <div style={classes.businessContainerStyle}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
-          defaultFiltering={documentType === DOCUMENT_TYPE.purchaseOrder ? true : false}
+          defaultFiltering={
+            documentType === DOCUMENT_TYPE.purchaseOrder ? true : false
+          }
           value={
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
               : quoteStateValue?.client?.name
-                ? quoteStateValue?.client?.name
-                : t("sales.quote.selectBusinessName")
+              ? quoteStateValue?.client?.name
+              : t("sales.quote.selectBusinessName")
           }
-          options={documentType === DOCUMENT_TYPE.purchaseOrder ? mappedSuppliers : mappedCustomers}
+          options={
+            documentType === DOCUMENT_TYPE.purchaseOrder
+              ? mappedSuppliers
+              : mappedCustomers
+          }
           onBlur={onBlurBusinessName}
           isUpdate={canEditDocument && isUpdateBusinessName}
           setIsUpdate={
@@ -138,9 +144,9 @@ const BusinessNewWidget = ({
           onChange={(e, value) => onClickOpenChangeClientModal(value)}
           onChangeTextField={(e) => {
             if (documentType === DOCUMENT_TYPE.purchaseOrder) {
-              return
+              return;
             }
-            checkWhatRenderArray(e)
+            checkWhatRenderArray(e);
           }}
           isFetching={isFetching}
         />
@@ -266,12 +272,12 @@ const BusinessNewWidget = ({
             value={
               values?.documentAddresses?.length > 0
                 ? [
-                  values?.documentAddresses[0]?.street,
-                  values?.documentAddresses[0]?.apartment,
-                  values?.documentAddresses[0]?.city,
-                ]
-                  .filter((part) => part && part.trim())
-                  .join(", ") || t("sales.cart.noAddressFound")
+                    values?.documentAddresses[0]?.street,
+                    values?.documentAddresses[0]?.apartment,
+                    values?.documentAddresses[0]?.city,
+                  ]
+                    .filter((part) => part && part.trim())
+                    .join(", ") || t("sales.cart.noAddressFound")
                 : t("sales.cart.noAddressFound")
             }
             label={t("customers.modal.address")}
@@ -285,31 +291,31 @@ const BusinessNewWidget = ({
         )}
         {values?.documentAddresses?.length > 0
           ? !isQuoteConfirmation &&
-          canEditDocument && (
-            <div style={classes.addNewAddressStyle} onClick={() => null}>
-              <MinusIcon />
-              <div
-                style={classes.addNewAddressTextStyle}
-                onClick={() =>
-                  onClickDeleteAddress(values?.documentAddresses[0])
-                }
-              >
-                {t("sales.quote.removeAddress")}
+            canEditDocument && (
+              <div style={classes.addNewAddressStyle} onClick={() => null}>
+                <MinusIcon />
+                <div
+                  style={classes.addNewAddressTextStyle}
+                  onClick={() =>
+                    onClickDeleteAddress(values?.documentAddresses[0])
+                  }
+                >
+                  {t("sales.quote.removeAddress")}
+                </div>
               </div>
-            </div>
-          )
+            )
           : !isQuoteConfirmation &&
-          canEditAddress && (
-            <div style={classes.addNewAddressStyle}>
-              <PlusNewIcon />
-              <div
-                style={classes.addNewAddressTextStyle}
-                onClick={() => setOpenModal(true)}
-              >
-                {t("sales.quote.addAddress")}
+            canEditAddress && (
+              <div style={classes.addNewAddressStyle}>
+                <PlusNewIcon />
+                <div
+                  style={classes.addNewAddressTextStyle}
+                  onClick={() => setOpenModal(true)}
+                >
+                  {t("sales.quote.addAddress")}
+                </div>
               </div>
-            </div>
-          )}
+            )}
         {!isQuoteConfirmation && (
           <AddressModal
             isUpdate={values?.documentAddresses?.length > 0}
@@ -342,6 +348,7 @@ const BusinessNewWidget = ({
         onClickDelete={() => onChangeSelectBusiness(selectedClient)}
       />
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("products.profits.titleChangeClient")}
         subTitle={t("sales.cart.subTitleChangeClientFromInvoice")}
         openModal={openChangeClientModalFromInvoice}
