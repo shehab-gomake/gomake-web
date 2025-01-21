@@ -38,7 +38,7 @@ const usePrintHouseMachines = () => {
         }[]
     ) => {
         return machinesList.map((machine) => ({
-            text: `${machine.manufacturer} ${machine.model} - ${machine.nickName}`,
+            text: `${machine.nickName}`,
             value: machine.id,
         }));
     };
