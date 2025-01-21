@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "@/pages-components/board-missions/style";
 import { downloadPdf } from "@/utils/helpers";
 import { getDeliveryTickerPdfApi } from "@/services/api-service/board-missions/board-missions-table";
+import { ModalType } from "@/enums";
 
 interface IProps {
   listening: boolean;
@@ -187,6 +188,7 @@ const QrListenerWidget = ({ listening }: IProps) => {
         onClickNo={() => {}}
       />
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("boardMissions.printAndMoveToReadyTitle")}
         yesBtn={t("boardMissions.printAndTransferToReady")}
         noBtn={t("boardMissions.printOnly")}
@@ -197,6 +199,7 @@ const QrListenerWidget = ({ listening }: IProps) => {
       />
 
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneFromPrintSlipModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
         yesBtn={"boardMissions.markDoneModalYes"}

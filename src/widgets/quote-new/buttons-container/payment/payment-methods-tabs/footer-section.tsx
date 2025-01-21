@@ -2,6 +2,8 @@ import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useStyle } from "../style";
 import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
+import { GoMakeDeleteModal } from "@/components";
+import { ModalType } from "@/enums";
 
 const FooterSection = ({ onCloseModal }: any) => {
   const { classes } = useStyle();
@@ -18,7 +20,27 @@ const FooterSection = ({ onCloseModal }: any) => {
     isTransacted,
     onClickMakePayment,
     transactionSelected,
+    openTransactionModal,
+    handleOpenTransactionModal,
+    setOpenTransactionModal,
+    resetTotalCreditCard,
+    resetCreditCardState,
+    setTotalPayment,
   } = usePaymentsTable();
+
+  const handleClickCancelTransactionModal = () => {
+    handleSave(null, true);
+    // reset credit card total and state
+    // setTotalPayment(totalPayment - totalCreditCard);
+    resetCreditCardState();
+    resetTotalCreditCard();
+    onCloseModal();
+    setOpenTransactionModal(false);
+  };
+
+  const handleCloseTransactionModal = () => {
+    setOpenTransactionModal(false);
+  };
 
   const handleSaveAndClose = (transactionData) => {
     handleSave(transactionData);
@@ -32,7 +54,7 @@ const FooterSection = ({ onCloseModal }: any) => {
       !secondWidget &&
       !transactionSelected
     ) {
-      onClickMakePayment(handleSaveAndClose, thirdWidget);
+      handleOpenTransactionModal();
     } else {
       handleSave();
       onCloseModal();
@@ -99,9 +121,7 @@ const FooterSection = ({ onCloseModal }: any) => {
           >
             <span style={classes.textStyle}>{t("payment.totalPayment")}</span>
             <input style={classes.inputStyle} value={totalPayment} />
-            {/* !here */}
           </Stack>
-
           {totalSum - totalPayment < 0 && (
             <Stack
               style={{
@@ -127,6 +147,19 @@ const FooterSection = ({ onCloseModal }: any) => {
           {t("payment.save")}
         </SecondaryButton>
       </Stack>
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("payment.PendingCreditCardTransactionDetected")}
+        subTitle={" "}
+        yesBtn={t("payment.MakePayment")}
+        openModal={openTransactionModal}
+        onClose={handleCloseTransactionModal}
+        onClickCancel={handleClickCancelTransactionModal}
+        onClickDelete={() =>
+          onClickMakePayment(handleSaveAndClose, thirdWidget)
+        }
+        cancelBtn={t("modal.cancel")}
+      />
     </div>
   );
 };
