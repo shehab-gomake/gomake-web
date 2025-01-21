@@ -103,7 +103,7 @@ const useStyle = () => {
       },
       insideStyle: {
         width: "50%",
-        height: "520px",
+        height: "600px",
       },
       openBtnStyle: {
         display: "flex",
