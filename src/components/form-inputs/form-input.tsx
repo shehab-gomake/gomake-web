@@ -127,7 +127,7 @@ const FormInput = ({
     useEffect(() => {
         if (input.optionsUrl) {
             setOptionsUrl(input.optionsUrl);
-        } else if (input.options && input.options.length > 0 && options.length === 0) {
+        } else if (input.options && input.options.length > 0) {
             setOptions(
                 input.options.map(({value, text}) => ({label: text, value}))
             );
