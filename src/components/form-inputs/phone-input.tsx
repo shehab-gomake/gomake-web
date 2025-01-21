@@ -90,7 +90,7 @@ const PhoneInputComponent = ({
         disableDialCodeAndPrefix={
           !CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
         }
-        disableFormatting={true}
+        disableFormatting={!CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)}
         value={value || ""}
         onChange={(value) => {
           value.length !== 4 && onChange(value);
