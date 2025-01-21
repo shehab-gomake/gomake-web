@@ -299,8 +299,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1050,7 +1050,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1621,8 +1621,17 @@ const useQuoteNew = ({
   ]);
 
   const [openReferenceModal, setOpenReferenceModal] = useState(false);
+  const [confirmCreateDocument, setConfirmCreateDocument] = useState(false);
   const onClickOpenReferenceModal = () => {
     setOpenReferenceModal(true);
+  };
+
+  const onClickConfirmCreateDocument = () => {
+    setConfirmCreateDocument(true);
+  };
+
+  const onClickCloseConfirmCreateDocument = () => {
+    setConfirmCreateDocument(false);
   };
 
   const [newCreationDate, setNewCreationDate] = useState(
@@ -2228,6 +2237,9 @@ const useQuoteNew = ({
     handleSendUsingWhatsAppWeb,
     isOrder,
     isQuote,
+    confirmCreateDocument,
+    onClickConfirmCreateDocument,
+    onClickCloseConfirmCreateDocument,
   };
 };
 

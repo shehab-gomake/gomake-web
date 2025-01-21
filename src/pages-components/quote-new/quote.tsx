@@ -276,6 +276,9 @@ const QuoteNewPageWidget = ({
     handleSendUsingWhatsAppWeb,
     isOrder,
     isQuote,
+    confirmCreateDocument,
+    onClickConfirmCreateDocument,
+    onClickCloseConfirmCreateDocument,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -337,7 +340,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const {} = useGoMakeTour(quoteSteps, []);
+  const { } = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -381,8 +384,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -451,7 +454,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                      quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -687,6 +690,8 @@ const QuoteNewPageWidget = ({
                 }
                 onClickSendReceiptToClient={onClickSendReceiptToClient}
                 handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
+                onClickConfirmCreateDocument={onClickConfirmCreateDocument}
+
               />
             </div>
           )}
@@ -901,6 +906,23 @@ const QuoteNewPageWidget = ({
         docType={documentType}
         onClickSendDocumentToClient={onClickSendQuoteToClient}
         handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
+      />
+      <GoMakeDeleteModal
+        openModal={confirmCreateDocument}
+        onClose={onClickCloseConfirmCreateDocument}
+        yesBtn={t("sales.quote.yesBtn")}
+        modalType={ModalType.WARNING}
+        title={`${t("sales.quote.titleConfirmCreateDocument", {
+          document: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}?`}
+        subTitle={`${t("sales.quote.subTitleConfirmCreateDocument", {
+          document: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        onClickDelete={() => handleSaveBtnClickForDocument()}
       />
     </>
   );

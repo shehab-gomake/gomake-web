@@ -41,6 +41,7 @@ const ButtonsContainer = ({
   onClickOpenChangeProductionStatusModal,
   onClickSendReceiptToClient,
   handleSendUsingWhatsAppWeb,
+  onClickConfirmCreateDocument
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -272,10 +273,10 @@ const ButtonsContainer = ({
                 ) {
                   onClickOpenNewItemNotesModal();
                 } else {
-                  handleSaveBtnClickForDocument();
+                  onClickConfirmCreateDocument();
                 }
               } else {
-                handleSaveBtnClickForDocument();
+                onClickConfirmCreateDocument();
               }
             }}
           >
