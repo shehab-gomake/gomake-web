@@ -55,6 +55,12 @@ const StyledAutocomplete: any = styled(Autocomplete)((props: any) => {
         padding: 0,
         direction: props?.direction,
         flex: 1,
+        "&.Mui-disabled": {
+          cursor: "not-allowed",
+          color: "#000",
+          WebkitTextFillColor: "#000",
+          opacity: 1,
+        },
       },
       "& input::placeholder": {
         color: "#B1B1B1",
