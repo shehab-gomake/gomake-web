@@ -1,9 +1,9 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { getAllPrintHouseActions } from "@/services/hooks";
+import { getAllPrintHouseActions, getAndSetAllCustomers } from "@/services/hooks";
 import { actionLists } from "@/store";
 import { useRouter } from "next/router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
 interface EAction {
@@ -21,7 +21,9 @@ const useCopyAction = ({ getAllActionProfitRowsByActionId }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openModal, setOpenModal] = useState(false);
   const [selectedCationId, setSelectedActionId] = useState<EAction>();
-  const { alertFaultUpdate } = useSnackBar();
+  const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+
+  const [selectedSupplier, setSelectedSupplier] = useState(null)
 
   const handleMoreOptionIconClick = (event) => {
     getActions();
@@ -88,6 +90,36 @@ const useCopyAction = ({ getAllActionProfitRowsByActionId }) => {
     }
   }, [percentageProfit]);
 
+  const getAllSupplierList = useCallback(async (SearchTerm?) => {
+    await getAndSetAllCustomers(callApi, setSupplierList, {
+      clientType: "S",
+      searchTerm: SearchTerm,
+      onlyCreateOrderClients: false,
+    });
+  }, []);
+  const [supplierList, setSupplierList] = useState([]);
+  useEffect(() => {
+    if (router.query.isOutSource) {
+      getAllSupplierList();
+    }
+  }, []);
+
+  const updateOutSourceActionSupplier = useCallback(async (supplierId) => {
+    const res = await callApi(
+      "PUT",
+      `/v1/printhouse-config/profits/update-out-source-action-supplier`,
+      {
+        actionId: router.query.actionId,
+        supplierId
+      }
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+    } else {
+      alertFaultUpdate();
+    }
+  }, [router.query.actionId]);
+
   return {
     router,
     anchorEl,
@@ -106,6 +138,10 @@ const useCopyAction = ({ getAllActionProfitRowsByActionId }) => {
     onCloseProfitModal,
     onOpenProfitModal,
     AddNewProfitForActionProfitsApi,
+    supplierList,
+    updateOutSourceActionSupplier,
+    selectedSupplier, 
+    setSelectedSupplier
   };
 };
 

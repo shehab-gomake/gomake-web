@@ -31,7 +31,9 @@ const BoardMissionsDetailsHeader = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const direction = t("direction");
-  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const {
+    CheckPreferenceValue
+  } = usePrintHousePreferences()
   const {
     boards,
     boardFromTable,

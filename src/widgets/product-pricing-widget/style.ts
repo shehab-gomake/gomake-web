@@ -95,13 +95,17 @@ const useStyle = () => {
         ...adaptRight(direction, 5),
       },
       nameStyle:{
-        marginRight: 12,
+        // marginRight: 12,
         ...FONT_FAMILY.Inter(400, 12),
         color:"#FFF"
       },
       secondPartStyle:{
         ...FONT_FAMILY.Inter(700, 14),
         color:"#FFF"
+      },
+      totalRealProductionTimeStyle:{
+        display: 'flex',
+         flexDirection: 'row' as "row", alignItems: 'center', gap: '10px'
       },
       lineStyle:{
         ...FONT_FAMILY.Inter(500, 14),
