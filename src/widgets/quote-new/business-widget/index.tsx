@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { MinusIcon } from "@/icons/minus-icon";
 import { PlusNewIcon } from "@/icons";
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
@@ -14,6 +14,7 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums";
+import { EAddressType } from "./address-widget/state";
 
 const BusinessNewWidget = ({
   values,
@@ -113,20 +114,39 @@ const BusinessNewWidget = ({
     setDocumentTitle(values?.title);
   }, [values?.title]);
 
+  const [selectedAddressType, setSelectedAddressType] =
+    useState<EAddressType>();
+
+  const openBillingModal = () => {
+    setSelectedAddressType(EAddressType.BILLING);
+    setOpenModal(true);
+  };
+
+  const openDeliveryModal = () => {
+    setSelectedAddressType(EAddressType.DELIVERY);
+    setOpenModal(true);
+  };
+
   return (
     <>
       <div style={classes.businessContainerStyle}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
-          defaultFiltering={documentType === DOCUMENT_TYPE.purchaseOrder ? true : false}
+          defaultFiltering={
+            documentType === DOCUMENT_TYPE.purchaseOrder ? true : false
+          }
           value={
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
               : quoteStateValue?.client?.name
-                ? quoteStateValue?.client?.name
-                : t("sales.quote.selectBusinessName")
+              ? quoteStateValue?.client?.name
+              : t("sales.quote.selectBusinessName")
           }
-          options={documentType === DOCUMENT_TYPE.purchaseOrder ? mappedSuppliers : mappedCustomers}
+          options={
+            documentType === DOCUMENT_TYPE.purchaseOrder
+              ? mappedSuppliers
+              : mappedCustomers
+          }
           onBlur={onBlurBusinessName}
           isUpdate={canEditDocument && isUpdateBusinessName}
           setIsUpdate={
@@ -138,9 +158,9 @@ const BusinessNewWidget = ({
           onChange={(e, value) => onClickOpenChangeClientModal(value)}
           onChangeTextField={(e) => {
             if (documentType === DOCUMENT_TYPE.purchaseOrder) {
-              return
+              return;
             }
-            checkWhatRenderArray(e)
+            checkWhatRenderArray(e);
           }}
           isFetching={isFetching}
         />
@@ -261,62 +281,130 @@ const BusinessNewWidget = ({
           />
         )}
 
-        {values?.documentAddresses?.length > 0 && (
+        {/* Address input */}
+
+        {/* Delivery Address Input */}
+        {values?.documentDeliveryAddresses?.length > 0 && (
           <InputUpdatedValues
             value={
-              values?.documentAddresses?.length > 0
+              values?.documentDeliveryAddresses?.length > 0
                 ? [
-                  values?.documentAddresses[0]?.street,
-                  values?.documentAddresses[0]?.apartment,
-                  values?.documentAddresses[0]?.city,
-                ]
-                  .filter((part) => part && part.trim())
-                  .join(", ") || t("sales.cart.noAddressFound")
+                    values?.documentDeliveryAddresses[0]?.street,
+                    values?.documentDeliveryAddresses[0]?.apartment,
+                    values?.documentDeliveryAddresses[0]?.city,
+                  ]
+                    .filter((part) => part && part.trim())
+                    .join(", ") || t("sales.cart.noAddressFound")
                 : t("sales.cart.noAddressFound")
             }
-            label={t("customers.modal.address")}
+            label={t("sales.cart.deliveryAddress")}
             isUnderLine={true}
             onBlur={onBlurAddress}
             isUpdate={false}
             setIsUpdate={setIsUpdateAddress}
             flag={!isQuoteConfirmation && canEditAddress}
-            onClickFlag={() => setOpenModal(true)}
+            onClickFlag={openDeliveryModal}
           />
         )}
-        {values?.documentAddresses?.length > 0
+        {/* Billing Address Input */}
+        {values?.documentBillingAddresses?.length > 0 && (
+          <InputUpdatedValues
+            value={
+              values?.documentBillingAddresses?.length > 0
+                ? [
+                    values?.documentBillingAddresses[0]?.street,
+                    values?.documentBillingAddresses[0]?.apartment,
+                    values?.documentBillingAddresses[0]?.city,
+                  ]
+                    .filter((part) => part && part.trim())
+                    .join(", ") || t("sales.cart.noAddressFound")
+                : t("sales.cart.noAddressFound")
+            }
+            label={t("sales.cart.billingAddress")}
+            isUnderLine={true}
+            onBlur={onBlurAddress}
+            isUpdate={false}
+            setIsUpdate={setIsUpdateAddress}
+            flag={!isQuoteConfirmation && canEditAddress}
+            onClickFlag={openBillingModal}
+          />
+        )}
+
+        {/* Address input */}
+
+        {/* Address add/remove btns */}
+        {values?.documentDeliveryAddresses?.length > 0
           ? !isQuoteConfirmation &&
-          canEditDocument && (
-            <div style={classes.addNewAddressStyle} onClick={() => null}>
-              <MinusIcon />
-              <div
-                style={classes.addNewAddressTextStyle}
-                onClick={() =>
-                  onClickDeleteAddress(values?.documentAddresses[0])
-                }
-              >
-                {t("sales.quote.removeAddress")}
+            canEditDocument && (
+              <div style={classes.addNewAddressStyle}>
+                <MinusIcon />
+                <div
+                  style={classes.addNewAddressTextStyle}
+                  onClick={() =>
+                    onClickDeleteAddress(values?.documentDeliveryAddresses[0])
+                  }
+                >
+                  {t("sales.cart.removerDeliveryAddress")}
+                </div>
               </div>
-            </div>
-          )
+            )
           : !isQuoteConfirmation &&
-          canEditAddress && (
-            <div style={classes.addNewAddressStyle}>
-              <PlusNewIcon />
-              <div
-                style={classes.addNewAddressTextStyle}
-                onClick={() => setOpenModal(true)}
-              >
-                {t("sales.quote.addAddress")}
+            canEditAddress && (
+              <div style={classes.addNewAddressStyle}>
+                <PlusNewIcon />
+                <div
+                  style={classes.addNewAddressTextStyle}
+                  onClick={openDeliveryModal}
+                >
+                  {t("sales.cart.addDeliveryAddress")}
+                </div>
               </div>
-            </div>
-          )}
+            )}
+        {values?.documentBillingAddresses?.length > 0
+          ? !isQuoteConfirmation &&
+            canEditDocument && (
+              <div style={classes.addNewAddressStyle}>
+                <MinusIcon />
+                <div
+                  style={classes.addNewAddressTextStyle}
+                  onClick={() =>
+                    onClickDeleteAddress(values?.documentBillingAddresses[0])
+                  }
+                >
+                  {t("sales.cart.removeBillingAddress")}
+                </div>
+              </div>
+            )
+          : !isQuoteConfirmation &&
+            canEditAddress && (
+              <div style={classes.addNewAddressStyle}>
+                <PlusNewIcon />
+                <div
+                  style={classes.addNewAddressTextStyle}
+                  onClick={openBillingModal}
+                >
+                  {t("sales.cart.addBillingAddress")}
+                </div>
+              </div>
+            )}
+        {/* Address add/remove btns */}
+
+        {/* Address modal */}
         {!isQuoteConfirmation && (
           <AddressModal
-            isUpdate={values?.documentAddresses?.length > 0}
+            addressType={selectedAddressType}
+            isUpdate={
+              selectedAddressType === EAddressType.BILLING
+                ? values?.documentBillingAddresses?.length > 0
+                : values?.documentDeliveryAddresses?.length > 0
+            }
             documentType={documentType}
           />
         )}
+
+        {/* Address modal */}
       </div>
+
       <CustomerCardWidget
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Add}

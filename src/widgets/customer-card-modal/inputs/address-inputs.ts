@@ -1,4 +1,7 @@
+import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget/state";
+
 const addressInputs1 = (
+  t,
   state: any,
   cities?: any[],
   filteredCityStreets?: any[]
@@ -14,6 +17,25 @@ const addressInputs1 = (
       options: [],
       value: state?.address1,
       isValid: true,
+    },
+    {
+      name: "addressType",
+      label: "sales.cart.addressType",
+      type: "select",
+      placeholder: "sales.cart.addressType",
+      required: false,
+      parameterKey: "type",
+      options: [
+        {
+          value: EAddressType.DELIVERY,
+          text: `${t("sales.cart.deliveryAddress")}`,
+        },
+        {
+          value: EAddressType.BILLING,
+          text: `${t("sales.cart.billingAddress")}`,
+        },
+      ],
+      value: state?.type,
     },
     {
       name: "city",

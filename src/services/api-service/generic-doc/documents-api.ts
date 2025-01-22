@@ -52,7 +52,8 @@ const GET_CALCULATE_DOCUMENT_ITEM_URL =
 const GET_CALCULATE_DOCUMENT_URL =
   "/v1/erp-service/documents/calculate-document";
 const ADD_ITEM_URL = "/v1/erp-service/documents/add-item";
-const ADD_GENERIC_PRODUCT_TO_DOCUMENT_URL = "/v1/erp-service/documents/add-generic-product-to-document";
+const ADD_GENERIC_PRODUCT_TO_DOCUMENT_URL =
+  "/v1/erp-service/documents/add-generic-product-to-document";
 const UPDATE_DOCUMENT_URL = "/v1/erp-service/documents/update-document";
 const UPDATE_OCCASIONAL_CLIENT_NAME_URL =
   "/v1/erp-service/documents/update-occasional-client-name";
@@ -127,7 +128,13 @@ const CREATE_DOCUMENT_URL = "/v1/erp-service/documents/create-document";
 const START_ORDER_PRODUCTION_URL =
   "/v1/erp-service/documents/start-order-production";
 
-const getDocumentApi: ICallAndSetData = async (callApi, setState, data,loading, abortController) => {
+const getDocumentApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data,
+  loading,
+  abortController
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
@@ -474,7 +481,11 @@ const addItemApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
-const addGenericProductToDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+const addGenericProductToDocumentApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
@@ -917,11 +928,7 @@ const makePaymentForOrderApi: ICallAndSetData = async (
   );
 };
 
-const quickDuplicateApi: ICallAndSetData = async (
-  callApi,
-  setState,
-  data
-) => {
+const quickDuplicateApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.PUT,
@@ -1153,5 +1160,5 @@ export {
   createDocumentApi,
   startOrderProductionApi,
   addGenericProductToDocumentApi,
-  quickDuplicateApi
+  quickDuplicateApi,
 };
