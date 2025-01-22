@@ -115,7 +115,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     showCustomerModal,
     customerForEdit,
     setShowCustomerModal,
-    setCustomerForEdit
+    setCustomerForEdit,
   } = useBoardMissions({ isPurchaseJobs });
   const [newOrderId, setNewOrderId] = useRecoilState(
     newOrderIdToPrintJobsState
@@ -156,10 +156,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                     {Object.keys(router.query).filter(
                       (key) => key !== "pageNumber"
                     ).length > 0 && (
-                        <div style={{ position: "absolute", top: -5, right: -1 }}>
-                          <DotIcon />
-                        </div>
-                      )}
+                      <div style={{ position: "absolute", top: -5, right: -1 }}>
+                        <DotIcon />
+                      </div>
+                    )}
                   </IconButton>
                   <GoMakeMenu
                     handleClose={handleClose}
@@ -340,55 +340,55 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               !isPurchaseJobs
                 ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                   ? [
+                      "7%",
+                      "7%",
+                      "6%",
+                      "6%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "4%",
+                      "6%",
+                      "12%",
+                      "7%",
+                      "7%",
+                      "13%",
+                      "3%",
+                    ]
+                  : [
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "18%",
+                      "7%",
+                      "15%",
+                      "7%",
+                      "3%",
+                    ]
+                : [
                     "7%",
+                    "5%",
+                    "6%",
                     "7%",
                     "6%",
-                    "6%",
                     "7%",
-                    "7%",
+                    "11%",
                     "8%",
+                    "6%",
+                    "8%",
+                    "5%",
+                    "5%",
+                    "7%",
                     "7%",
                     "4%",
-                    "6%",
-                    "12%",
-                    "7%",
-                    "7%",
-                    "13%",
-                    "3%",
+                    "2%",
                   ]
-                  : [
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "8%",
-                    "7%",
-                    "18%",
-                    "7%",
-                    "15%",
-                    "7%",
-                    "3%",
-                  ]
-                : [
-                  "7%",
-                  "5%",
-                  "6%",
-                  "7%",
-                  "6%",
-                  "7%",
-                  "11%",
-                  "8%",
-                  "6%",
-                  "8%",
-                  "5%",
-                  "5%",
-                  "7%",
-                  "7%",
-                  "4%",
-                  "2%",
-                ]
             }
           />
         </div>
@@ -404,6 +404,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         />
       </Stack>
       <ThreeOptionsModal
+        modalType={ModalType.DUPLICATE}
         title={t("boardMissions.duplicateModalTitle")}
         yesBtn={"boardMissions.duplicateModalYes"}
         noBtn={"boardMissions.duplicateModalNo"}
@@ -425,6 +426,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         }
       />
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
         yesBtn={"boardMissions.markDoneModalYes"}
@@ -435,6 +437,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClickNo={() => onClickMoveBoardMissionToDone(false)}
       />
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneFromPrintSlipModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
         yesBtn={"boardMissions.markDoneModalYes"}
@@ -456,6 +459,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClickDelete={onClickBackToProcess}
       />
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("boardMissions.printAndMoveToReadyTitle")}
         yesBtn={t("boardMissions.printAndTransferToReady")}
         noBtn={t("boardMissions.printOnly")}

@@ -25,6 +25,7 @@ import { productionFloorTextSearchState } from "@/widgets/production-floor/state
 import { useCallback } from "react";
 import { ThreeOptionsModal } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
+import { ModalType } from "@/enums";
 
 interface IProps {
   status: IProductionStatus;
@@ -169,6 +170,7 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
         </Collapse>
       )}
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle")}
         subTitle={t("boardMissions.markDoneModalSubTitle")}
         yesBtn={"boardMissions.markDoneModalYes"}

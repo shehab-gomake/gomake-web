@@ -21,6 +21,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { ThreeOptionsModal } from "@/components";
 import { ClientUploadExcelErrorsModal } from "../customers/export-import-buttons/errors-messages-modal";
+import { ModalType } from "@/enums";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -166,6 +167,7 @@ export default function Home() {
               showUpdateButton={true}
             />
             <ThreeOptionsModal
+              modalType={ModalType.WARNING}
               title={t("customers.modal.exportClients")}
               subTitle={t("customers.modal.exportPrompt")}
               yesBtn={"customers.modal.includeContacts"}

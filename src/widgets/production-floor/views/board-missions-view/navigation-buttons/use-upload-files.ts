@@ -211,7 +211,10 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
     const res: any = await callApi(
       "POST",
       `/v1/erp-service/board-missions/set-order-item-file-status`,
-      dto,
+        {
+          ...dto,
+          boardMissionIds: uploadingFiles.map(fileGroup => fileGroup.boardMissionId)
+        },
       false
     );
   };

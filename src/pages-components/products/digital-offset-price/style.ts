@@ -880,7 +880,7 @@ const useStyle = () => {
         top: 10,
       },
       advertisingProductNameMain: {
-        minWidth: 1000,
+        minWidth: 250,
         width: "100%",
         position: "relative",
       },

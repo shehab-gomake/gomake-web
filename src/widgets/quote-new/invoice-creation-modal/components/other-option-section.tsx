@@ -133,6 +133,7 @@ const OtherOptionsSection = ({
         {getCreateButtonText()}
       </Button>
       <ThreeOptionsModal
+        hideIcon
         title={t("sales.modals.printReceipt")}
         subTitle={t("sales.modals.includeInvoicesPdfPrompt")}
         yesBtn={"sales.modals.withInvoices"}

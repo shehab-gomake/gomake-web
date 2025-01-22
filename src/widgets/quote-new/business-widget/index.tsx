@@ -421,6 +421,7 @@ const BusinessNewWidget = ({
         onClickDelete={() => onChangeSelectBusiness(selectedClient)}
       />
       <ThreeOptionsModal
+        modalType={ModalType.WARNING}
         title={t("products.profits.titleChangeClient")}
         subTitle={t("sales.cart.subTitleChangeClientFromInvoice")}
         openModal={openChangeClientModalFromInvoice}
