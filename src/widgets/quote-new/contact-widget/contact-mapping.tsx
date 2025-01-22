@@ -55,12 +55,15 @@ const ContactMapping = ({
   };
 
   const onBlurContactEmail = async (item) => {
-    let trimmedContactMail =  item.contactMail;
-    if(item.contactMail){
+    let trimmedContactMail = item.contactMail;
+    if (item.contactMail) {
       trimmedContactMail = item.contactMail.trim();
       changeItems(index, "contactMail", trimmedContactMail);
     }
-    if (trimmedContactMail === "" && trimmedContactMail !== originalContactEmail) {
+    if (
+      trimmedContactMail === "" &&
+      trimmedContactMail !== originalContactEmail
+    ) {
       //This case is similar to deleting the mail.
       await updateClientContact(item);
     } else if (!isValidEmail(trimmedContactMail) && trimmedContactMail !== "") {
@@ -99,7 +102,12 @@ const ContactMapping = ({
   };
 
   return (
-    <div style={classes.businessContainerStyle}>
+    <div
+      style={{
+        ...classes.businessContainerStyle,
+        marginBottom: !isQuoteConfirmation ? "0px" : 10,
+      }}
+    >
       <Stack direction={"row"} alignItems={"center"}>
         {isEditingContactName ? (
           <InputUpdatedValues
@@ -219,8 +227,8 @@ const ContactMapping = ({
           }
         }}
         onInputChange={(e: any) => {
-          if(e){
-           // e = e.trim();
+          if (e) {
+            // e = e.trim();
           }
           changeItems(index, "contactMail", e);
         }}

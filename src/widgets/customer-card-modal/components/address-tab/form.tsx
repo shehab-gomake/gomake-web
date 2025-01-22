@@ -8,6 +8,7 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { addressInputs1 } from "../../inputs/address-inputs";
 import { useCallback } from "react";
 import { Stack } from "@mui/material";
+import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget/state";
 
 interface IProps {
   address: {
@@ -25,6 +26,7 @@ interface IProps {
     remarks?: string;
     default?: boolean;
     index?: number;
+    type?: EAddressType;
   };
   onDelete: (value: number) => void;
   setAddress: any;
@@ -57,7 +59,6 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
   //   }
   // };
 
-
   // const addresses = useCallback(() => {
   //   const selectedCity = address?.city;
   //   const foundCity = cities.filter((city) => city.Name == selectedCity);
@@ -67,12 +68,11 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
   //   return addressInputs1(address, cities, filteredCityStreets);
   // }, [address, cities, cityStreets]);
 
-
   const onChangeInputs = (key, value) => {
     setAddress({ ...address, [key]: value });
   };
 
-  return ( 
+  return (
     <div>
       <div style={classes.customerInfoStyle}>
         {/* {cities &&
@@ -89,7 +89,7 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
               />
             </div>
           ))} */}
-        {addressInputs1(address).map((item) => (
+        {addressInputs1(t, address).map((item) => (
           <div style={{ marginBottom: 10 }}>
             <FormInput
               input={item as IInput}
@@ -101,8 +101,11 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
         ))}
       </div>
       <Stack direction={"row"} marginTop={"10px"} marginBottom={"10px"}>
-        <a style={classes.removeFormStyle}  onClick={() => onDelete(address.index)}>
-          <RemoveIcon/>
+        <a
+          style={classes.removeFormStyle}
+          onClick={() => onDelete(address.index)}
+        >
+          <RemoveIcon />
           <button style={classes.buttonsStyle}>
             {t("customers.buttons.remove")}
           </button>

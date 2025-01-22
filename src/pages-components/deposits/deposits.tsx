@@ -11,79 +11,78 @@ import { DocumentLogsWidget } from "../quotes/widgets/documents-logs-widget/logs
 import { useAgentsList } from "@/hooks/use-agent-list";
 
 const DepositsListPageWidget = () => {
-    const { classes } = useStyle();
-    const {
-        page,
-        setPage,
-        pagesCount,
-        pageSize,
-        handlePageSizeChange,
-        tableHeaders,
-        getAllDeposits,
-        allDeposits,
-        finalPatternSearch,
-        handleSearchChange,
-        openLogsModal,
-        onClickCloseLogsModal,
-        logsTableHeaders,
-        depositLogTitle,
-        handleSelectEmployee,
-        employeeId,
-        onSelectLogsDateRange,
-        resetLogsDatePicker,
-    } = useDeposits();
+  const { classes } = useStyle();
+  const {
+    page,
+    setPage,
+    pagesCount,
+    pageSize,
+    handlePageSizeChange,
+    tableHeaders,
+    getAllDeposits,
+    allDeposits,
+    finalPatternSearch,
+    handleSearchChange,
+    openLogsModal,
+    onClickCloseLogsModal,
+    logsTableHeaders,
+    depositLogTitle,
+    handleSelectEmployee,
+    employeeId,
+    onSelectLogsDateRange,
+    resetLogsDatePicker,
+  } = useDeposits();
 
-    useEffect(() => {
-        getAllDeposits();
-    }, [page, pageSize, finalPatternSearch]);
+  useEffect(() => {
+    getAllDeposits();
+  }, [page, pageSize, finalPatternSearch]);
 
-
-    return (
-        <>
-            <Stack
-                direction="column"
-                justifyContent="space-between"
-                display="flex"
-                spacing={2}
-                height="100%"
-            >
-                <div style={classes.mainContainer}>
-                    <DepositsHeaderSection />
-                    <DepositsFiltersWidget onClickSearch={handleSearchChange} />
-                    <PrimaryTable
-                        stickyFirstCol={false}
-                        stickyHeader={true}
-                        maxHeight={"100vh"}
-                        rows={allDeposits}
-                        headers={tableHeaders}
-                    />
-                </div>
-                <GoMakePagination
-                    onChangePageNumber={(event, value) => setPage(value)}
-                    onChangePageSize={handlePageSizeChange}
-                    page={page}
-                    setPage={setPage}
-                    pagesCount={pagesCount}
-                    pageSize={pageSize}
-                />
-                <GoMakeModal
-                    insideStyle={classes.insideStyle}
-                    openModal={openLogsModal}
-                    onClose={onClickCloseLogsModal}
-                    modalTitle={depositLogTitle}
-                >
-                    <DocumentLogsWidget
-                        logsTableHeaders={logsTableHeaders}
-                        logsTableRows={null}
-                        employeeId={employeeId}
-                        handleSelectEmployee={handleSelectEmployee}
-                        onSelectDateRange={onSelectLogsDateRange}
-                        resetLogsDatePicker={resetLogsDatePicker}
-                    />
-                </GoMakeModal>
-            </Stack>
-        </>
-    );
+  return (
+    <>
+      <Stack
+        direction="column"
+        justifyContent="space-between"
+        display="flex"
+        spacing={2}
+        height="100%"
+      >
+        <div style={classes.mainContainer}>
+          <DepositsHeaderSection />
+          <DepositsFiltersWidget onClickSearch={handleSearchChange} />
+          <PrimaryTable
+            stickyFirstCol={false}
+            stickyHeader={true}
+            maxHeight={"100vh"}
+            rows={allDeposits}
+            headers={tableHeaders}
+          />
+        </div>
+        <GoMakePagination
+          onChangePageNumber={(event, value) => setPage(value)}
+          onChangePageSize={handlePageSizeChange}
+          page={page}
+          setPage={setPage}
+          pagesCount={pagesCount}
+          pageSize={pageSize}
+        />
+        <GoMakeModal
+          insideStyle={classes.insideStyle}
+          openModal={openLogsModal}
+          onClose={onClickCloseLogsModal}
+          modalTitle={depositLogTitle}
+        >
+          <DocumentLogsWidget
+            logsTableHeaders={logsTableHeaders}
+            logsTableRows={null}
+            employeeId={employeeId}
+            handleSelectEmployee={handleSelectEmployee}
+            onSelectDateRange={onSelectLogsDateRange}
+            resetLogsDatePicker={resetLogsDatePicker}
+          />
+        </GoMakeModal>
+      </Stack>
+    </>
+  );
 };
 
 export { DepositsListPageWidget };

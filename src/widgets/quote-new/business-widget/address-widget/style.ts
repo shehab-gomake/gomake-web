@@ -17,6 +17,9 @@ const useStyle = () => {
         display: "flex",
         width: "330px",
         gap: "13px",
+        height: " 340px",
+        overflow: "scroll",
+        marginBottom: "5px",
       },
       saveBtn: {
         width: "331px",
@@ -105,6 +108,10 @@ const useStyle = () => {
       },
       noAddressContaner: {
         marginTop: 16,
+      },
+      modalTitleStyle: {
+        color: "black",
+        ...FONT_FAMILY.Lexend(500, 20),
       },
     };
   }, []);
