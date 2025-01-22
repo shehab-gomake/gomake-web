@@ -37,14 +37,36 @@ const BusinessWidget = () => {
           inputMainContainerStyle={classes.inputMainContainer}
           speicalStyle={{ padding: "0px" }}
         />
-        {/* //!here what is this */}
         <InputUpdatedValues
           value={
-            quoteConfirm?.documentAddresses?.length > 0
-              ? `${quoteConfirm?.documentAddresses[0]?.street} ${quoteConfirm?.documentAddresses[0]?.apartment}, ${quoteConfirm?.documentAddresses[0]?.city}`
-              : "no address found"
+            quoteConfirm?.documentDeliveryAddresses?.length > 0
+              ? [
+                  quoteConfirm?.documentDeliveryAddresses[0]?.street,
+                  quoteConfirm?.documentDeliveryAddresses[0]?.apartment,
+                  quoteConfirm?.documentDeliveryAddresses[0]?.city,
+                ]
+                  .filter((part) => part && part.trim())
+                  .join(", ") || t("sales.cart.noAddressFound")
+              : t("sales.cart.noAddressFound")
           }
-          label={t("customers.modal.address")}
+          label={t("sales.cart.deliveryAddress")}
+          setIsUpdate={setIsConfirmation}
+          inputMainContainerStyle={classes.inputMainContainer}
+          speicalStyle={{ padding: "0px" }}
+        />
+        <InputUpdatedValues
+          value={
+            quoteConfirm?.documentBillingAddresses?.length > 0
+              ? [
+                  quoteConfirm?.documentBillingAddresses[0]?.street,
+                  quoteConfirm?.documentBillingAddresses[0]?.apartment,
+                  quoteConfirm?.documentBillingAddresses[0]?.city,
+                ]
+                  .filter((part) => part && part.trim())
+                  .join(", ") || t("sales.cart.noAddressFound")
+              : t("sales.cart.noAddressFound")
+          }
+          label={t("sales.cart.billingAddress")}
           setIsUpdate={setIsConfirmation}
           inputMainContainerStyle={classes.inputMainContainer}
           speicalStyle={{ padding: "0px" }}

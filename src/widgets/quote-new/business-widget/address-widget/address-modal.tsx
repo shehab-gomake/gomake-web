@@ -38,7 +38,6 @@ const AddressModal = ({ isUpdate, documentType, addressType }: IProps) => {
   const isDeliveryAddress = addressType === EAddressType.DELIVERY;
 
   const handleClick = () => {
-    debugger;
     if (isNewAddressState) {
       onClickAddNewAddress(addressState, isUpdate, addressType);
     } else if (isUpdate) {
