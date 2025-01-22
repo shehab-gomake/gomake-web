@@ -43,8 +43,8 @@ html * {
   height: 0;
 }
 .MuiAutocomplete-listbox {
-  max-height: 300px; 
-  overflow-y: auto; 
+  max-height: 300px;
+  overflow-y: auto;
 }
 .MuiAutocomplete-listbox::-webkit-scrollbar {
   width: 8px;
@@ -435,7 +435,7 @@ df-messenger {
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 11px !important;
+  width: 10px !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -507,10 +507,9 @@ df-messenger {
   background-color: black;
   position: relative;
   z-index: 300;
-
 }
 .react-calendar-timeline .rct-header-root {
-  background-color: #FFF;
+  background-color: #fff;
 }
 
 .react-calendar-timeline .rct-dateHeader-primary {
@@ -528,7 +527,7 @@ df-messenger {
   height: 100%;
 }
 .react-calendar-timeline .rct-dateHeader {
-  background-color: #FFF;
+  background-color: #fff;
   border: 0;
 }
 .react-calendar-timeline .rct-calendar-header {
@@ -538,13 +537,13 @@ df-messenger {
   border: 0;
 }
 .react-calendar-timeline .rct-sidebar .rct-sidebar-row {
-  border-bottom: 1px solid #EAECF0;
+  border-bottom: 1px solid #eaecf0;
 }
 
 .rct-vl {
-  border-left: 0!important;
+  border-left: 0 !important;
 }
 .rct-horizontal-lines > * {
-  background-color: inherit!important;
-  border: 0!important;
+  background-color: inherit !important;
+  border: 0 !important;
 }

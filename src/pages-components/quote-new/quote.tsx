@@ -534,7 +534,10 @@ const QuoteNewPageWidget = ({
                   </ThemeProvider>
                 </div>
               )}
-              <div style={classes.bordersecondContainer}>
+              <div
+                style={classes.bordersecondContainer}
+                className="custom-scrollbar"
+              >
                 <BusinessNewWidget
                   values={quoteState}
                   onBlurBusinessName={onBlurBusinessName}
