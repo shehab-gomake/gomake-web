@@ -75,7 +75,7 @@ const PricingList = ({
       const supplier = supplierList.find((supplier) => supplier.id === actionProfitByActionId?.supplerId)
       setSelectedSupplier(supplier)
     }
-  }, [actionProfitByActionId])
+  }, [actionProfitByActionId, supplierList])
   return (
     <div style={classes.pricListWidgetMainContainer}>
       <div style={classes.headerMainCointaner}>
