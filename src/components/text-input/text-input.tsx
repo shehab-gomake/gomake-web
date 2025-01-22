@@ -1,7 +1,7 @@
 import * as React from "react";
 import TextField from "@mui/material/TextField";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
-import {styled} from "@mui/material";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { styled } from "@mui/material";
 
 const StyledTextField = styled(TextField, {
     shouldForwardProp: (propName: any) =>
@@ -47,11 +47,18 @@ const StyledTextField = styled(TextField, {
             borderRadius: props?.style?.borderRadius || 4,
             width: "100%",
         },
+
         "&.Mui-focused fieldset": {
             borderColor: props.error ? `${props.errorColor(300)}` : "#FFFFFF",
             borderRadius: props?.style?.borderRadius || 4,
             width: "100%",
         },
+    },
+    "& .MuiInputBase-input.Mui-disabled": {
+        cursor: "not-allowed",
+        color: "#000",
+        WebkitTextFillColor: "#000",
+        opacity: 1,
     },
     "& input::placeholder": {
         color: "#B1B1B1",
@@ -60,30 +67,36 @@ const StyledTextField = styled(TextField, {
         fontStyle: "normal",
         fontWeight: 500,
     },
+    "&.Mui-disabled": {
+        cursor: "not-allowed",
+        color: "#000",
+        WebkitTextFillColor: "#000",
+        opacity: 1,
+    },
 }));
 
 const GomakeTextInput = ({
-                             value,
-                             onChange,
-                             style,
-                             error,
-                             type,
-                             disabled,
-                             placeholder,
-                             onKeyDown,
-                             multiline,
-                             InputProps,
-                             autoFocus,
-                             onMouseLeave,
-                             defaultValue,
-                             onBlur,
-                             onClick,
-                             onFocus,
-                             id,
-                             helperText,
-                             direction,
-                             sx,
-                         }: {
+    value,
+    onChange,
+    style,
+    error,
+    type,
+    disabled,
+    placeholder,
+    onKeyDown,
+    multiline,
+    InputProps,
+    autoFocus,
+    onMouseLeave,
+    defaultValue,
+    onBlur,
+    onClick,
+    onFocus,
+    id,
+    helperText,
+    direction,
+    sx,
+}: {
     labelText?: string;
     value?: any;
     onChange?: any;
@@ -106,7 +119,7 @@ const GomakeTextInput = ({
     direction?: any;
     sx?: any;
 }) => {
-    const {primaryColor, secondColor, errorColor} = useGomakeTheme();
+    const { primaryColor, secondColor, errorColor } = useGomakeTheme();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const trimmedValue = e.target.value.trimStart();
@@ -158,4 +171,4 @@ const GomakeTextInput = ({
     );
 };
 
-export {GomakeTextInput, StyledTextField};
+export { GomakeTextInput, StyledTextField };
