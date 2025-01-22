@@ -248,12 +248,22 @@ const useQuoteWidget = () => {
   const onCloseCustomerModal = () => {
     setOpenCustomerModal(false);
   };
-
+  const [products, setProducts] = useState([]);
   const [combinedData, setCombinedData] = useState<any>([]);
+
+  useEffect(() => {
+    if (products?.length > 0 && combinedData?.length > 0) {
+      const findDefaultProduct = products.find((item) => item.isDefaultInHomePage);
+      if (findDefaultProduct) {
+        handleProductChange(findDefaultProduct?.id);
+      }
+    }
+  }, [combinedData]);
 
   const getAllProductsAndMaterials = useCallback(async () => {
     const callBack = (res) => {
       if (res?.success) {
+        setProducts(res?.data?.products);
         const transformProducts = (products) => {
           return {
             value: "products",
