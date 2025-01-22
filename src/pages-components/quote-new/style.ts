@@ -159,6 +159,10 @@ const useStyle = (isQuoteConfirmation) => {
           fontSize: "14px !important",
         },
       },
+      createdByContainer: {
+        ...FONT_FAMILY.Lexend(400, 16),
+          color: "#667085",
+      },
     };
   }, [isQuoteConfirmation, theme]);
   return {
