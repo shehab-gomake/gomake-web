@@ -266,7 +266,7 @@ const useMoreCircle = () => {
         },
         icon: <TickIcon />,
         name: t("sales.quote.closeAsInvoice"),
-        isLink: isOrder ? quote?.productionStatus ?? false : true,
+        isLink: isOrder ? quote?.productionStatus : true,
         href: isOrder
           ? `/invoice?isNewCreation=true&orderId=${quote?.id}`
           : `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`,
