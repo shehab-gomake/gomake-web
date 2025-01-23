@@ -241,7 +241,7 @@ const useMoreCircle = () => {
         },
         icon: <TickIcon />,
         name: t("sales.quote.closeAsDeliveryNote"),
-        isLink: quote?.productionStatus ?? false,
+        isLink: quote?.productionStatus,
         href: `/deliveryNote?isNewCreation=true&orderId=${quote?.id}`,
       },
       {
