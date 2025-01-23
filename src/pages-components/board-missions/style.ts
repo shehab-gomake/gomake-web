@@ -72,6 +72,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(550, 14),
         color: primaryColor(400),
         marginBottom: 7,
+        
       },
       inputValueStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -86,6 +87,7 @@ const useStyle = () => {
         backgroundColor: "#FFF",
         width: "100%",
         borderBottom: `0px solid #FFFFFF`,
+        padding: "0px 8px",
       },
       textInputStyle: {
         width: "100%",
@@ -116,7 +118,7 @@ const useStyle = () => {
         color: errorColor(300),
       },
       modalStyle: {
-        width: "25%",
+        width: "40%",
         borderRadius: "8px",
         height: "auto",
         maxHeight: 600,
