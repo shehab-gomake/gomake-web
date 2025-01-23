@@ -131,16 +131,19 @@ const useMoreCircle = () => {
       Permissions.SHOW_PURCHASE_ORDERS
     );
 
+    const isCreateStatus =
+      isQuote && quote?.documentStatus === QUOTE_STATUSES.Create;
+
     return [
       {
         condition: !isPauseOrder && isQuote && quote?.isEditable,
         onClick: () => {
-          const isCreateStatus =
-            quote?.documentStatus === QUOTE_STATUSES.Create;
           isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote);
         },
         icon: <EditingIcon />,
         name: t("sales.quote.edit"),
+        isLink: isCreateStatus,
+        href: `/quote`,
       },
       {
         condition:
