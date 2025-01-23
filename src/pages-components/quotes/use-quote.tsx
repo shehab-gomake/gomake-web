@@ -113,13 +113,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList();
   // const [patternSearch, setPatternSearch] = useState<any>(null);
-  // const [finalPatternSearch, setFinalPatternSearch] = useState("");
-
   const [patternSearch, setPatternSearch] = useState<any>(
     router.query.finalPatternSearch || null
   );
   const [finalPatternSearch, setFinalPatternSearch] = useState<any>("");
-
   const [statusId, setStatusId] = useState<any>();
   const [approvalStatusId, setApprovalStatusId] = useState<any>();
   const [quoteStatusId, setQuoteStatusId] = useState<any>();
@@ -1209,13 +1206,31 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     // getAllQuotesInitial(); // move to useEffect
   };
 
+  //!Old code please don't delete it
+  // useEffect(() => {
+  //   const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
+  //   if (!isFromHomePage) {
+  //     if (isNotFilteredData) getAllQuotesInitial();
+  //     else getAllQuotes();
+  //   }
+  // }, [pageSize, router]);
+
+  const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
   useEffect(() => {
     const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
+
+    // Serialize the current query for comparison
+    const serializedQuery = JSON.stringify(router.query);
+
     if (!isFromHomePage) {
-      if (isNotFilteredData) getAllQuotesInitial();
-      else getAllQuotes();
+      if (isNotFilteredData) {
+        getAllQuotesInitial();
+      } else if (hasFetchedQuery !== serializedQuery) {
+        getAllQuotes();
+        setHasFetchedQuery(serializedQuery); // Mark this query as fetched
+      }
     }
-  }, [pageSize, router]);
+  }, [pageSize, router.query]);
 
   const tableHeaders = isPurchaseOrder
     ? [
@@ -2371,30 +2386,65 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setPatternSearch(value);
   };
 
+  //!Old code please don't delete it
+  // const debouncePatternSearch = useDebounce(patternSearch, 1000);
+  // useEffect(() => {
+  //   const trimmedSearch = debouncePatternSearch?.trim() || "";
+  //   setFinalPatternSearch(trimmedSearch);
+  //   if (trimmedSearch === "") {
+  //     const { finalPatternSearch, ...remainingQuery } = router.query;
+  //     router.push({
+  //       pathname: router.pathname,
+  //       query: {
+  //         ...remainingQuery,
+  //         pageNumber: 1, // Optional: reset page on clear
+  //       },
+  //     });
+  //     return;
+  //   }
+
+  //   router.push({
+  //     pathname: router.pathname,
+  //     query: {
+  //       ...router.query,
+  //       finalPatternSearch: trimmedSearch,
+  //       pageNumber: 1,
+  //     },
+  //   });
+  // }, [debouncePatternSearch]);
+
   const debouncePatternSearch = useDebounce(patternSearch, 1000);
   useEffect(() => {
-    const trimmedSearch = debouncePatternSearch?.trim() || "";
+    if (debouncePatternSearch == null) return;
+
+    const trimmedSearch = debouncePatternSearch.trim();
     setFinalPatternSearch(trimmedSearch);
-    if (trimmedSearch === "") {
-      const { finalPatternSearch, ...remainingQuery } = router.query;
-      router.push({
-        pathname: router.pathname,
-        query: {
-          ...remainingQuery,
-          pageNumber: 1, // Optional: reset page on clear
-        },
-      });
-      return;
+
+    // Create a new query object
+    const newQuery = { ...router.query };
+
+    if (trimmedSearch) {
+      newQuery.finalPatternSearch = trimmedSearch;
+      newQuery.pageNumber = "1";
+    } else {
+      delete newQuery.finalPatternSearch; // Remove the parameter if empty
+      newQuery.pageNumber = "1";
     }
 
-    router.push({
-      pathname: router.pathname,
-      query: {
-        ...router.query,
-        finalPatternSearch: trimmedSearch,
-        pageNumber: 1,
-      },
-    });
+    // Only push if the query is actually changing
+    const hasQueryChanged =
+      JSON.stringify(newQuery) !== JSON.stringify(router.query);
+
+    if (hasQueryChanged) {
+      router.push(
+        {
+          pathname: router.pathname,
+          query: newQuery,
+        },
+        undefined,
+        { shallow: true } // Optional: prevents full page reload
+      );
+    }
   }, [debouncePatternSearch]);
 
   const [openDuplicateModal, setOpenDuplicateModal] = useState<boolean>(false);
