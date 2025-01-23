@@ -65,7 +65,7 @@ import {
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import {
   clientTypesCategoriesState,
-  isSelectedCLoseAsDeleveryNoteState,
+  isSelectedCLoseAsDeliveryNoteState,
 } from "@/pages/customers/customer-states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import {
@@ -279,8 +279,8 @@ const useQuoteNew = ({
   const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] =
     useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>({});
-  const isSelectedCLoseAsDeleveryNote = useRecoilValue(
-    isSelectedCLoseAsDeleveryNoteState
+  const isSelectedCLoseAsDeliveryNote = useRecoilValue(
+    isSelectedCLoseAsDeliveryNoteState
   );
   const onClickCloseChangeProductionStatusModal = () => {
     setOpenChangeProductionStatusModal(false);
@@ -1946,10 +1946,11 @@ const useQuoteNew = ({
     router.query.isNewCreation &&
     (isDeliveryNote || isInvoice)
   );
+
   const moveOrderToReady = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        if (isSelectedCLoseAsDeleveryNote) {
+        if (isSelectedCLoseAsDeliveryNote) {
           navigate(
             `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
           );
@@ -2235,7 +2236,7 @@ const useQuoteNew = ({
     openChangeProductionStatusModal,
     onClickCloseChangeProductionStatusModal,
     selectedDocument,
-    isSelectedCLoseAsDeleveryNote,
+    isSelectedCLoseAsDeliveryNote,
     navigate,
     moveOrderToReady,
     allClientActiveBudgets,

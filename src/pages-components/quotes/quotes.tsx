@@ -176,7 +176,7 @@ const QuotesListPageWidget = ({
     ExportDocumentTableToExcel,
     isFetching,
     openChangeProductionStatusModal,
-    isSelectedCLoseAsDeleveryNote,
+    isSelectedCLoseAsDeliveryNote,
     onClickCloseChangeProductionStatusModal,
     moveOrderToReady,
     onChangeDocumentSearch,
@@ -861,15 +861,15 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseChangeProductionStatusModal}
         onClickDelete={moveOrderToReady}
         onClickCancel={() => {
-          if (isSelectedCLoseAsDeleveryNote) {
-            navigate(
-              `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-            );
+          if (isSelectedCLoseAsDeliveryNote) {
+            const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
+            window.open(path, "_blank");
           } else {
+            // i think no need for the condition because his modal only for order
             const path = isOrder
               ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
               : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-            navigate(path);
+            window.open(path, "_blank");
           }
         }}
       />
