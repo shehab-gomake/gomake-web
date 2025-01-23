@@ -493,7 +493,10 @@ const QuoteNewPageWidget = ({
                 <div style={classes.datesContainer}>
                   {
                     !isQuoteConfirmation && quoteState?.createdBy &&
-                    <div style={classes.createdByContainer}>{t("sales.quote.createdBy", { name: quoteState?.createdBy })}</div>
+                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 10 }}>
+                      <div style={classes.createdByContainer}>{t("sales.quote.createBy")}</div>
+                      <div style={classes.createdByContainer}>{quoteState?.createdBy}</div>
+                    </div>
                   }
                   <ThemeProvider theme={theme}>
                     <CssBaseline />
