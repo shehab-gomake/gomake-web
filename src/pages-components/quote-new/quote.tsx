@@ -261,7 +261,7 @@ const QuoteNewPageWidget = ({
     openChangeProductionStatusModal,
     onClickCloseChangeProductionStatusModal,
     selectedDocument,
-    isSelectedCLoseAsDeleveryNote,
+    isSelectedCLoseAsDeliveryNote,
     allClientActiveBudgets,
     moveOrderToReady,
     navigate,
@@ -864,7 +864,7 @@ const QuoteNewPageWidget = ({
         onClose={onClickCloseChangeProductionStatusModal}
         onClickDelete={moveOrderToReady}
         onClickCancel={() => {
-          if (isSelectedCLoseAsDeleveryNote) {
+          if (isSelectedCLoseAsDeliveryNote) {
             navigate(
               `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
             );
