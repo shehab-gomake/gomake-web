@@ -5,7 +5,7 @@ import { useStyle } from "../style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
 
-const PrintPackingSlipModal = ({ openPackagesModal, onClosePackagesModal, packageInputs, quantityOfPackages, quantityPerPackage, handleQuantityOfPackagesChange, handleQuantityPerPackageChange , onClickConfirm}: any) => {
+const PrintPackingSlipModal = ({ openPackagesModal, onClosePackagesModal, packageInputs, quantityOfPackages, quantityPerPackage, handleQuantityOfPackagesChange, handleQuantityPerPackageChange, onClickConfirm }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
 
@@ -15,7 +15,7 @@ const PrintPackingSlipModal = ({ openPackagesModal, onClosePackagesModal, packag
       onClose={onClosePackagesModal}
       modalTitle={t("boardMissions.packagesTitle")}
       insideStyle={classes.modalStyle}
-      style={{zIndex: 999999}}
+      style={{ zIndex: 999999 }}
     >
       <Stack direction={"column"} gap={"15px"}>
         <Stack direction={"column"} gap={"15px"}>
@@ -46,8 +46,10 @@ const PrintPackingSlipModal = ({ openPackagesModal, onClosePackagesModal, packag
               />
             </div>
           </Stack>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
+            {packageInputs}
+          </div>
 
-          {packageInputs}
         </Stack>
         <Stack direction={"row"} gap={"15px"}>
           <SecondaryButton variant={'contained'} onClick={onClickConfirm} >{t('modal.confirm')}</SecondaryButton>
