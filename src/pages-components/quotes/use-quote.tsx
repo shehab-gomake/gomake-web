@@ -112,8 +112,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
   const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList();
-  const [patternSearch, setPatternSearch] = useState<any>(null);
-  const [finalPatternSearch, setFinalPatternSearch] = useState("");
+  // const [patternSearch, setPatternSearch] = useState<any>(null);
+  // const [finalPatternSearch, setFinalPatternSearch] = useState("");
+
+  const [patternSearch, setPatternSearch] = useState<any>(
+    router.query.finalPatternSearch || null
+  );
+  const [finalPatternSearch, setFinalPatternSearch] = useState<any>("");
+
   const [statusId, setStatusId] = useState<any>();
   const [approvalStatusId, setApprovalStatusId] = useState<any>();
   const [quoteStatusId, setQuoteStatusId] = useState<any>();
@@ -490,9 +496,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.jobs
             );
 
-            const statusPayment = `${quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
-              }/${quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-              }`;
+            const statusPayment = `${
+              quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
+            }/${
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+            }`;
 
             return [
               GetDateFormat(quote?.createdDate),
@@ -524,8 +532,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               isOrdersTracking
                 ? statusPayment
                 : quote?.totalPrice +
-                " " +
-                getCurrencyUnitText(quote?.currency),
+                  " " +
+                  getCurrencyUnitText(quote?.currency),
               quote?.notes,
               <ClickableStatusButton
                 id={quote?.id}
@@ -681,34 +689,34 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const currentMaxPrice = router.query.maxPrice;
     const currentFromDate = router.query.fromDate
       ? new Date(
-        Array.isArray(router.query.fromDate)
-          ? router.query.fromDate[0]
-          : router.query.fromDate
-      )
+          Array.isArray(router.query.fromDate)
+            ? router.query.fromDate[0]
+            : router.query.fromDate
+        )
       : null;
     const currentToDate = router.query.toDate
       ? new Date(
-        Array.isArray(router.query.toDate)
-          ? router.query.toDate[0]
-          : router.query.toDate
-      )
+          Array.isArray(router.query.toDate)
+            ? router.query.toDate[0]
+            : router.query.toDate
+        )
       : null;
     const currentAccountingStatus = router.query.accountingStatus
       ? accountingStatuses.find(
-        (status) => status.value === Number(router.query.accountingStatus)
-      )
+          (status) => status.value === Number(router.query.accountingStatus)
+        )
       : null;
 
     const currentDeliveryStatusStatus = router.query.deliveryStatus
       ? deliveryStatuses.find(
-        (status) => status.value === Number(router.query.deliveryStatus)
-      )
+          (status) => status.value === Number(router.query.deliveryStatus)
+        )
       : null;
 
     const currentProductionStatus = router.query.productionStatus
       ? productionStatuses.find(
-        (status) => status.value === Number(router.query.productionStatus)
-      )
+          (status) => status.value === Number(router.query.productionStatus)
+        )
       : null;
     const currentIsCanceled = router.query.isCanceled;
     const currentIsPaused = router.query.isPaused;
@@ -749,7 +757,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           productionStatus:
             currentProductionStatus?.value || productionStatus?.value,
           patternSearch:
-            finalPatternSearch !== null && finalPatternSearch !== undefined
+            finalPatternSearch !== null &&
+            finalPatternSearch !== undefined &&
+            finalPatternSearch !== ""
               ? finalPatternSearch
               : currentFinalPatternSearch,
           customerId: currentCustomerId || customerId?.id,
@@ -794,7 +804,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickDocumentLogs,
   ]);
 
-  const { } = useDocumentsSignalR({ getAllQuotes, docType });
+  const {} = useDocumentsSignalR({ getAllQuotes, docType });
 
   const getAllQuotesInitial = async () => {
     const callBack = (res) => {
@@ -907,9 +917,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.jobs
             );
 
-            const statusPayment = `${quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
-              }/${quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-              }`;
+            const statusPayment = `${
+              quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
+            }/${
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+            }`;
             return [
               GetDateFormat(quote?.createdDate),
               <div
@@ -940,8 +952,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               isOrdersTracking
                 ? statusPayment
                 : quote?.totalPrice +
-                " " +
-                getCurrencyUnitText(quote?.currency),
+                  " " +
+                  getCurrencyUnitText(quote?.currency),
               quote?.notes,
               <ClickableStatusButton
                 id={quote?.id}
@@ -1207,19 +1219,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const tableHeaders = isPurchaseOrder
     ? [
-      t("sales.quote.creationDate"),
-      t("sales.quote.purchaseOrderNumber"),
-      t("sales.quote.orderNumber"),
-      t("sales.quote.supplierName"),
-      t("sales.quote.client"),
-      t("sales.quote.itemsNumber"),
-      t("sales.quote.totalPrice"),
-      t("sales.quote.notes"),
-      t("sales.quote.status"),
-      t("sales.quote.more"),
-    ]
+        t("sales.quote.creationDate"),
+        t("sales.quote.purchaseOrderNumber"),
+        t("sales.quote.orderNumber"),
+        t("sales.quote.supplierName"),
+        t("sales.quote.client"),
+        t("sales.quote.itemsNumber"),
+        t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ]
     : isPurchaseInvoice || isPurchaseInvoiceRefund
-      ? [
+    ? [
         t("sales.quote.creationDate"),
         t("sales.quote.purchaseInvoiceNumber"),
         t("sales.quote.invoiceNumber"),
@@ -1231,68 +1243,68 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         t("sales.quote.status"),
         t("sales.quote.more"),
       ]
-      : isQuote
-        ? [
-          t("sales.quote.createdDate"),
-          t("sales.quote.client"),
-          t("sales.quote.agent"),
-          t("documentingDesign.TableSetting.number"),
-          t("sales.quote.worksName"),
-          t("sales.quote.totalPrice"),
-          t("sales.quote.notes"),
-          t("sales.quote.status"),
-          t("sales.quote.more"),
-        ]
-        : [
-          t("sales.quote.createdDate"),
-          t("sales.quote.client"),
-          t("sales.quote.agent"),
-          (() => {
-            switch (docType) {
-              case DOCUMENT_TYPE.order:
-                return t("sales.quote.orderNumber");
-              // case DOCUMENT_TYPE.deliveryNote:
-              //   return t("documentingDesign.TableSetting.number");
-              // case DOCUMENT_TYPE.deliveryNoteRefund:
-              //   return t("sales.quote.deliveryNoteNumber");
-              // case DOCUMENT_TYPE.invoice:
-              //   return t("sales.quote.invoiceNumber");
-              // case DOCUMENT_TYPE.invoiceRefund:
-              //   return t("sales.quote.invoiceNumber");
-              // case DOCUMENT_TYPE.receipt:
-              //   return t("sales.quote.receiptNumber");
-              default:
-                return t("documentingDesign.TableSetting.number");
-            }
-          })(),
-          isOrder
-            ? t("sales.quote.quoteNumber")
-            : isReceipt
-              ? null
-              : t("sales.quote.sourceDocument"),
+    : isQuote
+    ? [
+        t("sales.quote.createdDate"),
+        t("sales.quote.client"),
+        t("sales.quote.agent"),
+        t("documentingDesign.TableSetting.number"),
+        t("sales.quote.worksName"),
+        t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ]
+    : [
+        t("sales.quote.createdDate"),
+        t("sales.quote.client"),
+        t("sales.quote.agent"),
+        (() => {
+          switch (docType) {
+            case DOCUMENT_TYPE.order:
+              return t("sales.quote.orderNumber");
+            // case DOCUMENT_TYPE.deliveryNote:
+            //   return t("documentingDesign.TableSetting.number");
+            // case DOCUMENT_TYPE.deliveryNoteRefund:
+            //   return t("sales.quote.deliveryNoteNumber");
+            // case DOCUMENT_TYPE.invoice:
+            //   return t("sales.quote.invoiceNumber");
+            // case DOCUMENT_TYPE.invoiceRefund:
+            //   return t("sales.quote.invoiceNumber");
+            // case DOCUMENT_TYPE.receipt:
+            //   return t("sales.quote.receiptNumber");
+            default:
+              return t("documentingDesign.TableSetting.number");
+          }
+        })(),
+        isOrder
+          ? t("sales.quote.quoteNumber")
+          : isReceipt
+          ? null
+          : t("sales.quote.sourceDocument"),
 
-          isOrder && t("sales.quote.purchaseNumber"),
-          isOrder && t("sales.quote.productionStatus"),
-          isOrder && t("sales.quote.jobs"),
-          isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
-            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
-              {t("sales.quote.cost")}
-            </PermissionCheck>
-          ),
-          isReceipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
-          isOrdersTracking
-            ? t("customers.modal.paymentStatus")
-            : t("sales.quote.totalPrice"),
-          t("sales.quote.notes"),
-          (isOrder ||
-            isInvoice ||
-            isInvoiceRefund ||
-            isDeliveryNote ||
-            isDeliveryNoteRefund) &&
+        isOrder && t("sales.quote.purchaseNumber"),
+        isOrder && t("sales.quote.productionStatus"),
+        isOrder && t("sales.quote.jobs"),
+        isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
+          <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
+            {t("sales.quote.cost")}
+          </PermissionCheck>
+        ),
+        isReceipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
+        isOrdersTracking
+          ? t("customers.modal.paymentStatus")
+          : t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        (isOrder ||
+          isInvoice ||
+          isInvoiceRefund ||
+          isDeliveryNote ||
+          isDeliveryNoteRefund) &&
           t("sales.documentDeliveries.deliveryStatus"),
-          t("sales.quote.status"),
-          t("sales.quote.more"),
-        ].filter(Boolean);
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ].filter(Boolean);
 
   const logsTableHeaders = [
     t("sales.quote.actionDate"),
@@ -1615,8 +1627,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       case LogActionType[8]:
         return t("logs.CONTACTS_UPDATED");
       case LogActionType[9]:
-        return `${t("logs.CLIENT_UPDATED")} ${t("logs.from")} "${values[0]
-          }" ${t("logs.to")} "${values[1]}"`;
+        return `${t("logs.CLIENT_UPDATED")} ${t("logs.from")} "${
+          values[0]
+        }" ${t("logs.to")} "${values[1]}"`;
       case LogActionType[10]:
         if (values[0] === null) {
           return `${t("logs.AGENT_UPDATED")} ${t("logs.to")} ${values[1]}`;
@@ -1627,18 +1640,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         }
       case LogActionType[11]:
         if (values[0] === null) {
-          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.to")} "${values[1]
-            }"`;
+          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.to")} "${
+            values[1]
+          }"`;
         } else {
-          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.from")} ${values[0]
-            } ${t("logs.to")} ${values[1]}`;
+          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.from")} ${
+            values[0]
+          } ${t("logs.to")} ${values[1]}`;
         }
       case LogActionType[12]:
         if (values[0] === null) {
           return `${t("logs.COMMENTS_UPDATE")} ${t("logs.to")} "${values[1]}"`;
         } else {
-          return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${values[0]
-            }" ${t("logs.to")} "${values[1]}"`;
+          return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${
+            values[0]
+          }" ${t("logs.to")} "${values[1]}"`;
         }
       case LogActionType[13]:
         return `${t("logs.DOCUMENT_DUPLICATED", {
@@ -1677,7 +1693,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     return EMessageStatus[status] ? message : "";
   };
 
-
   const getAllDocumentLogs = (
     documentId?: string,
     isClear: boolean = false
@@ -1690,7 +1705,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             getFormattedLocalDate(log?.actionDate),
             log?.employeeName,
             getLogDescription(log?.logAction, log?.values, log?.documentType),
-            getMessageStatus(log?.messageStatus)
+            getMessageStatus(log?.messageStatus),
           ]);
           setDocumentLogsData(mapData);
           resolve();
@@ -1706,14 +1721,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           documentId: documentId,
           data: isClear
             ? {
-              fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
-              toDate: toLogsDate && GetDateFormat(toLogsDate),
-            }
+                fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
+                toDate: toLogsDate && GetDateFormat(toLogsDate),
+              }
             : {
-              userId: employeeId?.id,
-              fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
-              toDate: toLogsDate && GetDateFormat(toLogsDate),
-            },
+                userId: employeeId?.id,
+                fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
+                toDate: toLogsDate && GetDateFormat(toLogsDate),
+              },
         });
       } catch (error) {
         reject();
