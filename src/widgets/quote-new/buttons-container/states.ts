@@ -29,7 +29,7 @@ export interface TransferTabData {
   transferAccount: any;
   transferSum: number;
   transferReference: string;
-  transferDate: string;
+  transferDate: string | Date;
 }
 
 export interface prevStateStateData {
@@ -121,7 +121,7 @@ export const transferTabState = atom<TransferTabData>({
     transferAccount: "",
     transferSum: 0,
     transferReference: "",
-    transferDate: null,
+    transferDate: new Date().toISOString().split("T")[0],
   },
 });
 
