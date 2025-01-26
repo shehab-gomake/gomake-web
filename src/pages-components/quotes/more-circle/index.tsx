@@ -55,18 +55,35 @@ const MoreMenuWidget = ({
 
   return (
     <OptionsButton>
-      {menuList.map(
-        (item, index) =>
-          item?.condition && (
-            <MenuItem
-              style={classes.menuRowStyle}
-              key={index}
-              onClick={item.onClick}
-            >
-              {item.icon}
-              <div style={classes.rowTextStyle}>{item.name}</div>
-            </MenuItem>
-          )
+      {menuList.map((item, index) =>
+        item?.condition ? (
+          <MenuItem
+            style={classes.menuRowStyle}
+            key={index}
+            onClick={item.onClick}
+          >
+            {item?.isLink ? (
+              <a
+                href={item.href || "#"}
+                style={{
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  width: "100%",
+                  gap: 8,
+                }}
+              >
+                {item.icon}
+                <span style={classes.rowTextStyle}>{item.name}</span>
+              </a>
+            ) : (
+              <>
+                {item.icon}
+                <div style={classes.rowTextStyle}>{item.name}</div>
+              </>
+            )}
+          </MenuItem>
+        ) : null
       )}
     </OptionsButton>
   );

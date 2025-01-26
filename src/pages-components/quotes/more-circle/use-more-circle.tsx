@@ -1,4 +1,9 @@
-import {useCustomer, useGomakeAxios, useGomakeRouter, useSnackBar} from "@/hooks";
+import {
+  useCustomer,
+  useGomakeAxios,
+  useGomakeRouter,
+  useSnackBar,
+} from "@/hooks";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 import { EditingIcon } from "./icons/editing";
@@ -15,28 +20,34 @@ import { useStyle } from "@/pages-components/quotes/more-circle/style";
 import { useRouter } from "next/router";
 import { TrackingIcon } from "./icons/tracking";
 import { UnLockIcon } from "./icons/unlock";
-import {useRecoilState, useSetRecoilState} from "recoil";
-import { isSelectedCLoseAsDeleveryNoteState } from "@/pages/customers/customer-states";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { isSelectedCLoseAsDeliveryNoteState } from "@/pages/customers/customer-states";
 import { PauseIcon } from "@/icons/pause-icon";
 import { ResumeIcon } from "@/icons/resume-icon";
 import { PayIcon } from "./icons/pay";
 import { StartProductionIcon } from "./icons/start-productions";
-import {printHouseProfile} from "@/store/print-house-profile";
+import { printHouseProfile } from "@/store/print-house-profile";
+import { addOrderBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 import {
-  addOrderBoardMissionsToFileUploaderApi
-} from "@/services/api-service/board-missions/board-missions-table";
-import {fileUploaderConnectionIdState, openFileUploaderList, pinFileUploaderState} from "@/store/file-uploader-state";
+  fileUploaderConnectionIdState,
+  openFileUploaderList,
+  pinFileUploaderState,
+} from "@/store/file-uploader-state";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
-  const isSendPaymentToClient = CheckPermission(Permissions.SHOW_PRODUCTION_FLOOR);
+  const isSendPaymentToClient = CheckPermission(
+    Permissions.SHOW_PRODUCTION_FLOOR
+  );
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
-
+  const setIsSelectedCLoseAsDeliveryNote = useSetRecoilState(
+    isSelectedCLoseAsDeliveryNoteState
+  );
   const getMenuList = ({
     t,
     quote,
@@ -63,7 +74,7 @@ const useMoreCircle = () => {
     const documentPath = DOCUMENT_TYPE[documentType];
     const { callApi } = useGomakeAxios();
     const { pathname } = useRouter();
-    const {alertFaultAdded} = useSnackBar();
+    const { alertFaultAdded } = useSnackBar();
 
     const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
       const callBack = (res) => {
@@ -77,10 +88,7 @@ const useMoreCircle = () => {
         documentId: quoteItem?.id,
       });
     };
-    const { classes } = useStyle();
-    const setIsSelectedCLoseAsDeleveryNote = useSetRecoilState(
-      isSelectedCLoseAsDeleveryNoteState
-    );
+
     const addOrderBoardMissionsToFileUploader = async (orderId) => {
       const callBack = (res) => {
         if (res?.success) {
@@ -112,7 +120,8 @@ const useMoreCircle = () => {
     const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
     const isClosedOrder = quote?.statusTitleText === "Order.Closed";
     const isPauseOrder = quote?.statusTitleText === "Order.Paused";
-    const isPrePaymentOrder = isOrder && quote?.statusTitleText === "Order.WaitingForPayment";
+    const isPrePaymentOrder =
+      isOrder && quote?.statusTitleText === "Order.WaitingForPayment";
 
     const isShowLogs = CheckPermission(Permissions.SHOW_LOGS);
     const isSendPaymentToClient = CheckPermission(
@@ -122,16 +131,19 @@ const useMoreCircle = () => {
       Permissions.SHOW_PURCHASE_ORDERS
     );
 
+    const isCreateStatus =
+      isQuote && quote?.documentStatus === QUOTE_STATUSES.Create;
+
     return [
       {
         condition: !isPauseOrder && isQuote && quote?.isEditable,
         onClick: () => {
-          const isCreateStatus =
-            quote?.documentStatus === QUOTE_STATUSES.Create;
           isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote);
         },
         icon: <EditingIcon />,
         name: t("sales.quote.edit"),
+        isLink: isCreateStatus,
+        href: `/quote`,
       },
       {
         condition:
@@ -140,14 +152,9 @@ const useMoreCircle = () => {
           quote?.isEditable,
         onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
         icon: <EditingIcon />,
-        name: (
-          <a
-            style={classes.rowTextStyle}
-            href={`/${documentPath}?Id=${quote?.id}`}
-          >
-            {t("sales.quote.edit")}
-          </a>
-        ),
+        name: t("sales.quote.edit"),
+        isLink: true,
+        href: `/${documentPath}?Id=${quote?.id}`,
       },
       {
         condition:
@@ -201,6 +208,8 @@ const useMoreCircle = () => {
           ),
         icon: <DuplicateIcon />,
         name: t("sales.quote.duplicate"),
+        isLink: true,
+        href: `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`,
       },
       {
         condition:
@@ -211,14 +220,9 @@ const useMoreCircle = () => {
           CheckPermission(Permissions.SHOW_BOARD_MISSIONS),
         onClick: () => navigate(`/jobs?finalPatternSearch=${quote?.number}`),
         icon: <JobsIcon />,
-        name: (
-          <a
-            style={classes.rowTextStyle}
-            href={`/jobs?finalPatternSearch=${quote?.number}`}
-          >
-            {t("sales.quote.jobs")}
-          </a>
-        ),
+        name: t("sales.quote.jobs"),
+        isLink: true,
+        href: `/jobs?finalPatternSearch=${quote?.number}`,
       },
       {
         condition:
@@ -228,13 +232,17 @@ const useMoreCircle = () => {
           !isCanceledOrder &&
           quote?.isEditable,
         onClick: () => {
-          quote?.productionStatus
-            ? navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`)
-            : onClickOpenChangeProductionStatusModal(quote);
-          setIsSelectedCLoseAsDeleveryNote(true);
+          if (quote?.productionStatus) {
+            navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`);
+          } else {
+            onClickOpenChangeProductionStatusModal(quote);
+            setIsSelectedCLoseAsDeliveryNote(true);
+          }
         },
         icon: <TickIcon />,
         name: t("sales.quote.closeAsDeliveryNote"),
+        isLink: quote?.productionStatus,
+        href: `/deliveryNote?isNewCreation=true&orderId=${quote?.id}`,
       },
       {
         condition:
@@ -250,7 +258,7 @@ const useMoreCircle = () => {
               navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`);
             } else {
               onClickOpenChangeProductionStatusModal(quote);
-              setIsSelectedCLoseAsDeleveryNote(false);
+              setIsSelectedCLoseAsDeliveryNote(false);
             }
           } else {
             navigate(`/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`);
@@ -258,6 +266,10 @@ const useMoreCircle = () => {
         },
         icon: <TickIcon />,
         name: t("sales.quote.closeAsInvoice"),
+        isLink: isOrder ? quote?.productionStatus : true,
+        href: isOrder
+          ? `/invoice?isNewCreation=true&orderId=${quote?.id}`
+          : `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`,
       },
       {
         condition:
@@ -278,6 +290,8 @@ const useMoreCircle = () => {
           ),
         icon: <TickIcon />,
         name: t("sales.quote.createDeliveryNoteRefund"),
+        isLink: true,
+        href: `/deliveryNoteRefund?isNewCreation=true&documentId=${quote?.id}`,
       },
       {
         condition: !isPauseOrder && isInvoice && quote?.isCanClose,
@@ -285,6 +299,8 @@ const useMoreCircle = () => {
           navigate(`/invoiceRefund?isNewCreation=true&documentId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.createInvoiceRefund"),
+        isLink: true,
+        href: `/invoiceRefund?isNewCreation=true&documentId=${quote?.id}`,
       },
       {
         condition: !isPauseOrder && isPurchaseInvoice && quote?.isCanClose,
@@ -294,6 +310,8 @@ const useMoreCircle = () => {
           ),
         icon: <TickIcon />,
         name: t("sales.quote.createPurchaseInvoiceRefund"),
+        isLink: true,
+        href: `/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`,
       },
       {
         condition: !isPauseOrder && isPurchaseOrder && quote?.isCanClose,
@@ -301,6 +319,8 @@ const useMoreCircle = () => {
           navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
         name: t("sales.quote.closeAsPurchaseInvoice"),
+        isLink: true,
+        href: `/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`,
       },
       {
         condition:
@@ -350,8 +370,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-              ? onOpenCancelReceiptModalRefund(quote)
-              : onOpenCancelReceiptModal(quote),
+            ? onOpenCancelReceiptModalRefund(quote)
+            : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
@@ -363,6 +383,8 @@ const useMoreCircle = () => {
           ),
         icon: <PayIcon />,
         name: t("sales.quote.pay"),
+        isLink: true,
+        href: `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`,
       },
       {
         condition:
@@ -402,7 +424,7 @@ const useMoreCircle = () => {
       {
         condition: !!companyProfile.filesApiAddress,
         onClick: () => addOrderBoardMissionsToFileUploader(quote?.id),
-        icon: <PDFIcon/>,
+        icon: <PDFIcon />,
         name: t("fileUploader.uploadFile"),
       },
     ];
