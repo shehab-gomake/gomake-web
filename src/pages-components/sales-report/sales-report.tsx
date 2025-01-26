@@ -23,7 +23,7 @@ const SalesReportWidget = () => {
     onChangeDisplayByGroups,
     handleDocumentTypeChange,
     documentType,
-    documentsTypeList,
+    reportsTypeList,
     displayByGroups,
     tableHeaders,
     getTotalTableDataRows,
@@ -50,7 +50,7 @@ const SalesReportWidget = () => {
         handleCustomerChange={handleCustomerChange}
         displayByGroups={displayByGroups}
         onChangeDisplayByGroups={onChangeDisplayByGroups}
-        documentsTypeList={documentsTypeList}
+        reportsTypeList={reportsTypeList}
         handleDocumentTypeChange={handleDocumentTypeChange}
         documentType={documentType}
         handleDateChange={handleDateChange}
