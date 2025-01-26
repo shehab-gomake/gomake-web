@@ -10,6 +10,7 @@ import {
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useTranslation } from "react-i18next";
 import { endOfToday, startOfYear } from "date-fns";
+import { ReportsType } from "@/enums";
 
 const useSalesReport = () => {
   const { callApi } = useGomakeAxios();
@@ -24,7 +25,7 @@ const useSalesReport = () => {
     isFetching,
   } = useCustomerDropDownList();
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
-  const { documentsTypeList, documentType, handleDocumentTypeChange } =
+  const { reportsTypeList, documentType, handleDocumentTypeChange } =
     useDocumentsType();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [displayByGroups, setDisplayByGroups] = useState<boolean>(false);
@@ -84,50 +85,68 @@ const useSalesReport = () => {
   ];
 
   function sumAllItems(salesReports) {
-    return salesReports?.reduce((total, report) => {
-      for (const key in report) {
+    if (!salesReports || !salesReports.length) return {};
+    return salesReports.reduce((total, report) => {
+      Object.keys(report).forEach((key) => {
         if (typeof report[key] === "number") {
           total[key] = (total[key] || 0) + report[key];
         }
-      }
+      });
       return total;
     }, {});
   }
 
-  const totalSum = sumAllItems(tableData);
+  const totalSum = tableData?.length ? sumAllItems(tableData) : {};
   const getTableDataRows = useCallback(() => {
-    if (tableData?.length) {
-      return tableData?.map((data) => [
-        data?.cardCode,
-        data?.cardName,
-        data?.totalSalesAmount,
-        data?.totalRefundsAmount,
-        data?.prevSales.toFixed(2),
-        data?.prev3MonthSales.toFixed(2),
-        data?.prev2MonthSales.toFixed(2),
-        data?.prevMonthSales.toFixed(2),
-        data?.thisMonthSales.toFixed(2),
-        data?.totalSales.toFixed(2),
-      ]);
-    }
+    if (!tableData?.length) return [];
+    return tableData.map((data) => [
+      data?.cardCode || "",
+      data?.cardName || "",
+      data?.totalSalesAmount?.toFixed(2) || "0.00",
+      data?.totalRefundsAmount?.toFixed(2) || "0.00",
+      data?.prevSales?.toFixed(2) || "0.00",
+      data?.prev3MonthSales?.toFixed(2) || "0.00",
+      data?.prev2MonthSales?.toFixed(2) || "0.00",
+      data?.prevMonthSales?.toFixed(2) || "0.00",
+      data?.thisMonthSales?.toFixed(2) || "0.00",
+      data?.totalSales?.toFixed(2) || "0.00",
+    ]);
   }, [tableData]);
 
   const getTotalTableDataRows = useCallback(() => {
-    if ([totalSum]?.length) {
-      return [totalSum]?.map((data) => [
+    if (!totalSum || !Object.keys(totalSum).length) return [];
+    return [
+      [
         t("reports.SumOfColumns"),
         "",
-        data?.totalSalesAmount,
-        data?.totalRefundsAmount,
-        data?.prevSales.toFixed(2),
-        data?.prev3MonthSales.toFixed(2),
-        data?.prev2MonthSales.toFixed(2),
-        data?.prevMonthSales.toFixed(2),
-        data?.thisMonthSales.toFixed(2),
-        data?.totalSales.toFixed(2),
-      ]);
-    }
-  }, [tableData]);
+        totalSum.totalSalesAmount?.toFixed(2) || "0.00",
+        totalSum.totalRefundsAmount?.toFixed(2) || "0.00",
+        totalSum.prevSales?.toFixed(2) || "0.00",
+        totalSum.prev3MonthSales?.toFixed(2) || "0.00",
+        totalSum.prev2MonthSales?.toFixed(2) || "0.00",
+        totalSum.prevMonthSales?.toFixed(2) || "0.00",
+        totalSum.thisMonthSales?.toFixed(2) || "0.00",
+        totalSum.totalSales?.toFixed(2) || "0.00",
+      ],
+    ];
+  }, [totalSum, t]);
+
+  // const getTotalTableDataRows = useCallback(() => {
+  //   if ([totalSum]?.length && totalSum) {
+  //     return [totalSum]?.map((data) => [
+  //       t("reports.SumOfColumns"),
+  //       "",
+  //       data?.totalSalesAmount,
+  //       data?.totalRefundsAmount,
+  //       data?.prevSales.toFixed(2),
+  //       data?.prev3MonthSales.toFixed(2),
+  //       data?.prev2MonthSales.toFixed(2),
+  //       data?.prevMonthSales.toFixed(2),
+  //       data?.thisMonthSales.toFixed(2),
+  //       data?.totalSales.toFixed(2),
+  //     ]);
+  //   } else return [];
+  // }, [tableData]);
 
   const onClickBtn1 = () => {
     setShowTable(false);
@@ -151,7 +170,7 @@ const useSalesReport = () => {
         endDate: formattedEndDate,
         clientId: customer?.id,
         agentId: agent?.id,
-        documentsType: documentType,
+        reportType: documentType ? documentType?.id : ReportsType.allInvoices,
         displayByGroup: displayByGroups,
       }
     );
@@ -193,7 +212,7 @@ const useSalesReport = () => {
     onChangeDisplayByGroups,
     documentType,
     handleDocumentTypeChange,
-    documentsTypeList,
+    reportsTypeList,
     tableHeaders,
     getTotalTableDataRows,
     handleDateChange,
