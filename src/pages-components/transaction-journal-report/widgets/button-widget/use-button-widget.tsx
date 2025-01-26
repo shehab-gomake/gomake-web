@@ -22,6 +22,8 @@ const useLedgerReportHeader = ({
   const isAccountingTransaction =
     reportType === EReportType.AccountingTransaction;
   const isAdjustmentsReport = reportType === EReportType.AdjustmentsReport;
+  const isDailyPaymentsReport = EReportType.DailyPayments;
+  const isTransactionJournal = EReportType.TransactionJournal;
 
   const tabs = [
     {
@@ -56,7 +58,9 @@ const useLedgerReportHeader = ({
           },
         ]
       : []),
-    ...(!isAccountingTransaction && !isAdjustmentsReport
+    ...(!isAccountingTransaction &&
+    !isAdjustmentsReport &&
+    !isDailyPaymentsReport
       ? [
           {
             name: t("reports.printCard"),
