@@ -11,6 +11,7 @@ const LedgerReportButtonWidget = ({
   onClickCreateNewTransaction,
   onClickOpenAdjustmentsModal,
   onClickExportAccountingReportExcel,
+  onClickDownloadMovingFiles,
   reportType,
 }: LedgerReportButtonWidgetProps) => {
   const { classes } = useStyle();
@@ -20,6 +21,7 @@ const LedgerReportButtonWidget = ({
     onClickCreateNewTransaction,
     onClickOpenAdjustmentsModal,
     onClickExportAccountingReportExcel,
+    onClickDownloadMovingFiles,
     reportType,
   });
 

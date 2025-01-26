@@ -19,6 +19,7 @@ export interface AccountingTransactionReportHeaderProps {
   filterState: FilterState;
   setFilterState: any;
   handleClickClear: () => void;
+  erpAccountsList: any;
 }
 
 const useAgingReportHeader = () => {
