@@ -109,7 +109,7 @@ const useProperites = ({ classes }) => {
                 <div style={classes.item}>
                   {successEvent ? (
                     <>
-                      {index + 1}- {rule.expression} value=
+                      {index + 1}- {rule.expression} {t("products.profits.exceptions.value")} =
                       {successEvent}
                     </>
                   ) : (
