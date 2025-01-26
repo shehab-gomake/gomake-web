@@ -12,15 +12,11 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
   const { t } = useTranslation();
   const dateRef = useRef(null);
   const { callApi } = useGomakeAxios();
-  const {
-    alertFaultGetData,
-    alertFaultAdded,
-    alertSuccessAdded,
-    alertRequiredFields,
-  } = useSnackBar();
+  const { alertFaultAdded, alertSuccessAdded, alertRequiredFields } =
+    useSnackBar();
   const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList();
-  const [erpAccountsList, setErpAccountsList] = useState([]);
+
   const accountTypeList: { id: number; name: string }[] = [
     { id: EAccountType.DEBIT, name: t("reports.debit") },
     { id: EAccountType.CREDIT, name: t("reports.credit") },
@@ -46,21 +42,21 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
     setPrice(e.target.value);
   };
 
-  const getAgingReportFilter = useCallback(async () => {
-    const res = await callApi(
-      EHttpMethod.GET,
-      `/v1/erp-service/receipts/get-erp-accounts`
-    );
-    if (res?.success) {
-      setErpAccountsList(res.data?.data?.data);
-    } else {
-      alertFaultGetData();
-    }
-  }, []);
+  // const getAgingReportFilter = useCallback(async () => {
+  //   const res = await callApi(
+  //     EHttpMethod.GET,
+  //     `/v1/erp-service/receipts/get-erp-accounts`
+  //   );
+  //   if (res?.success) {
+  //     setErpAccountsList(res.data?.data?.data);
+  //   } else {
+  //     alertFaultGetData();
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    getAgingReportFilter();
-  }, []);
+  // useEffect(() => {
+  //   getAgingReportFilter();
+  // }, []);
 
   const onCloseAndRemoveState = () => {
     setPrice(0);
@@ -174,7 +170,7 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
 
   return {
     t,
-    erpAccountsList,
+    // erpAccountsList,
     renderOptions,
     checkWhatRenderArray,
     accountTypeList,

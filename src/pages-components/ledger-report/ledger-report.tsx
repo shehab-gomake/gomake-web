@@ -8,6 +8,7 @@ import { useLedgerReport } from "./use-ledger-report";
 import { useStyle } from "./style";
 import { CreateNewTransactionModal } from "./widgets/create-transaction-modal";
 import { HeaderTitle } from "@/widgets/header-title";
+import { useEffect } from "react";
 
 interface LedgerReportWidgetProps {
   customerId?: string;
@@ -52,7 +53,13 @@ const LedgerReportWidget = ({
     fromDate,
     toDate,
     isFetching,
+    erpAccountsList,
+    getErpAccountsList,
   } = useLedgerReport({ customerId });
+
+  useEffect(() => {
+    getErpAccountsList();
+  }, []);
 
   return (
     <div style={classes.mainContainer}>
@@ -113,6 +120,7 @@ const LedgerReportWidget = ({
       <CreateNewTransactionModal
         onCloseModal={onClickCloseCreateTransactionModal}
         openModal={isopenCreateTransactionModal}
+        erpAccountsList={erpAccountsList}
       />
     </div>
   );

@@ -7,15 +7,17 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 interface CreateNewTransactionModalProps {
   openModal: boolean;
   onCloseModal: () => void;
+  erpAccountsList?: any;
 }
 const CreateNewTransactionModal = ({
   openModal,
   onCloseModal,
+  erpAccountsList,
 }: CreateNewTransactionModalProps) => {
   const { classes } = useStyle();
   const {
     t,
-    erpAccountsList,
+    // erpAccountsList,
     renderOptions,
     checkWhatRenderArray,
     accountTypeList,

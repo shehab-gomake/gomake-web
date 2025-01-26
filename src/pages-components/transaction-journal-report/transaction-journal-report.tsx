@@ -76,6 +76,9 @@ const TransactionJournalReportWidget = ({
     clientPaymentsList,
     setClientPaymentsList,
     onClickExportAccountingReportExcel,
+    erpAccountsList,
+    getErpAccountsList,
+    onClickDownloadMovingFiles,
   } = useTransactionJournalReport({ reportType });
 
   const isAccountingTransaction =
@@ -95,6 +98,10 @@ const TransactionJournalReportWidget = ({
       getClientPaymentItems();
     }
   }, [customer, isOpenAdjustmentsModal]);
+
+  useEffect(() => {
+    getErpAccountsList();
+  }, []);
 
   return (
     <div
@@ -128,13 +135,13 @@ const TransactionJournalReportWidget = ({
           />
         </div>
       )}
-
       {isAccountingTransaction && (
         <AccountingTransactionReportHeader
           handleDateChange={handleDatesChange}
           filterState={filterState}
           setFilterState={setFilterState}
           handleClickClear={handleClearFilters}
+          erpAccountsList={erpAccountsList}
         />
       )}
       {!isAdjustmentsReport && !isAccountingTransaction && (
@@ -155,6 +162,7 @@ const TransactionJournalReportWidget = ({
         onClickCreateNewTransaction={onClickOpenCreateTransactionModal}
         onClickOpenAdjustmentsModal={onClickOpenAdjustmentsModal}
         onClickExportAccountingReportExcel={onClickExportAccountingReportExcel}
+        onClickDownloadMovingFiles={onClickDownloadMovingFiles}
         reportType={reportType}
       />
       {reportType === EReportType.AdjustmentsReport && (
@@ -235,6 +243,7 @@ const TransactionJournalReportWidget = ({
       <CreateNewTransactionModal
         onCloseModal={onClickCloseCreateTransactionModal}
         openModal={isOpenCreateTransactionModal}
+        erpAccountsList={erpAccountsList}
       />
       <AdjustmentsLedgerReportModal
         customerId={customer?.id}
