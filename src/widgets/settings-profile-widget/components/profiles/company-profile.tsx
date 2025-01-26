@@ -130,7 +130,7 @@ const CompanyProfileComponent = ({
                     <FormInput
                       input={companyInput as IInput}
                       changeState={changeState}
-                      error={false}
+                      error={(companyInput.required && !companyInput.value) || !companyInput.isValid}
                     />
 
                     {companyInput.parameterKey === "mailServiceEmail" && (
