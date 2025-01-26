@@ -12,7 +12,7 @@ import {
   qrDataState,
 } from "@/widgets/qr-listener/state";
 import { useRouter } from "next/router";
-import { ThreeOptionsModal } from "@/components";
+import { GomakeTextInput, ThreeOptionsModal } from "@/components";
 import { PrintPackingSlipModal } from "@/pages-components/board-missions/widgets/print-packing-slip-modal";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/pages-components/board-missions/style";
@@ -60,28 +60,72 @@ const QrListenerWidget = ({ listening }: IProps) => {
         downloadPdf(pdfLink);
         setOpenPackagesModal(false);
       } else {
-        alertFaultGetData();
+        alertFault("boardMissions.alertPrintPackingSlip");
       }
     };
     await getDeliveryTickerPdfApi(callApi, callBack, {
       boardMissionId: qrData.boardMissionId,
-      quantityOnPackages: quantityPerPackage,
+      packageQuantities,
+    });
+  };
+  const [packageQuantities, setPackageQuantities] = useState<number[]>(() => {
+    const initialQuantityPerPackage = qrData?.quantity
+      ? Math.ceil(qrData.quantity / quantityOfPackages)
+      : 0;
+    return Array(quantityOfPackages).fill(initialQuantityPerPackage);
+  });
+  console.log("packageQuantities", packageQuantities)
+
+  useEffect(() => {
+    if (qrData?.quantity && quantityPerPackage > 0) {
+      const totalQuantity = qrData.quantity;
+      const fullPackages = Math.max(0, Math.floor(totalQuantity / quantityPerPackage));
+      const remainingQuantity = totalQuantity % quantityPerPackage;
+
+      let newPackageQuantities = Array(fullPackages).fill(quantityPerPackage);
+      if (remainingQuantity > 0) {
+        newPackageQuantities = [...newPackageQuantities, remainingQuantity];
+      }
+
+      setPackageQuantities(newPackageQuantities);
+    } else {
+      setPackageQuantities([]);
+    }
+  }, [qrData, quantityPerPackage]);
+
+  const handlePackageQuantityChange = (index: number, newValue: number) => {
+    setPackageQuantities((prevQuantities) => {
+      const updatedQuantities = [...prevQuantities];
+      updatedQuantities[index] = newValue;
+
+      if (index === quantityOfPackages - 1) {
+        const totalQuantity = qrData?.quantity || 0;
+        const sumOfOtherPackages = updatedQuantities.slice(0, -1).reduce((acc, val) => acc + val, 0);
+        updatedQuantities[index] = totalQuantity - sumOfOtherPackages;
+      }
+
+      return updatedQuantities;
     });
   };
   const packageInputs = useMemo(() => {
-    return [...Array(quantityOfPackages)].map((_, index) => (
-      <div key={index} style={{ width: "40%" }}>
-        <h3 style={classes.packageLabelStyle}>
-          {`${t("boardMissions.package")} ${index + 1}`}
-        </h3>
-        <div style={classes.inputValueStyle}>
-          {index === quantityOfPackages - 1
-            ? remainingQuantity
-            : quantityPerPackage}
+    if (quantityOfPackages) {
+      return [...Array(quantityOfPackages)].map((_, index) => (
+        <div key={index} style={{ width: "30%" }}>
+          <h3 style={classes.packageLabelStyle}>
+            {`${t("boardMissions.package")} ${index + 1}`}
+          </h3>
+          <GomakeTextInput
+            type="number"
+            value={packageQuantities[index]}
+            onChange={(e) => {
+              const newValue = parseInt(e.target.value, 10);
+              handlePackageQuantityChange(index, newValue);
+            }}
+          />
         </div>
-      </div>
-    ));
-  }, [quantityOfPackages, quantityPerPackage, remainingQuantity]);
+      ));
+    }
+  }, [quantityOfPackages, packageQuantities]);
   const handleQuantityOfPackagesChange = (event) => {
     const newQuantityOfPackages = parseInt(event.target.value, 10);
     const totalQuantity = qrData.quantity || 0;
@@ -126,11 +170,11 @@ const QrListenerWidget = ({ listening }: IProps) => {
   };
 
   useEffect(() => {
-    window.addEventListener("keypress", listening ? handleKeyPress : () => {});
+    window.addEventListener("keypress", listening ? handleKeyPress : () => { });
     return () => {
       window.removeEventListener(
         "keypress",
-        listening ? handleKeyPress : () => {}
+        listening ? handleKeyPress : () => { }
       );
     };
   }, [inputBuffer, lastInputTime, listening]);
@@ -185,7 +229,7 @@ const QrListenerWidget = ({ listening }: IProps) => {
         onClickYes={() => {
           updateBoardMissionsQrCode().then();
         }}
-        onClickNo={() => {}}
+        onClickNo={() => { }}
       />
       <ThreeOptionsModal
         modalType={ModalType.WARNING}

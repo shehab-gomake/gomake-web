@@ -57,23 +57,63 @@ const PrintPackingSlipModalWidget = ({
       isNaN(newQuantityOfPackages) ? 1 : newQuantityOfPackages
     );
   };
+  const [packageQuantities, setPackageQuantities] = useState<number[]>(() => {
+    const initialQuantityPerPackage = quantity
+      ? Math.ceil(quantity / quantityOfPackages)
+      : 0;
+    return Array(quantityOfPackages).fill(initialQuantityPerPackage);
+  });
 
+  useEffect(() => {
+    if (quantity && quantityPerPackage > 0) {
+      const totalQuantity = quantity;
+      const fullPackages = Math.max(0, Math.floor(totalQuantity / quantityPerPackage));
+      const remainingQuantity = totalQuantity % quantityPerPackage;
+
+      let newPackageQuantities = Array(fullPackages).fill(quantityPerPackage);
+      if (remainingQuantity > 0) {
+        newPackageQuantities = [...newPackageQuantities, remainingQuantity];
+      }
+
+      setPackageQuantities(newPackageQuantities);
+    } else {
+      setPackageQuantities([]);
+    }
+  }, [quantity, quantityPerPackage]);
+
+  const handlePackageQuantityChange = (index: number, newValue: number) => {
+    setPackageQuantities((prevQuantities) => {
+      const updatedQuantities = [...prevQuantities];
+      updatedQuantities[index] = newValue;
+
+      if (index === quantityOfPackages - 1) {
+        const totalQuantity = quantity || 0;
+        const sumOfOtherPackages = updatedQuantities.slice(0, -1).reduce((acc, val) => acc + val, 0);
+        updatedQuantities[index] = totalQuantity - sumOfOtherPackages;
+      }
+
+      return updatedQuantities;
+    });
+  };
   const packageInputs = useMemo(() => {
-    return [...Array(isNaN(quantityOfPackages) ? 1 : quantityOfPackages)].map(
-      (_, index) => (
-        <div key={index} style={{ width: "40%" }}>
+    if (quantityOfPackages) {
+      return [...Array(quantityOfPackages)].map((_, index) => (
+        <div key={index} style={{ width: "30%" }}>
           <h3 style={classes.packageLabelStyle}>
             {`${t("boardMissions.package")} ${index + 1}`}
           </h3>
-          <div style={classes.inputValueStyle}>
-            {index === quantityOfPackages - 1
-              ? remainingQuantity
-              : quantityPerPackage}
-          </div>
+          <GomakeTextInput
+            type="number"
+            value={packageQuantities[index]}
+            onChange={(e) => {
+              const newValue = parseInt(e.target.value, 10);
+              handlePackageQuantityChange(index, newValue);
+            }}
+          />
         </div>
-      )
-    );
-  }, [quantityOfPackages, quantityPerPackage, remainingQuantity]);
+      ));
+    }
+  }, [quantityOfPackages, packageQuantities]);
 
   const onClickPrintPackagingSlip = async () => {
     if (quantityPerPackage > quantity) {
@@ -86,12 +126,12 @@ const PrintPackingSlipModalWidget = ({
         downloadPdf(pdfLink);
         onClose();
       } else {
-        alertFaultGetData();
+        alertFault("boardMissions.alertPrintPackingSlip");
       }
     };
     await getDeliveryTickerPdfApi(callApi, callBack, {
       boardMissionId: boardMissionId,
-      quantityOnPackages: quantityPerPackage,
+      packageQuantities,
     });
   };
 
