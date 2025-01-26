@@ -18,11 +18,8 @@ import { useState } from "react";
 const useCompanyProfile = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [profile, setProfile] =
-    useRecoilState<ICompanyProfile>(companyProfileState);
-  const setChangeProfileImage = useSetRecoilState<boolean>(
-    changeProfileImageState
-  );
+  const [profile, setProfile] = useRecoilState<ICompanyProfile>(companyProfileState);
+  const setChangeProfileImage = useSetRecoilState<boolean>(changeProfileImageState);
   const [currencies, setCurrencies] =
     useRecoilState<{ label: string; value: string }[]>(currenciesState);
 
