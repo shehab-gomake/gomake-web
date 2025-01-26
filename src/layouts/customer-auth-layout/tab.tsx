@@ -9,6 +9,7 @@ import { useTranslation } from "react-i18next";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ArrowDownIcon } from "@/icons/side-list-icons/arrows";
 import { convertWidthToVW } from "@/utils/adapter";
+import Link from "next/link";
 
 interface IProps {
   tab: {
@@ -109,7 +110,7 @@ const Tab = ({ tab, customGap }: IProps) => {
             </div>
           </Stack>
         ) : (
-          <a
+          <Link
             href={tab.path}
             rel="noopener noreferrer"
             style={{
@@ -129,7 +130,7 @@ const Tab = ({ tab, customGap }: IProps) => {
               </div>
             </Stack>
             <div style={{ marginLeft: 5 }} />
-          </a>
+          </Link>
         )}
       </div>
       <Collapse in={isListOpen}>
@@ -138,7 +139,7 @@ const Tab = ({ tab, customGap }: IProps) => {
             ?.filter((x) => !x.Permission || CheckPermission(x.Permission))
             .map((list: any) => {
               return (
-                <a
+                <Link
                   href={list?.path}
                   rel="noopener noreferrer"
                   style={classes.tabList}
@@ -151,7 +152,7 @@ const Tab = ({ tab, customGap }: IProps) => {
                   >
                     {t(list?.title)}
                   </div>
-                </a>
+                </Link>
               );
             })}
       </Collapse>
