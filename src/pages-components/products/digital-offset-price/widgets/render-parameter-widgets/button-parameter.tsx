@@ -378,8 +378,8 @@ const ButtonParameterWidget = ({
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
     if (isStraightKnife) {
       Comp = (
-        <div style={clasess.btnSelectedStyle}>
-          <div style={clasess.btnSelectedTextStyle}>
+        <div style={clasess?.btnSelectedStyle}>
+          <div style={clasess?.btnSelectedTextStyle}>
             {straightKnife?.name}
           </div>
           <div
@@ -415,16 +415,16 @@ const ButtonParameterWidget = ({
     else if (isSelectedShape && selectedShape?.id !== undefined && hasDieCutOrDieKissCut) {
 
       Comp = (
-        <div style={clasess.btnSelectedStyle}>
+        <div style={clasess?.btnSelectedStyle}>
           <img
             src={selectedShape?.rowData?.image?.value || selectedShape?.additionalAttribute}
             style={{ width: 24, height: 24 }}
           />
-          <div style={clasess.btnSelectedTextStyle}>
+          <div style={clasess?.btnSelectedTextStyle}>
             {selectedShape?.rowData?.name?.value}
           </div>
           <div
-            style={clasess.btnSelectedIconReChoose}
+            style={clasess?.btnSelectedIconReChoose}
             onClick={() =>
               selectBtnTypeToAction(
                 parameter,
@@ -439,7 +439,7 @@ const ButtonParameterWidget = ({
             <ReChooseIcon />
           </div>
           <div
-            style={clasess.btnSelectedIconReChoose}
+            style={clasess?.btnSelectedIconReChoose}
             onClick={removeParameterFromSubProducts}
           >
             <DeleteIcon />
