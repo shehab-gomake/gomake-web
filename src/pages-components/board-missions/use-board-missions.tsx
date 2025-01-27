@@ -438,7 +438,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         if (res?.success) {
           const _data = res?.data;
           const mapData = _data.data?.map((mission: any) => {
-            const itemCalculatedPrice = mission?.calculatedPrice && mission?.calculatedPrice != mission?.price ? mission?.calculatedPrice : 200;
+            const itemCalculatedPrice = mission?.calculatedPrice && mission?.calculatedPrice != mission?.price ? mission?.calculatedPrice : 0;
             return [
               <a
                 href={mission?.boardMissionImage}
