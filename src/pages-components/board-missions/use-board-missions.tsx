@@ -434,11 +434,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const getAllBoardMissions = async (isClear: boolean = false) => {
-    if (connectionId) {
+    if (connectionId || true) {
       const callBack = (res) => {
         if (res?.success) {
           const _data = res?.data;
           const mapData = _data.data?.map((mission: any) => {
+            const itemCalculatedPrice = mission?.calculatedPrice && mission?.calculatedPrice != mission?.price ? mission?.calculatedPrice : 200;
             return [
               <a
                 href={mission?.boardMissionImage}
@@ -484,7 +485,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                 ? [
                   mission?.price +
-                  " " +
+                  (itemCalculatedPrice ? ` (${itemCalculatedPrice})` : " ") +
                   getCurrencyUnitText(mission?.currency),
                 ]
                 : []),
