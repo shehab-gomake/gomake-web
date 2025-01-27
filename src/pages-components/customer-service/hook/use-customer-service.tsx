@@ -236,11 +236,12 @@ const useCustomerService = (isAdmin: boolean) => {
       alertFault("customerService.titleRequired");
       return;
     }
-
-    const printHouseName =
+    let printHouseName =
       printHouses.find((ph) => ph.domain === domain)?.label ||
       (formattedDomain ?? null);
-    
+    if(printHouseName){
+      printHouseName = printHouseName.replaceAll('"',"'");
+    }
     let columnValues = {
       long_text: ticketState?.description,
       status_11: ticketState?.ticketType?.value,
