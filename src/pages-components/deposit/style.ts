@@ -5,7 +5,8 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = (width?: string) => {
   const { t } = useTranslation();
-  const { theme, grayColor, secondColor, primaryColor } = useGomakeTheme();
+  const { theme, grayColor, secondColor, primaryColor, errorColor } =
+    useGomakeTheme();
   const dir = t("direction");
   const classes = useMemo(() => {
     return {
@@ -188,8 +189,7 @@ const useStyle = (width?: string) => {
       textInputContainer: {
         display: "flex",
         flexDirection: "row" as "row",
-        width: "max-content",
-        gap: "10px",
+        gap: "15px",
       },
       addClientTypeBtnContainer: {
         marginTop: "10px",
@@ -204,6 +204,10 @@ const useStyle = (width?: string) => {
         height: "auto",
         maxHeight: 400,
         backgroundColor: "#f7f7f7",
+      },
+      required: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: errorColor(500),
       },
     };
   }, [t, theme]);
