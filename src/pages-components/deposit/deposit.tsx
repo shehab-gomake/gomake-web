@@ -15,34 +15,61 @@ export interface IDepositProps {
 
 const DepositPageWidget = ({ actionType }: IDepositProps) => {
   const { classes } = useStyle();
-  const { depositsTabs, onSelectTab, renderTableHeaders, renderTableRows, getDepositMetaData, accounts, depositAccounts, isLoading, deposit } = useDeposit();
+  const {
+    depositsTabs,
+    onSelectTab,
+    renderTableHeaders,
+    renderTableRows,
+    getDepositMetaData,
+    accounts,
+    depositAccounts,
+    isLoading,
+    deposit,
+    addNewAccountCode,
+  } = useDeposit();
 
   useEffect(() => {
-    if (actionType === DEPOSIT_ACTIONS.Create)
-      getDepositMetaData();
+    if (actionType === DEPOSIT_ACTIONS.Create) getDepositMetaData();
   }, []);
 
   return (
     <>
-      {isLoading && actionType === DEPOSIT_ACTIONS.Create ?
+      {isLoading && actionType === DEPOSIT_ACTIONS.Create ? (
         <GomakeLoaderWidget />
-        :
+      ) : (
         <div style={classes.mainContainer}>
-          <Stack direction="column" paddingLeft="20px" paddingRight="20px" width={"100%"}  >
+          <Stack
+            direction="column"
+            paddingLeft="20px"
+            paddingRight="20px"
+            width={"100%"}
+          >
             <DepositHeaderSection actionType={actionType} />
             <div style={classes.borderSecondContainer} />
-            <DepositFilterSection actionType={actionType} accountsOptions={accounts} depositAccountsOptions={depositAccounts} />
+            <DepositFilterSection
+              actionType={actionType}
+              accountsOptions={accounts}
+              depositAccountsOptions={depositAccounts}
+              addNewAccountCode={addNewAccountCode}
+            />
           </Stack>
           <Stack style={classes.secondDivStyle}>
-            {
-              actionType === DEPOSIT_ACTIONS.Create ?
-                <PrimaryTabsComponent tabs={depositsTabs} selectedColor="secondary" onSelectTab={onSelectTab} />
-                :
-                <DepositTable tableHeaders={renderTableHeaders()} tableRows={renderTableRows()} deposit={deposit} />
-            }
+            {actionType === DEPOSIT_ACTIONS.Create ? (
+              <PrimaryTabsComponent
+                tabs={depositsTabs}
+                selectedColor="secondary"
+                onSelectTab={onSelectTab}
+              />
+            ) : (
+              <DepositTable
+                tableHeaders={renderTableHeaders()}
+                tableRows={renderTableRows()}
+                deposit={deposit}
+              />
+            )}
           </Stack>
         </div>
-      }
+      )}
     </>
   );
 };

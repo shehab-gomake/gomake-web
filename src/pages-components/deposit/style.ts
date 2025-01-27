@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
-const useStyle = (width? : string) => {
+const useStyle = (width?: string) => {
   const { t } = useTranslation();
-  const { theme, grayColor, secondColor } = useGomakeTheme();
-  const dir = t('direction');
+  const { theme, grayColor, secondColor, primaryColor } = useGomakeTheme();
+  const dir = t("direction");
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -18,17 +18,15 @@ const useStyle = (width? : string) => {
         position: "relative" as "relative",
         height: "100%",
         overflow: "hidden",
-        gap: "20px"
+        gap: "20px",
       },
-      firstDivStyle: {
-
-      },
+      firstDivStyle: {},
       secondDivStyle: {
         overflow: "auto",
         paddingLeft: 20,
         paddingRight: 12,
         width: "100%",
-        height:"100%"
+        height: "100%",
       },
       titleContainer: {
         display: "flex",
@@ -160,14 +158,53 @@ const useStyle = (width? : string) => {
       tabContainerStyle: {
         display: "flex",
         flexDirection: "column" as "column",
-        gap: "2px"
+        gap: "2px",
       },
       tabFooterStyle: {
         width: "25%",
         display: "flex",
         flexDirection: "column" as "column",
-        gap: "5px"
-      }
+        gap: "5px",
+      },
+      inputLbl: {
+        color: primaryColor(900),
+        ...FONT_FAMILY.Lexend(600, 14),
+        display: "flex",
+        alignItems: "center",
+        gap: "4px",
+      },
+      inputs: {
+        boxSizing: "border-box" as "border-box",
+        borderRadius: "4px",
+        height: "40px",
+        padding: dir === "ltr" ? "6.5px 14px" : "6.5px 0px",
+        paddingLeft: dir === "ltr" ? 0 : "14px",
+      },
+      inputContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: 10,
+      },
+      textInputContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        width: "max-content",
+        gap: "10px",
+      },
+      addClientTypeBtnContainer: {
+        marginTop: "10px",
+        display: "flex",
+        justifyContent: "center" as "center",
+        width: "100%",
+      },
+      insideStyle: {
+        width: "30%",
+        borderRadius: 8,
+        gap: "8px",
+        height: "auto",
+        maxHeight: 400,
+        backgroundColor: "#f7f7f7",
+      },
     };
   }, [t, theme]);
   return {
