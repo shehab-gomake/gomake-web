@@ -4,11 +4,16 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 export default function PrePaymentInvoice() {
   return (
-    <CustomerAuthLayout allowAnonymous={true} disableHeaderSideMenu={true}>
-      <QuoteConfirmationPageWidget
-        isPrePaymentPage={true}
-        documentType={DOCUMENT_TYPE.invoice}
-      />
-    </CustomerAuthLayout>
+      <CustomerAuthLayout allowAnonymous={true} disableHeaderSideMenu={true}>
+          <div>
+
+          </div>
+          {
+              /*<QuoteConfirmationPageWidget
+          isPrePaymentPage={true}
+          documentType={DOCUMENT_TYPE.invoice}
+        />*/
+          }
+      </CustomerAuthLayout>
   );
 }

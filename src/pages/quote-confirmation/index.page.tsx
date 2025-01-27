@@ -6,7 +6,10 @@ export default function QuoteConfirmation() {
 
   return (
     <CustomerAuthLayout allowAnonymous={true} disableHeaderSideMenu={true}>
-      <QuoteConfirmationPageWidget />
+        <div>
+            
+        </div>
+        {/*<QuoteConfirmationPageWidget/>*/}
     </CustomerAuthLayout>
   );
 }

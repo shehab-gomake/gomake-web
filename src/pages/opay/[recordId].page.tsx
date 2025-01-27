@@ -4,11 +4,14 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 export default function PrePaymentOrder() {
   return (
-    <CustomerAuthLayout allowAnonymous={true} disableHeaderSideMenu={true}>
-      <QuoteConfirmationPageWidget
+      <CustomerAuthLayout allowAnonymous={true} disableHeaderSideMenu={true}>
+          <div>
+
+          </div>
+          {/*<QuoteConfirmationPageWidget
         isPrePaymentPage={true}
         documentType={DOCUMENT_TYPE.order}
-      />
-    </CustomerAuthLayout>
+      />*/}
+      </CustomerAuthLayout>
   );
 }
