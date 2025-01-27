@@ -44,14 +44,12 @@ const useTransactionJournalReport = ({
   const { t } = useTranslation();
   const dir = t("direction");
   const { getFormattedLocalDate, GetDateWithoutHoursFormat } = useDateFormat();
-
   const { documentsTypeList, documentType, handleDocumentTypeChange } =
     useDocumentsType();
   const [showTable, setShowTable] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
   const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
-  // New states for customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -59,6 +57,13 @@ const useTransactionJournalReport = ({
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
   const [isOpenCreateTransactionModal, setIsCreateTransactionModal] =
     useState<boolean>(false);
+  const {
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+  } = useCustomerDropDownList();
 
   const onClickCloseCreateTransactionModal = () => {
     setIsCreateTransactionModal(false);
@@ -327,6 +332,7 @@ const useTransactionJournalReport = ({
       EHttpMethod.POST,
       `/v1/erp-service/reports/get-adjustments-report`,
       {
+        clientId: customer?.id,
         pageNumber,
         pageSize,
       }
@@ -359,7 +365,7 @@ const useTransactionJournalReport = ({
     } else {
       alertFaultGetData();
     }
-  }, [reportType, pageNumber, pageSize]);
+  }, [reportType, pageNumber, pageSize, customer]);
 
   const ExportAccountingReportPDF = useCallback(async () => {
     if (!filterState.startDate || !filterState.endDate) {
@@ -506,14 +512,6 @@ const useTransactionJournalReport = ({
     });
     setPageNumber(1);
   };
-
-  const {
-    customer,
-    renderOptions,
-    checkWhatRenderArray,
-    handleCustomerChange,
-    isFetching,
-  } = useCustomerDropDownList();
 
   const [isOpenAdjustmentsModal, setIsOpenAdjustmentsModal] =
     useState<boolean>(false);
