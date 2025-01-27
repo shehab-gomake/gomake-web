@@ -20,17 +20,11 @@ const AddAccountCodeModal = ({
   const { classes } = useStyle();
   const { alertRequiredFields } = useSnackBar();
   const [accountState, setAccountState] = useState({
-    id: "",
     code: "",
     name: "",
-    isDefault: false,
-    balance: null,
-    openBalance: null,
-    isDepositAccount: null,
     bankName: "",
     branchNumber: "",
     bankAccountNumber: "",
-    type: null,
   });
 
   const handleInputChange = (
@@ -66,15 +60,43 @@ const AddAccountCodeModal = ({
       >
         <Stack gap={"20px"}>
           <div style={classes.textInputContainer}>
+            <Stack direction={"row"} gap={"5px"} width={"100%"}>
+              <GomakeTextInput
+                placeholder={t("products.addProduct.admin.enterName")}
+                value={accountState.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+              />
+              <span style={classes.required}>*</span>
+            </Stack>
+            <Stack direction={"row"} gap={"5px"} width={"100%"}>
+              <GomakeTextInput
+                placeholder={t("products.addProduct.admin.enterCode")}
+                onChange={(e) => handleInputChange("code", e.target.value)}
+                value={accountState.code}
+              />
+              <span style={classes.required}>*</span>
+            </Stack>
+          </div>
+
+          <div style={classes.textInputContainer}>
             <GomakeTextInput
-              placeholder={t("products.addProduct.admin.enterName")}
-              value={accountState.name}
-              onChange={(e) => handleInputChange("name", e.target.value)}
+              placeholder={t("deposits.enterBankName")}
+              value={accountState.bankName}
+              onChange={(e) => handleInputChange("bankName", e.target.value)}
             />
             <GomakeTextInput
-              placeholder={t("products.addProduct.admin.enterCode")}
-              onChange={(e) => handleInputChange("code", e.target.value)}
-              value={accountState.code}
+              placeholder={t("deposits.enterBranchNumber")}
+              value={accountState.branchNumber}
+              onChange={(e) =>
+                handleInputChange("branchNumber", e.target.value)
+              }
+            />
+            <GomakeTextInput
+              placeholder={t("deposits.enterBankAccountNumber")}
+              value={accountState.bankAccountNumber}
+              onChange={(e) =>
+                handleInputChange("bankAccountNumber", e.target.value)
+              }
             />
           </div>
           <div style={classes.addClientTypeBtnContainer}>
