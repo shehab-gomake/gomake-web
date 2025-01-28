@@ -370,6 +370,7 @@ const useDeposit = () => {
             ? {
                 label: `${firstDepositAccount.name} - ${firstDepositAccount.code}`,
                 id: firstDepositAccount.id,
+                code: firstDepositAccount?.code,
               }
             : null,
           bankName: firstDepositAccount?.bankName || "",
@@ -406,6 +407,8 @@ const useDeposit = () => {
       ...metaData,
       erpDeposit: {
         ...newDeposit,
+        depositAccount:
+          newDeposit?.depositAccount?.code ?? newDeposit?.depositAccount,
         depositType: renderDepositType(labelArray),
         cashAmount: updatedTotal,
       },
