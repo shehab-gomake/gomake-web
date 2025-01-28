@@ -66,7 +66,13 @@ const RightSideWidget = ({
     setSliderCurrentProductItemValueTotalPrice,
     alertFault,
     priceIncludeVat,
+    setPriceIncludeVat,
+    systemVAT,
   } = useRightSideWidget({ includeVAT, widgetType });
+
+  console.log("priceIncludeVat", priceIncludeVat);
+
+
 
   const additionalProductItems = useRecoilValue(additionalProductItemsState);
   const mergedArray = [
@@ -298,7 +304,32 @@ const RightSideWidget = ({
             </div>
             <div style={clasess.vatContainer}>
               {t("products.offsetPrice.admin.includeVAT")}:{" "}
-              {Number(priceIncludeVat).toFixed(2)} {systemCurrency}
+              <input
+                value={priceIncludeVat}
+                // type="number"
+                onChange={(e) => {
+                  const newPriceIncludeVat = e.target.value;
+                  if (!newPriceIncludeVat || Number(newPriceIncludeVat) === 0) {
+                    setPriceIncludeVat(1);
+                  }
+                  else {
+                    setPriceIncludeVat(newPriceIncludeVat);
+                  }
+
+                  if (quantity?.values[0]) {
+                    const newTotalPrice = (Number(newPriceIncludeVat) / (1 + systemVAT)).toFixed(4);
+                    setSliderCurrentProductItemValueTotalPrice(Number(newTotalPrice));
+                  }
+                }}
+                style={{
+                  width: "65px",
+                  border: "none",
+                  outline: "none",
+                  color: "#2E3092",
+                  padding: "5px",
+                }}
+              />
+              {systemCurrency}
             </div>
           </>
         )}
