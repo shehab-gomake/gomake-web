@@ -1,10 +1,10 @@
 import {
-    Table,
-    TableBody,
-    TableContainer,
-    TableHead,
-    Checkbox,
-    TableRow
+  Table,
+  TableBody,
+  TableContainer,
+  TableHead,
+  Checkbox,
+  TableRow,
 } from "@mui/material";
 import { useStyle } from "./style";
 import { RowMappingWidget } from "./row-mapping";
@@ -13,82 +13,199 @@ import { TotalPricesNewReceipts } from "./total-prices-new-receipt";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { TotalPricesReceipts } from "./total-prices-receipt";
 import { useRouter } from "next/router";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { PaymentMethodsDetailsModal } from "./Payment-methods-details/payment-methods-details-modal";
-
+//!here
 const ReceiptsTable = () => {
-    let indexs = 0;
-    const headerHeight = "44px";
-    const { classes } = useStyle({ headerHeight });
-    const router = useRouter();
-    const {
-        t,
-        resetReceiptState,
-        isNewReceipt,
-        documentItemValue,
-        tableHeaders,
-        tableRows,
-        columnWidths,
-        PrimaryTableCell,
-        checkedItems,
-        handleCheckboxChange,
-        totalSum,
-        finalTotalPayment,
-        taxDeduction,
-        isShowReceiptTransference,
-        ReceiptTransferenceComponent,
-        isShowReceiptCreditCards,
-        ReceiptCreditCardsComponent,
-        isShowReceiptChecks,
-        ReceiptChecksComponent,
-        openMethodsDetailsModal,
-        handleOpenMethodsDetailsModal,
-        handleCloseMethodsDetailsModal
-    } = usePaymentsTable();
+  let indexs = 0;
+  const headerHeight = "44px";
+  const { classes } = useStyle({ headerHeight });
+  const router = useRouter();
+  const {
+    t,
+    resetReceiptState,
+    isNewReceipt,
+    documentItemValue,
+    tableHeaders,
+    tableRows,
+    columnWidths,
+    PrimaryTableCell,
+    checkedItems,
+    handleCheckboxChange,
+    totalSum,
+    finalTotalPayment,
+    taxDeduction,
+    isShowReceiptTransference,
+    ReceiptTransferenceComponent,
+    isShowReceiptCreditCards,
+    ReceiptCreditCardsComponent,
+    isShowReceiptChecks,
+    ReceiptChecksComponent,
+    openMethodsDetailsModal,
+    handleOpenMethodsDetailsModal,
+    handleCloseMethodsDetailsModal,
+  } = usePaymentsTable();
 
-    const renderReceiptsItems = useCallback(() => {
-        return tableRows?.map((item: any, index: number) => {
-            indexs++;
-            return (
-                <>
-                    <RowMappingWidget
-                        key={item.id}
-                        item={item}
-                        index={index}
-                        columnWidths={columnWidths}
-                        headerHeight={headerHeight}
-                        isChecked={checkedItems[index] || item?.isChecked}
-                        onCheckboxChange={() => {
-                            handleCheckboxChange(index, item?.id);
-                        }}
-                    />
-                </>
-            );
-        })
-    }, [checkedItems, documentItemValue, tableRows]);
+  //   const renderReceiptsItems = useCallback(() => {
+  //     return tableRows?.map((item: any, index: number) => {
+  //       indexs++;
+  //       return (
+  //         <>
+  //           <RowMappingWidget
+  //             key={item.id}
+  //             item={item}
+  //             index={index}
+  //             columnWidths={columnWidths}
+  //             headerHeight={headerHeight}
+  //             isChecked={checkedItems[index] || item?.isChecked}
+  //             onCheckboxChange={() => {
+  //               handleCheckboxChange(index, item?.id);
+  //             }}
+  //           />
+  //         </>
+  //       );
+  //     });
+  //   }, [checkedItems, documentItemValue, tableRows]);
 
-    useEffect(() => {
-        if (router?.query?.isNewCreation && router?.query?.documentNumber && tableRows) {
-            const documentNumber = router.query.documentNumber;
-            if (documentNumber) {
-                const foundRow = tableRows.find(row => row.docNum === documentNumber);
-                if (foundRow) {
-                    handleCheckboxChange(tableRows.indexOf(foundRow), foundRow.id);
-                }
-            }
+  //-----------------------------------------------------------------------------------------------------------------------
+
+  const [allocatedSums, setAllocatedSums] = useState<Record<string, number>>(
+    {}
+  ); // Store allocated sums per row
+  const [remainingTotal, setRemainingTotal] = useState(0); // Remaining payment allocation
+  const totalAllocatedSum = Object.values(allocatedSums).reduce(
+    (acc, value) => acc + value,
+    0
+  );
+
+  useEffect(() => {
+    console.log("Allo ", totalAllocatedSum);
+  }, [allocatedSums]);
+
+  useEffect(() => {
+    // Recalculate allocations when finalTotalPayment changes
+    setRemainingTotal(finalTotalPayment);
+    setAllocatedSums((prev) => {
+      const updatedSums = {};
+      let remaining = finalTotalPayment;
+
+      // Reallocate sums to checked items in order
+      tableRows.forEach((item, index) => {
+        if (checkedItems[index]) {
+          const allocatable = Math.min(remaining, item.sumApplied);
+          updatedSums[index] = allocatable;
+          remaining -= allocatable;
         }
-    }, []);
+      });
 
-    // Triggered when the client is changed
-    useEffect(() => {
-        if (router?.query?.isNewCreation && !router?.query?.documentNumber) {
-            resetReceiptState();
+      return updatedSums;
+    });
+  }, [finalTotalPayment, tableRows, checkedItems]);
+
+  const handleAllocationChange = (index, isChecked, sumApplied) => {
+    setAllocatedSums((prev) => {
+      const updated = { ...prev };
+      let remaining = remainingTotal;
+
+      if (isChecked) {
+        // Allocate sum when checked
+        const allocatable = Math.min(remaining, sumApplied);
+        updated[index] = allocatable;
+        remaining -= allocatable;
+      } else {
+        // Release allocated sum when unchecked
+        const releasedAmount = updated[index] || 0;
+        delete updated[index]; // Remove allocation for unchecked row
+        remaining += releasedAmount;
+
+        // Reallocate released amount to remaining checked items
+        const sortedCheckedIndexes = tableRows
+          .map((_, i) => i)
+          .filter((i) => i !== index && checkedItems[i]);
+
+        sortedCheckedIndexes.forEach((i) => {
+          const allocatable = Math.min(
+            remaining,
+            tableRows[i].sumApplied - (updated[i] || 0)
+          );
+          if (allocatable > 0) {
+            updated[i] = (updated[i] || 0) + allocatable;
+            remaining -= allocatable;
+          }
+        });
+      }
+
+      setRemainingTotal(remaining);
+      return updated;
+    });
+  };
+
+  //   const setAllocatedSum = (index, newAllocatedSum) => {
+  //     setAllocatedSums((prev) => ({
+  //       ...prev,
+  //       [index]: newAllocatedSum,
+  //     }));
+  //   };
+
+  const setAllocatedSum = (index, newAllocatedSum) => {
+    setAllocatedSums((prev) => {
+      const prevAllocated = prev[index] || 0;
+
+      // Update the remaining total
+      const difference = newAllocatedSum - prevAllocated;
+
+      setRemainingTotal((prevRemaining) => prevRemaining - difference);
+
+      return {
+        ...prev,
+        [index]: newAllocatedSum, // Update the allocated sum for the index
+      };
+    });
+  };
+  const renderReceiptsItems = useCallback(() => {
+    return tableRows?.map((item, index) => (
+      <RowMappingWidget
+        key={item.id}
+        item={item}
+        index={index}
+        columnWidths={columnWidths}
+        headerHeight={headerHeight}
+        isChecked={checkedItems[index] || item?.isChecked}
+        allocatedSum={allocatedSums[index] || 0}
+        onCheckboxChange={() => {
+          handleCheckboxChange(index, item?.id);
+          handleAllocationChange(index, !checkedItems[index], item?.sumApplied);
+        }}
+        setAllocatedSum={setAllocatedSum}
+      />
+    ));
+  }, [allocatedSums, checkedItems, tableRows, remainingTotal]);
+  useEffect(() => {
+    if (
+      router?.query?.isNewCreation &&
+      router?.query?.documentNumber &&
+      tableRows
+    ) {
+      const documentNumber = router.query.documentNumber;
+      if (documentNumber) {
+        const foundRow = tableRows.find((row) => row.docNum === documentNumber);
+        if (foundRow) {
+          handleCheckboxChange(tableRows.indexOf(foundRow), foundRow.id);
         }
-    }, [documentItemValue?.customerID, router]);
+      }
+    }
+  }, []);
 
-    return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
-            {/* <div>
+  // Triggered when the client is changed
+  useEffect(() => {
+    if (router?.query?.isNewCreation && !router?.query?.documentNumber) {
+      resetReceiptState();
+    }
+  }, [documentItemValue?.customerID, router]);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column" }}>
+      {/* <div>
                 <Checkbox
                     icon={<CheckboxIcon />}
                     checkedIcon={<CheckboxCheckedIcon />}
@@ -97,42 +214,62 @@ const ReceiptsTable = () => {
                 />
                 Select All
             </div> */}
-            <div>
-                <TableContainer style={{ maxHeight: 420, overflow: "scroll", border: "1px solid #EAECF0" }} >
-                    <Table stickyHeader={true}>
-                        <TableHead>
-                            <TableRow style={classes.tableRowStyle}>
-                                {tableHeaders.map((header, index) => (
-                                    <PrimaryTableCell
-                                        key={index}
-                                        style={{ ...classes.tableHeaderStyle, width: columnWidths[index] }}>
-                                        {header}
-                                    </PrimaryTableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody style={{ border: "1px solid #EAECF0" }}>
-                            {renderReceiptsItems()}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                {isNewReceipt ?
-                    <TotalPricesNewReceipts sum={totalSum} totalPayment={finalTotalPayment} taxDeduction={taxDeduction} /> :
-                    <TotalPricesReceipts receiptItemValue={documentItemValue} handleOpenModal={handleOpenMethodsDetailsModal} />}
-            </div>
-            <PaymentMethodsDetailsModal
-                modalTitle={t("payment.paymentMethodsDetails")}
-                openModal={openMethodsDetailsModal}
-                handleModalClose={handleCloseMethodsDetailsModal}
-                isShowFirstTabContent={isShowReceiptTransference}
-                firstTabContent={ReceiptTransferenceComponent}
-                isShowSecondTabContent={isShowReceiptChecks}
-                secondTabContent={ReceiptChecksComponent}
-                isShowThirdTabContent={isShowReceiptCreditCards}
-                thirdTabContent={ReceiptCreditCardsComponent}
-            />
-        </div>
-    );
+      <div>
+        <TableContainer
+          style={{
+            maxHeight: 420,
+            overflow: "scroll",
+            border: "1px solid #EAECF0",
+          }}
+        >
+          <Table stickyHeader={true}>
+            <TableHead>
+              <TableRow style={classes.tableRowStyle}>
+                {tableHeaders.map((header, index) => (
+                  <PrimaryTableCell
+                    key={index}
+                    style={{
+                      ...classes.tableHeaderStyle,
+                      width: columnWidths[index],
+                    }}
+                  >
+                    {header}
+                  </PrimaryTableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody style={{ border: "1px solid #EAECF0" }}>
+              {renderReceiptsItems()}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        {isNewReceipt ? (
+          <TotalPricesNewReceipts
+            sum={totalSum}
+            totalPayment={finalTotalPayment}
+            taxDeduction={taxDeduction}
+            totalAllocatedSum={totalAllocatedSum}
+          />
+        ) : (
+          <TotalPricesReceipts
+            receiptItemValue={documentItemValue}
+            handleOpenModal={handleOpenMethodsDetailsModal}
+          />
+        )}
+      </div>
+      <PaymentMethodsDetailsModal
+        modalTitle={t("payment.paymentMethodsDetails")}
+        openModal={openMethodsDetailsModal}
+        handleModalClose={handleCloseMethodsDetailsModal}
+        isShowFirstTabContent={isShowReceiptTransference}
+        firstTabContent={ReceiptTransferenceComponent}
+        isShowSecondTabContent={isShowReceiptChecks}
+        secondTabContent={ReceiptChecksComponent}
+        isShowThirdTabContent={isShowReceiptCreditCards}
+        thirdTabContent={ReceiptCreditCardsComponent}
+      />
+    </div>
+  );
 };
 
 export { ReceiptsTable };

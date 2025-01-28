@@ -1,12 +1,15 @@
 import { PrimaryTableCell } from "@/components/tables/primary-table";
-import { Checkbox, TableRow } from "@mui/material";
+import { Checkbox, TableRow, TextField } from "@mui/material";
 import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useDateFormat } from "@/hooks/use-date-format";
+import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
+import { GomakeTextInput } from "@/components";
 
+//!here
 const RowMappingWidget = ({
   item,
   index,
@@ -14,11 +17,25 @@ const RowMappingWidget = ({
   headerHeight,
   onCheckboxChange,
   isChecked,
+  allocatedSum,
+  setAllocatedSum,
 }) => {
   const { classes } = useStyle({ headerHeight });
   const { t } = useTranslation();
   const router = useRouter();
   const { GetDateWithoutHoursFormat } = useDateFormat();
+
+  const handleAllocatedSumChange = (event) => {
+    const newAllocatedSum = event.target.value;
+
+    // Make sure to set the value as a number
+    if (isNaN(newAllocatedSum) || newAllocatedSum < 0) {
+      return; // Optionally show an error message if the value is invalid
+    }
+
+    setAllocatedSum(index, Number(newAllocatedSum));
+  };
+
   return (
     <TableRow
       key={item.id}
@@ -90,13 +107,39 @@ const RowMappingWidget = ({
       >
         {t(item?.documentTypeText)}
       </PrimaryTableCell>
-      <PrimaryTableCell
+      {/* <PrimaryTableCell
+        style={{
+          width: columnWidths[5],
+          ...classes.cellContainerStyle,
+        }}
+      >
+        {allocatedSum}/{item?.sumApplied}
+      </PrimaryTableCell> */}
+      {/* <PrimaryTableCell
         style={{
           width: columnWidths[5],
           ...classes.cellContainerStyle,
         }}
       >
         {item?.sumApplied}
+      </PrimaryTableCell> */}
+
+      <PrimaryTableCell
+        style={{
+          width: columnWidths[5],
+          ...classes.cellContainerStyle,
+        }}
+      >
+        {/* Use TextField to allow input for allocated sum */}
+        <GomakeTextInput
+          key={`allocates-${index}`}
+          value={allocatedSum || 0}
+          onChange={handleAllocatedSumChange}
+          type="number"
+          style={{ width: "70px", height: "20px" }}
+          sx={{ height: "20px" }}
+        />
+        /{item?.sumApplied}
       </PrimaryTableCell>
     </TableRow>
   );
