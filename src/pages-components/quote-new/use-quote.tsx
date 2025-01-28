@@ -74,6 +74,7 @@ import {
   isAtLeastOneSelected,
 } from "@/utils/helpers";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
+import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget/state";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -1542,10 +1543,20 @@ const useQuoteNew = ({
     });
   };
 
-  const onClickDeleteAddress = async (item: any) => {
+  const onClickDeleteAddress = async (item: any, addressType: EAddressType) => {
+    const addressArray =
+      addressType === EAddressType.BILLING
+        ? "documentBillingAddresses"
+        : "documentDeliveryAddresses";
+
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
-      updatedQuoteItemValue.documentAddresses = [];
+
+      // Remove the address with the matching ID
+      updatedQuoteItemValue[addressArray] = updatedQuoteItemValue[
+        addressArray
+      ]?.filter((address) => address.id !== item.id);
+
       setQuoteItemValue(updatedQuoteItemValue);
     } else {
       const callBack = (res) => {
@@ -1556,12 +1567,14 @@ const useQuoteNew = ({
           alertFaultDelete();
         }
       };
+
       await deleteDocumentAddressApi(callApi, callBack, {
         documentAddressId: item?.id,
         documentType: docType,
       });
     }
   };
+
   const setCardTransactions = useSetRecoilState<transactionOptionsData[]>(
     creditTransactionsState
   );

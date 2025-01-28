@@ -86,7 +86,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   /* Slider */
   const priceToUse =
     widgetType === EWidgetProductType.EDIT ||
-    widgetType === EWidgetProductType.DUPLICATE
+      widgetType === EWidgetProductType.DUPLICATE
       ? calculatedPriceProductItemValue
       : currentProductItemValueTotalPrice;
 
@@ -108,10 +108,13 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   };
 
   useEffect(() => {
-    if (sliderCurrentProductItemValueTotalPrice !== null) {
+    if (sliderCurrentProductItemValueTotalPrice !== null && !priceIncludeVat) {
       setPriceIncludeVat(
-        sliderCurrentProductItemValueTotalPrice * (1 + systemVAT)
+        (sliderCurrentProductItemValueTotalPrice * (1 + systemVAT))
       );
+    }
+    else {
+      setPriceIncludeVat(null);
     }
   }, [sliderCurrentProductItemValueTotalPrice]);
 
@@ -136,6 +139,8 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     setSliderCurrentProductItemValueTotalPrice,
     alertFault,
     priceIncludeVat,
+    setPriceIncludeVat,
+    systemVAT,
   };
 };
 
