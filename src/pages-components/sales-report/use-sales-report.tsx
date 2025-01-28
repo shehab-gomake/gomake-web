@@ -145,7 +145,7 @@ const useSalesReport = () => {
               : data?.debit?.toFixed(2),
           ];
         });
-      }
+      } else return [];
     },
     [tableData]
   );
