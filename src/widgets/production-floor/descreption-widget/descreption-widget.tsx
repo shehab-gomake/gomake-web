@@ -11,7 +11,7 @@ const DescreptionWidget = ({ desciption }: { desciption: string }) => {
     setIsExpanded(!isExpanded);
   };
   const stripHtmlTags = (html: string) => {
-    return html?.replace(/<[^>]*>/g, '');
+    return html?.replace(/<[^>]*>/g, ' ');
   };
 
   const plainTextDescription = stripHtmlTags(desciption);
