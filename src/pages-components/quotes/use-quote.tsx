@@ -1486,6 +1486,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       if (res?.success) {
         const data = res?.data?.data;
         const mapData = data?.map((document: any) => [
+          <div
+              style={{ cursor: "pointer" }}
+              onClick={() => onClickOpenCustomerModal(document?.customerId)}
+          >
+            {document?.customerName}
+          </div>,
           document?.number,
           document?.clientType,
           document?.worksNames,
@@ -1573,6 +1579,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const tableHomeHeader = [
+    t("sales.quote.client"),
     t("home.headers.documentNumber"),
     t("home.headers.clientType"),
     t("home.headers.jobName"),
