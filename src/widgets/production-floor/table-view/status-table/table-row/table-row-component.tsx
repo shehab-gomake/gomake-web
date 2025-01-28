@@ -1,38 +1,27 @@
 import { SecondaryTableCell } from "@/components/tables/secondary-table";
-import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
 import Link from "next/link";
-import { LabelComponent } from "@/widgets/production-floor/label-component/label-component";
 import { CurrentStationComponent } from "@/widgets/production-floor/table-view/status-table/stations/current-station";
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useDrag, useDrop } from "react-dnd";
 import { useRecoilState } from "recoil";
 import { selectedBoardsMissionsState } from "@/widgets/production-floor/state/boards";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
-import Stack from "@mui/material/Stack";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { useRef, useState } from "react";
-import {
-  Collapse,
-  Skeleton,
-  styled,
-  TableCell,
-  TableRow,
-  Tooltip,
-  tooltipClasses,
-  TooltipProps,
-} from "@mui/material";
-import { ApprovalFileStatusComponent } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
-import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
+import { Checkbox, Collapse, Skeleton, TableCell, TableRow } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { MoreMenuWidget } from "./more-circle";
 import { ClickableLabelComponent } from "@/widgets/production-floor/label-component/clickable-label-component";
 import { NextStationComponent } from "../stations/next-station";
-import { DateTimeComponent } from "@/components/date-time/date-time-component";
 import { useRouter } from "next/router";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { getTruncatedLabel } from "@/utils/get-truncated-text";
+import { CheckboxCheckedIcon } from "@/icons/checked-icon";
+import { CheckboxIcon } from "@/icons/checkbox-icon";
+import { DateTimeProductionFloorComponent } from "@/widgets/production-floor/date-comp/date-componenet";
+import { DescreptionWidget } from "@/widgets/production-floor/descreption-widget/descreption-widget";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -142,10 +131,10 @@ const TableRowComponent = ({
       checked
         ? [...selectedIds, boardMission]
         : selectedIds.filter(
-            (selectedBoard) =>
-              selectedBoard.id !== id &&
-              selectedBoard.productType === boardMission.productType
-          )
+          (selectedBoard) =>
+            selectedBoard.id !== id &&
+            selectedBoard.productType === boardMission.productType
+        )
     );
   };
 
@@ -176,7 +165,7 @@ const TableRowComponent = ({
           userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}
         >
           <SecondaryTableCell align={"center"}>
-            <SecondaryCheckBox
+            <Checkbox
               checked={
                 !!selectedIds?.find(
                   (si) =>
@@ -187,17 +176,19 @@ const TableRowComponent = ({
               onChange={(a) => {
                 onSelectBoardMissions(boardMission.id, a.target.checked);
               }}
+              icon={<CheckboxIcon color="#D0D5DD" width="20" height="20" />}
+              checkedIcon={<CheckboxCheckedIcon fill="#2E3092" width="20" height="20" />}
             />
           </SecondaryTableCell>
         </PermissionCheck>
-        <SecondaryTableCell>
+        {/* <SecondaryTableCell>
           {
             <ApprovalFileStatusComponent
               fileStatus={boardMission.showGraphicsApprovalAlert}
               t={t}
             />
           }
-        </SecondaryTableCell>
+        </SecondaryTableCell> */}
         <SecondaryTableCell align={"center"}>
           <span
             onClick={() => {
@@ -208,22 +199,22 @@ const TableRowComponent = ({
             style={{
               cursor: "pointer",
               textDecoration: "none",
-              color: primaryColor(500),
+              color: "#475467",
             }}
           >
             {`${boardMission?.boardMissionNumber}\\${boardMission?.orderNumber}`}
           </span>
         </SecondaryTableCell>
-        <SecondaryTableCell>
+        {/* <SecondaryTableCell>
           {boardMission.isUrgentWork && (
             <KeyboardDoubleArrowUpIcon style={{ color: errorColor(500) }} />
           )}
+        </SecondaryTableCell> */}
+        <SecondaryTableCell align={"center"} style={{ width: "20px" }}>
+          {getTruncatedLabel(boardMission?.clientName, 15)}
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"} style={{ padding: "0px 5px" }}>
           {getTruncatedLabel(boardMission?.jobName, 10)}
-        </SecondaryTableCell>
-        <SecondaryTableCell align={"center"} style={{ width: "20px" }}>
-          {getTruncatedLabel(boardMission?.clientName, 15)}
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"} style={{ padding: "0px 10px" }}>
           <ClickableLabelComponent
@@ -233,6 +224,12 @@ const TableRowComponent = ({
             t={t}
             key={boardMission.id}
           />
+        </SecondaryTableCell>
+        <SecondaryTableCell align={"center"}>
+          <DateTimeProductionFloorComponent dateString={boardMission.boardMissionCreatedDate} />
+        </SecondaryTableCell>
+        <SecondaryTableCell align={"center"}>
+          <DescreptionWidget desciption={boardMission.description || "Lamination: One Side | Glossy  Scorings In Width: 3  Scorings In Len"} />
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"}>
           <BoardStatusComponent
@@ -258,25 +255,7 @@ const TableRowComponent = ({
             textColor={boardMission?.productionFloorJobColor}
           />
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
-          <DateTimeComponent
-            dateTime={boardMission.boardMissionCreatedDate}
-            direction={"column-reverse"}
-          />
-        </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
-          <DateTimeComponent
-            dateTime={boardMission.actionDueDate}
-            direction={"column-reverse"}
-          />
-        </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
-          <DateTimeComponent
-            dateTime={boardMission.dueDate}
-            direction={"column-reverse"}
-          />
-        </SecondaryTableCell>
-        <SecondaryTableCell
+        {/* <SecondaryTableCell
           align={"center"}
           style={{ width: "20px", gap: "2px" }}
         >
@@ -285,7 +264,7 @@ const TableRowComponent = ({
               <LabelComponent key={tag} label={tag} />
             ))}
           </Stack>
-        </SecondaryTableCell>
+        </SecondaryTableCell> */}
         <SecondaryTableCell align={"center"}>
           <MoreMenuWidget
             boardMission={boardMission}

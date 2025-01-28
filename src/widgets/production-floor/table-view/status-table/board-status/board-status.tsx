@@ -87,6 +87,7 @@ const BoardStatusComponent = ({
           border: `1px solid ${newTextColor}`,
           color: newTextColor,
           width: "fit-content",
+          minWidth: "fit-content",
           height: 36,
           pointerEvents: canChangeStatus ? "auto" : "none",
           opacity: 1,
@@ -111,12 +112,16 @@ const BoardStatusComponent = ({
         }}
         disabled={!canChangeStatus}
       >
-        {anchorEl
-          ? t("customers.selectStatus")
-          : isFromMissionView
-          ? `${statusText} / ${currentStation}`
-          : t("productionStatuses." + boardStatus()?.name)}
-        {anchorEl ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <div style={{ width: "max-content", }}>
+            {anchorEl
+              ? t("customers.selectStatus")
+              : isFromMissionView
+                ? `${statusText} / ${currentStation}`
+                : t("productionStatuses." + boardStatus()?.name)}
+          </div>
+          {anchorEl ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+        </div>
       </Button>
       <Menu
         closeAfterTransition={true}

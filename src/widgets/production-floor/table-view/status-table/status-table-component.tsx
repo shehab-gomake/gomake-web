@@ -88,21 +88,21 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-          (board) =>
-            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-              search
-            ) ||
-            `${board?.clientName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            `${board?.productName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            board?.automatedTags?.some((tag) =>
-              `${tag.toLowerCase()}`.includes(search.toLowerCase())
-            ) ||
-            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-        )
+        (board) =>
+          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+            search
+          ) ||
+          `${board?.clientName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          `${board?.productName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          board?.automatedTags?.some((tag) =>
+            `${tag.toLowerCase()}`.includes(search.toLowerCase())
+          ) ||
+          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+      )
       : boards;
   }, [boards, search]);
 
@@ -137,12 +137,15 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
                     {tableHeaders(status.id)?.map((header) => (
                       <SecondaryTableCell
                         style={{
-                          backgroundColor: status.backgroundColor,
+                          backgroundColor: "#F9FAFB",
+                          placeItems: "center"
                         }}
                         key={"statusTable" + status.id}
                         align={"center"}
                       >
-                        {header}
+                        <div style={{ width: "max-content", minWidth: "max-content", }}>
+                          {header}
+                        </div>
                       </SecondaryTableCell>
                     ))}
                   </SecondaryTableRow>
