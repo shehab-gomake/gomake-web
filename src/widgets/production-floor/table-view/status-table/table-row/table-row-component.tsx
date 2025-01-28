@@ -229,7 +229,7 @@ const TableRowComponent = ({
           <DateTimeProductionFloorComponent dateString={boardMission.boardMissionCreatedDate} />
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"}>
-          <DescreptionWidget desciption={boardMission.description || "Lamination: One Side | Glossy  Scorings In Width: 3  Scorings In Len"} />
+          <DescreptionWidget desciption={boardMission.description} />
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"}>
           <BoardStatusComponent

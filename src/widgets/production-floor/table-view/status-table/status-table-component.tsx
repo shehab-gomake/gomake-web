@@ -106,6 +106,11 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
       : boards;
   }, [boards, search]);
 
+  const getCustomWidth = (index: number) => {
+    const widths = ["3%", "10%", "10%", "10%", "10%", "7%", "16%", "10%", "10%", "10%", "4%"];
+    return widths[index] || "auto";
+  };
+
   return (
     <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
       <Button
@@ -134,11 +139,14 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
               <Table stickyHeader={false}>
                 <TableHead style={{ backgroundColor: status.backgroundColor }}>
                   <SecondaryTableRow>
-                    {tableHeaders(status.id)?.map((header) => (
+                    {tableHeaders(status.id)?.map((header, index) => (
                       <SecondaryTableCell
                         style={{
                           backgroundColor: "#F9FAFB",
-                          placeItems: "center"
+                          placeItems: "center",
+                          minWidth: getCustomWidth(index),
+                          maxWidth: getCustomWidth(index),
+                          width: getCustomWidth(index)
                         }}
                         key={"statusTable" + status.id}
                         align={"center"}
