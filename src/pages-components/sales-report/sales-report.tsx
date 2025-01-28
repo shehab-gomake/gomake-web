@@ -73,7 +73,7 @@ const SalesReportWidget = () => {
       )} */}
 
       {showTable &&
-        tableData?.map((item) => {
+        (Array.isArray(tableData) ? tableData : []).map((item) => {
           return (
             <PrimaryTable
               rows={getNewTableDataRows(item?.data)}
