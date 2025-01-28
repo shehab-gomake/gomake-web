@@ -283,7 +283,7 @@ const GoMakeTreeSelect = ({
         key={"ProductSelect"}
         showSearch
         style={{ width: "100%" }}
-        //value={value}
+        value={value?.id}
         dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
         placeholder={t("modal.pleaseSelect")}
         allowClear

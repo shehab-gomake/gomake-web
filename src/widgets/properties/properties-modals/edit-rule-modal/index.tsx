@@ -97,6 +97,7 @@ const EditRulesModal = ({
                               key={`${index}-${rule.id}`}
                               rule={rule}
                               deletePropertyRule={deletePropertyRule}
+                              selectedProperties={selectedProperties}
                             />
                           </div>
                         )}

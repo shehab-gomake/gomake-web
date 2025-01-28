@@ -1,8 +1,6 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { useProperites } from "./use-properites";
 
 const useRule = () => {
   const { setSnackbarStateValue } = useSnackBar();

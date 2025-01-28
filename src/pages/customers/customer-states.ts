@@ -1,17 +1,16 @@
-import { atom } from 'recoil';
+import { atom } from "recoil";
 
 export const clientTypesCategoriesState = atom<any>({
-    key: 'clientTypesCategoriesState',
-    default: [],
+  key: "clientTypesCategoriesState",
+  default: [],
 });
 
 export const agentsCategoriesState = atom<[]>({
-    key: 'agentsCategoriesState',
-    default: [],
+  key: "agentsCategoriesState",
+  default: [],
 });
 
-
-export const isSelectedCLoseAsDeleveryNoteState = atom<boolean>({
-    key: 'isSelectedCLoseAsDeleveryNoteState',
-    default: false,
+export const isSelectedCLoseAsDeliveryNoteState = atom<boolean>({
+  key: "isSelectedCLoseAsDeliveryNoteState",
+  default: false,
 });

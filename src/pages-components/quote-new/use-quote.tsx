@@ -65,7 +65,7 @@ import {
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
 import {
   clientTypesCategoriesState,
-  isSelectedCLoseAsDeleveryNoteState,
+  isSelectedCLoseAsDeliveryNoteState,
 } from "@/pages/customers/customer-states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import {
@@ -278,8 +278,8 @@ const useQuoteNew = ({
   const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] =
     useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>({});
-  const isSelectedCLoseAsDeleveryNote = useRecoilValue(
-    isSelectedCLoseAsDeleveryNoteState
+  const isSelectedCLoseAsDeliveryNote = useRecoilValue(
+    isSelectedCLoseAsDeliveryNoteState
   );
   const onClickCloseChangeProductionStatusModal = () => {
     setOpenChangeProductionStatusModal(false);
@@ -299,8 +299,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1050,7 +1050,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1621,8 +1621,17 @@ const useQuoteNew = ({
   ]);
 
   const [openReferenceModal, setOpenReferenceModal] = useState(false);
+  const [confirmCreateDocument, setConfirmCreateDocument] = useState(false);
   const onClickOpenReferenceModal = () => {
     setOpenReferenceModal(true);
+  };
+
+  const onClickConfirmCreateDocument = () => {
+    setConfirmCreateDocument(true);
+  };
+
+  const onClickCloseConfirmCreateDocument = () => {
+    setConfirmCreateDocument(false);
   };
 
   const [newCreationDate, setNewCreationDate] = useState(
@@ -1924,10 +1933,11 @@ const useQuoteNew = ({
     router.query.isNewCreation &&
     (isDeliveryNote || isInvoice)
   );
+
   const moveOrderToReady = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        if (isSelectedCLoseAsDeleveryNote) {
+        if (isSelectedCLoseAsDeliveryNote) {
           navigate(
             `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
           );
@@ -2213,7 +2223,7 @@ const useQuoteNew = ({
     openChangeProductionStatusModal,
     onClickCloseChangeProductionStatusModal,
     selectedDocument,
-    isSelectedCLoseAsDeleveryNote,
+    isSelectedCLoseAsDeliveryNote,
     navigate,
     moveOrderToReady,
     allClientActiveBudgets,
@@ -2228,6 +2238,9 @@ const useQuoteNew = ({
     handleSendUsingWhatsAppWeb,
     isOrder,
     isQuote,
+    confirmCreateDocument,
+    onClickConfirmCreateDocument,
+    onClickCloseConfirmCreateDocument,
   };
 };
 

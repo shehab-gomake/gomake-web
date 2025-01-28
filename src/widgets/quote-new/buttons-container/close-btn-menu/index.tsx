@@ -1,19 +1,19 @@
 import { GoMakeMenu } from "@/components";
 import { useGomakeRouter } from "@/hooks/use-gomake-router";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { isSelectedCLoseAsDeleveryNoteState } from "@/pages/customers/customer-states";
+import { isSelectedCLoseAsDeliveryNoteState } from "@/pages/customers/customer-states";
 import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useSetRecoilState } from "recoil";
 
 interface ICloseMenuProps {
-  handleClose: () => void,
+  handleClose: () => void;
   open: boolean;
   anchorEl: null | HTMLElement;
   documentState: any;
   documentType: DOCUMENT_TYPE;
   onClickClose: (id: string) => void;
-  onClickOpenChangeProductionStatusModal?: any
+  onClickOpenChangeProductionStatusModal?: any;
 }
 
 const CloseBtnMenu = ({
@@ -23,49 +23,82 @@ const CloseBtnMenu = ({
   documentState,
   documentType,
   onClickClose,
-  onClickOpenChangeProductionStatusModal
+  onClickOpenChangeProductionStatusModal,
 }: ICloseMenuProps) => {
   const { t } = useTranslation();
   const { navigate } = useGomakeRouter();
-  const setIsSelectedCLoseAsDeleveryNote = useSetRecoilState(isSelectedCLoseAsDeleveryNoteState);
+  const setIsSelectedCLoseAsDeliveryNote = useSetRecoilState(
+    isSelectedCLoseAsDeliveryNoteState
+  );
   const getMenuOptions = () => {
     switch (documentType) {
       case DOCUMENT_TYPE.order:
         return [
-          { label: t("sales.quote.close"), action: () => onClickClose(documentState?.id) },
           {
-            label: t("sales.quote.closeAsDeliveryNote"), action: () => {
-              if (documentState?.productionStatus) {
-                navigate(`/deliveryNote?isNewCreation=true&orderId=${documentState?.id}`)
-              }
-              else {
-                onClickOpenChangeProductionStatusModal(documentState)
-                setIsSelectedCLoseAsDeleveryNote(true)
-              }
-            }
+            label: t("sales.quote.close"),
+            action: () => onClickClose(documentState?.id),
           },
           {
-            label: t("sales.quote.closeAsInvoice"), action: () => {
+            label: t("sales.quote.closeAsDeliveryNote"),
+            action: () => {
               if (documentState?.productionStatus) {
-                navigate(`/invoice?isNewCreation=true&orderId=${documentState?.id}`)
+                navigate(
+                  `/deliveryNote?isNewCreation=true&orderId=${documentState?.id}`
+                );
+              } else {
+                onClickOpenChangeProductionStatusModal(documentState);
+                setIsSelectedCLoseAsDeliveryNote(true);
               }
-              else {
-                onClickOpenChangeProductionStatusModal(documentState)
-                setIsSelectedCLoseAsDeleveryNote(false)
+            },
+          },
+          {
+            label: t("sales.quote.closeAsInvoice"),
+            action: () => {
+              if (documentState?.productionStatus) {
+                navigate(
+                  `/invoice?isNewCreation=true&orderId=${documentState?.id}`
+                );
+              } else {
+                onClickOpenChangeProductionStatusModal(documentState);
+                setIsSelectedCLoseAsDeliveryNote(false);
               }
-            }
-          }
+            },
+          },
         ];
       case DOCUMENT_TYPE.deliveryNote:
         return [
-          { label: t("sales.quote.close"), action: () => onClickClose(documentState?.id) },
-          { label: t("sales.quote.closeAsInvoice"), action: () => navigate(`/invoice?isNewCreation=true&deliveryNoteId=${documentState?.id}`) },
-          { label: t("sales.quote.createDeliveryNoteRefund"), action: () => navigate(`/deliveryNoteRefund?isNewCreation=true&documentId=${documentState?.id}`) }
+          {
+            label: t("sales.quote.close"),
+            action: () => onClickClose(documentState?.id),
+          },
+          {
+            label: t("sales.quote.closeAsInvoice"),
+            action: () =>
+              navigate(
+                `/invoice?isNewCreation=true&deliveryNoteId=${documentState?.id}`
+              ),
+          },
+          {
+            label: t("sales.quote.createDeliveryNoteRefund"),
+            action: () =>
+              navigate(
+                `/deliveryNoteRefund?isNewCreation=true&documentId=${documentState?.id}`
+              ),
+          },
         ];
       case DOCUMENT_TYPE.invoice:
         return [
-          { label: t("sales.quote.close"), action: () => onClickClose(documentState?.id) },
-          { label: t("sales.quote.createInvoiceRefund"), action: () => navigate(`/invoiceRefund?isNewCreation=true&documentId=${documentState?.id}`) }
+          {
+            label: t("sales.quote.close"),
+            action: () => onClickClose(documentState?.id),
+          },
+          {
+            label: t("sales.quote.createInvoiceRefund"),
+            action: () =>
+              navigate(
+                `/invoiceRefund?isNewCreation=true&documentId=${documentState?.id}`
+              ),
+          },
         ];
       default:
         return [];
@@ -84,10 +117,10 @@ const CloseBtnMenu = ({
       anchorEl={anchorEl}
       style={{ marginTop: -45 }}
       sx={{
-        '& .MuiPaper-root': {
-          border: '1px solid #cbcbe4',
-          borderRadius: "8px"
-        }
+        "& .MuiPaper-root": {
+          border: "1px solid #cbcbe4",
+          borderRadius: "8px",
+        },
       }}
     >
       {menuOptions.map((option, index) => (

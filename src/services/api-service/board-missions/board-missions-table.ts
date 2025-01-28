@@ -86,7 +86,7 @@ const getDeliveryTickerPdfApi: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
+    EHttpMethod.POST,
     GET_DELIVERY_TICKER_PDF_URL,
     setState,
     data

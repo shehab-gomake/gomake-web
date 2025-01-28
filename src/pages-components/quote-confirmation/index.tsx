@@ -64,11 +64,11 @@ const QuoteConfirmationPageWidget = ({
           setIsPageNotFound(true);
         }
       } else {
-        getQuoteConfirmation();
+        await getQuoteConfirmation();
       }
     };
 
-    handlePrePaymentPage();
+    handlePrePaymentPage().then();
   }, [isPrePaymentPage, getTempUserToken]);
 
   if (isPageNotFound && isPrePaymentPage) {
@@ -118,4 +118,4 @@ const QuoteConfirmationPageWidget = ({
   );
 };
 
-export { QuoteConfirmationPageWidget };
+export default QuoteConfirmationPageWidget;

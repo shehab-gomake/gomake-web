@@ -36,6 +36,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
+import { GomakeTextInput } from "@/components";
 
 type StatusOption = {
   label: string;
@@ -691,12 +692,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         downloadPdf(pdfLink);
         onClosePackagesModal();
       } else {
-        alertFaultGetData();
+        alertFault("boardMissions.alertPrintPackingSlip");
       }
     };
     await getDeliveryTickerPdfApi(callApi, callBack, {
       boardMissionId: missionItem?.id,
-      quantityOnPackages: quantityPerPackage,
+      packageQuantities
     });
   };
 
@@ -767,8 +768,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     missionItem?.quantity || 0
   );
 
-  const remainingQuantity =
-    missionItem?.quantity - quantityPerPackage * (quantityOfPackages - 1);
+  const [remainingQuantity, setRemainingQuantity] = useState(
+    missionItem?.quantity - quantityPerPackage * (quantityOfPackages - 1)
+  );
+  useEffect(() => {
+    setRemainingQuantity(
+      missionItem?.quantity - quantityPerPackage * (quantityOfPackages - 1)
+    );
+  }, [quantityPerPackage, quantityOfPackages]);
 
   const handleQuantityOfPackagesChange = (event) => {
     const newQuantityOfPackages = parseInt(event.target.value, 10);
@@ -790,20 +797,66 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setQuantityOfPackages(newQuantityOfPackages);
   };
 
+
+  const [packageQuantities, setPackageQuantities] = useState<number[]>(() => {
+    const initialQuantityPerPackage = missionItem?.quantity
+      ? Math.ceil(missionItem.quantity / quantityOfPackages)
+      : 0;
+    return Array(quantityOfPackages).fill(initialQuantityPerPackage);
+  });
+
+  useEffect(() => {
+    if (missionItem?.quantity && quantityPerPackage > 0) {
+      const totalQuantity = missionItem.quantity;
+      const fullPackages = Math.max(0, Math.floor(totalQuantity / quantityPerPackage));
+      const remainingQuantity = totalQuantity % quantityPerPackage;
+
+      let newPackageQuantities = Array(fullPackages).fill(quantityPerPackage);
+      if (remainingQuantity > 0) {
+        newPackageQuantities = [...newPackageQuantities, remainingQuantity];
+      }
+
+      setPackageQuantities(newPackageQuantities);
+    } else {
+      setPackageQuantities([]);
+    }
+  }, [missionItem, quantityPerPackage]);
+
+  const handlePackageQuantityChange = (index: number, newValue: number) => {
+    setPackageQuantities((prevQuantities) => {
+      const updatedQuantities = [...prevQuantities];
+      updatedQuantities[index] = newValue;
+
+      if (index === quantityOfPackages - 1) {
+        const totalQuantity = missionItem?.quantity || 0;
+        const sumOfOtherPackages = updatedQuantities.slice(0, -1).reduce((acc, val) => acc + val, 0);
+        updatedQuantities[index] = totalQuantity - sumOfOtherPackages;
+      }
+
+      return updatedQuantities;
+    });
+  };
+
   const packageInputs = useMemo(() => {
-    return [...Array(quantityOfPackages)].map((_, index) => (
-      <div key={index} style={{ width: "40%" }}>
-        <h3 style={classes.packageLabelStyle}>
-          {`${t("boardMissions.package")} ${index + 1}`}
-        </h3>
-        <div style={classes.inputValueStyle}>
-          {index === quantityOfPackages - 1
-            ? remainingQuantity
-            : quantityPerPackage}
+    if (quantityOfPackages) {
+      return [...Array(quantityOfPackages)].map((_, index) => (
+        <div key={index} style={{ width: "30%" }}>
+          <h3 style={classes.packageLabelStyle}>
+            {`${t("boardMissions.package")} ${index + 1}`}
+          </h3>
+          <GomakeTextInput
+            type="number"
+            value={packageQuantities[index]}
+            onChange={(e) => {
+              const newValue = parseInt(e.target.value, 10);
+              console.log("newValue", { newValue, index })
+              handlePackageQuantityChange(index, newValue);
+            }}
+          />
         </div>
-      </div>
-    ));
-  }, [quantityOfPackages, quantityPerPackage, remainingQuantity]);
+      ));
+    }
+  }, [quantityOfPackages, packageQuantities]);
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   const onCloseModal = () => {
