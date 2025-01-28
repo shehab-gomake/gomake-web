@@ -309,14 +309,8 @@ const RightSideWidget = ({
                 // type="number"
                 onChange={(e) => {
                   const newPriceIncludeVat = e.target.value;
-                  if (!newPriceIncludeVat || Number(newPriceIncludeVat) === 0) {
-                    setPriceIncludeVat(1);
-                  }
-                  else {
-                    setPriceIncludeVat(newPriceIncludeVat);
-                  }
-
-                  if (quantity?.values[0]) {
+                  setPriceIncludeVat(newPriceIncludeVat);
+                  if (quantity?.values[0] && newPriceIncludeVat !== "" && newPriceIncludeVat !== null && newPriceIncludeVat !== "0") {
                     const newTotalPrice = (Number(newPriceIncludeVat) / (1 + systemVAT)).toFixed(4);
                     setSliderCurrentProductItemValueTotalPrice(Number(newTotalPrice));
                   }
