@@ -16,6 +16,17 @@ const companyProfileInputs = (state: ICompanyProfile, currencies) => {
             isValid: !!state.name,
         },
         {
+            name: "businessNumber",
+            label: "profileSettings.businessNumber",
+            type: "number",
+            placeholder: "profileSettings.businessNumber",
+            required: false,
+            parameterKey: "business_ID",
+            options: [],
+            value: state.business_ID,
+            isValid: state.business_ID.length >= 9,
+        },
+        {
             name: "dashboardCode",
             label: "profileSettings.dashboardCode",
             type: "text",
