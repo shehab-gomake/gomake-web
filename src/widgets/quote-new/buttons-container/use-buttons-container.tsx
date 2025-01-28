@@ -243,14 +243,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const checkedItemsIds = useRecoilValue(checkedItemsIdsState);
 
-  //!heres
+  //!here done
   const allocatedSums = useRecoilValue(allocatedSumsState);
   const onClickCreateNewReceipt = async () => {
     // const filteredReceiptItems = Object.values(checkedItemsIds)
     //   .map((id) => quoteItemValue.receiptItems.find((item) => item.id === id))
     //   .filter(Boolean);
-
-    //!here
     const filteredReceiptItems = Object.keys(checkedItemsIds)
       .map((key) => {
         const item = quoteItemValue.receiptItems.find(

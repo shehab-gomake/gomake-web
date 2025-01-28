@@ -1,5 +1,5 @@
 import { PrimaryTableCell } from "@/components/tables/primary-table";
-import { Checkbox, TableRow, TextField } from "@mui/material";
+import { Checkbox, Stack, TableRow, TextField } from "@mui/material";
 import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -27,9 +27,12 @@ const RowMappingWidget = ({
   const handleAllocatedSumChange = (event) => {
     const newAllocatedSum = event.target.value;
 
-    // Make sure to set the value as a number
-    if (isNaN(newAllocatedSum) || newAllocatedSum < 0) {
-      return; // Optionally show an error message if the value is invalid
+    if (
+      isNaN(newAllocatedSum) ||
+      newAllocatedSum < 0 ||
+      newAllocatedSum > item?.sumApplied
+    ) {
+      return;
     }
 
     setAllocatedSum(index, Number(newAllocatedSum));
@@ -119,19 +122,23 @@ const RowMappingWidget = ({
       ) : (
         <PrimaryTableCell
           style={{
-            width: columnWidths[5],
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "row",
+            // justifyContent: "center",
             ...classes.cellContainerStyle,
+            padding: "0px 50px", //!here should adjust direction
+            gap: "3px",
           }}
         >
-          <GomakeTextInput
+          <input
             key={`allocates-${index}`}
             value={allocatedSum || 0}
             onChange={handleAllocatedSumChange}
+            style={{ width: "80px" }}
             type="number"
-            style={{ width: "70px", height: "20px" }}
-            sx={{ height: "20px" }}
           />
-          /{item?.sumApplied}
+          / {item?.sumApplied}
         </PrimaryTableCell>
       )}
     </TableRow>
