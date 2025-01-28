@@ -44,15 +44,13 @@ const ReceiptsTable = () => {
     openMethodsDetailsModal,
     handleOpenMethodsDetailsModal,
     handleCloseMethodsDetailsModal,
+    remainingTotal,
+    setRemainingTotal,
+    allocatedSums,
+    setAllocatedSums,
   } = usePaymentsTable();
 
   //-----------------------------------------------------------------------------------------------------------------------
-
-  const [allocatedSums, setAllocatedSums] = useState<Record<string, number>>(
-    {}
-  );
-
-  const [remainingTotal, setRemainingTotal] = useState(0);
 
   useEffect(() => {
     // Recalculate allocations when finalTotalPayment or tableRows change

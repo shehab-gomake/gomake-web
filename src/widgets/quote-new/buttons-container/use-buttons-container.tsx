@@ -1,4 +1,4 @@
-import {openReceiptCreationModalState, quoteItemState} from "@/store";
+import { openReceiptCreationModalState, quoteItemState } from "@/store";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -16,7 +16,11 @@ import {
   getReceiptInvoicesPdfApi,
   getReceiptPdfApi,
 } from "@/services/api-service/generic-doc/receipts-api";
-import { checkedItemsIdsState, finalTotalPaymentState } from "./states";
+import {
+  allocatedSumsState,
+  checkedItemsIdsState,
+  finalTotalPaymentState,
+} from "./states";
 import {
   checkArrayNotEmptyOrEmailNotEmpty,
   checkArrayNotEmptyOrPhoneNotEmpty,
@@ -56,7 +60,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
   const [openMangerApprovalModal, setOpenMangerApprovalModal] = useState(false);
   const [, setShowPrintJobsModal] = useRecoilState(newOrderIdToPrintJobsState);
-  const [openReceiptCreationModal, setOpenReceiptCreationModal] = useRecoilState(openReceiptCreationModalState);
+  const [openReceiptCreationModal, setOpenReceiptCreationModal] =
+    useRecoilState(openReceiptCreationModalState);
   const [openOrderNowPrePaymentModal, setOpenOrderNowPrePaymentModal] =
     useState(false);
 
@@ -238,10 +243,26 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const checkedItemsIds = useRecoilValue(checkedItemsIdsState);
 
+  //!heres
+  const allocatedSums = useRecoilValue(allocatedSumsState);
   const onClickCreateNewReceipt = async () => {
-    const filteredReceiptItems = Object.values(checkedItemsIds)
-      .map((id) => quoteItemValue.receiptItems.find((item) => item.id === id))
+    // const filteredReceiptItems = Object.values(checkedItemsIds)
+    //   .map((id) => quoteItemValue.receiptItems.find((item) => item.id === id))
+    //   .filter(Boolean);
+
+    //!here
+    const filteredReceiptItems = Object.keys(checkedItemsIds)
+      .map((key) => {
+        const item = quoteItemValue.receiptItems.find(
+          (item) => item.id === checkedItemsIds[key]
+        );
+
+        const sumApplied = allocatedSums[key] || 0;
+
+        return item ? { ...item, sumApplied } : null;
+      })
       .filter(Boolean);
+
     const newReceiptItem = {
       ...quoteItemValue,
       receiptItems: filteredReceiptItems,

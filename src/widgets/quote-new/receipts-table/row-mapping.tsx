@@ -6,7 +6,6 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
 import { GomakeTextInput } from "@/components";
 
 //!here
@@ -107,40 +106,34 @@ const RowMappingWidget = ({
       >
         {t(item?.documentTypeText)}
       </PrimaryTableCell>
-      {/* <PrimaryTableCell
-        style={{
-          width: columnWidths[5],
-          ...classes.cellContainerStyle,
-        }}
-      >
-        {allocatedSum}/{item?.sumApplied}
-      </PrimaryTableCell> */}
-      {/* <PrimaryTableCell
-        style={{
-          width: columnWidths[5],
-          ...classes.cellContainerStyle,
-        }}
-      >
-        {item?.sumApplied}
-      </PrimaryTableCell> */}
 
-      <PrimaryTableCell
-        style={{
-          width: columnWidths[5],
-          ...classes.cellContainerStyle,
-        }}
-      >
-        {/* Use TextField to allow input for allocated sum */}
-        <GomakeTextInput
-          key={`allocates-${index}`}
-          value={allocatedSum || 0}
-          onChange={handleAllocatedSumChange}
-          type="number"
-          style={{ width: "70px", height: "20px" }}
-          sx={{ height: "20px" }}
-        />
-        /{item?.sumApplied}
-      </PrimaryTableCell>
+      {!router?.query?.isNewCreation ? (
+        <PrimaryTableCell
+          style={{
+            width: columnWidths[5],
+            ...classes.cellContainerStyle,
+          }}
+        >
+          {item?.sumApplied}
+        </PrimaryTableCell>
+      ) : (
+        <PrimaryTableCell
+          style={{
+            width: columnWidths[5],
+            ...classes.cellContainerStyle,
+          }}
+        >
+          <GomakeTextInput
+            key={`allocates-${index}`}
+            value={allocatedSum || 0}
+            onChange={handleAllocatedSumChange}
+            type="number"
+            style={{ width: "70px", height: "20px" }}
+            sx={{ height: "20px" }}
+          />
+          /{item?.sumApplied}
+        </PrimaryTableCell>
+      )}
     </TableRow>
   );
 };

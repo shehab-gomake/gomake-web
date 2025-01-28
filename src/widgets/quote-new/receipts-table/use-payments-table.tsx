@@ -31,6 +31,7 @@ import {
   selectedCreditTransactionState,
   transactionOptionsData,
   cashAccountCodeState,
+  allocatedSumsState,
 } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
@@ -143,6 +144,7 @@ const usePaymentsTable = () => {
     };
   });
 
+  //!here
   const handleCheckboxChange = (index, itemId) => {
     const newTableRow = tableRows.map((row) =>
       row.id === itemId ? { ...row, isChecked: false } : row
@@ -173,6 +175,74 @@ const usePaymentsTable = () => {
         }
       });
       setTotalSum(sum);
+      return updatedCheckedItems;
+    });
+  };
+
+  const handleCheckboxChangeNew = (index, itemId) => {
+    const newTableRow = tableRows.map((row) => {
+      if (row.id === itemId) {
+        // Add the newSumApplied field to the item, taking its value from allocatedSums
+        const newSumApplied = allocatedSums[index] || 0;
+        return { ...row, isChecked: !row.isChecked, newSumApplied }; // Add the new field
+      }
+      return row;
+    });
+
+    setDocumentItemValue({ ...documentItemValue, receiptItems: newTableRow });
+
+    setCheckedItems((prevCheckedItems) => {
+      const updatedCheckedItems = {
+        ...prevCheckedItems,
+        [index]: !prevCheckedItems[index], // Toggle checked state
+      };
+
+      // Update checked item IDs
+      setCheckedItemsIds((prevCheckedItemsIds) => {
+        const updatedCheckedItemsIds = { ...prevCheckedItemsIds };
+        if (updatedCheckedItems[index]) {
+          updatedCheckedItemsIds[index] = itemId;
+        } else {
+          delete updatedCheckedItemsIds[index];
+        }
+        return updatedCheckedItemsIds;
+      });
+
+      // Recalculate total sum for checked items
+      let sum = 0;
+      tableRows.forEach((item, idx) => {
+        if (updatedCheckedItems[idx]) {
+          sum += item.sumApplied;
+        }
+      });
+
+      setTotalSum(sum);
+
+      // Now, when the item is checked, calculate its allocated sum
+      if (updatedCheckedItems[index]) {
+        // Calculate allocated sum for the newly checked item
+        setAllocatedSums((prev) => {
+          const updated = { ...prev };
+          let remaining = remainingTotal;
+          const allocatable = Math.min(remaining, tableRows[index].sumApplied);
+          updated[index] = allocatable;
+          remaining -= allocatable;
+          setRemainingTotal(remaining); // Update remaining total
+
+          return updated;
+        });
+      } else {
+        // If unchecked, clear the allocated sum and adjust remaining total
+        setAllocatedSums((prev) => {
+          const updated = { ...prev };
+          const releasedAmount = updated[index] || 0;
+          delete updated[index];
+          setRemainingTotal((prevRemaining) => prevRemaining + releasedAmount); // Restore the released amount
+
+          return updated;
+        });
+      }
+
       return updatedCheckedItems;
     });
   };
@@ -435,6 +505,14 @@ const usePaymentsTable = () => {
     setOpenTransactionModal(true);
   };
 
+  //!here
+  // const [allocatedSums, setAllocatedSums] = useState<Record<string, number>>(
+  //   {}
+  // );
+  const [allocatedSums, setAllocatedSums] = useRecoilState(allocatedSumsState);
+
+  const [remainingTotal, setRemainingTotal] = useState(0);
+
   return {
     t,
     documentItemValue,
@@ -491,6 +569,11 @@ const usePaymentsTable = () => {
     setOpenTransactionModal,
     resetTotalCreditCard,
     resetCreditCardState,
+
+    remainingTotal,
+    setRemainingTotal,
+    allocatedSums,
+    setAllocatedSums,
   };
 };
 
