@@ -44,7 +44,10 @@ const DepositFilterSection = ({
         if (selectedAccount) {
           return {
             ...prev,
-            depositAccount: value,
+            depositAccount: {
+              ...value,
+              code: selectedAccount?.code,
+            },
             bankName: selectedAccount?.bankName || "",
             bankBranch: selectedAccount?.bankBranch || "",
             bankAccountNUM: selectedAccount?.bankAccountNUM || "",
