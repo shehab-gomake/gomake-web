@@ -47,9 +47,9 @@ const CurrentStationComponent = ({
       >
         <span>{machineName ? machineName : actionName}</span>
         {anchorEl ? (
-          <UpArrowIcon color={textColor} />
+          <UpArrowIcon color={"#475467"} />
         ) : (
-          <DownArrowIcon color={textColor} />
+          <DownArrowIcon color={"#475467"} />
         )}
       </Button>
       <Menu
