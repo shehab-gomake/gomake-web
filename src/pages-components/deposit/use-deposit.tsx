@@ -331,7 +331,7 @@ const useDeposit = () => {
             (account) => account?.type === DEPOSIT_TYPE.Checks
           )
         );
-        setDepositAccounts(metaData?.depositAccounts);
+        setDepositAccounts(metaData?.depositAccounts ?? []);
         const cashSumTotal = depositMetaData?.cashReceiptsToDeposit?.reduce(
           (total, deposit) => {
             return total + (deposit?.cashSum || 0);
@@ -354,16 +354,24 @@ const useDeposit = () => {
           checksBalance: checksSumTotal,
           creditCardBalance: creditSumTotal,
         });
+
         const firstDepositAccount = metaData?.depositAccounts?.[0] || {};
+
+        const checksAccounts = metaData?.depositMetaData?.accounts?.filter(
+          (account) => account?.type === DEPOSIT_TYPE.Checks
+        ); // for first tab by default
 
         setNewDeposit({
           ...res?.data?.erpDeposit,
           balance: checksSumTotal,
-          allocationAccount: "71100",
-          depositAccount: {
-            label: `${firstDepositAccount?.name} - ${firstDepositAccount?.code}`,
-            id: firstDepositAccount?.id,
-          },
+          allocationAccount:
+            checksAccounts.length > 0 ? checksAccounts[0].code : "0000",
+          depositAccount: metaData?.depositAccounts
+            ? {
+                label: `${firstDepositAccount.name} - ${firstDepositAccount.code}`,
+                id: firstDepositAccount.id,
+              }
+            : null,
           bankName: firstDepositAccount?.bankName || "",
           bankBranch: firstDepositAccount?.bankBranch || "",
           bankAccountNUM: firstDepositAccount?.bankAccountNUM || "",

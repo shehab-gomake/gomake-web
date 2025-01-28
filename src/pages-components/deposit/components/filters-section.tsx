@@ -115,6 +115,7 @@ const DepositFilterSection = ({
                 onChange={(e: any, value: any) =>
                   onChangeDepositInputs("depositAccount", value)
                 }
+                placeholder={t("deposits.accountCode")}
               />
             </div>
           </div>
