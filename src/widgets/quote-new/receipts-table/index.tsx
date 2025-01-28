@@ -13,7 +13,7 @@ import { TotalPricesNewReceipts } from "./total-prices-new-receipt";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { TotalPricesReceipts } from "./total-prices-receipt";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PaymentMethodsDetailsModal } from "./Payment-methods-details/payment-methods-details-modal";
 //!here
 const ReceiptsTable = () => {
@@ -46,55 +46,31 @@ const ReceiptsTable = () => {
     handleCloseMethodsDetailsModal,
   } = usePaymentsTable();
 
-  //   const renderReceiptsItems = useCallback(() => {
-  //     return tableRows?.map((item: any, index: number) => {
-  //       indexs++;
-  //       return (
-  //         <>
-  //           <RowMappingWidget
-  //             key={item.id}
-  //             item={item}
-  //             index={index}
-  //             columnWidths={columnWidths}
-  //             headerHeight={headerHeight}
-  //             isChecked={checkedItems[index] || item?.isChecked}
-  //             onCheckboxChange={() => {
-  //               handleCheckboxChange(index, item?.id);
-  //             }}
-  //           />
-  //         </>
-  //       );
-  //     });
-  //   }, [checkedItems, documentItemValue, tableRows]);
-
   //-----------------------------------------------------------------------------------------------------------------------
 
   const [allocatedSums, setAllocatedSums] = useState<Record<string, number>>(
     {}
-  ); // Store allocated sums per row
-  const [remainingTotal, setRemainingTotal] = useState(0); // Remaining payment allocation
-  const totalAllocatedSum = Object.values(allocatedSums).reduce(
-    (acc, value) => acc + value,
-    0
   );
 
-  useEffect(() => {
-    console.log("Allo ", totalAllocatedSum);
-  }, [allocatedSums]);
+  const [remainingTotal, setRemainingTotal] = useState(0);
 
   useEffect(() => {
-    // Recalculate allocations when finalTotalPayment changes
+    // Recalculate allocations when finalTotalPayment or tableRows change
     setRemainingTotal(finalTotalPayment);
-    setAllocatedSums((prev) => {
+
+    setAllocatedSums(() => {
       const updatedSums = {};
       let remaining = finalTotalPayment;
 
-      // Reallocate sums to checked items in order
+      // Initialize allocated sums with sumApplied or adjust based on remaining total
       tableRows.forEach((item, index) => {
         if (checkedItems[index]) {
           const allocatable = Math.min(remaining, item.sumApplied);
           updatedSums[index] = allocatable;
           remaining -= allocatable;
+        } else {
+          // Default allocation to sumApplied for unchecked rows
+          updatedSums[index] = item.sumApplied;
         }
       });
 
@@ -115,7 +91,7 @@ const ReceiptsTable = () => {
       } else {
         // Release allocated sum when unchecked
         const releasedAmount = updated[index] || 0;
-        delete updated[index]; // Remove allocation for unchecked row
+        delete updated[index];
         remaining += releasedAmount;
 
         // Reallocate released amount to remaining checked items
@@ -140,13 +116,6 @@ const ReceiptsTable = () => {
     });
   };
 
-  //   const setAllocatedSum = (index, newAllocatedSum) => {
-  //     setAllocatedSums((prev) => ({
-  //       ...prev,
-  //       [index]: newAllocatedSum,
-  //     }));
-  //   };
-
   const setAllocatedSum = (index, newAllocatedSum) => {
     setAllocatedSums((prev) => {
       const prevAllocated = prev[index] || 0;
@@ -162,6 +131,7 @@ const ReceiptsTable = () => {
       };
     });
   };
+
   const renderReceiptsItems = useCallback(() => {
     return tableRows?.map((item, index) => (
       <RowMappingWidget
@@ -180,6 +150,8 @@ const ReceiptsTable = () => {
       />
     ));
   }, [allocatedSums, checkedItems, tableRows, remainingTotal]);
+
+  /*---------------------------------------------------------------------------------------- */
   useEffect(() => {
     if (
       router?.query?.isNewCreation &&
@@ -217,7 +189,7 @@ const ReceiptsTable = () => {
       <div>
         <TableContainer
           style={{
-            maxHeight: 420,
+            maxHeight: 400,
             overflow: "scroll",
             border: "1px solid #EAECF0",
           }}
@@ -248,7 +220,6 @@ const ReceiptsTable = () => {
             sum={totalSum}
             totalPayment={finalTotalPayment}
             taxDeduction={taxDeduction}
-            totalAllocatedSum={totalAllocatedSum}
           />
         ) : (
           <TotalPricesReceipts

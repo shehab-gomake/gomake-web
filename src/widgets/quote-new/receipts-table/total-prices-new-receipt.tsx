@@ -2,12 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 import { useStyle } from "./style";
 
-const TotalPricesNewReceipts = ({
-  sum,
-  taxDeduction,
-  totalPayment,
-  totalAllocatedSum,
-}) => {
+const TotalPricesNewReceipts = ({ sum, taxDeduction, totalPayment }) => {
   const headerHeight = "44px";
   const { classes } = useStyle({ headerHeight });
   const { t } = useTranslation();
@@ -84,20 +79,6 @@ const TotalPricesNewReceipts = ({
               " " +
               getCurrencyUnitText(quoteItemValue?.currency)}
           </div>
-          {/* 
-          <div
-            style={{
-              ...classes.oddRowContainer,
-              width: "44.2%",
-              paddingLeft: 36,
-              borderBottom: "1px solid #EAECF0",
-            }}
-          >
-            {totalPayment -
-              Number(totalAllocatedSum) +
-              " " +
-              getCurrencyUnitText(quoteItemValue?.currency)}
-          </div> */}
         </div>
       )}
       {sum - totalPayment < 0 && totalPayment !== 0 && (
