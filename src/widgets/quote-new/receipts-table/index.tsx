@@ -130,6 +130,16 @@ const ReceiptsTable = () => {
     });
   };
 
+  const calculateTotalAllocatedSum = () => {
+    let totalAllocated = 0;
+    tableRows.forEach((item, index) => {
+      if (checkedItems[index] && allocatedSums[index]) {
+        totalAllocated += allocatedSums[index];
+      }
+    });
+    return totalAllocated;
+  };
+
   const renderReceiptsItems = useCallback(() => {
     return tableRows?.map((item, index) => (
       <RowMappingWidget
@@ -215,7 +225,8 @@ const ReceiptsTable = () => {
         </TableContainer>
         {isNewReceipt ? (
           <TotalPricesNewReceipts
-            sum={totalSum}
+            // sum={totalSum}
+            sum={calculateTotalAllocatedSum()}
             totalPayment={finalTotalPayment}
             taxDeduction={taxDeduction}
           />
