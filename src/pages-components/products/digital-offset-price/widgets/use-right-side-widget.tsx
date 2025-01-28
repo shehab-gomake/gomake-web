@@ -53,7 +53,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     sliderCurrentProductItemValueTotalPrice,
     setSliderCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
-  const [priceIncludeVat, setPriceIncludeVat] = useState<any>();
+  const [priceIncludeVat, setPriceIncludeVat] = useState<number>(0);
 
   useEffect(() => {
     setCalculationExceptionsLogs([]);
