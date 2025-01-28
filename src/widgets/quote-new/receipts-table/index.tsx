@@ -76,18 +76,91 @@ const ReceiptsTable = () => {
     });
   }, [finalTotalPayment, tableRows, checkedItems]);
 
+  const setAllocatedSum = (index, newAllocatedSum) => {
+    setAllocatedSums((prev) => {
+      const prevAllocated = prev[index] || 0;
+
+      // Update the remaining total
+      const difference = newAllocatedSum - prevAllocated;
+
+      setRemainingTotal((prevRemaining) => prevRemaining - difference);
+
+      return {
+        ...prev,
+        [index]: newAllocatedSum, // Update the allocated sum for the index
+      };
+    });
+  };
+
+  const renderReceiptsItems = useCallback(() => {
+    return tableRows?.map((item, index) => (
+      <RowMappingWidget
+        key={item.id}
+        item={item}
+        index={index}
+        columnWidths={columnWidths}
+        headerHeight={headerHeight}
+        isChecked={checkedItems[index] || item?.isChecked}
+        allocatedSum={allocatedSums[index] || 0}
+        onCheckboxChange={() => {
+          handleCheckboxChange(index, item?.id);
+          handleAllocationChange(index, !checkedItems[index], item?.sumApplied);
+        }}
+        setAllocatedSum={setAllocatedSum}
+      />
+    ));
+  }, [allocatedSums, checkedItems, tableRows, remainingTotal]);
+
+  // const handleAllocationChange = (index, isChecked, sumApplied) => {
+  //   setAllocatedSums((prev) => {
+  //     const updated = { ...prev };
+  //     let remaining = remainingTotal;
+
+  //     if (isChecked) {
+  //       // Allocate sum when checked
+  //       const allocatable = Math.min(remaining, sumApplied);
+  //       updated[index] = allocatable;
+  //       remaining -= allocatable;
+  //     } else {
+  //       // Release allocated sum when unchecked
+  //       const releasedAmount = updated[index] || 0;
+  //       delete updated[index];
+  //       remaining += releasedAmount;
+
+  //       // Reallocate released amount to remaining checked items
+  //       const sortedCheckedIndexes = tableRows
+  //         .map((_, i) => i)
+  //         .filter((i) => i !== index && checkedItems[i]);
+
+  //       sortedCheckedIndexes.forEach((i) => {
+  //         const allocatable = Math.min(
+  //           remaining,
+  //           tableRows[i].sumApplied - (updated[i] || 0)
+  //         );
+  //         if (allocatable > 0) {
+  //           updated[i] = (updated[i] || 0) + allocatable;
+  //           remaining -= allocatable;
+  //         }
+  //       });
+  //     }
+
+  //     setRemainingTotal(remaining);
+  //     return updated;
+  //   });
+  // };
+
   const handleAllocationChange = (index, isChecked, sumApplied) => {
     setAllocatedSums((prev) => {
       const updated = { ...prev };
       let remaining = remainingTotal;
 
       if (isChecked) {
-        // Allocate sum when checked
+        // Allocate sum when checked (allow negative allocation)
         const allocatable = Math.min(remaining, sumApplied);
         updated[index] = allocatable;
         remaining -= allocatable;
       } else {
-        // Release allocated sum when unchecked
+        // Release allocated sum when unchecked (allow negative allocation)
         const releasedAmount = updated[index] || 0;
         delete updated[index];
         remaining += releasedAmount;
@@ -114,22 +187,6 @@ const ReceiptsTable = () => {
     });
   };
 
-  const setAllocatedSum = (index, newAllocatedSum) => {
-    setAllocatedSums((prev) => {
-      const prevAllocated = prev[index] || 0;
-
-      // Update the remaining total
-      const difference = newAllocatedSum - prevAllocated;
-
-      setRemainingTotal((prevRemaining) => prevRemaining - difference);
-
-      return {
-        ...prev,
-        [index]: newAllocatedSum, // Update the allocated sum for the index
-      };
-    });
-  };
-
   const calculateTotalAllocatedSum = () => {
     let totalAllocated = 0;
     tableRows.forEach((item, index) => {
@@ -140,26 +197,8 @@ const ReceiptsTable = () => {
     return totalAllocated;
   };
 
-  const renderReceiptsItems = useCallback(() => {
-    return tableRows?.map((item, index) => (
-      <RowMappingWidget
-        key={item.id}
-        item={item}
-        index={index}
-        columnWidths={columnWidths}
-        headerHeight={headerHeight}
-        isChecked={checkedItems[index] || item?.isChecked}
-        allocatedSum={allocatedSums[index] || 0}
-        onCheckboxChange={() => {
-          handleCheckboxChange(index, item?.id);
-          handleAllocationChange(index, !checkedItems[index], item?.sumApplied);
-        }}
-        setAllocatedSum={setAllocatedSum}
-      />
-    ));
-  }, [allocatedSums, checkedItems, tableRows, remainingTotal]);
-
   /*---------------------------------------------------------------------------------------- */
+
   useEffect(() => {
     if (
       router?.query?.isNewCreation &&

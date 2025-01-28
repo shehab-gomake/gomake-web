@@ -26,11 +26,13 @@ const RowMappingWidget = ({
 
   const handleAllocatedSumChange = (event) => {
     const newAllocatedSum = event.target.value;
+    const minValue = Math.min(0, item?.sumApplied);
+    const maxValue = item?.sumApplied > 0 ? item?.sumApplied : 0;
 
     if (
       isNaN(newAllocatedSum) ||
-      newAllocatedSum < 0 ||
-      newAllocatedSum > item?.sumApplied
+      newAllocatedSum < minValue ||
+      newAllocatedSum > maxValue
     ) {
       return;
     }
@@ -127,7 +129,7 @@ const RowMappingWidget = ({
             flexDirection: "row",
             // justifyContent: "center",
             ...classes.cellContainerStyle,
-            padding: "0px 50px", //!here should adjust direction
+            padding: "0px 50px",
             gap: "3px",
           }}
         >
@@ -135,8 +137,11 @@ const RowMappingWidget = ({
             key={`allocates-${index}`}
             value={allocatedSum || 0}
             onChange={handleAllocatedSumChange}
-            style={{ width: "80px" }}
+            style={{ width: "80px", textAlign: "center" }}
             type="number"
+            min={Math.min(0, item?.sumApplied)}
+            max={item?.sumApplied > 0 ? item?.sumApplied : 0}
+            // step="0.01"
           />
           / {item?.sumApplied}
         </PrimaryTableCell>
