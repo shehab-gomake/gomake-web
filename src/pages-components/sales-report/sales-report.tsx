@@ -31,6 +31,8 @@ const SalesReportWidget = () => {
     fromDate,
     toDate,
     isFetching,
+    getNewTableDataRows,
+    tableData,
   } = useSalesReport();
 
   return (
@@ -60,16 +62,27 @@ const SalesReportWidget = () => {
       />
       <Divider />
       <SalesReportButtonWidget onClickBtn1={onClickBtn1} />
-      {showTable && (
+      {/* {showTable && (
         <PrimaryTable
           rows={[...getTableDataRows(), ...getTotalTableDataRows()]}
           headers={tableHeaders}
-          // maxHeight={650}
           maxHeight={"calc(100vh - 318px)"}
           isLastItemTotal={true}
           stickyHeader={true}
         />
-      )}
+      )} */}
+
+      {showTable &&
+        tableData?.map((item) => {
+          return (
+            <PrimaryTable
+              rows={getNewTableDataRows(item?.data)}
+              headers={tableHeaders}
+              maxHeight={"calc(100vh - 300px)"}
+              stickyHeader={true}
+            />
+          );
+        })}
     </div>
   );
 };

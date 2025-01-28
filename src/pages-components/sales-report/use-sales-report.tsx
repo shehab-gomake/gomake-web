@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import {
   useAgentsList,
@@ -10,7 +10,8 @@ import {
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useTranslation } from "react-i18next";
 import { endOfToday, startOfYear } from "date-fns";
-import { ReportsType } from "@/enums";
+import { DocumentsTypeReportList, ReportsType } from "@/enums";
+import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
 
 const useSalesReport = () => {
   const { callApi } = useGomakeAxios();
@@ -75,14 +76,79 @@ const useSalesReport = () => {
     setDisplayByGroups(!displayByGroups);
   };
 
-  const tableHeaders = [
-    t("reports.clientCode"),
-    t("reports.clientName"),
-    t("reports.salesAmount"),
-    t("reports.refunds amount"),
-    ...dateList,
-    t("reports.totalPrice"),
-  ];
+  //!old
+  // const tableHeaders = [
+  //   t("reports.clientCode"),
+  //   t("reports.clientName"),
+  //   t("reports.salesAmount"),
+  //   t("reports.refunds amount"),
+  //   ...dateList,
+  //   t("reports.totalPrice"),
+  // ];
+
+  //!new
+  const tableHeaders = useMemo(() => {
+    let headers = [
+      t("reports.dueDate"),
+      t("reports.documentNumber"),
+      t("reports.transType"),
+      t("reports.TransNumber"),
+      t("reports.AccountCode"),
+      t("reports.accountName"),
+      t("reports.cardcode"),
+      t("reports.cardname"),
+      `${t("reports.credit")} / ${t("reports.debit")}`,
+    ];
+
+    return headers;
+  }, [t]);
+
+  const getNewTableDataRows = useCallback(
+    (dataTable) => {
+      if (dataTable?.length) {
+        return dataTable?.map((data) => {
+          let documentPath;
+          switch (data?.transType) {
+            case DocumentsTypeReportList.Invoice:
+              documentPath = "invoices";
+              break;
+            case DocumentsTypeReportList.InvoiceRefund:
+              documentPath = "invoiceRefunds";
+              break;
+            default:
+              documentPath = null;
+          }
+          return [
+            data?.dueDate?.split("T")[0],
+            documentPath ? (
+              <a
+                style={{
+                  cursor: "pointer",
+                  color: "inherit",
+                  textDecoration: "unset",
+                }}
+                href={`/${documentPath}?documentNumber=${data?.docNumber}`}
+              >
+                {data?.docNumber}
+              </a>
+            ) : (
+              <span>{data?.docNumber}</span>
+            ),
+            getDocumentTypeName(t, data?.transType),
+            data?.transNumber,
+            data?.accountCode,
+            data?.accountName,
+            data?.cardCode,
+            data?.cardName,
+            data?.credit > 0
+              ? data?.credit?.toFixed(2)
+              : data?.debit?.toFixed(2),
+          ];
+        });
+      }
+    },
+    [tableData]
+  );
 
   function sumAllItems(salesReports) {
     if (!salesReports || !salesReports.length) return {};
@@ -131,23 +197,6 @@ const useSalesReport = () => {
     ];
   }, [totalSum, t]);
 
-  // const getTotalTableDataRows = useCallback(() => {
-  //   if ([totalSum]?.length && totalSum) {
-  //     return [totalSum]?.map((data) => [
-  //       t("reports.SumOfColumns"),
-  //       "",
-  //       data?.totalSalesAmount,
-  //       data?.totalRefundsAmount,
-  //       data?.prevSales.toFixed(2),
-  //       data?.prev3MonthSales.toFixed(2),
-  //       data?.prev2MonthSales.toFixed(2),
-  //       data?.prevMonthSales.toFixed(2),
-  //       data?.thisMonthSales.toFixed(2),
-  //       data?.totalSales.toFixed(2),
-  //     ]);
-  //   } else return [];
-  // }, [tableData]);
-
   const onClickBtn1 = () => {
     setShowTable(false);
     getAgingReportFilter();
@@ -175,8 +224,8 @@ const useSalesReport = () => {
       }
     );
     if (res?.success) {
-      setTableData(res?.data?.data?.data?.salesReports);
-
+      // setTableData(res?.data?.data?.data?.salesReports); //!old
+      setTableData(res.data?.data?.data); //!new
       alertSuccessGetData();
       setShowTable(true);
     } else {
@@ -219,6 +268,8 @@ const useSalesReport = () => {
     fromDate,
     toDate,
     isFetching,
+    getNewTableDataRows,
+    tableData,
   };
 };
 

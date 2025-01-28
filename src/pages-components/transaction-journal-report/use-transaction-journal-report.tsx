@@ -34,6 +34,31 @@ interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
 }
 
+export const getDocumentTypeName = (t, transType: number): string => {
+  switch (transType) {
+    case DocumentsTypeReportList.Invoice:
+      return t("reports.invoice");
+    case DocumentsTypeReportList.InvoiceRefund:
+      return t("reports.invoiceRefund");
+    case DocumentsTypeReportList.PurchaseInvoice:
+      return t("reports.purchaseInvoice");
+    case DocumentsTypeReportList.PurchaseInvoiceRefund:
+      return t("reports.purchaseInvoiceRefund");
+    case DocumentsTypeReportList.Payments:
+      return t("reports.Payments");
+    case DocumentsTypeReportList.Deposits:
+      return t("reports.deposits");
+    case DocumentsTypeReportList.JournalEntry:
+      return t("reports.journalEntry");
+    case DocumentsTypeReportList.OutGoingPayments:
+      return t("reports.outGoingPayments");
+    case DocumentsTypeReportList.SalesDocuments:
+      return t("reports.salesDocuments");
+    default:
+      return "Unknown";
+  }
+};
+
 const useTransactionJournalReport = ({
   reportType,
 }: TransactionJournalReportWidgetProps) => {
@@ -77,31 +102,6 @@ const useTransactionJournalReport = ({
     endDate: endOfToday(),
   });
 
-  const getDocumentTypeName = (transType: number): string => {
-    switch (transType) {
-      case DocumentsTypeReportList.Invoice:
-        return t("reports.invoice");
-      case DocumentsTypeReportList.InvoiceRefund:
-        return t("reports.invoiceRefund");
-      case DocumentsTypeReportList.PurchaseInvoice:
-        return t("reports.purchaseInvoice");
-      case DocumentsTypeReportList.PurchaseInvoiceRefund:
-        return t("reports.purchaseInvoiceRefund");
-      case DocumentsTypeReportList.Payments:
-        return t("reports.Payments");
-      case DocumentsTypeReportList.Deposits:
-        return t("reports.deposits");
-      case DocumentsTypeReportList.JournalEntry:
-        return t("reports.journalEntry");
-      case DocumentsTypeReportList.OutGoingPayments:
-        return t("reports.outGoingPayments");
-      case DocumentsTypeReportList.SalesDocuments:
-        return t("reports.salesDocuments");
-      default:
-        return "Unknown";
-    }
-  };
-
   const getTableDataRows = useCallback(
     (dataTable, onClickOpenCustomerModal) => {
       if (dataTable?.length) {
@@ -133,7 +133,7 @@ const useTransactionJournalReport = ({
             ) : (
               <span>{data?.docNumber}</span>
             ),
-            getDocumentTypeName(data?.transType),
+            getDocumentTypeName(t, data?.transType),
             data?.transNumber,
             data?.accountCode,
             data?.accountName,
