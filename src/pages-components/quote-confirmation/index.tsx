@@ -52,7 +52,6 @@ const QuoteConfirmationPageWidget = ({
     const handlePrePaymentPage = async () => {
       if (isPrePaymentPage) {
         try {
-          debugger;
           const userToken = await getTempUserToken();
           if (!userToken) {
             setIsPageNotFound(true);

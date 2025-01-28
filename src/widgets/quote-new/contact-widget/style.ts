@@ -13,7 +13,7 @@ const useStyle = () => {
         alignItems: "center",
         width: "100%",
         marginBottom: 14,
-        gap: 24,
+        gap: 20,
       },
       addNewContactNameStyle: {
         display: "flex",
@@ -69,7 +69,7 @@ const useStyle = () => {
         backgroundColor: secondColor(500),
         height: 28,
         width: 60,
-        minWidth:"fit-content"
+        minWidth: "fit-content",
       },
     };
   }, []);
