@@ -31,7 +31,7 @@ const CustomerAuthLayout = ({
 
   return disableHeaderSideMenu ? (
     <>
-      {(
+      {canAccess && (
         <div style={{ ...classes.bodyContainer, backgroundColor: "#FFF" }}>
           {children}
         </div>

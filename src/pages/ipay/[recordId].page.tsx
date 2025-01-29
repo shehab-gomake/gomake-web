@@ -1,15 +1,14 @@
 import { CustomerAuthLayout } from "@/layouts/customer-auth-layout";
+import { QuoteConfirmationPageWidget } from "@/pages-components/quote-confirmation";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import dynamic from "next/dynamic";
-const QuoteConfirmationPageWidget = dynamic(() => import('@/pages-components/quote-confirmation'), { ssr: false })
 
 export default function PrePaymentInvoice() {
   return (
     <CustomerAuthLayout allowAnonymous={true} disableHeaderSideMenu={true}>
-        <QuoteConfirmationPageWidget
-            isPrePaymentPage={true}
-            documentType={DOCUMENT_TYPE.invoice}
-        />
+      <QuoteConfirmationPageWidget
+        isPrePaymentPage={true}
+        documentType={DOCUMENT_TYPE.invoice}
+      />
     </CustomerAuthLayout>
   );
 }

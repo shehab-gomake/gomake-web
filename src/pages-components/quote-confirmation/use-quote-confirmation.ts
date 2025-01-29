@@ -107,7 +107,7 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
       quoteCopy = { ...quoteCopy, documentItems: documentItems };
     }
     setQuoteConfirm(quoteCopy);
-    calculateSelectedItems(quoteCopy).then();
+    calculateSelectedItems(quoteCopy);
   };
 
   const documentsTitles = [
