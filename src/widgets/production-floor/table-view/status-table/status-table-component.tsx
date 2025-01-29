@@ -107,7 +107,7 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
   }, [boards, search]);
 
   const getCustomWidth = (index: number) => {
-    const widths = ["3%", "10%", "10%", "10%", "10%", "7%", "16%", "10%", "10%", "10%", "4%"];
+    const widths = ["3%", "7%", "12%", "9%", "11%", "18%", "10%", "18%", "10%", "2%"];
     return widths[index] || "auto";
   };
 
@@ -161,7 +161,7 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
                 <TableBody>
                   {[...getBoards()]
                     ?.sort((a, b) => a.priority - b.priority)
-                    ?.map((boardMission) => {
+                    ?.map((boardMission, index) => {
                       return (
                         <>
                           <TableRowComponent
@@ -170,6 +170,8 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
                             status={status}
                             onClickDone={onOpenMarkReadyModal}
                             onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                            index={index}
+
                           />
                         </>
                       );

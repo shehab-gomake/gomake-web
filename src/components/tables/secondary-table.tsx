@@ -24,8 +24,8 @@ const SecondaryTableCell = styled(TableCell)(() => {
       borderRight: "1px solid #EAECF0",
     },
     [`&.${tableCellClasses.body}`]: {
-      ...FONT_FAMILY.Lexend(500, 14),
-      color: "#475467",
+      ...FONT_FAMILY.Lexend(500, 15),
+      color: "#000000",
       padding: "5px",
       backgroundColor: "#FFFFFF",
       borderBottom: "1px solid #DBDBDB",

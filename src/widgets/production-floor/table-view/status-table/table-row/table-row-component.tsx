@@ -28,6 +28,7 @@ interface IProps {
   status?: any;
   onClickDone?: (missionId: any) => void;
   onClickPrintDTicket?: (mission: any) => void;
+  index: number;
 }
 
 enum EDropArea {
@@ -41,6 +42,7 @@ const TableRowComponent = ({
   status,
   onClickDone,
   onClickPrintDTicket,
+  index,
 }: IProps) => {
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
@@ -142,8 +144,8 @@ const TableRowComponent = ({
 
   return (
     <>
-      <TableRow>
-        <TableCell colSpan={9} style={{ padding: 0, transition: "padding 1s" }}>
+      <TableRow >
+        <TableCell colSpan={10} style={{ padding: 0, transition: "padding 1s" }}>
           {
             <Collapse
               in={
@@ -159,12 +161,12 @@ const TableRowComponent = ({
       </TableRow>
       <TableRow
         ref={ref}
-        style={{ cursor: canDrag ? "move" : "default", marginBottom: "100px" }}
+        style={{ cursor: canDrag ? "move" : "default", marginBottom: "100px", }}
       >
         <PermissionCheck
           userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}
         >
-          <SecondaryTableCell align={"center"}>
+          <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
             <Checkbox
               checked={
                 !!selectedIds?.find(
@@ -189,7 +191,10 @@ const TableRowComponent = ({
             />
           }
         </SecondaryTableCell> */}
-        <SecondaryTableCell align={"center"}>
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
+          <DateTimeProductionFloorComponent dateString={boardMission.boardMissionCreatedDate} />
+        </SecondaryTableCell>
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <span
             onClick={() => {
               push(
@@ -199,10 +204,10 @@ const TableRowComponent = ({
             style={{
               cursor: "pointer",
               textDecoration: "none",
-              color: "#475467",
+              color: "#000000",
             }}
           >
-            {`${boardMission?.boardMissionNumber}\\${boardMission?.orderNumber}`}
+            {`${boardMission?.boardMissionNumber}/${boardMission?.orderNumber}`}
           </span>
         </SecondaryTableCell>
         {/* <SecondaryTableCell>
@@ -210,13 +215,13 @@ const TableRowComponent = ({
             <KeyboardDoubleArrowUpIcon style={{ color: errorColor(500) }} />
           )}
         </SecondaryTableCell> */}
-        <SecondaryTableCell align={"center"} style={{ width: "20px" }}>
+        <SecondaryTableCell align={"center"} style={{ width: "20px", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           {getTruncatedLabel(boardMission?.clientName, 15)}
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"} style={{ padding: "0px 5px" }}>
+        {/* <SecondaryTableCell align={"center"} style={{ padding: "0px 5px" }}>
           {getTruncatedLabel(boardMission?.jobName, 10)}
-        </SecondaryTableCell>
-        <SecondaryTableCell align={"center"} style={{ padding: "0px 10px" }}>
+        </SecondaryTableCell> */}
+        <SecondaryTableCell align={"center"} style={{ padding: "0px 10px", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <ClickableLabelComponent
             label={boardMission?.productName}
             id={boardMission.id}
@@ -225,20 +230,18 @@ const TableRowComponent = ({
             key={boardMission.id}
           />
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
-          <DateTimeProductionFloorComponent dateString={boardMission.boardMissionCreatedDate} />
-        </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
+
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <DescreptionWidget desciption={boardMission.description} />
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <BoardStatusComponent
             statusId={boardMission.statusId}
             id={boardMission.id}
             onChange={(id, statusId) => updateStatus([boardMission], statusId)}
           />
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <CurrentStationComponent
             {...boardMission.currentStation}
             boardMissionId={boardMission.id}
@@ -246,7 +249,7 @@ const TableRowComponent = ({
             textColor={boardMission?.productionFloorJobColor}
           />
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <NextStationComponent
             {...boardMission.currentStation}
             {...boardMission.nextStation}
@@ -265,7 +268,7 @@ const TableRowComponent = ({
             ))}
           </Stack>
         </SecondaryTableCell> */}
-        <SecondaryTableCell align={"center"}>
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <MoreMenuWidget
             boardMission={boardMission}
             onClickDone={onClickDone}
@@ -275,8 +278,8 @@ const TableRowComponent = ({
         </SecondaryTableCell>
       </TableRow>
 
-      <TableRow>
-        <TableCell colSpan={9} style={{ padding: 0, transition: "padding 1s" }}>
+      <TableRow >
+        <TableCell colSpan={10} style={{ padding: 0, transition: "padding 1s" }}>
           {
             <Collapse
               in={
