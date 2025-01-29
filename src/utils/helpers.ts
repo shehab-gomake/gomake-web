@@ -239,7 +239,8 @@ export const _renderDeliveryDate = (dateString: string) => {
 
   const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
 
-  const formattedDate = date.toLocaleDateString([], { month: '2-digit', day: '2-digit' });
+  // Specify 'en-GB' locale to ensure DD/MM format
+  const formattedDate = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
 
-  return `${formattedDate} | ${time}`
+  return `${formattedDate} | ${time}`;
 }
