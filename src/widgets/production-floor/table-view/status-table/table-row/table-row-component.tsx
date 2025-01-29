@@ -145,7 +145,7 @@ const TableRowComponent = ({
   return (
     <>
       <TableRow >
-        <TableCell colSpan={9} style={{ padding: 0, transition: "padding 1s" }}>
+        <TableCell colSpan={10} style={{ padding: 0, transition: "padding 1s" }}>
           {
             <Collapse
               in={
@@ -279,7 +279,7 @@ const TableRowComponent = ({
       </TableRow>
 
       <TableRow >
-        <TableCell colSpan={9} style={{ padding: 0, transition: "padding 1s" }}>
+        <TableCell colSpan={10} style={{ padding: 0, transition: "padding 1s" }}>
           {
             <Collapse
               in={
