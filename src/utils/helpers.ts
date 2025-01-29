@@ -234,3 +234,13 @@ export const clearPhoneNumberPrefix = (phoneNumber) =>{
   return result;
 };
 
+export const _renderDeliveryDate = (dateString: string) => {
+  const date = new Date(dateString);
+
+  const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+
+  // Specify 'en-GB' locale to ensure DD/MM format
+  const formattedDate = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
+
+  return `${formattedDate} | ${time}`;
+}
