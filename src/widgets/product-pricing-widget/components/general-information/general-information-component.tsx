@@ -13,12 +13,14 @@ const GeneralInformationComponent = ({
   details,
   withTitle = true,
   actionName,
-  details2
+  details2,
+  selectedWorkFlow
 }: {
   details: IOutput[];
   withTitle?: boolean;
   actionName?: string;
   details2?: any;
+  selectedWorkFlow?: any;
 }) => {
   const { t } = useTranslation();
   const { neutralColor, primaryColor } = useGomakeTheme();
@@ -27,10 +29,37 @@ const GeneralInformationComponent = ({
       parameter && parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
-  const parameterOutputs = details?.filter(
+  let parameterOutputs = details?.filter(
     (parameter) =>
       parameter && parameter?.htmlElementType === HtmlElementType.TEXT
   );
+  if (selectedWorkFlow?.deliveryDate) {
+    const newParameter = {
+      name: t("home.headers.deliveryDate"),
+      index: null,
+      values: [selectedWorkFlow.deliveryDate.split("T")[0]],
+      outSourceValues: ["0"],
+      rectangles: null,
+      useableWasteRectangels: null,
+      unuseableWasteRectangels: null,
+      materialWidth: 0,
+      materialLength: 0,
+      unitType: 5,
+      defaultUnit: "",
+      id: "00000000-0000-0000-0000-000000000000",
+      propertyType: 0,
+      htmlElementType: HtmlElementType.TEXT,
+      isEditable: false,
+      displayInOutputId: null,
+      tableHeaders: null,
+      tableRows: null,
+      orginalName: "Total time"
+    };
+    parameterOutputs = [...parameterOutputs, newParameter];
+  }
+
+
+  console.log("parameterOutputs", parameterOutputs);
   return (
     <Stack gap={"10px"}>
       {withTitle && <h3>{t("pricingWidget.generalInformation")}</h3>}

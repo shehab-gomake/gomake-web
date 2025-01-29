@@ -173,6 +173,7 @@ const PricingWidget = ({
         <GeneralInformationComponent
           details={selectedWorkFlow?.generalInformation}
           details2={selectedWorkFlow?.generalInformationProductionFloor}
+          selectedWorkFlow={selectedWorkFlow}
         />
       )}
       <Divider />
