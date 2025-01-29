@@ -77,7 +77,7 @@ export enum DocumentTypeEnums {
 export enum ERPDocumentsTypesEnum {
   order = 1,
   invoice,
-  deliveryNotes,
+  deliveryNote,
   purchase,
   invoiceRefund,
   receipt,
