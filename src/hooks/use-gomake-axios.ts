@@ -49,8 +49,8 @@ const useGomakeAxios = () => {
         }, 500);
       }
       if (result.status === 401) {
-        await push("/login");
-        return;
+        //await push("/login");
+        //return;
       }
       return result;
     },
