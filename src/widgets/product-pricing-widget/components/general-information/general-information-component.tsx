@@ -8,12 +8,13 @@ import { HtmlElementType, RuleType } from "../../enums";
 import { Divider } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { GeneralInformationDictionaryComponent } from "./general-information-dictionary-component";
+import { _renderDeliveryDate } from "@/utils/helpers";
 
 const GeneralInformationComponent = ({
   details,
   withTitle = true,
   actionName,
-  details2
+  details2,
 }: {
   details: IOutput[];
   withTitle?: boolean;
@@ -27,10 +28,36 @@ const GeneralInformationComponent = ({
       parameter && parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
-  const parameterOutputs = details?.filter(
+  let parameterOutputs = details?.filter(
     (parameter) =>
       parameter && parameter?.htmlElementType === HtmlElementType.TEXT
   );
+  // if (selectedWorkFlow?.deliveryDate) {
+  //   const newParameter = {
+  //     name: t("home.headers.deliveryDate"),
+  //     index: null,
+  //     values: [_renderDeliveryDate(selectedWorkFlow?.deliveryDate)],
+  //     outSourceValues: ["0"],
+  //     rectangles: null,
+  //     useableWasteRectangels: null,
+  //     unuseableWasteRectangels: null,
+  //     materialWidth: 0,
+  //     materialLength: 0,
+  //     unitType: 5,
+  //     defaultUnit: "",
+  //     id: "00000000-0000-0000-0000-000000000000",
+  //     propertyType: 0,
+  //     htmlElementType: HtmlElementType.TEXT,
+  //     isEditable: false,
+  //     displayInOutputId: null,
+  //     tableHeaders: null,
+  //     tableRows: null,
+  //     orginalName: "Total time"
+  //   };
+  //   parameterOutputs = [...parameterOutputs, newParameter];
+  // }
+
+
   return (
     <Stack gap={"10px"}>
       {withTitle && <h3>{t("pricingWidget.generalInformation")}</h3>}

@@ -42,6 +42,7 @@ import { Draggable } from "react-beautiful-dnd";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons/sort-icon";
 import { ModalType } from "@/enums";
+import { _renderDeliveryDate } from "@/utils/helpers";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -52,6 +53,7 @@ interface IActionContainerComponentProps extends IWorkFlowAction {
   isFromSetting?: boolean
   deleteActionFromProduct?: (selectedAction: any) => void
   updateProductAction?: (data: any) => void
+  deliveryDate?: string
 }
 
 interface IActionsComponentProps {
@@ -186,6 +188,7 @@ const ActionContainerComponent = ({
   profit,
   totalPrice,
   totalProductionTime,
+  deliveryDate,
   totalCost,
   source,
   supplierId,
@@ -358,6 +361,8 @@ const ActionContainerComponent = ({
       }
     }
   }, [foldOptionValueId, foldOptions])
+
+
 
 
   return (
@@ -711,8 +716,17 @@ const ActionContainerComponent = ({
                     onUpdate={handleDeliveryTimeUpdate}
                     {...totalProductionTime}
                     source={source}
-                    name={t("home.headers.productDate")}
+                    name={t("home.headers.deliveryTime")}
                   />
+                  {
+                    deliveryDate && <>
+                      <Divider orientation={"vertical"} flexItem />
+                      <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
+                        <span style={classes.detailTitle}>{t("home.headers.deliveryDate")}</span>
+                        <span style={classes.detailValue}>{_renderDeliveryDate(deliveryDate)}</span>
+                      </Stack>
+                    </>
+                  }
                   {
                     source === EWorkSource.OUT &&
                     <>
