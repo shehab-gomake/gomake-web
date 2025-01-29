@@ -320,6 +320,20 @@ const useLedgerReport = ({ customerId }: any) => {
     }
   };
 
+  const [erpAccountsList, setErpAccountsList] = useState([]);
+
+  const getErpAccountsList = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.GET,
+      `/v1/erp-service/receipts/get-erp-accounts`
+    );
+    if (res?.success) {
+      setErpAccountsList(res.data?.data?.data);
+    } else {
+      alertFaultGetData();
+    }
+  }, []);
+
   return {
     t,
     onSelectDeliveryTimeDates,
@@ -357,6 +371,8 @@ const useLedgerReport = ({ customerId }: any) => {
     toDate,
     customerId,
     isFetching,
+    erpAccountsList,
+    getErpAccountsList,
   };
 };
 

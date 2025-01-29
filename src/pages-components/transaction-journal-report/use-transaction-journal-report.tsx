@@ -22,12 +22,14 @@ import LinkIcon from "@mui/icons-material/Link";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import LinkOffIcon from "@mui/icons-material/LinkOff";
 import { adaptMarginLeft } from "@/utils/adapter";
+import { downloadCpaFileApi } from "@/services/api-service/settings/finance-api";
 
 export interface FilterState {
   fromAccount: string;
   toAccount: string;
   startDate: Date | null;
   endDate: Date | null;
+  accountCode?: string;
 }
 
 interface TransactionJournalReportWidgetProps {
@@ -293,7 +295,8 @@ const useTransactionJournalReport = ({
       EHttpMethod.POST,
       `/v1/erp-service/reports/get-accounting-transaction-report`,
       {
-        ...filterState,
+        // ...filterState,
+        accountCode: filterState?.accountCode,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
         pageNumber: pageNumber,
@@ -574,7 +577,8 @@ const useTransactionJournalReport = ({
       `/v1/erp-service/reports/export-accounting-report-excel`,
       {
         myBody: {
-          ...filterState,
+          // ...filterState,
+          accountCode: filterState?.accountCode,
           startDate: formattedStartDate,
           endDate: formattedEndDate,
           pageNumber: pageNumber,
@@ -590,6 +594,41 @@ const useTransactionJournalReport = ({
     downloadLink.download = `AccountingReport.xlsx`;
     downloadLink.click();
   }, [reportType, filterState, pageNumber, pageSize]);
+
+  const [erpAccountsList, setErpAccountsList] = useState([]);
+
+  const getErpAccountsList = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.GET,
+      `/v1/erp-service/receipts/get-erp-accounts`
+    );
+    if (res?.success) {
+      setErpAccountsList(res.data?.data?.data);
+    } else {
+      alertFaultGetData();
+    }
+  }, []);
+
+  const onClickDownloadMovingFiles = async () => {
+    const formattedStartDate = format(filterState.startDate, "yyyy-MM-dd");
+    const formattedEndDate = format(filterState.endDate, "yyyy-MM-dd");
+
+    const callBack = (res) => {
+      if (res.success) {
+        const downloadLink = document.createElement("a");
+        downloadLink.href = res.data;
+        downloadLink.download = "Account_Files.zip";
+        downloadLink.click();
+      } else {
+        alertFaultGetData();
+      }
+    };
+
+    await downloadCpaFileApi(callApi, callBack, {
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+    });
+  };
 
   return {
     t,
@@ -641,6 +680,9 @@ const useTransactionJournalReport = ({
     clientPaymentsList,
     setClientPaymentsList,
     onClickExportAccountingReportExcel,
+    erpAccountsList,
+    getErpAccountsList,
+    onClickDownloadMovingFiles,
   };
 };
 
