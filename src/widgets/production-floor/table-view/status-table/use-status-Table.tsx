@@ -62,7 +62,7 @@ const useStatusTable = () => {
         />
       ),
       t("home.headers.deliveryDate"),
-      `${t("productionFloor.jobs")} / ${t("SourceDocument.order")}`,
+      `${t("productionFloor.job")} / ${t("SourceDocument.order")}`,
       t("productionFloor.customer"),
       // t("home.headers.jobName"),
       t("sales.quote.productName"),
