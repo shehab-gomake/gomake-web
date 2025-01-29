@@ -47,7 +47,7 @@ const CurrentStationComponent = ({
         onClick={(e) => handleClick(e, boardMissionId, productType)}
       >
         <span style={{
-          width: "max-content", ...FONT_FAMILY.Lexend(500, 15),
+          ...FONT_FAMILY.Lexend(500, 15),
           color: "#000000",
         }}>{machineName ? machineName : actionName}</span>
         {anchorEl ? (
