@@ -152,9 +152,7 @@ const RightSideWidget = ({
       currentProductItemValueTotalPrice
     );
   }, [currentProductItemValueTotalPrice]);
-  const roundTotalPrice = (price) =>{
-    
-  }
+
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -225,7 +223,7 @@ const RightSideWidget = ({
             ) : (
               <GomakeTextInput
                 direction={direction}
-                value={sliderCurrentProductItemValueTotalPrice ? sliderCurrentProductItemValueTotalPrice?.toFixed(3) :"---------"}
+                value={sliderCurrentProductItemValueTotalPrice ?? "---------"}
                 onBlur={(e: any) => {
                   /*if (currentProductItemValueTotalPrice > 0) {
                     const inputValue = Number(e.target.value);
@@ -307,16 +305,14 @@ const RightSideWidget = ({
             <div style={clasess.vatContainer}>
               {t("products.offsetPrice.admin.includeVAT")}:{" "}
               <input
-                value={priceIncludeVat?.toFixed(3)}
-                //type="number"
+                value={priceIncludeVat}
+                // type="number"
                 onChange={(e) => {
                   const newPriceIncludeVat = e.target.value;
+                  setPriceIncludeVat(newPriceIncludeVat);
                   if (quantity?.values[0] && newPriceIncludeVat !== "" && newPriceIncludeVat !== null && newPriceIncludeVat !== "0") {
                     const newTotalPrice = (Number(newPriceIncludeVat) / (1 + systemVAT)).toFixed(4);
                     setSliderCurrentProductItemValueTotalPrice(Number(newTotalPrice));
-                    setPriceIncludeVat(Number(newPriceIncludeVat));
-                  }else {
-                    setPriceIncludeVat(0);
                   }
                 }}
                 style={{
