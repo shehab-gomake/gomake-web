@@ -20,9 +20,6 @@ const CreateNewTransactionModal = ({
     // erpAccountsList,
     renderOptions,
     checkWhatRenderArray,
-    accountTypeList,
-    selectTransactionType,
-    handleTransactionTypeChange,
     handleClickSelectDate,
     selectDate,
     setSelectDate,
@@ -59,7 +56,8 @@ const CreateNewTransactionModal = ({
               <div style={classes.inputsRowStyle}>
                 <div style={classes.date2FilterContainer}>
                   <h3 style={classes.filterLabelStyle}>
-                    {t("reports.fromAccountType")}
+                    {/* {t("reports.fromAccountType")} */}
+                    {t("reports.debitAccount")}
                   </h3>
                   <GoMakeAutoComplate
                     options={accountTypeOptions}
@@ -80,12 +78,13 @@ const CreateNewTransactionModal = ({
                         : t("reports.selectAccountCode")}
                     </h3>
                     <GoMakeAutoComplate
+                      key={fromAccountType}
+                      getOptionLabel={(option: any) => option?.name || ""}
                       options={
                         fromAccountType === "client"
                           ? renderOptions()
                           : erpAccountsList
                       }
-                      getOptionLabel={(option: any) => option.name}
                       style={classes.textInputStyle}
                       placeholder={
                         fromAccountType === "client"
@@ -96,10 +95,10 @@ const CreateNewTransactionModal = ({
                         fromAccountType === "client"
                           ? renderOptions().find(
                               (option) => option.id === fromClientId
-                            )
+                            ) || null
                           : erpAccountsList.find(
                               (option) => option.code === fromAccountCode
-                            )
+                            ) || null
                       }
                       onChange={handleFromChange}
                       onChangeTextField={
@@ -115,7 +114,8 @@ const CreateNewTransactionModal = ({
               <div style={classes.inputsRowStyle}>
                 <div style={classes.date2FilterContainer}>
                   <h3 style={classes.filterLabelStyle}>
-                    {t("reports.toAccountType")}
+                    {/* {t("reports.toAccountType")} */}
+                    {t("reports.creditAccount")}
                   </h3>
                   <GoMakeAutoComplate
                     options={accountTypeOptions}
@@ -136,6 +136,7 @@ const CreateNewTransactionModal = ({
                         : t("reports.selectAccountCode")}
                     </h3>
                     <GoMakeAutoComplate
+                      key={toAccountType}
                       options={
                         toAccountType === "client"
                           ? renderOptions()
@@ -192,20 +193,6 @@ const CreateNewTransactionModal = ({
                   </div>
                 </div>
               </div>
-            </div>
-            <div style={classes.date2FilterContainer}>
-              <h3 style={classes.filterLabelStyle}>
-                {t("payment.transactionType")}
-              </h3>
-              <GoMakeAutoComplate
-                key={selectTransactionType?.id}
-                options={accountTypeList}
-                getOptionLabel={(option: any) => `${option.name}`}
-                style={classes.textInputStyle}
-                placeholder={t("reports.selectType")}
-                onChange={handleTransactionTypeChange}
-                value={selectTransactionType}
-              />
             </div>
             <div style={classes.date2FilterContainer}>
               <h3 style={classes.filterLabelStyle}>{t("reports.reference")}</h3>
