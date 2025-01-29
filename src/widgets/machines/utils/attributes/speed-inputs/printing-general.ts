@@ -1,6 +1,6 @@
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
-const printingGeneral = (state: Record<string, any>) => {
+const printingGeneral = (state: Record<string, any>, speedUnit: EMeasurementUnits = EMeasurementUnits.PPM) => {
     return [
         {
             name: 'machineAttributes.speedByColor',
@@ -22,7 +22,7 @@ const printingGeneral = (state: Record<string, any>) => {
                     name: "speed",
                     label: "machineAttributes.speed",
                     type: "text",
-                    unit: EMeasurementUnits.PPM,
+                    unit: speedUnit,
                     placeholder: "machineAttributes.speed",
                     required: true,
                     parameterKey: "speed",

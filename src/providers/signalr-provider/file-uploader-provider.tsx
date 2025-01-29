@@ -6,7 +6,7 @@ const FileUploaderContext = createContext<any>(null);
 
 export const FileUploaderProvider = ({ children }: { children: React.ReactNode }) => {
     const fileUploaderSignalRState = useFilesUploaderSignalr();
-    const messengerSignalRState = useFilesUploaderSignalr();
+    //const messengerSignalRState = useFilesUploaderSignalr();
 
     return (
         <FileUploaderContext.Provider value={fileUploaderSignalRState}>
