@@ -24,6 +24,7 @@ import { SectionNameListMenu } from "./components/sections-menu";
 import { ModalType } from "@/enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { _renderDeliveryDate } from "@/utils/helpers";
 
 const PricingWidget = ({
   workFlows,
@@ -79,7 +80,7 @@ const PricingWidget = ({
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
   return (
-    <Stack gap={"16px"} width={"100%"}>
+    <Stack gap={"16px"} width={"100%"} >
       <Stack direction={"row"} justifyContent={"space-between"}>
         {!!workFlows && view !== EPricingViews.OUTSOURCE_WORKFLOW ? (
           <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}>
@@ -123,7 +124,11 @@ const PricingWidget = ({
         ) : (
           <div />
         )}
-        <Stack direction={"row"} gap={"10px"}>
+        <Stack direction={"row"} gap={"10px"} alignItems={'center'}>
+          <Stack direction={'row'} gap={'10px'} alignItems={'center'} style={{ cursor: "pointer" }}>
+            <span style={classes.detailTitle}>{t("home.headers.deliveryDate")}</span>
+            <span style={classes.detailValue}>{_renderDeliveryDate(selectedWorkFlow?.deliveryDate)}</span>
+          </Stack>
           <PermissionCheck userPermission={Permissions.CUSTOMIZE_WORKFLOW}>
             {
               isHasSubWorkFlowsOrProductTypeActions && view === EPricingViews.SELECTED_WORKFLOW &&
@@ -145,6 +150,7 @@ const PricingWidget = ({
               </div>
             }
           </PermissionCheck>
+
           <InOutSourceSelect
             onChange={(v: EWorkSource) => {
               setSelectedWorkFlowCalculatedIsLoaded(true)
@@ -173,7 +179,6 @@ const PricingWidget = ({
         <GeneralInformationComponent
           details={selectedWorkFlow?.generalInformation}
           details2={selectedWorkFlow?.generalInformationProductionFloor}
-          selectedWorkFlow={selectedWorkFlow}
         />
       )}
       <Divider />

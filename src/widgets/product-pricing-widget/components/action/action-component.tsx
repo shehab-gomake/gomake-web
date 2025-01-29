@@ -42,6 +42,7 @@ import { Draggable } from "react-beautiful-dnd";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons/sort-icon";
 import { ModalType } from "@/enums";
+import { _renderDeliveryDate } from "@/utils/helpers";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -360,6 +361,8 @@ const ActionContainerComponent = ({
       }
     }
   }, [foldOptionValueId, foldOptions])
+
+
 
 
   return (
@@ -720,7 +723,7 @@ const ActionContainerComponent = ({
                       <Divider orientation={"vertical"} flexItem />
                       <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
                         <span style={classes.detailTitle}>{t("home.headers.deliveryDate")}</span>
-                        <span style={classes.detailValue}>{deliveryDate.split("T")[0]}</span>
+                        <span style={classes.detailValue}>{_renderDeliveryDate(deliveryDate)}</span>
                       </Stack>
                     </>
                   }

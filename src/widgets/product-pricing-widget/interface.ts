@@ -59,6 +59,7 @@ export interface ICalculatedWorkFlow {
   orginalBookPartId:string;
   generalInformationProductionFloor?:any;
   isOutSourceWorkFlow?:boolean;
+  deliveryDate?:string
 }
 
 export interface IPrintActionType {
