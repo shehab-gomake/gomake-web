@@ -87,6 +87,19 @@ const useStyle = () => {
         cursor: "pointer",
         position: "relative" as "relative",
       },
+      descriptionStyle: {
+        height: "120px",
+        display: "flex",
+        padding: "var(--spacing-lg, 12px) 14px",
+        alignItems: "flex-start",
+        gap: "var(--spacing-md, 8px)",
+        flex: "1 0 0",
+        alignSelf: "stretch",
+        borderRadius: "var(--radius-md, 8px)",
+        border: "1px solid var(--Colors-Border-border-primary, #D0D5DD)",
+        background: "var(--Colors-Background-bg-primary, #FFF)",
+        boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
+      },
     };
   }, []);
   return {

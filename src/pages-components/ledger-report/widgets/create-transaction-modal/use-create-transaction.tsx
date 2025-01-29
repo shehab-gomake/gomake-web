@@ -11,6 +11,8 @@ export enum EAccountType {
 const useCreateNewTransaction = ({ onCloseModal }) => {
   const { t } = useTranslation();
   const dateRef = useRef(null);
+  const dueDateRef = useRef(null);
+
   const { callApi } = useGomakeAxios();
   const { alertFaultAdded, alertSuccessAdded, alertRequiredFields } =
     useSnackBar();
@@ -24,7 +26,12 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
 
   const [price, setPrice] = useState<number>(0);
   const [reference, setReference] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+
   const [selectDate, setSelectDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
+  const [selectedDueDate, setSelectedDueDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
 
@@ -32,11 +39,20 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
     dateRef?.current?.showPicker();
   };
 
+  const handleClickSelectDueDate = () => {
+    dueDateRef?.current?.showPicker();
+  };
+
   const onChangeReference = (e: any) => {
     setReference(e.target.value);
   };
+
   const onChangePrice = (e: any) => {
     setPrice(e.target.value);
+  };
+
+  const onChangeDescription = (e: any) => {
+    setDescription(e.target.value);
   };
 
   // const getAgingReportFilter = useCallback(async () => {
@@ -59,6 +75,7 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
     setPrice(0);
     setReference("");
     setSelectDate(new Date().toISOString().split("T")[0]);
+    setSelectedDueDate(new Date().toISOString().split("T")[0]);
     setFromAccountType(null);
     setToAccountType(null);
     setToAccountCode(null);
@@ -66,6 +83,7 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
     setFromClientId(null);
     setFromAccountCode(null);
     onCloseModal();
+    setDescription("");
   };
 
   const [fromAccountType, setFromAccountType] = useState<string>();
@@ -91,6 +109,8 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
       amount: price,
       reference: reference,
       referenceDate: selectDate,
+      dueDate: selectedDueDate, //!here
+      description,
     };
 
     // if (toAccountCode !== null) transObject.toAccountCode = toAccountCode;
@@ -123,10 +143,12 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
     price,
     reference,
     selectDate,
+    selectedDueDate,
     toAccountCode,
     fromAccountCode,
     toClientId,
     fromClientId,
+    description,
   ]);
 
   const accountTypeOptions = useMemo(
@@ -181,6 +203,10 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
     selectDate,
     setSelectDate,
     dateRef,
+    handleClickSelectDueDate,
+    selectedDueDate,
+    setSelectedDueDate,
+    dueDateRef,
     onChangeReference,
     onChangePrice,
     createTransactionsApi,
@@ -197,6 +223,8 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
     handleToChange,
     handleToTypeChange,
     handleFromTypeChange,
+    onChangeDescription,
+    description,
   };
 };
 
