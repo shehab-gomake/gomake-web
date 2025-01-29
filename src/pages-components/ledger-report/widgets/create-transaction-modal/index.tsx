@@ -4,6 +4,8 @@ import { useStyle } from "./style";
 import { DateFormatter } from "@/utils/adapter";
 import { SecondaryButton } from "@/components/button/secondary-button";
 
+//!here
+
 interface CreateNewTransactionModalProps {
   openModal: boolean;
   onCloseModal: () => void;
@@ -40,6 +42,12 @@ const CreateNewTransactionModal = ({
     handleToChange,
     handleToTypeChange,
     handleFromTypeChange,
+    handleClickSelectDueDate,
+    selectedDueDate,
+    setSelectedDueDate,
+    dueDateRef,
+    onChangeDescription,
+    description,
   } = useCreateNewTransaction({ onCloseModal });
 
   return (
@@ -51,7 +59,13 @@ const CreateNewTransactionModal = ({
         insideStyle={classes.insideStyle}
       >
         <div style={classes.mainContainer}>
-          <div style={classes.inputsRowStyle}>
+          <div
+            style={{
+              ...classes.inputsRowStyle,
+              maxHeight: "350px",
+              overflow: "scroll",
+            }}
+          >
             <div style={classes.inputsColumnStyle}>
               <div style={classes.inputsRowStyle}>
                 <div style={classes.date2FilterContainer}>
@@ -195,6 +209,28 @@ const CreateNewTransactionModal = ({
               </div>
             </div>
             <div style={classes.date2FilterContainer}>
+              <h3 style={classes.filterLabelStyle}>{t("reports.dueDate")}</h3>
+              <div
+                style={classes.datePickerinvidualContainer}
+                onClick={handleClickSelectDueDate}
+              >
+                <div style={classes.dateStyle}>
+                  {selectedDueDate
+                    ? DateFormatter(selectedDueDate)
+                    : t("sales.quote.selectDate")}
+                  <div style={classes.datePickerContainer}>
+                    <input
+                      type="date"
+                      onChange={(e) => {
+                        setSelectedDueDate(e.target.value);
+                      }}
+                      ref={dueDateRef}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style={classes.date2FilterContainer}>
               <h3 style={classes.filterLabelStyle}>{t("reports.reference")}</h3>
               <GomakeTextInput
                 style={classes.textInputStyle}
@@ -212,6 +248,18 @@ const CreateNewTransactionModal = ({
               />
             </div>
           </div>
+          {/* <div>
+            <h3 style={classes.filterLabelStyle}>
+              {t("usersSettings.description")}
+            </h3>
+            <GomakeTextInput
+              placeholder={t("preferences.enterDescription")}
+              multiline
+              style={classes.descriptionStyle}
+              value={description}
+              onChange={onChangeDescription}
+            />
+          </div> */}
           <SecondaryButton
             variant="contained"
             style={classes.createBtnStyle}
