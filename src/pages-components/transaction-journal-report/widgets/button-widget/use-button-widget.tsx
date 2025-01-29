@@ -42,6 +42,10 @@ const useLedgerReportHeader = ({
             name: t("reports.createNewAdjustment"),
             onclick: onClickOpenAdjustmentsModal,
           },
+          {
+            name: t("reports.createNewTransaction"),
+            onclick: onClickCreateNewTransaction,
+          },
         ]
       : []),
     ...(isAccountingTransaction
