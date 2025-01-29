@@ -61,16 +61,16 @@ const useStatusTable = () => {
           checkedIcon={<CheckboxCheckedIcon fill="#2E3092" width="20" height="20" />}
         />
       ),
+      t("home.headers.deliveryDate"),
       `${t("productionFloor.jobs")} / ${t("SourceDocument.order")}`,
       t("productionFloor.customer"),
-      t("home.headers.jobName"),
+      // t("home.headers.jobName"),
       t("sales.quote.productName"),
-      t("sales.documentDeliveries.date"),
       t("sales.documentDeliveries.description"),
       t("productionFloor.status"),
       t("productionFloor.currentStation"),
       t("productionFloor.nextStation"),
-      t("usersSettings.actions"),
+      " ",
     ].filter(Boolean);
   };
 

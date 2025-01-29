@@ -21,7 +21,7 @@ const DescreptionWidget = ({ desciption }: { desciption: string }) => {
 
 
   return (
-    <div style={{ ...FONT_FAMILY.Inter(600, 14), color: "#475467", maxWidth: "250px", minWidth: "250px" }}>
+    <div style={{ ...FONT_FAMILY.Inter(500, 15), color: "#000000", maxWidth: "300px", minWidth: "300px", placeSelf: "center" }}>
       {displayedText}
       {shouldTruncate && (
         <span onClick={toggleDescription} style={{ color: "#2E3092", cursor: "pointer" }}>
