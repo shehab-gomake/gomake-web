@@ -223,7 +223,6 @@ export const selectedCreditTransactionState = atom<transactionOptionsData>({
   default: null,
 });
 
-//!here
 export const allocatedSumsState = atom<Record<string, number>>({
   key: "allocatedSumsState",
   default: {},

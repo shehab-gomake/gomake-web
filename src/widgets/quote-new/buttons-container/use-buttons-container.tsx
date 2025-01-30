@@ -243,7 +243,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const checkedItemsIds = useRecoilValue(checkedItemsIdsState);
 
-  //!here done
   const allocatedSums = useRecoilValue(allocatedSumsState);
   const onClickCreateNewReceipt = async () => {
     // const filteredReceiptItems = Object.values(checkedItemsIds)

@@ -144,7 +144,6 @@ const usePaymentsTable = () => {
     };
   });
 
-  //!here
   const handleCheckboxChange = (index, itemId) => {
     const newTableRow = tableRows.map((row) =>
       row.id === itemId ? { ...row, isChecked: false } : row
@@ -437,10 +436,6 @@ const usePaymentsTable = () => {
     setOpenTransactionModal(true);
   };
 
-  //!here
-  // const [allocatedSums, setAllocatedSums] = useState<Record<string, number>>(
-  //   {}
-  // );
   const [allocatedSums, setAllocatedSums] = useRecoilState(allocatedSumsState);
 
   const [remainingTotal, setRemainingTotal] = useState(0);

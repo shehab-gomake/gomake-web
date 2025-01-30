@@ -1,14 +1,13 @@
 import { PrimaryTableCell } from "@/components/tables/primary-table";
-import { Checkbox, Stack, TableRow, TextField } from "@mui/material";
+import { Checkbox, TableRow } from "@mui/material";
 import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { GomakeTextInput } from "@/components";
+import { DocumentsTypeEnum } from "@/widgets/settings-documenting/documentNumbering/interface/document";
 
-//!here
 const RowMappingWidget = ({
   item,
   index,
@@ -101,7 +100,7 @@ const RowMappingWidget = ({
           ...classes.cellContainerStyle,
         }}
       >
-        {item?.documentType}
+        {t(`documentType.${DocumentsTypeEnum[item?.documentType]}`)}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -109,7 +108,7 @@ const RowMappingWidget = ({
           ...classes.cellContainerStyle,
         }}
       >
-        {t(item?.documentTypeText)}
+        {t(item?.details ?? "")}
       </PrimaryTableCell>
 
       {!router?.query?.isNewCreation ? (

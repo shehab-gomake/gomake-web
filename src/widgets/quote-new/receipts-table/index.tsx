@@ -15,7 +15,7 @@ import { TotalPricesReceipts } from "./total-prices-receipt";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PaymentMethodsDetailsModal } from "./Payment-methods-details/payment-methods-details-modal";
-//!here
+
 const ReceiptsTable = () => {
   let indexs = 0;
   const headerHeight = "44px";
