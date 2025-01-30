@@ -4,12 +4,14 @@ import { useStyle } from "../style";
 import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
+import { useRecoilValue } from "recoil";
+import { totalAllocatedDocumentsState } from "../../states";
 
 const FooterSection = ({ onCloseModal }: any) => {
   const { classes } = useStyle();
   const {
     t,
-    totalSum,
+    // totalSum,
     totalPayment,
     handleSave,
     handleTaxDeductionChange,
@@ -27,6 +29,11 @@ const FooterSection = ({ onCloseModal }: any) => {
     resetCreditCardState,
     setTotalPayment,
   } = usePaymentsTable();
+
+  //!here new instead of  totalSum
+  const totalAllocatedDocuments = useRecoilValue<number>(
+    totalAllocatedDocumentsState
+  );
 
   const handleClickCancelTransactionModal = () => {
     handleSave(null, true);
@@ -96,10 +103,10 @@ const FooterSection = ({ onCloseModal }: any) => {
               readOnly
               id={"totalFromDocuments"}
               style={classes.inputStyle}
-              value={totalSum}
+              value={totalAllocatedDocuments}
             />
           </Stack>
-          {totalSum - totalPayment > 0 && totalPayment !== 0 && (
+          {totalAllocatedDocuments - totalPayment > 0 && totalPayment !== 0 && (
             <Stack
               style={{
                 ...classes.rowStyle,
@@ -109,7 +116,7 @@ const FooterSection = ({ onCloseModal }: any) => {
               <span style={classes.textStyle}>{t("payment.balance")}</span>
               <input
                 style={classes.inputStyle}
-                value={totalSum - totalPayment}
+                value={totalAllocatedDocuments - totalPayment}
               />
             </Stack>
           )}
@@ -122,7 +129,7 @@ const FooterSection = ({ onCloseModal }: any) => {
             <span style={classes.textStyle}>{t("payment.totalPayment")}</span>
             <input style={classes.inputStyle} value={totalPayment} />
           </Stack>
-          {totalSum - totalPayment < 0 && (
+          {totalAllocatedDocuments - totalPayment < 0 && (
             <Stack
               style={{
                 ...classes.rowStyle,
@@ -134,7 +141,7 @@ const FooterSection = ({ onCloseModal }: any) => {
               </span>
               <input
                 style={classes.inputStyle}
-                value={Math.abs(totalSum - totalPayment)}
+                value={Math.abs(totalAllocatedDocuments - totalPayment)}
               />
             </Stack>
           )}

@@ -15,6 +15,8 @@ import { TotalPricesReceipts } from "./total-prices-receipt";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { PaymentMethodsDetailsModal } from "./Payment-methods-details/payment-methods-details-modal";
+import { totalAllocatedDocumentsState } from "../buttons-container/states";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 const ReceiptsTable = () => {
   let indexs = 0;
@@ -32,7 +34,6 @@ const ReceiptsTable = () => {
     PrimaryTableCell,
     checkedItems,
     handleCheckboxChange,
-    totalSum,
     finalTotalPayment,
     taxDeduction,
     isShowReceiptTransference,
@@ -50,31 +51,76 @@ const ReceiptsTable = () => {
     setAllocatedSums,
   } = usePaymentsTable();
 
+  const setTotalAllocatedDocuments = useSetRecoilState<number>(
+    totalAllocatedDocumentsState
+  );
+
+  const calculateTotalAllocatedSum = () => {
+    let totalAllocated = 0;
+    tableRows?.forEach((item, index) => {
+      if (checkedItems[index] && allocatedSums[index]) {
+        totalAllocated += allocatedSums[index];
+      }
+    });
+    return totalAllocated;
+  };
+
+  //!here new
+  useEffect(() => {
+    setTotalAllocatedDocuments(calculateTotalAllocatedSum());
+  }, [tableRows, checkedItems, allocatedSums]);
+
   //-----------------------------------------------------------------------------------------------------------------------
 
+  //!here new
   useEffect(() => {
-    // Recalculate allocations when finalTotalPayment or tableRows change
     setRemainingTotal(finalTotalPayment);
 
     setAllocatedSums(() => {
       const updatedSums = {};
       let remaining = finalTotalPayment;
 
-      // Initialize allocated sums with sumApplied or adjust based on remaining total
       tableRows.forEach((item, index) => {
         if (checkedItems[index]) {
-          const allocatable = Math.min(remaining, item.sumApplied);
+          // If finalTotalPayment is 0, allocate full sumApplied
+          let allocatable =
+            finalTotalPayment === 0
+              ? item.sumApplied
+              : Math.min(remaining, item.sumApplied);
           updatedSums[index] = allocatable;
-          remaining -= allocatable;
+          remaining -= allocatable; // Deduct only if finalTotalPayment is not 0
         } else {
-          // Default allocation to sumApplied for unchecked rows
-          updatedSums[index] = item.sumApplied;
+          updatedSums[index] = item.sumApplied; // Keep sumApplied for unchecked rows
         }
       });
 
       return updatedSums;
     });
   }, [finalTotalPayment, tableRows, checkedItems]);
+
+  // useEffect(() => {
+  //   // Recalculate allocations when finalTotalPayment or tableRows change
+  //   setRemainingTotal(finalTotalPayment);
+
+  //   setAllocatedSums(() => {
+  //     const updatedSums = {};
+  //     let remaining = finalTotalPayment;
+
+  //     // Initialize allocated sums with sumApplied or adjust based on remaining total
+  //     tableRows.forEach((item, index) => {
+  //       if (checkedItems[index]) {
+  //         const allocatable = Math.min(remaining, item.sumApplied);
+  //         updatedSums[index] = allocatable;
+  //         remaining -= allocatable;
+  //       } else {
+  //         // Default allocation to sumApplied for unchecked rows
+  //         updatedSums[index] = item.sumApplied;
+  //       }
+  //     });
+
+  //     return updatedSums;
+  //   });
+  // }, [finalTotalPayment, tableRows, checkedItems]);
 
   const setAllocatedSum = (index, newAllocatedSum) => {
     setAllocatedSums((prev) => {
@@ -149,6 +195,7 @@ const ReceiptsTable = () => {
   //   });
   // };
 
+  //!here new
   const handleAllocationChange = (index, isChecked, sumApplied) => {
     setAllocatedSums((prev) => {
       const updated = { ...prev };
@@ -156,7 +203,15 @@ const ReceiptsTable = () => {
 
       if (isChecked) {
         // Allocate sum when checked (allow negative allocation)
-        const allocatable = Math.min(remaining, sumApplied);
+        // const allocatable = Math.min(remaining, sumApplied);
+
+        let allocatable = Math.min(remaining, sumApplied);
+
+        if (finalTotalPayment === 0) {
+          allocatable = sumApplied;
+        } else {
+          allocatable = Math.min(remaining, sumApplied);
+        }
         updated[index] = allocatable;
         remaining -= allocatable;
       } else {
@@ -185,16 +240,6 @@ const ReceiptsTable = () => {
       setRemainingTotal(remaining);
       return updated;
     });
-  };
-
-  const calculateTotalAllocatedSum = () => {
-    let totalAllocated = 0;
-    tableRows.forEach((item, index) => {
-      if (checkedItems[index] && allocatedSums[index]) {
-        totalAllocated += allocatedSums[index];
-      }
-    });
-    return totalAllocated;
   };
 
   /*---------------------------------------------------------------------------------------- */
