@@ -22,7 +22,11 @@ import { CheckboxCheckedIcon } from "@/icons/checked-icon";
 import { CheckboxIcon } from "@/icons/checkbox-icon";
 import { DateTimeProductionFloorComponent } from "@/widgets/production-floor/date-comp/date-componenet";
 import { DescreptionWidget } from "@/widgets/production-floor/descreption-widget/descreption-widget";
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 
+import { ApprovalFileStatusComponent } from "./approval-file-status-component";
+import { ExpandIcon } from "@/icons/expand-icon";
 interface IProps {
   boardMission: IBoardMissions;
   status?: any;
@@ -44,6 +48,7 @@ const TableRowComponent = ({
   onClickPrintDTicket,
   index,
 }: IProps) => {
+
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
@@ -141,7 +146,8 @@ const TableRowComponent = ({
   };
 
   drag(drop(ref));
-
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   return (
     <>
       <TableRow >
@@ -183,32 +189,48 @@ const TableRowComponent = ({
             />
           </SecondaryTableCell>
         </PermissionCheck>
-        {/* <SecondaryTableCell>
-          {
-            <ApprovalFileStatusComponent
-              fileStatus={boardMission.showGraphicsApprovalAlert}
-              t={t}
-            />
-          }
-        </SecondaryTableCell> */}
         <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
-          <DateTimeProductionFloorComponent dateString={boardMission.boardMissionCreatedDate} />
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+            <DateTimeProductionFloorComponent dateString={boardMission.boardMissionCreatedDate} />
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", }}>
+              <ApprovalFileStatusComponent
+                fileStatus={boardMission.showGraphicsApprovalAlert}
+                t={t}
+              />
+              <div style={{ marginTop: "5px" }}>
+                {boardMission.isUrgentWork && (
+                  <KeyboardDoubleArrowUpIcon style={{
+                    color: errorColor(500),
+                  }} />
+                )}
+              </div>
+
+            </div>
+          </div>
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
-          <span
-            onClick={() => {
-              push(
-                `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`
-              ).then();
-            }}
-            style={{
-              cursor: "pointer",
-              textDecoration: "none",
-              color: "#000000",
-            }}
-          >
-            {`${boardMission?.boardMissionNumber}/${boardMission?.orderNumber}`}
-          </span>
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9", cursor: "pointer" }}>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 }} onClick={() => {
+            push(
+              `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`
+            ).then();
+          }}>
+            <div />
+            <div />
+
+            <div
+
+              style={{
+                cursor: "pointer",
+                textDecoration: "none",
+                color: "#000000",
+              }}
+            >
+              {`${boardMission?.boardMissionNumber}`}
+              <br />
+              {`${boardMission?.orderNumber}`}
+            </div>
+            <ExpandIcon />
+          </div>
         </SecondaryTableCell>
         {/* <SecondaryTableCell>
           {boardMission.isUrgentWork && (

@@ -6,6 +6,7 @@ import { DownArrowIcon } from "../table-row/more-circle/icons/down-arrow";
 import { UpArrowIcon } from "../table-row/more-circle/icons/up-arrow";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useStations } from "./use-stations";
+import { getTruncatedLabel } from "@/utils/get-truncated-text";
 
 interface IProps extends ICurrentStation {
   boardMissionId: string;
@@ -49,7 +50,7 @@ const CurrentStationComponent = ({
         <span style={{
           ...FONT_FAMILY.Lexend(500, 15),
           color: "#000000",
-        }}>{machineName ? machineName : actionName}</span>
+        }}>{machineName ? getTruncatedLabel(machineName, 15) : getTruncatedLabel(actionName, 15)}</span>
         {anchorEl ? (
           <UpArrowIcon color={"#475467"} width={14} height={14} />
         ) : (
