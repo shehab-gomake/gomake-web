@@ -107,7 +107,7 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
   }, [boards, search]);
 
   const getCustomWidth = (index: number) => {
-    const widths = ["3%", "7%", "12%", "9%", "11%", "18%", "10%", "18%", "10%", "2%"];
+    const widths = ["3%", "9%", "9%", "9%", "9%", "29%", "10%", "10%", "10%", "2%"];
     return widths[index] || "auto";
   };
 

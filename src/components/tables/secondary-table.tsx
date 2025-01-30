@@ -31,6 +31,7 @@ const SecondaryTableCell = styled(TableCell)(() => {
       borderBottom: "1px solid #DBDBDB",
       borderLeft: "1px solid #EAECF0",
       borderRight: "1px solid #EAECF0",
+
     },
   };
 });
