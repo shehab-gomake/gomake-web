@@ -15,6 +15,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums";
 import { EAddressType } from "./address-widget/state";
+import { ClientChangeSource } from "@/pages-components/quote-new/store/quote";
 
 const BusinessNewWidget = ({
   values,
@@ -426,8 +427,19 @@ const BusinessNewWidget = ({
         subTitle={t("sales.cart.subTitleChangeClientFromInvoice")}
         openModal={openChangeClientModalFromInvoice}
         onClose={onClickCloseChangeClientModalFromInvoice}
-        onClickYes={() => onChangeSelectBusiness(selectedClient, values)}
-        onClickNo={() => onChangeSelectBusiness(selectedClient)}
+        onClickYes={() =>
+          onChangeSelectBusiness(
+            selectedClient,
+            ClientChangeSource.SAVE_AND_CHANGE_CLIENT,
+            values
+          )
+        }
+        onClickNo={() =>
+          onChangeSelectBusiness(
+            selectedClient,
+            ClientChangeSource.SAVE_AND_START_NEW_DOC
+          )
+        }
         yesBtn={"sales.cart.saveAndChangeClients"}
         noBtn={"sales.cart.startNewInvoice"}
       />

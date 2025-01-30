@@ -75,6 +75,7 @@ import {
 } from "@/utils/helpers";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
 import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget/state";
+import { ClientChangeSource } from "./store/quote";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -300,8 +301,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -551,9 +552,12 @@ const useQuoteNew = ({
     }
   }, []);
 
+  const [routerChangedFromClientSelect, setRouterChangedFromClientSelect] =
+    useState(false);
   const onChangeSelectBusiness = async (
     item: any,
-    prevDocumentItem: any | null = null
+    clientChangeSource: ClientChangeSource = ClientChangeSource.REGULAR_CHANGE,
+    prevDocumentItem: any | null = null //in case we change client and click "save and change client"
   ) => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
       setLoadingWithShadow(true);
@@ -584,6 +588,7 @@ const useQuoteNew = ({
                   undefined,
                   { shallow: true }
                 );
+                setRouterChangedFromClientSelect(true);
               }
             }
           }
@@ -614,18 +619,31 @@ const useQuoteNew = ({
       );
       if (res?.success) {
         const _data = res?.data?.data?.result || {};
-        const { orderId, deliveryNoteId, documentId, ...newQuery } =
-          router.query;
-        router.replace(
-          {
-            pathname: router.pathname,
-            query: { ...newQuery },
-          },
-          undefined,
-          { shallow: true }
-        );
 
-        if (prevDocumentItem) {
+        if (clientChangeSource === ClientChangeSource.SAVE_AND_START_NEW_DOC) {
+          const {
+            orderId,
+            deliveryNoteId,
+            documentId,
+            documentToDuplicateId,
+            ...newQuery
+          } = router.query;
+
+          router.replace(
+            {
+              pathname: router.pathname,
+              query: { ...newQuery },
+            },
+            undefined,
+            { shallow: true }
+          );
+
+          setRouterChangedFromClientSelect(true);
+        }
+        if (
+          clientChangeSource === ClientChangeSource.SAVE_AND_CHANGE_CLIENT &&
+          prevDocumentItem
+        ) {
           setQuoteItemValue({
             ..._data,
             documentItems: prevDocumentItem?.documentItems,
@@ -1051,7 +1069,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1711,7 +1729,7 @@ const useQuoteNew = ({
   const prevRouterQueryRef = useRef(router.query);
   const hasMountedRef = useRef(false);
   useEffect(() => {
-    if (!isQuoteConfirmation) {
+    if (!isQuoteConfirmation && !routerChangedFromClientSelect) {
       if (!hasMountedRef.current) {
         getQuote();
         getAllEmployees();
@@ -1729,6 +1747,7 @@ const useQuoteNew = ({
         }
       }
     }
+    setRouterChangedFromClientSelect(false);
   }, [isQuoteConfirmation, router.query]);
 
   // useEffect(() => {
@@ -2020,7 +2039,6 @@ const useQuoteNew = ({
   );
 
   const handleSendUsingWhatsAppWeb = () => {
-    debugger;
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
       quoteItemValue?.documentContacts
     );
