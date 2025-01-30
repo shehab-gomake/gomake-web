@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { Stack, TableCell, styled, tableCellClasses } from "@mui/material";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   useRecoilState,
   useRecoilValue,
@@ -31,6 +31,8 @@ import {
   selectedCreditTransactionState,
   transactionOptionsData,
   cashAccountCodeState,
+  allocatedSumsState,
+  totalAllocatedDocumentsState,
 } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
@@ -54,6 +56,7 @@ const usePaymentsTable = () => {
   const resetCheckedItemsIds = useResetRecoilState(checkedItemsIdsState);
   // total documents
   const [totalSum, setTotalSum] = useRecoilState<number>(totalDocumentsState);
+
   const resetTotalSum = useResetRecoilState(totalDocumentsState);
   // final total payment
   const [finalTotalPayment, setFinalTotalPayment] = useRecoilState<number>(
@@ -435,6 +438,10 @@ const usePaymentsTable = () => {
     setOpenTransactionModal(true);
   };
 
+  const [allocatedSums, setAllocatedSums] = useRecoilState(allocatedSumsState);
+
+  const [remainingTotal, setRemainingTotal] = useState(0);
+
   return {
     t,
     documentItemValue,
@@ -475,7 +482,6 @@ const usePaymentsTable = () => {
     openMethodsDetailsModal,
     handleOpenMethodsDetailsModal,
     handleCloseMethodsDetailsModal,
-
     totalCreditCard,
     isTransacted,
     onClickMakePayment,
@@ -485,12 +491,15 @@ const usePaymentsTable = () => {
     setThirdWidget,
     setActiveWidget,
     transactionSelected,
-
     openTransactionModal,
     handleOpenTransactionModal,
     setOpenTransactionModal,
     resetTotalCreditCard,
     resetCreditCardState,
+    remainingTotal,
+    setRemainingTotal,
+    allocatedSums,
+    setAllocatedSums,
   };
 };
 

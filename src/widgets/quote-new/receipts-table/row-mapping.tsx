@@ -6,6 +6,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useDateFormat } from "@/hooks/use-date-format";
+import { DocumentsTypeEnum } from "@/widgets/settings-documenting/documentNumbering/interface/document";
 
 const RowMappingWidget = ({
   item,
@@ -14,11 +15,30 @@ const RowMappingWidget = ({
   headerHeight,
   onCheckboxChange,
   isChecked,
+  allocatedSum,
+  setAllocatedSum,
 }) => {
   const { classes } = useStyle({ headerHeight });
   const { t } = useTranslation();
   const router = useRouter();
   const { GetDateWithoutHoursFormat } = useDateFormat();
+
+  const handleAllocatedSumChange = (event) => {
+    const newAllocatedSum = event.target.value;
+    const minValue = Math.min(0, item?.sumApplied);
+    const maxValue = item?.sumApplied > 0 ? item?.sumApplied : 0;
+
+    if (
+      isNaN(newAllocatedSum) ||
+      newAllocatedSum < minValue ||
+      newAllocatedSum > maxValue
+    ) {
+      return;
+    }
+
+    setAllocatedSum(index, Number(newAllocatedSum));
+  };
+
   return (
     <TableRow
       key={item.id}
@@ -80,7 +100,7 @@ const RowMappingWidget = ({
           ...classes.cellContainerStyle,
         }}
       >
-        {item?.documentType}
+        {t(`documentType.${DocumentsTypeEnum[item?.documentType]}`)}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -88,16 +108,43 @@ const RowMappingWidget = ({
           ...classes.cellContainerStyle,
         }}
       >
-        {t(item?.documentTypeText)}
+        {t(item?.details ?? "")}
       </PrimaryTableCell>
-      <PrimaryTableCell
-        style={{
-          width: columnWidths[5],
-          ...classes.cellContainerStyle,
-        }}
-      >
-        {item?.sumApplied}
-      </PrimaryTableCell>
+
+      {!router?.query?.isNewCreation ? (
+        <PrimaryTableCell
+          style={{
+            width: columnWidths[5],
+            ...classes.cellContainerStyle,
+          }}
+        >
+          {item?.sumApplied}
+        </PrimaryTableCell>
+      ) : (
+        <PrimaryTableCell
+          style={{
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "row",
+            // justifyContent: "center",
+            ...classes.cellContainerStyle,
+            padding: "0px 50px",
+            gap: "3px",
+          }}
+        >
+          <input
+            key={`allocates-${index}`}
+            value={allocatedSum || 0}
+            onChange={handleAllocatedSumChange}
+            style={{ width: "80px", textAlign: "center" }}
+            type="number"
+            min={Math.min(0, item?.sumApplied)}
+            max={item?.sumApplied > 0 ? item?.sumApplied : 0}
+            // step="0.01"
+          />
+          / {item?.sumApplied}
+        </PrimaryTableCell>
+      )}
     </TableRow>
   );
 };
