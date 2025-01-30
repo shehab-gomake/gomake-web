@@ -19,6 +19,7 @@ interface IProps extends ICurrentStation, INextStation {
   boardMissionId: string;
   status?: any;
   textColor?: string;
+  onClickDone: ()=>void;
 }
 
 const NextStationComponent = ({
@@ -28,6 +29,7 @@ const NextStationComponent = ({
   status,
   nextStationName,
   nextStationId,
+    onClickDone
 }: IProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle({ textColor });
@@ -63,9 +65,9 @@ const NextStationComponent = ({
       <PermissionCheck
         userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}
       >
-        {nextStationId && (
-          <Button sx={classes.moveToBtn} onClick={onClickOpenModal}>
-            <span style={classes.actionText}>{nextStationName}</span>
+        { (
+          <Button sx={classes.moveToBtn} onClick={ nextStationId ? onClickOpenModal : onClickDone}>
+            <span style={classes.actionText}>{nextStationId ? nextStationName : 'move to done'}</span>
             {dir === "ltr" ? <RightArrowIcon /> : <LeftArrowIcon />}
           </Button>
         )}
