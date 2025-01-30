@@ -53,7 +53,7 @@ const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob, onClickP
       },
       {
         condition: true,
-        onClick: () => onClickDone(boardMission?.id),
+        onClick: () => onClickDone(boardMission),
         icon: <DoneIcon />,
         name: t("boardMissions.done")
       },
