@@ -300,8 +300,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -551,9 +551,10 @@ const useQuoteNew = ({
     }
   }, []);
 
+  //!here
   const onChangeSelectBusiness = async (
     item: any,
-    prevDocumentItem: any | null = null
+    prevDocumentItem: any | null = null //in case we change client and click "save and change client"
   ) => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
       setLoadingWithShadow(true);
@@ -614,17 +615,25 @@ const useQuoteNew = ({
       );
       if (res?.success) {
         const _data = res?.data?.data?.result || {};
-        const { orderId, deliveryNoteId, documentId, ...newQuery } =
-          router.query;
-        router.replace(
-          {
-            pathname: router.pathname,
-            query: { ...newQuery },
-          },
-          undefined,
-          { shallow: true }
-        );
 
+        const {
+          orderId,
+          deliveryNoteId,
+          documentId,
+          documentToDuplicateId,
+          ...newQuery
+        } = router.query;
+
+        if (!prevDocumentItem) {
+          router.replace(
+            {
+              pathname: router.pathname,
+              query: { ...newQuery },
+            },
+            undefined,
+            { shallow: true }
+          );
+        }
         if (prevDocumentItem) {
           setQuoteItemValue({
             ..._data,
@@ -1051,7 +1060,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1711,6 +1720,7 @@ const useQuoteNew = ({
   const prevRouterQueryRef = useRef(router.query);
   const hasMountedRef = useRef(false);
   useEffect(() => {
+    debugger;
     if (!isQuoteConfirmation) {
       if (!hasMountedRef.current) {
         getQuote();
@@ -1984,6 +1994,7 @@ const useQuoteNew = ({
   };
   const [selectedBudget, setSelectedBudget] = useState(null);
 
+  //!here
   useEffect(() => {
     if (quoteItemValue?.client?.id) {
       getAllClientActiveBudgets();
@@ -2020,7 +2031,6 @@ const useQuoteNew = ({
   );
 
   const handleSendUsingWhatsAppWeb = () => {
-    debugger;
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
       quoteItemValue?.documentContacts
     );
