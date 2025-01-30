@@ -6,6 +6,7 @@ import { DownArrowIcon } from "../table-row/more-circle/icons/down-arrow";
 import { UpArrowIcon } from "../table-row/more-circle/icons/up-arrow";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useStations } from "./use-stations";
+import { getTruncatedLabel } from "@/utils/get-truncated-text";
 
 interface IProps extends ICurrentStation {
   boardMissionId: string;
@@ -21,6 +22,7 @@ const CurrentStationComponent = ({
   productType,
   id,
 }: IProps) => {
+
   const { classes } = useStyle({ textColor });
   const {
     handleClick,
@@ -45,11 +47,14 @@ const CurrentStationComponent = ({
         disabled={!canMoveStation}
         onClick={(e) => handleClick(e, boardMissionId, productType)}
       >
-        <span>{machineName ? machineName : actionName}</span>
+        <span style={{
+          ...FONT_FAMILY.Lexend(500, 15),
+          color: "#000000",
+        }}>{machineName ? getTruncatedLabel(machineName, 15) : getTruncatedLabel(actionName, 15)}</span>
         {anchorEl ? (
-          <UpArrowIcon color={textColor} />
+          <UpArrowIcon color={"#475467"} width={14} height={14} />
         ) : (
-          <DownArrowIcon color={textColor} />
+          <DownArrowIcon color={"#475467"} width={14} height={14} />
         )}
       </Button>
       <Menu
@@ -62,7 +67,7 @@ const CurrentStationComponent = ({
             boxShadow:
               "0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03)",
             color: "black",
-            ...FONT_FAMILY.Inter(600, 14),
+            ...FONT_FAMILY.Inter(500, 14),
           },
         }}
         anchorEl={anchorEl}

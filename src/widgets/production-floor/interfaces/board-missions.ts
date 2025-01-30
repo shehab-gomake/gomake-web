@@ -34,6 +34,7 @@ export interface IBoardMissions {
   isUrgentWork: boolean;
   productionFloorJobColor?: string;
   numberOfJobsInOrder?: number | string;
+  description?: string;
 }
 
 export interface IBoardMissionsDetails {

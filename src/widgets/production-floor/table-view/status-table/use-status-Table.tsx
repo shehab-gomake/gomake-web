@@ -8,6 +8,9 @@ import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
 import { useTranslation } from "react-i18next";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
+import { Checkbox } from "@mui/material";
+import { CheckboxCheckedIcon } from "@/icons";
+import { CheckboxIcon } from "@/icons";
 
 const useStatusTable = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -45,7 +48,7 @@ const useStatusTable = () => {
   const tableHeaders = (statusId: string) => {
     return [
       CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR) && (
-        <SecondaryCheckBox
+        <Checkbox
           checked={status(statusId).boardMissions.every((b) =>
             selectedBoards?.find(
               (sb) => sb.id === b.id && sb.productType === b.productType
@@ -54,21 +57,19 @@ const useStatusTable = () => {
           onChange={(e, checked) => {
             onChangeHeaderCheckBox(statusId, checked);
           }}
+          icon={<CheckboxIcon color="#D0D5DD" width="20" height="20" />}
+          checkedIcon={<CheckboxCheckedIcon fill="#2E3092" width="20" height="20" />}
         />
       ),
-      " ",
-      t("productionFloor.jobs"),
-      " ",
-      t("home.headers.jobName"),
+      t("home.headers.deliveryDate"),
+      `${t("productionFloor.job")} / ${t("SourceDocument.order")}`,
       t("productionFloor.customer"),
-      t("productionFloor.taskCategory"),
+      // t("home.headers.jobName"),
+      t("sales.quote.productName"),
+      t("sales.documentDeliveries.description"),
       t("productionFloor.status"),
       t("productionFloor.currentStation"),
       t("productionFloor.nextStation"),
-      t("productionFloor.createdDate"),
-      t("productionFloor.stationDeliveryTime"),
-      t("productionFloor.deliveryTime"),
-      t("productionFloor.tags"),
       " ",
     ].filter(Boolean);
   };

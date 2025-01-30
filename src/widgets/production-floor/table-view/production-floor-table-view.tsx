@@ -1,9 +1,9 @@
-import {StatusTableComponent} from "@/widgets/production-floor/table-view/status-table/status-table-component";
-import {useProductionFloorTable} from "@/widgets/production-floor/table-view/use-production-floor-table";
+import { StatusTableComponent } from "@/widgets/production-floor/table-view/status-table/status-table-component";
+import { useProductionFloorTable } from "@/widgets/production-floor/table-view/use-production-floor-table";
 import Stack from "@mui/material/Stack";
-import {useEffect, useMemo} from "react";
-import {useRecoilValue} from "recoil";
-import {selectedChipIdsState} from "../state/text-search";
+import { useEffect, useMemo } from "react";
+import { useRecoilValue } from "recoil";
+import { selectedChipIdsState } from "../state/text-search";
 
 const ProductionFloorTableView = () => {
     const selectedChipId = useRecoilValue(selectedChipIdsState);
@@ -62,7 +62,6 @@ const ProductionFloorTableView = () => {
         }, 1000);
         return () => clearTimeout(delayFetch);
     }, [search]);
-
     return (
         <Stack gap={"20px"}>
             {filteredDataByMachine.map((statusBoards, index) => (
@@ -76,4 +75,4 @@ const ProductionFloorTableView = () => {
     );
 };
 
-export {ProductionFloorTableView};
+export { ProductionFloorTableView };
