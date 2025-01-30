@@ -66,7 +66,7 @@ const useProperites = ({ classes }) => {
     getMachincesByActionId()
   }, [])
   const getSuccessEvent = (property, rule) => {
-    if (property.ruleType === 1) {
+    if (property?.ruleType === 1) {
       const params = parameters.find(
         (param) => param?.id === property?.propertyId
       )?.values;
@@ -263,7 +263,7 @@ const useProperites = ({ classes }) => {
         if (matchingOutput) {
           property.defaultUnit = matchingOutput.defaultUnit;
         }
-      } else if (property.ruleType === 1) {
+      } else if (property?.ruleType === 1) {
         // RuleType is 1, check for matching Input ID
         const matchingInput = inputs.find(
           (input) => input.id === property.propertyId

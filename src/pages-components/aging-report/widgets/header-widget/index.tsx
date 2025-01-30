@@ -51,7 +51,7 @@ const AgingReportHeaderWidget = ({
           />
         </div>
       </div>
-      <div style={classes.date2FilterContainer}>
+      {/* <div style={classes.date2FilterContainer}>
         <h3 style={classes.filterLabelStyle}>
           {t("customers.modal.referenceDate")}
         </h3>
@@ -74,7 +74,7 @@ const AgingReportHeaderWidget = ({
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
       <div style={classes.date2FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("sales.quote.agent")}</h3>
         <GoMakeAutoComplate
@@ -102,7 +102,7 @@ const AgingReportHeaderWidget = ({
           loading={isFetchingCustomers}
         />
       </div>
-      <div style={classes.date1FilterContainer}>
+      <div style={{ ...classes.date1FilterContainer, alignSelf: "flex-end" }}>
         <div style={classes.checkboxStyle}>
           <Checkbox
             icon={<CheckboxIcon />}
@@ -114,7 +114,7 @@ const AgingReportHeaderWidget = ({
             {t("reports.detailedReport")}
           </div>
         </div>
-        <div style={classes.checkboxStyle}>
+        {/* <div style={classes.checkboxStyle}>
           <Checkbox
             onChange={onChangeByReferenceDate}
             icon={<CheckboxIcon />}
@@ -123,7 +123,7 @@ const AgingReportHeaderWidget = ({
           <div style={classes.labelSwichStyle}>
             {t("reports.byReferenceDate")}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
