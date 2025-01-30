@@ -62,25 +62,23 @@ const SalesReportWidget = () => {
       />
       <Divider />
       <SalesReportButtonWidget onClickBtn1={onClickBtn1} />
-      {/* {showTable && (
-        <PrimaryTable
-          rows={[...getTableDataRows(), ...getTotalTableDataRows()]}
-          headers={tableHeaders}
-          maxHeight={"calc(100vh - 318px)"}
-          isLastItemTotal={true}
-          stickyHeader={true}
-        />
-      )} */}
-
       {showTable &&
         (Array.isArray(tableData) ? tableData : []).map((item) => {
           return (
-            <PrimaryTable
-              rows={getNewTableDataRows(item?.data)}
-              headers={tableHeaders}
-              maxHeight={"calc(100vh - 300px)"}
-              stickyHeader={true}
-            />
+            <div style={classes.tableTitleContainer}>
+              <div style={classes.titleStyle}>
+                {item.accountName}-{item.accountCode}
+              </div>
+              <PrimaryTable
+                rows={getNewTableDataRows(item?.data)}
+                headers={tableHeaders}
+                maxHeight={"calc(100vh - 300px)"}
+                stickyHeader={true}
+              />
+              <div style={classes.totalStyle}>
+                {t("deposits.total")} : {item.total.toFixed(2)}
+              </div>
+            </div>
           );
         })}
     </div>
