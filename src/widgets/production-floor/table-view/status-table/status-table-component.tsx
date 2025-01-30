@@ -47,6 +47,7 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
     selectedMission,
+      tryMoveBoardMissionsToDone
   } = useProductionFloorData();
 
   const [{ isOver }, drop] = useDrop(
@@ -157,7 +158,7 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
                             key={"status" + status.id + boardMission.id}
                             boardMission={boardMission}
                             status={status}
-                            onClickDone={onOpenMarkReadyModal}
+                            onClickDone={tryMoveBoardMissionsToDone}
                             onClickPrintDTicket={onOpenPrintDeliverTicketModal}
                           />
                         </>

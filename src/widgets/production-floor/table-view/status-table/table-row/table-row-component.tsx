@@ -1,6 +1,5 @@
 import { SecondaryTableCell } from "@/components/tables/secondary-table";
 import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
-import Link from "next/link";
 import { LabelComponent } from "@/widgets/production-floor/label-component/label-component";
 import { CurrentStationComponent } from "@/widgets/production-floor/table-view/status-table/stations/current-station";
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
@@ -16,12 +15,8 @@ import { useRef, useState } from "react";
 import {
   Collapse,
   Skeleton,
-  styled,
   TableCell,
   TableRow,
-  Tooltip,
-  tooltipClasses,
-  TooltipProps,
 } from "@mui/material";
 import { ApprovalFileStatusComponent } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
@@ -37,7 +32,7 @@ import { getTruncatedLabel } from "@/utils/get-truncated-text";
 interface IProps {
   boardMission: IBoardMissions;
   status?: any;
-  onClickDone?: (missionId: any) => void;
+  onClickDone?: (mission: any) => void;
   onClickPrintDTicket?: (mission: any) => void;
 }
 
