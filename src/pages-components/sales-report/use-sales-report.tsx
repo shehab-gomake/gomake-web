@@ -93,8 +93,7 @@ const useSalesReport = () => {
       t("reports.documentNumber"),
       t("reports.transType"),
       t("reports.TransNumber"),
-      t("reports.AccountCode"),
-      t("reports.accountName"),
+
       t("reports.cardcode"),
       t("reports.cardname"),
       `${t("reports.credit")} / ${t("reports.debit")}`,
@@ -136,13 +135,13 @@ const useSalesReport = () => {
             ),
             getDocumentTypeName(t, data?.transType),
             data?.transNumber,
-            data?.accountCode,
-            data?.accountName,
             data?.cardCode,
             data?.cardName,
             data?.credit > 0
-              ? data?.credit?.toFixed(2)
-              : data?.debit?.toFixed(2),
+              ? Number(data?.credit.toFixed(2))
+              : data?.debit
+              ? Number((-data.debit).toFixed(2))
+              : 0,
           ];
         });
       } else return [];
