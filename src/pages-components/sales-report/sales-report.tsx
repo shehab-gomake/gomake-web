@@ -72,7 +72,7 @@ const SalesReportWidget = () => {
               <PrimaryTable
                 rows={getNewTableDataRows(item?.data)}
                 headers={tableHeaders}
-                maxHeight={"calc(100vh - 300px)"}
+                maxHeight={"calc(100vh - 450px)"}
                 stickyHeader={true}
               />
               <div style={classes.totalStyle}>
