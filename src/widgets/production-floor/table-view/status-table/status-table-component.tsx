@@ -47,7 +47,7 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
     selectedMission,
-      tryMoveBoardMissionsToDone
+    tryMoveBoardMissionsToDone
   } = useProductionFloorData();
 
   const [{ isOver }, drop] = useDrop(
@@ -108,7 +108,7 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
   }, [boards, search]);
 
   const getCustomWidth = (index: number) => {
-    const widths = ["3%", "9%", "9%", "9%", "9%", "29%", "10%", "10%", "10%", "2%"];
+    const widths = ["3%", "9%", "9%", "9%", "9%", "23%", "12%", "12%", "12%", "2%"];
     return widths[index] || "auto";
   };
 
