@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Box,
   Stack,
@@ -10,6 +10,7 @@ import {
   Paper,
   MenuItem,
   CircularProgress,
+  ClickAwayListener,
 } from "@mui/material";
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
@@ -316,7 +317,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
   }, [filterGroups, containerWidth]);
 
   const getMissionsList = useCallback(() => {
-    return  missionsList;
+    return missionsList;
   }, [missionsList]);
 
   const renderMenuItem = (option, handleClick) => (
@@ -337,15 +338,17 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     </MenuItem>
   );
 
-  const SearchMissionList = ({ missionsList, handleMissionClick }) => (
-    <Paper elevation={3} sx={classes.paperStyle}>
-      <ScrollableDiv>
-        {missionsList?.map((option) =>
-          renderMenuItem(option, handleMissionClick)
-        )}
-      </ScrollableDiv>
-    </Paper>
-  );
+  const SearchMissionList = ({ missionsList, handleMissionClick }) => {
+    return (
+      <Paper elevation={3} sx={classes.paperStyle}>
+        <ScrollableDiv>
+          {missionsList?.map((option) =>
+            renderMenuItem(option, handleMissionClick)
+          )}
+        </ScrollableDiv>
+      </Paper>
+    );
+  };
 
   const handleMissionClick = (id) => {
     push(`/production-floor?boardMissionsId=${id}&step=stations`).then(() => {
@@ -354,26 +357,53 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     });
   };
 
+  const [isListOpen, setIsListOpen] = useState(false);
+  const searchInputRef = useRef(null);
+  const handleSearchChange = (value) => {
+    setSearch(value);
+    if (!value) {
+      setIsListOpen(false);
+      setMissionsList([]);
+    } else {
+      setIsListOpen(true);
+      setMissionsList(getMissionsList());
+    }
+  };
+
   return (
     <Stack style={classes.headerFilterContainer}>
-      <Stack>
-        <SearchInputComponent
-          bgColor={"#F8F8F8"}
-          value={search}
-          onChange={setSearch}
-          filtersButton={
-            isSearchLoading && (
-              <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
-            )
+      <ClickAwayListener
+        onClickAway={(event) => {
+          if (
+            searchInputRef.current &&
+            searchInputRef.current.contains(event.target)
+          ) {
+            return;
           }
-        />
-        {getMissionsList().length !== 0 && !!search && (
+          setIsListOpen(false);
+        }}
+      >
+        <Stack>
+          <div ref={searchInputRef}>
+            <SearchInputComponent
+              bgColor={"#F8F8F8"}
+              value={search}
+              onChange={handleSearchChange}
+              filtersButton={
+                isSearchLoading && (
+                  <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
+                )
+              }
+            />
+          </div>
+          {getMissionsList().length !== 0 && isListOpen && (
             <SearchMissionList
               missionsList={getMissionsList()}
               handleMissionClick={handleMissionClick}
             />
           )}
-      </Stack>
+        </Stack>
+      </ClickAwayListener>
       <SelectComponent
         buttonLabel={"productionFloor.tags"}
         list={tagsList}
