@@ -14,7 +14,7 @@ import { boardMissionsActivitiesState } from "@/widgets/production-floor/state/b
 import { boardMissionsFilesState } from "@/widgets/production-floor/views/board-missions-view/files/state";
 
 const useProductionFloorSignalr = () => {
-  const setBoardMissions = useSetRecoilState(boardMissionsDetailsState);
+  const [currentBoardMissions, setBoardMissions] = useRecoilState(boardMissionsDetailsState);
   const setBoardMissionsStations = useSetRecoilState(
     boardMissionsStationsState
   );
@@ -37,8 +37,14 @@ const useProductionFloorSignalr = () => {
         getData(connection?.connectionId).then();
       });
 
+    }
+  }, [connection, connectionId]);
+
+  useEffect(() => {
+    if (connection && !!connectionId) {
+
       connection.on("UpdateBoardMissionModal", (newData) => {
-        if (!!newData) {
+        if (!!newData && currentBoardMissions.boardMissionId === newData.details.boardMissionId) {
           setActivities(newData?.activites);
           setBoardMissions(newData?.details);
           setBoardMissionsStations(newData?.stations.workFlow?.actions);
@@ -48,8 +54,7 @@ const useProductionFloorSignalr = () => {
         }
       });
     }
-  }, [connection, connectionId]);
-
+  }, [connection, connectionId, currentBoardMissions]);
   return {
     data,
     connectionId,
