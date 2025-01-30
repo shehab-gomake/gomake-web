@@ -67,7 +67,7 @@ const NextStationComponent = ({
       >
         { (
           <Button sx={classes.moveToBtn} onClick={ nextStationId ? onClickOpenModal : onClickDone}>
-            <span style={classes.actionText}>{nextStationId ? nextStationName : 'move to done'}</span>
+            <span style={classes.actionText}>{nextStationId ? nextStationName : t('productionFloor.moveToDone')}</span>
             {dir === "ltr" ? <RightArrowIcon /> : <LeftArrowIcon />}
           </Button>
         )}
