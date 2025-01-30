@@ -39,9 +39,9 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
       };
       
       const updateValues = (subProduct, value, settingParameters) => {
-        const colorParam = settingParameters.find(param => param.code === "printingcolorsDetail");
-        const loadParam = settingParameters.find(param => param.code === "Colorloadpercentage");
-        const layersParam = settingParameters.find(param => param.code === "ColorLayers");
+        const colorParam = settingParameters.find(param => param.code === "printingcolorsDetail" || param.code === "printingcolorsDetailSide2");
+        const loadParam = settingParameters.find(param => param.code === "Colorloadpercentage" || param.code === "ColorloadpercentageSide2");
+        const layersParam = settingParameters.find(param => param.code === "ColorLayers" || param.code === "ColorLayersSide2");
     
         const colorParamValue = subProduct.parameters.find(param => param.parameterId === colorParam.id);
         const loadParamValue = subProduct.parameters.find(param => param.parameterId === loadParam.id);
@@ -105,9 +105,9 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
           let subProduct = subProductsCopy.find(sub => sub.type === subProductType);
           subProduct.parameters = removeDuplicateParameters(subProduct.parameters);
       
-          const colorParameter = settingParameters.parameter.settingParameters.find(param => param.code === "printingcolorsDetail");
-          const loadParameter = settingParameters.parameter.settingParameters.find(param => param.code === "Colorloadpercentage");
-          const layersParameter = settingParameters.parameter.settingParameters.find(param => param.code === "ColorLayers");
+          const colorParameter = settingParameters.parameter.settingParameters.find(param => param.code === "printingcolorsDetail" || param.code === "printingcolorsDetailSide2");
+          const loadParameter = settingParameters.parameter.settingParameters.find(param => param.code === "Colorloadpercentage" || param.code === "ColorloadpercentageSide2");
+          const layersParameter = settingParameters.parameter.settingParameters.find(param => param.code === "ColorLayers" || param.code === "ColorLayersSide2");
       
           const colorParameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === colorParameter.id);
           const loadParameterValue = subProduct.parameters.find(paramValue => paramValue.parameterId === loadParameter.id);
@@ -195,7 +195,7 @@ const userMultiParameterModalValues = (settingParameters,isParameterSettings) =>
       const setSubProductValueForParameterSettingsDefaultValueArray = (parameters, parameterId, value, textInputVal) => {
 
         // Step 1: Find the parameter for colors to get the correct index
-        const colorsParameter = parameters.find(param => param.code === "printingcolorsDetail");
+        const colorsParameter = parameters.find(param => param.code === "printingcolorsDetail" || param.code === "printingcolorsDetailSide2");
         if (!colorsParameter) return parameters; // Exit if color parameter not found
       
         // Step 2: Find the index of the valueId within the colors parameter

@@ -42,7 +42,7 @@ const useSubChildMapping = ({
       const valuesConfigs = settingParameters?.parameter?.valuesConfigs;
       const valueConfigDefault = valuesConfigs?.find((item) => item.isDefault);
       if(valueConfigDefault){
-        const colorParameter = settingParameters?.parameter?.settingParameters.find(item => item.code === "printingcolorsDetail");
+        const colorParameter = settingParameters?.parameter?.settingParameters.find(item => item.code === "printingcolorsDetail" || item.code === "printingcolorsDetailSide2");
         return valueConfigDefault?.selectedParameterValues?.find(paramValue => paramValue.parameterId === colorParameter.id);
       }
     
@@ -56,9 +56,9 @@ const useSubChildMapping = ({
 
   const onChangeCheckBox = (e) => {
     if (isParameterSettings) {
-      const printingcolorsDetail = parameters.find(item => item.code === "printingcolorsDetail");
-      const loadParameter = parameters.find(p => p.code === "Colorloadpercentage");
-      const layersParameter = parameters.find(p => p.code === "ColorLayers");
+      const printingcolorsDetail = parameters.find(item => item.code === "printingcolorsDetail" || item.code === "printingcolorsDetailSide2");
+      const loadParameter = parameters.find(p => p.code === "Colorloadpercentage" || p.code === "ColorloadpercentageSide2");
+      const layersParameter = parameters.find(p => p.code === "ColorLayers" || p.code === "ColorLayersSide2");
       const parameter = settingParameters?.parameter;
       const valuesConfigsList = parameter?.valuesConfigs;
       const defaultValueConfig = valuesConfigsList?.find(item => item.isDefault);
@@ -185,7 +185,7 @@ const useSubChildMapping = ({
       return item.defaultValue;
     }
     else {
-      const colorParameter = settingParameters?.parameter?.settingParameters.find(param => param.code === "printingcolorsDetail");
+      const colorParameter = settingParameters?.parameter?.settingParameters.find(param => param.code === "printingcolorsDetail" || param.code === "printingcolorsDetailSide2");
       if (!colorParameter) return item.defaultValue;
   
       const valueIndex = colorParameter?.defaultValueArray?.findIndex(val => val === value.valueId);
