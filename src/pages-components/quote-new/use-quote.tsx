@@ -75,6 +75,7 @@ import {
 } from "@/utils/helpers";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
 import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget/state";
+import { ClientChangeSource } from "./store/quote";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -551,9 +552,11 @@ const useQuoteNew = ({
     }
   }, []);
 
-  //!here
+  const [routerChangedFromClientSelect, setRouterChangedFromClientSelect] =
+    useState(false);
   const onChangeSelectBusiness = async (
     item: any,
+    clientChangeSource: ClientChangeSource = ClientChangeSource.REGULAR_CHANGE,
     prevDocumentItem: any | null = null //in case we change client and click "save and change client"
   ) => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
@@ -585,6 +588,7 @@ const useQuoteNew = ({
                   undefined,
                   { shallow: true }
                 );
+                setRouterChangedFromClientSelect(true);
               }
             }
           }
@@ -616,15 +620,15 @@ const useQuoteNew = ({
       if (res?.success) {
         const _data = res?.data?.data?.result || {};
 
-        const {
-          orderId,
-          deliveryNoteId,
-          documentId,
-          documentToDuplicateId,
-          ...newQuery
-        } = router.query;
+        if (clientChangeSource === ClientChangeSource.SAVE_AND_START_NEW_DOC) {
+          const {
+            orderId,
+            deliveryNoteId,
+            documentId,
+            documentToDuplicateId,
+            ...newQuery
+          } = router.query;
 
-        if (!prevDocumentItem) {
           router.replace(
             {
               pathname: router.pathname,
@@ -633,8 +637,13 @@ const useQuoteNew = ({
             undefined,
             { shallow: true }
           );
+
+          setRouterChangedFromClientSelect(true);
         }
-        if (prevDocumentItem) {
+        if (
+          clientChangeSource === ClientChangeSource.SAVE_AND_CHANGE_CLIENT &&
+          prevDocumentItem
+        ) {
           setQuoteItemValue({
             ..._data,
             documentItems: prevDocumentItem?.documentItems,
@@ -1720,8 +1729,7 @@ const useQuoteNew = ({
   const prevRouterQueryRef = useRef(router.query);
   const hasMountedRef = useRef(false);
   useEffect(() => {
-    debugger;
-    if (!isQuoteConfirmation) {
+    if (!isQuoteConfirmation && !routerChangedFromClientSelect) {
       if (!hasMountedRef.current) {
         getQuote();
         getAllEmployees();
@@ -1739,6 +1747,7 @@ const useQuoteNew = ({
         }
       }
     }
+    setRouterChangedFromClientSelect(false);
   }, [isQuoteConfirmation, router.query]);
 
   // useEffect(() => {
@@ -1994,7 +2003,6 @@ const useQuoteNew = ({
   };
   const [selectedBudget, setSelectedBudget] = useState(null);
 
-  //!here
   useEffect(() => {
     if (quoteItemValue?.client?.id) {
       getAllClientActiveBudgets();
