@@ -2,7 +2,7 @@ import { useGoMakeSignalr } from "@/hooks/signalr/use-go-make-signalr";
 import { getUserToken } from "@/services/storage-data";
 import config from "@/config";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
-import { useEffect } from "react";
+import {useCallback, useEffect} from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import {
@@ -31,20 +31,18 @@ const useProductionFloorSignalr = () => {
     methodName: "",
   });
 
+  const currentBoardMissionsId = useCallback(() => {
+    return currentBoardMissions.boardMissionId;
+  }, [currentBoardMissions]);
+
   useEffect(() => {
     if (connection && !!connectionId) {
       connection.on("UpdateBoardMissionsStation", () => {
         getData(connection?.connectionId).then();
       });
 
-    }
-  }, [connection, connectionId]);
-
-  useEffect(() => {
-    if (connection && !!connectionId) {
-
       connection.on("UpdateBoardMissionModal", (newData) => {
-        if (!!newData && currentBoardMissions.boardMissionId === newData.details.boardMissionId) {
+        if (!!newData && currentBoardMissionsId() === newData.details.boardMissionId) {
           setActivities(newData?.activites);
           setBoardMissions(newData?.details);
           setBoardMissionsStations(newData?.stations.workFlow?.actions);
@@ -54,7 +52,8 @@ const useProductionFloorSignalr = () => {
         }
       });
     }
-  }, [connection, connectionId, currentBoardMissions]);
+  }, [connection, connectionId]);
+
   return {
     data,
     connectionId,
