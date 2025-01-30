@@ -1,5 +1,7 @@
 import { SecondaryTableCell } from "@/components/tables/secondary-table";
 import Link from "next/link";
+import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
+import { LabelComponent } from "@/widgets/production-floor/label-component/label-component";
 import { CurrentStationComponent } from "@/widgets/production-floor/table-view/status-table/stations/current-station";
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useDrag, useDrop } from "react-dnd";
@@ -10,7 +12,14 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { useRef, useState } from "react";
-import { Checkbox, Collapse, Skeleton, TableCell, TableRow } from "@mui/material";
+import {
+  Collapse,
+  Skeleton,
+  TableCell,
+  TableRow,
+} from "@mui/material";
+import { ApprovalFileStatusComponent } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
+import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { MoreMenuWidget } from "./more-circle";
 import { ClickableLabelComponent } from "@/widgets/production-floor/label-component/clickable-label-component";
@@ -30,7 +39,7 @@ import { ExpandIcon } from "@/icons/expand-icon";
 interface IProps {
   boardMission: IBoardMissions;
   status?: any;
-  onClickDone?: (missionId: any) => void;
+  onClickDone?: (mission: any) => void;
   onClickPrintDTicket?: (mission: any) => void;
   index: number;
 }
