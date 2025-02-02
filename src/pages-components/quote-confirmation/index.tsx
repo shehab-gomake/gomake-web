@@ -8,6 +8,8 @@ import { useQuoteConfirmation } from "./use-quote-confirmation";
 import { updateTempUserTokenStorage } from "@/services/storage-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import PageNotFound from "@/pages/404.page";
+import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-profile-api";
+import { useGomakeAxios } from "@/hooks";
 
 interface IProps {
   isPrePaymentPage?: boolean;
@@ -73,16 +75,32 @@ const QuoteConfirmationPageWidget = ({
   if (isPageNotFound && isPrePaymentPage) {
     return <PageNotFound hideBackToHomePageBtn={true} />;
   }
+  const { callApi } = useGomakeAxios();
+  const [companyLogo, setCompanyLogo] = useState<{ loginLogo: string, name: string }>({ loginLogo: '', name: '' });
 
+  const getCompanyLogo = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setCompanyLogo(res.data);
+      }
+    };
+    await getCompanyLoginLogo(callApi, callBack);
+  };
+  useEffect(() => {
+    getCompanyLogo().then();
+  }, []);
   return (
     <div style={classes.firstContainer}>
       <div style={isMobile ? classes.iconMobileStyle : classes.iconStyle}>
-        {quoteConfirm?.printHouseLogo ? (
-          <img
-            src={quoteConfirm.printHouseLogo}
-            alt="Print House Logo"
-            style={classes.printHouseLogo}
-          />
+        {companyLogo?.loginLogo ? (
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px" }}>
+            <img
+              src={companyLogo?.loginLogo}
+              alt="Print House Logo"
+              style={classes.printHouseLogo}
+            />
+            <span style={{ color: "#000", ...FONT_FAMILY.Inter(700, 32), textTransform: 'capitalize' }}>{companyLogo?.name}</span>
+          </div>
         ) : (
           <GoMakeIcon />
         )}
