@@ -24,6 +24,7 @@ import { ManuallyCloseModal } from "./close-manually-modal";
 import { InvoiceCreationModal } from "../invoice-creation-modal";
 import { ModalType } from "@/enums";
 import { OrderNowPrePaymentModal } from "../total-price-and-vat/order-now-modal/order-now-pre-payment";
+import { validateDocument } from "@/utils/validators";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -34,14 +35,13 @@ const ButtonsContainer = ({
   onOpenDeliveryModal,
   documentType,
   onOpenCopyFromOrder,
-  handleSaveBtnClickForDocument,
   onClickOpenNewItemNotesModal,
   handleRejectBtnClick,
   handleAcceptBtnClick,
   onClickOpenChangeProductionStatusModal,
   onClickSendReceiptToClient,
   handleSendUsingWhatsAppWeb,
-  onClickConfirmCreateDocument
+  onClickConfirmCreateDocument,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -263,6 +263,13 @@ const ButtonsContainer = ({
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
             onClick={() => {
+              if (documentType !== DOCUMENT_TYPE.receipt) {
+                const validationError = validateDocument(quoteItemValue);
+                if (validationError) {
+                  alertFault(validationError);
+                  return;
+                }
+              }
               if (documentType === DOCUMENT_TYPE.receipt) {
                 onClickCreateNewReceipt();
               } else if (isInvoice) {
