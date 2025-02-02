@@ -54,9 +54,8 @@ const UnderlinedTabs = styled(Tabs)(
     const { selectedColor } = props;
     return {
       "& .MuiTabs-indicator": {
-        borderBottom: `2px solid ${
-          selectedColor === "secondary" ? secondColor(500) : primaryColor(500)
-        }`,
+        borderBottom: `2px solid ${selectedColor === "secondary" ? secondColor(500) : primaryColor(500)
+          }`,
       },
       "& .MuiButtonBase-root": {
         textTransform: "initial",
@@ -131,6 +130,7 @@ const PrimaryTabsComponent = ({
           onChange={handleChange}
           selectedColor={selectedColor}
           aria-label="tabs example"
+          key={`tabs-${value}`}
         >
           {tabs?.map((tab, index) => (
             <TabComponent
