@@ -176,10 +176,10 @@ const CreateNewTransactionModal = ({
                         }
                         onChange={handleToChange}
                         onChangeTextField={
-                          fromAccountType === "client" && checkWhatRenderArray
+                          toAccountType === "client" && checkWhatRenderArray
                         }
                         defaultFiltering={
-                          fromAccountType === "client" ? false : true
+                          toAccountType === "client" ? false : true
                         }
                       />
                     </div>
