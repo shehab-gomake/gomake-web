@@ -2,7 +2,7 @@ import { useGoMakeSignalr } from "@/hooks/signalr/use-go-make-signalr";
 import { getUserToken } from "@/services/storage-data";
 import config from "@/config";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
-import { useEffect } from "react";
+import {useCallback, useEffect} from "react";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import {
@@ -14,7 +14,7 @@ import { boardMissionsActivitiesState } from "@/widgets/production-floor/state/b
 import { boardMissionsFilesState } from "@/widgets/production-floor/views/board-missions-view/files/state";
 
 const useProductionFloorSignalr = () => {
-  const setBoardMissions = useSetRecoilState(boardMissionsDetailsState);
+  const [currentBoardMissions, setBoardMissions] = useRecoilState(boardMissionsDetailsState);
   const setBoardMissionsStations = useSetRecoilState(
     boardMissionsStationsState
   );
@@ -31,6 +31,10 @@ const useProductionFloorSignalr = () => {
     methodName: "",
   });
 
+  const currentBoardMissionsId = useCallback(() => {
+    return currentBoardMissions.boardMissionId;
+  }, [currentBoardMissions]);
+
   useEffect(() => {
     if (connection && !!connectionId) {
       connection.on("UpdateBoardMissionsStation", () => {
@@ -38,7 +42,7 @@ const useProductionFloorSignalr = () => {
       });
 
       connection.on("UpdateBoardMissionModal", (newData) => {
-        if (!!newData) {
+        if (!!newData && currentBoardMissionsId() === newData.details.boardMissionId) {
           setActivities(newData?.activites);
           setBoardMissions(newData?.details);
           setBoardMissionsStations(newData?.stations.workFlow?.actions);
