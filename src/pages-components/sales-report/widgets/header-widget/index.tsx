@@ -20,7 +20,7 @@ const SalesReportHeaderWidget = ({
   handleCustomerChange,
   displayByGroups,
   onChangeDisplayByGroups,
-  documentsTypeList,
+  reportsTypeList,
   handleDocumentTypeChange,
   documentType,
   handleDateChange,
@@ -78,9 +78,9 @@ const SalesReportHeaderWidget = ({
         />
       </div>
       <div style={classes.date2FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>{t("reports.documentsType")}</h3>
+        <h3 style={classes.filterLabelStyle}>{t("reports.reportType")}</h3>
         <GoMakeAutoComplate
-          options={documentsTypeList}
+          options={reportsTypeList}
           style={classes.textInputStyle}
           placeholder={t("reports.chooseDocumentType")}
           onChange={handleDocumentTypeChange}

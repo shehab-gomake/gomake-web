@@ -36,7 +36,14 @@ const useLedgerReport = ({ customerId }: any) => {
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [isExtended, setIsExtended] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+
+  const startOfPreviousYear = () => {
+    const currentYear = new Date().getFullYear();
+    return new Date(currentYear - 1, 0, 1); // January 1st of the previous year
+  };
+
+  const [fromDate, setFromDate] = useState<Date>(startOfPreviousYear());
+  // const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
   const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
   const [selectedContactById, setSelectedContactById] = useState<any>();
@@ -320,6 +327,20 @@ const useLedgerReport = ({ customerId }: any) => {
     }
   };
 
+  const [erpAccountsList, setErpAccountsList] = useState([]);
+
+  const getErpAccountsList = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.GET,
+      `/v1/erp-service/receipts/get-erp-accounts`
+    );
+    if (res?.success) {
+      setErpAccountsList(res.data?.data?.data);
+    } else {
+      alertFaultGetData();
+    }
+  }, []);
+
   return {
     t,
     onSelectDeliveryTimeDates,
@@ -357,6 +378,8 @@ const useLedgerReport = ({ customerId }: any) => {
     toDate,
     customerId,
     isFetching,
+    erpAccountsList,
+    getErpAccountsList,
   };
 };
 

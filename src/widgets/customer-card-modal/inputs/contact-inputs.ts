@@ -125,10 +125,7 @@ const contactInputs1 = (state) => {
       options: [
         { value: ERPDocumentsTypesEnum.quote, text: t("tabs.quotes") },
         { value: ERPDocumentsTypesEnum.order, text: t("tabs.orders") },
-        {
-          value: ERPDocumentsTypesEnum.deliveryNote,
-          text: t("tabs.deliveryNotes"),
-        },
+        { value: ERPDocumentsTypesEnum.deliveryNote, text: t("tabs.deliveryNotes") },
         { value: ERPDocumentsTypesEnum.invoice, text: t("tabs.invoices") },
         { value: ERPDocumentsTypesEnum.receipt, text: t("tabs.receipts") },
       ],
