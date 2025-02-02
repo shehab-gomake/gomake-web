@@ -23,7 +23,7 @@ const SalesReportWidget = () => {
     onChangeDisplayByGroups,
     handleDocumentTypeChange,
     documentType,
-    documentsTypeList,
+    reportsTypeList,
     displayByGroups,
     tableHeaders,
     getTotalTableDataRows,
@@ -31,6 +31,8 @@ const SalesReportWidget = () => {
     fromDate,
     toDate,
     isFetching,
+    getNewTableDataRows,
+    tableData,
   } = useSalesReport();
 
   return (
@@ -50,7 +52,7 @@ const SalesReportWidget = () => {
         handleCustomerChange={handleCustomerChange}
         displayByGroups={displayByGroups}
         onChangeDisplayByGroups={onChangeDisplayByGroups}
-        documentsTypeList={documentsTypeList}
+        reportsTypeList={reportsTypeList}
         handleDocumentTypeChange={handleDocumentTypeChange}
         documentType={documentType}
         handleDateChange={handleDateChange}
@@ -60,16 +62,27 @@ const SalesReportWidget = () => {
       />
       <Divider />
       <SalesReportButtonWidget onClickBtn1={onClickBtn1} />
-      {showTable && (
+      {/* {showTable && (
         <PrimaryTable
           rows={[...getTableDataRows(), ...getTotalTableDataRows()]}
           headers={tableHeaders}
-          // maxHeight={650}
           maxHeight={"calc(100vh - 318px)"}
           isLastItemTotal={true}
           stickyHeader={true}
         />
-      )}
+      )} */}
+
+      {showTable &&
+        (Array.isArray(tableData) ? tableData : []).map((item) => {
+          return (
+            <PrimaryTable
+              rows={getNewTableDataRows(item?.data)}
+              headers={tableHeaders}
+              maxHeight={"calc(100vh - 300px)"}
+              stickyHeader={true}
+            />
+          );
+        })}
     </div>
   );
 };

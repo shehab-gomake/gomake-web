@@ -4,14 +4,14 @@ import {
 } from "./use-header-widget";
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
-import { GomakeTextInput } from "@/components";
-import { SecondaryButton } from "@/components/button/secondary-button";
+import { GoMakeAutoComplate } from "@/components";
 
 const AccountingTransactionReportHeader = ({
   handleDateChange,
   filterState,
   setFilterState,
   handleClickClear,
+  erpAccountsList,
 }: AccountingTransactionReportHeaderProps) => {
   const { classes, t } = useAgingReportHeader();
   const dir: "rtl" | "ltr" = t("direction");
@@ -23,6 +23,13 @@ const AccountingTransactionReportHeader = ({
     right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
   }
 `;
+
+  const handleAccountChange = (e: any, value: any) => {
+    setFilterState((prevState) => ({
+      ...prevState,
+      accountCode: value?.code ?? null,
+    }));
+  };
 
   return (
     <div style={classes.mainContainer}>
@@ -40,6 +47,22 @@ const AccountingTransactionReportHeader = ({
           />
         </div>
       </div>
+
+      <div style={{ ...classes.date1FilterContainer, width: "18%" }}>
+        <h3 style={classes.filterLabelStyle}>{t("reports.accountCode")}</h3>
+        <GoMakeAutoComplate
+          options={erpAccountsList}
+          getOptionLabel={(option: any) => option.name}
+          style={classes.textInputStyle}
+          placeholder={t("reports.selectAccountCode")}
+          value={erpAccountsList.find(
+            (option) => option.code === filterState?.accountCode
+          )}
+          onChange={handleAccountChange}
+        />
+      </div>
+
+      {/* 
       <div style={classes.date1FilterContainer}>
         <h3 style={classes.filterLabelStyle}>
           {t("accounting.fromAccountCode")}
@@ -71,7 +94,7 @@ const AccountingTransactionReportHeader = ({
           placeholder={t("accounting.toAccountCode")}
           style={{ height: 40 }}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

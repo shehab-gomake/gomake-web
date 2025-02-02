@@ -193,12 +193,18 @@ const TableRowComponent = ({
         </PermissionCheck>
         <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+            <div />
+            <div />
             <DateTimeProductionFloorComponent dateString={boardMission.boardMissionCreatedDate} />
+
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", }}>
-              <ApprovalFileStatusComponent
-                fileStatus={boardMission.showGraphicsApprovalAlert}
-                t={t}
-              />
+              {
+                boardMission.showGraphicsApprovalAlert && <ApprovalFileStatusComponent
+                  fileStatus={boardMission.showGraphicsApprovalAlert}
+                  t={t}
+                />
+              }
+
               <div style={{ marginTop: "5px" }}>
                 {boardMission.isUrgentWork && (
                   <KeyboardDoubleArrowUpIcon style={{
@@ -208,6 +214,8 @@ const TableRowComponent = ({
               </div>
 
             </div>
+            <div />
+
           </div>
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9", cursor: "pointer" }}>
@@ -234,17 +242,10 @@ const TableRowComponent = ({
             <ExpandIcon />
           </div>
         </SecondaryTableCell>
-        {/* <SecondaryTableCell>
-          {boardMission.isUrgentWork && (
-            <KeyboardDoubleArrowUpIcon style={{ color: errorColor(500) }} />
-          )}
-        </SecondaryTableCell> */}
+
         <SecondaryTableCell align={"center"} style={{ width: "20px", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           {getTruncatedLabel(boardMission?.clientName, 15)}
         </SecondaryTableCell>
-        {/* <SecondaryTableCell align={"center"} style={{ padding: "0px 5px" }}>
-          {getTruncatedLabel(boardMission?.jobName, 10)}
-        </SecondaryTableCell> */}
         <SecondaryTableCell align={"center"} style={{ padding: "0px 10px", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <ClickableLabelComponent
             label={boardMission?.productName}
@@ -280,6 +281,7 @@ const TableRowComponent = ({
             boardMissionId={boardMission.id}
             status={status}
             textColor={boardMission?.productionFloorJobColor}
+            onClickDone={()=> onClickDone(boardMission)}
           />
         </SecondaryTableCell>
         {/* <SecondaryTableCell

@@ -3,10 +3,13 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { ICallAndSetData } from "@/services/api-service/interface";
 
 const GET_ALL_DEPOSITS_URL = "/v1/erp-service/deposits/get-all-deposits";
-const GET_DEPOSITS_META_DATA_URL = "/v1/erp-service/deposits/get-deposit-meta-data";
+const GET_DEPOSITS_META_DATA_URL =
+  "/v1/erp-service/deposits/get-deposit-meta-data";
 const SHOW_DEPOSIT_URL = "/v1/erp-service/deposits/show-deposit";
 const CREATE_DEPOSIT_URL = "/v1/erp-service/deposits/create-deposits";
 const CANCEL_DEPOSIT_URL = "/v1/erp-service/deposits/cancel-deposit";
+const CREATE_ACCOUNT_CODE_URL =
+  "/v1/erp-service/deposits/create-deposits-account";
 
 const getAllDepositsApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -18,16 +21,14 @@ const getAllDepositsApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
-
 const getDepositsMetaDataApi: ICallAndSetData = async (callApi, setState) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
     GET_DEPOSITS_META_DATA_URL,
-    setState,
+    setState
   );
 };
-
 
 const showDepositApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -59,10 +60,25 @@ const cancelDepositApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
+const createAccountCodeApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    CREATE_ACCOUNT_CODE_URL,
+    setState,
+    data
+  );
+};
+
 export {
-    getAllDepositsApi,
-    getDepositsMetaDataApi,
-    showDepositApi,
-    createDepositApi,
-    cancelDepositApi
+  getAllDepositsApi,
+  getDepositsMetaDataApi,
+  showDepositApi,
+  createDepositApi,
+  cancelDepositApi,
+  createAccountCodeApi,
 };

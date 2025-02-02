@@ -1,16 +1,18 @@
-import {ITab} from "@/components/tabs/interface";
-import {useStyle} from "./style";
-import {PrimaryTabsComponent} from "@/components/tabs/primary-tabs";
-import {DOCUMENT_TYPE} from "@/pages-components/quotes/enums";
-import {QuotesListPageWidget} from "@/pages-components/quotes/quotes";
-import {useTranslation} from "react-i18next";
-import {Permissions} from "@/components/CheckPermission/enum";
-import {useUserPermission} from "@/hooks/use-permission";
+import { ITab } from "@/components/tabs/interface";
+import { useStyle } from "./style";
+import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
+import { useTranslation } from "react-i18next";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { useUserPermission } from "@/hooks/use-permission";
+import { useState } from "react";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const HomeTableWidget = () => {
-    const {classes} = useStyle();
-    const {t} = useTranslation();
-    const {CheckPermission} = useUserPermission();
+    const { classes } = useStyle();
+    const { t } = useTranslation();
+    const { CheckPermission } = useUserPermission();
     const tabs: (ITab & { permission?: boolean })[] = [
         {
             title: t("home.tabs.Quotes"),
@@ -63,12 +65,49 @@ const HomeTableWidget = () => {
             ),
         },
     ].filter((tab) => tab.permission);
-
+    const [selectedTab, setSelectedTab] = useState<number>(0);
+    console.log("selectedTab", selectedTab)
+    const _renderSelectedTab = () => {
+        return (
+            <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems: "center", gap: 25, marginBottom: 15 }}>
+                {tabs.map((tab, index) => (
+                    <div key={index}
+                        onClick={() => setSelectedTab(index)} // Ensure this updates the state
+                        style={{
+                            padding: 10,
+                            backgroundColor: index === selectedTab ? "#ED028C" : "#D5D6E9",
+                            borderRadius: 8,
+                            color: index === selectedTab ? "#fff" : "#252661",
+                            ...FONT_FAMILY.Inter(500, 16),
+                            cursor: "pointer"
+                        }} >
+                        <div style={{ ...FONT_FAMILY.Inter(500, 16) }}>{tab.title}</div>
+                    </div>
+                ))}
+            </div>
+        );
+    };
+    const _renderTabContent = () => {
+        return (
+            <div style={classes.mainContainer}>
+                <div style={{ width: "100%" }}>
+                    {tabs.map((tab, index) => (
+                        <div key={index}>
+                            {index === selectedTab && tab.component}
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
     return (
-        <div style={classes.mainContainer}>
-            <PrimaryTabsComponent tabs={tabs} variant="ButtonedTabs"/>
-        </div>
+        <>
+            {_renderSelectedTab()}
+            {_renderTabContent()}
+        </>
+
+
     );
 };
 
-export {HomeTableWidget};
+export { HomeTableWidget };

@@ -42,7 +42,7 @@ const RuleMappingWidget = ({ rule, deletePropertyRule, productId, selectedProper
     getMachincesByActionId()
   }, [])
   const getSuccessEvent = (property, rule) => {
-    if (property.ruleType === 1) {
+    if (property?.ruleType === 1) {
       const params = parameters.find(
         (param) => param?.id === property?.propertyId
       )?.values;
