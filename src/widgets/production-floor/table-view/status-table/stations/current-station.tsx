@@ -36,8 +36,8 @@ const CurrentStationComponent = ({
 
   return (
     <Stack
-      justifyContent={"center"}
-      alignItems={"center"}
+      justifyContent={"flex-start"}
+      alignItems={"flex-start"}
       display={"inline-flex"}
       overflow={"hidden"}
     >
@@ -50,7 +50,8 @@ const CurrentStationComponent = ({
         <span style={{
           ...FONT_FAMILY.Lexend(500, 15),
           color: "#000000",
-        }}>{machineName ? getTruncatedLabel(machineName, 15) : getTruncatedLabel(actionName, 15)}</span>
+          lineHeight: "15px",
+        }}>{machineName ? getTruncatedLabel(machineName, 25) : getTruncatedLabel(actionName, 25)}</span>
         {anchorEl ? (
           <UpArrowIcon color={"#475467"} width={14} height={14} />
         ) : (

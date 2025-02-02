@@ -99,8 +99,8 @@ const DepositInputs = (state) => {
       isValid: true,
       readOnly: true,
     },
-  ]
-}
+  ];
+};
 
 const newDepositInputs = (state, accountsOptions, depositAccountsOptions) => {
   return [
@@ -124,10 +124,10 @@ const newDepositInputs = (state, accountsOptions, depositAccountsOptions) => {
       required: false,
       parameterKey: "depositAccount",
       value: state?.depositAccount,
-      options: depositAccountsOptions?.map(depositAccount => ({
+      options: depositAccountsOptions?.map((depositAccount) => ({
         text: `${depositAccount.name} - ${depositAccount.code}`,
         value: depositAccount.code,
-        id: depositAccount.id
+        id: depositAccount.id,
       })),
       isValid: true,
       readOnly: false,
@@ -201,7 +201,7 @@ const newDepositInputs = (state, accountsOptions, depositAccountsOptions) => {
       required: false,
       parameterKey: "allocationAccount",
       value: state?.allocationAccount,
-      options: accountsOptions?.map(account => ({
+      options: accountsOptions?.map((account) => ({
         text: `${account.name} - ${account.code}`,
         value: account.code,
       })),
@@ -220,7 +220,7 @@ const newDepositInputs = (state, accountsOptions, depositAccountsOptions) => {
       isValid: true,
       readOnly: true,
     },
-  ]
-}
+  ];
+};
 
 export { DepositInputs, newDepositInputs };

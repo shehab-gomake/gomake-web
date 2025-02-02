@@ -3,7 +3,7 @@ import { styled } from "@mui/material/styles";
 import { CSSProperties, ReactNode } from "react";
 
 const StyledTextField = styled(TextField)(
-  ({ direction }: { direction?: "ltr" | "rtl" }) => ({
+  ({ direction, error }: { direction?: "ltr" | "rtl"; error }) => ({
     direction: direction,
     display: "flex",
     alignItems: "center",
@@ -13,7 +13,9 @@ const StyledTextField = styled(TextField)(
     border: "1px solid var(--Colors-Border-border-primary, #D0D5DD)",
     background: "var(--Colors-Background-bg-primary, #FFF)",
     boxShadow: "0px 1px 2px 0px rgba(16, 24, 40, 0.05)",
-
+    "& input": {
+      color: error ? "red" : "#000000",
+    },
     "& .MuiOutlinedInput-root": {
       height: "40px",
       fontFamily: "Heebo",

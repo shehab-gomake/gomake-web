@@ -12,7 +12,8 @@ export interface SalesReportHeaderWidgetProps {
   handleCustomerChange: any;
   displayByGroups: boolean;
   onChangeDisplayByGroups: any;
-  documentsTypeList: any;
+  documentsTypeList?: any;
+  reportsTypeList?: any;
   handleDocumentTypeChange: any;
   documentType: any;
   handleDateChange?: any;
