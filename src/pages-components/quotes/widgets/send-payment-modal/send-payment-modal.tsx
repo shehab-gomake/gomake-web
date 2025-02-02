@@ -11,18 +11,26 @@ import { useSendPaymentModal } from "./use-send-payment-modal";
 import { Divider } from "@mui/material";
 import currencySymbolMap from "currency-symbol-map";
 import { DOCUMENT_TYPE } from "../../enums";
+import { useEffect, useState } from "react";
+import { useSnackBar } from "@/hooks/use-snack-bar";
+import { checkArrayNotEmptyOrPhoneNotEmpty } from "@/utils/helpers";
+import { getWhatsAppMessageApi, sendDocumentToClientApi } from "@/services/api-service/generic-doc/documents-api";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
 
 interface ISendPaymentProps {
   openPaymentModal?: any;
   onClickClosePaymentModal?: any;
   paymentModalTitle?: any;
   documentType?: DOCUMENT_TYPE;
+  isSendToClient?: boolean;
 }
 const SendPaymentModal = ({
   openPaymentModal,
   onClickClosePaymentModal,
   paymentModalTitle,
   documentType,
+  isSendToClient
 }: ISendPaymentProps) => {
   const { classes } = useStyle();
   const {
@@ -34,18 +42,74 @@ const SendPaymentModal = ({
     handleSendPaymentPage,
   } = useSendPaymentModal({ openPaymentModal, documentType });
 
+  const {
+    alertSuccessAdded,
+    alertFaultAdded,
+  } = useSnackBar();
+  const { callApi } = useGomakeAxios();
+  const { openWhatsAppWebLink } = useWhatsAppWeb();
+
+  const handleSendUsingWhatsAppWeb = () => {
+    const callBack = (res) => {
+      const selectedContact =
+        payState?.documentContacts &&
+        payState.documentContacts[payState?.selectedContactIndex];
+      openWhatsAppWebLink(res?.data, selectedContact?.contactPhone);
+    };
+    getWhatsAppMessageApi(callApi, callBack, {
+      documentId: payState?.documentId,
+      documentType: documentType,
+    });
+
+    //setOpenWatsAppModal(true)
+  };
+  const onClickSendQuoteToClient = async () => {
+
+    let messageType = null; // Default messageType
+    if (payState.sendByMail && payState.sendBySms) {
+      messageType = 2;
+    } else if (payState.sendByMail) {
+      messageType = 0;
+    } else if (payState.sendBySms) {
+      messageType = 1;
+    }
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessAdded();
+
+        onClickClosePaymentModal();
+      } else {
+        alertFaultAdded();
+      }
+    };
+    if (messageType) {
+      await sendDocumentToClientApi(callApi, callBack, {
+        documentType: documentType,
+        document: {
+          documentId: payState?.documentId,
+          messageType,
+        },
+      });
+    }
+    if (payState?.sendByWhatsapp) {
+      handleSendUsingWhatsAppWeb();
+    }
+
+  };
+
   return (
     <GoMakeModal
       insideStyle={classes.insideStyle}
       openModal={openPaymentModal}
       onClose={onClickClosePaymentModal}
-      modalTitle={paymentModalTitle}
+      modalTitle={isSendToClient ? t("sales.quote.sendToClient") : paymentModalTitle}
     >
       <Stack
         direction={"column"}
         height={"100%"}
-        justifyContent={"space-between"}
+        justifyContent={"flex-start"}
         width={"100%"}
+        gap={"30px"}
       >
         <Divider style={classes.dividerContainer} />
         <Stack display="flex" flexWrap="wrap" direction="row">
@@ -61,7 +125,26 @@ const SendPaymentModal = ({
               />
             ))}
         </Stack>
-        {PaymentInputs(payState)
+        {isSendToClient && PaymentInputs(payState)
+          .slice(3, 4)
+          .map((item) => (
+            <Stack
+              display="flex"
+              flexWrap="wrap"
+              direction="row"
+              width={"max-content"}
+              gap={"2px"}
+            >
+              <FormInput
+                input={item as IInput}
+                changeState={onChangePaymentInputs}
+                error={false}
+                key={item.name}
+                readonly={!!item.readOnly}
+              />
+            </Stack>
+          ))}
+        {!isSendToClient && PaymentInputs(payState)
           .slice(3)
           .map((item) => (
             <Stack
@@ -122,21 +205,25 @@ const SendPaymentModal = ({
           </div>
         </Stack>
         {/* Third section */}
-        <Stack direction={"row"} gap={"10px"} alignItems={"baseline"}>
+        <Stack direction={"row"} gap={"10px"} alignItems={"center"} justifyContent={"space-between"}>
           <SecondaryButton
             variant="contained"
-            onClick={handleSendPaymentPage}
+            onClick={isSendToClient ? onClickSendQuoteToClient : handleSendPaymentPage}
             style={{ width: "50%", height: "35px", minWidth: "fit-content" }}
           >
-            {t("prePayment.sendPaymentPage")}
+            {isSendToClient ? t("sales.quote.sendToClient") : t("prePayment.sendPaymentPage")}
           </SecondaryButton>
-          <SecondaryButton
-            variant="outlined"
-            onClick={handleCopyPaymentLink}
-            style={{ width: "30%", height: "35px", minWidth: "fit-content" }}
-          >
-            {t("prePayment.copyPaymentLink")}
-          </SecondaryButton>
+          {
+            !isSendToClient && (
+              <SecondaryButton
+                variant="outlined"
+                onClick={handleCopyPaymentLink}
+                style={{ width: "30%", height: "35px", minWidth: "fit-content" }}
+              >
+                {t("prePayment.copyPaymentLink")}
+              </SecondaryButton>
+            )
+          }
           <PrimaryButton
             variant="outlined"
             onClick={onClickClosePaymentModal}
