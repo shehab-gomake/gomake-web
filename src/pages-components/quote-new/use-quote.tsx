@@ -76,6 +76,7 @@ import {
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
 import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget/state";
 import { ClientChangeSource } from "./store/quote";
+import { validateDocument } from "@/utils/validators";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -1516,18 +1517,11 @@ const useQuoteNew = ({
   const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
 
   const handleSaveBtnClickForDocument = async () => {
-    if (
-      !quoteItemValue?.documentItems ||
-      quoteItemValue.documentItems.length === 0
-    ) {
-      alertFault("alerts.noItems");
-      return;
-    }
-    if (quoteItemValue?.totalPrice === 0) {
-      alertFault("alerts.cannotCreateWithPriceZero");
-      return;
-    }
-
+    // const validationError = validateDocument(quoteItemValue);
+    // if (validationError) {
+    //   alertFault(validationError);
+    //   return;
+    // }
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessAdded();
