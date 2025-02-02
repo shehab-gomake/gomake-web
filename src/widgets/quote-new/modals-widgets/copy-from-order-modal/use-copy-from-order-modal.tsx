@@ -112,7 +112,7 @@ const useCopyFromOrderModal = ({
   const calculateTotalPrice = (fromDocumentType: DOCUMENT_TYPE) => {
     const documentTypeMapping = {
       [ERPDocumentsTypesEnum.order]: DOCUMENT_TYPE.order,
-      [ERPDocumentsTypesEnum.deliveryNotes]: DOCUMENT_TYPE.deliveryNote,
+      [ERPDocumentsTypesEnum.deliveryNote]: DOCUMENT_TYPE.deliveryNote,
       [ERPDocumentsTypesEnum.purchase]: DOCUMENT_TYPE.purchaseOrder,
     };
 

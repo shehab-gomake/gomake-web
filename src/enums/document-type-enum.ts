@@ -71,7 +71,7 @@ export enum DocumentTypeEnums {
 export enum ERPDocumentsTypesEnum {
   order = 1,
   invoice,
-  deliveryNotes,
+  deliveryNote,
   purchase,
   invoiceRefund,
   receipt,
@@ -110,18 +110,17 @@ export enum ECalculationStatus {
   Failed,
 }
 
-export enum EMessageStatus
-{
-    processed,
-    dropped,
-    delivered,
-    deferred,
-    bounce,
-    blocked,
-    open,
-    clicked,
-    spamreport,
-    unsubscribe,
-    group_unsubscribe,
-    group_resubscribe
+export enum EMessageStatus {
+  processed,
+  dropped,
+  delivered,
+  deferred,
+  bounce,
+  blocked,
+  open,
+  clicked,
+  spamreport,
+  unsubscribe,
+  group_unsubscribe,
+  group_resubscribe,
 }
