@@ -747,7 +747,7 @@ const QuoteNewPageWidget = ({
         openModal={openCopyFromOrderModal}
         onClose={onCloseCopyFromOrder}
         documentType={documentType}
-        cliendDocumentType={copyFromDocumentType}
+        copyFromDocumentType={copyFromDocumentType}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}

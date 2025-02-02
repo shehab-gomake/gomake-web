@@ -113,7 +113,7 @@ const contactInputs1 = (state) => {
       options: [],
       value: state?.mail,
       isValid: !!state?.mail,
-      regex: emailRegex
+      regex: emailRegex,
     },
     {
       name: "default in document",
@@ -130,8 +130,7 @@ const contactInputs1 = (state) => {
         { value: ERPDocumentsTypesEnum.receipt, text: t("tabs.receipts") },
       ],
       value: state?.defaultInDocsTypes,
-      multiple: true
-
+      multiple: true,
     },
   ];
 };

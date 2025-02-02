@@ -21,16 +21,21 @@ const OrderTableWidget = ({
   handleSelectAll,
   areAllItemsSelected,
   selectedItems,
-  filterItems
+  filterItems,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
-  
+
   const filteredDocumentItems = useMemo(() => {
-    return documentItems.map((documentItem) => {
-      const filteredItems = filterItems(documentItem?.isReady, documentItem.orderItems);
-      return { ...documentItem, filteredItems };
-    }).filter(item => item.filteredItems?.length > 0);
+    return documentItems
+      .map((documentItem) => {
+        const filteredItems = filterItems(
+          documentItem?.isReady,
+          documentItem.orderItems
+        );
+        return { ...documentItem, filteredItems };
+      })
+      .filter((item) => item.filteredItems?.length > 0);
   }, [documentItems, filterItems]);
 
   return (
@@ -48,7 +53,9 @@ const OrderTableWidget = ({
                 icon={<CheckboxIcon />}
                 checkedIcon={<CheckboxCheckedIcon />}
               />
-              <div style={classes.selectAllStyle}>{t("deposits.selectAll")}</div>
+              <div style={classes.selectAllStyle}>
+                {t("deposits.selectAll")}
+              </div>
             </div>
           </div>
           <TableContainer
@@ -85,7 +92,9 @@ const OrderTableWidget = ({
                       parentIndex={parentIndex}
                       columnWidths={columnWidths}
                       handleItemSelect={handleItemSelect}
-                      isSelected={selectedItems.some(selectedItem => selectedItem.id === item.id)}
+                      isSelected={selectedItems.some(
+                        (selectedItem) => selectedItem.id === item.id
+                      )}
                     />
                   );
                 })}

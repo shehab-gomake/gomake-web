@@ -1,6 +1,4 @@
 import { ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
-
-
 export function renderDocumentTypeForSourceDocumentNumber(documentType: ERPDocumentsTypesEnum): string {
     switch (documentType) {
         case ERPDocumentsTypesEnum.order:
