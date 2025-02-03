@@ -13,7 +13,7 @@ import {
 } from "@/store/file-uploader-state";
 
 const useFilesUploaderSignalr = () => {
-  const { connectionId,connection, data, closeConnection } = useGoMakeSignalr<any>({
+  const { connectionId, data, closeConnection } = useGoMakeSignalr<any>({
     url: config.erp_server + "/hubs/fileUploader",
     accessToken: getUserToken(),
     methodName: "UpdateFileUploader",
@@ -27,17 +27,15 @@ const useFilesUploaderSignalr = () => {
   useEffect(() => {
     if (connectionId) {
       setConnectionId(connectionId);
-      connection.on("UpdateFileUploader", (newData) => {
-        getAllBoardMissionsUploadingFiles(
-            callApi,
-            (res) => {
-              setFiles(res?.data);
-              setShowFileUploader(res?.data?.length > 0);
-              setOpen(res?.data?.length > 0);
-            },
-            connectionId
-        ).then();
-      });
+      getAllBoardMissionsUploadingFiles(
+          callApi,
+          (res) => {
+            setFiles(res?.data);
+            setShowFileUploader(res?.data?.length > 0);
+            setOpen(res?.data?.length > 0);
+          },
+          connectionId
+      ).then();
     }
   }, [connectionId]);
 
