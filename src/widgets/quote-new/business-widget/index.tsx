@@ -94,6 +94,7 @@ const BusinessNewWidget = ({
     documentTitle,
     setDocumentTitle,
     isFetching,
+    isPurchaseDocument,
   } = useBusinessWidget({ values, documentType });
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -133,9 +134,7 @@ const BusinessNewWidget = ({
       <div style={{ ...classes.businessContainerStyle, marginBottom: "10px" }}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
-          defaultFiltering={
-            documentType === DOCUMENT_TYPE.purchaseOrder ? true : false
-          }
+          defaultFiltering={isPurchaseDocument ? true : false}
           value={
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
@@ -143,11 +142,7 @@ const BusinessNewWidget = ({
               ? quoteStateValue?.client?.name
               : t("sales.quote.selectBusinessName")
           }
-          options={
-            documentType === DOCUMENT_TYPE.purchaseOrder
-              ? mappedSuppliers
-              : mappedCustomers
-          }
+          options={isPurchaseDocument ? mappedSuppliers : mappedCustomers}
           onBlur={onBlurBusinessName}
           isUpdate={canEditDocument && isUpdateBusinessName}
           setIsUpdate={
@@ -158,7 +153,7 @@ const BusinessNewWidget = ({
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => onClickOpenChangeClientModal(value)}
           onChangeTextField={(e) => {
-            if (documentType === DOCUMENT_TYPE.purchaseOrder) {
+            if (isPurchaseDocument) {
               return;
             }
             checkWhatRenderArray(e);
