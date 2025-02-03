@@ -23,21 +23,21 @@ export const validateDocument = (quoteItemValue: any): string | null => {
       return "alerts.itemWithNegativeQuantity";
     }
 
-    if (item.price == null || item.price === 0) {
+    /*if (item.price == null || item.price === 0) {
       return "alerts.itemWithoutUnitPrice";
-    }
+    }*/
 
-    if (item.price < 0) {
+    /*if (item.price < 0) {
       return "alerts.itemWithNegativeUnitPrice";
-    }
+    }*/
 
-    if (!item.finalPrice && item.finalPrice !== 0) {
+    /*if (!item.finalPrice && item.finalPrice !== 0) {
       return "alerts.itemWithoutTotalPrice";
     }
 
     if (item.finalPrice < 0) {
       return "alerts.itemWithNegativeTotalPrice";
-    }
+    }*/
 
     const itemKey = item.sourceDocumentItemId
       ? `id-${item.sourceDocumentItemId}`
