@@ -248,7 +248,7 @@ const TableRowComponent = ({
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"} style={{ padding: "0px 10px", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <ClickableLabelComponent
-            label={boardMission?.productName}
+            label={getTruncatedLabel(boardMission?.productName, 18)}
             id={boardMission.id}
             textColor={boardMission?.productionFloorJobColor}
             t={t}
@@ -281,7 +281,7 @@ const TableRowComponent = ({
             boardMissionId={boardMission.id}
             status={status}
             textColor={boardMission?.productionFloorJobColor}
-            onClickDone={()=> onClickDone(boardMission)}
+            onClickDone={() => onClickDone(boardMission)}
           />
         </SecondaryTableCell>
         {/* <SecondaryTableCell
