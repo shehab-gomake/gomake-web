@@ -12,6 +12,7 @@ import cloneDeep from "lodash.clonedeep";
 import { getPrePaymentByIdApi } from "@/services/api-service/pay/pay-api";
 import { useTranslation } from "react-i18next";
 import { DOCUMENT_TYPE } from "../quotes/enums";
+import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-profile-api";
 
 interface IProps {
   documentType?: DOCUMENT_TYPE;
@@ -136,6 +137,20 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
     return text?.charAt(0).toUpperCase() + text.slice(1);
   };
 
+  const [companyLogo, setCompanyLogo] = useState<{
+    loginLogo: string;
+    name: string;
+  }>({ loginLogo: "", name: "" });
+
+  const getCompanyLogo = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setCompanyLogo(res.data);
+      }
+    };
+    await getCompanyLoginLogo(callApi, callBack);
+  };
+
   return {
     t,
     getQuoteConfirmation,
@@ -151,6 +166,8 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
     isPageNotFound,
     setIsPageNotFound,
     router,
+    companyLogo,
+    getCompanyLogo,
   };
 };
 

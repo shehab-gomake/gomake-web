@@ -8,8 +8,6 @@ import { useQuoteConfirmation } from "./use-quote-confirmation";
 import { updateTempUserTokenStorage } from "@/services/storage-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import PageNotFound from "@/pages/404.page";
-import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-profile-api";
-import { useGomakeAxios } from "@/hooks";
 
 interface IProps {
   isPrePaymentPage?: boolean;
@@ -21,19 +19,17 @@ const QuoteConfirmationPageWidget = ({
   documentType,
 }: IProps) => {
   const [isMobile, setIsMobile] = useState(false);
-
   const {
-    t,
     getTempUserToken,
     getPrePaymentById,
     getQuoteConfirmation,
-    quoteConfirm,
     documentTitle,
     direction,
-    capitalizeFirstLetter,
     isPageNotFound,
     setIsPageNotFound,
-    router,
+    companyLogo,
+    getCompanyLogo,
+    quoteConfirm,
   } = useQuoteConfirmation({ documentType });
 
   const { classes } = useStyle({ direction });
@@ -75,46 +71,68 @@ const QuoteConfirmationPageWidget = ({
   if (isPageNotFound && isPrePaymentPage) {
     return <PageNotFound hideBackToHomePageBtn={true} />;
   }
-  const { callApi } = useGomakeAxios();
-  const [companyLogo, setCompanyLogo] = useState<{ loginLogo: string, name: string }>({ loginLogo: '', name: '' });
 
-  const getCompanyLogo = async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        setCompanyLogo(res.data);
-      }
-    };
-    await getCompanyLoginLogo(callApi, callBack);
-  };
   useEffect(() => {
     getCompanyLogo().then();
   }, []);
+
   return (
     <div style={classes.firstContainer}>
       <div style={isMobile ? classes.iconMobileStyle : classes.iconStyle}>
-        {companyLogo?.loginLogo ? (
-          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: "10px" }}>
+        {companyLogo?.loginLogo && !isPrePaymentPage ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
             <img
               src={companyLogo?.loginLogo}
               alt="Print House Logo"
               style={classes.printHouseLogo}
             />
-            <span style={{ color: "#000", ...FONT_FAMILY.Inter(700, 32), textTransform: 'capitalize' }}>{companyLogo?.name}</span>
+            <span
+              style={{
+                color: "#000",
+                ...(isMobile
+                  ? FONT_FAMILY.Inter(600, 24)
+                  : FONT_FAMILY.Inter(700, 32)),
+                textTransform: "capitalize",
+              }}
+            >
+              {companyLogo?.name}
+            </span>
+          </div>
+        ) : quoteConfirm?.printHouseLogo && isPrePaymentPage ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <img
+              src={quoteConfirm?.printHouseLogo}
+              alt="Print House Logo"
+              style={classes.printHouseLogo}
+            />
+            <span
+              style={{
+                color: "#000",
+                ...(isMobile
+                  ? FONT_FAMILY.Inter(600, 24)
+                  : FONT_FAMILY.Inter(700, 32)),
+                textTransform: "capitalize",
+              }}
+            >
+              {quoteConfirm?.printHouseName}
+            </span>
           </div>
         ) : (
           <GoMakeIcon />
-        )}
-        {isPrePaymentPage && (
-          <span
-            style={{
-              ...classes.printHouseName,
-              ...(isMobile
-                ? FONT_FAMILY.Inter(600, 16)
-                : FONT_FAMILY.Inter(600, 18)),
-            }}
-          >
-            {capitalizeFirstLetter(quoteConfirm?.printHouseName)}
-          </span>
         )}
       </div>
       {isMobile ? (
