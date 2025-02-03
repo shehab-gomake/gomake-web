@@ -3263,6 +3263,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     parameters: any[],
     actionIndex: number
   ) => {
+    debugger;
     // Find the parameter in the productTemplate
     const productTemplateCopy = cloneDeep(productTemplate);
     const section = productTemplateCopy.sections.find(
@@ -3282,7 +3283,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const relatedIndex = parameters.findIndex(
           (param) =>
             param.parameterId === relatedParam.parameterId &&
-            param.actionIndex == relatedParam.actionIndex
+            param.actionIndex == relatedParam.actionIndex &&
+            param.sectionId == sectionId &&
+            param.subSectionId == subSectionId
         );
 
         if (relatedIndex !== -1) {
