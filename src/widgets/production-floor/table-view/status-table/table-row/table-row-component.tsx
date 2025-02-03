@@ -1,44 +1,42 @@
 import { SecondaryTableCell } from "@/components/tables/secondary-table";
-import { SecondaryCheckBox } from "@/components/check-box/secondary-check-box";
-import Link from "next/link";
-import { LabelComponent } from "@/widgets/production-floor/label-component/label-component";
 import { CurrentStationComponent } from "@/widgets/production-floor/table-view/status-table/stations/current-station";
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useDrag, useDrop } from "react-dnd";
 import { useRecoilState } from "recoil";
 import { selectedBoardsMissionsState } from "@/widgets/production-floor/state/boards";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
-import Stack from "@mui/material/Stack";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { useRef, useState } from "react";
 import {
+  Checkbox,
   Collapse,
   Skeleton,
-  styled,
   TableCell,
   TableRow,
-  Tooltip,
-  tooltipClasses,
-  TooltipProps,
 } from "@mui/material";
-import { ApprovalFileStatusComponent } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
-import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { MoreMenuWidget } from "./more-circle";
 import { ClickableLabelComponent } from "@/widgets/production-floor/label-component/clickable-label-component";
 import { NextStationComponent } from "../stations/next-station";
-import { DateTimeComponent } from "@/components/date-time/date-time-component";
 import { useRouter } from "next/router";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { getTruncatedLabel } from "@/utils/get-truncated-text";
+import { CheckboxCheckedIcon } from "@/icons/checked-icon";
+import { CheckboxIcon } from "@/icons/checkbox-icon";
+import { DateTimeProductionFloorComponent } from "@/widgets/production-floor/date-comp/date-componenet";
+import { DescreptionWidget } from "@/widgets/production-floor/descreption-widget/descreption-widget";
+import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp';
 
+import { ApprovalFileStatusComponent } from "./approval-file-status-component";
+import { ExpandIcon } from "@/icons/expand-icon";
 interface IProps {
   boardMission: IBoardMissions;
   status?: any;
-  onClickDone?: (missionId: any) => void;
+  onClickDone?: (mission: any) => void;
   onClickPrintDTicket?: (mission: any) => void;
+  index: number;
 }
 
 enum EDropArea {
@@ -52,7 +50,9 @@ const TableRowComponent = ({
   status,
   onClickDone,
   onClickPrintDTicket,
+  index,
 }: IProps) => {
+
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
@@ -62,7 +62,7 @@ const TableRowComponent = ({
     Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
   );
   const [dropArea, setDropArea] = useState<EDropArea>();
-  const { errorColor, primaryColor } = useGomakeTheme();
+  const { errorColor } = useGomakeTheme();
   const ref = useRef(null);
   const [, drag] = useDrag(
     () => ({
@@ -142,19 +142,18 @@ const TableRowComponent = ({
       checked
         ? [...selectedIds, boardMission]
         : selectedIds.filter(
-            (selectedBoard) =>
-              selectedBoard.id !== id &&
-              selectedBoard.productType === boardMission.productType
-          )
+          (selectedBoard) =>
+            selectedBoard.id !== id &&
+            selectedBoard.productType === boardMission.productType
+        )
     );
   };
 
   drag(drop(ref));
-
   return (
     <>
-      <TableRow>
-        <TableCell colSpan={9} style={{ padding: 0, transition: "padding 1s" }}>
+      <TableRow >
+        <TableCell colSpan={10} style={{ padding: 0, transition: "padding 1s" }}>
           {
             <Collapse
               in={
@@ -170,13 +169,13 @@ const TableRowComponent = ({
       </TableRow>
       <TableRow
         ref={ref}
-        style={{ cursor: canDrag ? "move" : "default", marginBottom: "100px" }}
+        style={{ cursor: canDrag ? "move" : "default", marginBottom: "100px", }}
       >
         <PermissionCheck
           userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}
         >
-          <SecondaryTableCell align={"center"}>
-            <SecondaryCheckBox
+          <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
+            <Checkbox
               checked={
                 !!selectedIds?.find(
                   (si) =>
@@ -187,45 +186,67 @@ const TableRowComponent = ({
               onChange={(a) => {
                 onSelectBoardMissions(boardMission.id, a.target.checked);
               }}
+              icon={<CheckboxIcon color="#D0D5DD" width="20" height="20" />}
+              checkedIcon={<CheckboxCheckedIcon fill="#2E3092" width="20" height="20" />}
             />
           </SecondaryTableCell>
         </PermissionCheck>
-        <SecondaryTableCell>
-          {
-            <ApprovalFileStatusComponent
-              fileStatus={boardMission.showGraphicsApprovalAlert}
-              t={t}
-            />
-          }
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+            <div />
+            <div />
+            <DateTimeProductionFloorComponent dateString={boardMission.boardMissionCreatedDate} />
+
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", }}>
+              {
+                boardMission.showGraphicsApprovalAlert && <ApprovalFileStatusComponent
+                  fileStatus={boardMission.showGraphicsApprovalAlert}
+                  t={t}
+                />
+              }
+
+              <div style={{ marginTop: "5px" }}>
+                {boardMission.isUrgentWork && (
+                  <KeyboardDoubleArrowUpIcon style={{
+                    color: errorColor(500),
+                  }} />
+                )}
+              </div>
+
+            </div>
+            <div />
+
+          </div>
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
-          <span
-            onClick={() => {
-              push(
-                `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`
-              ).then();
-            }}
-            style={{
-              cursor: "pointer",
-              textDecoration: "none",
-              color: primaryColor(500),
-            }}
-          >
-            {`${boardMission?.boardMissionNumber}\\${boardMission?.orderNumber}`}
-          </span>
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9", cursor: "pointer" }}>
+          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 }} onClick={() => {
+            push(
+              `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`
+            ).then();
+          }}>
+            <div />
+            <div />
+
+            <div
+
+              style={{
+                cursor: "pointer",
+                textDecoration: "none",
+                color: "#000000",
+              }}
+            >
+              {`${boardMission?.boardMissionNumber}`}
+              <br />
+              {`${boardMission?.orderNumber}`}
+            </div>
+            <ExpandIcon />
+          </div>
         </SecondaryTableCell>
-        <SecondaryTableCell>
-          {boardMission.isUrgentWork && (
-            <KeyboardDoubleArrowUpIcon style={{ color: errorColor(500) }} />
-          )}
-        </SecondaryTableCell>
-        <SecondaryTableCell align={"center"} style={{ padding: "0px 5px" }}>
-          {getTruncatedLabel(boardMission?.jobName, 10)}
-        </SecondaryTableCell>
-        <SecondaryTableCell align={"center"} style={{ width: "20px" }}>
+
+        <SecondaryTableCell align={"center"} style={{ width: "20px", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           {getTruncatedLabel(boardMission?.clientName, 15)}
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"} style={{ padding: "0px 10px" }}>
+        <SecondaryTableCell align={"center"} style={{ padding: "0px 10px", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <ClickableLabelComponent
             label={boardMission?.productName}
             id={boardMission.id}
@@ -234,14 +255,18 @@ const TableRowComponent = ({
             key={boardMission.id}
           />
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
+
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
+          <DescreptionWidget desciption={boardMission.description} />
+        </SecondaryTableCell>
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <BoardStatusComponent
             statusId={boardMission.statusId}
             id={boardMission.id}
             onChange={(id, statusId) => updateStatus([boardMission], statusId)}
           />
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <CurrentStationComponent
             {...boardMission.currentStation}
             boardMissionId={boardMission.id}
@@ -249,34 +274,17 @@ const TableRowComponent = ({
             textColor={boardMission?.productionFloorJobColor}
           />
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <NextStationComponent
             {...boardMission.currentStation}
             {...boardMission.nextStation}
             boardMissionId={boardMission.id}
             status={status}
             textColor={boardMission?.productionFloorJobColor}
+            onClickDone={()=> onClickDone(boardMission)}
           />
         </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
-          <DateTimeComponent
-            dateTime={boardMission.boardMissionCreatedDate}
-            direction={"column-reverse"}
-          />
-        </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
-          <DateTimeComponent
-            dateTime={boardMission.actionDueDate}
-            direction={"column-reverse"}
-          />
-        </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
-          <DateTimeComponent
-            dateTime={boardMission.dueDate}
-            direction={"column-reverse"}
-          />
-        </SecondaryTableCell>
-        <SecondaryTableCell
+        {/* <SecondaryTableCell
           align={"center"}
           style={{ width: "20px", gap: "2px" }}
         >
@@ -285,8 +293,8 @@ const TableRowComponent = ({
               <LabelComponent key={tag} label={tag} />
             ))}
           </Stack>
-        </SecondaryTableCell>
-        <SecondaryTableCell align={"center"}>
+        </SecondaryTableCell> */}
+        <SecondaryTableCell align={"center"} style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <MoreMenuWidget
             boardMission={boardMission}
             onClickDone={onClickDone}
@@ -296,8 +304,8 @@ const TableRowComponent = ({
         </SecondaryTableCell>
       </TableRow>
 
-      <TableRow>
-        <TableCell colSpan={9} style={{ padding: 0, transition: "padding 1s" }}>
+      <TableRow >
+        <TableCell colSpan={10} style={{ padding: 0, transition: "padding 1s" }}>
           {
             <Collapse
               in={

@@ -3,7 +3,6 @@ import {
   FormEvent,
   ReactElement,
   useCallback,
-  useEffect,
   useRef,
 } from "react";
 import { Button, FormGroup, Paper } from "@mui/material";
@@ -19,7 +18,9 @@ import { CollapseOptionComponent } from "@/widgets/production-floor/filters/sele
 import { useStyle } from "./style";
 import { DepartmentModal } from "@/widgets/production-floor/header/components/groups/department-modal";
 import styled from "styled-components";
-
+import {PrimaryButton} from "@/components/button/primary-button";
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import {useRouter} from "next/router";
 interface IProps {
   onClickApply: any;
   source: Source;
@@ -55,7 +56,7 @@ const ActionsListComponent = ({
     openCollapse,
     scrollRef,
   } = useActionsList({ source, onClickApply, filterGroups, setFilterGroups });
-
+  const {push} = useRouter();
   const { classes } = useStyle({ source });
   const buttonRef = useRef<HTMLButtonElement>(null);
 
@@ -136,6 +137,10 @@ const ActionsListComponent = ({
         <ClickOutside exceptionRef={buttonRef} onClick={handleCloseList}>
           <Paper sx={classes.paperStyle}>
             <div style={{ minWidth: "280px" }}>
+              <PrimaryButton onClick={()=>push('/employees-working-hours')} style={{width: 'fit-content', padding: 0, gap: '5px', alignItems: 'center', display: 'flex'}}>
+                <AccessTimeIcon style={{height: '14px', width: '14px', padding: 0}}/>
+                <span style={{paddingTop: '2px', color: '#344054', fontSize: 12}}>{t('employeeWorkingHours.employeeHours')}</span>
+              </PrimaryButton>
               <FormGroup>
                 <div style={classes.listContainer}>
                   <GomakeTextInput

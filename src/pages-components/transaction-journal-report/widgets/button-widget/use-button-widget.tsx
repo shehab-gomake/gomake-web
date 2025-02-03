@@ -7,6 +7,7 @@ export interface LedgerReportButtonWidgetProps {
   onClickCreateNewTransaction?: () => void;
   onClickOpenAdjustmentsModal?: () => void;
   onClickExportAccountingReportExcel?: () => void;
+  onClickDownloadMovingFiles?: () => void;
   reportType: EReportType;
 }
 
@@ -16,31 +17,30 @@ const useLedgerReportHeader = ({
   onClickCreateNewTransaction,
   onClickOpenAdjustmentsModal,
   onClickExportAccountingReportExcel,
+  onClickDownloadMovingFiles,
   reportType,
 }: LedgerReportButtonWidgetProps) => {
   const { t } = useTranslation();
   const isAccountingTransaction =
     reportType === EReportType.AccountingTransaction;
   const isAdjustmentsReport = reportType === EReportType.AdjustmentsReport;
+  const isDailyPaymentsReport = EReportType.DailyPayments;
+  const isTransactionJournal = EReportType.TransactionJournal;
 
   const tabs = [
     {
       name: t("reports.showCard"),
       onclick: onClickShowCard,
     },
-    // ...(!isAdjustmentsReport
-    //   ? [
-    //       {
-    //         name: t("reports.showCard"),
-    //         onclick: onClickShowCard,
-    //       },
-    //     ]
-    //   : []),
     ...(isAdjustmentsReport
       ? [
           {
             name: t("reports.createNewAdjustment"),
             onclick: onClickOpenAdjustmentsModal,
+          },
+          {
+            name: t("reports.createNewTransaction"),
+            onclick: onClickCreateNewTransaction,
           },
         ]
       : []),
@@ -54,9 +54,15 @@ const useLedgerReportHeader = ({
             name: t("reports.excelReport"),
             onclick: onClickExportAccountingReportExcel,
           },
+          {
+            name: t("reports.downloadAccountingFiles"),
+            onclick: onClickDownloadMovingFiles,
+          },
         ]
       : []),
-    ...(!isAccountingTransaction && !isAdjustmentsReport
+    ...(!isAccountingTransaction &&
+    !isAdjustmentsReport &&
+    !isDailyPaymentsReport
       ? [
           {
             name: t("reports.printCard"),

@@ -74,6 +74,8 @@ const GET_BOARD_MISSIONS_ACTION_MATERIALS =
 
 const UPDATE_BOARD_MISSIONS_ACTION_DONE_WITH_MATERIALS =
   "/v1/erp-service/board-missions-actions/move-to-done";
+const TRY_MOVE_BOARD_MISSION_TO_DONE_URL =
+    "/v1/erp-service/board-missions/try-move-board-mission-to-done/";
 
 const getProductionFloorData: ICallAndSetData = async (
   callApi,
@@ -615,6 +617,19 @@ const updateBoardMissionsActionDoneWithMaterialsApi: ICallAndSetData = async (
   );
 };
 
+const tryMoveBoardMissionToDoneApi: ICallAndSetData = async (
+    callApi,
+    setState,
+    data: { boardMissionId: string;}
+) => {
+  return await getSetApiData(
+      callApi,
+      EHttpMethod.GET,
+      TRY_MOVE_BOARD_MISSION_TO_DONE_URL + data.boardMissionId,
+      setState,
+  );
+};
+
 export {
   boardMissionsUpdateActionEmployee,
   boardMissionsUpdateActionMachine,
@@ -653,4 +668,5 @@ export {
   getAllActionsApi,
   getBoardMissionActionMaterialsApi,
   updateBoardMissionsActionDoneWithMaterialsApi,
+  tryMoveBoardMissionToDoneApi
 };

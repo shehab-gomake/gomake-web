@@ -11,34 +11,33 @@ import {
 import { FONT_FAMILY } from "@/utils/font-family";
 import { ISecondaryTableProps } from "@/components/tables/interface";
 import { useStyle } from "@/components/tables/style";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTranslation } from "react-i18next";
 
 const SecondaryTableCell = styled(TableCell)(() => {
-  const { primaryColor } = useGomakeTheme();
   return {
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: "#FCFCFC",
-      color: primaryColor(800),
-      ...FONT_FAMILY.Lexend(600, 14),
-      padding: "5px 5px",
-      height: 50,
+      color: "#475467",
+      ...FONT_FAMILY.Lexend(500, 14),
+      padding: "5px",
+      borderLeft: "1px solid #EAECF0",
+      borderRight: "1px solid #EAECF0",
     },
     [`&.${tableCellClasses.body}`]: {
-      ...FONT_FAMILY.Lexend(500, 14),
-      color: primaryColor(800),
-      padding: "3px 0",
-      border: 0,
-      height: 38,
+      ...FONT_FAMILY.Lexend(500, 15),
+      color: "#000000",
+      padding: "5px",
       backgroundColor: "#FFFFFF",
       borderBottom: "1px solid #DBDBDB",
+      borderLeft: "1px solid #EAECF0",
+      borderRight: "1px solid #EAECF0",
+
     },
   };
 });
 
 const SecondaryTableRow = styled(TableRow)(() => {
   return {
-    // backgroundColor: bgColor,
   };
 });
 

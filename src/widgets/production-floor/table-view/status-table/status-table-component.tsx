@@ -47,6 +47,7 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
     selectedMission,
+    tryMoveBoardMissionsToDone
   } = useProductionFloorData();
 
   const [{ isOver }, drop] = useDrop(
@@ -88,23 +89,28 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-          (board) =>
-            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-              search
-            ) ||
-            `${board?.clientName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            `${board?.productName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            board?.automatedTags?.some((tag) =>
-              `${tag.toLowerCase()}`.includes(search.toLowerCase())
-            ) ||
-            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-        )
+        (board) =>
+          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+            search
+          ) ||
+          `${board?.clientName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          `${board?.productName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          board?.automatedTags?.some((tag) =>
+            `${tag.toLowerCase()}`.includes(search.toLowerCase())
+          ) ||
+          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+      )
       : boards;
   }, [boards, search]);
+
+  const getCustomWidth = (index: number) => {
+    const widths = ["3%", "9%", "9%", "9%", "9%", "23%", "12%", "12%", "12%", "2%"];
+    return widths[index] || "auto";
+  };
 
   return (
     <Stack ref={drop} border={isOver ? "1px solid black" : "none"} gap={"5px"}>
@@ -134,15 +140,21 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
               <Table stickyHeader={false}>
                 <TableHead style={{ backgroundColor: status.backgroundColor }}>
                   <SecondaryTableRow>
-                    {tableHeaders(status.id)?.map((header) => (
+                    {tableHeaders(status.id)?.map((header, index) => (
                       <SecondaryTableCell
                         style={{
-                          backgroundColor: status.backgroundColor,
+                          backgroundColor: "#F9FAFB",
+                          placeItems: "center",
+                          minWidth: getCustomWidth(index),
+                          maxWidth: getCustomWidth(index),
+                          width: getCustomWidth(index)
                         }}
                         key={"statusTable" + status.id}
                         align={"center"}
                       >
-                        {header}
+                        <div style={{ width: "max-content", minWidth: "max-content", }}>
+                          {header}
+                        </div>
                       </SecondaryTableCell>
                     ))}
                   </SecondaryTableRow>
@@ -150,15 +162,17 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
                 <TableBody>
                   {[...getBoards()]
                     ?.sort((a, b) => a.priority - b.priority)
-                    ?.map((boardMission) => {
+                    ?.map((boardMission, index) => {
                       return (
                         <>
                           <TableRowComponent
                             key={"status" + status.id + boardMission.id}
                             boardMission={boardMission}
                             status={status}
-                            onClickDone={onOpenMarkReadyModal}
+                            onClickDone={tryMoveBoardMissionsToDone}
                             onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                            index={index}
+
                           />
                         </>
                       );

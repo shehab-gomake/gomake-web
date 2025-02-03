@@ -8,6 +8,7 @@ import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useSetRecoilState } from "recoil";
 import { quoteConfirmationState, quoteItemState } from "@/store";
 import { renderDocumentTypeForSourceDocumentNumber } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
+import { ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
 
 interface IProps {
   isQuoteConfirmation?: boolean;
@@ -38,7 +39,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
     dataForInternalNotes,
     handleBlurForInternalNotes,
     handleChangeForInternalNotes
-  } = useWriteCommentComp({ getQuote, documentType, quoteItemValue : documentState, setQuoteItemValue })
+  } = useWriteCommentComp({ getQuote, documentType, quoteItemValue: documentState, setQuoteItemValue })
 
   const mergeDocumentNumbers = (quoteItemValue) => {
     const groupedDocuments = {};
@@ -46,6 +47,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
     quoteItemValue?.documentNumbers?.forEach(doc => {
       const { documentType, documentId, documentNumber } = doc;
       const title = t(renderDocumentTypeForSourceDocumentNumber(documentType));
+      const documentPath = ERPDocumentsTypesEnum[documentType];
 
       if (!groupedDocuments[title]) {
         groupedDocuments[title] = [];
@@ -57,6 +59,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
         label: `${documentNumber}`,
         title,
         value: documentId,
+        documentPath,
         documentType
       });
     });
@@ -66,9 +69,9 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
 
   const relatedDocuments = mergeDocumentNumbers(documentState);
   const canEditComments = documentState?.isEditable && CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
-  const canEditNotes =  CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
+  const canEditNotes = CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
   const canNotEditConfirmationComments = documentState?.isConfirmed || documentState?.documentStatus === QUOTE_STATUSES.Canceled;
-
+  console.log("relatedDocuments", relatedDocuments)
   return (
     <div style={classes.writeCommentContainer}>
       {
@@ -83,13 +86,14 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
             style={classes.autoComplateStyle}
             placeholder={t("sales.quote.selectDocuments")}
             onChange={(e, item) => {
-              if (!item.isHeader && item?.value) {
+              console.log("item", item)
+              if (!item?.isHeader && item?.value) {
                 if (item?.documentType === 12) {
                   const url = `/quotes?documentNumber=${item.documentNumber}`;
                   window.open(url, '_blank');
                 }
                 else {
-                  const url = `/${item.title.charAt(0).toLowerCase() + item.title.slice(1)}?Id=${item.documentId}`;
+                  const url = `/${item.documentPath.charAt(0).toLowerCase() + item.documentPath.slice(1)}?Id=${item.documentId}`;
                   window.open(url, '_blank');
                 }
 
