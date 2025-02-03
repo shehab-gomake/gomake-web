@@ -3282,7 +3282,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const relatedIndex = parameters.findIndex(
           (param) =>
             param.parameterId === relatedParam.parameterId &&
-            param.actionIndex == relatedParam.actionIndex
+            param.actionIndex == relatedParam.actionIndex &&
+            param.sectionId == sectionId &&
+            param.subSectionId == subSectionId
         );
 
         if (relatedIndex !== -1) {
