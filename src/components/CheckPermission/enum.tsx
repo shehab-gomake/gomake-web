@@ -93,6 +93,8 @@ export enum Permissions {
   EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR = "EditBoardMissionInProductionFloor",
   SHOW_COSTS_IN_PRODUCTION_FLOOR = "IsShowCostsInProductionFloor",
   IS_CAN_UPDATE_MACHINE_IN_PRODUCTION_FLOOR = "IsCanUpdateMachineInProductionFloor",
+  SHOW_EMPLOYEE_WORKING_HOURS = "ShowEmployeeWorkingHours",
+  SHOW_PRODUCTION_TIME_LINE = "ShowProductionTimeLine",
 
   //board missions group
   SHOW_BOARD_MISSIONS = "IsCanShowBoardMissions",
