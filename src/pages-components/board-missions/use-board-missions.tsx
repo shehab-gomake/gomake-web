@@ -84,7 +84,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   } | null>();
   const searchInputRef = useRef(null);
   const [orderStatus, setOrderStatus] = useState<StatusOption>();
-  const [supplierId, selectedSupplierId] = useState<any>();
   const [productIds, setProductIds] = useState<string[]>([]);
   const [productsList, setProductsList] = useState([]);
 
@@ -122,7 +121,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-  } = useCustomerDropDownList({ shouldRenderSuppliersOnMount: isPurchaseJobs });
+  } = useCustomerDropDownList({
+    shouldRenderCustomersOnMount: !isPurchaseJobs,
+    shouldRenderSuppliersOnMount: isPurchaseJobs,
+  });
 
   const { agent, setAgent, agentsCategories, handleAgentChange } =
     useAgentsList();
@@ -189,9 +191,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-    t("boardMissions.costFromOrderItem"),
+      t("boardMissions.costFromOrderItem"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-    t("boardMissions.priceFromOrderItem"),
+      t("boardMissions.priceFromOrderItem"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
@@ -226,10 +228,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
   const handleOrderStatusChange = (e: any, value: any) => {
     setOrderStatus(value);
-  };
-
-  const handledSupplierIdChange = (e: any, value: any) => {
-    selectedSupplierId(value);
   };
 
   const handleClickSearch = () => {
@@ -319,7 +317,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setCustomer(null);
     setStatus(null);
     setOrderStatus(null);
-    selectedSupplierId(null);
     setProductIds([]);
     setPatternSearch("");
     setFromDate(null);
@@ -439,7 +436,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         if (res?.success) {
           const _data = res?.data;
           const mapData = _data.data?.map((mission: any) => {
-            const itemCalculatedPrice = mission?.calculatedPrice && mission?.calculatedPrice != mission?.price ? mission?.calculatedPrice : 0;
+            const itemCalculatedPrice =
+              mission?.calculatedPrice &&
+              mission?.calculatedPrice != mission?.price
+                ? mission?.calculatedPrice
+                : 0;
             return [
               <a
                 href={mission?.boardMissionImage}
@@ -484,10 +485,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 : []),
               ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                 ? [
-                  mission?.price +
-                  (itemCalculatedPrice ? ` (${itemCalculatedPrice})` : " ") +
-                  getCurrencyUnitText(mission?.currency),
-                ]
+                    mission?.price +
+                      (itemCalculatedPrice
+                        ? ` (${itemCalculatedPrice})`
+                        : " ") +
+                      getCurrencyUnitText(mission?.currency),
+                  ]
                 : []),
               mission?.jobName,
               mission?.numberOfBoardMissions,
@@ -518,30 +521,30 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         callBack,
         isClear
           ? {
-            productsIds: [],
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-          }
+              productsIds: [],
+              pageNumber: pageNumber,
+              pageSize: pageSize,
+            }
           : {
-            clientId: customer?.id || router?.query?.clientId,
-            agentId: agent?.id,
-            search: finalPatternSearch,
-            fromDate: fromDate && GetDateFormat(fromDate),
-            toDate: toDate && GetDateFormat(toDate),
+              clientId: customer?.id || router?.query?.clientId,
+              agentId: agent?.id,
+              search: finalPatternSearch,
+              fromDate: fromDate && GetDateFormat(fromDate),
+              toDate: toDate && GetDateFormat(toDate),
 
-            fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
-            toDueDate: toDueDate && GetDateFormat(toDueDate),
+              fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
+              toDueDate: toDueDate && GetDateFormat(toDueDate),
 
-            fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
-            toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+              fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
+              toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
 
-            productsIds: productIds,
-            productionStatus: status?.value,
-            orderStatus: orderStatus?.value,
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-            orderNumber: router?.query?.orderNumber,
-          }
+              productsIds: productIds,
+              productionStatus: status?.value,
+              orderStatus: orderStatus?.value,
+              pageNumber: pageNumber,
+              pageSize: pageSize,
+              orderNumber: router?.query?.orderNumber,
+            }
       );
     }
   };
@@ -580,8 +583,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             mission?.isReady
               ? t("boardMissions.done")
               : mission?.boardMissionStatus && mission?.station
-                ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
-                : "",
+              ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
+              : "",
             <MoreMenuWidget
               mission={mission}
               onClickDuplicate={onOpenDuplicateModal}
@@ -604,31 +607,33 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         callBack,
         isClear
           ? {
-            productsIds: [],
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-          }
+              productsIds: [],
+              pageNumber: pageNumber,
+              pageSize: pageSize,
+            }
           : {
-            clientId: customer?.id,
-            agentId: agent?.id,
-            search: finalPatternSearch,
-            fromDate: fromDate && GetDateFormat(fromDate),
-            toDate: toDate && GetDateFormat(toDate),
+              ...(isPurchaseJobs
+                ? { supplierId: customer?.id }
+                : { clientId: customer?.id }),
 
-            fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
-            toDueDate: toDueDate && GetDateFormat(toDueDate),
+              agentId: agent?.id,
+              search: finalPatternSearch,
+              fromDate: fromDate && GetDateFormat(fromDate),
+              toDate: toDate && GetDateFormat(toDate),
 
-            fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
-            toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+              fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
+              toDueDate: toDueDate && GetDateFormat(toDueDate),
 
-            productsIds: productIds,
-            productionStatus: status?.value,
-            orderStatus: orderStatus?.value,
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-            supplierId: supplierId?.value,
-            isPurchaseJobs: true,
-          }
+              fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
+              toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+
+              productsIds: productIds,
+              productionStatus: status?.value,
+              orderStatus: orderStatus?.value,
+              pageNumber: pageNumber,
+              pageSize: pageSize,
+              isPurchaseJobs: true,
+            }
       );
     }
   };
@@ -637,12 +642,19 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const { targetOrderId, targetOrderNumber } = router?.query;
     if (targetOrderId)
       navigate(
-        `/products/duplicate?clientTypeId=${missionItem?.clientTypeId
-        }&customerId=${missionItem?.customerID}&customerName=${encodeURIComponent(
+        `/products/duplicate?clientTypeId=${
+          missionItem?.clientTypeId
+        }&customerId=${
+          missionItem?.customerID
+        }&customerName=${encodeURIComponent(
           missionItem?.clientName || ""
-        )}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId
-        }&documentType=${DOCUMENT_TYPE.order
-        }&documentNumber=${targetOrderNumber}&documentId=${missionItem?.orderID}&duplicateType=${duplicateType}`
+        )}&productId=${missionItem?.productID}&documentItemId=${
+          missionItem?.orderItemId
+        }&documentType=${
+          DOCUMENT_TYPE.order
+        }&documentNumber=${targetOrderNumber}&documentId=${
+          missionItem?.orderID
+        }&duplicateType=${duplicateType}`
       );
     else
       navigate(
@@ -697,7 +709,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     };
     await getDeliveryTickerPdfApi(callApi, callBack, {
       boardMissionId: missionItem?.id,
-      packageQuantities
+      packageQuantities,
     });
   };
 
@@ -797,7 +809,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setQuantityOfPackages(newQuantityOfPackages);
   };
 
-
   const [packageQuantities, setPackageQuantities] = useState<number[]>(() => {
     const initialQuantityPerPackage = missionItem?.quantity
       ? Math.ceil(missionItem.quantity / quantityOfPackages)
@@ -808,7 +819,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   useEffect(() => {
     if (missionItem?.quantity && quantityPerPackage > 0) {
       const totalQuantity = missionItem.quantity;
-      const fullPackages = Math.max(0, Math.floor(totalQuantity / quantityPerPackage));
+      const fullPackages = Math.max(
+        0,
+        Math.floor(totalQuantity / quantityPerPackage)
+      );
       const remainingQuantity = totalQuantity % quantityPerPackage;
 
       let newPackageQuantities = Array(fullPackages).fill(quantityPerPackage);
@@ -829,7 +843,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
       if (index === quantityOfPackages - 1) {
         const totalQuantity = missionItem?.quantity || 0;
-        const sumOfOtherPackages = updatedQuantities.slice(0, -1).reduce((acc, val) => acc + val, 0);
+        const sumOfOtherPackages = updatedQuantities
+          .slice(0, -1)
+          .reduce((acc, val) => acc + val, 0);
         updatedQuantities[index] = totalQuantity - sumOfOtherPackages;
       }
 
@@ -849,7 +865,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             value={packageQuantities[index]}
             onChange={(e) => {
               const newValue = parseInt(e.target.value, 10);
-              console.log("newValue", { newValue, index })
+              console.log("newValue", { newValue, index });
               handlePackageQuantityChange(index, newValue);
             }}
           />
@@ -1056,7 +1072,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     patternSearch,
     handleAgentChange,
     handleStatusChange,
-    handledSupplierIdChange,
     handleCustomerChange,
     checkWhatRenderArray,
     pagesCount,
@@ -1104,7 +1119,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onCloseMarkReadyThenPrintModal,
     onOpenMarkReadyThenPrintModal,
     selectedMission,
-    supplierId,
     supplierList,
     orderStatuses,
     orderStatus,
@@ -1120,7 +1134,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     showCustomerModal,
     customerForEdit,
     setShowCustomerModal,
-    setCustomerForEdit
+    setCustomerForEdit,
   };
 };
 

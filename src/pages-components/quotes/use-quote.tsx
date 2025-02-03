@@ -110,8 +110,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { quoteNumber } = query;
   const { errorColor } = useGomakeTheme();
   const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
-  const { renderOptions, checkWhatRenderArray, isFetching } =
-    useCustomerDropDownList();
+
+  const isPurchaseDocument =
+    docType === DOCUMENT_TYPE.purchaseOrder ||
+    docType === DOCUMENT_TYPE.purchaseInvoice ||
+    docType === DOCUMENT_TYPE.purchaseInvoiceRefund;
+
+  const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
+    useCustomerDropDownList({
+      shouldRenderCustomersOnMount: !isPurchaseDocument,
+      shouldRenderSuppliersOnMount: isPurchaseDocument,
+    });
+
   // const [patternSearch, setPatternSearch] = useState<any>(null);
   const [patternSearch, setPatternSearch] = useState<any>(
     router.query.finalPatternSearch || null
@@ -1487,8 +1497,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const data = res?.data?.data;
         const mapData = data?.map((document: any) => [
           <div
-              style={{ cursor: "pointer" }}
-              onClick={() => onClickOpenCustomerModal(document?.customerId)}
+            style={{ cursor: "pointer" }}
+            onClick={() => onClickOpenCustomerModal(document?.customerId)}
           >
             {document?.customerName}
           </div>,
@@ -2618,6 +2628,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     deliveryStatuses,
     deliveryStatus,
     setDeliveryStatus,
+    isPurchaseDocument,
+    supplierList,
   };
 };
 
