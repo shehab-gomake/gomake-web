@@ -19,6 +19,8 @@ import { useProductionFloorSignalr } from "@/hooks/signalr/use-production-floor-
 import { ProductionFloorFilters } from "./filters/production-floor-filters";
 import { useProductionFloorData } from "./use-production-floor-data";
 import { TimelineWidget } from "@/widgets/production-floor/views/gantt-view/gantt-component";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -93,7 +95,11 @@ const ProductionFloorWidget = () => {
         {view === EProductionFloorView.DASHBOARD ? (
           <DashboardWidget />
         ) : view === EProductionFloorView.GANTT ? (
-          <TimelineWidget />
+          <PermissionCheck
+            userPermission={Permissions.SHOW_PRODUCTION_TIME_LINE}
+          >
+            <TimelineWidget />
+          </PermissionCheck>
         ) : view === EProductionFloorView.GROUPS ? (
           <GroupsTable />
         ) : (
