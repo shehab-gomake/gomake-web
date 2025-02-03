@@ -5,6 +5,8 @@ import { useRouter } from "next/router";
 import { MachineIcon } from "./icons/machine-icon";
 import { getBoardMissionDataForMenuApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import {ExpandIcon} from "@/icons/expand-icon";
+import {DotIcon, LeftArrowIcon, MoreCircleIcon, SearchIcon} from "@/icons";
 
 const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob, onClickPrintDTicket }) => {
   const { push } = useRouter();
@@ -29,10 +31,20 @@ const useMoreCircle = ({ t, boardMission, onClickDone, onClickPrintJob, onClickP
     await getBoardMissionDataForMenuApi(callApi, callBack, { boardMissionId: boardMission?.id, });
   }
 
-
+  const openJobModal = ()=>{
+    push(
+        `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`
+    ).then();
+  }
 
   const getMenuList = () => {
     return [
+      {
+        condition: true,
+        onClick: () => openJobModal(),
+        icon: <SearchIcon width={17} height={17} />,
+        name: t("productionFloor.openJob")
+      },
       {
         condition: true,
         onClick: () => handleGetBoardMissionData("edit"),
