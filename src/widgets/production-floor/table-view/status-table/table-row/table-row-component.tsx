@@ -281,6 +281,7 @@ const TableRowComponent = ({
             boardMissionId={boardMission.id}
             status={status}
             textColor={boardMission?.productionFloorJobColor}
+            onClickDone={()=> onClickDone(boardMission)}
           />
         </SecondaryTableCell>
         {/* <SecondaryTableCell
