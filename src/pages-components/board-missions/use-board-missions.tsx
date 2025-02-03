@@ -642,7 +642,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           missionItem?.clientName || ""
         )}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId
         }&documentType=${DOCUMENT_TYPE.order
-        }&documentNumber=${targetOrderNumber}&documentId=${missionItem?.orderID}&duplicateType=${duplicateType}`
+        }&documentNumber=${targetOrderNumber}&documentId=${targetOrderId}&duplicateType=${duplicateType}`
       );
     else
       navigate(
