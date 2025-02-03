@@ -24,7 +24,7 @@ const companyProfileInputs = (state: ICompanyProfile, currencies) => {
             parameterKey: "business_ID",
             options: [],
             value: state.business_ID,
-            isValid: state.business_ID.length >= 9,
+            isValid: state?.business_ID?.length >= 9,
         },
         {
             name: "dashboardCode",
