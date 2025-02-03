@@ -328,7 +328,7 @@ const useLedgerReport = ({ customerId }: any) => {
       `/v1/erp-service/receipts/get-erp-accounts`
     );
     if (res?.success) {
-      setErpAccountsList(res.data?.data?.data);
+      setErpAccountsList(res.data?.data?.data || []);
     } else {
       alertFaultGetData();
     }

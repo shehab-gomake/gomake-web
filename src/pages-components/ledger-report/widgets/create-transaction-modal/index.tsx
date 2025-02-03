@@ -109,10 +109,10 @@ const CreateNewTransactionModal = ({
                         }
                         value={
                           fromAccountType === "client"
-                            ? renderOptions().find(
+                            ? renderOptions()?.find(
                                 (option) => option.id === fromClientId
                               ) || null
-                            : erpAccountsList.find(
+                            : erpAccountsList?.find(
                                 (option) => option.code === fromAccountCode
                               ) || null
                         }
@@ -170,7 +170,7 @@ const CreateNewTransactionModal = ({
                             ? renderOptions().find(
                                 (option) => option.id === toClientId
                               )
-                            : erpAccountsList.find(
+                            : erpAccountsList?.find(
                                 (option) => option.code === toAccountCode
                               )
                         }
