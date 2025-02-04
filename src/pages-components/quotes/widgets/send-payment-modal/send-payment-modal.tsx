@@ -41,7 +41,7 @@ const SendPaymentModal = ({
     onChangePaymentInputs,
     handleSendPaymentPage,
   } = useSendPaymentModal({ openPaymentModal, documentType });
-
+  console.log("payState", payState)
   const {
     alertSuccessAdded,
     alertFaultAdded,
@@ -64,7 +64,10 @@ const SendPaymentModal = ({
     //setOpenWatsAppModal(true)
   };
   const onClickSendQuoteToClient = async () => {
-
+    const selectedContact =
+      payState?.documentContacts &&
+      payState.documentContacts[payState?.selectedContactIndex];
+    console.log("selectedContact", selectedContact)
     let messageType = null; // Default messageType
     if (payState.sendByMail && payState.sendBySms) {
       messageType = 2;
@@ -82,15 +85,25 @@ const SendPaymentModal = ({
         alertFaultAdded();
       }
     };
-    if (messageType) {
+    const documentData: any = {
+      documentId: payState?.documentId,
+      messageType,
+    };
+
+    if (selectedContact?.contactPhone) {
+      documentData.contactPhone = selectedContact.contactPhone;
+    }
+
+    if (selectedContact?.contactMail) {
+      documentData.contactEmail = selectedContact.contactMail;
+    }
+    if (messageType >= 0) {
       await sendDocumentToClientApi(callApi, callBack, {
         documentType: documentType,
-        document: {
-          documentId: payState?.documentId,
-          messageType,
-        },
+        document: documentData,
       });
     }
+
     if (payState?.sendByWhatsapp) {
       handleSendUsingWhatsAppWeb();
     }
