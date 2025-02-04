@@ -9,6 +9,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
+import { DocumentCalculationType } from "@/enums";
 
 const TotalPriceComp = ({
   documentType,
@@ -27,20 +28,32 @@ const TotalPriceComp = ({
 
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const onBlurTotalPayment = async () => {
-    getCalculateQuote(2, quoteItems?.totalPayment);
+    getCalculateQuote(DocumentCalculationType.TotalPayment, quoteItems?.totalPayment);
     setIsUpdateTotalPayment(null);
   };
   const onInputTotalPayment = (e) => {
     changeQuoteItems("totalPayment", e);
   };
   const [isUpdateDiscount, setIsUpdateDiscount] = useState(null);
+  const [isUpdateDiscountAmount, setIsUpdateDiscountAmount] = useState(null);
   const onBlurDiscount = async () => {
-    getCalculateQuote(0, quoteItems?.discount);
+    getCalculateQuote(DocumentCalculationType.Discount, quoteItems?.discount);
     setIsUpdateDiscount(null);
   };
+  const onBlurDiscountAmount = async () => {
+    getCalculateQuote(DocumentCalculationType.DiscountAmount, quoteItems?.discountAmount);
+    setIsUpdateDiscountAmount(null);
+  };
+
   const onInputDiscount = (e) => {
     changeQuoteItems("discount", e);
   };
+  const onInputDiscountAmount = (e) => {
+    changeQuoteItems("discountAmount", e);
+
+  };
+
+
 
   const canUpdateDiscount = router.query.isNewCreation ? true :
     (quoteItems?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_DISCOUNT));
@@ -74,7 +87,29 @@ const TotalPriceComp = ({
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
-            % {isQuoteConfirmation ? quoteItems?.discountAmount != 0 && `(-${quoteItems?.discountAmount + " " + quoteItems?.currency})` : quoteItemValue?.discountAmount != 0 && `(-${quoteItemValue?.discountAmount + " " + quoteItems?.currency})`}
+            %
+            {isQuoteConfirmation ? quoteItems?.discountAmount != 0 && `(-${quoteItems?.discountAmount + " " + quoteItems?.currency})` :
+              quoteItemValue?.discountAmount != 0 &&
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginLeft: 10, marginRight: 10 }}>
+                (<InputUpdatedValues
+                  value={quoteItems?.discountAmount ? quoteItems?.discountAmount : 0}
+                  onBlur={onBlurDiscountAmount}
+                  isUpdate={canUpdateDiscount && isUpdateDiscountAmount}
+                  setIsUpdate={!isQuoteConfirmation && setIsUpdateDiscountAmount}
+                  sign={" " + quoteItems?.currency}
+                  speicalStyle={{
+                    ...FONT_FAMILY.Inter(400, 14),
+                  }}
+                  inputMainContainerStyle={{
+                    gap: 0,
+                  }}
+                  onInputChange={(e) => onInputDiscountAmount(e)}
+                />)
+              </div>
+
+
+
+            }
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
