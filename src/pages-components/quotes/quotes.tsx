@@ -199,7 +199,10 @@ const QuotesListPageWidget = ({
     deliveryStatuses,
     deliveryStatus,
     setDeliveryStatus,
+    setFromDate,
+    setToDate
   } = useQuotes(documentType, isFromHomePage);
+
 
   useEffect(() => {
     if (router.query.orderNumber) {
@@ -218,11 +221,22 @@ const QuotesListPageWidget = ({
   const GlobalStyle = createGlobalStyle`
   .rs-picker-popup-daterange {
     left: ${({ RTL }: any) => (RTL ? "auto" : "515px")} !important;
-    right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
+    right: ${({ RTL }: any) => (RTL ? "530px" : "auto")} !important;
     top: 320px !important;
   }
 `;
 
+  const pickerRef = useRef(null);
+
+  const handleSelect = (date) => {
+    if (!fromDate) {
+      setFromDate(date);
+    } else if (!toDate) {
+      setToDate(date);
+      onSelectDeliveryTimeDates([fromDate, date]);
+      pickerRef.current.close();
+    }
+  };
   const renderCreateNewButton = (onClickHandler) => (
     <Button
       sx={{
@@ -239,7 +253,6 @@ const QuotesListPageWidget = ({
       {t("sales.quote.createNew")}
     </Button>
   );
-  const pickerRef = useRef(null);
   const renderOrderCard = (onclickCreateNew) => (
     <>
       <PermissionCheck
@@ -565,13 +578,9 @@ const QuotesListPageWidget = ({
                               </h3>
                               <GlobalStyle RTL={RTL} />
                               <DateRangePicker
+                                ref={pickerRef}
                                 onChange={onSelectDeliveryTimeDates}
-                                onSelect={(e, value) => {
-                                  console.log({ value, fromDate, toDate })
-                                  // if (fromDate && toDate) {
-                                  //   pickerRef.current.close();
-                                  // }
-                                }}
+                                onSelect={handleSelect}
                                 value={
                                   fromDate && toDate ? [fromDate, toDate] : null
                                 }
