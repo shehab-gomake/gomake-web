@@ -19,7 +19,7 @@ import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
@@ -201,7 +201,10 @@ const QuotesListPageWidget = ({
     setDeliveryStatus,
     supplierList,
     isPurchaseDocument,
+    setFromDate,
+    setToDate
   } = useQuotes(documentType, isFromHomePage);
+
 
   useEffect(() => {
     if (router.query.orderNumber) {
@@ -219,11 +222,23 @@ const QuotesListPageWidget = ({
   const RTL = dir === "rtl";
   const GlobalStyle = createGlobalStyle`
   .rs-picker-popup-daterange {
-    left: ${({ RTL }: any) => (RTL ? "auto" : "150px")} !important;
-    right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
+    left: ${({ RTL }: any) => (RTL ? "auto" : "515px")} !important;
+    right: ${({ RTL }: any) => (RTL ? "530px" : "auto")} !important;
+    top: 320px !important;
   }
 `;
 
+  const pickerRef = useRef(null);
+
+  const handleSelect = (date) => {
+    if (!fromDate) {
+      setFromDate(date);
+    } else if (!toDate) {
+      setToDate(date);
+      onSelectDeliveryTimeDates([fromDate, date]);
+      pickerRef.current.close();
+    }
+  };
   const renderCreateNewButton = (onClickHandler) => (
     <Button
       sx={{
@@ -240,7 +255,6 @@ const QuotesListPageWidget = ({
       {t("sales.quote.createNew")}
     </Button>
   );
-
   const renderOrderCard = (onclickCreateNew) => (
     <>
       <PermissionCheck
@@ -332,12 +346,12 @@ const QuotesListPageWidget = ({
                         {Object.keys(router.query).filter(
                           (key) => key !== "pageNumber"
                         ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
-                        )}
+                            <div
+                              style={{ position: "absolute", top: -5, right: -1 }}
+                            >
+                              <DotIcon />
+                            </div>
+                          )}
                       </IconButton>
                       <GoMakeMenu
                         handleClose={handleClose}
@@ -356,8 +370,8 @@ const QuotesListPageWidget = ({
                                   isPurchaseDocument
                                     ? supplierList
                                     : renderOptions()
-                                    ? renderOptions()
-                                    : []
+                                      ? renderOptions()
+                                      : []
                                 }
                                 getOptionLabel={(option: any) =>
                                   `${option.name}`
@@ -491,7 +505,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder &&
                               documentType !== DOCUMENT_TYPE.receipt && (
                                 <div style={classes.statusFilterContainer}>
@@ -537,7 +551,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder && (
                                 <div
                                   style={{
@@ -579,10 +593,13 @@ const QuotesListPageWidget = ({
                               </h3>
                               <GlobalStyle RTL={RTL} />
                               <DateRangePicker
+                                ref={pickerRef}
                                 onChange={onSelectDeliveryTimeDates}
+                                onSelect={handleSelect}
                                 value={
                                   fromDate && toDate ? [fromDate, toDate] : null
                                 }
+                              // oneTap
                               />
                             </div>
                           </div>
@@ -640,7 +657,7 @@ const QuotesListPageWidget = ({
                 isQuote
                   ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
                   : isOrder
-                  ? [
+                    ? [
                       "6%",
                       "5%",
                       "5%",
@@ -657,32 +674,32 @@ const QuotesListPageWidget = ({
                       "5%",
                       "5%",
                     ]
-                  : documentType === DOCUMENT_TYPE.purchaseInvoice ||
-                    documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
-                  ? [
-                      "7%",
-                      "15%",
-                      "10%",
-                      "13%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "5%",
-                    ]
-                  : [
-                      "7%",
-                      "8%",
-                      "8%",
-                      "8%",
-                      "10%",
-                      "26%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "3%",
-                    ]
+                    : documentType === DOCUMENT_TYPE.purchaseInvoice ||
+                      documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+                      ? [
+                        "7%",
+                        "15%",
+                        "10%",
+                        "13%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "5%",
+                      ]
+                      : [
+                        "7%",
+                        "8%",
+                        "8%",
+                        "8%",
+                        "10%",
+                        "26%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "3%",
+                      ]
               }
             />
           </div>
