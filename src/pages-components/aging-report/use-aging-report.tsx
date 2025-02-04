@@ -65,6 +65,8 @@ const useAgingReport = () => {
 
   const onChangeDetailedReport = () => {
     setDetailedReport(!detailedReport);
+    setShowTable(false);
+    getAgingReportFilter(!detailedReport);
   };
 
   const onChangeByReferenceDate = () => {
@@ -73,7 +75,7 @@ const useAgingReport = () => {
 
   const getTableDataRows = useCallback(
     (onClickOpenCustomerModal) => {
-      return tableData.flatMap((data: any) => {
+      return tableData?.flatMap((data: any) => {
         const rows = [];
         const mainRow = tableHeader.map((header: any) => {
           const nestedKey = header.key;
@@ -134,7 +136,7 @@ const useAgingReport = () => {
 
   const onClickBtn1 = () => {
     setShowTable(false);
-    getAgingReportFilter();
+    getAgingReportFilter(detailedReport);
   };
 
   const onClickBtn2 = () => {
@@ -145,46 +147,50 @@ const useAgingReport = () => {
     ExportAgingReportExcel();
   };
 
-  const getAgingReportFilter = useCallback(async () => {
-    if (!fromDate || !toDate) {
-      alertFault("alerts.pleaseEnsureDatesSelected");
-      return;
-    }
-
-    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
-    const formattedEndDate = format(toDate, "yyyy-MM-dd");
-
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/reports/get-aging-report`,
-      {
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-        clientId: customer?.id,
-        referDate: selectDate ? selectDate : new Date(),
-        agentId: agent?.id,
-        byCreationDate: byReferenceDate,
-        expendedReport: detailedReport,
+  const getAgingReportFilter = useCallback(
+    async (expendedReport = false) => {
+      if (!fromDate || !toDate) {
+        alertFault("alerts.pleaseEnsureDatesSelected");
+        return;
       }
-    );
-    if (res?.success) {
-      setTableData(res?.data?.data?.data?.data);
-      setTableHeader(res?.data?.data?.data?.headers);
-      alertSuccessGetData();
-      setShowTable(true);
-    } else {
-      alertFaultGetData();
-      setShowTable(false);
-    }
-  }, [
-    fromDate,
-    toDate,
-    detailedReport,
-    agent,
-    customer,
-    selectDate,
-    byReferenceDate,
-  ]);
+
+      const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+      const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/get-aging-report`,
+        {
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          clientId: customer?.id,
+          referDate: selectDate ? selectDate : new Date(),
+          agentId: agent?.id,
+          byCreationDate: byReferenceDate,
+          // expendedReport: detailedReport,
+          expendedReport: expendedReport,
+        }
+      );
+      if (res?.success) {
+        setTableData(res?.data?.data?.data?.data);
+        setTableHeader(res?.data?.data?.data?.headers);
+        alertSuccessGetData();
+        setShowTable(true);
+      } else {
+        alertFaultGetData();
+        setShowTable(false);
+      }
+    },
+    [
+      fromDate,
+      toDate,
+      detailedReport,
+      agent,
+      customer,
+      selectDate,
+      byReferenceDate,
+    ]
+  );
 
   const ExportAgingReportPDF = useCallback(async () => {
     if (!fromDate || !toDate) {
