@@ -28,7 +28,6 @@ import {
   ECalculationStatus,
   ERPDocumentsTypesEnum,
 } from "@/enums/document-type-enum";
-import { useOrdersSignalr, useQuotesSignalr } from "@/hooks";
 import { useTranslation } from "react-i18next";
 
 const RowMappingWidget = ({
@@ -58,8 +57,7 @@ const RowMappingWidget = ({
   const [isConfirmation, setIsConfirmation] = useState(null);
   const [isSelected, setIsSelected] = useState(item?.isSelected);
   const { getCurrencyUnitText } = useQuoteGetData();
-  const {} = useQuotesSignalr({ getQuote });
-  const {} = useOrdersSignalr({ getQuote });
+ 
   const handleChangeSelectedItem = (checked, itemId) => {
     setIsSelected(checked);
     onChangeSelectedItemRowForQoute(checked, itemId);
