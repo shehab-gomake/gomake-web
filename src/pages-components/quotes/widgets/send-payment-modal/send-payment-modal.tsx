@@ -11,9 +11,7 @@ import { useSendPaymentModal } from "./use-send-payment-modal";
 import { Divider } from "@mui/material";
 import currencySymbolMap from "currency-symbol-map";
 import { DOCUMENT_TYPE } from "../../enums";
-import { useEffect, useState } from "react";
 import { useSnackBar } from "@/hooks/use-snack-bar";
-import { checkArrayNotEmptyOrPhoneNotEmpty } from "@/utils/helpers";
 import { getWhatsAppMessageApi, sendDocumentToClientApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
@@ -41,7 +39,6 @@ const SendPaymentModal = ({
     onChangePaymentInputs,
     handleSendPaymentPage,
   } = useSendPaymentModal({ openPaymentModal, documentType });
-  console.log("payState", payState)
   const {
     alertSuccessAdded,
     alertFaultAdded,
@@ -67,7 +64,6 @@ const SendPaymentModal = ({
     const selectedContact =
       payState?.documentContacts &&
       payState.documentContacts[payState?.selectedContactIndex];
-    console.log("selectedContact", selectedContact)
     let messageType = null; // Default messageType
     if (payState.sendByMail && payState.sendBySms) {
       messageType = 2;
