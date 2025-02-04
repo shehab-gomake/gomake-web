@@ -831,7 +831,7 @@ const QuotesListPageWidget = ({
       />
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
-        title={`Do you want to print the delivery note with prices ?`}
+        title={t("sales.quote.printDeliveryNoteWithPrices")}
         openModal={openPrintPDFModal}
         yesBtn={t("sales.quote.yesBtn")}
         cancelBtn={t("sales.quote.noBtn")}
