@@ -370,8 +370,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-            ? onOpenCancelReceiptModalRefund(quote)
-            : onOpenCancelReceiptModal(quote),
+              ? onOpenCancelReceiptModalRefund(quote)
+              : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
@@ -391,9 +391,15 @@ const useMoreCircle = () => {
           ((!isPauseOrder && isOrder && !isCanceledOrder) || isInvoice) &&
           quote?.isCanClose &&
           isSendPaymentToClient,
-        onClick: () => onClickSendPayment(quote),
+        onClick: () => onClickSendPayment(quote, false),
         icon: <PayIcon />,
         name: t("sales.quote.sendPayment"),
+      },
+      {
+        condition: true,
+        onClick: () => onClickSendPayment(quote, true),
+        icon: <PayIcon />,
+        name: t("sales.quote.sendToClient"),
       },
       {
         condition:
