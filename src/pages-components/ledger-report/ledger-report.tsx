@@ -98,6 +98,7 @@ const LedgerReportWidget = ({
           maxHeight={"100vh"}
           stickyFirstCol={false}
           stickyHeader={true}
+          variant="OddEvenTable"
         />
       )}
       <SendEmailLedgerReportModal
