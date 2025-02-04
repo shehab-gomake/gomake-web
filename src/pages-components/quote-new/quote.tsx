@@ -1,58 +1,55 @@
-import { useRecoilState, useRecoilValue } from "recoil";
-import { DuplicateItemModal } from "@/widgets/quote-new/modals-widgets/duplicate-item-modal";
-import { AddNewItemModal } from "@/widgets/quote-new/modals-widgets/add-new-item-modal";
-import { ButtonsContainer } from "@/widgets/quote-new/buttons-container";
-import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
-import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
-import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
-import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
-import {
-  GoMakeAlertModal,
-  GoMakeAutoComplate,
-  GoMakeDeleteModal,
-} from "@/components";
-import { HeaderTitle } from "@/widgets";
-import { ArrowDownNewIcon, BudgetIcon, SettingNewIcon } from "@/icons";
-import { useQuoteNew } from "./use-quote";
-import { quoteConfirmationState, quoteItemState } from "@/store";
-import { useStyle } from "./style";
-import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
-import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
-import { _renderQuoteStatus } from "@/utils/constants";
-import { IconButton } from "@mui/material";
-import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
-import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
-import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../quotes/enums";
-import { ButtonsConfirmContainer } from "@/widgets/quote-new/buttons-cofirm-container";
-import { CopyFromOrderModal } from "@/widgets/quote-new/modals-widgets/copy-from-order-modal/copy-from-order-modal";
-import { ReceiptsTable } from "@/widgets/quote-new/receipts-table";
-import { useRouter } from "next/router";
-import { usePaymentsTable } from "@/widgets/quote-new/receipts-table/use-payments-table";
-import { useEffect, useState } from "react";
-import { StepType } from "@reactour/tour";
-import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
-import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
-import { LoginTaxesUrl, fetchTaxesAuthority } from "@/utils/taxes-authority";
-import { printHouseProfile } from "@/store/print-house-profile";
-import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
-import { AddNewContactModal } from "@/widgets/quote-new/modals-widgets/add-new-contact-modal";
-import { NewItemNotesModal } from "@/widgets/quote-new/total-price-and-vat/new-item-notes-modal";
-import { AddRelatedDocumentsModal } from "@/widgets/quote-new/total-price-and-vat/add-related-documents";
-import { ViewSignatureApprovalModal } from "@/widgets/quote-new/total-price-and-vat/view-signature-approval-modal";
-import { CreditCardPaySection } from "@/widgets/quote-confirmation-mobile/components/credit-card-pay-section";
+import {useRecoilState, useRecoilValue} from "recoil";
+import {DuplicateItemModal} from "@/widgets/quote-new/modals-widgets/duplicate-item-modal";
+import {AddNewItemModal} from "@/widgets/quote-new/modals-widgets/add-new-item-modal";
+import {ButtonsContainer} from "@/widgets/quote-new/buttons-container";
+import {BusinessNewWidget} from "@/widgets/quote-new/business-widget";
+import {ContactNewWidget} from "@/widgets/quote-new/contact-widget";
+import {QuoteForPriceTable} from "@/widgets/quote-new/quote-table";
+import {WriteCommentComp} from "@/widgets/quote-new/write-comment";
+import {GoMakeAlertModal, GoMakeAutoComplate, GoMakeDeleteModal,} from "@/components";
+import {HeaderTitle} from "@/widgets";
+import {ArrowDownNewIcon, BudgetIcon, SettingNewIcon} from "@/icons";
+import {useQuoteNew} from "./use-quote";
+import {quoteConfirmationState, quoteItemState} from "@/store";
+import {useStyle} from "./style";
+import {CancelBtnMenu} from "@/widgets/quote-new/cancel-btn-menu";
+import {SendBtnMenu} from "@/widgets/quote-new/send-btn-menu";
+import {_renderQuoteStatus} from "@/utils/constants";
+import {IconButton} from "@mui/material";
+import {SettingQuoteMenu} from "@/widgets/quote-new/setting-quote-menu";
+import {AddDeliveryModal} from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
+import {DOCUMENT_TYPE, QUOTE_STATUSES} from "../quotes/enums";
+import {ButtonsConfirmContainer} from "@/widgets/quote-new/buttons-cofirm-container";
+import {CopyFromOrderModal} from "@/widgets/quote-new/modals-widgets/copy-from-order-modal/copy-from-order-modal";
+import {ReceiptsTable} from "@/widgets/quote-new/receipts-table";
+import {useRouter} from "next/router";
+import {usePaymentsTable} from "@/widgets/quote-new/receipts-table/use-payments-table";
+import {useEffect, useState} from "react";
+import {StepType} from "@reactour/tour";
+import {useGoMakeTour} from "@/hooks/use-go-make-tour";
+import {OtherReasonModal} from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
+import {QuoteStatuses} from "@/widgets/quote-new/total-price-and-vat/enums";
+import {fetchTaxesAuthority, LoginTaxesUrl} from "@/utils/taxes-authority";
+import {printHouseProfile} from "@/store/print-house-profile";
+import {WhatsAppWebModal} from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
+import {AddNewContactModal} from "@/widgets/quote-new/modals-widgets/add-new-contact-modal";
+import {NewItemNotesModal} from "@/widgets/quote-new/total-price-and-vat/new-item-notes-modal";
+import {AddRelatedDocumentsModal} from "@/widgets/quote-new/total-price-and-vat/add-related-documents";
+import {ViewSignatureApprovalModal} from "@/widgets/quote-new/total-price-and-vat/view-signature-approval-modal";
+import {CreditCardPaySection} from "@/widgets/quote-confirmation-mobile/components/credit-card-pay-section";
 import moment from "moment";
-import { QuoteNewPageSkeletonWidget } from "./quote-skeleton";
-import { InvoiceCreationModal } from "@/widgets/quote-new/invoice-creation-modal";
-import { useQuoteGetData } from "./use-quote-get-data";
-import { FONT_FAMILY } from "@/utils/font-family";
-import { DateField } from "@/components/date-picker/date-filed";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import {QuoteNewPageSkeletonWidget} from "./quote-skeleton";
+import {InvoiceCreationModal} from "@/widgets/quote-new/invoice-creation-modal";
+import {useQuoteGetData} from "./use-quote-get-data";
+import {FONT_FAMILY} from "@/utils/font-family";
+import {DateField} from "@/components/date-picker/date-filed";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {AdapterDateFns} from "@mui/x-date-pickers/AdapterDateFns";
+import {createTheme, ThemeProvider} from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
-import { ModalType } from "@/enums";
-import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
+import {ModalType} from "@/enums";
+import {DuplicateQuickModal} from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
+import {useOrdersSignalr, useQuotesSignalr} from "@/hooks";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -73,7 +70,7 @@ const QuoteNewPageWidget = ({
   useEffect(() => {
     setQuoteItemValue({});
   }, []);
-
+  
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
   const quoteState = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
@@ -284,6 +281,13 @@ const QuoteNewPageWidget = ({
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
+  if(documentType == DOCUMENT_TYPE.quote){
+    const {} = useQuotesSignalr({ getQuote });
+  }
+  if(documentType == DOCUMENT_TYPE.order){
+    const {} = useOrdersSignalr({ getQuote });
+  }
+ 
   const dir: "rtl" | "ltr" = t("direction");
 
   const handleChangeCreationDate = (newDate) => {
