@@ -55,7 +55,7 @@ const AccountingTransactionReportHeader = ({
           getOptionLabel={(option: any) => option.name}
           style={classes.textInputStyle}
           placeholder={t("reports.selectAccountCode")}
-          value={erpAccountsList.find(
+          value={erpAccountsList?.find(
             (option) => option.code === filterState?.accountCode
           )}
           onChange={handleAccountChange}

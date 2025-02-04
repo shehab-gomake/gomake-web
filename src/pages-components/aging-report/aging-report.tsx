@@ -87,6 +87,7 @@ const AgingReportWidget = () => {
           headers={transformedHeaders}
           maxHeight={"100vh"}
           stickyHeader={true}
+          variant="OddEvenTable"
         />
       )}
 
