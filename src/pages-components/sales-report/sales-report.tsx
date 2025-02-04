@@ -74,6 +74,7 @@ const SalesReportWidget = () => {
                 headers={tableHeaders}
                 maxHeight={"calc(100vh - 450px)"}
                 stickyHeader={true}
+                variant="OddEvenTable"
               />
               <div style={classes.totalStyle}>
                 {t("deposits.total")} : {item.total.toFixed(2)}
