@@ -343,12 +343,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     //getAllData(isPurchaseJobs, true); // moved to useEffect below
   };
 
+  const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
   useEffect(() => {
     const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
+    const serializedQuery = JSON.stringify(router.query);
+
     if (isNotFilteredData) {
-      getAllData(isPurchaseJobs, true); // Call this if there are no filters
-    } else {
-      getAllData(isPurchaseJobs, false); // Call this if there are filters
+      getAllData(isPurchaseJobs, true);
+    } else if (hasFetchedQuery !== serializedQuery) {
+      getAllData(isPurchaseJobs, false);
+      setHasFetchedQuery(serializedQuery); // Mark this query as fetched
     }
   }, [connectionId, pageSize, router]);
 
@@ -516,6 +520,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           alertFaultGetData();
         }
       };
+
+      const currentFinalPatternSearch = router.query.finalPatternSearch;
+      const currentPageNumber = router.query.pageNumber;
+
       await setBoardMissionsFiltersApi(
         callApi,
         callBack,
@@ -528,7 +536,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           : {
               clientId: customer?.id || router?.query?.clientId,
               agentId: agent?.id,
-              search: finalPatternSearch,
+              search:
+                finalPatternSearch !== null &&
+                finalPatternSearch !== undefined &&
+                finalPatternSearch !== ""
+                  ? finalPatternSearch
+                  : currentFinalPatternSearch,
               fromDate: fromDate && GetDateFormat(fromDate),
               toDate: toDate && GetDateFormat(toDate),
 
@@ -541,7 +554,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               productsIds: productIds,
               productionStatus: status?.value,
               orderStatus: orderStatus?.value,
-              pageNumber: pageNumber,
+              pageNumber: currentPageNumber || pageNumber,
               pageSize: pageSize,
               orderNumber: router?.query?.orderNumber,
             }
@@ -602,6 +615,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           alertFaultGetData();
         }
       };
+      const currentFinalPatternSearch = router.query.finalPatternSearch;
+      const currentPageNumber = router.query.pageNumber;
+
       await getAllPurchaseJobsApi(
         callApi,
         callBack,
@@ -617,7 +633,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 : { clientId: customer?.id }),
 
               agentId: agent?.id,
-              search: finalPatternSearch,
+                search:
+                    finalPatternSearch !== null &&
+                    finalPatternSearch !== undefined &&
+                    finalPatternSearch !== ""
+                        ? finalPatternSearch
+                        : currentFinalPatternSearch,
               fromDate: fromDate && GetDateFormat(fromDate),
               toDate: toDate && GetDateFormat(toDate),
 
@@ -630,8 +651,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               productsIds: productIds,
               productionStatus: status?.value,
               orderStatus: orderStatus?.value,
-              pageNumber: pageNumber,
-              pageSize: pageSize,
+                pageNumber: currentPageNumber || pageNumber,
+
+                pageSize: pageSize,
               isPurchaseJobs: true,
             }
       );
@@ -648,8 +670,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           missionItem?.customerID
         }&customerName=${encodeURIComponent(
           missionItem?.clientName || ""
-        )}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId
-        }&documentType=${DOCUMENT_TYPE.order
+        )}&productId=${missionItem?.productID}&documentItemId=${
+          missionItem?.orderItemId
+        }&documentType=${
+          DOCUMENT_TYPE.order
         }&documentNumber=${targetOrderNumber}&documentId=${targetOrderId}&duplicateType=${duplicateType}`
       );
     else
@@ -779,6 +803,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [remainingQuantity, setRemainingQuantity] = useState(
     missionItem?.quantity - quantityPerPackage * (quantityOfPackages - 1)
   );
+
+  //!here
   useEffect(() => {
     setRemainingQuantity(
       missionItem?.quantity - quantityPerPackage * (quantityOfPackages - 1)
@@ -932,6 +958,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   /* Most Important*/
   /* Read URL parameters and set state accordingly*/
+  //!here
   useEffect(() => {
     const {
       clientId,
@@ -1012,7 +1039,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const debouncePatternSearch = useDebounce(patternSearch, 1000);
-
   useEffect(() => {
     if (router.query.targetOrderNumber) {
       setPatternSearch(router.query.targetOrderNumber);
@@ -1020,30 +1046,35 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   }, []);
 
   useEffect(() => {
-    if (debouncePatternSearch !== null) {
-      const trimmedSearch = debouncePatternSearch?.trim() || "";
-      setFinalPatternSearch(trimmedSearch);
-      setPageNumber(1);
-      if (trimmedSearch === "") {
-        const { finalPatternSearch, ...remainingQuery } = router.query;
-        router.push({
-          pathname: router.pathname,
-          query: {
-            ...remainingQuery,
-            pageNumber: 1,
-          },
-        });
-        return;
-      }
+    if (debouncePatternSearch == null) return;
 
-      router.push({
-        pathname: router.pathname,
-        query: {
-          ...router.query,
-          finalPatternSearch: trimmedSearch,
-          pageNumber: 1,
+    const trimmedSearch = debouncePatternSearch.trim();
+    setFinalPatternSearch(trimmedSearch);
+
+    // Create a new query object
+    const newQuery = { ...router.query };
+
+    if (trimmedSearch) {
+      newQuery.finalPatternSearch = trimmedSearch;
+      newQuery.pageNumber = "1";
+    } else {
+      delete newQuery.finalPatternSearch; // Remove the parameter if empty
+      newQuery.pageNumber = "1";
+    }
+
+    // Only push if the query is actually changing
+    const hasQueryChanged =
+      JSON.stringify(newQuery) !== JSON.stringify(router.query);
+
+    if (hasQueryChanged) {
+      router.push(
+        {
+          pathname: router.pathname,
+          query: newQuery,
         },
-      });
+        undefined,
+        { shallow: true } // Optional: prevents full page reload
+      );
     }
   }, [debouncePatternSearch]);
 
