@@ -165,7 +165,7 @@ const TransactionJournalReportWidget = ({
         onClickDownloadMovingFiles={onClickDownloadMovingFiles}
         reportType={reportType}
       />
-      {reportType === EReportType.AdjustmentsReport && (
+      {isAdjustmentsReport && (
         <CollapsibleTable
           rows={rows}
           headers={headers}
@@ -178,6 +178,7 @@ const TransactionJournalReportWidget = ({
           headers={tableHeaders}
           maxHeight={"calc(100vh - 300px)"}
           stickyHeader={true}
+          variant="OddEvenTable"
         />
       )}
       {!isAccountingTransaction && !isAdjustmentsReport && (
@@ -196,6 +197,7 @@ const TransactionJournalReportWidget = ({
                       headers={tableHeaders}
                       maxHeight={"calc(100vh - 300px)"}
                       stickyHeader={true}
+                      variant="OddEvenTable"
                     />
                   );
                 })}
@@ -216,6 +218,7 @@ const TransactionJournalReportWidget = ({
                         )}
                         headers={tableHeaders}
                         maxHeight={400}
+                        variant="OddEvenTable"
                       />
                       <div style={classes.totalStyle}>
                         {t("deposits.total")} : {item.total.toFixed(2)}
