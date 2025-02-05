@@ -64,7 +64,7 @@ import {
   StatePayment,
   sendPaymentState,
 } from "./widgets/send-payment-modal/states";
-import { sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pay-api";
+import { getDocumentContactApi, sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pay-api";
 import { useRouter } from "next/router";
 import { ICard } from "./widgets/statistics-section/statistics-sections";
 import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
@@ -424,6 +424,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendPayment={onClickSendPayment}
               />,
             ];
           } else if (isPurchaseInvoice || isPurchaseInvoiceRefund) {
@@ -455,6 +456,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendPayment={onClickSendPayment}
               />,
             ];
           } else if (isQuote) {
@@ -483,6 +485,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendPayment={onClickSendPayment}
               />,
             ];
           } else if (isOrder) {
@@ -671,6 +674,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickOpenChangeProductionStatusModal={
               onClickOpenChangeProductionStatusModal
             }
+            onClickSendPayment={onClickSendPayment}
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -843,6 +847,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendPayment={onClickSendPayment}
               />,
             ];
           } else if (isPurchaseInvoice || isPurchaseInvoiceRefund) {
@@ -874,6 +879,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendPayment={onClickSendPayment}
               />,
             ];
           } else if (isQuote) {
@@ -902,6 +908,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
+                onClickSendPayment={onClickSendPayment}
               />,
             ];
           } else if (isOrder) {
@@ -1086,6 +1093,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickOpenChangeProductionStatusModal={
               onClickOpenChangeProductionStatusModal
             }
+            onClickSendPayment={onClickSendPayment}
           />,
         ]);
         setAllQuotes(isReceipt ? mapReceiptData : mapData);
@@ -2119,6 +2127,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
+  const [isSendToClient, setIsSendToClient] = useState(false);
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [sendPayment, setSendPayment] =
     useRecoilState<StatePayment>(sendPaymentState);
@@ -2127,27 +2136,50 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenPaymentModal(false);
   };
 
-  const onClickSendPaymentOld = (document: any): Promise<void> => {
-    return new Promise<void>((resolve, reject) => {
-      const callBack = (res) => {
-        if (res?.success) {
-          const newSendPaymentState = { ...sendPayment, ...res.data };
-          setSendPayment(newSendPaymentState);
-          resolve();
-        } else {
-          reject(new Error("Failed to update payment state"));
-        }
-      };
-      sendDocumentToClientForPaymentApi(callApi, callBack, {
-        id: document?.id,
-        documentType: docType,
+  const onClickSendPaymentOld = (document: any, isSendToClient: boolean): Promise<void> => {
+    if (isSendToClient) {
+      return new Promise<void>((resolve, reject) => {
+        const callBack = (res) => {
+          if (res?.success) {
+            const newSendPaymentState = { ...sendPayment, };
+            newSendPaymentState.documentId = document?.id;
+            newSendPaymentState.documentContacts = res.data;
+            setSendPayment(newSendPaymentState);
+            resolve();
+          } else {
+            reject(new Error("Failed to update payment state"));
+          }
+        };
+        getDocumentContactApi(callApi, callBack, {
+          documentId: document?.id,
+          documentType: docType,
+        });
+
       });
-    });
+    }
+    else {
+      return new Promise<void>((resolve, reject) => {
+        const callBack = (res) => {
+          if (res?.success) {
+            const newSendPaymentState = { ...sendPayment, ...res.data };
+            setSendPayment(newSendPaymentState);
+            resolve();
+          } else {
+            reject(new Error("Failed to update payment state"));
+          }
+        };
+        sendDocumentToClientForPaymentApi(callApi, callBack, {
+          id: document?.id,
+          documentType: docType,
+        });
+      });
+    }
   };
 
-  const onClickSendPayment = async (document: any) => {
+  const onClickSendPayment = async (document: any, isSendToClient: boolean) => {
+    setIsSendToClient(isSendToClient);
     try {
-      await onClickSendPaymentOld(document);
+      await onClickSendPaymentOld(document, isSendToClient);
       setPaymentModalTitle(
         `${t("prePayment.paymentPageFor")} ${t(
           `sales.quote.${DOCUMENT_TYPE[docType]}`
@@ -2624,7 +2656,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setFromDate,
     setToDate,
     isPurchaseDocument,
-    supplierList
+    supplierList,
+    isSendToClient
   };
 };
 

@@ -202,7 +202,8 @@ const QuotesListPageWidget = ({
     setFromDate,
     setToDate,
     supplierList,
-    isPurchaseDocument
+    isPurchaseDocument,
+    isSendToClient
   } = useQuotes(documentType, isFromHomePage);
 
 
@@ -845,6 +846,7 @@ const QuotesListPageWidget = ({
         onClickClosePaymentModal={onClickClosePaymentModal}
         paymentModalTitle={paymentModalTitle}
         documentType={documentType}
+        isSendToClient={isSendToClient}
       />
       <MakePaymentModal
         openMakePaymentModal={openMakePaymentModal}
