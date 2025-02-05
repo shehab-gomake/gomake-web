@@ -287,7 +287,7 @@ const TableRowComponent = ({
           </div>
         </SecondaryTableCell>
 
-        <SecondaryTableCell align={"center"} style={{ width: "20px", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }} onClick={() => getCustomerForEdit(boardMission?.clientId)}>
+        <SecondaryTableCell align={"center"} style={{ width: "20px",cursor:"pointer", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }} onClick={() => getCustomerForEdit(boardMission?.clientId)}>
           {getTruncatedLabel(boardMission?.clientName, 15)}
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"} style={{ padding: "0px 10px", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
