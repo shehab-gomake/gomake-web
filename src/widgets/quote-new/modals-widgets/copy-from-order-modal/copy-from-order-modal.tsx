@@ -5,7 +5,12 @@ import { OrderTableWidget } from "./order-table";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 
-const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentType }) => {
+const CopyFromOrderModal = ({
+  openModal,
+  onClose,
+  documentType,
+  copyFromDocumentType,
+}) => {
   const { classes } = useStyle();
   const {
     t,
@@ -27,16 +32,21 @@ const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentTy
     setShowReadyOnly,
     showReadyOnly,
     isCopyFromOrder,
-    setDocumentItems
-  } = useCopyFromOrderModal({ onClose, documentType, openModal, cliendDocumentType })
+    setDocumentItems,
+  } = useCopyFromOrderModal({
+    onClose,
+    documentType,
+    openModal,
+    copyFromDocumentType,
+  });
   return (
     <>
       <GoMakeModal
         openModal={openModal}
         modalTitle={`${modalLabel()} ${quoteItemValue?.client?.name}`}
         onClose={() => {
-          setDocumentItems([])
-          onClose()
+          setDocumentItems([]);
+          onClose();
         }}
         insideStyle={classes.insideStyle}
       >
@@ -45,7 +55,9 @@ const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentTy
             {documentItems?.length > 0 ? (
               <div style={classes.filtersContainer}>
                 <div style={classes.searchContainer}>
-                  <div style={classes.searchLabelStyle}>{t("sales.quote.searchBy")}</div>
+                  <div style={classes.searchLabelStyle}>
+                    {t("sales.quote.searchBy")}
+                  </div>
                   <SearchInputComponent onChange={setTerm} />
                 </div>
                 <div style={classes.switchContainer}>
@@ -53,17 +65,29 @@ const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentTy
                     checked={showReadyOnly}
                     onChange={(e) => setShowReadyOnly(e.target.checked)}
                   />
-                  <span style={classes.switchLabel}>{t("sales.cart.showReadyItems")}</span>
+                  <span style={classes.switchLabel}>
+                    {t("sales.cart.showReadyItems")}
+                  </span>
                 </div>
               </div>
             ) : (
               <div style={classes.filtersContainer}>
                 <div style={classes.searchContainer}>
                   <Skeleton variant="text" width={100} height={30} />
-                  <Skeleton variant="rectangular" width={200} height={40} style={{ marginTop: '10px' }} />
+                  <Skeleton
+                    variant="rectangular"
+                    width={200}
+                    height={40}
+                    style={{ marginTop: "10px" }}
+                  />
                 </div>
                 <div style={classes.switchContainer}>
-                  <Skeleton variant="text" width={150} height={30} style={{ marginLeft: '10px' }} />
+                  <Skeleton
+                    variant="text"
+                    width={150}
+                    height={30}
+                    style={{ marginLeft: "10px" }}
+                  />
                 </div>
               </div>
             )}
@@ -97,9 +121,14 @@ const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentTy
             {documentItems?.length > 0 ? (
               <>
                 <div style={classes.totalStyle}>
-                  {`${t("sales.quote.total")} : ${totalPrice.toFixed(2)} ${t("sales.quote.notIncludingVAT")} `}
+                  {`${t("sales.quote.total")} : ${totalPrice.toFixed(2)} ${t(
+                    "sales.quote.notIncludingVAT"
+                  )} `}
                 </div>
-                <GomakePrimaryButton onClick={addOrdersToDeliveryNote} style={classes.btnContainer}>
+                <GomakePrimaryButton
+                  onClick={addOrdersToDeliveryNote}
+                  style={classes.btnContainer}
+                >
                   {`${t("sales.quote.addTo")} ${buttonLabel().toLowerCase()}`}
                 </GomakePrimaryButton>
               </>
@@ -108,7 +137,12 @@ const CopyFromOrderModal = ({ openModal, onClose, documentType, cliendDocumentTy
                 {/* Skeleton for total price */}
                 <Skeleton variant="text" width={200} height={30} />
                 {/* Skeleton for the button */}
-                <Skeleton variant="rectangular" width={150} height={40} style={{ marginTop: '10px' }} />
+                <Skeleton
+                  variant="rectangular"
+                  width={150}
+                  height={40}
+                  style={{ marginTop: "10px" }}
+                />
               </>
             )}
           </div>

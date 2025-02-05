@@ -774,7 +774,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
             let temp = [];
             subSection.parameters.forEach((parameter) => {
-              if (parameter?.isHidden && !parameter?.isHiddenInSetting) {
+              if (parameter?.isHidden && !parameter?.isHiddenInSetting && !parameter?.setSettingIcon) {
                 if (parameter.isUnderParameterId !== null) {
                   underParameterIdsArray.push({
                     underParameterId: parameter.isUnderParameterId,
@@ -838,6 +838,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           "e1dfbaab-977e-4267-9e4e-d733f49ee20d",
                           "8b43efba-f28c-4e73-8fa0-cc64f3ea06f8",
                           "8eff3238-a321-48f3-85eb-c14afaccbff3",
+                          "ae8d81d1-a0de-4967-b821-dae6937e7551",
+                          "7a344769-6470-4584-8288-c7ff512af2ee",
+                          "54a29d4c-4fe1-4b3b-a4e8-cbfe99f656f5"
                         ];
 
                         parameterIdsToExtract.forEach((parameterId) => {
@@ -3279,7 +3282,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const relatedIndex = parameters.findIndex(
           (param) =>
             param.parameterId === relatedParam.parameterId &&
-            param.actionIndex == relatedParam.actionIndex
+            param.actionIndex == relatedParam.actionIndex &&
+            param.sectionId == sectionId &&
+            param.subSectionId == subSectionId
         );
 
         if (relatedIndex !== -1) {

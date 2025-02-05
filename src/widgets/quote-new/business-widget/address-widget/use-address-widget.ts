@@ -70,6 +70,9 @@ const useAddressWidget = ({ docType, addressType }: useAddressWidgetProps) => {
         addressId: "",
         apartment: "",
         entry: "",
+        floor: "",
+        postbox: "",
+        zipCode: "",
         type: addressType,
       });
       setIsNewAddressState(true);

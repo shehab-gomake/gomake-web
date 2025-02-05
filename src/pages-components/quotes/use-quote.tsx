@@ -110,8 +110,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { quoteNumber } = query;
   const { errorColor } = useGomakeTheme();
   const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
-  const { renderOptions, checkWhatRenderArray, isFetching } =
-    useCustomerDropDownList();
+
+  const isPurchaseDocument =
+    docType === DOCUMENT_TYPE.purchaseOrder ||
+    docType === DOCUMENT_TYPE.purchaseInvoice ||
+    docType === DOCUMENT_TYPE.purchaseInvoiceRefund;
+
+  const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
+    useCustomerDropDownList({
+      shouldRenderCustomersOnMount: !isPurchaseDocument,
+      shouldRenderSuppliersOnMount: isPurchaseDocument,
+    });
+
   // const [patternSearch, setPatternSearch] = useState<any>(null);
   const [patternSearch, setPatternSearch] = useState<any>(
     router.query.finalPatternSearch || null
@@ -1573,6 +1583,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   //   setToDate(toDate);
   // };
   const onSelectDeliveryTimeDates = (value) => {
+    console.log("value", value)
     if (value && value.length === 2) {
       setFromDate(value[0]);
       setToDate(value[1]);
@@ -2642,6 +2653,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     deliveryStatuses,
     deliveryStatus,
     setDeliveryStatus,
+    setFromDate,
+    setToDate,
+    isPurchaseDocument,
+    supplierList,
     isSendToClient
   };
 };

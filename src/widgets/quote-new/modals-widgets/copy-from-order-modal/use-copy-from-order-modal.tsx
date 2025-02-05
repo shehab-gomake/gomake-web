@@ -1,3 +1,4 @@
+import { ERPDocumentsTypesEnum } from "@/enums";
 import { useGomakeAxios } from "@/hooks";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
@@ -9,7 +10,12 @@ import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
-const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumentType }) => {
+const useCopyFromOrderModal = ({
+  onClose,
+  documentType,
+  openModal,
+  copyFromDocumentType,
+}) => {
   const { t } = useTranslation();
   const router = useRouter();
   const [term, setTerm] = useState("");
@@ -25,8 +31,6 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     };
   });
 
-  ///////////////////////////// NEW /////////////////////////////
-
   const [prevSelectedItems, setPrevSelectedItems] = useState([]);
   const [isAddToClicked, setIsAddToClicked] = useState(false);
 
@@ -41,7 +45,6 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     }
   }, [openModal]);
 
-
   const addOrdersToDeliveryNote = () => {
     setIsAddToClicked(true); // Track that the button was clicked
     setPrevSelectedItems(selectedItems); // Save current selected item
@@ -49,16 +52,16 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     onClose();
   };
 
-  ///////////////////////////// NEW /////////////////////////////
-
-
   const { callApi } = useGomakeAxios();
-  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+  const [quoteItemValue, setQuoteItemValue] =
+    useRecoilState<any>(quoteItemState);
   const [selectedItems, setSelectedItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [documentItems, setDocumentItems] = useState([]);
   const { orderId, deliveryNoteId } = router.query;
-  const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(null);
+  const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(
+    null
+  );
 
   useEffect(() => {
     if (orderId) {
@@ -69,7 +72,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
   }, [orderId, deliveryNoteId]);
 
   const modalLabel = () => {
-    switch (cliendDocumentType) {
+    switch (copyFromDocumentType) {
       case DOCUMENT_TYPE.order:
         return t("tabs.orders");
       case DOCUMENT_TYPE.deliveryNote:
@@ -106,18 +109,32 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     t("products.offsetPrice.admin.finalPrice"),
   ];
 
-  const calculateTotalPrice = () => {
+  const calculateTotalPrice = (fromDocumentType: DOCUMENT_TYPE) => {
+    const documentTypeMapping = {
+      [ERPDocumentsTypesEnum.order]: DOCUMENT_TYPE.order,
+      [ERPDocumentsTypesEnum.deliveryNote]: DOCUMENT_TYPE.deliveryNote,
+      [ERPDocumentsTypesEnum.purchase]: DOCUMENT_TYPE.purchaseOrder,
+    };
+
     let total = 0;
-    selectedItems.forEach(item => {
-      total += item.finalPrice;
-    });
+    selectedItems
+      .filter(
+        (item) =>
+          documentTypeMapping[item.sourceDocumentType] === fromDocumentType
+      )
+      .forEach((item) => {
+        total += item.finalPrice;
+      });
+
     setTotalPrice(total);
   };
 
   const handleItemSelect = (item) => {
-    if (selectedItems.some(selectedItem => selectedItem.id === item.id)) {
+    if (selectedItems.some((selectedItem) => selectedItem.id === item.id)) {
       // If the item is already selected, remove it
-      setSelectedItems(selectedItems.filter(selectedItem => selectedItem.id !== item.id));
+      setSelectedItems(
+        selectedItems.filter((selectedItem) => selectedItem.id !== item.id)
+      );
     } else {
       // If the item is not selected, add it
       setSelectedItems([...selectedItems, item]);
@@ -125,53 +142,67 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
   };
 
   const handleSelectAll = (documentItem) => {
+    const selectedIds = new Set(selectedItems.map((item) => item.id));
+    const sectionItemIds =
+      documentItem?.orderItems?.map((item) => item.id) || [];
 
-    const selectedIds = selectedItems.map(item => item.id);
-    const sectionItemIds = documentItem?.orderItems?.map(item => item.id);
-    const allSelected = sectionItemIds?.every(id => selectedIds?.includes(id));
+    const allSelected = sectionItemIds.every((id) => selectedIds.has(id));
 
     if (allSelected) {
       // If all items in the section are selected, remove them
-      const newSelectedItems = selectedItems.filter(item => !sectionItemIds.includes(item.id));
-      setSelectedItems(newSelectedItems);
+      setSelectedItems(
+        selectedItems.filter((item) => !sectionItemIds.includes(item.id))
+      );
     } else {
-
-      // If any item in the section is not selected, select all items in the section
-      const newSelectedItems = [...selectedItems, ...documentItem?.orderItems];
-      setSelectedItems(newSelectedItems);
+      // If any item is not selected, add only missing items
+      const newItems = documentItem?.orderItems.filter(
+        (item) => !selectedIds.has(item.id)
+      );
+      setSelectedItems([...selectedItems, ...newItems]);
     }
   };
 
   const areAllItemsSelected = (documentItemId) => {
-    const selectedIds = documentItems.find(item => item.id === documentItemId)?.orderItems?.map(item => item.id) || [];
-    return documentItems.find(item => item.id === documentItemId)?.orderItems?.every(item => selectedItems.some(selectedItem => selectedItem.id === item.id)) || false;
+    const selectedIds =
+      documentItems
+        .find((item) => item.id === documentItemId)
+        ?.orderItems?.map((item) => item.id) || [];
+    return (
+      documentItems
+        .find((item) => item.id === documentItemId)
+        ?.orderItems?.every((item) =>
+          selectedItems.some((selectedItem) => selectedItem.id === item.id)
+        ) || false
+    );
   };
 
   const getClientOrderItems = async () => {
     let docType;
-    if (cliendDocumentType === DOCUMENT_TYPE.order) {
+    if (copyFromDocumentType === DOCUMENT_TYPE.order) {
       docType = DOCUMENT_TYPE.order;
-    } else if (cliendDocumentType === DOCUMENT_TYPE.deliveryNote) {
+    } else if (copyFromDocumentType === DOCUMENT_TYPE.deliveryNote) {
       docType = DOCUMENT_TYPE.deliveryNote;
-    }
-    else if (cliendDocumentType === DOCUMENT_TYPE.purchaseOrder) {
+    } else if (copyFromDocumentType === DOCUMENT_TYPE.purchaseOrder) {
       docType = DOCUMENT_TYPE.purchaseOrder;
     }
+
     const callBack = (res) => {
       if (res?.success) {
-        const updatedData = res.data.filter(doc => doc.id !== currentDocumentId).map(doc => {
-          const sourceDocumentNumber = doc.number;
-          const sourceDocumentId = doc.id;
-          const updatedOrderItems = doc.orderItems.map(item => ({
-            ...item,
-            sourceDocumentNumber,
-            sourceDocumentId
-          }));
-          return {
-            ...doc,
-            orderItems: updatedOrderItems,
-          };
-        });
+        const updatedData = res.data
+          .filter((doc) => doc.id !== currentDocumentId)
+          .map((doc) => {
+            const sourceDocumentNumber = doc.number;
+            const sourceDocumentId = doc.id;
+            const updatedOrderItems = doc.orderItems.map((item) => ({
+              ...item,
+              sourceDocumentNumber,
+              sourceDocumentId,
+            }));
+            return {
+              ...doc,
+              orderItems: updatedOrderItems,
+            };
+          });
         setDocumentItems(updatedData);
       } else {
         setDocumentItems(null);
@@ -182,39 +213,44 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
       documentType: docType,
       clientId: quoteItemValue?.customerID,
     });
-
-
   };
   const calculateDocument = useCallback(async () => {
-    const sharedDeletedArry = quoteItemValue.documentItems.filter(item => {
-      const isIncludedInOrderItems = documentItems.some(docItem => {
-        return docItem.orderItems.some(orderItem => orderItem.id === item.id);
+    const sharedDeletedArry = quoteItemValue.documentItems.filter((item) => {
+      const isIncludedInOrderItems = documentItems.some((docItem) => {
+        return docItem.orderItems.some((orderItem) => orderItem.id === item.id);
       });
-      const isNotIncludedInSelectedItems = !selectedItems.some(selectedItem => selectedItem.id === item.id);
+      const isNotIncludedInSelectedItems = !selectedItems.some(
+        (selectedItem) => selectedItem.id === item.id
+      );
       return isIncludedInOrderItems && isNotIncludedInSelectedItems;
     });
-    const documentItemsFilters = quoteItemValue.documentItems.filter(item => {
-      return !sharedDeletedArry.some(sharedItem => sharedItem.id === item.id);
+    const documentItemsFilters = quoteItemValue.documentItems.filter((item) => {
+      return !sharedDeletedArry.some((sharedItem) => sharedItem.id === item.id);
     });
     const mergedItems = [...documentItemsFilters, ...selectedItems];
     const idMap = new Map();
-    const uniqueItems = mergedItems.filter(item => {
-      if (!idMap.has(item.id)) {
-        idMap.set(item.id, true);
-        return true;
-      }
-      return false;
-    }).map(item => ({
-      ...item,
-      finalPrice: item.finalPrice
-    }));
+    const uniqueItems = mergedItems
+      .filter((item) => {
+        if (!idMap.has(item.id)) {
+          idMap.set(item.id, true);
+          return true;
+        }
+        return false;
+      })
+      .map((item) => ({
+        ...item,
+        finalPrice: item.finalPrice,
+      }));
     const res = await callApi(
       EHttpMethod.POST,
       `/v1/erp-service/documents/calculate-document-new`,
       {
         documentType: documentType,
         document: {
-          exchangeRate: documentItems[0]?.exchangeRate === 0 ? 1 : documentItems[0]?.exchangeRate,
+          exchangeRate:
+            documentItems[0]?.exchangeRate === 0
+              ? 1
+              : documentItems[0]?.exchangeRate,
           totalPrice: quoteItemValue?.totalPrice,
           data: 0,
           calculationType: 0,
@@ -226,44 +262,46 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
           totalVAT: quoteItemValue?.totalVAT || 0.17,
           documentItems: uniqueItems,
           roundPrices: quoteItemValue?.client?.roundPrices,
-        }
+        },
       }
     );
     if (res?.success) {
-      const _data = res?.data?.data?.data
+      const _data = res?.data?.data?.data;
       const updatedQuoteItemValue = { ...quoteItemValue };
       updatedQuoteItemValue.discount = _data.discount;
       updatedQuoteItemValue.discountAmount = _data.discountAmount;
       updatedQuoteItemValue.totalPayment = _data.totalPayment;
       updatedQuoteItemValue.totalPrice = _data.totalPrice;
-      updatedQuoteItemValue.totalPriceAfterDiscount = _data.totalPriceAfterDiscount;
+      updatedQuoteItemValue.totalPriceAfterDiscount =
+        _data.totalPriceAfterDiscount;
       updatedQuoteItemValue.totalVAT = _data.totalVAT;
       updatedQuoteItemValue.vat = _data.vat;
       updatedQuoteItemValue.exchangeRate = documentItems[0]?.exchangeRate;
-      const filteredSelectedItems = selectedItems.filter(selectedItem => {
-        return !updatedQuoteItemValue.documentItems.some(documentItem => documentItem.id === selectedItem.id);
+      const filteredSelectedItems = selectedItems.filter((selectedItem) => {
+        return !updatedQuoteItemValue.documentItems.some(
+          (documentItem) => documentItem.id === selectedItem.id
+        );
       });
 
       updatedQuoteItemValue.documentItems = [
         ...documentItemsFilters,
-        ...filteredSelectedItems
+        ...filteredSelectedItems,
       ];
       setQuoteItemValue(updatedQuoteItemValue);
     }
   }, [quoteItemValue, selectedItems, documentType, documentItems]);
 
   useEffect(() => {
-    calculateTotalPrice();
-  }, [selectedItems]);
+    calculateTotalPrice(copyFromDocumentType);
+  }, [selectedItems, copyFromDocumentType]);
 
   useEffect(() => {
     if (openModal) {
-      getClientOrderItems()
+      getClientOrderItems();
     }
   }, [quoteItemValue, openModal]);
 
-
-  const isCopyFromOrder = cliendDocumentType === DOCUMENT_TYPE.order;
+  const isCopyFromOrder = copyFromDocumentType === DOCUMENT_TYPE.order;
   const [showReadyOnly, setShowReadyOnly] = useState(false);
 
   const filterItems = (documentItemIsReady, items) => {
@@ -275,10 +313,11 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
 
     if (term) {
       const searchTerm = term.toLowerCase();
-      filteredItems = filteredItems.filter(item =>
-        item?.productName?.toLowerCase()?.includes(searchTerm) ||
-        item?.details?.toLowerCase()?.includes(searchTerm) ||
-        item?.workName?.toLowerCase()?.includes(searchTerm)
+      filteredItems = filteredItems.filter(
+        (item) =>
+          item?.productName?.toLowerCase()?.includes(searchTerm) ||
+          item?.details?.toLowerCase()?.includes(searchTerm) ||
+          item?.workName?.toLowerCase()?.includes(searchTerm)
       );
     }
 
@@ -317,7 +356,7 @@ const useCopyFromOrderModal = ({ onClose, documentType, openModal, cliendDocumen
     setShowReadyOnly,
     showReadyOnly,
     isCopyFromOrder,
-    setDocumentItems
+    setDocumentItems,
   };
 };
 

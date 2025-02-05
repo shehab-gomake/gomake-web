@@ -19,7 +19,7 @@ import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
@@ -199,8 +199,13 @@ const QuotesListPageWidget = ({
     deliveryStatuses,
     deliveryStatus,
     setDeliveryStatus,
+    setFromDate,
+    setToDate,
+    supplierList,
+    isPurchaseDocument,
     isSendToClient
   } = useQuotes(documentType, isFromHomePage);
+
 
   useEffect(() => {
     if (router.query.orderNumber) {
@@ -218,11 +223,23 @@ const QuotesListPageWidget = ({
   const RTL = dir === "rtl";
   const GlobalStyle = createGlobalStyle`
   .rs-picker-popup-daterange {
-    left: ${({ RTL }: any) => (RTL ? "auto" : "150px")} !important;
-    right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
+    left: ${({ RTL }: any) => (RTL ? "auto" : "515px")} !important;
+    right: ${({ RTL }: any) => (RTL ? "530px" : "auto")} !important;
+    top: 320px !important;
   }
 `;
 
+  const pickerRef = useRef(null);
+
+  const handleSelect = (date) => {
+    if (!fromDate) {
+      setFromDate(date);
+    } else if (!toDate) {
+      setToDate(date);
+      onSelectDeliveryTimeDates([fromDate, date]);
+      pickerRef.current.close();
+    }
+  };
   const renderCreateNewButton = (onClickHandler) => (
     <Button
       sx={{
@@ -239,7 +256,6 @@ const QuotesListPageWidget = ({
       {t("sales.quote.createNew")}
     </Button>
   );
-
   const renderOrderCard = (onclickCreateNew) => (
     <>
       <PermissionCheck
@@ -351,12 +367,25 @@ const QuotesListPageWidget = ({
                               </div>
                               <GoMakeAutoComplate
                                 key={customerId?.id}
-                                options={renderOptions() ? renderOptions() : []}
+                                options={
+                                  isPurchaseDocument
+                                    ? supplierList
+                                    : renderOptions()
+                                    ? renderOptions()
+                                    : []
+                                }
                                 getOptionLabel={(option: any) =>
                                   `${option.name}`
                                 }
-                                defaultFiltering={false}
-                                onChangeTextField={checkWhatRenderArray}
+                                defaultFiltering={
+                                  isPurchaseDocument ? true : false
+                                }
+                                onChangeTextField={(e) => {
+                                  if (isPurchaseDocument) {
+                                    return;
+                                  }
+                                  checkWhatRenderArray(e);
+                                }}
                                 style={classes.textInputStyle}
                                 placeholder={t("sales.quote.chooseCustomer")}
                                 onChange={(e: any, value: any) => {
@@ -565,10 +594,13 @@ const QuotesListPageWidget = ({
                               </h3>
                               <GlobalStyle RTL={RTL} />
                               <DateRangePicker
+                                ref={pickerRef}
                                 onChange={onSelectDeliveryTimeDates}
+                                onSelect={handleSelect}
                                 value={
                                   fromDate && toDate ? [fromDate, toDate] : null
                                 }
+                              // oneTap
                               />
                             </div>
                           </div>

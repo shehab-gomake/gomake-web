@@ -16,7 +16,7 @@ const BookletCollectorUnit = ({}: IStepFormProps) => {
                         <InputContainer key={property.parameterKey} attribute={property} updateState={changeMachineAttributes} error={errors[property.parameterKey]}/>
                     ))
                 }
-                <CollectorCellsMaxThickness disabled={!machineState.attributes?.isManualCollector || !machineState.attributes?.isAvailableCollectorUnit}/>
+                <CollectorCellsMaxThickness disabled={!!machineState.attributes?.isManualCollector || !machineState.attributes?.isAvailableCollectorUnit}/>
             </div>
         </div>
     );

@@ -1,13 +1,11 @@
 import { ERPDocumentsTypesEnum } from "@/enums/document-type-enum";
-
-
 export function renderDocumentTypeForSourceDocumentNumber(documentType: ERPDocumentsTypesEnum): string {
     switch (documentType) {
         case ERPDocumentsTypesEnum.order:
             return "SourceDocument.order";
         case ERPDocumentsTypesEnum.invoice:
             return "SourceDocument.invoice";
-        case ERPDocumentsTypesEnum.deliveryNotes:
+        case ERPDocumentsTypesEnum.deliveryNote:
             return "SourceDocument.deliveryNotes";
         case ERPDocumentsTypesEnum.purchase:
             return "SourceDocument.purchase";
@@ -52,7 +50,7 @@ export function renderURLDocumentType(documentType: ERPDocumentsTypesEnum, docum
             return `/order?Id=${documentId}`;
         case ERPDocumentsTypesEnum.invoice:
             return `/invoice?Id=${documentId}`;
-        case ERPDocumentsTypesEnum.deliveryNotes:
+        case ERPDocumentsTypesEnum.deliveryNote:
             return `/deliveryNote?Id=${documentId}`;
         case ERPDocumentsTypesEnum.purchase:
             return `/purchaseOrder?Id=${documentId}`;
