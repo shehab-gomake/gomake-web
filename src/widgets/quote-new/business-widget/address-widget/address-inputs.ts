@@ -40,6 +40,36 @@ const addressInputs = (state: any, isNewAddressState: boolean) => {
       options: [],
       value: state?.apartment,
     },
+    {
+      name: "floor",
+      label: "customers.modal.floor",
+      type: "text",
+      placeholder: "customers.modal.floor",
+      required: false,
+      parameterKey: "floor",
+      options: [],
+      value: state?.floor,
+    },
+    {
+      name: "zipCode",
+      label: "customers.modal.postalCode",
+      type: "text",
+      placeholder: "customers.modal.postalCode",
+      required: false,
+      parameterKey: "zipCode",
+      options: [],
+      value: state?.zipCode,
+    },
+    {
+      name: "postbox",
+      label: "customers.modal.po",
+      type: "text",
+      placeholder: "customers.modal.po",
+      required: false,
+      parameterKey: "postbox",
+      options: [],
+      value: state?.postbox,
+    },
   ];
 
   if (isNewAddressState) {

@@ -26,7 +26,10 @@ const useAuthLayoutHook = (
   permissionEnumValue?: Permissions,
   allowAnonymous?: boolean
 ) => {
-  const { isAuth, isLanguageUpdated } = useGomakeAuth(permissionEnumValue, allowAnonymous);
+  const { isAuth, isLanguageUpdated } = useGomakeAuth(
+    permissionEnumValue,
+    allowAnonymous
+  );
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
@@ -141,6 +144,12 @@ const useAuthLayoutHook = (
         isList: true,
         list: [
           {
+            key: "purchaseJobs",
+            title: "tabs.purchaseJobs",
+            path: "/purchase-jobs",
+            Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
+          },
+          {
             key: "purchase order",
             title: "tabs.purchaseOrder",
             path: "/purchaseOrders",
@@ -156,12 +165,6 @@ const useAuthLayoutHook = (
             key: "purchase invoice refund",
             title: "tabs.purchaseInvoiceRefund",
             path: "/purchaseInvoiceRefunds",
-            Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
-          },
-          {
-            key: "purchaseJobs",
-            title: "tabs.purchaseJobs",
-            path: "/purchase-jobs",
             Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
           },
         ],
@@ -239,12 +242,12 @@ const useAuthLayoutHook = (
             path: "/ledger-report",
             Permission: Permissions.SHOW_LEDGER_REPORT,
           },
-          {
-            key: "transactionJournalReport",
-            title: "tabs.transactionJournalReport",
-            path: "/transaction-journal-report",
-            Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
-          },
+          // {
+          //   key: "transactionJournalReport",
+          //   title: "tabs.transactionJournalReport",
+          //   path: "/transaction-journal-report",
+          //   Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
+          // },
           {
             key: "dailyPaymentsReport",
             title: "tabs.dailyPaymentsReport",
@@ -401,9 +404,9 @@ const useAuthLayoutHook = (
   }, []);
 
   useEffect(() => {
-    if(allowAnonymous){
-      setCanAccess(true)
-      return
+    if (allowAnonymous) {
+      setCanAccess(true);
+      return;
     }
     if (typeof isAuth === "boolean") {
       setCanAccess(isAuth && isLanguageUpdated);

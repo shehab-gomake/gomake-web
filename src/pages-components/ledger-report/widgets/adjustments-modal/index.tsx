@@ -82,6 +82,7 @@ const AdjustmentsLedgerReportModal = ({
                 headers={tableHeaders}
                 maxHeight={610}
                 stickyHeader={true}
+                columnWidths={["5%", "18%", "18%", "18%", "18%", "27%"]}
               />
               <div style={classes.totalPriceContainer}>
                 {calculateTotalPrice().toFixed(3)} NIS

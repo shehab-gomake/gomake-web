@@ -368,7 +368,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           )
         )
       }
-      if (action?.key.toLowerCase().includes("price")&&!openPriceModal) {
+      if (action?.key.toLowerCase().includes("price") && !openPriceModal) {
         onClickOpenPriceModal();
       }
       setAction(null);
@@ -724,12 +724,14 @@ const useMaterialsActions = (isAdmin: boolean) => {
   }, [properties]);
   const duplicateMaterials = useCallback(async () => {
     const transformedArray = properties.map((item) => {
-      const key = item.key.key.toLowerCase();
-      const value = item.value;
+      const key = item?.key?.key?.toLowerCase();
+      const value = String(item.values[item?.values?.length - 1]);
+      const uniqueValues = Array.from(new Set(item.values));
 
       return {
         key,
         value,
+        values: uniqueValues
       };
     });
 

@@ -19,19 +19,17 @@ const QuoteConfirmationPageWidget = ({
   documentType,
 }: IProps) => {
   const [isMobile, setIsMobile] = useState(false);
-
   const {
-    t,
     getTempUserToken,
     getPrePaymentById,
     getQuoteConfirmation,
-    quoteConfirm,
     documentTitle,
     direction,
-    capitalizeFirstLetter,
     isPageNotFound,
     setIsPageNotFound,
-    router,
+    companyLogo,
+    getCompanyLogo,
+    quoteConfirm,
   } = useQuoteConfirmation({ documentType });
 
   const { classes } = useStyle({ direction });
@@ -74,29 +72,67 @@ const QuoteConfirmationPageWidget = ({
     return <PageNotFound hideBackToHomePageBtn={true} />;
   }
 
+  useEffect(() => {
+    getCompanyLogo().then();
+  }, []);
+
   return (
     <div style={classes.firstContainer}>
       <div style={isMobile ? classes.iconMobileStyle : classes.iconStyle}>
-        {quoteConfirm?.printHouseLogo ? (
-          <img
-            src={quoteConfirm.printHouseLogo}
-            alt="Print House Logo"
-            style={classes.printHouseLogo}
-          />
-        ) : (
-          <GoMakeIcon />
-        )}
-        {isPrePaymentPage && (
-          <span
+        {companyLogo?.loginLogo && !isPrePaymentPage ? (
+          <div
             style={{
-              ...classes.printHouseName,
-              ...(isMobile
-                ? FONT_FAMILY.Inter(600, 16)
-                : FONT_FAMILY.Inter(600, 18)),
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: "10px",
             }}
           >
-            {capitalizeFirstLetter(quoteConfirm?.printHouseName)}
-          </span>
+            <img
+              src={companyLogo?.loginLogo}
+              alt="Print House Logo"
+              style={classes.printHouseLogo}
+            />
+            <span
+              style={{
+                color: "#000",
+                ...(isMobile
+                  ? FONT_FAMILY.Inter(600, 24)
+                  : FONT_FAMILY.Inter(700, 32)),
+                textTransform: "capitalize",
+              }}
+            >
+              {companyLogo?.name}
+            </span>
+          </div>
+        ) : quoteConfirm?.printHouseLogo && isPrePaymentPage ? (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <img
+              src={quoteConfirm?.printHouseLogo}
+              alt="Print House Logo"
+              style={classes.printHouseLogo}
+            />
+            <span
+              style={{
+                color: "#000",
+                ...(isMobile
+                  ? FONT_FAMILY.Inter(600, 24)
+                  : FONT_FAMILY.Inter(700, 32)),
+                textTransform: "capitalize",
+              }}
+            >
+              {quoteConfirm?.printHouseName}
+            </span>
+          </div>
+        ) : (
+          <GoMakeIcon />
         )}
       </div>
       {isMobile ? (

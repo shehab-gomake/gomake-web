@@ -15,8 +15,8 @@ const DescreptionWidget = ({ desciption }: { desciption: string }) => {
   };
 
   const plainTextDescription = stripHtmlTags(desciption);
-  const shouldTruncate = plainTextDescription?.length > 100;
-  const displayedText = isExpanded || !shouldTruncate ? plainTextDescription : `${plainTextDescription?.slice(0, 100)}...`;
+  const shouldTruncate = plainTextDescription?.length > 70;
+  const displayedText = isExpanded || !shouldTruncate ? plainTextDescription : `${plainTextDescription?.slice(0, 70)}...`;
 
 
 

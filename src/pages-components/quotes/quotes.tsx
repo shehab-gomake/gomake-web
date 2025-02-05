@@ -200,7 +200,9 @@ const QuotesListPageWidget = ({
     deliveryStatus,
     setDeliveryStatus,
     setFromDate,
-    setToDate
+    setToDate,
+    supplierList,
+    isPurchaseDocument
   } = useQuotes(documentType, isFromHomePage);
 
 
@@ -364,12 +366,25 @@ const QuotesListPageWidget = ({
                               </div>
                               <GoMakeAutoComplate
                                 key={customerId?.id}
-                                options={renderOptions() ? renderOptions() : []}
+                                options={
+                                  isPurchaseDocument
+                                    ? supplierList
+                                    : renderOptions()
+                                    ? renderOptions()
+                                    : []
+                                }
                                 getOptionLabel={(option: any) =>
                                   `${option.name}`
                                 }
-                                defaultFiltering={false}
-                                onChangeTextField={checkWhatRenderArray}
+                                defaultFiltering={
+                                  isPurchaseDocument ? true : false
+                                }
+                                onChangeTextField={(e) => {
+                                  if (isPurchaseDocument) {
+                                    return;
+                                  }
+                                  checkWhatRenderArray(e);
+                                }}
                                 style={classes.textInputStyle}
                                 placeholder={t("sales.quote.chooseCustomer")}
                                 onChange={(e: any, value: any) => {

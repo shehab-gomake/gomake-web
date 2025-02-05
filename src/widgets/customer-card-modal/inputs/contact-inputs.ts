@@ -113,7 +113,7 @@ const contactInputs1 = (state) => {
       options: [],
       value: state?.mail,
       isValid: !!state?.mail,
-      regex: emailRegex
+      regex: emailRegex,
     },
     {
       name: "default in document",
@@ -125,13 +125,12 @@ const contactInputs1 = (state) => {
       options: [
         { value: ERPDocumentsTypesEnum.quote, text: t("tabs.quotes") },
         { value: ERPDocumentsTypesEnum.order, text: t("tabs.orders") },
-        { value: ERPDocumentsTypesEnum.deliveryNotes, text: t("tabs.deliveryNotes") },
+        { value: ERPDocumentsTypesEnum.deliveryNote, text: t("tabs.deliveryNotes") },
         { value: ERPDocumentsTypesEnum.invoice, text: t("tabs.invoices") },
         { value: ERPDocumentsTypesEnum.receipt, text: t("tabs.receipts") },
       ],
       value: state?.defaultInDocsTypes,
-      multiple: true
-
+      multiple: true,
     },
   ];
 };
