@@ -57,7 +57,7 @@ import {
   materialModalState,
 } from "./material-and-production-time-modal/states";
 import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
-import {convertUtcToLocalIsoString} from "@/components/date-time/date-time-component";
+import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import { currentProductItemValueState, outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 import { updateProductItemDraftActionData } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 
@@ -136,7 +136,6 @@ const BoardMissionsStationAction = ({
     onClickGetMachineForAction,
   } = useBoardMissionsUpdatedOutputs();
   const { CheckPermission } = useUserPermission();
-  console.log("stations", stations)
   const inputsParameters = outputs.filter(
     (parameter) =>
       parameter &&
@@ -745,15 +744,7 @@ const BoardMissionsStationAction = ({
                                         zIndex: 9999999999999999999,
                                       }}
                                     >
-                                      {(!!machensFilter
-                                        ? machinesList?.filter((value) =>
-                                          value.label
-                                            ?.toLowerCase()
-                                            ?.includes(
-                                              machensFilter?.toLowerCase()
-                                            )
-                                        )
-                                        : machinesList
+                                      {(machinesList
                                       )?.map((value, index) => {
                                         return (
                                           <MenuItem
@@ -838,15 +829,7 @@ const BoardMissionsStationAction = ({
                                       zIndex: 9999999999999999999,
                                     }}
                                   >
-                                    {(!!contactsFilter
-                                      ? employeesList?.filter((value) =>
-                                        value.label
-                                          ?.toLowerCase()
-                                          ?.includes(
-                                            contactsFilter?.toLowerCase()
-                                          )
-                                      )
-                                      : employeesList
+                                    {(employeesList
                                     )?.map((value, index) => {
                                       return (
                                         <MenuItem
@@ -904,7 +887,7 @@ const BoardMissionsStationAction = ({
                           {t("productionFloor.deliveryTime")}
                         </span>
                         <span style={classes.detailValue}>
-                    {DateFormatterDDMMYYYY(convertUtcToLocalIsoString(dueDate))}
+                          {DateFormatterDDMMYYYY(convertUtcToLocalIsoString(dueDate))}
                         </span>
                       </Stack>
                       <span style={classes.sourceLabel}>
