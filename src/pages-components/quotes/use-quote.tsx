@@ -664,7 +664,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             quote={quote}
             documentType={docType}
             onClickOpenModal={onClickOpenModal}
-            //onClickPdf={onClickQuotePdf}
             onClickPdf={onOpenExportReceiptPdfModal}
             onClickDuplicate={onClickDocumentDuplicate}
             onClickLoggers={onClickDocumentLogs}
@@ -1084,7 +1083,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             quote={quote}
             documentType={docType}
             onClickOpenModal={onClickOpenModal}
-            onClickPdf={onClickQuotePdf}
+            onClickPdf={onOpenExportReceiptPdfModal}
             onClickDuplicate={onClickDocumentDuplicate}
             onClickLoggers={onClickDocumentLogs}
             onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
