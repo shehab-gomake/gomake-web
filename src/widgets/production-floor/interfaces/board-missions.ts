@@ -52,6 +52,7 @@ export interface IBoardMissionsDetails {
   agentName: string;
   boardMissionImage: string;
   isNeedExample: boolean;
+  isUrgentWork?: boolean;
   isRepetitiveWork?: boolean;
   dueDate?: string;
   createdDate?: Date;

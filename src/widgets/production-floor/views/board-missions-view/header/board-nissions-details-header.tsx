@@ -13,7 +13,12 @@ import { useBoardMissionsDetailsHeader } from "./use-board-nissions-details-head
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { clearPhoneNumberPrefix } from "@/utils/helpers";
-import {convertUtcToLocalIsoString} from "@/components/date-time/date-time-component";
+import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
+import { ApprovalFileStatusComponent } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
+import { DocumentsButton } from "../navigation-buttons/documents-button";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { MoreActionsButton } from "../navigation-buttons/more-actions-button";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
@@ -27,13 +32,12 @@ const doneBoardMissionsColors = {
   color: "#66D671",
   bfColor: "#D9F5DC",
 };
+
 const BoardMissionsDetailsHeader = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const direction = t("direction");
-  const {
-    CheckPreferenceValue
-  } = usePrintHousePreferences()
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   const {
     boards,
     boardFromTable,
@@ -68,7 +72,11 @@ const BoardMissionsDetailsHeader = () => {
   return (
     <>
       {isLoading ? (
-        <Stack direction="row" justifyContent="space-between">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems={"flex-start"}
+        >
           {/* Avatar Skeleton */}
           <Stack direction="row" gap="14px" alignItems="center">
             <Skeleton variant="rectangular" width={80} height={80} />
@@ -83,16 +91,42 @@ const BoardMissionsDetailsHeader = () => {
               </Stack>
             </Stack>
           </Stack>
-
-          {/* Navigation buttons Skeleton */}
-          <Stack direction="row" gap="10px" alignItems="center">
-            <Skeleton variant="circular" width={40} height={40} />
-            <Skeleton variant="circular" width={40} height={40} />
+          <Stack gap={"10px"}>
+            {/* Navigation buttons Skeleton */}
+            <Stack
+              direction="row"
+              gap="10px"
+              alignItems="center"
+              alignSelf={"flex-end"}
+            >
+              <Skeleton variant="circular" width={40} height={40} />
+              <Skeleton variant="circular" width={40} height={40} />
+            </Stack>
+            {/* Action Buttons (DocumentsButton and MoreActionsButton) Skeletons  */}
+            <Stack direction={"row"} alignItems={"center"} gap={"12px"}>
+              <Skeleton
+                variant="rectangular"
+                width={200}
+                height={40}
+                style={{ borderRadius: 12 }}
+              />
+              <Skeleton
+                variant="rectangular"
+                width={50}
+                height={40}
+                style={{ borderRadius: 12 }}
+              />
+            </Stack>
           </Stack>
         </Stack>
       ) : (
-        <Stack direction={"row"} justifyContent={"space-between"}>
+        <Stack
+          direction={"row"}
+          justifyContent={"space-between"}
+          alignItems="flex-start"
+        >
           <Stack gap={"14px"} direction={"row"} alignItems={"center"}>
+            {/* Avatar */}
             <Stack>
               <Avatar
                 src={boardMissionsDetails?.boardMissionImage}
@@ -102,7 +136,9 @@ const BoardMissionsDetailsHeader = () => {
                 <TocIcon style={{ width: "60px", height: "60px" }} />
               </Avatar>
             </Stack>
+
             <Stack gap={"10px"}>
+              {/* First row */}
               <Stack direction={"row"} alignItems={"center"} gap={"5px"}>
                 <HeaderTitleComponent
                   title={boardMissionsDetails?.productName}
@@ -118,149 +154,185 @@ const BoardMissionsDetailsHeader = () => {
                 <span style={classes.productType}>
                   {boardMissionsDetails.sectionName}
                 </span>
-              </Stack>
-              <Stack direction={"row"} alignItems={"center"} gap={"16px"}>
-                <span>
-                  {t("productionFloor.started")}{" "}
-                  {DateFormatterDDMMYYYY(
-                      convertUtcToLocalIsoString(boardMissionsDetails.createdDate?.toString())
+
+                {/* Status */}
+                <Stack
+                  style={{
+                    backgroundColor: boardMissionsDetails?.isReady
+                      ? doneBoardMissionsColors.bfColor
+                      : "transparent",
+                  }}
+                  padding={"0 5px"}
+                  direction={"row"}
+                  gap={"5px"}
+                  color={
+                    boardMissionsDetails?.isReady
+                      ? doneBoardMissionsColors.color
+                      : boardMissionsDetails?.boardMissionStatus?.textColor
+                  }
+                >
+                  {isLoadingStatus ? (
+                    <Skeleton
+                      variant="rectangular"
+                      width={120}
+                      height={40}
+                      sx={{ borderRadius: "5px" }}
+                    />
+                  ) : boardMissionsDetails?.isReady ? (
+                    <span>{t("boardMissions.done")}</span>
+                  ) : (
+                    <BoardStatusComponent
+                      statusId={boardMissionsDetails.boardMissionStatus?.id}
+                      id={boardMissionsDetails?.boardMissionId}
+                      onChange={handleStatusChange}
+                      isFromMissionView={true}
+                      currentStation={boardMissionsDetails?.currentActionName}
+                      statusColorBg={
+                        boardMissionsDetails?.boardMissionStatus
+                          ?.backgroundColor
+                      }
+                      statusColorText={
+                        boardMissionsDetails?.boardMissionStatus?.textColor
+                      }
+                      statusText={t(
+                        `productionStatuses.${boardMissionsDetails.boardMissionStatus?.name}`
+                      )}
+                    />
                   )}
-                </span>
-                <Divider flexItem orientation={"vertical"} />
-                <Stack direction={"row"} gap={"8px"} alignItems={"center"}>
-                  <span style={classes.parameterLabel}>
-                    {t("productionFloor.status")}:
-                  </span>
-                  <Stack
-                    style={{
-                      backgroundColor: boardMissionsDetails?.isReady
-                        ? doneBoardMissionsColors.bfColor
-                        : "transparent",
-                    }}
-                    padding={"0 5px"}
-                    direction={"row"}
-                    gap={"5px"}
-                    color={
-                      boardMissionsDetails?.isReady
-                        ? doneBoardMissionsColors.color
-                        : boardMissionsDetails?.boardMissionStatus?.textColor
-                    }
-                  >
-                    {isLoadingStatus ? (
-                      <Skeleton
-                        variant="rectangular"
-                        width={120}
-                        height={40}
-                        sx={{ borderRadius: "5px" }}
-                      />
-                    ) : boardMissionsDetails?.isReady ? (
-                      <span>{t("boardMissions.done")}</span>
-                    ) : (
-                      <BoardStatusComponent
-                        statusId={boardMissionsDetails.boardMissionStatus?.id}
-                        id={boardMissionsDetails?.boardMissionId}
-                        onChange={handleStatusChange}
-                        isFromMissionView={true}
-                        currentStation={boardMissionsDetails?.currentActionName}
-                        statusColorBg={
-                          boardMissionsDetails?.boardMissionStatus
-                            ?.backgroundColor
-                        }
-                        statusColorText={
-                          boardMissionsDetails?.boardMissionStatus?.textColor
-                        }
-                        statusText={t(
-                          `productionStatuses.${boardMissionsDetails.boardMissionStatus?.name}`
-                        )}
-                      />
-                    )}
-                  </Stack>
                 </Stack>
-                <Divider flexItem orientation={"vertical"} />
+              </Stack>
+              {/* Second row */}
+              <Stack direction={"row"} alignItems={"center"} gap={"16px"}>
                 <Stack direction={"row"} gap={"5px"}>
-                  <span style={classes.parameterLabel}>
-                    {t("productionFloor.agent")}:
+                  <span style={classes.newParameterLabel}>
+                    {t("productionFloor.started")}
                   </span>
-                  <span style={classes.parameterValue}>
+                  <span style={classes.newParameterValue}>
+                    {DateFormatterDDMMYYYY(
+                      convertUtcToLocalIsoString(
+                        boardMissionsDetails.createdDate?.toString()
+                      )
+                    )}
+                  </span>
+                </Stack>
+                <Stack direction={"row"} gap={"5px"}>
+                  <span style={classes.newParameterLabel}>
+                    {t("productionFloor.agent")}
+                  </span>
+                  <span style={classes.newParameterValue}>
                     {boardMissionsDetails.agentName}
                   </span>
                 </Stack>
-                <Divider flexItem orientation={"vertical"} />
                 <Stack direction={"row"} gap={"5px"}>
-                  <span style={classes.parameterLabel}>{t("login.email")}</span>
-                  <span style={classes.parameterValue}>
+                  <span style={classes.newParameterLabel}>
+                    {t("login.email")}
+                  </span>
+                  <span style={classes.newParameterValue}>
                     {boardMissionsDetails.clientEmail}
                   </span>
                 </Stack>
-
-                <Divider flexItem orientation={"vertical"} />
                 <Stack direction={"row"} gap={"5px"}>
-                  <span style={classes.parameterLabel}>
+                  <span style={classes.newParameterLabel}>
                     {t("sales.quote.phone")}
                   </span>
-                  <span style={classes.parameterValue}>
+                  <span style={classes.newParameterValue}>
                     {!CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
                       ? clearPhoneNumberPrefix(boardMissionsDetails.clientPhone)
                       : boardMissionsDetails.clientPhone}
                   </span>
                 </Stack>
-                <Divider flexItem orientation={"vertical"} />
                 <Stack direction={"row"} gap={"5px"}>
-                  <span style={classes.parameterLabel}>
+                  <span style={classes.newParameterLabel}>
                     {t("productionFloor.deliveredOn")}
                   </span>
-                  <span style={classes.parameterValue}>
+                  <span style={classes.newParameterValue}>
                     {DateFormatterDDMMYYYY(boardMissionsDetails.dueDate)}
                   </span>
                 </Stack>
+                {boardMissionsDetails?.isNeedExample && (
+                  <span
+                    style={{ ...classes.labelsStyle, background: "#BE0270" }}
+                  >
+                    {t("boardMissions.sampleRequired")}
+                  </span>
+                )}
+                {boardMissionsDetails?.isUrgentWork && (
+                  <span style={classes.labelsStyle}>
+                    {t("boardMissions.urgent")}
+                  </span>
+                )}
               </Stack>
             </Stack>
           </Stack>
-          <Stack direction={"row"} gap={"10px"} alignItems={"center"}>
-            <Tooltip
-              title={`${boardFromTable?.previousBoardMission?.productName} |  ${boardFromTable?.previousBoardMission?.clientName} | ${boardFromTable?.previousBoardMission?.boardMissionNumber} / ${boardFromTable?.previousBoardMission?.orderNumber}`}
-              arrow
+          {/* Navigation buttons + Actions and Documents buttons*/}
+          <Stack gap={"10px"}>
+            <Stack
+              direction={"row"}
+              gap={"10px"}
+              alignItems={"center"}
+              alignSelf={"flex-end"}
             >
-              <IconButton
-                onClick={() =>
-                  onNavigateBoardMissions(
-                    boardFromTable?.previousBoardMission?.boardMissionId,
-                    boardFromTable?.previousBoardMission?.productType
-                  )
-                }
-                style={{ border: "1px solid" }}
-                color={"error"}
-                disabled={!boardFromTable?.previousBoardMission}
+              <Tooltip
+                title={`${boardFromTable?.previousBoardMission?.productName} |  ${boardFromTable?.previousBoardMission?.clientName} | ${boardFromTable?.previousBoardMission?.boardMissionNumber} / ${boardFromTable?.previousBoardMission?.orderNumber}`}
+                arrow
               >
-                {direction === "ltr" ? (
-                  <NavigateBeforeIcon />
-                ) : (
-                  <NavigateNextIcon />
-                )}
-              </IconButton>
-            </Tooltip>
-            <Tooltip
-              title={`${boardFromTable?.nextBoardMission?.productName} |  ${boardFromTable?.nextBoardMission?.clientName} | ${boardFromTable?.nextBoardMission?.boardMissionNumber} / ${boardFromTable?.nextBoardMission?.orderNumber}`}
-              arrow
-            >
-              <IconButton
-                onClick={() =>
-                  onNavigateBoardMissions(
-                    boardFromTable?.nextBoardMission?.boardMissionId,
-                    boardFromTable?.nextBoardMission?.productType
-                  )
-                }
-                style={{ border: "1px solid" }}
-                color={"success"}
-                disabled={!boardFromTable?.nextBoardMission}
+                <IconButton
+                  onClick={() =>
+                    onNavigateBoardMissions(
+                      boardFromTable?.previousBoardMission?.boardMissionId,
+                      boardFromTable?.previousBoardMission?.productType
+                    )
+                  }
+                  style={{ border: "1px solid", width: "40px", height: "40px" }}
+                  color={"error"}
+                  disabled={!boardFromTable?.previousBoardMission}
+                >
+                  {direction === "ltr" ? (
+                    <NavigateBeforeIcon />
+                  ) : (
+                    <NavigateNextIcon />
+                  )}
+                </IconButton>
+              </Tooltip>
+              <Tooltip
+                title={`${boardFromTable?.nextBoardMission?.productName} |  ${boardFromTable?.nextBoardMission?.clientName} | ${boardFromTable?.nextBoardMission?.boardMissionNumber} / ${boardFromTable?.nextBoardMission?.orderNumber}`}
+                arrow
               >
-                {direction === "ltr" ? (
-                  <NavigateNextIcon />
-                ) : (
-                  <NavigateBeforeIcon />
-                )}
-              </IconButton>
-            </Tooltip>
+                <IconButton
+                  onClick={() =>
+                    onNavigateBoardMissions(
+                      boardFromTable?.nextBoardMission?.boardMissionId,
+                      boardFromTable?.nextBoardMission?.productType
+                    )
+                  }
+                  style={{ border: "1px solid", width: "40px", height: "40px" }}
+                  color={"success"}
+                  disabled={!boardFromTable?.nextBoardMission}
+                >
+                  {direction === "ltr" ? (
+                    <NavigateNextIcon />
+                  ) : (
+                    <NavigateBeforeIcon />
+                  )}
+                </IconButton>
+              </Tooltip>
+            </Stack>
+            <Stack direction={"row"} alignItems={"center"} gap={"12px"}>
+              <ApprovalFileStatusComponent
+                height={"40px"}
+                width={"40px"}
+                fileStatus={boardMissionsDetails.showGraphicsApprovalAlert}
+                t={t}
+              />
+              <DocumentsButton />
+              <PermissionCheck
+                userPermission={
+                  Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
+                }
+              >
+                <MoreActionsButton />
+              </PermissionCheck>
+            </Stack>
           </Stack>
         </Stack>
       )}

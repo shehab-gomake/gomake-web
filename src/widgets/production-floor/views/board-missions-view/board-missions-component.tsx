@@ -19,6 +19,7 @@ interface IProps {
   updateStatus?: any;
 }
 
+//!here BoardMissionsComponent main component
 const BoardMissionsComponent = ({
   boardMissionsId,
   step,
@@ -35,6 +36,7 @@ const BoardMissionsComponent = ({
       initStates();
     };
   }, [boardMissionsId, connectionId, productType]);
+
   return (
     <Stack
       borderTop={`6px solid ${boardMissionsDetails?.productionFloorJobColor}`}
@@ -45,9 +47,11 @@ const BoardMissionsComponent = ({
       padding={"34px 24px"}
       borderRadius={"24px, 24px, 0px, 0px"}
     >
+      {/* //!Here Done */}
       <BoardMissionsDetailsHeader />
       <Divider orientation={"horizontal"} flexItem />
       <NavigationButtonsComponent />
+
       <Stack overflow={"auto"} flex={1}>
         {step === EBoardMissionsViews.STATIONS && (
           <BoardMissionsStationsComponent />
