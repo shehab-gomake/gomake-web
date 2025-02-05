@@ -127,7 +127,9 @@ const BoardMissionsDetailsHeader = () => {
         >
           <Stack gap={"14px"} direction={"row"} alignItems={"center"}>
             {/* Avatar */}
-            <Stack>
+            <Stack
+              style={{ borderRadius: "12px", border: "2px solid #E6E4E4" }}
+            >
               <Avatar
                 src={boardMissionsDetails?.boardMissionImage}
                 style={{ width: "80px", height: "80px", borderRadius: "8px" }}

@@ -54,7 +54,6 @@ const BoardMissionsComponent = ({
     width: 100%;
     height: 100vh;
     gap: 10px;
-    padding: 10px;
   `;
 
   // const ColumnOne = styled.div`
@@ -80,7 +79,7 @@ const BoardMissionsComponent = ({
 
   const ColumnOne = styled.div`
     display: grid;
-    grid-template-rows: 15% 25% 60%;
+    grid-template-rows: 20% 25% 55%;
     gap: 10px;
     height: 100%; // Ensure it takes full height
     min-height: 0; // Prevents content overflow issues
@@ -117,10 +116,8 @@ const BoardMissionsComponent = ({
       padding={"34px 24px"}
       borderRadius={"24px, 24px, 0px, 0px"}
     >
-      {/* //!Here Done */}
-      <BoardMissionsDetailsHeader />
-
       {/* Old */}
+      {/* <BoardMissionsDetailsHeader /> */}
       {/* <Divider orientation={"horizontal"} flexItem />
       <NavigationButtonsComponent /> */}
       {/* <Stack overflow={"auto"} flex={1}>
@@ -132,7 +129,7 @@ const BoardMissionsComponent = ({
           {step === EBoardMissionsViews.ACTIVITY && <BoardMissionsActivities />}
         </Stack> */}
       {/* Old */}
-
+      <BoardMissionsDetailsHeader />
       <GridContainer>
         {isLoading ? (
           <>
@@ -221,19 +218,7 @@ const BoardMissionsComponent = ({
             </ColumnOne>
             <ColumnTwo>
               <CardContainer label="Actions">
-                {Array.from({ length: 15 }).map((_, index) => (
-                  <p
-                    key={index}
-                    style={{
-                      margin: "8px 0",
-
-                      background: "#F5F5F5",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    This is action {index + 1}.
-                  </p>
-                ))}
+                <BoardMissionsStationsComponent />
               </CardContainer>
               <NestedGrid>
                 <CardContainer

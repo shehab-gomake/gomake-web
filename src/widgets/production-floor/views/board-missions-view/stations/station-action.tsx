@@ -57,8 +57,11 @@ import {
   materialModalState,
 } from "./material-and-production-time-modal/states";
 import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
-import {convertUtcToLocalIsoString} from "@/components/date-time/date-time-component";
-import { currentProductItemValueState, outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
+import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
+import {
+  currentProductItemValueState,
+  outsourceSuppliersState,
+} from "@/widgets/product-pricing-widget/state";
 import { updateProductItemDraftActionData } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 
 interface IProps extends IBoardMissionsStation {
@@ -71,6 +74,7 @@ interface IProps extends IBoardMissionsStation {
   supplierId?: string;
 }
 
+//!here have a copy
 const BoardMissionsStationAction = ({
   id,
   actionId,
@@ -96,7 +100,7 @@ const BoardMissionsStationAction = ({
   isHideTimeAndDate,
   supplierName,
   supplierId,
-  productType
+  productType,
 }: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -136,7 +140,7 @@ const BoardMissionsStationAction = ({
     onClickGetMachineForAction,
   } = useBoardMissionsUpdatedOutputs();
   const { CheckPermission } = useUserPermission();
-  console.log("stations", stations)
+  console.log("stations", stations);
   const inputsParameters = outputs.filter(
     (parameter) =>
       parameter &&
@@ -747,12 +751,12 @@ const BoardMissionsStationAction = ({
                                     >
                                       {(!!machensFilter
                                         ? machinesList?.filter((value) =>
-                                          value.label
-                                            ?.toLowerCase()
-                                            ?.includes(
-                                              machensFilter?.toLowerCase()
-                                            )
-                                        )
+                                            value.label
+                                              ?.toLowerCase()
+                                              ?.includes(
+                                                machensFilter?.toLowerCase()
+                                              )
+                                          )
                                         : machinesList
                                       )?.map((value, index) => {
                                         return (
@@ -840,12 +844,12 @@ const BoardMissionsStationAction = ({
                                   >
                                     {(!!contactsFilter
                                       ? employeesList?.filter((value) =>
-                                        value.label
-                                          ?.toLowerCase()
-                                          ?.includes(
-                                            contactsFilter?.toLowerCase()
-                                          )
-                                      )
+                                          value.label
+                                            ?.toLowerCase()
+                                            ?.includes(
+                                              contactsFilter?.toLowerCase()
+                                            )
+                                        )
                                       : employeesList
                                     )?.map((value, index) => {
                                       return (
@@ -904,7 +908,9 @@ const BoardMissionsStationAction = ({
                           {t("productionFloor.deliveryTime")}
                         </span>
                         <span style={classes.detailValue}>
-                    {DateFormatterDDMMYYYY(convertUtcToLocalIsoString(dueDate))}
+                          {DateFormatterDDMMYYYY(
+                            convertUtcToLocalIsoString(dueDate)
+                          )}
                         </span>
                       </Stack>
                       <span style={classes.sourceLabel}>
