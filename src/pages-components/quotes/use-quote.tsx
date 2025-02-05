@@ -1505,6 +1505,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           >
             {document?.customerName}
           </div>,
+          document?.agentName,
           document?.number,
           document?.clientType,
           document?.worksNames,
@@ -1594,6 +1595,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const tableHomeHeader = [
     t("sales.quote.client"),
+    t("sales.quote.agent"),
     t("home.headers.documentNumber"),
     t("home.headers.clientType"),
     t("home.headers.jobName"),

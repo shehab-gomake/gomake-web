@@ -199,10 +199,10 @@ const QuotesListPageWidget = ({
     deliveryStatuses,
     deliveryStatus,
     setDeliveryStatus,
-    supplierList,
-    isPurchaseDocument,
     setFromDate,
     setToDate,
+    supplierList,
+    isPurchaseDocument,
     isSendToClient
   } = useQuotes(documentType, isFromHomePage);
 
