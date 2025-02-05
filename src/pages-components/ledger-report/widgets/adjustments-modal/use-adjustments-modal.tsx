@@ -76,6 +76,7 @@ const useAdjustmentsModal = ({
     t("reports.documentNumber"),
     t("reports.documentType"),
     t("reports.documentDate"),
+    t("reports.dueDate"),
     t("reports.totalPrice"),
     t("reports.adjustablePrice"),
   ];
@@ -168,6 +169,7 @@ const useAdjustmentsModal = ({
         )}`
       ),
       data?.docDate?.split("T")[0],
+      data?.dueDate?.split("T")[0],
       data?.fixedPrice,
       <div
         key={inputErrors[index]}
