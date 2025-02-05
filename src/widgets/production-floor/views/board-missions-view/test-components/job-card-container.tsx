@@ -5,7 +5,7 @@ import { ReactNode, ReactElement } from "react";
 interface CardContainerProps {
   label?: string;
   children?: ReactNode;
-  actionButton?: ReactElement; // Optional button element
+  actionButton?: ReactElement;
   withHeader?: boolean;
 }
 
@@ -23,6 +23,10 @@ const CardContainer = ({
         border: "1px solid #EBEBEB",
         background: "#FFF",
         boxShadow: "0px 5px 31px 0px rgba(0, 0, 0, 0.06)",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        overflow: "hidden",
       }}
     >
       {/* Header with label and optional button */}
@@ -37,17 +41,20 @@ const CardContainer = ({
             boxShadow: "0px 5px 31px 0px rgba(0, 0, 0, 0.06)",
             color: "#FFFFFF",
             padding: "8px 16px",
+            flexShrink: 0,
           }}
         >
           <span style={{ ...FONT_FAMILY.Inter(500, 15) }}>{label}</span>
           {actionButton && <span>{actionButton}</span>}
         </Stack>
       )}
-
-      {/* Content Area */}
+      {/* Scrollable Content Area */}
       <Stack
+        className={`custom-scroller`}
         style={{
-          padding: "0px 16px",
+          padding: "8px 16px",
+          flexGrow: 1,
+          overflowY: "auto",
         }}
       >
         {children}

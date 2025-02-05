@@ -11,7 +11,7 @@ import { BoardMissionsActivities } from "@/widgets/production-floor/views/board-
 import { BoardMissionsFiles } from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import { GoMakeSnackBar } from "@/components";
 import styled from "styled-components";
-import { CardContainer } from "./test-components/grid-div";
+import { CardContainer } from "./test-components/job-card-container";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { CompletedBoardMissionsComponent } from "./stations/completed-board-missions-component/completed-board-missions-component";
 import { DownloadIcon } from "./test-components/icons";
@@ -57,25 +57,54 @@ const BoardMissionsComponent = ({
     padding: 10px;
   `;
 
+  // const ColumnOne = styled.div`
+  //   display: grid;
+  //   grid-template-rows: 15% 25% 60%;
+  //   gap: 10px;
+  // `;
+
+  // const ColumnTwo = styled.div`
+  //   display: grid;
+  //   grid-template-rows: 50% 50%;
+  //   gap: 10px;
+  // `;
+
+  // const NestedGrid = styled.div`
+  //   display: grid;
+  //   grid-template-columns: 30% 70%; /* 2 columns with 30% and 70% */
+  //   width: 100%;
+  //   height: 100%;
+  //   gap: 10px;
+  //   padding-right: 10px;
+  // `;
+
   const ColumnOne = styled.div`
     display: grid;
     grid-template-rows: 15% 25% 60%;
     gap: 10px;
+    height: 100%; // Ensure it takes full height
+    min-height: 0; // Prevents content overflow issues
+    overflow: hidden; // Prevents unintended scrolling
   `;
 
   const ColumnTwo = styled.div`
     display: grid;
     grid-template-rows: 50% 50%;
     gap: 10px;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
   `;
 
   const NestedGrid = styled.div`
     display: grid;
-    grid-template-columns: 30% 70%; /* 2 columns with 30% and 70% */
+    grid-template-columns: 30% 70%;
     width: 100%;
     height: 100%;
     gap: 10px;
     padding-right: 10px;
+    min-height: 0; // Prevents content overflow issues
+    overflow: hidden;
   `;
 
   return (
@@ -169,18 +198,42 @@ const BoardMissionsComponent = ({
                   </Button>
                 }
               >
-                <p>This is a note inside the card.</p>
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <p
+                    key={index}
+                    style={{
+                      margin: "8px 0",
+                      padding: "8px",
+                      background: "#F5F5F5",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    This is note {index + 1}.
+                  </p>
+                ))}
               </CardContainer>
               <CardContainer label="Product Details">
-                <p>This is Product Details 1.</p>
+                <p>This will be "Product Details 1 " section</p>
               </CardContainer>
               <CardContainer withHeader={false}>
-                <p>This is Product Details 2.</p>
+                <p>This will be "Product Details index + 1" section</p>
               </CardContainer>
             </ColumnOne>
             <ColumnTwo>
               <CardContainer label="Actions">
-                <p>This is ACTIONS SECTION.</p>
+                {Array.from({ length: 15 }).map((_, index) => (
+                  <p
+                    key={index}
+                    style={{
+                      margin: "8px 0",
+
+                      background: "#F5F5F5",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    This is action {index + 1}.
+                  </p>
+                ))}
               </CardContainer>
               <NestedGrid>
                 <CardContainer
@@ -194,9 +247,12 @@ const BoardMissionsComponent = ({
                     </IconButton>
                   }
                 >
+                  <p>This will be "Files" section</p>
                   {/* <BoardMissionsFiles /> */}
                 </CardContainer>
                 <CardContainer label="Activities">
+                  <p>This will be "Activities" section</p>
+
                   {/* <BoardMissionsActivities /> */}
                 </CardContainer>
               </NestedGrid>
