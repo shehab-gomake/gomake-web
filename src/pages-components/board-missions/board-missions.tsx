@@ -31,6 +31,7 @@ import { printHouseUsePrintNode } from "@/store/print-house-profile";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { isValidCustomer } from "@/utils/helpers";
+import { createGlobalStyle } from "styled-components";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -126,6 +127,16 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   }, []);
 
   const { targetOrderId } = router?.query;
+
+  const dir: "rtl" | "ltr" = t("direction");
+  const RTL = dir === "rtl";
+  const GlobalStyle = createGlobalStyle`
+  .rs-picker-popup-daterange {
+    left: ${({ RTL }: any) => (RTL ? "auto" : "515px")} !important;
+    right: ${({ RTL }: any) => (RTL ? "530px" : "auto")} !important;
+    top: 420px !important;
+  }
+`;
   return (
     <>
       <Stack
@@ -155,10 +166,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                     {Object.keys(router.query).filter(
                       (key) => key !== "pageNumber"
                     ).length > 0 && (
-                      <div style={{ position: "absolute", top: -5, right: -1 }}>
-                        <DotIcon />
-                      </div>
-                    )}
+                        <div style={{ position: "absolute", top: -5, right: -1 }}>
+                          <DotIcon />
+                        </div>
+                      )}
                   </IconButton>
                   <GoMakeMenu
                     handleClose={handleClose}
@@ -253,6 +264,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                           />
                         </div>
                         <div style={classes.statusFilterContainer}>
+                          <GlobalStyle RTL={RTL} />
                           <h3 style={classes.filterLabelStyle}>
                             {t("boardMissions.dateRange")}
                           </h3>
@@ -265,6 +277,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                         </div>
 
                         <div style={classes.statusFilterContainer}>
+                          <GlobalStyle RTL={RTL} />
                           <h3 style={classes.filterLabelStyle}>
                             {t("Due Date")}
                           </h3>
@@ -279,6 +292,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                         </div>
 
                         <div style={classes.statusFilterContainer}>
+                          <GlobalStyle RTL={RTL} />
                           <h3 style={classes.filterLabelStyle}>
                             {t("Ready Date")}
                           </h3>
@@ -332,55 +346,55 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               !isPurchaseJobs
                 ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                   ? [
-                      "7%",
-                      "7%",
-                      "6%",
-                      "6%",
-                      "7%",
-                      "7%",
-                      "8%",
-                      "7%",
-                      "4%",
-                      "6%",
-                      "12%",
-                      "7%",
-                      "7%",
-                      "13%",
-                      "3%",
-                    ]
-                  : [
-                      "7%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "8%",
-                      "7%",
-                      "18%",
-                      "7%",
-                      "15%",
-                      "7%",
-                      "3%",
-                    ]
-                : [
                     "7%",
-                    "5%",
-                    "6%",
                     "7%",
                     "6%",
+                    "6%",
                     "7%",
-                    "11%",
+                    "7%",
                     "8%",
-                    "6%",
-                    "8%",
-                    "5%",
-                    "5%",
-                    "7%",
                     "7%",
                     "4%",
-                    "2%",
+                    "6%",
+                    "12%",
+                    "7%",
+                    "7%",
+                    "13%",
+                    "3%",
                   ]
+                  : [
+                    "7%",
+                    "7%",
+                    "7%",
+                    "7%",
+                    "7%",
+                    "7%",
+                    "8%",
+                    "7%",
+                    "18%",
+                    "7%",
+                    "15%",
+                    "7%",
+                    "3%",
+                  ]
+                : [
+                  "7%",
+                  "5%",
+                  "6%",
+                  "7%",
+                  "6%",
+                  "7%",
+                  "11%",
+                  "8%",
+                  "6%",
+                  "8%",
+                  "5%",
+                  "5%",
+                  "7%",
+                  "7%",
+                  "4%",
+                  "2%",
+                ]
             }
           />
         </div>
