@@ -252,6 +252,21 @@ const useProperites = ({ classes }) => {
     [selectedProperties]
   );
 
+  const ToggleIsShowInOutSourceDetails = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/print-house-action/toggle-is-show-in-out-source-details/${router.query.actionId}/${selectedProperties?.ruleType}/${selectedProperties?.propertyId}`,
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+      getProperitesService();
+    } else {
+      alertFaultUpdate();
+    }
+
+
+  }, [selectedProperties]);
+
 
   function updateProperties(allProperties, inputs, outputs) {
     allProperties.forEach((property) => {
@@ -318,8 +333,10 @@ const useProperites = ({ classes }) => {
     setHiddenData,
     reOrderPropertiesTables,
     updateIsHiddenFromWorkFlow,
-    updateIsHiddenFromCalculation
+    updateIsHiddenFromCalculation,
+    ToggleIsShowInOutSourceDetails
   };
 };
+
 
 export { useProperites };
