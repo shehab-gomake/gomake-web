@@ -109,7 +109,7 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
       amount: price,
       reference: reference,
       referenceDate: selectDate,
-      dueDate: selectedDueDate, //!here
+      dueDate: selectedDueDate,
       description,
     };
 
