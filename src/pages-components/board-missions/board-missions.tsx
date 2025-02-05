@@ -57,7 +57,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     patternSearch,
     handleAgentChange,
     handleStatusChange,
-    handledSupplierIdChange,
     handleCustomerChange,
     checkWhatRenderArray,
     handlePageChange,
@@ -97,7 +96,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     handleClose,
     open,
     anchorEl,
-    supplierId,
     supplierList,
     orderStatuses,
     orderStatus,
@@ -117,6 +115,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     setShowCustomerModal,
     setCustomerForEdit,
   } = useBoardMissions({ isPurchaseJobs });
+
   const [newOrderId, setNewOrderId] = useRecoilState(
     newOrderIdToPrintJobsState
   );
@@ -175,9 +174,20 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                           </h3>
                           <GoMakeAutoComplate
                             key={customer?.id}
-                            options={renderOptions()}
-                            defaultFiltering={false}
-                            onChangeTextField={checkWhatRenderArray}
+                            options={
+                              isPurchaseJobs
+                                ? supplierList
+                                : renderOptions()
+                                ? renderOptions()
+                                : []
+                            }
+                            defaultFiltering={isPurchaseJobs ? true : false}
+                            onChangeTextField={(e) => {
+                              if (isPurchaseJobs) {
+                                return;
+                              }
+                              checkWhatRenderArray(e);
+                            }}
                             getOptionLabel={(option: any) => `${option.name}`}
                             style={classes.textInputStyle}
                             placeholder={t("sales.quote.chooseCustomer")}
@@ -242,24 +252,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                             placeholder={t("boardMissions.selectProducts")}
                           />
                         </div>
-                        {isPurchaseJobs && (
-                          <div style={classes.statusFilterContainer}>
-                            <h3 style={classes.filterLabelStyle}>
-                              {t("sales.quote.supplierName")}
-                            </h3>
-                            <GoMakeAutoComplate
-                              placeholder={"Select supplier"}
-                              value={supplierId}
-                              style={classes.textInputForProductsStyle}
-                              onChange={handledSupplierIdChange}
-                              options={supplierList?.map((s) => ({
-                                value: s.id,
-                                label: s.name,
-                              }))}
-                              withArrow={true}
-                            />
-                          </div>
-                        )}
                         <div style={classes.statusFilterContainer}>
                           <h3 style={classes.filterLabelStyle}>
                             {t("boardMissions.dateRange")}
