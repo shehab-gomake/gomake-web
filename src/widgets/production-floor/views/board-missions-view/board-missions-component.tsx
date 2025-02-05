@@ -2,7 +2,7 @@ import Stack from "@mui/material/Stack";
 import { useEffect } from "react";
 import { useBoardMissions } from "@/widgets/production-floor/views/board-missions-view/use-board-missions";
 import { BoardMissionsDetailsHeader } from "@/widgets/production-floor/views/board-missions-view/header/board-nissions-details-header";
-import { Divider } from "@mui/material";
+import { Button, Divider, IconButton, Skeleton } from "@mui/material";
 
 import { NavigationButtonsComponent } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/navigation-buttons-component";
 import { EBoardMissionsViews } from "@/widgets/production-floor/views/board-missions-view/enums";
@@ -10,6 +10,11 @@ import { BoardMissionsStationsComponent } from "@/widgets/production-floor/views
 import { BoardMissionsActivities } from "@/widgets/production-floor/views/board-missions-view/activity/board-missions-activities";
 import { BoardMissionsFiles } from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import { GoMakeSnackBar } from "@/components";
+import styled from "styled-components";
+import { CardContainer } from "./test-components/grid-div";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { CompletedBoardMissionsComponent } from "./stations/completed-board-missions-component/completed-board-missions-component";
+import { DownloadIcon } from "./test-components/icons";
 
 interface IProps {
   boardMissionsId: string;
@@ -26,8 +31,14 @@ const BoardMissionsComponent = ({
   productType,
   connectionId,
 }: IProps) => {
-  const { getBoardMissions, initStates, boardMissionsDetails } =
-    useBoardMissions();
+  const {
+    getBoardMissions,
+    initStates,
+    boardMissionsDetails,
+    isLoading,
+    onClickUploadFile,
+  } = useBoardMissions();
+
   useEffect(() => {
     if (!!boardMissionsId && !!connectionId) {
       getBoardMissions(boardMissionsId, connectionId, productType).then();
@@ -36,6 +47,36 @@ const BoardMissionsComponent = ({
       initStates();
     };
   }, [boardMissionsId, connectionId, productType]);
+
+  const GridContainer = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    height: 100vh;
+    gap: 10px;
+    padding: 10px;
+  `;
+
+  const ColumnOne = styled.div`
+    display: grid;
+    grid-template-rows: 15% 25% 60%;
+    gap: 10px;
+  `;
+
+  const ColumnTwo = styled.div`
+    display: grid;
+    grid-template-rows: 50% 50%;
+    gap: 10px;
+  `;
+
+  const NestedGrid = styled.div`
+    display: grid;
+    grid-template-columns: 30% 70%; /* 2 columns with 30% and 70% */
+    width: 100%;
+    height: 100%;
+    gap: 10px;
+    padding-right: 10px;
+  `;
 
   return (
     <Stack
@@ -49,17 +90,121 @@ const BoardMissionsComponent = ({
     >
       {/* //!Here Done */}
       <BoardMissionsDetailsHeader />
-      <Divider orientation={"horizontal"} flexItem />
-      <NavigationButtonsComponent />
 
-      <Stack overflow={"auto"} flex={1}>
-        {step === EBoardMissionsViews.STATIONS && (
-          <BoardMissionsStationsComponent />
+      {/* Old */}
+      {/* <Divider orientation={"horizontal"} flexItem />
+      <NavigationButtonsComponent /> */}
+      {/* <Stack overflow={"auto"} flex={1}>
+          {step === EBoardMissionsViews.STATIONS && (
+            <BoardMissionsStationsComponent />
+          )}
+          {step === EBoardMissionsViews.FILES && <BoardMissionsFiles />}
+          {step === EBoardMissionsViews.APPROVAL && <></>}
+          {step === EBoardMissionsViews.ACTIVITY && <BoardMissionsActivities />}
+        </Stack> */}
+      {/* Old */}
+
+      <GridContainer>
+        {isLoading ? (
+          <>
+            <ColumnOne>
+              <Skeleton
+                variant="rectangular"
+                width="100%"
+                height="100%"
+                style={{ borderRadius: "8px" }}
+              />
+              <Skeleton
+                variant="rectangular"
+                width="100%"
+                height="100%"
+                style={{ borderRadius: "8px" }}
+              />
+              <Skeleton
+                variant="rectangular"
+                width="100%"
+                height="100%"
+                style={{ borderRadius: "8px" }}
+              />
+            </ColumnOne>
+            <ColumnTwo>
+              <Skeleton
+                variant="rectangular"
+                width="100%"
+                height="100%"
+                style={{ borderRadius: "8px" }}
+              />
+              <NestedGrid>
+                <Skeleton
+                  variant="rectangular"
+                  width="100%"
+                  height="100%"
+                  style={{ borderRadius: "8px" }}
+                />
+                <Skeleton
+                  variant="rectangular"
+                  width="100%"
+                  height="100%"
+                  style={{ borderRadius: "8px" }}
+                />
+              </NestedGrid>
+            </ColumnTwo>
+          </>
+        ) : (
+          <>
+            <ColumnOne>
+              <CardContainer
+                label="Notes"
+                actionButton={
+                  <Button
+                    variant="text"
+                    style={{
+                      color: "#ffffff",
+                      ...FONT_FAMILY.Inter(500, 14),
+                      padding: "0px",
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    + Add Note
+                  </Button>
+                }
+              >
+                <p>This is a note inside the card.</p>
+              </CardContainer>
+              <CardContainer label="Product Details">
+                <p>This is Product Details 1.</p>
+              </CardContainer>
+              <CardContainer withHeader={false}>
+                <p>This is Product Details 2.</p>
+              </CardContainer>
+            </ColumnOne>
+            <ColumnTwo>
+              <CardContainer label="Actions">
+                <p>This is ACTIONS SECTION.</p>
+              </CardContainer>
+              <NestedGrid>
+                <CardContainer
+                  label="Files"
+                  actionButton={
+                    <IconButton
+                      onClick={onClickUploadFile}
+                      sx={{ padding: "0px" }}
+                    >
+                      <DownloadIcon />
+                    </IconButton>
+                  }
+                >
+                  {/* <BoardMissionsFiles /> */}
+                </CardContainer>
+                <CardContainer label="Activities">
+                  {/* <BoardMissionsActivities /> */}
+                </CardContainer>
+              </NestedGrid>
+            </ColumnTwo>
+          </>
         )}
-        {step === EBoardMissionsViews.FILES && <BoardMissionsFiles />}
-        {step === EBoardMissionsViews.APPROVAL && <></>}
-        {step === EBoardMissionsViews.ACTIVITY && <BoardMissionsActivities />}
-      </Stack>
+      </GridContainer>
+
       <GoMakeSnackBar />
     </Stack>
   );
