@@ -8,6 +8,7 @@ import {
   boardMissionsSubWorkFlowsState,
   isOrderCompletedState,
   isReadyBoardMissionsState,
+  productionFloorSectionsState,
   relatedOrderItemsComponentState,
   stationGeneralInformationProductionFloorState,
   stationGeneralInformationState,
@@ -30,7 +31,9 @@ const useBoardMissionsStations = () => {
   const [, setInformationProductionFloor] = useRecoilState(
     stationGeneralInformationProductionFloorState
   );
-  const [, setRelatedOrderItems] = useRecoilState(relatedOrderItemsComponentState);
+  const [, setRelatedOrderItems] = useRecoilState(
+    relatedOrderItemsComponentState
+  );
 
   const [subWorkFlows, setSubWorkFlows] = useRecoilState(
     boardMissionsSubWorkFlowsState
@@ -39,8 +42,17 @@ const useBoardMissionsStations = () => {
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
   const initStations = useResetRecoilState(boardMissionsStationsState);
   const [, setIsOrderCompleted] = useRecoilState(isOrderCompletedState);
-  const initProductionInformation = useResetRecoilState(stationGeneralInformationProductionFloorState);
-  const initGeneralInformation = useResetRecoilState(stationGeneralInformationState);
+  const initProductionInformation = useResetRecoilState(
+    stationGeneralInformationProductionFloorState
+  );
+  const initGeneralInformation = useResetRecoilState(
+    stationGeneralInformationState
+  );
+
+  const [productDetails, setProductDetails] = useRecoilState(
+    productionFloorSectionsState
+  );
+
   const getStations = async () => {
     initGeneralInformation();
     initProductionInformation();
@@ -55,6 +67,7 @@ const useBoardMissionsStations = () => {
         setRelatedOrderItems(res?.data?.relatedOrderItems);
         setIsReady(res?.data?.isReady);
         setIsOrderCompleted(res?.data?.isOrderCompleted);
+        setProductDetails(res?.data?.productionFlooeSections);
       }
     };
     await getBoardsMissionsStations(callApi, callBack, {
@@ -101,6 +114,7 @@ const useBoardMissionsStations = () => {
     t,
     isRTL,
     getStations,
+    productDetails,
   };
 };
 

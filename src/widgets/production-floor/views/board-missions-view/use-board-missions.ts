@@ -1,13 +1,8 @@
 import { getBoardMissionsById } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import { useRecoilState, useResetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
-import {
-  boardMissionsStationsState,
-  boardMissionsSubWorkFlowsState,
-  stationGeneralInformationState,
-} from "@/widgets/production-floor/views/board-missions-view/stations/state";
-import { boardMissionsFilesState } from "@/widgets/production-floor/views/board-missions-view/files/state";
+import { productionFloorSectionsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useRouter } from "next/router";
 import {
@@ -17,6 +12,7 @@ import {
 } from "@/store/file-uploader-state";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useBoardMissionsStations } from "./stations/use-board-missions-stations";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
@@ -25,15 +21,14 @@ const useBoardMissions = () => {
     boardMissionsDetailsState
   );
 
-  const resetStations = useResetRecoilState(boardMissionsStationsState);
-  const resetFiles = useResetRecoilState(boardMissionsFilesState);
+  const {} = useBoardMissionsStations();
+  const productDetails = useRecoilValue(productionFloorSectionsState);
+  const resetProductDetails = useResetRecoilState(productionFloorSectionsState);
   const resetDetails = useResetRecoilState(boardMissionsDetailsState);
-  const resetSubWorkFlows = useResetRecoilState(boardMissionsSubWorkFlowsState);
-  const resetGeneralInformation = useResetRecoilState(
-    stationGeneralInformationState
-  );
+
   const initStates = () => {
     resetDetails();
+    resetProductDetails();
     // resetFiles();
     // resetStations();
     // resetSubWorkFlows();
@@ -98,6 +93,7 @@ const useBoardMissions = () => {
     openAddNoteModal,
     handleOpenNotesModal,
     handleCloseNotesModal,
+    productDetails,
     t,
   };
 };

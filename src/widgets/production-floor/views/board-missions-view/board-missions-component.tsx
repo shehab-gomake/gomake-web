@@ -6,18 +6,19 @@ import { Button, Divider, IconButton, Skeleton } from "@mui/material";
 
 import { NavigationButtonsComponent } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/navigation-buttons-component";
 import { EBoardMissionsViews } from "@/widgets/production-floor/views/board-missions-view/enums";
-import { BoardMissionsStationsComponent } from "@/widgets/production-floor/views/board-missions-view/stations/board-missions-stations-component";
 import { BoardMissionsActivities } from "@/widgets/production-floor/views/board-missions-view/activity/board-missions-activities";
 import { BoardMissionsFiles } from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import { GoMakeSnackBar } from "@/components";
 import styled from "styled-components";
 import { CardContainer } from "./job-card-container/job-card-container";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { DownloadIcon } from "./job-card-container/icons";
+import { DownloadIcon } from "./job-card-container/components/icons";
 import { BoardMissionsAddNote } from "./stations/notes/add-note";
 import { BoardMissionsNotes } from "./stations/notes/board-missions-notes";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission";
+import ProductDetailsSection from "./job-card-container/components/product-details-section";
+import { BoardMissionsStationsComponent } from "./stations/board-missions-stations-component";
 
 interface IProps {
   boardMissionsId: string;
@@ -44,6 +45,7 @@ const BoardMissionsComponent = ({
     openAddNoteModal,
     handleOpenNotesModal,
     handleCloseNotesModal,
+    productDetails,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -59,7 +61,9 @@ const BoardMissionsComponent = ({
     display: grid;
     grid-template-columns: 1fr 1fr;
     width: 100%;
-    height: 100vh;
+    // height: 100vh;
+    height: 100%;
+
     gap: 10px;
   `;
 
@@ -198,55 +202,67 @@ const BoardMissionsComponent = ({
               <GridContainer
                 style={{
                   display: "grid",
-                  // gridTemplateColumns: typesData ? "60% 38%" : "100%",
                   gridTemplateColumns: typesData
-                    ? "calc(60% - 0.5%) calc(40% - 0.5%)"
+                    ? "calc(60% - 4px) calc(40% - 4px)"
                     : "100%",
-                  gap: "1%",
+                  gap: "8px",
                   height: "100%",
                   overflow: "hidden",
                 }}
               >
-                <CardContainer label="Product Details">
-                  <p>This will be "Product Details 1 " section</p>
-                </CardContainer>
+                {productDetails.length > 0 && (
+                  <ProductDetailsSection
+                    key={0}
+                    name={productDetails[0].name}
+                    productionFloorSubSections={
+                      productDetails[0].productionFloorSubSections
+                    }
+                    withHeader={true}
+                    header={"Product Details"}
+                    style={{
+                      flex: 1,
+                      height: "100%",
+                    }}
+                  />
+                )}
                 {typesData && (
                   <CardContainer label="Types">
                     <p>This will be "Types" section</p>
                   </CardContainer>
                 )}
               </GridContainer>
+
               <div
                 style={{
                   display: "flex",
                   flexDirection: "column",
                   gap: "5px",
-                  flex: 1, // This makes it take remaining space (55%)
+                  flex: 1,
                   overflowY: "auto",
-                  minHeight: 0, // E
+                  minHeight: 0,
                 }}
                 className={`custom-scroller`}
               >
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <CardContainer
+                {productDetails.slice(1).map((section, index) => (
+                  <ProductDetailsSection
+                    key={index + 1}
+                    name={section.name}
+                    productionFloorSubSections={
+                      section.productionFloorSubSections
+                    }
+                    withHeader={false}
                     style={{
                       flex: 1,
-                      minHeight: "100%",
-                      // maxHeight: "100%",
-                      // height: "fit-content",
+                      minHeight: "fit-content",
                     }}
-                    key={index}
-                    withHeader={false}
-                  >
-                    <p>This will be "Product Details {index + 2}" section</p>
-                  </CardContainer>
+                  />
                 ))}
               </div>
             </ColumnOne>
             {/* Actions + Files + Activities */}
             <ColumnTwo>
               <CardContainer label="Actions">
-                <BoardMissionsStationsComponent />
+                {/* <BoardMissionsStationsComponent /> */}
               </CardContainer>
               <NestedGrid>
                 <CardContainer
