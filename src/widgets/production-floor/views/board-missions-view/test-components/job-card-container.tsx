@@ -1,12 +1,13 @@
 import { FONT_FAMILY } from "@/utils/font-family";
 import Stack from "@mui/material/Stack";
-import { ReactNode, ReactElement } from "react";
+import { ReactNode, ReactElement, CSSProperties } from "react";
 
 interface CardContainerProps {
   label?: string;
   children?: ReactNode;
   actionButton?: ReactElement;
   withHeader?: boolean;
+  style?: CSSProperties;
 }
 
 //!here
@@ -15,6 +16,7 @@ const CardContainer = ({
   children,
   actionButton,
   withHeader = true,
+  style,
 }: CardContainerProps) => {
   return (
     <Stack
@@ -27,6 +29,7 @@ const CardContainer = ({
         flexDirection: "column",
         height: "100%",
         overflow: "hidden",
+        ...style,
       }}
     >
       {/* Header with label and optional button */}

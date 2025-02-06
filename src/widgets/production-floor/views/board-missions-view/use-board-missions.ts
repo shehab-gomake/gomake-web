@@ -15,8 +15,11 @@ import {
   openFileUploaderList,
   pinFileUploaderState,
 } from "@/store/file-uploader-state";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const useBoardMissions = () => {
+  const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(
     boardMissionsDetailsState
@@ -55,6 +58,7 @@ const useBoardMissions = () => {
   };
 
   //!here new
+  const [openAddNoteModal, setOpenAddNoteModal] = useState<boolean>(false);
   const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
   const router = useRouter();
   const { query } = router;
@@ -83,6 +87,9 @@ const useBoardMissions = () => {
     boardMissionsDetails,
     isLoading,
     onClickUploadFile,
+    openAddNoteModal,
+    setOpenAddNoteModal,
+    t,
   };
 };
 

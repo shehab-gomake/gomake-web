@@ -1,5 +1,5 @@
 import Stack from "@mui/material/Stack";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useBoardMissions } from "@/widgets/production-floor/views/board-missions-view/use-board-missions";
 import { BoardMissionsDetailsHeader } from "@/widgets/production-floor/views/board-missions-view/header/board-nissions-details-header";
 import { Button, Divider, IconButton, Skeleton } from "@mui/material";
@@ -15,6 +15,8 @@ import { CardContainer } from "./test-components/job-card-container";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { CompletedBoardMissionsComponent } from "./stations/completed-board-missions-component/completed-board-missions-component";
 import { DownloadIcon } from "./test-components/icons";
+import { BoardMissionsAddNote } from "./stations/notes/add-note";
+import { BoardMissionsNotes } from "./stations/notes/board-missions-notes";
 
 interface IProps {
   boardMissionsId: string;
@@ -32,11 +34,14 @@ const BoardMissionsComponent = ({
   connectionId,
 }: IProps) => {
   const {
+    t,
     getBoardMissions,
     initStates,
     boardMissionsDetails,
     isLoading,
     onClickUploadFile,
+    openAddNoteModal,
+    setOpenAddNoteModal,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -178,11 +183,13 @@ const BoardMissionsComponent = ({
           </>
         ) : (
           <>
+            {/* Notes + Products details */}
             <ColumnOne>
               <CardContainer
                 label="Notes"
                 actionButton={
                   <Button
+                    onClick={() => setOpenAddNoteModal(true)}
                     variant="text"
                     style={{
                       color: "#ffffff",
@@ -191,34 +198,52 @@ const BoardMissionsComponent = ({
                       textTransform: "capitalize",
                     }}
                   >
-                    + Add Note
+                    + {t("productionFloor.addNote")}
                   </Button>
                 }
               >
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <p
-                    key={index}
-                    style={{
-                      margin: "8px 0",
-                      padding: "8px",
-                      background: "#F5F5F5",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    This is note {index + 1}.
-                  </p>
-                ))}
+                <BoardMissionsNotes />
               </CardContainer>
               <CardContainer label="Product Details">
                 <p>This will be "Product Details 1 " section</p>
               </CardContainer>
-              <CardContainer withHeader={false}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "5px",
+                  flex: 1, // This makes it take remaining space (55%)
+                  overflowY: "auto",
+                  minHeight: 0, // E
+                }}
+                className={`custom-scroller`}
+              >
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <CardContainer
+                    style={{
+                      flex: 1,
+                      minHeight: "100%",
+                      // maxHeight: "100%",
+                      // height: "fit-content",
+                    }}
+                    key={index}
+                    withHeader={false}
+                  >
+                    <p>This will be "Product Details {index + 2}" section</p>
+                  </CardContainer>
+                ))}
+              </div>
+              {/* <CardContainer withHeader={false}>
                 <p>This will be "Product Details index + 1" section</p>
-              </CardContainer>
+              </CardContainer> */}
             </ColumnOne>
+
+            {/* Actions + Files + Activities */}
             <ColumnTwo>
               <CardContainer label="Actions">
-                <BoardMissionsStationsComponent />
+                <p>This will be "Actions" section</p>
+
+                {/* <BoardMissionsStationsComponent /> */}
               </CardContainer>
               <NestedGrid>
                 <CardContainer
@@ -237,7 +262,6 @@ const BoardMissionsComponent = ({
                 </CardContainer>
                 <CardContainer label="Activities">
                   <p>This will be "Activities" section</p>
-
                   {/* <BoardMissionsActivities /> */}
                 </CardContainer>
               </NestedGrid>
@@ -245,8 +269,13 @@ const BoardMissionsComponent = ({
           </>
         )}
       </GridContainer>
-
       <GoMakeSnackBar />
+      <BoardMissionsAddNote
+        onClose={() => {
+          setOpenAddNoteModal(false);
+        }}
+        openModal={openAddNoteModal}
+      />
     </Stack>
   );
 };
