@@ -195,9 +195,9 @@ const BoardMissionsStationActionNew = ({
     });
   };
 
-  useEffect(() => {
-    setIsOpen(!!selected);
-  }, [selected]);
+  // useEffect(() => {
+  //   setIsOpen(!!selected);
+  // }, [selected]);
 
   const [open, setOpen] = useState<boolean>(false);
   const [contactsFilter, setContactsFilter] = useState<string>("");
@@ -380,6 +380,7 @@ const BoardMissionsStationActionNew = ({
 
   return (
     <>
+      {/* !here this case i didn't try isHaveSubACtions  */}
       {isHaveSubACtions ? (
         <div>
           {/* General action header */}
@@ -424,14 +425,10 @@ const BoardMissionsStationActionNew = ({
                 <span style={{ ...classes.detailValue, color: "#FFFF" }}>
                   {DateFormatterDDMMYYYY(convertUtcToLocalIsoString(dueDate))}
                 </span>
-                <span style={classes.sourceLabel}>
-                  {source === EWorkSource.OUT
-                    ? t("pricingWidget.outSource")
-                    : t("pricingWidget.inSource")}
-                </span>
+                {source == EWorkSource.OUT && (
+                  <span style={classes.outSourceLabel}>OS</span>
+                )}
               </Stack>
-
-              {/* !here */}
               <Stack
                 direction={"row"}
                 gap={"12px"}
@@ -604,6 +601,7 @@ const BoardMissionsStationActionNew = ({
                         <>
                           {!chooseMachine ? (
                             <Button
+                              endIcon={<KeyboardArrowDownIcon />}
                               onClick={(e) => {
                                 if (
                                   CheckPermission(
@@ -617,7 +615,7 @@ const BoardMissionsStationActionNew = ({
                                 }
                               }}
                               variant={"text"}
-                              style={classes.sectionTitle}
+                              style={classes.machineTitle}
                             >
                               {machineName != null ? (
                                 <>
@@ -626,7 +624,7 @@ const BoardMissionsStationActionNew = ({
                                     : machineName}
                                 </>
                               ) : (
-                                <>Selecte New Machine</>
+                                <>Select New Machine</>
                               )}
                             </Button>
                           ) : (
@@ -703,6 +701,7 @@ const BoardMissionsStationActionNew = ({
                       <>
                         {!chooseEmployee ? (
                           <Button
+                            endIcon={<KeyboardArrowDownIcon />}
                             onClick={(e) => {
                               if (
                                 CheckPermission(
@@ -716,7 +715,7 @@ const BoardMissionsStationActionNew = ({
                               }
                             }}
                             variant={"text"}
-                            style={classes.sectionTitle}
+                            style={classes.machineTitle}
                           >
                             {employeeName ? (
                               employeeName
@@ -797,7 +796,11 @@ const BoardMissionsStationActionNew = ({
                       <Divider
                         orientation={"vertical"}
                         flexItem
-                        color={"#D6D6D6"}
+                        style={{
+                          height: "60%",
+                          alignSelf: "center",
+                          color: "#D6D6D6",
+                        }}
                       />
                       <Stack
                         direction={"row"}
@@ -810,11 +813,9 @@ const BoardMissionsStationActionNew = ({
                           )}
                         </span>
                       </Stack>
-                      <span style={classes.sourceLabel}>
-                        {source === EWorkSource.OUT
-                          ? t("pricingWidget.outSource")
-                          : t("pricingWidget.inSource")}
-                      </span>
+                      {source == EWorkSource.OUT && (
+                        <span style={classes.outSourceLabel}>OS</span>
+                      )}
                     </>
                   )}
                 </Stack>
@@ -870,6 +871,8 @@ const BoardMissionsStationActionNew = ({
                   )}
               </Collapse>
             </Stack>
+
+            {/* Completed and Check */}
             <PermissionCheck
               userPermission={
                 Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR

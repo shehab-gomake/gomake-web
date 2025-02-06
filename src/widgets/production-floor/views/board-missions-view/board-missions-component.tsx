@@ -65,32 +65,35 @@ const BoardMissionsComponent = ({
 
   const ColumnOne = styled.div`
     display: grid;
-    grid-template-rows: 20% 25% 55%;
-    gap: 10px;
-    height: 100%; // Ensure it takes full height
-    min-height: 0; // Prevents content overflow issues
-    overflow: hidden; // Prevents unintended scrolling
+    grid-template-rows: calc(20% - 6px) calc(35% - 6px) calc(45% - 6px);
+    gap: 9px;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    box-sizing: border-box;
   `;
 
   const ColumnTwo = styled.div`
     display: grid;
-    grid-template-rows: 50% 50%;
-    gap: 10px;
+    grid-template-rows: calc(50% - 4px) calc(50% - 4px);
+    gap: 8px;
     height: 100%;
     min-height: 0;
     overflow: hidden;
+    box-sizing: border-box;
   `;
 
   const NestedGrid = styled.div`
     display: grid;
-    grid-template-columns: 30% 70%;
+    grid-template-columns: calc(30% - 4px) calc(70% - 4px);
     width: 100%;
     height: 100%;
-    gap: 10px;
-    padding-right: 10px;
-    min-height: 0; // Prevents content overflow issues
+    gap: 8px;
+    min-height: 0;
     overflow: hidden;
   `;
+
+  const typesData = null;
 
   return (
     <Stack
@@ -114,6 +117,7 @@ const BoardMissionsComponent = ({
           {step === EBoardMissionsViews.APPROVAL && <></>}
           {step === EBoardMissionsViews.ACTIVITY && <BoardMissionsActivities />}
         </Stack> */}
+      {/* <GoMakeSnackBar /> */}
       {/* Old */}
       <BoardMissionsDetailsHeader />
       <GridContainer>
@@ -191,9 +195,27 @@ const BoardMissionsComponent = ({
               >
                 <BoardMissionsNotes />
               </CardContainer>
-              <CardContainer label="Product Details">
-                <p>This will be "Product Details 1 " section</p>
-              </CardContainer>
+              <GridContainer
+                style={{
+                  display: "grid",
+                  // gridTemplateColumns: typesData ? "60% 38%" : "100%",
+                  gridTemplateColumns: typesData
+                    ? "calc(60% - 0.5%) calc(40% - 0.5%)"
+                    : "100%",
+                  gap: "1%",
+                  height: "100%",
+                  overflow: "hidden",
+                }}
+              >
+                <CardContainer label="Product Details">
+                  <p>This will be "Product Details 1 " section</p>
+                </CardContainer>
+                {typesData && (
+                  <CardContainer label="Types">
+                    <p>This will be "Types" section</p>
+                  </CardContainer>
+                )}
+              </GridContainer>
               <div
                 style={{
                   display: "flex",
@@ -220,17 +242,11 @@ const BoardMissionsComponent = ({
                   </CardContainer>
                 ))}
               </div>
-              {/* <CardContainer withHeader={false}>
-                <p>This will be "Product Details index + 1" section</p>
-              </CardContainer> */}
             </ColumnOne>
-
             {/* Actions + Files + Activities */}
             <ColumnTwo>
               <CardContainer label="Actions">
-                <p>This will be "Actions" section</p>
-
-                {/* <BoardMissionsStationsComponent /> */}
+                <BoardMissionsStationsComponent />
               </CardContainer>
               <NestedGrid>
                 <CardContainer

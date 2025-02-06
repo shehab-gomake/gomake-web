@@ -1,6 +1,6 @@
 import Stack from "@mui/material/Stack";
 import { useBoardMissionsStations } from "@/widgets/production-floor/views/board-missions-view/stations/use-board-missions-stations";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Skeleton } from "@mui/material";
 import { BoardMissionsSubWorkFlowComponent } from "@/widgets/production-floor/views/board-missions-view/stations/sub-work-flow-component";
 import { CompletedBoardMissionsComponent } from "@/widgets/production-floor/views/board-missions-view/stations/completed-board-missions-component/completed-board-missions-component";
@@ -25,10 +25,11 @@ const BoardMissionsStationsComponent = () => {
     boardMissionsDetailsState
   );
 
-  const isLoading = !boardMissionsDetails?.boardMissionId && sortedStations;
+  const isLoading =
+    !boardMissionsDetails?.boardMissionId || sortedStations?.length === 0;
 
   return (
-    <Stack gap={"10px"} minHeight={"fit-content"} overflow={"scroll"}>
+    <Stack gap={"10px"} minHeight="100%" overflow="auto">
       {/* Skeleton for Stations */}
       {isLoading ? (
         <>
@@ -40,7 +41,7 @@ const BoardMissionsStationsComponent = () => {
                 variant="rectangular"
                 width="100%"
                 height={50}
-                style={{ marginBottom: "10px" }}
+                style={{ marginBottom: "10px", borderRadius: "8px" }}
               />
             ))}
         </>
