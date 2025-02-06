@@ -21,11 +21,12 @@ import { useProductionFloorData } from "./use-production-floor-data";
 import { TimelineWidget } from "@/widgets/production-floor/views/gantt-view/gantt-component";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import {useProductionFloorSocketIO} from "@/hooks/socket-io/use-production-floor-socket-io";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
   const { query, replace, pathname, push } = useRouter();
-  const { connectionId, closeConnection } = useProductionFloorSignalr();
+  const { connectionId } = useProductionFloorSocketIO();
   const { groupsId, boardMissionsId, step, productType } = query;
 
   const {
@@ -52,11 +53,11 @@ const ProductionFloorWidget = () => {
     }
   }, [groupsId, boardMissionsId, step]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     return () => {
       closeConnection();
     };
-  }, []);
+  }, []);*/
 
   useEffect(() => {
     const { view: viewQuery } = query;

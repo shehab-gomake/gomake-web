@@ -10,6 +10,7 @@ import { BoardMissionsStationsComponent } from "@/widgets/production-floor/views
 import { BoardMissionsActivities } from "@/widgets/production-floor/views/board-missions-view/activity/board-missions-activities";
 import { BoardMissionsFiles } from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import { GoMakeSnackBar } from "@/components";
+import {useJobModalSocketIO} from "@/hooks/socket-io/use-job-modal-socket-io";
 
 interface IProps {
   boardMissionsId: string;
@@ -27,6 +28,7 @@ const BoardMissionsComponent = ({
 }: IProps) => {
   const { getBoardMissions, initStates, boardMissionsDetails } =
     useBoardMissions();
+  const {} = useJobModalSocketIO(boardMissionsId)
   useEffect(() => {
     if (!!boardMissionsId && !!connectionId) {
       getBoardMissions(boardMissionsId, connectionId, productType).then();
