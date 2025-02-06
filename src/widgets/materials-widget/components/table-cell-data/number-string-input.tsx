@@ -10,14 +10,19 @@ import { materialCategorySuppliersState } from "../../state";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums";
+import { convertValueToImperial } from "@/utils/helpers";
+import { convertValueToOriginalUnit } from "@/utils/helpers";
 
 
-const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRowData) => {
+const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit }: IRowData) => {
+
     const { classes } = useStyle();
     const { t } = useTranslation();
     const [isUpdate, setIsUpdate] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [updateValue, setUpdateValue] = useState('');
+
+
     const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
     const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
 
@@ -33,7 +38,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRo
     const onClick = () => {
         if (isEditable) {
             setIsUpdate(true);
-            setUpdateValue(value as string);
+            setUpdateValue(convertValueToImperial(unit, value) as string);
         }
     }
     const onInputChange = (v: string) => {
@@ -46,11 +51,13 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRo
                 onClickOpenDeleteTableRowModal()
             }
             else {
+                const originalValue = convertValueToOriginalUnit(unit, updateValue);
                 setIsLoading(true)
-                updateCellData(id, parameterKey, updateValue).then(
+                updateCellData(id, parameterKey, originalValue).then(
                     () => {
                         setIsLoading(false);
                         setIsUpdate(false);
+
 
                     }
                 );
@@ -64,11 +71,31 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRo
         return onBlur
     }, [updateValue])
 
+
+
+
     return (
         <>
-            {isUpdate ? isLoading ? <DotsLoader /> : <UpdateValueInput clickedOut={onClickOut()} onInputChange={onInputChange} value={updateValue as string} onUpdate={onBlur}
-                onCancel={() => setIsUpdate(false)} /> :
-                isEditable ? <PrimaryButton style={{ minWidth: "max-content" }} sx={classes.clickableData} onClick={onClick} variant={'text'}>{value}</PrimaryButton> : <span>{value}</span>
+            {isUpdate ? isLoading ?
+                <DotsLoader /> :
+                <UpdateValueInput
+                    clickedOut={onClickOut()}
+                    onInputChange={onInputChange}
+                    value={updateValue as string}
+                    onUpdate={onBlur}
+                    onCancel={() => setIsUpdate(false)}
+                />
+                :
+                isEditable ?
+                    <PrimaryButton
+                        style={{ minWidth: "max-content" }}
+                        sx={classes.clickableData}
+                        onClick={onClick}
+                        variant={'text'}
+                    >
+                        {convertValueToImperial(unit, value)}
+                    </PrimaryButton>
+                    : <span>{convertValueToImperial(unit, value)}</span>
             }
             <GoMakeDeleteModal
                 modalType={ModalType.EDIT}
@@ -79,9 +106,11 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRo
                 yesBtn={t("documentingSettings.update")}
                 onClickDelete={() => {
                     setIsLoading(true)
-                    updateCellData(id, parameterKey, updateValue).then(
+                    const originalValue = convertValueToOriginalUnit(unit, updateValue);
+                    updateCellData(id, parameterKey, originalValue).then(
                         () => {
                             setIsLoading(false);
+
                             setIsUpdate(false);
 
                         }

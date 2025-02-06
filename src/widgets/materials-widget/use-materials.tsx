@@ -46,11 +46,10 @@ import { getAndSetAllCustomers, getAndSetMachincesNew } from "@/services/hooks";
 import { MaterialMenuWidget } from "./components/more-circle";
 import cloneDeep from "lodash.clonedeep";
 import { SideLeftMenuWidget } from "./components/side-list-menu";
-import { EMaterialActiveFilter } from "@/widgets/materials-widget/enums";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { useMaterialsCategories } from "./use-materials-categories";
-import { NumberStringInput } from "./components/table-cell-data/number-string-input";
+import { convertTitleUnits } from "@/utils/helpers";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -285,6 +284,7 @@ const useMaterials = (isAdmin: boolean) => {
     ];
   }, [materialHeaders, materialCategoryData]);
 
+
   const tableHeadersNew = useCallback(() => {
     return [
       <Checkbox
@@ -294,16 +294,24 @@ const useMaterials = (isAdmin: boolean) => {
       ...(isAdmin
         ? materialHeaders.filter((x) => x.key !== "stock")
         : materialHeaders.filter((header) => !header.isForAdmin)
-      ).map((header) =>
-        header.unit ? (
-          <div>
-            {" "}
-            <span>{header.value}</span> <small>{header.unit}</small>
-          </div>
-        ) : (
-          <div style={{ textTransform: "capitalize" }}>{header.value}</div>
-        )
-      ),
+      ).map((header) => {
+        const convertedUnit = convertTitleUnits(header.unit);
+
+        return (
+          header.unit ? (
+            <div>
+              {" "}
+              <div key={header.key}>
+                <span>{header.value}</span>
+                {convertedUnit && <small> ({convertedUnit})</small>}
+              </div>
+            </div>
+          ) : (
+            <div style={{ textTransform: "capitalize" }}>{header.value}</div>
+          )
+
+        );
+      }),
       t("usersSettings.isActive"),
       t("properties.more"),
     ];
@@ -354,6 +362,7 @@ const useMaterials = (isAdmin: boolean) => {
             {...dataRow.rowData[header.key]}
             id={dataRow.id}
             isAdmin={isAdmin}
+            unit={header.unit}
             parameterKey={header.key}
             onChangeRowCheckBox={onChangeRowCheckBox}
           />

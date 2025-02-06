@@ -1,6 +1,7 @@
 import { EPreferences } from "@/enums/prefernces";
 import { ISetState } from "@/services/hooks/call-api.interface";
 import get from "lodash.get";
+import convert from "convert-units";
 
 const returnResult = (
   result: any,
@@ -244,3 +245,50 @@ export const _renderDeliveryDate = (dateString: string) => {
 
   return `${formattedDate} | ${time}`;
 }
+
+export const convertTitleUnits = (unit: string | null) => {
+  if (!unit) return null;
+
+  switch (unit) {
+    case "cm":
+      return "in"; // Convert cm to inches
+    case "gram":
+      return "oz"; // Convert grams to ounces
+    case "um":
+      return "µin"; // Convert microns to mils
+    default:
+      return unit; // Return as is if not supported
+  }
+};
+
+export const convertValueToImperial = (unit: string | null, value: any) => {
+  if (!unit) return value; // Return value as-is if no unit
+
+  switch (unit) {
+      case "cm":
+          return convert(value).from("cm").to("in").toFixed(2);
+      case "gram":
+          return convert(value).from("g").to("oz").toFixed(2);
+      case "um":
+          // Manually convert micrometers to microinches (1 um = 39.3701 microinches)
+          return (value * 39.3701).toFixed(2);
+      default:
+          return value;
+  }
+};
+
+export const convertValueToOriginalUnit = (unit: string | null, value: any) => {
+  if (!unit) return value; // Return value as-is if no unit
+
+  switch (unit) {
+      case "cm":
+          return convert(value).from("in").to("cm").toFixed(2);
+      case "gram":
+          return convert(value).from("oz").to("g").toFixed(2);
+      case "um":
+          // Manually convert microinches to micrometers (1 microinch = 0.0254 micrometers)
+          return (value * 0.0254).toFixed(2);
+      default:
+          return value;
+  }
+};
