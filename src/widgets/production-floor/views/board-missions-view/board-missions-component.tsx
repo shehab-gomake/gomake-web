@@ -11,12 +11,13 @@ import { BoardMissionsActivities } from "@/widgets/production-floor/views/board-
 import { BoardMissionsFiles } from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import { GoMakeSnackBar } from "@/components";
 import styled from "styled-components";
-import { CardContainer } from "./test-components/job-card-container";
+import { CardContainer } from "./job-card-container/job-card-container";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { CompletedBoardMissionsComponent } from "./stations/completed-board-missions-component/completed-board-missions-component";
-import { DownloadIcon } from "./test-components/icons";
+import { DownloadIcon } from "./job-card-container/icons";
 import { BoardMissionsAddNote } from "./stations/notes/add-note";
 import { BoardMissionsNotes } from "./stations/notes/board-missions-notes";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { PermissionCheck } from "@/components/CheckPermission";
 
 interface IProps {
   boardMissionsId: string;
@@ -41,7 +42,8 @@ const BoardMissionsComponent = ({
     isLoading,
     onClickUploadFile,
     openAddNoteModal,
-    setOpenAddNoteModal,
+    handleOpenNotesModal,
+    handleCloseNotesModal,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -60,27 +62,6 @@ const BoardMissionsComponent = ({
     height: 100vh;
     gap: 10px;
   `;
-
-  // const ColumnOne = styled.div`
-  //   display: grid;
-  //   grid-template-rows: 15% 25% 60%;
-  //   gap: 10px;
-  // `;
-
-  // const ColumnTwo = styled.div`
-  //   display: grid;
-  //   grid-template-rows: 50% 50%;
-  //   gap: 10px;
-  // `;
-
-  // const NestedGrid = styled.div`
-  //   display: grid;
-  //   grid-template-columns: 30% 70%; /* 2 columns with 30% and 70% */
-  //   width: 100%;
-  //   height: 100%;
-  //   gap: 10px;
-  //   padding-right: 10px;
-  // `;
 
   const ColumnOne = styled.div`
     display: grid;
@@ -186,20 +167,26 @@ const BoardMissionsComponent = ({
             {/* Notes + Products details */}
             <ColumnOne>
               <CardContainer
-                label="Notes"
+                label={t("sales.quote.notes")}
                 actionButton={
-                  <Button
-                    onClick={() => setOpenAddNoteModal(true)}
-                    variant="text"
-                    style={{
-                      color: "#ffffff",
-                      ...FONT_FAMILY.Inter(500, 14),
-                      padding: "0px",
-                      textTransform: "capitalize",
-                    }}
+                  <PermissionCheck
+                    userPermission={
+                      Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
+                    }
                   >
-                    + {t("productionFloor.addNote")}
-                  </Button>
+                    <Button
+                      onClick={handleOpenNotesModal}
+                      variant="text"
+                      style={{
+                        color: "#ffffff",
+                        ...FONT_FAMILY.Inter(500, 14),
+                        padding: "0px",
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      + {t("productionFloor.addNote")}
+                    </Button>
+                  </PermissionCheck>
                 }
               >
                 <BoardMissionsNotes />
@@ -271,9 +258,7 @@ const BoardMissionsComponent = ({
       </GridContainer>
       <GoMakeSnackBar />
       <BoardMissionsAddNote
-        onClose={() => {
-          setOpenAddNoteModal(false);
-        }}
+        onClose={handleCloseNotesModal}
         openModal={openAddNoteModal}
       />
     </Stack>

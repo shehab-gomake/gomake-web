@@ -9,7 +9,6 @@ import { useTranslation } from "react-i18next";
 
 enum NoteTypeEnum {
   general = 0,
-  lamination,
 }
 
 interface IProps {
@@ -33,7 +32,10 @@ const BoardMissionsNote = ({ index, note }: IProps) => {
           style={{ ...FONT_FAMILY.Inter(600, 16), color: secondColor(500) }}
         >
           {`${
-            t(`productionFloor.${NoteTypeEnum[note?.noteType]}`) || "Unknown"
+            note?.noteType !== NoteTypeEnum.general
+              ? note?.name || "Unknown"
+              : t(`productionFloor.${NoteTypeEnum[note?.noteType]}`) ||
+                "Unknown"
           }:`}
         </span>
         <span style={{ ...FONT_FAMILY.Inter(500, 16), color: "#344054" }}>

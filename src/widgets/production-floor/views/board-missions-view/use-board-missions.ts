@@ -81,6 +81,14 @@ const useBoardMissions = () => {
     });
   };
 
+  const handleOpenNotesModal = () => {
+    setOpenAddNoteModal(true);
+  };
+
+  const handleCloseNotesModal = () => {
+    setOpenAddNoteModal(false);
+  };
+
   return {
     getBoardMissions,
     initStates,
@@ -88,7 +96,8 @@ const useBoardMissions = () => {
     isLoading,
     onClickUploadFile,
     openAddNoteModal,
-    setOpenAddNoteModal,
+    handleOpenNotesModal,
+    handleCloseNotesModal,
     t,
   };
 };
