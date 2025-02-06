@@ -52,6 +52,7 @@ const useBoardMissionsStations = () => {
   const [productDetails, setProductDetails] = useRecoilState(
     productionFloorSectionsState
   );
+  const resetProductDetails = useResetRecoilState(productionFloorSectionsState);
 
   const getStations = async () => {
     initGeneralInformation();
@@ -115,6 +116,7 @@ const useBoardMissionsStations = () => {
     isRTL,
     getStations,
     productDetails,
+    resetProductDetails,
   };
 };
 

@@ -20,19 +20,20 @@ const useBoardMissions = () => {
   const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(
     boardMissionsDetailsState
   );
-
-  const {} = useBoardMissionsStations();
-  const productDetails = useRecoilValue(productionFloorSectionsState);
-  const resetProductDetails = useResetRecoilState(productionFloorSectionsState);
   const resetDetails = useResetRecoilState(boardMissionsDetailsState);
+
+  const {
+    stations,
+    subWorkFlows,
+    boardMissions,
+    getStations,
+    productDetails,
+    resetProductDetails,
+  } = useBoardMissionsStations();
 
   const initStates = () => {
     resetDetails();
     resetProductDetails();
-    // resetFiles();
-    // resetStations();
-    // resetSubWorkFlows();
-    // resetGeneralInformation();
   };
 
   const getBoardMissions = async (
@@ -95,6 +96,10 @@ const useBoardMissions = () => {
     handleCloseNotesModal,
     productDetails,
     t,
+    stations,
+    subWorkFlows,
+    boardMissions,
+    getStations,
   };
 };
 

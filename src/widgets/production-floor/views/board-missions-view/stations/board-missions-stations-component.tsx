@@ -1,6 +1,5 @@
 import Stack from "@mui/material/Stack";
-import { useBoardMissionsStations } from "@/widgets/production-floor/views/board-missions-view/stations/use-board-missions-stations";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { Skeleton } from "@mui/material";
 import { BoardMissionsSubWorkFlowComponent } from "@/widgets/production-floor/views/board-missions-view/stations/sub-work-flow-component";
 import { CompletedBoardMissionsComponent } from "@/widgets/production-floor/views/board-missions-view/stations/completed-board-missions-component/completed-board-missions-component";
@@ -9,9 +8,16 @@ import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boar
 import { BoardMissionsStationActionNew } from "./station-action-new";
 
 //!here new version BoardMissionsStationsComponent
-const BoardMissionsStationsComponent = () => {
-  const { stations, subWorkFlows, boardMissions, getStations } =
-    useBoardMissionsStations();
+const BoardMissionsStationsComponent = ({
+  stations,
+  subWorkFlows,
+  boardMissions,
+  getStations,
+}) => {
+  //!here was before and it was render many times!
+
+  // const { stations, subWorkFlows, boardMissions, getStations } =
+  //   useBoardMissionsStations();
 
   const sortedStations = useMemo(
     () =>

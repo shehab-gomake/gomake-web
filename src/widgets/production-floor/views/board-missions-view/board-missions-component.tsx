@@ -46,6 +46,10 @@ const BoardMissionsComponent = ({
     handleOpenNotesModal,
     handleCloseNotesModal,
     productDetails,
+    stations,
+    subWorkFlows,
+    boardMissions,
+    getStations,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -262,7 +266,12 @@ const BoardMissionsComponent = ({
             {/* Actions + Files + Activities */}
             <ColumnTwo>
               <CardContainer label="Actions">
-                {/* <BoardMissionsStationsComponent /> */}
+                <BoardMissionsStationsComponent
+                  stations={stations}
+                  subWorkFlows={subWorkFlows}
+                  boardMissions={boardMissions}
+                  getStations={getStations}
+                />
               </CardContainer>
               <NestedGrid>
                 <CardContainer
