@@ -21,7 +21,6 @@ const useJobModalSocketIO = (boardMissionId:string) => {
     const [, setFiles] = useRecoilState(boardMissionsFilesState);
     const setSubWorkFlows = useSetRecoilState(boardMissionsSubWorkFlowsState);
     useEffect(()=>{
-        debugger
         const socket = io(config.api_server);
         socket.on(`UpdateBoardMissionModal-${boardMissionId}`, (newData) => {
             if (!!newData && boardMissionId === newData.details.boardMissionId) {

@@ -10,7 +10,6 @@ const useProductionFloorSocketIO = () => {
     const profile = useRecoilValue(printHouseProfile);
     const { getData } = useProductionFloorData();
     useEffect(()=>{
-        debugger
         const socket = io(config.api_server);
         socket.on(`UpdateBoardMissionsStation-${profile.id}`, () => {
             getData(socket.id).then();
