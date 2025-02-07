@@ -41,6 +41,7 @@ interface IProps {
   status?: any;
   onClickDone?: (mission: any) => void;
   onClickPrintDTicket?: (mission: any) => void;
+  onClickClient?: (clientId: any) => void;
   index: number;
 }
 
@@ -55,52 +56,20 @@ const TableRowComponent = ({
   status,
   onClickDone,
   onClickPrintDTicket,
+  onClickClient,
   index,
 }: IProps) => {
   console.log("boardMission", boardMission);
 
   const { push } = useRouter();
-  const { callApi } = useGomakeAxios();
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
   );
-  const [openCustomerModal, setOpenCustomerModal] = useState(false);
-  const [customer, setCustomer] = useState([]);
+
   const onCustomerAdd = (customer) => {
-    setOpenCustomerModal(false);
+    //setOpenCustomerModal(false);
   };
 
-  const getCustomerForEdit = async (id) => {
-    const callBack = (res) => {
-      if (res.success) {
-        let customer = res.data;
-        if (customer.contacts && customer.contacts.length > 0) {
-          let index = 0;
-          customer.contacts.forEach((x) => {
-            x.index = index;
-            index++;
-          });
-        }
-        if (customer.addresses && customer.addresses.length > 0) {
-          let index = 0;
-          customer.addresses.forEach((x) => {
-            x.index = index;
-            index++;
-          });
-        }
-        if (customer.users && customer.users.length > 0) {
-          let index = 0;
-          customer.users.forEach((x) => {
-            x.index = index;
-            index++;
-          });
-        }
-        setCustomer(customer);
-        setOpenCustomerModal(true);
-      }
-    };
-    await getAndSetCustomerById(callApi, callBack, { customerId: id });
-  };
   const { CheckPermission } = useUserPermission();
   const canDrag = CheckPermission(
     Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
@@ -287,7 +256,7 @@ const TableRowComponent = ({
           </div>
         </SecondaryTableCell>
 
-        <SecondaryTableCell align={"center"} style={{ width: "20px",cursor:"pointer", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }} onClick={() => getCustomerForEdit(boardMission?.clientId)}>
+        <SecondaryTableCell align={"center"} style={{ width: "20px",cursor:"pointer", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }} onClick={() => onClickClient(boardMission?.clientId)}>
           {getTruncatedLabel(boardMission?.clientName, 15)}
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"} style={{ padding: "0px 10px", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
@@ -363,18 +332,6 @@ const TableRowComponent = ({
           }
         </TableCell>
       </TableRow>
-
-      <CustomerCardWidget
-        isValidCustomer={isValidCustomer}
-        customerAction={CUSTOMER_ACTIONS.Edit}
-        typeClient={CLIENT_TYPE.CUSTOMER}
-        openModal={openCustomerModal}
-        modalTitle={t("suppliers.editModalTitle")}
-        onClose={() => setOpenCustomerModal(false)}
-        customer={customer}
-        setCustomer={setCustomer}
-        showUpdateButton={true}
-      />
     </>
   );
 };
