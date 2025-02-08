@@ -34,13 +34,9 @@ const useCalculationsWorkFlowsSignalR = () => {
   useEffect(() => {
     if (connection) {
       connection.on("updateWorkFlows", (newData: ICalculationSignalRResult) => {
-        //setCalculationExceptionsLogs(newData.exceptions);
         setSignalRWorkFlows(newData);
       });
       connection.on("startCalculationSession", async (newData) => {
-        /*if(newData.isDevMode){
-          setConnectionSessionId(newData.productItemValueDraftId);
-        }*/
         setStartCalculationData(newData);
         setCalculationExceptionsLogs(newData.calculationExceptions);
       });
