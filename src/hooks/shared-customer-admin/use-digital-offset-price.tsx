@@ -93,6 +93,7 @@ import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-
 import { useMaterials } from "../use-materials";
 import { ESourceView } from "@/enums/products";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
+import {useCalculationSocketIO} from "@/hooks/socket-io/use-calculation-socket-io";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
@@ -245,12 +246,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     calculationServerError,
     isCalculationFinished,
     setIsCalculationFinished,
-  } = useCalculationsWorkFlowsSignalR();
+  } = useCalculationSocketIO();
   useEffect(() => {
     setProductItemValueByEdit({});
   }, []);
 
   useEffect(() => {
+    debugger
     const oldConnectionId = currentSignalRConnectionId;
     if (oldConnectionId && connectionId && connectionId !== oldConnectionId) {
       updateSignalRConnectionId(oldConnectionId, connectionId);

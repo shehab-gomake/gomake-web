@@ -94,6 +94,7 @@ const BusinessNewWidget = ({
     documentTitle,
     setDocumentTitle,
     isFetching,
+    isPurchaseDocument,
   } = useBusinessWidget({ values, documentType });
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -133,9 +134,7 @@ const BusinessNewWidget = ({
       <div style={{ ...classes.businessContainerStyle, marginBottom: "10px" }}>
         <AutoCompleteUpdatedValue
           label={t("sales.quote.businessName")}
-          defaultFiltering={
-            documentType === DOCUMENT_TYPE.purchaseOrder ? true : false
-          }
+          defaultFiltering={isPurchaseDocument ? true : false}
           value={
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
@@ -143,11 +142,7 @@ const BusinessNewWidget = ({
               ? quoteStateValue?.client?.name
               : t("sales.quote.selectBusinessName")
           }
-          options={
-            documentType === DOCUMENT_TYPE.purchaseOrder
-              ? mappedSuppliers
-              : mappedCustomers
-          }
+          options={isPurchaseDocument ? mappedSuppliers : mappedCustomers}
           onBlur={onBlurBusinessName}
           isUpdate={canEditDocument && isUpdateBusinessName}
           setIsUpdate={
@@ -158,7 +153,7 @@ const BusinessNewWidget = ({
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => onClickOpenChangeClientModal(value)}
           onChangeTextField={(e) => {
-            if (documentType === DOCUMENT_TYPE.purchaseOrder) {
+            if (isPurchaseDocument) {
               return;
             }
             checkWhatRenderArray(e);
@@ -285,15 +280,45 @@ const BusinessNewWidget = ({
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           {values?.documentDeliveryAddresses?.length > 0 && (
             <InputUpdatedValues
+              speicalStyle={{ fontWeight: "500px" }}
               value={
                 values?.documentDeliveryAddresses?.length > 0
-                  ? [
-                      values?.documentDeliveryAddresses[0]?.street,
-                      values?.documentDeliveryAddresses[0]?.apartment,
-                      values?.documentDeliveryAddresses[0]?.city,
-                    ]
-                      .filter((part) => part && part.trim())
-                      .join(", ") || t("sales.cart.noAddressFound")
+                  ? (() => {
+                      const addressParts = [
+                        values?.documentDeliveryAddresses[0]?.city &&
+                          `${t("customers.modal.city")}: ${
+                            values?.documentDeliveryAddresses[0]?.city
+                          }`,
+                        values?.documentDeliveryAddresses[0]?.street &&
+                          `${t("customers.modal.street")}: ${
+                            values?.documentDeliveryAddresses[0]?.street
+                          }`,
+                        values?.documentDeliveryAddresses[0]?.entry &&
+                          `${t("customers.modal.entrance")}: ${
+                            values?.documentDeliveryAddresses[0]?.entry
+                          }`,
+                        values?.documentDeliveryAddresses[0]?.apartment &&
+                          `${t("customers.modal.apartment")}: ${
+                            values?.documentDeliveryAddresses[0]?.apartment
+                          }`,
+                        values?.documentDeliveryAddresses[0]?.floor &&
+                          `${t("customers.modal.floor")}: ${
+                            values?.documentDeliveryAddresses[0]?.floor
+                          }`,
+                        values?.documentDeliveryAddresses[0]?.zipCode &&
+                          `${t("customers.modal.postalCode")}: ${
+                            values?.documentDeliveryAddresses[0]?.zipCode
+                          }`,
+                        values?.documentDeliveryAddresses[0]?.postbox &&
+                          `${t("customers.modal.po")}: ${
+                            values?.documentDeliveryAddresses[0]?.postbox
+                          }`,
+                      ].filter(Boolean);
+
+                      return addressParts.length > 0
+                        ? addressParts.join(" | ")
+                        : t("sales.cart.noAddressFound");
+                    })()
                   : t("sales.cart.noAddressFound")
               }
               label={t("sales.cart.deliveryAddress")}
@@ -339,13 +364,42 @@ const BusinessNewWidget = ({
             <InputUpdatedValues
               value={
                 values?.documentBillingAddresses?.length > 0
-                  ? [
-                      values?.documentBillingAddresses[0]?.street,
-                      values?.documentBillingAddresses[0]?.apartment,
-                      values?.documentBillingAddresses[0]?.city,
-                    ]
-                      .filter((part) => part && part.trim())
-                      .join(", ") || t("sales.cart.noAddressFound")
+                  ? (() => {
+                      const addressParts = [
+                        values?.documentBillingAddresses[0]?.city &&
+                          `${t("customers.modal.city")}: ${
+                            values?.documentBillingAddresses[0]?.city
+                          }`,
+                        values?.documentBillingAddresses[0]?.street &&
+                          `${t("customers.modal.street")}: ${
+                            values?.documentBillingAddresses[0]?.street
+                          }`,
+                        values?.documentBillingAddresses[0]?.entry &&
+                          `${t("customers.modal.entrance")}: ${
+                            values?.documentBillingAddresses[0]?.entry
+                          }`,
+                        values?.documentBillingAddresses[0]?.apartment &&
+                          `${t("customers.modal.apartment")}: ${
+                            values?.documentBillingAddresses[0]?.apartment
+                          }`,
+                        values?.documentBillingAddresses[0]?.floor &&
+                          `${t("customers.modal.floor")}: ${
+                            values?.documentBillingAddresses[0]?.floor
+                          }`,
+                        values?.documentBillingAddresses[0]?.zipCode &&
+                          `${t("customers.modal.postalCode")}: ${
+                            values?.documentBillingAddresses[0]?.zipCode
+                          }`,
+                        values?.documentBillingAddresses[0]?.postbox &&
+                          `${t("customers.modal.po")}: ${
+                            values?.documentBillingAddresses[0]?.postbox
+                          }`,
+                      ].filter(Boolean);
+
+                      return addressParts.length > 0
+                        ? addressParts.join(" | ")
+                        : t("sales.cart.noAddressFound");
+                    })()
                   : t("sales.cart.noAddressFound")
               }
               label={t("sales.cart.billingAddress")}

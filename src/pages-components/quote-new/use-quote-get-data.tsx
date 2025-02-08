@@ -363,7 +363,6 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
 
   const onClickAddNewAddress = useCallback(
     async (item: any, isUpdate: boolean, addressType: EAddressType) => {
-      debugger;
       if (!item?.addressId || !item?.city) {
         alertRequiredFields();
         return;
@@ -379,6 +378,9 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           type: addressType,
           apartment: item?.apartment,
           clientId: quoteItemValue?.customerID,
+          floor: item?.floor,
+          postbox: item?.postbox,
+          zipCode: item?.zipCode,
         }
       );
       if (res?.success) {
@@ -399,6 +401,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
     },
     [quoteItemValue, router]
   );
+
   const onClickAddAddress = async (item: any, addressType: EAddressType) => {
     if (!item?.city) {
       alertRequiredFields();
@@ -426,6 +429,9 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         apartment: item?.apartment,
         notes: "",
         documentID: updatedQuoteItemValue?.id,
+        floor: item?.floor,
+        postbox: item?.postbox,
+        zipCode: item?.zipCode,
       };
 
       updatedQuoteItemValue[addressArray] = [
@@ -457,10 +463,14 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           apartment: item?.apartment,
           notes: item?.notes || "",
           documentID: quoteItemValue?.id,
+          floor: item?.floor,
+          postbox: item?.postbox,
+          zipCode: item?.zipCode,
         },
       });
     }
   };
+
   const updateClientAddress = async (item: any, addressType: EAddressType) => {
     if (!item?.city) {
       alertRequiredFields();
@@ -484,6 +494,9 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
               entry: item.entry,
               apartment: item.apartment,
               notes: item.notes || "",
+              floor: item?.floor,
+              postbox: item?.postbox,
+              zipCode: item?.zipCode,
             };
           }
           return address;
@@ -521,6 +534,9 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           notes: item?.notes || "",
           documentID: quoteItemValue?.id,
           type: addressType,
+          floor: item?.floor,
+          postbox: item?.postbox,
+          zipCode: item?.zipCode,
         },
       });
     }

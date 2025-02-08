@@ -31,9 +31,10 @@ interface IProps {
   status: IProductionStatus;
   boards: IBoardMissions[];
   count?: number;
+  onClickClient?: (clientId: any) => void;
 }
 
-const StatusTableComponent = ({ status, boards, count }: IProps) => {
+const StatusTableComponent = ({ status, boards, count,onClickClient }: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const {
@@ -172,7 +173,7 @@ const StatusTableComponent = ({ status, boards, count }: IProps) => {
                             onClickDone={tryMoveBoardMissionsToDone}
                             onClickPrintDTicket={onOpenPrintDeliverTicketModal}
                             index={index}
-
+                            onClickClient={onClickClient}
                           />
                         </>
                       );

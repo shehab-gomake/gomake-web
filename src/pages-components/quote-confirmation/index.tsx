@@ -8,6 +8,8 @@ import { useQuoteConfirmation } from "./use-quote-confirmation";
 import { updateTempUserTokenStorage } from "@/services/storage-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import PageNotFound from "@/pages/404.page";
+import { QuoteNewPageSkeletonWidget } from "../quote-new/quote-skeleton";
+import { QuoteConfirmationMobileSkeltonWidget } from "@/widgets/quote-confirmation-mobile/components/quote-confirmation-mobile-skelton";
 
 interface IProps {
   isPrePaymentPage?: boolean;
@@ -136,12 +138,16 @@ const QuoteConfirmationPageWidget = ({
         )}
       </div>
       {isMobile ? (
-        <QuoteConfirmationMobileWidget
-          isMobile={isMobile}
-          isPrePaymentPage={isPrePaymentPage}
-          documentType={documentType}
-          documentTitle={documentTitle}
-        />
+        quoteConfirm?.id ? (
+          <QuoteConfirmationMobileWidget
+            isMobile={isMobile}
+            isPrePaymentPage={isPrePaymentPage}
+            documentType={documentType}
+            documentTitle={documentTitle}
+          />
+        ) : (
+          <QuoteConfirmationMobileSkeltonWidget />
+        )
       ) : (
         <QuoteNewPageWidget
           documentType={isPrePaymentPage ? documentType : DOCUMENT_TYPE.quote}

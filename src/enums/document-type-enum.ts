@@ -130,3 +130,10 @@ export enum EMessageStatus {
   group_unsubscribe,
   group_resubscribe,
 }
+
+export enum DocumentCalculationType {
+  Discount,
+  DiscountAmount,
+  TotalPayment,
+  VAT
+}

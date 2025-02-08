@@ -11,7 +11,7 @@ import { resetProductionFloorJobColorApi, updateProductionFloorJobColorApi } fro
 
 interface ITaskCategoryLabelProps {
     id: string;
-    label?: string;
+    label?: any;
     t?: any;
     key: any;
     textColor: string;
