@@ -87,7 +87,7 @@ const MoreMenuWidget = ({
           height: "18px",
           color: "#8283BE"
         }} />
-        <div style={clasess.menuTitleStyle}>{selectedProperties?.isShowInOutSourceDetails ? t("properties.showPropertyFromPurchaseOrder") : t("properties.hidePropertyFromPurchaseOrder")}</div>
+        <div style={clasess.menuTitleStyle}>{selectedProperties?.isShowInOutSourceDetails ? t("properties.hidePropertyFromPurchaseOrder") : t("properties.showPropertyFromPurchaseOrder")}</div>
       </MenuItem>
     </GoMakeMenu>
   );
