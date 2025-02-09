@@ -748,8 +748,7 @@ const BoardMissionsStationAction = ({
                                         zIndex: 9999999999999999999,
                                       }}
                                     >
-                                      {(machinesList
-                                      )?.map((value, index) => {
+                                      {machinesList?.map((value, index) => {
                                         return (
                                           <MenuItem
                                             key={index}
@@ -833,8 +832,7 @@ const BoardMissionsStationAction = ({
                                       zIndex: 9999999999999999999,
                                     }}
                                   >
-                                    {(employeesList
-                                    )?.map((value, index) => {
+                                    {employeesList?.map((value, index) => {
                                       return (
                                         <MenuItem
                                           key={index}
@@ -891,7 +889,9 @@ const BoardMissionsStationAction = ({
                           {t("productionFloor.deliveryTime")}
                         </span>
                         <span style={classes.detailValue}>
-                          {DateFormatterDDMMYYYY(convertUtcToLocalIsoString(dueDate))}
+                          {DateFormatterDDMMYYYY(
+                            convertUtcToLocalIsoString(dueDate)
+                          )}
                         </span>
                       </Stack>
                       <span style={classes.sourceLabel}>

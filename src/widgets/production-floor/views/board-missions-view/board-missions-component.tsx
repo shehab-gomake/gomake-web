@@ -79,15 +79,15 @@ const BoardMissionsComponent = ({
       {/* Old */}
       {/* <BoardMissionsDetailsHeader /> */}
       {/* <Divider orientation={"horizontal"} flexItem />
-      <NavigationButtonsComponent /> */}
-      {/* <Stack overflow={"auto"} flex={1}>
+    <NavigationButtonsComponent /> 
+      <Stack overflow={"auto"} flex={1}>
           {step === EBoardMissionsViews.STATIONS && (
             <BoardMissionsStationsComponent />
           )}
           {step === EBoardMissionsViews.FILES && <BoardMissionsFiles />}
           {step === EBoardMissionsViews.APPROVAL && <></>}
           {step === EBoardMissionsViews.ACTIVITY && <BoardMissionsActivities />}
-        </Stack> */}
+        </Stack>
       {/* <GoMakeSnackBar /> */}
       {/* Old */}
       <BoardMissionsDetailsHeader />
@@ -96,7 +96,7 @@ const BoardMissionsComponent = ({
           renderSkeletons()
         ) : (
           <>
-            {/* Notes + Products details */}
+            {/* Notes + Types + Products details */}
             <div style={classes.ColumnOne}>
               <CardContainer
                 label={t("sales.quote.notes")}
@@ -163,7 +163,7 @@ const BoardMissionsComponent = ({
                   flexDirection: "column",
                   gap: "5px",
                   flex: 1,
-                  overflowY: "auto",
+                  overflowY: "scroll",
                   minHeight: 0,
                 }}
                 className={`custom-scroller`}
@@ -194,6 +194,7 @@ const BoardMissionsComponent = ({
                   getStations={getStations}
                 />
               </CardContainer>
+
               <div style={classes.NestedGrid}>
                 <CardContainer
                   label="Files"

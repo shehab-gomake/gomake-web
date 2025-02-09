@@ -79,7 +79,7 @@ const useBoardMissionsNotes = (onCloseModal?: () => void) => {
     newNote,
     setNewNote,
     handleAddNote,
-    notes: boardMissions?.noteValues, //!here
+    notes: boardMissions?.noteValues,
     onDeleteNote,
     deleting,
     addingNote,

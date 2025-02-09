@@ -9,7 +9,7 @@ const useStyle = () => {
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
         width: "100%",
-        height: "100vh",
+        height: "100vh", //!why 100vh
         gap: "10px",
       },
       ColumnOne: {
@@ -32,7 +32,7 @@ const useStyle = () => {
       },
       NestedGrid: {
         display: "grid",
-        gridTemplateColumns: "calc(30% - 4px) calc(70% - 4px)",
+        gridTemplateColumns: "calc(40% - 4px) calc(60% - 4px)",
         width: "100%",
         height: "100%",
         gap: "8px",

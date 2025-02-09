@@ -24,7 +24,7 @@ import { useStyle } from "@/widgets/production-floor/views/board-missions-view/s
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { IBoardMissionsStation } from "@/widgets/production-floor/views/board-missions-view/stations/interface";
-import { DateFormatterDDMMYYYY } from "@/utils/adapter";
+import { DateFormatterDDMMYYYY, DateFormatterShort } from "@/utils/adapter";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   boardMissionsUpdateActionEmployee,
@@ -58,11 +58,7 @@ import {
 } from "./material-and-production-time-modal/states";
 import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
-import {
-  currentProductItemValueState,
-  outsourceSuppliersState,
-} from "@/widgets/product-pricing-widget/state";
-import { updateProductItemDraftActionData } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IProps extends IBoardMissionsStation {
@@ -128,7 +124,6 @@ const BoardMissionsStationActionNew = ({
   const [stations, setStations] = useRecoilState(boardMissionsStationsState);
   const [openPackagingModal, setOpenPackagingModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const [timerLoading, setTimerLoading] = useState<boolean>(false);
   const [isOrderCompleted] = useRecoilState(isOrderCompletedState);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
@@ -195,17 +190,9 @@ const BoardMissionsStationActionNew = ({
     });
   };
 
-  // useEffect(() => {
-  //   setIsOpen(!!selected);
-  // }, [selected]);
-
   const [open, setOpen] = useState<boolean>(false);
   const [contactsFilter, setContactsFilter] = useState<string>("");
-  const [selectedContact, setSelectedContacts] = useState({});
-
   const [openMachine, setOpenMachine] = useState<boolean>(false);
-  const [machensFilter, setMachinesFilter] = useState<string>("");
-  const [selectedMachine, setSelectedMachines] = useState({});
 
   const onClickBoardMissionsUpdateActionEmployee = async (
     boardMissionActionId: string,
@@ -251,13 +238,12 @@ const BoardMissionsStationActionNew = ({
     setOpen(true);
     setContactsFilter(e.target.value);
   };
+
   const onMachinesInputChange = (e) => {
     setOpenMachine(true);
-    setMachinesFilter(e.target.value);
   };
+
   const onMachineClick = (value: any, label: any) => {
-    setSelectedMachines(value);
-    setMachinesFilter(value.label);
     setOpenMachine(false);
     setChooseMachine(false);
     onClickBoardMissionsUpdateActionMachine(
@@ -268,7 +254,6 @@ const BoardMissionsStationActionNew = ({
   };
 
   const onContactClick = (value: any, label: any) => {
-    setSelectedContacts(value);
     setContactsFilter(value.label);
     setOpen(false);
     setChooseEmployee(false);
@@ -395,8 +380,6 @@ const BoardMissionsStationActionNew = ({
                 border: selected ? classes.actionContainerBorder : "unset",
               }}
             >
-              {/* !here */}
-
               <Stack
                 direction={"row"}
                 gap={"10px"}
@@ -415,15 +398,13 @@ const BoardMissionsStationActionNew = ({
                     {actionName}
                   </span>
                 </Stack>
-
                 <Divider
                   orientation={"vertical"}
                   flexItem
                   style={{ background: "#FFF" }}
                 />
-
                 <span style={{ ...classes.detailValue, color: "#FFFF" }}>
-                  {DateFormatterDDMMYYYY(convertUtcToLocalIsoString(dueDate))}
+                  {DateFormatterShort(convertUtcToLocalIsoString(dueDate))}
                 </span>
                 {source == EWorkSource.OUT && (
                   <span style={classes.outSourceLabel}>OS</span>
@@ -443,7 +424,7 @@ const BoardMissionsStationActionNew = ({
                   {isEditable && (
                     <div>
                       {loading ? (
-                        <CircularProgress />
+                        <CircularProgress size={30} />
                       ) : isDone ? (
                         <Button
                           variant={"contained"}
@@ -452,10 +433,13 @@ const BoardMissionsStationActionNew = ({
                             onClickBackToProcess(boardMissionActionId).then();
                           }}
                           style={{
-                            padding: "10px",
+                            padding: "5px 8px",
+                            ...FONT_FAMILY.Inter(600, 14),
                             backgroundColor: "#FFF",
-                            color: "#344054",
-                            borderRadius: "16px",
+                            color: "#475467",
+                            borderRadius: "8px",
+                            textTransform: "capitalize",
+                            border: "1px solid #475467",
                           }}
                         >
                           {t("boardMissions.completed")}
@@ -464,11 +448,11 @@ const BoardMissionsStationActionNew = ({
                         <PrimaryButton
                           variant={"contained"}
                           sx={{
-                            height: "40px",
-                            width: "40px",
-                            minWidth: "40px",
+                            height: "30px",
+                            width: "30px",
+                            minWidth: "30px",
                             padding: 0,
-                            borderRadius: "12px",
+                            borderRadius: "8px",
                           }}
                           onClick={onClickOpenDoneModal}
                         >
@@ -558,7 +542,7 @@ const BoardMissionsStationActionNew = ({
         >
           <Stack
             direction={"row"}
-            alignItems={"center"}
+            alignItems={"baseline"}
             justifyContent={"space-between"}
             onClick={() => setIsOpen(isHideTimeAndDate ? isOpen : !isOpen)}
             style={{
@@ -659,16 +643,7 @@ const BoardMissionsStationActionNew = ({
                                         zIndex: 9999999999999999999,
                                       }}
                                     >
-                                      {(!!machensFilter
-                                        ? machinesList?.filter((value) =>
-                                            value.label
-                                              ?.toLowerCase()
-                                              ?.includes(
-                                                machensFilter?.toLowerCase()
-                                              )
-                                          )
-                                        : machinesList
-                                      )?.map((value, index) => {
+                                      {machinesList?.map((value, index) => {
                                         return (
                                           <MenuItem
                                             key={index}
@@ -753,16 +728,7 @@ const BoardMissionsStationActionNew = ({
                                       zIndex: 9999999999999999999,
                                     }}
                                   >
-                                    {(!!contactsFilter
-                                      ? employeesList?.filter((value) =>
-                                          value.label
-                                            ?.toLowerCase()
-                                            ?.includes(
-                                              contactsFilter?.toLowerCase()
-                                            )
-                                        )
-                                      : employeesList
-                                    )?.map((value, index) => {
+                                    {employeesList?.map((value, index) => {
                                       return (
                                         <MenuItem
                                           key={index}
@@ -808,7 +774,7 @@ const BoardMissionsStationActionNew = ({
                         alignItems={"center"}
                       >
                         <span style={classes.detailValue}>
-                          {DateFormatterDDMMYYYY(
+                          {DateFormatterShort(
                             convertUtcToLocalIsoString(dueDate)
                           )}
                         </span>
@@ -881,7 +847,7 @@ const BoardMissionsStationActionNew = ({
               {isEditable && !isHideTimeAndDate && (
                 <div>
                   {loading ? (
-                    <CircularProgress />
+                    <CircularProgress size={30} />
                   ) : isDone ? (
                     <Button
                       variant={"outlined"}
@@ -892,7 +858,6 @@ const BoardMissionsStationActionNew = ({
                       style={{
                         padding: "5px 8px",
                         ...FONT_FAMILY.Inter(600, 14),
-
                         backgroundColor: "#FFF",
                         color: "#475467",
                         borderRadius: "8px",

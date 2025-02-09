@@ -14,11 +14,6 @@ const BoardMissionsStationsComponent = ({
   boardMissions,
   getStations,
 }) => {
-  //!here was before and it was render many times!
-
-  // const { stations, subWorkFlows, boardMissions, getStations } =
-  //   useBoardMissionsStations();
-
   const sortedStations = useMemo(
     () =>
       [...stations]
@@ -35,7 +30,7 @@ const BoardMissionsStationsComponent = ({
     !boardMissionsDetails?.boardMissionId || sortedStations?.length === 0;
 
   return (
-    <Stack gap={"10px"} minHeight="100%" overflow="auto">
+    <Stack gap={"10px"} maxHeight="100%">
       {/* Skeleton for Stations */}
       {isLoading ? (
         <>

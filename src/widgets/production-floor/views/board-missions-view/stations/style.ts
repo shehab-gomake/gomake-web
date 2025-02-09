@@ -66,8 +66,8 @@ const useStyle = () => {
       toggleSubWorkFlowActionButton: {
         backgroundColor: primaryColor(600),
         borderRadius: 8,
-        height: 40,
-        width: 40,
+        height: 30,
+        width: 30,
         color: "white",
       },
       workFlowContainer: {
