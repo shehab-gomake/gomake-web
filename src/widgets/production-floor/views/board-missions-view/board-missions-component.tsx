@@ -9,6 +9,7 @@ import { EBoardMissionsViews } from "@/widgets/production-floor/views/board-miss
 import { BoardMissionsActivities } from "@/widgets/production-floor/views/board-missions-view/activity/board-missions-activities";
 import { BoardMissionsFiles } from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import { GoMakeSnackBar } from "@/components";
+import {useJobModalSocketIO} from "@/hooks/socket-io/use-job-modal-socket-io";
 import styled from "styled-components";
 import { CardContainer } from "./job-card-container/job-card-container";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -35,6 +36,7 @@ const BoardMissionsComponent = ({
   productType,
   connectionId,
 }: IProps) => {
+  const {} = useJobModalSocketIO(boardMissionsId)
   const {
     t,
     getBoardMissions,

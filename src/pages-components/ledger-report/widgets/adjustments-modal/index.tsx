@@ -6,6 +6,8 @@ import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { Skeleton } from "@mui/material";
 import { ModalType } from "@/enums";
+import { useRecoilValue } from "recoil";
+import { systemCurrencyState } from "@/store";
 
 const AdjustmentsLedgerReportModal = ({
   openModal,
@@ -16,6 +18,8 @@ const AdjustmentsLedgerReportModal = ({
   setClientPaymentsList,
 }) => {
   const { classes } = useStyle();
+  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
+
   const {
     getTableDataRows,
     calculateTotalPrice,
@@ -80,12 +84,12 @@ const AdjustmentsLedgerReportModal = ({
               <PrimaryTable
                 rows={getTableDataRows()}
                 headers={tableHeaders}
-                maxHeight={610}
+                maxHeight={500}
                 stickyHeader={true}
-                columnWidths={["5%", "18%", "18%", "18%", "18%", "27%"]}
+                columnWidths={["5%", "14%", "14%", "14%", "14%", "14%", "25%"]}
               />
               <div style={classes.totalPriceContainer}>
-                {calculateTotalPrice().toFixed(3)} NIS
+                {calculateTotalPrice().toFixed(3)} {systemCurrency}
               </div>
               <div style={classes.btnsContainer}>
                 {btns.map((tab, index) => (

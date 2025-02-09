@@ -31,11 +31,17 @@ import KeyboardDoubleArrowUpIcon from '@mui/icons-material/KeyboardDoubleArrowUp
 
 import { ApprovalFileStatusComponent } from "./approval-file-status-component";
 import { ExpandIcon } from "@/icons/expand-icon";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { isValidCustomer } from "@/utils/helpers";
+import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
+import { useGomakeAxios } from "@/hooks";
 interface IProps {
   boardMission: IBoardMissions;
   status?: any;
   onClickDone?: (mission: any) => void;
   onClickPrintDTicket?: (mission: any) => void;
+  onClickClient?: (clientId: any) => void;
   index: number;
 }
 
@@ -50,13 +56,20 @@ const TableRowComponent = ({
   status,
   onClickDone,
   onClickPrintDTicket,
+  onClickClient,
   index,
 }: IProps) => {
+  console.log("boardMission", boardMission);
 
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
   );
+
+  const onCustomerAdd = (customer) => {
+    //setOpenCustomerModal(false);
+  };
+
   const { CheckPermission } = useUserPermission();
   const canDrag = CheckPermission(
     Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
@@ -243,12 +256,12 @@ const TableRowComponent = ({
           </div>
         </SecondaryTableCell>
 
-        <SecondaryTableCell align={"center"} style={{ width: "20px", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
+        <SecondaryTableCell align={"center"} style={{ width: "20px",cursor:"pointer", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }} onClick={() => onClickClient(boardMission?.clientId)}>
           {getTruncatedLabel(boardMission?.clientName, 15)}
         </SecondaryTableCell>
         <SecondaryTableCell align={"center"} style={{ padding: "0px 10px", backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}>
           <ClickableLabelComponent
-            label={boardMission?.productName}
+            label={getTruncatedLabel(boardMission?.productName, 18)}
             id={boardMission.id}
             textColor={boardMission?.productionFloorJobColor}
             t={t}
@@ -281,7 +294,7 @@ const TableRowComponent = ({
             boardMissionId={boardMission.id}
             status={status}
             textColor={boardMission?.productionFloorJobColor}
-            onClickDone={()=> onClickDone(boardMission)}
+            onClickDone={() => onClickDone(boardMission)}
           />
         </SecondaryTableCell>
         {/* <SecondaryTableCell

@@ -144,6 +144,12 @@ const useAuthLayoutHook = (
         isList: true,
         list: [
           {
+            key: "purchaseJobs",
+            title: "tabs.purchaseJobs",
+            path: "/purchase-jobs",
+            Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
+          },
+          {
             key: "purchase order",
             title: "tabs.purchaseOrder",
             path: "/purchaseOrders",
@@ -159,12 +165,6 @@ const useAuthLayoutHook = (
             key: "purchase invoice refund",
             title: "tabs.purchaseInvoiceRefund",
             path: "/purchaseInvoiceRefunds",
-            Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
-          },
-          {
-            key: "purchaseJobs",
-            title: "tabs.purchaseJobs",
-            path: "/purchase-jobs",
             Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
           },
         ],

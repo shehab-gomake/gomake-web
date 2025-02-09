@@ -140,7 +140,6 @@ const BoardMissionsStationAction = ({
     onClickGetMachineForAction,
   } = useBoardMissionsUpdatedOutputs();
   const { CheckPermission } = useUserPermission();
-  console.log("stations", stations);
   const inputsParameters = outputs.filter(
     (parameter) =>
       parameter &&
@@ -749,15 +748,7 @@ const BoardMissionsStationAction = ({
                                         zIndex: 9999999999999999999,
                                       }}
                                     >
-                                      {(!!machensFilter
-                                        ? machinesList?.filter((value) =>
-                                            value.label
-                                              ?.toLowerCase()
-                                              ?.includes(
-                                                machensFilter?.toLowerCase()
-                                              )
-                                          )
-                                        : machinesList
+                                      {(machinesList
                                       )?.map((value, index) => {
                                         return (
                                           <MenuItem
@@ -842,15 +833,7 @@ const BoardMissionsStationAction = ({
                                       zIndex: 9999999999999999999,
                                     }}
                                   >
-                                    {(!!contactsFilter
-                                      ? employeesList?.filter((value) =>
-                                          value.label
-                                            ?.toLowerCase()
-                                            ?.includes(
-                                              contactsFilter?.toLowerCase()
-                                            )
-                                        )
-                                      : employeesList
+                                    {(employeesList
                                     )?.map((value, index) => {
                                       return (
                                         <MenuItem
@@ -908,9 +891,7 @@ const BoardMissionsStationAction = ({
                           {t("productionFloor.deliveryTime")}
                         </span>
                         <span style={classes.detailValue}>
-                          {DateFormatterDDMMYYYY(
-                            convertUtcToLocalIsoString(dueDate)
-                          )}
+                          {DateFormatterDDMMYYYY(convertUtcToLocalIsoString(dueDate))}
                         </span>
                       </Stack>
                       <span style={classes.sourceLabel}>

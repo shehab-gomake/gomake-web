@@ -804,7 +804,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     missionItem?.quantity - quantityPerPackage * (quantityOfPackages - 1)
   );
 
-  //!here
   useEffect(() => {
     setRemainingQuantity(
       missionItem?.quantity - quantityPerPackage * (quantityOfPackages - 1)
@@ -958,7 +957,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   /* Most Important*/
   /* Read URL parameters and set state accordingly*/
-  //!here
   useEffect(() => {
     const {
       clientId,
