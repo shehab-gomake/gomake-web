@@ -20,4 +20,5 @@ export interface IBusinessWidget {
   placeholder?: string;
   isFetching?: boolean;
   defaultFiltering?: boolean;
+  width?: any;
 }
