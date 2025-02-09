@@ -211,8 +211,8 @@ const BoardMissionsComponent = ({
                   {/* <BoardMissionsFiles /> */}
                 </CardContainer>
                 <CardContainer label="Activities">
-                  <p>This will be "Activities" section</p>
-                  {/* <BoardMissionsActivities /> */}
+                  {/* <p>This will be "Activities" section</p> */}
+                  <BoardMissionsActivities />
                 </CardContainer>
               </div>
             </div>

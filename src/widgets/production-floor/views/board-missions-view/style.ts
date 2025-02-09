@@ -9,7 +9,7 @@ const useStyle = () => {
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
         width: "100%",
-        height: "100vh", //!why 100vh
+        height: "calc(100vh - 230px)", //!why 100vh
         gap: "10px",
       },
       ColumnOne: {
