@@ -64,8 +64,6 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
                     >
                       {subSection.name}
                     </TableCell>
-
-                    {/* Property Values */}
                     {/* Property Values */}
                     <TableCell
                       colSpan={4}
