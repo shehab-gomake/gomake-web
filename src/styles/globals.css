@@ -451,6 +451,23 @@ df-messenger {
   background: #b0b0b0 !important;
 }
 
+.custom-scroller::-webkit-scrollbar {
+  width: 10px !important;
+}
+
+.custom-scroller::-webkit-scrollbar-track {
+  background: #ffffff !important;
+}
+
+.custom-scroller::-webkit-scrollbar-thumb {
+  background: #eaecf0 !important;
+  border-radius: 10px !important;
+}
+
+.custom-scroller::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0 !important;
+}
+
 /* .custom-scrollbar {
   overflow-y: auto !important;
   overflow-x: hidden !important;
