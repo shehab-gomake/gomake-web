@@ -13,6 +13,7 @@ import { ModalType } from "@/enums";
 import { convertValueToImperial } from "@/utils/helpers";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
 
+import { userState } from "@/store/user";
 
 const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit }: IRowData) => {
 
@@ -21,7 +22,8 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit 
     const [isUpdate, setIsUpdate] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [updateValue, setUpdateValue] = useState('');
-
+    const user = useRecoilValue<any>(userState);
+    const unitType = user?.printHouseProfile?.unitType || 0
 
     const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
     const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
@@ -37,8 +39,9 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit 
     const { updateCellData } = useTableCellData(isAdmin);
     const onClick = () => {
         if (isEditable) {
+            const data = unitType === 1 ? convertValueToImperial(unit, value) : value
             setIsUpdate(true);
-            setUpdateValue(convertValueToImperial(unit, value) as string);
+            setUpdateValue(data);
         }
     }
     const onInputChange = (v: string) => {
@@ -51,7 +54,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit 
                 onClickOpenDeleteTableRowModal()
             }
             else {
-                const originalValue = convertValueToOriginalUnit(unit, updateValue);
+                const originalValue = unitType === 1 ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
                 setIsLoading(true)
                 updateCellData(id, parameterKey, originalValue).then(
                     () => {
@@ -93,9 +96,10 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit 
                         onClick={onClick}
                         variant={'text'}
                     >
-                        {convertValueToImperial(unit, value)}
+                        {unitType === 1 ? convertValueToImperial(unit, value) : value}
                     </PrimaryButton>
-                    : <span>{convertValueToImperial(unit, value)}</span>
+                    : <span>{unitType === 1 ? convertValueToImperial(unit, value) : value}</span>
+
             }
             <GoMakeDeleteModal
                 modalType={ModalType.EDIT}
@@ -106,7 +110,7 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit 
                 yesBtn={t("documentingSettings.update")}
                 onClickDelete={() => {
                     setIsLoading(true)
-                    const originalValue = convertValueToOriginalUnit(unit, updateValue);
+                    const originalValue = unitType === 1 ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
                     updateCellData(id, parameterKey, originalValue).then(
                         () => {
                             setIsLoading(false);

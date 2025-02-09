@@ -50,6 +50,7 @@ import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list"
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { useMaterialsCategories } from "./use-materials-categories";
 import { convertTitleUnits } from "@/utils/helpers";
+import { userState } from "@/store";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -283,7 +284,8 @@ const useMaterials = (isAdmin: boolean) => {
       ...materialHeaders.map((header) => header.value),
     ];
   }, [materialHeaders, materialCategoryData]);
-
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0
 
   const tableHeadersNew = useCallback(() => {
     return [
@@ -295,7 +297,7 @@ const useMaterials = (isAdmin: boolean) => {
         ? materialHeaders.filter((x) => x.key !== "stock")
         : materialHeaders.filter((header) => !header.isForAdmin)
       ).map((header) => {
-        const convertedUnit = convertTitleUnits(header.unit);
+        const convertedUnit = unitType === 1 ? convertTitleUnits(header.unit) : header.unit;
 
         return (
           header.unit ? (
