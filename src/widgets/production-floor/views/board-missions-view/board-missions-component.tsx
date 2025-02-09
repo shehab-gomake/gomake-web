@@ -1,16 +1,14 @@
 import Stack from "@mui/material/Stack";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useBoardMissions } from "@/widgets/production-floor/views/board-missions-view/use-board-missions";
 import { BoardMissionsDetailsHeader } from "@/widgets/production-floor/views/board-missions-view/header/board-nissions-details-header";
-import { Button, Divider, IconButton, Skeleton } from "@mui/material";
-
+import { Button, IconButton } from "@mui/material";
 import { NavigationButtonsComponent } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/navigation-buttons-component";
 import { EBoardMissionsViews } from "@/widgets/production-floor/views/board-missions-view/enums";
 import { BoardMissionsActivities } from "@/widgets/production-floor/views/board-missions-view/activity/board-missions-activities";
 import { BoardMissionsFiles } from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import { GoMakeSnackBar } from "@/components";
-import {useJobModalSocketIO} from "@/hooks/socket-io/use-job-modal-socket-io";
-import styled from "styled-components";
+import { useJobModalSocketIO } from "@/hooks/socket-io/use-job-modal-socket-io";
 import { CardContainer } from "./job-card-container/job-card-container";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DownloadIcon } from "./job-card-container/components/icons";
@@ -20,6 +18,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission";
 import ProductDetailsSection from "./job-card-container/components/product-details-section";
 import { BoardMissionsStationsComponent } from "./stations/board-missions-stations-component";
+import { useStyle } from "./style";
 
 interface IProps {
   boardMissionsId: string;
@@ -36,7 +35,7 @@ const BoardMissionsComponent = ({
   productType,
   connectionId,
 }: IProps) => {
-  const {} = useJobModalSocketIO(boardMissionsId)
+  const {} = useJobModalSocketIO(boardMissionsId);
   const {
     t,
     getBoardMissions,
@@ -52,6 +51,7 @@ const BoardMissionsComponent = ({
     subWorkFlows,
     boardMissions,
     getStations,
+    renderSkeletons,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -63,47 +63,8 @@ const BoardMissionsComponent = ({
     };
   }, [boardMissionsId, connectionId, productType]);
 
-  const GridContainer = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    width: 100%;
-    // height: 100vh;
-    height: 100%;
-
-    gap: 10px;
-  `;
-
-  const ColumnOne = styled.div`
-    display: grid;
-    grid-template-rows: calc(20% - 6px) calc(35% - 6px) calc(45% - 6px);
-    gap: 9px;
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
-    box-sizing: border-box;
-  `;
-
-  const ColumnTwo = styled.div`
-    display: grid;
-    grid-template-rows: calc(50% - 4px) calc(50% - 4px);
-    gap: 8px;
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
-    box-sizing: border-box;
-  `;
-
-  const NestedGrid = styled.div`
-    display: grid;
-    grid-template-columns: calc(30% - 4px) calc(70% - 4px);
-    width: 100%;
-    height: 100%;
-    gap: 8px;
-    min-height: 0;
-    overflow: hidden;
-  `;
-
   const typesData = null;
+  const { classes } = useStyle();
 
   return (
     <Stack
@@ -130,56 +91,13 @@ const BoardMissionsComponent = ({
       {/* <GoMakeSnackBar /> */}
       {/* Old */}
       <BoardMissionsDetailsHeader />
-      <GridContainer>
+      <div style={classes.GridContainer}>
         {isLoading ? (
-          <>
-            <ColumnOne>
-              <Skeleton
-                variant="rectangular"
-                width="100%"
-                height="100%"
-                style={{ borderRadius: "8px" }}
-              />
-              <Skeleton
-                variant="rectangular"
-                width="100%"
-                height="100%"
-                style={{ borderRadius: "8px" }}
-              />
-              <Skeleton
-                variant="rectangular"
-                width="100%"
-                height="100%"
-                style={{ borderRadius: "8px" }}
-              />
-            </ColumnOne>
-            <ColumnTwo>
-              <Skeleton
-                variant="rectangular"
-                width="100%"
-                height="100%"
-                style={{ borderRadius: "8px" }}
-              />
-              <NestedGrid>
-                <Skeleton
-                  variant="rectangular"
-                  width="100%"
-                  height="100%"
-                  style={{ borderRadius: "8px" }}
-                />
-                <Skeleton
-                  variant="rectangular"
-                  width="100%"
-                  height="100%"
-                  style={{ borderRadius: "8px" }}
-                />
-              </NestedGrid>
-            </ColumnTwo>
-          </>
+          renderSkeletons()
         ) : (
           <>
             {/* Notes + Products details */}
-            <ColumnOne>
+            <div style={classes.ColumnOne}>
               <CardContainer
                 label={t("sales.quote.notes")}
                 actionButton={
@@ -205,8 +123,9 @@ const BoardMissionsComponent = ({
               >
                 <BoardMissionsNotes />
               </CardContainer>
-              <GridContainer
+              <div
                 style={{
+                  ...classes.GridContainer,
                   display: "grid",
                   gridTemplateColumns: typesData
                     ? "calc(60% - 4px) calc(40% - 4px)"
@@ -236,7 +155,7 @@ const BoardMissionsComponent = ({
                     <p>This will be "Types" section</p>
                   </CardContainer>
                 )}
-              </GridContainer>
+              </div>
 
               <div
                 style={{
@@ -264,9 +183,9 @@ const BoardMissionsComponent = ({
                   />
                 ))}
               </div>
-            </ColumnOne>
+            </div>
             {/* Actions + Files + Activities */}
-            <ColumnTwo>
+            <div style={classes.ColumnTwo}>
               <CardContainer label="Actions">
                 <BoardMissionsStationsComponent
                   stations={stations}
@@ -275,7 +194,7 @@ const BoardMissionsComponent = ({
                   getStations={getStations}
                 />
               </CardContainer>
-              <NestedGrid>
+              <div style={classes.NestedGrid}>
                 <CardContainer
                   label="Files"
                   actionButton={
@@ -294,11 +213,11 @@ const BoardMissionsComponent = ({
                   <p>This will be "Activities" section</p>
                   {/* <BoardMissionsActivities /> */}
                 </CardContainer>
-              </NestedGrid>
-            </ColumnTwo>
+              </div>
+            </div>
           </>
         )}
-      </GridContainer>
+      </div>
       <GoMakeSnackBar />
       <BoardMissionsAddNote
         onClose={handleCloseNotesModal}
