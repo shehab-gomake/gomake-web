@@ -64,7 +64,6 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
                     >
                       {subSection.name}
                     </TableCell>
-
                     {/* Property Values */}
                     <TableCell
                       colSpan={4}
@@ -74,9 +73,11 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
                       }}
                     >
                       <Stack
-                        direction="row"
-                        flexWrap="wrap"
-                        sx={{ rowGap: "10px", columnGap: "120px" }} // Applying gap without margin
+                        sx={{
+                          display: "grid",
+                          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                          rowGap: "10px",
+                        }}
                       >
                         {subSection.productionFloorProperties.map(
                           (property, propIndex) => (

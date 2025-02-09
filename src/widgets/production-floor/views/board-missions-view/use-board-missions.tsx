@@ -13,9 +13,12 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useBoardMissionsStations } from "./stations/use-board-missions-stations";
+import { useStyle } from "./style";
+import { Skeleton } from "@mui/material";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
+  const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(
     boardMissionsDetailsState
@@ -85,6 +88,41 @@ const useBoardMissions = () => {
     setOpenAddNoteModal(false);
   };
 
+  const renderSkeletons = () => (
+    <>
+      <div style={classes.ColumnOne}>
+        {[...Array(3)].map((_, i) => (
+          <Skeleton
+            key={i}
+            variant="rectangular"
+            width="100%"
+            height="100%"
+            style={{ borderRadius: "8px" }}
+          />
+        ))}
+      </div>
+      <div style={classes.ColumnTwo}>
+        <Skeleton
+          variant="rectangular"
+          width="100%"
+          height="100%"
+          style={{ borderRadius: "8px" }}
+        />
+        <div style={classes.NestedGrid}>
+          {[...Array(2)].map((_, i) => (
+            <Skeleton
+              key={i}
+              variant="rectangular"
+              width="100%"
+              height="100%"
+              style={{ borderRadius: "8px" }}
+            />
+          ))}
+        </div>
+      </div>
+    </>
+  );
+
   return {
     getBoardMissions,
     initStates,
@@ -100,6 +138,7 @@ const useBoardMissions = () => {
     subWorkFlows,
     boardMissions,
     getStations,
+    renderSkeletons,
   };
 };
 
