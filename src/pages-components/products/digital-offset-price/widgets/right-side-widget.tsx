@@ -1,12 +1,6 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon, ReloadIcon } from "@/icons";
-import {
-  Checkbox,
-  Divider,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Checkbox, Divider, IconButton, Tooltip, Typography } from "@mui/material";
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
@@ -22,6 +16,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { permissionsState } from "@/store";
 import { Box, Slider } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 
 const RightSideWidget = ({
   clasess,
@@ -68,11 +63,10 @@ const RightSideWidget = ({
     priceIncludeVat,
     setPriceIncludeVat,
     systemVAT,
+    selectedProduct,
+    combinedData,
+    handleProductChange
   } = useRightSideWidget({ includeVAT, widgetType });
-
-  console.log("priceIncludeVat", priceIncludeVat);
-
-
 
   const additionalProductItems = useRecoilValue(additionalProductItemsState);
   const mergedArray = [
@@ -153,6 +147,7 @@ const RightSideWidget = ({
     );
   }, [currentProductItemValueTotalPrice]);
 
+
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -180,6 +175,7 @@ const RightSideWidget = ({
             <div style={clasess.labelTextStyle}>
               {t("products.offsetPrice.admin.type")}
             </div>
+
             {clientTypeDefaultValue && (
               <GoMakeAutoComplate
                 options={clientTypesCategories}
@@ -203,6 +199,16 @@ const RightSideWidget = ({
               //   {clientTypeDefaultValue?.label || t("products.offsetPrice.admin.type")}
               // </Typography>
             )}
+          </div>
+        </div>
+        <div style={clasess.autoComplateRowContainer}>
+          <div data-tour="select-product" style={{ width: "100%", marginBottom: 16 }}>
+            <GoMakeTreeSelect
+              value={selectedProduct}
+              options={combinedData}
+              onChange={handleProductChange}
+              placeholder={t("home.admin.selectProductOrMaterial")}
+            />
           </div>
         </div>
         {template.img ? (
