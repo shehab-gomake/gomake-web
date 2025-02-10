@@ -13,6 +13,7 @@ import { endOfToday, startOfYear } from "date-fns";
 import { DocumentsTypeReportList, ReportsType } from "@/enums";
 import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
 
+
 const useSalesReport = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -148,7 +149,6 @@ const useSalesReport = () => {
     },
     [tableData]
   );
-
   function sumAllItems(salesReports) {
     if (!salesReports || !salesReports.length) return {};
     return salesReports.reduce((total, report) => {
@@ -242,6 +242,46 @@ const useSalesReport = () => {
       setToDate(null);
     }
   };
+  const handleExportRows = async () => {
+    if (!fromDate || !toDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+    const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/get-sales-report-pdf`,
+        {
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          clientId: customer?.id,
+          agentId: agent?.id,
+          reportType: documentType ? documentType?.id : ReportsType.allInvoices,
+          displayByGroup: displayByGroups,
+        }
+    );
+    if (res?.success) {
+      const pdfLink = res?.data?.data?.data;
+      downloadPdf(pdfLink);
+      alertSuccessGetData();
+    } else {
+      alertFaultGetData();
+    }
+  };
+  const downloadPdf = (url) => {
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.target = "_blank";
+    anchor.addEventListener("click", () => {
+      setTimeout(() => {
+        anchor.remove();
+      }, 100);
+    });
+    anchor.click();
+  };
   return {
     t,
     onSelectDeliveryTimeDates,
@@ -269,6 +309,7 @@ const useSalesReport = () => {
     isFetching,
     getNewTableDataRows,
     tableData,
+    handleExportRows
   };
 };
 
