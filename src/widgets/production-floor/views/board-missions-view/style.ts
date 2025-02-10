@@ -9,12 +9,13 @@ const useStyle = () => {
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
         width: "100%",
-        height: "calc(100vh - 230px)", //!why 100vh
+        height: "calc(100vh - 230px)",
         gap: "10px",
       },
       ColumnOne: {
         display: "grid" as "grid",
-        gridTemplateRows: "calc(20% - 6px) calc(35% - 6px) calc(45% - 6px)",
+        // gridTemplateRows: "calc(20% - 6px) calc(35% - 6px) calc(45% - 6px)",
+        gridTemplateRows: "1fr 1.75fr 2.25fr",
         gap: "9px",
         height: "100%",
         minHeight: 0,

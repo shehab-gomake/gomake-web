@@ -51,6 +51,16 @@ const useStyle = () => {
         color: neutralColor(500),
         width: "max-content",
       },
+      doneLabel: {
+        borderRadius: "8px",
+        display: "inline-flex",
+        padding: "var(--spacing-xs, 4px) 10px",
+        alignItems: "center",
+        //Text style
+        textAlign: "center" as "center",
+        lineHeight: "20px",
+        ...FONT_FAMILY.Inter(500, 14),
+      },
     };
   }, [theme]);
   return {

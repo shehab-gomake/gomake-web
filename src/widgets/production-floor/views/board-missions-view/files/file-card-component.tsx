@@ -96,10 +96,10 @@ const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
     <div
       style={{
         position: "relative",
-        height: "190px",
-        width: "150px",
-        maxWidth: "60%",
-        maxHeight: "90%",
+        height: "140px",
+        width: "110px",
+        // maxWidth: "60%",
+        // maxHeight: "90%",
       }}
     >
       <Card

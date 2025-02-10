@@ -101,7 +101,7 @@ const BoardMissionsFiles = () => {
       </Stack>
 
       {/* Files Display */}
-      <Stack direction="row" gap={"20px"} flexWrap="wrap">
+      <Stack direction="row" gap={"10px"} flexWrap="wrap">
         {filteredFiles.length > 0 &&
           filteredFiles.map((file) => (
             <FileCardComponent key={file.name} file={file} />

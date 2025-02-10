@@ -175,11 +175,6 @@ const BoardMissionsDetailsHeader = () => {
                 </Stack>
                 {/* Status */}
                 <Stack
-                  style={{
-                    backgroundColor: boardMissionsDetails?.isReady
-                      ? doneBoardMissionsColors.bfColor
-                      : "transparent",
-                  }}
                   padding={"0 5px"}
                   direction={"row"}
                   gap={"5px"}
@@ -197,7 +192,16 @@ const BoardMissionsDetailsHeader = () => {
                       sx={{ borderRadius: "5px" }}
                     />
                   ) : boardMissionsDetails?.isReady ? (
-                    <span>{t("boardMissions.done")}</span>
+                    <span
+                      style={{
+                        ...classes.doneLabel,
+                        color: doneBoardMissionsColors.color,
+                        border: `1px solid ${doneBoardMissionsColors.color}`,
+                        background: doneBoardMissionsColors.bfColor,
+                      }}
+                    >
+                      {t("boardMissions.done")}
+                    </span>
                   ) : (
                     <BoardStatusComponent
                       statusId={boardMissionsDetails.boardMissionStatus?.id}
@@ -233,11 +237,13 @@ const BoardMissionsDetailsHeader = () => {
                   <ActionCountDown
                     loading={timerLoading}
                     onToggle={onToggleTimer}
-                    {...stations.find(
-                      (station) =>
-                        station.boardMissionActionId ===
-                        boardMissionsDetails?.currentBoardMissionActionId
-                    )?.boardMissionActionTimer}
+                    // {...stations.find(
+                    //   (station) =>
+                    //     station.boardMissionActionId ===
+                    //     boardMissionsDetails?.currentBoardMissionActionId
+                    // )?.boardMissionActionTimer}
+                    {...boardMissionsDetails?.currentStation
+                      ?.boardMissionActionTimer}
                   />
                 )}
               </Stack>

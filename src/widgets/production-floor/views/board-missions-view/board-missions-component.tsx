@@ -77,20 +77,6 @@ const BoardMissionsComponent = ({
       padding={"34px 24px"}
       borderRadius={"24px, 24px, 0px, 0px"}
     >
-      {/* Old */}
-      {/* <BoardMissionsDetailsHeader /> */}
-      {/* <Divider orientation={"horizontal"} flexItem />
-    <NavigationButtonsComponent /> 
-      <Stack overflow={"auto"} flex={1}>
-          {step === EBoardMissionsViews.STATIONS && (
-            <BoardMissionsStationsComponent />
-          )}
-          {step === EBoardMissionsViews.FILES && <BoardMissionsFiles />}
-          {step === EBoardMissionsViews.APPROVAL && <></>}
-          {step === EBoardMissionsViews.ACTIVITY && <BoardMissionsActivities />}
-        </Stack>
-      {/* <GoMakeSnackBar /> */}
-      {/* Old */}
       <BoardMissionsDetailsHeader />
       <div style={classes.GridContainer}>
         {isLoading ? (
@@ -127,14 +113,12 @@ const BoardMissionsComponent = ({
               <div
                 style={{
                   ...classes.GridContainer,
-                  display: "grid",
                   gridTemplateColumns:
                     productWorksTypes?.length > 0
-                      ? "calc(70% - 4px) calc(30% - 4px)"
+                      ? "calc(70% - 5px) calc(30% - 5px)"
                       : "100%",
-                  gap: "8px",
                   height: "100%",
-                  overflow: "hidden",
+                  // overflow: "hidden",
                 }}
               >
                 {productDetails.length > 0 && (
@@ -147,13 +131,18 @@ const BoardMissionsComponent = ({
                     withHeader={true}
                     header={"Product Details"}
                     style={{
-                      flex: 1,
-                      height: "100%",
+                      maxHeight: "fit-content",
                     }}
                   />
                 )}
                 {productWorksTypes.length > 0 && (
-                  <CardContainer label="Types">
+                  <CardContainer
+                    label="Types"
+                    style={{
+                      flex: 1,
+                      height: "50%",
+                    }}
+                  >
                     <WorkTypesWidget types={productWorksTypes} />
                   </CardContainer>
                 )}

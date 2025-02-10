@@ -9,56 +9,54 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface IProps extends IBoardMissionsStationTimer {
   onToggle?: (seconds: number) => void;
   loading?: boolean;
 }
 
-//!here new
 const ActionCountDown = ({
   isTimerRunning,
-  totalRunningTime, // totalRunningTime is now expected as a number (seconds)
+  totalRunningTime,
   onToggle,
   loading = false,
 }: IProps) => {
   const [seconds, setSeconds] = useState<number>(0);
   const [isActive, setIsActive] = useState(false);
   const [boardMissionsDetails] = useRecoilState(boardMissionsDetailsState);
+  const { errorColor } = useGomakeTheme();
 
-  // Initialize state with totalRunningTime (which is in seconds)
+  // Initialize state with totalRunningTime (in seconds)
   useEffect(() => {
     setSeconds(totalRunningTime || 0);
     setIsActive(isTimerRunning);
   }, [isTimerRunning, totalRunningTime]);
 
-  // Countdown logic
+  // Countdown logic (allows negative values)
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
-    if (isActive && seconds > 0) {
+    if (isActive) {
       interval = setInterval(() => {
-        setSeconds((prevSeconds) => (prevSeconds > 0 ? prevSeconds - 1 : 0));
+        setSeconds((prevSeconds) => prevSeconds - 1);
       }, 1000);
-    }
-
-    if (seconds === 0 && isActive) {
-      setIsActive(false); // Stop when it reaches 00:00
     }
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, seconds]);
+  }, [isActive]);
 
   // Format seconds into MM:SS
   const formatTime = useCallback(() => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
+    const absSeconds = Math.abs(seconds);
+    const minutes = Math.floor(absSeconds / 60);
+    const remainingSeconds = absSeconds % 60;
 
-    return `${minutes.toString().padStart(2, "0")}:${remainingSeconds
+    return `${seconds < 0 ? "-" : ""}${minutes
       .toString()
-      .padStart(2, "0")}`;
+      .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
   }, [seconds]);
 
   return (
@@ -70,7 +68,10 @@ const ActionCountDown = ({
           <IconButton
             onClick={(e) => {
               e.stopPropagation();
-              onToggle(seconds);
+              setIsActive((prev) => !prev); // Toggle timer state
+              if (onToggle) {
+                onToggle(seconds);
+              }
             }}
           >
             {loading ? (
@@ -83,11 +84,12 @@ const ActionCountDown = ({
           </IconButton>
         )}
       </PermissionCheck>
+
       <Stack direction="row" alignItems="baseline">
         <span
           style={{
             ...FONT_FAMILY.Inter(600, 32),
-            color: "#101828",
+            color: seconds < 0 ? errorColor(500) : "#101828",
           }}
         >
           {formatTime()}
@@ -95,11 +97,11 @@ const ActionCountDown = ({
         <span
           style={{
             ...FONT_FAMILY.Inter(400, 16),
-            color: "#101828",
+            color: seconds < 0 ? errorColor(500) : "#101828",
             marginLeft: 4,
           }}
         >
-          Min
+          {seconds < 0 ? "Overdue" : "Min"}
         </span>
       </Stack>
     </Stack>
