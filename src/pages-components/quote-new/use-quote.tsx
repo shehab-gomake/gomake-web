@@ -44,11 +44,10 @@ import {
   updateDocuementItemSelectApi,
   updateDocumentContactApi,
   updateDocumentCurrencyApi,
+  updateDocumentPreferenceApi,
   updateDocumentTitleApi,
   updateDueDateApi,
   updateExchangeRateApi,
-  updateIsShowDetailsApi,
-  updateIsShowPricesApi,
   updateOccasionalClientNameApi,
   updatePurchaseNumberApi,
 } from "@/services/api-service/generic-doc/documents-api";
@@ -1867,24 +1866,8 @@ const useQuoteNew = ({
       },
     });
   };
-  const updateIsShowDetails = async () => {
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessUpdate();
-        getQuote();
-      } else {
-        alertFaultUpdate();
-      }
-    };
-    await updateIsShowDetailsApi(callApi, callBack, {
-      documentType: docType,
-      document: {
-        documentId: quoteItemValue?.id,
-      },
-    });
-  };
 
-  const updateIsShowPrices = async () => {
+  const updateDocumentPreference = async (value: string, documentSettingTYpe: number) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1893,10 +1876,11 @@ const useQuoteNew = ({
         alertFaultUpdate();
       }
     };
-    await updateIsShowPricesApi(callApi, callBack, {
+    await updateDocumentPreferenceApi(callApi, callBack, {
       documentType: docType,
-      document: {
-        documentId: quoteItemValue?.id,
+      data: {
+        value: value,
+        documentSetting: documentSettingTYpe,
       },
     });
   };
@@ -2203,8 +2187,7 @@ const useQuoteNew = ({
     onClickOpenWhatsAppModal,
     onClickCloseWhatsAppModal,
     sortDocumentItems,
-    updateIsShowDetails,
-    updateIsShowPrices,
+    updateDocumentPreference,
     getWhatsAppMessage,
     getWhatsAppMessageForReceipt,
     whatsappMassage,
