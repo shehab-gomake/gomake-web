@@ -410,28 +410,6 @@ const BoardMissionsStationAction = ({
       isSendMessage: !!sendMSg,
     });
   };
-  // const updateActionData = async (actionId: string, newValue: number, key: string, productType: string) => {
-  //   const apiCallBack = (res: { success: boolean }) => {
-  //     if (res.success) {
-  //       alertSuccessUpdate()
-  //     } else {
-  //       alertFaultUpdate()
-  //     }
-  //   }
-  //   await updateProductItemDraftActionData(callApi, apiCallBack, {
-  //     productItemValueId: currentProductItemValue,
-  //     actionId: actionId,
-  //     value: newValue,
-  //     fieldName: key,
-  //     productType: productType,
-  //     signalRConnectionId: connectionId
-  //   })
-  // }
-  const handleSupplierChange = (e, value) => {
-    console.log("value", value);
-
-    // updateActionData(id, value?.value, "supplierId", productType).then();
-  };
 
   return (
     <>
@@ -748,8 +726,7 @@ const BoardMissionsStationAction = ({
                                         zIndex: 9999999999999999999,
                                       }}
                                     >
-                                      {(machinesList
-                                      )?.map((value, index) => {
+                                      {machinesList?.map((value, index) => {
                                         return (
                                           <MenuItem
                                             key={index}
@@ -833,8 +810,7 @@ const BoardMissionsStationAction = ({
                                       zIndex: 9999999999999999999,
                                     }}
                                   >
-                                    {(employeesList
-                                    )?.map((value, index) => {
+                                    {employeesList?.map((value, index) => {
                                       return (
                                         <MenuItem
                                           key={index}
@@ -891,7 +867,9 @@ const BoardMissionsStationAction = ({
                           {t("productionFloor.deliveryTime")}
                         </span>
                         <span style={classes.detailValue}>
-                          {DateFormatterDDMMYYYY(convertUtcToLocalIsoString(dueDate))}
+                          {DateFormatterDDMMYYYY(
+                            convertUtcToLocalIsoString(dueDate)
+                          )}
                         </span>
                       </Stack>
                       <span style={classes.sourceLabel}>

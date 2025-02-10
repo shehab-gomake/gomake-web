@@ -48,7 +48,6 @@ const useBoardMissionsNotes = (onCloseModal?: () => void) => {
 
     await boardMissionsAddNote(callApi, callBack, {
       boardMissionsId,
-      //   note: newNote,
       note: newNote?.value,
     });
   };
@@ -79,7 +78,7 @@ const useBoardMissionsNotes = (onCloseModal?: () => void) => {
     newNote,
     setNewNote,
     handleAddNote,
-    notes: boardMissions?.noteValues, //!here
+    notes: boardMissions?.noteValues,
     onDeleteNote,
     deleting,
     addingNote,

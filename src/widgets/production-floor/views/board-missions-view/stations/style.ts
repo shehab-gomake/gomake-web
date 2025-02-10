@@ -29,8 +29,8 @@ const useStyle = () => {
         textTransform: "capitalize" as "capitalize",
       },
       actionContainer: {
-        padding: "10px 16px",
-        borderRadius: 16,
+        padding: "5px 16px",
+        borderRadius: "8px",
         width: "100%",
         backgroundColor: primaryColor(300),
       },
@@ -66,8 +66,8 @@ const useStyle = () => {
       toggleSubWorkFlowActionButton: {
         backgroundColor: primaryColor(600),
         borderRadius: 8,
-        height: 40,
-        width: 40,
+        height: 30,
+        width: 30,
         color: "white",
       },
       workFlowContainer: {

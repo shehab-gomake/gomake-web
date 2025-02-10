@@ -38,8 +38,12 @@ export const isOrderCompletedState = atom<boolean>({
   default: false,
 });
 
-//!here new
 export const productionFloorSectionsState = atom({
   key: "productionFloorSectionsState",
+  default: [],
+});
+
+export const productWorksTypesState = atom({
+  key: "productWorksTypesState",
   default: [],
 });

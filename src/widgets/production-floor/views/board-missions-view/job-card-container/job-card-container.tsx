@@ -10,7 +10,7 @@ interface CardContainerProps {
   style?: CSSProperties;
 }
 
-//!here
+//!here new
 const CardContainer = ({
   label,
   children,
@@ -27,7 +27,7 @@ const CardContainer = ({
         boxShadow: "0px 5px 31px 0px rgba(0, 0, 0, 0.06)",
         display: "flex",
         flexDirection: "column",
-        height: "100%",
+        maxHeight: "100%",
         overflow: "hidden",
         ...style,
       }}
@@ -57,7 +57,7 @@ const CardContainer = ({
         style={{
           padding: "8px 16px",
           flexGrow: 1,
-          overflowY: "auto",
+          overflowY: "scroll",
         }}
       >
         {children}

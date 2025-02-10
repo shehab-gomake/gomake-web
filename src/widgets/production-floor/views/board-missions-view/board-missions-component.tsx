@@ -19,6 +19,7 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import ProductDetailsSection from "./job-card-container/components/product-details-section";
 import { BoardMissionsStationsComponent } from "./stations/board-missions-stations-component";
 import { useStyle } from "./style";
+import WorkTypesWidget from "./work-types/work-types-widget";
 
 interface IProps {
   boardMissionsId: string;
@@ -52,6 +53,7 @@ const BoardMissionsComponent = ({
     boardMissions,
     getStations,
     renderSkeletons,
+    productWorksTypes,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -63,7 +65,6 @@ const BoardMissionsComponent = ({
     };
   }, [boardMissionsId, connectionId, productType]);
 
-  const typesData = null;
   const { classes } = useStyle();
 
   return (
@@ -76,27 +77,13 @@ const BoardMissionsComponent = ({
       padding={"34px 24px"}
       borderRadius={"24px, 24px, 0px, 0px"}
     >
-      {/* Old */}
-      {/* <BoardMissionsDetailsHeader /> */}
-      {/* <Divider orientation={"horizontal"} flexItem />
-      <NavigationButtonsComponent /> */}
-      {/* <Stack overflow={"auto"} flex={1}>
-          {step === EBoardMissionsViews.STATIONS && (
-            <BoardMissionsStationsComponent />
-          )}
-          {step === EBoardMissionsViews.FILES && <BoardMissionsFiles />}
-          {step === EBoardMissionsViews.APPROVAL && <></>}
-          {step === EBoardMissionsViews.ACTIVITY && <BoardMissionsActivities />}
-        </Stack> */}
-      {/* <GoMakeSnackBar /> */}
-      {/* Old */}
       <BoardMissionsDetailsHeader />
       <div style={classes.GridContainer}>
         {isLoading ? (
           renderSkeletons()
         ) : (
           <>
-            {/* Notes + Products details */}
+            {/* Notes + Types + Products details */}
             <div style={classes.ColumnOne}>
               <CardContainer
                 label={t("sales.quote.notes")}
@@ -126,13 +113,12 @@ const BoardMissionsComponent = ({
               <div
                 style={{
                   ...classes.GridContainer,
-                  display: "grid",
-                  gridTemplateColumns: typesData
-                    ? "calc(60% - 4px) calc(40% - 4px)"
-                    : "100%",
-                  gap: "8px",
+                  gridTemplateColumns:
+                    productWorksTypes?.length > 0
+                      ? "calc(70% - 5px) calc(30% - 5px)"
+                      : "100%",
                   height: "100%",
-                  overflow: "hidden",
+                  // overflow: "hidden",
                 }}
               >
                 {productDetails.length > 0 && (
@@ -145,27 +131,24 @@ const BoardMissionsComponent = ({
                     withHeader={true}
                     header={"Product Details"}
                     style={{
-                      flex: 1,
-                      height: "100%",
+                      maxHeight: "fit-content",
                     }}
                   />
                 )}
-                {typesData && (
-                  <CardContainer label="Types">
-                    <p>This will be "Types" section</p>
+                {productWorksTypes.length > 0 && (
+                  <CardContainer
+                    label="Types"
+                    style={{
+                      flex: 1,
+                      height: "50%",
+                    }}
+                  >
+                    <WorkTypesWidget types={productWorksTypes} />
                   </CardContainer>
                 )}
               </div>
-
               <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "5px",
-                  flex: 1,
-                  overflowY: "auto",
-                  minHeight: 0,
-                }}
+                style={classes.productDetailsContainer}
                 className={`custom-scroller`}
               >
                 {productDetails.slice(1).map((section, index) => (
@@ -206,12 +189,10 @@ const BoardMissionsComponent = ({
                     </IconButton>
                   }
                 >
-                  <p>This will be "Files" section</p>
-                  {/* <BoardMissionsFiles /> */}
+                  <BoardMissionsFiles />
                 </CardContainer>
                 <CardContainer label="Activities">
-                  <p>This will be "Activities" section</p>
-                  {/* <BoardMissionsActivities /> */}
+                  <BoardMissionsActivities />
                 </CardContainer>
               </div>
             </div>

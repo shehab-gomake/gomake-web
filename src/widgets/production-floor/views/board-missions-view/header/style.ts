@@ -3,16 +3,19 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-  const { theme, primaryColor, grayColor, secondColor } = useGomakeTheme();
+  const { theme, primaryColor, grayColor, secondColor, neutralColor } =
+    useGomakeTheme();
   const classes = useMemo(() => {
     return {
       title: {
         ...FONT_FAMILY.Inter(600, 20),
-        color: primaryColor(600),
+        color: primaryColor(900),
       },
       divider: {
         width: "2px",
         backgroundColor: primaryColor(600),
+        height: "60%",
+        alignSelf: "center",
       },
       parameterLabel: {
         ...FONT_FAMILY.Inter(500, 14),
@@ -42,6 +45,21 @@ const useStyle = () => {
         alignItems: "center",
         borderRadius: "var(--radius-full, 9999px)",
         background: primaryColor(500),
+      },
+      detailTitle: {
+        ...FONT_FAMILY.Lexend(500, 14),
+        color: neutralColor(500),
+        width: "max-content",
+      },
+      doneLabel: {
+        borderRadius: "8px",
+        display: "inline-flex",
+        padding: "var(--spacing-xs, 4px) 10px",
+        alignItems: "center",
+        //Text style
+        textAlign: "center" as "center",
+        lineHeight: "20px",
+        ...FONT_FAMILY.Inter(500, 14),
       },
     };
   }, [theme]);

@@ -32,6 +32,7 @@ const useBoardMissions = () => {
     getStations,
     productDetails,
     resetProductDetails,
+    productWorksTypes,
   } = useBoardMissionsStations();
 
   const initStates = () => {
@@ -139,6 +140,7 @@ const useBoardMissions = () => {
     boardMissions,
     getStations,
     renderSkeletons,
+    productWorksTypes,
   };
 };
 

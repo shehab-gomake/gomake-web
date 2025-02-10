@@ -72,6 +72,7 @@ export interface IBoardMissionsDetails {
   isReady: boolean;
   productionFloorJobColor?: string;
   showGraphicsApprovalAlert?: 0 | 1 | 2;
+  currentStation?: any;
 }
 
 export interface IBoardMissionStep {

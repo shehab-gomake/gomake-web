@@ -9,12 +9,13 @@ const useStyle = () => {
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
         width: "100%",
-        height: "100vh",
+        height: "calc(100vh - 230px)",
         gap: "10px",
       },
       ColumnOne: {
         display: "grid" as "grid",
-        gridTemplateRows: "calc(20% - 6px) calc(35% - 6px) calc(45% - 6px)",
+        // gridTemplateRows: "calc(20% - 6px) calc(35% - 6px) calc(45% - 6px)",
+        gridTemplateRows: "1fr 1.75fr 2.25fr",
         gap: "9px",
         height: "100%",
         minHeight: 0,
@@ -38,6 +39,14 @@ const useStyle = () => {
         gap: "8px",
         minHeight: 0,
         overflow: "hidden",
+      },
+      productDetailsContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "5px",
+        flex: 1,
+        overflowY: "scroll" as "scroll",
+        minHeight: 0,
       },
     };
   }, []);
