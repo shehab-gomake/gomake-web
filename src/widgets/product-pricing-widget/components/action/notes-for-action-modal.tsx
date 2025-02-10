@@ -1,4 +1,4 @@
-import { GoMakeModal, GomakePrimaryButton } from "@/components";
+import { GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../../style";
 import {
@@ -22,7 +22,12 @@ interface NotesForActionModalProps {
   setValue: (value: string) => void;
   modalTitle?: string;
   id?: string | number;
+  isHaveJobName?: boolean;
+  jobName?: string;
+  setJobName?: (value: string) => void;
 }
+
+
 
 const NotesForActionModal = ({
   onClose,
@@ -33,9 +38,13 @@ const NotesForActionModal = ({
   setValue,
   modalTitle,
   id,
+  isHaveJobName = false,
+  jobName,
+  setJobName,
 }: NotesForActionModalProps) => {
   const { classes } = useStyle();
   const [myValue, setMyValue] = useState<string>("");
+
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -113,9 +122,27 @@ const NotesForActionModal = ({
           ...containerStyle,
         }}
       >
+        {isHaveJobName && (
+          <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start", gap: 10, marginBottom: 10 }}>
+            <div>
+              Enter Job Name
+            </div>
+            <GomakeTextInput
+              placeholder={t("sales.cart.jobName")}
+              onChange={(e: any) => {
+                setJobName(e.target.value);
+              }}
+              value={jobName}
+            />
+
+          </div>
+
+        )}
+
         {typeof window !== "undefined" && (
           <Suspense>
             <ReactQuill
+
               formats={formats}
               style={style}
               value={myValue}
