@@ -19,9 +19,12 @@ const ADD_DOCUMENT_ADDRESS_URL =
   "/v1/erp-service/document/add-document-address";
 const UPDATE_DOCUMENT_ADDRESS_URL =
   "/v1/erp-service/document/update-document-address";
+const UPDATE_DOCUMENT_PREFERENCE_URL =
+  "/v1/erp-service/document/update-document-preference";
 const DELETE_DOCUMENT_ADDRESS_URL =
   "/v1/erp-service/documents/delete-document-address";
 const DUPLICATE_DOCUMENT_URL = "/v1/erp-service/documents/duplicate-document";
+
 const DUPLICATE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/duplicate-document-item-with-another-quantity";
 const CHANGE_DOCUMENT_CLIENT_URL =
@@ -281,6 +284,19 @@ const updateDocumentAddressApi: ICallAndSetData = async (
   );
 };
 
+const updateDocumentPreferenceApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_DOCUMENT_PREFERENCE_URL,
+    setState,
+    data
+  );
+};
 const deleteDocumentAddressApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1097,12 +1113,14 @@ export {
   deleteDocumentContactApi,
   addDocumentAddressApi,
   updateDocumentAddressApi,
+  updateDocumentPreferenceApi,
   deleteDocumentAddressApi,
   changeDocumentClientApi,
   getIfCartExistApi,
   duplicateDocumentApi,
   duplicateWithAnotherQuantityApi,
   getDocumentPdfApi,
+
   updatePurchaseNumberApi,
   addDeliveryApi,
   cancelDocumentApi,
