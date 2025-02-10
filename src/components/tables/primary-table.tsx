@@ -217,7 +217,7 @@ const PrimaryTable = ({
       return 0;
     });
   }, [rows, sortConfig]);
-
+  
   const handleSort = (index: number) => {
     setSortConfig((prev) => {
       if (prev?.key === index) {
