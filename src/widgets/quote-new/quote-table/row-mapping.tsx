@@ -57,7 +57,7 @@ const RowMappingWidget = ({
   const [isConfirmation, setIsConfirmation] = useState(null);
   const [isSelected, setIsSelected] = useState(item?.isSelected);
   const { getCurrencyUnitText } = useQuoteGetData();
- 
+
   const handleChangeSelectedItem = (checked, itemId) => {
     setIsSelected(checked);
     onChangeSelectedItemRowForQoute(checked, itemId);
@@ -101,17 +101,17 @@ const RowMappingWidget = ({
   const canUpdatePrices = router.query.isNewCreation
     ? true
     : item?.isEditable &&
-      CheckDocumentPermission(
-        documentType,
-        DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
-      );
+    CheckDocumentPermission(
+      documentType,
+      DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
+    );
   const canUpdateDeliveryPrices = router.query.isNewCreation
     ? true
     : item?.isEditable &&
-      CheckDocumentPermission(
-        documentType,
-        DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES
-      );
+    CheckDocumentPermission(
+      documentType,
+      DocumentPermission.UPDATE_DOCUMENT_DELIVERY_ITEM_PRICES
+    );
   const canUpdatePricesBasedOnType =
     item?.productType === 1 ? canUpdateDeliveryPrices : canUpdatePrices;
 
@@ -130,9 +130,9 @@ const RowMappingWidget = ({
         }}
       >
         {!isPrePaymentPage &&
-        isQuoteConfirmation &&
-        !quoteConfirm?.isConfirmed &&
-        quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled ? (
+          isQuoteConfirmation &&
+          !quoteConfirm?.isConfirmed &&
+          quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled ? (
           <div style={classes.checkBoxContainer}>
             <Checkbox
               icon={<CheckboxIcon />}
@@ -186,10 +186,9 @@ const RowMappingWidget = ({
           <span style={{ display: "block", color: "#5859A8" }}>
             {item?.sourceDocumentType
               ? `${t(
-                  `SourceDocument.${
-                    ERPDocumentsTypesEnum[item?.sourceDocumentType]
-                  }`
-                )} ${t("general.shortForNum")}`
+                `SourceDocument.${ERPDocumentsTypesEnum[item?.sourceDocumentType]
+                }`
+              )} ${t("general.shortForNum")}`
               : ""}
           </span>
           <span style={{ display: "block" }}>
@@ -234,8 +233,10 @@ const RowMappingWidget = ({
             documentItemId={item?.id}
             canUpdate={canUpdate}
             documentType={documentType}
+            workName={item?.workName}
           />
         </PrimaryTableCell>
+
       )}
       <PrimaryTableCell
         style={{
@@ -246,7 +247,7 @@ const RowMappingWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           {item?.calculationStatus === null ||
-          item?.calculationStatus === ECalculationStatus.Done ? (
+            item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.quantity}
               onBlur={onBlurAmount}
@@ -271,7 +272,7 @@ const RowMappingWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           {item?.calculationStatus === null ||
-          item?.calculationStatus === ECalculationStatus.Done ? (
+            item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.price}
               onBlur={onBlurPrice}
@@ -295,7 +296,7 @@ const RowMappingWidget = ({
       >
         <div style={classes.cellTextInputStyle}>
           {item?.calculationStatus === null ||
-          item?.calculationStatus === ECalculationStatus.Done ? (
+            item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.discount ? item.discount : "0"}
               onBlur={onBlurDiscount}
@@ -337,7 +338,7 @@ const RowMappingWidget = ({
           ) : (
             <>
               {item?.calculationStatus === null ||
-              item?.calculationStatus === ECalculationStatus.Done ? (
+                item?.calculationStatus === ECalculationStatus.Done ? (
                 <InputUpdatedValues
                   value={item.finalPrice}
                   onBlur={onBlurFinalPrice}

@@ -14,6 +14,7 @@ interface CharacterDetailsProps {
   showLessHeightFit?: boolean;
   canUpdate?: boolean;
   documentType?: number;
+  workName?: string;
 }
 
 const CharacterDetails = ({
@@ -25,6 +26,7 @@ const CharacterDetails = ({
   showLessHeightFit = false,
   canUpdate = true,
   documentType,
+  workName,
 }: CharacterDetailsProps) => {
   const {
     t,
@@ -38,8 +40,10 @@ const CharacterDetails = ({
     setIsEdit,
     handleClose,
     handleSave,
+    jobName,
+    setJobName,
     truncatedDetails,
-  } = useCharacterDetails({ details, getQuote, documentItemId, documentType });
+  } = useCharacterDetails({ details, getQuote, documentItemId, documentType, workName });
   const { classes } = useStyleCharacterDetails({ showAll, showLessHeightFit });
 
   return (
@@ -80,6 +84,11 @@ const CharacterDetails = ({
         onSend={handleSave}
         modalTitle={t("sales.cart.editDetails")}
         id={documentItemId}
+        isHaveJobName={true}
+        jobName={jobName}
+        setJobName={setJobName}
+
+
       />
     </>
   );
