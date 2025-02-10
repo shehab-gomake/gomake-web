@@ -8,12 +8,13 @@ import Divider from "@mui/material/Divider";
 
 import { BoardMissionsStationAction } from "@/widgets/production-floor/views/board-missions-view/stations/station-action";
 import { IBoardMissionsSubWorkFlow } from "@/widgets/production-floor/views/board-missions-view/stations/interface";
+import { BoardMissionsStationActionNew } from "./station-action-new";
 
 interface IProps extends IBoardMissionsSubWorkFlow {
   currentBoardMissionsActionId: string;
 }
 
-//!here what is this
+//!here done
 const BoardMissionsSubWorkFlowComponent = ({
   actions,
   productType,
@@ -91,7 +92,7 @@ const BoardMissionsSubWorkFlowComponent = ({
                   backgroundColor: "#667085",
                 }}
               />
-              <BoardMissionsStationAction
+              <BoardMissionsStationActionNew
                 delay={i * 300}
                 selected={
                   currentBoardMissionsActionId === action.boardMissionActionId

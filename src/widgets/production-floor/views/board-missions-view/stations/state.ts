@@ -42,3 +42,8 @@ export const productionFloorSectionsState = atom({
   key: "productionFloorSectionsState",
   default: [],
 });
+
+export const productWorksTypesState = atom({
+  key: "productWorksTypesState",
+  default: [],
+});

@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { Skeleton } from "@mui/material";
 import { BoardMissionsSubWorkFlowComponent } from "@/widgets/production-floor/views/board-missions-view/stations/sub-work-flow-component";
 import { CompletedBoardMissionsComponent } from "@/widgets/production-floor/views/board-missions-view/stations/completed-board-missions-component/completed-board-missions-component";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { BoardMissionsStationActionNew } from "./station-action-new";
 
@@ -14,6 +14,7 @@ const BoardMissionsStationsComponent = ({
   boardMissions,
   getStations,
 }) => {
+  const boardMissionsDetails = useRecoilValue(boardMissionsDetailsState);
   const sortedStations = useMemo(
     () =>
       [...stations]
@@ -21,11 +22,6 @@ const BoardMissionsStationsComponent = ({
         ?.sort((a, b) => (b?.isDone && a?.isDone ? 0 : a.isDone ? 1 : -1)),
     [stations]
   );
-
-  const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(
-    boardMissionsDetailsState
-  );
-
   const isLoading =
     !boardMissionsDetails?.boardMissionId || sortedStations?.length === 0;
 

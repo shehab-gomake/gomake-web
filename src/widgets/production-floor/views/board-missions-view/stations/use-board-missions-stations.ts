@@ -9,6 +9,7 @@ import {
   isOrderCompletedState,
   isReadyBoardMissionsState,
   productionFloorSectionsState,
+  productWorksTypesState,
   relatedOrderItemsComponentState,
   stationGeneralInformationProductionFloorState,
   stationGeneralInformationState,
@@ -52,6 +53,10 @@ const useBoardMissionsStations = () => {
   const [productDetails, setProductDetails] = useRecoilState(
     productionFloorSectionsState
   );
+  const [productWorksTypes, setProductWorksTypes] = useRecoilState(
+    productWorksTypesState
+  );
+
   const resetProductDetails = useResetRecoilState(productionFloorSectionsState);
 
   const getStations = async () => {
@@ -69,6 +74,7 @@ const useBoardMissionsStations = () => {
         setIsReady(res?.data?.isReady);
         setIsOrderCompleted(res?.data?.isOrderCompleted);
         setProductDetails(res?.data?.productionFlooeSections);
+        setProductWorksTypes(res?.data?.workTypes);
       }
     };
     await getBoardsMissionsStations(callApi, callBack, {
@@ -117,6 +123,7 @@ const useBoardMissionsStations = () => {
     getStations,
     productDetails,
     resetProductDetails,
+    productWorksTypes,
   };
 };
 

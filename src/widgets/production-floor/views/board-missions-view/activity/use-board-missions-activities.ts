@@ -86,14 +86,13 @@ const useBoardMissionsActivities = () => {
         textColor: "#B93815",
         bgColor: "#FEF6EE",
       },
-
-      {
-        name: "Reports",
-        onClick: () => setFilter(EActivitiesFilter.REPORTS),
-        selected: filter === EActivitiesFilter.REPORTS,
-        borderColor: "#FCCEEE",
-        textColor: "#C11574",
-      },
+      // {
+      //   name: "Reports",
+      //   onClick: () => setFilter(EActivitiesFilter.REPORTS),
+      //   selected: filter === EActivitiesFilter.REPORTS,
+      //   borderColor: "#FCCEEE",
+      //   textColor: "#C11574",
+      // },
     ],
     [filter]
   );

@@ -121,3 +121,17 @@ export const DateFormatterShort = (date: string) => {
     return `${hours}:${minutes} ${day}/${month}`;
   }
 };
+
+export const DateHourFormatterShort = (date: string) => {
+  if (date) {
+    let myDate = date?.split("T")[0];
+    let hours = date?.split("T")[1]?.split(":")[0];
+    let minutes = date?.split("T")[1]?.split(":")[1];
+    let day = myDate?.split("-")[2];
+    let month = myDate?.split("-")[1];
+    let year = myDate?.split("-")[0];
+
+    // Format to DD:MM and HH:MM
+    return `${day}/${month} ${hours}:${minutes}`;
+  }
+};

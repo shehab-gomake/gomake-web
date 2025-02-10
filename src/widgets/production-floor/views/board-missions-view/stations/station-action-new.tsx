@@ -71,6 +71,7 @@ interface IProps extends IBoardMissionsStation {
   supplierId?: string;
 }
 
+//!here new
 const BoardMissionsStationActionNew = ({
   id,
   actionId,
@@ -134,7 +135,7 @@ const BoardMissionsStationActionNew = ({
     onClickGetMachineForAction,
   } = useBoardMissionsUpdatedOutputs();
   const { CheckPermission } = useUserPermission();
-  console.log("stations", stations);
+
   const inputsParameters = outputs.filter(
     (parameter) =>
       parameter &&
@@ -546,15 +547,11 @@ const BoardMissionsStationActionNew = ({
             justifyContent={"space-between"}
             onClick={() => setIsOpen(isHideTimeAndDate ? isOpen : !isOpen)}
             style={{
-              padding: "5px 16px",
-              borderRadius: "8px",
-              width: "100%",
+              ...classes.actionContainer,
               backgroundColor: isDone ? "#EAECF0" : "#F9FAFB",
               border: selected
                 ? classes.actionContainerBorder
                 : "1px solid var(--Colors-Border-border-primary, #D0D5DD)",
-              flexShrink: 0,
-              background: "#F9FAFB",
             }}
           >
             <Stack>

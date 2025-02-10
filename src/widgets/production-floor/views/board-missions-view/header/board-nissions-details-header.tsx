@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import { Avatar, Divider, IconButton, Skeleton, Tooltip } from "@mui/material";
 import { useStyle } from "@/widgets/production-floor/views/board-missions-view/header/style";
-import { DateFormatterDDMMYYYY } from "@/utils/adapter";
+import { DateHourFormatterShort } from "@/utils/adapter";
 import TocIcon from "@mui/icons-material/Toc";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
@@ -249,11 +249,21 @@ const BoardMissionsDetailsHeader = () => {
                       {t("productionFloor.started")}
                     </span>
                     <span style={classes.newParameterValue}>
-                      {DateFormatterDDMMYYYY(
+                      {DateHourFormatterShort(
                         convertUtcToLocalIsoString(
                           boardMissionsDetails.createdDate?.toString()
                         )
                       )}
+                    </span>
+                  </Stack>
+                )}
+                {boardMissionsDetails.dueDate && (
+                  <Stack direction={"row"} gap={"5px"}>
+                    <span style={classes.newParameterLabel}>
+                      {t("productionFloor.deliveredOn")}
+                    </span>
+                    <span style={classes.newParameterValue}>
+                      {DateHourFormatterShort(boardMissionsDetails.dueDate)}
                     </span>
                   </Stack>
                 )}
@@ -293,16 +303,7 @@ const BoardMissionsDetailsHeader = () => {
                       </span>
                     </Stack>
                   )}
-                {boardMissionsDetails.dueDate && (
-                  <Stack direction={"row"} gap={"5px"}>
-                    <span style={classes.newParameterLabel}>
-                      {t("productionFloor.deliveredOn")}
-                    </span>
-                    <span style={classes.newParameterValue}>
-                      {DateFormatterDDMMYYYY(boardMissionsDetails.dueDate)}
-                    </span>
-                  </Stack>
-                )}
+
                 {boardMissionsDetails?.isNeedExample && (
                   <span
                     style={{ ...classes.labelsStyle, background: "#BE0270" }}

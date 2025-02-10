@@ -53,7 +53,7 @@ const LogComponent = ({
       direction={"row"}
       gap={"12px"}
       alignItems={"flex-start"}
-      marginBottom={"25px"}
+      marginBottom={"20px"}
     >
       <Avatar
         sx={{
@@ -64,7 +64,6 @@ const LogComponent = ({
           border:
             "0.75px solid var(--Component-colors-Components-Avatars-avatar-contrast-border, rgba(0, 0, 0, 0.08))",
           backgroundColor: "#F2F4F7",
-          color: "red",
         }}
       >
         {userImages ? (
@@ -117,7 +116,7 @@ const LogComponent = ({
         >
           <span
             style={{
-              width: "75%",
+              width: "100%",
               color: "#101828",
               ...FONT_FAMILY.Inter(500, 16),
             }}

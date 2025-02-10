@@ -29,8 +29,8 @@ const useStyle = () => {
         textTransform: "capitalize" as "capitalize",
       },
       actionContainer: {
-        padding: "10px 16px",
-        borderRadius: 16,
+        padding: "5px 16px",
+        borderRadius: "8px",
         width: "100%",
         backgroundColor: primaryColor(300),
       },

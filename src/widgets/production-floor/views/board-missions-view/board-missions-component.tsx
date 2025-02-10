@@ -19,6 +19,7 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import ProductDetailsSection from "./job-card-container/components/product-details-section";
 import { BoardMissionsStationsComponent } from "./stations/board-missions-stations-component";
 import { useStyle } from "./style";
+import WorkTypesWidget from "./work-types/work-types-widget";
 
 interface IProps {
   boardMissionsId: string;
@@ -52,6 +53,7 @@ const BoardMissionsComponent = ({
     boardMissions,
     getStations,
     renderSkeletons,
+    productWorksTypes,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -63,7 +65,6 @@ const BoardMissionsComponent = ({
     };
   }, [boardMissionsId, connectionId, productType]);
 
-  const typesData = null;
   const { classes } = useStyle();
 
   return (
@@ -127,9 +128,10 @@ const BoardMissionsComponent = ({
                 style={{
                   ...classes.GridContainer,
                   display: "grid",
-                  gridTemplateColumns: typesData
-                    ? "calc(60% - 4px) calc(40% - 4px)"
-                    : "100%",
+                  gridTemplateColumns:
+                    productWorksTypes?.length > 0
+                      ? "calc(70% - 4px) calc(30% - 4px)"
+                      : "100%",
                   gap: "8px",
                   height: "100%",
                   overflow: "hidden",
@@ -150,22 +152,14 @@ const BoardMissionsComponent = ({
                     }}
                   />
                 )}
-                {typesData && (
+                {productWorksTypes.length > 0 && (
                   <CardContainer label="Types">
-                    <p>This will be "Types" section</p>
+                    <WorkTypesWidget types={productWorksTypes} />
                   </CardContainer>
                 )}
               </div>
-
               <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "5px",
-                  flex: 1,
-                  overflowY: "scroll",
-                  minHeight: 0,
-                }}
+                style={classes.productDetailsContainer}
                 className={`custom-scroller`}
               >
                 {productDetails.slice(1).map((section, index) => (
@@ -194,7 +188,6 @@ const BoardMissionsComponent = ({
                   getStations={getStations}
                 />
               </CardContainer>
-
               <div style={classes.NestedGrid}>
                 <CardContainer
                   label="Files"
@@ -207,11 +200,9 @@ const BoardMissionsComponent = ({
                     </IconButton>
                   }
                 >
-                  <p>This will be "Files" section</p>
-                  {/* <BoardMissionsFiles /> */}
+                  <BoardMissionsFiles />
                 </CardContainer>
                 <CardContainer label="Activities">
-                  {/* <p>This will be "Activities" section</p> */}
                   <BoardMissionsActivities />
                 </CardContainer>
               </div>

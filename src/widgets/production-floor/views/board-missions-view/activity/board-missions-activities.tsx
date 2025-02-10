@@ -1,14 +1,12 @@
 import { Stack } from "@mui/material";
 import Button from "@mui/material/Button";
-import * as React from "react";
-import { GoMakeTextEditor } from "@/components/text-editor/go-make-text-editor";
 import { useBoardMissionsActivities } from "@/widgets/production-floor/views/board-missions-view/activity/use-board-missions-activities";
 import { ActivityComponent } from "@/widgets/production-floor/views/board-missions-view/activity/activity-component";
-import { convertHeightToVH } from "@/utils/adapter";
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { toRgba } from "@/utils/helpers";
+import { ActivitiesMessengerInputComponent } from "./activities-messenger-input";
 
 const BoardMissionsActivities = () => {
   const { t } = useTranslation();
@@ -45,7 +43,7 @@ const BoardMissionsActivities = () => {
   }, [activitiesList]);
 
   return (
-    <Stack width={"100%"} gap={"25px"} height={"100%"} overflow={"hidden"}>
+    <Stack width={"100%"} gap={"20px"} height={"100%"} overflow={"hidden"}>
       <Stack direction={"row"} gap={"10px"} alignItems={"center"}>
         {filtersButtonsArray?.map((btn) => (
           <Button
@@ -68,43 +66,50 @@ const BoardMissionsActivities = () => {
           </Button>
         ))}
       </Stack>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          overflow: "auto",
-          // height: convertHeightToVH(650),
-        }}
+
+      <Stack
+        direction={"column"}
+        justifyContent={"space-between"}
+        display={"flex"}
+        height={"100%"}
+        overflow={"hidden"}
+        gap={"15px"}
       >
-        {activitiesList?.length > 0 &&
-          activitiesList?.map((activity, index) => (
-            <div
-              key={"activity" + index}
-              ref={
-                index + 1 === activitiesList.length
-                  ? lastActivityRef
-                  : undefined
-              }
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+            overflow: "auto",
+            // height: convertHeightToVH(650),
+          }}
+        >
+          {activitiesList?.length > 0 &&
+            activitiesList?.map((activity, index) => (
+              <div
+                key={"activity" + index}
+                ref={
+                  index + 1 === activitiesList.length
+                    ? lastActivityRef
+                    : undefined
+                }
+              >
+                <ActivityComponent {...activity} />
+              </div>
+            ))}
+          {addActivityLoader && (
+            <Stack
+              ref={loaderRef}
+              // height={"60px"}
+              alignItems={"center"}
+              justifyContent={"center"}
             >
-              <ActivityComponent {...activity} />
-            </div>
-          ))}
-        {addActivityLoader && (
-          <Stack
-            ref={loaderRef}
-            // height={"60px"}
-            alignItems={"center"}
-            justifyContent={"center"}
-          >
-            <DotsLoader />
-          </Stack>
-        )}
-      </div>
-      <GoMakeTextEditor
-        onSend={addComment}
-        containerStyle={{ marginTop: "auto", height: "unset" }}
-      />
+              <DotsLoader />
+            </Stack>
+          )}
+        </div>
+        <ActivitiesMessengerInputComponent onSendMessage={addComment} />
+      </Stack>
     </Stack>
   );
 };

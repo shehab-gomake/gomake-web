@@ -32,12 +32,20 @@ const useStyle = () => {
       },
       NestedGrid: {
         display: "grid",
-        gridTemplateColumns: "calc(40% - 4px) calc(60% - 4px)",
+        gridTemplateColumns: "calc(30% - 4px) calc(70% - 4px)",
         width: "100%",
         height: "100%",
         gap: "8px",
         minHeight: 0,
         overflow: "hidden",
+      },
+      productDetailsContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        gap: "5px",
+        flex: 1,
+        overflowY: "scroll" as "scroll",
+        minHeight: 0,
       },
     };
   }, []);
