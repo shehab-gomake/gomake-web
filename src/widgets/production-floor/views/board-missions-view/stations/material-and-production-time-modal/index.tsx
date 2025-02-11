@@ -42,7 +42,6 @@ const MaterialsAndProductionTimeModalWidget = ({
   };
 
   const handleUpdate = (isSendingMessage?: boolean | null) => {
-    debugger
     onUpdate(state, isSendingMessage);
     onClose();
   };
@@ -189,7 +188,7 @@ const MaterialsAndProductionTimeModalWidget = ({
                   borderRadius: "8px",
                   height: "44px",
                 }}
-                onClick={()=>handleUpdate(false)}
+                onClick={() => handleUpdate(false)}
               >
                 {t("modal.update")}
               </GomakePrimaryButton>

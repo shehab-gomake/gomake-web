@@ -113,7 +113,9 @@ const useMoreCircle = ({
       name: (
         <a
           style={classes.menuTitleStyle}
-          href={`/production-floor?boardMissionsId=${mission?.id}&step=stations`}
+          href={`/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission?.productType}` : ""
+          }&step=stations`}
         >
           {t("boardMissions.viewTask")}
         </a>
@@ -121,7 +123,9 @@ const useMoreCircle = ({
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
       onclick: () =>
         navigate(
-          `/production-floor?boardMissionsId=${mission?.id}&step=stations`
+          `/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission?.productType}` : ""
+          }&step=stations`
         ),
     },
     {

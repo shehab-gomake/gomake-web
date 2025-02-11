@@ -375,8 +375,8 @@ const BoardMissionsDetailsHeader = () => {
             </Stack>
             <Stack direction={"row"} alignItems={"center"} gap={"12px"}>
               <ApprovalFileStatusComponent
-                height={"40px"}
-                width={"40px"}
+                height={"30px"}
+                width={"30px"}
                 fileStatus={boardMissionsDetails.showGraphicsApprovalAlert}
                 t={t}
               />
