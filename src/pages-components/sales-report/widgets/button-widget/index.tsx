@@ -5,8 +5,9 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 
 export interface SalesReportButtonWidgetProps {
   onClickBtn1: () => void;
+  onPrintClick: () => void;
 }
-const SalesReportButtonWidget = ({ onClickBtn1 }: SalesReportButtonWidgetProps) => {
+const SalesReportButtonWidget = ({ onClickBtn1 ,onPrintClick}: SalesReportButtonWidgetProps) => {
   const { classes } = useStyle();
   const {t} = useTranslation();
   
@@ -14,6 +15,10 @@ const SalesReportButtonWidget = ({ onClickBtn1 }: SalesReportButtonWidgetProps) 
     {
       name: t("permissions.ShowReports"),
       onclick: onClickBtn1
+    },
+    {
+      name: t("reports.printReport"),
+      onclick: onPrintClick
     },
   ]
   return (
