@@ -2,10 +2,15 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = (notes, productWorksTypes) => {
+  // const columnOneGridTemplateRows =
+  //   Array.isArray(notes) && notes.length > 0
+  //     ? "calc(20% - 6px) calc(35% - 6px) calc(45% - 6px)"
+  //     : "calc(10% - 6px) calc(40% - 6px) calc(50% - 6px)";
+
   const columnOneGridTemplateRows =
     Array.isArray(notes) && notes.length > 0
-      ? "calc(20% - 6px) calc(35% - 6px) calc(45% - 6px)"
-      : "calc(10% - 6px) calc(40% - 6px) calc(50% - 6px)";
+      ? "calc(20% - 6px) auto"
+      : "calc(10% - 6px) auto";
 
   const classes = useMemo(() => {
     return {
