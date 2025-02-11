@@ -21,6 +21,7 @@ export interface ITableProps {
   onSelectionChange?: (selectedRows: Set<number>) => void;
   enableCheckboxes?: boolean;
   rowCheckboxCondition?: (any) => boolean;
+  isAgingeport?: boolean;
 }
 
 export interface ISecondaryTableProps {

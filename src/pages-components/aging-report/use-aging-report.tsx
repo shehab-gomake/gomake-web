@@ -37,7 +37,6 @@ const useAgingReport = () => {
   const [tableData, setTableData] = useState<any>([]);
   const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
   const [toDate, setToDate] = useState<Date>(endOfToday());
-
   // New states and logic for handling customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
@@ -103,7 +102,8 @@ const useAgingReport = () => {
                 return nestedValue || "";
               });
             });
-          } else if (typeof value === "object" && value !== null) {
+          }
+          else if (typeof value === "object" && value !== null) {
             return Object.entries(value)
               .map(([key, val]) => `${key}: ${val}`)
               .join(", ");
@@ -111,9 +111,6 @@ const useAgingReport = () => {
             return value || "";
           }
         });
-
-        rows.push(mainRow);
-
         if (Array.isArray(data.data) && detailedReport) {
           rows.push(
             ...data.data.map((nestedItem: any) => {
@@ -122,18 +119,29 @@ const useAgingReport = () => {
                 const nestedValue = header.key
                   .split(".")
                   .reduce((acc, part) => acc && acc[part], nestedItem);
+                if (header.key === "docNumber") {
+                  return (
+                    <div
+                      style={{ cursor: "pointer" }}
+                      onClick={() => console.log(nestedItem.docNumber)}
+                    >
+                      {nestedValue || ""}
+                    </div>
+                  );
+                }
                 return nestedValue || "";
               });
             })
           );
         }
 
+        rows.push(mainRow);
+
         return rows;
       });
     },
     [tableData, tableHeader, detailedReport]
   );
-
   const onClickBtn1 = () => {
     setShowTable(false);
     getAgingReportFilter(detailedReport);
@@ -350,6 +358,8 @@ const useAgingReport = () => {
     setCustomerForEdit,
     onClickOpenCustomerModal, // Expose the function
     isFetching,
+    tableData,
+    tableHeader,
   };
 };
 

@@ -145,6 +145,7 @@ const PrimaryTable = ({
   columnWidths,
   dataTour,
   isLastItemTotal = false,
+  isAgingeport = false,
   withSort = false,
   enableCheckboxes = false,
   onSelectionChange,
@@ -192,17 +193,17 @@ const PrimaryTable = ({
     variant === "ClassicTable"
       ? ClassicTableCell
       : variant === "RoundTable"
-      ? RoundTableCell
-      : PrimaryTableCell;
+        ? RoundTableCell
+        : PrimaryTableCell;
 
   const TableRow =
     variant === "ClassicTable"
       ? ClassicTableRow
       : variant === "OddEvenTable"
-      ? OddEvenTableRow
-      : variant === "RoundTable"
-      ? RoundTableRow
-      : PrimaryTableRow;
+        ? OddEvenTableRow
+        : variant === "RoundTable"
+          ? RoundTableRow
+          : PrimaryTableRow;
 
   // Sorting logic
   const sortedRows = useMemo(() => {
@@ -217,7 +218,7 @@ const PrimaryTable = ({
       return 0;
     });
   }, [rows, sortConfig]);
-  
+
   const handleSort = (index: number) => {
     setSortConfig((prev) => {
       if (prev?.key === index) {
@@ -309,9 +310,11 @@ const PrimaryTable = ({
                 key={`row_${rowIndex}`}
                 style={{
                   backgroundColor:
-                    isLastItemTotal && rowIndex === rows.length - 1
-                      ? "#EFDDFF"
-                      : "inherit",
+                    isAgingeport && row[0] != ""
+                      ? "#EBECFF"
+                      : isLastItemTotal && rowIndex === rows.length - 1
+                        ? "#EFDDFF"
+                        : "inherit",
                 }}
               >
                 {enableCheckboxes && (
