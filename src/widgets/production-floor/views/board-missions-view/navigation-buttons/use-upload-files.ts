@@ -59,7 +59,6 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
         {
           orderItemId,
           boardMissionId: boardMissions.boardMissionId,
-          boardMissionProductType: boardMissions.productType,
           filePath: filesPath,
           graphicsFilePath: graphicsFilePath,
           title: `${boardMissions.boardMissionNumber} | ${boardMissions.orderNumber} | ${boardMissions.clientName}`,
