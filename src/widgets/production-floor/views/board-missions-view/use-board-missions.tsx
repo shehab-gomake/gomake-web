@@ -10,7 +10,7 @@ import {
   openFileUploaderList,
   pinFileUploaderState,
 } from "@/store/file-uploader-state";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useBoardMissionsStations } from "./stations/use-board-missions-stations";
 import { useStyle } from "./style";
@@ -21,13 +21,16 @@ import { useBoardMissionsNotes } from "./stations/notes/use-board-missions-notes
 const useBoardMissions = () => {
   const { t } = useTranslation();
   const { notes } = useBoardMissionsNotes();
-  const { classes } = useStyle(notes);
   const { callApi } = useGomakeAxios();
   const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(
     boardMissionsDetailsState
   );
   const resetDetails = useResetRecoilState(boardMissionsDetailsState);
   const [companyProfile] = useRecoilState(printHouseProfile);
+
+  const ProductDetailsSectionRef = useRef(null);
+  const [typesConHeight, setTypesConHeight] = useState("auto");
+
   const {
     stations,
     subWorkFlows,
@@ -37,6 +40,7 @@ const useBoardMissions = () => {
     resetProductDetails,
     productWorksTypes,
   } = useBoardMissionsStations();
+  const { classes } = useStyle(notes, productWorksTypes);
 
   const initStates = () => {
     resetDetails();
@@ -147,6 +151,9 @@ const useBoardMissions = () => {
     companyProfile,
     notes,
     classes,
+    ProductDetailsSectionRef,
+    typesConHeight,
+    setTypesConHeight,
   };
 };
 

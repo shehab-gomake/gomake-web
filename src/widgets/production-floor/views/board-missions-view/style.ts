@@ -1,11 +1,16 @@
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = (notes) => {
-  const columnOneGridTemplateRows =
+const useStyle = (notes, productWorksTypes) => {
+  const columnOneGridTemplateRowsOld =
     Array.isArray(notes) && notes.length > 0
       ? "1fr 1.75fr 2.25fr"
       : "0.5fr 1.75fr 2.25fr";
+
+  const columnOneGridTemplateRows =
+    Array.isArray(notes) && notes.length > 0
+      ? "calc(20% - 6px) calc(35% - 6px) calc(45% - 6px)"
+      : "calc(10% - 6px) calc(40% - 6px) calc(50% - 6px)";
 
   const classes = useMemo(() => {
     return {
@@ -15,6 +20,16 @@ const useStyle = (notes) => {
         width: "100%",
         height: "calc(100vh - 230px)",
         gap: "10px",
+      },
+      ColumnOneRowTwoGridContainer: {
+        display: "grid",
+        width: "100%",
+        gap: "10px",
+        height: "100%",
+        gridTemplateColumns:
+          productWorksTypes?.length > 0
+            ? "calc(70% - 5px) calc(30% - 5px)"
+            : "100%",
       },
       ColumnOne: {
         display: "grid" as "grid",
@@ -57,7 +72,7 @@ const useStyle = (notes) => {
         textTransform: "capitalize" as "capitalize",
       },
     };
-  }, []);
+  }, [notes, productWorksTypes]);
   return {
     classes,
   };

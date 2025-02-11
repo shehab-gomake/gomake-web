@@ -1,16 +1,13 @@
 import Stack from "@mui/material/Stack";
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 import { useBoardMissions } from "@/widgets/production-floor/views/board-missions-view/use-board-missions";
 import { BoardMissionsDetailsHeader } from "@/widgets/production-floor/views/board-missions-view/header/board-nissions-details-header";
 import { Button, IconButton } from "@mui/material";
-import { NavigationButtonsComponent } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/navigation-buttons-component";
-import { EBoardMissionsViews } from "@/widgets/production-floor/views/board-missions-view/enums";
 import { BoardMissionsActivities } from "@/widgets/production-floor/views/board-missions-view/activity/board-missions-activities";
 import { BoardMissionsFiles } from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import { GoMakeSnackBar } from "@/components";
 import { useJobModalSocketIO } from "@/hooks/socket-io/use-job-modal-socket-io";
 import { CardContainer } from "./job-card-container/job-card-container";
-import { FONT_FAMILY } from "@/utils/font-family";
 import { DownloadIcon } from "./job-card-container/components/icons";
 import { BoardMissionsAddNote } from "./stations/notes/add-note";
 import { BoardMissionsNotes } from "./stations/notes/board-missions-notes";
@@ -18,7 +15,6 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission";
 import ProductDetailsSection from "./job-card-container/components/product-details-section";
 import { BoardMissionsStationsComponent } from "./stations/board-missions-stations-component";
-import { useStyle } from "./style";
 import WorkTypesWidget from "./work-types/work-types-widget";
 
 interface IProps {
@@ -36,8 +32,7 @@ const BoardMissionsComponent = ({
   connectionId,
 }: IProps) => {
   const {} = useJobModalSocketIO(boardMissionsId);
-  const ProductDetailsSectionRef = useRef(null);
-  const [typesConHeight, setTypesConHeight] = useState("auto");
+
   const {
     t,
     getBoardMissions,
@@ -57,6 +52,9 @@ const BoardMissionsComponent = ({
     productWorksTypes,
     companyProfile,
     classes,
+    ProductDetailsSectionRef,
+    typesConHeight,
+    setTypesConHeight,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -69,9 +67,20 @@ const BoardMissionsComponent = ({
   }, [boardMissionsId, connectionId, productType]);
 
   useEffect(() => {
-    if (ProductDetailsSectionRef?.current) {
-      setTypesConHeight(ProductDetailsSectionRef?.current?.clientHeight);
-    }
+    const updateHeight = () => {
+      if (ProductDetailsSectionRef?.current) {
+        setTypesConHeight(ProductDetailsSectionRef.current.clientHeight);
+      }
+    };
+
+    updateHeight();
+
+    window.addEventListener("resize", updateHeight);
+
+    // Cleanup listener
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+    };
   }, [productDetails]);
 
   return (
@@ -112,16 +121,7 @@ const BoardMissionsComponent = ({
               >
                 <BoardMissionsNotes />
               </CardContainer>
-              <div
-                style={{
-                  ...classes.GridContainer,
-                  gridTemplateColumns:
-                    productWorksTypes?.length > 0
-                      ? "calc(70% - 5px) calc(30% - 5px)"
-                      : "100%",
-                  height: "100%",
-                }}
-              >
+              <div style={classes.ColumnOneRowTwoGridContainer}>
                 {productDetails.length > 0 && (
                   <div
                     ref={ProductDetailsSectionRef}
@@ -144,7 +144,6 @@ const BoardMissionsComponent = ({
                 {productWorksTypes.length > 0 && (
                   <div
                     style={{
-                      flex: 1,
                       maxHeight: `${typesConHeight}px`,
                     }}
                   >
