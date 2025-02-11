@@ -1,7 +1,6 @@
 export interface IUploadingFileGroup {
   orderItemId: string;
   boardMissionId: string;
-  boardMissionProductType?: string;
   filePath: string;
   graphicsFilePath?: string;
   title: string;

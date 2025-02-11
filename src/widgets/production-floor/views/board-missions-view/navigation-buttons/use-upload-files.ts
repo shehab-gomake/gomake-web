@@ -12,12 +12,16 @@ import {
 } from "@/widgets/file-uploader-widget/interface";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { useGomakeAxios } from "@/hooks";
+import { useRouter } from "next/router";
 
 const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
   const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
+  const { query } = useRouter();
+  const { productType } = query;
+
   const [uploadingFiles, setUploadingFiles] =
     useRecoilState(uploadingFilesState);
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
@@ -55,7 +59,6 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
         {
           orderItemId,
           boardMissionId: boardMissions.boardMissionId,
-          boardMissionProductType: boardMissions.productType,
           filePath: filesPath,
           graphicsFilePath: graphicsFilePath,
           title: `${boardMissions.boardMissionNumber} | ${boardMissions.orderNumber} | ${boardMissions.clientName}`,
@@ -75,7 +78,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
       orderItemId,
       filename: file?.name,
       source: finalPath,
-      productType: "",
+      productType: !!productType ? productType.toString() : "",
       signalRConnectId: connectionId,
       status: EUploadingFileStatus.UPLOADING,
       fileType,
@@ -119,7 +122,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
           filename: file?.name,
           source: finalPath,
           screenShot: "",
-          productType: "",
+          productType: !!productType ? productType.toString() : "",
           signalRConnectId: connectionId,
           status: EUploadingFileStatus.ERROR,
           fileType,
@@ -151,7 +154,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
           filename: file?.name,
           source: finalPath,
           screenShot: response.screenShot,
-          productType: "",
+          productType: !!productType ? productType.toString() : "",
           signalRConnectId: connectionId,
           status: EUploadingFileStatus.Uploaded,
           fileType,
