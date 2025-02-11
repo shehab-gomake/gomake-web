@@ -34,6 +34,7 @@ const BoardMissionsAddNote = ({ openModal, onClose }: IProps) => {
           placeholder={t("productionFloor.fillYourNote")}
           value={newNote?.value}
           onChange={(e) => setNewNote({ ...newNote, value: e.target.value })}
+          onClick={(e) => e.currentTarget.querySelector("textarea")?.focus()} // ensure focus on click
         />
         <Stack
           gap={"12px"}

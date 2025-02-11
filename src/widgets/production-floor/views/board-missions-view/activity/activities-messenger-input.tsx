@@ -17,6 +17,7 @@ const ActivitiesMessengerInputComponent = ({
   const { t } = useTranslation();
   const { primaryColor, grayColor } = useGomakeTheme();
   const direction = t("direction");
+
   const handleKeyDown = async (event) => {
     if (event.key === "Enter") {
       try {
@@ -40,6 +41,7 @@ const ActivitiesMessengerInputComponent = ({
     >
       <InputBase
         onKeyDown={handleKeyDown}
+        onClick={(e) => e.currentTarget.querySelector("input")?.focus()} // Ensure focus on click
         sx={{
           flex: 1,
           height: "48px",
@@ -48,6 +50,7 @@ const ActivitiesMessengerInputComponent = ({
         onChange={(e) => setValue(e.target.value)}
         value={value}
       />
+
       <IconButton
         disabled={!value}
         onClick={handelSendMessage}
