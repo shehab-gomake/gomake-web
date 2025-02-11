@@ -222,30 +222,25 @@ const BoardMissionsDetailsHeader = () => {
                     />
                   )}
                 </Stack>
-
-                {isLoadingTimer ? (
-                  <Stack direction={"row"} alignItems={"center"} gap={"8px"}>
-                    <Skeleton variant="circular" width={32} height={32} />
-                    <Skeleton
-                      variant="rectangular"
-                      width={90}
-                      height={40}
-                      style={{ borderRadius: 12 }}
+                {!boardMissionsDetails?.isReady &&
+                  (isLoadingTimer ? (
+                    <Stack direction={"row"} alignItems={"center"} gap={"8px"}>
+                      <Skeleton variant="circular" width={32} height={32} />
+                      <Skeleton
+                        variant="rectangular"
+                        width={90}
+                        height={40}
+                        style={{ borderRadius: 12 }}
+                      />
+                    </Stack>
+                  ) : (
+                    <ActionCountDown
+                      loading={timerLoading}
+                      onToggle={onToggleTimer}
+                      {...boardMissionsDetails?.currentStation
+                        ?.boardMissionActionTimer}
                     />
-                  </Stack>
-                ) : (
-                  <ActionCountDown
-                    loading={timerLoading}
-                    onToggle={onToggleTimer}
-                    // {...stations.find(
-                    //   (station) =>
-                    //     station.boardMissionActionId ===
-                    //     boardMissionsDetails?.currentBoardMissionActionId
-                    // )?.boardMissionActionTimer}
-                    {...boardMissionsDetails?.currentStation
-                      ?.boardMissionActionTimer}
-                  />
-                )}
+                  ))}
               </Stack>
               {/* Second row */}
               <Stack direction={"row"} alignItems={"center"} gap={"16px"}>

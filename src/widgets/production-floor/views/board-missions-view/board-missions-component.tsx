@@ -2,7 +2,7 @@ import Stack from "@mui/material/Stack";
 import { useEffect } from "react";
 import { useBoardMissions } from "@/widgets/production-floor/views/board-missions-view/use-board-missions";
 import { BoardMissionsDetailsHeader } from "@/widgets/production-floor/views/board-missions-view/header/board-nissions-details-header";
-import { Button, IconButton } from "@mui/material";
+import { Button, IconButton, Skeleton } from "@mui/material";
 import { BoardMissionsActivities } from "@/widgets/production-floor/views/board-missions-view/activity/board-missions-activities";
 import { BoardMissionsFiles } from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import { GoMakeSnackBar } from "@/components";
@@ -25,7 +25,6 @@ interface IProps {
   updateStatus?: any;
 }
 
-//!here BoardMissionsComponent main component
 const BoardMissionsComponent = ({
   boardMissionsId,
   productType,
@@ -55,6 +54,9 @@ const BoardMissionsComponent = ({
     ProductDetailsSectionRef,
     typesConHeight,
     setTypesConHeight,
+    isLoadingStations,
+    renderDetailsSkeletons1,
+    renderDetailsSkeletons2,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -121,57 +123,65 @@ const BoardMissionsComponent = ({
               >
                 <BoardMissionsNotes />
               </CardContainer>
-              <div style={classes.ColumnOneRowTwoGridContainer}>
-                {productDetails.length > 0 && (
-                  <div
-                    ref={ProductDetailsSectionRef}
-                    style={{
-                      maxHeight: "fit-content",
-                      height: "fit-content",
-                    }}
-                  >
+              {isLoadingStations ? (
+                renderDetailsSkeletons1()
+              ) : (
+                <div style={classes.ColumnOneRowTwoGridContainer}>
+                  {productDetails.length > 0 && (
+                    <div
+                      ref={ProductDetailsSectionRef}
+                      style={{
+                        maxHeight: "fit-content",
+                        height: "fit-content",
+                      }}
+                    >
+                      <ProductDetailsSection
+                        key={0}
+                        name={productDetails[0].name}
+                        productionFloorSubSections={
+                          productDetails[0].productionFloorSubSections
+                        }
+                        withHeader={true}
+                        header={t("productionFloor.productDetails")}
+                      />
+                    </div>
+                  )}
+                  {productWorksTypes.length > 0 && (
+                    <div
+                      style={{
+                        maxHeight: `${typesConHeight}px`,
+                      }}
+                    >
+                      <CardContainer label={t("productionFloor.types")}>
+                        <WorkTypesWidget types={productWorksTypes} />
+                      </CardContainer>
+                    </div>
+                  )}
+                </div>
+              )}
+              {isLoadingStations ? (
+                renderDetailsSkeletons2()
+              ) : (
+                <div
+                  style={classes.productDetailsContainer}
+                  className={`custom-scroller`}
+                >
+                  {productDetails.slice(1).map((section, index) => (
                     <ProductDetailsSection
-                      key={0}
-                      name={productDetails[0].name}
+                      key={index + 1}
+                      name={section.name}
                       productionFloorSubSections={
-                        productDetails[0].productionFloorSubSections
+                        section.productionFloorSubSections
                       }
-                      withHeader={true}
-                      header={t("productionFloor.productDetails")}
+                      withHeader={false}
+                      style={{
+                        flex: 1,
+                        minHeight: "fit-content",
+                      }}
                     />
-                  </div>
-                )}
-                {productWorksTypes.length > 0 && (
-                  <div
-                    style={{
-                      maxHeight: `${typesConHeight}px`,
-                    }}
-                  >
-                    <CardContainer label={t("productionFloor.types")}>
-                      <WorkTypesWidget types={productWorksTypes} />
-                    </CardContainer>
-                  </div>
-                )}
-              </div>
-              <div
-                style={classes.productDetailsContainer}
-                className={`custom-scroller`}
-              >
-                {productDetails.slice(1).map((section, index) => (
-                  <ProductDetailsSection
-                    key={index + 1}
-                    name={section.name}
-                    productionFloorSubSections={
-                      section.productionFloorSubSections
-                    }
-                    withHeader={false}
-                    style={{
-                      flex: 1,
-                      minHeight: "fit-content",
-                    }}
-                  />
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
             {/* Actions + Files + Activities */}
             <div style={classes.ColumnTwo}>
@@ -214,7 +224,6 @@ const BoardMissionsComponent = ({
           </>
         )}
       </div>
-      {/* !here have problem also with type text in activities */}
       <BoardMissionsAddNote
         onClose={handleCloseNotesModal}
         openModal={openAddNoteModal}

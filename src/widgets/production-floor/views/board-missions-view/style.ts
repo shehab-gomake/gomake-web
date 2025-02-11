@@ -2,11 +2,6 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = (notes, productWorksTypes) => {
-  const columnOneGridTemplateRowsOld =
-    Array.isArray(notes) && notes.length > 0
-      ? "1fr 1.75fr 2.25fr"
-      : "0.5fr 1.75fr 2.25fr";
-
   const columnOneGridTemplateRows =
     Array.isArray(notes) && notes.length > 0
       ? "calc(20% - 6px) calc(35% - 6px) calc(45% - 6px)"
