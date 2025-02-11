@@ -5,9 +5,8 @@ import { BoardMissionsSubWorkFlowComponent } from "@/widgets/production-floor/vi
 import { CompletedBoardMissionsComponent } from "@/widgets/production-floor/views/board-missions-view/stations/completed-board-missions-component/completed-board-missions-component";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
-import { BoardMissionsStationActionNew } from "./station-action-new";
+import { BoardMissionsStationActionItem } from "./station-action-item";
 
-//!here new version BoardMissionsStationsComponent
 const BoardMissionsStationsComponent = ({
   stations,
   subWorkFlows,
@@ -56,7 +55,7 @@ const BoardMissionsStationsComponent = ({
             />
           ))}
           {sortedStations?.map((station, index) => (
-            <BoardMissionsStationActionNew
+            <BoardMissionsStationActionItem
               selected={
                 station.boardMissionActionId ===
                 boardMissions.currentBoardMissionActionId

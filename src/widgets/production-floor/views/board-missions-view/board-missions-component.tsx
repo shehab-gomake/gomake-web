@@ -2,15 +2,12 @@ import Stack from "@mui/material/Stack";
 import { useEffect } from "react";
 import { useBoardMissions } from "@/widgets/production-floor/views/board-missions-view/use-board-missions";
 import { BoardMissionsDetailsHeader } from "@/widgets/production-floor/views/board-missions-view/header/board-nissions-details-header";
-import { Button, IconButton } from "@mui/material";
-import { NavigationButtonsComponent } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/navigation-buttons-component";
-import { EBoardMissionsViews } from "@/widgets/production-floor/views/board-missions-view/enums";
+import { Button, IconButton, Skeleton } from "@mui/material";
 import { BoardMissionsActivities } from "@/widgets/production-floor/views/board-missions-view/activity/board-missions-activities";
 import { BoardMissionsFiles } from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import { GoMakeSnackBar } from "@/components";
 import { useJobModalSocketIO } from "@/hooks/socket-io/use-job-modal-socket-io";
 import { CardContainer } from "./job-card-container/job-card-container";
-import { FONT_FAMILY } from "@/utils/font-family";
 import { DownloadIcon } from "./job-card-container/components/icons";
 import { BoardMissionsAddNote } from "./stations/notes/add-note";
 import { BoardMissionsNotes } from "./stations/notes/board-missions-notes";
@@ -18,7 +15,6 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission";
 import ProductDetailsSection from "./job-card-container/components/product-details-section";
 import { BoardMissionsStationsComponent } from "./stations/board-missions-stations-component";
-import { useStyle } from "./style";
 import WorkTypesWidget from "./work-types/work-types-widget";
 
 interface IProps {
@@ -29,14 +25,13 @@ interface IProps {
   updateStatus?: any;
 }
 
-//!here BoardMissionsComponent main component
 const BoardMissionsComponent = ({
   boardMissionsId,
-  step,
   productType,
   connectionId,
 }: IProps) => {
   const {} = useJobModalSocketIO(boardMissionsId);
+
   const {
     t,
     getBoardMissions,
@@ -54,6 +49,14 @@ const BoardMissionsComponent = ({
     getStations,
     renderSkeletons,
     productWorksTypes,
+    companyProfile,
+    classes,
+    ProductDetailsSectionRef,
+    typesConHeight,
+    setTypesConHeight,
+    isLoadingStations,
+    renderDetailsSkeletons1,
+    renderDetailsSkeletons2,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -65,7 +68,22 @@ const BoardMissionsComponent = ({
     };
   }, [boardMissionsId, connectionId, productType]);
 
-  const { classes } = useStyle();
+  useEffect(() => {
+    const updateHeight = () => {
+      if (ProductDetailsSectionRef?.current) {
+        setTypesConHeight(ProductDetailsSectionRef.current.clientHeight);
+      }
+    };
+
+    updateHeight();
+
+    window.addEventListener("resize", updateHeight);
+
+    // Cleanup listener
+    return () => {
+      window.removeEventListener("resize", updateHeight);
+    };
+  }, [productDetails]);
 
   return (
     <Stack
@@ -96,12 +114,7 @@ const BoardMissionsComponent = ({
                     <Button
                       onClick={handleOpenNotesModal}
                       variant="text"
-                      style={{
-                        color: "#ffffff",
-                        ...FONT_FAMILY.Inter(500, 14),
-                        padding: "0px",
-                        textTransform: "capitalize",
-                      }}
+                      style={classes.addNote}
                     >
                       + {t("productionFloor.addNote")}
                     </Button>
@@ -110,66 +123,69 @@ const BoardMissionsComponent = ({
               >
                 <BoardMissionsNotes />
               </CardContainer>
-              <div
-                style={{
-                  ...classes.GridContainer,
-                  gridTemplateColumns:
-                    productWorksTypes?.length > 0
-                      ? "calc(70% - 5px) calc(30% - 5px)"
-                      : "100%",
-                  height: "100%",
-                  // overflow: "hidden",
-                }}
-              >
-                {productDetails.length > 0 && (
-                  <ProductDetailsSection
-                    key={0}
-                    name={productDetails[0].name}
-                    productionFloorSubSections={
-                      productDetails[0].productionFloorSubSections
-                    }
-                    withHeader={true}
-                    header={"Product Details"}
-                    style={{
-                      maxHeight: "fit-content",
-                    }}
-                  />
-                )}
-                {productWorksTypes.length > 0 && (
-                  <CardContainer
-                    label="Types"
-                    style={{
-                      flex: 1,
-                      height: "50%",
-                    }}
-                  >
-                    <WorkTypesWidget types={productWorksTypes} />
-                  </CardContainer>
-                )}
-              </div>
-              <div
-                style={classes.productDetailsContainer}
-                className={`custom-scroller`}
-              >
-                {productDetails.slice(1).map((section, index) => (
-                  <ProductDetailsSection
-                    key={index + 1}
-                    name={section.name}
-                    productionFloorSubSections={
-                      section.productionFloorSubSections
-                    }
-                    withHeader={false}
-                    style={{
-                      flex: 1,
-                      minHeight: "fit-content",
-                    }}
-                  />
-                ))}
-              </div>
+              {isLoadingStations ? (
+                renderDetailsSkeletons1()
+              ) : (
+                <div style={classes.ColumnOneRowTwoGridContainer}>
+                  {productDetails.length > 0 && (
+                    <div
+                      ref={ProductDetailsSectionRef}
+                      style={{
+                        maxHeight: "fit-content",
+                        height: "fit-content",
+                      }}
+                    >
+                      <ProductDetailsSection
+                        key={0}
+                        name={productDetails[0].name}
+                        productionFloorSubSections={
+                          productDetails[0].productionFloorSubSections
+                        }
+                        withHeader={true}
+                        header={t("productionFloor.productDetails")}
+                      />
+                    </div>
+                  )}
+                  {productWorksTypes.length > 0 && (
+                    <div
+                      style={{
+                        maxHeight: `${typesConHeight}px`,
+                      }}
+                    >
+                      <CardContainer label={t("productionFloor.types")}>
+                        <WorkTypesWidget types={productWorksTypes} />
+                      </CardContainer>
+                    </div>
+                  )}
+                </div>
+              )}
+              {isLoadingStations ? (
+                renderDetailsSkeletons2()
+              ) : (
+                <div
+                  style={classes.productDetailsContainer}
+                  className={`custom-scroller`}
+                >
+                  {productDetails.slice(1).map((section, index) => (
+                    <ProductDetailsSection
+                      key={index + 1}
+                      name={section.name}
+                      productionFloorSubSections={
+                        section.productionFloorSubSections
+                      }
+                      withHeader={false}
+                      style={{
+                        flex: 1,
+                        minHeight: "fit-content",
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
             {/* Actions + Files + Activities */}
             <div style={classes.ColumnTwo}>
-              <CardContainer label="Actions">
+              <CardContainer label={t("productionFloor.actions")}>
                 <BoardMissionsStationsComponent
                   stations={stations}
                   subWorkFlows={subWorkFlows}
@@ -177,21 +193,30 @@ const BoardMissionsComponent = ({
                   getStations={getStations}
                 />
               </CardContainer>
-              <div style={classes.NestedGrid}>
-                <CardContainer
-                  label="Files"
-                  actionButton={
-                    <IconButton
-                      onClick={onClickUploadFile}
-                      sx={{ padding: "0px" }}
-                    >
-                      <DownloadIcon />
-                    </IconButton>
-                  }
-                >
-                  <BoardMissionsFiles />
-                </CardContainer>
-                <CardContainer label="Activities">
+              <div
+                style={{
+                  ...classes.NestedGrid,
+                  gridTemplateColumns: !!companyProfile.filesApiAddress
+                    ? "calc(30% - 4px) calc(70% - 4px)"
+                    : "100%",
+                }}
+              >
+                {!!companyProfile.filesApiAddress && (
+                  <CardContainer
+                    label={t("productionFloor.files")}
+                    actionButton={
+                      <IconButton
+                        onClick={onClickUploadFile}
+                        sx={{ padding: "0px" }}
+                      >
+                        <DownloadIcon />
+                      </IconButton>
+                    }
+                  >
+                    <BoardMissionsFiles />
+                  </CardContainer>
+                )}
+                <CardContainer label={t("productionFloor.activities")}>
                   <BoardMissionsActivities />
                 </CardContainer>
               </div>
@@ -199,11 +224,11 @@ const BoardMissionsComponent = ({
           </>
         )}
       </div>
-      <GoMakeSnackBar />
       <BoardMissionsAddNote
         onClose={handleCloseNotesModal}
         openModal={openAddNoteModal}
       />
+      <GoMakeSnackBar />
     </Stack>
   );
 };

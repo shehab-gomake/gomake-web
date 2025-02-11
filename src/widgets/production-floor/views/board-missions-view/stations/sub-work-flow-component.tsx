@@ -5,16 +5,13 @@ import Stack from "@mui/material/Stack";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Divider from "@mui/material/Divider";
-
-import { BoardMissionsStationAction } from "@/widgets/production-floor/views/board-missions-view/stations/station-action";
 import { IBoardMissionsSubWorkFlow } from "@/widgets/production-floor/views/board-missions-view/stations/interface";
-import { BoardMissionsStationActionNew } from "./station-action-new";
+import { BoardMissionsStationActionItem } from "./station-action-item";
 
 interface IProps extends IBoardMissionsSubWorkFlow {
   currentBoardMissionsActionId: string;
 }
 
-//!here done
 const BoardMissionsSubWorkFlowComponent = ({
   actions,
   productType,
@@ -92,7 +89,7 @@ const BoardMissionsSubWorkFlowComponent = ({
                   backgroundColor: "#667085",
                 }}
               />
-              <BoardMissionsStationActionNew
+              <BoardMissionsStationActionItem
                 delay={i * 300}
                 selected={
                   currentBoardMissionsActionId === action.boardMissionActionId

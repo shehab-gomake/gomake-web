@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import { CSSProperties } from "react";
 import { CardContainer } from "../job-card-container";
 import { useStyle } from "./style";
 import {
@@ -8,7 +8,9 @@ import {
   TableCell,
   TableContainer,
   TableRow,
+  useTheme,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface Property {
   name: string;
@@ -38,11 +40,22 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
 }) => {
   const { classes } = useStyle();
 
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
+
   return (
     <CardContainer label={header} withHeader={withHeader} style={style}>
-      <Stack gap={"8px"}>
+      <Stack gap={"8px"} sx={{ direction: isRTL ? "rtl" : "ltr" }}>
         {/* Main Section Title */}
-        <span style={classes.title}>{name}</span>
+        <span
+          style={{
+            ...classes.title,
+            textAlign: isRTL ? "right" : "left",
+          }}
+        >
+          {name}
+        </span>
 
         <TableContainer>
           <Table>
@@ -58,6 +71,7 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
                         width: "20%",
                         borderBottom: "none",
                         padding: "16px 0px",
+                        textAlign: isRTL ? "right" : "left",
                         alignContent: "start",
                         ...classes.subTitles,
                       }}
@@ -75,14 +89,28 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
                       <Stack
                         sx={{
                           display: "grid",
-                          gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                          gridTemplateColumns: isRTL
+                            ? "repeat(3, minmax(0, 1fr))"
+                            : "repeat(3, minmax(0, 1fr))",
                           rowGap: "10px",
+                          direction: isRTL ? "rtl" : "ltr",
                         }}
                       >
                         {subSection.productionFloorProperties.map(
                           (property, propIndex) => (
-                            <span key={propIndex} style={classes.propertyValue}>
-                              <span style={classes.propertyName}>
+                            <span
+                              key={propIndex}
+                              style={{
+                                ...classes.propertyValue,
+                                textAlign: isRTL ? "right" : "left",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  ...classes.propertyName,
+                                  direction: isRTL ? "rtl" : "ltr",
+                                }}
+                              >
                                 {property.name}:
                               </span>{" "}
                               {property.value}{" "}

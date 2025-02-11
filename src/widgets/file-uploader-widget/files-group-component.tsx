@@ -22,6 +22,7 @@ const FilesGroupComponent = ({
   filePath,
   graphicsFilePath,
   boardMissionId,
+  boardMissionProductType,
 }: IUploadingFileGroup) => {
   const { primaryColor } = useGomakeTheme();
   const [isOverGraphics, setIsOverGraphics] = useState(false);
@@ -112,7 +113,11 @@ const FilesGroupComponent = ({
             }}
             onClick={() =>
               push(
-                `/production-floor?boardMissionsId=${boardMissionId}&step=files`
+                `/production-floor?boardMissionsId=${boardMissionId}${
+                  boardMissionProductType
+                    ? `&productType=${boardMissionProductType}`
+                    : ""
+                }&step=stations`
               ).then()
             }
           >

@@ -55,6 +55,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
         {
           orderItemId,
           boardMissionId: boardMissions.boardMissionId,
+          boardMissionProductType: boardMissions.productType,
           filePath: filesPath,
           graphicsFilePath: graphicsFilePath,
           title: `${boardMissions.boardMissionNumber} | ${boardMissions.orderNumber} | ${boardMissions.clientName}`,
@@ -211,10 +212,12 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
     const res: any = await callApi(
       "POST",
       `/v1/erp-service/board-missions/set-order-item-file-status`,
-        {
-          ...dto,
-          boardMissionIds: uploadingFiles.map(fileGroup => fileGroup.boardMissionId)
-        },
+      {
+        ...dto,
+        boardMissionIds: uploadingFiles.map(
+          (fileGroup) => fileGroup.boardMissionId
+        ),
+      },
       false
     );
   };

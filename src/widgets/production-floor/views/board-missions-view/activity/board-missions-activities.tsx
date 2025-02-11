@@ -51,7 +51,7 @@ const BoardMissionsActivities = () => {
             onClick={btn.onClick}
             variant={"contained"}
             style={{
-              width: "100px",
+              // width: "100px",
               backgroundColor: btn.selected
                 ? btn.textColor
                 : toRgba(btn.borderColor, 0.2),

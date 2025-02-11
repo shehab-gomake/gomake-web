@@ -192,7 +192,9 @@ const useMoreCircle = ({
       icon: <LoggerIcon />,
       onclick: () => {
         window.open(
-          `/production-floor?boardMissionsId=${mission?.id}&step=activity`,
+          `/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission.productType}` : ""
+          }&step=stations`,
           "_blank"
         );
       },

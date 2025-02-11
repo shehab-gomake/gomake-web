@@ -1,8 +1,7 @@
 import { getBoardMissionsById } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
+import { useRecoilState, useResetRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
-import { productionFloorSectionsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useRouter } from "next/router";
 import {
@@ -10,21 +9,31 @@ import {
   openFileUploaderList,
   pinFileUploaderState,
 } from "@/store/file-uploader-state";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useBoardMissionsStations } from "./stations/use-board-missions-stations";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
+import { printHouseProfile } from "@/store/print-house-profile";
+import { useBoardMissionsNotes } from "./stations/notes/use-board-missions-notes";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
-  const { classes } = useStyle();
+  const router = useRouter();
+  const { query } = router;
+  const { notes } = useBoardMissionsNotes();
   const { callApi } = useGomakeAxios();
   const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(
     boardMissionsDetailsState
   );
   const resetDetails = useResetRecoilState(boardMissionsDetailsState);
-
+  const [companyProfile] = useRecoilState(printHouseProfile);
+  const ProductDetailsSectionRef = useRef(null);
+  const [typesConHeight, setTypesConHeight] = useState("auto");
+  const [openAddNoteModal, setOpenAddNoteModal] = useState<boolean>(false);
+  const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
+  const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
+  const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const {
     stations,
     subWorkFlows,
@@ -34,6 +43,10 @@ const useBoardMissions = () => {
     resetProductDetails,
     productWorksTypes,
   } = useBoardMissionsStations();
+
+  const { classes } = useStyle(notes, productWorksTypes);
+  const isLoadingStations = stations?.length === 0;
+  const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
 
   const initStates = () => {
     resetDetails();
@@ -56,16 +69,6 @@ const useBoardMissions = () => {
       productType,
     });
   };
-
-  //!here new
-  const [openAddNoteModal, setOpenAddNoteModal] = useState<boolean>(false);
-  const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
-  const router = useRouter();
-  const { query } = router;
-
-  const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
-  const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
-  const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
 
   const onClickUploadFile = async () => {
     const callBack = (res) => {
@@ -124,6 +127,23 @@ const useBoardMissions = () => {
     </>
   );
 
+  const renderDetailsSkeletons1 = () => (
+    <Skeleton
+      variant="rectangular"
+      width="100%"
+      height="100%"
+      style={{ ...classes.ColumnOneRowTwoGridContainer, borderRadius: "8px" }}
+    />
+  );
+
+  const renderDetailsSkeletons2 = () => (
+    <Skeleton
+      variant="rectangular"
+      width="100%"
+      height="100%"
+      style={{ ...classes.productDetailsContainer, borderRadius: "8px" }}
+    />
+  );
   return {
     getBoardMissions,
     initStates,
@@ -141,6 +161,15 @@ const useBoardMissions = () => {
     getStations,
     renderSkeletons,
     productWorksTypes,
+    companyProfile,
+    notes,
+    classes,
+    ProductDetailsSectionRef,
+    typesConHeight,
+    setTypesConHeight,
+    isLoadingStations,
+    renderDetailsSkeletons1,
+    renderDetailsSkeletons2,
   };
 };
 
