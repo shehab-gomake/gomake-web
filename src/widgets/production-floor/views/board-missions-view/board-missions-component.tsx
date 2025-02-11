@@ -1,5 +1,5 @@
 import Stack from "@mui/material/Stack";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useBoardMissions } from "@/widgets/production-floor/views/board-missions-view/use-board-missions";
 import { BoardMissionsDetailsHeader } from "@/widgets/production-floor/views/board-missions-view/header/board-nissions-details-header";
 import { Button, IconButton } from "@mui/material";
@@ -32,11 +32,12 @@ interface IProps {
 //!here BoardMissionsComponent main component
 const BoardMissionsComponent = ({
   boardMissionsId,
-  step,
   productType,
   connectionId,
 }: IProps) => {
   const {} = useJobModalSocketIO(boardMissionsId);
+  const ProductDetailsSectionRef = useRef(null);
+  const [typesConHeight, setTypesConHeight] = useState("auto");
   const {
     t,
     getBoardMissions,
@@ -54,6 +55,8 @@ const BoardMissionsComponent = ({
     getStations,
     renderSkeletons,
     productWorksTypes,
+    companyProfile,
+    classes,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -65,7 +68,11 @@ const BoardMissionsComponent = ({
     };
   }, [boardMissionsId, connectionId, productType]);
 
-  const { classes } = useStyle();
+  useEffect(() => {
+    if (ProductDetailsSectionRef?.current) {
+      setTypesConHeight(ProductDetailsSectionRef?.current?.clientHeight);
+    }
+  }, [productDetails]);
 
   return (
     <Stack
@@ -96,12 +103,7 @@ const BoardMissionsComponent = ({
                     <Button
                       onClick={handleOpenNotesModal}
                       variant="text"
-                      style={{
-                        color: "#ffffff",
-                        ...FONT_FAMILY.Inter(500, 14),
-                        padding: "0px",
-                        textTransform: "capitalize",
-                      }}
+                      style={classes.addNote}
                     >
                       + {t("productionFloor.addNote")}
                     </Button>
@@ -118,33 +120,38 @@ const BoardMissionsComponent = ({
                       ? "calc(70% - 5px) calc(30% - 5px)"
                       : "100%",
                   height: "100%",
-                  // overflow: "hidden",
                 }}
               >
                 {productDetails.length > 0 && (
-                  <ProductDetailsSection
-                    key={0}
-                    name={productDetails[0].name}
-                    productionFloorSubSections={
-                      productDetails[0].productionFloorSubSections
-                    }
-                    withHeader={true}
-                    header={"Product Details"}
+                  <div
+                    ref={ProductDetailsSectionRef}
                     style={{
                       maxHeight: "fit-content",
-                    }}
-                  />
-                )}
-                {productWorksTypes.length > 0 && (
-                  <CardContainer
-                    label="Types"
-                    style={{
-                      flex: 1,
-                      height: "50%",
+                      height: "fit-content",
                     }}
                   >
-                    <WorkTypesWidget types={productWorksTypes} />
-                  </CardContainer>
+                    <ProductDetailsSection
+                      key={0}
+                      name={productDetails[0].name}
+                      productionFloorSubSections={
+                        productDetails[0].productionFloorSubSections
+                      }
+                      withHeader={true}
+                      header={t("productionFloor.productDetails")}
+                    />
+                  </div>
+                )}
+                {productWorksTypes.length > 0 && (
+                  <div
+                    style={{
+                      flex: 1,
+                      maxHeight: `${typesConHeight}px`,
+                    }}
+                  >
+                    <CardContainer label={t("productionFloor.types")}>
+                      <WorkTypesWidget types={productWorksTypes} />
+                    </CardContainer>
+                  </div>
                 )}
               </div>
               <div
@@ -169,7 +176,7 @@ const BoardMissionsComponent = ({
             </div>
             {/* Actions + Files + Activities */}
             <div style={classes.ColumnTwo}>
-              <CardContainer label="Actions">
+              <CardContainer label={t("productionFloor.actions")}>
                 <BoardMissionsStationsComponent
                   stations={stations}
                   subWorkFlows={subWorkFlows}
@@ -177,21 +184,30 @@ const BoardMissionsComponent = ({
                   getStations={getStations}
                 />
               </CardContainer>
-              <div style={classes.NestedGrid}>
-                <CardContainer
-                  label="Files"
-                  actionButton={
-                    <IconButton
-                      onClick={onClickUploadFile}
-                      sx={{ padding: "0px" }}
-                    >
-                      <DownloadIcon />
-                    </IconButton>
-                  }
-                >
-                  <BoardMissionsFiles />
-                </CardContainer>
-                <CardContainer label="Activities">
+              <div
+                style={{
+                  ...classes.NestedGrid,
+                  gridTemplateColumns: !!companyProfile.filesApiAddress
+                    ? "calc(30% - 4px) calc(70% - 4px)"
+                    : "100%",
+                }}
+              >
+                {!!companyProfile.filesApiAddress && (
+                  <CardContainer
+                    label={t("productionFloor.files")}
+                    actionButton={
+                      <IconButton
+                        onClick={onClickUploadFile}
+                        sx={{ padding: "0px" }}
+                      >
+                        <DownloadIcon />
+                      </IconButton>
+                    }
+                  >
+                    <BoardMissionsFiles />
+                  </CardContainer>
+                )}
+                <CardContainer label={t("productionFloor.activities")}>
                   <BoardMissionsActivities />
                 </CardContainer>
               </div>
@@ -199,11 +215,12 @@ const BoardMissionsComponent = ({
           </>
         )}
       </div>
-      <GoMakeSnackBar />
+      {/* !here have problem also with type text in activities */}
       <BoardMissionsAddNote
         onClose={handleCloseNotesModal}
         openModal={openAddNoteModal}
       />
+      <GoMakeSnackBar />
     </Stack>
   );
 };

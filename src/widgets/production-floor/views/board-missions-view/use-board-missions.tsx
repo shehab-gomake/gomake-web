@@ -15,16 +15,19 @@ import { useTranslation } from "react-i18next";
 import { useBoardMissionsStations } from "./stations/use-board-missions-stations";
 import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
+import { printHouseProfile } from "@/store/print-house-profile";
+import { useBoardMissionsNotes } from "./stations/notes/use-board-missions-notes";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
-  const { classes } = useStyle();
+  const { notes } = useBoardMissionsNotes();
+  const { classes } = useStyle(notes);
   const { callApi } = useGomakeAxios();
   const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(
     boardMissionsDetailsState
   );
   const resetDetails = useResetRecoilState(boardMissionsDetailsState);
-
+  const [companyProfile] = useRecoilState(printHouseProfile);
   const {
     stations,
     subWorkFlows,
@@ -141,6 +144,9 @@ const useBoardMissions = () => {
     getStations,
     renderSkeletons,
     productWorksTypes,
+    companyProfile,
+    notes,
+    classes,
   };
 };
 

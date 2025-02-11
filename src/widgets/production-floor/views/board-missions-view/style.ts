@@ -1,8 +1,12 @@
+import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
 
-const useStyle = () => {
-  const { t } = useTranslation();
+const useStyle = (notes) => {
+  const columnOneGridTemplateRows =
+    Array.isArray(notes) && notes.length > 0
+      ? "1fr 1.75fr 2.25fr"
+      : "0.5fr 1.75fr 2.25fr";
+
   const classes = useMemo(() => {
     return {
       GridContainer: {
@@ -14,8 +18,7 @@ const useStyle = () => {
       },
       ColumnOne: {
         display: "grid" as "grid",
-        // gridTemplateRows: "calc(20% - 6px) calc(35% - 6px) calc(45% - 6px)",
-        gridTemplateRows: "1fr 1.75fr 2.25fr",
+        gridTemplateRows: columnOneGridTemplateRows,
         gap: "9px",
         height: "100%",
         minHeight: 0,
@@ -33,7 +36,6 @@ const useStyle = () => {
       },
       NestedGrid: {
         display: "grid",
-        gridTemplateColumns: "calc(30% - 4px) calc(70% - 4px)",
         width: "100%",
         height: "100%",
         gap: "8px",
@@ -47,6 +49,12 @@ const useStyle = () => {
         flex: 1,
         overflowY: "scroll" as "scroll",
         minHeight: 0,
+      },
+      addNote: {
+        color: "#ffffff",
+        ...FONT_FAMILY.Inter(500, 14),
+        padding: "0px",
+        textTransform: "capitalize" as "capitalize",
       },
     };
   }, []);

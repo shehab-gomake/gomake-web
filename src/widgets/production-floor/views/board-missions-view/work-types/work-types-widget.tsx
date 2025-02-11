@@ -1,6 +1,7 @@
-import { Box, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useTranslation } from "react-i18next";
 
 interface WorkType {
   name: string;
@@ -13,11 +14,28 @@ interface WorkTypesWidgetProps {
 
 const WorkTypesWidget = ({ types }: WorkTypesWidgetProps) => {
   const { primaryColor } = useGomakeTheme();
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
 
   return (
-    <Box display="flex" flexDirection="column" gap={1.5}>
+    <Stack
+      style={{
+        direction: dir,
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}
+    >
       {types.map((type, index) => (
-        <Typography key={index}>
+        <Stack
+          key={index}
+          style={{
+            direction: dir,
+            display: "flex",
+            flexDirection: "row",
+            gap: "2px",
+          }}
+        >
           <span
             style={{
               color: "black",
@@ -27,7 +45,7 @@ const WorkTypesWidget = ({ types }: WorkTypesWidgetProps) => {
           >
             {type.name}
           </span>
-          :{" "}
+          <span>:</span>
           <span
             style={{
               color: primaryColor(500),
@@ -36,9 +54,9 @@ const WorkTypesWidget = ({ types }: WorkTypesWidgetProps) => {
           >
             {type.quantity}
           </span>
-        </Typography>
+        </Stack>
       ))}
-    </Box>
+    </Stack>
   );
 };
 

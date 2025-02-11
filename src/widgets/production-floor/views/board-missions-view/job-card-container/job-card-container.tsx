@@ -10,7 +10,6 @@ interface CardContainerProps {
   style?: CSSProperties;
 }
 
-//!here new
 const CardContainer = ({
   label,
   children,
