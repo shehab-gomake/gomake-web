@@ -19,7 +19,7 @@ const useBoardMissionsNotes = (onCloseModal?: () => void) => {
   const [boardMissions, setBoardMissions] = useRecoilState(
     boardMissionsDetailsState
   );
-  const { boardMissionsId } = query;
+  const { boardMissionsId, productType } = query;
   const [deleting, setDeleting] = useState<boolean>(false);
   const [addingNote, setAddingNote] = useState<boolean>(false);
   const {
@@ -49,6 +49,7 @@ const useBoardMissionsNotes = (onCloseModal?: () => void) => {
     await boardMissionsAddNote(callApi, callBack, {
       boardMissionsId,
       note: newNote?.value,
+      ...(productType && { productType }),
     });
   };
 
@@ -71,6 +72,7 @@ const useBoardMissionsNotes = (onCloseModal?: () => void) => {
     await boardMissionsDeleteNote(callApi, callBack, {
       index: noteIndex,
       boardMissionsId,
+      ...(productType && { productType }),
     });
   };
 
