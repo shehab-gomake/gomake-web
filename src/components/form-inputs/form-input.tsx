@@ -23,6 +23,7 @@ import {
 } from "@/widgets/materials-widget/state";
 import { productsForDropDownList } from "@/store";
 import { GoMakeImageFiled } from "../image-filed/image-filed";
+import {useInputUnit} from "@/components/form-inputs/use-input-units";
 
 const FormInput = ({
     input,
@@ -44,7 +45,8 @@ const FormInput = ({
     const clientsCategories = useRecoilValue<any>(materialsClientsState);
     const parametersCategories = useRecoilValue<any>(materialsParametersState);
     const productValue = useRecoilValue(productsForDropDownList);
-    const [optionsUrl, setOptionsUrl] = useState<string>('')
+    const [optionsUrl, setOptionsUrl] = useState<string>('');
+    const {translateUnit, restoreUnitValue, convertUnitValue, units} = useInputUnit();
     const machinesCategoriesList = machinesCategories.map((machine) => ({
         ...machine,
         value: machine.id,
@@ -72,7 +74,8 @@ const FormInput = ({
     };
 
     const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
-        changeState(input.parameterKey, e.target.value as string);
+        const value = translateUnit && input.unit ? restoreUnitValue(input.unit, parseFloat(e.target.value)) :  e.target.value;
+        changeState(input.parameterKey, e.target.value.endsWith('.') ? value + '.' : value);
     };
 
     const onChangePhoneNumber = (phone: string) => {
@@ -227,7 +230,7 @@ const FormInput = ({
                             >
                                 <span>{t(input.label)}</span>
                                 {input.unit && (
-                                    <small>{`${t("measurementUnits." + input.unit)}`}</small>
+                                    <small>{`${t(`measurementUnits.${translateUnit && input.unit ? units[input.unit].imperialUnit : input.unit}`)}`}</small>
                                 )}
                             </Stack>
                         }
@@ -394,7 +397,7 @@ const FormInput = ({
                                 }
                                 placeholder={t(input.placeholder)}
                                 disabled={!!readonly}
-                                value={input.value}
+                                value={translateUnit && input.unit ? ( String(input.value).endsWith('.') ? convertUnitValue(input.unit, parseFloat(input.value)) + '.' : convertUnitValue(input.unit, parseFloat(input.value)) ): input.value}
                             />
                         )}
                     </div>
