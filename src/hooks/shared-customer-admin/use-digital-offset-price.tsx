@@ -252,7 +252,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, []);
 
   useEffect(() => {
-    debugger
     const oldConnectionId = currentSignalRConnectionId;
     if (oldConnectionId && connectionId && connectionId !== oldConnectionId) {
       updateSignalRConnectionId(oldConnectionId, connectionId);
