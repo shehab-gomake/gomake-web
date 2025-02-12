@@ -13,7 +13,15 @@ const useSnackBar = () => {
     props,
     ref
   ) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    return (
+      <MuiAlert
+        elevation={6}
+        ref={ref}
+        variant="filled"
+        key={Math.random()}
+        {...props}
+      />
+    );
   });
 
   const handleClose = () => {
@@ -40,17 +48,21 @@ const useSnackBar = () => {
     handleClose,
     Alert,
     alertFaultUpdate: () => showAlert("modal.updatedfailed", "error"),
-    alertSuccessUpdate: () => showAlert("modal.updatedSusuccessfully", "success"),
+    alertSuccessUpdate: () =>
+      showAlert("modal.updatedSusuccessfully", "success"),
     alertFaultAdded: () => showAlert("modal.addedfailed", "error"),
     alertSuccessAdded: () => showAlert("modal.addedSusuccessfully", "success"),
-    alertSuccessDelete: () => showAlert("modal.deleteSusuccessfully", "success"),
+    alertSuccessDelete: () =>
+      showAlert("modal.deleteSusuccessfully", "success"),
     alertFaultDelete: () => showAlert("modal.deletefailed", "error"),
     alertRequiredFields: () => showAlert("modal.RequiredFields", "error"),
     alertFaultDuplicate: () => showAlert("modal.duplicateFailed", "error"),
     alertFault: (errorMessage: string) => showAlert(errorMessage, "error"),
-    alertSuccess: (successMessage: string) => showAlert(successMessage, "success"),
+    alertSuccess: (successMessage: string) =>
+      showAlert(successMessage, "success"),
     alertFaultGetData: () => showAlert("modal.getDataFailed", "error"),
-    alertSuccessGetData: () => showAlert("modal.getDataSuccessfully", "success"),
+    alertSuccessGetData: () =>
+      showAlert("modal.getDataSuccessfully", "success"),
     alertFaultSend: () => showAlert("alerts.sendFailed", "error"),
   };
 };
