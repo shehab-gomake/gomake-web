@@ -11,3 +11,9 @@ export enum ModalType {
     ADD = "add",
     WARNING = "warning",
   }
+
+export enum UNIT_TYPE {
+    UNITS ,
+    IMPERIAL
+}
+  

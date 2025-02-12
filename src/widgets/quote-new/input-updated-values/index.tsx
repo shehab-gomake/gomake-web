@@ -18,6 +18,7 @@ const InputUpdatedValues = ({
   inputMainContainerStyle,
   isTwoDigit = false,
   placeholder,
+  width,
 }: IBusinessWidget) => {
   const { clasess } = useStyle({ isUnderLine });
   const [updateValue, setUpdateValue] = useState();
@@ -44,7 +45,7 @@ const InputUpdatedValues = ({
             onCancel={() => setIsUpdate(null)}
             onUpdate={() => onBlur()?.then()}
             value={updateValue}
-            width={"210px"}
+            width={width ? width : "210px"}
           />
         ) : (
           <div
@@ -55,10 +56,10 @@ const InputUpdatedValues = ({
             {placeholder
               ? placeholder
               : isTwoDigit
-              ? typeof value === "number"
-                ? value.toFixed(2)
-                : value
-              : value}
+                ? typeof value === "number"
+                  ? value.toFixed(2)
+                  : value
+                : value}
             {sign}
           </div>
         )}

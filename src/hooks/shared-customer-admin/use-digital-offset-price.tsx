@@ -1922,7 +1922,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         widgetType === EWidgetProductType.DUPLICATE
       ) {
         getAllMaterial().then((materials) => {
-          getProductQuoteItemById(materials);
+          getProductQuoteItemById(materials, router?.query?.productId);
         });
       } else {
         getAllMaterial().then((materials) => {
@@ -1931,6 +1931,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     }
   }, [connectionId]);
+
+  useEffect(() => {
+    if (router?.query?.productId && (widgetType === EWidgetProductType.EDIT ||
+      widgetType === EWidgetProductType.DUPLICATE)) {
+      getAllMaterial().then((materials) => {
+        getProductQuoteItemById(materials, router?.query?.productId);
+      });
+    }
+  }, [router?.query?.productId]);
+  useEffect(() => {
+    if (router?.query?.productId && widgetType === EWidgetProductType.CREATE) {
+      getAllMaterial().then((materials) => {
+        getProductById(materials);
+      });
+    }
+
+  }, [router?.query?.productId])
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);
@@ -4722,7 +4739,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   };
 
-  const getProductQuoteItemById = async (materials) => {
+  const getProductQuoteItemById = async (materials, productId?) => {
     if (connectionId) {
       const callBack = (res) => {
         if (res?.success) {
@@ -4744,6 +4761,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         documentItemId: router?.query?.documentItemId,
         signalRConnectionId: connectionId,
         documentType: router?.query?.documentType,
+        productId: productId,
       });
     }
   };
