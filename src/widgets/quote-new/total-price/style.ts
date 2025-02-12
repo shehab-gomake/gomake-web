@@ -40,8 +40,10 @@ const useStyle = () => {
       },
       cellTextInputStyle: {
         display: "flex",
+        flexDirection: "row" as "row",
         justifyContent: "center",
         alignItems: "center",
+        gap:5
       },
     };
   }, []);
