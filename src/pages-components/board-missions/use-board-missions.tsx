@@ -62,6 +62,7 @@ interface Query {
   toDueDate?: string;
   fromReadyDate?: string;
   toReadyDate?: string;
+  productsIds?: string[];
 }
 
 const useBoardMissions = ({ isPurchaseJobs }) => {
@@ -234,6 +235,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const handleClickSearch = () => {
     const newQuery: Query = { ...router.query };
+
+    if (productIds.length > 0) {
+      newQuery.productsIds = productIds;
+    } else {
+      delete newQuery.productsIds;
+    }
 
     if (customer?.id) {
       newQuery.clientId = customer.id;
@@ -526,6 +533,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
       const currentFinalPatternSearch = router.query.finalPatternSearch;
       const currentPageNumber = router.query.pageNumber;
+      const currentProductionStatus = router.query.productionStatus;
+      const currentProductsIds = Array.isArray(router.query.productsIds)
+        ? router.query.productsIds
+        : router.query.productsIds
+        ? [router.query.productsIds]
+        : productIds;
 
       await setBoardMissionsFiltersApi(
         callApi,
@@ -553,9 +566,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
               fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
               toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
-
-              productsIds: productIds,
-              productionStatus: status?.value,
+              productsIds: currentProductsIds,
+              productionStatus: status?.value || currentProductionStatus,
               orderStatus: orderStatus?.value,
               pageNumber: currentPageNumber || pageNumber,
               pageSize: pageSize,
@@ -972,7 +984,15 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       toReadyDate,
       finalPatternSearch,
       pageNumber,
+      productsIds,
     } = router.query;
+
+    if (productsIds) {
+      const productIdsArray = Array.isArray(productsIds)
+        ? productsIds
+        : [productsIds];
+      setProductIds(productIdsArray); // Set the productsIds state if needed
+    }
 
     if (clientId) {
       setCustomer({
@@ -987,6 +1007,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       );
       setAgent(selectedAgent);
     }
+
     if (productionStatus) {
       const statusToSet = productionStatuses.find(
         (status) => status.value === Number(productionStatus)
