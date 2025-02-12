@@ -320,6 +320,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [subProducts]);
   const [isCanGetSelected, setIsCanGetSelected] = useState(false);
   useEffect(() => {
+    if (widgetType == EWidgetProductType.EDIT || widgetType == EWidgetProductType.DUPLICATE) {
+      setIsCanGetSelected(true);
+    }
+  }, []);
+  useEffect(() => {
     if (
       calculationResult &&
       calculationResult.productItemValueDraftId === currentCalculationSessionId &&
