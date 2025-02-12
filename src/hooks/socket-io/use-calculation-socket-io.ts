@@ -24,7 +24,7 @@ const useCalculationSocketIO = () => {
 
   const [isCalculationFinished, setIsCalculationFinished] = useState(false);
   useEffect(()=>{
-    const socket = io("http://ui-backend.dev.gomake.net");
+    const socket = io(config.api_server);
     socket.on("updateWorkFlows", (newData: ICalculationSignalRResult) => {
       setSignalRWorkFlows(newData);
     });
