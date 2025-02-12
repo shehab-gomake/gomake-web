@@ -56,7 +56,6 @@ const BoardMissionsComponent = ({
     setTypesConHeight,
     isLoadingStations,
     renderDetailsSkeletons1,
-    renderDetailsSkeletons2,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -92,8 +91,8 @@ const BoardMissionsComponent = ({
       height={"100%"}
       overflow={"hidden"}
       gap={"16px"}
-      padding={"34px 24px"}
-      borderRadius={"24px, 24px, 0px, 0px"}
+      // padding={"34px 24px"}
+      padding={"10px 20px 0px 20px"}
     >
       <BoardMissionsDetailsHeader />
       <div style={classes.GridContainer}>
@@ -126,60 +125,64 @@ const BoardMissionsComponent = ({
               {isLoadingStations ? (
                 renderDetailsSkeletons1()
               ) : (
-                <div style={classes.ColumnOneRowTwoGridContainer}>
-                  {productDetails.length > 0 && (
-                    <div
-                      ref={ProductDetailsSectionRef}
-                      style={{
-                        maxHeight: "fit-content",
-                        height: "fit-content",
-                      }}
-                    >
+                <div style={classes.productDetailsContainer}>
+                  <div style={classes.ColumnOneRowTwoGridContainer}>
+                    {productDetails.length > 0 && (
+                      <div
+                        ref={ProductDetailsSectionRef}
+                        style={{
+                          maxHeight: "fit-content",
+                          height: "fit-content",
+                        }}
+                      >
+                        <ProductDetailsSection
+                          key={0}
+                          name={productDetails[0].name}
+                          productionFloorSubSections={
+                            productDetails[0].productionFloorSubSections
+                          }
+                          withHeader={true}
+                          header={t("productionFloor.productDetails")}
+                        />
+                      </div>
+                    )}
+                    {productWorksTypes.length > 0 && (
+                      <div style={{ maxHeight: `${typesConHeight}px` }}>
+                        <CardContainer label={t("productionFloor.types")}>
+                          <WorkTypesWidget types={productWorksTypes} />
+                        </CardContainer>
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className="custom-scroller"
+                    style={{
+                      overflowY:
+                        productWorksTypes.length > 0 ? "auto" : "visible",
+                      maxHeight: "fit-content",
+                      flex: 1,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "5px",
+                    }}
+                  >
+                    {productDetails.slice(1).map((section, index) => (
                       <ProductDetailsSection
-                        key={0}
-                        name={productDetails[0].name}
+                        key={index + 1}
+                        name={section.name}
                         productionFloorSubSections={
-                          productDetails[0].productionFloorSubSections
+                          section.productionFloorSubSections
                         }
-                        withHeader={true}
-                        header={t("productionFloor.productDetails")}
+                        withHeader={false}
+                        style={{
+                          // maxHeight: "fit-content",
+                          // height: "fit-content",
+                          flex: 1,
+                          minHeight: "fit-content",
+                        }}
                       />
-                    </div>
-                  )}
-                  {productWorksTypes.length > 0 && (
-                    <div
-                      style={{
-                        maxHeight: `${typesConHeight}px`,
-                      }}
-                    >
-                      <CardContainer label={t("productionFloor.types")}>
-                        <WorkTypesWidget types={productWorksTypes} />
-                      </CardContainer>
-                    </div>
-                  )}
-                </div>
-              )}
-              {isLoadingStations ? (
-                renderDetailsSkeletons2()
-              ) : (
-                <div
-                  style={classes.productDetailsContainer}
-                  className={`custom-scroller`}
-                >
-                  {productDetails.slice(1).map((section, index) => (
-                    <ProductDetailsSection
-                      key={index + 1}
-                      name={section.name}
-                      productionFloorSubSections={
-                        section.productionFloorSubSections
-                      }
-                      withHeader={false}
-                      style={{
-                        flex: 1,
-                        minHeight: "fit-content",
-                      }}
-                    />
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

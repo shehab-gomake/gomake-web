@@ -364,11 +364,6 @@ const BoardMissionsStationActionItem = ({
       isSendMessage: !!sendMSg,
     });
   };
-  const handleSupplierChange = (e, value) => {
-    console.log("value", value);
-
-    // updateActionData(id, value?.value, "supplierId", productType).then();
-  };
 
   return (
     <>
