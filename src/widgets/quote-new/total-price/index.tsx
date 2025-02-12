@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { InputUpdatedValues } from "../input-updated-values";
@@ -36,12 +36,18 @@ const TotalPriceComp = ({
   };
   const [isUpdateDiscount, setIsUpdateDiscount] = useState(null);
   const [isUpdateDiscountAmount, setIsUpdateDiscountAmount] = useState(null);
+  const [previousDiscountAmount, setPreviousDiscountAmount] = useState(quoteItems?.discountAmount);
+  console.log("previousDiscountAmount", previousDiscountAmount);
+
   const onBlurDiscount = async () => {
     getCalculateQuote(DocumentCalculationType.Discount, quoteItems?.discount);
     setIsUpdateDiscount(null);
   };
   const onBlurDiscountAmount = async () => {
-    getCalculateQuote(DocumentCalculationType.DiscountAmount, quoteItems?.discountAmount);
+    if (quoteItems?.discountAmount !== previousDiscountAmount) {
+      getCalculateQuote(DocumentCalculationType.DiscountAmount, quoteItems?.discountAmount);
+      setPreviousDiscountAmount(quoteItems?.discountAmount);
+    }
     setIsUpdateDiscountAmount(null);
   };
 
@@ -89,7 +95,6 @@ const TotalPriceComp = ({
             />
             %
             {isQuoteConfirmation ? quoteItems?.discountAmount != 0 && `(-${quoteItems?.discountAmount + " " + quoteItems?.currency})` :
-              quoteItemValue?.discountAmount != 0 &&
               <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginLeft: 10, marginRight: 10 }}>
                 (<InputUpdatedValues
                   value={quoteItems?.discountAmount ? quoteItems?.discountAmount : 0}
@@ -104,12 +109,11 @@ const TotalPriceComp = ({
                     gap: 0,
                   }}
                   onInputChange={(e) => onInputDiscountAmount(e)}
+                  width={"150px"}
                 />)
               </div>
-
-
-
             }
+
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
