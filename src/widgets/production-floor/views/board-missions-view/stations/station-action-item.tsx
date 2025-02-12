@@ -37,7 +37,7 @@ import {
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Button from "@mui/material/Button";
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { GomakeTextInput } from "@/components";
 import { useBoardMissionsUpdatedOutputs } from "./use-board-missions-updated-outputs";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { ActionTimer } from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
