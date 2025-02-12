@@ -94,6 +94,7 @@ const QuoteCard = ({ key, item, index, isPrePaymentPage }: IProps) => {
         </Typography>
         <CharacterDetails
           details={item?.details}
+          workName={item?.workName}
           showAllStyle={classes.showAll}
           detailsStyle={classes.detailsStyle}
           canUpdate={false}

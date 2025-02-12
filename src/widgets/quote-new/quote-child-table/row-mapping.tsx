@@ -174,8 +174,10 @@ const RowMappingChildWidget = ({
               documentItemId={item?.id}
               canUpdate={canUpdate}
               documentType={documentType}
+              workName={item?.workName}
             />
           </PrimaryTableCell>
+
         )}
       </PrimaryTableCell>
       <PrimaryTableCell
