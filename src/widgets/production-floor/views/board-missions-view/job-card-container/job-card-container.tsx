@@ -42,7 +42,7 @@ const CardContainer = ({
             background: "#2E3092",
             boxShadow: "0px 5px 31px 0px rgba(0, 0, 0, 0.06)",
             color: "#FFFFFF",
-            padding: "8px 16px",
+            padding: "5px 16px",
             flexShrink: 0,
           }}
         >
@@ -54,7 +54,7 @@ const CardContainer = ({
       <Stack
         className={`custom-scroller`}
         style={{
-          padding: "8px 16px",
+          padding: "5px 16px",
           flexGrow: 1,
           overflowY: "scroll",
         }}

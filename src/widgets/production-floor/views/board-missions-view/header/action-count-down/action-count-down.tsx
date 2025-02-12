@@ -48,19 +48,19 @@ const ActionCountDown = ({
     };
   }, [isActive]);
 
-  // Format seconds into MM:SS
   const formatTime = useCallback(() => {
     const absSeconds = Math.abs(seconds);
-    const minutes = Math.floor(absSeconds / 60);
+    const hours = Math.floor(absSeconds / 3600);
+    const minutes = Math.floor((absSeconds % 3600) / 60);
     const remainingSeconds = absSeconds % 60;
 
-    return `${seconds < 0 ? "-" : ""}${minutes
+    return `${hours.toString().padStart(2, "0")}:${minutes
       .toString()
       .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
   }, [seconds]);
 
   return (
-    <Stack direction={"row"} alignItems={"center"}>
+    <Stack direction={"row"} alignItems={"flex-end"}>
       <PermissionCheck
         userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}
       >
@@ -84,26 +84,15 @@ const ActionCountDown = ({
           </IconButton>
         )}
       </PermissionCheck>
-
-      <Stack direction="row" alignItems="baseline">
-        <span
-          style={{
-            ...FONT_FAMILY.Inter(600, 32),
-            color: seconds < 0 ? errorColor(500) : "#101828",
-          }}
-        >
-          {formatTime()}
-        </span>
-        <span
-          style={{
-            ...FONT_FAMILY.Inter(400, 16),
-            color: seconds < 0 ? errorColor(500) : "#101828",
-            marginLeft: 4,
-          }}
-        >
-          {seconds < 0 ? "Overdue" : "Min"}
-        </span>
-      </Stack>
+      <span
+        style={{
+          ...FONT_FAMILY.Inter(600, 30),
+          color: seconds < 0 ? errorColor(500) : "#101828",
+          alignItems: "center",
+        }}
+      >
+        {formatTime()}
+      </span>
     </Stack>
   );
 };
