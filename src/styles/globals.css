@@ -452,7 +452,7 @@ df-messenger {
 }
 
 .custom-scroller::-webkit-scrollbar {
-  width: 10px !important;
+  width: 7px !important;
 }
 
 .custom-scroller::-webkit-scrollbar-track {
