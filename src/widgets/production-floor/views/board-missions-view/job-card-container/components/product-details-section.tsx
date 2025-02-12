@@ -68,9 +68,9 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
                     {/* SubSection Name*/}
                     <TableCell
                       style={{
-                        width: "20%",
+                        width: "15%",
                         borderBottom: "none",
-                        padding: "16px 0px",
+                        padding: "10px 0px",
                         textAlign: isRTL ? "right" : "left",
                         alignContent: "start",
                         ...classes.subTitles,
@@ -82,7 +82,7 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
                     <TableCell
                       colSpan={4}
                       sx={{
-                        padding: "16px 0px",
+                        padding: "10px 0px",
                         borderBottom: isLastRow ? "none" : "1px solid #E5E5E5",
                       }}
                     >
@@ -90,8 +90,8 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
                         sx={{
                           display: "grid",
                           gridTemplateColumns: isRTL
-                            ? "repeat(3, minmax(0, 1fr))"
-                            : "repeat(3, minmax(0, 1fr))",
+                            ? "repeat(4, minmax(0, 1fr))"
+                            : "repeat(4, minmax(0, 1fr))",
                           rowGap: "10px",
                           direction: isRTL ? "rtl" : "ltr",
                         }}
@@ -114,7 +114,7 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
                                 {property.name}:
                               </span>{" "}
                               {property.value}{" "}
-                              {property.unit && `(${property.unit})`}
+                              {property.unit && `${property.unit}`}
                             </span>
                           )
                         )}

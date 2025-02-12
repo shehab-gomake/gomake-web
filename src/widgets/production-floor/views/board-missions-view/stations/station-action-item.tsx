@@ -24,7 +24,7 @@ import { useStyle } from "@/widgets/production-floor/views/board-missions-view/s
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { IBoardMissionsStation } from "@/widgets/production-floor/views/board-missions-view/stations/interface";
-import { DateFormatterDDMMYYYY, DateFormatterShort } from "@/utils/adapter";
+import { DateFormatterShort } from "@/utils/adapter";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   boardMissionsUpdateActionEmployee,
@@ -60,6 +60,7 @@ import { MaterialsAndProductionTimeModalWidget } from "./material-and-production
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { formatSecondsToHHMMSS } from "@/utils/helpers";
 
 interface IProps extends IBoardMissionsStation {
   delay: number;
@@ -97,6 +98,7 @@ const BoardMissionsStationActionItem = ({
   supplierName,
   supplierId,
   productType,
+  realProductionTime,
 }: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -410,8 +412,22 @@ const BoardMissionsStationActionItem = ({
                 <span style={{ ...classes.detailValue, color: "#FFFF" }}>
                   {DateFormatterShort(convertUtcToLocalIsoString(dueDate))}
                 </span>
+                {isDone && (
+                  <>
+                    <Divider
+                      orientation={"vertical"}
+                      flexItem
+                      style={classes.dividerStyle}
+                    />
+                    <span style={classes.realTimeValue}>
+                      {formatSecondsToHHMMSS(realProductionTime ?? 0)}
+                    </span>
+                  </>
+                )}
                 {source == EWorkSource.OUT && (
-                  <span style={classes.outSourceLabel}>OS</span>
+                  <Stack style={classes.sectionTitle}>
+                    <span style={classes.outSourceLabel}>OS</span>
+                  </Stack>
                 )}
               </Stack>
               <Stack
@@ -570,16 +586,9 @@ const BoardMissionsStationActionItem = ({
                       {actionName}
                     </span>
                     {source === EWorkSource.OUT && supplierId ? (
-                      <>
-                        <Divider
-                          orientation={"vertical"}
-                          flexItem
-                          color={"#000"}
-                        />
-
-                        <span>{getSupplierId()}</span>
-                        <Divider orientation={"vertical"} flexItem />
-                      </>
+                      <span style={classes.supplierTitle}>
+                        {getSupplierId()}
+                      </span>
                     ) : (
                       isNeedMachine && (
                         <>
@@ -779,8 +788,22 @@ const BoardMissionsStationActionItem = ({
                           )}
                         </span>
                       </Stack>
+                      {isDone && (
+                        <>
+                          <Divider
+                            orientation={"vertical"}
+                            flexItem
+                            style={classes.dividerStyle}
+                          />
+                          <span style={classes.realTimeValue}>
+                            {formatSecondsToHHMMSS(realProductionTime ?? 0)}
+                          </span>
+                        </>
+                      )}
                       {source == EWorkSource.OUT && (
-                        <span style={classes.outSourceLabel}>OS</span>
+                        <Stack style={classes.sectionTitle}>
+                          <span style={classes.outSourceLabel}>OS</span>
+                        </Stack>
                       )}
                     </>
                   )}

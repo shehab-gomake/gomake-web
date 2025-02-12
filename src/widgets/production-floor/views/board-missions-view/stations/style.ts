@@ -19,6 +19,11 @@ const useStyle = () => {
         ...FONT_FAMILY.Inter(500, 14),
         color: primaryColor(900),
       },
+
+      realTimeValue: {
+        ...FONT_FAMILY.Inter(600, 14),
+        color: primaryColor(900),
+      },
       sectionTitle: {
         color: primaryColor(900),
         ...FONT_FAMILY.Lexend(500, 14),
@@ -27,6 +32,12 @@ const useStyle = () => {
         color: secondColor(500),
         ...FONT_FAMILY.Lexend(500, 14),
         textTransform: "capitalize" as "capitalize",
+      },
+      supplierTitle: {
+        color: secondColor(500),
+        ...FONT_FAMILY.Lexend(500, 14),
+        textTransform: "capitalize" as "capitalize",
+        padding: "7px 5px",
       },
       actionContainer: {
         padding: "5px 16px",
@@ -126,6 +137,11 @@ const useStyle = () => {
         bottom: "50%",
         height: "50%",
         ...adaptRight(direction, 5),
+      },
+      dividerStyle: {
+        height: "60%",
+        alignSelf: "center",
+        color: "#D6D6D6",
       },
     };
   }, [theme, direction]);
