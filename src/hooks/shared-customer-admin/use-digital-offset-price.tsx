@@ -371,12 +371,29 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (
       result.productItemValue &&
       result.productItemValue.workFlows &&
-      result.productItemValue.workFlows.length > 0 &&
+      result.productItemValue.workFlows.length > 0
+      &&
       !(
         widgetType == EWidgetProductType.EDIT &&
         currentProductItemValueTotalPrice
       )
     ) {
+      const mySelectedWorkFlow = result.productItemValue.workFlows[0];
+      if (
+        mySelectedWorkFlow &&
+        mySelectedWorkFlow.totalPrice &&
+        mySelectedWorkFlow.totalPrice.values &&
+        !isNaN(mySelectedWorkFlow.totalPrice.values[0])
+      ) {
+        setCurrentProductItemValueTotalPrice(
+          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
+        );
+        setSliderCurrentProductItemValueTotalPrice(
+          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
+        );
+      }
+    }
+    else if ((widgetType == EWidgetProductType.EDIT || widgetType == EWidgetProductType.DUPLICATE) && productTemplate?.isHaveFixedAction) {
       const mySelectedWorkFlow = result.productItemValue.workFlows[0];
       if (
         mySelectedWorkFlow &&
