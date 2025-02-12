@@ -91,8 +91,8 @@ const BoardMissionsComponent = ({
       height={"100%"}
       overflow={"hidden"}
       gap={"16px"}
-      padding={"34px 24px"}
-      borderRadius={"24px, 24px, 0px, 0px"}
+      // padding={"34px 24px"}
+      padding={"10px 20px 0px 20px"}
     >
       <BoardMissionsDetailsHeader />
       <div style={classes.GridContainer}>
