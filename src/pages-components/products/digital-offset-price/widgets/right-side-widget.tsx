@@ -69,10 +69,8 @@ const RightSideWidget = ({
     setPriceIncludeVat,
     systemVAT,
   } = useRightSideWidget({ includeVAT, widgetType });
-
-  console.log("priceIncludeVat", priceIncludeVat);
-
-
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
 
   const additionalProductItems = useRecoilValue(additionalProductItemsState);
   const mergedArray = [
@@ -217,42 +215,47 @@ const RightSideWidget = ({
           <div style={clasess.totalStyleText}>
             {t("products.offsetPrice.admin.total")}
           </div>
+
           <div data-tour={"product-pricing"} style={clasess.totalStyle}>
             {isLoading ? (
               <DotsLoader />
             ) : (
-              <GomakeTextInput
-                direction={direction}
-                value={sliderCurrentProductItemValueTotalPrice ?? "---------"}
-                onBlur={(e: any) => {
-                  if (currentProductItemValueTotalPrice > 0) {
-                    const inputValue = Number(e.target.value);
-                    if (inputValue < minDiscount || inputValue > maxIncrease) {
-                      alertFault("Value is out of the allowed range!");
+              <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
+                <span style={{ ...clasess.totalCurrancyStyle, position: "absolute", left: 30, zIndex: 999999 }}>
+                  {systemCurrency}
+                </span>
+                <GomakeTextInput
+                  direction={direction}
+                  value={sliderCurrentProductItemValueTotalPrice ?? "---------"}
+                  onBlur={(e: any) => {
+                    if (currentProductItemValueTotalPrice > 0) {
+                      const inputValue = Number(e.target.value);
+                      if (inputValue < minDiscount || inputValue > maxIncrease) {
+                        alertFault("Value is out of the allowed range!");
+                        setSliderCurrentProductItemValueTotalPrice(
+                          currentProductItemValueTotalPrice
+                        ); // Reset to valid value
+                      }
+                    }
+                  }}
+                  onChange={(e: any) => {
+                    if (
+                      !permissions.includes(Permissions.UPDATE_CALCULATED_PRICE)
+                    ) {
                       setSliderCurrentProductItemValueTotalPrice(
                         currentProductItemValueTotalPrice
-                      ); // Reset to valid value
+                      );
+                    } else {
+                      setSliderCurrentProductItemValueTotalPrice(e.target.value);
                     }
-                  }
-                }}
-                onChange={(e: any) => {
-                  if (
-                    !permissions.includes(Permissions.UPDATE_CALCULATED_PRICE)
-                  ) {
-                    setSliderCurrentProductItemValueTotalPrice(
-                      currentProductItemValueTotalPrice
-                    );
-                  } else {
-                    setSliderCurrentProductItemValueTotalPrice(e.target.value);
-                  }
-                }}
-                key={"TotalPriceInput"}
-                style={clasess.inputPriceStyle}
-              />
+                  }}
+                  key={"TotalPriceInput"}
+                  style={clasess.inputPriceStyle}
+                />
+              </div>
             )}
           </div>
           <span style={clasess.totalCurrancyStyle}>
-            {systemCurrency}
             <Tooltip title={t("products.offsetPrice.admin.updateTotalPrice")}>
               <IconButton
                 onClick={() => {
@@ -304,6 +307,7 @@ const RightSideWidget = ({
             </div>
             <div style={clasess.vatContainer}>
               {t("products.offsetPrice.admin.includeVAT")}:{" "}
+              {!isRTL && systemCurrency}
               <input
                 value={priceIncludeVat}
                 // type="number"
@@ -323,7 +327,8 @@ const RightSideWidget = ({
                   padding: "5px",
                 }}
               />
-              {systemCurrency}
+              {isRTL && systemCurrency}
+
             </div>
           </>
         )}
