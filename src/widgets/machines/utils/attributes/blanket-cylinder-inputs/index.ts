@@ -5,6 +5,8 @@ const getCategoryBlanketCylinderInputs = (categoryId: string, state: Record<stri
     switch (categoryId) {
         case ECategoryId.OFSSET_PRINTING:
             return ofssetPrinting(state);
+        case ECategoryId.ROLL_OFF_SET_PRINTING:
+            return ofssetPrinting(state);
         default:
             return [];
     }
