@@ -39,6 +39,8 @@ const getCategoryColorsInputs = (categoryId: string, state: Record<string, any>)
             return enhancementMachine(state);
         case ECategoryId.SUBLIMATION:
             return sublimationMachine(state);
+        case ECategoryId.ROLL_OFF_SET_PRINTING:
+            return ofssetPrinting(state);
         default:
             return []
     }
