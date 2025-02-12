@@ -89,8 +89,6 @@ const AgingReportWidget = () => {
           stickyHeader={true}
           variant={detailedReport ? "PrimaryTable " : "OddEvenTable"}
           isAgingeport={detailedReport}
-          withoutShadow={true}
-          withSort={true}
         />
       )}
 
