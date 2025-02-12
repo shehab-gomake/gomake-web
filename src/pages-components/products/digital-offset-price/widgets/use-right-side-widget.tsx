@@ -110,7 +110,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   useEffect(() => {
     if (sliderCurrentProductItemValueTotalPrice !== null && !priceIncludeVat) {
       setPriceIncludeVat(
-        (sliderCurrentProductItemValueTotalPrice * (1 + systemVAT))
+        (sliderCurrentProductItemValueTotalPrice * (1 + systemVAT))?.toFixed(3)
       );
     }
     else {

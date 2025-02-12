@@ -301,7 +301,7 @@ const RightSideWidget = ({
                   : (
                     (sliderCurrentProductItemValueTotalPrice || 0) /
                     (quantity?.values[0] || 1)
-                  )?.toFixed(4),
+                  )?.toFixed(3),
                 unitPrice: systemCurrency,
               })}
             </div>
@@ -315,7 +315,7 @@ const RightSideWidget = ({
                   const newPriceIncludeVat = e.target.value;
                   setPriceIncludeVat(newPriceIncludeVat);
                   if (quantity?.values[0] && newPriceIncludeVat !== "" && newPriceIncludeVat !== null && newPriceIncludeVat !== "0") {
-                    const newTotalPrice = (Number(newPriceIncludeVat) / (1 + systemVAT)).toFixed(4);
+                    const newTotalPrice = (Number(newPriceIncludeVat) / (1 + systemVAT)).toFixed(3);
                     setSliderCurrentProductItemValueTotalPrice(Number(newTotalPrice));
                   }
                 }}
