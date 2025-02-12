@@ -772,7 +772,7 @@ const ActionContainerComponent = ({
                       }
 
                       {
-                        !isFromSetting && <EditableKeyValueViewComponent
+                        !isFromSetting && source !== EWorkSource.OUT && <EditableKeyValueViewComponent
                           onUpdate={handleUpdatePrice}
                           {...totalPrice}
                           values={totalPriceValue}

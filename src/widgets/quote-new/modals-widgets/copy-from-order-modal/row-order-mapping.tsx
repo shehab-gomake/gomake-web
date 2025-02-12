@@ -80,9 +80,11 @@ const RowMappingWidget = ({
           details={item.details}
           documentItemId={item?.id}
           canUpdate={false}
+          workName={item?.workName}
         />
       </PrimaryTableCell>
       <PrimaryTableCell
+
         style={{
           width: columnWidths[4],
           ...classes.cellContainerStyle,

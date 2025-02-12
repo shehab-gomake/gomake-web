@@ -1,21 +1,19 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { GoMakeMenu, SecondSwitch } from "@/components";
+import React from "react";
+
 import { Divider, IconButton } from "@mui/material";
-import { useStyle } from "./style";
-import { TableSortingMenu } from "../table-sorting-menu";
-import { InputUpdatedValues } from "../input-updated-values";
-import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
-import { quoteItemState } from "@/store";
-import { useRecoilValue } from "recoil";
 import SyncIcon from "@mui/icons-material/Sync";
-import { useCompanyProfile } from "@/hooks/use-company-profile";
-import { currenciesState } from "@/widgets/materials-widget/state";
-import { useTranslation } from "react-i18next";
-import { AutomaticDiscountMenu } from "../automatic-discount-menu";
-import { DotIcon } from "@/icons";
 import { Check } from "@mui/icons-material";
-import { DiscountType, SortByTypes } from "@/enums";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+
+import { GoMakeMenu, SecondSwitch } from "@/components";
+import { DotIcon } from "@/icons";
+
+import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
+import { AutomaticDiscountMenu } from "../automatic-discount-menu";
+import { useSttingsQuoteMenu } from "./use-setting-quote-menu";
+import { InputUpdatedValues } from "../input-updated-values";
+import { TableSortingMenu } from "../table-sorting-menu";
+
+import { useStyle } from "./style";
 
 const SettingQuoteMenu = ({
   handleClose,
@@ -30,106 +28,31 @@ const SettingQuoteMenu = ({
   updateCurrency,
   onClickRefresh,
   sortDocumentItems,
-  updateIsShowDetails,
-  updateIsShowPrices,
   updateDiscountType,
-  documentType,
-  getQuote,
+  updateDocumentPreference,
 }) => {
   const { classes } = useStyle();
-  const { t } = useTranslation();
-  const quoteStateValue = useRecoilValue<any>(quoteItemState);
-  const { getCurrenciesApi } = useCompanyProfile();
-  const [detailsView, setDetailsView] = useState(
-    quoteStateValue?.isShowDetails
-  );
-  const [showPrices, setShowPrices] = useState(quoteStateValue?.isShowPrice);
-  const currencies =
-    useRecoilValue<{ label: string; value: string }[]>(currenciesState);
-  const matchingCurrency = currencies.find(
-    (currency) => currency.value === quoteStateValue?.currency
-  )?.label;
-  const [exchangeRate, setExchangeRate] = useState(
-    quoteStateValue?.exchangeRate || "-"
-  );
-  const [anchorElTableSorting, setAnchorElTableSorting] =
-    useState<null | HTMLElement>(null);
-  const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
-  const [anchorElBudget, setAnchorElBudget] = useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElAutomaticDiscount, setAnchorElAutomaticDiscount] =
-    useState<null | HTMLElement>(null);
-  const openTableSorting = Boolean(anchorElTableSorting);
-  const openAutomaticDiscount = Boolean(anchorElAutomaticDiscount);
-  const openBudget = Boolean(anchorElBudget);
-  useEffect(() => {
-    setDetailsView(quoteStateValue?.isShowDetails);
-    setShowPrices(quoteStateValue?.isShowPrice);
-  }, [quoteStateValue?.isShowDetails, quoteStateValue?.isShowPrice]);
+  const {
+    quoteStateValue,
+    exchangeRate,
+    anchorElTableSorting,
+    anchorElAutomaticDiscount,
+    openTableSorting,
+    openAutomaticDiscount,
+    matchingCurrency,
+    currencies,
+    switchConfigs,
+    handleTableSorting,
+    handleTableSortingClose,
+    handleAutomaticDiscount,
+    handleAutomaticDiscountClose,
+    _renderSelectionType,
+    _renderSortingBy,
+    setExchangeRate,
+    t,
+  } = useSttingsQuoteMenu({ updateDocumentPreference })
 
-  useEffect(() => {
-    setExchangeRate(quoteStateValue?.exchangeRate || "-");
-  }, [quoteStateValue?.exchangeRate]);
 
-  useEffect(() => {
-    getCurrenciesApi();
-  }, []);
-
-  const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
-    setDetailsView(event.target.checked);
-    updateIsShowDetails();
-  };
-
-  const handleSwitchCheckForShowPrice = (
-    event: ChangeEvent<HTMLInputElement>
-  ) => {
-    setShowPrices(event.target.checked);
-    updateIsShowPrices();
-  };
-
-  const handleTableSorting = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElTableSorting(event.currentTarget);
-  };
-
-  const handleTableSortingClose = () => {
-    setAnchorElTableSorting(null);
-  };
-
-  const handleAutomaticDiscount = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElAutomaticDiscount(event.currentTarget);
-  };
-
-  const handleAutomaticDiscountClose = () => {
-    setAnchorElAutomaticDiscount(null);
-  };
-  const handleBudget = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElBudget(event.currentTarget);
-  };
-  const handleBudgetClose = () => {
-    setAnchorElBudget(null);
-  };
-
-  const _renderSelectionType = (type: DiscountType) => {
-    switch (type) {
-      case DiscountType.Product:
-        return <div>{t("sales.quote.byProduct")}</div>;
-      case DiscountType.ProductSKU:
-        return <div>{t("sales.quote.bySku")}</div>;
-      default:
-        return <div> {t("sales.quote.none")}</div>;
-    }
-  };
-  const _renderSortingBy = (type: SortByTypes) => {
-    switch (type) {
-      case SortByTypes.Date:
-        return <div> {t("sales.quote.creationDate")}</div>;
-      case SortByTypes.ProductABC:
-        return <div>{t("sales.quote.productName")}</div>;
-      case SortByTypes.WorkNameABC:
-        return <div>{t("sales.quote.jobName")}</div>;
-    }
-  };
 
   return (
     <>
@@ -183,20 +106,15 @@ const SettingQuoteMenu = ({
             )}
           </div>
           <Divider />
-          <div style={classes.menuRowStyle}>
-            <div style={classes.menuTabStyle}>{t("sales.quote.details")}</div>
-            <SecondSwitch checked={detailsView} onChange={handleSwitchCheck} />
-          </div>
-          <Divider />
-          <div style={classes.menuRowStyle}>
-            <div style={classes.menuTabStyle}>
-              {t("sales.quote.showPrices")}
-            </div>
-            <SecondSwitch
-              checked={showPrices}
-              onChange={handleSwitchCheckForShowPrice}
-            />
-          </div>
+          {switchConfigs.map((config, index) => (
+            <React.Fragment key={index}>
+              <div style={classes.menuRowStyle}>
+                <div style={classes.menuTabStyle}>{config.label}</div>
+                <SecondSwitch checked={config.checked} onChange={config.onChange} />
+              </div>
+              <Divider />
+            </React.Fragment>
+          ))}
           {quoteStateValue?.isForeignCurrency && (
             <>
               <Divider />

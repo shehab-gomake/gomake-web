@@ -26,6 +26,7 @@ const TableCellData = ({
   values,
   isAdmin,
   onChangeRowCheckBox,
+  unit,
 }: IRowData) => {
   const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin);
   const machinesCategories = useRecoilValue(machineCategoriesState);
@@ -189,6 +190,7 @@ const TableCellData = ({
           id={id}
           value={value}
           isAdmin={isAdmin}
+          unit={unit}
         />
       );
   }

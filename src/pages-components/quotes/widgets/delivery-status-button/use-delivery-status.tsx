@@ -284,6 +284,7 @@ const useDeliveryStatusButton = () => {
         documentItem?.productName,
         <CharacterDetails
           details={documentItem?.details}
+          workName={documentItem?.workName}
           showLessHeightFit={true}
           canUpdate={false}
         />,
@@ -321,15 +322,12 @@ const useDeliveryStatusButton = () => {
               padding: "0px 20px",
             }}
           >
-            {`${t("sales.documentDeliveries.recipientName")}: ${
-              contactName || "N/A"
-            }, `}
-            {`${t("sales.documentDeliveries.recipientMail")}: ${
-              contactEmail || "N/A"
-            }, `}
-            {`${t("sales.documentDeliveries.recipientNumber")}: ${
-              contactPhone || "N/A"
-            }`}
+            {`${t("sales.documentDeliveries.recipientName")}: ${contactName || "N/A"
+              }, `}
+            {`${t("sales.documentDeliveries.recipientMail")}: ${contactEmail || "N/A"
+              }, `}
+            {`${t("sales.documentDeliveries.recipientNumber")}: ${contactPhone || "N/A"
+              }`}
           </span>
         ) : null,
         renderPopover(),

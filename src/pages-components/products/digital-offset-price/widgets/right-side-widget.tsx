@@ -1,12 +1,6 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon, ReloadIcon } from "@/icons";
-import {
-  Checkbox,
-  Divider,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Checkbox, Divider, IconButton, Tooltip, Typography } from "@mui/material";
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
@@ -22,6 +16,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { permissionsState } from "@/store";
 import { Box, Slider } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
+import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 
 const RightSideWidget = ({
   clasess,
@@ -68,11 +63,12 @@ const RightSideWidget = ({
     priceIncludeVat,
     setPriceIncludeVat,
     systemVAT,
+    selectedProduct,
+    combinedData,
+    handleProductChange
   } = useRightSideWidget({ includeVAT, widgetType });
-
-  console.log("priceIncludeVat", priceIncludeVat);
-
-
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
 
   const additionalProductItems = useRecoilValue(additionalProductItemsState);
   const mergedArray = [
@@ -153,6 +149,7 @@ const RightSideWidget = ({
     );
   }, [currentProductItemValueTotalPrice]);
 
+
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -180,6 +177,7 @@ const RightSideWidget = ({
             <div style={clasess.labelTextStyle}>
               {t("products.offsetPrice.admin.type")}
             </div>
+
             {clientTypeDefaultValue && (
               <GoMakeAutoComplate
                 options={clientTypesCategories}
@@ -205,6 +203,16 @@ const RightSideWidget = ({
             )}
           </div>
         </div>
+        <div style={clasess.autoComplateRowContainer}>
+          <div data-tour="select-product" style={{ width: "100%", marginBottom: 16 }}>
+            <GoMakeTreeSelect
+              value={selectedProduct}
+              options={combinedData}
+              onChange={handleProductChange}
+              placeholder={t("home.admin.selectProductOrMaterial")}
+            />
+          </div>
+        </div>
         {template.img ? (
           <div style={clasess.imgProductContainer}>
             <img src={template.img} alt="gomake" style={{ width: "100%" }} />
@@ -217,42 +225,47 @@ const RightSideWidget = ({
           <div style={clasess.totalStyleText}>
             {t("products.offsetPrice.admin.total")}
           </div>
+
           <div data-tour={"product-pricing"} style={clasess.totalStyle}>
             {isLoading ? (
               <DotsLoader />
             ) : (
-              <GomakeTextInput
-                direction={direction}
-                value={sliderCurrentProductItemValueTotalPrice ?? "---------"}
-                onBlur={(e: any) => {
-                  if (currentProductItemValueTotalPrice > 0) {
-                    const inputValue = Number(e.target.value);
-                    if (inputValue < minDiscount || inputValue > maxIncrease) {
-                      alertFault("Value is out of the allowed range!");
+              <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
+                <span style={{ ...clasess.totalCurrancyStyle, position: "absolute", left: 30, zIndex: 999999 }}>
+                  {systemCurrency}
+                </span>
+                <GomakeTextInput
+                  direction={direction}
+                  value={sliderCurrentProductItemValueTotalPrice ?? "---------"}
+                  onBlur={(e: any) => {
+                    if (currentProductItemValueTotalPrice > 0) {
+                      const inputValue = Number(e.target.value);
+                      if (inputValue < minDiscount || inputValue > maxIncrease) {
+                        alertFault("Value is out of the allowed range!");
+                        setSliderCurrentProductItemValueTotalPrice(
+                          currentProductItemValueTotalPrice
+                        ); // Reset to valid value
+                      }
+                    }
+                  }}
+                  onChange={(e: any) => {
+                    if (
+                      !permissions.includes(Permissions.UPDATE_CALCULATED_PRICE)
+                    ) {
                       setSliderCurrentProductItemValueTotalPrice(
                         currentProductItemValueTotalPrice
-                      ); // Reset to valid value
+                      );
+                    } else {
+                      setSliderCurrentProductItemValueTotalPrice(e.target.value);
                     }
-                  }
-                }}
-                onChange={(e: any) => {
-                  if (
-                    !permissions.includes(Permissions.UPDATE_CALCULATED_PRICE)
-                  ) {
-                    setSliderCurrentProductItemValueTotalPrice(
-                      currentProductItemValueTotalPrice
-                    );
-                  } else {
-                    setSliderCurrentProductItemValueTotalPrice(e.target.value);
-                  }
-                }}
-                key={"TotalPriceInput"}
-                style={clasess.inputPriceStyle}
-              />
+                  }}
+                  key={"TotalPriceInput"}
+                  style={clasess.inputPriceStyle}
+                />
+              </div>
             )}
           </div>
           <span style={clasess.totalCurrancyStyle}>
-            {systemCurrency}
             <Tooltip title={t("products.offsetPrice.admin.updateTotalPrice")}>
               <IconButton
                 onClick={() => {
@@ -298,12 +311,13 @@ const RightSideWidget = ({
                   : (
                     (sliderCurrentProductItemValueTotalPrice || 0) /
                     (quantity?.values[0] || 1)
-                  )?.toFixed(4),
+                  )?.toFixed(3),
                 unitPrice: systemCurrency,
               })}
             </div>
             <div style={clasess.vatContainer}>
               {t("products.offsetPrice.admin.includeVAT")}:{" "}
+              {!isRTL && systemCurrency}
               <input
                 value={priceIncludeVat}
                 // type="number"
@@ -311,7 +325,7 @@ const RightSideWidget = ({
                   const newPriceIncludeVat = e.target.value;
                   setPriceIncludeVat(newPriceIncludeVat);
                   if (quantity?.values[0] && newPriceIncludeVat !== "" && newPriceIncludeVat !== null && newPriceIncludeVat !== "0") {
-                    const newTotalPrice = (Number(newPriceIncludeVat) / (1 + systemVAT)).toFixed(4);
+                    const newTotalPrice = (Number(newPriceIncludeVat) / (1 + systemVAT)).toFixed(3);
                     setSliderCurrentProductItemValueTotalPrice(Number(newTotalPrice));
                   }
                 }}
@@ -323,7 +337,8 @@ const RightSideWidget = ({
                   padding: "5px",
                 }}
               />
-              {systemCurrency}
+              {isRTL && systemCurrency}
+
             </div>
           </>
         )}

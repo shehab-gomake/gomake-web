@@ -1,4 +1,4 @@
-import { useSnackBar } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   isLoadgingState,
   subProductsParametersState,
@@ -17,12 +17,17 @@ import {
   selectedWorkFlowState,
   sliderCurrentProductItemValuePriceState,
 } from "@/widgets/product-pricing-widget/state";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { EWidgetProductType } from "../enums";
+import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
+import { useRouter } from "next/router";
+import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
 
 const useRightSideWidget = ({ includeVAT, widgetType }) => {
+  const router = useRouter();
+  const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const direction = t("direction");
   const isRtl = direction === "rtl";
@@ -54,6 +59,95 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     setSliderCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
   const [priceIncludeVat, setPriceIncludeVat] = useState<any>();
+
+  const [selectedProduct, setSelectedProduct] = useState<any>({});
+  const [combinedData, setCombinedData] = useState<any>([]);
+  const [products, setProducts] = useState([]);
+
+
+
+  const handleProductChange = (e) => {
+    const selectedValue = e;
+    // Find the selected node from combinedData
+    const findNodeByKey = (key, nodes) => {
+      for (const node of nodes) {
+        if (node.value === key) {
+          return node;
+        }
+        if (node.children) {
+          const found = findNodeByKey(key, node.children);
+          if (found) {
+            return found;
+          }
+        }
+      }
+      return null;
+    };
+
+    const selectedNode = findNodeByKey(selectedValue, combinedData);
+
+    if (selectedNode && !selectedNode.children) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, productId: selectedValue },
+      });
+      setSelectedProduct({
+        id: selectedValue,
+        category: selectedNode?.category,
+      });
+
+    } else {
+      setSelectedProduct(null);
+    }
+  };
+
+  const getAllProductsAndMaterials = useCallback(async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setProducts(res?.data?.products);
+        const transformProducts = (products) => {
+          return {
+            value: "products",
+            selectable: false,
+            title: t("tabs.products"),
+            text: t("tabs.products"),
+            level: 0,
+            children: products.map((product) => ({
+              value: product.id, // Using product id as the key
+              title: product.name, // Using product name as the label,
+              text: product.name,
+              level: 1,
+              category: ProductCategoryType.PRODUCT,
+            })),
+          };
+        };
+        const transformedProducts = transformProducts(res?.data?.products);
+
+        // Combine the transformed data
+        const combinedFinalData = [transformedProducts];
+        setCombinedData(combinedFinalData);
+      }
+    };
+
+    if (router?.query?.customerId && router?.query?.clientTypeId)
+      await getAllProductAndMaterialsApi(callApi, callBack, {
+        clientId: router?.query?.customerId,
+        clientTypeId: router?.query?.clientTypeId,
+      });
+
+  }, []);
+
+  useEffect(() => {
+    if (products?.length > 0 && combinedData?.length > 0) {
+      const findDefaultProduct = products.find((item) => item.id === router?.query?.productId);
+      if (findDefaultProduct) {
+        handleProductChange(findDefaultProduct?.id);
+      }
+    }
+  }, [combinedData, router?.query?.productId]);
+  useEffect(() => {
+    getAllProductsAndMaterials();
+  }, []);
 
   useEffect(() => {
     setCalculationExceptionsLogs([]);
@@ -110,7 +204,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   useEffect(() => {
     if (sliderCurrentProductItemValueTotalPrice !== null && !priceIncludeVat) {
       setPriceIncludeVat(
-        (sliderCurrentProductItemValueTotalPrice * (1 + systemVAT))
+        (sliderCurrentProductItemValueTotalPrice * (1 + systemVAT))?.toFixed(3)
       );
     }
     else {
@@ -141,6 +235,9 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     priceIncludeVat,
     setPriceIncludeVat,
     systemVAT,
+    selectedProduct,
+    combinedData,
+    handleProductChange
   };
 };
 

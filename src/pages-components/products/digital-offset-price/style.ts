@@ -46,6 +46,14 @@ const useStyle = () => {
         width: "100%",
         ...adaptPaddingRight(direction, 20),
       },
+      autoComplateRowContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        width: "100%",
+        gap: 30,
+      },
       mainRowContainer: {
         display: "flex",
         flexDirection: "row" as "row",
