@@ -37,7 +37,7 @@ import {
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import Button from "@mui/material/Button";
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
+import { GomakeTextInput } from "@/components";
 import { useBoardMissionsUpdatedOutputs } from "./use-board-missions-updated-outputs";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
 import { ActionTimer } from "@/widgets/production-floor/views/board-missions-view/stations/action-timer/action-timer";
@@ -58,8 +58,7 @@ import {
 } from "./material-and-production-time-modal/states";
 import { MaterialsAndProductionTimeModalWidget } from "./material-and-production-time-modal";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
-import { currentProductItemValueState, outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
-import { updateProductItemDraftActionData } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
+import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 
 interface IProps extends IBoardMissionsStation {
   delay: number;
@@ -406,23 +405,6 @@ const BoardMissionsStationAction = ({
       isSendMessage: !!sendMSg,
     });
   };
-  // const updateActionData = async (actionId: string, newValue: number, key: string, productType: string) => {
-  //   const apiCallBack = (res: { success: boolean }) => {
-  //     if (res.success) {
-  //       alertSuccessUpdate()
-  //     } else {
-  //       alertFaultUpdate()
-  //     }
-  //   }
-  //   await updateProductItemDraftActionData(callApi, apiCallBack, {
-  //     productItemValueId: currentProductItemValue,
-  //     actionId: actionId,
-  //     value: newValue,
-  //     fieldName: key,
-  //     productType: productType,
-  //     signalRConnectionId: connectionId
-  //   })
-  // }
   const handleSupplierChange = (e, value) => {
     console.log("value", value);
 
