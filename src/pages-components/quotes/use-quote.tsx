@@ -99,6 +99,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertFaultDuplicate,
     alertFaultGetData,
     alertSuccessUpdate,
+    alertFault
   } = useSnackBar();
   const router = useRouter();
   const documentPath = DOCUMENT_TYPE[docType];
@@ -1440,7 +1441,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       if (res?.success) {
         navigate("/quote");
       } else {
-        alertFaultUpdate();
+        if (res?.statusCode === 85) {
+          alertFault(res?.message);
+        }
+        else {
+          alertFaultUpdate();
+        }
       }
     };
     await updateDocumentApi(callApi, callBack, {
@@ -1583,7 +1589,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   //   setToDate(toDate);
   // };
   const onSelectDeliveryTimeDates = (value) => {
-    console.log("value", value)
     if (value && value.length === 2) {
       setFromDate(value[0]);
       setToDate(value[1]);
