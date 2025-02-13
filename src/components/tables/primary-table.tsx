@@ -328,7 +328,7 @@ const PrimaryTable = ({
                 style={{
                   backgroundColor:
                     isAgingeport && isAgingDetailedReport && row[0] != ""
-                      ? "#EBECFF"
+                      ? "#EAECF0"
                       : isLastItemTotal && rowIndex === rows.length - 1
                         ? "#EFDDFF"
                         : "inherit",

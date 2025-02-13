@@ -120,6 +120,7 @@ const useAgingReport = () => {
             return value || "";
           }
         });
+        rows.push(mainRow);
         if (Array.isArray(data.data) && detailedReport) {
           rows.push(
             ...data.data.map((nestedItem: any) => {
@@ -175,8 +176,6 @@ const useAgingReport = () => {
             })
           );
         }
-
-        rows.push(mainRow);
 
         return rows;
       });

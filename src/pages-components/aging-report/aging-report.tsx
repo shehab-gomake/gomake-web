@@ -97,7 +97,6 @@ const AgingReportWidget = () => {
           isAgingDetailedReport={detailedReport}
           handleSortAgingReport={handleSortAgingReport}
           isDescOrder={isDescOrder}
-
         />
       )}
 
