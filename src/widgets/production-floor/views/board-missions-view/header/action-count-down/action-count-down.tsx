@@ -48,15 +48,28 @@ const ActionCountDown = ({
     };
   }, [isActive]);
 
+  // const formatTime = useCallback(() => {
+  //   const absSeconds = Math.abs(seconds);
+  //   const hours = Math.floor(absSeconds / 3600);
+  //   const minutes = Math.floor((absSeconds % 3600) / 60);
+  //   const remainingSeconds = absSeconds % 60;
+
+  //   return `${hours.toString().padStart(2, "0")}:${minutes
+  //     .toString()
+  //     .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+  // }, [seconds]);
+
   const formatTime = useCallback(() => {
     const absSeconds = Math.abs(seconds);
     const hours = Math.floor(absSeconds / 3600);
     const minutes = Math.floor((absSeconds % 3600) / 60);
     const remainingSeconds = absSeconds % 60;
 
-    return `${hours.toString().padStart(2, "0")}:${minutes
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
       .toString()
       .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+
+    return seconds < 0 ? `-${formattedTime}` : formattedTime;
   }, [seconds]);
 
   return (

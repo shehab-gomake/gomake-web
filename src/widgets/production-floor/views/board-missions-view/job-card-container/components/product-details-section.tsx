@@ -68,6 +68,7 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
                     {/* SubSection Name*/}
                     <TableCell
                       style={{
+                        minWidth: "fit-content",
                         width: "15%",
                         borderBottom: "none",
                         padding: "10px 0px",
@@ -103,6 +104,7 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
                               style={{
                                 ...classes.propertyValue,
                                 textAlign: isRTL ? "right" : "left",
+                                padding: "0px 8px",
                               }}
                             >
                               <span
