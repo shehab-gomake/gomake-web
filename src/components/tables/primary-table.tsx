@@ -148,9 +148,11 @@ const PrimaryTable = ({
   isAgingeport = false,
   withSort = false,
   enableCheckboxes = false,
+  isAgingDetailedReport = false,
   onSelectionChange,
   rowCheckboxCondition = () => true,
-  handleSortAgingReport
+  handleSortAgingReport,
+  isDescOrder
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -161,7 +163,6 @@ const PrimaryTable = ({
     key: number;
     direction: "asc" | "desc";
   } | null>(null);
-  console.log("headers", headers);
   const handleRowSelection = (rowIndex: number) => {
     setSelectedRows((prevSelectedRows) => {
       const newSelectedRows = new Set(prevSelectedRows);
@@ -306,7 +307,11 @@ const PrimaryTable = ({
                           style={{ ...adaptMarginRight(dir, 4) }}
                           onClick={() => handleSortAgingReport(header?.key)}
                         >
-                          <ArrowUpward sx={{ fontSize: "18px" }} />
+                          {!isDescOrder ? (
+                            <ArrowUpward sx={{ fontSize: "18px" }} />
+                          ) : (
+                            <ArrowDownward sx={{ fontSize: "18px" }} />
+                          )}
                         </IconButton>
                       )
                     }
@@ -322,7 +327,7 @@ const PrimaryTable = ({
                 key={`row_${rowIndex}`}
                 style={{
                   backgroundColor:
-                    isAgingeport && row[0] != ""
+                    isAgingeport && isAgingDetailedReport && row[0] != ""
                       ? "#EBECFF"
                       : isLastItemTotal && rowIndex === rows.length - 1
                         ? "#EFDDFF"

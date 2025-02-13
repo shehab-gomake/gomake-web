@@ -49,7 +49,7 @@ const useAgingReport = () => {
   });
   const dateRef = useRef(null);
   const [orderBy, setOrderBy] = useState<string>("cardCode");
-  const [isDescOrder, setIsDescOrder] = useState<boolean>(false);
+  const [isDescOrder, setIsDescOrder] = useState<boolean>(true);
 
   const handleSortAgingReport = (key: string) => {
     setOrderBy(key);
@@ -407,7 +407,8 @@ const useAgingReport = () => {
     tableData,
     tableHeader,
     getAgingReportFilter,
-    handleSortAgingReport
+    handleSortAgingReport,
+    isDescOrder
   };
 };
 

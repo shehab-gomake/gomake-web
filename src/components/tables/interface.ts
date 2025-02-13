@@ -23,6 +23,8 @@ export interface ITableProps {
   rowCheckboxCondition?: (any) => boolean;
   isAgingeport?: boolean;
   handleSortAgingReport?: (key: string) => void;
+  isAgingDetailedReport?: boolean;
+  isDescOrder?: boolean;
 }
 
 export interface ISecondaryTableProps {

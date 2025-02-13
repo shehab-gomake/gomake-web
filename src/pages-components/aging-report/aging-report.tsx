@@ -43,7 +43,8 @@ const AgingReportWidget = () => {
     onClickOpenCustomerModal, // New handler
     isFetching,
     tableHeader,
-    handleSortAgingReport
+    handleSortAgingReport,
+    isDescOrder
   } = useAgingReport();
   const { classes } = useStyle();
 
@@ -88,12 +89,14 @@ const AgingReportWidget = () => {
       {showTable && (
         <PrimaryTable
           rows={getTableDataRows(onClickOpenCustomerModal)} // Pass handler here
-          headers={detailedReport ? tableHeader : transformedHeaders}
+          headers={tableHeader}
           maxHeight={"100vh"}
           stickyHeader={true}
           variant={detailedReport ? "PrimaryTable " : "OddEvenTable"}
-          isAgingeport={detailedReport}
+          isAgingeport={true}
+          isAgingDetailedReport={detailedReport}
           handleSortAgingReport={handleSortAgingReport}
+          isDescOrder={isDescOrder}
 
         />
       )}
