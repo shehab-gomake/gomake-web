@@ -44,11 +44,6 @@ const useDownloadAccountFilesModal = () => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccess("financesWidget.filesSentSuccessfully");
-        // const downloadLink = document.createElement("a");
-        // downloadLink.href = res.data;
-        // downloadLink.download = "Account_Files.zip";
-        // downloadLink.click();
-
         onClose();
       } else {
         alertFaultGetData();
