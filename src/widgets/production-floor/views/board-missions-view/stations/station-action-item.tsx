@@ -179,8 +179,17 @@ const BoardMissionsStationActionItem = ({
         );
         setBoardMissions({
           ...boardMissions,
+          currentStation: {
+            ...boardMissions.currentStation,
+            boardMissionActionTimer: {
+              ...boardMissions.currentStation?.boardMissionActionTimer,
+              isTimerRunning: false,
+              totalRunningTime: 0,
+            },
+          },
           currentBoardMissionActionId: currentActionId,
         });
+
         alertSuccessUpdate();
       } else {
         alertFaultUpdate();
@@ -331,9 +340,11 @@ const BoardMissionsStationActionItem = ({
       if (res.success) {
         alertSuccessUpdate();
         const currentActionId = res?.data?.currentStationId;
+        debugger;
         setStations(
           stations.map((station) => {
             if (station?.boardMissionActionId === boardMissionActionId) {
+              debugger;
               return {
                 ...station,
                 isDone: true,
@@ -350,8 +361,17 @@ const BoardMissionsStationActionItem = ({
         );
         setBoardMissions({
           ...boardMissions,
+          currentStation: {
+            ...boardMissions.currentStation,
+            boardMissionActionTimer: {
+              ...boardMissions.currentStation?.boardMissionActionTimer,
+              isTimerRunning: false,
+              totalRunningTime: 0,
+            },
+          },
           currentBoardMissionActionId: currentActionId,
         });
+
         setOpenPackagingModal(true);
       } else {
         alertFaultUpdate();
@@ -589,7 +609,8 @@ const BoardMissionsStationActionItem = ({
                         <>
                           {!chooseMachine ? (
                             <Button
-                              endIcon={<KeyboardArrowDownIcon />}
+                              disabled={isDone}
+                              endIcon={!isDone && <KeyboardArrowDownIcon />}
                               onClick={(e) => {
                                 if (
                                   CheckPermission(
@@ -680,7 +701,8 @@ const BoardMissionsStationActionItem = ({
                       <>
                         {!chooseEmployee ? (
                           <Button
-                            endIcon={<KeyboardArrowDownIcon />}
+                            disabled={isDone}
+                            endIcon={!isDone && <KeyboardArrowDownIcon />}
                             onClick={(e) => {
                               if (
                                 CheckPermission(
