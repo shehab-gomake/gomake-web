@@ -7,7 +7,7 @@ export type TABLE_TYPE =
 
 export interface ITableProps {
   rows: ReactNode[][];
-  headers: (string | JSX.Element)[];
+  headers:any;
   stickyHeader?: boolean;
   stickyFirstCol?: boolean;
   maxHeight?: any;
@@ -21,6 +21,8 @@ export interface ITableProps {
   onSelectionChange?: (selectedRows: Set<number>) => void;
   enableCheckboxes?: boolean;
   rowCheckboxCondition?: (any) => boolean;
+  isAgingeport?: boolean;
+  handleSortAgingReport?: (key: string) => void;
 }
 
 export interface ISecondaryTableProps {

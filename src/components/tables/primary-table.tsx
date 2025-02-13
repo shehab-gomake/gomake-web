@@ -145,10 +145,12 @@ const PrimaryTable = ({
   columnWidths,
   dataTour,
   isLastItemTotal = false,
+  isAgingeport = false,
   withSort = false,
   enableCheckboxes = false,
   onSelectionChange,
   rowCheckboxCondition = () => true,
+  handleSortAgingReport
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -159,7 +161,7 @@ const PrimaryTable = ({
     key: number;
     direction: "asc" | "desc";
   } | null>(null);
-
+  console.log("headers", headers);
   const handleRowSelection = (rowIndex: number) => {
     setSelectedRows((prevSelectedRows) => {
       const newSelectedRows = new Set(prevSelectedRows);
@@ -192,17 +194,17 @@ const PrimaryTable = ({
     variant === "ClassicTable"
       ? ClassicTableCell
       : variant === "RoundTable"
-      ? RoundTableCell
-      : PrimaryTableCell;
+        ? RoundTableCell
+        : PrimaryTableCell;
 
   const TableRow =
     variant === "ClassicTable"
       ? ClassicTableRow
       : variant === "OddEvenTable"
-      ? OddEvenTableRow
-      : variant === "RoundTable"
-      ? RoundTableRow
-      : PrimaryTableRow;
+        ? OddEvenTableRow
+        : variant === "RoundTable"
+          ? RoundTableRow
+          : PrimaryTableRow;
 
   // Sorting logic
   const sortedRows = useMemo(() => {
@@ -217,7 +219,7 @@ const PrimaryTable = ({
       return 0;
     });
   }, [rows, sortConfig]);
-  
+
   const handleSort = (index: number) => {
     setSortConfig((prev) => {
       if (prev?.key === index) {
@@ -283,9 +285,9 @@ const PrimaryTable = ({
                       alignItems: "center",
                     }}
                   >
-                    {header}
+                    {isAgingeport ? header?.name : header}
                     {/* Show sorting icon only when it's the sorted header */}
-                    {withSort && header !== "" && sortConfig?.key === index && (
+                    {withSort && isAgingeport ? header?.name : header !== "" && sortConfig?.key === index && (
                       <IconButton
                         size="small"
                         style={{ ...adaptMarginRight(dir, 4) }}
@@ -297,6 +299,17 @@ const PrimaryTable = ({
                         )}
                       </IconButton>
                     )}
+                    {
+                      isAgingeport && (header?.key === "cardName" || header?.key === "cardCode" || header?.key === "balanceDue") && (
+                        <IconButton
+                          size="small"
+                          style={{ ...adaptMarginRight(dir, 4) }}
+                          onClick={() => handleSortAgingReport(header?.key)}
+                        >
+                          <ArrowUpward sx={{ fontSize: "18px" }} />
+                        </IconButton>
+                      )
+                    }
                   </div>
                 </TableCell>
               ))}
@@ -309,9 +322,11 @@ const PrimaryTable = ({
                 key={`row_${rowIndex}`}
                 style={{
                   backgroundColor:
-                    isLastItemTotal && rowIndex === rows.length - 1
-                      ? "#EFDDFF"
-                      : "inherit",
+                    isAgingeport && row[0] != ""
+                      ? "#EBECFF"
+                      : isLastItemTotal && rowIndex === rows.length - 1
+                        ? "#EFDDFF"
+                        : "inherit",
                 }}
               >
                 {enableCheckboxes && (
