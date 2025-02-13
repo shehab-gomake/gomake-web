@@ -45,8 +45,15 @@ const useAgingReport = () => {
     const containsNumber = /\d/.test(header.key);
     return containsNumber ? header.name : t(`reports.${header.key}`);
   });
-  console.log("tableHeader", tableHeader);
   const dateRef = useRef(null);
+  const [orderBy, setOrderBy] = useState<string>("cardCode");
+  const [isDescOrder, setIsDescOrder] = useState<boolean>(false);
+
+  const handleSortAgingReport = (key: string) => {
+    setOrderBy(key);
+    setIsDescOrder(!isDescOrder);
+    getAgingReportFilter(detailedReport, key, isDescOrder);
+  };
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
@@ -222,6 +229,8 @@ const useAgingReport = () => {
           agentId: agent?.id,
           byCreationDate: byReferenceDate,
           expendedReport: detailedReport,
+          orderBy,
+          isDescOrder
         },
       },
       true,
@@ -237,6 +246,8 @@ const useAgingReport = () => {
     customer,
     selectDate,
     byReferenceDate,
+    orderBy,
+    isDescOrder
   ]);
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
@@ -361,7 +372,8 @@ const useAgingReport = () => {
     isFetching,
     tableData,
     tableHeader,
-    getAgingReportFilter
+    getAgingReportFilter,
+    handleSortAgingReport
   };
 };
 

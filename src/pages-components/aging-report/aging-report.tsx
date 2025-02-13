@@ -43,15 +43,10 @@ const AgingReportWidget = () => {
     onClickOpenCustomerModal, // New handler
     isFetching,
     tableHeader,
-    getAgingReportFilter
+    handleSortAgingReport
   } = useAgingReport();
   const { classes } = useStyle();
-  const [sortAgingReport, setSortAgingReport] = useState<boolean>(false);
 
-  const handleSortAgingReport = (key: string) => {
-    setSortAgingReport(!sortAgingReport);
-    getAgingReportFilter(detailedReport, key, sortAgingReport);
-  };
 
   return (
     <div style={classes.mainContainer}>
