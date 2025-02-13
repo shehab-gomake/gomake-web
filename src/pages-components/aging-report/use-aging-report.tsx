@@ -49,7 +49,7 @@ const useAgingReport = () => {
   });
   const dateRef = useRef(null);
   const [orderBy, setOrderBy] = useState<string>("cardCode");
-  const [isDescOrder, setIsDescOrder] = useState<boolean>(false);
+  const [isDescOrder, setIsDescOrder] = useState<boolean>(true);
 
   const handleSortAgingReport = (key: string) => {
     setOrderBy(key);
@@ -85,6 +85,8 @@ const useAgingReport = () => {
     (onClickOpenCustomerModal) => {
       return tableData?.flatMap((data: any) => {
         const rows = [];
+
+        // Main row without totals
         const mainRow = tableHeader.map((header: any) => {
           const nestedKey = header.key;
           const value = nestedKey
@@ -102,24 +104,16 @@ const useAgingReport = () => {
             );
           }
 
-          if (Array.isArray(value)) {
-            return value.map((item: any) => {
-              return tableHeader.map((nestedHeader: any) => {
-                const nestedValue = nestedHeader.key
-                  .split(".")
-                  .reduce((acc, part) => acc && acc[part], item);
-                return nestedValue || "";
-              });
-            });
+          // Hide total values in the main row
+          if (["balanceDue", "_0to30", "_31to60", "_61to90", "_91to120", "_120plus"].includes(nestedKey)) {
+            return "";
           }
-          else if (typeof value === "object" && value !== null) {
-            return Object.entries(value)
-              .map(([key, val]) => `${key}: ${val}`)
-              .join(", ");
-          } else {
-            return value || "";
-          }
+
+          return value || "";
         });
+        rows.push(mainRow);
+
+        // Add detailed rows
         if (Array.isArray(data.data) && detailedReport) {
           rows.push(
             ...data.data.map((nestedItem: any) => {
@@ -144,7 +138,7 @@ const useAgingReport = () => {
                       documentPath = "purchaseInvoiceRefunds";
                       break;
                     default:
-                      documentPath = null; // or you can use an empty string ''
+                      documentPath = null;
                   }
                   return (
                     <>
@@ -166,9 +160,7 @@ const useAgingReport = () => {
                   );
                 }
                 if (header.key === "type") {
-                  return (
-                    getDocumentTypeName(t, nestedItem?.docType)
-                  );
+                  return getDocumentTypeName(t, nestedItem?.docType);
                 }
                 return nestedValue || "";
               });
@@ -176,7 +168,16 @@ const useAgingReport = () => {
           );
         }
 
-        rows.push(mainRow);
+        // Add totals row
+        const totalsRow = tableHeader.map((header: any, index: number) => {
+          if (index === 0) return " "; // Add "isTotal" to the first column
+          const nestedKey = header.key;
+          if (["balanceDue", "_0to30", "_31to60", "_61to90", "_91to120", "_120plus"].includes(nestedKey)) {
+            return data[nestedKey] || "";
+          }
+          return "";
+        });
+        rows.push(totalsRow);
 
         return rows;
       });
@@ -407,7 +408,8 @@ const useAgingReport = () => {
     tableData,
     tableHeader,
     getAgingReportFilter,
-    handleSortAgingReport
+    handleSortAgingReport,
+    isDescOrder
   };
 };
 
