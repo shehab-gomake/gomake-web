@@ -149,7 +149,12 @@ const RightSideWidget = ({
     );
   }, [currentProductItemValueTotalPrice]);
 
-
+  const roundPrice = (price)=>{
+    if(price && !isNaN(price) ){
+      return price.toFixed(3);
+    }
+    return price;
+  }
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -236,7 +241,7 @@ const RightSideWidget = ({
                 </span>
                 <GomakeTextInput
                   direction={direction}
-                  value={sliderCurrentProductItemValueTotalPrice ?? "---------"}
+                  value={roundPrice(sliderCurrentProductItemValueTotalPrice) ?? "---------"}
                   onBlur={(e: any) => {
                     if (currentProductItemValueTotalPrice > 0) {
                       const inputValue = Number(e.target.value);
@@ -319,7 +324,7 @@ const RightSideWidget = ({
               {t("products.offsetPrice.admin.includeVAT")}:{" "}
               {!isRTL && systemCurrency}
               <input
-                value={priceIncludeVat}
+                value={roundPrice(priceIncludeVat)}
                 // type="number"
                 onChange={(e) => {
                   const newPriceIncludeVat = e.target.value;
