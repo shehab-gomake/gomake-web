@@ -14,6 +14,8 @@ import { useSetRecoilState } from "recoil";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { getAndSetClientTypes } from "@/services/hooks";
+import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
+import { DocumentsTypeReportList } from "@/enums";
 
 const useAgingReport = () => {
   const { t } = useTranslation();
@@ -127,13 +129,45 @@ const useAgingReport = () => {
                   .split(".")
                   .reduce((acc, part) => acc && acc[part], nestedItem);
                 if (header.key === "docNumber") {
+                  let documentPath;
+                  switch (nestedItem?.docType) {
+                    case DocumentsTypeReportList.Invoice:
+                      documentPath = "invoices";
+                      break;
+                    case DocumentsTypeReportList.InvoiceRefund:
+                      documentPath = "invoiceRefunds";
+                      break;
+                    case DocumentsTypeReportList.PurchaseInvoice:
+                      documentPath = "purchaseInvoices";
+                      break;
+                    case DocumentsTypeReportList.PurchaseInvoiceRefund:
+                      documentPath = "purchaseInvoiceRefunds";
+                      break;
+                    default:
+                      documentPath = null; // or you can use an empty string ''
+                  }
                   return (
-                    <div
-                      style={{ cursor: "pointer" }}
-                      onClick={() => console.log(nestedItem.docNumber)}
-                    >
-                      {nestedValue || ""}
-                    </div>
+                    <>
+                      {documentPath ? (
+                        <a
+                          style={{
+                            cursor: "pointer",
+                            color: "inherit",
+                            textDecoration: "unset",
+                          }}
+                          href={`/${documentPath}?documentNumber=${nestedValue}`}
+                        >
+                          {nestedValue}
+                        </a>
+                      ) : (
+                        <span>{nestedValue}</span>
+                      )}
+                    </>
+                  );
+                }
+                if (header.key === "type") {
+                  return (
+                    getDocumentTypeName(t, nestedItem?.docType)
                   );
                 }
                 return nestedValue || "";
