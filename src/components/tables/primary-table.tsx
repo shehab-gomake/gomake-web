@@ -150,6 +150,7 @@ const PrimaryTable = ({
   enableCheckboxes = false,
   onSelectionChange,
   rowCheckboxCondition = () => true,
+  handleSortAgingReport
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -160,7 +161,7 @@ const PrimaryTable = ({
     key: number;
     direction: "asc" | "desc";
   } | null>(null);
-
+  console.log("headers", headers);
   const handleRowSelection = (rowIndex: number) => {
     setSelectedRows((prevSelectedRows) => {
       const newSelectedRows = new Set(prevSelectedRows);
@@ -284,9 +285,9 @@ const PrimaryTable = ({
                       alignItems: "center",
                     }}
                   >
-                    {header}
+                    {isAgingeport ? header?.name : header}
                     {/* Show sorting icon only when it's the sorted header */}
-                    {withSort && header !== "" && sortConfig?.key === index && (
+                    {withSort && isAgingeport ? header?.name : header !== "" && sortConfig?.key === index && (
                       <IconButton
                         size="small"
                         style={{ ...adaptMarginRight(dir, 4) }}
@@ -298,6 +299,17 @@ const PrimaryTable = ({
                         )}
                       </IconButton>
                     )}
+                    {
+                      isAgingeport && (header?.key === "cardName" || header?.key === "cardCode" || header?.key === "balanceDue") && (
+                        <IconButton
+                          size="small"
+                          style={{ ...adaptMarginRight(dir, 4) }}
+                          onClick={() => handleSortAgingReport(header?.key)}
+                        >
+                          <ArrowUpward sx={{ fontSize: "18px" }} />
+                        </IconButton>
+                      )
+                    }
                   </div>
                 </TableCell>
               ))}

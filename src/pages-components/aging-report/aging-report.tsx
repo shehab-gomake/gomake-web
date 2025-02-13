@@ -8,6 +8,7 @@ import { HeaderTitle } from "@/widgets/header-title/header-title";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { isValidCustomer } from "@/utils/helpers";
+import { useState } from "react";
 
 const AgingReportWidget = () => {
   const {
@@ -41,8 +42,16 @@ const AgingReportWidget = () => {
     setCustomerForEdit,
     onClickOpenCustomerModal, // New handler
     isFetching,
+    tableHeader,
+    getAgingReportFilter
   } = useAgingReport();
   const { classes } = useStyle();
+  const [sortAgingReport, setSortAgingReport] = useState<boolean>(false);
+
+  const handleSortAgingReport = (key: string) => {
+    setSortAgingReport(!sortAgingReport);
+    getAgingReportFilter(detailedReport, key, sortAgingReport);
+  };
 
   return (
     <div style={classes.mainContainer}>
@@ -84,11 +93,13 @@ const AgingReportWidget = () => {
       {showTable && (
         <PrimaryTable
           rows={getTableDataRows(onClickOpenCustomerModal)} // Pass handler here
-          headers={transformedHeaders}
+          headers={detailedReport ? tableHeader : transformedHeaders}
           maxHeight={"100vh"}
           stickyHeader={true}
           variant={detailedReport ? "PrimaryTable " : "OddEvenTable"}
           isAgingeport={detailedReport}
+          handleSortAgingReport={handleSortAgingReport}
+
         />
       )}
 

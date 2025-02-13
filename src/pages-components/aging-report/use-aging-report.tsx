@@ -45,7 +45,7 @@ const useAgingReport = () => {
     const containsNumber = /\d/.test(header.key);
     return containsNumber ? header.name : t(`reports.${header.key}`);
   });
-
+  console.log("tableHeader", tableHeader);
   const dateRef = useRef(null);
 
   const handleDateChange = (value) => {
@@ -156,7 +156,7 @@ const useAgingReport = () => {
   };
 
   const getAgingReportFilter = useCallback(
-    async (expendedReport = false) => {
+    async (expendedReport = false, orderBy?, isDescOrder?) => {
       if (!fromDate || !toDate) {
         alertFault("alerts.pleaseEnsureDatesSelected");
         return;
@@ -175,10 +175,9 @@ const useAgingReport = () => {
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
           byCreationDate: byReferenceDate,
-          // expendedReport: detailedReport,
           expendedReport: expendedReport,
-          // orderBy: "balanceDue", //balanceDue  cardCode    cardName
-          // isDescOrder: true
+          orderBy, //balanceDue  cardCode    cardName
+          isDescOrder
         }
       );
       if (res?.success) {
@@ -362,6 +361,7 @@ const useAgingReport = () => {
     isFetching,
     tableData,
     tableHeader,
+    getAgingReportFilter
   };
 };
 
