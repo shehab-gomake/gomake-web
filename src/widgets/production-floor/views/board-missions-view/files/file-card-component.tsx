@@ -143,32 +143,34 @@ const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
           {isLoading ? (
             <DotsLoader />
           ) : (
-            <ClickOutside onClick={() => setOpen(false)} exceptionRef={menuRef}>
-              <IconButton
-                onClick={() => setOpen(!open)}
-                sx={{ height: 22, width: 22, alignSelf: "center" }}
-                size="small"
-              >
-                <MoreVertIcon sx={{ width: 20, height: 20 }} />
-              </IconButton>
-            </ClickOutside>
+            // <ClickOutside onClick={() => setOpen(false)} exceptionRef={menuRef}>
+            <IconButton
+              onClick={() => setOpen(!open)}
+              sx={{ height: 22, width: 22, alignSelf: "center" }}
+              size="small"
+            >
+              <MoreVertIcon sx={{ width: 20, height: 20 }} />
+            </IconButton>
+            // </ClickOutside>
           )}
         </Stack>
         {!!open && !isLoading && (
-          <Paper
-            ref={menuRef}
-            sx={{
-              zIndex: 99999999999,
-              position: "absolute",
-              [direction === "rtl" ? "left" : "right"]: "6px",
-              top: "calc(100% - 10px)",
-            }}
-          >
-            <MenuItem onClick={onClickDownload}>
-              {t("translations.download")}
-            </MenuItem>
-            <MenuItem onClick={onClickDelete}>{t("modal.delete")}</MenuItem>
-          </Paper>
+          <ClickOutside onClick={() => setOpen(false)} exceptionRef={menuRef}>
+            <Paper
+              ref={menuRef}
+              sx={{
+                zIndex: 99999999999,
+                position: "absolute",
+                [direction === "rtl" ? "left" : "right"]: "6px",
+                top: "calc(100% - 10px)",
+              }}
+            >
+              <MenuItem onClick={onClickDownload}>
+                {t("translations.download")}
+              </MenuItem>
+              <MenuItem onClick={onClickDelete}>{t("modal.delete")}</MenuItem>
+            </Paper>
+          </ClickOutside>
         )}
       </Card>
     </div>
