@@ -105,7 +105,7 @@ const useAgingReport = () => {
           }
 
           // Hide total values in the main row
-          if (["balanceDue", "_0to30", "_31to60", "_61to90", "_91to120", "_120plus"].includes(nestedKey)) {
+          if (["balanceDue", "_0to30", "_31to60", "_61to90", "_91to120", "_120plus"].includes(nestedKey) && detailedReport) {
             return "";
           }
 
@@ -169,15 +169,17 @@ const useAgingReport = () => {
         }
 
         // Add totals row
-        const totalsRow = tableHeader.map((header: any, index: number) => {
-          if (index === 0) return " "; // Add "isTotal" to the first column
-          const nestedKey = header.key;
-          if (["balanceDue", "_0to30", "_31to60", "_61to90", "_91to120", "_120plus"].includes(nestedKey)) {
-            return data[nestedKey] || "";
-          }
-          return "";
-        });
-        rows.push(totalsRow);
+        if (detailedReport) {
+          const totalsRow = tableHeader.map((header: any, index: number) => {
+            if (index === 0) return " "; // Add "isTotal" to the first column
+            const nestedKey = header.key;
+            if (["balanceDue", "_0to30", "_31to60", "_61to90", "_91to120", "_120plus"].includes(nestedKey)) {
+              return data[nestedKey] || "";
+            }
+            return "";
+          });
+          rows.push(totalsRow);
+        }
 
         return rows;
       });
