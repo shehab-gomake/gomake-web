@@ -81,9 +81,10 @@ const apiRequest = async (
     return {
       success: false,
       status: err?.response?.status,
-      message: err?.response?.data?.message,
-      errors: err?.response?.data?.error?.error,
-      msg: err?.response?.data?.msg,
+      message: err?.response?.data?.error?.ErrorMessage,
+      errors: err?.response?.data?.error,
+      msg: err?.response?.data?.message,
+      statusCode: err?.response?.data?.error?.statusCode,
     };
   }
 };
