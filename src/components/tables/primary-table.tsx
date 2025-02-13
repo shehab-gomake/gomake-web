@@ -154,6 +154,7 @@ const PrimaryTable = ({
   handleSortAgingReport,
   isDescOrder
 }: ITableProps) => {
+  console.log("rows", rows);
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
@@ -327,8 +328,8 @@ const PrimaryTable = ({
                 key={`row_${rowIndex}`}
                 style={{
                   backgroundColor:
-                    isAgingeport && isAgingDetailedReport && row[0] != ""
-                      ? "#EAECF0"
+                    isAgingeport && isAgingDetailedReport && row[0] == " "
+                      ? "#F6F6F6"
                       : isLastItemTotal && rowIndex === rows.length - 1
                         ? "#EFDDFF"
                         : "inherit",
