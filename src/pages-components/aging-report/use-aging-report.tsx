@@ -14,6 +14,8 @@ import { useSetRecoilState } from "recoil";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { getAndSetClientTypes } from "@/services/hooks";
+import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
+import { DocumentsTypeReportList } from "@/enums";
 
 const useAgingReport = () => {
   const { t } = useTranslation();
@@ -37,7 +39,6 @@ const useAgingReport = () => {
   const [tableData, setTableData] = useState<any>([]);
   const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
   const [toDate, setToDate] = useState<Date>(endOfToday());
-
   // New states and logic for handling customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
@@ -46,8 +47,15 @@ const useAgingReport = () => {
     const containsNumber = /\d/.test(header.key);
     return containsNumber ? header.name : t(`reports.${header.key}`);
   });
-
   const dateRef = useRef(null);
+  const [orderBy, setOrderBy] = useState<string>("cardCode");
+  const [isDescOrder, setIsDescOrder] = useState<boolean>(true);
+
+  const handleSortAgingReport = (key: string) => {
+    setOrderBy(key);
+    setIsDescOrder(!isDescOrder);
+    getAgingReportFilter(detailedReport, key, isDescOrder);
+  };
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
@@ -77,6 +85,8 @@ const useAgingReport = () => {
     (onClickOpenCustomerModal) => {
       return tableData?.flatMap((data: any) => {
         const rows = [];
+
+        // Main row without totals
         const mainRow = tableHeader.map((header: any) => {
           const nestedKey = header.key;
           const value = nestedKey
@@ -94,26 +104,16 @@ const useAgingReport = () => {
             );
           }
 
-          if (Array.isArray(value)) {
-            return value.map((item: any) => {
-              return tableHeader.map((nestedHeader: any) => {
-                const nestedValue = nestedHeader.key
-                  .split(".")
-                  .reduce((acc, part) => acc && acc[part], item);
-                return nestedValue || "";
-              });
-            });
-          } else if (typeof value === "object" && value !== null) {
-            return Object.entries(value)
-              .map(([key, val]) => `${key}: ${val}`)
-              .join(", ");
-          } else {
-            return value || "";
+          // Hide total values in the main row
+          if (["balanceDue", "_0to30", "_31to60", "_61to90", "_91to120", "_120plus"].includes(nestedKey)) {
+            return "";
           }
-        });
 
+          return value || "";
+        });
         rows.push(mainRow);
 
+        // Add detailed rows
         if (Array.isArray(data.data) && detailedReport) {
           rows.push(
             ...data.data.map((nestedItem: any) => {
@@ -122,18 +122,68 @@ const useAgingReport = () => {
                 const nestedValue = header.key
                   .split(".")
                   .reduce((acc, part) => acc && acc[part], nestedItem);
+                if (header.key === "docNumber") {
+                  let documentPath;
+                  switch (nestedItem?.docType) {
+                    case DocumentsTypeReportList.Invoice:
+                      documentPath = "invoices";
+                      break;
+                    case DocumentsTypeReportList.InvoiceRefund:
+                      documentPath = "invoiceRefunds";
+                      break;
+                    case DocumentsTypeReportList.PurchaseInvoice:
+                      documentPath = "purchaseInvoices";
+                      break;
+                    case DocumentsTypeReportList.PurchaseInvoiceRefund:
+                      documentPath = "purchaseInvoiceRefunds";
+                      break;
+                    default:
+                      documentPath = null;
+                  }
+                  return (
+                    <>
+                      {documentPath ? (
+                        <a
+                          style={{
+                            cursor: "pointer",
+                            color: "inherit",
+                            textDecoration: "unset",
+                          }}
+                          href={`/${documentPath}?documentNumber=${nestedValue}`}
+                        >
+                          {nestedValue}
+                        </a>
+                      ) : (
+                        <span>{nestedValue}</span>
+                      )}
+                    </>
+                  );
+                }
+                if (header.key === "type") {
+                  return getDocumentTypeName(t, nestedItem?.docType);
+                }
                 return nestedValue || "";
               });
             })
           );
         }
 
+        // Add totals row
+        const totalsRow = tableHeader.map((header: any, index: number) => {
+          if (index === 0) return " "; // Add "isTotal" to the first column
+          const nestedKey = header.key;
+          if (["balanceDue", "_0to30", "_31to60", "_61to90", "_91to120", "_120plus"].includes(nestedKey)) {
+            return data[nestedKey] || "";
+          }
+          return "";
+        });
+        rows.push(totalsRow);
+
         return rows;
       });
     },
     [tableData, tableHeader, detailedReport]
   );
-
   const onClickBtn1 = () => {
     setShowTable(false);
     getAgingReportFilter(detailedReport);
@@ -148,7 +198,7 @@ const useAgingReport = () => {
   };
 
   const getAgingReportFilter = useCallback(
-    async (expendedReport = false) => {
+    async (expendedReport = false, orderBy?, isDescOrder?) => {
       if (!fromDate || !toDate) {
         alertFault("alerts.pleaseEnsureDatesSelected");
         return;
@@ -167,8 +217,9 @@ const useAgingReport = () => {
           referDate: selectDate ? selectDate : new Date(),
           agentId: agent?.id,
           byCreationDate: byReferenceDate,
-          // expendedReport: detailedReport,
           expendedReport: expendedReport,
+          orderBy, //balanceDue  cardCode    cardName
+          isDescOrder
         }
       );
       if (res?.success) {
@@ -213,6 +264,8 @@ const useAgingReport = () => {
           agentId: agent?.id,
           byCreationDate: byReferenceDate,
           expendedReport: detailedReport,
+          orderBy,
+          isDescOrder
         },
       },
       true,
@@ -228,6 +281,8 @@ const useAgingReport = () => {
     customer,
     selectDate,
     byReferenceDate,
+    orderBy,
+    isDescOrder
   ]);
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
@@ -350,6 +405,11 @@ const useAgingReport = () => {
     setCustomerForEdit,
     onClickOpenCustomerModal, // Expose the function
     isFetching,
+    tableData,
+    tableHeader,
+    getAgingReportFilter,
+    handleSortAgingReport,
+    isDescOrder
   };
 };
 
