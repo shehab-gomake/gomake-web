@@ -222,6 +222,7 @@ const RightSideWidget = ({
               options={combinedData}
               onChange={handleProductChange}
               placeholder={t("home.admin.selectProductOrMaterial")}
+              isRequired={false}
             />
           </div>
         </div>
