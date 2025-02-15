@@ -17,8 +17,12 @@ import { useStyle } from "./style";
 import CheckIcon from "@mui/icons-material/Check";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { TreeSelect, TreeSelectProps } from "antd";
-const StyledTreeSelect = styled(TreeSelect)(
-  ({ theme, dir, selectedOption }: any) => ({
+import {TextareaProps} from "@mui/joy";
+interface IsSS extends TreeSelectProps {
+    
+}
+const StyledTreeSelect = styled<any>(TreeSelect)(
+  ({ theme, dir, selectedOption,value,isRequired }: any) => ({
     boxSizing: "border-box",
     borderRadius: "4px",
     height: "40px",
@@ -34,7 +38,7 @@ const StyledTreeSelect = styled(TreeSelect)(
     fontWeight: 500,
     lineHeight: "20px",
     border: "transparent !important",
-    borderBottom: selectedOption
+    borderBottom: !isRequired ? "unset !important" : value
       ? "2px solid rgb(67,195,232) !important"
       : "2px solid rgb(237, 2, 140) !important",
     "& .ant-select-selector": {
@@ -99,12 +103,14 @@ const GoMakeTreeSelect = ({
   options,
   placeholder,
   style,
+  isRequired,  
   ...props
 }: {
   value?: any;
   onChange?: (e: { value: any }) => void;
   options: any[];
   placeholder?: string;
+  isRequired?: boolean;
   style?: React.CSSProperties;
 }) => {
   const router = useRouter();
@@ -283,6 +289,7 @@ const GoMakeTreeSelect = ({
         key={"ProductSelect"}
         showSearch
         style={{ width: "100%" }}
+        isRequired={isRequired}
         value={value?.id}
         dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
         placeholder={t("modal.pleaseSelect")}

@@ -156,6 +156,7 @@ const QuoteWidget = ({ isAdmin = true }) => {
             options={combinedData}
             onChange={handleProductChange}
             placeholder={t("home.admin.selectProductOrMaterial")}
+            isRequired={true}
           />
         </div>
       </div>
