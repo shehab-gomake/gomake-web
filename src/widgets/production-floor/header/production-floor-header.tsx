@@ -19,7 +19,7 @@ import { Source } from "@/widgets/production-floor/filters/select/actions-select
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
-const ProductionFloorHeader = ({ filterGroups, setFilterGroups }: any) => {
+const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: any) => {
   const {
     view,
     setView,
@@ -31,7 +31,7 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups }: any) => {
     currentPathIndex,
     onStationsChange,
     useUpdateViewInUrl,
-  } = useProductionFloorHeader();
+  } = useProductionFloorHeader(connectionId);
   const { t } = useTranslation();
   const dir = t("direction");
   const updateViewInUrl = useUpdateViewInUrl();

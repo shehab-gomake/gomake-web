@@ -265,7 +265,11 @@ const useProductionFloorData = () => {
                         inProcessCount: group?.inProcessCount,
                     })
                 );
-                setFilterGroups(filterGroupsList);
+                const allGroupViewFilter:IFilterGroupsList = {
+                    id:"all",
+                    name:"all"
+                }
+                setFilterGroups([allGroupViewFilter,...filterGroupsList]);
             }
         };
         await getAllBoardMissionStationFilterGroupsApi(callApi, callBack).then();

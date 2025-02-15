@@ -8,4 +8,5 @@ export interface IProductionStatus {
   backgroundColor: string;
   checked?: boolean;
   count?: number;
+  isGroup?: boolean;
 }

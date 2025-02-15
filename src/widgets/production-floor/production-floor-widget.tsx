@@ -85,11 +85,13 @@ const ProductionFloorWidget = () => {
       <ProductionFloorHeader
         filterGroups={filterGroups}
         setFilterGroups={setFilterGroups}
+        connectionId={connectionId}
       />
       {view !== EProductionFloorView.DASHBOARD && (
         <ProductionFloorFilters
           filterGroups={filterGroups}
           getStationFilterGroups={getStationFilterGroups}
+          connectionId={connectionId}
         />
       )}
       <Stack overflow={"auto"} maxHeight={"100%"}>

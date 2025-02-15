@@ -14,7 +14,7 @@ import {
 } from "@/widgets/production-floor/interfaces/filters";
 import { setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
+import { boardsMissionsState,jobsStatusesState } from "@/widgets/production-floor/state/boards";
 import {
   EProductionFloorView,
   productionFloorViewState,
@@ -26,7 +26,7 @@ import { productionFloorPathsState } from "@/widgets/production-floor/state/prod
 import { useTranslation } from "react-i18next";
 import { selectedChipIdsState } from "../state/text-search";
 import {
-  deleteStationFilterByGroupIdApi,
+  deleteStationFilterByGroupIdApi, getJobsByGroups,
   getStationFilterByGroupIdApi,
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { selectedGroupIdState } from "../state/filter-group";
@@ -39,10 +39,12 @@ interface onStationsChangeProps {
 
 interface IUseProductionFloorFiltersProps {
   getStationFilterGroups?: any;
+  connectionId: string;
 }
 
 const useProductionFloorFilters = ({
   getStationFilterGroups,
+  connectionId
 }: IUseProductionFloorFiltersProps) => {
   const [filtersState, setFiltersState] = useRecoilState(
     productionFloorFiltersState
@@ -53,6 +55,7 @@ const useProductionFloorFilters = ({
   const setTags = useSetRecoilState(tagsState);
   const { callApi } = useGomakeAxios();
   const [data, setData] = useRecoilState(boardsMissionsState);
+  const [jobsStatuses, setJobsStatuses] = useRecoilState(jobsStatusesState);
   const setView = useSetRecoilState(productionFloorViewState);
   const { push } = useRouter();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
@@ -277,6 +280,27 @@ const useProductionFloorFilters = ({
   };
 
   const getStationFilterGroupById = async (id) => {
+    if(id === "all"){
+      const callBack = (res) => {
+        if (res.success) {
+          setData(res?.data?.boardMissionsCollections);
+          //setFilters(res?.data?.filter);
+          setJobsStatuses(res?.data?.boardMissionStatuses);
+          setSelectedGroupId(id);
+          setTags(res?.data?.automatedTagsFilter);
+          setUserGroups(res?.data?.groups);
+          setPath(res?.data?.path ? res?.data?.path : []);
+          //alertSuccessGetData();
+        }
+      }
+      await getJobsByGroups( 
+          callApi,
+          callBack,
+          connectionId,
+          false,
+          null)
+      return;
+    }
     const callBack = (res) => {
       if (res.success) {
         onStationsChange({ stations: res?.data?.stations, groupId: id });

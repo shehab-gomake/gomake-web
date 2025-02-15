@@ -221,7 +221,7 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 });
 
-const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
+const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups ,connectionId}) => {
   const { classes } = useStyle();
   const { push } = useRouter();
   const { tagsList } = filtersInputs();
@@ -256,7 +256,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     handleDeleteConfirm,
     handleCancel,
     handleClearClick,
-  } = useProductionFloorFilters({ getStationFilterGroups });
+  } = useProductionFloorFilters({ getStationFilterGroups:getStationFilterGroups,connectionId:connectionId });
 
   useEffect(() => {
     const fetchMachinesColors = async () => {
