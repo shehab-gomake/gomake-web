@@ -155,7 +155,13 @@ const RightSideWidget = ({
         price = Number(price);
       }
       if(price && !isNaN(price) && typeof price === "number" ){
-        return price.toFixed(3);
+        let roundedPrice = price.toFixed(3);
+        let arr = roundedPrice.split(".");
+        let decimalPart = Number(arr[1]);
+        if(!decimalPart){
+          return arr[0];
+        }
+        return roundedPrice;
       }
       return price;
     }catch (e){
