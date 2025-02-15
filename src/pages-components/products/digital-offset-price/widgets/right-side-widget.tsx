@@ -150,10 +150,17 @@ const RightSideWidget = ({
   }, [currentProductItemValueTotalPrice]);
 
   const roundPrice = (price)=>{
-    if(price && !isNaN(price) ){
-      return price.toFixed(3);
+    try{
+      if (typeof price === "string"){
+        price = Number(price);
+      }
+      if(price && !isNaN(price) && typeof price === "number" ){
+        return price.toFixed(3);
+      }
+      return price;
+    }catch (e){
+      return price;
     }
-    return price;
   }
   return (
     <div style={clasess.rightSideMainContainer}>
@@ -309,14 +316,14 @@ const RightSideWidget = ({
             <div style={clasess.orderContainer}>
               {t("products.offsetPrice.admin.orderToral", {
                 prieceNum: quantity?.values[0],
-                price: isNaN(
-                  sliderCurrentProductItemValueTotalPrice / quantity?.values[0]
+                price: roundPrice(isNaN(
+                    sliderCurrentProductItemValueTotalPrice / quantity?.values[0]
                 )
-                  ? 0
-                  : (
-                    (sliderCurrentProductItemValueTotalPrice || 0) /
-                    (quantity?.values[0] || 1)
-                  )?.toFixed(3),
+                    ? 0
+                    : (
+                        (sliderCurrentProductItemValueTotalPrice || 0) /
+                        (quantity?.values[0] || 1)
+                    )),
                 unitPrice: systemCurrency,
               })}
             </div>
@@ -330,7 +337,7 @@ const RightSideWidget = ({
                   const newPriceIncludeVat = e.target.value;
                   setPriceIncludeVat(newPriceIncludeVat);
                   if (quantity?.values[0] && newPriceIncludeVat !== "" && newPriceIncludeVat !== null && newPriceIncludeVat !== "0") {
-                    const newTotalPrice = (Number(newPriceIncludeVat) / (1 + systemVAT)).toFixed(3);
+                    const newTotalPrice = roundPrice((Number(newPriceIncludeVat) / (1 + systemVAT)));
                     setSliderCurrentProductItemValueTotalPrice(Number(newTotalPrice));
                   }
                 }}
@@ -391,7 +398,7 @@ const RightSideWidget = ({
                 <div style={clasess.secondText}>
                   {t("products.offsetPrice.admin.lastPrice")}{" "}
                   {/* {lastProductItemValueTotalPrice} */}
-                  {lastProductItemValueTotalPrice.toFixed(3)}
+                  {roundPrice(lastProductItemValueTotalPrice)}
                 </div>
               </div>
             ) : (
