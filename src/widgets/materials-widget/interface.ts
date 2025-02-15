@@ -18,6 +18,7 @@ export interface IRowData {
   id?: string;
   isAdmin: boolean;
   onChangeRowCheckBox?: any;
+  unit?: string;
 }
 
 export interface IDynamicRowData {

@@ -57,4 +57,5 @@ export interface ICompanyProfile {
   printnodeUsername?: string;
   printnodePassword?: string;
   employeeWorkingHourCost?: string;
+  unitType?: number;
 }

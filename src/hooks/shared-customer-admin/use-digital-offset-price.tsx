@@ -93,7 +93,7 @@ import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-
 import { useMaterials } from "../use-materials";
 import { ESourceView } from "@/enums/products";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
-import {useCalculationSocketIO} from "@/hooks/socket-io/use-calculation-socket-io";
+import { useCalculationSocketIO } from "@/hooks/socket-io/use-calculation-socket-io";
 
 const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [, setOpenQuantityComponentModal] = useRecoilState<boolean>(
@@ -252,7 +252,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, []);
 
   useEffect(() => {
-    debugger
     const oldConnectionId = currentSignalRConnectionId;
     if (oldConnectionId && connectionId && connectionId !== oldConnectionId) {
       updateSignalRConnectionId(oldConnectionId, connectionId);
@@ -321,6 +320,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [subProducts]);
   const [isCanGetSelected, setIsCanGetSelected] = useState(false);
   useEffect(() => {
+    if (widgetType == EWidgetProductType.EDIT || widgetType == EWidgetProductType.DUPLICATE) {
+      setIsCanGetSelected(true);
+    }
+  }, []);
+  useEffect(() => {
     if (
       calculationResult &&
       calculationResult.productItemValueDraftId === currentCalculationSessionId &&
@@ -367,12 +371,29 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (
       result.productItemValue &&
       result.productItemValue.workFlows &&
-      result.productItemValue.workFlows.length > 0 &&
+      result.productItemValue.workFlows.length > 0
+      &&
       !(
         widgetType == EWidgetProductType.EDIT &&
         currentProductItemValueTotalPrice
       )
     ) {
+      const mySelectedWorkFlow = result.productItemValue.workFlows[0];
+      if (
+        mySelectedWorkFlow &&
+        mySelectedWorkFlow.totalPrice &&
+        mySelectedWorkFlow.totalPrice.values &&
+        !isNaN(mySelectedWorkFlow.totalPrice.values[0])
+      ) {
+        setCurrentProductItemValueTotalPrice(
+          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
+        );
+        setSliderCurrentProductItemValueTotalPrice(
+          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
+        );
+      }
+    }
+    else if ((widgetType == EWidgetProductType.EDIT || widgetType == EWidgetProductType.DUPLICATE) && productTemplate?.isHaveFixedAction) {
       const mySelectedWorkFlow = result.productItemValue.workFlows[0];
       if (
         mySelectedWorkFlow &&
@@ -1923,7 +1944,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         widgetType === EWidgetProductType.DUPLICATE
       ) {
         getAllMaterial().then((materials) => {
-          getProductQuoteItemById(materials);
+          getProductQuoteItemById(materials, router?.query?.productId);
         });
       } else {
         getAllMaterial().then((materials) => {
@@ -1932,6 +1953,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
     }
   }, [connectionId]);
+
+  useEffect(() => {
+    if (router?.query?.productId && (widgetType === EWidgetProductType.EDIT ||
+      widgetType === EWidgetProductType.DUPLICATE)) {
+      getAllMaterial().then((materials) => {
+        getProductQuoteItemById(materials, router?.query?.productId);
+      });
+    }
+  }, [router?.query?.productId]);
+  useEffect(() => {
+    if (router?.query?.productId && widgetType === EWidgetProductType.CREATE) {
+      getAllMaterial().then((materials) => {
+        getProductById(materials);
+      });
+    }
+
+  }, [router?.query?.productId])
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);
@@ -4723,7 +4761,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   };
 
-  const getProductQuoteItemById = async (materials) => {
+  const getProductQuoteItemById = async (materials, productId?) => {
     if (connectionId) {
       const callBack = (res) => {
         if (res?.success) {
@@ -4745,6 +4783,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         documentItemId: router?.query?.documentItemId,
         signalRConnectionId: connectionId,
         documentType: router?.query?.documentType,
+        productId: productId,
       });
     }
   };

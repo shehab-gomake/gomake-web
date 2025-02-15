@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { InputUpdatedValues } from "../input-updated-values";
@@ -36,12 +36,18 @@ const TotalPriceComp = ({
   };
   const [isUpdateDiscount, setIsUpdateDiscount] = useState(null);
   const [isUpdateDiscountAmount, setIsUpdateDiscountAmount] = useState(null);
+  const [previousDiscountAmount, setPreviousDiscountAmount] = useState(quoteItems?.discountAmount);
+  console.log("previousDiscountAmount", previousDiscountAmount);
+
   const onBlurDiscount = async () => {
     getCalculateQuote(DocumentCalculationType.Discount, quoteItems?.discount);
     setIsUpdateDiscount(null);
   };
   const onBlurDiscountAmount = async () => {
-    getCalculateQuote(DocumentCalculationType.DiscountAmount, quoteItems?.discountAmount);
+    if (quoteItems?.discountAmount !== previousDiscountAmount) {
+      getCalculateQuote(DocumentCalculationType.DiscountAmount, quoteItems?.discountAmount);
+      setPreviousDiscountAmount(quoteItems?.discountAmount);
+    }
     setIsUpdateDiscountAmount(null);
   };
 
@@ -58,6 +64,9 @@ const TotalPriceComp = ({
   const canUpdateDiscount = router.query.isNewCreation ? true :
     (quoteItems?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_DISCOUNT));
 
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
+
   return (
     <div style={classes.tableFooterContainer}>
       <div style={classes.firstRowForFooterContainer}>
@@ -68,12 +77,16 @@ const TotalPriceComp = ({
           style={{
             ...classes.oddRowContainer,
             width: "19%",
-            paddingLeft: 36,
+            paddingLeft: 24,
           }}
         >
-          {(quoteItems?.totalPrice) +
-            " " +
-            getCurrencyUnitText(quoteItems?.currency)}
+          {
+            isRTL ?
+              <>{(quoteItems?.totalPrice) + " " + getCurrencyUnitText(quoteItems?.currency)}</>
+              :
+              <>{getCurrencyUnitText(quoteItems?.currency) + " " + (quoteItems?.totalPrice)}</>
+          }
+
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
           {t("sales.quote.discount")}
@@ -89,7 +102,6 @@ const TotalPriceComp = ({
             />
             %
             {isQuoteConfirmation ? quoteItems?.discountAmount != 0 && `(-${quoteItems?.discountAmount + " " + quoteItems?.currency})` :
-              quoteItemValue?.discountAmount != 0 &&
               <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginLeft: 10, marginRight: 10 }}>
                 (<InputUpdatedValues
                   value={quoteItems?.discountAmount ? quoteItems?.discountAmount : 0}
@@ -104,19 +116,22 @@ const TotalPriceComp = ({
                     gap: 0,
                   }}
                   onInputChange={(e) => onInputDiscountAmount(e)}
+                  width={"150px"}
                 />)
               </div>
-
-
-
             }
+
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
           {`${t("sales.quote.vat")} (${Number(quoteItems?.vat) * 100}%)`}
         </div>
         <div style={{ ...classes.oddRowContainer, width: "23%" }}>
-          {quoteItems?.totalVAT + " " + getCurrencyUnitText(quoteItems?.currency)}
+          {isRTL ?
+            <>{quoteItems?.totalVAT + " " + getCurrencyUnitText(quoteItems?.currency)}</>
+            :
+            <>{getCurrencyUnitText(quoteItems?.currency) + " " + quoteItems?.totalVAT}</>
+          }
         </div>
       </div>
       <div style={classes.firstRowForFooterContainer}>
@@ -134,9 +149,11 @@ const TotalPriceComp = ({
           style={{
             ...classes.oddRowContainer,
             width: "87%",
+            padding: isRTL ? "12px" : "12px 24px",
           }}
         >
           <div style={classes.cellTextInputStyle}>
+            {!isRTL && getCurrencyUnitText(quoteItems?.currency)}
             <InputUpdatedValues
               value={quoteItems?.totalPayment}
               onBlur={onBlurTotalPayment}
@@ -146,9 +163,13 @@ const TotalPriceComp = ({
               speicalStyle={{
                 color: "#F135A3",
                 ...FONT_FAMILY.Inter(700, 18),
+                padding: 0,
+              }}
+              inputMainContainerStyle={{
+                gap: 0
               }}
             />
-            {getCurrencyUnitText(quoteItems?.currency)}
+            {isRTL && getCurrencyUnitText(quoteItems?.currency)}
           </div>
         </div>
       </div>
