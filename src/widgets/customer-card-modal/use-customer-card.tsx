@@ -161,22 +161,27 @@ const useCustomerCard = ({
   // in order to avoid sending an empty object that include just name & index
 
   const isNameIndexOnly = (dataObject) => {
-    const { name, index, phone, tel1, tel2, ...otherProps } = dataObject;
+    const { name, index, ...otherProps } = dataObject;
 
-    const isPhoneEmpty = [phone, tel1, tel2].every(
-      (field) =>
-        field === null ||
-        field === "" ||
-        field === " " ||
-        field === "+1" ||
-        field === undefined
-    );
+    // const processedPhone = clearPhoneNumberPrefix(phone);
+
+    // const processedTel1 = clearPhoneNumberPrefix(tel1);
+
+    // const processedTel2 = clearPhoneNumberPrefix(tel2);
+
+    // const isPhoneEmpty =
+    //   !processedPhone ||
+    //   !processedTel1 ||
+    //   !processedTel2 ||
+    //   [processedPhone, processedTel1, processedTel2].some(
+    //     (field) => field === null || field === undefined || field === ""
+    //   );
 
     const emptyProps = Object.values(otherProps)?.every(
       (prop) => prop === null || prop === "" || prop === " "
     );
 
-    return isPhoneEmpty && emptyProps;
+    return emptyProps;
   };
 
   const handleClose = () => {
