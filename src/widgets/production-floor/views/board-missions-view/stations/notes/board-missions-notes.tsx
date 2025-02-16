@@ -6,7 +6,7 @@ const BoardMissionsNotes = () => {
   const { notes } = useBoardMissionsNotes();
 
   return (
-    <Stack direction={"column"} gap={"10px"}>
+    <Stack direction={"column"}>
       {notes?.map((note, index) => (
         <BoardMissionsNote note={note} index={index} />
       ))}
