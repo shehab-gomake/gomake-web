@@ -76,7 +76,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
   }, [notebookTypesObj]);
 
   const onChangeInputs = (key, value) => {
-    setRowData({ ...rowData, [key]: value });
+    setRowData({ ...rowData, [key]: value as string });
   };
   return (
     <GoMakeModal
