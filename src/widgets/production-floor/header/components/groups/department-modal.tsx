@@ -55,6 +55,7 @@ const DepartmentModal = ({
   };
 
   const cancelAndApplyWithoutGroup = () => {
+      debugger
     setSelectedGroupId(null);
     onClickApply({ stations: [...stationFilterGroup?.stations] });
   };

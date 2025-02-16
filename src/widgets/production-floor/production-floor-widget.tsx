@@ -1,6 +1,6 @@
 import { IconButton, Stack } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
-import { useRecoilState } from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {
   EProductionFloorView,
   productionFloorViewState,
@@ -26,7 +26,7 @@ import {useProductionFloorSocketIO} from "@/hooks/socket-io/use-production-floor
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
   const { query, replace, pathname, push } = useRouter();
-  const { connectionId } = useProductionFloorSocketIO();
+  const { connectionId } = useProductionFloorSocketIO(view);
   const { groupsId, boardMissionsId, step, productType } = query;
 
   const {
@@ -34,12 +34,18 @@ const ProductionFloorWidget = () => {
     setFilterGroups,
     getStationFilterGroups,
     updateStatus,
+    setSelectedGroupId
   } = useProductionFloorData();
 
   useEffect(() => {
     getStationFilterGroups();
   }, []);
-
+  useEffect(() => {
+    debugger
+    if(view === EProductionFloorView.FILTER_GROUPS){
+      setSelectedGroupId("all");
+    }
+  }, [view]);
   useEffect(() => {
     if (!!boardMissionsId && !step) {
       replace(

@@ -3,19 +3,21 @@ import io from "socket.io-client";
 import config from "@/config";
 import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
 import {printHouseProfile} from "@/store/print-house-profile";
-import {useRecoilState, useRecoilValue} from "recoil";
-import {selectedGroupIdState} from "@/widgets/production-floor/state/filter-group";
+import { useRecoilValue} from "recoil";
+import {EProductionFloorView} from "@/widgets/production-floor/state/production-floor-view";
 
-const useProductionFloorSocketIO = () => {
+const useProductionFloorSocketIO = (view:EProductionFloorView) => {
     const [connectionId, setConnectionId] = useState<any>();
     const profile = useRecoilValue(printHouseProfile);
-    const selectedGroupId = useRecoilValue(
-        selectedGroupIdState
-    );
     const { getData,getDataByGroups } = useProductionFloorData();
     useEffect(()=>{
         const socket = io(config.api_server);
         socket.on(`UpdateBoardMissionsStation-${profile.id}`, () => {
+            debugger;
+            if(view === EProductionFloorView.FILTER_GROUPS){
+                getDataByGroups(connectionId).then();
+                return;
+            }
             getData(socket.id).then();
             
         });
@@ -26,7 +28,7 @@ const useProductionFloorSocketIO = () => {
             console.log("Closing socket connection...");
             socket.disconnect();
         };
-    },[])
+    },[view])
     return {
         connectionId,
     };

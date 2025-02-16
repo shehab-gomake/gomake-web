@@ -91,7 +91,7 @@ const useProductionFloorFilters = ({
   const [selectedChips, setSelectedChips] = useState<string[]>([]);
   const [selectedChipIds, setSelectedChipIds] =
     useRecoilState(selectedChipIdsState);
-
+  const router = useRouter();
   const setFilters = async (filters: IProductionFloorFilter) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -273,10 +273,22 @@ const useProductionFloorFilters = ({
 
   const handleSelectGroup = (groupId: string) => {
     if (selectedGroupId === groupId) {
+      debugger
       setSelectedGroupId(null);
       onStationsChange({ stations: [], groupId: null });
     } else {
-      if(selectedGroupId === "all"){
+      if(selectedGroupId === "all" && groupId !== "all") {
+        const viewName = EProductionFloorView[EProductionFloorView.TABLE].toLowerCase();
+        router.push(`/production-floor?view=${viewName}`, undefined, {
+          shallow: true,
+        });
+        setData([])
+      }
+      if(groupId === "all"){
+        const viewName = EProductionFloorView[EProductionFloorView.FILTER_GROUPS].toLowerCase();
+        router.push(`/production-floor?view=${viewName}`, undefined, {
+          shallow: true,
+        });
         setData([])
       }
       setSelectedGroupId(groupId);
@@ -305,6 +317,7 @@ const useProductionFloorFilters = ({
         getStationFilterGroups();
         if (id === selectedGroupId) {
           onStationsChange({ stations: [], groupId: null });
+          debugger
           setSelectedGroupId(null);
         }
       }
