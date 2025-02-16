@@ -329,10 +329,12 @@ const useCustomerCard = ({
     var temp = [];
     if (customer && customer.contacts) {
       temp = [...customer.contacts];
-    } else {
-      const index = temp.length + 1;
-      temp.push({ name: "", index: index });
     }
+
+    // else {
+    //   const index = temp.length + 1;
+    //   temp.push({ name: "", index: index });
+    // }
     setContacts(temp);
   };
 
@@ -375,11 +377,12 @@ const useCustomerCard = ({
     var temp = [];
     if (customer && customer.addresses) {
       temp = [...customer.addresses];
-    } else {
-      const index = temp.length + 1;
-      // temp.push({ name: "", index: index, city: " ", street: " " });
-      temp.push({ name: "", index: index });
     }
+    // else {
+    //   const index = temp.length + 1;
+    //   // temp.push({ name: "", index: index, city: " ", street: " " });
+    //   temp.push({ name: "", index: index });
+    // }
     setAddresses(temp);
   };
 
@@ -416,10 +419,12 @@ const useCustomerCard = ({
     var temp = [];
     if (customer && customer.users) {
       temp = [...customer.users];
-    } else {
-      const index = temp.length + 1;
-      temp.push({ name: "", index: index });
     }
+
+    // else {
+    //   const index = temp.length + 1;
+    //   temp.push({ name: "", index: index });
+    // }
     setUsers(temp);
   };
 
