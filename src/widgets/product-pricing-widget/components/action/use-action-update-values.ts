@@ -1,8 +1,8 @@
 import { useRecoilState, useRecoilValue} from "recoil";
 import {
     currentCalculationSessionIdState,
-    currentProductItemValueDraftId,
-    jobActionsState,
+    currentProductItemValueDraftId, currentProductItemValuePriceState,
+    jobActionsState, sliderCurrentProductItemValuePriceState,
 } from "@/widgets/product-pricing-widget/state";
 import {useEffect, useState} from "react";
 import {
@@ -36,7 +36,14 @@ const useActionUpdateValues = () => {
     const [openModalMachine,setOpenModalMachine]=useState(false);
     const [openModalMaterial,setOpenModalMaterial]=useState(false);
     const [currentCalculationSessionId, setCurrentCalculationSessionId] = useRecoilState<any>(currentCalculationSessionIdState);
-
+    const [
+        currentProductItemValueTotalPrice,
+        setCurrentProductItemValueTotalPrice,
+    ] = useRecoilState<number>(currentProductItemValuePriceState);
+    const [
+        sliderCurrentProductItemValueTotalPrice,
+        setSliderCurrentProductItemValueTotalPrice,
+    ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
     const onClickOpenModalMachine=()=>{
         setOpenModalMachine(true)
     }
@@ -122,6 +129,8 @@ const useActionUpdateValues = () => {
                     onClickOpenModalMachine()
                 }
                 else{
+                    setCurrentProductItemValueTotalPrice(null);
+                    setSliderCurrentProductItemValueTotalPrice(null); //!new
                     setCurrentCalculationSessionId(res.data.item2)
                 }
             }
@@ -137,6 +146,8 @@ const useActionUpdateValues = () => {
                 onClickOpenModalMaterial()
             }else{
                 setCurrentCalculationSessionId(res.data.item2)
+                setCurrentProductItemValueTotalPrice(null);
+                setSliderCurrentProductItemValueTotalPrice(null); //!new
                 alertSuccessUpdate()
             }
         }else {
