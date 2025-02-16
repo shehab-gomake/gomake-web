@@ -163,7 +163,6 @@ const useCustomerCard = ({
   const isNameIndexOnly = (dataObject) => {
     const { name, index, phone, tel1, tel2, ...otherProps } = dataObject;
 
-    debugger;
     const isPhoneEmpty = [phone, tel1, tel2].every(
       (field) =>
         field === null ||
