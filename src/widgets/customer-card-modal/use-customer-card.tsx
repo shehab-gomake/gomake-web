@@ -19,6 +19,9 @@ import { emailRegex } from "@/utils/regex";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { getClientsGroupstApi } from "@/services/api-service/suppliers/suppliers-endpoints";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+// import { clearPhoneNumberPrefix } from "@/utils/helpers";
+import { EPreferences } from "@/enums/prefernces";
+import { clearPhoneNumberPrefix } from "@/utils/helpers";
 
 const useCustomerCard = ({
   t,
@@ -156,12 +159,25 @@ const useCustomerCard = ({
   const { updateUserPassword } = useUserProfile();
 
   // in order to avoid sending an empty object that include just name & index
+
   const isNameIndexOnly = (dataObject) => {
-    const { name, index, ...otherProps } = dataObject;
+    const { name, index, phone, tel1, tel2, ...otherProps } = dataObject;
+
+    debugger;
+    const isPhoneEmpty = [phone, tel1, tel2].every(
+      (field) =>
+        field === null ||
+        field === "" ||
+        field === " " ||
+        field === "+1" ||
+        field === undefined
+    );
+
     const emptyProps = Object.values(otherProps)?.every(
       (prop) => prop === null || prop === "" || prop === " "
     );
-    return emptyProps;
+
+    return isPhoneEmpty && emptyProps;
   };
 
   const handleClose = () => {
