@@ -7,7 +7,7 @@ import {
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import {useRecoilState, useSetRecoilState} from "recoil";
 import {productionFloorFiltersState} from "@/widgets/production-floor/state/production-floor-filters";
-import {boardsMissionsState} from "@/widgets/production-floor/state/boards";
+import {boardsMissionsState, jobsStatusesState} from "@/widgets/production-floor/state/boards";
 import {tagsState} from "@/widgets/production-floor/state/tags";
 import {userProductionFloorGroupsState} from "@/widgets/production-floor/state/production-floor-groups-state";
 import {productionFloorPathsState} from "@/widgets/production-floor/state/production-floor-paths";
@@ -18,7 +18,7 @@ import {useState} from "react";
 import {getBoardMissionPDF} from "@/services/api-service/generic-doc/documents-api";
 import {IFilterGroupsList} from "./interfaces/borad-missions-filter-groups";
 import {
-    getAllBoardMissionStationFilterGroupsApi
+    getAllBoardMissionStationFilterGroupsApi, getJobsByGroups
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import {selectedGroupIdState} from "./state/filter-group";
 
@@ -34,12 +34,18 @@ const useProductionFloorData = () => {
     const [, setTags] = useRecoilState(tagsState);
     const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
     const [, setPath] = useRecoilState(productionFloorPathsState);
+    const [jobsStatuses, setJobsStatuses] = useRecoilState(jobsStatusesState);
+
     const {alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
-    const setSelectedGroupId = useSetRecoilState<string | null>(
+    const [selectedGroupId,setSelectedGroupId] = useRecoilState<string | null>(
         selectedGroupIdState
     );
 
     const getData = async (connectionId?: string) => {
+        if(selectedGroupId === "all"){
+            getDataByGroups(connectionId).then();
+            return ;
+        }
         const callBack = (res) => {
             if (res.success) {
                 setData(res?.data?.boardMissionsCollections);
@@ -64,13 +70,40 @@ const useProductionFloorData = () => {
             abortController
         );
     };
-
+    const getDataByGroups = async (connectionId?: string,clearData?:boolean) => {
+        if(clearData){
+            setData([])
+            setJobsStatuses([])
+        }
+        
+        const callBack = (res) => {
+            if (res.success) {
+                setData(res?.data?.boardMissionsCollections);
+                //setFilters(res?.data?.filter);
+                setJobsStatuses(res?.data?.boardMissionStatuses);
+                //setSelectedGroupId("all");
+                setTags(res?.data?.automatedTagsFilter);
+                setUserGroups(res?.data?.groups);
+                setPath(res?.data?.path ? res?.data?.path : []);
+                //alertSuccessGetData();
+            }
+        }
+        await getJobsByGroups(
+            callApi,
+            callBack,
+            connectionId,
+            false,
+            null)
+    };
     const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
         const boardsIds = boards?.filter((b) => b.statusId !== statusId);
 
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessUpdate();
+                if(selectedGroupId !== "all"){
+                    return;
+                }
                 setData(
                     data?.map((status) => {
                         if (
@@ -295,7 +328,8 @@ const useProductionFloorData = () => {
         filterGroups,
         setFilterGroups,
         getStationFilterGroups,
-        tryMoveBoardMissionsToDone
+        tryMoveBoardMissionsToDone,
+        getDataByGroups
     };
 };
 

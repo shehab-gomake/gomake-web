@@ -31,6 +31,7 @@ import {
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { selectedGroupIdState } from "../state/filter-group";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
+import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
 
 interface onStationsChangeProps {
   stations: IStation[];
@@ -55,7 +56,8 @@ const useProductionFloorFilters = ({
   const setTags = useSetRecoilState(tagsState);
   const { callApi } = useGomakeAxios();
   const [data, setData] = useRecoilState(boardsMissionsState);
-  const [jobsStatuses, setJobsStatuses] = useRecoilState(jobsStatusesState);
+  const { getDataByGroups } = useProductionFloorData();
+
   const setView = useSetRecoilState(productionFloorViewState);
   const { push } = useRouter();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
@@ -274,6 +276,9 @@ const useProductionFloorFilters = ({
       setSelectedGroupId(null);
       onStationsChange({ stations: [], groupId: null });
     } else {
+      if(selectedGroupId === "all"){
+        setData([])
+      }
       setSelectedGroupId(groupId);
       getStationFilterGroupById(groupId);
     }
@@ -281,24 +286,7 @@ const useProductionFloorFilters = ({
 
   const getStationFilterGroupById = async (id) => {
     if(id === "all"){
-      const callBack = (res) => {
-        if (res.success) {
-          setData(res?.data?.boardMissionsCollections);
-          //setFilters(res?.data?.filter);
-          setJobsStatuses(res?.data?.boardMissionStatuses);
-          setSelectedGroupId(id);
-          setTags(res?.data?.automatedTagsFilter);
-          setUserGroups(res?.data?.groups);
-          setPath(res?.data?.path ? res?.data?.path : []);
-          //alertSuccessGetData();
-        }
-      }
-      await getJobsByGroups( 
-          callApi,
-          callBack,
-          connectionId,
-          false,
-          null)
+      await getDataByGroups(connectionId,true)
       return;
     }
     const callBack = (res) => {
