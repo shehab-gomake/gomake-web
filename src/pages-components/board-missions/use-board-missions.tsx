@@ -62,6 +62,7 @@ interface Query {
   toDueDate?: string;
   fromReadyDate?: string;
   toReadyDate?: string;
+  productsIds?: string[];
 }
 
 const useBoardMissions = ({ isPurchaseJobs }) => {
@@ -234,6 +235,12 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const handleClickSearch = () => {
     const newQuery: Query = { ...router.query };
+
+    if (productIds.length > 0) {
+      newQuery.productsIds = productIds;
+    } else {
+      delete newQuery.productsIds;
+    }
 
     if (customer?.id) {
       newQuery.clientId = customer.id;
@@ -526,6 +533,53 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
       const currentFinalPatternSearch = router.query.finalPatternSearch;
       const currentPageNumber = router.query.pageNumber;
+      const currentProductionStatus = router.query.productionStatus;
+      const currentProductsIds = Array.isArray(router.query.productsIds)
+        ? router.query.productsIds
+        : router.query.productsIds
+        ? [router.query.productsIds]
+        : productIds;
+
+      const currentOrderStatus = router.query.orderStatus;
+
+      const currentFromDate = router.query.fromDate;
+      const currentToDate = router.query.toDate;
+
+      const currentFromDueDate = router.query.fromDueDate;
+      const currentToDueDate = router.query.toDueDate;
+
+      const currentFromReadyDate = router.query.fromReadyDate;
+      const currentToReadyDate = router.query.toReadyDate;
+
+      const currentFormattedFromDate =
+        typeof currentFromDate === "string"
+          ? GetDateFormat(new Date(currentFromDate))
+          : undefined;
+
+      const currentFormattedToDate =
+        typeof currentToDate === "string"
+          ? GetDateFormat(new Date(currentToDate))
+          : undefined;
+
+      const currentFormattedFromDueDate =
+        typeof currentFromDueDate === "string"
+          ? GetDateFormat(new Date(currentFromDueDate))
+          : undefined;
+
+      const currentFormattedToDueDate =
+        typeof currentToDueDate === "string"
+          ? GetDateFormat(new Date(currentToDueDate))
+          : undefined;
+
+      const currentFormattedFromReadyDate =
+        typeof currentFromReadyDate === "string"
+          ? GetDateFormat(new Date(currentFromReadyDate))
+          : undefined;
+
+      const currentFormattedToReadyDate =
+        typeof currentToReadyDate === "string"
+          ? GetDateFormat(new Date(currentToReadyDate))
+          : undefined;
 
       await setBoardMissionsFiltersApi(
         callApi,
@@ -538,26 +592,37 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             }
           : {
               clientId: customer?.id || router?.query?.clientId,
-              agentId: agent?.id,
+              agentId: agent?.id || router?.query?.agentId,
               search:
                 finalPatternSearch !== null &&
                 finalPatternSearch !== undefined &&
                 finalPatternSearch !== ""
                   ? finalPatternSearch
                   : currentFinalPatternSearch,
-              fromDate: fromDate && GetDateFormat(fromDate),
-              toDate: toDate && GetDateFormat(toDate),
 
-              fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
-              toDueDate: toDueDate && GetDateFormat(toDueDate),
+              fromDate:
+                (fromDate && GetDateFormat(fromDate)) ||
+                currentFormattedFromDate,
+              toDate:
+                (toDate && GetDateFormat(toDate)) || currentFormattedToDate,
 
-              fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
-              toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+              fromDueDate:
+                (fromDueDate && GetDateFormat(fromDueDate)) ||
+                currentFormattedFromDueDate,
+              toDueDate:
+                (toDueDate && GetDateFormat(toDueDate)) ||
+                currentFormattedToDueDate,
 
-              productsIds: productIds,
-              productionStatus: status?.value,
-              orderStatus: orderStatus?.value,
-              pageNumber: currentPageNumber || pageNumber,
+              fromReadyDate:
+                (fromReadyDate && GetDateFormat(fromReadyDate)) ||
+                currentFormattedFromReadyDate,
+              toReadyDate:
+                (toReadyDate && GetDateFormat(toReadyDate)) ||
+                currentFormattedToReadyDate,
+              productsIds: currentProductsIds,
+              productionStatus: status?.value || currentProductionStatus,
+              orderStatus: orderStatus?.value || currentOrderStatus,
+              pageNumber: pageNumber || currentPageNumber,
               pageSize: pageSize,
               orderNumber: router?.query?.orderNumber,
             }
@@ -972,7 +1037,15 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       toReadyDate,
       finalPatternSearch,
       pageNumber,
+      productsIds,
     } = router.query;
+
+    if (productsIds) {
+      const productIdsArray = Array.isArray(productsIds)
+        ? productsIds
+        : [productsIds];
+      setProductIds(productIdsArray); // Set the productsIds state if needed
+    }
 
     if (clientId) {
       setCustomer({
@@ -987,6 +1060,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       );
       setAgent(selectedAgent);
     }
+
     if (productionStatus) {
       const statusToSet = productionStatuses.find(
         (status) => status.value === Number(productionStatus)

@@ -278,6 +278,12 @@ const useAuthLayoutHook = (
             path: "/adjustments-report",
             Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
           },
+          {
+            key: "exportFiles",
+            title: "tabs.exportFiles",
+            path: "/export-files",
+            Permission: Permissions.SHOW_FINANCE,
+          },
         ],
         icon: () => {
           return <ReportsIcon />;

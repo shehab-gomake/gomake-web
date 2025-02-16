@@ -121,6 +121,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
               options={combinedData}
               onChange={handleProductChange}
               placeholder={t("home.admin.selectProductOrMaterial")}
+              isRequired={true}
             />
           ) : (
             <GenericProductInput

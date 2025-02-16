@@ -149,7 +149,25 @@ const RightSideWidget = ({
     );
   }, [currentProductItemValueTotalPrice]);
 
-
+  const roundPrice = (price)=>{
+    try{
+      if (typeof price === "string"){
+        price = Number(price);
+      }
+      if(price && !isNaN(price) && typeof price === "number" ){
+        let roundedPrice = price.toFixed(3);
+        let arr = roundedPrice.split(".");
+        let decimalPart = Number(arr[1]);
+        if(!decimalPart){
+          return arr[0];
+        }
+        return roundedPrice;
+      }
+      return price;
+    }catch (e){
+      return price;
+    }
+  }
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -210,6 +228,7 @@ const RightSideWidget = ({
               options={combinedData}
               onChange={handleProductChange}
               placeholder={t("home.admin.selectProductOrMaterial")}
+              isRequired={false}
             />
           </div>
         </div>
@@ -236,7 +255,7 @@ const RightSideWidget = ({
                 </span>
                 <GomakeTextInput
                   direction={direction}
-                  value={sliderCurrentProductItemValueTotalPrice ?? "---------"}
+                  value={roundPrice(sliderCurrentProductItemValueTotalPrice) ?? "---------"}
                   onBlur={(e: any) => {
                     if (currentProductItemValueTotalPrice > 0) {
                       const inputValue = Number(e.target.value);
@@ -304,14 +323,14 @@ const RightSideWidget = ({
             <div style={clasess.orderContainer}>
               {t("products.offsetPrice.admin.orderToral", {
                 prieceNum: quantity?.values[0],
-                price: isNaN(
-                  sliderCurrentProductItemValueTotalPrice / quantity?.values[0]
+                price: roundPrice(isNaN(
+                    sliderCurrentProductItemValueTotalPrice / quantity?.values[0]
                 )
-                  ? 0
-                  : (
-                    (sliderCurrentProductItemValueTotalPrice || 0) /
-                    (quantity?.values[0] || 1)
-                  )?.toFixed(3),
+                    ? 0
+                    : (
+                        (sliderCurrentProductItemValueTotalPrice || 0) /
+                        (quantity?.values[0] || 1)
+                    )),
                 unitPrice: systemCurrency,
               })}
             </div>
@@ -319,13 +338,13 @@ const RightSideWidget = ({
               {t("products.offsetPrice.admin.includeVAT")}:{" "}
               {!isRTL && systemCurrency}
               <input
-                value={priceIncludeVat}
+                value={roundPrice(priceIncludeVat)}
                 // type="number"
                 onChange={(e) => {
                   const newPriceIncludeVat = e.target.value;
                   setPriceIncludeVat(newPriceIncludeVat);
                   if (quantity?.values[0] && newPriceIncludeVat !== "" && newPriceIncludeVat !== null && newPriceIncludeVat !== "0") {
-                    const newTotalPrice = (Number(newPriceIncludeVat) / (1 + systemVAT)).toFixed(3);
+                    const newTotalPrice = roundPrice((Number(newPriceIncludeVat) / (1 + systemVAT)));
                     setSliderCurrentProductItemValueTotalPrice(Number(newTotalPrice));
                   }
                 }}
@@ -386,7 +405,7 @@ const RightSideWidget = ({
                 <div style={clasess.secondText}>
                   {t("products.offsetPrice.admin.lastPrice")}{" "}
                   {/* {lastProductItemValueTotalPrice} */}
-                  {lastProductItemValueTotalPrice.toFixed(3)}
+                  {roundPrice(lastProductItemValueTotalPrice)}
                 </div>
               </div>
             ) : (

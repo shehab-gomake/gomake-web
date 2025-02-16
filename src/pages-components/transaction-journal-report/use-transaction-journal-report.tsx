@@ -64,7 +64,8 @@ export const getDocumentTypeName = (t, transType: number): string => {
 const useTransactionJournalReport = ({
   reportType,
 }: TransactionJournalReportWidgetProps) => {
-  const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const { alertFault, alertFaultGetData, alertSuccessGetData, alertSuccess } =
+    useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const dir = t("direction");
@@ -613,10 +614,11 @@ const useTransactionJournalReport = ({
 
     const callBack = (res) => {
       if (res.success) {
-        const downloadLink = document.createElement("a");
-        downloadLink.href = res.data;
-        downloadLink.download = "Account_Files.zip";
-        downloadLink.click();
+        alertSuccess("financesWidget.filesSentSuccessfully");
+        // const downloadLink = document.createElement("a");
+        // downloadLink.href = res.data;
+        // downloadLink.download = "Account_Files.zip";
+        // downloadLink.click();
       } else {
         alertFaultGetData();
       }
