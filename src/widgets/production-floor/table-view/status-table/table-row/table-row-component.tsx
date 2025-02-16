@@ -73,7 +73,7 @@ const TableRowComponent = ({
   const { CheckPermission } = useUserPermission();
   const canDrag = CheckPermission(
     Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
-  );
+  ) && !status.isGroup;
   const [dropArea, setDropArea] = useState<EDropArea>();
   const { errorColor } = useGomakeTheme();
   const ref = useRef(null);
