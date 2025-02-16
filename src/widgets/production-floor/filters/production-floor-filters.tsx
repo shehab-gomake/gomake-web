@@ -190,22 +190,24 @@ const CustomGroupComponent = ({
               backgroundColor: "transparent",
             }}
           >
-            <IconButton
-              onClick={onClickDelete}
-              size="small"
-              style={{
-                padding: "4px",
-              }}
-            >
-              <ClearIcon
-                className="clear-icon"
-                style={{
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  color: isSelected ? "#FFF" : group?.color,
-                }}
-              />
-            </IconButton>
+            {
+              group.id !== "all" && (<IconButton
+                    onClick={onClickDelete}
+                    size="small"
+                    style={{
+                      padding: "4px",
+                    }}
+                >
+                  <ClearIcon
+                      className="clear-icon"
+                      style={{
+                        cursor: "pointer",
+                        fontSize: "14px",
+                        color: isSelected ? "#FFF" : group?.color,
+                      }}
+                  />
+                </IconButton>)
+            }
           </Circle>
         </Box>
       </CardContent>

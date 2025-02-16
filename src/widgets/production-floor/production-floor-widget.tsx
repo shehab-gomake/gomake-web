@@ -41,7 +41,6 @@ const ProductionFloorWidget = () => {
     getStationFilterGroups();
   }, []);
   useEffect(() => {
-    debugger
     if(view === EProductionFloorView.FILTER_GROUPS){
       setSelectedGroupId("all");
     }

@@ -84,8 +84,6 @@ export const isValidCustomer = (
   filteredUsers,
   CheckPreferenceValue
 ) => {
-  debugger;
-
   const isMissingRequiredCustomerInfo = !(
     customer &&
     customer.name &&

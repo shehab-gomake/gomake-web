@@ -265,7 +265,6 @@ const useActionsList = ({
           stations: [...stationFilterGroup?.stations],
           groupId,
         });
-        debugger
         setSelectedGroupId(groupId);
 
         onClickCloseDepartmentModal();

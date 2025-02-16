@@ -273,7 +273,6 @@ const useProductionFloorFilters = ({
 
   const handleSelectGroup = (groupId: string) => {
     if (selectedGroupId === groupId) {
-      debugger
       setSelectedGroupId(null);
       onStationsChange({ stations: [], groupId: null });
     } else {
@@ -298,6 +297,7 @@ const useProductionFloorFilters = ({
 
   const getStationFilterGroupById = async (id) => {
     if(id === "all"){
+      setData([])
       await getDataByGroups(connectionId,true)
       return;
     }
@@ -317,7 +317,6 @@ const useProductionFloorFilters = ({
         getStationFilterGroups();
         if (id === selectedGroupId) {
           onStationsChange({ stations: [], groupId: null });
-          debugger
           setSelectedGroupId(null);
         }
       }
