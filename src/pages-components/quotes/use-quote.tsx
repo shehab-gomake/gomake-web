@@ -55,7 +55,11 @@ import {
   renderDocumentTypeForSourceDocumentNumber,
   renderURLDocumentType,
 } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
-import { AStatus, PStatus } from "../board-missions/widgets/enums";
+import {
+  AStatus,
+  PStatus,
+  ReceiptAccountingStatus,
+} from "../board-missions/widgets/enums";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -92,7 +96,6 @@ interface Query {
   isPaused?: boolean;
   pageNumber?: number;
   productsIds?: string[];
-  //!here
 }
 
 const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
@@ -748,16 +751,26 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       await getAllReceiptsApi(callApi, callBack, {
         clientId: currentCustomerId || customerId?.id,
         agentId: currentAgentId || agentId?.id,
+        status: currentAccountingStatus?.value ?? accountingStatus?.value,
         patternSearch:
-          finalPatternSearch !== null && finalPatternSearch !== undefined
+          finalPatternSearch !== null &&
+          finalPatternSearch !== undefined &&
+          finalPatternSearch !== ""
             ? finalPatternSearch
             : currentFinalPatternSearch,
-        fromDate: currentFromDate && GetDateFormat(currentFromDate),
-        toDate: currentToDate && GetDateFormat(currentToDate),
-        status: currentStatusId || statusId?.value,
-        isCanceled: currentIsCanceled || isCanceledState,
-        minPrice: currentMinPrice || minPrice,
-        maxPrice: currentMaxPrice || maxPrice,
+
+        ...(currentFromDate
+          ? { fromDate: GetDateFormat(currentFromDate) }
+          : {}),
+        ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
+
+        ...(currentMinPrice && currentMinPrice !== ""
+          ? { minPrice: currentMinPrice }
+          : {}),
+        ...(currentMaxPrice && currentMaxPrice !== ""
+          ? { maxPrice: currentMaxPrice }
+          : {}),
+
         model: {
           pageNumber: currentPageNumber || page,
           pageSize: pageSize,
@@ -772,7 +785,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             pageSize: pageSize,
           },
           dateRange,
-          //************* DONE *****************/
           customerId: currentCustomerId || customerId?.id,
           agentId: currentAgentId || agentId?.id,
           statusId: quoteStatusId?.value || currentStatusId || statusId?.value,
@@ -810,7 +822,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
           isCanceled: currentIsCanceled || isCanceledState,
           isPaused: currentIsPaused || isPausedOrders,
-          //************* DONE *****************/
           isOrderInTracking: isOrdersTracking,
         },
       });
@@ -1876,11 +1887,22 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     { label: t("boardMissions.done"), value: PStatus.DONE },
   ];
 
-  const accountingStatuses = [
-    { label: t("sales.quote.open"), value: AStatus.OPEN },
-    { label: t("sales.quote.partialClosed"), value: AStatus.PARTIAL_CLOSED },
-    { label: t("sales.quote.closed"), value: AStatus.CLOSED },
-  ];
+  const accountingStatuses = isReceipt
+    ? [
+        { label: t("sales.quote.open"), value: ReceiptAccountingStatus.OPEN },
+        {
+          label: t("sales.quote.canceled"),
+          value: ReceiptAccountingStatus.CANCELED,
+        },
+      ]
+    : [
+        { label: t("sales.quote.open"), value: AStatus.OPEN },
+        {
+          label: t("sales.quote.partialClosed"),
+          value: AStatus.PARTIAL_CLOSED,
+        },
+        { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+      ];
 
   const deliveryStatuses = useMemo(
     () => [
