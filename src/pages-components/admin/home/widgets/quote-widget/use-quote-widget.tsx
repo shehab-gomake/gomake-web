@@ -46,7 +46,7 @@ const useQuoteWidget = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [QuoteId, setQuoteId] = useState("");
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
-  const [selectedTab, setSelectedTab] = useState<string | null>(JSON.parse(localStorage.getItem('homePageSelectedTab')) || ETab.PRODUCTS);
+  const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
 
   const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList();

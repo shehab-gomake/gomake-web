@@ -327,11 +327,11 @@ const GoMakeTreeSelect = ({
                             scrollButtons="auto"
                             style={{marginBottom: "10px"}}
                         >
-                            <UnderlinedTab selectedColor={'primary'} key={'products'} label={'products'}
+                            <UnderlinedTab selectedColor={'primary'} key={'products'} label={t("tabs.products")}
                                            value={ETab.PRODUCTS}/>
-                            <UnderlinedTab selectedColor={'primary'} key={'materials'} label={'materials'}
+                            <UnderlinedTab selectedColor={'primary'} key={'materials'} label={t("tabs.materials")}
                                            value={ETab.MATERIALS}/>
-                            <UnderlinedTab selectedColor={'primary'} key={'all'} label={'all'} value={ETab.ALL}/>
+                            <UnderlinedTab selectedColor={'primary'} key={'all'} label={t('navigationButtons.all')} value={ETab.ALL}/>
                         </UnderlinedTabs>
                         {menu}
                     </div>
