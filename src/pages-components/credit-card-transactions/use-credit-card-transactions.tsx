@@ -41,7 +41,7 @@ const useCreditCardTransactions = () => {
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
   const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
   const [toDate, setToDate] = useState<Date>(endOfToday());
-  const { GetDateFormat } = useDateFormat();
+  const { GetDateFormat,getFormattedLocalDate } = useDateFormat();
   const [transactionAmount, setTransactionAmount] = useState<number | "">();
   const [receiptNumber, setReceiptNumber] = useState<string>();
 
@@ -90,7 +90,7 @@ const useCreditCardTransactions = () => {
         setAllPureTransaction(res.data?.data);
         const totalItems = res.data?.totalItems;
         const mapData = res.data?.data.map((item: any) => [
-          GetDateFormat(item?.creationDate),
+          getFormattedLocalDate(item?.creationDate),
           item?.cardNumber,
           item?.clientName,
           item?.receiptNumber,
