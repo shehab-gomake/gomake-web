@@ -694,16 +694,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       }
     };
 
-    //!here
     const currentPageNumber = router.query.pageNumber;
     const currentStatusId = router.query.statusId;
     const currentFinalPatternSearch = router.query.finalPatternSearch;
     const currentCustomerId = router.query.customerId;
-    const currentCustomerName = router.query.customerName;
     const currentAgentId = router.query.agentId;
     const currentApprovalStatusId = router.query.approvalStatusId;
-    const currentMinPrice = router.query.minPrice;
-    const currentMaxPrice = router.query.maxPrice;
+    const currentMinPrice = router.query.minPrice || minPrice;
+    const currentMaxPrice = router.query.maxPrice || maxPrice;
     const currentFromDate = router.query.fromDate
       ? new Date(
           Array.isArray(router.query.fromDate)
@@ -718,6 +716,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             : router.query.toDate
         )
       : null;
+
     const currentAccountingStatus = router.query.accountingStatus
       ? accountingStatuses.find(
           (status) => status.value === Number(router.query.accountingStatus)
@@ -735,6 +734,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           (status) => status.value === Number(router.query.productionStatus)
         )
       : null;
+
     const currentIsCanceled = router.query.isCanceled;
     const currentIsPaused = router.query.isPaused;
 
@@ -771,37 +771,46 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             pageNumber: currentPageNumber || page,
             pageSize: pageSize,
           },
-
-          closeStatus:
-            currentAccountingStatus?.value || accountingStatus?.value,
-          deliveryStatus:
-            currentDeliveryStatusStatus?.value || deliveryStatus?.value,
-          productionStatus:
-            currentProductionStatus?.value || productionStatus?.value,
-
           dateRange,
-
           //************* DONE *****************/
           customerId: currentCustomerId || customerId?.id,
           agentId: currentAgentId || agentId?.id,
           statusId: quoteStatusId?.value || currentStatusId || statusId?.value,
           approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
 
-          ...(currentMinPrice ? { minPrice: currentMinPrice } : { minPrice }),
-          ...(currentMaxPrice ? { maxPrice: currentMaxPrice } : { maxPrice }),
+          ...(currentMinPrice && currentMinPrice !== ""
+            ? { minPrice: currentMinPrice }
+            : {}),
+          ...(currentMaxPrice && currentMaxPrice !== ""
+            ? { maxPrice: currentMaxPrice }
+            : {}),
+
           patternSearch:
             finalPatternSearch !== null &&
             finalPatternSearch !== undefined &&
             finalPatternSearch !== ""
               ? finalPatternSearch
               : currentFinalPatternSearch,
-          fromDate: currentFromDate && GetDateFormat(currentFromDate),
-          toDate: currentToDate && GetDateFormat(currentToDate),
-          productList: currentProductsIds,
-          //************* DONE *****************/
+
+          ...(currentFromDate
+            ? { fromDate: GetDateFormat(currentFromDate) }
+            : {}),
+          ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
+
+          ...(currentProductsIds?.length
+            ? { productList: currentProductsIds }
+            : {}),
+
+          closeStatus:
+            currentAccountingStatus?.value ?? accountingStatus?.value,
+          deliveryStatus:
+            currentDeliveryStatusStatus?.value ?? deliveryStatus?.value,
+          productionStatus:
+            currentProductionStatus?.value ?? productionStatus?.value,
 
           isCanceled: currentIsCanceled || isCanceledState,
           isPaused: currentIsPaused || isPausedOrders,
+          //************* DONE *****************/
           isOrderInTracking: isOrdersTracking,
         },
       });
