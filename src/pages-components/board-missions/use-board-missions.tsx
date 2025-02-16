@@ -540,6 +540,47 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         ? [router.query.productsIds]
         : productIds;
 
+      const currentOrderStatus = router.query.orderStatus;
+
+      const currentFromDate = router.query.fromDate;
+      const currentToDate = router.query.toDate;
+
+      const currentFromDueDate = router.query.fromDueDate;
+      const currentToDueDate = router.query.toDueDate;
+
+      const currentFromReadyDate = router.query.fromReadyDate;
+      const currentToReadyDate = router.query.toReadyDate;
+
+      const currentFormattedFromDate =
+        typeof currentFromDate === "string"
+          ? GetDateFormat(new Date(currentFromDate))
+          : undefined;
+
+      const currentFormattedToDate =
+        typeof currentToDate === "string"
+          ? GetDateFormat(new Date(currentToDate))
+          : undefined;
+
+      const currentFormattedFromDueDate =
+        typeof currentFromDueDate === "string"
+          ? GetDateFormat(new Date(currentFromDueDate))
+          : undefined;
+
+      const currentFormattedToDueDate =
+        typeof currentToDueDate === "string"
+          ? GetDateFormat(new Date(currentToDueDate))
+          : undefined;
+
+      const currentFormattedFromReadyDate =
+        typeof currentFromReadyDate === "string"
+          ? GetDateFormat(new Date(currentFromReadyDate))
+          : undefined;
+
+      const currentFormattedToReadyDate =
+        typeof currentToReadyDate === "string"
+          ? GetDateFormat(new Date(currentToReadyDate))
+          : undefined;
+
       await setBoardMissionsFiltersApi(
         callApi,
         callBack,
@@ -551,25 +592,37 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             }
           : {
               clientId: customer?.id || router?.query?.clientId,
-              agentId: agent?.id,
+              agentId: agent?.id || router?.query?.agentId,
               search:
                 finalPatternSearch !== null &&
                 finalPatternSearch !== undefined &&
                 finalPatternSearch !== ""
                   ? finalPatternSearch
                   : currentFinalPatternSearch,
-              fromDate: fromDate && GetDateFormat(fromDate),
-              toDate: toDate && GetDateFormat(toDate),
 
-              fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
-              toDueDate: toDueDate && GetDateFormat(toDueDate),
+              fromDate:
+                (fromDate && GetDateFormat(fromDate)) ||
+                currentFormattedFromDate,
+              toDate:
+                (toDate && GetDateFormat(toDate)) || currentFormattedToDate,
 
-              fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
-              toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+              fromDueDate:
+                (fromDueDate && GetDateFormat(fromDueDate)) ||
+                currentFormattedFromDueDate,
+              toDueDate:
+                (toDueDate && GetDateFormat(toDueDate)) ||
+                currentFormattedToDueDate,
+
+              fromReadyDate:
+                (fromReadyDate && GetDateFormat(fromReadyDate)) ||
+                currentFormattedFromReadyDate,
+              toReadyDate:
+                (toReadyDate && GetDateFormat(toReadyDate)) ||
+                currentFormattedToReadyDate,
               productsIds: currentProductsIds,
               productionStatus: status?.value || currentProductionStatus,
-              orderStatus: orderStatus?.value,
-              pageNumber: currentPageNumber || pageNumber,
+              orderStatus: orderStatus?.value || currentOrderStatus,
+              pageNumber: pageNumber || currentPageNumber,
               pageSize: pageSize,
               orderNumber: router?.query?.orderNumber,
             }
