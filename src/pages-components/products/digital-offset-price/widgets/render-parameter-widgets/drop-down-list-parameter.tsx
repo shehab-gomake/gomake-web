@@ -4,7 +4,6 @@ import Tooltip, { tooltipClasses, TooltipProps } from "@mui/material/Tooltip";
 import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 import { EParameterTypes } from "@/enums";
-import { ReChooseIcon } from "@/icons/re-choose-icon";
 import { IconButton } from "@mui/material";
 import { GoToMaterialsIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
@@ -62,7 +61,6 @@ const DropDownListParameterWidget = ({
       ? { updateName: temp[index].values }
       : parameter.valuesConfigs.find((item) => item.isDefault)
   );
-  console.log("selectedValue", selectedValue)
   useEffect(() => {
     // If the parameter changes, update the selectedValue accordingly
     setSelectedValue(

@@ -134,7 +134,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("subProducts", subProducts)
   const [subProductsColorsModal, setSubProductsColorsModal] =
     useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
@@ -195,6 +194,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(false);
+  console.log("canCalculation", canCalculation)
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
@@ -698,13 +698,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
 
   const removeSection = (item) => {
+    // setCanCalculation(true);
     let temp = cloneDeep(productTemplate);
     temp.sections = temp.sections.filter((x) => x.id !== item.id);
     initProduct(temp, allMaterials);
     const updatedSubProducts = subProducts.filter(
       (subProduct) => subProduct.sectionId !== item.id
     );
+
     setSubProducts(updatedSubProducts);
+    calculationProduct(updatedSubProducts);
   };
 
   const duplicateParameters = (mySubSection) => {
@@ -3315,7 +3318,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const deletedParameter = subSection?.parameters.find(
       (param) => param.id === parameterId && param.actionIndex == actionIndex
     );
-    console.log("deletedParameter", deletedParameter)
     // Check if the deleted parameter has related parameters
     if (deletedParameter && deletedParameter.relatedParameters) {
       deletedParameter.relatedParameters.forEach((relatedParam) => {
@@ -3998,7 +4000,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSectionType
         );
       }
-      console.log("subSectionParameter", subSectionParameter)
       if (subSectionParameter) {
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
