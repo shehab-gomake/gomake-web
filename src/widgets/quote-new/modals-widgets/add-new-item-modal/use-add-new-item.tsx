@@ -17,6 +17,7 @@ import {
   addItemApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { useUserPermission } from "@/hooks/use-permission";
+import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 const useAddNewItem = ({ onClose, getQuote, documentType }) => {
   const { callApi } = useGomakeAxios();
@@ -35,6 +36,11 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
   const [productName, setProductName] = useState("");
   const [productCode, setProductCode] = useState("");
 
+  const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
+  const onSelectTab = (v) => {
+    setSelectedTab(v);
+    localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
+  };
   const handleChange = (event) => {
     setActive(event.target.value === "true");
   };
@@ -380,11 +386,14 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
             addDocumentItemFromMaterial();
           } else {
             navigate(
-              `/products/create?clientTypeId=${quoteItemValue?.client?.clientTypeId
-              }&customerId=${quoteItemValue?.customerID}&customerName=${quoteItemValue?.client?.name
-              }&productId=${selectedProduct?.id}&documentType=${documentType}${quoteItemValue?.number
-                ? `&documentNumber=${quoteItemValue?.number}`
-                : ""
+              `/products/create?clientTypeId=${
+                quoteItemValue?.client?.clientTypeId
+              }&customerId=${quoteItemValue?.customerID}&customerName=${
+                quoteItemValue?.client?.name
+              }&productId=${selectedProduct?.id}&documentType=${documentType}${
+                quoteItemValue?.number
+                  ? `&documentNumber=${quoteItemValue?.number}`
+                  : ""
               }${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
             );
           }
@@ -416,6 +425,8 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
     setProductCode,
     handleCloseModal,
     CheckPermission,
+    selectedTab,
+    onSelectTab,
   };
 };
 

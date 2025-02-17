@@ -70,9 +70,9 @@ const QuoteWidget = ({ isAdmin = true }) => {
     selectedProduct,
     handleProductChange,
     isFetching,
-      selectedTab,
-      setSelectedTab,
-      onSelectTab
+    selectedTab,
+    setSelectedTab,
+    onSelectTab,
   } = useQuoteWidget();
 
   useEffect(() => {
@@ -155,13 +155,12 @@ const QuoteWidget = ({ isAdmin = true }) => {
       <div style={classes.autoComplateRowContainer}>
         <div data-tour="select-product" style={{ width: "65%" }}>
           <GoMakeTreeSelect
-              selectedTab={selectedTab}
-              setSelectedTab={onSelectTab}
+            selectedTab={selectedTab}
+            setSelectedTab={onSelectTab}
             value={selectedProduct}
             options={combinedData}
             onChange={handleProductChange}
             placeholder={t("home.admin.selectProductOrMaterial")}
-            isRequired={true}
           />
         </div>
       </div>
@@ -174,8 +173,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
                   isDisabled
                     ? handleClick
                     : isAdmin
-                      ? onClickCreateQuote
-                      : onClickCreateQuoteForCustomer
+                    ? onClickCreateQuote
+                    : onClickCreateQuoteForCustomer
                 }
                 variant="contained"
                 style={{ width: "100%", height: 40 }}
@@ -205,8 +204,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
               isDisabled
                 ? handleClick
                 : isAdmin
-                  ? onClickCreateQuote
-                  : onClickCreateQuoteForCustomer
+                ? onClickCreateQuote
+                : onClickCreateQuoteForCustomer
             }
             variant="contained"
             style={{ width: "100%", height: 40 }}

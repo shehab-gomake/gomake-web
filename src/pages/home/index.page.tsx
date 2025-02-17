@@ -1,14 +1,19 @@
 import { CustomerAuthLayout } from "@/layouts";
 import { HomePageComponentForAdmin } from "@/pages-components/admin/home/home";
-import io from 'socket.io-client';
-import {useEffect} from "react";
+import { useMediaQuery } from "react-responsive";
 
 export default function Home() {
-    
-    
-    return (
-        <CustomerAuthLayout className={`custom-scrollbar`}>
-            <HomePageComponentForAdmin isAdmin={false} />
-        </CustomerAuthLayout>
-    );
+  const isMobileScreen = useMediaQuery({ query: "(max-width: 768px)" });
+
+  return (
+    <CustomerAuthLayout
+      className={`custom-scrollbar`}
+      disableHeaderSideMenu={isMobileScreen}
+    >
+      <HomePageComponentForAdmin
+        isAdmin={false}
+        isMobileScreen={isMobileScreen}
+      />
+    </CustomerAuthLayout>
+  );
 }

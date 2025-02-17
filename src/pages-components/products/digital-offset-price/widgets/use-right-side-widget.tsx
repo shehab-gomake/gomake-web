@@ -24,6 +24,7 @@ import { EWidgetProductType } from "../enums";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { useRouter } from "next/router";
 import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
+import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const router = useRouter();
@@ -63,8 +64,11 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const [selectedProduct, setSelectedProduct] = useState<any>({});
   const [combinedData, setCombinedData] = useState<any>([]);
   const [products, setProducts] = useState([]);
-
-
+  const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
+  const onSelectTab = (v) => {
+    setSelectedTab(v);
+    localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
+  };
 
   const handleProductChange = (e) => {
     const selectedValue = e;
@@ -95,7 +99,6 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
         id: selectedValue,
         category: selectedNode?.category,
       });
-
     } else {
       setSelectedProduct(null);
     }
@@ -134,12 +137,13 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
         clientId: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
       });
-
   }, []);
 
   useEffect(() => {
     if (products?.length > 0 && combinedData?.length > 0) {
-      const findDefaultProduct = products.find((item) => item.id === router?.query?.productId);
+      const findDefaultProduct = products.find(
+        (item) => item.id === router?.query?.productId
+      );
       if (findDefaultProduct) {
         handleProductChange(findDefaultProduct?.id);
       }
@@ -180,7 +184,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   /* Slider */
   const priceToUse =
     widgetType === EWidgetProductType.EDIT ||
-      widgetType === EWidgetProductType.DUPLICATE
+    widgetType === EWidgetProductType.DUPLICATE
       ? calculatedPriceProductItemValue
       : currentProductItemValueTotalPrice;
 
@@ -206,8 +210,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       setPriceIncludeVat(
         (sliderCurrentProductItemValueTotalPrice * (1 + systemVAT))?.toFixed(3)
       );
-    }
-    else {
+    } else {
       setPriceIncludeVat(null);
     }
   }, [sliderCurrentProductItemValueTotalPrice]);
@@ -237,7 +240,9 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     systemVAT,
     selectedProduct,
     combinedData,
-    handleProductChange
+    handleProductChange,
+    selectedTab,
+    onSelectTab,
   };
 };
 

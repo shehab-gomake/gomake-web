@@ -90,6 +90,8 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
     setProductCode,
     handleCloseModal,
     CheckPermission,
+    selectedTab,
+    onSelectTab,
   } = useAddNewItem({ onClose, getQuote, documentType });
 
   return (
@@ -117,11 +119,12 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
           )*/}
           {active ? (
             <GoMakeTreeSelect
+              selectedTab={selectedTab}
+              setSelectedTab={onSelectTab}
               value={selectedProduct}
               options={combinedData}
               onChange={handleProductChange}
               placeholder={t("home.admin.selectProductOrMaterial")}
-              isRequired={true}
             />
           ) : (
             <GenericProductInput

@@ -9,15 +9,17 @@ import {
   adaptLeft,
   adaptPaddingLeft,
   adaptPaddingRight,
-  adaptRight,
   leftRightAdapter,
 } from "@/utils/adapter";
-const useStyle = () => {
+const useStyle = ({ isMobileScreen }) => {
   const { t } = useTranslation();
   const direction = t("direction");
+
   const { primaryColor, secondColor, errorColor, neutralColor, successColor } =
     useGomakeTheme();
+
   const [screenWidth, setScreenWidth] = useState<number | null>(null);
+
   useEffect(() => {
     // Function to update screen width
     const updateScreenWidth = () => {
@@ -44,7 +46,10 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        ...adaptPaddingRight(direction, 20),
+        // ...adaptPaddingRight(direction, 20),
+        ...(isMobileScreen
+          ? { padding: "12px" }
+          : adaptPaddingRight(direction, 20)),
       },
       autoComplateRowContainer: {
         display: "flex",
@@ -68,7 +73,10 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        ...adaptPaddingLeft(t("direction"), 20),
+
+        ...(isMobileScreen
+          ? { padding: "0px" }
+          : adaptPaddingLeft(direction, 20)),
       },
       rightSideMainContainer: {
         display: "flex",
@@ -1045,7 +1053,7 @@ const useStyle = () => {
         color: primaryColor(500),
       },
     };
-  }, [i18next.language, t, direction, screenWidth]);
+  }, [i18next.language, t, direction, screenWidth, isMobileScreen]);
   return {
     clasess,
   };

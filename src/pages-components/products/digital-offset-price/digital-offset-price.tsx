@@ -5,11 +5,12 @@ import {
   GoMakeDeleteModal,
   GoMakeModal,
   GomakePrimaryButton,
+  GomakeTextInput,
 } from "@/components";
 import { TabsMappingWidget } from "./widgets/tabs-mapping";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
-import { RightSideWidget } from "./widgets/right-side-widget";
+import { RightSideWidget, roundPrice } from "./widgets/right-side-widget";
 import {
   GalleryModal,
   MakeShapeModal,
@@ -18,7 +19,7 @@ import {
 import { Permissions } from "@/components/CheckPermission/enum";
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
-import { createTheme, Tabs, ThemeProvider } from "@mui/material";
+import { createTheme, Stack, Tabs, ThemeProvider } from "@mui/material";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { useEffect } from "react";
@@ -35,9 +36,11 @@ import { MissionModalWidget } from "./widgets/mission-modal-widget";
 import { ModalType } from "@/enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { permissionsState } from "@/store/permissions";
+import { DotsLoader } from "@/components/dots-loader/dots-Loader";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
-const PriceListPageWidget = ({ widgetType }) => {
-  const { clasess } = useStyle();
+const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
+  const { clasess } = useStyle({ isMobileScreen });
   const {
     t,
     handleTabClick,
@@ -104,7 +107,10 @@ const PriceListPageWidget = ({ widgetType }) => {
     subProducts,
     isOpenCreateDefaultWorkFlow,
     onClickCloseCreateDefaultWorkFlow,
-    addItemForQuotes
+    addItemForQuotes,
+    sliderCurrentProductItemValueTotalPrice,
+    systemCurrency,
+    direction,
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const permissions = useRecoilValue(permissionsState);
@@ -275,7 +281,7 @@ const PriceListPageWidget = ({ widgetType }) => {
       position: "top",
     },
   ];
-  const { } = useGoMakeTour(productSteps, [relatedParameters]);
+  const {} = useGoMakeTour(productSteps, [relatedParameters]);
 
   return (
     <div>
@@ -316,11 +322,18 @@ const PriceListPageWidget = ({ widgetType }) => {
               </div>
               <div
                 className="custom-scrollbar"
-                style={{
-                  height: "calc(100vh - 300px)",
-                  overflow: "scroll",
-                  width: "calc(100% - 330px)",
-                }}
+                style={
+                  !isMobileScreen
+                    ? {
+                        height: "calc(100vh - 300px)",
+                        overflow: "scroll",
+                        width: "calc(100% - 330px)",
+                      }
+                    : {
+                        height: "calc(100vh - 200px)",
+                        overflow: "scroll",
+                      }
+                }
               >
                 <div style={clasess.sectionsContainer}>
                   {[
@@ -401,30 +414,33 @@ const PriceListPageWidget = ({ widgetType }) => {
                 </div>
               </div>
             </div>
-            <RightSideWidget
-              clasess={clasess}
-              template={productTemplate}
-              tabs={tabs}
-              activeTab={activeTab}
-              setUrgentOrder={setUrgentOrder}
-              urgentOrder={urgentOrder}
-              setPrintingNotes={setPrintingNotes}
-              printingNotes={printingNotes}
-              widgetType={widgetType}
-              setPriceRecovery={setPriceRecovery}
-              priceRecovery={priceRecovery}
-              setSampleType={setSampleType}
-              includeVAT={includeVAT}
-              setIncludeVAT={setIncludeVAT}
-              sampleType={sampleType}
-              errorMsg={errorMsg}
-              calculationServerErrorState={calculationServerErrorState}
-              canCalculation={canCalculation}
-              calculationProduct={calculationProduct}
-              subProducts={subProducts}
-            />
+            {!isMobileScreen && (
+              <RightSideWidget
+                clasess={clasess}
+                template={productTemplate}
+                tabs={tabs}
+                activeTab={activeTab}
+                setUrgentOrder={setUrgentOrder}
+                urgentOrder={urgentOrder}
+                setPrintingNotes={setPrintingNotes}
+                printingNotes={printingNotes}
+                widgetType={widgetType}
+                setPriceRecovery={setPriceRecovery}
+                priceRecovery={priceRecovery}
+                setSampleType={setSampleType}
+                includeVAT={includeVAT}
+                setIncludeVAT={setIncludeVAT}
+                sampleType={sampleType}
+                errorMsg={errorMsg}
+                calculationServerErrorState={calculationServerErrorState}
+                canCalculation={canCalculation}
+                calculationProduct={calculationProduct}
+                subProducts={subProducts}
+              />
+            )}
           </div>
 
+          {/* buttons section */}
           <div
             style={{
               width: "100%",
@@ -440,16 +456,55 @@ const PriceListPageWidget = ({ widgetType }) => {
               backgroundColor: "#FFF",
             }}
           >
-            <div style={{ width: "68%" }}>
-              <div style={clasess.addPreviousContainer}>
+            {isMobileScreen ? (
+              <div
+                style={{
+                  ...clasess.addPreviousContainer,
+                  padding: "0px 8px",
+                  gap: "0px",
+                }}
+              >
                 {activeIndex !== 0 && (
-                  <GomakePrimaryButton
-                    style={clasess.previousBtnStyle}
+                  <SecondaryButton
+                    variant="outlined"
                     onClick={handlePreviousClick}
                   >
                     {t("products.offsetPrice.admin.previousBtn")}
-                  </GomakePrimaryButton>
+                  </SecondaryButton>
                 )}
+                <div data-tour={"product-pricing"} style={clasess.totalStyle}>
+                  {isLoadging ? (
+                    <DotsLoader />
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        position: "relative",
+                      }}
+                    >
+                      <span
+                        style={{
+                          ...clasess.totalCurrancyStyle,
+                          position: "absolute",
+                          left: 30,
+                          zIndex: 999999,
+                        }}
+                      >
+                        {systemCurrency}
+                      </span>
+                      <GomakeTextInput
+                        direction={direction}
+                        value={
+                          roundPrice(sliderCurrentProductItemValueTotalPrice) ??
+                          "---------"
+                        }
+                        key={"TotalPriceInput"}
+                        style={clasess.inputPriceStyle}
+                      />
+                    </div>
+                  )}
+                </div>
                 {[
                   ...productTemplate?.sections,
                   ...(permissions.includes(Permissions.SHOW_PRICING_TAB)
@@ -458,6 +513,35 @@ const PriceListPageWidget = ({ widgetType }) => {
                 ].length -
                   1 !==
                   activeIndex && (
+                  <div data-tour="next-button">
+                    <SecondaryButton
+                      variant="contained"
+                      onClick={handleNextClick}
+                    >
+                      {t("products.offsetPrice.admin.nextBtn")}
+                    </SecondaryButton>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div style={{ width: "68%" }}>
+                <div style={clasess.addPreviousContainer}>
+                  {activeIndex !== 0 && (
+                    <GomakePrimaryButton
+                      style={clasess.previousBtnStyle}
+                      onClick={handlePreviousClick}
+                    >
+                      {t("products.offsetPrice.admin.previousBtn")}
+                    </GomakePrimaryButton>
+                  )}
+                  {[
+                    ...productTemplate?.sections,
+                    ...(permissions.includes(Permissions.SHOW_PRICING_TAB)
+                      ? [PricingTab]
+                      : []),
+                  ].length -
+                    1 !==
+                    activeIndex && (
                     <div data-tour="next-button">
                       <GomakePrimaryButton
                         style={clasess.nextBtnStyle}
@@ -467,59 +551,63 @@ const PriceListPageWidget = ({ widgetType }) => {
                       </GomakePrimaryButton>
                     </div>
                   )}
+                </div>
               </div>
-            </div>
-            <div
-              style={{
-                width: 220,
-                height: 40,
-                marginLeft: 55,
-                marginRight: 55,
-              }}
-            >
-              {widgetType === EWidgetProductType.EDIT ? (
-                <GomakePrimaryButton
-                  style={
-                    isLoadging
-                      ? clasess.addOrderDisabledBtn
-                      : clasess.addOrderBtn
-                  }
-                  onClick={() => {
-                    if (
-                      DOCUMENT_TYPE.order ===
-                      Number(router.query.documentType) &&
-                      isFlowChanged
-                    ) {
-                      onClickOpenCurrentStationModal();
-                    } else {
-                      updateQuoteItem();
+            )}
+
+            {!isMobileScreen && (
+              <div
+                style={{
+                  width: 220,
+                  height: 40,
+                  marginLeft: 55,
+                  marginRight: 55,
+                }}
+              >
+                {widgetType === EWidgetProductType.EDIT ? (
+                  <GomakePrimaryButton
+                    style={
+                      isLoadging
+                        ? clasess.addOrderDisabledBtn
+                        : clasess.addOrderBtn
                     }
-                  }}
-                  disabled={isLoadging}
-                >
-                  {t("sales.quote.edit")}
-                </GomakePrimaryButton>
-              ) : !router?.query?.profitsProfileRowId ? (
-                <GomakePrimaryButton
-                  data-tour="addPricingBtn"
-                  style={
-                    isLoadging
-                      ? clasess.addOrderDisabledBtn
-                      : clasess.addOrderBtn
-                  }
-                  onClick={navigateForRouter}
-                  disabled={isLoadging}
-                >
-                  {t("products.offsetPrice.admin.addOrderBtn")}
-                </GomakePrimaryButton>
-              ) : (
-                <div></div>
-              )}
-            </div>
+                    onClick={() => {
+                      if (
+                        DOCUMENT_TYPE.order ===
+                          Number(router.query.documentType) &&
+                        isFlowChanged
+                      ) {
+                        onClickOpenCurrentStationModal();
+                      } else {
+                        updateQuoteItem();
+                      }
+                    }}
+                    disabled={isLoadging}
+                  >
+                    {t("sales.quote.edit")}
+                  </GomakePrimaryButton>
+                ) : !router?.query?.profitsProfileRowId ? (
+                  <GomakePrimaryButton
+                    data-tour="addPricingBtn"
+                    style={
+                      isLoadging
+                        ? clasess.addOrderDisabledBtn
+                        : clasess.addOrderBtn
+                    }
+                    onClick={navigateForRouter}
+                    disabled={isLoadging}
+                  >
+                    {t("products.offsetPrice.admin.addOrderBtn")}
+                  </GomakePrimaryButton>
+                ) : (
+                  <div></div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       ) : (
-        <PriceListPageSkeletonWidget />
+        <PriceListPageSkeletonWidget isMobileScreen={isMobileScreen} />
       )}
 
       <MakeShapeModal
