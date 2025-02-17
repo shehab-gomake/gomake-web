@@ -11,6 +11,7 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { endOfToday, startOfYear } from "date-fns";
 import { ERPDocumentsTypesEnum } from "@/enums";
 import { getAndSetClientContacts } from "@/services/hooks";
+import { initialFromDate } from "@/utils/helpers";
 
 const useLedgerReport = ({ customerId }: any) => {
   const { alertFaultGetData, alertSuccessGetData, alertFault, alertSuccess } =
@@ -42,8 +43,7 @@ const useLedgerReport = ({ customerId }: any) => {
     return new Date(currentYear - 1, 0, 1); // January 1st of the previous year
   };
 
-  const [fromDate, setFromDate] = useState<Date>(startOfPreviousYear());
-  // const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [fromDate, setFromDate] = useState<Date>(initialFromDate('ledger-report-date', startOfPreviousYear()));
   const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
   const [selectedContactById, setSelectedContactById] = useState<any>();
@@ -319,6 +319,7 @@ const useLedgerReport = ({ customerId }: any) => {
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
+      localStorage.setItem('ledger-report-date', value[0]);
       setFromDate(value[0]);
       setToDate(value[1]);
     } else {

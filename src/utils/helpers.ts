@@ -340,7 +340,7 @@ export const formatSecondsToHHMMSS = (seconds: number): string => {
 };
 
 
-export   const initialFromDate = (key: string) => {
+export   const initialFromDate = (key: string,defaultDate?:Date) => {
   const savedDate = localStorage.getItem(key);
-  return savedDate ? new Date(savedDate) : startOfYear(new Date());
+  return savedDate ? new Date(savedDate) :defaultDate?defaultDate: startOfYear(new Date());
 };
