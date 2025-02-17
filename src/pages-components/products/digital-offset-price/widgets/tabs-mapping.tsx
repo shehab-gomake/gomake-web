@@ -195,14 +195,14 @@ const TabsMappingWidget = ({
             <AddNewIcon />
           </div>
         ) : null}
-        {item.isCanDeleted && !isAdmin && (widgetType === EWidgetProductType.DUPLICATE || widgetType === EWidgetProductType.EDIT) ? (
+        {(item.isCanDeleted) && !isAdmin && (widgetType === EWidgetProductType.DUPLICATE || widgetType === EWidgetProductType.EDIT) ? (
           <div onClick={() => onRemoveSection(item)}>
             <WastebasketNew2 />
           </div>
         ) : (
           <></>
         )}
-        {item.isCanDeleted && item.index && !isAdmin && widgetType === EWidgetProductType.CREATE ? (
+        {item.isCanDuplicated && item.index && !isAdmin && widgetType === EWidgetProductType.CREATE ? (
           <div onClick={() => onRemoveSection(item)}>
             <WastebasketNew2 />
           </div>

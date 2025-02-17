@@ -665,6 +665,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       (x) => x.id === item.id
     );
     const sectionCopy = cloneDeep(section);
+    sectionCopy.isCanDeleted = true; // Set isCanDeleted to true
     const numberOfCopies = productTemplateCopy.sections.filter(
       (x) => x.duplicatedFromSectionId === item.id
     ).length;
