@@ -15,6 +15,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "./widgets/more-circle";
 import { format, endOfToday, startOfYear } from "date-fns";
+import { initialFromDate } from "@/utils/helpers";
 
 const useCreditCardTransactions = () => {
   const { t } = useTranslation();
@@ -39,9 +40,9 @@ const useCreditCardTransactions = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<any>();
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [fromDate, setFromDate] = useState<Date>(initialFromDate('credit-card-transactions-date'));
   const [toDate, setToDate] = useState<Date>(endOfToday());
-  const { GetDateFormat,getFormattedLocalDate } = useDateFormat();
+  const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
   const [transactionAmount, setTransactionAmount] = useState<number | "">();
   const [receiptNumber, setReceiptNumber] = useState<string>();
 
@@ -116,18 +117,18 @@ const useCreditCardTransactions = () => {
       callBack,
       isClear
         ? {
-            pageNumber: page,
-            pageSize: pageSize,
-          }
+          pageNumber: page,
+          pageSize: pageSize,
+        }
         : {
-            clientId: customer?.id,
-            receiptNumber: receiptNumber,
-            sum: transactionAmount && transactionAmount,
-            startDate: formattedStartDate,
-            endDate: formattedEndDate,
-            pageNumber: page,
-            pageSize: pageSize,
-          }
+          clientId: customer?.id,
+          receiptNumber: receiptNumber,
+          sum: transactionAmount && transactionAmount,
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          pageNumber: page,
+          pageSize: pageSize,
+        }
     );
   };
 
@@ -240,6 +241,7 @@ const useCreditCardTransactions = () => {
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
+      localStorage.setItem('credit-card-transactions-date', value[0]);
       setFromDate(value[0]);
       setToDate(value[1]);
     } else {

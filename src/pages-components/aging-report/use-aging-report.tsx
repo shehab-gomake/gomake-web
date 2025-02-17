@@ -8,7 +8,7 @@ import {
 import { EHttpMethod } from "@/services/api-service/enums";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { endOfToday, startOfYear } from "date-fns";
+import { endOfToday } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { useSetRecoilState } from "recoil";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
@@ -16,6 +16,7 @@ import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { getAndSetClientTypes } from "@/services/hooks";
 import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
 import { DocumentsTypeReportList } from "@/enums";
+import { initialFromDate } from "@/utils/helpers";
 
 const useAgingReport = () => {
   const { t } = useTranslation();
@@ -37,7 +38,8 @@ const useAgingReport = () => {
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableHeader, setTableHeader] = useState<any>([]);
   const [tableData, setTableData] = useState<any>([]);
-  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [fromDate, setFromDate] = useState<Date>(initialFromDate('aging-report-date'));
+
   const [toDate, setToDate] = useState<Date>(endOfToday());
   // New states and logic for handling customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
@@ -59,6 +61,7 @@ const useAgingReport = () => {
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
+      localStorage.setItem('aging-report-date', value[0]);
       setFromDate(value[0]);
       setToDate(value[1]);
     } else {

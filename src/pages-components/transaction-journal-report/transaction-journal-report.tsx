@@ -11,13 +11,12 @@ import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { isValidCustomer } from "@/utils/helpers";
 import { AccountingTransactionReportHeader } from "./widgets/header-widget/acconting-header";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { useEffect, useState } from "react";
+import { useEffect, } from "react";
 
 import CollapsibleTable from "./widgets/collapse-table";
 import { CreateNewTransactionModal } from "../ledger-report/widgets/create-transaction-modal";
 import { AdjustmentsLedgerReportModal } from "../ledger-report/widgets/adjustments-modal";
 import { GoMakeAutoComplate } from "@/components";
-import { useCustomerDropDownList } from "@/hooks";
 
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
@@ -184,7 +183,7 @@ const TransactionJournalReportWidget = ({
       {!isAccountingTransaction && !isAdjustmentsReport && (
         <div style={{ width: "100%", height: "100%" }}>
           {documentType?.id !== DocumentsTypeReportList.Payments &&
-          reportType !== EReportType.DailyPayments ? (
+            reportType !== EReportType.DailyPayments ? (
             <div>
               {showTable &&
                 dataTable?.map((item) => {
