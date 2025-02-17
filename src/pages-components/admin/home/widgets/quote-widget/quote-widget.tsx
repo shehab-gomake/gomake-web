@@ -25,7 +25,7 @@ import { useClientTypesList } from "@/hooks/use-client-types";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import { ModalType } from "@/enums";
 
-const QuoteWidget = ({ isAdmin = true }) => {
+const QuoteWidget = ({ isAdmin = true, isMobileScreen = false }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
@@ -146,11 +146,16 @@ const QuoteWidget = ({ isAdmin = true }) => {
             />
           </div>
         </div>
-        <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
-          <button style={classes.autoButtonStyle} onClick={onClickAddCustomer}>
-            {t("customers.buttons.AddOrSearch")}
-          </button>
-        </PermissionCheck>
+        {!isMobileScreen && (
+          <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
+            <button
+              style={classes.autoButtonStyle}
+              onClick={onClickAddCustomer}
+            >
+              {t("customers.buttons.AddOrSearch")}
+            </button>
+          </PermissionCheck>
+        )}
       </div>
       <div style={classes.autoComplateRowContainer}>
         <div data-tour="select-product" style={{ width: "65%" }}>

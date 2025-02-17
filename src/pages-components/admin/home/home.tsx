@@ -96,7 +96,7 @@ const HomePageComponentForAdmin = ({ isAdmin, isMobileScreen }) => {
           }
         >
           <div style={classes.widgetStyle}>
-            <QuoteWidget isAdmin={isAdmin} />
+            <QuoteWidget isAdmin={isAdmin} isMobileScreen={isMobileScreen} />
           </div>
 
           {!isMobileScreen && (

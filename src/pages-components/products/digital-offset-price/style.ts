@@ -1052,6 +1052,19 @@ const useStyle = ({ isMobileScreen }) => {
         ...FONT_FAMILY.Inter(500, 12),
         color: primaryColor(500),
       },
+      buttonsContainer: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        position: "fixed" as "fixed",
+        bottom: 0,
+        right: 0,
+        boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
+        height: 65,
+        backgroundColor: "#FFF",
+      },
     };
   }, [i18next.language, t, direction, screenWidth, isMobileScreen]);
   return {

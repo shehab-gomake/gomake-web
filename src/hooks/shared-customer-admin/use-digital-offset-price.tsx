@@ -194,7 +194,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [jobActions, setJobActions] = useRecoilState(jobActionsState);
   const setOutSuppliers = useSetRecoilState(outsourceSuppliersState);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
-  const [isLoadging, setLoading] = useRecoilState(isLoadgingState);
+  const [isLoadingPrice, setLoading] = useRecoilState(isLoadgingState);
   const setLoadingWithLockScreen = useSetRecoilState(loadingWithShadowState);
 
   const [priceRecovery, setPriceRecovery] = useState(true);
@@ -5711,7 +5711,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     isChangePriceForEdit,
     onClickCloseChangePriceModal,
     setIsChangePriceForEdit,
-    isLoadging,
+    isLoadingPrice,
     validateWorkflows,
     saveCurrentStation,
     onClickCloseCurrentStationModal,

@@ -93,7 +93,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     isChangePriceForEdit,
     onClickCloseChangePriceModal,
     setIsChangePriceForEdit,
-    isLoadging,
+    isLoadingPrice,
     saveCurrentStation,
     onClickCloseCurrentStationModal,
     onClickOpenCurrentStationModal,
@@ -296,7 +296,18 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
                 <ThemeProvider theme={theme}>
-                  <Tabs variant="scrollable" scrollButtons={"auto"}>
+                  <Tabs
+                    variant="scrollable"
+                    scrollButtons={"auto"}
+                    TabScrollButtonProps={{
+                      sx: {
+                        "&.Mui-disabled": {
+                          color: "grey", // Change the color when disabled
+                          opacity: 0.5, // Optional: Reduce opacity for a faded effect
+                        },
+                      },
+                    }}
+                  >
                     {[
                       ...visibleSections,
                       ...(permissions.includes(Permissions.SHOW_PRICING_TAB)
@@ -439,41 +450,18 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
               />
             )}
           </div>
-
           {/* buttons section */}
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              position: "fixed",
-              bottom: 0,
-              right: 0,
-              boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
-              height: 65,
-              backgroundColor: "#FFF",
-            }}
-          >
+          <div style={clasess.buttonsContainer}>
             {isMobileScreen ? (
               <div
                 style={{
                   ...clasess.addPreviousContainer,
                   padding: "0px 8px",
-                  gap: "0px",
+                  gap: "5px",
                 }}
               >
-                {activeIndex !== 0 && (
-                  <SecondaryButton
-                    variant="outlined"
-                    onClick={handlePreviousClick}
-                  >
-                    {t("products.offsetPrice.admin.previousBtn")}
-                  </SecondaryButton>
-                )}
                 <div data-tour={"product-pricing"} style={clasess.totalStyle}>
-                  {isLoadging ? (
+                  {isLoadingPrice ? (
                     <DotsLoader />
                   ) : (
                     <div
@@ -481,16 +469,10 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         display: "flex",
                         alignItems: "center",
                         position: "relative",
+                        // width: "90%",
                       }}
                     >
-                      <span
-                        style={{
-                          ...clasess.totalCurrancyStyle,
-                          position: "absolute",
-                          left: 30,
-                          zIndex: 999999,
-                        }}
-                      >
+                      <span style={clasess.totalCurrancyStyle}>
                         {systemCurrency}
                       </span>
                       <GomakeTextInput
@@ -505,6 +487,15 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                     </div>
                   )}
                 </div>
+                {activeIndex !== 0 && (
+                  <SecondaryButton
+                    variant="outlined"
+                    onClick={handlePreviousClick}
+                  >
+                    {t("products.offsetPrice.admin.previousBtn")}
+                  </SecondaryButton>
+                )}
+
                 {[
                   ...productTemplate?.sections,
                   ...(permissions.includes(Permissions.SHOW_PRICING_TAB)
@@ -567,7 +558,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 {widgetType === EWidgetProductType.EDIT ? (
                   <GomakePrimaryButton
                     style={
-                      isLoadging
+                      isLoadingPrice
                         ? clasess.addOrderDisabledBtn
                         : clasess.addOrderBtn
                     }
@@ -582,7 +573,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         updateQuoteItem();
                       }
                     }}
-                    disabled={isLoadging}
+                    disabled={isLoadingPrice}
                   >
                     {t("sales.quote.edit")}
                   </GomakePrimaryButton>
@@ -590,12 +581,12 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                   <GomakePrimaryButton
                     data-tour="addPricingBtn"
                     style={
-                      isLoadging
+                      isLoadingPrice
                         ? clasess.addOrderDisabledBtn
                         : clasess.addOrderBtn
                     }
                     onClick={navigateForRouter}
-                    disabled={isLoadging}
+                    disabled={isLoadingPrice}
                   >
                     {t("products.offsetPrice.admin.addOrderBtn")}
                   </GomakePrimaryButton>
