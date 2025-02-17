@@ -232,6 +232,7 @@ const RightSideWidget = ({
               isRequired={false}
               selectedTab={ETab.PRODUCTS}
               setSelectedTab={null}
+              hideOtherTabs={true}
             />
           </div>
         </div>
