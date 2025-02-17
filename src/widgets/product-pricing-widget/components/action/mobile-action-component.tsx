@@ -76,116 +76,36 @@ const MobileActions = ({
   productType,
   widgetType,
   selectedWorkFlowCalculatedIsLoaded,
-  reOderMainActions,
   isFromSetting = false,
   deleteActionFromProduct,
-  updateActionsOrderInProduct,
   updateProductAction,
 }: IActionsComponentProps) => {
-  const permissions = useRecoilValue(permissionsState);
   const [actionsList, setActionsList] = useState(actions);
 
   useEffect(() => {
     setActionsList(actions);
   }, [actions]);
 
-  const onDragEnd = (result) => {
-    if (!result.destination) return;
-    const reorderedActions = Array.from(actionsList);
-    const [movedAction] = reorderedActions.splice(result.source.index, 1);
-    reorderedActions.splice(result.destination.index, 0, movedAction);
-    const formattedActions = reorderedActions.map(
-      (action: any, index: number) => ({
-        printingActionId: action?.id,
-        productType: action?.productType,
-        orderIndex: index,
-      })
-    );
-    setActionsList(reorderedActions);
-    if (isFromSetting) {
-      updateActionsOrderInProduct(formattedActions);
-    } else {
-      reOderMainActions(formattedActions);
-    }
-  };
-
   return (
     <>
-      {permissions.includes(Permissions.CUSTOMIZE_WORKFLOW) ? (
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="actionsDroppable">
-            {(provided) => (
-              <Stack
-                gap={"10px"}
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-              >
-                {actionsList?.map((action, index) => (
-                  <Draggable
-                    key={action.id}
-                    draggableId={action.id}
-                    index={index}
-                  >
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}
-                      >
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "10px",
-                          }}
-                        >
-                          <SortIcon />
-                          <MobileActionContainerComponent
-                            data-toure={"action"}
-                            widgetType={widgetType}
-                            productType={productType}
-                            workFlowId={workFlowId}
-                            selectedWorkFlowCalculatedIsLoaded={
-                              selectedWorkFlowCalculatedIsLoaded
-                            }
-                            delay={index * 800}
-                            isFromSetting={isFromSetting}
-                            deleteActionFromProduct={deleteActionFromProduct}
-                            updateProductAction={updateProductAction}
-                            {...action}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </Stack>
-            )}
-          </Droppable>
-        </DragDropContext>
-      ) : (
-        <>
-          {actionsList?.map((action, index) => (
-            <div style={{ marginBottom: "16px" }}>
-              <MobileActionContainerComponent
-                data-toure={"action"}
-                widgetType={widgetType}
-                productType={productType}
-                workFlowId={workFlowId}
-                selectedWorkFlowCalculatedIsLoaded={
-                  selectedWorkFlowCalculatedIsLoaded
-                }
-                delay={index * 800}
-                isFromSetting={isFromSetting}
-                deleteActionFromProduct={deleteActionFromProduct}
-                updateProductAction={updateProductAction}
-                {...action}
-              />
-            </div>
-          ))}
-        </>
-      )}
+      {actionsList?.map((action, index) => (
+        <div style={{ marginBottom: "16px" }}>
+          <MobileActionContainerComponent
+            data-toure={"action"}
+            widgetType={widgetType}
+            productType={productType}
+            workFlowId={workFlowId}
+            selectedWorkFlowCalculatedIsLoaded={
+              selectedWorkFlowCalculatedIsLoaded
+            }
+            delay={index * 800}
+            isFromSetting={isFromSetting}
+            deleteActionFromProduct={deleteActionFromProduct}
+            updateProductAction={updateProductAction}
+            {...action}
+          />
+        </div>
+      ))}
     </>
   );
 };
@@ -1132,6 +1052,7 @@ const MobileActionComponent = ({
       valueColor: secondColor(500),
     },
   ];
+
   const getSupplierId = useCallback(() => {
     if (supplierId && suppliers?.length > 0) {
       const supplier = suppliers?.find((sup) => sup.supplierId === supplierId);

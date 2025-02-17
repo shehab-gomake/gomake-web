@@ -20,7 +20,6 @@ import { useState } from "react";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { GoMakeDeleteModal } from "@/components";
-
 import { ActionsListMenu } from "./components/actions-menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SectionNameListMenu } from "./components/sections-menu";
@@ -242,7 +241,6 @@ const PricingWidget = ({
             reOderMainActions={reOderMainActions}
             reOderSubWorkFlows={reOderSubWorkFlows}
           />
-          {/* processing */}
           {isMobileScreen ? (
             <MobileActions
               actions={selectedWorkFlow?.actions}
@@ -251,7 +249,6 @@ const PricingWidget = ({
               selectedWorkFlowCalculatedIsLoaded={
                 selectedWorkFlowCalculatedIsLoaded
               }
-              reOderMainActions={reOderMainActions}
             />
           ) : (
             <Actions
@@ -268,11 +265,11 @@ const PricingWidget = ({
       )}
 
       {/* waiting */}
-
-      {/* {selectedWorkFlowsByTabList?.length > 0 &&
+      {selectedWorkFlowsByTabList?.length > 0 &&
         view === EPricingViews.OTHERS_WORKFLOWS && (
           <div data-tour={"allWorkflowsContainer"}>
             <WorkFlowsComponent
+              isMobileScreen={isMobileScreen}
               showSelected={() => setView(EPricingViews.SELECTED_WORKFLOW)}
               workflows={selectedWorkFlowsByTabList}
               getWorkFlowsActions={getWorkFlowsActions}
@@ -302,11 +299,7 @@ const PricingWidget = ({
             )}
           </div>
         )}
-           */}
-
-      {/* waiting */}
-
-      {/* {view === EPricingViews.OUTSOURCE_WORKFLOW && (
+      {view === EPricingViews.OUTSOURCE_WORKFLOW && (
         <OutSourceSuppliers
           widgetType={widgetType}
           onClickAddOutSourceAction={onClickAddOutSourceAction}
@@ -316,7 +309,7 @@ const PricingWidget = ({
           }
           onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
         />
-      )} */}
+      )}
       <GoMakeDeleteModal
         modalType={ModalType.ADD}
         openModal={isAddNewAction}

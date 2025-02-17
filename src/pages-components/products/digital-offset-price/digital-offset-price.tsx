@@ -302,8 +302,8 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                     TabScrollButtonProps={{
                       sx: {
                         "&.Mui-disabled": {
-                          color: "grey", // Change the color when disabled
-                          opacity: 0.5, // Optional: Reduce opacity for a faded effect
+                          color: "grey",
+                          opacity: 0.5,
                         },
                       },
                     }}

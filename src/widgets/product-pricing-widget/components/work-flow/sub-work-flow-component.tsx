@@ -11,7 +11,7 @@ import {
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import FmdBadIcon from "@mui/icons-material/FmdBad";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { adaptPaddingLeft, adaptPaddingRight } from "@/utils/adapter";
+import { adaptPaddingLeft } from "@/utils/adapter";
 import { useTranslation } from "react-i18next";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
@@ -33,6 +33,8 @@ interface ISubWorkFlowsComponentProps {
   reOderMainActions?: (data: any) => void;
   reOderSubWorkFlows?: (data: any) => void;
 }
+
+//!here i think should make two for mobile also
 
 const SubWorkFlowComponent = ({
   actions,
@@ -283,9 +285,11 @@ const SubWorkFlowsComponent = ({
 }: ISubWorkFlowsComponentProps) => {
   const [workflowsList, setWorkflowsList] = useState(workflows);
   const permissions = useRecoilValue(permissionsState);
+
   useEffect(() => {
     setWorkflowsList(workflows);
   }, [workflows]);
+
   const onDragEnd = (result) => {
     if (!result.destination) return;
     const reorderedWorkflows = Array.from(workflowsList);
@@ -365,4 +369,5 @@ const SubWorkFlowsComponent = ({
     </>
   );
 };
+
 export { SubWorkFlowsComponent, SubWorkFlowComponent };
