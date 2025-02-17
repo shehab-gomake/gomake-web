@@ -2,6 +2,7 @@ import { EPreferences } from "@/enums/prefernces";
 import { ISetState } from "@/services/hooks/call-api.interface";
 import get from "lodash.get";
 import convert from "convert-units";
+import {  startOfYear } from "date-fns";
 
 const returnResult = (
   result: any,
@@ -336,4 +337,10 @@ export const formatSecondsToHHMMSS = (seconds: number): string => {
   return [hours, minutes, remainingSeconds]
     .map((unit) => unit.toString().padStart(2, "0"))
     .join(":");
+};
+
+
+export   const initialFromDate = (key: string) => {
+  const savedDate = localStorage.getItem(key);
+  return savedDate ? new Date(savedDate) : startOfYear(new Date());
 };

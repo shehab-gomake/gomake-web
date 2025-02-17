@@ -8,7 +8,7 @@ import {
 import { EHttpMethod } from "@/services/api-service/enums";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { endOfToday, startOfYear } from "date-fns";
+import { endOfToday } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { useSetRecoilState } from "recoil";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
@@ -16,6 +16,7 @@ import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { getAndSetClientTypes } from "@/services/hooks";
 import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
 import { DocumentsTypeReportList } from "@/enums";
+import { initialFromDate } from "@/utils/helpers";
 
 const useAgingReport = () => {
   const { t } = useTranslation();
@@ -29,13 +30,6 @@ const useAgingReport = () => {
     isFetching,
   } = useCustomerDropDownList();
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
-
-
-  const initialFromDate = () => {
-    const savedDate = localStorage.getItem('aging-report-date');
-    return savedDate ? new Date(savedDate) : startOfYear(new Date());
-  };
-
   const [selectDate, setSelectDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
@@ -44,7 +38,7 @@ const useAgingReport = () => {
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableHeader, setTableHeader] = useState<any>([]);
   const [tableData, setTableData] = useState<any>([]);
-  const [fromDate, setFromDate] = useState<Date>(initialFromDate());
+  const [fromDate, setFromDate] = useState<Date>(initialFromDate('aging-report-date'));
 
   const [toDate, setToDate] = useState<Date>(endOfToday());
   // New states and logic for handling customer modal
