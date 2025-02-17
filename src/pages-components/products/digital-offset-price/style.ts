@@ -473,6 +473,7 @@ const useStyle = () => {
       labelsStyle: {
         color: primaryColor(500),
         ...FONT_FAMILY.Lexend(500, 14),
+        gap: 5,
       },
       progress: {
         marginBottom: 8,
