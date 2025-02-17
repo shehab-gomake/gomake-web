@@ -477,12 +477,13 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         {systemCurrency}
                       </span>
                       <GomakeTextInput
+                        disabled={true}
                         direction={direction}
                         value={
                           roundPrice(sliderCurrentProductItemValueTotalPrice) ??
                           "---------"
                         }
-                        key={"TotalPriceInput"}
+                        key={"TotalPriceInputMobile"}
                         style={clasess.inputPriceStyle}
                       />
                     </div>

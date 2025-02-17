@@ -4,7 +4,7 @@ import { EWidgetProductType } from "@/pages-components/products/digital-offset-p
 import { useMediaQuery } from "react-responsive";
 
 export default function DigitalOffsetPrice() {
-  const isMobileScreen = useMediaQuery({ query: "(max-width: 768px)" });
+  const isMobileScreen = useMediaQuery({ query: "(max-width: 700px)" });
 
   return (
     <CustomerAuthLayout

@@ -533,7 +533,8 @@ const useStyle = ({ isMobileScreen }) => {
         height: 35,
       },
       inputPriceStyle: {
-        color: primaryColor(500),
+        color: primaryColor(500) + " !important",
+        WebkitTextFillColor: primaryColor(500) + " !important",
         ...FONT_FAMILY.Lexend(700, 24),
         height: "100%",
         width: "100%",
