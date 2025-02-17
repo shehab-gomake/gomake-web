@@ -320,7 +320,7 @@ const useProductionFloorData = () => {
                 );
                 const allGroupViewFilter:IFilterGroupsList = {
                     id:"all",
-                    name:"all"
+                    name:t("productionFloor.allFilterGroupsViewName")
                 }
                 setFilterGroups([allGroupViewFilter,...filterGroupsList]);
             }
