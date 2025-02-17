@@ -75,7 +75,7 @@ const FormInput = ({
 
     const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
         const value = translateUnit && input.unit ? restoreUnitValue(input.unit, parseFloat(e.target.value)) :  e.target.value;
-        changeState(input.parameterKey, e.target.value.endsWith('.') ? value + '.' : value);
+        changeState(input.parameterKey, translateUnit && input.unit && e.target.value.endsWith('.') ? value + '.' : value);
     };
 
     const onChangePhoneNumber = (phone: string) => {
