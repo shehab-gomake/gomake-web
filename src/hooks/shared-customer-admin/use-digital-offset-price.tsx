@@ -194,7 +194,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const [priceRecovery, setPriceRecovery] = useState(true);
   const [canCalculation, setCanCalculation] = useState(false);
-  console.log("canCalculation", canCalculation)
   const setSelectParameterButton = useSetRecoilState(
     selectParameterButtonState
   );
