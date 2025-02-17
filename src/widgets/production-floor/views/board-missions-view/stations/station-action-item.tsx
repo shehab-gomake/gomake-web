@@ -70,6 +70,7 @@ interface IProps extends IBoardMissionsStation {
   isHaveSubACtions?: boolean;
   isHideTimeAndDate?: boolean;
   supplierId?: string;
+  isSubAction?: boolean;
 }
 
 const BoardMissionsStationActionItem = ({
@@ -99,6 +100,7 @@ const BoardMissionsStationActionItem = ({
   supplierId,
   productType,
   realProductionTime,
+  isSubAction = false,
 }: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { t } = useTranslation();
@@ -385,6 +387,11 @@ const BoardMissionsStationActionItem = ({
     });
   };
 
+  // if isSubAction make problem delete it and use the useEffect
+  // useEffect(() => {
+  //   setIsOpen(!!selected);
+  // }, [selected]);
+
   return (
     <>
       {isHaveSubACtions ? (
@@ -535,7 +542,7 @@ const BoardMissionsStationActionItem = ({
                       style={{
                         width: "2px",
                         backgroundColor: "#667085",
-                        margin: i === 0 ? "-20px 0 -10px 0" : "-10px 0",
+                        margin: i === 0 ? "-10px 0 -10px 0" : "-10px 0",
                       }}
                       flexItem
                     />
@@ -562,6 +569,7 @@ const BoardMissionsStationActionItem = ({
                     isHaveSubACtions={!!subAction.subActions}
                     subActions={subAction.subActions}
                     isHideTimeAndDate={true}
+                    isSubAction={true}
                     {...subAction}
                   />
                 </Stack>
@@ -827,7 +835,7 @@ const BoardMissionsStationActionItem = ({
                 </Stack>
               </Stack>
               <Collapse
-                in={isOpen}
+                in={isSubAction ? true : isOpen}
                 collapsedSize={0}
                 orientation={"vertical"}
                 onClick={(e) => e.stopPropagation()}

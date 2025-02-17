@@ -43,7 +43,7 @@ const BoardMissionsActivities = () => {
   }, [activitiesList]);
 
   return (
-    <Stack width={"100%"} gap={"20px"} height={"100%"} overflow={"hidden"}>
+    <Stack width={"100%"} gap={"8px"} height={"100%"} overflow={"hidden"}>
       <Stack direction={"row"} gap={"10px"} alignItems={"center"}>
         {filtersButtonsArray?.map((btn) => (
           <Button
@@ -60,6 +60,7 @@ const BoardMissionsActivities = () => {
               border: btn.selected ? "none" : `1px solid ${btn.borderColor}`,
               boxShadow: "none",
               textTransform: "capitalize",
+              padding: "0px 8px",
             }}
           >
             {t(btn.name)}
