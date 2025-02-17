@@ -3,12 +3,14 @@ import { PriceListPageWidget } from "@/pages-components/products/digital-offset-
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 import { useMediaQuery } from "react-responsive";
 
-//!here
 export default function DigitalOffsetPrice() {
   const isMobileScreen = useMediaQuery({ query: "(max-width: 768px)" });
 
   return (
-    <CustomerAuthLayout disableHeaderSideMenu={isMobileScreen}>
+    <CustomerAuthLayout
+      disableHeaderSideMenu={isMobileScreen}
+      backgroundColor={"#f6f6f6"}
+    >
       <PriceListPageWidget
         widgetType={EWidgetProductType.CREATE}
         isMobileScreen={isMobileScreen}

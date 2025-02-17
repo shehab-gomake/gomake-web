@@ -18,6 +18,7 @@ const CustomerAuthLayout = ({
   allowAnonymous,
   disableHeaderSideMenu,
   className,
+  backgroundColor,
 }: IAuthLayout) => {
   const { canAccess } = useAuthLayoutHook(permissionEnumValue, allowAnonymous);
   const { classes } = useStyle({
@@ -32,14 +33,19 @@ const CustomerAuthLayout = ({
   return disableHeaderSideMenu ? (
     <>
       {canAccess && (
-        <div style={{ ...classes.bodyContainer, backgroundColor: "#FFF" }}>
+        <div
+          style={{
+            ...classes.bodyContainer,
+            backgroundColor: backgroundColor ?? "#FFF",
+          }}
+        >
           {children}
         </div>
       )}
     </>
   ) : (
     <>
-      {(
+      {
         <div style={classes.container}>
           <LeftSideLayout customGap={customGap} />
           <div
@@ -69,7 +75,7 @@ const CustomerAuthLayout = ({
             />
           </GoMakeModal>
         </div>
-      )}
+      }
     </>
   );
 };

@@ -362,6 +362,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                             userPermission={Permissions.SHOW_PRICING_TAB}
                           >
                             <PricingWidget
+                              isMobileScreen={isMobileScreen}
                               getOutSourcingSuppliers={getOutSourcingSuppliers}
                               actions={jobActions}
                               workFlows={workFlows}

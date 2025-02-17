@@ -28,6 +28,7 @@ import { ModalType } from "@/enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderDeliveryDate } from "@/utils/helpers";
+import { MobileActions } from "./components/action/mobile-action-component";
 
 //!here pricing
 const PricingWidget = ({
@@ -37,6 +38,7 @@ const PricingWidget = ({
   setSelectedWorkFlowCalculatedIsLoaded,
   selectedWorkFlowCalculatedIsLoaded,
   getSelectedWorkFlow,
+  isMobileScreen,
 }: IPricingWidgetProps) => {
   const { classes } = useStyle();
   const {
@@ -223,8 +225,16 @@ const PricingWidget = ({
       )}
       <Divider />
 
-      {/* {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && (
-        <div data-tour={"actions-container"}>
+      {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && (
+        <div
+          data-tour={"actions-container"}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            width: "100%",
+          }}
+        >
+          {/* waiting */}
           <SubWorkFlowsComponent
             widgetType={widgetType}
             isEditableActions={true}
@@ -232,18 +242,34 @@ const PricingWidget = ({
             reOderMainActions={reOderMainActions}
             reOderSubWorkFlows={reOderSubWorkFlows}
           />
-          <Actions
-            actions={selectedWorkFlow?.actions}
-            productType={selectedWorkFlow.productType}
-            widgetType={widgetType}
-            selectedWorkFlowCalculatedIsLoaded={
-              selectedWorkFlowCalculatedIsLoaded
-            }
-            reOderMainActions={reOderMainActions}
-          />
+          {/* processing */}
+          {isMobileScreen ? (
+            <MobileActions
+              actions={selectedWorkFlow?.actions}
+              productType={selectedWorkFlow.productType}
+              widgetType={widgetType}
+              selectedWorkFlowCalculatedIsLoaded={
+                selectedWorkFlowCalculatedIsLoaded
+              }
+              reOderMainActions={reOderMainActions}
+            />
+          ) : (
+            <Actions
+              actions={selectedWorkFlow?.actions}
+              productType={selectedWorkFlow.productType}
+              widgetType={widgetType}
+              selectedWorkFlowCalculatedIsLoaded={
+                selectedWorkFlowCalculatedIsLoaded
+              }
+              reOderMainActions={reOderMainActions}
+            />
+          )}
         </div>
       )}
-      {selectedWorkFlowsByTabList?.length > 0 &&
+
+      {/* waiting */}
+
+      {/* {selectedWorkFlowsByTabList?.length > 0 &&
         view === EPricingViews.OTHERS_WORKFLOWS && (
           <div data-tour={"allWorkflowsContainer"}>
             <WorkFlowsComponent
@@ -276,7 +302,11 @@ const PricingWidget = ({
             )}
           </div>
         )}
-      {view === EPricingViews.OUTSOURCE_WORKFLOW && (
+           */}
+
+      {/* waiting */}
+
+      {/* {view === EPricingViews.OUTSOURCE_WORKFLOW && (
         <OutSourceSuppliers
           widgetType={widgetType}
           onClickAddOutSourceAction={onClickAddOutSourceAction}

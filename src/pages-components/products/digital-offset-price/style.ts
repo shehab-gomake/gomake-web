@@ -128,7 +128,7 @@ const useStyle = ({ isMobileScreen }) => {
         gap: 40,
         marginBottom: 20,
         width: "100%",
-        maxWidth: screenWidth - 600,
+        maxWidth: isMobileScreen ? "unset" : screenWidth - 600,
       },
       tabContainer: {
         display: "flex",

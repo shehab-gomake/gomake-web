@@ -9,6 +9,7 @@ export default function Home() {
     <CustomerAuthLayout
       className={`custom-scrollbar`}
       disableHeaderSideMenu={isMobileScreen}
+      backgroundColor={"#f6f6f6"}
     >
       <HomePageComponentForAdmin
         isAdmin={false}
