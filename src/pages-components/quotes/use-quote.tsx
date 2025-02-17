@@ -2663,7 +2663,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setToDate,
     isPurchaseDocument,
     supplierList,
-    isSendToClient
+    isSendToClient,
+    onClickOpenCustomerModal
   };
 };
 

@@ -1,6 +1,7 @@
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 export enum Permissions {
+  SHOW_CLIENT_BALANCE = 'ShowClientBalance',
   // client group
   SHOW_CLIENT = "ShowClient",
   EDIT_CLIENT = "EditClient",
