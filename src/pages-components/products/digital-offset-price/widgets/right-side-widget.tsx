@@ -23,6 +23,7 @@ import { permissionsState } from "@/store";
 import { Box, Slider } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
+import {ETab} from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 export const roundPrice = (price) => {
   try {
@@ -242,6 +243,8 @@ const RightSideWidget = ({
               options={combinedData}
               onChange={handleProductChange}
               placeholder={t("home.admin.selectProductOrMaterial")}
+              isRequired={false}
+            
             />
           </div>
         </div>

@@ -23,7 +23,7 @@ import {
 } from "@/widgets/materials-widget/state";
 import { productsForDropDownList } from "@/store";
 import { GoMakeImageFiled } from "../image-filed/image-filed";
-import {useInputUnit} from "@/components/form-inputs/use-input-units";
+import { useInputUnit } from "@/components/form-inputs/use-input-units";
 
 const FormInput = ({
     input,
@@ -32,7 +32,9 @@ const FormInput = ({
     readonly,
     checkWhatRenderArray,
     loading,
+    keyItem,
 }: IFormInput) => {
+    console.log("keyItem", keyItem)
     const [options, setOptions] = useState([]);
     const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
     const { callApi } = useGomakeAxios();
@@ -46,7 +48,7 @@ const FormInput = ({
     const parametersCategories = useRecoilValue<any>(materialsParametersState);
     const productValue = useRecoilValue(productsForDropDownList);
     const [optionsUrl, setOptionsUrl] = useState<string>('');
-    const {translateUnit, restoreUnitValue, convertUnitValue, units} = useInputUnit();
+    const { translateUnit, restoreUnitValue, convertUnitValue, units } = useInputUnit();
     const machinesCategoriesList = machinesCategories.map((machine) => ({
         ...machine,
         value: machine.id,
@@ -75,7 +77,7 @@ const FormInput = ({
 
     const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
         const value = translateUnit && input.unit ? restoreUnitValue(input.unit, parseFloat(e.target.value)) :  e.target.value;
-        changeState(input.parameterKey, e.target.value.endsWith('.') ? value + '.' : value);
+        changeState(input.parameterKey, translateUnit && input.unit && e.target.value.endsWith('.') ? value + '.' : value);
     };
 
     const onChangePhoneNumber = (phone: string) => {
@@ -244,7 +246,7 @@ const FormInput = ({
                             />
                         ) : input.type === "select" || input?.type === "products_list" ? (
                             <GoMakeAutoComplate
-                                key={`${input.value}-${selectedLabel}-${selectedOptions}`}
+                                key={keyItem ? keyItem : `${input.value}-${selectedLabel}-${selectedOptions}`}
                                 style={{
                                     minWidth: 180,
                                     border: 0,
@@ -397,7 +399,7 @@ const FormInput = ({
                                 }
                                 placeholder={t(input.placeholder)}
                                 disabled={!!readonly}
-                                value={translateUnit && input.unit ? ( String(input.value).endsWith('.') ? convertUnitValue(input.unit, parseFloat(input.value)) + '.' : convertUnitValue(input.unit, parseFloat(input.value)) ): input.value}
+                                value={translateUnit && input.unit ? (String(input.value).endsWith('.') ? convertUnitValue(input.unit, parseFloat(input.value)) + '.' : convertUnitValue(input.unit, parseFloat(input.value))) : input.value}
                             />
                         )}
                     </div>

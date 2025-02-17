@@ -326,6 +326,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         onRemoveSection={removeSection}
                         setProductTemplate={setProductTemplate}
                         isAdmin={false}
+                        widgetType={widgetType}
                       />
                     ))}
                   </Tabs>

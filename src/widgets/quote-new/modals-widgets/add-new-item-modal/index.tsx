@@ -11,6 +11,8 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { Stack, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { Permissions } from "@/components/CheckPermission/enum";
+import {useState} from "react";
+import {ETab} from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 const ProductTypeSelector = ({ active, onChange, primaryColor, t }) => (
   <RadioGroup
@@ -93,7 +95,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
     selectedTab,
     onSelectTab,
   } = useAddNewItem({ onClose, getQuote, documentType });
-
+  const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
   return (
     <>
       <GoMakeModal
@@ -118,14 +120,15 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
             />
           )*/}
           {active ? (
-            <GoMakeTreeSelect
-              selectedTab={selectedTab}
-              setSelectedTab={onSelectTab}
-              value={selectedProduct}
-              options={combinedData}
-              onChange={handleProductChange}
-              placeholder={t("home.admin.selectProductOrMaterial")}
-            />
+              <GoMakeTreeSelect
+                  selectedTab={selectedTab}
+                  setSelectedTab={setSelectedTab}
+                  value={selectedProduct}
+                  options={combinedData}
+                  onChange={handleProductChange}
+                  placeholder={t("home.admin.selectProductOrMaterial")}
+                  isRequired={true}
+              />
           ) : (
             <GenericProductInput
               productName={productName}

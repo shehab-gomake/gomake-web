@@ -707,13 +707,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
 
   const removeSection = (item) => {
+    // setCanCalculation(true);
     let temp = cloneDeep(productTemplate);
     temp.sections = temp.sections.filter((x) => x.id !== item.id);
     initProduct(temp, allMaterials);
     const updatedSubProducts = subProducts.filter(
       (subProduct) => subProduct.sectionId !== item.id
     );
+
     setSubProducts(updatedSubProducts);
+    calculationProduct(updatedSubProducts);
   };
 
   const duplicateParameters = (mySubSection) => {
@@ -3355,7 +3358,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const deletedParameter = subSection?.parameters.find(
       (param) => param.id === parameterId && param.actionIndex == actionIndex
     );
-
     // Check if the deleted parameter has related parameters
     if (deletedParameter && deletedParameter.relatedParameters) {
       deletedParameter.relatedParameters.forEach((relatedParam) => {
@@ -3377,6 +3379,34 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           // Recursively remove related parameters for the removed parameter
           removeRelatedParametersFromSubProducts(
             relatedParameterId,
+            sectionId,
+            subSectionId,
+            parameters,
+            deletedParameter.actionIndex
+          );
+        }
+      });
+    }
+    if (deletedParameter && deletedParameter.settingParameters) {
+      deletedParameter.settingParameters.forEach((settingParam) => {
+        // Remove the setting parameter from the parameters array
+        const settingIndex = parameters.findIndex(
+          (param) =>
+            param.parameterId === settingParam.id &&
+            param.actionIndex == settingParam.actionIndex &&
+            param.sectionId == sectionId &&
+            param.subSectionId == subSectionId
+        );
+
+        if (settingIndex !== -1) {
+          const settingParameterId = parameters[settingIndex].parameterId;
+
+          // Remove the setting parameter
+          parameters.splice(settingIndex, 1);
+
+          // Recursively remove setting parameters for the removed parameter
+          removeRelatedParametersFromSubProducts(
+            settingParameterId,
             sectionId,
             subSectionId,
             parameters,

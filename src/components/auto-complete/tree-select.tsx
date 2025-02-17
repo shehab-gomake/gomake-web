@@ -100,6 +100,7 @@ const GoMakeTreeSelect = ({
                               style,
                               selectedTab,
                               setSelectedTab,
+                              isRequired,
                               ...props
                           }: {
     value?: any;
@@ -108,6 +109,7 @@ const GoMakeTreeSelect = ({
     placeholder?: string;
     style?: React.CSSProperties;
     selectedTab?: any;
+    isRequired?: boolean;
     setSelectedTab: (value: any) => void;
 }) => {
     const router = useRouter();

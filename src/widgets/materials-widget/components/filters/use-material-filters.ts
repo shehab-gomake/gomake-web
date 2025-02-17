@@ -83,7 +83,7 @@ const useMaterialFilters = () => {
     });
     setPageNumber(1);
   };
-  const setFilterValue = (key: string, value: string | string[]) => {
+  const setFilterValue = (key: string, value: string | string[], unit?: string) => {
     const updatedFilters =
       value && !(Array.isArray(value) && value.length === 0)
         ? [
@@ -93,6 +93,7 @@ const useMaterialFilters = () => {
               ...(key === "machines" || key === "clients"
                 ? { values: value }
                 : { value: value }),
+              ...(unit ? { unit: unit } : {}), // Add unit if it exists
             },
           ]
         : filters.filter((x) => x.key !== key);
