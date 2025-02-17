@@ -62,6 +62,7 @@ const DropDownListParameterWidget = ({
       ? { updateName: temp[index].values }
       : parameter.valuesConfigs.find((item) => item.isDefault)
   );
+  console.log("selectedValue", selectedValue)
   useEffect(() => {
     // If the parameter changes, update the selectedValue accordingly
     setSelectedValue(
@@ -69,7 +70,7 @@ const DropDownListParameterWidget = ({
         ? { updateName: temp[index].values }
         : parameter.valuesConfigs.find((item) => item.isDefault)
     );
-  }, [index, temp]);
+  }, []);
 
   const handleValueChange = (e, value) => {
     setSelectedValue(value); // Update the selected value in state

@@ -134,6 +134,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  console.log("subProducts", subProducts)
   const [subProductsColorsModal, setSubProductsColorsModal] =
     useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
@@ -3314,7 +3315,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const deletedParameter = subSection?.parameters.find(
       (param) => param.id === parameterId && param.actionIndex == actionIndex
     );
-
+    console.log("deletedParameter", deletedParameter)
     // Check if the deleted parameter has related parameters
     if (deletedParameter && deletedParameter.relatedParameters) {
       deletedParameter.relatedParameters.forEach((relatedParam) => {
@@ -3336,6 +3337,34 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           // Recursively remove related parameters for the removed parameter
           removeRelatedParametersFromSubProducts(
             relatedParameterId,
+            sectionId,
+            subSectionId,
+            parameters,
+            deletedParameter.actionIndex
+          );
+        }
+      });
+    }
+    if (deletedParameter && deletedParameter.settingParameters) {
+      deletedParameter.settingParameters.forEach((settingParam) => {
+        // Remove the setting parameter from the parameters array
+        const settingIndex = parameters.findIndex(
+          (param) =>
+            param.parameterId === settingParam.id &&
+            param.actionIndex == settingParam.actionIndex &&
+            param.sectionId == sectionId &&
+            param.subSectionId == subSectionId
+        );
+
+        if (settingIndex !== -1) {
+          const settingParameterId = parameters[settingIndex].parameterId;
+
+          // Remove the setting parameter
+          parameters.splice(settingIndex, 1);
+
+          // Recursively remove setting parameters for the removed parameter
+          removeRelatedParametersFromSubProducts(
+            settingParameterId,
             sectionId,
             subSectionId,
             parameters,
@@ -3969,6 +3998,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           subSectionType
         );
       }
+      console.log("subSectionParameter", subSectionParameter)
       if (subSectionParameter) {
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
