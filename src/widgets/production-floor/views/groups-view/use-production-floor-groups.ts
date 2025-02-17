@@ -12,12 +12,12 @@ import { productionFloorFiltersState } from "@/widgets/production-floor/state/pr
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
 
-const useProductionFloorGroups = () => {
+const useProductionFloorGroups = (connectionId:string) => {
   const [groups, setGroups] = useRecoilState(productionFloorGroupsState);
   const { callApi } = useGomakeAxios();
   const { query } = useRouter();
   const { groupsId } = query;
-  const { handleGroupsFilterChange } = useProductionFloorFilters({});
+  const { handleGroupsFilterChange } = useProductionFloorFilters({connectionId:connectionId});
   const [, setFilters] = useRecoilState(productionFloorFiltersState);
   const [, setTags] = useRecoilState(tagsState);
   const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);

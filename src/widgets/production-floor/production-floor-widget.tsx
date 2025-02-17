@@ -109,7 +109,7 @@ const ProductionFloorWidget = () => {
             <TimelineWidget />
           </PermissionCheck>
         ) : view === EProductionFloorView.GROUPS ? (
-          <GroupsTable />
+          <GroupsTable connectionId={connectionId} />
         ) : (
           <ProductionFloorBoardMissionsViews connectionId={connectionId} />
         )}
