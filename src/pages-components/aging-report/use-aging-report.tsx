@@ -29,6 +29,13 @@ const useAgingReport = () => {
     isFetching,
   } = useCustomerDropDownList();
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
+
+
+  const initialFromDate = () => {
+    const savedDate = localStorage.getItem('aging-report-date');
+    return savedDate ? new Date(savedDate) : startOfYear(new Date());
+  };
+
   const [selectDate, setSelectDate] = useState<string>(
     new Date().toISOString().split("T")[0]
   );
@@ -37,7 +44,8 @@ const useAgingReport = () => {
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableHeader, setTableHeader] = useState<any>([]);
   const [tableData, setTableData] = useState<any>([]);
-  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [fromDate, setFromDate] = useState<Date>(initialFromDate());
+
   const [toDate, setToDate] = useState<Date>(endOfToday());
   // New states and logic for handling customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
@@ -59,6 +67,7 @@ const useAgingReport = () => {
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
+      localStorage.setItem('aging-report-date', value[0]);
       setFromDate(value[0]);
       setToDate(value[1]);
     } else {
