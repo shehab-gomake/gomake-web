@@ -1,6 +1,5 @@
 import { Card, IconButton, MenuItem, Paper, Stack } from "@mui/material";
 import CardMedia from "@mui/material/CardMedia";
-import { CardFooter } from "react-bootstrap";
 import { FONT_FAMILY } from "@/utils/font-family";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
@@ -31,7 +30,6 @@ const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
   const onClickDelete = async () => {
     try {
       setIsLoading(true);
-      // Fetch the file from the server
       const response = await fetch(
         companyProfile.filesApiAddress + "/api/Files/DeleteFile",
         {
@@ -40,7 +38,7 @@ const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
             orderItemId: boardMissions.orderItemId,
             filename: file.name,
             source: file.filePath,
-            productType: productType ? productType : "",
+            productType: productType || "",
           }),
           headers: {
             authorization: "Bearer " + getUserToken(),
@@ -51,17 +49,15 @@ const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      setIsLoading(false);
     } catch (error) {
-      setIsLoading(false);
       console.error("Download failed:", error);
     }
+    setIsLoading(false);
   };
 
   const onClickDownload = async () => {
     try {
       setIsLoading(true);
-      // Fetch the file from the server
       const response = await fetch(
         companyProfile.filesApiAddress + "/api/Files/downloadfile",
         {
@@ -80,26 +76,19 @@ const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      // Get the file as a Blob
       const blob = await response.blob();
-
-      // Create a URL for the Blob object
       const downloadUrl = window.URL.createObjectURL(blob);
-
-      // Create a link element to download the blob
       const link = document.createElement("a");
       link.href = downloadUrl;
-      link.download = file?.name; // Provide the filename and extension
+      link.download = file?.name;
       document.body.appendChild(link);
       link.click();
-      setIsLoading(false);
-
-      // Clean up by revoking the object URL and removing the link
       window.URL.revokeObjectURL(downloadUrl);
-      link.parentNode.removeChild(link);
+      link.remove();
     } catch (error) {
       console.error("Download failed:", error);
     }
+    setIsLoading(false);
     setOpen(false);
   };
 
@@ -107,71 +96,72 @@ const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
     <div
       style={{
         position: "relative",
-        // margin: "35px 0",
-        height: "200px",
+        height: "140px",
+        width: "110px",
+        // maxWidth: "60%",
+        // maxHeight: "90%",
       }}
     >
       <Card
         sx={{
-          width: 206,
-          height: 180,
+          width: "100%",
+          height: "100%",
           padding: "8px",
           backgroundColor: primaryColor(100),
+          borderRadius: "8px",
+          border: "1px solid #2E3092",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
         }}
       >
         <CardMedia
           sx={{ height: 120, borderRadius: "8px" }}
           image={file?.screenShotURL}
-          title="green iguana"
+          title={file?.name}
         />
-        <CardFooter
-          style={{
-            marginTop: "8px",
-
-            paddingLeft: direction === "ltr" ? "8px" : 0,
-            paddingRight: direction === "rtl" ? "8px" : 0,
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
+        <Stack direction={"row"}>
           <Stack
             sx={{
               color: grayColor(700),
               ...FONT_FAMILY.Inter(500, 12),
-              overflow: "scroll",
-              overflowY: "auto",
-              maxHeight: "50px",
-              maxWidth: "90%",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              textAlign: "center",
             }}
           >
-            <span>{file?.name}</span>
+            <span
+              style={{
+                overflow: "scroll",
+              }}
+            >
+              {file?.name}
+            </span>
             <span>{DateFormatterDDMMYYYY(file?.uploadDate)}</span>
           </Stack>
           {isLoading ? (
             <DotsLoader />
           ) : (
-            <ClickOutside onClick={() => setOpen(false)} exceptionRef={menuRef}>
-              <IconButton
-                onClick={() => setOpen(!open)}
-                sx={{
-                  height: 22,
-                  width: 22,
-                }}
-                size={"small"}
-              >
-                <MoreVertIcon sx={{ width: 20, height: 20 }}>M</MoreVertIcon>
-              </IconButton>
-            </ClickOutside>
+            // <ClickOutside onClick={() => setOpen(false)} exceptionRef={menuRef}>
+            <IconButton
+              onClick={() => setOpen(!open)}
+              sx={{ height: 22, width: 22, alignSelf: "center" }}
+              size="small"
+            >
+              <MoreVertIcon sx={{ width: 20, height: 20 }} />
+            </IconButton>
+            // </ClickOutside>
           )}
-          {!!open && !isLoading && (
+        </Stack>
+        {!!open && !isLoading && (
+          <ClickOutside onClick={() => setOpen(false)} exceptionRef={menuRef}>
             <Paper
               ref={menuRef}
               sx={{
-                zIndex: "99999",
+                zIndex: 99999999999,
                 position: "absolute",
-                // right: "6px",
                 [direction === "rtl" ? "left" : "right"]: "6px",
-
                 top: "calc(100% - 10px)",
               }}
             >
@@ -180,8 +170,8 @@ const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
               </MenuItem>
               <MenuItem onClick={onClickDelete}>{t("modal.delete")}</MenuItem>
             </Paper>
-          )}
-        </CardFooter>
+          </ClickOutside>
+        )}
       </Card>
     </div>
   );
