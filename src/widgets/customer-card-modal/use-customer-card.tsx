@@ -19,6 +19,9 @@ import { emailRegex } from "@/utils/regex";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { getClientsGroupstApi } from "@/services/api-service/suppliers/suppliers-endpoints";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+// import { clearPhoneNumberPrefix } from "@/utils/helpers";
+import { EPreferences } from "@/enums/prefernces";
+import { clearPhoneNumberPrefix } from "@/utils/helpers";
 
 const useCustomerCard = ({
   t,
@@ -156,11 +159,28 @@ const useCustomerCard = ({
   const { updateUserPassword } = useUserProfile();
 
   // in order to avoid sending an empty object that include just name & index
+
   const isNameIndexOnly = (dataObject) => {
     const { name, index, ...otherProps } = dataObject;
+
+    // const processedPhone = clearPhoneNumberPrefix(phone);
+
+    // const processedTel1 = clearPhoneNumberPrefix(tel1);
+
+    // const processedTel2 = clearPhoneNumberPrefix(tel2);
+
+    // const isPhoneEmpty =
+    //   !processedPhone ||
+    //   !processedTel1 ||
+    //   !processedTel2 ||
+    //   [processedPhone, processedTel1, processedTel2].some(
+    //     (field) => field === null || field === undefined || field === ""
+    //   );
+
     const emptyProps = Object.values(otherProps)?.every(
       (prop) => prop === null || prop === "" || prop === " "
     );
+
     return emptyProps;
   };
 
@@ -314,10 +334,12 @@ const useCustomerCard = ({
     var temp = [];
     if (customer && customer.contacts) {
       temp = [...customer.contacts];
-    } else {
-      const index = temp.length + 1;
-      temp.push({ name: "", index: index });
     }
+
+    // else {
+    //   const index = temp.length + 1;
+    //   temp.push({ name: "", index: index });
+    // }
     setContacts(temp);
   };
 
@@ -360,11 +382,12 @@ const useCustomerCard = ({
     var temp = [];
     if (customer && customer.addresses) {
       temp = [...customer.addresses];
-    } else {
-      const index = temp.length + 1;
-      // temp.push({ name: "", index: index, city: " ", street: " " });
-      temp.push({ name: "", index: index });
     }
+    // else {
+    //   const index = temp.length + 1;
+    //   // temp.push({ name: "", index: index, city: " ", street: " " });
+    //   temp.push({ name: "", index: index });
+    // }
     setAddresses(temp);
   };
 
@@ -401,10 +424,12 @@ const useCustomerCard = ({
     var temp = [];
     if (customer && customer.users) {
       temp = [...customer.users];
-    } else {
-      const index = temp.length + 1;
-      temp.push({ name: "", index: index });
     }
+
+    // else {
+    //   const index = temp.length + 1;
+    //   temp.push({ name: "", index: index });
+    // }
     setUsers(temp);
   };
 

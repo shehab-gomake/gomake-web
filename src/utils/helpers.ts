@@ -84,8 +84,6 @@ export const isValidCustomer = (
   filteredUsers,
   CheckPreferenceValue
 ) => {
-  debugger;
-
   const isMissingRequiredCustomerInfo = !(
     customer &&
     customer.name &&
@@ -223,12 +221,11 @@ export const checkArrayNotEmptyOrEmailNotEmpty = (array) => {
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
-export const clearPhoneNumberPrefix = (phoneNumber) =>{
-  if (typeof phoneNumber !== "string"){
+export const clearPhoneNumberPrefix = (phoneNumber) => {
+  if (typeof phoneNumber !== "string") {
     return phoneNumber;
   }
-  if(!phoneNumber)
-    return phoneNumber;
+  if (!phoneNumber) return phoneNumber;
   const pattern = /^(?:\+|00)(1|[2-9]\d{1,2})[-\s]?/;
   const result = phoneNumber.replace(pattern, "");
 
@@ -238,13 +235,20 @@ export const clearPhoneNumberPrefix = (phoneNumber) =>{
 export const _renderDeliveryDate = (dateString: string) => {
   const date = new Date(dateString);
 
-  const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+  const time = date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 
   // Specify 'en-GB' locale to ensure DD/MM format
-  const formattedDate = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
+  const formattedDate = date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+  });
 
   return `${formattedDate} | ${time}`;
-}
+};
 
 export const convertTitleUnits = (unit: string | null) => {
   if (!unit) return null;
@@ -320,4 +324,15 @@ export const convertValueToOriginalUnit = (unit: string | null, value: any) => {
       default:
           return value;
   }
+};
+export const formatSecondsToHHMMSS = (seconds: number): string => {
+  if (!seconds) return "00:00:00";
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  return [hours, minutes, remainingSeconds]
+    .map((unit) => unit.toString().padStart(2, "0"))
+    .join(":");
 };

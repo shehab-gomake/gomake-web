@@ -31,7 +31,7 @@ const FilesGroupComponent = ({
     filePath,
     graphicsFilePath
   );
-  const { push } = useRouter();
+  const { push, pathname } = useRouter();
   const fileInputRef = useRef(null);
   const { t } = useTranslation();
 
@@ -103,22 +103,24 @@ const FilesGroupComponent = ({
         <h3 style={{ color: primaryColor(400), ...FONT_FAMILY.Inter(700, 14) }}>
           {title}
         </h3>
-        <Stack direction={"row"} alignItems={"center"}>
-          <IconButton
-            style={{
-              width: "25px",
-              height: "25px",
-              padding: "2px",
-            }}
-            onClick={() =>
-              push(
-                `/production-floor?boardMissionsId=${boardMissionId}&step=files`
-              ).then()
-            }
-          >
-            <FolderIcon />
-          </IconButton>
-        </Stack>
+        {pathname !== "/production-floor" && (
+          <Stack direction={"row"} alignItems={"center"}>
+            <IconButton
+              style={{
+                width: "25px",
+                height: "25px",
+                padding: "2px",
+              }}
+              onClick={() => {
+                push(
+                  `/production-floor?boardMissionsId=${boardMissionId}&step=stations`
+                ).then();
+              }}
+            >
+              <FolderIcon />
+            </IconButton>
+          </Stack>
+        )}
       </Stack>
 
       <Stack

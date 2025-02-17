@@ -55,7 +55,11 @@ import {
   renderDocumentTypeForSourceDocumentNumber,
   renderURLDocumentType,
 } from "@/widgets/settings-documenting/documentDesign/enums/document-type";
-import { AStatus, PStatus } from "../board-missions/widgets/enums";
+import {
+  AStatus,
+  PStatus,
+  ReceiptAccountingStatus,
+} from "../board-missions/widgets/enums";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -64,7 +68,10 @@ import {
   StatePayment,
   sendPaymentState,
 } from "./widgets/send-payment-modal/states";
-import { getDocumentContactApi, sendDocumentToClientForPaymentApi } from "@/services/api-service/pay/pay-api";
+import {
+  getDocumentContactApi,
+  sendDocumentToClientForPaymentApi,
+} from "@/services/api-service/pay/pay-api";
 import { useRouter } from "next/router";
 import { ICard } from "./widgets/statistics-section/statistics-sections";
 import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
@@ -88,6 +95,7 @@ interface Query {
   isCanceled?: boolean;
   isPaused?: boolean;
   pageNumber?: number;
+  productsIds?: string[];
 }
 
 const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
@@ -99,7 +107,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertFaultDuplicate,
     alertFaultGetData,
     alertSuccessUpdate,
-    alertFault
+    alertFault,
   } = useSnackBar();
   const router = useRouter();
   const documentPath = DOCUMENT_TYPE[docType];
@@ -507,9 +515,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.jobs
             );
 
-            const statusPayment = `${quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
-              }/${quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-              }`;
+            const statusPayment = `${
+              quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
+            }/${
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+            }`;
 
             return [
               GetDateFormat(quote?.createdDate),
@@ -541,8 +551,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               isOrdersTracking
                 ? statusPayment
                 : quote?.totalPrice +
-                " " +
-                getCurrencyUnitText(quote?.currency),
+                  " " +
+                  getCurrencyUnitText(quote?.currency),
               quote?.notes,
               <ClickableStatusButton
                 id={quote?.id}
@@ -691,59 +701,76 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const currentStatusId = router.query.statusId;
     const currentFinalPatternSearch = router.query.finalPatternSearch;
     const currentCustomerId = router.query.customerId;
-    const currentCustomerName = router.query.customerName;
     const currentAgentId = router.query.agentId;
     const currentApprovalStatusId = router.query.approvalStatusId;
-    const currentMinPrice = router.query.minPrice;
-    const currentMaxPrice = router.query.maxPrice;
+    const currentMinPrice = router.query.minPrice || minPrice;
+    const currentMaxPrice = router.query.maxPrice || maxPrice;
     const currentFromDate = router.query.fromDate
       ? new Date(
-        Array.isArray(router.query.fromDate)
-          ? router.query.fromDate[0]
-          : router.query.fromDate
-      )
+          Array.isArray(router.query.fromDate)
+            ? router.query.fromDate[0]
+            : router.query.fromDate
+        )
       : null;
     const currentToDate = router.query.toDate
       ? new Date(
-        Array.isArray(router.query.toDate)
-          ? router.query.toDate[0]
-          : router.query.toDate
-      )
+          Array.isArray(router.query.toDate)
+            ? router.query.toDate[0]
+            : router.query.toDate
+        )
       : null;
+
     const currentAccountingStatus = router.query.accountingStatus
       ? accountingStatuses.find(
-        (status) => status.value === Number(router.query.accountingStatus)
-      )
+          (status) => status.value === Number(router.query.accountingStatus)
+        )
       : null;
 
     const currentDeliveryStatusStatus = router.query.deliveryStatus
       ? deliveryStatuses.find(
-        (status) => status.value === Number(router.query.deliveryStatus)
-      )
+          (status) => status.value === Number(router.query.deliveryStatus)
+        )
       : null;
 
     const currentProductionStatus = router.query.productionStatus
       ? productionStatuses.find(
-        (status) => status.value === Number(router.query.productionStatus)
-      )
+          (status) => status.value === Number(router.query.productionStatus)
+        )
       : null;
+
     const currentIsCanceled = router.query.isCanceled;
     const currentIsPaused = router.query.isPaused;
+
+    const currentProductsIds = Array.isArray(router.query.productsIds)
+      ? router.query.productsIds
+      : router.query.productsIds
+      ? [router.query.productsIds]
+      : productIds;
 
     if (isReceipt) {
       await getAllReceiptsApi(callApi, callBack, {
         clientId: currentCustomerId || customerId?.id,
         agentId: currentAgentId || agentId?.id,
+        status: currentAccountingStatus?.value ?? accountingStatus?.value,
         patternSearch:
-          finalPatternSearch !== null && finalPatternSearch !== undefined
+          finalPatternSearch !== null &&
+          finalPatternSearch !== undefined &&
+          finalPatternSearch !== ""
             ? finalPatternSearch
             : currentFinalPatternSearch,
-        fromDate: currentFromDate && GetDateFormat(currentFromDate),
-        toDate: currentToDate && GetDateFormat(currentToDate),
-        status: currentStatusId || statusId?.value,
-        isCanceled: currentIsCanceled || isCanceledState,
-        minPrice: currentMinPrice || minPrice,
-        maxPrice: currentMaxPrice || maxPrice,
+
+        ...(currentFromDate
+          ? { fromDate: GetDateFormat(currentFromDate) }
+          : {}),
+        ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
+
+        ...(currentMinPrice && currentMinPrice !== ""
+          ? { minPrice: currentMinPrice }
+          : {}),
+        ...(currentMaxPrice && currentMaxPrice !== ""
+          ? { maxPrice: currentMaxPrice }
+          : {}),
+
         model: {
           pageNumber: currentPageNumber || page,
           pageSize: pageSize,
@@ -757,31 +784,45 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             pageNumber: currentPageNumber || page,
             pageSize: pageSize,
           },
+          dateRange,
+          customerId: currentCustomerId || customerId?.id,
+          agentId: currentAgentId || agentId?.id,
           statusId: quoteStatusId?.value || currentStatusId || statusId?.value,
           approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
-          closeStatus:
-            currentAccountingStatus?.value || accountingStatus?.value,
-          deliveryStatus:
-            currentDeliveryStatusStatus?.value || deliveryStatus?.value,
-          productionStatus:
-            currentProductionStatus?.value || productionStatus?.value,
+
+          ...(currentMinPrice && currentMinPrice !== ""
+            ? { minPrice: currentMinPrice }
+            : {}),
+          ...(currentMaxPrice && currentMaxPrice !== ""
+            ? { maxPrice: currentMaxPrice }
+            : {}),
+
           patternSearch:
             finalPatternSearch !== null &&
-              finalPatternSearch !== undefined &&
-              finalPatternSearch !== ""
+            finalPatternSearch !== undefined &&
+            finalPatternSearch !== ""
               ? finalPatternSearch
               : currentFinalPatternSearch,
-          customerId: currentCustomerId || customerId?.id,
-          dateRange,
-          agentId: currentAgentId || agentId?.id,
-          minPrice: currentMinPrice || minPrice,
-          maxPrice: currentMaxPrice || maxPrice,
-          productList: productIds,
+
+          ...(currentFromDate
+            ? { fromDate: GetDateFormat(currentFromDate) }
+            : {}),
+          ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
+
+          ...(currentProductsIds?.length
+            ? { productList: currentProductsIds }
+            : {}),
+
+          closeStatus:
+            currentAccountingStatus?.value ?? accountingStatus?.value,
+          deliveryStatus:
+            currentDeliveryStatusStatus?.value ?? deliveryStatus?.value,
+          productionStatus:
+            currentProductionStatus?.value ?? productionStatus?.value,
+
           isCanceled: currentIsCanceled || isCanceledState,
           isPaused: currentIsPaused || isPausedOrders,
           isOrderInTracking: isOrdersTracking,
-          fromDate: currentFromDate && GetDateFormat(currentFromDate),
-          toDate: currentToDate && GetDateFormat(currentToDate),
         },
       });
     }
@@ -813,7 +854,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickDocumentLogs,
   ]);
 
-  const { } = useDocumentsSignalR({ getAllQuotes, docType });
+  const {} = useDocumentsSignalR({ getAllQuotes, docType });
 
   const getAllQuotesInitial = async () => {
     const callBack = (res) => {
@@ -929,9 +970,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.jobs
             );
 
-            const statusPayment = `${quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
-              }/${quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-              }`;
+            const statusPayment = `${
+              quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
+            }/${
+              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+            }`;
             return [
               GetDateFormat(quote?.createdDate),
               <div
@@ -962,8 +1005,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               isOrdersTracking
                 ? statusPayment
                 : quote?.totalPrice +
-                " " +
-                getCurrencyUnitText(quote?.currency),
+                  " " +
+                  getCurrencyUnitText(quote?.currency),
               quote?.notes,
               <ClickableStatusButton
                 id={quote?.id}
@@ -1128,6 +1171,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickSearchFilter = async () => {
     const query: Query = { ...router.query };
 
+    if (productIds.length > 0) {
+      query.productsIds = productIds;
+    } else {
+      delete query.productsIds;
+    }
+
     if (customerId?.id) query.customerId = customerId.id;
     else delete query.customerId;
 
@@ -1248,19 +1297,19 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const tableHeaders = isPurchaseOrder
     ? [
-      t("sales.quote.creationDate"),
-      t("sales.quote.purchaseOrderNumber"),
-      t("sales.quote.orderNumber"),
-      t("sales.quote.supplierName"),
-      t("sales.quote.client"),
-      t("sales.quote.itemsNumber"),
-      t("sales.quote.totalPrice"),
-      t("sales.quote.notes"),
-      t("sales.quote.status"),
-      t("sales.quote.more"),
-    ]
+        t("sales.quote.creationDate"),
+        t("sales.quote.purchaseOrderNumber"),
+        t("sales.quote.orderNumber"),
+        t("sales.quote.supplierName"),
+        t("sales.quote.client"),
+        t("sales.quote.itemsNumber"),
+        t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ]
     : isPurchaseInvoice || isPurchaseInvoiceRefund
-      ? [
+    ? [
         t("sales.quote.creationDate"),
         t("sales.quote.purchaseInvoiceNumber"),
         t("sales.quote.invoiceNumber"),
@@ -1272,68 +1321,68 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         t("sales.quote.status"),
         t("sales.quote.more"),
       ]
-      : isQuote
-        ? [
-          t("sales.quote.createdDate"),
-          t("sales.quote.client"),
-          t("sales.quote.agent"),
-          t("documentingDesign.TableSetting.number"),
-          t("sales.quote.worksName"),
-          t("sales.quote.totalPrice"),
-          t("sales.quote.notes"),
-          t("sales.quote.status"),
-          t("sales.quote.more"),
-        ]
-        : [
-          t("sales.quote.createdDate"),
-          t("sales.quote.client"),
-          t("sales.quote.agent"),
-          (() => {
-            switch (docType) {
-              case DOCUMENT_TYPE.order:
-                return t("sales.quote.orderNumber");
-              // case DOCUMENT_TYPE.deliveryNote:
-              //   return t("documentingDesign.TableSetting.number");
-              // case DOCUMENT_TYPE.deliveryNoteRefund:
-              //   return t("sales.quote.deliveryNoteNumber");
-              // case DOCUMENT_TYPE.invoice:
-              //   return t("sales.quote.invoiceNumber");
-              // case DOCUMENT_TYPE.invoiceRefund:
-              //   return t("sales.quote.invoiceNumber");
-              // case DOCUMENT_TYPE.receipt:
-              //   return t("sales.quote.receiptNumber");
-              default:
-                return t("documentingDesign.TableSetting.number");
-            }
-          })(),
-          isOrder
-            ? t("sales.quote.quoteNumber")
-            : isReceipt
-              ? null
-              : t("sales.quote.sourceDocument"),
+    : isQuote
+    ? [
+        t("sales.quote.createdDate"),
+        t("sales.quote.client"),
+        t("sales.quote.agent"),
+        t("documentingDesign.TableSetting.number"),
+        t("sales.quote.worksName"),
+        t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ]
+    : [
+        t("sales.quote.createdDate"),
+        t("sales.quote.client"),
+        t("sales.quote.agent"),
+        (() => {
+          switch (docType) {
+            case DOCUMENT_TYPE.order:
+              return t("sales.quote.orderNumber");
+            // case DOCUMENT_TYPE.deliveryNote:
+            //   return t("documentingDesign.TableSetting.number");
+            // case DOCUMENT_TYPE.deliveryNoteRefund:
+            //   return t("sales.quote.deliveryNoteNumber");
+            // case DOCUMENT_TYPE.invoice:
+            //   return t("sales.quote.invoiceNumber");
+            // case DOCUMENT_TYPE.invoiceRefund:
+            //   return t("sales.quote.invoiceNumber");
+            // case DOCUMENT_TYPE.receipt:
+            //   return t("sales.quote.receiptNumber");
+            default:
+              return t("documentingDesign.TableSetting.number");
+          }
+        })(),
+        isOrder
+          ? t("sales.quote.quoteNumber")
+          : isReceipt
+          ? null
+          : t("sales.quote.sourceDocument"),
 
-          isOrder && t("sales.quote.purchaseNumber"),
-          isOrder && t("sales.quote.productionStatus"),
-          isOrder && t("sales.quote.jobs"),
-          isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
-            <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
-              {t("sales.quote.cost")}
-            </PermissionCheck>
-          ),
-          isReceipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
-          isOrdersTracking
-            ? t("customers.modal.paymentStatus")
-            : t("sales.quote.totalPrice"),
-          t("sales.quote.notes"),
-          (isOrder ||
-            isInvoice ||
-            isInvoiceRefund ||
-            isDeliveryNote ||
-            isDeliveryNoteRefund) &&
+        isOrder && t("sales.quote.purchaseNumber"),
+        isOrder && t("sales.quote.productionStatus"),
+        isOrder && t("sales.quote.jobs"),
+        isOrder && CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS) && (
+          <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_ORDERS}>
+            {t("sales.quote.cost")}
+          </PermissionCheck>
+        ),
+        isReceipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
+        isOrdersTracking
+          ? t("customers.modal.paymentStatus")
+          : t("sales.quote.totalPrice"),
+        t("sales.quote.notes"),
+        (isOrder ||
+          isInvoice ||
+          isInvoiceRefund ||
+          isDeliveryNote ||
+          isDeliveryNoteRefund) &&
           t("sales.documentDeliveries.deliveryStatus"),
-          t("sales.quote.status"),
-          t("sales.quote.more"),
-        ].filter(Boolean);
+        t("sales.quote.status"),
+        t("sales.quote.more"),
+      ].filter(Boolean);
 
   const logsTableHeaders = [
     t("sales.quote.actionDate"),
@@ -1443,8 +1492,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       } else {
         if (res?.statusCode === 85) {
           alertFault(res?.message);
-        }
-        else {
+        } else {
           alertFaultUpdate();
         }
       }
@@ -1588,6 +1636,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   //   setFromDate(fromDate);
   //   setToDate(toDate);
   // };
+
   const onSelectDeliveryTimeDates = (value) => {
     if (value && value.length === 2) {
       setFromDate(value[0]);
@@ -1670,8 +1719,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       case LogActionType[8]:
         return t("logs.CONTACTS_UPDATED");
       case LogActionType[9]:
-        return `${t("logs.CLIENT_UPDATED")} ${t("logs.from")} "${values[0]
-          }" ${t("logs.to")} "${values[1]}"`;
+        return `${t("logs.CLIENT_UPDATED")} ${t("logs.from")} "${
+          values[0]
+        }" ${t("logs.to")} "${values[1]}"`;
       case LogActionType[10]:
         if (values[0] === null) {
           return `${t("logs.AGENT_UPDATED")} ${t("logs.to")} ${values[1]}`;
@@ -1682,18 +1732,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         }
       case LogActionType[11]:
         if (values[0] === null) {
-          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.to")} "${values[1]
-            }"`;
+          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.to")} "${
+            values[1]
+          }"`;
         } else {
-          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.from")} ${values[0]
-            } ${t("logs.to")} ${values[1]}`;
+          return `${t("logs.PURCHASE_NUMBER_UPDATE")} ${t("logs.from")} ${
+            values[0]
+          } ${t("logs.to")} ${values[1]}`;
         }
       case LogActionType[12]:
         if (values[0] === null) {
           return `${t("logs.COMMENTS_UPDATE")} ${t("logs.to")} "${values[1]}"`;
         } else {
-          return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${values[0]
-            }" ${t("logs.to")} "${values[1]}"`;
+          return `${t("logs.COMMENTS_UPDATE")} ${t("logs.from")} "${
+            values[0]
+          }" ${t("logs.to")} "${values[1]}"`;
         }
       case LogActionType[13]:
         return `${t("logs.DOCUMENT_DUPLICATED", {
@@ -1760,14 +1813,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           documentId: documentId,
           data: isClear
             ? {
-              fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
-              toDate: toLogsDate && GetDateFormat(toLogsDate),
-            }
+                fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
+                toDate: toLogsDate && GetDateFormat(toLogsDate),
+              }
             : {
-              userId: employeeId?.id,
-              fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
-              toDate: toLogsDate && GetDateFormat(toLogsDate),
-            },
+                userId: employeeId?.id,
+                fromDate: fromLogsDate && GetDateFormat(fromLogsDate),
+                toDate: toLogsDate && GetDateFormat(toLogsDate),
+              },
         });
       } catch (error) {
         reject();
@@ -1834,11 +1887,22 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     { label: t("boardMissions.done"), value: PStatus.DONE },
   ];
 
-  const accountingStatuses = [
-    { label: t("sales.quote.open"), value: AStatus.OPEN },
-    { label: t("sales.quote.partialClosed"), value: AStatus.PARTIAL_CLOSED },
-    { label: t("sales.quote.closed"), value: AStatus.CLOSED },
-  ];
+  const accountingStatuses = isReceipt
+    ? [
+        { label: t("sales.quote.open"), value: ReceiptAccountingStatus.OPEN },
+        {
+          label: t("sales.quote.canceled"),
+          value: ReceiptAccountingStatus.CANCELED,
+        },
+      ]
+    : [
+        { label: t("sales.quote.open"), value: AStatus.OPEN },
+        {
+          label: t("sales.quote.partialClosed"),
+          value: AStatus.PARTIAL_CLOSED,
+        },
+        { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+      ];
 
   const deliveryStatuses = useMemo(
     () => [
@@ -2142,12 +2206,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenPaymentModal(false);
   };
 
-  const onClickSendPaymentOld = (document: any, isSendToClient: boolean): Promise<void> => {
+  const onClickSendPaymentOld = (
+    document: any,
+    isSendToClient: boolean
+  ): Promise<void> => {
     if (isSendToClient) {
       return new Promise<void>((resolve, reject) => {
         const callBack = (res) => {
           if (res?.success) {
-            const newSendPaymentState = { ...sendPayment, };
+            const newSendPaymentState = { ...sendPayment };
             newSendPaymentState.documentId = document?.id;
             newSendPaymentState.documentContacts = res.data;
             setSendPayment(newSendPaymentState);
@@ -2160,10 +2227,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           documentId: document?.id,
           documentType: docType,
         });
-
       });
-    }
-    else {
+    } else {
       return new Promise<void>((resolve, reject) => {
         const callBack = (res) => {
           if (res?.success) {
@@ -2327,22 +2392,50 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       isCanceled,
       pageNumber,
       isPaused,
+      productsIds,
     } = router.query;
+
+    if (productsIds) {
+      const productIdsArray = Array.isArray(productsIds)
+        ? productsIds
+        : [productsIds];
+      setProductIds(productIdsArray); // Set the productsIds state if needed
+    }
 
     if (customerId) {
       setCustomerId({ id: customerId, name: customerName });
     }
+
     if (agentId) {
       const selectedAgent = agentsCategories?.find(
         (agent: any) => agent?.id === agentId
       );
       setAgentId(selectedAgent);
     }
-    if (statusId) setStatusId({ value: statusId });
+
+    if (statusId) {
+      const statusToSet = quoteStatuses.find(
+        (status) => status.value === Number(statusId)
+      );
+      if (statusToSet) {
+        setStatusId(statusToSet);
+      }
+    }
+
+    if (approvalStatusId) {
+      const appStatusToSet = approvalStatuses.find(
+        (status) => status.value === Number(approvalStatusId)
+      );
+      if (appStatusToSet) {
+        setApprovalStatusId(appStatusToSet);
+      }
+    }
+
     if (pageNumber) setPage(Number(pageNumber)); // Convert to number
-    if (approvalStatusId) setApprovalStatusId({ value: approvalStatusId });
+
     if (typeof minPrice === "string") setMinPrice(minPrice);
     if (typeof maxPrice === "string") setMaxPrice(maxPrice);
+
     if (fromDate && typeof fromDate === "string")
       setFromDate(new Date(fromDate));
     if (toDate && typeof toDate === "string") setToDate(new Date(toDate));
@@ -2392,6 +2485,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         );
       }
     }
+
     if (isCanceled) {
       setIsCanceledState(
         Array.isArray(isCanceled)
@@ -2663,7 +2757,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setToDate,
     isPurchaseDocument,
     supplierList,
-    isSendToClient
+    isSendToClient,
   };
 };
 

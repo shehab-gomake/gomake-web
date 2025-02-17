@@ -3,14 +3,9 @@ import Stack from "@mui/material/Stack";
 import { Skeleton, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { MoreActionsButton } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/more-actions-button";
-import { DocumentsButton } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/documents-button";
 import { useTranslation } from "react-i18next";
-import { Permissions } from "@/components/CheckPermission/enum";
-import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
-import { ApprovalFileStatusComponent } from "@/widgets/production-floor/table-view/status-table/table-row/approval-file-status-component";
 
 const NavigationButtonsComponent = () => {
   const { t } = useTranslation();
@@ -47,39 +42,6 @@ const NavigationButtonsComponent = () => {
             </PrimaryToggleButton>
           ))}
         </PrimaryToggleButtonGroup>
-      )}
-
-      {isLoading ? (
-        // Skeletons for the Action Buttons (DocumentsButton and MoreActionsButton)
-        <Stack direction={"row"} alignItems={"center"} gap={"12px"}>
-          <Skeleton
-            variant="rectangular"
-            width={200}
-            height={40}
-            style={{ borderRadius: 12 }}
-          />
-          <Skeleton
-            variant="rectangular"
-            width={50}
-            height={40}
-            style={{ borderRadius: 12 }}
-          />
-        </Stack>
-      ) : (
-        <Stack direction={"row"} alignItems={"center"} gap={"12px"}>
-          <ApprovalFileStatusComponent
-            height={"40px"}
-            width={"40px"}
-            fileStatus={boardMissionsDetails.showGraphicsApprovalAlert}
-            t={t}
-          />
-          <DocumentsButton />
-          <PermissionCheck
-            userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}
-          >
-            <MoreActionsButton />
-          </PermissionCheck>
-        </Stack>
       )}
     </Stack>
   );
