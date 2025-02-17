@@ -14,7 +14,7 @@ import {
 } from "@/widgets/production-floor/interfaces/filters";
 import { setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
+import { boardsMissionsState,jobsStatusesState } from "@/widgets/production-floor/state/boards";
 import {
   EProductionFloorView,
   productionFloorViewState,
@@ -26,11 +26,12 @@ import { productionFloorPathsState } from "@/widgets/production-floor/state/prod
 import { useTranslation } from "react-i18next";
 import { selectedChipIdsState } from "../state/text-search";
 import {
-  deleteStationFilterByGroupIdApi,
+  deleteStationFilterByGroupIdApi, getJobsByGroups,
   getStationFilterByGroupIdApi,
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { selectedGroupIdState } from "../state/filter-group";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
+import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
 
 interface onStationsChangeProps {
   stations: IStation[];
@@ -39,10 +40,12 @@ interface onStationsChangeProps {
 
 interface IUseProductionFloorFiltersProps {
   getStationFilterGroups?: any;
+  connectionId: string;
 }
 
 const useProductionFloorFilters = ({
   getStationFilterGroups,
+  connectionId
 }: IUseProductionFloorFiltersProps) => {
   const [filtersState, setFiltersState] = useRecoilState(
     productionFloorFiltersState
@@ -53,6 +56,8 @@ const useProductionFloorFilters = ({
   const setTags = useSetRecoilState(tagsState);
   const { callApi } = useGomakeAxios();
   const [data, setData] = useRecoilState(boardsMissionsState);
+  const { getDataByGroups } = useProductionFloorData();
+
   const setView = useSetRecoilState(productionFloorViewState);
   const { push } = useRouter();
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
@@ -86,7 +91,7 @@ const useProductionFloorFilters = ({
   const [selectedChips, setSelectedChips] = useState<string[]>([]);
   const [selectedChipIds, setSelectedChipIds] =
     useRecoilState(selectedChipIdsState);
-
+  const router = useRouter();
   const setFilters = async (filters: IProductionFloorFilter) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -271,12 +276,31 @@ const useProductionFloorFilters = ({
       setSelectedGroupId(null);
       onStationsChange({ stations: [], groupId: null });
     } else {
+      if(selectedGroupId === "all" && groupId !== "all") {
+        const viewName = EProductionFloorView[EProductionFloorView.TABLE].toLowerCase();
+        router.push(`/production-floor?view=${viewName}`, undefined, {
+          shallow: true,
+        });
+        setData([])
+      }
+      if(groupId === "all"){
+        const viewName = EProductionFloorView[EProductionFloorView.FILTER_GROUPS].toLowerCase();
+        router.push(`/production-floor?view=${viewName}`, undefined, {
+          shallow: true,
+        });
+        setData([])
+      }
       setSelectedGroupId(groupId);
       getStationFilterGroupById(groupId);
     }
   };
 
   const getStationFilterGroupById = async (id) => {
+    if(id === "all"){
+      setData([])
+      await getDataByGroups(connectionId,true)
+      return;
+    }
     const callBack = (res) => {
       if (res.success) {
         onStationsChange({ stations: res?.data?.stations, groupId: id });

@@ -4,15 +4,24 @@ import {
   IBoardMissions,
   IBoardMissionsDetails,
 } from "@/widgets/production-floor/interfaces/board-missions";
+import {IProductionStatus} from "@/widgets/production-floor/interfaces/production-floor-status";
 
 export const boardsMissionsState = atom<IStatusesBoardsMissions[]>({
   key: "boardsMissionsState",
+  default: [],
+});
+export const jobsStatusesState = atom<IProductionStatus[]>({
+  key: "jobsStatusesState",
   default: [],
 });
 
 export const productionFloorStatusesState = selector({
   key: "productionFloorStatusesState",
   get: ({ get }) => {
+    const statues = get(jobsStatusesState);
+    if(statues && statues.length > 0) {
+      return statues;
+    }
     const data = get(boardsMissionsState);
     return data?.map((status) => status.boardMissionStatus.boardMissionStatus);
   },

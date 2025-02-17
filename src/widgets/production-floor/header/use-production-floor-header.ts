@@ -14,7 +14,7 @@ import {
 } from "../filters/select/actions-select/use-actions-list";
 import { IProductionFloorPath } from "../interfaces/production-floor-path";
 
-const useProductionFloorHeader = () => {
+const useProductionFloorHeader = (connectionId:string) => {
   const [view, setView] = useRecoilState(productionFloorViewState);
   const [paths] = useRecoilState(productionFloorPathsState);
   const {
@@ -23,7 +23,7 @@ const useProductionFloorHeader = () => {
     setGroupFromPath,
     groups,
     onStationsChange,
-  } = useProductionFloorFilters({});
+  } = useProductionFloorFilters({connectionId:connectionId});
 
   const {
     actionsList,
