@@ -21,7 +21,7 @@ import { useProductionFloorData } from "./use-production-floor-data";
 import { TimelineWidget } from "@/widgets/production-floor/views/gantt-view/gantt-component";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import {useProductionFloorSocketIO} from "@/hooks/socket-io/use-production-floor-socket-io";
+import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-floor-socket-io";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);

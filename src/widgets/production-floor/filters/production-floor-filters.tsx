@@ -350,6 +350,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     );
   };
 
+  //!there is no productType
   const handleMissionClick = (id) => {
     push(`/production-floor?boardMissionsId=${id}&step=stations`).then(() => {
       setSearch("");

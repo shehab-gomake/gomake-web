@@ -326,3 +326,14 @@ export const convertValueToOriginalUnit = (unit: string | null, value: any) => {
       return value;
   }
 };
+export const formatSecondsToHHMMSS = (seconds: number): string => {
+  if (!seconds) return "00:00:00";
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  return [hours, minutes, remainingSeconds]
+    .map((unit) => unit.toString().padStart(2, "0"))
+    .join(":");
+};
