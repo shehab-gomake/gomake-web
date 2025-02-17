@@ -28,6 +28,7 @@ const rowInputs = (
             })),
             value: state?.parameterKey,
             isValid: true,
+            unit: header?.unit,
           };
         case "ARRAY_INPUT":
           return {
@@ -40,6 +41,7 @@ const rowInputs = (
             options: [],
             value: state?.parameterKey,
             isValid: true,
+            unit: header?.unit,
           };
         case "LIST":
           return {
@@ -51,12 +53,13 @@ const rowInputs = (
             parameterKey: header?.key,
             options: header.values
               ? header.values.map((value) => ({
-                  value: value.key,
-                  text: value.value,
-                }))
+                value: value.key,
+                text: value.value,
+              }))
               : [],
             value: "",
             isValid: true,
+            unit: header?.unit,
           };
         case "MULTI_SELECATION_LIST":
           return {
@@ -69,12 +72,13 @@ const rowInputs = (
             parameterKey: header?.key,
             options: header.values
               ? header.values.map((value) => ({
-                  value: value.key,
-                  text: value.value,
-                }))
+                value: value.key,
+                text: value.value,
+              }))
               : [],
             value: "",
             isValid: true,
+            unit: header?.unit,
           };
         case "MACHINES_LIST":
           return {
@@ -94,6 +98,7 @@ const rowInputs = (
                 : [],
             isValid: true,
             multiple: true,
+            unit: header?.unit,
           };
 
         case "CLIENTS_LIST":
@@ -112,6 +117,7 @@ const rowInputs = (
             isValid: true,
             multiple: true,
             loading: isFetching,
+            unit: header?.unit,
           };
         case "NOTE_BOOK_TYPES":
           return {
@@ -125,6 +131,7 @@ const rowInputs = (
             options: [],
             value: "",
             isValid: true,
+            unit: header?.unit,
           };
         default:
           if (EDataTypeEnum[header?.inputType] === "IMAGE") return null;
@@ -140,11 +147,10 @@ const rowInputs = (
               required: false,
               parameterKey: header?.key,
               options: [],
-              value:
-                EDataTypeEnum[header?.inputType] == "BOOLEAN"
-                  ? state[header?.key]
-                  : state?.header?.key,
+              value: state[header?.key],
               isValid: true,
+              unit: header?.unit,
+
             };
       }
     })
