@@ -276,21 +276,21 @@ export const convertValueToImperial = (unit: string | null, value: any) => {
 
   switch (unit) {
       case "cm":
-          return convert(value).from("cm").to("in").toFixed(2);
+          return convert(value).from("cm").to("in").toFixed(3);
       case "gram":
-          return convert(value).from("g").to("lb").toFixed(2);
+          return convert(value).from("g").to("lb").toFixed(3);
           case "um":
             return (value * 0.00003937007874);
           case "m":
-            return convert(value).from("m").to("yd").toFixed(2);
+            return convert(value).from("m").to("yd").toFixed(3);
         case "kg":
-            return convert(value).from("kg").to("lb").toFixed(2);
+            return convert(value).from("kg").to("lb").toFixed(3);
             case "liter":
-              return convert(value).from("l").to("gal").toFixed(2); // Convert liters to gallons
+              return convert(value).from("l").to("gal").toFixed(3); // Convert liters to gallons
             case "mm":
-              return convert(value).from("mm").to("in").toFixed(2); // Convert millimeters to inches
+              return convert(value).from("mm").to("in").toFixed(3); // Convert millimeters to inches
             case "Gram/m^2":
-              return convert(value).from("g/m2").to("lb/yd2").toFixed(2); // Convert grams per square meter to ounces per square yard
+              return convert(value).from("g/m2").to("lb/yd2").toFixed(3); // Convert grams per square meter to ounces per square yard
       default:
           return value;
   }
@@ -301,22 +301,22 @@ export const convertValueToOriginalUnit = (unit: string | null, value: any) => {
 
   switch (unit) {
       case "cm":
-          return convert(value).from("in").to("cm").toFixed(2);
+          return convert(value).from("in").to("cm").toFixed(3);
       case "gram":
-          return convert(value).from("lb").to("g").toFixed(2);
+          return convert(value).from("lb").to("g").toFixed(3);
           case "um":
             // Convert inches to micrometers (1 inch = 25,400 micrometers)
-            return (value * 25400).toFixed(2);
+            return (value * 25400).toFixed(3);
           case "m":
-            return convert(value).from("yd").to("m").toFixed(2);
+            return convert(value).from("yd").to("m").toFixed(3);
         case "kg":
-            return convert(value).from("lb").to("kg").toFixed(2);
+            return convert(value).from("lb").to("kg").toFixed(3);
         case "liter":
-            return convert(value).from("gal").to("l").toFixed(2); // Convert gallons to liters
+            return convert(value).from("gal").to("l").toFixed(3); // Convert gallons to liters
         case "mm":
-            return convert(value).from("in").to("mm").toFixed(2); // Convert inches to millimeters
+            return convert(value).from("in").to("mm").toFixed(3); // Convert inches to millimeters
         case "Gram/m^2":
-            return convert(value).from("lb/yd2").to("g/m2").toFixed(2); // Convert ounces per square yard to grams per square meter
+            return convert(value).from("lb/yd2").to("g/m2").toFixed(3); // Convert ounces per square yard to grams per square meter
       default:
           return value;
   }
