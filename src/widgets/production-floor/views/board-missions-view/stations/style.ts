@@ -5,7 +5,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 import { adaptRight } from "@/utils/adapter";
 const useStyle = () => {
-  const { theme, neutralColor, primaryColor } = useGomakeTheme();
+  const { theme, neutralColor, primaryColor, secondColor } = useGomakeTheme();
   const { t } = useTranslation();
   const direction = t("direction");
   const classes = useMemo(() => {
@@ -19,13 +19,29 @@ const useStyle = () => {
         ...FONT_FAMILY.Inter(500, 14),
         color: primaryColor(900),
       },
+
+      realTimeValue: {
+        ...FONT_FAMILY.Inter(600, 14),
+        color: primaryColor(900),
+      },
       sectionTitle: {
         color: primaryColor(900),
         ...FONT_FAMILY.Lexend(500, 14),
       },
+      machineTitle: {
+        color: secondColor(500),
+        ...FONT_FAMILY.Lexend(500, 14),
+        textTransform: "capitalize" as "capitalize",
+      },
+      supplierTitle: {
+        color: secondColor(500),
+        ...FONT_FAMILY.Lexend(500, 14),
+        textTransform: "capitalize" as "capitalize",
+        padding: "7px 5px",
+      },
       actionContainer: {
-        padding: "10px 16px",
-        borderRadius: 16,
+        padding: "5px 16px",
+        borderRadius: "8px",
         width: "100%",
         backgroundColor: primaryColor(300),
       },
@@ -61,8 +77,8 @@ const useStyle = () => {
       toggleSubWorkFlowActionButton: {
         backgroundColor: primaryColor(600),
         borderRadius: 8,
-        height: 40,
-        width: 40,
+        height: 30,
+        width: 30,
         color: "white",
       },
       workFlowContainer: {
@@ -100,6 +116,19 @@ const useStyle = () => {
         borderRadius: "16px",
         textAlign: "center" as "center",
       },
+      outSourceLabel: {
+        borderRadius: "8px",
+        border: "1px solid #B9E6FE",
+        background: "#F0F9FF",
+        display: "inline-flex",
+        padding: "var(--spacing-xs, 4px) 10px",
+        alignItems: "center",
+        //Text style
+        color: "#026AA2",
+        textAlign: "center" as "center",
+        lineHeight: "20px",
+        ...FONT_FAMILY.Inter(500, 14),
+      },
       subWorkFlowDividerVertical: {
         width: "2px",
         backgroundColor: "#667085",
@@ -108,6 +137,11 @@ const useStyle = () => {
         bottom: "50%",
         height: "50%",
         ...adaptRight(direction, 5),
+      },
+      dividerStyle: {
+        height: "60%",
+        alignSelf: "center",
+        color: "#D6D6D6",
       },
     };
   }, [theme, direction]);

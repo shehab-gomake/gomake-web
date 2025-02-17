@@ -51,6 +51,7 @@ import { useTableCellData } from "./components/table-cell-data/use-table-cell-da
 import { useMaterialsCategories } from "./use-materials-categories";
 import { convertTitleUnits } from "@/utils/helpers";
 import { userState } from "@/store";
+import { UNIT_TYPE } from "@/enums";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -297,7 +298,7 @@ const useMaterials = (isAdmin: boolean) => {
         ? materialHeaders.filter((x) => x.key !== "stock")
         : materialHeaders.filter((header) => !header.isForAdmin)
       ).map((header) => {
-        const convertedUnit = unitType === 1 ? convertTitleUnits(header.unit) : header.unit;
+        const convertedUnit = unitType === UNIT_TYPE.IMPERIAL ? convertTitleUnits(header.unit) : header.unit;
 
         return (
           header.unit ? (

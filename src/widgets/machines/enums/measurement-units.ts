@@ -9,6 +9,7 @@ export enum EMeasurementUnits {
     PERCENTAGE = 'percentage',
     MINUTE = 'minute',
     INCH = 'inch',
+    MICRO_INCH = 'microInch',
     SQUARE_METER = 'squareMeter',
     SQUARE_CM = 'squareCM',
     SETS_HOUR = 'setsHour',
