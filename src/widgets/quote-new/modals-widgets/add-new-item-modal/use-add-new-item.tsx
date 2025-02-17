@@ -426,6 +426,7 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
     handleCloseModal,
     CheckPermission,
     selectedTab,
+    setSelectedTab,
     onSelectTab,
   };
 };
