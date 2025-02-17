@@ -17,6 +17,7 @@ import { permissionsState } from "@/store";
 import { Box, Slider } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
+import {ETab} from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 const RightSideWidget = ({
   clasess,
@@ -229,6 +230,8 @@ const RightSideWidget = ({
               onChange={handleProductChange}
               placeholder={t("home.admin.selectProductOrMaterial")}
               isRequired={false}
+              selectedTab={ETab.PRODUCTS}
+              setSelectedTab={null}
             />
           </div>
         </div>
