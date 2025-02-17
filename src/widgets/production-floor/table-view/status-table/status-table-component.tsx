@@ -132,7 +132,7 @@ const StatusTableComponent = ({ status, boards, count,onClickClient }: IProps) =
           },
         }}
       >
-        {`${t("productionStatuses." + status.name)} (${getBoards().length})`}
+        {`${!status.isGroup ? t("productionStatuses." + status.name) : status.name} (${getBoards().length})`}
       </Button>
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>

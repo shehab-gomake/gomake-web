@@ -20,8 +20,8 @@ import {UnderlinedTab, UnderlinedTabs} from "@/components/tabs/primary-tabs";
 import {ETab} from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 // Styled components for TreeSelect and Clear Button
-const StyledTreeSelect = styled(TreeSelect)(
-    ({ selectedOption}: any) => ({
+const StyledTreeSelect = styled<any>(TreeSelect)(
+    ({ selectedOption,isRequired}: any) => ({
         boxSizing: "border-box",
         borderRadius: "4px",
         height: "40px",
@@ -36,7 +36,7 @@ const StyledTreeSelect = styled(TreeSelect)(
         fontWeight: 500,
         lineHeight: "20px",
         border: "transparent !important",
-        borderBottom: selectedOption
+        borderBottom: !isRequired ? "unset !important" : selectedOption
             ? "2px solid rgb(67,195,232) !important"
             : "2px solid rgb(237, 2, 140) !important",
         "& .ant-select-selector": {
@@ -100,6 +100,8 @@ const GoMakeTreeSelect = ({
                               style,
                               selectedTab,
                               setSelectedTab,
+                              isRequired,
+                              hideOtherTabs,
                               ...props
                           }: {
     value?: any;
@@ -108,6 +110,8 @@ const GoMakeTreeSelect = ({
     placeholder?: string;
     style?: React.CSSProperties;
     selectedTab?: any;
+    isRequired?: boolean;
+    hideOtherTabs?: boolean;
     setSelectedTab: (value: any) => void;
 }) => {
     const router = useRouter();
@@ -314,6 +318,7 @@ const GoMakeTreeSelect = ({
                 placeholder={t("modal.pleaseSelect")}
                 allowClear
                 onChange={onChange}
+                isRequired={isRequired}
                 treeData={filteredTreeData}
                 onPopupScroll={onPopupScroll}
                 filterTreeNode={filterTreeNode}
@@ -327,11 +332,17 @@ const GoMakeTreeSelect = ({
                             scrollButtons="auto"
                             style={{marginBottom: "10px"}}
                         >
-                            <UnderlinedTab selectedColor={'primary'} key={'products'} label={t("tabs.products")}
-                                           value={ETab.PRODUCTS}/>
-                            <UnderlinedTab selectedColor={'primary'} key={'materials'} label={t("tabs.materials")}
+                            {
+                                hideOtherTabs && selectedTab !==ETab.PRODUCTS ? <></> : <UnderlinedTab selectedColor={'primary'} key={'products'} label={t("tabs.products")}
+                                               value={ETab.PRODUCTS}/>
+                            }
+                            {
+                                hideOtherTabs && selectedTab !==ETab.MATERIALS ? <></> : <UnderlinedTab selectedColor={'primary'} key={'materials'} label={t("tabs.materials")}
                                            value={ETab.MATERIALS}/>
-                            <UnderlinedTab selectedColor={'primary'} key={'all'} label={t('navigationButtons.all')} value={ETab.ALL}/>
+                            }
+                            {
+                                hideOtherTabs && selectedTab !==ETab.ALL ? <></> : <UnderlinedTab selectedColor={'primary'} key={'all'} label={t('navigationButtons.all')} value={ETab.ALL}/>
+                            }
                         </UnderlinedTabs>
                         {menu}
                     </div>

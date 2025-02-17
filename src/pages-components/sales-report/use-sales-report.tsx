@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { endOfToday, startOfYear } from "date-fns";
 import { DocumentsTypeReportList, ReportsType } from "@/enums";
 import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
+import { initialFromDate } from "@/utils/helpers";
 
 const useSalesReport = () => {
   const { callApi } = useGomakeAxios();
@@ -19,7 +20,7 @@ const useSalesReport = () => {
   const [displayByGroups, setDisplayByGroups] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableData, setTableData] = useState<any>([]);
-  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [fromDate, setFromDate] = useState<Date>(initialFromDate('sales-report-date'));
   const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dateList, setDateList] = useState<string[]>([]);
 
@@ -215,6 +216,7 @@ const useSalesReport = () => {
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
+      localStorage.setItem('sales-report-date', value[0]);
       setFromDate(value[0]);
       setToDate(value[1]);
     } else {

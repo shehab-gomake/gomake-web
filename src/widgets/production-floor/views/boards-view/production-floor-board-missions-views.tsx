@@ -44,9 +44,9 @@ const ProductionFloorBoardMissionsViews = ({
         <span style={classes.noStationSelected}>
           {t("productionFloor.noStationsSelected")}
         </span>
-      ) : view === EProductionFloorView.TABLE ? (
+      ) : view === EProductionFloorView.TABLE || view === EProductionFloorView.FILTER_GROUPS ? (
         <ProductionFloorTableView />
-      ) : view === EProductionFloorView.KANBAN ? (
+      ) : view === EProductionFloorView.KANBAN  ? (
         <ProductionFloorKanbanBoard />
       ) : (
         <div />
