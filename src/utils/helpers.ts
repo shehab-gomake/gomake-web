@@ -255,7 +255,7 @@ export const convertTitleUnits = (unit: string | null) => {
     case "gram":
       return "LB"; // Convert grams to LB
     case "um":
-      return "inch"; // Convert microns to microinches
+      return "µ inch"; // Convert microns to microinches
     case "liter":
       return "gallon"; // Convert liters to gallons
     case "mm":
@@ -280,7 +280,7 @@ export const convertValueToImperial = (unit: string | null, value: any) => {
       case "gram":
           return convert(value).from("g").to("lb").toFixed(3);
           case "um":
-            return (value * 0.00003937007874);
+            return (value * 39.3701).toFixed(3);
           case "m":
             return convert(value).from("m").to("yd").toFixed(3);
         case "kg":
@@ -305,8 +305,8 @@ export const convertValueToOriginalUnit = (unit: string | null, value: any) => {
       case "gram":
           return convert(value).from("lb").to("g").toFixed(3);
           case "um":
-            // Convert inches to micrometers (1 inch = 25,400 micrometers)
-            return (value * 25400).toFixed(3);
+            // Convert microinches to micrometers (1 microinch = 0.0254 micrometers)
+            return (value * 0.0254).toFixed(3);
           case "m":
             return convert(value).from("yd").to("m").toFixed(3);
         case "kg":

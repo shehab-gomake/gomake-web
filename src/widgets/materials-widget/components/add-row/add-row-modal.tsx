@@ -105,6 +105,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
                 readonly={false}
                 checkWhatRenderArray={checkWhatRenderArray}
                 loading={item?.loading || false}
+                keyItem={"item"}
               />
             </Stack>
           ))}
