@@ -27,8 +27,10 @@ export interface IDynamicRowData {
 export interface IMaterialsTableFilter {
   key: string;
   values: string[];
+  unit?: string;
 }
 export interface IMaterialTableFilteringValue {
   key: string;
   value: string;
+  unit?: string;
 }
