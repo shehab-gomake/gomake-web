@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import {
@@ -18,11 +18,8 @@ import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
 import { IconButton } from "@mui/material";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useDateFormat } from "@/hooks/use-date-format";
-import LinkIcon from "@mui/icons-material/Link";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import LinkOffIcon from "@mui/icons-material/LinkOff";
-import { adaptMarginLeft } from "@/utils/adapter";
 import { downloadCpaFileApi } from "@/services/api-service/settings/finance-api";
+import { initialFromDate } from "@/utils/helpers";
 
 export interface FilterState {
   fromAccount: string;
@@ -68,12 +65,11 @@ const useTransactionJournalReport = ({
     useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const dir = t("direction");
   const { getFormattedLocalDate, GetDateWithoutHoursFormat } = useDateFormat();
   const { documentsTypeList, documentType, handleDocumentTypeChange } =
     useDocumentsType();
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [fromDate, setFromDate] = useState<Date>(initialFromDate('transaction-journal-report-date'));
   const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
@@ -106,7 +102,7 @@ const useTransactionJournalReport = ({
   const [filterState, setFilterState] = useState<FilterState>({
     fromAccount: "",
     toAccount: "",
-    startDate: startOfYear(new Date()),
+    startDate: initialFromDate('accounting-transactions-report-date'),
     endDate: endOfToday(),
   });
 
@@ -416,6 +412,7 @@ const useTransactionJournalReport = ({
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
+      localStorage.setItem('transaction-journal-report-date', value[0]);
       setFromDate(value[0]);
       setToDate(value[1]);
     } else {
@@ -490,6 +487,7 @@ const useTransactionJournalReport = ({
 
   const handleDatesChange = (value) => {
     if (value && value.length === 2) {
+      localStorage.setItem('accounting-transactions-report-date', value[0]);
       setFilterState((prevState) => ({
         ...prevState,
         startDate: value[0],

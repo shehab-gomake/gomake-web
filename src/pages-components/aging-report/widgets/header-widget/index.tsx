@@ -1,7 +1,6 @@
 import { Checkbox } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { GoMakeAutoComplate } from "@/components";
-import { DateFormatter } from "@/utils/adapter";
 import {
   AgingReportHeaderWidgetProps,
   useAgingReportHeader,
@@ -10,10 +9,6 @@ import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
 
 const AgingReportHeaderWidget = ({
-  handleClickSelectDate,
-  selectDate,
-  setSelectDate,
-  dateRef,
   agent,
   agentsCategories,
   handleAgentChange,
@@ -22,7 +17,6 @@ const AgingReportHeaderWidget = ({
   checkWhatRenderArray,
   handleCustomerChange,
   detailedReport,
-  onChangeByReferenceDate,
   onChangeDetailedReport,
   handleDateChange,
   fromDate,
@@ -51,30 +45,6 @@ const AgingReportHeaderWidget = ({
           />
         </div>
       </div>
-      {/* <div style={classes.date2FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>
-          {t("customers.modal.referenceDate")}
-        </h3>
-        <div
-          style={classes.datePickerinvidualContainer}
-          onClick={handleClickSelectDate}
-        >
-          <div style={classes.dateStyle}>
-            {selectDate
-              ? DateFormatter(selectDate)
-              : t("sales.quote.selectDate")}
-            <div style={classes.datePickerContainer}>
-              <input
-                type="date"
-                onChange={(e) => {
-                  setSelectDate(e.target.value);
-                }}
-                ref={dateRef}
-              />
-            </div>
-          </div>
-        </div>
-      </div> */}
       <div style={classes.date2FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("sales.quote.agent")}</h3>
         <GoMakeAutoComplate
@@ -114,16 +84,6 @@ const AgingReportHeaderWidget = ({
             {t("reports.detailedReport")}
           </div>
         </div>
-        {/* <div style={classes.checkboxStyle}>
-          <Checkbox
-            onChange={onChangeByReferenceDate}
-            icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon />}
-          />
-          <div style={classes.labelSwichStyle}>
-            {t("reports.byReferenceDate")}
-          </div>
-        </div> */}
       </div>
     </div>
   );
