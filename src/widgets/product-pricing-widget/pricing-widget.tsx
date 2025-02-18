@@ -29,7 +29,6 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderDeliveryDate } from "@/utils/helpers";
 import { MobileActions } from "./components/action/mobile-action-component";
 
-//!here pricing
 const PricingWidget = ({
   workFlows,
   getOutSourcingSuppliers,
@@ -114,6 +113,7 @@ const PricingWidget = ({
               {t("pricingWidget.selected")}
             </PrimaryButton>
             {calculationResult &&
+              !isMobileScreen &&
               calculationResult?.tabs?.map((section, index) => (
                 <PrimaryButton
                   key={index}
@@ -161,7 +161,8 @@ const PricingWidget = ({
           </Stack>
           <PermissionCheck userPermission={Permissions.CUSTOMIZE_WORKFLOW}>
             {isHasSubWorkFlowsOrProductTypeActions &&
-              view === EPricingViews.SELECTED_WORKFLOW && (
+              view === EPricingViews.SELECTED_WORKFLOW &&
+              !isMobileScreen && (
                 <div
                   style={classes.autoCompleteSelectedSectionName}
                   onClick={(e) => {
@@ -174,7 +175,8 @@ const PricingWidget = ({
                 </div>
               )}
             {!isHasSubWorkFlowsOrProductTypeActions &&
-              view === EPricingViews.SELECTED_WORKFLOW && (
+              view === EPricingViews.SELECTED_WORKFLOW &&
+              !isMobileScreen && (
                 <div
                   style={classes.autoCompleteSelectedSectionName}
                   onClick={(e) => {

@@ -191,9 +191,6 @@ const WorkFlowComponent = ({
   );
 };
 
-//!here need to fix SubWorkFlowsComponent -> mobileSubWorkFlowsComponent
-//!also ActionComponent -> MobileActionComponent
-
 const MobileWorkFlowComponent = ({
   delay,
   index,
@@ -363,6 +360,7 @@ const WorkFlowsComponent = ({
   };
   const totalPageDelay = 1000 * 5;
   const elementDelay = totalPageDelay / workflows.length;
+
   return (
     <Stack gap={"10px"}>
       {workflows.map((flow, index) => {

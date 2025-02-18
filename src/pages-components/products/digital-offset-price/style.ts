@@ -11,7 +11,11 @@ import {
   adaptPaddingRight,
   leftRightAdapter,
 } from "@/utils/adapter";
-const useStyle = ({ isMobileScreen }) => {
+
+interface IProps {
+  isMobileScreen?: boolean;
+}
+const useStyle = ({ isMobileScreen }: IProps) => {
   const { t } = useTranslation();
   const direction = t("direction");
 

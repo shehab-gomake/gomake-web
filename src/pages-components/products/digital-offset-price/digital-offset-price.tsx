@@ -342,7 +342,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         width: "calc(100% - 330px)",
                       }
                     : {
-                        height: "calc(100vh - 200px)",
+                        height: "calc(100vh - 260px)",
                         overflow: "scroll",
                       }
                 }

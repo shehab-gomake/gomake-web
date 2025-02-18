@@ -49,7 +49,7 @@ const useStyle = () => {
         flexDirection: "row" as "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        gap: '5px'
+        gap: "5px",
       },
       profileContainer: {
         display: "flex",
@@ -188,14 +188,14 @@ const useStyle = () => {
         color: "#3C4257",
         borderColor: "#DDDEE1",
       },
-      iconBtnContainer:{
-        padding:"2px"
-      }
+      iconBtnContainer: {
+        padding: "2px",
+      },
     };
   }, [i18next.language, t]);
   return {
     classes,
-    primaryColor
+    primaryColor,
   };
 };
 export { useStyle };

@@ -5,7 +5,11 @@ import {
   convertWidthToVW,
 } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { LAYOUT_DEFAULT_GAP, SIDE_MENU_Layout } from "@/utils/layout-config";
+import {
+  HEADER_HEIGHT,
+  LAYOUT_DEFAULT_GAP,
+  SIDE_MENU_Layout,
+} from "@/utils/layout-config";
 import { useMemo } from "react";
 
 const useStyle = ({
@@ -15,7 +19,7 @@ const useStyle = ({
 }: {
   isHover?: boolean;
   navStatus: any;
-  customGap: number;
+  customGap?: number;
 }) => {
   const { primaryColor } = useGomakeTheme();
   const classes = useMemo(() => {
@@ -51,8 +55,9 @@ const useStyle = ({
         paddingBottom: navStatus?.isClosed ? 8 : 40,
         overflowY: "scroll" as "scroll",
         position: "relative" as "relative",
-         zIndex: 1,
+        zIndex: 1,
       },
+
       rightContainer: {
         width: "100%",
         display: "flex",
@@ -155,6 +160,18 @@ const useStyle = ({
         "-webkit-animation": "rotate90-rtl 0.5s forwards",
         "-moz-animation": "rotate90-rtl 0.5s forwards",
         animation: "rotate90-rtl 0.5s forwards",
+      },
+      mobileHeaderContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        padding: "5px 10px",
+        height: convertHeightToVH(HEADER_HEIGHT),
+        maxHeight: convertHeightToVH(HEADER_HEIGHT),
+
+        backgroundColor: primaryColor(500),
       },
     };
   }, [isHover, navStatus]);

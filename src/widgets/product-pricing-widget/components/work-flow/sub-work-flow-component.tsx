@@ -34,8 +34,6 @@ interface ISubWorkFlowsComponentProps {
   reOderSubWorkFlows?: (data: any) => void;
 }
 
-//!here i think should make two for mobile also
-
 const SubWorkFlowComponent = ({
   actions,
   sectionName,

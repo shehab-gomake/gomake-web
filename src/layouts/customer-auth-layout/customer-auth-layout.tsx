@@ -10,6 +10,8 @@ import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
 import { GoMakeModal } from "@/components";
 import { useHtmlTour } from "@/layouts/customer-auth-layout/use-html-tour";
 import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-uploader-widget";
+import { useMediaQuery } from "react-responsive";
+import { MobileHeaderWidget } from "./mobile-top-list/mobile-header-widget";
 
 const CustomerAuthLayout = ({
   children,
@@ -29,6 +31,7 @@ const CustomerAuthLayout = ({
   const setNavStatus = useSetRecoilState(navStatusState);
   const isHover = useRecoilValue(hoverStatusState);
   const { htmlTour, openModal, onCloseModal } = useHtmlTour();
+  const isMobileScreen = useMediaQuery({ query: "(max-width: 700px)" });
 
   return disableHeaderSideMenu ? (
     <>
@@ -47,7 +50,12 @@ const CustomerAuthLayout = ({
     <>
       {
         <div style={classes.container}>
-          <LeftSideLayout customGap={customGap} />
+          {isMobileScreen ? (
+            <div></div>
+          ) : (
+            <LeftSideLayout customGap={customGap} />
+          )}
+
           <div
             style={classes.rightContainer}
             onMouseEnter={() => {
@@ -56,7 +64,8 @@ const CustomerAuthLayout = ({
               }
             }}
           >
-            <HeaderWidget />
+            {isMobileScreen ? <MobileHeaderWidget /> : <HeaderWidget />}
+
             {canAccess && (
               <div style={classes.bodyContainer} className={className}>
                 {children}
