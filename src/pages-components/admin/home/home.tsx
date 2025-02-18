@@ -13,7 +13,6 @@ import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { ChatBotComponent } from "@/components/chat-bot/chat-bot";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import io from "socket.io-client";
 
 const HomePageComponentForAdmin = ({ isAdmin }) => {
   const { classes } = useStyle();
@@ -115,7 +114,7 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
             </span>
           </div>
           <div style={{ marginBottom: 20 }}>
-            <HomeTableWidget />
+            <HomeTableWidget clientId={selectedClient?.id} clientBalance={selectedClient?.clientBalance} />
           </div>
         </div>
       )}
