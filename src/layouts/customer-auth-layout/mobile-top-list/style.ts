@@ -16,6 +16,22 @@ const useStyle = () => {
   const { primaryColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
+      drawerContainer: {
+        position: "absolute" as "absolute",
+        top: "100%",
+        left: 0,
+        width: "100%",
+        backgroundColor: "#333",
+        color: "#fff",
+        overflow: "hidden",
+        maxHeight: "fit-content",
+        transition: "height 0.3s ease-in-out",
+        display: "flex",
+        flexDirection: "column" as "column",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 9999999999999999,
+      },
       container: {
         width: "100%",
         height: "100vh",
@@ -36,7 +52,7 @@ const useStyle = () => {
         width: "100%",
         minWidth: 245,
         transitionDuration: "0.4s",
-        height: "100vh",
+        // height: "100vh",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start" as "flex-start",
