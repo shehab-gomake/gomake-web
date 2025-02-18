@@ -1,6 +1,6 @@
 import { QuoteWidget } from "./widgets/quote-widget/quote-widget";
 import { useStyle } from "./style";
-import { HomeTableWidget } from "@/pages-components/admin/home/widgets";
+import { HomeTableWidget } from "./widgets/home-table-widget/home-table-widget";
 import { useHome } from "./use-home";
 import { useEffect } from "react";
 import { CardsWidget } from "./widgets/cards-widget/cards-widget";
