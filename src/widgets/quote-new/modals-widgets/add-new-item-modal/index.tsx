@@ -11,8 +11,8 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { Stack, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { Permissions } from "@/components/CheckPermission/enum";
-import {useState} from "react";
-import {ETab} from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { useState } from "react";
+import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 const ProductTypeSelector = ({ active, onChange, primaryColor, t }) => (
   <RadioGroup

@@ -21,33 +21,46 @@ const WorkFlowsWidget = () => {
     addActionToProduct,
     deleteActionFromProduct,
     updateActionsOrderInProduct,
-    updateProductAction
+    updateProductAction,
   } = useWorkFlows();
-
 
   return (
     <div style={clasess.mainContainer}>
-      <div style={clasess.autoCompleteSelectedSectionName} onClick={(e) => {
-        handleOpenActionsListMenu(e)
-      }}>
+      <div
+        style={clasess.autoCompleteSelectedSectionName}
+        onClick={(e) => {
+          handleOpenActionsListMenu(e);
+        }}
+      >
         {t("pricingWidget.addAction")}
         <ArrowDropDownIcon />
       </div>
       {/* <GeneralInformationComponent details={generalInformation} /> */}
       <div style={{ width: "100%" }}>
-        {
-          productActions?.length > 0 ?
-            <Actions
-              actions={productActions}
-              isFromSetting={true}
-              deleteActionFromProduct={deleteActionFromProduct}
-              updateActionsOrderInProduct={updateActionsOrderInProduct}
-              updateProductAction={updateProductAction}
-            /> :
-            <div style={{ width: "100%", height: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
-              <Typography variant="h6" color="text.secondary"> {t("pricingWidget.noActions")} </Typography>
-            </div>
-        }
+        {productActions?.length > 0 ? (
+          <Actions
+            actions={productActions}
+            isFromSetting={true}
+            deleteActionFromProduct={deleteActionFromProduct}
+            updateActionsOrderInProduct={updateActionsOrderInProduct}
+            updateProductAction={updateProductAction}
+          />
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h6" color="text.secondary">
+              {" "}
+              {t("pricingWidget.noActions")}{" "}
+            </Typography>
+          </div>
+        )}
       </div>
 
       <ActionsListMenu
@@ -60,8 +73,6 @@ const WorkFlowsWidget = () => {
         isUnderlined={true}
         isFromSetting={true}
         addActionToProduct={addActionToProduct}
-
-
       />
     </div>
   );
