@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { quickDuplicateApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios } from "@/hooks";
@@ -14,14 +14,18 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
   const [productSizes, setProductSizes] = useState([]);
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [groups, setGroups] = useState<any>([{ id: 1, parameters: [{ name: "", value: "" }] }]);
-  const addGroup = () => {
-    const newGroup = {
-      id: groups.length + 1,
-      parameters: [{ name: "", value: "" }]
-    };
-    setGroups([...groups, newGroup]);
-  };
 
+  const addGroup = (groupIndex) => {
+    if (groups[groupIndex]) {
+      const groupToDuplicate = groups[groupIndex];
+      const newGroup = {
+        ...groupToDuplicate,
+        id: groups.length + 1,
+        parameters: groupToDuplicate.parameters.map(param => ({ ...param }))
+      };
+      setGroups([...groups, newGroup]);
+    }
+  };
   const addParameter = (groupIndex) => {
     const newGroups = [...groups];
     newGroups[groupIndex].parameters.push({ name: "", value: "" });

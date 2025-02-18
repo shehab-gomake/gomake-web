@@ -43,7 +43,6 @@ const DuplicateQuickModal = ({
       getProductSizes()
     }
   }, [quoteItem, openModal])
-  console.log("groups", groups)
   return (
     <>
       <GoMakeModal
@@ -63,7 +62,7 @@ const DuplicateQuickModal = ({
                   <div style={clasess.groupTitle}>{t("products.addProduct.admin.product")}{` ${group.id}`}</div>
                 </div>
                 <div style={clasess.groupActions}>
-                  <div onClick={addGroup} style={clasess.groupAction}>
+                  <div onClick={() => addGroup(groupIndex)} style={clasess.groupAction}>
                     <DuplicateModalIcon />
                   </div>
                   {groups.length > 1 && (
