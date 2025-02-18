@@ -1,6 +1,5 @@
 import { ITab } from "@/components/tabs/interface";
 import { useStyle } from "./style";
-import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { QuotesListPageWidget } from "@/pages-components/quotes/quotes";
 import { useTranslation } from "react-i18next";
@@ -8,8 +7,10 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useState } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
+import {Stack} from "@mui/material";
+import {ClientBalanceComponent} from "@/components/client-balance/client-balance";
 
-const HomeTableWidget = () => {
+const HomeTableWidget = ({clientId}: {clientId: string; clientBalance: number;}) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     const { CheckPermission } = useUserPermission();
@@ -102,7 +103,10 @@ const HomeTableWidget = () => {
     };
     return (
         <>
+            <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
             {_renderSelectedTab()}
+                <ClientBalanceComponent clientId={clientId}/>
+            </Stack>
             {_renderTabContent()}
         </>
 

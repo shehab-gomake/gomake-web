@@ -1,19 +1,22 @@
 import {Stack} from "@mui/material";
-import Link from "next/link";
 import {useQuotes} from "@/pages-components/quotes/use-quote";
 import {DOCUMENT_TYPE} from "@/pages-components/quotes/enums";
 import {CustomerCardWidget} from "@/widgets/customer-card-modal";
 import {isValidCustomer} from "@/utils/helpers";
 import {CLIENT_TYPE, CUSTOMER_ACTIONS} from "@/pages/customers/enums";
-import Button from "@mui/material/Button";
+import {Permissions} from "@/components/CheckPermission/enum";
+import {PermissionCheck} from "@/components/CheckPermission";
+import {useEffect, useState} from "react";
+import {getClientBalanceApi} from "@/services/api-service/customers/customers-api";
+import {useGomakeAxios} from "@/hooks";
+import {PrimaryButton} from "@/components/button/primary-button";
 
 interface IProps {
     clientId: string;
-    clientName: string;
-    clientBalance: number;
+    clientBalance?: number;
 }
 
-const ClientBalanceComponent = ({clientBalance, clientName, clientId}: IProps) => {
+const ClientBalanceComponent = ({clientBalance, clientId}: IProps) => {
     const {
         showCustomerModal,
         setShowCustomerModal,
@@ -22,12 +25,29 @@ const ClientBalanceComponent = ({clientBalance, clientName, clientId}: IProps) =
         setCustomerForEdit,
         onClickOpenCustomerModal,
     } = useQuotes(DOCUMENT_TYPE.order, false);
+    const {callApi} = useGomakeAxios();
+    const [balance, setBalance] = useState<number>(clientBalance);
+
+    useEffect(() => {
+        if (!clientBalance) {
+            getClientBalanceApi(callApi, (res) => {
+                if (res.success) {
+                    setBalance(res.data);
+                }
+            }, clientId).then();
+        }
+    }, [clientBalance])
     return (
         <>
-            <Stack direction={'row'} justifyContent={'space-between'} gap={'5px'}>
-                <span>balance:</span>
-                <Button onClick={()=> onClickOpenCustomerModal(clientId)}>{clientBalance}</Button>
-            </Stack>
+            <PermissionCheck userPermission={Permissions.SHOW_CLIENT_BALANCE}>
+                {balance !== undefined &&
+                    <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} gap={'5px'}>
+                        <span>{t('home.clientBalance')}</span>
+                        <PrimaryButton style={{maxWidth: 'fit-content', padding: 0}}
+                                       onClick={() => onClickOpenCustomerModal(clientId)}>{` ${balance}`}</PrimaryButton>
+                    </Stack>
+                }
+            </PermissionCheck>
             <CustomerCardWidget
                 isValidCustomer={isValidCustomer}
                 customerAction={CUSTOMER_ACTIONS.Edit}
@@ -40,6 +60,7 @@ const ClientBalanceComponent = ({clientBalance, clientName, clientId}: IProps) =
                 customer={customerForEdit}
                 setCustomer={setCustomerForEdit}
                 showUpdateButton={true}
+                selectedTabIndex={6}
             />
         </>
     )

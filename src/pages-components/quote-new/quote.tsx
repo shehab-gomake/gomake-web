@@ -51,8 +51,6 @@ import {ModalType} from "@/enums";
 import {DuplicateQuickModal} from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
 import {useOrdersSignalr, useQuotesSignalr} from "@/hooks";
 import Stack from "@mui/material/Stack";
-import {PermissionCheck} from "@/components/CheckPermission";
-import {Permissions} from "@/components/CheckPermission/enum";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
 
 interface IProps {
@@ -559,11 +557,9 @@ const QuoteNewPageWidget = ({
                       )}
                     </LocalizationProvider>
                   </ThemeProvider>
-                  <PermissionCheck userPermission={Permissions.SHOW_CLIENT_BALANCE}>
                     <Stack flex={1} direction={'row'} justifyContent={'flex-end'}>
-                      <ClientBalanceComponent clientBalance={quoteState.clientBalance} clientId={quoteState.client.id} clientName={quoteState.client.name} />
+                      <ClientBalanceComponent clientBalance={quoteState.clientBalance} clientId={quoteState.client.id}/>
                     </Stack>
-                  </PermissionCheck>
                 </div>
               )}
               <div
