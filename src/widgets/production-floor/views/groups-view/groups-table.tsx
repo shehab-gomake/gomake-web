@@ -3,8 +3,13 @@ import {SecondaryTable} from "@/components/tables/secondary-table";
 import {IconButton} from "@mui/material";
 import ArrowCircleRightOutlinedIcon from '@mui/icons-material/ArrowCircleRightOutlined';
 import {useTranslation} from "react-i18next";
-const GroupsTable = () => {
-    const {groups, onNavigateToGroupBoardsMissions} = useProductionFloorGroups();
+
+const GroupsTable = ({
+                         connectionId,
+                     }: {
+                        connectionId: string;
+                    }) => {
+    const {groups, onNavigateToGroupBoardsMissions} = useProductionFloorGroups(connectionId);
     const {t} = useTranslation();
     return (
         groups.length > 0 && <SecondaryTable rows={

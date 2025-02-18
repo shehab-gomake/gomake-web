@@ -251,7 +251,6 @@ const useCustomerService = (isAdmin: boolean) => {
         text: printHouseName,
       },
     };
-    debugger
     if(columnValues.long_text){
       columnValues.long_text = columnValues.long_text.replaceAll("\n","\\n");
       columnValues.long_text = columnValues.long_text.replaceAll('"',"'");
@@ -366,7 +365,6 @@ const useCustomerService = (isAdmin: boolean) => {
       }
     }
   `;*/
-    debugger
     let query = "";
     if(isAdmin){
       query = `
@@ -405,7 +403,6 @@ const useCustomerService = (isAdmin: boolean) => {
     const data = { query };
     const callBack = (res) => {
       if (res?.success) {
-        debugger
         const issues =
           res.data.data.boards[0]?.items_page.items || [];
 
