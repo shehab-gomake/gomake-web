@@ -2,6 +2,7 @@ import { EPreferences } from "@/enums/prefernces";
 import { ISetState } from "@/services/hooks/call-api.interface";
 import get from "lodash.get";
 import convert from "convert-units";
+import {  startOfYear } from "date-fns";
 
 const returnResult = (
   result: any,
@@ -84,8 +85,6 @@ export const isValidCustomer = (
   filteredUsers,
   CheckPreferenceValue
 ) => {
-  debugger;
-
   const isMissingRequiredCustomerInfo = !(
     customer &&
     customer.name &&
@@ -223,12 +222,11 @@ export const checkArrayNotEmptyOrEmailNotEmpty = (array) => {
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
-export const clearPhoneNumberPrefix = (phoneNumber) =>{
-  if (typeof phoneNumber !== "string"){
+export const clearPhoneNumberPrefix = (phoneNumber) => {
+  if (typeof phoneNumber !== "string") {
     return phoneNumber;
   }
-  if(!phoneNumber)
-    return phoneNumber;
+  if (!phoneNumber) return phoneNumber;
   const pattern = /^(?:\+|00)(1|[2-9]\d{1,2})[-\s]?/;
   const result = phoneNumber.replace(pattern, "");
 
@@ -238,13 +236,20 @@ export const clearPhoneNumberPrefix = (phoneNumber) =>{
 export const _renderDeliveryDate = (dateString: string) => {
   const date = new Date(dateString);
 
-  const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+  const time = date.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 
   // Specify 'en-GB' locale to ensure DD/MM format
-  const formattedDate = date.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' });
+  const formattedDate = date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+  });
 
   return `${formattedDate} | ${time}`;
-}
+};
 
 export const convertTitleUnits = (unit: string | null) => {
   if (!unit) return null;
@@ -253,9 +258,9 @@ export const convertTitleUnits = (unit: string | null) => {
     case "cm":
       return "inch"; // Convert cm to inches
     case "gram":
-      return "oz"; // Convert grams to ounces
+      return "LB"; // Convert grams to LB
     case "um":
-      return "µinch"; // Convert microns to microinches
+      return "µ inch"; // Convert microns to microinches
     case "liter":
       return "gallon"; // Convert liters to gallons
     case "mm":
@@ -263,9 +268,9 @@ export const convertTitleUnits = (unit: string | null) => {
     case "m":
       return "yd"; // Convert meters to yards
     case "Gram/m^2":
-      return "oz/yd^2"; // Convert grams per square meter to ounces per square yard
+      return "lb/yd^2"; // Convert grams per square meter to ounces per square yard
     case "kg":
-      return "lb"; // Convert kilograms to pounds
+      return "LB"; // Convert kilograms to pounds
     default:
       return unit; // Return as is if not supported
   }
@@ -276,22 +281,21 @@ export const convertValueToImperial = (unit: string | null, value: any) => {
 
   switch (unit) {
       case "cm":
-          return convert(value).from("cm").to("in").toFixed(2);
+          return convert(value).from("cm").to("in").toFixed(3);
       case "gram":
-          return convert(value).from("g").to("oz").toFixed(2);
-      case "um":
-          // Manually convert micrometers to microinches (1 um = 39.3701 microinches)
-          return (value * 39.3701).toFixed(2);
+          return convert(value).from("g").to("lb").toFixed(3);
+          case "um":
+            return (value * 39.3701).toFixed(3);
           case "m":
-            return convert(value).from("m").to("yd").toFixed(2);
+            return convert(value).from("m").to("yd").toFixed(3);
         case "kg":
-            return convert(value).from("kg").to("lb").toFixed(2);
+            return convert(value).from("kg").to("lb").toFixed(3);
             case "liter":
-              return convert(value).from("l").to("gal").toFixed(2); // Convert liters to gallons
+              return convert(value).from("l").to("gal").toFixed(3); // Convert liters to gallons
             case "mm":
-              return convert(value).from("mm").to("in").toFixed(2); // Convert millimeters to inches
+              return convert(value).from("mm").to("in").toFixed(3); // Convert millimeters to inches
             case "Gram/m^2":
-              return convert(value).from("g/m2").to("oz/yd2").toFixed(2); // Convert grams per square meter to ounces per square yard
+              return convert(value).from("g/m2").to("lb/yd2").toFixed(3); // Convert grams per square meter to ounces per square yard
       default:
           return value;
   }
@@ -302,23 +306,40 @@ export const convertValueToOriginalUnit = (unit: string | null, value: any) => {
 
   switch (unit) {
       case "cm":
-          return convert(value).from("in").to("cm").toFixed(2);
+          return convert(value).from("in").to("cm").toFixed(3);
       case "gram":
-          return convert(value).from("oz").to("g").toFixed(2);
-      case "um":
-          // Manually convert microinches to micrometers (1 microinch = 0.0254 micrometers)
-          return (value * 0.0254).toFixed(2);
+          return convert(value).from("lb").to("g").toFixed(3);
+          case "um":
+            // Convert microinches to micrometers (1 microinch = 0.0254 micrometers)
+            return (value * 0.0254).toFixed(3);
           case "m":
-            return convert(value).from("yd").to("m").toFixed(2);
+            return convert(value).from("yd").to("m").toFixed(3);
         case "kg":
-            return convert(value).from("lb").to("kg").toFixed(2);
+            return convert(value).from("lb").to("kg").toFixed(3);
         case "liter":
-            return convert(value).from("gal").to("l").toFixed(2); // Convert gallons to liters
+            return convert(value).from("gal").to("l").toFixed(3); // Convert gallons to liters
         case "mm":
-            return convert(value).from("in").to("mm").toFixed(2); // Convert inches to millimeters
+            return convert(value).from("in").to("mm").toFixed(3); // Convert inches to millimeters
         case "Gram/m^2":
-            return convert(value).from("oz/yd2").to("g/m2").toFixed(2); // Convert ounces per square yard to grams per square meter
+            return convert(value).from("lb/yd2").to("g/m2").toFixed(3); // Convert ounces per square yard to grams per square meter
       default:
           return value;
   }
+};
+export const formatSecondsToHHMMSS = (seconds: number): string => {
+  if (!seconds) return "00:00:00";
+
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+
+  return [hours, minutes, remainingSeconds]
+    .map((unit) => unit.toString().padStart(2, "0"))
+    .join(":");
+};
+
+
+export   const initialFromDate = (key: string,defaultDate?:Date) => {
+  const savedDate = localStorage.getItem(key);
+  return savedDate ? new Date(savedDate) :defaultDate?defaultDate: startOfYear(new Date());
 };

@@ -24,6 +24,7 @@ import { EWidgetProductType } from "../enums";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { useRouter } from "next/router";
 import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
+import {ETab} from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const router = useRouter();
@@ -100,14 +101,13 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       setSelectedProduct(null);
     }
   };
-
   const getAllProductsAndMaterials = useCallback(async () => {
     const callBack = (res) => {
       if (res?.success) {
         setProducts(res?.data?.products);
         const transformProducts = (products) => {
           return {
-            value: "products",
+            value: ETab.PRODUCTS,
             selectable: false,
             title: t("tabs.products"),
             text: t("tabs.products"),
@@ -121,10 +121,56 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
             })),
           };
         };
-        const transformedProducts = transformProducts(res?.data?.products);
+
+        const transformMaterials = (materials) => {
+          return {
+            value: ETab.MATERIALS,
+            title: t("tabs.materials"),
+            text: t("tabs.materials"),
+            level: 0,
+            selectable: false,
+            children: materials.map((material) => ({
+              value: material.materialTypeName,
+              title: material.materialTypeName,
+              text: material.materialTypeName,
+              level: 1, // Material Types are level 1
+              selectable: false,
+              children: material.categories.map((category) => ({
+                value: `${material.materialTypeName}-${category.categoryName}`,
+                title: category.categoryName,
+                text: category.categoryName,
+                selectable: false,
+                level: 2, // Categories are level 2
+                children: category.rows.map((row) => ({
+                  value: row.id,
+                  title: row.value,
+                  text: row.value,
+                  level: 3, // Rows are level 3
+                  category: ProductCategoryType.MATERIAL,
+                })),
+              })),
+            })),
+          };
+        };
+        const attachParentReferences = (nodes, parent = null) => {
+          if (!Array.isArray(nodes)) return [];
+
+          return nodes.map((node) => {
+            const newNode = { ...node, parent };
+            if (newNode.children) {
+              newNode.children = attachParentReferences(newNode.children, newNode);
+            }
+            return newNode;
+          });
+        };
+        const transformedProducts =transformProducts(res?.data?.products);
+        const transformedMaterials = transformMaterials(res?.data?.materials);
+        transformedProducts.children = attachParentReferences(transformedProducts.children, transformedProducts);
+        transformedMaterials.children = attachParentReferences(transformedMaterials.children, transformedMaterials);
+
 
         // Combine the transformed data
-        const combinedFinalData = [transformedProducts];
+        const combinedFinalData = [transformedProducts, transformedMaterials];
         setCombinedData(combinedFinalData);
       }
     };
@@ -134,7 +180,6 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
         clientId: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
       });
-
   }, []);
 
   useEffect(() => {

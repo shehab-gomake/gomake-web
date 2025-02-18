@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useRouter } from "next/router";
 import {
@@ -8,8 +8,12 @@ import {
 } from "@/widgets/production-floor/state/boards";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { updateBoardsMissionsStatusApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import {
+  toggleBoardMissionsActionTimer,
+  updateBoardsMissionsStatusApi,
+} from "@/services/api-service/production-floor/production-floor-endpoints";
 import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
+import { boardMissionsStationsState } from "../stations/state";
 
 const useBoardMissionsDetailsHeader = () => {
   const [boardFromTable, setBoardFromTable] = useState<IBoardMissions>(
@@ -112,6 +116,54 @@ const useBoardMissionsDetailsHeader = () => {
     }
   };
 
+  const [stations, setStations] = useRecoilState(boardMissionsStationsState);
+
+  const [timerLoading, setTimerLoading] = useState<boolean>(false);
+  const onToggleTimer = async (seconds: number) => {
+    setTimerLoading(true);
+    const callBack = (res) => {
+      setTimerLoading(false);
+      setStations(
+        stations.map((station) => {
+          if (
+            station.boardMissionActionId ==
+            boardMissionsDetails?.currentBoardMissionActionId
+          ) {
+            const isTimerRunning = station.boardMissionActionTimer
+              ? !station.boardMissionActionTimer.isTimerRunning
+              : true;
+            return {
+              ...station,
+              boardMissionActionTimer: {
+                ...station.boardMissionActionTimer,
+                isTimerRunning: isTimerRunning,
+                totalRunningTime: seconds,
+              },
+            };
+          }
+          return { ...station };
+        })
+      );
+      if (res.success) {
+        alertSuccessUpdate();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await toggleBoardMissionsActionTimer(callApi, callBack, {
+      boardMissionsActionId: boardMissionsDetails?.currentBoardMissionActionId,
+      productType: boardMissionsDetails.productType,
+    });
+  };
+
+  const sortedStations = useMemo(
+    () =>
+      [...stations]
+        ?.sort((a, b) => b?.index - a?.index)
+        ?.sort((a, b) => (b?.isDone && a?.isDone ? 0 : a.isDone ? 1 : -1)),
+    [stations]
+  );
+
   return {
     boards,
     boardFromTable,
@@ -121,6 +173,11 @@ const useBoardMissionsDetailsHeader = () => {
     onNavigateBoardMissions,
     handleStatusChange,
     isLoadingStatus,
+    timerLoading,
+    onToggleTimer,
+    stations,
+    setStations,
+    sortedStations,
   };
 };
 

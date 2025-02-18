@@ -52,6 +52,7 @@ export interface IBoardMissionsDetails {
   agentName: string;
   boardMissionImage: string;
   isNeedExample: boolean;
+  isUrgentWork?: boolean;
   isRepetitiveWork?: boolean;
   dueDate?: string;
   createdDate?: Date;
@@ -61,6 +62,7 @@ export interface IBoardMissionsDetails {
   currentMachineName: string;
   orderItemId: string;
   notes: string[];
+  noteValues: { noteType: number; name: string | null; value: string }[];
   filesPath: string;
   graphicsFilePath?: string;
   productType: string;
@@ -70,6 +72,7 @@ export interface IBoardMissionsDetails {
   isReady: boolean;
   productionFloorJobColor?: string;
   showGraphicsApprovalAlert?: 0 | 1 | 2;
+  currentStation?: any;
 }
 
 export interface IBoardMissionStep {

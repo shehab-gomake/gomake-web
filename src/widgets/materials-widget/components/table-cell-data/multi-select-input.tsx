@@ -51,7 +51,6 @@ const MultiSelectInput = ({
       return 0;
     }
   });
-  debugger
   const selectedLabels = Array.isArray(values) ? values?.map((selectedId) => options?.find((opt) => opt?.value === selectedId)?.label)
     .filter((label) => label !== null && label !== undefined) : []
 

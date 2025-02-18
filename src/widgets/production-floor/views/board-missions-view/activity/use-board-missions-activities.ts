@@ -14,6 +14,7 @@ enum EActivitiesFilter {
   ALL = 1,
   COMMENTS,
   LOGS,
+  REPORTS,
 }
 const useBoardMissionsActivities = () => {
   const [activitiesState, setActivities] = useRecoilState(
@@ -67,17 +68,31 @@ const useBoardMissionsActivities = () => {
         name: "productionFloor.all",
         onClick: () => setFilter(EActivitiesFilter.ALL),
         selected: filter === EActivitiesFilter.ALL,
+        borderColor: "#2E3092",
+        textColor: "#2E3092",
       },
       {
         name: "productionFloor.comments",
         onClick: () => setFilter(EActivitiesFilter.COMMENTS),
         selected: filter === EActivitiesFilter.COMMENTS,
+        borderColor: "#B2DDFF",
+        textColor: "#175CD3",
       },
       {
         name: "productionFloor.logs",
         onClick: () => setFilter(EActivitiesFilter.LOGS),
         selected: filter === EActivitiesFilter.LOGS,
+        borderColor: "#F9DBAF",
+        textColor: "#B93815",
+        bgColor: "#FEF6EE",
       },
+      // {
+      //   name: "Reports",
+      //   onClick: () => setFilter(EActivitiesFilter.REPORTS),
+      //   selected: filter === EActivitiesFilter.REPORTS,
+      //   borderColor: "#FCCEEE",
+      //   textColor: "#C11574",
+      // },
     ],
     [filter]
   );

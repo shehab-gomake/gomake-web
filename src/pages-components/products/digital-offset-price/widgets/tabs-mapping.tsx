@@ -1,5 +1,5 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { AddNewIcon, RemoveIcon, WarnIcon } from "@/icons";
+import { AddNewIcon, RemoveIcon, WarnIcon, WastebasketNew2 } from "@/icons";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { subProductsParametersState } from "@/store/general-parameters-state";
 import { _renderActiveIcon, _renderUnActiveIcon } from "@/utils/constants";
@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { useCallback } from "react";
 import { useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
+import { EWidgetProductType } from "../enums";
 const TabsMappingWidget = ({
   classes,
   index,
@@ -22,6 +23,7 @@ const TabsMappingWidget = ({
   getProductById,
   onDuplicateSection,
   onRemoveSection,
+  widgetType,
 }: any) => {
   const { callApi } = useGomakeAxios();
   const {
@@ -193,16 +195,23 @@ const TabsMappingWidget = ({
             <AddNewIcon />
           </div>
         ) : null}
-        {item.isCanDuplicated && item.index && !isAdmin ? (
+        {(item.isCanDeleted) && !isAdmin && (widgetType === EWidgetProductType.DUPLICATE || widgetType === EWidgetProductType.EDIT) ? (
           <div onClick={() => onRemoveSection(item)}>
-            <RemoveIcon />
+            <WastebasketNew2 />
+          </div>
+        ) : (
+          <></>
+        )}
+        {item.isCanDuplicated && item.index && !isAdmin && widgetType === EWidgetProductType.CREATE ? (
+          <div onClick={() => onRemoveSection(item)}>
+            <WastebasketNew2 />
           </div>
         ) : (
           <></>
         )}
         {item.isCanDeleted && isAdmin ? (
           <div onClick={() => deleteSection(item)} style={{ marginTop: 5 }}>
-            <RemoveIcon />
+            <WastebasketNew2 />
           </div>
         ) : null}
       </div>

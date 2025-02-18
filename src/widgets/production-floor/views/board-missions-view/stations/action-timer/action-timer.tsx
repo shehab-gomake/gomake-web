@@ -2,82 +2,99 @@ import Stack from "@mui/material/Stack";
 import { useCallback, useEffect, useState } from "react";
 import { IBoardMissionsStationTimer } from "@/widgets/production-floor/views/board-missions-view/stations/interface";
 import { CircularProgress, IconButton } from "@mui/material";
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import PauseCircleIcon from '@mui/icons-material/PauseCircle';
+import PlayCircleIcon from "@mui/icons-material/PlayCircle";
+import PauseCircleIcon from "@mui/icons-material/PauseCircle";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
-import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 
 interface IProps extends IBoardMissionsStationTimer {
-    onToggle: (seconds: number) => void;
-    loading: boolean;
-    actionId: string;
-    isSubAction?: boolean;
+  onToggle: (seconds: number) => void;
+  loading: boolean;
+  actionId: string;
+  isSubAction?: boolean;
 }
 
-const ActionTimer = ({ isTimerRunning, totalRunningTime, onToggle, loading, actionId, isSubAction = false }: IProps) => {
-    const [seconds, setSeconds] = useState<number>(0);
-    const [isActive, setIsActive] = useState(false);
-    const [bordMissionsDetails] = useRecoilState(boardMissionsDetailsState);
+const ActionTimer = ({
+  isTimerRunning,
+  totalRunningTime,
+  onToggle,
+  loading,
+  actionId,
+  isSubAction = false,
+}: IProps) => {
+  const [seconds, setSeconds] = useState<number>(0);
+  const [isActive, setIsActive] = useState(false);
+  const [bordMissionsDetails] = useRecoilState(boardMissionsDetailsState);
 
-    useEffect(() => {
-        let interval = null;
+  useEffect(() => {
+    let interval = null;
 
-        if (isActive) {
+    if (isActive) {
+      interval = setInterval(() => {
+        setSeconds((seconds) => seconds + 1);
+      }, 1000);
+    } else if (!isActive && seconds !== 0) {
+      clearInterval(interval);
+    }
 
-            interval = setInterval(() => {
-                setSeconds(seconds => seconds + 1);
-            }, 1000);
-        } else if (!isActive && seconds !== 0) {
-            clearInterval(interval);
-        }
+    return () => clearInterval(interval);
+  }, [isActive]);
 
-        return () => clearInterval(interval);
-    }, [isActive]);
+  useEffect(() => {
+    setSeconds(totalRunningTime ? totalRunningTime : 0);
+    setIsActive(isTimerRunning);
+  }, [isTimerRunning, totalRunningTime]);
 
-    useEffect(() => {
-        setSeconds(totalRunningTime ? totalRunningTime : 0);
-        setIsActive(isTimerRunning);
-    }, [isTimerRunning, totalRunningTime])
+  const formatTime = useCallback(() => {
+    if (seconds) {
+      const hours = Math.floor(seconds / 3600);
+      const minutes = Math.floor((seconds % 3600) / 60);
+      const remainingSeconds = seconds % 60;
 
-    const formatTime = useCallback(() => {
-        if (seconds) {
-            const hours = Math.floor(seconds / 3600);
-            const minutes = Math.floor((seconds % 3600) / 60);
-            const remainingSeconds = seconds % 60;
+      const hh = hours.toString().padStart(2, "0");
+      const mm = minutes.toString().padStart(2, "0");
+      const ss = remainingSeconds.toString().padStart(2, "0");
 
-            const hh = hours.toString().padStart(2, '0');
-            const mm = minutes.toString().padStart(2, '0');
-            const ss = remainingSeconds.toString().padStart(2, '0');
+      return `${hh}:${mm}:${ss}`;
+    }
+    return "00:00:00";
+  }, [seconds]);
 
-            return `${hh}:${mm}:${ss}`;
-        }
-        return '00:00:00'
-    }, [seconds]);
+  return (
+    <Stack direction={"row"} alignItems={"center"}>
+      <span
+        style={{
+          ...FONT_FAMILY.Inter(600, 14),
+          color: isSubAction ? "#FFF" : "#344054",
+        }}
+      >
+        {formatTime()}
+      </span>
+      <PermissionCheck
+        userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}
+      >
+        {actionId === bordMissionsDetails.currentBoardMissionActionId && (
+          <IconButton
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggle(seconds);
+            }}
+          >
+            {loading ? (
+              <CircularProgress size={15} />
+            ) : isActive ? (
+              <PauseCircleIcon style={{ color: "#43459D" }} />
+            ) : (
+              <PlayCircleIcon style={{ color: "#43459D" }} />
+            )}
+          </IconButton>
+        )}
+      </PermissionCheck>
+    </Stack>
+  );
+};
 
-    return (
-        <Stack direction={'row'} alignItems={'center'}>
-            <span style={{ ...FONT_FAMILY.Inter(600, 14), color: isSubAction ? "#FFF" : '#344054' }}>{formatTime()}</span>
-            <PermissionCheck userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}>
-                {
-                    actionId === bordMissionsDetails.currentBoardMissionActionId &&
-                    <IconButton onClick={(e) => {
-                        e.stopPropagation();
-                        onToggle(seconds);
-                    }}>
-                        {
-                            loading ? <CircularProgress size={15} /> : isActive ?
-                                <PauseCircleIcon style={{ color: '#43459D' }} /> :
-                                <PlayCircleIcon style={{ color: '#43459D' }} />
-                        }
-                    </IconButton>
-                }
-            </PermissionCheck>
-        </Stack>
-    )
-}
-
-export { ActionTimer }
+export { ActionTimer };

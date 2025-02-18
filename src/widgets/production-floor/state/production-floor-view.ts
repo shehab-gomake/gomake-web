@@ -5,7 +5,8 @@ export enum EProductionFloorView {
   KANBAN,
   GROUPS,
   DASHBOARD,
-  GANTT
+  GANTT,
+  FILTER_GROUPS
 }
 
 export const productionFloorViewState = atom({

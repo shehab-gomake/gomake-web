@@ -24,6 +24,7 @@ export interface IBoardMissionsStation {
   isNeedMaterial?: boolean;
   productType?: string | null;
   subActions?: any;
+  realProductionTime?: number;
 }
 
 export interface IBoardMissionsStationTimer {

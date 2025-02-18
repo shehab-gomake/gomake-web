@@ -46,7 +46,7 @@ const NotificationMessageComponent = ({
   ) : type === ENotificationType.BOARD_MISSIONS_APPROVED_STATUS ? (
     <Link
       style={style}
-      href={`/production-floor?boardMissionsId=${documentId}&productType=&step=stations`}
+      href={`/production-floor?boardMissionsId=${documentId}&step=stations`}
     >
       {t("notifications.approvedBoardMissionsMessage", {
         number: message,
@@ -55,7 +55,7 @@ const NotificationMessageComponent = ({
   ) : type === ENotificationType.BOARD_MISSIONS_REJECTED_STATUS ? (
     <Link
       style={style}
-      href={`/production-floor?boardMissionsId=${documentId}&productType=&step=stations`}
+      href={`/production-floor?boardMissionsId=${documentId}&step=stations`}
     >
       {t("notifications.rejectedBoardMissionsMessage", {
         number: message,
