@@ -23,6 +23,7 @@ import {
   selectParameterButtonState,
   subProductsCopyParametersState,
   subProductsParametersState,
+  userState,
 } from "@/store";
 import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
@@ -34,6 +35,7 @@ import {
   EParameterTypes,
   GraphicsTypesParam,
   SampleTypeParm,
+  UNIT_TYPE,
 } from "@/enums";
 import { QuantityParameter } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/quantity-parameter/quantity-parameter";
 import { InputNumberParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/input-number-parameter";
@@ -134,6 +136,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  console.log("subProducts", subProducts)
   const [subProductsColorsModal, setSubProductsColorsModal] =
     useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
@@ -2670,7 +2673,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
               >
                 {parameter?.name}
-                <small>&nbsp;{parameter?.defaultUnit}</small>
+                <small>&nbsp;{unitType === UNIT_TYPE.IMPERIAL ? parameter?.imperialUnit : parameter?.defaultUnit}</small>
                 {parameter?.isRequired ? (
                   <span style={clasess.spanRequierd}> *</span>
                 ) : null}
@@ -3896,7 +3899,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subProducts,
     false
   );
-
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0
   const onChangeSubProductsForPrice = (
     parameterId: any,
     subSectionId: any,
@@ -4003,6 +4007,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSectionParameter) {
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
+            console.log("myparameter", { myparameter, data })
             const parameterId = myparameter.id;
             const myindex = temp.findIndex((item) => {
               return (
@@ -4025,7 +4030,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   temp[myindex] = {
                     ...temp[myindex],
                     parameterCode: myparameter?.code,
-                    values: [data?.value?.values[parameterId]],
+                    values: unitType === UNIT_TYPE.IMPERIAL ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : data?.value?.values[parameterId],
                     isDisabled: hasValues(data?.value),
                   };
                 } else {
@@ -4038,7 +4043,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   subSectionId: subSection?.id,
                   ParameterType: myparameter?.parameterType,
                   isQuantityParameter: myparameter?.isQuantityParameter,
-                  values: [data?.value?.values[parameterId]],
+                  values: unitType === UNIT_TYPE.IMPERIAL ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : data?.value?.values[parameterId],
                   actionIndex: myparameter?.actionIndex,
                   parameterName: myparameter?.name,
                   parameterCode: myparameter?.code,
