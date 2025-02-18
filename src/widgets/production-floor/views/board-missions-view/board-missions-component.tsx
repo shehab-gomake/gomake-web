@@ -91,7 +91,6 @@ const BoardMissionsComponent = ({
       height={"100%"}
       overflow={"hidden"}
       gap={"16px"}
-      // padding={"34px 24px"}
       padding={"10px 20px 0px 20px"}
     >
       <BoardMissionsDetailsHeader />
@@ -104,6 +103,7 @@ const BoardMissionsComponent = ({
             <div style={classes.ColumnOne}>
               <CardContainer
                 label={t("sales.quote.notes")}
+                style={{ background: "#F6F6F6" }}
                 actionButton={
                   <PermissionCheck
                     userPermission={
@@ -125,7 +125,10 @@ const BoardMissionsComponent = ({
               {isLoadingStations ? (
                 renderDetailsSkeletons1()
               ) : (
-                <div style={classes.productDetailsContainer}>
+                <div
+                  className={`custom-scroller`}
+                  style={classes.productDetailsContainer}
+                >
                   <div style={classes.ColumnOneRowTwoGridContainer}>
                     {productDetails.length > 0 && (
                       <div
@@ -143,19 +146,23 @@ const BoardMissionsComponent = ({
                           }
                           withHeader={true}
                           header={t("productionFloor.productDetails")}
+                          style={{ background: "#F6F6F6" }}
                         />
                       </div>
                     )}
                     {productWorksTypes.length > 0 && (
                       <div style={{ maxHeight: `${typesConHeight}px` }}>
-                        <CardContainer label={t("productionFloor.types")}>
+                        <CardContainer
+                          label={t("productionFloor.types")}
+                          style={{ background: "#F6F6F6" }}
+                        >
                           <WorkTypesWidget types={productWorksTypes} />
                         </CardContainer>
                       </div>
                     )}
                   </div>
                   <div
-                    className="custom-scroller"
+                    className={`custom-scroller`}
                     style={{
                       overflowY:
                         productWorksTypes.length > 0 ? "auto" : "visible",
@@ -175,10 +182,9 @@ const BoardMissionsComponent = ({
                         }
                         withHeader={false}
                         style={{
-                          // maxHeight: "fit-content",
-                          // height: "fit-content",
                           flex: 1,
                           minHeight: "fit-content",
+                          background: "#F6F6F6",
                         }}
                       />
                     ))}
