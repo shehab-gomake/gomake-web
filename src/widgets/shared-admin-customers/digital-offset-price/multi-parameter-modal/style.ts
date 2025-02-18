@@ -7,13 +7,14 @@ const useStyle = () => {
   const { primaryColor, secondColor } = useGomakeTheme();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
-  const RTL = dir === 'rtl';
+  const RTL = dir === "rtl";
   const clasess = useMemo(() => {
     return {
       insideStyle: {
-        width: 444,
+        width: "35%",
+        minWidth: "350px",
         borderRadius: 12,
-        height: 700,
+        height: "75%",
         backgroundColor: "#FFFFFF",
         padding: 20,
       },
@@ -48,7 +49,7 @@ const useStyle = () => {
         borderRadius: 8,
         width: "100%",
         height: 600,
-        overflow: "scroll"
+        overflow: "scroll",
       },
       headerTableContainer: {
         display: "flex",
@@ -58,13 +59,12 @@ const useStyle = () => {
         width: "100%",
         height: 44,
         background: "rgba(244, 241, 246, 1)",
-        paddingLeft:RTL?0: 24,
-        paddingRight:RTL?24: 0,
+        paddingLeft: RTL ? 0 : 24,
+        paddingRight: RTL ? 24 : 0,
         borderTopRightRadius: 8,
         borderTopLeftRadius: 8,
         borderBottom: "1px solid rgba(208, 213, 221, 1)",
         backgroundColor: "rgba(244, 241, 246, 1)",
-
       },
       headerTableStyle: {
         ...FONT_FAMILY.Lexend(500, 12),

@@ -1,6 +1,12 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
 import { CheckboxCheckedIcon, CheckboxIcon, ReloadIcon } from "@/icons";
-import { Checkbox, Divider, IconButton, Tooltip, Typography } from "@mui/material";
+import {
+  Checkbox,
+  Divider,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
@@ -18,6 +24,26 @@ import { Box, Slider } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+
+export const roundPrice = (price) => {
+  try {
+    if (typeof price === "string") {
+      price = Number(price);
+    }
+    if (price && !isNaN(price) && typeof price === "number") {
+      let roundedPrice = price.toFixed(3);
+      let arr = roundedPrice.split(".");
+      let decimalPart = Number(arr[1]);
+      if (!decimalPart) {
+        return arr[0];
+      }
+      return roundedPrice;
+    }
+    return price;
+  } catch (e) {
+    return price;
+  }
+};
 
 const RightSideWidget = ({
   clasess,
@@ -66,7 +92,9 @@ const RightSideWidget = ({
     systemVAT,
     selectedProduct,
     combinedData,
-    handleProductChange
+    handleProductChange,
+    selectedTab,
+    onSelectTab,
   } = useRightSideWidget({ includeVAT, widgetType });
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -90,7 +118,7 @@ const RightSideWidget = ({
             t.actionName === item.actionName &&
             t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
             t?.exception?.exceptionMessage ===
-            item?.exception?.exceptionMessage &&
+              item?.exception?.exceptionMessage &&
             JSON.parse(t.values || "[]")
               .sort()
               .join(",") === itemValuesSorted
@@ -223,7 +251,10 @@ const RightSideWidget = ({
           </div>
         </div>
         <div style={clasess.autoComplateRowContainer}>
-          <div data-tour="select-product" style={{ width: "100%", marginBottom: 16 }}>
+          <div
+            data-tour="select-product"
+            style={{ width: "100%", marginBottom: 16 }}
+          >
             <GoMakeTreeSelect
               value={selectedProduct}
               options={combinedData}
@@ -253,13 +284,29 @@ const RightSideWidget = ({
             {isLoading ? (
               <DotsLoader />
             ) : (
-              <div style={{ display: "flex", alignItems: "center", position: "relative" }}>
-                <span style={{ ...clasess.totalCurrancyStyle, position: "absolute", left: 30, zIndex: 999999 }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  position: "relative",
+                }}
+              >
+                <span
+                  style={{
+                    ...clasess.totalCurrancyStyle,
+                    position: "absolute",
+                    left: 30,
+                    zIndex: 999999,
+                  }}
+                >
                   {systemCurrency}
                 </span>
                 <GomakeTextInput
                   direction={direction}
-                  value={roundPrice(sliderCurrentProductItemValueTotalPrice) ?? "---------"}
+                  value={
+                    roundPrice(sliderCurrentProductItemValueTotalPrice) ??
+                    "---------"
+                  }
                   onBlur={(e: any) => {
                     if (currentProductItemValueTotalPrice > 0) {
                       const inputValue = Number(e.target.value);
@@ -282,7 +329,9 @@ const RightSideWidget = ({
                         currentProductItemValueTotalPrice
                       );
                     } else {
-                      setSliderCurrentProductItemValueTotalPrice(e.target.value);
+                      setSliderCurrentProductItemValueTotalPrice(
+                        e.target.value
+                      );
                     }
                   }}
                   key={"TotalPriceInput"}
@@ -306,7 +355,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-          calculationProgress.totalWorkFlowsCount && (
+            calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -350,9 +399,18 @@ const RightSideWidget = ({
                 onChange={(e) => {
                   const newPriceIncludeVat = e.target.value;
                   setPriceIncludeVat(newPriceIncludeVat);
-                  if (quantity?.values[0] && newPriceIncludeVat !== "" && newPriceIncludeVat !== null && newPriceIncludeVat !== "0") {
-                    const newTotalPrice = roundPrice((Number(newPriceIncludeVat) / (1 + systemVAT)));
-                    setSliderCurrentProductItemValueTotalPrice(Number(newTotalPrice));
+                  if (
+                    quantity?.values[0] &&
+                    newPriceIncludeVat !== "" &&
+                    newPriceIncludeVat !== null &&
+                    newPriceIncludeVat !== "0"
+                  ) {
+                    const newTotalPrice = roundPrice(
+                      Number(newPriceIncludeVat) / (1 + systemVAT)
+                    );
+                    setSliderCurrentProductItemValueTotalPrice(
+                      Number(newTotalPrice)
+                    );
                   }
                 }}
                 style={{
@@ -364,13 +422,12 @@ const RightSideWidget = ({
                 }}
               />
               {isRTL && systemCurrency}
-
             </div>
           </>
         )}
 
         {widgetType === EWidgetProductType.EDIT ||
-          widgetType === EWidgetProductType.DUPLICATE ? (
+        widgetType === EWidgetProductType.DUPLICATE ? (
           <div
             style={{
               display: "flex",
@@ -641,11 +698,12 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "
-                            }${renderExceptionMessage(
-                              item?.exception?.exceptionKey,
-                              item?.exception?.values
-                            )}${renderValues(item?.exception?.values)}`}
+                          {`${item.actionName ? item.actionName + ": " : ""}${
+                            item?.exception?.exceptionMessage || " "
+                          }${renderExceptionMessage(
+                            item?.exception?.exceptionKey,
+                            item?.exception?.values
+                          )}${renderValues(item?.exception?.values)}`}
                         </div>
                       </div>
                     </div>
@@ -672,11 +730,12 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item?.exceptionMessage || " "
-                            }${renderExceptionMessage(
-                              item?.exceptionKey,
-                              item?.values
-                            )}${renderValues(item?.values)}`}
+                          {`${
+                            item?.exceptionMessage || " "
+                          }${renderExceptionMessage(
+                            item?.exceptionKey,
+                            item?.values
+                          )}${renderValues(item?.values)}`}
                         </div>
                       </div>
                     </div>

@@ -30,6 +30,10 @@ const useStyle = () => {
         color: primaryColor(900),
         ...FONT_FAMILY.Lexend(500, 14),
       },
+      mobileSectionTitle: {
+        color: primaryColor(900),
+        ...FONT_FAMILY.Lexend(500, 13),
+      },
       actionContainer: {
         backgroundColor: "#FFF",
         padding: "0 16px",
@@ -42,6 +46,12 @@ const useStyle = () => {
         borderRadius: 8,
         height: 40,
         width: 40,
+      },
+      toggleActionButtonMobile: {
+        backgroundColor: primaryColor(50),
+        borderRadius: 8,
+        height: 30,
+        width: 30,
       },
       toggleSubWorkFlowActionButton: {
         backgroundColor: primaryColor(600),
@@ -118,6 +128,7 @@ const useStyle = () => {
       },
       modalStyle: {
         width: "45%",
+        minWidth: "350px",
         borderRadius: "8px",
         height: "auto",
         gap: "10px",

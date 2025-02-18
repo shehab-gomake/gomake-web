@@ -7,11 +7,12 @@ import { useTranslation } from "react-i18next";
 const useStyle = () => {
   const { primaryColor, secondColor } = useGomakeTheme();
   const { t } = useTranslation();
-  const direction = t('direction');
+  const direction = t("direction");
   const clasess = useMemo(() => {
     return {
       insideStyle: {
         width: "60%",
+        minWidth: "340px",
         borderRadius: 5,
         height: "100%",
         maxHeight: 900,
@@ -46,14 +47,19 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "center",
       },
-      switchContainer:{ display: "flex", flexDirection: "row" as "row", justifyContent: "flex-start", alignItems: "center" },
-      switchlabel:{
-        ...FONT_FAMILY.Lexend(400,12),
-        color:"#000"
+      switchContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
       },
-      switchlabelSelected:{
-        ...FONT_FAMILY.Lexend(400,12),
-        color:secondColor(500)
+      switchlabel: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: "#000",
+      },
+      switchlabelSelected: {
+        ...FONT_FAMILY.Lexend(400, 12),
+        color: secondColor(500),
       },
       mainContainer: {
         display: "flex",
@@ -78,7 +84,7 @@ const useStyle = () => {
         gap: 12,
         cursor: "pointer",
         "box-shadow": "0px 4px 20px 0px rgba(0, 0, 0, 0.08)",
-        zIndex: 99
+        zIndex: 99,
       },
       fixdCard: {
         display: "flex",
@@ -124,7 +130,7 @@ const useStyle = () => {
         gap: 12,
         border: `1px solid ${secondColor(500)}`,
         cursor: "pointer",
-        zIndex: 99
+        zIndex: 99,
       },
       shapeNameStyle: {
         ...FONT_FAMILY.Lexend(500, 20),
@@ -135,7 +141,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 14),
         color: primaryColor(900),
         ...adaptPaddingRight(direction, 16),
-        lineHeight:0.8
+        lineHeight: 0.8,
       },
       btnsContainer: {
         display: "flex",
@@ -156,7 +162,7 @@ const useStyle = () => {
         backgroundColor: secondColor(500),
       },
     };
-  }, [t,direction]);
+  }, [t, direction]);
   return {
     clasess,
   };
