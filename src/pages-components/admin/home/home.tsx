@@ -123,7 +123,7 @@ const HomePageComponentForAdmin = ({ isAdmin, isMobileScreen }) => {
             </span>
           </div>
           <div style={{ marginBottom: 20 }}>
-            <HomeTableWidget />
+            <HomeTableWidget clientId={selectedClient?.id} clientBalance={selectedClient?.clientBalance} />
           </div>
         </div>
       )}

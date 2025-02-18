@@ -30,6 +30,18 @@ const ofssetPrinting = (state: Record<string, any>) => {
             isValid: !!state?.attributes?.colorStations
         },
         {
+            name: "perfecto",
+            label: "machineAttributes.perfecto",
+            type: "text",
+            placeholder: "machineAttributes.perfecto",
+            required: true,
+            parameterKey: "perfecto",
+            options: [],
+            machineInputType: 'input',
+            value: state?.attributes?.perfecto ? state?.attributes?.perfecto : '',
+            isValid: !!state?.attributes?.perfecto
+        },
+        {
             name: "fIfthStation",
             label: "machineAttributes.fifthStation",
             type: "text",
