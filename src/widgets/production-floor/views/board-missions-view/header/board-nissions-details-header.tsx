@@ -278,6 +278,18 @@ const BoardMissionsDetailsHeader = () => {
                     </span>
                   </Stack>
                 )}
+
+                {boardMissionsDetails.contactName && (
+                  <Stack direction={"row"} gap={"5px"}>
+                    <span style={classes.newParameterLabel}>
+                      {t("sales.quote.contactName")}
+                    </span>
+                    <span style={classes.newParameterValue}>
+                      {boardMissionsDetails.contactName}
+                    </span>
+                  </Stack>
+                )}
+
                 {boardMissionsDetails.clientEmail && (
                   <Stack direction={"row"} gap={"5px"}>
                     <span style={classes.newParameterLabel}>
@@ -315,6 +327,14 @@ const BoardMissionsDetailsHeader = () => {
                 {boardMissionsDetails?.isUrgentWork && (
                   <span style={classes.labelsStyle}>
                     {t("boardMissions.urgent")}
+                  </span>
+                )}
+
+                {boardMissionsDetails?.isRepetitiveWork && (
+                  <span
+                    style={{ ...classes.labelsStyle, background: "#B93815" }}
+                  >
+                    {t("boardMissions.isRepetitiveWork")}
                   </span>
                 )}
               </Stack>
