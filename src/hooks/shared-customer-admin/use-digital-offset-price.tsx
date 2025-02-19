@@ -136,7 +136,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("subProducts", subProducts)
   const [subProductsColorsModal, setSubProductsColorsModal] =
     useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
@@ -4990,6 +4989,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     return uniqueFilteredArray;
   };
+
+  const convertValuesToImperial = (parameters) => {
+    return parameters.map((param) => {
+      if (unitType === UNIT_TYPE.IMPERIAL && param.factor) {
+        return {
+          ...param,
+          values: param?.ParameterType === 5 ? [param?.valueIds[0]] : param.values.map((value) => (parseFloat(value) / param.factor).toFixed(3)),
+        };
+      }
+      return param;
+    });
+  }
+
   const calculationProduct = useDebouncedCallback(
     async (currentSubProducts) => {
       if (requestAbortController) {
@@ -5050,6 +5062,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               generalParameters,
               productTemplate
             );
+          const convertedItemParameters = convertValuesToImperial(itemParmetersValues);
+          const convertedGeneralParameters = convertValuesToImperial(updatedGeneralParameters);
+
+
           if (calculationSubProducts && calculationSubProducts.length > 0) {
             calculationSubProducts.forEach((subProduct) => {
               subProduct.parameters =
@@ -5070,9 +5086,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               clientId: router?.query?.customerId,
               clientTypeId: router?.query?.clientTypeId,
               productId: router?.query?.productId,
-              generalParameters: updatedGeneralParameters,
+              generalParameters: unitType === UNIT_TYPE.IMPERIAL ? convertedGeneralParameters : updatedGeneralParameters,
               subProducts: calculationSubProducts,
-              itemParmetersValues: itemParmetersValues,
+              itemParmetersValues: unitType === UNIT_TYPE.IMPERIAL ? convertedItemParameters : itemParmetersValues,
               workTypes: workTypes,
               isChargeForNewDie: isChargeForNewDie,
               productType: productTemplate?.productType,
