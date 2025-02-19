@@ -6,7 +6,7 @@ import {
   RuleType,
   UnitType,
 } from "@/widgets/product-pricing-widget/enums";
-import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
+import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
 
 export interface IPricingWidgetProps {
   jobDetails?: string;
@@ -14,18 +14,19 @@ export interface IPricingWidgetProps {
   workFlows: ICalculatedWorkFlow[];
   onSelectNewWorkFlow?: (id: string) => void;
   getOutSourcingSuppliers: () => void;
-  widgetType:EWidgetProductType;
-  getSelectedWorkFlow?:()=>void;
-  selectedWorkFlowCalculatedIsLoaded?:boolean;
-  setSelectedWorkFlowCalculatedIsLoaded?:any
+  widgetType: EWidgetProductType;
+  getSelectedWorkFlow?: () => void;
+  selectedWorkFlowCalculatedIsLoaded?: boolean;
+  setSelectedWorkFlowCalculatedIsLoaded?: any;
+  isMobileScreen?: boolean;
 }
 
 export interface IPricingAction {
   actionId: string;
   machineCategories: IPricingMachineCategory[];
   productType: string | null;
-  materials?:any
-  employees?:any
+  materials?: any;
+  employees?: any;
 }
 
 export interface IPricingMachineCategory {
@@ -55,11 +56,11 @@ export interface ICalculatedWorkFlow {
   productType: string | null;
   isCalculated: boolean;
   exceptions: any[];
-  isCompleteWorkFlow:boolean;
-  orginalBookPartId:string;
-  generalInformationProductionFloor?:any;
-  isOutSourceWorkFlow?:boolean;
-  deliveryDate?:string
+  isCompleteWorkFlow: boolean;
+  orginalBookPartId: string;
+  generalInformationProductionFloor?: any;
+  isOutSourceWorkFlow?: boolean;
+  deliveryDate?: string;
 }
 
 export interface IPrintActionType {
@@ -68,7 +69,7 @@ export interface IPrintActionType {
 }
 
 export interface IWorkFlowAction {
-  id:string;
+  id: string;
   actionId: string;
   actionName: string;
   mongoDBMachineId: string;
@@ -95,15 +96,15 @@ export interface IWorkFlowAction {
   materialVolume: number;
   pagesQuantity?: number;
   totalBookletDelay?: number;
-  materials?:any
-  employeeId?:string,
-  employeeName?:string
-  isNeedEmployee?:boolean,
-  isNeedMachine?:boolean,
-  isNeedMaterial?:boolean,
-  isNeedFolds?:boolean,
-  foldOptionValueId?:string,
-  sectionName?: string
+  materials?: any;
+  employeeId?: string;
+  employeeName?: string;
+  isNeedEmployee?: boolean;
+  isNeedMachine?: boolean;
+  isNeedMaterial?: boolean;
+  isNeedFolds?: boolean;
+  foldOptionValueId?: string;
+  sectionName?: string;
 }
 
 export interface IOutput {
@@ -129,7 +130,7 @@ export interface IOutSourceSupplier {
   profit: number;
   workHours: number;
   status: EOutsourceSupplierStatus;
-  widgetType:string;
+  widgetType: string;
 }
 
 export interface IRectangle {
@@ -155,12 +156,12 @@ export interface IRecommendationRang {
   profitPercent: number;
 }
 
-export interface IExceptionsLog{
-    actionId?: string;
-    actionName?: string;
-    exceptionKey:string;
-    title?:string;
-    exceptionType?:ECalculationLogType
+export interface IExceptionsLog {
+  actionId?: string;
+  actionName?: string;
+  exceptionKey: string;
+  title?: string;
+  exceptionType?: ECalculationLogType;
 }
 
 interface TableHeader {

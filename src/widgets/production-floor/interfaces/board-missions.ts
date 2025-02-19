@@ -73,6 +73,7 @@ export interface IBoardMissionsDetails {
   productionFloorJobColor?: string;
   showGraphicsApprovalAlert?: 0 | 1 | 2;
   currentStation?: any;
+  contactName?: string;
 }
 
 export interface IBoardMissionStep {

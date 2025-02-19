@@ -14,7 +14,7 @@ import { Stack } from "@mui/material";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
 import { ClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal";
-import { SettingIcon } from "../shared-admin-customers/add-product/icons/setting";
+import { SettingIcon } from "@/widgets";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useCustomerCard } from "./use-customer-card";
@@ -54,6 +54,7 @@ interface IProps {
   userQuote?: any;
   isFromCartPage?: boolean;
   onChangeSelectBusiness?: any;
+  selectedTabIndex?: number
 }
 
 const CustomerCardWidget = ({
@@ -75,6 +76,7 @@ const CustomerCardWidget = ({
   userQuote,
   isFromCartPage = false,
   onChangeSelectBusiness,
+    selectedTabIndex = undefined
 }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -238,7 +240,7 @@ const CustomerCardWidget = ({
           {renderAddButton(addEmptyContact, "customers.buttons.addContact")}
           <Stack direction={"column"}>
             {contacts
-              ?.filter((contact, index) => !contact.isMainContact)
+              ?.filter((contact) => !contact.isMainContact)
               ?.map((x) => (
                 <ContactForm
                   key={x.index}
@@ -315,6 +317,7 @@ const CustomerCardWidget = ({
         <LedgerReportWidget
           customerId={customer?.id}
           isFromCustomerCard={true}
+          autoShowCard={true}
         />
       ),
     },
@@ -455,6 +458,7 @@ const CustomerCardWidget = ({
             variant="ButtonedTabs"
             tabs={tabs}
             withBackGround={true}
+            selectedTabIndex={selectedTabIndex}
           />
         </div>
         <div style={classes.footerStyle}>

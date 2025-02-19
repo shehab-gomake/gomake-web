@@ -3,19 +3,29 @@ import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state"
 import { Stack } from "@mui/material";
 import { OutSourceSuppliersRowComponent } from "./out-source-suppliers-row";
 
-
-const OutSourceSuppliers = ({ widgetType, onClickAddOutSourceAction, onClickRemoveOutSourceAction, selectedWorkFlow, selectedWorkFlowCalculatedIsLoaded }) => {
-    const suppliers = useRecoilValue(outsourceSuppliersState);
-    return <Stack gap={'15px'}>
-        {suppliers && suppliers.length > 0 && <OutSourceSuppliersRowComponent
-            widgetType={widgetType}
-            options={suppliers}
-            onClickAddOutSourceAction={onClickAddOutSourceAction}
-            selectedWorkFlow={selectedWorkFlow}
-            selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
-            onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
-        />}
+const OutSourceSuppliers = ({
+  widgetType,
+  onClickAddOutSourceAction,
+  onClickRemoveOutSourceAction,
+  selectedWorkFlow,
+  selectedWorkFlowCalculatedIsLoaded,
+}) => {
+  const suppliers = useRecoilValue(outsourceSuppliersState);
+  return (
+    <Stack gap={"15px"}>
+      {suppliers && suppliers.length > 0 && (
+        <OutSourceSuppliersRowComponent
+          widgetType={widgetType}
+          options={suppliers}
+          onClickAddOutSourceAction={onClickAddOutSourceAction}
+          selectedWorkFlow={selectedWorkFlow}
+          selectedWorkFlowCalculatedIsLoaded={
+            selectedWorkFlowCalculatedIsLoaded
+          }
+          onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
+        />
+      )}
     </Stack>
-}
-export { OutSourceSuppliers }
-
+  );
+};
+export { OutSourceSuppliers };

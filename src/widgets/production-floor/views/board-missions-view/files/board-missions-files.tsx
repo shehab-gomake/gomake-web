@@ -41,14 +41,21 @@ const BoardMissionsFiles = () => {
   return (
     <Stack width={"100%"} padding={"0 0 30px 0"}>
       {/* Tab Buttons */}
-      <Stack direction="row" gap={2} marginBottom={2}>
+      <Stack
+        direction="row"
+        gap={1}
+        marginBottom={2}
+        alignItems={"center"}
+        justifyContent={"center"}
+      >
         <Button
           variant="contained"
           onClick={() => setActiveTab(FileTypeENUM.Printing)}
           sx={{
-            width: "100px",
-
             fontWeight: "bold",
+            height: "fit-content",
+            padding: "0px 10px",
+
             backgroundColor:
               activeTab === FileTypeENUM.Printing ? "#D0D1ED" : "#F9FAFB",
             color:
@@ -76,6 +83,8 @@ const BoardMissionsFiles = () => {
           onClick={() => setActiveTab(FileTypeENUM.Graphics)}
           sx={{
             fontWeight: "bold",
+            height: "fit-content",
+            padding: "0px 10px",
             backgroundColor:
               activeTab === FileTypeENUM.Graphics ? "#D0D1ED" : "#F9FAFB",
             color:

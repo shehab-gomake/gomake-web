@@ -76,8 +76,8 @@ import { useRouter } from "next/router";
 import { ICard } from "./widgets/statistics-section/statistics-sections";
 import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
 import { DocumentDeliveryStatuses } from "./widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
-import { useDocumentsSignalR } from "@/hooks/signalr/use-documents-signalr";
 import { EMessageStatus } from "@/enums/document-type-enum";
+import {useDocumentsTableSocketIo} from "@/hooks/socket-io/use-documents-table-socket-io";
 
 interface Query {
   customerId?: string;
@@ -854,8 +854,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickDocumentLogs,
   ]);
 
-  const {} = useDocumentsSignalR({ getAllQuotes, docType });
-
+  // const {} = useDocumentsSignalR({ getAllQuotes, docType });
+  const {} = useDocumentsTableSocketIo(docType, getAllQuotes)
   const getAllQuotesInitial = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -2758,6 +2758,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isSendToClient,
     setFromDate,
     setToDate,
+    onClickOpenCustomerModal
   };
 };
 
