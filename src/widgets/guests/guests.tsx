@@ -20,15 +20,18 @@ export default function GuestsWidget() {
             }
             updateTokenStorage(userToken);
             debugger;
-            const product = router?.query?.product; // searchParams.get('product')
-            const ProductRes: any = await callApi("GET", "/v1/printhouse-config/products/get-guest-product?product="+product);
-            if (ProductRes?.success) {
-                const data = ProductRes?.data?.data?.data;
-                if(data && data.productId){
-                    navigate(`/products/create?clientTypeId=${data.clientTypeId}&customerId=${data.customerId}&customerName=${data.customerName}&productId=${data.productId}`);
+            const product = router?.query?.product;
+            if(product){
+                const ProductRes: any = await callApi("GET", "/v1/printhouse-config/products/get-guest-product?product="+product);
+                if (ProductRes?.success) {
+                    const data = ProductRes?.data?.data?.data;
+                    if(data && data.productId){
+                        navigate(`/products/create?clientTypeId=${data.clientTypeId}&customerId=${data.customerId}&customerName=${data.customerName}&productId=${data.productId}`);
+                    }
+                    return;
                 }
-                return;
             }
+            
            navigate("/home");
         }else{
             navigate("/login");
