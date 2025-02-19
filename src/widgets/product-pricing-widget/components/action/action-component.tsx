@@ -37,12 +37,12 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderIconLogs } from "@/utils/constants";
 import { TableOutPutComponent } from "../table-output/table-output-component";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import { isActionEmployeeUpdatedState, permissionsState } from "@/store";
+import { isActionEmployeeUpdatedState, permissionsState, userState } from "@/store";
 import { Draggable } from "react-beautiful-dnd";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons/sort-icon";
-import { ModalType } from "@/enums";
-import { _renderDeliveryDate } from "@/utils/helpers";
+import { ModalType, UNIT_TYPE } from "@/enums";
+import { _renderDeliveryDate, updateValuesAndDefaultUnitForPricingTab } from "@/utils/helpers";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -264,6 +264,10 @@ const ActionContainerComponent = ({
   }, [suppliersState]);
   const { classes } = useStyle();
   const { secondColor } = useGomakeTheme();
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0
+  const [outputsParametersWithImperial, setOutputsParametersWithImperial] = useState<any[]>([])
+  const [inputsParametersWithImperial, setInputsParametersWithImperial] = useState<any[]>([])
   const inputsParameters = outputs?.filter(
     (parameter) =>
       parameter && parameter?.propertyType === RuleType.PARAMETER &&
@@ -274,6 +278,14 @@ const ActionContainerComponent = ({
       parameter && parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TEXT
   );
+
+  useEffect(() => {
+    if (outputsParameters && unitType === UNIT_TYPE.IMPERIAL) {
+      setOutputsParametersWithImperial(updateValuesAndDefaultUnitForPricingTab(outputsParameters, unitType))
+      setInputsParametersWithImperial(updateValuesAndDefaultUnitForPricingTab(inputsParameters, unitType))
+    }
+  }, [outputsParameters, unitType])
+
   const imageOutputs = outputs?.filter(
     (parameter) =>
       parameter && parameter?.propertyType === RuleType.OUTPUT &&
@@ -896,7 +908,7 @@ const ActionContainerComponent = ({
                       gap={"16px"}
                       flexWrap={"wrap"}
                     >
-                      <ParametersMapping parameters={inputsParameters} />
+                      <ParametersMapping parameters={unitType === UNIT_TYPE.IMPERIAL ? inputsParametersWithImperial : inputsParameters} />
                     </Stack>
                   </>
                 )}
@@ -911,7 +923,7 @@ const ActionContainerComponent = ({
                     >
                       <ParametersMapping
                         source={source}
-                        parameters={outputsParameters}
+                        parameters={unitType === UNIT_TYPE.IMPERIAL ? outputsParametersWithImperial : outputsParameters}
                       />
                       {imageOutputs.map((parameter) => (
                         <PrintImageComponent {...parameter} />
