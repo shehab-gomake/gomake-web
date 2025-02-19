@@ -543,7 +543,7 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         ...FONT_FAMILY.Lexend(700, 24),
         height: "100%",
         width: "100%",
-        maxHeight: 35,
+        maxHeight: 40,
         boxShadow: "none",
         textAlign: "center" as "center",
         direction: direction,
