@@ -17,7 +17,7 @@ import { GoMakeIcon } from "@/icons/side-list-icons/gomake";
 const LeftSideLayout = (customGap) => {
   const { t } = useTranslation();
   const router = useRouter();
-  const { tabs1, tabs2, tabs3 } = useAuthLayoutHook(null, true);
+  const { tabs1, tabs2, tabs3, tabs4 } = useAuthLayoutHook(null, true);
   const [navStatus, setNavStatus] = useRecoilState(navStatusState);
   const [isHover, setIsHover] = useRecoilState(hoverStatusState);
   const { CheckPermission } = useUserPermission();
@@ -70,6 +70,26 @@ const LeftSideLayout = (customGap) => {
   const handleMouseLeave = () => {
     clearTimeout(hoverTimeout);
   };
+
+  const filterTabsWithPermission = (tabs: any) => {
+    return tabs
+      .filter((tab: any) => {
+        if (tab.isLine) {
+          return false;
+        }
+        return checkTabPermissions(tab);
+      })
+      .map((tab: any) => {
+        if (tab.isList && tab.list) {
+          tab.list = tab.list.filter((item: any) => item.Permission);
+        }
+        return tab;
+      });
+  };
+
+  const hasTabs2 = filterTabsWithPermission(tabs2).length > 0;
+  const hasTabs3 = filterTabsWithPermission(tabs3).length > 0;
+  const hasTabs4 = filterTabsWithPermission(tabs4).length > 0;
 
   return (
     <div
@@ -144,27 +164,54 @@ const LeftSideLayout = (customGap) => {
           alignSelf: "flex-start",
         }}
       >
-        {tabs2.every((tab) => tab.Permission === false) ? (
-          <div style={classes.lineContainer}>
-            <div style={classes.line} />
-          </div>
-        ) : (
-          [...tabs2, ...tabs3].map((tab) => {
+        {hasTabs2 &&
+          tabs2.map((tab, i) => {
             if (tab.isLine) {
               return (
-                <div style={classes.lineContainer} key={tab.key}>
-                  <div style={classes.line} />
+                <div style={classes.lineContainer}>
+                  <div key={tab.key} style={classes.line} />
                 </div>
               );
             } else if (checkTabPermissions(tab)) {
               return (
                 <div data-tour={`${tab?.tourData}`}>
-                  <Tab key={tab.key} tab={tab} />
+                  <Tab key={tab.key} tab={tab} customGap={customGap} />
                 </div>
               );
             }
-          })
-        )}
+          })}
+        {hasTabs3 &&
+          tabs3.map((tab, i) => {
+            if (tab.isLine) {
+              return (
+                <div style={classes.lineContainer}>
+                  <div key={tab.key} style={classes.line} />
+                </div>
+              );
+            } else if (checkTabPermissions(tab)) {
+              return (
+                <div data-tour={`${tab?.tourData}`}>
+                  <Tab key={tab.key} tab={tab} customGap={customGap} />
+                </div>
+              );
+            }
+          })}
+        {hasTabs4 &&
+          tabs4.map((tab, i) => {
+            if (tab.isLine) {
+              return (
+                <div style={classes.lineContainer}>
+                  <div key={tab.key} style={classes.line} />
+                </div>
+              );
+            } else if (checkTabPermissions(tab)) {
+              return (
+                <div data-tour={`${tab?.tourData}`}>
+                  <Tab key={tab.key} tab={tab} customGap={customGap} />
+                </div>
+              );
+            }
+          })}
       </div>
       <div style={{ ...classes.lineContainer, paddingBottom: "10px" }}>
         <div style={classes.line} />
