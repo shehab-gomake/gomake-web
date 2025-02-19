@@ -940,6 +940,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameterCode: parameter?.code,
                         valuesConfigs: parameter?.valuesConfigs,
                         unitKey: parameter?.unitKey,
+                        factor: parameter?.factor,
                         unitType: parameter?.unitType,
                         isGeneralInfoInProductionFloor:
                           parameter?.isGeneralInfoInProductionFloor,
@@ -989,6 +990,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         valuesConfigs: parameter?.valuesConfigs,
                         unitKey: parameter?.unitKey,
                         unitType: parameter?.unitType,
+                        factor: parameter?.factor,
                         isGeneralInfoInProductionFloor:
                           parameter?.isGeneralInfoInProductionFloor,
                       });
@@ -1037,6 +1039,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         valuesConfigs: parameter?.valuesConfigs,
                         unitKey: parameter?.unitKey,
                         unitType: parameter?.unitType,
+                        factor: parameter?.factor,
                         isGeneralInfoInProductionFloor:
                           parameter?.isGeneralInfoInProductionFloor,
                       });
@@ -1087,6 +1090,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           valuesConfigs: parameter?.valuesConfigs,
                           unitKey: parameter?.unitKey,
                           unitType: parameter?.unitType,
+                          factor: parameter?.factor,
                           isGeneralInfoInProductionFloor:
                             parameter?.isGeneralInfoInProductionFloor,
                         });
@@ -1129,6 +1133,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           valuesConfigs: parameter?.valuesConfigs,
                           unitKey: parameter?.unitKey,
                           unitType: parameter?.unitType,
+                          factor: parameter?.factor,
                           isGeneralInfoInProductionFloor:
                             parameter?.isGeneralInfoInProductionFloor,
                         };
@@ -1183,6 +1188,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           valuesConfigs: parameter?.valuesConfigs,
                           unitKey: parameter?.unitKey,
                           unitType: parameter?.unitType,
+                          factor: parameter?.factor,
                           isGeneralInfoInProductionFloor:
                             parameter?.isGeneralInfoInProductionFloor,
                         });
@@ -1227,6 +1233,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           valuesConfigs: parameter?.valuesConfigs,
                           unitKey: parameter?.unitKey,
                           unitType: parameter?.unitType,
+                          factor: parameter?.factor,
                           isGeneralInfoInProductionFloor:
                             parameter?.isGeneralInfoInProductionFloor,
                         });
@@ -1270,6 +1277,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         valuesConfigs: parameter?.valuesConfigs,
                         unitKey: parameter?.unitKey,
                         unitType: parameter?.unitType,
+                        factor: parameter?.factor,
                         isGeneralInfoInProductionFloor:
                           parameter?.isGeneralInfoInProductionFloor,
                       });
@@ -1310,6 +1318,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       valuesConfigs: parameter?.valuesConfigs,
                       unitKey: parameter?.unitKey,
                       unitType: parameter?.unitType,
+                      factor: parameter?.factor,
                       isGeneralInfoInProductionFloor:
                         parameter?.isGeneralInfoInProductionFloor,
                     });
@@ -1339,8 +1348,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameterType: childParam?.parameterType,
                         isQuantityParameter: childParam?.isQuantityParameter,
                         values: item.defaultValue
-                          ? [item?.defaultValue]
-                          : [childParam?.defaultValue],
+                          ? [unitType === UNIT_TYPE.IMPERIAL ? (item?.defaultValue * childParam?.factor).toFixed(3) : item?.defaultValue]
+                          : [unitType === UNIT_TYPE.IMPERIAL ? (childParam?.defaultValue * childParam?.factor).toFixed(3) : childParam?.defaultValue],
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: childParam?.actionIndex,
@@ -1348,6 +1357,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         valuesConfigs: childParam?.valuesConfigs,
                         unitKey: childParam?.unitKey,
                         unitType: childParam?.unitType,
+                        factor: childParam?.factor,
                         isDisabled: isDisabled,
                         isGeneralInfoInProductionFloor:
                           childParam?.isGeneralInfoInProductionFloor,
@@ -2283,6 +2293,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   valuesConfigs: myparameter.valuesConfigs,
                   unitKey: myparameter.unitKey,
                   unitType: myparameter.unitType,
+                  factor: myparameter.factor,
                   isDisabled: true,
                   isGeneralInfoInProductionFloor:
                     myparameter.isGeneralInfoInProductionFloor,
@@ -2524,6 +2535,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const sizeParameter = getParameterByParameterCode(subProducts, "size");
       if (sizeParameter && sizeParameter.isDisabled) {
         disabled = true;
+
       }
       Comp = (
         <SelectChildParameterWidget
@@ -3464,6 +3476,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 valuesConfigs: relatedParameter?.valuesConfigs,
                 unitKey: relatedParameter?.unitKey,
                 unitType: relatedParameter?.unitType,
+                factor: relatedParameter?.factor,
                 isGeneralInfoInProductionFloor:
                   relatedParameter?.isGeneralInfoInProductionFloor,
               });
@@ -3590,6 +3603,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         valuesConfigs: param?.valuesConfigs,
                         unitKey: param?.unitKey,
                         unitType: param?.unitType,
+                        factor: param?.factor,
                         isGeneralInfoInProductionFloor:
                           param?.isGeneralInfoInProductionFloor,
                       });
@@ -3624,6 +3638,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         valuesConfigs: selectedParam?.valuesConfigs,
                         unitKey: param?.unitKey,
                         unitType: param?.unitType,
+                        factor: param?.factor,
                         actionIndex,
                         parameterCode: param?.code,
                         isGeneralInfoInProductionFloor:
@@ -3991,6 +4006,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           valuesConfigs: subSectionParameter?.valuesConfigs,
           unitKey: subSectionParameter?.unitKey,
           unitType: subSectionParameter?.unitType,
+          factor: subSectionParameter?.factor,
           isGeneralInfoInProductionFloor:
             subSectionParameter?.isGeneralInfoInProductionFloor,
         });
@@ -4007,7 +4023,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSectionParameter) {
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
-            console.log("myparameter", { myparameter, data })
             const parameterId = myparameter.id;
             const myindex = temp.findIndex((item) => {
               return (
@@ -4032,6 +4047,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     parameterCode: myparameter?.code,
                     values: unitType === UNIT_TYPE.IMPERIAL ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : data?.value?.values[parameterId],
                     isDisabled: hasValues(data?.value),
+                    factor: myparameter?.factor,
                   };
                 } else {
                   temp.splice(myindex, 1);
@@ -4048,6 +4064,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   parameterName: myparameter?.name,
                   parameterCode: myparameter?.code,
                   isDisabled: hasValues(data?.value),
+                  factor: myparameter?.factor,
+                  unitKey: myparameter?.unitKey,
+                  unitType: myparameter?.unitType,
+                  actionId: myparameter?.actionId,
+                  valuesConfigs: myparameter?.valuesConfigs,
                   isGeneralInfoInProductionFloor:
                     myparameter?.isGeneralInfoInProductionFloor,
                 });
@@ -4128,6 +4149,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               valuesConfigs: [],
               unitKey: null,
               unitType: 0,
+              factor: subSectionParameter?.factor,
             });
           }
           //setQuantity
@@ -4154,6 +4176,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               valuesConfigs: [],
               unitKey: null,
               unitType: 0,
+              factor: subSectionParameter?.factor,
             });
           }
           // SetUnits
@@ -4327,6 +4350,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 param.additionalValuesConfigs,
                 data
               );
+              // if (param?.factor != null && param?.factor != undefined) {
+              //   param.valuesConfigs = param.valuesConfigs.map(config => {
+              //     const newValue = (parseFloat(config.updateName) * param.factor).toFixed(3);
+              //     return {
+              //       ...config,
+              //       updateName: newValue.toString(),
+              //       values: [newValue.toString()],
+              //       id: newValue.toString(),
+              //     };
+              //   });
+              // }
               if (
                 param?.valuesConfigs &&
                 param?.valuesConfigs?.length === 1 &&
@@ -4348,6 +4382,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   valuesConfigs: param?.valuesConfigs,
                   unitKey: param?.unitKey,
                   unitType: param?.unitType,
+                  factor: param?.factor,
                   isGeneralInfoInProductionFloor:
                     param?.isGeneralInfoInProductionFloor,
                 });
@@ -4379,6 +4414,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 valuesConfigs: selectedParam?.valuesConfigs,
                 unitKey: param?.unitKey,
                 unitType: param?.unitType,
+                factor: param?.factor,
                 actionIndex,
                 parameterCode: param?.code,
                 isGeneralInfoInProductionFloor:
@@ -4446,6 +4482,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     valuesConfigs: subSectionParameter?.valuesConfigs,
                     unitKey: subSectionParameter?.unitKey,
                     unitType: subSectionParameter?.unitType,
+                    factor: subSectionParameter?.factor,
                     isDisabled: true,
                     isGeneralInfoInProductionFloor:
                       subSectionParameter?.isGeneralInfoInProductionFloor,
@@ -4493,6 +4530,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   valuesConfigs: subSectionParameter?.valuesConfigs,
                   unitKey: subSectionParameter?.unitKey,
                   unitType: subSectionParameter?.unitType,
+                  factor: subSectionParameter?.factor,
                   isDisabled: true,
                   isGeneralInfoInProductionFloor:
                     subSectionParameter?.isGeneralInfoInProductionFloor,
@@ -4545,6 +4583,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   valuesConfigs: subSectionParameter?.valuesConfigs,
                   unitKey: subSectionParameter?.unitKey,
                   unitType: subSectionParameter?.unitType,
+                  factor: subSectionParameter?.factor,
                   isDisabled: true,
                   isGeneralInfoInProductionFloor:
                     subSectionParameter?.isGeneralInfoInProductionFloor,
@@ -4584,6 +4623,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   valuesConfigs: sizeParameter?.valuesConfigs,
                   unitKey: sizeParameter?.unitKey,
                   unitType: sizeParameter?.unitType,
+                  factor: sizeParameter?.factor,
                   isDisabled: true,
                   isGeneralInfoInProductionFloor:
                     sizeParameter?.isGeneralInfoInProductionFloor,
