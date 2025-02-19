@@ -32,6 +32,12 @@ const useStyle = () => {
         color: secondColor(500),
         ...FONT_FAMILY.Lexend(500, 14),
         textTransform: "capitalize" as "capitalize",
+        "& .MuiButton-endIcon": {
+          ...(direction === "rtl" && {
+            marginRight: "0px",
+            marginLeft: "0px",
+          }),
+        },
       },
       supplierTitle: {
         color: secondColor(500),
