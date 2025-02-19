@@ -141,6 +141,7 @@ const useCustomerDropDownList = ({
     clientContactsValue,
     supplierList,
     isFetching,
+    customersListCreateQuote,
   };
 };
 

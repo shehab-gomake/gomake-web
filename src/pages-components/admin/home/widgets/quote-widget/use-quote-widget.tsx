@@ -23,7 +23,7 @@ import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { prevSelectedClientState, ProductCategoryType } from "./states";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
-import {ETab} from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
@@ -48,8 +48,12 @@ const useQuoteWidget = () => {
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
   const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
 
-  const { renderOptions, checkWhatRenderArray, isFetching } =
-    useCustomerDropDownList();
+  const {
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
+    customersListCreateQuote,
+  } = useCustomerDropDownList();
 
   const onClickOpenModal = (quoteId: any) => {
     setOpenModal(true);
@@ -237,10 +241,7 @@ const useQuoteWidget = () => {
   const [customer, setCustomer] = useState([]);
 
   const onCustomerAdd = (customer) => {
-    handleClickToSelectedCustomer(
-      userQuote?.client?.id,
-      customer
-    ).then();
+    handleClickToSelectedCustomer(userQuote?.client?.id, customer).then();
     setOpenCustomerModal(false);
   };
 
@@ -255,7 +256,9 @@ const useQuoteWidget = () => {
 
   useEffect(() => {
     if (products?.length > 0 && combinedData?.length > 0) {
-      const findDefaultProduct = products.find((item) => item.isDefaultInHomePage);
+      const findDefaultProduct = products.find(
+        (item) => item.isDefaultInHomePage
+      );
       if (findDefaultProduct) {
         handleProductChange(findDefaultProduct?.id);
       }
@@ -319,16 +322,24 @@ const useQuoteWidget = () => {
           return nodes.map((node) => {
             const newNode = { ...node, parent };
             if (newNode.children) {
-              newNode.children = attachParentReferences(newNode.children, newNode);
+              newNode.children = attachParentReferences(
+                newNode.children,
+                newNode
+              );
             }
             return newNode;
           });
         };
-        const transformedProducts =transformProducts(res?.data?.products);
+        const transformedProducts = transformProducts(res?.data?.products);
         const transformedMaterials = transformMaterials(res?.data?.materials);
-        transformedProducts.children = attachParentReferences(transformedProducts.children, transformedProducts);
-        transformedMaterials.children = attachParentReferences(transformedMaterials.children, transformedMaterials);
-
+        transformedProducts.children = attachParentReferences(
+          transformedProducts.children,
+          transformedProducts
+        );
+        transformedMaterials.children = attachParentReferences(
+          transformedMaterials.children,
+          transformedMaterials
+        );
 
         // Combine the transformed data
         const combinedFinalData = [transformedProducts, transformedMaterials];
@@ -340,7 +351,7 @@ const useQuoteWidget = () => {
       await getAllProductAndMaterialsApi(callApi, callBack, {
         clientId: selectedClient?.id,
         clientTypeId: selectedClientType?.id,
-        selectionType: selectedTab
+        selectionType: selectedTab,
       });
   }, [selectedClient, selectedClientType, selectedTab]);
 
@@ -391,8 +402,8 @@ const useQuoteWidget = () => {
 
   const onSelectTab = (v) => {
     setSelectedTab(v);
-    localStorage.setItem('homePageSelectedTab', JSON.stringify(v));
-  }
+    localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
+  };
 
   return {
     clientTypesValue,
@@ -439,7 +450,8 @@ const useQuoteWidget = () => {
     isFetching,
     selectedTab,
     setSelectedTab,
-    onSelectTab
+    onSelectTab,
+    customersListCreateQuote,
   };
 };
 

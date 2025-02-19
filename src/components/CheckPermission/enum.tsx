@@ -1,7 +1,7 @@
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 export enum Permissions {
-  SHOW_CLIENT_BALANCE = 'ShowClientBalance',
+  SHOW_CLIENT_BALANCE = "ShowClientBalance",
   // client group
   SHOW_CLIENT = "ShowClient",
   EDIT_CLIENT = "EditClient",
@@ -24,6 +24,7 @@ export enum Permissions {
   UPDATE_QUOTE_DELIVERY_ITEM_PRICES = "UpdateQuoteDeliveryItemPrices",
   SHOW_COSTS_IN_CALCULATIONS = "ShowCostsInCalculations",
   ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
+  CAN_SELECT_CLIENT_IN_HOME_PAGE = "CanSelectClientInHomePage",
 
   //SHOW_PROFITS_IN_CALCULATIONS = "ShowProfitsInCalculations",
   CUSTOMIZE_WORKFLOW = "CustomizeWorkflow",
