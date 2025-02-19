@@ -41,8 +41,8 @@ const ClientBalanceComponent = ({clientBalance, clientId}: IProps) => {
         <>
             <PermissionCheck userPermission={Permissions.SHOW_CLIENT_BALANCE}>
                 {balance !== undefined &&
-                    <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} gap={'5px'}>
-                        <span>{t('home.clientBalance')}</span>
+                    <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'} >
+                        <span style={{width:"70px"}}>{t('home.clientBalance')}</span>
                         <PrimaryButton style={{maxWidth: 'fit-content', padding: 0}}
                                        onClick={() => onClickOpenCustomerModal(clientId)}>{` ${balance}`}</PrimaryButton>
                     </Stack>
