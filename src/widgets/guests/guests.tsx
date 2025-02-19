@@ -29,7 +29,7 @@ export default function GuestsWidget() {
                 }
                 return;
             }
-           //navigate("/home");
+           navigate("/home");
         }else{
             navigate("/login");
         }
