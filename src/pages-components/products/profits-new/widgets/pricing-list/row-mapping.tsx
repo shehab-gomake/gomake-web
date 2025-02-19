@@ -69,6 +69,7 @@ const RowMappingWidget = ({
                 onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
                   onInputChangeCaseQuantity(e)
                 }
+                isTwoDigit={true}
               />
             </div>
           </PrimaryTableCell>
@@ -84,6 +85,7 @@ const RowMappingWidget = ({
             onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
               onInputChangeCost(e)
             }
+            isTwoDigit={true}
           />
         </div>
       </PrimaryTableCell>
@@ -99,6 +101,7 @@ const RowMappingWidget = ({
                 onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
                   onInputChangeCaseCost(e)
                 }
+                isTwoDigit={true}
               />
             </div>
           </PrimaryTableCell>
@@ -117,6 +120,7 @@ const RowMappingWidget = ({
                 onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
                   onInputChangeProfit(e)
                 }
+              // isTwoDigit={true}
               />
             ) : (
               <InputUpdatedValues
@@ -177,6 +181,7 @@ const RowMappingWidget = ({
             onInputChange={(e: ChangeEvent<HTMLInputElement>) =>
               onInputChangeTotalPrice(e)
             }
+            isTwoDigit={true}
           />
         </div>
       </PrimaryTableCell>

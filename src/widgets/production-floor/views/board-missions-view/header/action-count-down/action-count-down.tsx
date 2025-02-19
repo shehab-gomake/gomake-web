@@ -10,6 +10,7 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useTranslation } from "react-i18next";
 
 interface IProps extends IBoardMissionsStationTimer {
   onToggle?: (seconds: number) => void;
@@ -26,8 +27,9 @@ const ActionCountDown = ({
   const [isActive, setIsActive] = useState(false);
   const [boardMissionsDetails] = useRecoilState(boardMissionsDetailsState);
   const { errorColor } = useGomakeTheme();
-
-  // Initialize state with totalRunningTime (in seconds)
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   useEffect(() => {
     setSeconds(totalRunningTime || 0);
     setIsActive(isTimerRunning);
@@ -92,7 +94,13 @@ const ActionCountDown = ({
             ) : isActive ? (
               <PauseCircleIcon style={{ color: "#43459D", fontSize: "32px" }} />
             ) : (
-              <PlayCircleIcon style={{ color: "#43459D", fontSize: "32px" }} />
+              <PlayCircleIcon
+                style={{
+                  color: "#43459D",
+                  fontSize: "32px",
+                  transform: isRTL ? "scaleX(-1)" : "none",
+                }}
+              />
             )}
           </IconButton>
         )}

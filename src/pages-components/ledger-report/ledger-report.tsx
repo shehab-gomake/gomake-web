@@ -13,10 +13,13 @@ import { useEffect } from "react";
 interface LedgerReportWidgetProps {
   customerId?: string;
   isFromCustomerCard?: boolean;
+  autoShowCard?: boolean;
 }
 const LedgerReportWidget = ({
   customerId,
   isFromCustomerCard = false,
+                              autoShowCard = false,
+
 }: LedgerReportWidgetProps) => {
   const { classes } = useStyle();
   const {
@@ -61,6 +64,11 @@ const LedgerReportWidget = ({
     getErpAccountsList();
   }, []);
 
+  useEffect(() => {
+    if (autoShowCard && customerId) {
+      onClickShowCard()
+    }
+  }, [autoShowCard, customerId]);
   return (
     <div style={classes.mainContainer}>
       {!isFromCustomerCard && (
