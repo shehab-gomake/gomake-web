@@ -3,6 +3,9 @@ import { ISetState } from "@/services/hooks/call-api.interface";
 import get from "lodash.get";
 import convert from "convert-units";
 import {  startOfYear } from "date-fns";
+import { UNIT_TYPE } from "@/enums";
+
+
 
 const returnResult = (
   result: any,
@@ -259,18 +262,24 @@ export const convertTitleUnits = (unit: string | null) => {
       return "inch"; // Convert cm to inches
     case "gram":
       return "LB"; // Convert grams to LB
+      case "g":
+        return "LB"; // Convert grams to LB
     case "um":
       return "µ inch"; // Convert microns to microinches
     case "liter":
       return "gallon"; // Convert liters to gallons
     case "mm":
-      return "in"; // Convert millimeters to inches
+      return "inch"; // Convert millimeters to inches
     case "m":
       return "yd"; // Convert meters to yards
     case "Gram/m^2":
       return "lb/yd^2"; // Convert grams per square meter to ounces per square yard
     case "kg":
       return "LB"; // Convert kilograms to pounds
+      case "Kg":
+        return "LB"; // Convert kilograms to pounds
+      case "m²":
+        return "yd²"; // Convert square meters to square yards
     default:
       return unit; // Return as is if not supported
   }
@@ -284,18 +293,24 @@ export const convertValueToImperial = (unit: string | null, value: any) => {
           return convert(value).from("cm").to("in").toFixed(3);
       case "gram":
           return convert(value).from("g").to("lb").toFixed(3);
+          case "g":
+          return convert(value).from("g").to("lb").toFixed(3);
           case "um":
             return (value * 39.3701).toFixed(3);
           case "m":
             return convert(value).from("m").to("yd").toFixed(3);
         case "kg":
             return convert(value).from("kg").to("lb").toFixed(3);
+            case "Kg":
+              return convert(value).from("kg").to("lb").toFixed(3);
             case "liter":
               return convert(value).from("l").to("gal").toFixed(3); // Convert liters to gallons
             case "mm":
               return convert(value).from("mm").to("in").toFixed(3); // Convert millimeters to inches
             case "Gram/m^2":
               return convert(value).from("g/m2").to("lb/yd2").toFixed(3); // Convert grams per square meter to ounces per square yard
+              case "m²":
+                return convert(value).from("m2").to("yd2").toFixed(3); // Convert square meters to square yards
       default:
           return value;
   }
@@ -309,6 +324,8 @@ export const convertValueToOriginalUnit = (unit: string | null, value: any) => {
           return convert(value).from("in").to("cm").toFixed(3);
       case "gram":
           return convert(value).from("lb").to("g").toFixed(3);
+          case "g":
+          return convert(value).from("lb").to("g").toFixed(3);
           case "um":
             // Convert microinches to micrometers (1 microinch = 0.0254 micrometers)
             return (value * 0.0254).toFixed(3);
@@ -316,12 +333,16 @@ export const convertValueToOriginalUnit = (unit: string | null, value: any) => {
             return convert(value).from("yd").to("m").toFixed(3);
         case "kg":
             return convert(value).from("lb").to("kg").toFixed(3);
+        case "Kg":
+            return convert(value).from("lb").to("kg").toFixed(3);
         case "liter":
             return convert(value).from("gal").to("l").toFixed(3); // Convert gallons to liters
         case "mm":
             return convert(value).from("in").to("mm").toFixed(3); // Convert inches to millimeters
         case "Gram/m^2":
             return convert(value).from("lb/yd2").to("g/m2").toFixed(3); // Convert ounces per square yard to grams per square meter
+        case "m²":
+            return convert(value).from("yd2").to("m2").toFixed(3); // Convert square yards to square meters
       default:
           return value;
   }
@@ -343,3 +364,23 @@ export   const initialFromDate = (key: string,defaultDate?:Date) => {
   const savedDate = localStorage.getItem(key);
   return savedDate ? new Date(savedDate) :defaultDate?defaultDate: startOfYear(new Date());
 };
+
+export const updateValuesAndDefaultUnitForPricingTab= (parameters,unitType) => {
+  return parameters.map(param => {
+    let updatedParam = { ...param };
+
+    if (unitType === UNIT_TYPE.IMPERIAL) {
+      if (param.defaultUnit) {
+        // Update the values array
+        const updatedValues = [...param.values];
+        updatedValues[0] = convertValueToImperial(param.defaultUnit, param.values[0]);
+        updatedParam.values = updatedValues;
+
+        // Update the defaultUnit
+        updatedParam.defaultUnit = convertTitleUnits(param.defaultUnit);
+      }
+    }
+
+    return updatedParam;
+  });
+}

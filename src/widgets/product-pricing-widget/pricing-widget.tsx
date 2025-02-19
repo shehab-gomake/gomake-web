@@ -21,7 +21,7 @@ import { GoMakeDeleteModal } from "@/components";
 import { ActionsListMenu } from "./components/actions-menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SectionNameListMenu } from "./components/sections-menu";
-import { ModalType } from "@/enums";
+import { ModalType, UNIT_TYPE } from "@/enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderDeliveryDate } from "@/utils/helpers";
@@ -34,6 +34,7 @@ const PricingWidget = ({
   selectedWorkFlowCalculatedIsLoaded,
   getSelectedWorkFlow
 }: IPricingWidgetProps) => {
+
   const { classes } = useStyle();
   const {
     view,
@@ -71,7 +72,9 @@ const PricingWidget = ({
     handleCloseSectionNameListMenu,
     handleOpenSectionNameListMenu,
     reOderMainActions,
-    reOderSubWorkFlows
+    reOderSubWorkFlows,
+    generalInformationWithImperial,
+    unitType,
 
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
   const isHasSubWorkFlowsOrProductTypeActions = hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)
@@ -79,6 +82,9 @@ const PricingWidget = ({
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
+
+
+
   return (
     <Stack gap={"16px"} width={"100%"} >
       <Stack direction={"row"} justifyContent={"space-between"}>
@@ -177,7 +183,7 @@ const PricingWidget = ({
       </Stack>
       {selectedWorkFlow && (
         <GeneralInformationComponent
-          details={selectedWorkFlow?.generalInformation}
+          details={unitType === UNIT_TYPE.IMPERIAL ? generalInformationWithImperial : selectedWorkFlow?.generalInformation}
           details2={selectedWorkFlow?.generalInformationProductionFloor}
         />
       )}
