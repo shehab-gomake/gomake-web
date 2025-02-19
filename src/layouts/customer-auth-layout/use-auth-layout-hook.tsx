@@ -60,16 +60,16 @@ const useAuthLayoutHook = (
         },
         isProduction: true,
       },
-      {
-        isLine: true,
-        key: "line_1",
-        isProduction: true,
-      },
     ];
   }, []);
 
   const tabs2: any = useMemo(() => {
     return [
+      {
+        isLine: true,
+        key: "line_1",
+        isProduction: true,
+      },
       {
         isLine: false,
         key: "sales",
@@ -377,9 +377,14 @@ const useAuthLayoutHook = (
         isProduction: true,
         tourData: "menu-companyReports",
       },
+    ];
+  }, []);
+
+  const tabs4: any = useMemo(() => {
+    return [
       {
         isLine: true,
-        key: "line_3",
+        key: "line_2",
         isProduction: true,
       },
       {
@@ -406,6 +411,7 @@ const useAuthLayoutHook = (
         isProduction: true,
         tourData: "menu-settings",
       },
+      // Add any other new tabs here as needed
     ];
   }, []);
 
@@ -419,23 +425,14 @@ const useAuthLayoutHook = (
     }
   }, [isAuth, isLanguageUpdated]);
 
-  // const getUserProfile = async () => {
-  //   const res = await callApi("GET", "/v1/get-print-house-profile");
-  //   if (res.success) {
-  //     setProfile(res?.data?.data?.data);
-  //   }
-  // };
-  // useEffect(() => {
-  //   getUserProfile();
-  // }, []);
-
-  const permissionsOfTabs = [tabs1, tabs2, tabs3];
+  const permissionsOfTabs = [tabs1, tabs2, tabs3, tabs4];
 
   return {
     permissionsOfTabs,
     tabs1,
     tabs2,
     tabs3,
+    tabs4,
     canAccess,
     profile,
     navigate,
