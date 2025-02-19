@@ -31,7 +31,8 @@ const useStyle = () => {
       },
       newParameterLabel: {
         ...FONT_FAMILY.Inter(400, 16),
-        color: "#98A2B3",
+        // color: "#98A2B3",
+        color: "#676B71",
       },
       newParameterValue: {
         ...FONT_FAMILY.Inter(500, 16),
