@@ -1,34 +1,26 @@
-import { useState, useEffect, useCallback } from "react";
-import { Button, Stack, Divider } from "@mui/material";
-import { useGomakeAxios } from "@/hooks";
-import { getAllBoardMissionsUploadedFiles } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { useEffect } from "react";
+import { Button, Stack } from "@mui/material";
 import { FileCardComponent } from "@/widgets/production-floor/views/board-missions-view/files/file-card-component";
-import { useRecoilState } from "recoil";
-import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
-import { boardMissionsFilesState } from "@/widgets/production-floor/views/board-missions-view/files/state";
-import { useUploadFiles } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/use-upload-files";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FileTypeENUM } from "@/widgets/file-uploader-widget/interface";
+import { useBoardMissionsFiles } from "./use-board-missions-files";
 
 const BoardMissionsFiles = () => {
   const { t } = useTranslation();
   const { primaryColor } = useGomakeTheme();
-  const { callApi } = useGomakeAxios();
-  const [files, setFiles] = useRecoilState(boardMissionsFilesState);
-  const [boardMissions] = useRecoilState(boardMissionsDetailsState);
-  const [activeTab, setActiveTab] = useState(FileTypeENUM.Printing);
+  const {
+    boardMissions,
+    getAllBoardMissionsFiles,
+    activeTab,
+    setActiveTab,
+    files,
+  } = useBoardMissionsFiles();
 
   useEffect(() => {
     if (boardMissions.orderItemId) {
-      getAllBoardMissionsUploadedFiles(
-        callApi,
-        (res) => {
-          if (res.success) setFiles(res.data);
-        },
-        boardMissions?.orderItemId
-      );
+      getAllBoardMissionsFiles().then();
     }
   }, [boardMissions.orderItemId]);
 
