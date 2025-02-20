@@ -558,7 +558,7 @@ const QuoteNewPageWidget = ({
                     </LocalizationProvider>
                   </ThemeProvider>
                     <Stack flex={1} direction={'row'} justifyContent={'flex-end'}>
-                      <ClientBalanceComponent clientBalance={quoteState.clientBalance} clientId={quoteState.client.id}/>
+                      <ClientBalanceComponent clientBalance={quoteState.clientBalance} clientId={quoteState?.client?.id}/>
                     </Stack>
                 </div>
               )}
