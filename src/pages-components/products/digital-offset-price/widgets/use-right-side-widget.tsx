@@ -24,7 +24,7 @@ import { EWidgetProductType } from "../enums";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { useRouter } from "next/router";
 import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
-import {ETab} from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const router = useRouter();
@@ -59,6 +59,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     sliderCurrentProductItemValueTotalPrice,
     setSliderCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
+  console.log("sliderCurrentProductItemValueTotalPrice", sliderCurrentProductItemValueTotalPrice)
   const [priceIncludeVat, setPriceIncludeVat] = useState<any>();
 
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -163,7 +164,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       }
     };
 
-    if (router?.query?.customerId && router?.query?.clientTypeId){
+    if (router?.query?.customerId && router?.query?.clientTypeId) {
       await getAllProductAndMaterialsApi(callApi, callBack, {
         clientId: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
@@ -217,7 +218,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   /* Slider */
   const priceToUse =
     widgetType === EWidgetProductType.EDIT ||
-    widgetType === EWidgetProductType.DUPLICATE
+      widgetType === EWidgetProductType.DUPLICATE
       ? calculatedPriceProductItemValue
       : currentProductItemValueTotalPrice;
 

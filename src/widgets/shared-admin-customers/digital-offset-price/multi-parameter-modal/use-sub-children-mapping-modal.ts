@@ -30,6 +30,7 @@ const useSubChildMapping = ({
   const ref = useClickAway(() => {
     setIsFocused(false);
   });
+  console.log("subProducts", subProducts)
   const getSelectedColorParameterValue = () => {
     if (subProducts && !isParameterSettings) {
       const subSection = settingParameters.subSection;
