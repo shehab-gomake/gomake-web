@@ -33,6 +33,7 @@ const useBoardMissionsActivities = () => {
     alertFaultGetData,
   } = useSnackBar();
   const { boardMissionsId, step, productType } = query;
+
   const getAllActivities = async () => {
     const callBack = (res) => {
       if (res.success) {
