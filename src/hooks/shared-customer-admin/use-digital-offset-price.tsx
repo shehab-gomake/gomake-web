@@ -376,69 +376,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       result.productItemValue.totalWorkFlows
     );
     setWorkFlows(result.productItemValue.workFlows);
-    if (
-      result.productItemValue &&
-      result.productItemValue.workFlows &&
-      result.productItemValue.workFlows.length > 0 &&
-      !(
-        widgetType == EWidgetProductType.EDIT &&
-        currentProductItemValueTotalPrice
-      )
-    ) {
-      const mySelectedWorkFlow = result.productItemValue.workFlows[0];
-      if (
-        mySelectedWorkFlow &&
-        mySelectedWorkFlow.totalPrice &&
-        mySelectedWorkFlow.totalPrice.values &&
-        !isNaN(mySelectedWorkFlow.totalPrice.values[0])
-      ) {
-        setCurrentProductItemValueTotalPrice(
-          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
-        );
-        setSliderCurrentProductItemValueTotalPrice(
-          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
-        );
-      }
-    } else if (
-      (widgetType == EWidgetProductType.EDIT ||
-        widgetType == EWidgetProductType.DUPLICATE) &&
-      productTemplate?.isHaveFixedAction
-    ) {
-      const mySelectedWorkFlow = result.productItemValue.workFlows[0];
-      if (
-        mySelectedWorkFlow &&
-        mySelectedWorkFlow.totalPrice &&
-        mySelectedWorkFlow.totalPrice.values &&
-        !isNaN(mySelectedWorkFlow.totalPrice.values[0])
-      ) {
-        setCurrentProductItemValueTotalPrice(
-          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
-        );
-        setSliderCurrentProductItemValueTotalPrice(
-          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
-        );
-      }
-    }
-    else if (
-      (widgetType == EWidgetProductType.EDIT ||
-        widgetType == EWidgetProductType.DUPLICATE) &&
-      !productTemplate?.isHaveFixedAction
-    ) {
-      const mySelectedWorkFlow = result.productItemValue.workFlows[0];
-      if (
-        mySelectedWorkFlow &&
-        mySelectedWorkFlow.totalPrice &&
-        mySelectedWorkFlow.totalPrice.values &&
-        !isNaN(mySelectedWorkFlow.totalPrice.values[0])
-      ) {
-        setCurrentProductItemValueTotalPrice(
-          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
-        );
-        setSliderCurrentProductItemValueTotalPrice(
-          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
-        );
-      }
-    }
+    setCurrentProductItemValueTotalPrice(
+      parseFloat(result.totalPrice)
+    );
+    setSliderCurrentProductItemValueTotalPrice(
+      parseFloat(result.totalPrice)
+    );
 
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result);
@@ -446,7 +389,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       widgetType === EWidgetProductType.EDIT &&
       (isActionEmployeeUpdated || isJobNameValue)
     ) {
-
       setIsChangePriceForEdit(true);
       setIsActionEmployeeUpdated(false);
       setIsJobNameValue(false);
@@ -580,6 +522,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (updatedSelectedWorkFlow) {
+      console.log("updatedSelectedWorkFlow", updatedSelectedWorkFlow)
       if (workFlows.find((x) => x.id == updatedSelectedWorkFlow?.id)) {
         setWorkFlows(
           workFlows.map((flow) =>
