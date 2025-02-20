@@ -243,7 +243,7 @@ const BoardMissionsDetailsHeader = () => {
                   ))}
               </Stack>
               {/* Second row */}
-              <Stack direction={"row"} alignItems={"center"} gap={"16px"}>
+              <Stack direction={"row"} alignItems={"center"} gap={"12px"}>
                 {boardMissionsDetails.createdDate && (
                   <Stack direction={"row"} gap={"5px"}>
                     <span style={classes.newParameterLabel}>
@@ -335,6 +335,14 @@ const BoardMissionsDetailsHeader = () => {
                     style={{ ...classes.labelsStyle, background: "#B93815" }}
                   >
                     {t("boardMissions.isRepetitiveWork")}
+                  </span>
+                )}
+
+                {boardMissionsDetails?.isHaveDelivery && (
+                  <span
+                    style={{ ...classes.labelsStyle, background: "#F4A100" }}
+                  >
+                    {t("boardMissions.isHaveDelivery")}
                   </span>
                 )}
               </Stack>
