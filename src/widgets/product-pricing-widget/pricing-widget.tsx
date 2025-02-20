@@ -73,9 +73,6 @@ const PricingWidget = ({
     handleOpenSectionNameListMenu,
     reOderMainActions,
     reOderSubWorkFlows,
-    generalInformationWithImperial,
-    unitType,
-
   } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
   const isHasSubWorkFlowsOrProductTypeActions = hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)
   const sectionNames = getSectionNames(selectedWorkFlow);
@@ -183,7 +180,7 @@ const PricingWidget = ({
       </Stack>
       {selectedWorkFlow && (
         <GeneralInformationComponent
-          details={unitType === UNIT_TYPE.IMPERIAL ? generalInformationWithImperial : selectedWorkFlow?.generalInformation}
+          details={selectedWorkFlow?.generalInformation}
           details2={selectedWorkFlow?.generalInformationProductionFloor}
         />
       )}
