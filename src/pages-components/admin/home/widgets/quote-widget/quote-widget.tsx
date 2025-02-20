@@ -24,13 +24,15 @@ import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import { ModalType } from "@/enums";
+import { useUserPermission } from "@/hooks/use-permission";
 
-const QuoteWidget = ({ isAdmin = true }) => {
+const QuoteWidget = ({ isAdmin = true, isMobileScreen = false }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
   const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
   const { getClientTypesCategories } = useClientTypesList();
+  const { CheckPermission } = useUserPermission();
 
   const {
     clientTypesValue,
@@ -72,7 +74,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
     isFetching,
     selectedTab,
     setSelectedTab,
-    onSelectTab
+    onSelectTab,
+    customersListCreateQuote,
   } = useQuoteWidget();
 
   useEffect(() => {
@@ -106,54 +109,73 @@ const QuoteWidget = ({ isAdmin = true }) => {
     getClientTypesCategories();
   }, []);
 
+  useEffect(() => {
+    if (!CheckPermission(Permissions.CAN_SELECT_CLIENT_IN_HOME_PAGE)) {
+      const options = renderOptions();
+      if (options.length > 0) {
+        handleClickToSelectedCustomer(userQuote?.client?.id, options[0]);
+      }
+    }
+  }, [customersListCreateQuote]);
+
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>
-      <div style={classes.customerSectionStyle}>
-        <div style={classes.autoComplateRowContainer}>
-          <div data-tour="select-customer" style={{ width: "65%" }}>
-            <GoMakeAutoComplate
-              disableClearable={true}
-              options={renderOptions() ? renderOptions() : []}
-              placeholder={t("home.admin.selectCustomer")}
-              style={classes.selectCustomerContainer}
-              getOptionLabel={(option: any) =>
-                option && option.name ? `${option.code} - ${option.name}` : ""
-              }
-              defaultFiltering={false}
-              onChangeTextField={checkWhatRenderArray}
-              value={selectedClient}
-              loading={isFetching}
-              onChange={(e: any, value: any) => {
-                handleClickToSelectedCustomer(
-                  userQuote?.client?.id,
-                  value
-                ).then();
-              }}
-            />
+      <PermissionCheck
+        userPermission={Permissions.CAN_SELECT_CLIENT_IN_HOME_PAGE}
+      >
+        <div style={classes.customerSectionStyle}>
+          <div style={classes.autoComplateRowContainer}>
+            <div data-tour="select-customer" style={{ width: "65%" }}>
+              <GoMakeAutoComplate
+                disableClearable={true}
+                options={renderOptions() ? renderOptions() : []}
+                placeholder={t("home.admin.selectCustomer")}
+                style={classes.selectCustomerContainer}
+                getOptionLabel={(option: any) =>
+                  option && option.name ? `${option.code} - ${option.name}` : ""
+                }
+                defaultFiltering={false}
+                onChangeTextField={checkWhatRenderArray}
+                value={selectedClient}
+                loading={isFetching}
+                onChange={(e: any, value: any) => {
+                  handleClickToSelectedCustomer(
+                    userQuote?.client?.id,
+                    value
+                  ).then();
+                }}
+              />
+            </div>
+            <div data-tour="select-type" style={{ width: "30%" }}>
+              <GoMakeAutoComplate
+                options={clientTypesValue}
+                placeholder={t("home.admin.selectType")}
+                style={classes.selectTypeContainer}
+                getOptionLabel={(option: any) =>
+                  option?.name ? option.name : ""
+                }
+                onChange={(e: any, value: any) => {
+                  setSelectedClientType(value);
+                }}
+                value={selectedClientType}
+              />
+            </div>
           </div>
-          <div data-tour="select-type" style={{ width: "30%" }}>
-            <GoMakeAutoComplate
-              options={clientTypesValue}
-              placeholder={t("home.admin.selectType")}
-              style={classes.selectTypeContainer}
-              getOptionLabel={(option: any) =>
-                option?.name ? option.name : ""
-              }
-              onChange={(e: any, value: any) => {
-                setSelectedClientType(value);
-              }}
-              value={selectedClientType}
-            />
-          </div>
+          <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
+            <button
+              style={classes.autoButtonStyle}
+              onClick={onClickAddCustomer}
+            >
+              {t("customers.buttons.AddOrSearch")}
+            </button>
+          </PermissionCheck>
         </div>
-        <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
-          <button style={classes.autoButtonStyle} onClick={onClickAddCustomer}>
-            {t("customers.buttons.AddOrSearch")}
-          </button>
-        </PermissionCheck>
-      </div>
+      </PermissionCheck>
       <div style={classes.autoComplateRowContainer}>
-        <div data-tour="select-product" style={{ width: "65%" }}>
+        <div
+          data-tour="select-product"
+          style={{ width: isMobileScreen ? "100%" : "65%" }}
+        >
           <GoMakeTreeSelect
             selectedTab={selectedTab}
             setSelectedTab={onSelectTab}
@@ -161,7 +183,6 @@ const QuoteWidget = ({ isAdmin = true }) => {
             options={combinedData}
             onChange={handleProductChange}
             placeholder={t("home.admin.selectProductOrMaterial")}
-            isRequired={true}
           />
         </div>
       </div>
@@ -174,8 +195,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
                   isDisabled
                     ? handleClick
                     : isAdmin
-                      ? onClickCreateQuote
-                      : onClickCreateQuoteForCustomer
+                    ? onClickCreateQuote
+                    : onClickCreateQuoteForCustomer
                 }
                 variant="contained"
                 style={{ width: "100%", height: 40 }}
@@ -205,8 +226,8 @@ const QuoteWidget = ({ isAdmin = true }) => {
               isDisabled
                 ? handleClick
                 : isAdmin
-                  ? onClickCreateQuote
-                  : onClickCreateQuoteForCustomer
+                ? onClickCreateQuote
+                : onClickCreateQuoteForCustomer
             }
             variant="contained"
             style={{ width: "100%", height: 40 }}

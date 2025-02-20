@@ -64,8 +64,11 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const [selectedProduct, setSelectedProduct] = useState<any>({});
   const [combinedData, setCombinedData] = useState<any>([]);
   const [products, setProducts] = useState([]);
-
-
+  const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
+  const onSelectTab = (v) => {
+    setSelectedTab(v);
+    localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
+  };
 
   const handleProductChange = (e) => {
     const selectedValue = e;
@@ -96,7 +99,6 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
         id: selectedValue,
         category: selectedNode?.category,
       });
-
     } else {
       setSelectedProduct(null);
     }
@@ -104,7 +106,6 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const getAllProductsAndMaterials = useCallback(async () => {
     const callBack = (res) => {
       if (res?.success) {
-        setProducts(res?.data?.products);
         const transformProducts = (products) => {
           return {
             value: ETab.PRODUCTS,
@@ -116,12 +117,12 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
               value: product.id, // Using product id as the key
               title: product.name, // Using product name as the label,
               text: product.name,
+              code: product.code,
               level: 1,
               category: ProductCategoryType.PRODUCT,
             })),
           };
         };
-
         const transformMaterials = (materials) => {
           return {
             value: ETab.MATERIALS,
@@ -152,22 +153,9 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
             })),
           };
         };
-        const attachParentReferences = (nodes, parent = null) => {
-          if (!Array.isArray(nodes)) return [];
 
-          return nodes.map((node) => {
-            const newNode = { ...node, parent };
-            if (newNode.children) {
-              newNode.children = attachParentReferences(newNode.children, newNode);
-            }
-            return newNode;
-          });
-        };
-        const transformedProducts =transformProducts(res?.data?.products);
+        const transformedProducts = transformProducts(res?.data?.products);
         const transformedMaterials = transformMaterials(res?.data?.materials);
-        transformedProducts.children = attachParentReferences(transformedProducts.children, transformedProducts);
-        transformedMaterials.children = attachParentReferences(transformedMaterials.children, transformedMaterials);
-
 
         // Combine the transformed data
         const combinedFinalData = [transformedProducts, transformedMaterials];
@@ -175,16 +163,20 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       }
     };
 
-    if (router?.query?.customerId && router?.query?.clientTypeId)
+    if (router?.query?.customerId && router?.query?.clientTypeId){
       await getAllProductAndMaterialsApi(callApi, callBack, {
         clientId: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
+        selectionType: selectedTab
       });
+    }
   }, []);
 
   useEffect(() => {
     if (products?.length > 0 && combinedData?.length > 0) {
-      const findDefaultProduct = products.find((item) => item.id === router?.query?.productId);
+      const findDefaultProduct = products.find(
+        (item) => item.id === router?.query?.productId
+      );
       if (findDefaultProduct) {
         handleProductChange(findDefaultProduct?.id);
       }
@@ -225,7 +217,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   /* Slider */
   const priceToUse =
     widgetType === EWidgetProductType.EDIT ||
-      widgetType === EWidgetProductType.DUPLICATE
+    widgetType === EWidgetProductType.DUPLICATE
       ? calculatedPriceProductItemValue
       : currentProductItemValueTotalPrice;
 
@@ -251,8 +243,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       setPriceIncludeVat(
         (sliderCurrentProductItemValueTotalPrice * (1 + systemVAT))?.toFixed(3)
       );
-    }
-    else {
+    } else {
       setPriceIncludeVat(null);
     }
   }, [sliderCurrentProductItemValueTotalPrice]);
@@ -282,7 +273,9 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     systemVAT,
     selectedProduct,
     combinedData,
-    handleProductChange
+    handleProductChange,
+    selectedTab,
+    onSelectTab,
   };
 };
 

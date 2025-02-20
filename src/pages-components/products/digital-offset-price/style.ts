@@ -9,15 +9,21 @@ import {
   adaptLeft,
   adaptPaddingLeft,
   adaptPaddingRight,
-  adaptRight,
   leftRightAdapter,
 } from "@/utils/adapter";
-const useStyle = () => {
+
+interface IProps {
+  isMobileScreen?: boolean;
+}
+const useStyle = ({ isMobileScreen }: IProps) => {
   const { t } = useTranslation();
   const direction = t("direction");
+
   const { primaryColor, secondColor, errorColor, neutralColor, successColor } =
     useGomakeTheme();
+
   const [screenWidth, setScreenWidth] = useState<number | null>(null);
+
   useEffect(() => {
     // Function to update screen width
     const updateScreenWidth = () => {
@@ -44,7 +50,10 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        ...adaptPaddingRight(direction, 20),
+        // ...adaptPaddingRight(direction, 20),
+        ...(isMobileScreen
+          ? { padding: "12px" }
+          : adaptPaddingRight(direction, 20)),
       },
       autoComplateRowContainer: {
         display: "flex",
@@ -68,7 +77,10 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "flex-start",
         width: "100%",
-        ...adaptPaddingLeft(t("direction"), 20),
+
+        ...(isMobileScreen
+          ? { padding: "0px" }
+          : adaptPaddingLeft(direction, 20)),
       },
       rightSideMainContainer: {
         display: "flex",
@@ -120,7 +132,7 @@ const useStyle = () => {
         gap: 40,
         marginBottom: 20,
         width: "100%",
-        maxWidth: screenWidth - 600,
+        maxWidth: isMobileScreen ? "unset" : screenWidth - 600,
       },
       tabContainer: {
         display: "flex",
@@ -526,11 +538,12 @@ const useStyle = () => {
         height: 35,
       },
       inputPriceStyle: {
-        color: primaryColor(500),
+        color: primaryColor(500) + " !important",
+        WebkitTextFillColor: primaryColor(500) + " !important",
         ...FONT_FAMILY.Lexend(700, 24),
         height: "100%",
         width: "100%",
-        maxHeight: 35,
+        maxHeight: 40,
         boxShadow: "none",
         textAlign: "center" as "center",
         direction: direction,
@@ -1045,8 +1058,21 @@ const useStyle = () => {
         ...FONT_FAMILY.Inter(500, 12),
         color: primaryColor(500),
       },
+      buttonsContainer: {
+        width: "100%",
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+        position: "fixed" as "fixed",
+        bottom: 0,
+        right: 0,
+        boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
+        height: 65,
+        backgroundColor: "#FFF",
+      },
     };
-  }, [i18next.language, t, direction, screenWidth]);
+  }, [i18next.language, t, direction, screenWidth, isMobileScreen]);
   return {
     clasess,
   };

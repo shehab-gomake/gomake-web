@@ -104,6 +104,8 @@ const BoardMissionsStationActionItem = ({
 }: IProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData } =
@@ -617,6 +619,7 @@ const BoardMissionsStationActionItem = ({
                         <>
                           {!chooseMachine ? (
                             <Button
+                              dir={dir}
                               disabled={isDone}
                               endIcon={!isDone && <KeyboardArrowDownIcon />}
                               onClick={(e) => {
@@ -632,7 +635,7 @@ const BoardMissionsStationActionItem = ({
                                 }
                               }}
                               variant={"text"}
-                              style={classes.machineTitle}
+                              sx={classes.machineTitle}
                             >
                               {machineName != null ? (
                                 <>
@@ -709,6 +712,7 @@ const BoardMissionsStationActionItem = ({
                       <>
                         {!chooseEmployee ? (
                           <Button
+                            dir={dir}
                             disabled={isDone}
                             endIcon={!isDone && <KeyboardArrowDownIcon />}
                             onClick={(e) => {
@@ -724,7 +728,7 @@ const BoardMissionsStationActionItem = ({
                               }
                             }}
                             variant={"text"}
-                            style={classes.machineTitle}
+                            sx={classes.machineTitle}
                           >
                             {employeeName ? (
                               employeeName

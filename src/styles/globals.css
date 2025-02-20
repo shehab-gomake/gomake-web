@@ -456,11 +456,13 @@ df-messenger {
 }
 
 .custom-scroller::-webkit-scrollbar-track {
-  background: #ffffff !important;
+  /* background: #ffffff !important; */
+  background: #f6f6f6 !important;
 }
 
 .custom-scroller::-webkit-scrollbar-thumb {
-  background: #eaecf0 !important;
+  /* background: #eaecf0 !important; */
+  background: #d5d6e9 !important;
   border-radius: 10px !important;
 }
 
