@@ -195,8 +195,8 @@ const QuoteWidget = ({ isAdmin = true, isMobileScreen = false }) => {
                   isDisabled
                     ? handleClick
                     : isAdmin
-                    ? onClickCreateQuote
-                    : onClickCreateQuoteForCustomer
+                      ? onClickCreateQuote
+                      : onClickCreateQuoteForCustomer
                 }
                 variant="contained"
                 style={{ width: "100%", height: 40 }}
@@ -226,8 +226,8 @@ const QuoteWidget = ({ isAdmin = true, isMobileScreen = false }) => {
               isDisabled
                 ? handleClick
                 : isAdmin
-                ? onClickCreateQuote
-                : onClickCreateQuoteForCustomer
+                  ? onClickCreateQuote
+                  : onClickCreateQuoteForCustomer
             }
             variant="contained"
             style={{ width: "100%", height: 40 }}
