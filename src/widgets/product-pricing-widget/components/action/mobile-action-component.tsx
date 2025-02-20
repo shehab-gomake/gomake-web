@@ -368,7 +368,7 @@ const MobileActionContainerComponent = ({
                       </IconButton>
                     </Tooltip>
                   )}
-                  <IconButton
+                  {/* <IconButton
                     onClick={(e) => {
                       e.stopPropagation();
                       handleClick(e);
@@ -379,7 +379,7 @@ const MobileActionContainerComponent = ({
                       width={20}
                       height={20}
                     />
-                  </IconButton>
+                  </IconButton> */}
                   {!isFromSetting && (
                     <IconButton
                       onClick={(e) => {
@@ -924,6 +924,7 @@ const MobileActionContainerComponent = ({
                   </div>
                 </Stack>
               </Stack>
+
               <Collapse
                 in={isOpen}
                 collapsedSize={0}
@@ -957,9 +958,9 @@ const MobileActionContainerComponent = ({
                           source={source}
                           parameters={outputsParameters}
                         />
-                        {imageOutputs.map((parameter) => (
+                        {/* {imageOutputs.map((parameter) => (
                           <PrintImageComponent {...parameter} />
-                        ))}
+                        ))} */}
                         <Divider orientation={"vertical"} flexItem />
                         <TextAreaActionsMapping
                           parameters={textAreaOutputs}
@@ -974,7 +975,7 @@ const MobileActionContainerComponent = ({
                     </>
                   )}
               </Collapse>
-              <SettingsMenu
+              {/* <SettingsMenu
                 handleClose={handleClose}
                 open={open}
                 anchorEl={anchorEl}
@@ -988,7 +989,7 @@ const MobileActionContainerComponent = ({
                 sectionName={sectionName}
                 deleteActionFromProduct={deleteActionFromProduct}
                 isFromSetting={isFromSetting}
-              />
+              /> */}
               <GoMakeDeleteModal
                 modalType={ModalType.ADD}
                 insideStyle={classes.insideStyle}
