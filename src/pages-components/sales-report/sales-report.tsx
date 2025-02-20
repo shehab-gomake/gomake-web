@@ -33,7 +33,8 @@ const SalesReportWidget = () => {
     isFetching,
     getNewTableDataRows,
     tableData,
-    handleExportRows
+    handleExportRows,
+    onClickExportExcelReport,
   } = useSalesReport();
 
   return (
@@ -62,7 +63,11 @@ const SalesReportWidget = () => {
         isFetchingCustomers={isFetching}
       />
       <Divider />
-      <SalesReportButtonWidget onClickBtn1={onClickBtn1} onPrintClick={handleExportRows} />
+      <SalesReportButtonWidget
+        onClickBtn1={onClickBtn1}
+        onPrintClick={handleExportRows}
+        onClickExportExcelReport={onClickExportExcelReport}
+      />
       {showTable &&
         (Array.isArray(tableData) ? tableData : []).map((item) => {
           return (
