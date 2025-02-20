@@ -1,6 +1,6 @@
 import { getBoardMissionsById } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import { useRecoilState, useResetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useRouter } from "next/router";
@@ -16,6 +16,7 @@ import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { useBoardMissionsNotes } from "./stations/notes/use-board-missions-notes";
+import { relatedOrderItemsComponentState } from "./stations/state";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
@@ -44,7 +45,9 @@ const useBoardMissions = () => {
     productWorksTypes,
   } = useBoardMissionsStations();
 
-  const { classes } = useStyle(notes, productWorksTypes);
+  const relatedOrderItems = useRecoilValue(relatedOrderItemsComponentState);
+
+  const { classes } = useStyle(notes, productWorksTypes, relatedOrderItems);
   const isLoadingStations = stations?.length === 0;
   const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
 
@@ -170,6 +173,7 @@ const useBoardMissions = () => {
     isLoadingStations,
     renderDetailsSkeletons1,
     renderDetailsSkeletons2,
+    relatedOrderItems,
   };
 };
 

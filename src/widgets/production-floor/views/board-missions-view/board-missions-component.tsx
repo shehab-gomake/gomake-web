@@ -15,6 +15,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission";
 import ProductDetailsSection from "./job-card-container/components/product-details-section";
 import { BoardMissionsStationsComponent } from "./stations/board-missions-stations-component";
+import { RelatedOrderItemsComponent } from "./related-order-items/related-order-items";
 import WorkTypesWidget from "./work-types/work-types-widget";
 
 interface IProps {
@@ -56,6 +57,7 @@ const BoardMissionsComponent = ({
     setTypesConHeight,
     isLoadingStations,
     renderDetailsSkeletons1,
+    relatedOrderItems,
   } = useBoardMissions();
 
   useEffect(() => {
@@ -160,12 +162,28 @@ const BoardMissionsComponent = ({
                         </CardContainer>
                       </div>
                     )}
+                    {relatedOrderItems?.length > 0 && (
+                      <div style={{ maxHeight: `${typesConHeight}px` }}>
+                        <CardContainer
+                          label={t("productionFloor.relatedOrderItems")}
+                          style={{ background: "#F6F6F6" }}
+                        >
+                          <RelatedOrderItemsComponent
+                            relatedOrderItems={relatedOrderItems}
+                          />
+                        </CardContainer>
+                      </div>
+                    )}
                   </div>
                   <div
                     className={`custom-scroller`}
                     style={{
                       overflowY:
-                        productWorksTypes.length > 0 ? "auto" : "visible",
+                        relatedOrderItems?.length > 0 ||
+                        productWorksTypes.length > 0
+                          ? "auto"
+                          : "visible",
+
                       maxHeight: "fit-content",
                       flex: 1,
                       display: "flex",
