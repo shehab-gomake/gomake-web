@@ -7,4 +7,5 @@ export interface ICalculationSignalRResult {
     monials?:IWorkFlowMonial[];
     exceptions?:IExceptionsLog[]
     isCalculationFinished:boolean;
+    isNeedPriceUpdate?:boolean;
 }

@@ -138,12 +138,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  const [subProductsColorsModal, setSubProductsColorsModal] =
-    useRecoilState<any>(subProductsCopyParametersState);
+  const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
-  const setSubProductsCopy = useSetRecoilState<any>(
-    subProductsCopyParametersState
-  );
+  const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
   const [currentProductItemValue, setCurrentProductItemValue] =
     useRecoilState<any>(currentProductItemValueState);
   const [productItemValueDraftId, setCurrentProductItemValueDraftId] =
@@ -321,9 +318,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setSliderCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
   useEffect(() => {
-    let copy = lodashClonedeep(subProducts);
-    setSubProductsCopy(copy);
-  }, [subProducts]);
+    if (widgetType == EWidgetProductType.CREATE) {
+      let copy = lodashClonedeep(subProducts);
+      setSubProductsCopy(copy);
+    }
+
+  }, [subProducts, widgetType]);
   const [isCanGetSelected, setIsCanGetSelected] = useState(false);
   useEffect(() => {
     if (
@@ -340,12 +340,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       currentCalculationSessionId &&
       !productTemplate?.isHaveFixedAction
     ) {
-      getSelectedWorkFlow();
+      getSelectedWorkFlow(calculationResult?.isNeedPriceUpdate);
     }
     if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
-      getSelectedWorkFlow();
+      getSelectedWorkFlow(calculationResult?.isNeedPriceUpdate);
     }
-  }, [calculationResult, currentCalculationSessionId]);
+  }, [calculationResult, currentCalculationSessionId, priceRecovery]);
   const [
     selectedWorkFlowCalculatedIsLoaded,
     setSelectedWorkFlowCalculatedIsLoaded,
@@ -378,49 +378,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       result.productItemValue.totalWorkFlows
     );
     setWorkFlows(result.productItemValue.workFlows);
-    if (
-      result.productItemValue &&
-      result.productItemValue.workFlows &&
-      result.productItemValue.workFlows.length > 0 &&
-      !(
-        widgetType == EWidgetProductType.EDIT &&
-        currentProductItemValueTotalPrice
-      )
-    ) {
-      const mySelectedWorkFlow = result.productItemValue.workFlows[0];
-      if (
-        mySelectedWorkFlow &&
-        mySelectedWorkFlow.totalPrice &&
-        mySelectedWorkFlow.totalPrice.values &&
-        !isNaN(mySelectedWorkFlow.totalPrice.values[0])
-      ) {
-        setCurrentProductItemValueTotalPrice(
-          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
-        );
-        setSliderCurrentProductItemValueTotalPrice(
-          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
-        );
-      }
-    } else if (
-      (widgetType == EWidgetProductType.EDIT ||
-        widgetType == EWidgetProductType.DUPLICATE) &&
-      productTemplate?.isHaveFixedAction
-    ) {
-      const mySelectedWorkFlow = result.productItemValue.workFlows[0];
-      if (
-        mySelectedWorkFlow &&
-        mySelectedWorkFlow.totalPrice &&
-        mySelectedWorkFlow.totalPrice.values &&
-        !isNaN(mySelectedWorkFlow.totalPrice.values[0])
-      ) {
-        setCurrentProductItemValueTotalPrice(
-          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
-        );
-        setSliderCurrentProductItemValueTotalPrice(
-          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
-        );
-      }
-    }
+    setCurrentProductItemValueTotalPrice(
+      parseFloat(result.totalPrice)
+    );
+    setSliderCurrentProductItemValueTotalPrice(
+      parseFloat(result.totalPrice)
+    );
 
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result);
@@ -436,13 +399,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setSelectedWorkFlowCalculatedIsLoaded(false);
   };
 
-  const getSelectedWorkFlow = async () => {
+  const getSelectedWorkFlow = async (IsNeedPriceUpdate?) => {
+
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
     if (documentItemId) {
-      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${priceRecovery}`;
+      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery}`;
     }
     const res: any = await callApi("GET", url, {}, false);
     _setDataFromSelectedWorkFlow(res);
@@ -4896,6 +4860,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setWorkTypes(res?.data?.productItemValue?.workTypes);
           setMissionsListForEdit(res?.data?.missions);
           setCalculatedPriceProductItemValue(res?.data?.calculatedPrice);
+          setSubProductsCopy([
+            {
+              parameters: res?.data?.productItemValue?.itemParmetersValues,
+              type: null,
+            }
+          ]);
         } else {
           alertFaultUpdate();
         }
