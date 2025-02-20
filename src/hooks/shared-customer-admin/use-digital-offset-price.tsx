@@ -419,6 +419,26 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         );
       }
     }
+    else if (
+      (widgetType == EWidgetProductType.EDIT ||
+        widgetType == EWidgetProductType.DUPLICATE) &&
+      !productTemplate?.isHaveFixedAction
+    ) {
+      const mySelectedWorkFlow = result.productItemValue.workFlows[0];
+      if (
+        mySelectedWorkFlow &&
+        mySelectedWorkFlow.totalPrice &&
+        mySelectedWorkFlow.totalPrice.values &&
+        !isNaN(mySelectedWorkFlow.totalPrice.values[0])
+      ) {
+        setCurrentProductItemValueTotalPrice(
+          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
+        );
+        setSliderCurrentProductItemValueTotalPrice(
+          parseFloat(mySelectedWorkFlow.totalPrice.values[0])
+        );
+      }
+    }
 
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result);
@@ -426,6 +446,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       widgetType === EWidgetProductType.EDIT &&
       (isActionEmployeeUpdated || isJobNameValue)
     ) {
+
       setIsChangePriceForEdit(true);
       setIsActionEmployeeUpdated(false);
       setIsJobNameValue(false);
