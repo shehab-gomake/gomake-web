@@ -1,11 +1,10 @@
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Modal } from "@mui/material";
-import { Wastebasket } from "@/icons";
+import { WarningModalIcon, Wastebasket } from "@/icons";
 import { GomakePrimaryButton } from "../button";
 import { useStyle } from "./style";
 import { PrimaryButton } from "../button/primary-button";
-import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
 
 const GoMakeAlertModal = ({
   openModal,
@@ -15,10 +14,11 @@ const GoMakeAlertModal = ({
   onClickConfirm,
   title,
   yesBtn = "sales.quote.Confirm",
-  withIcon = false, 
+  withIcon = true,
+  withCancelBtn = true,
   ...props
 }: any) => {
-  const { classes } = useStyle({insideStyle});
+  const { classes } = useStyle({ insideStyle });
   const { t } = useTranslation();
 
   return (
@@ -32,20 +32,26 @@ const GoMakeAlertModal = ({
       }}
     >
       <div style={classes.modalContainer}>
-        <div style={classes.content}>
-        {withIcon && <ReportProblemOutlinedIcon style={classes.iconStyle} />}
+        <div style={{ ...classes.content, width: "100%" }}>
+          {withIcon && <WarningModalIcon />}
           <div style={classes.title}>{title}</div>
-          <div style={classes.subTitle}>{subTitle}</div>
+          <div style={classes.subTitle}> {t(subTitle)}</div>
           <div style={classes.btnsContainer}>
             <GomakePrimaryButton
               style={classes.confermBtn}
               onClick={onClickConfirm}
             >
               {t(yesBtn)}
-            </GomakePrimaryButton>{" "}
-            <PrimaryButton style={classes.cancelBtn} onClick={onClose} variant="outlined">
-              {props?.cancelBtn || t("materials.buttons.cancel")}
-            </PrimaryButton>
+            </GomakePrimaryButton>
+            {withCancelBtn && (
+              <PrimaryButton
+                style={classes.cancelBtn}
+                onClick={onClose}
+                variant="outlined"
+              >
+                {props?.cancelBtn || t("materials.buttons.cancel")}
+              </PrimaryButton>
+            )}
           </div>
         </div>
       </div>
