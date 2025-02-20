@@ -338,12 +338,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       currentCalculationSessionId &&
       !productTemplate?.isHaveFixedAction
     ) {
-      getSelectedWorkFlow();
+      getSelectedWorkFlow(calculationResult?.isNeedPriceUpdate);
     }
     if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
-      getSelectedWorkFlow();
+      getSelectedWorkFlow(calculationResult?.isNeedPriceUpdate);
     }
-  }, [calculationResult, currentCalculationSessionId]);
+  }, [calculationResult, currentCalculationSessionId, priceRecovery]);
   const [
     selectedWorkFlowCalculatedIsLoaded,
     setSelectedWorkFlowCalculatedIsLoaded,
@@ -397,13 +397,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setSelectedWorkFlowCalculatedIsLoaded(false);
   };
 
-  const getSelectedWorkFlow = async () => {
+  const getSelectedWorkFlow = async (IsNeedPriceUpdate?) => {
+
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
     if (documentItemId) {
-      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${priceRecovery}`;
+      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery}`;
     }
     const res: any = await callApi("GET", url, {}, false);
     _setDataFromSelectedWorkFlow(res);
@@ -522,7 +523,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   useEffect(() => {
     if (updatedSelectedWorkFlow) {
-      console.log("updatedSelectedWorkFlow", updatedSelectedWorkFlow)
       if (workFlows.find((x) => x.id == updatedSelectedWorkFlow?.id)) {
         setWorkFlows(
           workFlows.map((flow) =>
