@@ -1,37 +1,35 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import config from "@/config";
-import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
-import {printHouseProfile} from "@/store/print-house-profile";
-import { useRecoilValue} from "recoil";
-import {EProductionFloorView} from "@/widgets/production-floor/state/production-floor-view";
+import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
+import { printHouseProfile } from "@/store/print-house-profile";
+import { useRecoilValue } from "recoil";
+import { EProductionFloorView } from "@/widgets/production-floor/state/production-floor-view";
 
-const useProductionFloorSocketIO = (view:EProductionFloorView) => {
-    const [connectionId, setConnectionId] = useState<any>();
-    const profile = useRecoilValue(printHouseProfile);
-    const { getData,getDataByGroups } = useProductionFloorData();
-    useEffect(()=>{
-        const socket = io(config.api_server);
-        socket.on(`UpdateBoardMissionsStation-${profile.id}`, () => {
-            debugger;
-            if(view === EProductionFloorView.FILTER_GROUPS){
-                getDataByGroups(connectionId).then();
-                return;
-            }
-            getData(socket.id).then();
-            
-        });
-        socket.on('connect', () => {
-            setConnectionId(socket.id);
-        });
-        return () => {
-            console.log("Closing socket connection...");
-            socket.disconnect();
-        };
-    },[view])
-    return {
-        connectionId,
+const useProductionFloorSocketIO = (view: EProductionFloorView) => {
+  const [connectionId, setConnectionId] = useState<any>();
+  const profile = useRecoilValue(printHouseProfile);
+  const { getData, getDataByGroups } = useProductionFloorData();
+  useEffect(() => {
+    const socket = io(config.api_server);
+    socket.on(`UpdateBoardMissionsStation-${profile.id}`, () => {
+      if (view === EProductionFloorView.FILTER_GROUPS) {
+        getDataByGroups(connectionId).then();
+        return;
+      }
+      getData(socket.id).then();
+    });
+    socket.on("connect", () => {
+      setConnectionId(socket.id);
+    });
+    return () => {
+      console.log("Closing socket connection...");
+      socket.disconnect();
     };
+  }, [view]);
+  return {
+    connectionId,
+  };
 };
 
 export { useProductionFloorSocketIO };
