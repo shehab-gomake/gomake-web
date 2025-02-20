@@ -365,23 +365,3 @@ export   const initialFromDate = (key: string,defaultDate?:Date) => {
   const savedDate = localStorage.getItem(key);
   return savedDate ? new Date(savedDate) :defaultDate?defaultDate: startOfYear(new Date());
 };
-
-export const updateValuesAndDefaultUnitForPricingTab= (parameters,unitType) => {
-  return parameters.map(param => {
-    let updatedParam = { ...param };
-
-    if (unitType === UNIT_TYPE.IMPERIAL) {
-      if (param.defaultUnit) {
-        // Update the values array
-        const updatedValues = [...param.values];
-        updatedValues[0] = convertValueToImperial(param.defaultUnit, param.values[0]);
-        updatedParam.values = updatedValues;
-
-        // Update the defaultUnit
-        updatedParam.defaultUnit = convertTitleUnits(param.defaultUnit);
-      }
-    }
-
-    return updatedParam;
-  });
-}

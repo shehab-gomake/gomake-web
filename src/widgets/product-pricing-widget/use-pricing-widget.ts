@@ -33,7 +33,6 @@ import {
   getWorkFlowsActionsApi,
   getWorkFlowsApi,
 } from "@/services/api-service/generic-doc/quote-confirmation-api";
-import { updateValuesAndDefaultUnitForPricingTab } from "@/utils/helpers";
 import { UNIT_TYPE } from "@/enums";
 import { getAllActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
@@ -441,12 +440,7 @@ const usePricingWidget = ({
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0
 
-  const [generalInformationWithImperial, setGeneralInformationWithImperial] = useState([])
-  useEffect(() => {
-    if (selectedWorkFlow?.generalInformation && unitType === UNIT_TYPE.IMPERIAL) {
-      setGeneralInformationWithImperial(updateValuesAndDefaultUnitForPricingTab(selectedWorkFlow?.generalInformation, unitType))
-    }
-  }, [selectedWorkFlow])
+
 
   return {
     view,
@@ -495,7 +489,6 @@ const usePricingWidget = ({
     handleOpenSectionNameListMenu,
     reOderMainActions,
     reOderSubWorkFlows,
-    generalInformationWithImperial,
     unitType,
   };
 };
