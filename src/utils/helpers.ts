@@ -286,33 +286,38 @@ export const convertTitleUnits = (unit: string | null) => {
 };
 
 export const convertValueToImperial = (unit: string | null, value: any) => {
-  if (!unit) return value; // Return value as-is if no unit
+  try {
+    if (!unit) return value; // Return value as-is if no unit
 
-  switch (unit) {
+    switch (unit) {
       case "cm":
-          return convert(value).from("cm").to("in").toFixed(3);
+        return convert(value).from("cm").to("in").toFixed(3);
       case "gram":
-          return convert(value).from("g").to("lb").toFixed(3);
-          case "g":
-          return convert(value).from("g").to("lb").toFixed(3);
-          case "um":
-            return (value * 39.3701).toFixed(3);
-          case "m":
-            return convert(value).from("m").to("yd").toFixed(3);
-        case "kg":
-            return convert(value).from("kg").to("lb").toFixed(3);
-            case "Kg":
-              return convert(value).from("kg").to("lb").toFixed(3);
-            case "liter":
-              return convert(value).from("l").to("gal").toFixed(3); // Convert liters to gallons
-            case "mm":
-              return convert(value).from("mm").to("in").toFixed(3); // Convert millimeters to inches
-            case "Gram/m^2":
-              return convert(value).from("g/m2").to("lb/yd2").toFixed(3); // Convert grams per square meter to ounces per square yard
-              case "m²":
-                return convert(value).from("m2").to("yd2").toFixed(3); // Convert square meters to square yards
+        return convert(value).from("g").to("lb").toFixed(3);
+      case "g":
+        return convert(value).from("g").to("lb").toFixed(3);
+      case "um":
+        return (value * 39.3701).toFixed(3);
+      case "m":
+        return convert(value).from("m").to("yd").toFixed(3);
+      case "kg":
+        return convert(value).from("kg").to("lb").toFixed(3);
+      case "Kg":
+        return convert(value).from("kg").to("lb").toFixed(3);
+      case "liter":
+        return convert(value).from("l").to("gal").toFixed(3); // Convert liters to gallons
+      case "mm":
+        return convert(value).from("mm").to("in").toFixed(3); // Convert millimeters to inches
+      case "Gram/m^2":
+        return convert(value).from("g/m2").to("lb/yd2").toFixed(3); // Convert grams per square meter to ounces per square yard
+      case "m²":
+        return convert(value).from("m2").to("yd2").toFixed(3); // Convert square meters to square yards
       default:
-          return value;
+        return value;
+    }
+  }catch (e) {
+    console.log(e);
+    return value;
   }
 };
 
