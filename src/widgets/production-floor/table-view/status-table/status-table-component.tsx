@@ -150,7 +150,7 @@ const StatusTableComponent = ({ status, boards, count,onClickClient }: IProps) =
                           maxWidth: getCustomWidth(index),
                           width: getCustomWidth(index)
                         }}
-                        key={"statusTable" + status.id}
+                        key={"statusTable" + status.id + index}
                         align={"center"}
                       >
                         <div style={{ width: "max-content", minWidth: "max-content", }}>
@@ -167,7 +167,7 @@ const StatusTableComponent = ({ status, boards, count,onClickClient }: IProps) =
                       return (
                         <>
                           <TableRowComponent
-                            key={"status" + status.id + boardMission.id}
+                            key={"status" + status.id + boardMission.id + index}
                             boardMission={boardMission}
                             status={status}
                             onClickDone={tryMoveBoardMissionsToDone}

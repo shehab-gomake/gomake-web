@@ -91,6 +91,7 @@ const AddRuleModal = ({
     filterData,
     openModal,
   });
+
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
@@ -756,7 +757,9 @@ const AddRuleModal = ({
                     <>
                       {rules[index]?.statement2?.type === 0 ||
                         rules[index]?.statement2?.type === 5 ||
-                        rules[index]?.statement2?.type === 4 ? (
+                        rules[index]?.statement2?.type === 4 ||
+                        rules[index]?.statement2?.type === 10 ||
+                        rules[index]?.statement2?.type === 11 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}

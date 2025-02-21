@@ -10,7 +10,6 @@ const useStyle = ({
   modalTitleColor,
 }: any) => {
   const { primaryColor, errorColor, neutralColor } = useGomakeTheme();
-
   const classes = useMemo(() => {
     return {
       container: {
@@ -109,8 +108,8 @@ const useStyle = ({
         textAlign: "center" as "center",
       },
       subTitle: {
-        ...FONT_FAMILY.Lexend(400, 12),
-        color: neutralColor(500),
+        ...FONT_FAMILY.Lexend(400, 14),
+        color: neutralColor(700),
         textAlign: "center" as "center",
         marginBottom: 33,
         width: "89%",
@@ -127,14 +126,14 @@ const useStyle = ({
         width: "50%",
         height: 33.29,
         borderRadius: "10px",
-        ...FONT_FAMILY.Lexend(500, 9),
+        ...FONT_FAMILY.Lexend(500, 14),
         backgroundColor: primaryColor(500),
       },
       cancelBtn: {
         width: "50%",
         height: 33.29,
         borderRadius: "10px",
-        ...FONT_FAMILY.Lexend(500, 9),
+        ...FONT_FAMILY.Lexend(500, 14),
       },
     };
   }, [insideStyle, headerPadding]);

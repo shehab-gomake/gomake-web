@@ -15,6 +15,7 @@ import {
   currentCalculationConnectionId,
   foldOptionsState,
   productItemValueByEditState,
+  userState,
   viewPricingTab,
 } from "@/store";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
@@ -32,6 +33,7 @@ import {
   getWorkFlowsActionsApi,
   getWorkFlowsApi,
 } from "@/services/api-service/generic-doc/quote-confirmation-api";
+import { UNIT_TYPE } from "@/enums";
 import { getAllActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const usePricingWidget = ({
@@ -435,6 +437,10 @@ const usePricingWidget = ({
       subProductOrderIndex: data,
     });
   };
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0
+
+
 
   return {
     view,
@@ -483,6 +489,7 @@ const usePricingWidget = ({
     handleOpenSectionNameListMenu,
     reOderMainActions,
     reOderSubWorkFlows,
+    unitType,
   };
 };
 

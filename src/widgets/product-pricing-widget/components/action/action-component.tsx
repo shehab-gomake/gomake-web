@@ -37,12 +37,12 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderIconLogs } from "@/utils/constants";
 import { TableOutPutComponent } from "../table-output/table-output-component";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import { isActionEmployeeUpdatedState, permissionsState } from "@/store";
+import { isActionEmployeeUpdatedState, permissionsState, userState } from "@/store";
 import { Draggable } from "react-beautiful-dnd";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons/sort-icon";
-import { ModalType } from "@/enums";
-import { _renderDeliveryDate } from "@/utils/helpers";
+import { ModalType, } from "@/enums";
+import { _renderDeliveryDate, } from "@/utils/helpers";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -264,6 +264,8 @@ const ActionContainerComponent = ({
   }, [suppliersState]);
   const { classes } = useStyle();
   const { secondColor } = useGomakeTheme();
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0
   const inputsParameters = outputs?.filter(
     (parameter) =>
       parameter && parameter?.propertyType === RuleType.PARAMETER &&
@@ -274,6 +276,7 @@ const ActionContainerComponent = ({
       parameter && parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TEXT
   );
+
   const imageOutputs = outputs?.filter(
     (parameter) =>
       parameter && parameter?.propertyType === RuleType.OUTPUT &&
