@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { OptionsButton } from "@/components/options-button/options-button";
 import { useMoreCircle } from "./use-more-circle";
 import { useStyle } from "./style";
+import Link from "next/link";
 
 const MoreMenuWidget = ({
   quote,
@@ -63,8 +64,9 @@ const MoreMenuWidget = ({
             onClick={item.onClick}
           >
             {item?.isLink ? (
-              <a
+              <Link
                 href={item.href || "#"}
+                rel="noopener noreferrer"
                 style={{
                   textDecoration: "none",
                   display: "flex",
@@ -75,7 +77,7 @@ const MoreMenuWidget = ({
               >
                 {item.icon}
                 <span style={classes.rowTextStyle}>{item.name}</span>
-              </a>
+              </Link>
             ) : (
               <>
                 {item.icon}
