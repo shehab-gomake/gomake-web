@@ -293,11 +293,15 @@ const useSalesReport = () => {
     );
 
     if (res?.success) {
-      const downloadLink = document.createElement("a");
-      const link = res?.data?.data?.data;
-      downloadLink.href = link;
-      downloadLink.download = `SalesReport.xlsx`;
+      const base64Data = res?.data?.data?.data?.base64Excel;
+      const contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      const linkSource = `data:${contentType};base64,${base64Data}`;
+      const downloadLink = document.createElement('a');
+      downloadLink.href = linkSource;
+      downloadLink.download = "SalesReport.xlsx";
+      document.body.appendChild(downloadLink);
       downloadLink.click();
+      document.body.removeChild(downloadLink);
     } else {
       alertFaultGetData();
     }
