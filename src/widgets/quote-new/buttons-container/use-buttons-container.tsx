@@ -272,7 +272,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       if (res?.success) {
         const receiptId = res?.data;
         alertSuccessAdded();
-        navigate(`/receipt?Id=${receiptId}`);
+        router.replace(`/receipt?Id=${receiptId}`);
+        //navigate(`/receipt?Id=${receiptId}`);
         onClickOpenReceiptCreation();
       } else {
         alertFaultAdded();
