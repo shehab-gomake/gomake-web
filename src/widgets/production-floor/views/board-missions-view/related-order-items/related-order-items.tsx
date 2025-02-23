@@ -25,7 +25,7 @@ const RelatedOrderItemsComponent = ({
             fontWeight={600}
             color={secondColor(500)}
           >
-            {t("sales.quote.item") + " #" + (index + 1)}
+            {t("productionFloor.job") + " #" + (index + 1)}
           </Typography>
 
           <Stack direction="row" flexWrap="wrap" gap={"12px"}>
