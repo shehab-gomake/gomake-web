@@ -17,6 +17,8 @@ interface TimeRangeManagerProps {
     machines: IWorkingHoursMachine[];
     timeIndex: number;
     time: IStartEndTime;
+    showMachines?: boolean;
+    canAddTimeRange?: boolean;
 }
 
 const TimeRangeManager: React.FC<TimeRangeManagerProps> = ({
@@ -27,10 +29,15 @@ const TimeRangeManager: React.FC<TimeRangeManagerProps> = ({
                                                                onRemoveTimeRange,
                                                                machines,
                                                                timeIndex,
-                                                               time
+                                                               time,
+                                                               showMachines = true,
+                                                               canAddTimeRange = true
                                                            }) => {
     const {t} = useTranslation();
     const convertDateToTimeString = (date) => {
+       if (date === null) {
+           return null;
+       }
         const tDate = new Date(date);
         const hours = tDate.getHours().toString().padStart(2, '0'); // Get hours and pad to 2 digits
         const minutes = tDate.getMinutes().toString().padStart(2, '0'); // Get minutes and pad to 2 digits
@@ -48,6 +55,7 @@ const TimeRangeManager: React.FC<TimeRangeManagerProps> = ({
                     type="time"
                     variant="outlined"
                     fullWidth
+                    sx={{background: 'white'}}
                     value={convertDateToTimeString(time.startTime)}
                     onChange={(e) =>
                         onTimeChange(groupIndex, timeIndex, 'startTime', e.target.value)
@@ -58,35 +66,45 @@ const TimeRangeManager: React.FC<TimeRangeManagerProps> = ({
                     type="time"
                     variant="outlined"
                     fullWidth
+                    sx={{background: 'white'}}
                     value={convertDateToTimeString(time.endTime)}
                     onChange={(e) =>
                         onTimeChange(groupIndex, timeIndex, 'endTime', e.target.value)
                     }
                 />
-                {timeIndex === 0 ? (
-                    <IconButton
-                        sx={{fontSize: 14}}
-                        onClick={() => onAddTimeRange(groupIndex)}
-                    >
-                        <AddCircleOutlineRounded/>
-                    </IconButton>
-                ) : (
-                    <IconButton
+                {
+                    canAddTimeRange && <>
+                        {timeIndex === 0 ? (
+                            <IconButton
+                                sx={{fontSize: 14}}
+                                onClick={() => onAddTimeRange(groupIndex)}
+                            >
+                                <AddCircleOutlineRounded/>
+                            </IconButton>
+                        ) : (
+                            <IconButton
 
-                        onClick={() => onRemoveTimeRange(groupIndex, timeIndex)}
-                    >
-                        <DeleteOutlinedIcon style={{color: 'D92D20'}}/>
-                    </IconButton>
-                )}
+                                onClick={() => onRemoveTimeRange(groupIndex, timeIndex)}
+                            >
+                                <DeleteOutlinedIcon style={{color: 'D92D20'}}/>
+                            </IconButton>
+                        )}
+                    </>
+                }
             </Stack>
-            <div>
-             <h5 style={{...FONT_FAMILY.Inter(500, 14), color: '#344054', paddingBottom: '8px'}}>{t('tabs.machines')}</h5>
-            <SelectMachines
-                onChange={(v) => onMachinesChange(groupIndex, timeIndex, v)}
-                options={[...machines]}
-                values={time.machines}
-            />
+            {showMachines && <div>
+                <h5 style={{
+                    ...FONT_FAMILY.Inter(500, 14),
+                    color: '#344054',
+                    paddingBottom: '8px'
+                }}>{t('tabs.machines')}</h5>
+                <SelectMachines
+                    onChange={(v) => onMachinesChange(groupIndex, timeIndex, v)}
+                    options={[...machines]}
+                    values={time.machines}
+                />
             </div>
+            }
         </Stack>
     );
 };

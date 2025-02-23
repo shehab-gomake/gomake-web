@@ -989,7 +989,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   if (
                     !value &&
                     parameter?.valuesConfigs &&
-                    parameter?.valuesConfigs?.length === 1 &&
+                    (parameter.valuesConfigs = parameter.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
                     parameter?.isRequired &&
                     parameter?.parameterType !==
                     EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
@@ -1806,7 +1806,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }
                       if (
                         param?.valuesConfigs &&
-                        param?.valuesConfigs?.length === 1 &&
+                        (param.valuesConfigs = param.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
                         (param?.isRequired ||
                           param?.code == "FlatbedColor" ||
                           param?.code == "SheetColor")
@@ -3449,7 +3449,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   : defaultConfig.id;
             } else if (
               relatedParameter.valuesConfigs &&
-              relatedParameter.valuesConfigs.length === 1 &&
+              (relatedParameter.valuesConfigs = relatedParameter.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
               relatedParameter.valuesConfigs[0]?.values?.length > 0 &&
               relatedParameter.isRequired
             ) {
@@ -3593,7 +3593,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     );
                     if (
                       param?.valuesConfigs &&
-                      param?.valuesConfigs?.length === 1 &&
+                      (param.valuesConfigs = param.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
                       param?.isRequired
                     ) {
                       param.valuesConfigs[0].isDefault = true;
@@ -3894,7 +3894,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                     if (
                       param?.valuesConfigs &&
-                      param?.valuesConfigs?.length === 1 &&
+                      (param.valuesConfigs = param.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
                       param?.isRequired
                     ) {
                       param.valuesConfigs[0].isDefault = true;
@@ -4031,7 +4031,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       if (subSectionParameter) {
         if (subSectionParameter?.childsParameters) {
-          debugger
           subSectionParameter?.childsParameters.forEach((myparameter) => {
             const parameterId = myparameter.id;
             const myindex = temp.findIndex((item) => {
@@ -4373,7 +4372,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               // }
               if (
                 param?.valuesConfigs &&
-                param?.valuesConfigs?.length === 1 &&
+                (param.valuesConfigs = param.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
                 param?.isRequired
               ) {
                 param.valuesConfigs[0].isDefault = true;
@@ -5795,6 +5794,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sliderCurrentProductItemValueTotalPrice,
     systemCurrency,
     direction,
+    setCanCalculation
   };
 };
 

@@ -20,6 +20,7 @@ const TimeTextField: FC<TextFieldProps> = (props) => {
                 borderRadius: '8px',
                 height: '40px',
                 cursor: 'pointer',
+                ...props?.sx,
                 '& .MuiOutlinedInput-root': {
                     height: '100%',
                     '& input': {
