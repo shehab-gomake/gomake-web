@@ -24,14 +24,18 @@ const InputNumberParameterWidget = ({
   const [openModal, setOpenModal] = useRecoilState<boolean>(openQuantityComponentModalState);
   const productTypesNumber = useRecoilValue<number>(productTypesNumberState);
   const productSetsParam = useRecoilValue<string>(productSetsParamState);
-  const checkIfHaveValue = () =>{
-     // return !temp[index]?.values || temp[index]?.values.every(value => value === undefined);
-      return "";
+  const checkIfNotHaveValue = () =>{
+      try {
+          return !temp[index]?.values || temp[index]?.values.every(value => value === undefined);
+      }catch (error){
+          console.log(error);
+          return true;
+      }
   }
   return (
     <div data-tour={parameter?.id?.toString()} style={{ display: "flex", flexDirection: "row", width: "100%" }}>
       <GomakeTextInput
-        style={clasess.textInputStyle}
+        style={parameter?.isRequired && checkIfNotHaveValue() ? clasess.requiredTextInputStyle : clasess.textInputStyle}
         disabled={parameter?.isLock ? parameter?.isLock : disabled ? disabled : myParameter?.isDisabled}
         defaultValue={parameter.defaultValue}
         placeholder={parameter.name}
