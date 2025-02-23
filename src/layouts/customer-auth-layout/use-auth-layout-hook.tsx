@@ -313,12 +313,12 @@ const useAuthLayoutHook = (
           //   path: "/payments-report",
           //   Permission: Permissions.SHOW_DAILY_PAYMENT_REPORT,
           // },
-          // {
-          //   key: "purchasesReport",
-          //   title: "tabs.purchasesReport",
-          //   path: "/purchases-report",
-          //   Permission: Permissions.SHOW_SALES_REPORT,
-          // },
+          {
+            key: "purchasesReport",
+            title: "tabs.purchasesReport",
+            path: "/purchases-report",
+            Permission: Permissions.SHOW_SALES_REPORT,
+          },
         ],
         icon: () => {
           return <ReportsIcon />;

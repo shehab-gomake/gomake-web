@@ -13,19 +13,26 @@ import { endOfToday, startOfYear } from "date-fns";
 import { DocumentsTypeReportList, ReportsType } from "@/enums";
 import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
 import { initialFromDate } from "@/utils/helpers";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
-const useSalesReport = () => {
+const useSalesReport = (clientType: CLIENT_TYPE) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-
   const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
+
+  const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
   const {
     customer,
     renderOptions,
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-  } = useCustomerDropDownList();
+    supplierList,
+  } = useCustomerDropDownList({
+    shouldRenderCustomersOnMount: !isPurchaseReport,
+    shouldRenderSuppliersOnMount: isPurchaseReport,
+  });
+
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const { reportsTypeList, documentType, handleDocumentTypeChange } =
     useDocumentsType();
@@ -294,9 +301,10 @@ const useSalesReport = () => {
 
     if (res?.success) {
       const base64Data = res?.data?.data?.data?.base64Excel;
-      const contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      const contentType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
       const linkSource = `data:${contentType};base64,${base64Data}`;
-      const downloadLink = document.createElement('a');
+      const downloadLink = document.createElement("a");
       downloadLink.href = linkSource;
       downloadLink.download = "SalesReport.xlsx";
       document.body.appendChild(downloadLink);
@@ -348,6 +356,8 @@ const useSalesReport = () => {
     tableData,
     handleExportRows,
     onClickExportExcelReport,
+    isPurchaseReport,
+    supplierList,
   };
 };
 

@@ -24,7 +24,6 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
     useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-
   const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
   const {
     customer,

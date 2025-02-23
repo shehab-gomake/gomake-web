@@ -22,7 +22,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
-  const isSupplier = clientType === CLIENT_TYPE.SUPPLIER;
+  const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
   const {
     customer,
     renderOptions,
@@ -31,8 +31,8 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     isFetching,
     supplierList,
   } = useCustomerDropDownList({
-    shouldRenderCustomersOnMount: !isSupplier,
-    shouldRenderSuppliersOnMount: isSupplier,
+    shouldRenderCustomersOnMount: !isPurchaseReport,
+    shouldRenderSuppliersOnMount: isPurchaseReport,
   });
 
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
@@ -443,6 +443,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     handleSortAgingReport,
     isDescOrder,
     supplierList,
+    isPurchaseReport,
   };
 };
 
