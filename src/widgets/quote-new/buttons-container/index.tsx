@@ -102,6 +102,7 @@ const ButtonsContainer = ({
     openOrderNowPrePaymentModal,
     onClickCloseOrderNowPreModal,
     handleOrderConfirmation,
+    setOpenReceiptCreationModal,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -130,6 +131,10 @@ const ButtonsContainer = ({
   useEffect(() => {
     isQuote && getAllUsersCanApproveQuote();
   }, []);
+
+  useEffect(() => {
+    setOpenReceiptCreationModal(false);
+  }, [setOpenReceiptCreationModal]);
 
   return (
     <div style={classes.writeCommentContainer}>
