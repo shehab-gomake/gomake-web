@@ -1,7 +1,7 @@
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = (notes, productWorksTypes) => {
+const useStyle = (notes, productWorksTypes, relatedOrderItems) => {
   const columnOneGridTemplateRows =
     Array.isArray(notes) && notes.length > 0
       ? "calc(15% - 6px) auto"
@@ -22,7 +22,7 @@ const useStyle = (notes, productWorksTypes) => {
         width: "100%",
         gap: "10px",
         gridTemplateColumns:
-          productWorksTypes?.length > 0
+          productWorksTypes?.length > 0 || relatedOrderItems?.length > 0
             ? "calc(70% - 5px) calc(30% - 5px)"
             : "100%",
       },
@@ -69,7 +69,7 @@ const useStyle = (notes, productWorksTypes) => {
         textTransform: "capitalize" as "capitalize",
       },
     };
-  }, [notes, productWorksTypes]);
+  }, [notes, productWorksTypes, relatedOrderItems]);
   return {
     classes,
   };
