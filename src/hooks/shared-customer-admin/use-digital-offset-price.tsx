@@ -4032,6 +4032,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       if (subSectionParameter) {
         if (subSectionParameter?.childsParameters) {
+          debugger
           subSectionParameter?.childsParameters.forEach((myparameter) => {
             const parameterId = myparameter.id;
             const myindex = temp.findIndex((item) => {
@@ -4069,7 +4070,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   subSectionId: subSection?.id,
                   ParameterType: myparameter?.parameterType,
                   isQuantityParameter: myparameter?.isQuantityParameter,
-                  values: unitType === UNIT_TYPE.IMPERIAL ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : data?.value?.values[parameterId],
+                  values: unitType === UNIT_TYPE.IMPERIAL ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
                   actionIndex: myparameter?.actionIndex,
                   parameterName: myparameter?.name,
                   parameterCode: myparameter?.code,
