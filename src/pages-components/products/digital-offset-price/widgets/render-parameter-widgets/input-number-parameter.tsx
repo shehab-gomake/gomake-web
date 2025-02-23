@@ -29,7 +29,7 @@ const InputNumberParameterWidget = ({
           return !temp[index]?.values || temp[index]?.values.every(value => value === undefined);
       }catch (error){
           console.log(error);
-          return true;
+          return false;
       }
   }
   return (
