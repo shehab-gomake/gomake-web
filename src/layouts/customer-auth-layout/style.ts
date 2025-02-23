@@ -42,7 +42,7 @@ const useStyle = ({
       leftContainer: {
         backgroundColor: primaryColor(500),
         width: navStatus?.isClosed ? 125 : 245,
-        minWidth: navStatus?.isClosed ? 125 : 245,
+        minWidth: navStatus?.isClosed ? 125 : 260,
         transitionDuration: "0.4s",
         height: "100vh",
         display: "flex",

@@ -78,7 +78,9 @@ const LedgerReportWidget = ({
       {!isFromCustomerCard && (
         <HeaderTitle
           title={
-            isPurchaseReport ? t("tabs.supplierLedger") : t("tabs.ledgerReport")
+            isPurchaseReport
+              ? t("tabs.supplierLedger")
+              : t("tabs.customerLedger")
           }
           marginTop={"0px"}
           marginBottom={"0px"}
