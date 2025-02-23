@@ -4046,7 +4046,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       if (subSectionParameter) {
         if (subSectionParameter?.childsParameters) {
-          debugger;
           subSectionParameter?.childsParameters.forEach((myparameter) => {
             const parameterId = myparameter.id;
             const myindex = temp.findIndex((item) => {
