@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
-import { useAgentsList, useCustomerDropDownList, useDocumentsType, useGomakeAxios, useSnackBar } from "@/hooks";
+import {
+  useAgentsList,
+  useCustomerDropDownList,
+  useDocumentsType,
+  useGomakeAxios,
+  useSnackBar,
+} from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useTranslation } from "react-i18next";
 import { endOfToday, startOfYear } from "date-fns";
@@ -13,14 +19,23 @@ const useSalesReport = () => {
   const { t } = useTranslation();
 
   const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
-  const { customer, renderOptions, checkWhatRenderArray, handleCustomerChange, isFetching } = useCustomerDropDownList();
+  const {
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+  } = useCustomerDropDownList();
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
-  const { reportsTypeList, documentType, handleDocumentTypeChange } = useDocumentsType();
+  const { reportsTypeList, documentType, handleDocumentTypeChange } =
+    useDocumentsType();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [displayByGroups, setDisplayByGroups] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableData, setTableData] = useState<any>([]);
-  const [fromDate, setFromDate] = useState<Date>(initialFromDate('sales-report-date'));
+  const [fromDate, setFromDate] = useState<Date>(
+    initialFromDate("sales-report-date")
+  );
   const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dateList, setDateList] = useState<string[]>([]);
 
@@ -64,17 +79,6 @@ const useSalesReport = () => {
     setDisplayByGroups(!displayByGroups);
   };
 
-  //!old
-  // const tableHeaders = [
-  //   t("reports.clientCode"),
-  //   t("reports.clientName"),
-  //   t("reports.salesAmount"),
-  //   t("reports.refunds amount"),
-  //   ...dateList,
-  //   t("reports.totalPrice"),
-  // ];
-
-  //!new
   const tableHeaders = useMemo(() => {
     let headers = [
       t("reports.docDate"),
@@ -82,7 +86,7 @@ const useSalesReport = () => {
       t("reports.documentNumber"),
       t("reports.transType"),
       t("reports.TransNumber"),
-
+      t("profileSettings.businessNumber"),
       t("reports.cardcode"),
       t("reports.cardname"),
       `${t("reports.credit")} / ${t("reports.debit")}`,
@@ -125,15 +129,21 @@ const useSalesReport = () => {
             ),
             getDocumentTypeName(t, data?.transType),
             data?.transNumber,
+            data?.businessNumber ?? "-",
             data?.cardCode,
             data?.cardName,
-            data?.credit > 0 ? Number(data?.credit.toFixed(2)) : data?.debit ? Number((-data.debit).toFixed(2)) : 0,
+            data?.credit > 0
+              ? Number(data?.credit.toFixed(2))
+              : data?.debit
+              ? Number((-data.debit).toFixed(2))
+              : 0,
           ];
         });
       } else return [];
     },
     [tableData]
   );
+
   function sumAllItems(salesReports) {
     if (!salesReports || !salesReports.length) return {};
     return salesReports.reduce((total, report) => {
@@ -195,14 +205,18 @@ const useSalesReport = () => {
     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
-    const res = await callApi(EHttpMethod.POST, `/v1/erp-service/reports/get-sales-report`, {
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
-      clientId: customer?.id,
-      agentId: agent?.id,
-      reportType: documentType ? documentType?.id : ReportsType.allInvoices,
-      displayByGroup: displayByGroups,
-    });
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/get-sales-report`,
+      {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        clientId: customer?.id,
+        agentId: agent?.id,
+        reportType: documentType ? documentType?.id : ReportsType.allInvoices,
+        displayByGroup: displayByGroups,
+      }
+    );
     if (res?.success) {
       // setTableData(res?.data?.data?.data?.salesReports); //!old
       setTableData(res.data?.data?.data); //!new
@@ -216,7 +230,7 @@ const useSalesReport = () => {
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
-      localStorage.setItem('sales-report-date', value[0]);
+      localStorage.setItem("sales-report-date", value[0]);
       setFromDate(value[0]);
       setToDate(value[1]);
     } else {
@@ -224,6 +238,7 @@ const useSalesReport = () => {
       setToDate(null);
     }
   };
+
   const handleExportRows = async () => {
     if (!fromDate || !toDate) {
       alertFault("alerts.pleaseEnsureDatesSelected");
@@ -233,14 +248,18 @@ const useSalesReport = () => {
     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
 
-    const res = await callApi(EHttpMethod.POST, `/v1/erp-service/reports/get-sales-report-pdf`, {
-      startDate: formattedStartDate,
-      endDate: formattedEndDate,
-      clientId: customer?.id,
-      agentId: agent?.id,
-      reportType: documentType ? documentType?.id : ReportsType.allInvoices,
-      displayByGroup: displayByGroups,
-    });
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/get-sales-report-pdf`,
+      {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        clientId: customer?.id,
+        agentId: agent?.id,
+        reportType: documentType ? documentType?.id : ReportsType.allInvoices,
+        displayByGroup: displayByGroups,
+      }
+    );
     if (res?.success) {
       const pdfLink = res?.data?.data?.data;
       downloadPdf(pdfLink);
@@ -249,6 +268,45 @@ const useSalesReport = () => {
       alertFaultGetData();
     }
   };
+
+  const onClickExportExcelReport = useCallback(async () => {
+    if (!fromDate || !toDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/export-sales-report-excel`,
+      {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        clientId: customer?.id,
+        agentId: agent?.id,
+        reportType: documentType ? documentType?.id : ReportsType.allInvoices,
+        displayByGroup: displayByGroups,
+      },
+      true,
+      null
+    );
+
+    if (res?.success) {
+      const base64Data = res?.data?.data?.data?.base64Excel;
+      const contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      const linkSource = `data:${contentType};base64,${base64Data}`;
+      const downloadLink = document.createElement('a');
+      downloadLink.href = linkSource;
+      downloadLink.download = "SalesReport.xlsx";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    } else {
+      alertFaultGetData();
+    }
+  }, [fromDate, toDate, agent, customer, documentType, displayByGroups]);
+
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -260,6 +318,7 @@ const useSalesReport = () => {
     });
     anchor.click();
   };
+
   return {
     t,
     onSelectDeliveryTimeDates,
@@ -288,6 +347,7 @@ const useSalesReport = () => {
     getNewTableDataRows,
     tableData,
     handleExportRows,
+    onClickExportExcelReport,
   };
 };
 

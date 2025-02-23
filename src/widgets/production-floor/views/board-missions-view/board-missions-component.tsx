@@ -17,21 +17,19 @@ import ProductDetailsSection from "./job-card-container/components/product-detai
 import { BoardMissionsStationsComponent } from "./stations/board-missions-stations-component";
 import { RelatedOrderItemsComponent } from "./related-order-items/related-order-items";
 import WorkTypesWidget from "./work-types/work-types-widget";
+import { useBoardMissionsActivities } from "@/widgets/production-floor/views/board-missions-view/activity/use-board-missions-activities";
+import { useBoardMissionsFiles } from "./files/use-board-missions-files";
 
 interface IProps {
   boardMissionsId: string;
-  step: string;
+  step?: string;
   productType: string;
-  connectionId: string;
   updateStatus?: any;
 }
 
-const BoardMissionsComponent = ({
-  boardMissionsId,
-  productType,
-  connectionId,
-}: IProps) => {
-  const {} = useJobModalSocketIO(boardMissionsId);
+const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
+  const { getAllActivities } = useBoardMissionsActivities();
+  const { getAllBoardMissionsFiles } = useBoardMissionsFiles();
 
   const {
     t,
@@ -59,6 +57,14 @@ const BoardMissionsComponent = ({
     renderDetailsSkeletons1,
     relatedOrderItems,
   } = useBoardMissions();
+
+  const { connectionId } = useJobModalSocketIO({
+    boardMissionId: boardMissionsId,
+    getBoardMissions,
+    getStations,
+    getAllActivities,
+    getAllBoardMissionsFiles,
+  });
 
   useEffect(() => {
     if (!!boardMissionsId && !!connectionId) {

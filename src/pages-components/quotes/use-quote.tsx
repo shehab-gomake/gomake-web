@@ -696,7 +696,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         });
       }
     };
-
+    if(!router.isReady){
+      return
+    }
     const currentPageNumber = router.query.pageNumber;
     const currentStatusId = router.query.statusId;
     const currentFinalPatternSearch = router.query.finalPatternSearch;
@@ -1147,6 +1149,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         });
       }
     };
+    if(!router.isReady){
+      return
+    }
     if (isReceipt) {
       await getAllReceiptsApi(callApi, callBack, {
         model: {
@@ -1603,6 +1608,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         setAllDocuments(mapData);
       }
     };
+    if(!router.isReady){
+      return
+    }
     selectedClient?.id &&
       (await getAllDocumentsApi(callApi, callBack, {
         documentType: docType,

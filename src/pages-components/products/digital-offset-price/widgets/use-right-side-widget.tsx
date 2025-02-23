@@ -24,7 +24,7 @@ import { EWidgetProductType } from "../enums";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { useRouter } from "next/router";
 import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
-import {ETab} from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const router = useRouter();
@@ -59,6 +59,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     sliderCurrentProductItemValueTotalPrice,
     setSliderCurrentProductItemValueTotalPrice,
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
+  console.log("sliderCurrentProductItemValueTotalPrice", sliderCurrentProductItemValueTotalPrice)
   const [priceIncludeVat, setPriceIncludeVat] = useState<any>();
 
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -69,7 +70,17 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     setSelectedTab(v);
     localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
   };
-
+  useEffect(() => {
+    if (combinedData?.length > 0) {
+      const products = combinedData?.find((item) => item.value === ETab.PRODUCTS)?.children;
+      const findDefaultProduct = products.find(
+        (item) => item.value === router?.query?.productId
+      );
+      if (findDefaultProduct) {
+        handleProductChange(findDefaultProduct?.value);
+      }
+    }
+  }, [combinedData, router?.query?.productId])
   const handleProductChange = (e) => {
     const selectedValue = e;
     // Find the selected node from combinedData
@@ -103,6 +114,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       setSelectedProduct(null);
     }
   };
+
   const getAllProductsAndMaterials = useCallback(async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -163,7 +175,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       }
     };
 
-    if (router?.query?.customerId && router?.query?.clientTypeId){
+    if (router?.query?.customerId && router?.query?.clientTypeId) {
       await getAllProductAndMaterialsApi(callApi, callBack, {
         clientId: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
@@ -217,7 +229,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   /* Slider */
   const priceToUse =
     widgetType === EWidgetProductType.EDIT ||
-    widgetType === EWidgetProductType.DUPLICATE
+      widgetType === EWidgetProductType.DUPLICATE
       ? calculatedPriceProductItemValue
       : currentProductItemValueTotalPrice;
 

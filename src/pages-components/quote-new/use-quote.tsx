@@ -1531,10 +1531,12 @@ const useQuoteNew = ({
           docType === DOCUMENT_TYPE.invoice ||
           docType === DOCUMENT_TYPE.deliveryNote
         ) {
-          navigate(`/${documentPath}?Id=${_data?.id}`);
+          router.replace(`/${documentPath}?Id=${_data?.id}`);
+          //navigate(`/${documentPath}?Id=${_data?.id}`);
           onClickOpenInvoiceCreation();
         } else {
-          navigate(`/${documentPath}?Id=${_data?.id}`);
+          router.replace(`/${documentPath}?Id=${_data?.id}`);
+          //navigate(`/${documentPath}?Id=${_data?.id}`);
         }
       } else {
         alertFaultAdded();

@@ -234,7 +234,10 @@ const useActionsList = ({
             inProcessCount: group?.inProcessCount,
           })
         );
-        setFilterGroups(filterGroupsList);
+        setFilterGroups([{
+          id:"all",
+          name:t("productionFloor.allFilterGroupsViewName")
+        }, ...filterGroupsList]);
       }
     };
     await getAllBoardMissionStationFilterGroupsApi(callApi, callBack).then();
