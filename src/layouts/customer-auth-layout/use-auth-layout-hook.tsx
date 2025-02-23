@@ -227,7 +227,6 @@ const useAuthLayoutHook = (
         isLine: false,
         key: "reports",
         title: "tabs.reports",
-        //Permission: Permissions.SHOW_REPORTS,
         isList: true,
         list: [
           {
@@ -284,6 +283,42 @@ const useAuthLayoutHook = (
             path: "/export-files",
             Permission: Permissions.SHOW_FINANCE,
           },
+        ],
+        icon: () => {
+          return <ReportsIcon />;
+        },
+        isProduction: true,
+      },
+      {
+        isLine: false,
+        key: "supplierReports",
+        title: "tabs.supplierReports",
+        isList: true,
+        list: [
+          {
+            key: "supplierAging",
+            title: "tabs.supplierAging",
+            path: "/supplier-aging",
+            Permission: Permissions.SHOW_AGING_REPORT,
+          },
+          {
+            key: "supplierLedger",
+            title: "tabs.supplierLedger",
+            path: "/supplier-ledger",
+            Permission: Permissions.SHOW_LEDGER_REPORT,
+          },
+          // {
+          //   key: "paymentsReport",
+          //   title: "tabs.paymentsReport",
+          //   path: "/payments-report",
+          //   Permission: Permissions.SHOW_DAILY_PAYMENT_REPORT,
+          // },
+          // {
+          //   key: "purchasesReport",
+          //   title: "tabs.purchasesReport",
+          //   path: "/purchases-report",
+          //   Permission: Permissions.SHOW_SALES_REPORT,
+          // },
         ],
         icon: () => {
           return <ReportsIcon />;

@@ -21,6 +21,8 @@ const LedgerReportHeaderWidget = ({
   toDate,
   customerId,
   isFetchingCustomers,
+  isPurchaseReport,
+  supplierList,
 }: AgingReportHeaderWidgetProps) => {
   const { classes, t } = useAgingReportHeader();
   return (
@@ -30,15 +32,24 @@ const LedgerReportHeaderWidget = ({
           <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
           <GoMakeAutoComplate
             key={customer?.id}
-            options={renderOptions()}
-            defaultFiltering={false}
-            onChangeTextField={checkWhatRenderArray}
             getOptionLabel={(option: any) => `${option.name}`}
             style={classes.textInputStyle}
-            placeholder={t("sales.quote.chooseCustomer")}
             onChange={handleCustomerChange}
             value={customer}
             loading={isFetchingCustomers}
+            defaultFiltering={isPurchaseReport ? true : false}
+            options={isPurchaseReport ? supplierList : renderOptions()}
+            onChangeTextField={(e) => {
+              if (isPurchaseReport) {
+                return;
+              }
+              checkWhatRenderArray(e);
+            }}
+            placeholder={t(
+              `sales.quote.${
+                isPurchaseReport ? "chooseSupplier" : "chooseCustomer"
+              }`
+            )}
           />
         </div>
       )}

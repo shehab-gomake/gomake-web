@@ -7,6 +7,7 @@ import {
 } from "./use-header-widget";
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 const AgingReportHeaderWidget = ({
   agent,
@@ -22,6 +23,8 @@ const AgingReportHeaderWidget = ({
   fromDate,
   toDate,
   isFetchingCustomers,
+  clientType,
+  supplierList,
 }: AgingReportHeaderWidgetProps) => {
   const { classes, t } = useAgingReportHeader();
   const dir: "rtl" | "ltr" = t("direction");
@@ -32,6 +35,8 @@ const AgingReportHeaderWidget = ({
     right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
   }
 `;
+
+  const isSupplier = clientType === CLIENT_TYPE.SUPPLIER;
 
   return (
     <div style={classes.mainContainer}>
@@ -60,16 +65,23 @@ const AgingReportHeaderWidget = ({
       <div style={classes.date2FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
         <GoMakeAutoComplate
+          defaultFiltering={isSupplier ? true : false}
           key={customer?.id}
-          options={renderOptions()}
-          defaultFiltering={false}
-          onChangeTextField={checkWhatRenderArray}
-          getOptionLabel={(option: any) => `${option.name}`}
-          style={classes.textInputStyle}
-          placeholder={t("sales.quote.chooseCustomer")}
-          onChange={handleCustomerChange}
           value={customer}
+          options={isSupplier ? supplierList : renderOptions()}
+          onChangeTextField={(e) => {
+            if (isSupplier) {
+              return;
+            }
+            checkWhatRenderArray(e);
+          }}
+          getOptionLabel={(option: any) => `${option.name}`}
+          placeholder={t(
+            `sales.quote.${isSupplier ? "chooseSupplier" : "chooseCustomer"}`
+          )}
+          onChange={handleCustomerChange}
           loading={isFetchingCustomers}
+          style={classes.textInputStyle}
         />
       </div>
       <div style={{ ...classes.date1FilterContainer, alignSelf: "flex-end" }}>
