@@ -136,7 +136,6 @@ const useCompanyProfile = () => {
   }
 
   const onWorkingTimeChange = ( field: 'startTime' | 'endTime', value: string) => {
-    alert(value)
     setProfile(profile => ({...profile,
       businessDays: {
       ...profile.businessDays,
