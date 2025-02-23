@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { getCurrencies } from "@/services/api-service/general/enums";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { useState } from "react";
+import {convertTimeToDate} from "@/widgets/employees-working-hours-widgets/use-working-hours";
 
 const useCompanyProfile = () => {
   const { callApi } = useGomakeAxios();
@@ -129,6 +130,19 @@ const useCompanyProfile = () => {
     };
     await checkPrintHouseTaxLoginApi(callApi, callBack);
   };
+  const onToggleWorkingDays = (toggledDay: number) => {
+    setProfile(p => ({...p, businessDays: {...p.businessDays,
+        days: p.businessDays.days?.includes(toggledDay) ? p.businessDays.days.filter(d => d !== toggledDay) : [...p.businessDays.days, toggledDay]}}));
+  }
+
+  const onWorkingTimeChange = ( field: 'startTime' | 'endTime', value: string) => {
+    alert(value)
+    setProfile(profile => ({...profile,
+      businessDays: {
+      ...profile.businessDays,
+      [field]: convertTimeToDate(value)
+    }}));
+      }
 
   return {
     getProfile,
@@ -145,6 +159,8 @@ const useCompanyProfile = () => {
     countriesWithCodes,
     checkPrintHouseTaxLogin,
     taxLoginUrl,
+    onToggleWorkingDays,
+    onWorkingTimeChange
   };
 };
 
