@@ -46,6 +46,7 @@ import { usePaymentMethodsTabs } from "../buttons-container/payment/payment-meth
 const usePaymentsTable = () => {
   const { t } = useTranslation();
   const router = useRouter();
+  const isOutgoingPayments = router.query?.isOutgoingPayments === "true";
   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
   const [documentItemValue, setDocumentItemValue] =
     useRecoilState<any>(quoteItemState);
@@ -491,6 +492,7 @@ const usePaymentsTable = () => {
     setOpenTransactionModal,
     resetTotalCreditCard,
     resetCreditCardState,
+    isOutgoingPayments,
   };
 };
 

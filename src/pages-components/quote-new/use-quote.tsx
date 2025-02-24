@@ -113,6 +113,9 @@ const useQuoteNew = ({
   const [selectDate, setSelectDate] = useState(
     isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
   ); // Represents the Delivery Date for Quotes and Orders, and the Due Date for other documents
+
+  const isOutgoingPayments = router.query.isOutgoingPayments === "true";
+
   const [creationDate, setCreationDate] = useState(
     isQuoteConfirmation
       ? quoteConfirm?.creationDate
@@ -196,7 +199,7 @@ const useQuoteNew = ({
   const isInvoice =
     docType === DOCUMENT_TYPE.invoice ||
     docType === DOCUMENT_TYPE.invoiceRefund;
-
+  const isReceipt = docType === DOCUMENT_TYPE.receipt;
   const [openWhatsAppModal, setOpenWatsAppModal] = useState(false);
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
   const [openNewItemNotesModal, setOpenNewItemNotesModal] = useState(false);
@@ -1794,9 +1797,9 @@ const useQuoteNew = ({
     },
   ];
 
-  const documentTitle = documentsTitles.find(
-    (item) => item.value === docType
-  ).label;
+  const documentTitle = isOutgoingPayments
+    ? t("supplierPayments.supplierPayment")
+    : documentsTitles.find((item) => item.value === docType).label;
 
   const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 
@@ -2253,6 +2256,8 @@ const useQuoteNew = ({
     confirmCreateDocument,
     onClickConfirmCreateDocument,
     onClickCloseConfirmCreateDocument,
+    isOutgoingPayments,
+    isReceipt,
   };
 };
 

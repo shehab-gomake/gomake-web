@@ -36,6 +36,7 @@ const PaymentModal = ({
     handleSave,
     documentItemValue,
     setActiveWidget,
+    isOutgoingPayments,
   } = usePaymentsTable();
 
   const handleSaveAndClose = (transactionData) => {
@@ -49,7 +50,9 @@ const PaymentModal = ({
     { title: t("payment.cash"), component: <CashTab /> },
     {
       title: t("payment.creditCard"),
-      component: (
+      component: isOutgoingPayments ? (
+        <span>Coming soon ...</span>
+      ) : (
         <CreditCardTab
           firstWidget={firstWidget}
           secondWidget={secondWidget}

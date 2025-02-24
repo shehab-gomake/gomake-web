@@ -44,7 +44,11 @@ import {
 import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
-import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
+import {
+  CLIENT_TYPE,
+  CLIENT_TYPE_Id,
+  DEFAULT_VALUES,
+} from "@/pages/customers/enums";
 import {
   cancelReceiptApi,
   getAllReceiptsApi,
@@ -77,7 +81,7 @@ import { ICard } from "./widgets/statistics-section/statistics-sections";
 import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
 import { DocumentDeliveryStatuses } from "./widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
 import { EMessageStatus } from "@/enums/document-type-enum";
-import {useDocumentsTableSocketIo} from "@/hooks/socket-io/use-documents-table-socket-io";
+import { useDocumentsTableSocketIo } from "@/hooks/socket-io/use-documents-table-socket-io";
 
 interface Query {
   customerId?: string;
@@ -110,7 +114,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertFault,
   } = useSnackBar();
   const router = useRouter();
-  const documentPath = DOCUMENT_TYPE[docType];
+  const documentPath =
+    docType === DOCUMENT_TYPE.supplierPayments
+      ? `${
+          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+        }?isOutgoingPayments=true&isNewCreation=true`
+      : DOCUMENT_TYPE[docType];
+
   const searchInputRef = useRef(null);
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
@@ -123,7 +133,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isPurchaseDocument =
     docType === DOCUMENT_TYPE.purchaseOrder ||
     docType === DOCUMENT_TYPE.purchaseInvoice ||
-    docType === DOCUMENT_TYPE.purchaseInvoiceRefund;
+    docType === DOCUMENT_TYPE.purchaseInvoiceRefund ||
+    docType === DOCUMENT_TYPE.supplierPayments;
 
   const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
     useCustomerDropDownList({
@@ -203,6 +214,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isQuote = docType === DOCUMENT_TYPE.quote;
   const isOrder = docType === DOCUMENT_TYPE.order;
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
+  const isSupplierPayments = docType === DOCUMENT_TYPE.supplierPayments;
   const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote;
   const isDeliveryNoteRefund = docType === DOCUMENT_TYPE.deliveryNoteRefund;
   const isInvoice = docType === DOCUMENT_TYPE.invoice;
@@ -687,7 +699,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickSendPayment={onClickSendPayment}
           />,
         ]);
-        setAllQuotes(isReceipt ? mapReceiptData : mapData);
+        setAllQuotes(
+          isReceipt || isSupplierPayments ? mapReceiptData : mapData
+        );
         setPagesCount(Math.ceil(totalItems / pageSize));
 
         setAllStatistics({
@@ -696,8 +710,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         });
       }
     };
-    if(!router.isReady){
-      return
+    if (!router.isReady) {
+      return;
     }
     const currentPageNumber = router.query.pageNumber;
     const currentStatusId = router.query.statusId;
@@ -749,8 +763,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       ? [router.query.productsIds]
       : productIds;
 
-    if (isReceipt) {
+    if (isReceipt || isSupplierPayments) {
       await getAllReceiptsApi(callApi, callBack, {
+        cardType: isReceipt ? CLIENT_TYPE.CUSTOMER : CLIENT_TYPE.SUPPLIER,
         clientId: currentCustomerId || customerId?.id,
         agentId: currentAgentId || agentId?.id,
         status: currentAccountingStatus?.value ?? accountingStatus?.value,
@@ -835,6 +850,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     customerId,
     agentId,
     isReceipt,
+    isSupplierPayments,
     page,
     pageSize,
     statusId,
@@ -857,7 +873,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   ]);
 
   // const {} = useDocumentsSignalR({ getAllQuotes, docType });
-  const {} = useDocumentsTableSocketIo(docType, getAllQuotes)
+  const {} = useDocumentsTableSocketIo(docType, getAllQuotes);
   const getAllQuotesInitial = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -1141,7 +1157,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickSendPayment={onClickSendPayment}
           />,
         ]);
-        setAllQuotes(isReceipt ? mapReceiptData : mapData);
+        setAllQuotes(
+          isReceipt || isSupplierPayments ? mapReceiptData : mapData
+        );
         setPagesCount(Math.ceil(totalItems / pageSize));
         setAllStatistics({
           documentStatisticsList: res?.data?.documentStatisticsList ?? [],
@@ -1149,15 +1167,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         });
       }
     };
-    if(!router.isReady){
-      return
+    if (!router.isReady) {
+      return;
     }
-    if (isReceipt) {
+    if (isReceipt || isSupplierPayments) {
       await getAllReceiptsApi(callApi, callBack, {
         model: {
           pageNumber: page,
           pageSize: pageSize,
         },
+        cardType: isReceipt ? CLIENT_TYPE.CUSTOMER : CLIENT_TYPE.SUPPLIER,
       });
     } else {
       await getAllDocumentsApi(callApi, callBack, {
@@ -1362,7 +1381,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         })(),
         isOrder
           ? t("sales.quote.quoteNumber")
-          : isReceipt
+          : isReceipt || isSupplierPayments
           ? null
           : t("sales.quote.sourceDocument"),
 
@@ -1374,7 +1393,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             {t("sales.quote.cost")}
           </PermissionCheck>
         ),
-        isReceipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
+        isReceipt || isSupplierPayments
+          ? t("sales.quote.paymentMethod")
+          : t("sales.quote.worksName"),
         isOrdersTracking
           ? t("customers.modal.paymentStatus")
           : t("sales.quote.totalPrice"),
@@ -1484,11 +1505,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       label: t("sales.quote.purchaseInvoiceRefundList"),
       value: DOCUMENT_TYPE.purchaseInvoiceRefund,
     },
+    {
+      label: t("sales.quote.supplierPaymentsList"),
+      value: DOCUMENT_TYPE.supplierPayments,
+    },
   ];
 
   const documentLabel = isOrdersTracking
     ? t("tabs.ordersTracking")
-    : documentsLabels.find((item) => item.value === docType).label;
+    : documentsLabels.find((item) => item.value === docType)?.label;
 
   const updateQuoteStatus = async () => {
     const callBack = (res) => {
@@ -1608,8 +1633,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         setAllDocuments(mapData);
       }
     };
-    if(!router.isReady){
-      return
+    if (!router.isReady) {
+      return;
     }
     selectedClient?.id &&
       (await getAllDocumentsApi(callApi, callBack, {
@@ -1895,22 +1920,23 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     { label: t("boardMissions.done"), value: PStatus.DONE },
   ];
 
-  const accountingStatuses = isReceipt
-    ? [
-        { label: t("sales.quote.open"), value: ReceiptAccountingStatus.OPEN },
-        {
-          label: t("sales.quote.canceled"),
-          value: ReceiptAccountingStatus.CANCELED,
-        },
-      ]
-    : [
-        { label: t("sales.quote.open"), value: AStatus.OPEN },
-        {
-          label: t("sales.quote.partialClosed"),
-          value: AStatus.PARTIAL_CLOSED,
-        },
-        { label: t("sales.quote.closed"), value: AStatus.CLOSED },
-      ];
+  const accountingStatuses =
+    isReceipt || isSupplierPayments
+      ? [
+          { label: t("sales.quote.open"), value: ReceiptAccountingStatus.OPEN },
+          {
+            label: t("sales.quote.canceled"),
+            value: ReceiptAccountingStatus.CANCELED,
+          },
+        ]
+      : [
+          { label: t("sales.quote.open"), value: AStatus.OPEN },
+          {
+            label: t("sales.quote.partialClosed"),
+            value: AStatus.PARTIAL_CLOSED,
+          },
+          { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+        ];
 
   const deliveryStatuses = useMemo(
     () => [
@@ -1946,13 +1972,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const handleAccountingStatusChange = (e: any, value: any) => {
     setAccountingStatus(value);
   };
-  const [filterData, setFilterData] = useState({});
 
+  const [filterData, setFilterData] = useState({});
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -2756,6 +2784,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isOrder,
     isQuote,
     isReceipt,
+    isSupplierPayments,
     isDeliveryNote,
     isInvoice,
     deliveryStatuses,
@@ -2766,7 +2795,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isPurchaseDocument,
     supplierList,
     isSendToClient,
-    onClickOpenCustomerModal
+    onClickOpenCustomerModal,
   };
 };
 
