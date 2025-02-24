@@ -138,6 +138,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  console.log("subProducts", subProducts)
   const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
@@ -957,7 +958,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameterType: parameter?.parameterType,
                         isQuantityParameter: parameter?.isQuantityParameter,
                         ...(value && {
-                          valueIds: [value?.id],
+                          valueIds: [parameter?.parameterType === EParameterTypes.MACHINES_SELECT ? value?.updateName : value?.id],
                           values: [value?.updateName],
                         }),
                         sectionId: section?.id,
@@ -3440,7 +3441,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               defaultConfig.values.length > 0
             ) {
               valueToAdd = defaultConfig.values[0];
-              valueIds = defaultConfig.values[0];
+              valueIds =
+                relatedParameter.parameterType === 12
+                  ? valueToAdd
+                  : defaultConfig.values[0]
             } else if (defaultConfig && defaultConfig.updateName) {
               valueToAdd = defaultConfig.updateName;
               valueIds =
