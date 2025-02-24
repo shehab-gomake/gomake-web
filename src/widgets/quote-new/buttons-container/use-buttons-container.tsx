@@ -1,4 +1,4 @@
-import {openReceiptCreationModalState, quoteItemState} from "@/store";
+import { openReceiptCreationModalState, quoteItemState } from "@/store";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -56,7 +56,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
   const [openMangerApprovalModal, setOpenMangerApprovalModal] = useState(false);
   const [, setShowPrintJobsModal] = useRecoilState(newOrderIdToPrintJobsState);
-  const [openReceiptCreationModal, setOpenReceiptCreationModal] = useRecoilState(openReceiptCreationModalState);
+  const [openReceiptCreationModal, setOpenReceiptCreationModal] =
+    useRecoilState(openReceiptCreationModalState);
+
   const [openOrderNowPrePaymentModal, setOpenOrderNowPrePaymentModal] =
     useState(false);
 
@@ -255,7 +257,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         const receiptId = res?.data;
         alertSuccessAdded();
         router.replace(`/receipt?Id=${receiptId}`);
-        //navigate(`/receipt?Id=${receiptId}`);
         onClickOpenReceiptCreation();
       } else {
         alertFaultAdded();
@@ -476,16 +477,15 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     isOrder,
     isQuote,
     openReceiptCreationModal,
-    onClickOpenReceiptCreation,
     onClickCloseReceiptCreation,
     openExportReceiptPdfModal,
     onOpenExportReceiptPdfModal,
     onCloseExportReceiptPdfModal,
     handleClickPrint,
-
     openOrderNowPrePaymentModal,
     onClickCloseOrderNowPreModal,
     handleOrderConfirmation,
+    setOpenReceiptCreationModal,
   };
 };
 

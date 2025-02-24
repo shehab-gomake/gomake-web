@@ -16,10 +16,10 @@ import { _renderIconLogs } from "@/utils/constants";
 import { useRouter } from "next/router";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { additionalProductItemsState } from "@/widgets/product-pricing-widget/state";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { permissionsState } from "@/store";
+import { permissionsState, subProductsParametersState } from "@/store";
 import { Box, Slider } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
@@ -67,6 +67,7 @@ const RightSideWidget = ({
   canCalculation,
   calculationProduct,
   subProducts,
+  setCanCalculation
 }: any) => {
   const {
     t,
@@ -96,6 +97,8 @@ const RightSideWidget = ({
     selectedTab,
     onSelectTab,
   } = useRightSideWidget({ includeVAT, widgetType });
+  const setSubProducts = useSetRecoilState<any>(subProductsParametersState);
+
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
 
@@ -233,6 +236,9 @@ const RightSideWidget = ({
                 placeholder={t("customers.selectAgent")}
                 onChange={(e, v) => {
                   if (v) {
+                    if (widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE) {
+                      setCanCalculation(true)
+                    }
                     router.push({
                       pathname: router.pathname,
                       query: { ...router.query, clientTypeId: v?.id },
@@ -258,7 +264,10 @@ const RightSideWidget = ({
             <GoMakeTreeSelect
               value={selectedProduct}
               options={combinedData}
-              onChange={handleProductChange}
+              onChange={(e) => {
+                setSubProducts([])
+                handleProductChange(e)
+              }}
               placeholder={t("home.admin.selectProductOrMaterial")}
               selectedTab={ETab.PRODUCTS}
               setSelectedTab={null}

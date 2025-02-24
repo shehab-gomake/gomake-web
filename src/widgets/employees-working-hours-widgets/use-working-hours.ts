@@ -5,6 +5,13 @@ import {
     IWorkingHoursMachine
 } from "@/widgets/employees-working-hours-widgets/interface";
 
+const convertTimeToDate = (timeString: string): Date => {
+    const [hours, minutes] = timeString.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+};
+
 const useWorkingHours = () => {
     const formatTime = (date: Date): string => dayjs(date).format('HH:mm');
 
@@ -28,12 +35,6 @@ const useWorkingHours = () => {
         });
     };
 
-    const convertTimeToDate = (timeString: string): Date => {
-        const [hours, minutes] = timeString.split(':').map(Number);
-        const date = new Date();
-        date.setHours(hours, minutes, 0, 0);
-        return date;
-    };
 
     const mapMachinesWithEmployeesByDayGroup = (
         machines: IWorkingHoursMachine[],
@@ -132,4 +133,4 @@ const useWorkingHours = () => {
     };
 };
 
-export {useWorkingHours}
+export {useWorkingHours, convertTimeToDate}

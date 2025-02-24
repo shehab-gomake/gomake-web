@@ -596,20 +596,27 @@ const useTransactionJournalReport = ({
           accountCode: filterState?.accountCode,
           startDate: formattedStartDate,
           endDate: formattedEndDate,
-          pageNumber: pageNumber,
-          pageSize,
+          pageNumber: 0,
+          pageSize: 0,
         },
       },
       true,
       null
     );
-    const downloadLink = document.createElement("a");
-    debugger;
-
-    const link = res.data.data.data;
-    downloadLink.href = link;
-    downloadLink.download = `AccountingReport.xlsx`;
-    downloadLink.click();
+    if (res?.success) {
+      const base64Data = res?.data?.data?.data?.base64Excel;
+      const contentType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      const linkSource = `data:${contentType};base64,${base64Data}`;
+      const downloadLink = document.createElement("a");
+      downloadLink.href = linkSource;
+      downloadLink.download = "AccountingTransactionReport.xlsx";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    } else {
+      alertFaultGetData();
+    }
   }, [reportType, filterState, pageNumber, pageSize]);
 
   const [erpAccountsList, setErpAccountsList] = useState([]);
