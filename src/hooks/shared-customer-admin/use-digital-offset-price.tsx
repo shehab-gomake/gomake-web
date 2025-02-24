@@ -5005,7 +5005,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     return uniqueFilteredArray;
   };
-
+  const convertSubProductsValuesToImperial = (subProducts) => {
+    return subProducts.map((subProduct) => {
+      return {
+        ...subProduct,parameters:convertValuesToImperial(subProduct.parameters)
+      }
+    });
+  }
   const convertValuesToImperial = (parameters) => {
     return parameters.map((param) => {
       if (unitType === UNIT_TYPE.IMPERIAL && param.factor) {
@@ -5080,6 +5086,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             );
           const convertedItemParameters = convertValuesToImperial(itemParmetersValues);
           const convertedGeneralParameters = convertValuesToImperial(updatedGeneralParameters);
+          if(calculationSubProducts && calculationSubProducts.length > 0) {
+            calculationSubProducts = convertSubProductsValuesToImperial(calculationSubProducts);
+          }
+          
 
 
           if (calculationSubProducts && calculationSubProducts.length > 0) {
