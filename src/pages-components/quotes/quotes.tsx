@@ -362,7 +362,9 @@ const QuotesListPageWidget = ({
                           <div style={classes.selectedFilterContainer}>
                             <div style={classes.statusFilterContainer}>
                               <div style={classes.filterLabelStyle}>
-                                {t("sales.quote.customer")}
+                                {isPurchaseDocument
+                                  ? t("reports.supplier")
+                                  : t("productionFloor.customer")}
                               </div>
                               <GoMakeAutoComplate
                                 key={customerId?.id}

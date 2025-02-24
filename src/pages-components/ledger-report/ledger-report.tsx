@@ -9,8 +9,10 @@ import { useStyle } from "./style";
 import { CreateNewTransactionModal } from "./widgets/create-transaction-modal";
 import { HeaderTitle } from "@/widgets/header-title";
 import { useEffect } from "react";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 interface LedgerReportWidgetProps {
+  clientType: CLIENT_TYPE;
   customerId?: string;
   isFromCustomerCard?: boolean;
   autoShowCard?: boolean;
@@ -18,8 +20,8 @@ interface LedgerReportWidgetProps {
 const LedgerReportWidget = ({
   customerId,
   isFromCustomerCard = false,
-                              autoShowCard = false,
-
+  autoShowCard = false,
+  clientType,
 }: LedgerReportWidgetProps) => {
   const { classes } = useStyle();
   const {
@@ -58,7 +60,9 @@ const LedgerReportWidget = ({
     isFetching,
     erpAccountsList,
     getErpAccountsList,
-  } = useLedgerReport({ customerId });
+    supplierList,
+    isPurchaseReport,
+  } = useLedgerReport({ customerId, clientType });
 
   useEffect(() => {
     getErpAccountsList();
@@ -66,14 +70,18 @@ const LedgerReportWidget = ({
 
   useEffect(() => {
     if (autoShowCard && customerId) {
-      onClickShowCard()
+      onClickShowCard();
     }
   }, [autoShowCard, customerId]);
   return (
     <div style={classes.mainContainer}>
       {!isFromCustomerCard && (
         <HeaderTitle
-          title={t("tabs.ledgerReport")}
+          title={
+            isPurchaseReport
+              ? t("tabs.supplierLedger")
+              : t("tabs.customerLedger")
+          }
           marginTop={"0px"}
           marginBottom={"0px"}
         />
@@ -90,6 +98,8 @@ const LedgerReportWidget = ({
         toDate={toDate}
         customerId={customerId}
         isFetchingCustomers={isFetching}
+        isPurchaseReport={isPurchaseReport}
+        supplierList={supplierList}
       />
       <Divider />
       <LedgerReportButtonWidget

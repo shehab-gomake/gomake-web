@@ -14,7 +14,11 @@ import { getAndSetCustomerById } from "@/services/api-service/customers/customer
 import { useSetRecoilState } from "recoil";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetClientTypes } from "@/services/hooks";
-import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
+import {
+  CLIENT_TYPE,
+  CLIENT_TYPE_Id,
+  DEFAULT_VALUES,
+} from "@/pages/customers/enums";
 import { IconButton } from "@mui/material";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useDateFormat } from "@/hooks/use-date-format";
@@ -31,6 +35,7 @@ export interface FilterState {
 
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
+  clientType?: CLIENT_TYPE;
 }
 
 export const getDocumentTypeName = (t, transType: number): string => {
@@ -60,7 +65,10 @@ export const getDocumentTypeName = (t, transType: number): string => {
 
 const useTransactionJournalReport = ({
   reportType,
+  clientType,
 }: TransactionJournalReportWidgetProps) => {
+  const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
+
   const { alertFault, alertFaultGetData, alertSuccessGetData, alertSuccess } =
     useSnackBar();
   const { callApi } = useGomakeAxios();
@@ -235,6 +243,9 @@ const useTransactionJournalReport = ({
       {
         startDate: formattedStartDate,
         endDate: formattedEndDate,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       },
       true,
       null
@@ -274,6 +285,9 @@ const useTransactionJournalReport = ({
           reportType === EReportType.DailyPayments
             ? DocumentsTypeReportList.Payments
             : documentType?.id,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       }
     );
     if (res?.success) {
@@ -477,7 +491,9 @@ const useTransactionJournalReport = ({
       case EReportType.TransactionJournal:
         return t("tabs.transactionJournalReport");
       case EReportType.DailyPayments:
-        return t("tabs.dailyPaymentsReport");
+        return isPurchaseReport
+          ? t("tabs.paymentsReport")
+          : t("tabs.receiptsReport");
       case EReportType.AccountingTransaction:
         return t("tabs.accountingTransactionReport");
       case EReportType.AdjustmentsReport:
