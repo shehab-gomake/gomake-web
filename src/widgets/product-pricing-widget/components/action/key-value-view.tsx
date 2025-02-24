@@ -150,7 +150,7 @@ const KeyValueViewComponent = ({
             if (values && values.length > 0) {
                 if (values.length > 1) {
                     const formattedValues = values
-                        .map(item => item.replace(/\s+/g, '')) // Remove spaces within each item
+                        .map(item => item ? item.replace(/\s+/g, '') : "") // Remove spaces within each item
                         .join(' '); // Join items with a space between them
                     setValue(formattedValues)
                 }
