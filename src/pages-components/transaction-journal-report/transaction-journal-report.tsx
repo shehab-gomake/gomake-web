@@ -11,7 +11,7 @@ import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { isValidCustomer } from "@/utils/helpers";
 import { AccountingTransactionReportHeader } from "./widgets/header-widget/acconting-header";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { useEffect, } from "react";
+import { useEffect } from "react";
 
 import CollapsibleTable from "./widgets/collapse-table";
 import { CreateNewTransactionModal } from "../ledger-report/widgets/create-transaction-modal";
@@ -20,10 +20,12 @@ import { GoMakeAutoComplate } from "@/components";
 
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
+  clientType?: CLIENT_TYPE;
 }
 
 const TransactionJournalReportWidget = ({
   reportType,
+  clientType = CLIENT_TYPE.CUSTOMER,
 }: TransactionJournalReportWidgetProps) => {
   const { classes } = useStyle();
   const {
@@ -78,7 +80,7 @@ const TransactionJournalReportWidget = ({
     erpAccountsList,
     getErpAccountsList,
     onClickDownloadMovingFiles,
-  } = useTransactionJournalReport({ reportType });
+  } = useTransactionJournalReport({ reportType, clientType });
 
   const isAccountingTransaction =
     reportType === EReportType.AccountingTransaction;
@@ -183,7 +185,7 @@ const TransactionJournalReportWidget = ({
       {!isAccountingTransaction && !isAdjustmentsReport && (
         <div style={{ width: "100%", height: "100%" }}>
           {documentType?.id !== DocumentsTypeReportList.Payments &&
-            reportType !== EReportType.DailyPayments ? (
+          reportType !== EReportType.DailyPayments ? (
             <div>
               {showTable &&
                 dataTable?.map((item) => {
