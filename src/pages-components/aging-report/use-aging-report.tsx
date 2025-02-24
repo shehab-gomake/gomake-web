@@ -252,6 +252,9 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           expendedReport: expendedReport,
           orderBy, //balanceDue  cardCode    cardName
           isDescOrder,
+          cardType: isPurchaseReport
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER,
         }
       );
       if (res?.success) {
@@ -298,6 +301,9 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           expendedReport: detailedReport,
           orderBy,
           isDescOrder,
+          cardType: isPurchaseReport
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER,
         },
       },
       true,
@@ -348,6 +354,9 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
           agentId: agent?.id,
           byCreationDate: byReferenceDate,
           expendedReport: detailedReport,
+          cardType: isPurchaseReport
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER,
         },
       },
       true,
@@ -358,7 +367,9 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     const downloadLink = document.createElement("a");
     const link = URL?.createObjectURL(res.data);
     downloadLink.href = link;
-    downloadLink.download = `aging report.xlsx`;
+    downloadLink.download = isPurchaseReport
+      ? `supplier aging.xlsx`
+      : `customer aging.xlsx`;
     downloadLink.click();
   }, [
     fromDate,

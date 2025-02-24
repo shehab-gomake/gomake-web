@@ -222,6 +222,9 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
         agentId: agent?.id,
         reportType: documentType ? documentType?.id : ReportsType.allInvoices,
         displayByGroup: displayByGroups,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       }
     );
     if (res?.success) {
@@ -265,6 +268,9 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
         agentId: agent?.id,
         reportType: documentType ? documentType?.id : ReportsType.allInvoices,
         displayByGroup: displayByGroups,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       }
     );
     if (res?.success) {
@@ -294,6 +300,9 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
         agentId: agent?.id,
         reportType: documentType ? documentType?.id : ReportsType.allInvoices,
         displayByGroup: displayByGroups,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       },
       true,
       null
@@ -306,7 +315,9 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
       const linkSource = `data:${contentType};base64,${base64Data}`;
       const downloadLink = document.createElement("a");
       downloadLink.href = linkSource;
-      downloadLink.download = "SalesReport.xlsx";
+      downloadLink.download = isPurchaseReport
+        ? "PurchasesReport"
+        : "SalesReport.xlsx";
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);

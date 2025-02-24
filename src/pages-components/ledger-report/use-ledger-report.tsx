@@ -204,7 +204,10 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
-
+    if (!customerId && !customer) {
+      alertFault("reports.pleaseSelectCustomer");
+      return;
+    }
     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
     const res = await callApi(
@@ -215,6 +218,9 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
         startDate: formattedStartDate,
         endDate: formattedEndDate,
         isExtended: isExtended,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       },
       true,
       null
@@ -233,6 +239,7 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
     });
     anchor.click();
   };
+
   const getAgingReportFilter = useCallback(async () => {
     if (!fromDate || !toDate) {
       alertFault("alerts.pleaseEnsureDatesSelected");
@@ -249,6 +256,9 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
         endDate: formattedEndDate,
         clientId: customerId ? customerId : customer?.id,
         isExtended: isExtended,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       }
     );
     if (res?.success) {

@@ -243,6 +243,9 @@ const useTransactionJournalReport = ({
       {
         startDate: formattedStartDate,
         endDate: formattedEndDate,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       },
       true,
       null
@@ -282,6 +285,9 @@ const useTransactionJournalReport = ({
           reportType === EReportType.DailyPayments
             ? DocumentsTypeReportList.Payments
             : documentType?.id,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       }
     );
     if (res?.success) {

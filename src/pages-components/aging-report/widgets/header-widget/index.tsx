@@ -7,7 +7,6 @@ import {
 } from "./use-header-widget";
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
-import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 const AgingReportHeaderWidget = ({
   agent,
@@ -61,7 +60,11 @@ const AgingReportHeaderWidget = ({
         />
       </div>
       <div style={classes.date2FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+        <h3 style={classes.filterLabelStyle}>
+          {isPurchaseReport
+            ? t("reports.supplier")
+            : t("productionFloor.customer")}
+        </h3>
         <GoMakeAutoComplate
           defaultFiltering={isPurchaseReport ? true : false}
           key={customer?.id}

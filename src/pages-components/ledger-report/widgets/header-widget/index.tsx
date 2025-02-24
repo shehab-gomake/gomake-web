@@ -29,7 +29,11 @@ const LedgerReportHeaderWidget = ({
     <div style={classes.mainContainer}>
       {!customerId && (
         <div style={classes.date2FilterContainer}>
-          <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+          <h3 style={classes.filterLabelStyle}>
+            {isPurchaseReport
+              ? t("reports.supplier")
+              : t("sales.quote.customer")}
+          </h3>
           <GoMakeAutoComplate
             key={customer?.id}
             getOptionLabel={(option: any) => `${option.name}`}
