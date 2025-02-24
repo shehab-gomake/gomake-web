@@ -174,11 +174,13 @@ const useInputUnit = () => {
     };
 
     const convertUnitValue = (unit: EMeasurementUnits, value: number) => {
-        return units[unit].imperialRatio * value
+        const res = units[unit].imperialRatio * value
+        return isNaN(res) ? null : res;
     }
 
     const restoreUnitValue = (unit: EMeasurementUnits, value: number) => {
-        return value /  units[unit].imperialRatio
+        const res = value / units[unit].imperialRatio ;
+        return isNaN(res) ? null : res;
     }
     return {
         convertUnitValue,
