@@ -3577,13 +3577,31 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                     param.valuesConfigs = [];
                     param.isHidden = false;
+                    console.log("parameterValue", parameterValue)
                     paramMaterialValues?.forEach((val) => {
+                      let isHiddenValue = false;
+                      let isDefault = false;
+                      let isDeleted = false;
+
+                      if (param?.additionalValuesConfigs?.length > 0) {
+                        param.additionalValuesConfigs.forEach((additionalConfig) => {
+                          if (parameterValue?.id === additionalConfig?.key) {
+                            additionalConfig.valuesConfigs.forEach((config) => {
+                              if (config.materialValueIds[0]?.valueId === val.valueId) {
+                                isHiddenValue = config.isHidden; // Set isHidden from valuesConfigs
+                                isDefault = config.isDefault;
+                                isDeleted = config.isDeleted;
+                              }
+                            });
+                          }
+                        });
+                      }
                       param.valuesConfigs.push({
                         id: val.valueId,
                         activateAction: false,
-                        isDefault: false,
-                        isDeleted: false,
-                        isHidden: false,
+                        isDefault: isDefault,
+                        isDeleted: isDeleted,
+                        isHidden: isHiddenValue, // Use the determined isHidden value
                         materialValueIds: null,
                         selectedParameterValues: null,
                         updateName: val.value,
@@ -3592,6 +3610,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         currency: val?.currency,
                       });
                     });
+                    // paramMaterialValues?.forEach((val) => {
+                    //   param.valuesConfigs.push({
+                    //     id: val.valueId,
+                    //     activateAction: false,
+                    //     isDefault: false,
+                    //     isDeleted: false,
+                    //     isHidden: false,
+                    //     materialValueIds: null,
+                    //     selectedParameterValues: null,
+                    //     updateName: val.value,
+                    //     values: [val.valueId],
+                    //     additionalAttribute: val?.additionalAttribute,
+                    //     currency: val?.currency,
+                    //   });
+                    // });
                     param.valuesConfigs = param.valuesConfigs.filter(
                       (x) => x.values && x.values.length > 0
                     );
@@ -3661,17 +3694,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
                 );
               }
-
+              console.log("relatedParameter", relatedParameter)
               // Recursively add related parameters for the newly added parameter
-              addRelatedParametersWithDefaultValues(
-                relatedParameter.id,
-                sectionId,
-                subSectionId,
-                parameters,
-                productTemplateCopy,
-                actionIndex,
-                subSectionType
-              );
+              // addRelatedParametersWithDefaultValues(
+              //   relatedParameter.id,
+              //   sectionId,
+              //   subSectionId,
+              //   parameters,
+              //   productTemplateCopy,
+              //   actionIndex,
+              //   subSectionType
+              // );
             }
           } else if (
             relatedParameter.materialPath &&
@@ -4249,7 +4282,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 compareStrings(x, materialPath)
               );
               let allMaterialsCopy = cloneDeep(allMaterials);
-              let paramMaterialValues = [];
+              let paramMaterialValues: any = [];
               if (index > 0) {
                 allMaterialsCopy = allMaterialsCopy?.find((x) =>
                   compareStrings(x.pathName, param.materialPath[0])
@@ -4341,12 +4374,29 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 return [...valuesConfigs, ...updatedValuesConfigs];
               };
               paramMaterialValues?.forEach((val) => {
+                let isHiddenValue = false;
+                let isDefault = false;
+                let isDeleted = false;
+
+                if (param?.additionalValuesConfigs?.length > 0) {
+                  param.additionalValuesConfigs.forEach((additionalConfig) => {
+                    if (data?.valueIds === additionalConfig?.key) {
+                      additionalConfig.valuesConfigs.forEach((config) => {
+                        if (config.materialValueIds[0]?.valueId === val.valueId && paramMaterialValues?.pathName === config?.path) {
+                          isHiddenValue = config.isHidden; // Set isHidden from valuesConfigs
+                          isDefault = config.isDefault;
+                          isDeleted = config.isDeleted;
+                        }
+                      });
+                    }
+                  });
+                }
                 param.valuesConfigs.push({
                   id: val.valueId,
                   activateAction: false,
-                  isDefault: false,
-                  isDeleted: false,
-                  isHidden: false,
+                  isDefault: isDefault,
+                  isDeleted: isDeleted,
+                  isHidden: isHiddenValue, // Use the determined isHidden value
                   materialValueIds: null,
                   selectedParameterValues: null,
                   updateName: val.value,
@@ -4358,22 +4408,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               param.valuesConfigs = param.valuesConfigs.filter(
                 (x) => x.values && x.values.length > 0
               );
-              param.valuesConfigs = mergeAndFormatValuesConfigs(
-                param.valuesConfigs,
-                param.additionalValuesConfigs,
-                data
-              );
-              // if (param?.factor != null && param?.factor != undefined) {
-              //   param.valuesConfigs = param.valuesConfigs.map(config => {
-              //     const newValue = (parseFloat(config.updateName) * param.factor).toFixed(3);
-              //     return {
-              //       ...config,
-              //       updateName: newValue.toString(),
-              //       values: [newValue.toString()],
-              //       id: newValue.toString(),
-              //     };
-              //   });
-              // }
+              // param.valuesConfigs = mergeAndFormatValuesConfigs(
+              //   param.valuesConfigs,
+              //   param.additionalValuesConfigs,
+              //   data
+              // );
+
               if (
                 param?.valuesConfigs &&
                 (param.valuesConfigs = param.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
