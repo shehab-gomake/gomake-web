@@ -14,6 +14,7 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { TableSortingMenu } from "../table-sorting-menu";
 
 import { useStyle } from "./style";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const SettingQuoteMenu = ({
   handleClose,
@@ -30,6 +31,7 @@ const SettingQuoteMenu = ({
   sortDocumentItems,
   updateDiscountType,
   updateDocumentPreference,
+  documentType
 }) => {
   const { classes } = useStyle();
   const {
@@ -85,27 +87,29 @@ const SettingQuoteMenu = ({
           </div>
 
           <Divider />
-          <div
-            onClick={handleAutomaticDiscount}
-            className="table-sorting"
-            style={classes.menuTabStyle}
-          >
-            {quoteStateValue?.discountType !== null ? (
-              <div style={classes.selectedTabStyle}>
-                <div style={classes.mainTabContainer}>
-                  {t("sales.quote.automaticDiscount")}
-                  <DotIcon />
+          {(documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && <>
+            <div
+              onClick={handleAutomaticDiscount}
+              className="table-sorting"
+              style={classes.menuTabStyle}
+            >
+              {quoteStateValue?.discountType !== null ? (
+                <div style={classes.selectedTabStyle}>
+                  <div style={classes.mainTabContainer}>
+                    {t("sales.quote.automaticDiscount")}
+                    <DotIcon />
+                  </div>
+                  <div style={classes.selectedTabContainer}>
+                    <Check style={{ width: 16, height: 16 }} />{" "}
+                    {_renderSelectionType(quoteStateValue?.discountType)}
+                  </div>
                 </div>
-                <div style={classes.selectedTabContainer}>
-                  <Check style={{ width: 16, height: 16 }} />{" "}
-                  {_renderSelectionType(quoteStateValue?.discountType)}
-                </div>
-              </div>
-            ) : (
-              t("sales.quote.automaticDiscount")
-            )}
-          </div>
-          <Divider />
+              ) : (
+                t("sales.quote.automaticDiscount")
+              )}
+            </div>
+            <Divider />
+          </>}
           {switchConfigs.map((config, index) => (
             <React.Fragment key={index}>
               <div style={classes.menuRowStyle}>

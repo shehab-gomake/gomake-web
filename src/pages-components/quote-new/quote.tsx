@@ -6,11 +6,7 @@ import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
-import {
-  GoMakeAlertModal,
-  GoMakeAutoComplate,
-  GoMakeDeleteModal,
-} from "@/components";
+import { GoMakeAlertModal, GoMakeAutoComplate, GoMakeDeleteModal, } from "@/components";
 import { HeaderTitle } from "@/widgets";
 import { ArrowDownNewIcon, BudgetIcon, SettingNewIcon } from "@/icons";
 import { useQuoteNew } from "./use-quote";
@@ -290,10 +286,10 @@ const QuoteNewPageWidget = ({
     isPrePaymentPage: isPrePaymentPage,
   });
   if (documentType == DOCUMENT_TYPE.quote) {
-    const {} = useQuotesSignalr({ getQuote });
+    const { } = useQuotesSignalr({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const {} = useOrdersSignalr({ getQuote });
+    const { } = useOrdersSignalr({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -352,7 +348,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const {} = useGoMakeTour(quoteSteps, []);
+  const { } = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -396,8 +392,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -466,7 +462,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                      quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -564,11 +560,8 @@ const QuoteNewPageWidget = ({
                       )}
                     </LocalizationProvider>
                   </ThemeProvider>
-                  <Stack flex={1} direction={"row"} justifyContent={"flex-end"}>
-                    <ClientBalanceComponent
-                      clientBalance={quoteState.clientBalance}
-                      clientId={quoteState?.client?.id}
-                    />
+                  <Stack flex={1} direction={'row'} justifyContent={'flex-end'}>
+                    <ClientBalanceComponent clientBalance={quoteState.clientBalance} clientId={quoteState?.client?.id} />
                   </Stack>
                 </div>
               )}
@@ -825,6 +818,7 @@ const QuoteNewPageWidget = ({
         sortDocumentItems={sortDocumentItems}
         updateDiscountType={updateDiscountType}
         updateDocumentPreference={updateDocumentPreference}
+        documentType={documentType}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}
@@ -912,18 +906,18 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? moveOrderToReady
             : () => {
-                if (isSelectedCLoseAsDeliveryNote) {
-                  navigate(
-                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                  );
-                } else {
-                  const path =
-                    documentType === DOCUMENT_TYPE.order
-                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                  navigate(path);
-                }
+              if (isSelectedCLoseAsDeliveryNote) {
+                navigate(
+                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                );
+              } else {
+                const path =
+                  documentType === DOCUMENT_TYPE.order
+                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                navigate(path);
               }
+            }
         }
       >
         <div

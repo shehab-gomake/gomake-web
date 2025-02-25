@@ -87,6 +87,7 @@ const CharacterDetails = ({
         isHaveJobName={true}
         jobName={jobName}
         setJobName={setJobName}
+        documentType={documentType}
 
 
       />
