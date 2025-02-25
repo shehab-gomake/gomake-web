@@ -3416,6 +3416,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     );
     // Check if the parameter has related parameters
     if (parentParameter && parentParameter.relatedParameters) {
+      if (parentParameter?.code === "Capsulation") {
+        debugger;
+      }
       parentParameter.relatedParameters.forEach((relatedParam) => {
         // Find the related parameter in the subSection
         const relatedParameter = subSection?.parameters.find(
@@ -3512,17 +3515,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     x.actionIndex === actionIndex &&
                     x.materialPath?.find((y) => compareStrings(y, materialPath))
                 );
-                if (materialRelatedParameters?.length > 0) {
-                  parameters = parameters.filter((subProduct) => {
-                    if (subProduct.actionIndex !== actionIndex) {
-                      return true;
-                    }
-                    return !materialRelatedParameters.some(
-                      (materialParameter) =>
-                        materialParameter.id === subProduct.parameterId
-                    );
-                  });
-                }
+                // if (materialRelatedParameters?.length > 0) {
+                //   parameters = parameters.filter((subProduct) => {
+                //     if (subProduct.actionIndex !== actionIndex) {
+                //       return true;
+                //     }
+                //     return !materialRelatedParameters.some(
+                //       (materialParameter) =>
+                //         materialParameter.id === subProduct.parameterId
+                //     );
+                //   });
+                // }
 
                 materialRelatedParameters?.forEach((param) => {
                   if (param.materialPath && param.materialPath.length > 0) {
@@ -3577,7 +3580,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                     param.valuesConfigs = [];
                     param.isHidden = false;
-                    console.log("parameterValue", parameterValue)
                     paramMaterialValues?.forEach((val) => {
                       let isHiddenValue = false;
                       let isDefault = false;
@@ -3696,15 +3698,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
               console.log("relatedParameter", relatedParameter)
               // Recursively add related parameters for the newly added parameter
-              // addRelatedParametersWithDefaultValues(
-              //   relatedParameter.id,
-              //   sectionId,
-              //   subSectionId,
-              //   parameters,
-              //   productTemplateCopy,
-              //   actionIndex,
-              //   subSectionType
-              // );
+              addRelatedParametersWithDefaultValues(
+                relatedParameter.id,
+                sectionId,
+                subSectionId,
+                parameters,
+                productTemplateCopy,
+                actionIndex,
+                subSectionType
+              );
             }
           } else if (
             relatedParameter.materialPath &&
