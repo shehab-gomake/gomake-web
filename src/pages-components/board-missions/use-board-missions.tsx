@@ -37,7 +37,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { GomakeTextInput } from "@/components";
-import {useJobsTableSocketIo} from "@/hooks/socket-io/use-jobs-table-socket-io";
+import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
 
 type StatusOption = {
   label: string;
@@ -115,7 +115,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  const {} = useJobsTableSocketIo(()=> {getAllData(isPurchaseJobs, false).then()})
+  const {} = useJobsTableSocketIo(() => {
+    getAllData(isPurchaseJobs, false).then();
+  });
 
   const {
     customer,
@@ -362,6 +364,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
     if (isNotFilteredData) {
       getAllData(isPurchaseJobs, true);
+      setHasFetchedQuery(null);
     } else if (hasFetchedQuery !== serializedQuery) {
       getAllData(isPurchaseJobs, false);
       setHasFetchedQuery(serializedQuery); // Mark this query as fetched
