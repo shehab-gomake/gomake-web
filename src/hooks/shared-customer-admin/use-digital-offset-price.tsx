@@ -3416,9 +3416,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     );
     // Check if the parameter has related parameters
     if (parentParameter && parentParameter.relatedParameters) {
-      if (parentParameter?.code === "Capsulation") {
-        debugger;
-      }
       parentParameter.relatedParameters.forEach((relatedParam) => {
         // Find the related parameter in the subSection
         const relatedParameter = subSection?.parameters.find(
@@ -3696,7 +3693,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
                 );
               }
-              console.log("relatedParameter", relatedParameter)
               // Recursively add related parameters for the newly added parameter
               addRelatedParametersWithDefaultValues(
                 relatedParameter.id,
