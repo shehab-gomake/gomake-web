@@ -161,7 +161,13 @@ const useStyle = (isQuoteConfirmation) => {
       },
       createdByContainer: {
         ...FONT_FAMILY.Lexend(400, 16),
-          color: "#667085",
+        color: "#667085",
+      },
+      inputLbl: {
+        ...FONT_FAMILY.Lexend(400, 14),
+        display: "flex",
+        alignItems: "center",
+        width: "max-content",
       },
     };
   }, [isQuoteConfirmation, theme]);
