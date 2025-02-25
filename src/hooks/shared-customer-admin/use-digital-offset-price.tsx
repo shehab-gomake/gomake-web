@@ -5205,6 +5205,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         productType: productTemplate?.productType,
         templateId: productTemplate?.templateId,
         totalPrice: sliderCurrentProductItemValueTotalPrice || 0,
+        isAddOrEdit: true,
       },
       false
     );
