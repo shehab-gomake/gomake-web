@@ -115,10 +115,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  const {} = useJobsTableSocketIo(() => {
-    getAllData(isPurchaseJobs, false).then();
-  });
-
+  
   const {
     customer,
     supplierList,
@@ -393,6 +390,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return await getAllBoardMissions(isClear);
     }
   };
+  const {} = useJobsTableSocketIo(isPurchaseJobs,getAllData);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState([]);
 
@@ -594,42 +592,34 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             pageSize: pageSize,
           }
           : {
-            clientId: customer?.id || router?.query?.clientId,
-            agentId: agent?.id || router?.query?.agentId,
+            clientId: router?.query?.clientId || customer?.id ,
+            agentId: router?.query?.agentId || agent?.id ,
             search:
                 finalPatternSearch !== null &&
                 finalPatternSearch !== undefined &&
                 finalPatternSearch !== ""
                     ? finalPatternSearch
                     : currentFinalPatternSearch,
-
             fromDate:
-                (fromDate && GetDateFormat(fromDate)) ||
-                currentFormattedFromDate,
+                currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
             toDate:
-                (toDate && GetDateFormat(toDate)) || currentFormattedToDate,
-
+                currentFormattedToDate || (toDate && GetDateFormat(toDate)),
             fromDueDate:
-                (fromDueDate && GetDateFormat(fromDueDate)) ||
-                currentFormattedFromDueDate,
+                currentFormattedFromDueDate || (fromDueDate && GetDateFormat(fromDueDate)),
             toDueDate:
-                (toDueDate && GetDateFormat(toDueDate)) ||
-                currentFormattedToDueDate,
+                currentFormattedToDueDate || (toDueDate && GetDateFormat(toDueDate)),
 
             fromReadyDate:
-                (fromReadyDate && GetDateFormat(fromReadyDate)) ||
-                currentFormattedFromReadyDate,
+                currentFormattedFromReadyDate || (fromReadyDate && GetDateFormat(fromReadyDate)),
             toReadyDate:
-                (toReadyDate && GetDateFormat(toReadyDate)) ||
-                currentFormattedToReadyDate,
+                currentFormattedToReadyDate ||(toReadyDate && GetDateFormat(toReadyDate)),
             productsIds: currentProductsIds,
-            productionStatus: status?.value || currentProductionStatus,
-            orderStatus: orderStatus?.value || currentOrderStatus,
+            productionStatus: currentProductionStatus || status?.value,
+            orderStatus: currentOrderStatus || orderStatus?.value,
             pageNumber: pageNumber || currentPageNumber,
             pageSize: pageSize,
             orderNumber: router?.query?.orderNumber,
           };
-      console.log(`Get data with isClear = {${isClear}}`,data)
       await setBoardMissionsFiltersApi(
         callApi,
         callBack, 
