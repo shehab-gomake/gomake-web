@@ -825,6 +825,7 @@ const QuoteNewPageWidget = ({
         sortDocumentItems={sortDocumentItems}
         updateDiscountType={updateDiscountType}
         updateDocumentPreference={updateDocumentPreference}
+        documentType={documentType}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}
