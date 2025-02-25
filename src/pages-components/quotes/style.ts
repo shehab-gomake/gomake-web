@@ -203,6 +203,12 @@ const useStyle = () => {
         height: "100%",
         borderRadius: "8px",
       },
+      inputLbl: {
+        ...FONT_FAMILY.Lexend(400, 14),
+        display: "flex",
+        alignItems: "center",
+        width: "max-content",
+      },
     };
   }, [i18next.language, t, theme]);
   return {

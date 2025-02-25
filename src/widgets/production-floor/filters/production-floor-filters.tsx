@@ -28,6 +28,8 @@ import { useRouter } from "next/router";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
+import {useRecoilState} from "recoil";
+import {filterGroupsState} from "@/widgets/production-floor/state/filter-group";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -223,11 +225,13 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 });
 
-const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups ,connectionId}) => {
+const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
   const { classes } = useStyle();
   const { push } = useRouter();
   const { tagsList } = filtersInputs();
   const [containerWidth, setContainerWidth] = useState(0);
+  const [filterGroups, setFilterGroups] = useRecoilState<IFilterGroupsList[]>(filterGroupsState);
+
   const {
     t,
     dir,
@@ -317,6 +321,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups ,connecti
       setHiddenFilterGroups(hidden);
     }
   }, [filterGroups, containerWidth]);
+
 
   const getMissionsList = useCallback(() => {
     return missionsList;
@@ -426,7 +431,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups ,connecti
         {visibleFilterGroups?.map((group, index) => (
           <CustomGroupComponent
             dir={dir}
-            key={index}
+            key={'visibleGroup' + index}
             group={group}
             onClick={() => handleSelectGroup(group?.id)}
             onClickDelete={(event) => {
@@ -467,7 +472,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups ,connecti
                 {hiddenFilterGroups?.map((group, index) => (
                   <CustomGroupComponent
                     dir={dir}
-                    key={index}
+                    key={'hiddenGroup' + index}
                     group={group}
                     onClick={() => handleSelectGroup(group?.id)}
                     onClickDelete={(event) => {

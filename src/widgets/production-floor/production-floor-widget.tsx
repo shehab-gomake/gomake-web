@@ -96,7 +96,6 @@ const ProductionFloorWidget = () => {
       />
       {view !== EProductionFloorView.DASHBOARD && (
         <ProductionFloorFilters
-          filterGroups={filterGroups}
           getStationFilterGroups={getStationFilterGroups}
           connectionId={connectionId}
         />

@@ -6,7 +6,11 @@ import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
-import { GoMakeAlertModal, GoMakeAutoComplate, GoMakeDeleteModal, } from "@/components";
+import {
+  GoMakeAlertModal,
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+} from "@/components";
 import { HeaderTitle } from "@/widgets";
 import { ArrowDownNewIcon, BudgetIcon, SettingNewIcon } from "@/icons";
 import { useQuoteNew } from "./use-quote";
@@ -52,6 +56,7 @@ import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicat
 import { useOrdersSignalr, useQuotesSignalr } from "@/hooks";
 import Stack from "@mui/material/Stack";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
+import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -277,16 +282,18 @@ const QuoteNewPageWidget = ({
     confirmCreateDocument,
     onClickConfirmCreateDocument,
     onClickCloseConfirmCreateDocument,
+    isMoveToReady,
+    handleCheckboxChange,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
   if (documentType == DOCUMENT_TYPE.quote) {
-    const { } = useQuotesSignalr({ getQuote });
+    const {} = useQuotesSignalr({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const { } = useOrdersSignalr({ getQuote });
+    const {} = useOrdersSignalr({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -345,7 +352,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const { } = useGoMakeTour(quoteSteps, []);
+  const {} = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -389,8 +396,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -459,7 +466,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                      quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -557,8 +564,11 @@ const QuoteNewPageWidget = ({
                       )}
                     </LocalizationProvider>
                   </ThemeProvider>
-                  <Stack flex={1} direction={'row'} justifyContent={'flex-end'}>
-                    <ClientBalanceComponent clientBalance={quoteState.clientBalance} clientId={quoteState?.client?.id} />
+                  <Stack flex={1} direction={"row"} justifyContent={"flex-end"}>
+                    <ClientBalanceComponent
+                      clientBalance={quoteState.clientBalance}
+                      clientId={quoteState?.client?.id}
+                    />
                   </Stack>
                 </div>
               )}
@@ -885,27 +895,51 @@ const QuoteNewPageWidget = ({
         }}
       />
       <GoMakeDeleteModal
-        modalType={ModalType.EDIT}
-        title={"sales.moveOrderToReadyWhenCloseOrderTitle"}
-        yesBtn={t("sales.moveToReadyAndCloseOrder")}
-        cancelBtn={t("sales.closeOrderWithoutMoveToReady")}
+        modalType={ModalType.WARNING}
+        title={
+          isSelectedCLoseAsDeliveryNote
+            ? "customers.modal.closeOrderAsDeliveryNote"
+            : "customers.modal.closeOrderAsInvoice"
+        }
+        subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
+        yesBtn={
+          isSelectedCLoseAsDeliveryNote
+            ? t("customers.modal.closeAsDeliveryNote")
+            : t("customers.modal.closeAsInvoice")
+        }
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}
-        onClickDelete={moveOrderToReady}
-        onClickCancel={() => {
-          if (isSelectedCLoseAsDeliveryNote) {
-            navigate(
-              `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-            );
-          } else {
-            const path =
-              documentType === DOCUMENT_TYPE.order
-                ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-            navigate(path);
-          }
-        }}
-      />
+        onClickDelete={
+          isMoveToReady
+            ? moveOrderToReady
+            : () => {
+                if (isSelectedCLoseAsDeliveryNote) {
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  );
+                } else {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                }
+              }
+        }
+      >
+        <div
+          style={{
+            ...classes.inputLbl,
+            color: isMoveToReady ? "black" : "#475467",
+          }}
+        >
+          <PrimaryCheckbox
+            checked={isMoveToReady}
+            onChange={handleCheckboxChange}
+          />
+          {t("sales.moveToReadyAndCloseOrder")}
+        </div>
+      </GoMakeDeleteModal>
       <NewItemNotesModal
         openModal={openNewItemNotesModal}
         onClose={onClickCloseNewItemNotesModal}
