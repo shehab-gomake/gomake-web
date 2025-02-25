@@ -4404,11 +4404,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               param.valuesConfigs = param.valuesConfigs.filter(
                 (x) => x.values && x.values.length > 0
               );
-              // param.valuesConfigs = mergeAndFormatValuesConfigs(
-              //   param.valuesConfigs,
-              //   param.additionalValuesConfigs,
-              //   data
-              // );
+              param.valuesConfigs = mergeAndFormatValuesConfigs(
+                param.valuesConfigs,
+                param.additionalValuesConfigs,
+                data
+              );
 
               if (
                 param?.valuesConfigs &&
