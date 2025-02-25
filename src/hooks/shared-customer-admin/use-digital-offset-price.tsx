@@ -3986,7 +3986,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           item.subSectionId === subSectionId &&
           item.actionIndex === actionIndex
       );
-
       const productTemplateCopy = cloneDeep(productTemplate);
       const section = productTemplateCopy.sections.find(
         (section) => section.id === sectionId
@@ -4000,6 +3999,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSectionParameter) {
         subSectionParameter.isHidden = false;
       }
+      if (subSectionParameter?.code === "BothsideSameprintcolor" && data.values === "true") {
+        temp.splice(findIndex, 1);
+        removeRelatedParametersFromSubProducts(
+          parameterId,
+          sectionId,
+          subSectionId,
+          temp,
+          subSectionParameter.actionIndex
+        );
+
+      }
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
         temp[findIndex] = {
@@ -4007,6 +4017,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           values: [data.values],
           valueIds: [data.valueIds],
         };
+
         if (valuesArray.length > 0 && valuesArray[0] !== "false") {
           temp[findIndex] = {
             ...temp[findIndex],
@@ -4022,6 +4033,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             actionIndex,
             subSectionType
           );
+
         } else {
           temp.splice(findIndex, 1);
           removeRelatedParametersFromSubProducts(
