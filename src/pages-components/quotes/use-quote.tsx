@@ -77,7 +77,7 @@ import { ICard } from "./widgets/statistics-section/statistics-sections";
 import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery-status-button";
 import { DocumentDeliveryStatuses } from "./widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
 import { EMessageStatus } from "@/enums/document-type-enum";
-import {useDocumentsTableSocketIo} from "@/hooks/socket-io/use-documents-table-socket-io";
+import { useDocumentsTableSocketIo } from "@/hooks/socket-io/use-documents-table-socket-io";
 
 interface Query {
   customerId?: string;
@@ -696,8 +696,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         });
       }
     };
-    if(!router.isReady){
-      return
+    if (!router.isReady) {
+      return;
     }
     const currentPageNumber = router.query.pageNumber;
     const currentStatusId = router.query.statusId;
@@ -857,7 +857,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   ]);
 
   // const {} = useDocumentsSignalR({ getAllQuotes, docType });
-  const {} = useDocumentsTableSocketIo(docType, getAllQuotes)
+  const {} = useDocumentsTableSocketIo(docType, getAllQuotes);
   const getAllQuotesInitial = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -1149,8 +1149,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         });
       }
     };
-    if(!router.isReady){
-      return
+    if (!router.isReady) {
+      return;
     }
     if (isReceipt) {
       await getAllReceiptsApi(callApi, callBack, {
@@ -1293,6 +1293,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (!isFromHomePage) {
       if (isNotFilteredData) {
         getAllQuotesInitial();
+        setHasFetchedQuery(null);
       } else if (hasFetchedQuery !== serializedQuery) {
         getAllQuotes();
         setHasFetchedQuery(serializedQuery); // Mark this query as fetched
@@ -1608,8 +1609,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         setAllDocuments(mapData);
       }
     };
-    if(!router.isReady){
-      return
+    if (!router.isReady) {
+      return;
     }
     selectedClient?.id &&
       (await getAllDocumentsApi(callApi, callBack, {
@@ -2766,7 +2767,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isPurchaseDocument,
     supplierList,
     isSendToClient,
-    onClickOpenCustomerModal
+    onClickOpenCustomerModal,
   };
 };
 
