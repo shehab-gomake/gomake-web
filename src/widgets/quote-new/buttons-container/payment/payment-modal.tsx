@@ -11,6 +11,7 @@ import { FooterSection } from "./payment-methods-tabs/footer-section";
 import { usePaymentsTable } from "../../receipts-table/use-payments-table";
 import { ErpAccountType } from "../states";
 import { useEffect } from "react";
+import { SupplierCreditCardTab } from "./payment-methods-tabs/supplier-credit-card-tab";
 
 interface IPaymentModalProps {
   openModal: boolean;
@@ -51,7 +52,7 @@ const PaymentModal = ({
     {
       title: t("payment.creditCard"),
       component: isOutgoingPayments ? (
-        <span>Coming soon ...</span>
+        <SupplierCreditCardTab />
       ) : (
         <CreditCardTab
           firstWidget={firstWidget}

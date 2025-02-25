@@ -133,13 +133,19 @@ const BusinessNewWidget = ({
     <>
       <div style={{ ...classes.businessContainerStyle, marginBottom: "10px" }}>
         <AutoCompleteUpdatedValue
-          label={t("sales.quote.businessName")}
+          label={
+            isPurchaseDocument
+              ? t("sales.quote.supplierName")
+              : t("sales.quote.businessName")
+          }
           defaultFiltering={isPurchaseDocument ? true : false}
           value={
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
               : quoteStateValue?.client?.name
               ? quoteStateValue?.client?.name
+              : isPurchaseDocument
+              ? t("sales.quote.chooseSupplier")
               : t("sales.quote.selectBusinessName")
           }
           options={isPurchaseDocument ? mappedSuppliers : mappedCustomers}
@@ -187,7 +193,11 @@ const BusinessNewWidget = ({
               ? `${quoteConfirm?.client?.code}`
               : `${quoteStateValue?.client?.code}`
           }
-          label={t("sales.quote.businessCode")}
+          label={
+            isPurchaseDocument
+              ? t("suppliers.supplierCode")
+              : t("sales.quote.businessCode")
+          }
           onBlur={onBlurBusinessCode}
           setIsUpdate={
             isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode
