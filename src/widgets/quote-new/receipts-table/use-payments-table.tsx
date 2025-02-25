@@ -222,13 +222,10 @@ const usePaymentsTable = () => {
       creditCardTotal: isOutgoingPayments
         ? Number(totalSupplierCreditCard)
         : creditCardTotalValue,
-
-      //!here new
       creditCardAccount: supplierCreditCardState?.creditCardAccount,
-      creditCardDate: supplierCreditCardState?.creditCardDate,
+      creditCardTransactionDate:
+        supplierCreditCardState?.creditCardTransactionDate,
       creditCardReference: supplierCreditCardState?.creditCardReference,
-      //!here new
-
       receiptCreditCards: isSecondCreditCardEmpty
         ? transactionData
           ? [transactionData]

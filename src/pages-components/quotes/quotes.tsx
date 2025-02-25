@@ -206,6 +206,7 @@ const QuotesListPageWidget = ({
     isSendToClient,
     isReceipt,
     isSupplierPayments,
+    isPurchaseOrder,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -850,10 +851,18 @@ const QuotesListPageWidget = ({
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
         codeFlag={true}
-        typeClient={CLIENT_TYPE.CUSTOMER}
+        typeClient={
+          isPurchaseDocument && !isPurchaseOrder
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER
+        }
         isgetAllCustomers={false}
         openModal={showCustomerModal}
-        modalTitle={t("customers.modal.editTitle")}
+        modalTitle={
+          isPurchaseDocument && !isPurchaseOrder
+            ? t("suppliers.editModalTitle")
+            : t("customers.modal.editTitle")
+        }
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}

@@ -130,19 +130,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { errorColor } = useGomakeTheme();
   const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
 
-  const isPurchaseDocument =
-    docType === DOCUMENT_TYPE.purchaseOrder ||
-    docType === DOCUMENT_TYPE.purchaseInvoice ||
-    docType === DOCUMENT_TYPE.purchaseInvoiceRefund ||
-    docType === DOCUMENT_TYPE.supplierPayments;
-
-  const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
-    useCustomerDropDownList({
-      shouldRenderCustomersOnMount: !isPurchaseDocument,
-      shouldRenderSuppliersOnMount: isPurchaseDocument,
-    });
-
-  // const [patternSearch, setPatternSearch] = useState<any>(null);
   const [patternSearch, setPatternSearch] = useState<any>(
     router.query.finalPatternSearch || null
   );
@@ -223,6 +210,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isPurchaseInvoice = docType === DOCUMENT_TYPE.purchaseInvoice;
   const isPurchaseInvoiceRefund =
     docType === DOCUMENT_TYPE.purchaseInvoiceRefund;
+
+  const isPurchaseDocument =
+    isPurchaseOrder ||
+    isPurchaseInvoice ||
+    isPurchaseInvoiceRefund ||
+    isSupplierPayments;
+
+  const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
+    useCustomerDropDownList({
+      shouldRenderCustomersOnMount: !isPurchaseDocument,
+      shouldRenderSuppliersOnMount: isPurchaseDocument,
+    });
 
   const handleDocumentNumberChange = (event) => {
     setDocumentCloseNumber(event.target.value);
@@ -765,7 +764,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
     if (isReceipt || isSupplierPayments) {
       await getAllReceiptsApi(callApi, callBack, {
-        cardType: isReceipt ? CLIENT_TYPE.CUSTOMER : CLIENT_TYPE.SUPPLIER,
+        ...(!isReceipt && {
+          isOutgoingPayments: true,
+        }),
         clientId: currentCustomerId || customerId?.id,
         agentId: currentAgentId || agentId?.id,
         status: currentAccountingStatus?.value ?? accountingStatus?.value,
@@ -1176,7 +1177,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           pageNumber: page,
           pageSize: pageSize,
         },
-        cardType: isReceipt ? CLIENT_TYPE.CUSTOMER : CLIENT_TYPE.SUPPLIER,
+        ...(!isReceipt && {
+          isOutgoingPayments: true,
+        }),
       });
     } else {
       await getAllDocumentsApi(callApi, callBack, {
@@ -1359,22 +1362,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       ]
     : [
         t("sales.quote.createdDate"),
-        t("sales.quote.client"),
+        isSupplierPayments
+          ? t("sales.quote.supplier")
+          : t("sales.quote.client"),
         t("sales.quote.agent"),
         (() => {
           switch (docType) {
             case DOCUMENT_TYPE.order:
               return t("sales.quote.orderNumber");
-            // case DOCUMENT_TYPE.deliveryNote:
-            //   return t("documentingDesign.TableSetting.number");
-            // case DOCUMENT_TYPE.deliveryNoteRefund:
-            //   return t("sales.quote.deliveryNoteNumber");
-            // case DOCUMENT_TYPE.invoice:
-            //   return t("sales.quote.invoiceNumber");
-            // case DOCUMENT_TYPE.invoiceRefund:
-            //   return t("sales.quote.invoiceNumber");
-            // case DOCUMENT_TYPE.receipt:
-            //   return t("sales.quote.receiptNumber");
             default:
               return t("documentingDesign.TableSetting.number");
           }
@@ -2796,6 +2791,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     supplierList,
     isSendToClient,
     onClickOpenCustomerModal,
+    isPurchaseOrder,
   };
 };
 
