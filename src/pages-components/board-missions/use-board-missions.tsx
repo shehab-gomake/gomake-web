@@ -535,7 +535,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           alertFaultGetData();
         }
       };
-
+      if(!router.isReady){
+        return;
+      }
       const currentFinalPatternSearch = router.query.finalPatternSearch;
       const currentPageNumber = router.query.pageNumber;
       const currentProductionStatus = router.query.productionStatus;
@@ -585,52 +587,53 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         typeof currentToReadyDate === "string"
           ? GetDateFormat(new Date(currentToReadyDate))
           : undefined;
-
-      await setBoardMissionsFiltersApi(
-        callApi,
-        callBack,
-        isClear
+      const data =  isClear
           ? {
-              productsIds: [],
-              pageNumber: pageNumber,
-              pageSize: pageSize,
-            }
+            productsIds: [],
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+          }
           : {
-              clientId: customer?.id || router?.query?.clientId,
-              agentId: agent?.id || router?.query?.agentId,
-              search:
+            clientId: customer?.id || router?.query?.clientId,
+            agentId: agent?.id || router?.query?.agentId,
+            search:
                 finalPatternSearch !== null &&
                 finalPatternSearch !== undefined &&
                 finalPatternSearch !== ""
-                  ? finalPatternSearch
-                  : currentFinalPatternSearch,
+                    ? finalPatternSearch
+                    : currentFinalPatternSearch,
 
-              fromDate:
+            fromDate:
                 (fromDate && GetDateFormat(fromDate)) ||
                 currentFormattedFromDate,
-              toDate:
+            toDate:
                 (toDate && GetDateFormat(toDate)) || currentFormattedToDate,
 
-              fromDueDate:
+            fromDueDate:
                 (fromDueDate && GetDateFormat(fromDueDate)) ||
                 currentFormattedFromDueDate,
-              toDueDate:
+            toDueDate:
                 (toDueDate && GetDateFormat(toDueDate)) ||
                 currentFormattedToDueDate,
 
-              fromReadyDate:
+            fromReadyDate:
                 (fromReadyDate && GetDateFormat(fromReadyDate)) ||
                 currentFormattedFromReadyDate,
-              toReadyDate:
+            toReadyDate:
                 (toReadyDate && GetDateFormat(toReadyDate)) ||
                 currentFormattedToReadyDate,
-              productsIds: currentProductsIds,
-              productionStatus: status?.value || currentProductionStatus,
-              orderStatus: orderStatus?.value || currentOrderStatus,
-              pageNumber: pageNumber || currentPageNumber,
-              pageSize: pageSize,
-              orderNumber: router?.query?.orderNumber,
-            }
+            productsIds: currentProductsIds,
+            productionStatus: status?.value || currentProductionStatus,
+            orderStatus: orderStatus?.value || currentOrderStatus,
+            pageNumber: pageNumber || currentPageNumber,
+            pageSize: pageSize,
+            orderNumber: router?.query?.orderNumber,
+          };
+      console.log(`Get data with isClear = {${isClear}}`,data)
+      await setBoardMissionsFiltersApi(
+        callApi,
+        callBack, 
+        data
       );
     }
   };
