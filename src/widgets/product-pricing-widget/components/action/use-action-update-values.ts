@@ -132,17 +132,16 @@ const useActionUpdateValues = () => {
   };
   const apiCallBackMachine = (res: any) => {
     if (res.success) {
-      if (res.data && res.data.item2) {
-        if (res.data?.item1?.exceptionType === 0) {
-          onClickOpenModalMachine();
-        } else {
-          setCurrentProductItemValueTotalPrice(null);
-          setSliderCurrentProductItemValueTotalPrice(null); //!new
-          setCurrentCalculationSessionId(res.data.item2);
-        }
+      const { item1, item2 } = res.data || {};
+      setCurrentCalculationSessionId(item2);
+  
+      if (item1?.exceptionType === 0) {
+        onClickOpenModalMachine();
+      } else {
+        setCurrentProductItemValueTotalPrice(null);
+        setSliderCurrentProductItemValueTotalPrice(null);
+        alertSuccessUpdate();
       }
-      setCurrentCalculationSessionId(res.data.item2);
-      alertSuccessUpdate();
     } else {
       onClickOpenModalMachine();
     }
