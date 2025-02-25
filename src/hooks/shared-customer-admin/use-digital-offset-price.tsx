@@ -90,7 +90,6 @@ import { exampleTypeState } from "@/store/example-type";
 import { billingMethodState } from "@/store/billing-method";
 import { useDebouncedCallback } from "use-debounce";
 import { getDeviceSizeMockApi } from "@/services/api-service/materials/materials-endpoints";
-import { AdvertisingProductCategoryParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-category";
 import { AdvertisingProductNameParameterWidget } from "@/pages-components/products/digital-offset-price/widgets/render-parameter-widgets/advertising-product-name";
 import { getAllFoldOptions } from "@/services/api-service/parameters/parameters-outputs";
 import { useMaterials } from "../use-materials";
@@ -138,7 +137,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("subProducts", subProducts)
   const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
