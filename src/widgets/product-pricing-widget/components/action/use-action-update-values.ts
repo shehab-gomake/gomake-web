@@ -140,6 +140,7 @@ const useActionUpdateValues = () => {
       } else {
         setCurrentProductItemValueTotalPrice(null);
         setSliderCurrentProductItemValueTotalPrice(null);
+        setCurrentCalculationSessionId(item2);
         alertSuccessUpdate();
       }
     } else {
