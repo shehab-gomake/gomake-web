@@ -66,7 +66,6 @@ import {
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
 import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers/suppliers-endpoints";
-import { useCalculationsWorkFlowsSignalR } from "../signalr/use-calculations-workflows-signalr";
 import { v4 as uuidv4 } from "uuid";
 import {
   addItemApi,

@@ -19,15 +19,11 @@ import {
 import { Permissions } from "@/components/CheckPermission/enum";
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
-import { createTheme, Stack, Tabs, ThemeProvider } from "@mui/material";
+import { createTheme, Tabs, ThemeProvider } from "@mui/material";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { useEffect } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import {
-  currentProductItemValuePriceState,
-  lastProductItemValuePriceState,
-} from "@/widgets/product-pricing-widget/state";
+import { useRecoilValue } from "recoil";
 import { PriceListPageSkeletonWidget } from "./digital-offset-price-skeleton";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
@@ -90,9 +86,6 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     isChargeForNewDie,
     setIsChargeForNewDie,
     straightKnife,
-    isChangePriceForEdit,
-    onClickCloseChangePriceModal,
-    setIsChangePriceForEdit,
     isLoadingPrice,
     saveCurrentStation,
     onClickCloseCurrentStationModal,
@@ -123,12 +116,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
   const theme = createTheme({
     direction: dir,
   });
-  const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(
-    currentProductItemValuePriceState
-  );
-  const lastProductItemValueTotalPrice = useRecoilValue<number>(
-    lastProductItemValuePriceState
-  );
+
   useEffect(() => {
     document.body.setAttribute("dir", dir);
   }, [dir]);
@@ -473,7 +461,6 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         display: "flex",
                         alignItems: "center",
                         position: "relative",
-                        // width: "90%",
                       }}
                     >
                       <span style={clasess.totalCurrancyStyle}>
