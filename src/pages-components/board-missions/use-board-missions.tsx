@@ -369,7 +369,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     }
   }, [connectionId, pageSize, router]);
 
-  // const {} = useJobsTableSocketIo(isPurchaseJobs, getAllData);
   const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } =
     useJobsTableSocketIo();
 
