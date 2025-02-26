@@ -402,7 +402,7 @@ const useAddRuleModal = ({
   const getStatementId = (item) => {
     if (typeof item?.statement === "object") {
       //material input
-      if (item.statement2 && item.statement2.type === 5) {
+      if (item.statement2 && item.statement2.type === 5 || item.statement2 && item.statement2.type === 10 || item.statement2 && item.statement2.type === 11) {
         return item?.statement?.code;
       }
       return item?.statement?.id;
