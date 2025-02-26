@@ -115,10 +115,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  const {} = useJobsTableSocketIo(() => {
-    getAllData(isPurchaseJobs, false).then();
-  });
-
+  
   const {
     customer,
     supplierList,
@@ -393,6 +390,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return await getAllBoardMissions(isClear);
     }
   };
+  const {} = useJobsTableSocketIo(isPurchaseJobs,getAllData);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState([]);
 
@@ -535,7 +533,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           alertFaultGetData();
         }
       };
-
+      if(!router.isReady){
+        return;
+      }
       const currentFinalPatternSearch = router.query.finalPatternSearch;
       const currentPageNumber = router.query.pageNumber;
       const currentProductionStatus = router.query.productionStatus;
@@ -585,52 +585,45 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         typeof currentToReadyDate === "string"
           ? GetDateFormat(new Date(currentToReadyDate))
           : undefined;
-
-      await setBoardMissionsFiltersApi(
-        callApi,
-        callBack,
-        isClear
+      const data =  isClear
           ? {
             productsIds: [],
             pageNumber: pageNumber,
             pageSize: pageSize,
           }
           : {
-              clientId: customer?.id || router?.query?.clientId,
-              agentId: agent?.id || router?.query?.agentId,
-              search:
+            clientId: router?.query?.clientId || customer?.id ,
+            agentId: router?.query?.agentId || agent?.id ,
+            search:
                 finalPatternSearch !== null &&
                 finalPatternSearch !== undefined &&
                 finalPatternSearch !== ""
-                  ? finalPatternSearch
-                  : currentFinalPatternSearch,
+                    ? finalPatternSearch
+                    : currentFinalPatternSearch,
+            fromDate:
+                currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
+            toDate:
+                currentFormattedToDate || (toDate && GetDateFormat(toDate)),
+            fromDueDate:
+                currentFormattedFromDueDate || (fromDueDate && GetDateFormat(fromDueDate)),
+            toDueDate:
+                currentFormattedToDueDate || (toDueDate && GetDateFormat(toDueDate)),
 
-              fromDate:
-                (fromDate && GetDateFormat(fromDate)) ||
-                currentFormattedFromDate,
-              toDate:
-                (toDate && GetDateFormat(toDate)) || currentFormattedToDate,
-
-              fromDueDate:
-                (fromDueDate && GetDateFormat(fromDueDate)) ||
-                currentFormattedFromDueDate,
-              toDueDate:
-                (toDueDate && GetDateFormat(toDueDate)) ||
-                currentFormattedToDueDate,
-
-              fromReadyDate:
-                (fromReadyDate && GetDateFormat(fromReadyDate)) ||
-                currentFormattedFromReadyDate,
-              toReadyDate:
-                (toReadyDate && GetDateFormat(toReadyDate)) ||
-                currentFormattedToReadyDate,
-              productsIds: currentProductsIds,
-              productionStatus: status?.value || currentProductionStatus,
-              orderStatus: orderStatus?.value || currentOrderStatus,
-              pageNumber: pageNumber || currentPageNumber,
-              pageSize: pageSize,
-              orderNumber: router?.query?.orderNumber,
-            }
+            fromReadyDate:
+                currentFormattedFromReadyDate || (fromReadyDate && GetDateFormat(fromReadyDate)),
+            toReadyDate:
+                currentFormattedToReadyDate ||(toReadyDate && GetDateFormat(toReadyDate)),
+            productsIds: currentProductsIds,
+            productionStatus: currentProductionStatus || status?.value,
+            orderStatus: currentOrderStatus || orderStatus?.value,
+            pageNumber: pageNumber || currentPageNumber,
+            pageSize: pageSize,
+            orderNumber: router?.query?.orderNumber,
+          };
+      await setBoardMissionsFiltersApi(
+        callApi,
+        callBack, 
+        data
       );
     }
   };

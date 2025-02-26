@@ -6,7 +6,11 @@ import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { ContactNewWidget } from "@/widgets/quote-new/contact-widget";
 import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { WriteCommentComp } from "@/widgets/quote-new/write-comment";
-import { GoMakeAlertModal, GoMakeAutoComplate, GoMakeDeleteModal, } from "@/components";
+import {
+  GoMakeAlertModal,
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+} from "@/components";
 import { HeaderTitle } from "@/widgets";
 import { ArrowDownNewIcon, BudgetIcon, SettingNewIcon } from "@/icons";
 import { useQuoteNew } from "./use-quote";
@@ -560,8 +564,11 @@ const QuoteNewPageWidget = ({
                       )}
                     </LocalizationProvider>
                   </ThemeProvider>
-                  <Stack flex={1} direction={'row'} justifyContent={'flex-end'}>
-                    <ClientBalanceComponent clientBalance={quoteState.clientBalance} clientId={quoteState?.client?.id} />
+                  <Stack flex={1} direction={"row"} justifyContent={"flex-end"}>
+                    <ClientBalanceComponent
+                      clientBalance={quoteState.clientBalance}
+                      clientId={quoteState?.client?.id}
+                    />
                   </Stack>
                 </div>
               )}

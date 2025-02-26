@@ -1,5 +1,5 @@
 import { useStyle } from "./style";
-import { PlusNewIcon } from "@/icons";
+import { PlusNewIcon, SortIcon } from "@/icons";
 import { ContactMapping } from "./contact-mapping";
 import { AddContactNewWidget } from "./add-contact-widget";
 import { GoMakeDeleteModal } from "@/components";
@@ -8,6 +8,12 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useRouter } from "next/router";
 import { ModalType } from "@/enums";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { quoteItemState } from "@/store/quote-item";
+import { useRecoilValue } from "recoil";
+import { useEffect, useState } from "react";
+import { updateDocumentContactsReorderApi } from "@/services/api-service/generic-doc/documents-api";
+import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 
 const ContactNewWidget = ({
   handleShowLess,
@@ -45,11 +51,48 @@ const ContactNewWidget = ({
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const { callApi } = useGomakeAxios();
   const router = useRouter();
   const { CheckDocumentPermission } = useUserPermission();
+  const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const canEditDocumentContacts = router.query.isNewCreation
     ? true
     : CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
+  const [documentContacts, setDocumentContacts] = useState(items);
+  useEffect(() => {
+    setDocumentContacts(items);
+  }, [items]);
+
+  const updateDocumentContactsReorder = async (list) => {
+    const callBack = (res) => {
+      if (res?.success) {
+      } else {
+      }
+    };
+    await updateDocumentContactsReorderApi(callApi, callBack, {
+      documentType: documentType,
+      documentId: quoteItemValue?.id,
+      documentContacts: list
+
+    });
+  };
+  const onDragEnd = (result) => {
+    if (!result.destination) {
+      return;
+    }
+
+
+    const newList: any = Array.from(documentContacts);
+    const [removed] = newList.splice(result.source.index, 1);
+    newList.splice(result.destination.index, 0, removed);
+    const transformedArray = newList.map((item, index) => ({
+      ...item,
+      index: index + 1,
+    }));
+
+    setDocumentContacts(transformedArray);
+    updateDocumentContactsReorder(transformedArray);
+  };
 
   return (
     <>
@@ -57,23 +100,45 @@ const ContactNewWidget = ({
         {items?.length > 0 ? (
           <>
             <div>
-              {items?.slice(0, displayedItems).map((item, index) => (
-                <ContactMapping
-                  canEditContacts={canEditDocumentContacts}
-                  key={`${index}-${item.id}`}
-                  item={item}
-                  index={index}
-                  setIsDisplayWidget={setIsDisplayWidget}
-                  displayedItems={displayedItems}
-                  onOpenDeleteModalContact={onOpenDeleteModalContact}
-                  items={items}
-                  changeItems={changeItems}
-                  updateClientContact={updateClientContact}
-                  isQuoteConfirmation={isQuoteConfirmation}
-                  clientContactsValue={clientContactsValue}
-                  onOpenNewContact={onOpenNewContact}
-                />
-              ))}
+              <DragDropContext onDragEnd={onDragEnd}>
+                <Droppable droppableId="droppable">
+                  {(provided) => (
+                    <div {...provided.droppableProps} ref={provided.innerRef}>
+                      {documentContacts?.slice(0, displayedItems).sort((a, b) => a.index - b.index).map((item, index) => (
+                        <Draggable key={item.id} draggableId={item.id} index={index}>
+                          {(provided) => (
+                            <div
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                            >
+                              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                <SortIcon />
+                                <ContactMapping
+                                  canEditContacts={canEditDocumentContacts}
+                                  key={`${index}-${item.id}`}
+                                  item={item}
+                                  index={index}
+                                  setIsDisplayWidget={setIsDisplayWidget}
+                                  displayedItems={displayedItems}
+                                  onOpenDeleteModalContact={onOpenDeleteModalContact}
+                                  items={items}
+                                  changeItems={changeItems}
+                                  updateClientContact={updateClientContact}
+                                  isQuoteConfirmation={isQuoteConfirmation}
+                                  clientContactsValue={clientContactsValue}
+                                  onOpenNewContact={onOpenNewContact}
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
             </div>
           </>
         ) : (

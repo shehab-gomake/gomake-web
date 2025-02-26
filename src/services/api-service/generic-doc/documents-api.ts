@@ -11,6 +11,7 @@ const DELETE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/delete-document-item";
 const ADD_DOCUMENT_CONTACT_URL =
   "/v1/erp-service/document/add-document-contact";
+const UPDATE_DOCUMENT_CONTACTS_REORDER_URL = "/v1/erp-service/document/update-document-contacts-reorder";
 const UPDATE_DOCUMENT_CONTACT_URL =
   "/v1/erp-service/document/update-document-contact";
 const DELETE_DOCUMENT_CONTACT_URL =
@@ -214,6 +215,19 @@ const addDocumentContactApi: ICallAndSetData = async (
   );
 };
 
+const updateDocumentContactsReorderApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_DOCUMENT_CONTACTS_REORDER_URL,
+    setState,
+    data
+  );
+};
 const addCustomerContactApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -1109,6 +1123,7 @@ export {
   getAllDocumentsApi,
   deleteDocumentItemApi,
   addDocumentContactApi,
+  updateDocumentContactsReorderApi,
   updateDocumentContactApi,
   deleteDocumentContactApi,
   addDocumentAddressApi,
