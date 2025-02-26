@@ -50,10 +50,10 @@ const ClientBalanceComponent = ({ clientBalance, clientId }: IProps) => {
     <>
       <PermissionCheck userPermission={Permissions.SHOW_CLIENT_BALANCE}>
         {balance !== undefined && (
-          <Stack direction="row" alignItems="center" spacing={1}>
-            <Typography variant="body1" style={{ color: "#252675" }}>
-              {t("home.clientBalance")}:
-            </Typography>
+          <Stack direction="row" alignItems="center" gap={"2px"}>
+            <span style={{ width: "70px", color: "#252675" }}>
+              {t("home.clientBalance")}
+            </span>
             <Button
               startIcon={<WalletIcon stroke="#252675" />}
               sx={{

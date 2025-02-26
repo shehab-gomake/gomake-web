@@ -44,8 +44,9 @@ const ClientBalance = ({ clientId }: IProps) => {
         {balance !== undefined && (
           <Stack direction="row" alignItems="center" gap={"3px"}>
             <Typography variant="body1" style={{ color: "#252675" }}>
-              {t("home.clientBalance")}:
+              {t("home.clientBalance")}
             </Typography>
+            :
             <Button
               disabled={true}
               startIcon={<WalletIcon stroke="#252675" />}
