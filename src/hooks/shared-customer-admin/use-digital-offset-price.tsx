@@ -5131,11 +5131,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
             setLoading(false);
             setcalculationServerErrorState(true);
+            getSelectedWorkFlow(true).then()
           } else if (!res.success) {
             setCalculationProgress({
               totalWorkFlowsCount: 0,
               currentWorkFlowsCount: 0,
             });
+            getSelectedWorkFlow(true).then()
             //setLoading(false);
           } else {
             if (productTemplate?.isHaveFixedAction) {
@@ -5156,6 +5158,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               });
               //setLoading(true);
               if (id === "00000000-0000-0000-0000-000000000000") {
+                getSelectedWorkFlow(true).then()
                 setLoading(false);
               }
             }
