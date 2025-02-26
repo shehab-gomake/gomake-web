@@ -205,6 +205,9 @@ const QuotesListPageWidget = ({
     supplierList,
     isPurchaseDocument,
     isSendToClient,
+    isReceipt,
+    isSupplierPayments,
+    isPurchaseOrder,
     isMoveToReady,
     handleCheckboxChange,
   } = useQuotes(documentType, isFromHomePage);
@@ -258,6 +261,7 @@ const QuotesListPageWidget = ({
       {t("sales.quote.createNew")}
     </Button>
   );
+
   const renderOrderCard = (onclickCreateNew) => (
     <>
       <PermissionCheck
@@ -327,6 +331,8 @@ const QuotesListPageWidget = ({
                   renderOrderCard(
                     isOrder
                       ? onclickCreateNew
+                      : isSupplierPayments
+                      ? () => navigate(`/${documentPath}`)
                       : () => navigate(`/${documentPath}?isNewCreation=true`)
                   )}
               </div>
@@ -391,7 +397,13 @@ const QuotesListPageWidget = ({
                                   checkWhatRenderArray(e);
                                 }}
                                 style={classes.textInputStyle}
-                                placeholder={t("sales.quote.chooseCustomer")}
+                                placeholder={t(
+                                  `sales.quote.${
+                                    isPurchaseDocument
+                                      ? "chooseSupplier"
+                                      : "chooseCustomer"
+                                  }`
+                                )}
                                 onChange={(e: any, value: any) => {
                                   setCustomerId(value);
                                 }}
@@ -693,6 +705,19 @@ const QuotesListPageWidget = ({
                       "10%",
                       "5%",
                     ]
+                  : isReceipt || isSupplierPayments
+                  ? [
+                      "7%",
+                      "15%",
+                      "10%",
+                      "13%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "5%",
+                    ]
                   : [
                       "7%",
                       "8%",
@@ -829,10 +854,18 @@ const QuotesListPageWidget = ({
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
         codeFlag={true}
-        typeClient={CLIENT_TYPE.CUSTOMER}
+        typeClient={
+          isPurchaseDocument && !isPurchaseOrder
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER
+        }
         isgetAllCustomers={false}
         openModal={showCustomerModal}
-        modalTitle={t("customers.modal.editTitle")}
+        modalTitle={
+          isPurchaseDocument && !isPurchaseOrder
+            ? t("suppliers.editModalTitle")
+            : t("customers.modal.editTitle")
+        }
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}

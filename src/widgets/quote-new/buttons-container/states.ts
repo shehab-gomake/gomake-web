@@ -32,6 +32,13 @@ export interface TransferTabData {
   transferDate: string | Date;
 }
 
+export interface creditCardTabData {
+  creditCardAccount: any;
+  creditCardTotal: number;
+  creditCardReference: string;
+  creditCardTransactionDate: string | Date;
+}
+
 export interface prevStateStateData {
   totalTransfer: number;
   transferState: any;
@@ -47,6 +54,8 @@ export interface prevStateStateData {
   cashAccountCode: any;
   cardWidget: number;
   selectedCreditTransaction: transactionOptionsData;
+  totalSupplierCreditCard?: number;
+  supplierCreditCardState?: any;
 }
 
 export interface CreditCardData {
@@ -125,6 +134,16 @@ export const transferTabState = atom<TransferTabData>({
   },
 });
 
+export const supplierCreditCardTabState = atom<creditCardTabData>({
+  key: "supplierCreditCardTabState",
+  default: {
+    creditCardAccount: "",
+    creditCardTotal: 0,
+    creditCardReference: "",
+    creditCardTransactionDate: new Date().toISOString().split("T")[0],
+  },
+});
+
 export const totalDocumentsState = atom<number>({
   key: "totalDocumentsState",
   default: 0,
@@ -142,6 +161,11 @@ export const finalTotalPaymentState = atom<number>({
 
 export const totalTransferState = atom<number>({
   key: "totalTransferState",
+  default: 0,
+});
+
+export const totalSupplierCreditCardState = atom<number>({
+  key: "totalSupplierCreditCardState",
   default: 0,
 });
 
@@ -182,6 +206,8 @@ export const prevStateState = atom<prevStateStateData>({
     transferState: {},
     creditCardState: {},
     secondCreditCard: {},
+    totalSupplierCreditCard: 0,
+    supplierCreditCardState: {},
     checkAccountCode: "",
     cashAccountCode: "",
     totalCash: 0,
