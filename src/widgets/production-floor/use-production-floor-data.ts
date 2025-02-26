@@ -5,7 +5,7 @@ import {
     updateBoardsMissionsOrderApi,
     updateBoardsMissionsStatusApi, tryMoveBoardMissionToDoneApi
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import {useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {productionFloorFiltersState} from "@/widgets/production-floor/state/production-floor-filters";
 import {boardsMissionsState, jobsStatusesState} from "@/widgets/production-floor/state/boards";
 import {tagsState} from "@/widgets/production-floor/state/tags";
@@ -20,7 +20,7 @@ import {IFilterGroupsList} from "./interfaces/borad-missions-filter-groups";
 import {
     getAllBoardMissionStationFilterGroupsApi, getJobsByGroups
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
-import {selectedGroupIdState} from "./state/filter-group";
+import {filterGroupsState, selectedGroupIdState} from "./state/filter-group";
 import {EProductionFloorView, productionFloorViewState} from "@/widgets/production-floor/state/production-floor-view";
 
 const useProductionFloorData = () => {
@@ -35,7 +35,7 @@ const useProductionFloorData = () => {
     const [, setTags] = useRecoilState(tagsState);
     const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
     const [, setPath] = useRecoilState(productionFloorPathsState);
-    const [jobsStatuses, setJobsStatuses] = useRecoilState(jobsStatusesState);
+    const [, setJobsStatuses] = useRecoilState(jobsStatusesState);
 
     const {alertFaultUpdate, alertSuccessUpdate} = useSnackBar();
     const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
@@ -202,7 +202,7 @@ const useProductionFloorData = () => {
         await updateBoardsMissionsOrderApi(callApi, callBack, payload);
     };
 
-    const [selectedMissionId, setSelectedMissionId] = useState<any>(null);
+    const [, setSelectedMissionId] = useState<any>(null);
     const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
 
     const onCloseMarkReadyModal = () => {
@@ -305,7 +305,7 @@ const useProductionFloorData = () => {
 
     };
 
-    const [filterGroups, setFilterGroups] = useState<IFilterGroupsList[]>([]);
+    const [filterGroups, setFilterGroups] = useRecoilState<IFilterGroupsList[]>(filterGroupsState);
     const getStationFilterGroups = async () => {
         const callBack = (res) => {
             if (res.success) {
@@ -320,7 +320,10 @@ const useProductionFloorData = () => {
                 );
                 const allGroupViewFilter:IFilterGroupsList = {
                     id:"all",
-                    name:t("productionFloor.allFilterGroupsViewName")
+                    name:t("productionFloor.allFilterGroupsViewName"),
+                    color:  "#7355de",
+                    stuckCount: 0,
+                    inProcessCount: 0,
                 }
                 setFilterGroups([allGroupViewFilter,...filterGroupsList]);
             }

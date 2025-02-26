@@ -45,6 +45,7 @@ import {
 import { TotalCardComponent } from "./widgets/statistics-section/total-card";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission";
+import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -207,6 +208,8 @@ const QuotesListPageWidget = ({
     isReceipt,
     isSupplierPayments,
     isPurchaseOrder,
+    isMoveToReady,
+    handleCheckboxChange,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -921,26 +924,49 @@ const QuotesListPageWidget = ({
         onClickDelete={onClickCancelReceipt}
       />
       <GoMakeDeleteModal
-        modalType={ModalType.EDIT}
-        title={"sales.moveOrderToReadyWhenCloseOrderTitle"}
-        yesBtn={t("sales.moveToReadyAndCloseOrder")}
-        cancelBtn={t("sales.closeOrderWithoutMoveToReady")}
+        modalType={ModalType.WARNING}
+        title={
+          isSelectedCLoseAsDeliveryNote
+            ? "customers.modal.closeOrderAsDeliveryNote"
+            : "customers.modal.closeOrderAsInvoice"
+        }
+        subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
+        yesBtn={
+          isSelectedCLoseAsDeliveryNote
+            ? t("customers.modal.closeAsDeliveryNote")
+            : t("customers.modal.closeAsInvoice")
+        }
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}
-        onClickDelete={moveOrderToReady}
-        onClickCancel={() => {
-          if (isSelectedCLoseAsDeliveryNote) {
-            const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
-            window.open(path, "_blank");
-          } else {
-            // i think no need for the condition because his modal only for order
-            const path = isOrder
-              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-            window.open(path, "_blank");
-          }
-        }}
-      />
+        onClickDelete={
+          isMoveToReady
+            ? moveOrderToReady
+            : () => {
+                if (isSelectedCLoseAsDeliveryNote) {
+                  const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
+                  window.open(path, "_blank");
+                } else {
+                  const path = isOrder
+                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  window.open(path, "_blank");
+                }
+              }
+        }
+      >
+        <div
+          style={{
+            ...classes.inputLbl,
+            color: isMoveToReady ? "black" : "#475467",
+          }}
+        >
+          <PrimaryCheckbox
+            checked={isMoveToReady}
+            onChange={handleCheckboxChange}
+          />
+          {t("sales.moveToReadyAndCloseOrder")}
+        </div>
+      </GoMakeDeleteModal>
       <ThreeOptionsModal
         title={t("payment.cancelReceipt")}
         yesBtn={t("payment.CancelWithRefund")}

@@ -56,6 +56,7 @@ import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicat
 import { useOrdersSignalr, useQuotesSignalr } from "@/hooks";
 import Stack from "@mui/material/Stack";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
+import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -282,6 +283,8 @@ const QuoteNewPageWidget = ({
     onClickConfirmCreateDocument,
     onClickCloseConfirmCreateDocument,
     isReceipt,
+    isMoveToReady,
+    handleCheckboxChange,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -823,6 +826,7 @@ const QuoteNewPageWidget = ({
         sortDocumentItems={sortDocumentItems}
         updateDiscountType={updateDiscountType}
         updateDocumentPreference={updateDocumentPreference}
+        documentType={documentType}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}
@@ -892,27 +896,51 @@ const QuoteNewPageWidget = ({
         }}
       />
       <GoMakeDeleteModal
-        modalType={ModalType.EDIT}
-        title={"sales.moveOrderToReadyWhenCloseOrderTitle"}
-        yesBtn={t("sales.moveToReadyAndCloseOrder")}
-        cancelBtn={t("sales.closeOrderWithoutMoveToReady")}
+        modalType={ModalType.WARNING}
+        title={
+          isSelectedCLoseAsDeliveryNote
+            ? "customers.modal.closeOrderAsDeliveryNote"
+            : "customers.modal.closeOrderAsInvoice"
+        }
+        subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
+        yesBtn={
+          isSelectedCLoseAsDeliveryNote
+            ? t("customers.modal.closeAsDeliveryNote")
+            : t("customers.modal.closeAsInvoice")
+        }
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}
-        onClickDelete={moveOrderToReady}
-        onClickCancel={() => {
-          if (isSelectedCLoseAsDeliveryNote) {
-            navigate(
-              `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-            );
-          } else {
-            const path =
-              documentType === DOCUMENT_TYPE.order
-                ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-            navigate(path);
-          }
-        }}
-      />
+        onClickDelete={
+          isMoveToReady
+            ? moveOrderToReady
+            : () => {
+                if (isSelectedCLoseAsDeliveryNote) {
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  );
+                } else {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                }
+              }
+        }
+      >
+        <div
+          style={{
+            ...classes.inputLbl,
+            color: isMoveToReady ? "black" : "#475467",
+          }}
+        >
+          <PrimaryCheckbox
+            checked={isMoveToReady}
+            onChange={handleCheckboxChange}
+          />
+          {t("sales.moveToReadyAndCloseOrder")}
+        </div>
+      </GoMakeDeleteModal>
       <NewItemNotesModal
         openModal={openNewItemNotesModal}
         onClose={onClickCloseNewItemNotesModal}

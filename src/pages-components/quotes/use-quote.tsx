@@ -1315,6 +1315,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (!isFromHomePage) {
       if (isNotFilteredData) {
         getAllQuotesInitial();
+        setHasFetchedQuery(null);
       } else if (hasFetchedQuery !== serializedQuery) {
         getAllQuotes();
         setHasFetchedQuery(serializedQuery); // Mark this query as fetched
@@ -2318,6 +2319,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenMakePaymentModal(false);
   };
 
+  const [isMoveToReady, setIsMoveToReady] = useState(false);
+  const handleCheckboxChange = () => {
+    setIsMoveToReady(!isMoveToReady);
+  };
+
   const [openCloseAndTrackOrderModal, setOpenCloseAndTrackOrderModal] =
     useState(false);
   const [openPrintPDFModal, setOpenPrintPDFModal] = useState(false);
@@ -2326,6 +2332,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const onClickCloseChangeProductionStatusModal = () => {
     setOpenChangeProductionStatusModal(false);
+    setIsMoveToReady(false);
   };
   const onClickOpenChangeProductionStatusModal = (order) => {
     setSelectedDocument(order);
@@ -2792,6 +2799,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isSendToClient,
     onClickOpenCustomerModal,
     isPurchaseOrder,
+    isMoveToReady,
+    handleCheckboxChange,
   };
 };
 

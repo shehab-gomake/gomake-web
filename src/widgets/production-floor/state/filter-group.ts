@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { IStationFilterGroup } from "../interfaces/borad-missions-filter-groups";
+import {IFilterGroupsList, IStationFilterGroup} from "../interfaces/borad-missions-filter-groups";
 
 export const stationFilterGroupState = atom<IStationFilterGroup>({
   key: "stationFilterGroupState",
@@ -13,4 +13,9 @@ export const stationFilterGroupState = atom<IStationFilterGroup>({
 export const selectedGroupIdState = atom<string>({
   key: "selectedGroupIdState",
   default: "",
+});
+
+export const filterGroupsState = atom<IFilterGroupsList[]>({
+  key: "filterGroupsState",
+  default: []
 });

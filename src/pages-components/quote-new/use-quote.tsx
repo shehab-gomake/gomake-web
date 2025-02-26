@@ -281,6 +281,11 @@ const useQuoteNew = ({
     setOpenAddDeliveryModal(false);
   };
 
+  const [isMoveToReady, setIsMoveToReady] = useState(false);
+  const handleCheckboxChange = () => {
+    setIsMoveToReady(!isMoveToReady);
+  };
+
   const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] =
     useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>({});
@@ -289,6 +294,7 @@ const useQuoteNew = ({
   );
   const onClickCloseChangeProductionStatusModal = () => {
     setOpenChangeProductionStatusModal(false);
+    setIsMoveToReady(false);
   };
   const onClickOpenChangeProductionStatusModal = (order) => {
     setSelectedDocument(order);
@@ -2258,6 +2264,8 @@ const useQuoteNew = ({
     onClickCloseConfirmCreateDocument,
     isOutgoingPayments,
     isReceipt,
+    isMoveToReady,
+    handleCheckboxChange,
   };
 };
 

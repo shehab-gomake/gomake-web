@@ -4054,7 +4054,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   temp[myindex] = {
                     ...temp[myindex],
                     parameterCode: myparameter?.code,
-                    values: unitType === UNIT_TYPE.IMPERIAL ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : data?.value?.values[parameterId],
+                    values: unitType === UNIT_TYPE.IMPERIAL ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
                     isDisabled: hasValues(data?.value),
                     factor: myparameter?.factor,
                   };
@@ -5005,7 +5005,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     return uniqueFilteredArray;
   };
-
+  const convertSubProductsValuesToImperial = (subProducts) => {
+    return subProducts.map((subProduct) => {
+      return {
+        ...subProduct,parameters:convertValuesToImperial(subProduct.parameters)
+      }
+    });
+  }
   const convertValuesToImperial = (parameters) => {
     return parameters.map((param) => {
       if (unitType === UNIT_TYPE.IMPERIAL && param.factor) {
@@ -5080,6 +5086,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             );
           const convertedItemParameters = convertValuesToImperial(itemParmetersValues);
           const convertedGeneralParameters = convertValuesToImperial(updatedGeneralParameters);
+          if(calculationSubProducts && calculationSubProducts.length > 0) {
+            calculationSubProducts = convertSubProductsValuesToImperial(calculationSubProducts);
+          }
+          
 
 
           if (calculationSubProducts && calculationSubProducts.length > 0) {
@@ -5195,6 +5205,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         productType: productTemplate?.productType,
         templateId: productTemplate?.templateId,
         totalPrice: sliderCurrentProductItemValueTotalPrice || 0,
+        isAddOrEdit: true,
       },
       false
     );

@@ -158,7 +158,7 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
                         />
                       </div>
                     )}
-                    {productWorksTypes.length > 0 && (
+                    {productWorksTypes?.length > 0 && (
                       <div style={{ maxHeight: `${typesConHeight}px` }}>
                         <CardContainer
                           label={t("productionFloor.types")}
