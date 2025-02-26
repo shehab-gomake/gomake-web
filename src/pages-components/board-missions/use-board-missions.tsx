@@ -115,7 +115,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-  
+
   const {
     customer,
     supplierList,
@@ -355,6 +355,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
+
   useEffect(() => {
     const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
     const serializedQuery = JSON.stringify(router.query);
@@ -367,6 +368,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       setHasFetchedQuery(serializedQuery); // Mark this query as fetched
     }
   }, [connectionId, pageSize, router]);
+
+  const { isSocketUpdateJobsTable, setIsSocketUpdateJobsTable } =
+    useJobsTableSocketIo();
+
+  useEffect(() => {
+    if (isSocketUpdateJobsTable) {
+      getAllData(false, false);
+      setIsSocketUpdateJobsTable(false);
+    }
+  }, [isSocketUpdateJobsTable]);
 
   const getAllProducts = useCallback(async () => {
     const products = await getAllProductsForDropDownList(
@@ -390,7 +401,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       return await getAllBoardMissions(isClear);
     }
   };
-  const {} = useJobsTableSocketIo(isPurchaseJobs,getAllData);
+
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState([]);
 
@@ -533,7 +544,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           alertFaultGetData();
         }
       };
-      if(!router.isReady){
+      if (!router.isReady) {
         return;
       }
       const currentFinalPatternSearch = router.query.finalPatternSearch;
@@ -585,34 +596,37 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         typeof currentToReadyDate === "string"
           ? GetDateFormat(new Date(currentToReadyDate))
           : undefined;
-      const data =  isClear
-          ? {
+      const data = isClear
+        ? {
             productsIds: [],
             pageNumber: pageNumber,
             pageSize: pageSize,
           }
-          : {
-            clientId: router?.query?.clientId || customer?.id ,
-            agentId: router?.query?.agentId || agent?.id ,
+        : {
+            clientId: router?.query?.clientId || customer?.id,
+            agentId: router?.query?.agentId || agent?.id,
             search:
-                finalPatternSearch !== null &&
-                finalPatternSearch !== undefined &&
-                finalPatternSearch !== ""
-                    ? finalPatternSearch
-                    : currentFinalPatternSearch,
+              finalPatternSearch !== null &&
+              finalPatternSearch !== undefined &&
+              finalPatternSearch !== ""
+                ? finalPatternSearch
+                : currentFinalPatternSearch,
             fromDate:
-                currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
-            toDate:
-                currentFormattedToDate || (toDate && GetDateFormat(toDate)),
+              currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
+            toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
             fromDueDate:
-                currentFormattedFromDueDate || (fromDueDate && GetDateFormat(fromDueDate)),
+              currentFormattedFromDueDate ||
+              (fromDueDate && GetDateFormat(fromDueDate)),
             toDueDate:
-                currentFormattedToDueDate || (toDueDate && GetDateFormat(toDueDate)),
+              currentFormattedToDueDate ||
+              (toDueDate && GetDateFormat(toDueDate)),
 
             fromReadyDate:
-                currentFormattedFromReadyDate || (fromReadyDate && GetDateFormat(fromReadyDate)),
+              currentFormattedFromReadyDate ||
+              (fromReadyDate && GetDateFormat(fromReadyDate)),
             toReadyDate:
-                currentFormattedToReadyDate ||(toReadyDate && GetDateFormat(toReadyDate)),
+              currentFormattedToReadyDate ||
+              (toReadyDate && GetDateFormat(toReadyDate)),
             productsIds: currentProductsIds,
             productionStatus: currentProductionStatus || status?.value,
             orderStatus: currentOrderStatus || orderStatus?.value,
@@ -620,11 +634,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             pageSize: pageSize,
             orderNumber: router?.query?.orderNumber,
           };
-      await setBoardMissionsFiltersApi(
-        callApi,
-        callBack, 
-        data
-      );
+      await setBoardMissionsFiltersApi(callApi, callBack, data);
     }
   };
 
