@@ -856,8 +856,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onClickDocumentLogs,
   ]);
 
-  // const {} = useDocumentsSignalR({ getAllQuotes, docType });
-  const {} = useDocumentsTableSocketIo(docType, getAllQuotes);
+  const { isSocketUpdateDocumentsTable, setIsSocketUpdateDocumentsTable } =
+    useDocumentsTableSocketIo(docType);
+
+  useEffect(() => {
+    if (isSocketUpdateDocumentsTable) {
+      getAllQuotes();
+      setIsSocketUpdateDocumentsTable(false);
+    }
+  }, [isSocketUpdateDocumentsTable]);
+
   const getAllQuotesInitial = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -1274,16 +1282,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     // getAllQuotesInitial(); // move to useEffect
   };
 
-  //!Old code please don't delete it
-  // useEffect(() => {
-  //   const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
-  //   if (!isFromHomePage) {
-  //     if (isNotFilteredData) getAllQuotesInitial();
-  //     else getAllQuotes();
-  //   }
-  // }, [pageSize, router]);
-
   const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
+
   useEffect(() => {
     const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
 
