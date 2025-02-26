@@ -104,6 +104,7 @@ interface Query {
 
 const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { t } = useTranslation();
+  const direction = t("direction");
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const {
@@ -2801,6 +2802,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isPurchaseOrder,
     isMoveToReady,
     handleCheckboxChange,
+    direction,
   };
 };
 
