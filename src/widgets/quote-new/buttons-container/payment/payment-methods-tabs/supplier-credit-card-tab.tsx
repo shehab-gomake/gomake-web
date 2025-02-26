@@ -7,7 +7,6 @@ import { supplierCreditCardTabState } from "../../states";
 import { useEffect, useState } from "react";
 import { SupplierCreditCardInputs } from "./supplier-credit-card-inputs";
 
-//!here
 const SupplierCreditCardTab = () => {
   const { creditCardAccountsOptions, handleTotalSupplierCreditCardChange } =
     usePaymentMethodsTabs();

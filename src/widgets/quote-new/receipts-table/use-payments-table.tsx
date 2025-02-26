@@ -100,7 +100,6 @@ const usePaymentsTable = () => {
     useRecoilState<any>(cashAccountCodeState);
   const resetCashAccountCode = useResetRecoilState(cashAccountCodeState);
   //supplier credit card
-  //!here
   const [totalSupplierCreditCard, setTotalSupplierCreditCard] =
     useRecoilState<number>(totalSupplierCreditCardState);
   const [supplierCreditCardState, setSupplierCreditCardState] = useRecoilState(
@@ -286,10 +285,8 @@ const usePaymentsTable = () => {
     setTotalCash(previousState.totalCash);
     setTotalTransfer(previousState.totalTransfer);
     setTransferState(previousState.transferState);
-    //!here
     setTotalSupplierCreditCard(previousState.totalSupplierCreditCard);
     setSupplierCreditCardState(previousState.supplierCreditCardState);
-
     setTotalChecks(previousState.totalChecks);
     setChecksReceipt(previousState.checksReceipt);
     setTaxDeduction(previousState.taxDeduction);
@@ -316,7 +313,7 @@ const usePaymentsTable = () => {
     resetTotalSum();
     resetTotalBit();
     resetTotalCash();
-    resetTotalSupplierCreditCard(); //!here
+    resetTotalSupplierCreditCard();
     resetTotalTransfer();
     resetTransferTabState();
     resetTotalChecks();

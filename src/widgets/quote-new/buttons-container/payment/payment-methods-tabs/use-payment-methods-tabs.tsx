@@ -193,7 +193,6 @@ const usePaymentMethodsTabs = () => {
     );
   };
 
-  //!here
   // supplier credit card tab //
   const [totalSupplierCreditCard, setTotalSupplierCreditCard] =
     useRecoilState<number>(totalSupplierCreditCardState);
@@ -262,7 +261,6 @@ const usePaymentMethodsTabs = () => {
     })
   );
 
-  //!here
   const creditCardAccountsOptions = quoteItemValue?.creditCardAccounts?.map(
     (account) => ({
       text: `${account.name} - ${account.code}`,
