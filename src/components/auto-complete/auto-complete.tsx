@@ -158,12 +158,13 @@ const GoMakeAutoComplate = ({
   onOpen?: () => void;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
+  console.log("selectedOption", { selectedOption, value })
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
 
   useEffect(() => {
-    if (value?.name) {
+    if (value) {
       setSelectedOption(value);
     } else {
       setSelectedOption(null);
