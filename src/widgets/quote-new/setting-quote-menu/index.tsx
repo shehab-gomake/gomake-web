@@ -15,6 +15,7 @@ import { TableSortingMenu } from "../table-sorting-menu";
 
 import { useStyle } from "./style";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { EnumVATStatus } from "@/enums/accounting-enums";
 
 const SettingQuoteMenu = ({
   handleClose,
@@ -31,7 +32,11 @@ const SettingQuoteMenu = ({
   sortDocumentItems,
   updateDiscountType,
   updateDocumentPreference,
-  documentType
+  documentType,
+  onBlurVatStatus,
+  setIsUpdateVatStatus,
+  isUpdateVatStatus,
+  updateVatStatus,
 }) => {
   const { classes } = useStyle();
   const {
@@ -44,6 +49,8 @@ const SettingQuoteMenu = ({
     matchingCurrency,
     currencies,
     switchConfigs,
+    vatStatusList,
+    vatStatus,
     handleTableSorting,
     handleTableSortingClose,
     handleAutomaticDiscount,
@@ -155,7 +162,21 @@ const SettingQuoteMenu = ({
               onChange={(e, value) => updateCurrency(value?.value)}
             />
           </div>
+          <Divider />
+          <div style={classes.menuRowStyle}>
+            <div style={classes.menuTabStyle}>{t("accounting.defaultVat")}</div>
+            <AutoCompleteUpdatedValue
+              value={vatStatus}
+              options={vatStatusList}
+              onBlur={onBlurVatStatus}
+              isUpdate={isUpdateVatStatus}
+              setIsUpdate={setIsUpdateVatStatus}
+              getOptionLabel={(item) => item.text}
+              onChange={(e, value) => updateVatStatus(value?.value)}
+            />
+          </div>
         </div>
+
       </GoMakeMenu>
       <TableSortingMenu
         handleClose={handleTableSortingClose}

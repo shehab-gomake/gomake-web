@@ -46,6 +46,7 @@ import {
   updateDocumentCurrencyApi,
   updateDocumentPreferenceApi,
   updateDocumentTitleApi,
+  updateDocumentVatStatusApi,
   updateDueDateApi,
   updateExchangeRateApi,
   updateOccasionalClientNameApi,
@@ -144,6 +145,7 @@ const useQuoteNew = ({
   >(null);
 
   const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
+  const [isUpdateVatStatus, setIsUpdateVatStatus] = useState<number | null>(null);
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
@@ -409,6 +411,10 @@ const useQuoteNew = ({
     setIsUpdateCurrency(null);
   };
 
+  const onBlurVatStatus = async () => {
+    setIsUpdateVatStatus(null);
+  };
+
   const getAllEmployees = useCallback(async () => {
     await getAndSetAllEmployees(callApi, setAgentListValue, {
       isAgent: true,
@@ -495,6 +501,26 @@ const useQuoteNew = ({
       document: {
         documentId: quoteItemValue?.id,
         currency: currency,
+      },
+    });
+  };
+
+
+  const updateVatStatus = async (vatStatus: number) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdateVatStatus(null);
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await updateDocumentVatStatusApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+        vatStatus: vatStatus,
       },
     });
   };
@@ -2180,10 +2206,14 @@ const useQuoteNew = ({
     onBlurCurrency,
     setIsUpdateExchangeRate,
     setIsUpdateCurrency,
+    setIsUpdateVatStatus,
+    onBlurVatStatus,
+    isUpdateVatStatus,
     isUpdateExchangeRate,
     isUpdateCurrency,
     updateExchangeRate,
     updateCurrency,
+    updateVatStatus,
     refreshExchangeRate,
     getQuote,
     openCopyFromOrderModal,

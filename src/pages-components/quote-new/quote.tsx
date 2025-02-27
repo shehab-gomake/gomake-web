@@ -209,7 +209,11 @@ const QuoteNewPageWidget = ({
     onBlurCurrency,
     setIsUpdateCurrency,
     isUpdateCurrency,
+    setIsUpdateVatStatus,
+    onBlurVatStatus,
+    isUpdateVatStatus,
     updateCurrency,
+    updateVatStatus,
     refreshExchangeRate,
     getQuote,
     handleSaveBtnClickForDocument,
@@ -822,11 +826,15 @@ const QuoteNewPageWidget = ({
         setIsUpdateCurrency={setIsUpdateCurrency}
         isUpdateCurrency={isUpdateCurrency}
         updateCurrency={updateCurrency}
+        updateVatStatus={updateVatStatus}
         onClickRefresh={refreshExchangeRate}
         sortDocumentItems={sortDocumentItems}
         updateDiscountType={updateDiscountType}
         updateDocumentPreference={updateDocumentPreference}
         documentType={documentType}
+        onBlurVatStatus={onBlurVatStatus}
+        setIsUpdateVatStatus={setIsUpdateVatStatus}
+        isUpdateVatStatus={isUpdateVatStatus}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}
