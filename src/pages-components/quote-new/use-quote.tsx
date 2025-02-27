@@ -46,6 +46,7 @@ import {
   updateDocumentCurrencyApi,
   updateDocumentPreferenceApi,
   updateDocumentTitleApi,
+  updateDocumentVatStatusApi,
   updateDueDateApi,
   updateExchangeRateApi,
   updateOccasionalClientNameApi,
@@ -141,6 +142,7 @@ const useQuoteNew = ({
   >(null);
 
   const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
+  const [isUpdateVatStatus, setIsUpdateVatStatus] = useState<number | null>(null);
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
@@ -308,8 +310,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -407,6 +409,10 @@ const useQuoteNew = ({
     setIsUpdateCurrency(null);
   };
 
+  const onBlurVatStatus = async () => {
+    setIsUpdateVatStatus(null);
+  };
+
   const getAllEmployees = useCallback(async () => {
     await getAndSetAllEmployees(callApi, setAgentListValue, {
       isAgent: true,
@@ -493,6 +499,26 @@ const useQuoteNew = ({
       document: {
         documentId: quoteItemValue?.id,
         currency: currency,
+      },
+    });
+  };
+
+
+  const updateVatStatus = async (vatStatus: number) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdateVatStatus(null);
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await updateDocumentVatStatusApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+        vatStatus: vatStatus,
       },
     });
   };
@@ -1076,7 +1102,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -2178,10 +2204,14 @@ const useQuoteNew = ({
     onBlurCurrency,
     setIsUpdateExchangeRate,
     setIsUpdateCurrency,
+    setIsUpdateVatStatus,
+    onBlurVatStatus,
+    isUpdateVatStatus,
     isUpdateExchangeRate,
     isUpdateCurrency,
     updateExchangeRate,
     updateCurrency,
+    updateVatStatus,
     refreshExchangeRate,
     getQuote,
     openCopyFromOrderModal,
