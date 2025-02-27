@@ -63,14 +63,10 @@ const DropDownListParameterWidget = ({
   );
 
   useEffect(() => {
-    if (selectedValue !== null) {
-      setSelectedValue(
-        index !== -1 && temp[index]?.values
-          ? { updateName: temp[index].values }
-          : parameter.valuesConfigs.find((item) => item.isDefault)
-      );
-    }
-  }, [parameter, index]);
+    setSelectedValue(
+      (index !== -1 && temp[index]?.values) ? { updateName: temp[index].values } : undefined
+    );
+  }, [parameter, index,]);
 
   const handleValueChange = (e, value) => {
     setSelectedValue(value); // Update the selected value in state
@@ -115,7 +111,7 @@ const DropDownListParameterWidget = ({
     >
       <GoMakeAutoComplate
         disabled={parameter?.isLock}
-        key={selectedValue}
+        key={index !== -1 && temp[index]?.values ? selectedValue : undefined}
         options={parameter?.valuesConfigs
           ?.filter((value) => {
             return !(
