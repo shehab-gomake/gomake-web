@@ -269,11 +269,11 @@ const ButtonsContainer = ({
             style={classes.btnThirdContainer}
             onClick={() => {
               if (documentType !== DOCUMENT_TYPE.receipt) {
-                const validationError = validateDocument(quoteItemValue);
+                /*const validationError = validateDocument(quoteItemValue);
                 if (validationError) {
                   alertFault(validationError);
                   return;
-                }
+                }*/
               }
               if (documentType === DOCUMENT_TYPE.receipt) {
                 onClickCreateNewReceipt();
