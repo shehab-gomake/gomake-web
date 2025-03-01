@@ -69,7 +69,9 @@ const useTransactionJournalReport = ({
   const { documentsTypeList, documentType, handleDocumentTypeChange } =
     useDocumentsType();
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>(initialFromDate('transaction-journal-report-date'));
+  const [fromDate, setFromDate] = useState<Date>(
+    initialFromDate("transaction-journal-report-date")
+  );
   const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
   const [showCustomerModal, setShowCustomerModal] = useState(false);
@@ -102,7 +104,7 @@ const useTransactionJournalReport = ({
   const [filterState, setFilterState] = useState<FilterState>({
     fromAccount: "",
     toAccount: "",
-    startDate: initialFromDate('accounting-transactions-report-date'),
+    startDate: initialFromDate("accounting-transactions-report-date"),
     endDate: endOfToday(),
   });
 
@@ -412,7 +414,7 @@ const useTransactionJournalReport = ({
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
-      localStorage.setItem('transaction-journal-report-date', value[0]);
+      localStorage.setItem("transaction-journal-report-date", value[0]);
       setFromDate(value[0]);
       setToDate(value[1]);
     } else {
@@ -487,7 +489,7 @@ const useTransactionJournalReport = ({
 
   const handleDatesChange = (value) => {
     if (value && value.length === 2) {
-      localStorage.setItem('accounting-transactions-report-date', value[0]);
+      localStorage.setItem("accounting-transactions-report-date", value[0]);
       setFilterState((prevState) => ({
         ...prevState,
         startDate: value[0],
@@ -578,18 +580,27 @@ const useTransactionJournalReport = ({
           accountCode: filterState?.accountCode,
           startDate: formattedStartDate,
           endDate: formattedEndDate,
-          pageNumber: pageNumber,
-          pageSize,
+          pageNumber: 0,
+          pageSize: 0,
         },
       },
       true,
       null
     );
-    const downloadLink = document.createElement("a");
-    const link = res.data.data.data;
-    downloadLink.href = link;
-    downloadLink.download = `AccountingReport.xlsx`;
-    downloadLink.click();
+    if (res?.success) {
+      const base64Data = res?.data?.data?.data?.base64Excel;
+      const contentType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      const linkSource = `data:${contentType};base64,${base64Data}`;
+      const downloadLink = document.createElement("a");
+      downloadLink.href = linkSource;
+      downloadLink.download = "AccountingTransactionReport.xlsx";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    } else {
+      alertFaultGetData();
+    }
   }, [reportType, filterState, pageNumber, pageSize]);
 
   const [erpAccountsList, setErpAccountsList] = useState([]);

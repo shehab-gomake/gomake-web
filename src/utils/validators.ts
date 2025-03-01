@@ -38,12 +38,12 @@ export const validateDocument = (quoteItemValue: any): string | null => {
     if (item.finalPrice < 0) {
       return "alerts.itemWithNegativeTotalPrice";
     }*/
-
+    
     const itemKey = item.sourceDocumentItemId
       ? `id-${item.sourceDocumentItemId}`
       : `code-${item.code}-price-${item.price}-qty-${item.quantity}`;
 
-    if (seenItems.has(itemKey)) {
+    if (item.sourceDocumentItemId && seenItems.has(itemKey)) {
       return "alerts.duplicatedItems";
     }
     seenItems.add(itemKey);

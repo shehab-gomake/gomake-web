@@ -278,6 +278,11 @@ const useQuoteNew = ({
     setOpenAddDeliveryModal(false);
   };
 
+  const [isMoveToReady, setIsMoveToReady] = useState(false);
+  const handleCheckboxChange = () => {
+    setIsMoveToReady(!isMoveToReady);
+  };
+
   const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] =
     useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>({});
@@ -286,6 +291,7 @@ const useQuoteNew = ({
   );
   const onClickCloseChangeProductionStatusModal = () => {
     setOpenChangeProductionStatusModal(false);
+    setIsMoveToReady(false);
   };
   const onClickOpenChangeProductionStatusModal = (order) => {
     setSelectedDocument(order);
@@ -302,8 +308,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1070,7 +1076,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1532,11 +1538,9 @@ const useQuoteNew = ({
           docType === DOCUMENT_TYPE.deliveryNote
         ) {
           router.replace(`/${documentPath}?Id=${_data?.id}`);
-          //navigate(`/${documentPath}?Id=${_data?.id}`);
           onClickOpenInvoiceCreation();
         } else {
           router.replace(`/${documentPath}?Id=${_data?.id}`);
-          //navigate(`/${documentPath}?Id=${_data?.id}`);
         }
       } else {
         alertFaultAdded();
@@ -1869,7 +1873,10 @@ const useQuoteNew = ({
     });
   };
 
-  const updateDocumentPreference = async (value: string, documentSettingTYpe: number) => {
+  const updateDocumentPreference = async (
+    value: string,
+    documentSettingTYpe: number
+  ) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -2252,6 +2259,8 @@ const useQuoteNew = ({
     confirmCreateDocument,
     onClickConfirmCreateDocument,
     onClickCloseConfirmCreateDocument,
+    isMoveToReady,
+    handleCheckboxChange,
   };
 };
 

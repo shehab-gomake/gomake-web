@@ -11,6 +11,7 @@ import {
 } from "react";
 import { debounce } from "@mui/material";
 import dynamic from "next/dynamic";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 interface NotesForActionModalProps {
@@ -25,6 +26,7 @@ interface NotesForActionModalProps {
   isHaveJobName?: boolean;
   jobName?: string;
   setJobName?: (value: string) => void;
+  documentType?: number;
 }
 
 
@@ -41,6 +43,7 @@ const NotesForActionModal = ({
   isHaveJobName = false,
   jobName,
   setJobName,
+  documentType
 }: NotesForActionModalProps) => {
   const { classes } = useStyle();
   const [myValue, setMyValue] = useState<string>("");
@@ -122,7 +125,7 @@ const NotesForActionModal = ({
           ...containerStyle,
         }}
       >
-        {isHaveJobName && (
+        {isHaveJobName && (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && (
           <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start", gap: 10, marginBottom: 10 }}>
             <div>
               Enter Job Name

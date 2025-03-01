@@ -19,15 +19,11 @@ import {
 import { Permissions } from "@/components/CheckPermission/enum";
 import { EWidgetProductType } from "./enums";
 import { PricingWidget } from "@/widgets/product-pricing-widget/pricing-widget";
-import { createTheme, Stack, Tabs, ThemeProvider } from "@mui/material";
+import { createTheme, Tabs, ThemeProvider } from "@mui/material";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { useEffect } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import {
-  currentProductItemValuePriceState,
-  lastProductItemValuePriceState,
-} from "@/widgets/product-pricing-widget/state";
+import { useRecoilValue } from "recoil";
 import { PriceListPageSkeletonWidget } from "./digital-offset-price-skeleton";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
@@ -90,9 +86,6 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     isChargeForNewDie,
     setIsChargeForNewDie,
     straightKnife,
-    isChangePriceForEdit,
-    onClickCloseChangePriceModal,
-    setIsChangePriceForEdit,
     isLoadingPrice,
     saveCurrentStation,
     onClickCloseCurrentStationModal,
@@ -111,6 +104,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     sliderCurrentProductItemValueTotalPrice,
     systemCurrency,
     direction,
+    setCanCalculation
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const permissions = useRecoilValue(permissionsState);
@@ -122,12 +116,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
   const theme = createTheme({
     direction: dir,
   });
-  const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(
-    currentProductItemValuePriceState
-  );
-  const lastProductItemValueTotalPrice = useRecoilValue<number>(
-    lastProductItemValuePriceState
-  );
+
   useEffect(() => {
     document.body.setAttribute("dir", dir);
   }, [dir]);
@@ -281,7 +270,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
       position: "top",
     },
   ];
-  const {} = useGoMakeTour(productSteps, [relatedParameters]);
+  const { } = useGoMakeTour(productSteps, [relatedParameters]);
 
   return (
     <div>
@@ -337,14 +326,14 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 style={
                   !isMobileScreen
                     ? {
-                        height: "calc(100vh - 300px)",
-                        overflow: "scroll",
-                        width: "calc(100% - 330px)",
-                      }
+                      height: "calc(100vh - 300px)",
+                      overflow: "scroll",
+                      width: "calc(100% - 330px)",
+                    }
                     : {
-                        height: "calc(100vh - 260px)",
-                        overflow: "scroll",
-                      }
+                      height: "calc(100vh - 260px)",
+                      overflow: "scroll",
+                    }
                 }
               >
                 <div style={clasess.sectionsContainer}>
@@ -449,6 +438,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 canCalculation={canCalculation}
                 calculationProduct={calculationProduct}
                 subProducts={subProducts}
+                setCanCalculation={setCanCalculation}
               />
             )}
           </div>
@@ -471,7 +461,6 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         display: "flex",
                         alignItems: "center",
                         position: "relative",
-                        // width: "90%",
                       }}
                     >
                       <span style={clasess.totalCurrancyStyle}>
@@ -507,15 +496,15 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 ].length -
                   1 !==
                   activeIndex && (
-                  <div data-tour="next-button">
-                    <SecondaryButton
-                      variant="contained"
-                      onClick={handleNextClick}
-                    >
-                      {t("products.offsetPrice.admin.nextBtn")}
-                    </SecondaryButton>
-                  </div>
-                )}
+                    <div data-tour="next-button">
+                      <SecondaryButton
+                        variant="contained"
+                        onClick={handleNextClick}
+                      >
+                        {t("products.offsetPrice.admin.nextBtn")}
+                      </SecondaryButton>
+                    </div>
+                  )}
               </div>
             ) : (
               <div style={{ width: "68%" }}>
@@ -536,15 +525,15 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                   ].length -
                     1 !==
                     activeIndex && (
-                    <div data-tour="next-button">
-                      <GomakePrimaryButton
-                        style={clasess.nextBtnStyle}
-                        onClick={handleNextClick}
-                      >
-                        {t("products.offsetPrice.admin.nextBtn")}
-                      </GomakePrimaryButton>
-                    </div>
-                  )}
+                      <div data-tour="next-button">
+                        <GomakePrimaryButton
+                          style={clasess.nextBtnStyle}
+                          onClick={handleNextClick}
+                        >
+                          {t("products.offsetPrice.admin.nextBtn")}
+                        </GomakePrimaryButton>
+                      </div>
+                    )}
                 </div>
               </div>
             )}
@@ -568,7 +557,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                     onClick={() => {
                       if (
                         DOCUMENT_TYPE.order ===
-                          Number(router.query.documentType) &&
+                        Number(router.query.documentType) &&
                         isFlowChanged
                       ) {
                         onClickOpenCurrentStationModal();
