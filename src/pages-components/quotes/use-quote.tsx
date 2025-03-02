@@ -659,7 +659,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         });
 
         const mapReceiptData = data?.map((quote: any) => [
-          quote?.creationDate?.split(" ")[0],
+          formatCustomDateTime(quote?.creationDate).split(" ")[0],
           <div
             style={{ cursor: "pointer" }}
             onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -1121,7 +1121,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
         });
         const mapReceiptData = data?.map((quote: any) => [
-          quote?.creationDate?.split(" ")[0],
+          formatCustomDateTime(quote?.creationDate).split(" ")[0],
           <div
             style={{ cursor: "pointer" }}
             onClick={() => onClickOpenCustomerModal(quote?.customerId)}

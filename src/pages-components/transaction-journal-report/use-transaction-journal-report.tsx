@@ -65,7 +65,7 @@ const useTransactionJournalReport = ({
     useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const { GetDateWithoutHoursFormat } = useDateFormat();
+  const { formatISODateTime } = useDateFormat();
   const { documentsTypeList, documentType, handleDocumentTypeChange } =
     useDocumentsType();
   const [showTable, setShowTable] = useState<boolean>(false);
@@ -353,8 +353,12 @@ const useTransactionJournalReport = ({
             reference: adjustment?.document?.documentNumber,
             sum: adjustment?.amount,
             adjustmentSum: adjustment?.allocatedAmount,
-            valueDate: GetDateWithoutHoursFormat(adjustment?.document?.dueDate),
-            docDate: GetDateWithoutHoursFormat(adjustment?.document?.docDate),
+            valueDate: formatISODateTime(adjustment?.document?.dueDate).split(
+              " "
+            )[0],
+            docDate: formatISODateTime(adjustment?.document?.docDate).split(
+              " "
+            )[0],
           })) || [],
       }));
 
