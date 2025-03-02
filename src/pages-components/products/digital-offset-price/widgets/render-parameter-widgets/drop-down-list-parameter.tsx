@@ -61,18 +61,14 @@ const DropDownListParameterWidget = ({
       ? { updateName: temp[index].values }
       : parameter.valuesConfigs.find((item) => item.isDefault)
   );
-  useEffect(() => {
-    // If the parameter changes, update the selectedValue accordingly
-    setSelectedValue(
-      index !== -1 && temp[index]?.values
-        ? { updateName: temp[index].values }
-        : parameter.valuesConfigs.find((item) => item.isDefault)
-    );
-  }, []);
 
+  useEffect(() => {
+    setSelectedValue(
+      (index !== -1 && temp[index]?.values) ? { updateName: temp[index].values } : undefined
+    );
+  }, [parameter, index,]);
   const handleValueChange = (e, value) => {
     setSelectedValue(value); // Update the selected value in state
-
     // Handle category or size changes
     if (parameter?.code === "devicecategory") {
       setDeviceCategory(value?.id);
@@ -114,7 +110,7 @@ const DropDownListParameterWidget = ({
     >
       <GoMakeAutoComplate
         disabled={parameter?.isLock}
-        key={selectedValue}
+        key={index !== -1 && temp[index]?.values ? selectedValue : undefined}
         options={parameter?.valuesConfigs
           ?.filter((value) => {
             return !(
