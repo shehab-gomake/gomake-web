@@ -1,14 +1,14 @@
-import { SeparateDateFormatterDDMMYYYY } from "@/utils/adapter";
+import { SeparateDateFormatterDDMMYYYY } from "@/utils/date-formatters";
 import Stack from "@mui/material/Stack";
 import { CSSProperties } from "react";
 
-//!here
 interface IProps {
   dateTime: string;
   direction?: "row" | "column" | "column-reverse" | "row-reverse";
   gap?: string;
   style?: CSSProperties;
 }
+
 const DateTimeComponent = ({ dateTime, direction, gap, style }: IProps) => {
   const utcDate = convertUtcToLocalIsoString(dateTime);
   const { formattedDate: date, formattedTime: time } =
@@ -20,6 +20,7 @@ const DateTimeComponent = ({ dateTime, direction, gap, style }: IProps) => {
     </Stack>
   );
 };
+
 const convertUtcToLocalIsoString = (utcString: string): string => {
   const date = new Date(utcString + "Z"); // Parse the UTC date string
   const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000); // Adjust to local timezone
