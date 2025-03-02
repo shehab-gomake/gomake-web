@@ -69,6 +69,7 @@ interface Query {
 const useBoardMissions = ({ isPurchaseJobs }) => {
   const { CheckPermission } = useUserPermission();
   const { getCurrencyUnitText } = useQuoteGetData();
+
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
@@ -109,8 +110,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     useState<boolean>(false);
   const [allBoardMissions, setAllBoardMissions] = useState([]);
   const [allPurchaseJobs, setAllPurchaseJobs] = useState([]);
-  const { GetDateFormat, getFormattedLocalDate, GetJobDateFormat } =
-    useDateFormat();
+  const { GetDateFormat, formatISODateTime } = useDateFormat();
   const [finalPatternSearch, setFinalPatternSearch] = useState("");
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
@@ -487,8 +487,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                   }}
                 />
               </a>,
-              GetJobDateFormat(mission?.createdDate),
-              GetJobDateFormat(mission?.dueDate),
+              formatISODateTime(mission?.createdDate),
+              formatISODateTime(mission?.dueDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(mission?.customerID)}
@@ -644,10 +644,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         if (res?.success) {
           const _data = res?.data;
           const mapData = _data.data?.map((mission: any) => [
-            // mission?.createdDate?.split("T")[0],
-            // mission?.dueDate?.split("T")[0],
-            GetJobDateFormat(mission?.createdDate),
-            GetJobDateFormat(mission?.dueDate),
+            formatISODateTime(mission?.createdDate),
+            formatISODateTime(mission?.dueDate),
             <div
               style={{ cursor: "pointer" }}
               onClick={() => onClickOpenCustomerModal(mission?.customerID)}

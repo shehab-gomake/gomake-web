@@ -15,7 +15,7 @@ const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertSuccess, alertFault } = useSnackBar();
-  const { GetDateWithoutHoursFormat } = useDateFormat();
+  const { formatISODateTime } = useDateFormat();
   const [payState, setPayState] =
     useRecoilState<StatePayment>(sendPaymentState);
   const [originalTotalPayment, setOriginalTotalPayment] = useState(
@@ -126,7 +126,7 @@ const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
       documentId: payState.documentId,
       price: payState?.totalPayment,
       maxPayments: payState.numberOfInstallments,
-      invoiceDateStr: GetDateWithoutHoursFormat(payState.invoiceDate),
+      invoiceDateStr: formatISODateTime(payState.invoiceDate).split(" ")[0],
       contactName: selectedContact?.contactName || "",
       contactPhone,
       contactMail,
@@ -171,7 +171,7 @@ const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
       documentId: payState.documentId,
       price: payState?.totalPayment,
       maxPayments: payState.numberOfInstallments,
-      invoiceDateStr: GetDateWithoutHoursFormat(payState.invoiceDate),
+      invoiceDateStr: formatISODateTime(payState.invoiceDate).split(" ")[0],
       contactName: selectedContact?.contactName || "",
       contactPhone,
       contactMail,
