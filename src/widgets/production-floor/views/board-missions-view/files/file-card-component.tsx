@@ -5,7 +5,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useRef, useState } from "react";
 import { ClickOutside } from "@/components/click-out-side/click-out-side";
-import { DateFormatterDDMMYYYY } from "@/utils/adapter";
+import { DateFormatterDDMMYYYY } from "@/utils/date-formatters";
 import { IBoardMissionsFile } from "@/widgets/production-floor/views/board-missions-view/files/state";
 import { useRecoilState } from "recoil";
 import { printHouseProfile } from "@/store/print-house-profile";

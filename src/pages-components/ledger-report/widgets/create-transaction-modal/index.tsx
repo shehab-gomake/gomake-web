@@ -1,8 +1,8 @@
 import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
 import { useCreateNewTransaction } from "./use-create-transaction";
 import { useStyle } from "./style";
-import { DateFormatter } from "@/utils/adapter";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { DateFormatter } from "@/utils/date-formatters";
 
 interface CreateNewTransactionModalProps {
   openModal: boolean;
