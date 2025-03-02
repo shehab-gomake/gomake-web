@@ -65,7 +65,7 @@ const useTransactionJournalReport = ({
     useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const { getFormattedLocalDate, GetDateWithoutHoursFormat } = useDateFormat();
+  const { GetDateWithoutHoursFormat } = useDateFormat();
   const { documentsTypeList, documentType, handleDocumentTypeChange } =
     useDocumentsType();
   const [showTable, setShowTable] = useState<boolean>(false);

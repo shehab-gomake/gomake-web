@@ -14,7 +14,7 @@ const LogComponent = ({
   activityDate,
 }: IBoardMissionsActivity) => {
   const { t } = useTranslation();
-  const { getFormattedLocalDate } = useDateFormat();
+  const { formatISODateTime } = useDateFormat();
 
   const logTypeTextKey = {
     [EActivityLogType.UPDATE_STATUS]: "logs.updateStatus",
@@ -98,7 +98,7 @@ const LogComponent = ({
               color: "#475467",
             }}
           >
-            {getFormattedLocalDate(activityDate)}
+            {formatISODateTime(activityDate)}
           </span>
         </Stack>
         <div
