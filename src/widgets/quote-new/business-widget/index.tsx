@@ -175,7 +175,7 @@ const BusinessNewWidget = ({
             value={clientName}
             placeholder={clientName ? clientName : t("reports.enterClientName")}
             label={t("reports.clientName")}
-            onBlur={onBlurClientName}
+            onBlur={() => onBlurClientName(clientName)}
             setIsUpdate={setIsUpdateClientName}
             isUpdate={isUpdateClientName}
             onInputChange={(v) => setClientName(v)}

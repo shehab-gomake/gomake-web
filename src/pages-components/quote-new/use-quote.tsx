@@ -136,6 +136,7 @@ const useQuoteNew = ({
   const [clientName, setClientName] = useState(
     quoteItemValue?.occasionalClientName
   );
+
   const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<
     number | null
   >(null);
@@ -350,21 +351,28 @@ const useQuoteNew = ({
     }
   };
 
-  const updateOccasionalClientName = async () => {
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessUpdate();
-      } else {
-        alertFaultUpdate();
-      }
-    };
-    await updateOccasionalClientNameApi(callApi, callBack, {
-      documentType: 0,
-      document: {
-        documentId: quoteItemValue?.id,
-        occasionalClientName: clientName,
-      },
-    });
+  const updateOccasionalClientName = async (value) => {
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      updatedQuoteItemValue.occasionalClientName = value;
+      setQuoteItemValue(updatedQuoteItemValue);
+    } else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+        } else {
+          alertFaultUpdate();
+        }
+      };
+
+      await updateOccasionalClientNameApi(callApi, callBack, {
+        documentType: docType,
+        document: {
+          documentId: quoteItemValue?.id,
+          occasionalClientName: clientName,
+        },
+      });
+    }
   };
 
   const onBlurPurchaseNumber = async (value) => {
@@ -377,8 +385,8 @@ const useQuoteNew = ({
     setIsUpdateDocumentTitle(null);
   };
 
-  const onBlurClientName = async () => {
-    updateOccasionalClientName();
+  const onBlurClientName = async (value) => {
+    updateOccasionalClientName(value);
     setIsUpdateClientName(null);
   };
 
@@ -1723,6 +1731,8 @@ const useQuoteNew = ({
     setTaxDate(
       isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate
     );
+
+    setClientName(quoteItemValue?.occasionalClientName);
   }, [quoteItemValue, quoteConfirm]);
 
   //!important
