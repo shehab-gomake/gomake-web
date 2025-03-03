@@ -57,6 +57,7 @@ import { useOrdersSignalr, useQuotesSignalr } from "@/hooks";
 import Stack from "@mui/material/Stack";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
 import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
+import { SettingVatListMenu } from "@/widgets/quote-new/setting-vat-menu";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -124,8 +125,12 @@ const QuoteNewPageWidget = ({
     openDeliveryTimeCancelModal,
     anchorElSettingMenu,
     openSettingMenu,
+    anchorElSettingMenuForVat,
+    openNewSttingMenuForVat,
     handleSettingMenuClick,
     handleSettingMenuClose,
+    handleSettingMenuClickForVat,
+    handleSettingMenuCloseForVat,
     onClickClosePriceModal,
     onClickOpenDeliveryTimeModal,
     onClickOpenPriceModal,
@@ -263,7 +268,9 @@ const QuoteNewPageWidget = ({
     isWhatsAppWeb,
     setIsWhatsAppWeb,
     isShowSettingIcon,
+    showVatListInSettingIconNew,
     isInvoice,
+    isDeliveryNote,
     onClickOpenChangeProductionStatusModal,
     openChangeProductionStatusModal,
     onClickCloseChangeProductionStatusModal,
@@ -500,6 +507,17 @@ const QuoteNewPageWidget = ({
                         <SettingNewIcon />
                       </IconButton>
                     )}
+                    {
+                      showVatListInSettingIconNew &&
+                      (
+                        <IconButton
+                          style={{ marginRight: 4 }}
+                          onClick={handleSettingMenuClickForVat}
+                        >
+                          <SettingNewIcon />
+                        </IconButton>
+                      )
+                    }
                   </div>
                 )}
               </div>
@@ -834,6 +852,17 @@ const QuoteNewPageWidget = ({
         onBlurVatStatus={onBlurVatStatus}
         setIsUpdateVatStatus={setIsUpdateVatStatus}
         isUpdateVatStatus={isUpdateVatStatus}
+
+      />
+      <SettingVatListMenu
+        handleClose={handleSettingMenuCloseForVat}
+        open={openNewSttingMenuForVat}
+        anchorEl={anchorElSettingMenuForVat}
+        onBlurVatStatus={onBlurVatStatus}
+        setIsUpdateVatStatus={setIsUpdateVatStatus}
+        isUpdateVatStatus={isUpdateVatStatus}
+        updateVatStatus={updateVatStatus}
+
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}
