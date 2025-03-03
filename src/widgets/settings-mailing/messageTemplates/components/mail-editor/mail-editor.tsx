@@ -18,9 +18,11 @@ import { Stack } from "@mui/material";
 import { QuillEditor } from "./quill-editor";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { languageOptionsState, languagesState } from "@/store/languages";
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton } from "@/components";
 import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { AddNewButton } from "@/components/button/add-new-button";
+import { BodyTypeEnum } from "@/enums/accounting-enums";
 
 export interface IProps {
   onClickSave: (value: any) => void;
@@ -59,6 +61,48 @@ const EmailSettings = ({ onClickSave }: IProps) => {
     setLanguageState(value?.value);
   };
 
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const handleBodyTypeToggle = (type: BodyTypeEnum) => {
+    setState((prevState) => {
+      const isTypePresent = prevState.smsTemplateBodies.some(body => body.type === type);
+      const updatedBodies = isTypePresent
+        ? prevState.smsTemplateBodies.filter(body => body.type !== type)
+        : [...prevState.smsTemplateBodies, { type, body: "" }];
+
+      return {
+        ...prevState,
+        smsTemplateBodies: updatedBodies,
+      };
+    });
+  };
+
+  const handleSaveBodyTypes = () => {
+    setIsModalOpen(false);
+  };
+
+  // Function to update body content for a specific type
+  const handleBodyContentChange = (type: BodyTypeEnum, content: string) => {
+    setState((prevState: ISMSTemplate) => ({
+      ...prevState,
+      smsTemplateBodies: prevState.smsTemplateBodies.map((body) =>
+        body.type === type ? { ...body, body: content } : body
+      ),
+    }));
+  };
+
+
+
+
+  const handleAddNewButtonClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+
   return (
     <div style={classes.containerStyle}>
       <div style={classes.subSection}>
@@ -89,6 +133,63 @@ const EmailSettings = ({ onClickSave }: IProps) => {
       <div style={classes.subSection}>
         <h3 style={classes.subSectionHeader}>{t("mailingSettings.body")}</h3>
         <QuillEditor value={body} setValue={setBody} />
+      </div>
+      <div style={classes.subSection}>
+        <h3 style={classes.subSectionHeader}>
+          {t("mailingSettings.specialBody")}
+        </h3>
+        <AddNewButton
+          label={t("mailingSettings.specialBody")}
+          onClick={handleAddNewButtonClick}
+        />
+        <GoMakeModal
+          insideStyle={{ height: "fit-content" }}
+          openModal={isModalOpen}
+          onClose={handleModalClose}
+        >
+          <div>
+            <h3>Select Body Types</h3>
+            {Object.keys(BodyTypeEnum)
+              .filter((key) => isNaN(Number(key)))  // Filter out numeric keys
+              .map((key) => {
+                return (
+                  <div key={key} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <input
+                      type="checkbox"
+                      checked={state?.smsTemplateBodies?.some(body => body.type === BodyTypeEnum[key as keyof typeof BodyTypeEnum])}
+                      onChange={() => handleBodyTypeToggle(BodyTypeEnum[key as keyof typeof BodyTypeEnum])}
+                    />
+                    <label>{key}</label>
+                  </div>
+                )
+              })}
+            <button onClick={handleSaveBodyTypes}>Save</button>
+          </div>
+        </GoMakeModal>
+        {state?.smsTemplateBodies && state?.smsTemplateBodies.length > 0 && state?.smsTemplateBodies.map((body) => {
+          return (
+            <div key={body.type} style={classes.subSection}>
+              <h3 style={classes.subSectionHeader}>
+                {t(`mailingSettings.${BodyTypeEnum[body.type]?.toLowerCase()}Body`)}
+              </h3>
+              <QuillEditor
+                value={body.body || ""}
+                setValue={(content) => handleBodyContentChange(body.type, content)}
+              />
+            </div>
+          )
+        })}
+        {/* {selectedBodyTypes.map((type) => (
+          <div key={type} style={classes.subSection}>
+            <h3 style={classes.subSectionHeader}>
+              {t(`mailingSettings.${BodyTypeEnum[type].toLowerCase()}Body`)}
+            </h3>
+            <QuillEditor
+              value={bodyContents[type] || ""}
+              setValue={(content) => handleBodyContentChange(type, content)}
+            />
+          </div>
+        ))} */}
       </div>
       <div style={classes.subSection}>
         <h3 style={classes.subSectionHeader}>
