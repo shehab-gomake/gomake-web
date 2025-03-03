@@ -6,7 +6,7 @@ import { Permissions } from "../../components/CheckPermission/enum";
 export default function SupplierPayments() {
   return (
     <CustomerAuthLayout
-      permissionEnumValue={Permissions.SHOW_RECEIPTS}
+      permissionEnumValue={Permissions.SHOW_SUPPLIER_PAYMENTS}
       className={`custom-scrollbar`}
     >
       <QuotesListPageWidget documentType={DOCUMENT_TYPE.supplierPayments} />

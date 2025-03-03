@@ -6,7 +6,7 @@ import { CLIENT_TYPE } from "../customers/enums";
 export default function PurchasesReportPage() {
   return (
     <CustomerAuthLayout
-      permissionEnumValue={Permissions.SHOW_SALES_REPORT}
+      permissionEnumValue={Permissions.SHOW_PURCHASES_REPORT}
       className={`custom-scrollbar`}
     >
       <SalesReportWidget clientType={CLIENT_TYPE.SUPPLIER} />
