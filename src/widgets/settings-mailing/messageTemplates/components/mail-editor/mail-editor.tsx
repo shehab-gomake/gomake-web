@@ -32,7 +32,6 @@ const EmailSettings = ({ onClickSave }: IProps) => {
   const { classes } = useStyle();
   const { onOpenDeleteModal } = useMessageTemplate();
   const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
-  console.log("state", state);
   const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
   const [body, setBody] = useRecoilState<string>(smsBodyState);
   // const languages = useRecoilValue(languagesState);
@@ -168,7 +167,6 @@ const EmailSettings = ({ onClickSave }: IProps) => {
           </div>
         </GoMakeModal>
         {state?.smsTemplateBodies && state?.smsTemplateBodies.length > 0 && state?.smsTemplateBodies.map((body) => {
-          console.log("bodybody", body)
           return (
             <div key={body.type} style={classes.subSection}>
               <h3 style={classes.subSectionHeader}>
