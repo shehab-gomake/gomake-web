@@ -161,21 +161,26 @@ const SettingQuoteMenu = ({
               onChange={(e, value) => updateCurrency(value?.value)}
             />
           </div>
-          {documentType !== DOCUMENT_TYPE.invoice && documentType !== DOCUMENT_TYPE.deliveryNote && <>
-            <Divider />
-            <div style={classes.menuRowStyle}>
-              <div style={classes.menuTabStyle}>{t("accounting.defaultVat")}</div>
-              <AutoCompleteUpdatedValue
-                value={vatStatus}
-                options={vatStatusList}
-                onBlur={onBlurVatStatus}
-                isUpdate={isUpdateVatStatus}
-                setIsUpdate={setIsUpdateVatStatus}
-                getOptionLabel={(item) => item.text}
-                onChange={(e, value) => updateVatStatus(value?.value)}
-              />
-            </div>
-          </>}
+          {
+            documentType !== DOCUMENT_TYPE.invoice
+            && documentType !== DOCUMENT_TYPE.deliveryNote
+            && documentType !== DOCUMENT_TYPE.invoiceRefund
+            && documentType !== DOCUMENT_TYPE.deliveryNoteRefund
+            && <>
+              <Divider />
+              <div style={classes.menuRowStyle}>
+                <div style={classes.menuTabStyle}>{t("accounting.defaultVat")}</div>
+                <AutoCompleteUpdatedValue
+                  value={vatStatus}
+                  options={vatStatusList}
+                  onBlur={onBlurVatStatus}
+                  isUpdate={isUpdateVatStatus}
+                  setIsUpdate={setIsUpdateVatStatus}
+                  getOptionLabel={(item) => item.text}
+                  onChange={(e, value) => updateVatStatus(value?.value)}
+                />
+              </div>
+            </>}
         </div>
 
       </GoMakeMenu>
