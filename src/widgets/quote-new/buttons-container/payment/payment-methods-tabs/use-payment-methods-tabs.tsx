@@ -263,9 +263,9 @@ const usePaymentMethodsTabs = () => {
 
   const creditCardAccountsOptions = quoteItemValue?.creditCardAccounts?.map(
     (account) => ({
-      text: `${account.name} - ${account.code}`,
-      value: account.code,
-      isSelected: account.isSelected,
+      text: `${account?.name} - ${account?.code}`,
+      value: account?.code,
+      isSelected: account?.isSelected,
     })
   );
 
