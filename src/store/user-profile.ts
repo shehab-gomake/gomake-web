@@ -8,6 +8,7 @@ export const userProfileState = atom<IUserProfile>({
 export interface IUserProfile {
   id: string;
   employeeId: string;
+  userId: string;
   firstName: string;
   lastName: string;
   systemLang: string;
