@@ -188,7 +188,7 @@ const useAuthLayoutHook = (
           },
           {
             key: "payments",
-            title: "tabs.payments",
+            title: "tabs.supplierPayments",
             path: "/supplier-payments",
             Permission: Permissions.SHOW_RECEIPTS, //!need to change
           },

@@ -37,7 +37,7 @@ const SupplierCreditCardTab = () => {
       }));
     }
     setRenderInputs(true);
-  }, [creditCardAccountsOptions, state]);
+  }, []);
 
   return (
     <Stack direction="row">
