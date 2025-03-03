@@ -190,7 +190,7 @@ const useAuthLayoutHook = (
             key: "payments",
             title: "tabs.supplierPayments",
             path: "/supplier-payments",
-            Permission: Permissions.SHOW_RECEIPTS, //!need to change
+            Permission: Permissions.SHOW_SUPPLIER_PAYMENTS,
           },
           {
             key: "deposits",
@@ -283,25 +283,25 @@ const useAuthLayoutHook = (
             key: "supplierAging",
             title: "tabs.supplierAging",
             path: "/supplier-aging",
-            Permission: Permissions.SHOW_AGING_REPORT,
+            Permission: Permissions.SHOW_SUPPLIER_AGING_REPORT,
           },
           {
             key: "supplierLedger",
             title: "tabs.supplierLedger",
             path: "/supplier-ledger",
-            Permission: Permissions.SHOW_LEDGER_REPORT,
+            Permission: Permissions.SHOW_SUPPLIER_LEDGER_REPORT,
           },
           {
             key: "paymentsReport",
             title: "tabs.paymentsReport",
             path: "/payments-report",
-            Permission: Permissions.SHOW_DAILY_PAYMENT_REPORT,
+            Permission: Permissions.SHOW_SUPPLIER_PAYMENT_REPORT,
           },
           {
             key: "purchasesReport",
             title: "tabs.purchasesReport",
             path: "/purchases-report",
-            Permission: Permissions.SHOW_SALES_REPORT,
+            Permission: Permissions.SHOW_PURCHASES_REPORT,
           },
         ],
         icon: () => {
