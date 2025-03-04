@@ -14,13 +14,16 @@ import { useTranslation } from "react-i18next";
 import { getCurrencies } from "@/services/api-service/general/enums";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { useState } from "react";
-import {convertTimeToDate} from "@/widgets/employees-working-hours-widgets/use-working-hours";
+import { convertTimeToDate } from "@/widgets/employees-working-hours-widgets/use-working-hours";
 
 const useCompanyProfile = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [profile, setProfile] = useRecoilState<ICompanyProfile>(companyProfileState);
-  const setChangeProfileImage = useSetRecoilState<boolean>(changeProfileImageState);
+  const [profile, setProfile] =
+    useRecoilState<ICompanyProfile>(companyProfileState);
+  const setChangeProfileImage = useSetRecoilState<boolean>(
+    changeProfileImageState
+  );
   const [currencies, setCurrencies] =
     useRecoilState<{ label: string; value: string }[]>(currenciesState);
 
@@ -131,19 +134,32 @@ const useCompanyProfile = () => {
     await checkPrintHouseTaxLoginApi(callApi, callBack);
   };
   const onToggleWorkingDays = (toggledDay: number) => {
-    setProfile(p => ({...p, businessDays: {...p.businessDays,
-        days: p.businessDays.days?.includes(toggledDay) ? p.businessDays.days.filter(d => d !== toggledDay) : [...p.businessDays.days, toggledDay]}}));
-  }
-
-  const onWorkingTimeChange = ( field: 'startTime' | 'endTime', value: string) => {
-    setProfile(profile => ({...profile,
+    setProfile((p) => ({
+      ...p,
       businessDays: {
-      ...profile.businessDays,
-      [field]: convertTimeToDate(value)
-    }}));
-      }
+        ...p.businessDays,
+        days: p.businessDays.days?.includes(toggledDay)
+          ? p.businessDays.days.filter((d) => d !== toggledDay)
+          : [...p.businessDays.days, toggledDay],
+      },
+    }));
+  };
+
+  const onWorkingTimeChange = (
+    field: "startTime" | "endTime",
+    value: string
+  ) => {
+    setProfile((profile) => ({
+      ...profile,
+      businessDays: {
+        ...profile.businessDays,
+        [field]: convertTimeToDate(value),
+      },
+    }));
+  };
 
   return {
+    t,
     getProfile,
     profile,
     profileChange,
@@ -159,7 +175,7 @@ const useCompanyProfile = () => {
     checkPrintHouseTaxLogin,
     taxLoginUrl,
     onToggleWorkingDays,
-    onWorkingTimeChange
+    onWorkingTimeChange,
   };
 };
 

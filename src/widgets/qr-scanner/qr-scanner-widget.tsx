@@ -72,8 +72,7 @@ const QRScannerPage = () => {
             <Box display="flex" justifyContent="center" sx={{ mb: 3 }}>
               <QrReader
                 delay={300}
-                // facingMode="environment"
-                facingMode={{ exact: "environment" }} // Forces the rear camera
+                facingMode="environment"
                 style={{
                   width: "100%",
                   borderRadius: "20px",
