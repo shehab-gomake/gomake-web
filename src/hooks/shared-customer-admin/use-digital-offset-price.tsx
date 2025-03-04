@@ -366,8 +366,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const result = res?.data?.data?.data;
     setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
     setCurrentProductItemValueDraftId(result.productItemValueDraftId);
+    setCurrentCalculationSessionId(result.productItemValueDraftId);
     stIsFlowChanged(result.isFlowChanged);
     setAdditionalProductItems(result.additionalProductItems);
+    
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
