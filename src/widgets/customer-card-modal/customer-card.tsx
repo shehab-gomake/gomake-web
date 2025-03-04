@@ -27,6 +27,7 @@ import { AccountingTab } from "./components/accounting-tab";
 import { GeneralTab } from "./components/general-tab/form";
 import { BudgetTab } from "./components/budget-tab";
 import { LedgerReportWidget } from "@/pages-components/ledger-report/ledger-report";
+import { ClientBalance } from "./components/client-balance/client-balance";
 
 interface IProps {
   isValidCustomer?: (
@@ -461,7 +462,9 @@ const CustomerCardWidget = ({
             tabs={tabs}
             withBackGround={true}
             selectedTabIndex={selectedTabIndex}
-          />
+          >
+            <ClientBalance clientId={customer?.id} />
+          </PrimaryTabsComponent>
         </div>
         <div style={classes.footerStyle}>
           {isFromHomePage && !showTable ? (
