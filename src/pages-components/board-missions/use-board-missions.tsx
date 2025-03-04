@@ -553,8 +553,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       const currentProductsIds = Array.isArray(router.query.productsIds)
         ? router.query.productsIds
         : router.query.productsIds
-        ? [router.query.productsIds]
-        : productIds;
+          ? [router.query.productsIds]
+          : productIds;
 
       const currentOrderStatus = router.query.orderStatus;
 
@@ -598,42 +598,42 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           : undefined;
       const data = isClear
         ? {
-            productsIds: [],
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-          }
+          productsIds: [],
+          pageNumber: pageNumber,
+          pageSize: pageSize,
+        }
         : {
-            clientId: router?.query?.clientId || customer?.id,
-            agentId: router?.query?.agentId || agent?.id,
-            search:
-              finalPatternSearch !== null &&
+          clientId: router?.query?.clientId || customer?.id,
+          agentId: router?.query?.agentId || agent?.id,
+          search:
+            finalPatternSearch !== null &&
               finalPatternSearch !== undefined &&
               finalPatternSearch !== ""
-                ? finalPatternSearch
-                : currentFinalPatternSearch,
-            fromDate:
-              currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
-            toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
-            fromDueDate:
-              currentFormattedFromDueDate ||
-              (fromDueDate && GetDateFormat(fromDueDate)),
-            toDueDate:
-              currentFormattedToDueDate ||
-              (toDueDate && GetDateFormat(toDueDate)),
+              ? finalPatternSearch
+              : currentFinalPatternSearch,
+          fromDate:
+            currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
+          toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
+          fromDueDate:
+            currentFormattedFromDueDate ||
+            (fromDueDate && GetDateFormat(fromDueDate)),
+          toDueDate:
+            currentFormattedToDueDate ||
+            (toDueDate && GetDateFormat(toDueDate)),
 
-            fromReadyDate:
-              currentFormattedFromReadyDate ||
-              (fromReadyDate && GetDateFormat(fromReadyDate)),
-            toReadyDate:
-              currentFormattedToReadyDate ||
-              (toReadyDate && GetDateFormat(toReadyDate)),
-            productsIds: currentProductsIds,
-            productionStatus: currentProductionStatus || status?.value,
-            orderStatus: currentOrderStatus || orderStatus?.value,
-            pageNumber: pageNumber || currentPageNumber,
-            pageSize: pageSize,
-            orderNumber: router?.query?.orderNumber,
-          };
+          fromReadyDate:
+            currentFormattedFromReadyDate ||
+            (fromReadyDate && GetDateFormat(fromReadyDate)),
+          toReadyDate:
+            currentFormattedToReadyDate ||
+            (toReadyDate && GetDateFormat(toReadyDate)),
+          productsIds: currentProductsIds,
+          productionStatus: currentProductionStatus || status?.value,
+          orderStatus: currentOrderStatus || orderStatus?.value,
+          pageNumber: pageNumber || currentPageNumber,
+          pageSize: pageSize,
+          orderNumber: router?.query?.orderNumber,
+        };
       await setBoardMissionsFiltersApi(callApi, callBack, data);
     }
   };
@@ -953,7 +953,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             value={packageQuantities[index]}
             onChange={(e) => {
               const newValue = parseInt(e.target.value, 10);
-              console.log("newValue", { newValue, index });
               handlePackageQuantityChange(index, newValue);
             }}
           />
