@@ -1,17 +1,18 @@
-import { adaptRight } from "@/utils/adapter";
+import { adaptLeft, adaptRight } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Source } from "./use-actions-list";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useMediaQuery } from "@mui/material";
 
 const useStyle = ({ source }: any) => {
   const { t } = useTranslation();
   const { secondColor, theme } = useGomakeTheme();
-
   const dir: "rtl" | "ltr" = t("direction");
   const oppositeDir = dir === "rtl" ? "ltr" : "rtl";
   const finalDir = source === Source.PRODUCTION_FLOOR ? oppositeDir : dir;
+  const isMobile = useMediaQuery("(max-width:768px)");
 
   const classes = useMemo(() => {
     return {
@@ -33,7 +34,7 @@ const useStyle = ({ source }: any) => {
       },
       paperStyle: {
         position: "absolute",
-        ...adaptRight(finalDir, 0),
+        ...(isMobile ? adaptLeft(finalDir, 0) : adaptRight(finalDir, 0)),
         top: source === Source.USERS ? "-420px" : "110%",
         maxWidth: "500px",
         width: "fit-content",
@@ -138,7 +139,7 @@ const useStyle = ({ source }: any) => {
         borderRadius: "8px",
       },
     };
-  }, [theme]);
+  }, [theme, isMobile]);
   return {
     classes,
   };

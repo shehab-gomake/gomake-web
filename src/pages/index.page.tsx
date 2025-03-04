@@ -1,9 +1,9 @@
 import { CustomerAuthLayout } from "@/layouts";
 import { HomePageComponentForAdmin } from "@/pages-components/admin/home/home";
-import { useMediaQuery } from "react-responsive";
+import { useMediaQuery } from "@mui/material";
 
 export default function Home() {
-  const isMobileScreen = useMediaQuery({ query: "(max-width: 768px)" });
+  const isMobileScreen = useMediaQuery("(max-width:768px)");
 
   return (
     <CustomerAuthLayout

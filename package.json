@@ -74,6 +74,7 @@
     "react-payment-inputs": "^1.1.9",
     "react-pdf": "^8.0.2",
     "react-phone-input-2": "^2.15.1",
+    "react-qr-scanner": "^1.0.0-alpha.11",
     "react-quill": "^2.0.0",
     "react-responsive": "^10.0.0",
     "react-signature-canvas": "^1.0.6",

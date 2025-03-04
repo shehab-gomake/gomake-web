@@ -33,6 +33,7 @@ import { ExpandIcon } from "@/icons/expand-icon";
 
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 
+
 interface IProps {
   boardMission: IBoardMissions;
   status?: any;
@@ -40,6 +41,8 @@ interface IProps {
   onClickPrintDTicket?: (mission: any) => void;
   onClickClient?: (clientId: any) => void;
   index: number;
+  isMobileScreen: boolean;
+  isRTL?: boolean;
 }
 
 enum EDropArea {
@@ -55,6 +58,8 @@ const TableRowComponent = ({
   onClickPrintDTicket,
   onClickClient,
   index,
+  isMobileScreen,
+  isRTL,
 }: IProps) => {
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
@@ -185,7 +190,14 @@ const TableRowComponent = ({
         >
           <SecondaryTableCell
             align={"center"}
-            style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
+            style={{
+              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              ...(isMobileScreen && {
+                position: "sticky",
+                [isRTL ? "right" : "left"]: 0,
+                zIndex: 11,
+              }),
+            }}
           >
             <Checkbox
               checked={
@@ -205,58 +217,17 @@ const TableRowComponent = ({
             />
           </SecondaryTableCell>
         </PermissionCheck>
-        <SecondaryTableCell
-          align={"center"}
-          style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
-        >
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div />
-            <div />
-            <DateTimeProductionFloorComponent
-              dateString={convertUtcToLocalIsoString(
-                boardMission.boardMissionCreatedDate
-              )}
-            />
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              {boardMission.showGraphicsApprovalAlert && (
-                <ApprovalFileStatusComponent
-                  fileStatus={boardMission.showGraphicsApprovalAlert}
-                  t={t}
-                />
-              )}
 
-              <div style={{ marginTop: "5px" }}>
-                {boardMission.isUrgentWork && (
-                  <KeyboardDoubleArrowUpIcon
-                    style={{
-                      color: errorColor(500),
-                    }}
-                  />
-                )}
-              </div>
-            </div>
-            <div />
-          </div>
-        </SecondaryTableCell>
         <SecondaryTableCell
           align={"center"}
           style={{
             backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
             cursor: "pointer",
+            ...(isMobileScreen && {
+              position: "sticky",
+              [isRTL ? "right" : "left"]: 48,
+              zIndex: 10,
+            }),
           }}
         >
           <div
@@ -288,6 +259,54 @@ const TableRowComponent = ({
               {`${boardMission?.orderNumber}`}
             </div>
             <ExpandIcon />
+          </div>
+        </SecondaryTableCell>
+
+        <SecondaryTableCell
+          align={"center"}
+          style={{
+            backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <div />
+            <div />
+            <DateTimeProductionFloorComponent
+              dateString={boardMission.boardMissionCreatedDate}
+            />
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              {boardMission.showGraphicsApprovalAlert && (
+                <ApprovalFileStatusComponent
+                  fileStatus={boardMission.showGraphicsApprovalAlert}
+                  t={t}
+                />
+              )}
+
+              <div style={{ marginTop: "5px" }}>
+                {boardMission.isUrgentWork && (
+                  <KeyboardDoubleArrowUpIcon
+                    style={{
+                      color: errorColor(500),
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+            <div />
           </div>
         </SecondaryTableCell>
 

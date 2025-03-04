@@ -1,6 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { IconButton, Modal, Tooltip } from "@mui/material";
-import { Wastebasket, AddModalIcon, EditModalIcon, DuplicateModalIcon, WarningModalIcon, DeleteModalIcon } from "@/icons";
+import {
+  Wastebasket,
+  AddModalIcon,
+  EditModalIcon,
+  DuplicateModalIcon,
+  WarningModalIcon,
+  DeleteModalIcon,
+} from "@/icons";
 import { GomakePrimaryButton } from "../button";
 import { useStyle } from "./style";
 import { CloseIcon } from "@/widgets/quote-new/receipts-table/Payment-methods-details/icons/close-icon";
@@ -29,9 +36,6 @@ const GoMakeDeleteModal = ({
   const { classes } = useStyle({ modalType });
   const { t } = useTranslation();
 
-
-
-
   const _renderConfirmBtn = (modalType: ModalType) => {
     if (modalType === ModalType.DELETE) {
       return t("modal.delete");
@@ -52,8 +56,7 @@ const GoMakeDeleteModal = ({
   const _renderCancelBtn = (modalType: ModalType) => {
     if (modalType === ModalType.DELETE) {
       return t("modal.cancel");
-    }
-    else {
+    } else {
       return t("modal.discard");
     }
   };
@@ -73,11 +76,10 @@ const GoMakeDeleteModal = ({
       {...props}
       style={{
         outline: "none",
-        zIndex: 999999
+        zIndex: 999999,
       }}
     >
       <div style={{ ...classes.container, ...props.style }}>
-
         <div style={classes.content}>
           {withClose && (
             <div style={classes.closeIcon} onClick={onClose}>
@@ -89,10 +91,16 @@ const GoMakeDeleteModal = ({
             </div>
           )}
           {!hideIcon && (
-            <div style={classes.icon}>{props.icon || _renderIcon(modalType)}</div>
+            <div style={classes.icon}>
+              {props.icon || _renderIcon(modalType)}
+            </div>
           )}
-          <div style={classes.title}>{title ? t(title) : _renderTitle(modalType)}</div>
-          <div style={classes.subTitle}>{subTitle ? t(subTitle) : _renderSubTitle(modalType)}</div>
+          <div style={classes.title}>
+            {title ? t(title) : _renderTitle(modalType)}
+          </div>
+          <div style={classes.subTitle}>
+            {subTitle ? t(subTitle) : _renderSubTitle(modalType)}
+          </div>
 
           {children && <div style={classes.children}>{children}</div>}
           <div style={classes.btnsContainer}>
@@ -105,7 +113,10 @@ const GoMakeDeleteModal = ({
             >
               {yesBtn ? t(yesBtn) : _renderConfirmBtn(modalType)}
             </GomakePrimaryButton>
-            <GomakePrimaryButton style={classes.cancelBtn} onClick={handleCancelClick}>
+            <GomakePrimaryButton
+              style={classes.cancelBtn}
+              onClick={handleCancelClick}
+            >
               {props?.cancelBtn || _renderCancelBtn(modalType)}
             </GomakePrimaryButton>
           </div>

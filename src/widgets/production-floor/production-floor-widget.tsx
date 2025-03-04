@@ -1,4 +1,4 @@
-import { IconButton, Stack } from "@mui/material";
+import { Fab, IconButton, Stack, useMediaQuery } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -15,13 +15,13 @@ import { BoardMissionsComponent } from "@/widgets/production-floor/views/board-m
 import { DashboardWidget } from "@/widgets/dashboard-widget";
 import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-uploader-widget";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
-import { useProductionFloorSignalr } from "@/hooks/signalr/use-production-floor-signalr";
 import { ProductionFloorFilters } from "./filters/production-floor-filters";
 import { useProductionFloorData } from "./use-production-floor-data";
 import { TimelineWidget } from "@/widgets/production-floor/views/gantt-view/gantt-component";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-floor-socket-io";
+import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -81,6 +81,10 @@ const ProductionFloorWidget = () => {
     }
   }, [query, setView]);
 
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const handleOpenQRScanner = () => {
+    push(`/qr-scanner`);
+  };
   return (
     <Stack
       padding={"0 20px"}
@@ -94,6 +98,7 @@ const ProductionFloorWidget = () => {
         setFilterGroups={setFilterGroups}
         connectionId={connectionId}
       />
+
       {view !== EProductionFloorView.DASHBOARD && (
         <ProductionFloorFilters
           getStationFilterGroups={getStationFilterGroups}
@@ -116,6 +121,7 @@ const ProductionFloorWidget = () => {
         )}
         <QrListenerWidget listening={!boardMissionsId} />
       </Stack>
+
       <Drawer
         sx={{ zIndex: 999999 }}
         open={!!boardMissionsId}
@@ -161,6 +167,24 @@ const ProductionFloorWidget = () => {
         <FilesUploaderWidget />
         <QrListenerWidget listening={!!boardMissionsId} />
       </Drawer>
+
+      {isMobile && (
+        <Fab
+          color="primary"
+          sx={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            backgroundColor: "#1976D2",
+            color: "white",
+            "&:hover": { backgroundColor: "#115293" },
+            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+          }}
+          onClick={handleOpenQRScanner}
+        >
+          <QrCodeScannerIcon sx={{ fontSize: 28 }} />
+        </Fab>
+      )}
     </Stack>
   );
 };
