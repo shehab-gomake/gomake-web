@@ -34,9 +34,13 @@ const LoginLeftSide = () => {
           <Image
             src={userProfile?.loginLogo}
             alt="logo"
-            style={{ objectFit: "contain" }}
-            width={isMobile ? 100 : 200}
-            height={isMobile ? 100 : 200}
+            style={{
+              objectFit: "contain",
+              borderRadius: 8,
+              ...(isMobile && { marginBottom: "20px" }),
+            }}
+            width={isMobile ? 70 : 150}
+            height={isMobile ? 70 : 150}
           />
         </div>
       )}
