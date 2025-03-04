@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import { ModalType } from "@/enums";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { quoteItemState } from "@/store/quote-item";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useEffect, useState } from "react";
 import { updateDocumentContactsReorderApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
@@ -54,7 +54,7 @@ const ContactNewWidget = ({
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const { CheckDocumentPermission } = useUserPermission();
-  const quoteItemValue = useRecoilValue<any>(quoteItemState);
+  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
   const canEditDocumentContacts = router.query.isNewCreation
     ? true
     : CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
@@ -64,17 +64,25 @@ const ContactNewWidget = ({
   }, [items]);
 
   const updateDocumentContactsReorder = async (list) => {
-    const callBack = (res) => {
-      if (res?.success) {
-      } else {
-      }
-    };
-    await updateDocumentContactsReorderApi(callApi, callBack, {
-      documentType: documentType,
-      documentId: quoteItemValue?.id,
-      documentContacts: list
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      updatedQuoteItemValue.documentContacts = list;
+      setQuoteItemValue(updatedQuoteItemValue);
+    }
+    else {
+      const callBack = (res) => {
+        if (res?.success) {
+        } else {
+        }
+      };
+      await updateDocumentContactsReorderApi(callApi, callBack, {
+        documentType: documentType,
+        documentId: quoteItemValue?.id,
+        documentContacts: list
 
-    });
+      });
+    }
+
   };
   const onDragEnd = (result) => {
     if (!result.destination) {
@@ -105,7 +113,7 @@ const ContactNewWidget = ({
                   {(provided) => (
                     <div {...provided.droppableProps} ref={provided.innerRef}>
                       {documentContacts?.slice(0, displayedItems).sort((a, b) => a.index - b.index).map((item, index) => (
-                        <Draggable key={item.id} draggableId={item.id} index={index}>
+                        <Draggable key={item.id} draggableId={item.contactID} index={index}>
                           {(provided) => (
                             <div
                               ref={provided.innerRef}

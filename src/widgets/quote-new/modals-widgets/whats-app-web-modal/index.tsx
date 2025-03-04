@@ -10,9 +10,11 @@ import {
 import { useStyle } from "./style";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
-import {EPreferences} from "@/enums/prefernces";
-import {clearPhoneNumberPrefix} from "@/utils/helpers";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
+import { clearPhoneNumberPrefix } from "@/utils/helpers";
+import { quoteItemState } from "@/store/quote-item";
+import { useRecoilState } from "recoil";
 
 const WhatsAppWebModal = ({
   openModal,
@@ -46,6 +48,8 @@ const WhatsAppWebModal = ({
     //openWhatsAppWebLink(whatsappMassage, phoneNumber, isWhatsAppWeb);
     openWhatsAppWebLink(whatsappMassage, phoneNumber);
   };
+  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+  console.log("quoteItemValue", { quoteItemValue, clientContactsValue })
 
   return (
     <>
@@ -60,13 +64,13 @@ const WhatsAppWebModal = ({
       >
         <div style={clasess.mainContainer}>
           <GoMakeAutoComplate
-            options={clientContactsValue}
-            getOptionLabel={(option: any) => `${option.name}`}
+            options={quoteItemValue?.documentContacts}
+            getOptionLabel={(option: any) => `${option.contactName}`}
             style={clasess.textInputStyle}
             placeholder={t("sales.quote.contactName")}
             onChange={(e, value) => {
               setSelectedClient(value);
-              setPhoneNumber(value?.phone);
+              setPhoneNumber(value?.contactPhone);
             }}
           />
           <GomakeTextInput
