@@ -148,12 +148,14 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
               text: material.materialTypeName,
               level: 1, // Material Types are level 1
               selectable: false,
+              category: ProductCategoryType.MATERIAL,
               children: material.categories.map((category) => ({
                 value: `${material.materialTypeName}-${category.categoryName}`,
                 title: category.categoryName,
                 text: category.categoryName,
                 selectable: false,
                 level: 2, // Categories are level 2
+                category: ProductCategoryType.MATERIAL,
                 children: category.rows.map((row) => ({
                   value: row.id,
                   title: row.value,
