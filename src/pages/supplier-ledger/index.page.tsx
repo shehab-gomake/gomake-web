@@ -6,7 +6,7 @@ import { CLIENT_TYPE } from "../customers/enums";
 export default function SupplierLedgerPage() {
   return (
     <CustomerAuthLayout
-      permissionEnumValue={Permissions.SHOW_LEDGER_REPORT}
+      permissionEnumValue={Permissions.SHOW_SUPPLIER_LEDGER_REPORT}
       className={`custom-scrollbar`}
     >
       <LedgerReportWidget clientType={CLIENT_TYPE.SUPPLIER} />

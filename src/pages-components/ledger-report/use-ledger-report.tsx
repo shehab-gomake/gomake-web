@@ -45,7 +45,6 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
     });
   }, [customer, customerId]);
 
-  const { navigate } = useGomakeRouter();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [isExtended, setIsExtended] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);

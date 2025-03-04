@@ -282,6 +282,7 @@ const QuoteNewPageWidget = ({
     confirmCreateDocument,
     onClickConfirmCreateDocument,
     onClickCloseConfirmCreateDocument,
+    isReceipt,
     isMoveToReady,
     handleCheckboxChange,
   } = useQuoteNew({
@@ -377,7 +378,7 @@ const QuoteNewPageWidget = ({
   }, []);
 
   useEffect(() => {
-    if (documentType === DOCUMENT_TYPE.receipt) resetReceiptState();
+    if (isReceipt) resetReceiptState();
   }, []);
 
   useEffect(() => {
@@ -652,7 +653,7 @@ const QuoteNewPageWidget = ({
                 paddingRight: 12,
               }}
             >
-              {documentType !== DOCUMENT_TYPE.receipt && (
+              {!isReceipt && (
                 <QuoteForPriceTable
                   documentItems={
                     isQuoteConfirmation
@@ -694,7 +695,7 @@ const QuoteNewPageWidget = ({
                   />
                 </>
               )}
-              {documentType === DOCUMENT_TYPE.receipt && <ReceiptsTable />}
+              {isReceipt && <ReceiptsTable />}
             </div>
             {!isPrePaymentPage && (
               <WriteCommentComp
