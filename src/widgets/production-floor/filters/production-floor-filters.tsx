@@ -17,7 +17,7 @@ import { SearchInputComponent } from "@/components/form-inputs/search-input-comp
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { filtersInputs } from "@/widgets/production-floor/filters/filters-inputs";
 import { SelectComponent } from "@/widgets/production-floor/filters/select/select-component";
-import { styled } from "@mui/system";
+import { minWidth, styled } from "@mui/system";
 import { toRgba } from "@/utils/helpers";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { fetchS3JsonContent } from "@/utils/S3Content";
@@ -28,8 +28,8 @@ import { useRouter } from "next/router";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
-import {useRecoilState} from "recoil";
-import {filterGroupsState} from "@/widgets/production-floor/state/filter-group";
+import { useRecoilState } from "recoil";
+import { filterGroupsState } from "@/widgets/production-floor/state/filter-group";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -192,24 +192,24 @@ const CustomGroupComponent = ({
               backgroundColor: "transparent",
             }}
           >
-            {
-              group.id !== "all" && (<IconButton
-                    onClick={onClickDelete}
-                    size="small"
-                    style={{
-                      padding: "4px",
-                    }}
-                >
-                  <ClearIcon
-                      className="clear-icon"
-                      style={{
-                        cursor: "pointer",
-                        fontSize: "14px",
-                        color: isSelected ? "#FFF" : group?.color,
-                      }}
-                  />
-                </IconButton>)
-            }
+            {group.id !== "all" && (
+              <IconButton
+                onClick={onClickDelete}
+                size="small"
+                style={{
+                  padding: "4px",
+                }}
+              >
+                <ClearIcon
+                  className="clear-icon"
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    color: isSelected ? "#FFF" : group?.color,
+                  }}
+                />
+              </IconButton>
+            )}
           </Circle>
         </Box>
       </CardContent>
@@ -225,12 +225,13 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 });
 
-const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
+const ProductionFloorFilters = ({ getStationFilterGroups, connectionId }) => {
   const { classes } = useStyle();
   const { push } = useRouter();
   const { tagsList } = filtersInputs();
   const [containerWidth, setContainerWidth] = useState(0);
-  const [filterGroups, setFilterGroups] = useRecoilState<IFilterGroupsList[]>(filterGroupsState);
+  const [filterGroups, setFilterGroups] =
+    useRecoilState<IFilterGroupsList[]>(filterGroupsState);
 
   const {
     t,
@@ -262,7 +263,10 @@ const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
     handleDeleteConfirm,
     handleCancel,
     handleClearClick,
-  } = useProductionFloorFilters({ getStationFilterGroups:getStationFilterGroups,connectionId:connectionId });
+  } = useProductionFloorFilters({
+    getStationFilterGroups: getStationFilterGroups,
+    connectionId: connectionId,
+  });
 
   useEffect(() => {
     const fetchMachinesColors = async () => {
@@ -321,7 +325,6 @@ const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
       setHiddenFilterGroups(hidden);
     }
   }, [filterGroups, containerWidth]);
-
 
   const getMissionsList = useCallback(() => {
     return missionsList;
@@ -431,7 +434,7 @@ const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
         {visibleFilterGroups?.map((group, index) => (
           <CustomGroupComponent
             dir={dir}
-            key={'visibleGroup' + index}
+            key={"visibleGroup" + index}
             group={group}
             onClick={() => handleSelectGroup(group?.id)}
             onClickDelete={(event) => {
@@ -472,7 +475,7 @@ const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
                 {hiddenFilterGroups?.map((group, index) => (
                   <CustomGroupComponent
                     dir={dir}
-                    key={'hiddenGroup' + index}
+                    key={"hiddenGroup" + index}
                     group={group}
                     onClick={() => handleSelectGroup(group?.id)}
                     onClickDelete={(event) => {
@@ -494,6 +497,11 @@ const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
         onClose={handleCancel}
         onClickDelete={handleDeleteConfirm}
         onClickCancel={handleCancel}
+        style={{
+          width: "90vw",
+          maxWidth: 600,
+          minWidth: "unset",
+        }}
       />
     </Stack>
   );
