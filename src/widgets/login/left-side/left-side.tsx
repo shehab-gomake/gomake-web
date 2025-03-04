@@ -34,14 +34,23 @@ const LoginLeftSide = () => {
           <Image
             src={userProfile?.loginLogo}
             alt="logo"
-            style={{ objectFit: "contain" }}
-            width={isMobile ? 100 : 200}
-            height={isMobile ? 100 : 200}
+            style={{
+              objectFit: "contain",
+              borderRadius: 8,
+              ...(isMobile && { marginBottom: "20px" }),
+            }}
+            width={isMobile ? 70 : 150}
+            height={isMobile ? 70 : 150}
           />
         </div>
       )}
 
-      <div style={classes.loginContainer}>
+      <div
+        style={{
+          ...classes.loginContainer,
+          ...(isMobile && { padding: "0px 20px" }),
+        }}
+      >
         <div style={classes.loginLbl}>{t("login.login")}</div>
         {inputs.map((input: IInput) => (
           <InputContainer
