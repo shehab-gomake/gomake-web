@@ -3,8 +3,13 @@ import { useStyle } from "./style";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
+import { FONT_FAMILY } from "@/utils/font-family";
 
-const ForgotPasswordLeftSide = () => {
+interface ForgotPasswordLeftSideProps {
+  isMobile?: boolean;
+}
+
+const ForgotPasswordLeftSide = ({ isMobile }: ForgotPasswordLeftSideProps) => {
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
@@ -18,20 +23,39 @@ const ForgotPasswordLeftSide = () => {
       setError(false);
     }
   };
-  const { clasess } = useStyle();
+
+  const { classes } = useStyle();
   return (
-    <div style={clasess.leftContainer}>
+    <div
+      style={{
+        ...classes.leftContainer,
+        ...(isMobile ? { width: "100%" } : {}),
+      }}
+    >
       <Image
         alt="logo"
-        src={"https://i.ibb.co/wzpwSq6/Group-1239.png"}
-        width={180}
-        height={180}
+        // src={"https://i.ibb.co/wzpwSq6/Group-1239.png"}
+        src={
+          "https://gomake-printhouses-logos.s3.amazonaws.com/default_generalLogo.jpeg"
+        }
+        width={isMobile ? 100 : 180}
+        height={isMobile ? 100 : 180}
+        style={{
+          borderRadius: "8px",
+        }}
       />
-      <div style={clasess.loginContainer}>
-        <div style={clasess.loginLbl}>{t("login.forgotPassword")}</div>
-        <div style={clasess.inputContainer}>
-          <div style={clasess.inputLbl}>{t("login.email")}</div>
-          <div style={clasess.input}>
+      <div style={classes.loginContainer}>
+        <div
+          style={{
+            ...classes.loginLbl,
+            ...(isMobile ? { ...FONT_FAMILY.Outfit(600, 35) } : {}),
+          }}
+        >
+          {t("login.forgotPassword")}
+        </div>
+        <div style={classes.inputContainer}>
+          <div style={classes.inputLbl}>{t("login.email")}</div>
+          <div style={classes.input}>
             <GomakeTextInput
               placeholder={t("login.enterYourEmail")}
               onChange={(e) => setEmail(e.target.value)}
@@ -39,8 +63,8 @@ const ForgotPasswordLeftSide = () => {
             />
           </div>
         </div>
-        <div style={clasess.errorMsgStyle}>{errorMsg}</div>
-        <div style={clasess.btnContainer}>
+        <div style={classes.errorMsgStyle}>{errorMsg}</div>
+        <div style={classes.btnContainer}>
           <GomakePrimaryButton onClick={onClickSendEmail}>
             {t("login.send")}
           </GomakePrimaryButton>

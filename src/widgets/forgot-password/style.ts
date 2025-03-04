@@ -1,9 +1,7 @@
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const { theme, primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       container: {
         backgroundColor: "#FFFFFF",
@@ -12,12 +10,12 @@ const useStyle = () => {
         alignItems: "center",
         justifyContent: "space-between" as "space-between",
         width: "100%",
-        
       },
     };
-  }, [theme]);
+  }, []);
+
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };
