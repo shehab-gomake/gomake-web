@@ -1,11 +1,11 @@
-import {useCustomerDropDownList, useGomakeAxios} from "@/hooks";
+import { useGomakeAxios} from "@/hooks";
 import {useRecoilState, useRecoilValue} from "recoil";
 import {materialCategoryDataState, materialsClientsState, materialsMachinesState, selectedSupplierIdState} from "@/widgets/materials-widget/state";
 import {updatePrintHouseMaterialPropApi} from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {updateMaterialPropApi} from "@/services/api-service/materials/materials-endpoints";
 import { useMaterialsCategories } from "../../use-materials-categories";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import { updateProfitProfileProductMaterialApi } from "@/services/api-service/products/product-endpoints";
 import { openPriceModalState } from "@/store";
 
@@ -26,7 +26,7 @@ const useTableCellData = (isAdmin:boolean) => {
     const machinesCategories = useRecoilValue<any>(materialsMachinesState);
     const machinesOptions = machinesCategories.map((machine) => ({
       value: machine.id,
-      label: `${machine.manufacturer} - ${machine.model}`,
+      label: machine.nickName
     }));
   
     const [clientsCategories, setClientsCategories] = useRecoilState<any>(materialsClientsState);
