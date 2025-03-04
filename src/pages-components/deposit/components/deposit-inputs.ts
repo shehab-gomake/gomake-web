@@ -1,7 +1,7 @@
 import { useDateFormat } from "@/hooks/use-date-format";
 
 const DepositInputs = (state) => {
-  const { GetShortDateFormat } = useDateFormat();
+  const { formatISODateTime } = useDateFormat();
   return [
     {
       name: "depositDate",
@@ -10,7 +10,7 @@ const DepositInputs = (state) => {
       placeholder: "deposits.depositDate",
       required: false,
       parameterKey: "depositDate",
-      value: GetShortDateFormat(state?.depositDate),
+      value: formatISODateTime(state?.depositDate),
       options: [],
       isValid: true,
       readOnly: true,

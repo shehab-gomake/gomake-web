@@ -5,7 +5,7 @@ const useDateFormat = () => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
 
-  //?Correct for 04-11-2024 15:22
+  // keep it to format dates for the API request body and url filters
   const GetDateFormat = (date: Date) => {
     const utcDate = moment.utc(date, "DD-MM-YYYY h:mm");
     let format = "YYYY-MM-DD HH:mm";
@@ -15,65 +15,32 @@ const useDateFormat = () => {
     return utcDate.local().format(format);
   };
 
-  //?Correct for 2024-11-04T15:22:48.818687
-  //Convert to this 04-11-2024 17:22
-  const GetJobDateFormat = (date: Date) => {
-    const utcDate = moment.utc(date, "YYYY-MM-DD HH:mm");
-    let format = "DD-MM-YYYY HH:mm";
-    if (dir === "rtl") {
-      format = "DD-MM-YYYY HH:mm";
-    }
+  // The input date format looks like: 2024-11-04T15:22:48.818687 (ISO format)
+  // The output will be formatted as: "DD/MM/YYYY H:mm"
+  const formatISODateTime = (date: Date | string) => {
+    const utcDate = moment.utc(date);
+    const format = "DD/MM/YYYY H:mm";
+    // const format = "DD/MM/YYYY, H:mm"; // Adding a comma between date and time
     return utcDate.local().format(format);
   };
 
-  //?Correct for 2024-11-04T15:22:49.966622
-  //Convert to this 04/11/2024 17:22
-  //Convert to UTC first, then to local time
-  const getFormattedLocalDate = (date: Date | string) => {
-    const localDate = moment.utc(date).local();
-    let format = "DD/MM/YYYY HH:mm";
-
-    if (dir === "rtl") {
-      format = "HH:mm YYYY-MM-DD";
-    }
-    return localDate.format(format);
+  // The input date format looks like: "04-11-2024 15:22"
+  // The output will be formatted as: "DD/MM/YYYY H:mm"
+  const formatCustomDateTime = (date: Date) => {
+    const utcDate = moment.utc(date, "DD-MM-YYYY H:mm");
+    const format = "DD/MM/YYYY HH:mm";
+    return utcDate.local().format(format);
   };
 
-  const GetShortDateFormat = (date: Date) => {
-    if (date) {
-      const formattedDate = new Date(date).toLocaleDateString("en-GB", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-      });
-
-      return formattedDate;
-    }
-    return "N/A";
-  };
-
-  const GetDateWithoutHoursFormat = (date: Date) => {
-    if (date) {
-      const formattedDate = new Date(date).toLocaleDateString("en-GB", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-      });
-
-      return formattedDate;
-    }
-    return "N/A";
-  };
+  // Notes:
+  // - To extract just the date from formatISODateTime or formatCustomDateTime, you can use .split(" ")[0].
+  //   Example: formatISODateTime(quote?.creationDate).split(" ")[0] will give you just the date (e.g., "04/11/2024").
+  // - This works because both functions return the formatted date-time string, and .split(" ")[0] will give you the part before the space.
 
   return {
     GetDateFormat,
-    GetJobDateFormat,
-    GetShortDateFormat,
-    GetDateWithoutHoursFormat,
-    getFormattedLocalDate,
+    formatISODateTime,
+    formatCustomDateTime,
   };
 };
 

@@ -129,7 +129,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { query, pathname } = useRouter();
   const { quoteNumber } = query;
   const { errorColor } = useGomakeTheme();
-  const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
+  const { GetDateFormat, formatCustomDateTime, formatISODateTime } =
+    useDateFormat();
 
   const [patternSearch, setPatternSearch] = useState<any>(
     router.query.finalPatternSearch || null
@@ -421,7 +422,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const mapData = data?.map((quote: any) => {
           if (isPurchaseOrder) {
             return [
-              GetDateFormat(quote?.creationDate),
+              formatCustomDateTime(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
@@ -453,7 +454,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ? quote?.orderNumbers.join(", ")
               : "";
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
@@ -482,7 +483,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else if (isQuote) {
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -534,7 +535,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             }`;
 
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -601,7 +602,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else {
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -670,7 +671,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         });
 
         const mapReceiptData = data?.map((quote: any) => [
-          quote?.creationDate?.split(" ")[0],
+          formatCustomDateTime(quote?.creationDate).split(" ")[0],
           <div
             style={{ cursor: "pointer" }}
             onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -892,7 +893,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const mapData = data?.map((quote: any) => {
           if (isPurchaseOrder) {
             return [
-              GetDateFormat(quote?.creationDate),
+              formatCustomDateTime(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
@@ -924,7 +925,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ? quote?.orderNumbers.join(", ")
               : "";
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
@@ -953,7 +954,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else if (isQuote) {
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -1004,7 +1005,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
             }`;
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -1071,7 +1072,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else {
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -1138,7 +1139,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
         });
         const mapReceiptData = data?.map((quote: any) => [
-          quote?.creationDate?.split(" ")[0],
+          formatCustomDateTime(quote?.creationDate).split(" ")[0],
           <div
             style={{ cursor: "pointer" }}
             onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -1575,6 +1576,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   // table in home page
+
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -1590,8 +1592,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           document?.number,
           document?.clientType,
           document?.worksNames,
-          document?.createdDate?.split("T")[0],
-          // GetDateFormat(document?.createdDate),
+          docType === DOCUMENT_TYPE.receipt
+            ? document?.creationDate?.split("T")[0]
+            : formatCustomDateTime(document?.createdDate),
           document?.totalPrice + " " + getCurrencyUnitText(document?.currency),
           <div style={{ display: "flex", justifyContent: "center" }}>
             <h2
@@ -1824,7 +1827,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       const callBack = (res) => {
         if (res?.success) {
           const mapData = res?.data?.map((log: any) => [
-            getFormattedLocalDate(log?.actionDate),
+            formatISODateTime(log?.actionDate),
             log?.employeeName,
             getLogDescription(log?.logAction, log?.values, log?.documentType),
             getMessageStatus(log?.messageStatus),

@@ -28,7 +28,7 @@ const useDeliveryStatusButton = () => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData, alertFaultDelete, alertSuccessDelete } =
     useSnackBar();
-  const { getFormattedLocalDate } = useDateFormat();
+  const { formatISODateTime } = useDateFormat();
   const [documentItems, setDocumentItems] = useState<any>();
   const [editableQuantities, setEditableQuantities] = useState({});
   const [openDeliveryModal, setOpenDeliveryModal] = useState<boolean>(false);
@@ -308,7 +308,7 @@ const useDeliveryStatusButton = () => {
         ),
         _renderDeliveryStatus(deliveryStatus, id),
         <img src={signImage} style={{ width: "80px", maxHeight: "40px" }} />,
-        signedAt && getFormattedLocalDate(signedAt),
+        signedAt && formatISODateTime(signedAt),
         isDeliveredItem ? (
           <span
             onClick={(e) => handleDetailsClick(e, documentItem)}
@@ -322,12 +322,15 @@ const useDeliveryStatusButton = () => {
               padding: "0px 20px",
             }}
           >
-            {`${t("sales.documentDeliveries.recipientName")}: ${contactName || "N/A"
-              }, `}
-            {`${t("sales.documentDeliveries.recipientMail")}: ${contactEmail || "N/A"
-              }, `}
-            {`${t("sales.documentDeliveries.recipientNumber")}: ${contactPhone || "N/A"
-              }`}
+            {`${t("sales.documentDeliveries.recipientName")}: ${
+              contactName || "N/A"
+            }, `}
+            {`${t("sales.documentDeliveries.recipientMail")}: ${
+              contactEmail || "N/A"
+            }, `}
+            {`${t("sales.documentDeliveries.recipientNumber")}: ${
+              contactPhone || "N/A"
+            }`}
           </span>
         ) : null,
         renderPopover(),

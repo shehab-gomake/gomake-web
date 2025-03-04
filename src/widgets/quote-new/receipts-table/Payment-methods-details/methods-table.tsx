@@ -8,8 +8,8 @@ import {
 } from "@mui/material";
 import { PrimaryTableCell } from "@/components/tables/primary-table";
 import { useStyle } from "./style";
-import { useDateFormat } from "@/hooks/use-date-format";
 import { useTranslation } from "react-i18next";
+import { useDateFormat } from "@/hooks/use-date-format";
 
 interface CustomTableProps {
   headers: string[];
@@ -23,9 +23,8 @@ const CustomMethodsTable: React.FC<CustomTableProps> = ({
   columnWidths,
 }) => {
   const { classes } = useStyle();
-  const { getFormattedLocalDate, GetJobDateFormat } = useDateFormat();
-
   const { t } = useTranslation();
+  const { formatISODateTime } = useDateFormat();
 
   return (
     <TableContainer style={classes.receiptMethodsTable}>
@@ -55,7 +54,7 @@ const CustomMethodsTable: React.FC<CustomTableProps> = ({
                     style={classes.cellContainerStyle}
                   >
                     {header.includes("Date")
-                      ? GetJobDateFormat(row[header])
+                      ? formatISODateTime(row[header])
                       : row[header]}
                   </PrimaryTableCell>
                 ))}

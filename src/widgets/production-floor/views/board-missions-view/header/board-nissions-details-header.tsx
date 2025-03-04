@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import { Avatar, Divider, IconButton, Skeleton, Tooltip } from "@mui/material";
 import { useStyle } from "@/widgets/production-floor/views/board-missions-view/header/style";
-import { DateHourFormatterShort } from "@/utils/adapter";
+import { DateHourFormatterShort } from "@/utils/date-formatters";
 import TocIcon from "@mui/icons-material/Toc";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
@@ -264,7 +264,11 @@ const BoardMissionsDetailsHeader = () => {
                       {t("productionFloor.deliveredOn")}
                     </span>
                     <span style={classes.newParameterValue}>
-                      {DateHourFormatterShort(boardMissionsDetails.dueDate)}
+                      {DateHourFormatterShort(
+                        convertUtcToLocalIsoString(
+                          boardMissionsDetails.dueDate?.toString()
+                        )
+                      )}
                     </span>
                   </Stack>
                 )}
