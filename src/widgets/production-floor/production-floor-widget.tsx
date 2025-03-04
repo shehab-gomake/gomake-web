@@ -28,6 +28,7 @@ const ProductionFloorWidget = () => {
   const { query, replace, pathname, push } = useRouter();
   const { connectionId } = useProductionFloorSocketIO(view);
   const { groupsId, boardMissionsId, step, productType } = query;
+  const isMobile = useMediaQuery("(max-width: 768px)");
 
   const {
     filterGroups,
@@ -35,6 +36,7 @@ const ProductionFloorWidget = () => {
     getStationFilterGroups,
     updateStatus,
     setSelectedGroupId,
+    handleOpenQRScanner,
   } = useProductionFloorData();
 
   useEffect(() => {
@@ -81,10 +83,6 @@ const ProductionFloorWidget = () => {
     }
   }, [query, setView]);
 
-  const isMobile = useMediaQuery("(max-width: 768px)");
-  const handleOpenQRScanner = () => {
-    push(`/qr-scanner`);
-  };
   return (
     <Stack
       padding={"0 20px"}
@@ -167,7 +165,7 @@ const ProductionFloorWidget = () => {
         <FilesUploaderWidget />
         <QrListenerWidget listening={!!boardMissionsId} />
       </Drawer>
-
+      {/* QR scanner */}
       {isMobile && (
         <Fab
           color="primary"
@@ -175,7 +173,7 @@ const ProductionFloorWidget = () => {
             position: "fixed",
             bottom: 20,
             right: 20,
-            backgroundColor: "#1976D2",
+            backgroundColor: "#2e3092",
             color: "white",
             "&:hover": { backgroundColor: "#115293" },
             boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
