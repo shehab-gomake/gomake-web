@@ -1,24 +1,20 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Card,
-  CardContent,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Typography, Button, Card, CardContent } from "@mui/material";
 import { useRouter } from "next/router";
 import QrReader from "react-qr-scanner";
+import { useTranslation } from "react-i18next";
 
 const QRScannerPage = () => {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [isScanning, setIsScanning] = useState<boolean>(true); // New state to toggle scanning
+  const [isScanning, setIsScanning] = useState<boolean>(true);
 
   const handleScan = (data: { text: string } | null) => {
+    setLoading(true);
     if (data) {
-      debugger;
       setScanResult(data.text);
       setLoading(false);
       setIsScanning(false); // Hide the QR scanner after a successful scan
@@ -61,7 +57,7 @@ const QRScannerPage = () => {
             align="center"
             sx={{ mb: 2, fontWeight: "bold", color: "#2e3092" }}
           >
-            QR Code Scanner
+            {t("productionFloor.QRScanner")}
           </Typography>
           <Typography
             variant="body1"
@@ -69,19 +65,19 @@ const QRScannerPage = () => {
             color="textSecondary"
             sx={{ mb: 3, fontWeight: "500" }}
           >
-            Scan a QR code to proceed.
+            {t("productionFloor.scanQRCodeToProceed")}
           </Typography>
-
           {/* Conditionally render the QR scanner */}
           {isScanning && (
             <Box display="flex" justifyContent="center" sx={{ mb: 3 }}>
               <QrReader
                 delay={300}
-                facingMode="environment" // Forces the rear camera to be used
+                // facingMode="environment"
+                facingMode={{ exact: "environment" }} // Forces the rear camera
                 style={{
                   width: "100%",
                   borderRadius: "20px",
-                  border: "4px solid #2e3092", // Added a border around the scanner
+                  border: "4px solid #2e3092",
                   boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
                   padding: "10px",
                 }}
@@ -92,9 +88,14 @@ const QRScannerPage = () => {
           )}
 
           {loading ? (
-            <Box display="flex" justifyContent="center" sx={{ mb: 2 }}>
-              <CircularProgress color="primary" />
-            </Box>
+            <Typography
+              variant="body2"
+              align="center"
+              color="textSecondary"
+              sx={{ mb: 2 }}
+            >
+              {t("productionFloor.waitingForScan")}...
+            </Typography>
           ) : scanResult ? (
             <Typography
               variant="body1"
@@ -102,7 +103,7 @@ const QRScannerPage = () => {
               color="primary"
               sx={{ mb: 2 }}
             >
-              Scanned QR Code: {String(scanResult)} {/* Ensure it's a string */}
+              {t("productionFloor.scannedQRCode")}: {String(scanResult)}{" "}
             </Typography>
           ) : (
             <Typography
@@ -111,7 +112,7 @@ const QRScannerPage = () => {
               color="textSecondary"
               sx={{ mb: 2 }}
             >
-              Waiting for scan...
+              {t("productionFloor.waitingForScan")}...
             </Typography>
           )}
 
@@ -129,11 +130,11 @@ const QRScannerPage = () => {
                   textTransform: "none",
                   backgroundColor: "#2e3092",
                   "&:hover": {
-                    backgroundColor: "#1d1f75", // Slightly darker shade for hover effect
+                    backgroundColor: "#1d1f75",
                   },
                 }}
               >
-                Scan Again
+                {t("productionFloor.scanAgain")}
               </Button>
             </Box>
           )}
@@ -155,7 +156,7 @@ const QRScannerPage = () => {
                 },
               }}
             >
-              Back to Home
+              {t("productionFloor.backToHome")}
             </Button>
           </Box>
         </CardContent>
