@@ -18,6 +18,7 @@ import { Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
 import {TreeSelect, TreeSelectProps} from "antd";
 import {UnderlinedTab, UnderlinedTabs} from "@/components/tabs/primary-tabs";
 import {ETab} from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import {ProductCategoryType} from "@/pages-components/admin/home/widgets/quote-widget/states";
 
 // Styled components for TreeSelect and Clear Button
 const StyledTreeSelect = styled<any>(TreeSelect)(
@@ -280,6 +281,9 @@ const GoMakeTreeSelect = ({
 
     const filterTreeNode = (inputValue, treeNode) => {
         if (!inputValue) return true;
+        if (treeNode?.category !== ProductCategoryType.MATERIAL) {
+            return treeNode.title.toString().toLowerCase().includes(inputValue.toLowerCase())
+        }
         const searchKeywords = inputValue.toString().toLowerCase().split(" ").filter(Boolean);
         const pathTexts = getNodePathText(treeNode);
 
