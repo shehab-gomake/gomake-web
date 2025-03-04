@@ -69,6 +69,8 @@ const GET_PRODUCT_ITEM_BY_ID_URL =
   "/v1/erp-service/documents/get-product-document-item-by-id";
 const UPDATE_DOCUMENT_CURRENCY_URL =
   "/v1/erp-service/documents/update-document-currency";
+const UPDATE_DOCUMENT_VAT_STATUS_URL =
+  "/v1/erp-service/documents/update-document-vat-status";
 const UPDATE_EXCHANGE_RATE_URL =
   "/v1/erp-service/documents/update-document-exchange-rate";
 const REFRESH_EXCHANGE_RATE_URL =
@@ -605,6 +607,20 @@ const updateDocumentCurrencyApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.PUT,
     UPDATE_DOCUMENT_CURRENCY_URL,
+    setState,
+    data
+  );
+};
+
+const updateDocumentVatStatusApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {  
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_DOCUMENT_VAT_STATUS_URL,
     setState,
     data
   );
@@ -1151,6 +1167,7 @@ export {
   updateAgentApi,
   getProductByItemIdApi,
   updateDocumentCurrencyApi,
+  updateDocumentVatStatusApi,
   updateExchangeRateApi,
   refreshExchangeRateApi,
   createNewDocumentApi,
