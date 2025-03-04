@@ -14,7 +14,7 @@ import { ISMSTemplate } from "../../interfaces/interface";
 import { mailInputs, mailInputs1, mailInputs2, mailInputs3 } from "./inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { Stack } from "@mui/material";
+import { Checkbox, Stack } from "@mui/material";
 import { QuillEditor } from "./quill-editor";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { languageOptionsState, languagesState } from "@/store/languages";
@@ -23,6 +23,9 @@ import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplat
 import { FONT_FAMILY } from "@/utils/font-family";
 import { AddNewButton } from "@/components/button/add-new-button";
 import { BodyTypeEnum } from "@/enums/accounting-enums";
+import { CheckboxIcon } from "@/icons/checkbox-icon";
+import { CheckboxCheckedIcon } from "@/icons";
+import { useEffect } from "react";
 
 export interface IProps {
   onClickSave: (value: any) => void;
@@ -36,6 +39,15 @@ const EmailSettings = ({ onClickSave }: IProps) => {
   const [body, setBody] = useRecoilState<string>(smsBodyState);
   // const languages = useRecoilValue(languagesState);
   const languages = useRecoilValue(languageOptionsState);
+
+  useEffect(() => {
+    if (state?.smsTemplateBodies === null) {
+      setState({
+        ...state,
+        smsTemplateBodies: [],
+      });
+    }
+  }, [state]);
 
   const setLanguageState = useSetRecoilState<string>(languageTemplateState);
   const handleUpdateClick = () => {
@@ -68,7 +80,7 @@ const EmailSettings = ({ onClickSave }: IProps) => {
       const isTypePresent = prevState.smsTemplateBodies.some(body => body.type === type);
       const updatedBodies = isTypePresent
         ? prevState.smsTemplateBodies.filter(body => body.type !== type)
-        : [...prevState.smsTemplateBodies, { type, body: "" }];
+        : [...prevState.smsTemplateBodies, { type, body }];
 
       return {
         ...prevState,
@@ -135,9 +147,9 @@ const EmailSettings = ({ onClickSave }: IProps) => {
         <QuillEditor value={body} setValue={setBody} />
       </div>
       <div style={classes.subSection}>
-        <h3 style={classes.subSectionHeader}>
+        {/* <h3 style={classes.subSectionHeader}>
           {t("mailingSettings.specialBody")}
-        </h3>
+        </h3> */}
         <AddNewButton
           label={t("mailingSettings.specialBody")}
           onClick={handleAddNewButtonClick}
@@ -146,24 +158,26 @@ const EmailSettings = ({ onClickSave }: IProps) => {
           insideStyle={{ height: "fit-content" }}
           openModal={isModalOpen}
           onClose={handleModalClose}
+          modalTitle={"Select Body Types"}
         >
-          <div>
-            <h3>Select Body Types</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: "5px", marginTop: 20 }}>
+
             {Object.keys(BodyTypeEnum)
-              .filter((key) => isNaN(Number(key)))  // Filter out numeric keys
+              .filter((key) => isNaN(Number(key)))
               .map((key) => {
                 return (
-                  <div key={key} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <input
-                      type="checkbox"
+                  <div key={key} >
+                    <Checkbox
                       checked={state?.smsTemplateBodies?.some(body => body.type === BodyTypeEnum[key as keyof typeof BodyTypeEnum])}
                       onChange={() => handleBodyTypeToggle(BodyTypeEnum[key as keyof typeof BodyTypeEnum])}
+                      icon={<CheckboxIcon />}
+                      checkedIcon={<CheckboxCheckedIcon />}
                     />
-                    <label>{key}</label>
+                    <label>{t(`mailingSettings.${key}`)}</label>
                   </div>
                 )
               })}
-            <button onClick={handleSaveBodyTypes}>Save</button>
+            <GomakePrimaryButton style={{ width: "100%", height: "40px", marginTop: "10px" }} onClick={handleSaveBodyTypes}>{t("materials.buttons.save")}</GomakePrimaryButton>
           </div>
         </GoMakeModal>
         {state?.smsTemplateBodies && state?.smsTemplateBodies.length > 0 && state?.smsTemplateBodies.map((body) => {
