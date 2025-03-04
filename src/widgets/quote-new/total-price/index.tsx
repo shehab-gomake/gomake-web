@@ -37,7 +37,6 @@ const TotalPriceComp = ({
   const [isUpdateDiscount, setIsUpdateDiscount] = useState(null);
   const [isUpdateDiscountAmount, setIsUpdateDiscountAmount] = useState(null);
   const [previousDiscountAmount, setPreviousDiscountAmount] = useState(quoteItems?.discountAmount);
-  console.log("previousDiscountAmount", previousDiscountAmount);
 
   const onBlurDiscount = async () => {
     getCalculateQuote(DocumentCalculationType.Discount, quoteItems?.discount);

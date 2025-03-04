@@ -7,10 +7,10 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useState } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
-import {Stack} from "@mui/material";
-import {ClientBalanceComponent} from "@/components/client-balance/client-balance";
+import { Stack } from "@mui/material";
+import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
 
-const HomeTableWidget = ({clientId}: {clientId: string; clientBalance: number;}) => {
+const HomeTableWidget = ({ clientId }: { clientId: string; clientBalance: number; }) => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     const { CheckPermission } = useUserPermission();
@@ -67,7 +67,6 @@ const HomeTableWidget = ({clientId}: {clientId: string; clientBalance: number;})
         },
     ].filter((tab) => tab.permission);
     const [selectedTab, setSelectedTab] = useState<number>(0);
-    console.log("selectedTab", selectedTab)
     const _renderSelectedTab = () => {
         return (
             <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "flex-start", alignItems: "center", gap: 25, marginBottom: 15 }}>
@@ -104,8 +103,8 @@ const HomeTableWidget = ({clientId}: {clientId: string; clientBalance: number;})
     return (
         <>
             <Stack direction={'row'} alignItems={'center'} justifyContent={'space-between'}>
-            {_renderSelectedTab()}
-                <ClientBalanceComponent clientId={clientId}/>
+                {_renderSelectedTab()}
+                <ClientBalanceComponent clientId={clientId} />
             </Stack>
             {_renderTabContent()}
         </>

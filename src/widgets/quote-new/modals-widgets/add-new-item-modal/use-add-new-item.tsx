@@ -1,29 +1,29 @@
-import {useCallback, useEffect, useState} from "react";
-import {useGomakeAxios, useGomakeRouter, useSnackBar} from "@/hooks";
-import {useTranslation} from "react-i18next";
-import {getAllProductAndMaterialsApi} from "@/services/api-service/products/product-endpoints";
-import {ProductCategoryType} from "@/pages-components/admin/home/widgets/quote-widget/states";
-import {useRecoilState} from "recoil";
-import {quoteItemState} from "@/store";
+import { useCallback, useEffect, useState } from "react";
+import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
+import { useTranslation } from "react-i18next";
+import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
+import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
+import { useRecoilState } from "recoil";
+import { quoteItemState } from "@/store";
 import {
     addDocumentItemFromMaterialApi,
     getDocumentItemDataFromMaterialApi,
 } from "@/services/api-service/materials/materials-endpoints";
-import {v4 as uuidv4} from "uuid";
-import {DOCUMENT_TYPE} from "@/pages-components/quotes/enums";
-import {useRouter} from "next/router";
-import {addGenericProductToDocumentApi, addItemApi,} from "@/services/api-service/generic-doc/documents-api";
-import {useUserPermission} from "@/hooks/use-permission";
-import {ETab} from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { v4 as uuidv4 } from "uuid";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useRouter } from "next/router";
+import { addGenericProductToDocumentApi, addItemApi, } from "@/services/api-service/generic-doc/documents-api";
+import { useUserPermission } from "@/hooks/use-permission";
+import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
-const useAddNewItem = ({onClose, getQuote, documentType}) => {
-    const {callApi} = useGomakeAxios();
-    const {t} = useTranslation();
+const useAddNewItem = ({ onClose, getQuote, documentType }) => {
+    const { callApi } = useGomakeAxios();
+    const { t } = useTranslation();
     const [selectedProduct, setSelectedProduct] = useState<any>({});
-    const {alertFaultAdded, alertSuccessAdded} = useSnackBar();
-    const {navigate} = useGomakeRouter();
+    const { alertFaultAdded, alertSuccessAdded } = useSnackBar();
+    const { navigate } = useGomakeRouter();
     const router = useRouter();
-    const {CheckPermission} = useUserPermission();
+    const { CheckPermission } = useUserPermission();
 
     const [combinedData, setCombinedData] = useState<any>([]);
     const [quoteItemValue, setQuoteItemValue] =
@@ -237,8 +237,8 @@ const useAddNewItem = ({onClose, getQuote, documentType}) => {
                     productID: selectedMaterial?.productId,
                 };
 
-                const updatedQuoteItemValue = {...quoteItemValue};
-                const newItem = {...materialItem};
+                const updatedQuoteItemValue = { ...quoteItemValue };
+                const newItem = { ...materialItem };
                 updatedQuoteItemValue.documentItems = [
                     ...updatedQuoteItemValue.documentItems,
                     newItem,
@@ -339,11 +339,10 @@ const useAddNewItem = ({onClose, getQuote, documentType}) => {
 
     const onClickCreateQuoteForCustomer = () => {
         if (router.query.isNewCreation) {
-            console.log("documentType", documentType);
             if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
                 if (documentType === DOCUMENT_TYPE.purchaseOrder) {
-                    const updatedQuoteItemValue = {...quoteItemValue};
-                    const newItem = active === true ? {...item} : {...genericItem};
+                    const updatedQuoteItemValue = { ...quoteItemValue };
+                    const newItem = active === true ? { ...item } : { ...genericItem };
 
                     updatedQuoteItemValue.documentItems = [
                         ...updatedQuoteItemValue.documentItems,
@@ -356,8 +355,8 @@ const useAddNewItem = ({onClose, getQuote, documentType}) => {
                     getDocumentItemDataFromMaterial();
                 }
             } else {
-                const updatedQuoteItemValue = {...quoteItemValue};
-                const newItem = active === true ? {...item} : {...genericItem};
+                const updatedQuoteItemValue = { ...quoteItemValue };
+                const newItem = active === true ? { ...item } : { ...genericItem };
 
                 updatedQuoteItemValue.documentItems = [
                     ...updatedQuoteItemValue.documentItems,
@@ -422,4 +421,4 @@ const useAddNewItem = ({onClose, getQuote, documentType}) => {
     };
 };
 
-export {useAddNewItem};
+export { useAddNewItem };

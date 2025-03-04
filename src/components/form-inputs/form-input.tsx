@@ -34,7 +34,6 @@ const FormInput = ({
     loading,
     keyItem,
 }: IFormInput) => {
-    console.log("keyItem", keyItem)
     const [options, setOptions] = useState([]);
     const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
     const { callApi } = useGomakeAxios();
@@ -76,7 +75,7 @@ const FormInput = ({
     };
 
     const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
-        const value = translateUnit && input.unit ? restoreUnitValue(input.unit, parseFloat(e.target.value)) :  e.target.value;
+        const value = translateUnit && input.unit ? restoreUnitValue(input.unit, parseFloat(e.target.value)) : e.target.value;
         changeState(input.parameterKey, translateUnit && input.unit && e.target.value.endsWith('.') ? value + '.' : value);
     };
 
