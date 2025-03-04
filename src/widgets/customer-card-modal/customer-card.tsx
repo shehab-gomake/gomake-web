@@ -34,7 +34,7 @@ interface IProps {
     value1: any,
     value2: any,
     value3: any,
-    preferences: any,
+    preferences: any
   ) => boolean;
   customerAction?: CUSTOMER_ACTIONS;
   codeFlag?: boolean;
@@ -54,7 +54,7 @@ interface IProps {
   userQuote?: any;
   isFromCartPage?: boolean;
   onChangeSelectBusiness?: any;
-  selectedTabIndex?: number
+  selectedTabIndex?: number;
 }
 
 const CustomerCardWidget = ({
@@ -76,7 +76,7 @@ const CustomerCardWidget = ({
   userQuote,
   isFromCartPage = false,
   onChangeSelectBusiness,
-    selectedTabIndex = undefined
+  selectedTabIndex = undefined,
 }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -124,7 +124,7 @@ const CustomerCardWidget = ({
     dlientGroupList,
     addGroupName,
     newGroupId,
-    setNewGroupId
+    setNewGroupId,
   } = useCustomerCard({
     t,
     customer,
@@ -287,9 +287,7 @@ const CustomerCardWidget = ({
     },
     {
       title: t("budget"),
-      component: (
-        <BudgetTab state={customer} />
-      ),
+      component: <BudgetTab state={customer} />,
     },
     typeClient === CLIENT_TYPE.CUSTOMER && {
       title: t("customers.modal.gomakeUsers"),
@@ -315,6 +313,7 @@ const CustomerCardWidget = ({
       title: t("tabs.ledgerReport"),
       component: (
         <LedgerReportWidget
+          clientType={CLIENT_TYPE.CUSTOMER}
           customerId={customer?.id}
           isFromCustomerCard={true}
           autoShowCard={true}
@@ -423,7 +422,13 @@ const CustomerCardWidget = ({
                       (option: any) => option.groupName === inputValue
                     ) || inputValue === ""
                       ? dlientGroupList
-                      : [{ groupName: `Add "${inputValue}" as a new group`, id: 'new' }, ...dlientGroupList]
+                      : [
+                          {
+                            groupName: `Add "${inputValue}" as a new group`,
+                            id: "new",
+                          },
+                          ...dlientGroupList,
+                        ]
                   }
                   placeholder={"group by"}
                   style={classes.dropDownListStyle}
@@ -433,18 +438,15 @@ const CustomerCardWidget = ({
                   )}
                   onChange={(e: any, value: any) => {
                     if (value?.id === "new") {
-                      addGroupName(inputValue)
-                      setInputValue("")
+                      addGroupName(inputValue);
+                      setInputValue("");
+                    } else {
+                      onChangeInputs("clientGroupId", value?.id);
+                      setInputValue("");
                     }
-                    else {
-                      onChangeInputs("clientGroupId", value?.id)
-                      setInputValue("")
-                    }
-
-                  }
-                  }
+                  }}
                   onInputChange={(event: any, newInputValue: string) => {
-                    setInputValue(newInputValue)
+                    setInputValue(newInputValue);
                   }}
                 />
               </div>

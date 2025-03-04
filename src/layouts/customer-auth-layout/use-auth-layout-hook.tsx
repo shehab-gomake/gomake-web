@@ -223,11 +223,11 @@ const useAuthLayoutHook = (
         },
         isProduction: true,
       },
+
       {
         isLine: false,
-        key: "reports",
-        title: "tabs.reports",
-        //Permission: Permissions.SHOW_REPORTS,
+        key: "customerReports",
+        title: "tabs.customerReports",
         isList: true,
         list: [
           {
@@ -238,19 +238,14 @@ const useAuthLayoutHook = (
           },
           {
             key: "ledgerReport",
-            title: "tabs.ledgerReport",
+            title: "tabs.customerLedger",
             path: "/ledger-report",
             Permission: Permissions.SHOW_LEDGER_REPORT,
           },
-          // {
-          //   key: "transactionJournalReport",
-          //   title: "tabs.transactionJournalReport",
-          //   path: "/transaction-journal-report",
-          //   Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
-          // },
+
           {
             key: "dailyPaymentsReport",
-            title: "tabs.dailyPaymentsReport",
+            title: "tabs.receiptsReport",
             path: "/daily-payments-report",
             Permission: Permissions.SHOW_DAILY_PAYMENT_REPORT,
           },
@@ -266,6 +261,60 @@ const useAuthLayoutHook = (
             path: "/credit-card-transactions",
             Permission: Permissions.SHOW_CREDIT_CARD_TRANSACTIONS,
           },
+        ],
+        icon: () => {
+          return <ReportsIcon />;
+        },
+        isProduction: true,
+      },
+      {
+        isLine: false,
+        key: "supplierReports",
+        title: "tabs.supplierReports",
+        isList: true,
+        list: [
+          {
+            key: "supplierAging",
+            title: "tabs.supplierAging",
+            path: "/supplier-aging",
+            Permission: Permissions.SHOW_AGING_REPORT,
+          },
+          {
+            key: "supplierLedger",
+            title: "tabs.supplierLedger",
+            path: "/supplier-ledger",
+            Permission: Permissions.SHOW_LEDGER_REPORT,
+          },
+          {
+            key: "paymentsReport",
+            title: "tabs.paymentsReport",
+            path: "/payments-report",
+            Permission: Permissions.SHOW_DAILY_PAYMENT_REPORT,
+          },
+          {
+            key: "purchasesReport",
+            title: "tabs.purchasesReport",
+            path: "/purchases-report",
+            Permission: Permissions.SHOW_SALES_REPORT,
+          },
+        ],
+        icon: () => {
+          return <ReportsIcon />;
+        },
+        isProduction: true,
+      },
+      {
+        isLine: false,
+        key: "accountingReports",
+        title: "tabs.accountingReports",
+        isList: true,
+        list: [
+          // {
+          //   key: "transactionJournalReport",
+          //   title: "tabs.transactionJournalReport",
+          //   path: "/transaction-journal-report",
+          //   Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
+          // },
           {
             key: "accountingTransactionReport",
             title: "tabs.accountingTransactionReport",

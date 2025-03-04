@@ -20,6 +20,9 @@ export interface SalesReportHeaderWidgetProps {
   fromDate?: Date | null;
   toDate?: Date | null;
   isFetchingCustomers?: boolean;
+
+  isPurchaseReport?: boolean;
+  supplierList?: any[];
 }
 const useSalesReportHeader = () => {
   const { classes } = useStyle();

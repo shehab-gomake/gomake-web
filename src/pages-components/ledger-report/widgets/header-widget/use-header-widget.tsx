@@ -14,6 +14,8 @@ export interface AgingReportHeaderWidgetProps {
   toDate?: Date | null;
   customerId?: string;
   isFetchingCustomers?: boolean;
+  isPurchaseReport?: boolean;
+  supplierList?: any[];
 }
 
 const useAgingReportHeader = () => {

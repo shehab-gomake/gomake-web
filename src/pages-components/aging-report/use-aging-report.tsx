@@ -12,23 +12,29 @@ import { endOfToday } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { useSetRecoilState } from "recoil";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
-import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { getAndSetClientTypes } from "@/services/hooks";
 import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
 import { DocumentsTypeReportList } from "@/enums";
 import { initialFromDate } from "@/utils/helpers";
 
-const useAgingReport = () => {
+const useAgingReport = (clientType: CLIENT_TYPE) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
   const {
     customer,
     renderOptions,
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-  } = useCustomerDropDownList();
+    supplierList,
+  } = useCustomerDropDownList({
+    shouldRenderCustomersOnMount: !isPurchaseReport,
+    shouldRenderSuppliersOnMount: isPurchaseReport,
+  });
+
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const [selectDate, setSelectDate] = useState<string>(
     new Date().toISOString().split("T")[0]
@@ -38,7 +44,9 @@ const useAgingReport = () => {
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableHeader, setTableHeader] = useState<any>([]);
   const [tableData, setTableData] = useState<any>([]);
-  const [fromDate, setFromDate] = useState<Date>(initialFromDate('aging-report-date'));
+  const [fromDate, setFromDate] = useState<Date>(
+    initialFromDate("aging-report-date")
+  );
 
   const [toDate, setToDate] = useState<Date>(endOfToday());
   // New states and logic for handling customer modal
@@ -61,7 +69,7 @@ const useAgingReport = () => {
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
-      localStorage.setItem('aging-report-date', value[0]);
+      localStorage.setItem("aging-report-date", value[0]);
       setFromDate(value[0]);
       setToDate(value[1]);
     } else {
@@ -108,7 +116,17 @@ const useAgingReport = () => {
           }
 
           // Hide total values in the main row
-          if (["balanceDue", "_0to30", "_31to60", "_61to90", "_91to120", "_120plus"].includes(nestedKey) && detailedReport) {
+          if (
+            [
+              "balanceDue",
+              "_0to30",
+              "_31to60",
+              "_61to90",
+              "_91to120",
+              "_120plus",
+            ].includes(nestedKey) &&
+            detailedReport
+          ) {
             return "";
           }
 
@@ -176,7 +194,16 @@ const useAgingReport = () => {
           const totalsRow = tableHeader.map((header: any, index: number) => {
             if (index === 0) return " "; // Add "isTotal" to the first column
             const nestedKey = header.key;
-            if (["balanceDue", "_0to30", "_31to60", "_61to90", "_91to120", "_120plus"].includes(nestedKey)) {
+            if (
+              [
+                "balanceDue",
+                "_0to30",
+                "_31to60",
+                "_61to90",
+                "_91to120",
+                "_120plus",
+              ].includes(nestedKey)
+            ) {
               return data[nestedKey] || "";
             }
             return "";
@@ -224,7 +251,10 @@ const useAgingReport = () => {
           byCreationDate: byReferenceDate,
           expendedReport: expendedReport,
           orderBy, //balanceDue  cardCode    cardName
-          isDescOrder
+          isDescOrder,
+          cardType: isPurchaseReport
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER,
         }
       );
       if (res?.success) {
@@ -270,7 +300,10 @@ const useAgingReport = () => {
           byCreationDate: byReferenceDate,
           expendedReport: detailedReport,
           orderBy,
-          isDescOrder
+          isDescOrder,
+          cardType: isPurchaseReport
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER,
         },
       },
       true,
@@ -287,7 +320,7 @@ const useAgingReport = () => {
     selectDate,
     byReferenceDate,
     orderBy,
-    isDescOrder
+    isDescOrder,
   ]);
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
@@ -321,6 +354,9 @@ const useAgingReport = () => {
           agentId: agent?.id,
           byCreationDate: byReferenceDate,
           expendedReport: detailedReport,
+          cardType: isPurchaseReport
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER,
         },
       },
       true,
@@ -331,7 +367,9 @@ const useAgingReport = () => {
     const downloadLink = document.createElement("a");
     const link = URL?.createObjectURL(res.data);
     downloadLink.href = link;
-    downloadLink.download = `aging report.xlsx`;
+    downloadLink.download = isPurchaseReport
+      ? `supplier aging.xlsx`
+      : `customer aging.xlsx`;
     downloadLink.click();
   }, [
     fromDate,
@@ -414,7 +452,9 @@ const useAgingReport = () => {
     tableHeader,
     getAgingReportFilter,
     handleSortAgingReport,
-    isDescOrder
+    isDescOrder,
+    supplierList,
+    isPurchaseReport,
   };
 };
 
