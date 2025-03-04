@@ -178,7 +178,6 @@ const useQuoteNew = ({
   const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
   const [documentItems, setPriceListItems] = useState<any>([]);
   const [quoteItems, setquoteItems] = useState<any>([]);
-  console.log("quoteItems", quoteItems);
   const [anchorElCancelBtn, setAnchorElCancelBtn] =
     useState<null | HTMLElement>(null);
   const [anchorElSendBtn, setAnchorElSendBtn] = useState<null | HTMLElement>(
@@ -311,8 +310,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1079,7 +1078,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
