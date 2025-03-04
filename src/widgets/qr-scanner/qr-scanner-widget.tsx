@@ -9,26 +9,30 @@ import {
 } from "@mui/material";
 import { useRouter } from "next/router";
 import QrReader from "react-qr-scanner";
-import { PrimaryButton } from "@/components/button/primary-button";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 const QRScannerPage = () => {
   const router = useRouter();
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [isScanning, setIsScanning] = useState<boolean>(true); // New state to toggle scanning
 
-  const handleScan = (data: string | null) => {
+  const handleScan = (data: { text: string } | null) => {
     if (data) {
-      console.log("Scanned QR Code:", data);
-      setScanResult(data);
+      debugger;
+      setScanResult(data.text);
       setLoading(false);
-      // Redirect or handle the scanned data further
-      //   router.push(`/somewhere?data=${data}`);
+      setIsScanning(false); // Hide the QR scanner after a successful scan
     }
   };
 
   const handleError = (err: any) => {
     console.error("QR Scan error:", err);
+    setLoading(false);
+  };
+
+  const handleScanAgain = () => {
+    setScanResult(null);
+    setIsScanning(true); // Show the scanner again
     setLoading(false);
   };
 
@@ -46,7 +50,7 @@ const QRScannerPage = () => {
         sx={{
           width: "100%",
           maxWidth: 400,
-          borderRadius: "10px",
+          borderRadius: "15px",
           boxShadow: 3,
         }}
       >
@@ -55,7 +59,7 @@ const QRScannerPage = () => {
             variant="h5"
             component="div"
             align="center"
-            sx={{ mb: 2, fontWeight: "bold" }}
+            sx={{ mb: 2, fontWeight: "bold", color: "#2e3092" }}
           >
             QR Code Scanner
           </Typography>
@@ -63,28 +67,33 @@ const QRScannerPage = () => {
             variant="body1"
             align="center"
             color="textSecondary"
-            sx={{ mb: 3 }}
+            sx={{ mb: 3, fontWeight: "500" }}
           >
             Scan a QR code to proceed.
           </Typography>
 
-          <Box display="flex" justifyContent="center" sx={{ mb: 3 }}>
-            <QrReader
-              delay={300}
-              style={{
-                width: "100%",
-                borderRadius: "8px",
-                border: "2px solid #2e3092",
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-              }}
-              onScan={handleScan}
-              onError={handleError}
-            />
-          </Box>
+          {/* Conditionally render the QR scanner */}
+          {isScanning && (
+            <Box display="flex" justifyContent="center" sx={{ mb: 3 }}>
+              <QrReader
+                delay={300}
+                facingMode="environment" // Forces the rear camera to be used
+                style={{
+                  width: "100%",
+                  borderRadius: "20px",
+                  border: "4px solid #2e3092", // Added a border around the scanner
+                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+                  padding: "10px",
+                }}
+                onScan={handleScan}
+                onError={handleError}
+              />
+            </Box>
+          )}
 
           {loading ? (
             <Box display="flex" justifyContent="center" sx={{ mb: 2 }}>
-              <CircularProgress />
+              <CircularProgress color="primary" />
             </Box>
           ) : scanResult ? (
             <Typography
@@ -93,7 +102,7 @@ const QRScannerPage = () => {
               color="primary"
               sx={{ mb: 2 }}
             >
-              Scanned QR Code: {scanResult}
+              Scanned QR Code: {String(scanResult)} {/* Ensure it's a string */}
             </Typography>
           ) : (
             <Typography
@@ -106,40 +115,48 @@ const QRScannerPage = () => {
             </Typography>
           )}
 
+          {/* Optional "Scan Again" button */}
+          {!isScanning && (
+            <Box display="flex" justifyContent="center" sx={{ mb: 2 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleScanAgain}
+                sx={{
+                  borderRadius: "5px",
+                  padding: "10px",
+                  fontWeight: "bold",
+                  textTransform: "none",
+                  backgroundColor: "#2e3092",
+                  "&:hover": {
+                    backgroundColor: "#1d1f75", // Slightly darker shade for hover effect
+                  },
+                }}
+              >
+                Scan Again
+              </Button>
+            </Box>
+          )}
+
           <Box display="flex" justifyContent="center">
-            {/* <Button
+            <Button
               variant="contained"
               color="primary"
               fullWidth
+              onClick={() => router.push("/")}
               sx={{
                 borderRadius: "5px",
                 padding: "10px",
                 fontWeight: "bold",
                 textTransform: "none",
+                backgroundColor: "#2e3092",
                 "&:hover": {
-                  backgroundColor: "#115293",
+                  backgroundColor: "#1d1f75", // Slightly darker shade for hover effect
                 },
               }}
             >
               Back to Home
-            </Button> */}
-
-            <PrimaryButton
-              variant={"contained"}
-              startIcon={<ArrowBackIcon />}
-              sx={{
-                borderRadius: "5px",
-                padding: "10px",
-                fontWeight: "bold",
-                textTransform: "none",
-                "&:hover": {
-                  backgroundColor: "#115293",
-                },
-              }}
-              onClick={() => router.push("/")}
-            >
-              Back to home
-            </PrimaryButton>
+            </Button>
           </Box>
         </CardContent>
       </Card>
