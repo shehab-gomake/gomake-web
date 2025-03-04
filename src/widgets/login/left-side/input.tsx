@@ -3,6 +3,7 @@ import { ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { IInputContainer } from "./interfaces";
 import { useStyle } from "./style";
+import { useMediaQuery } from "@mui/material";
 
 const InputContainer = ({
   input,
@@ -13,13 +14,15 @@ const InputContainer = ({
 }: IInputContainer) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
     changeState(input.key, e.target.value);
   };
   return (
     <div style={classes.inputContainer} key={input.key}>
       <div style={classes.inputLbl}>{t(input.label)}</div>
-      <div style={classes.input}>
+      <div style={isMobile ? {} : classes.input}>
         <GomakeTextInput
           onChange={onChangeState}
           type={input.type}

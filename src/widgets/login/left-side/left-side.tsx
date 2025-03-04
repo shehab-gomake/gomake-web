@@ -45,7 +45,12 @@ const LoginLeftSide = () => {
         </div>
       )}
 
-      <div style={classes.loginContainer}>
+      <div
+        style={{
+          ...classes.loginContainer,
+          ...(isMobile && { padding: "0px 20px" }),
+        }}
+      >
         <div style={classes.loginLbl}>{t("login.login")}</div>
         {inputs.map((input: IInput) => (
           <InputContainer
