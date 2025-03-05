@@ -11,6 +11,7 @@ const DELETE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/delete-document-item";
 const ADD_DOCUMENT_CONTACT_URL =
   "/v1/erp-service/document/add-document-contact";
+const UPDATE_DOCUMENT_CONTACTS_REORDER_URL = "/v1/erp-service/document/update-document-contacts-reorder";
 const UPDATE_DOCUMENT_CONTACT_URL =
   "/v1/erp-service/document/update-document-contact";
 const DELETE_DOCUMENT_CONTACT_URL =
@@ -68,6 +69,8 @@ const GET_PRODUCT_ITEM_BY_ID_URL =
   "/v1/erp-service/documents/get-product-document-item-by-id";
 const UPDATE_DOCUMENT_CURRENCY_URL =
   "/v1/erp-service/documents/update-document-currency";
+const UPDATE_DOCUMENT_VAT_STATUS_URL =
+  "/v1/erp-service/documents/update-document-vat-status";
 const UPDATE_EXCHANGE_RATE_URL =
   "/v1/erp-service/documents/update-document-exchange-rate";
 const REFRESH_EXCHANGE_RATE_URL =
@@ -214,6 +217,19 @@ const addDocumentContactApi: ICallAndSetData = async (
   );
 };
 
+const updateDocumentContactsReorderApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_DOCUMENT_CONTACTS_REORDER_URL,
+    setState,
+    data
+  );
+};
 const addCustomerContactApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -591,6 +607,20 @@ const updateDocumentCurrencyApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.PUT,
     UPDATE_DOCUMENT_CURRENCY_URL,
+    setState,
+    data
+  );
+};
+
+const updateDocumentVatStatusApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {  
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_DOCUMENT_VAT_STATUS_URL,
     setState,
     data
   );
@@ -1109,6 +1139,7 @@ export {
   getAllDocumentsApi,
   deleteDocumentItemApi,
   addDocumentContactApi,
+  updateDocumentContactsReorderApi,
   updateDocumentContactApi,
   deleteDocumentContactApi,
   addDocumentAddressApi,
@@ -1136,6 +1167,7 @@ export {
   updateAgentApi,
   getProductByItemIdApi,
   updateDocumentCurrencyApi,
+  updateDocumentVatStatusApi,
   updateExchangeRateApi,
   refreshExchangeRateApi,
   createNewDocumentApi,

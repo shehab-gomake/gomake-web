@@ -17,7 +17,7 @@ const useDownloadAccountFilesModal = () => {
     alertFaultGetData,
     alertSuccess,
   } = useSnackBar();
-  const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
+  const { GetDateFormat } = useDateFormat();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();

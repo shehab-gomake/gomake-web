@@ -1,7 +1,6 @@
 import { useDrag } from "react-dnd";
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { Popover, Stack } from "@mui/material";
-import { DateFormatter } from "@/utils/adapter";
 import { useStyle } from "@/widgets/production-floor/kanban-view/kanban-card/style";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -12,6 +11,7 @@ import { useKanbanCard } from "./use-kanban-card";
 import { SketchPicker } from "react-color";
 import { useRef } from "react";
 import { getTruncatedLabel } from "@/utils/get-truncated-text";
+import { DateFormatter } from "@/utils/date-formatters";
 
 interface IProp {
   board: IBoardMissions;

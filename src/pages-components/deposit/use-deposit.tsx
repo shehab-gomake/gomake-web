@@ -25,7 +25,7 @@ const useDeposit = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
-  const { GetShortDateFormat } = useDateFormat();
+  const { formatISODateTime } = useDateFormat();
   const { alertSuccessAdded, alertFaultAdded, alertFaultGetData } =
     useSnackBar();
   const [accounts, setAccounts] = useState([]);
@@ -591,7 +591,7 @@ const useDeposit = () => {
               onChange={handleCashCheckboxChange(index, deposit)}
               checked={isChecked}
             />,
-            GetShortDateFormat(deposit?.dueDate),
+            formatISODateTime(deposit?.dueDate),
             deposit?.receiptNumber,
             deposit?.client?.name,
             <div
@@ -627,7 +627,7 @@ const useDeposit = () => {
               onChange={handleDeferredChecksCheckboxChange(index, deposit)}
               checked={isChecked}
             />,
-            GetShortDateFormat(deposit?.checkDate),
+            formatISODateTime(deposit?.checkDate),
             deposit?.customer,
             deposit?.checkNumber,
             deposit?.bank,
@@ -649,7 +649,7 @@ const useDeposit = () => {
               onChange={handleChecksCheckboxChange(index, deposit)}
               checked={isChecked}
             />,
-            GetShortDateFormat(deposit?.checkDate),
+            formatISODateTime(deposit?.checkDate),
             deposit?.customer,
             deposit?.checkNumber,
             deposit?.bank,
@@ -671,7 +671,7 @@ const useDeposit = () => {
               onChange={handleCreditCheckboxChange(index, deposit)}
               checked={isChecked}
             />,
-            GetShortDateFormat(deposit?.payDate),
+            formatISODateTime(deposit?.payDate),
             deposit?.voucherNumber,
             deposit?.customer,
             deposit?.total,

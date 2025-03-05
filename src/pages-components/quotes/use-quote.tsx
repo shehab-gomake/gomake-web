@@ -44,7 +44,11 @@ import {
 import { DOCUMENT_TYPE } from "./enums";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { useStyle } from "./style";
-import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
+import {
+  CLIENT_TYPE,
+  CLIENT_TYPE_Id,
+  DEFAULT_VALUES,
+} from "@/pages/customers/enums";
 import {
   cancelReceiptApi,
   getAllReceiptsApi,
@@ -100,6 +104,7 @@ interface Query {
 
 const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { t } = useTranslation();
+  const direction = t("direction");
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const {
@@ -110,7 +115,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertFault,
   } = useSnackBar();
   const router = useRouter();
-  const documentPath = DOCUMENT_TYPE[docType];
+  const documentPath =
+    docType === DOCUMENT_TYPE.supplierPayments
+      ? `${
+          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+        }?isOutgoingPayments=true&isNewCreation=true`
+      : DOCUMENT_TYPE[docType];
+
   const searchInputRef = useRef(null);
   const { getCurrencyUnitText } = useQuoteGetData();
   const { navigate } = useGomakeRouter();
@@ -118,20 +129,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { query, pathname } = useRouter();
   const { quoteNumber } = query;
   const { errorColor } = useGomakeTheme();
-  const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
+  const { GetDateFormat, formatCustomDateTime, formatISODateTime } =
+    useDateFormat();
 
-  const isPurchaseDocument =
-    docType === DOCUMENT_TYPE.purchaseOrder ||
-    docType === DOCUMENT_TYPE.purchaseInvoice ||
-    docType === DOCUMENT_TYPE.purchaseInvoiceRefund;
-
-  const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
-    useCustomerDropDownList({
-      shouldRenderCustomersOnMount: !isPurchaseDocument,
-      shouldRenderSuppliersOnMount: isPurchaseDocument,
-    });
-
-  // const [patternSearch, setPatternSearch] = useState<any>(null);
   const [patternSearch, setPatternSearch] = useState<any>(
     router.query.finalPatternSearch || null
   );
@@ -203,6 +203,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isQuote = docType === DOCUMENT_TYPE.quote;
   const isOrder = docType === DOCUMENT_TYPE.order;
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
+  const isSupplierPayments = docType === DOCUMENT_TYPE.supplierPayments;
   const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote;
   const isDeliveryNoteRefund = docType === DOCUMENT_TYPE.deliveryNoteRefund;
   const isInvoice = docType === DOCUMENT_TYPE.invoice;
@@ -211,6 +212,18 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const isPurchaseInvoice = docType === DOCUMENT_TYPE.purchaseInvoice;
   const isPurchaseInvoiceRefund =
     docType === DOCUMENT_TYPE.purchaseInvoiceRefund;
+
+  const isPurchaseDocument =
+    isPurchaseOrder ||
+    isPurchaseInvoice ||
+    isPurchaseInvoiceRefund ||
+    isSupplierPayments;
+
+  const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
+    useCustomerDropDownList({
+      shouldRenderCustomersOnMount: !isPurchaseDocument,
+      shouldRenderSuppliersOnMount: isPurchaseDocument,
+    });
 
   const handleDocumentNumberChange = (event) => {
     setDocumentCloseNumber(event.target.value);
@@ -409,7 +422,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const mapData = data?.map((quote: any) => {
           if (isPurchaseOrder) {
             return [
-              GetDateFormat(quote?.creationDate),
+              formatCustomDateTime(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
@@ -441,7 +454,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ? quote?.orderNumbers.join(", ")
               : "";
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
@@ -470,7 +483,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else if (isQuote) {
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -522,7 +535,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             }`;
 
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -589,7 +602,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else {
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -658,7 +671,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         });
 
         const mapReceiptData = data?.map((quote: any) => [
-          quote?.creationDate?.split(" ")[0],
+          formatCustomDateTime(quote?.creationDate).split(" ")[0],
           <div
             style={{ cursor: "pointer" }}
             onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -687,7 +700,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickSendPayment={onClickSendPayment}
           />,
         ]);
-        setAllQuotes(isReceipt ? mapReceiptData : mapData);
+        setAllQuotes(
+          isReceipt || isSupplierPayments ? mapReceiptData : mapData
+        );
         setPagesCount(Math.ceil(totalItems / pageSize));
 
         setAllStatistics({
@@ -749,8 +764,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       ? [router.query.productsIds]
       : productIds;
 
-    if (isReceipt) {
+    if (isReceipt || isSupplierPayments) {
       await getAllReceiptsApi(callApi, callBack, {
+        ...(!isReceipt && {
+          isOutgoingPayments: true,
+        }),
         clientId: currentCustomerId || customerId?.id,
         agentId: currentAgentId || agentId?.id,
         status: currentAccountingStatus?.value ?? accountingStatus?.value,
@@ -835,6 +853,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     customerId,
     agentId,
     isReceipt,
+    isSupplierPayments,
     page,
     pageSize,
     statusId,
@@ -874,7 +893,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         const mapData = data?.map((quote: any) => {
           if (isPurchaseOrder) {
             return [
-              GetDateFormat(quote?.creationDate),
+              formatCustomDateTime(quote?.creationDate),
               quote?.number,
               quote?.orderNumber,
               quote?.supplierName,
@@ -906,7 +925,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ? quote?.orderNumbers.join(", ")
               : "";
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               quote?.number,
               quote?.invoiceNumber,
               purchaseOrderNumbers,
@@ -935,7 +954,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else if (isQuote) {
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -986,7 +1005,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
             }`;
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -1053,7 +1072,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             ];
           } else {
             return [
-              GetDateFormat(quote?.createdDate),
+              formatCustomDateTime(quote?.createdDate),
               <div
                 style={{ cursor: "pointer" }}
                 onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -1120,7 +1139,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           }
         });
         const mapReceiptData = data?.map((quote: any) => [
-          quote?.creationDate?.split(" ")[0],
+          formatCustomDateTime(quote?.creationDate).split(" ")[0],
           <div
             style={{ cursor: "pointer" }}
             onClick={() => onClickOpenCustomerModal(quote?.customerId)}
@@ -1149,7 +1168,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickSendPayment={onClickSendPayment}
           />,
         ]);
-        setAllQuotes(isReceipt ? mapReceiptData : mapData);
+        setAllQuotes(
+          isReceipt || isSupplierPayments ? mapReceiptData : mapData
+        );
         setPagesCount(Math.ceil(totalItems / pageSize));
         setAllStatistics({
           documentStatisticsList: res?.data?.documentStatisticsList ?? [],
@@ -1160,12 +1181,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     if (!router.isReady) {
       return;
     }
-    if (isReceipt) {
+    if (isReceipt || isSupplierPayments) {
       await getAllReceiptsApi(callApi, callBack, {
         model: {
           pageNumber: page,
           pageSize: pageSize,
         },
+        ...(!isReceipt && {
+          isOutgoingPayments: true,
+        }),
       });
     } else {
       await getAllDocumentsApi(callApi, callBack, {
@@ -1341,29 +1365,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       ]
     : [
         t("sales.quote.createdDate"),
-        t("sales.quote.client"),
+        isSupplierPayments
+          ? t("sales.quote.supplier")
+          : t("sales.quote.client"),
         t("sales.quote.agent"),
         (() => {
           switch (docType) {
             case DOCUMENT_TYPE.order:
               return t("sales.quote.orderNumber");
-            // case DOCUMENT_TYPE.deliveryNote:
-            //   return t("documentingDesign.TableSetting.number");
-            // case DOCUMENT_TYPE.deliveryNoteRefund:
-            //   return t("sales.quote.deliveryNoteNumber");
-            // case DOCUMENT_TYPE.invoice:
-            //   return t("sales.quote.invoiceNumber");
-            // case DOCUMENT_TYPE.invoiceRefund:
-            //   return t("sales.quote.invoiceNumber");
-            // case DOCUMENT_TYPE.receipt:
-            //   return t("sales.quote.receiptNumber");
             default:
               return t("documentingDesign.TableSetting.number");
           }
         })(),
         isOrder
           ? t("sales.quote.quoteNumber")
-          : isReceipt
+          : isReceipt || isSupplierPayments
           ? null
           : t("sales.quote.sourceDocument"),
 
@@ -1375,7 +1391,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             {t("sales.quote.cost")}
           </PermissionCheck>
         ),
-        isReceipt ? t("sales.quote.paymentMethod") : t("sales.quote.worksName"),
+        isReceipt || isSupplierPayments
+          ? t("sales.quote.paymentMethod")
+          : t("sales.quote.worksName"),
         isOrdersTracking
           ? t("customers.modal.paymentStatus")
           : t("sales.quote.totalPrice"),
@@ -1485,11 +1503,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       label: t("sales.quote.purchaseInvoiceRefundList"),
       value: DOCUMENT_TYPE.purchaseInvoiceRefund,
     },
+    {
+      label: t("sales.quote.supplierPaymentsList"),
+      value: DOCUMENT_TYPE.supplierPayments,
+    },
   ];
 
   const documentLabel = isOrdersTracking
     ? t("tabs.ordersTracking")
-    : documentsLabels.find((item) => item.value === docType).label;
+    : documentsLabels.find((item) => item.value === docType)?.label;
 
   const updateQuoteStatus = async () => {
     const callBack = (res) => {
@@ -1554,6 +1576,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   // table in home page
+
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -1569,8 +1592,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           document?.number,
           document?.clientType,
           document?.worksNames,
-          document?.createdDate?.split("T")[0],
-          // GetDateFormat(document?.createdDate),
+          docType === DOCUMENT_TYPE.receipt
+            ? document?.creationDate?.split("T")[0]
+            : formatCustomDateTime(document?.createdDate),
           document?.totalPrice + " " + getCurrencyUnitText(document?.currency),
           <div style={{ display: "flex", justifyContent: "center" }}>
             <h2
@@ -1803,7 +1827,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       const callBack = (res) => {
         if (res?.success) {
           const mapData = res?.data?.map((log: any) => [
-            getFormattedLocalDate(log?.actionDate),
+            formatISODateTime(log?.actionDate),
             log?.employeeName,
             getLogDescription(log?.logAction, log?.values, log?.documentType),
             getMessageStatus(log?.messageStatus),
@@ -1896,22 +1920,23 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     { label: t("boardMissions.done"), value: PStatus.DONE },
   ];
 
-  const accountingStatuses = isReceipt
-    ? [
-        { label: t("sales.quote.open"), value: ReceiptAccountingStatus.OPEN },
-        {
-          label: t("sales.quote.canceled"),
-          value: ReceiptAccountingStatus.CANCELED,
-        },
-      ]
-    : [
-        { label: t("sales.quote.open"), value: AStatus.OPEN },
-        {
-          label: t("sales.quote.partialClosed"),
-          value: AStatus.PARTIAL_CLOSED,
-        },
-        { label: t("sales.quote.closed"), value: AStatus.CLOSED },
-      ];
+  const accountingStatuses =
+    isReceipt || isSupplierPayments
+      ? [
+          { label: t("sales.quote.open"), value: ReceiptAccountingStatus.OPEN },
+          {
+            label: t("sales.quote.canceled"),
+            value: ReceiptAccountingStatus.CANCELED,
+          },
+        ]
+      : [
+          { label: t("sales.quote.open"), value: AStatus.OPEN },
+          {
+            label: t("sales.quote.partialClosed"),
+            value: AStatus.PARTIAL_CLOSED,
+          },
+          { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+        ];
 
   const deliveryStatuses = useMemo(
     () => [
@@ -1947,13 +1972,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const handleAccountingStatusChange = (e: any, value: any) => {
     setAccountingStatus(value);
   };
-  const [filterData, setFilterData] = useState({});
 
+  const [filterData, setFilterData] = useState({});
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -2763,6 +2790,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isOrder,
     isQuote,
     isReceipt,
+    isSupplierPayments,
     isDeliveryNote,
     isInvoice,
     deliveryStatuses,
@@ -2774,8 +2802,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     supplierList,
     isSendToClient,
     onClickOpenCustomerModal,
+    isPurchaseOrder,
     isMoveToReady,
     handleCheckboxChange,
+    direction,
   };
 };
 

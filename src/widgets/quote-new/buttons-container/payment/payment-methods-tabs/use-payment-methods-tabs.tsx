@@ -23,6 +23,7 @@ import {
   totalChecksState,
   totalCreditCardState,
   totalPaymentState,
+  totalSupplierCreditCardState,
   totalTransferState,
   transactionOptionsData,
   transferTabState,
@@ -31,11 +32,14 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createCreditTransactionApi } from "@/services/api-service/generic-doc/receipts-api";
 import { isTransactedState } from "@/widgets/quote-new/receipts-table/states";
 import { loadingWithShadowState, quoteItemState } from "@/store";
+import { useRouter } from "next/router";
 
 const usePaymentMethodsTabs = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { alertSuccessUpdate, alertFaultUpdate, alertFault } = useSnackBar();
+  const router = useRouter();
+  const isOutgoingPayments = router.query.isOutgoingPayments === "true";
+  const { alertSuccessUpdate, alertFault } = useSnackBar();
   const setTotalPayment = useSetRecoilState<number>(totalPaymentState);
   const [totalChecks, setTotalChecks] =
     useRecoilState<number>(totalChecksState);
@@ -152,7 +156,9 @@ const usePaymentMethodsTabs = () => {
         Number(totalBit) +
         Number(totalTransfer) +
         Number(totalChecks) +
-        Number(totalCreditCard)
+        (isOutgoingPayments
+          ? Number(totalSupplierCreditCard)
+          : Number(totalCreditCard))
     );
   };
 
@@ -173,6 +179,7 @@ const usePaymentMethodsTabs = () => {
   // transfer tab //
   const [totalTransfer, setTotalTransfer] =
     useRecoilState<number>(totalTransferState);
+
   const handleTotalTransferChange = (value) => {
     setTotalTransfer(value);
     resetTotalBit();
@@ -180,14 +187,28 @@ const usePaymentMethodsTabs = () => {
       Number(value) +
         Number(totalCash) +
         Number(totalChecks) +
-        Number(totalCreditCard)
+        (isOutgoingPayments
+          ? Number(totalSupplierCreditCard)
+          : Number(totalCreditCard))
+    );
+  };
+
+  // supplier credit card tab //
+  const [totalSupplierCreditCard, setTotalSupplierCreditCard] =
+    useRecoilState<number>(totalSupplierCreditCardState);
+  const handleTotalSupplierCreditCardChange = (value) => {
+    setTotalSupplierCreditCard(value);
+    setTotalPayment(
+      Number(value) +
+        Number(totalCash) +
+        Number(totalChecks) +
+        Number(totalTransfer)
     );
   };
 
   // credit card tab //
   const [totalCreditCard, setTotalTotalCreditCard] =
     useRecoilState<number>(totalCreditCardState);
-
   const handleTotalCreditCardChange = (value) => {
     setTotalTotalCreditCard(Number(value));
     setTotalPayment(
@@ -210,11 +231,13 @@ const usePaymentMethodsTabs = () => {
         Number(totalCash) +
         Number(totalBit) +
         Number(totalTransfer) +
-        Number(totalCreditCard)
+        (isOutgoingPayments
+          ? Number(totalSupplierCreditCard)
+          : Number(totalCreditCard))
     );
-  }, [data, totalCash, totalBit, totalTransfer]);
+  }, [data, totalCash, totalBit, totalTransfer, isOutgoingPayments]);
 
-  ////////////////////////////////////// Account code /////////////////////////////////////////
+  /************************ Account code ************************/
 
   const cashAccountsOptions = quoteItemValue?.cashAccounts?.map((account) => ({
     label: `${account.name} - ${account.code}`,
@@ -238,7 +261,15 @@ const usePaymentMethodsTabs = () => {
     })
   );
 
-  ////////////////////////////////////// CREDIT CARD /////////////////////////////////////////
+  const creditCardAccountsOptions = quoteItemValue?.creditCardAccounts?.map(
+    (account) => ({
+      text: `${account?.name} - ${account?.code}`,
+      value: account?.code,
+      isSelected: account?.isSelected,
+    })
+  );
+
+  /************************ CREDIT CARD ************************/
 
   const [creditCard, setCreditCard] =
     useRecoilState<CreditCardData>(creditCardState);
@@ -419,6 +450,9 @@ const usePaymentMethodsTabs = () => {
     cashAccountsOptions,
     checksAccountsOptions,
     transferAccountsOptions,
+    creditCardAccountsOptions,
+    totalSupplierCreditCard,
+    handleTotalSupplierCreditCardChange,
   };
 };
 

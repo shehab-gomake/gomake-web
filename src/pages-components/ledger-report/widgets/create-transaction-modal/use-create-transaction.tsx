@@ -8,7 +8,7 @@ export enum EAccountType {
   CREDIT = 1,
 }
 
-const useCreateNewTransaction = ({ onCloseModal }) => {
+const useCreateNewTransaction = ({ onCloseModal, isPurchaseReport }) => {
   const { t } = useTranslation();
   const dateRef = useRef(null);
   const dueDateRef = useRef(null);
@@ -16,8 +16,14 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultAdded, alertSuccessAdded, alertRequiredFields } =
     useSnackBar();
-  const { renderOptions, checkWhatRenderArray, isFetching } =
-    useCustomerDropDownList();
+  // const { renderOptions, checkWhatRenderArray, isFetching } =
+  //   useCustomerDropDownList();
+
+  const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
+    useCustomerDropDownList({
+      shouldRenderCustomersOnMount: !isPurchaseReport,
+      shouldRenderSuppliersOnMount: isPurchaseReport,
+    });
 
   const accountTypeList: { id: number; name: string }[] = [
     { id: EAccountType.DEBIT, name: t("reports.debit") },
@@ -225,6 +231,7 @@ const useCreateNewTransaction = ({ onCloseModal }) => {
     handleFromTypeChange,
     onChangeDescription,
     description,
+    supplierList,
   };
 };
 

@@ -126,6 +126,7 @@ export enum Permissions {
   //banking group
   SHOW_RECEIPTS = "ShowReceipts",
   SHOW_DEPOSITS = "ShowDeposits",
+  SHOW_SUPPLIER_PAYMENTS = "ShowSupplierPayments",
 
   //reports group
   SHOW_REPORTS = "ShowReports",
@@ -140,6 +141,10 @@ export enum Permissions {
   SHOW_HOME_PAGE_STATISTICS = "ShowHomePageStatistics",
   SHOW_LOGS = "ShowLogs",
   GENERATE_REPORT = "GenerateReport",
+  SHOW_SUPPLIER_AGING_REPORT = "ShowSupplierAgingReport",
+  SHOW_SUPPLIER_LEDGER_REPORT = "ShowSupplierLedgerReport",
+  SHOW_SUPPLIER_PAYMENT_REPORT = "ShowSupplierPaymentsReport",
+  SHOW_PURCHASES_REPORT = "ShowPurchasesReport",
 }
 
 export const DocumentPermission = {

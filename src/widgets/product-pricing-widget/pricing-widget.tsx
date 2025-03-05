@@ -129,7 +129,7 @@ const PricingWidget = ({
                   sx={classes.button}
                   variant={
                     view === EPricingViews.OTHERS_WORKFLOWS &&
-                    selectedTab?.productType === section.productType
+                      selectedTab?.productType === section.productType
                       ? "contained"
                       : "outlined"
                   }
