@@ -241,6 +241,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const checkedItemsIds = useRecoilValue(checkedItemsIdsState);
 
   const onClickCreateNewReceipt = async () => {
+    const isOutgoingPayments = router.query.isOutgoingPayments === "true";
+
     const filteredReceiptItems = Object.values(checkedItemsIds)
       .map((id) => quoteItemValue.receiptItems.find((item) => item.id === id))
       .filter(Boolean);
@@ -256,7 +258,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       if (res?.success) {
         const receiptId = res?.data;
         alertSuccessAdded();
-        router.replace(`/receipt?Id=${receiptId}`);
+
+        isOutgoingPayments
+          ? router.replace(`/receipt?isOutgoingPayments=true&Id=${receiptId}`)
+          : router.replace(`/receipt?Id=${receiptId}`);
         onClickOpenReceiptCreation();
       } else {
         alertFaultAdded();

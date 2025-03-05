@@ -24,6 +24,7 @@
     "@mui/material": "^5.16.6",
     "@mui/x-date-pickers": "^7.23.0",
     "@next/bundle-analyzer": "^15.0.4",
+    "@react-oauth/google": "^0.12.1",
     "@reactour/tour": "^3.6.1",
     "@types/react-dom": "18.0.11",
     "@uidotdev/usehooks": "^2.0.1",

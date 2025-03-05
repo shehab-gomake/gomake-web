@@ -366,8 +366,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const result = res?.data?.data?.data;
     setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
     setCurrentProductItemValueDraftId(result.productItemValueDraftId);
+    setCurrentCalculationSessionId(result.productItemValueDraftId);
     stIsFlowChanged(result.isFlowChanged);
     setAdditionalProductItems(result.additionalProductItems);
+    
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
@@ -777,8 +779,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subSection.parameters.forEach((parameter) => {
               if (
                 parameter?.isHidden &&
-                !parameter?.isHiddenInSetting &&
+                // !parameter?.isHiddenInSetting &&
                 !parameter?.setSettingIcon
+                && relatedParameters.some(
+                  (relatedParam) => relatedParam.parameterId === parameter?.id && !relatedParam.isHiddenInSetting
+                )
               ) {
                 if (parameter.isUnderParameterId !== null) {
                   underParameterIdsArray.push({
@@ -5059,7 +5064,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const convertSubProductsValuesToImperial = (subProducts) => {
     return subProducts.map((subProduct) => {
       return {
-        ...subProduct,parameters:convertValuesToImperial(subProduct.parameters)
+        ...subProduct, parameters: convertValuesToImperial(subProduct.parameters)
       }
     });
   }
@@ -5137,10 +5142,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             );
           const convertedItemParameters = convertValuesToImperial(itemParmetersValues);
           const convertedGeneralParameters = convertValuesToImperial(updatedGeneralParameters);
-          if(calculationSubProducts && calculationSubProducts.length > 0) {
+          if (calculationSubProducts && calculationSubProducts.length > 0) {
             calculationSubProducts = convertSubProductsValuesToImperial(calculationSubProducts);
           }
-          
+
 
 
           if (calculationSubProducts && calculationSubProducts.length > 0) {

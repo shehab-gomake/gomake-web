@@ -13,11 +13,13 @@ const useBusinessWidget = ({ values, documentType }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const [isConfirmation, setIsConfirmation] = useState();
+  const isOutgoingPayments = router.query.isOutgoingPayments === "true";
 
   const isPurchaseDocument =
     documentType === DOCUMENT_TYPE.purchaseOrder ||
     documentType === DOCUMENT_TYPE.purchaseInvoice ||
-    documentType === DOCUMENT_TYPE.purchaseInvoiceRefund;
+    documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ||
+    isOutgoingPayments;
 
   const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
     useCustomerDropDownList({
@@ -185,6 +187,7 @@ const useBusinessWidget = ({ values, documentType }) => {
     isFetching,
     canEditAddress,
     isPurchaseDocument,
+    isOutgoingPayments,
   };
 };
 

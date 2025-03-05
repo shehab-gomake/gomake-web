@@ -98,6 +98,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   };
 
   // in case of an error all these routes have been moved from use-quote.tsx to current hook (use-quote-get-data.tsx)
+
   const getQuote = useCallback(async () => {
     if (requestAbortController) {
       requestAbortController.abort();
@@ -152,6 +153,9 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           alertFaultGetData();
         }
       } else if (docType === DOCUMENT_TYPE.receipt) {
+        const isOutgoingPayments = router?.query?.isOutgoingPayments === "true";
+        const supplierPaymentId = router?.query?.id;
+
         const callBack = (res) => {
           if (res?.success) {
             const _data = res?.data || {};
@@ -161,7 +165,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           }
         };
         await getReceiptByIdApi(callApi, callBack, {
-          receiptId: router?.query?.Id,
+          receiptId: isOutgoingPayments ? supplierPaymentId : router?.query?.Id,
         });
       } else {
         const newRequestAbortController = new AbortController();
@@ -238,6 +242,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
       }
     }
   }, [callApi, docType, requestAbortController, router, setQuoteItemValue]);
+
   // const getQuote = async () => {
   //   if (
   //     router?.query?.isNewCreation &&

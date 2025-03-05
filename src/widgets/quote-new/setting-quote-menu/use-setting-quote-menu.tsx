@@ -7,6 +7,7 @@ import { quoteItemState } from "@/store";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
+import { EnumVATStatus } from "@/enums/accounting-enums";
 
 const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   const { t } = useTranslation();
@@ -24,6 +25,16 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   const matchingCurrency = currencies.find(
     (currency) => currency.value === quoteStateValue?.currency
   )?.label;
+  const vatStatusList: { value: number; text: string }[] = Object.values(EnumVATStatus)
+    .filter(value => typeof value === 'number')
+    .map(value => ({
+      value: value as number,
+      text: t(`accounting.${EnumVATStatus[value]}`)
+    }));
+  const vatStatus = vatStatusList.find(
+    (status) => status.value === quoteStateValue?.vatStatus
+  )?.text;
+  console.log("quoteStateValue", { quoteStateValue, matchingCurrency });
   const [exchangeRate, setExchangeRate] = useState(
     quoteStateValue?.exchangeRate || "-"
   );
@@ -145,6 +156,8 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     matchingCurrency,
     currencies,
     switchConfigs,
+    vatStatus,
+    vatStatusList,
     handleTableSorting,
     handleTableSortingClose,
     handleAutomaticDiscount,

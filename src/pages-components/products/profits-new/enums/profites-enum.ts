@@ -6,7 +6,8 @@ export enum EPricingBy {
   SQUARE_METER = 5,
   CUBIC_METER = 6,
   METER=8,
-  PACKAGE=9
+  PACKAGE=9,
+  UNIT_LENGTH_IN_METER = 10,
 }
 export enum ETransition {
   LINEAR = 0,
