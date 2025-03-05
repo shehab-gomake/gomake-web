@@ -49,6 +49,10 @@ const useNewProfits = () => {
       label: t("products.profits.pricingListWidget.steps"),
       value: ETransition.STEPS,
     },
+    {
+      label: t("products.profits.pricingListWidget.bucket"),
+      value: ETransition.BUCKET,
+    },
   ];
 
   const PricingByList = [
