@@ -99,7 +99,7 @@ const ClientBalanceComponent = ({
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
         showUpdateButton={true}
-        selectedTabIndex={5}
+        selectedTabIndex={clientType === CLIENT_TYPE.SUPPLIER ? 5 : 6}
       />
     </>
   );
