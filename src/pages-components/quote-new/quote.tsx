@@ -58,6 +58,7 @@ import Stack from "@mui/material/Stack";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
 import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 import { SettingVatListMenu } from "@/widgets/quote-new/setting-vat-menu";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -296,16 +297,17 @@ const QuoteNewPageWidget = ({
     isReceipt,
     isMoveToReady,
     handleCheckboxChange,
+    isPurchaseDocument,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
   if (documentType == DOCUMENT_TYPE.quote) {
-    const { } = useQuotesSignalr({ getQuote });
+    const {} = useQuotesSignalr({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const { } = useOrdersSignalr({ getQuote });
+    const {} = useOrdersSignalr({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -364,7 +366,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const { } = useGoMakeTour(quoteSteps, []);
+  const {} = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -408,8 +410,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -478,7 +480,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                      quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -508,17 +510,14 @@ const QuoteNewPageWidget = ({
                         <SettingNewIcon />
                       </IconButton>
                     )}
-                    {
-                      showVatListInSettingIconNew &&
-                      (
-                        <IconButton
-                          style={{ marginRight: 4 }}
-                          onClick={handleSettingMenuClickForVat}
-                        >
-                          <SettingNewIcon />
-                        </IconButton>
-                      )
-                    }
+                    {showVatListInSettingIconNew && (
+                      <IconButton
+                        style={{ marginRight: 4 }}
+                        onClick={handleSettingMenuClickForVat}
+                      >
+                        <SettingNewIcon />
+                      </IconButton>
+                    )}
                   </div>
                 )}
               </div>
@@ -591,6 +590,11 @@ const QuoteNewPageWidget = ({
                     <ClientBalanceComponent
                       clientBalance={quoteState.clientBalance}
                       clientId={quoteState?.client?.id}
+                      clientType={
+                        isPurchaseDocument
+                          ? CLIENT_TYPE.SUPPLIER
+                          : CLIENT_TYPE.CUSTOMER
+                      }
                     />
                   </Stack>
                 </div>
@@ -853,7 +857,6 @@ const QuoteNewPageWidget = ({
         onBlurVatStatus={onBlurVatStatus}
         setIsUpdateVatStatus={setIsUpdateVatStatus}
         isUpdateVatStatus={isUpdateVatStatus}
-
       />
       <SettingVatListMenu
         handleClose={handleSettingMenuCloseForVat}
@@ -863,7 +866,6 @@ const QuoteNewPageWidget = ({
         setIsUpdateVatStatus={setIsUpdateVatStatus}
         isUpdateVatStatus={isUpdateVatStatus}
         updateVatStatus={updateVatStatus}
-
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}
@@ -951,18 +953,18 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? moveOrderToReady
             : () => {
-              if (isSelectedCLoseAsDeliveryNote) {
-                navigate(
-                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                );
-              } else {
-                const path =
-                  documentType === DOCUMENT_TYPE.order
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                navigate(path);
+                if (isSelectedCLoseAsDeliveryNote) {
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  );
+                } else {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                }
               }
-            }
         }
       >
         <div
