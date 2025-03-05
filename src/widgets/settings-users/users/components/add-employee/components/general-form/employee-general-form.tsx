@@ -228,11 +228,11 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
           />
         </div>
         {
-          !!state.employee.isAgent &&
+          /*!!state.employee.isAgent &&
             <Stack direction="row" spacing={2}>
               <OutlookEmailLoginComponent/>
               <GoogleAuth/>
-            </Stack>
+            </Stack>*/
         }
         {/* {
                     !!state.employee.isAgent && <>

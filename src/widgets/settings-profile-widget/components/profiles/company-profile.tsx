@@ -159,7 +159,7 @@ const CompanyProfileComponent = ({
                                 section.inputs.map((companyInput) => (
                                     <div key={companyInput.parameterKey}>
                                         {
-                                            companyInput.type === 'outlookLogin' ? <Stack direction={'row'} gap={'10px'} paddingTop={'37px'}><OutlookEmailLoginComponent/> <GoogleAuth/> </Stack> :
+                                           // companyInput.type === 'outlookLogin' ? <Stack direction={'row'} gap={'10px'} paddingTop={'37px'}><OutlookEmailLoginComponent/> <GoogleAuth/> </Stack> :
                                         <FormInput
                                             input={companyInput as IInput}
                                             changeState={changeState}
