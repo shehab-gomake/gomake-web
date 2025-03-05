@@ -540,12 +540,12 @@ const useQuoteNew = ({
   };
   const changeVatValueForVatStatus = (vatStatus: number) => {
     switch (vatStatus) {
-      case EnumVATStatus.Must17Percents:
-        return 0.17;
+      //case EnumVATStatus.Must17Percents:
+        //return 0.17;
       case EnumVATStatus.Must18Percents:
         return 0.18;
-      case EnumVATStatus.Must16Percents:
-        return 0.16;
+     // case EnumVATStatus.Must16Percents:
+       // return 0.16;
       case EnumVATStatus.Exempt:
         return 0.18;
       default:
