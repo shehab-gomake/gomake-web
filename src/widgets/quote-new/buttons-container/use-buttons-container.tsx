@@ -261,7 +261,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       })
       .filter(Boolean);
 
-    const newReceiptItem = {
+
+      const isOutgoingPayments = router.query.isOutgoingPayments === "true";
+
+      
+      const newReceiptItem = {
       ...quoteItemValue,
       receiptItems: filteredReceiptItems,
     };
@@ -273,7 +277,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       if (res?.success) {
         const receiptId = res?.data;
         alertSuccessAdded();
-        router.replace(`/receipt?Id=${receiptId}`);
+
+        isOutgoingPayments
+          ? router.replace(`/receipt?isOutgoingPayments=true&Id=${receiptId}`)
+          : router.replace(`/receipt?Id=${receiptId}`);
         onClickOpenReceiptCreation();
       } else {
         alertFaultAdded();
