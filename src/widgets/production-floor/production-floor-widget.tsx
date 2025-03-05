@@ -1,6 +1,6 @@
-import { Fab, IconButton, Stack, useMediaQuery } from "@mui/material";
+import { Fab, IconButton, Stack } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   EProductionFloorView,
   productionFloorViewState,
@@ -22,13 +22,14 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-floor-socket-io";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
   const { query, replace, pathname, push } = useRouter();
   const { connectionId } = useProductionFloorSocketIO(view);
   const { groupsId, boardMissionsId, step, productType } = query;
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const isMobile = useIsMobile();
 
   const {
     filterGroups,

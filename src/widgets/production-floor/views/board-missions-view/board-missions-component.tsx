@@ -2,7 +2,7 @@ import Stack from "@mui/material/Stack";
 import { useEffect } from "react";
 import { useBoardMissions } from "@/widgets/production-floor/views/board-missions-view/use-board-missions";
 import { BoardMissionsDetailsHeader } from "@/widgets/production-floor/views/board-missions-view/header/board-nissions-details-header";
-import { Button, IconButton, Skeleton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import { BoardMissionsActivities } from "@/widgets/production-floor/views/board-missions-view/activity/board-missions-activities";
 import { BoardMissionsFiles } from "@/widgets/production-floor/views/board-missions-view/files/board-missions-files";
 import { GoMakeSnackBar } from "@/components";
@@ -27,10 +27,10 @@ interface IProps {
   updateStatus?: any;
 }
 
+//!here
 const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
   const { getAllActivities } = useBoardMissionsActivities();
   const { getAllBoardMissionsFiles } = useBoardMissionsFiles();
-
   const {
     t,
     getBoardMissions,
@@ -56,6 +56,8 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
     isLoadingStations,
     renderDetailsSkeletons1,
     relatedOrderItems,
+    isMobileScreen,
+    renderMobileSkeletons,
   } = useBoardMissions();
 
   const { connectionId } = useJobModalSocketIO({
@@ -83,9 +85,7 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
     };
 
     updateHeight();
-
     window.addEventListener("resize", updateHeight);
-
     // Cleanup listener
     return () => {
       window.removeEventListener("resize", updateHeight);
@@ -102,9 +102,102 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
       padding={"10px 20px 0px 20px"}
     >
       <BoardMissionsDetailsHeader />
-      <div style={classes.GridContainer}>
+      <div
+        style={isMobileScreen ? classes.MobileContainer : classes.GridContainer}
+      >
         {isLoading ? (
           renderSkeletons()
+        ) : isMobileScreen ? (
+          <>
+            <CardContainer
+              label={t("sales.quote.notes")}
+              style={classes.mobileCard}
+              actionButton={
+                <PermissionCheck
+                  userPermission={
+                    Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
+                  }
+                >
+                  <Button
+                    onClick={handleOpenNotesModal}
+                    variant="text"
+                    style={classes.addNote}
+                  >
+                    + {t("productionFloor.addNote")}
+                  </Button>
+                </PermissionCheck>
+              }
+            >
+              <BoardMissionsNotes />
+            </CardContainer>
+            {isLoadingStations
+              ? renderMobileSkeletons()
+              : productDetails?.length > 0 &&
+                productDetails.map((section, index) => (
+                  <ProductDetailsSection
+                    key={index}
+                    name={section?.name}
+                    productionFloorSubSections={
+                      section?.productionFloorSubSections
+                    }
+                    withHeader={index === 0}
+                    header={
+                      index === 0
+                        ? t("productionFloor.productDetails")
+                        : undefined
+                    }
+                    style={{ background: "#F6F6F6" }}
+                  />
+                ))}
+            {productWorksTypes?.length > 0 && (
+              <CardContainer
+                label={t("productionFloor.types")}
+                style={classes.mobileCard}
+              >
+                <WorkTypesWidget types={productWorksTypes} />
+              </CardContainer>
+            )}
+            {relatedOrderItems?.length > 0 && (
+              <CardContainer
+                label={t("productionFloor.relatedOrderItems")}
+                style={classes.mobileCard}
+              >
+                <RelatedOrderItemsComponent
+                  relatedOrderItems={relatedOrderItems}
+                />
+              </CardContainer>
+            )}
+            <CardContainer label={t("productionFloor.actions")}>
+              <BoardMissionsStationsComponent
+                stations={stations}
+                subWorkFlows={subWorkFlows}
+                boardMissions={boardMissions}
+                getStations={getStations}
+              />
+            </CardContainer>
+            {/* <CardContainer
+              label={t("productionFloor.activities")}
+              style={{ height: "50vh" }}
+            >
+              <BoardMissionsActivities />
+            </CardContainer> */}
+            {!!companyProfile.filesApiAddress && (
+              <CardContainer
+                style={{ height: "30vh" }}
+                label={t("productionFloor.files")}
+                actionButton={
+                  <IconButton
+                    onClick={onClickUploadFile}
+                    sx={{ padding: "0px" }}
+                  >
+                    <DownloadIcon />
+                  </IconButton>
+                }
+              >
+                <BoardMissionsFiles />
+              </CardContainer>
+            )}
+          </>
         ) : (
           <>
             {/* Notes + Types + Products details */}

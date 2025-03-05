@@ -3,7 +3,7 @@ import QRScannerWidget from "@/widgets/qr-scanner/qr-scanner-widget";
 
 export default function QRScannerPage() {
   return (
-    <CustomerAuthLayout allowAnonymous={true} disableHeaderSideMenu={true}>
+    <CustomerAuthLayout>
       <QRScannerWidget />
     </CustomerAuthLayout>
   );
