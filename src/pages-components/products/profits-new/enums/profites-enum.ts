@@ -12,6 +12,7 @@ export enum EPricingBy {
 export enum ETransition {
   LINEAR = 0,
   STEPS = 1,
+  BUCKET = 2,
 }
 export enum ETypeException {
   ADDITIONAL = 0,
