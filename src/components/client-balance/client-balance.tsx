@@ -17,9 +17,14 @@ interface IProps {
   clientId: string;
   clientBalance?: number;
   isClickable?: boolean;
+  clientType?: CLIENT_TYPE;
 }
 
-const ClientBalanceComponent = ({ clientBalance, clientId }: IProps) => {
+const ClientBalanceComponent = ({
+  clientBalance,
+  clientId,
+  clientType = CLIENT_TYPE.SUPPLIER,
+}: IProps) => {
   const {
     showCustomerModal,
     setShowCustomerModal,
@@ -82,10 +87,14 @@ const ClientBalanceComponent = ({ clientBalance, clientId }: IProps) => {
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
         codeFlag={true}
-        typeClient={CLIENT_TYPE.CUSTOMER}
+        typeClient={clientType}
+        modalTitle={
+          clientType === CLIENT_TYPE.SUPPLIER
+            ? t("suppliers.editModalTitle")
+            : t("customers.modal.editTitle")
+        }
         isgetAllCustomers={false}
         openModal={showCustomerModal}
-        modalTitle={t("customers.modal.editTitle")}
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}

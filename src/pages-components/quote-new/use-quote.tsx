@@ -117,6 +117,18 @@ const useQuoteNew = ({
   ); // Represents the Delivery Date for Quotes and Orders, and the Due Date for other documents
 
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
+  const isSupplierPayments = docType === DOCUMENT_TYPE.supplierPayments;
+  const isPurchaseOrder = docType === DOCUMENT_TYPE.purchaseOrder;
+  const isPurchaseInvoice = docType === DOCUMENT_TYPE.purchaseInvoice;
+  const isPurchaseInvoiceRefund =
+    docType === DOCUMENT_TYPE.purchaseInvoiceRefund;
+
+  const isPurchaseDocument =
+    isPurchaseOrder ||
+    isPurchaseInvoice ||
+    isPurchaseInvoiceRefund ||
+    isSupplierPayments ||
+    isOutgoingPayments;
 
   const [creationDate, setCreationDate] = useState(
     isQuoteConfirmation
@@ -147,7 +159,9 @@ const useQuoteNew = ({
   >(null);
 
   const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
-  const [isUpdateVatStatus, setIsUpdateVatStatus] = useState<number | null>(null);
+  const [isUpdateVatStatus, setIsUpdateVatStatus] = useState<number | null>(
+    null
+  );
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
@@ -263,7 +277,9 @@ const useQuoteNew = ({
   const handleSettingMenuClose = () => {
     setAnchorElSettingMenu(null);
   };
-  const handleSettingMenuClickForVat = (event: React.MouseEvent<HTMLElement>) => {
+  const handleSettingMenuClickForVat = (
+    event: React.MouseEvent<HTMLElement>
+  ) => {
     setAnchorElSettingMenuForVat(event.currentTarget);
   };
   const handleSettingMenuCloseForVat = () => {
@@ -323,8 +339,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -523,7 +539,6 @@ const useQuoteNew = ({
     });
   };
   const changeVatValueForVatStatus = (vatStatus: number) => {
-
     switch (vatStatus) {
       case EnumVATStatus.Must17Percents:
         return 0.17;
@@ -536,7 +551,6 @@ const useQuoteNew = ({
       default:
         return 0.18;
     }
-
   };
 
   const updateVatStatus = async (vatStatus: number) => {
@@ -546,11 +560,13 @@ const useQuoteNew = ({
       updatedQuoteItemValue.vat = changeVatValueForVatStatus(vatStatus);
       setQuoteItemValue(updatedQuoteItemValue);
       setIsUpdateVatStatus(null);
-      getCalculateQuoteItem(updatedQuoteItemValue, 2, quoteItemValue.discount, updatedQuoteItemValue);
-
-
-    }
-    else {
+      getCalculateQuoteItem(
+        updatedQuoteItemValue,
+        2,
+        quoteItemValue.discount,
+        updatedQuoteItemValue
+      );
+    } else {
       const callBack = (res) => {
         if (res?.success) {
           alertSuccessUpdate();
@@ -567,7 +583,7 @@ const useQuoteNew = ({
           vatStatus: vatStatus,
         },
       });
-    };
+    }
   };
 
   const updateDocumentTitle = async (value: string) => {
@@ -1150,7 +1166,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -2029,8 +2045,8 @@ const useQuoteNew = ({
     router.query.isNewCreation &&
     (isDeliveryNote || isInvoice)
   );
-  const showVatListInSettingIconNew = router.query.isNewCreation && (isDeliveryNote || isInvoice)
-
+  const showVatListInSettingIconNew =
+    router.query.isNewCreation && (isDeliveryNote || isInvoice);
 
   const moveOrderToReady = async () => {
     const callBack = (res) => {
@@ -2351,6 +2367,7 @@ const useQuoteNew = ({
     isMoveToReady,
     handleCheckboxChange,
     isDeliveryNote,
+    isPurchaseDocument,
   };
 };
 
