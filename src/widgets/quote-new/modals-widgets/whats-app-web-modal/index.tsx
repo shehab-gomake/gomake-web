@@ -28,7 +28,7 @@ const WhatsAppWebModal = ({
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
-  const [, setSelectedClient] = useState<any>();
+  const [selectedClient, setSelectedClient] = useState<any>();
   const [phoneNumber, setPhoneNumber] = useState("");
   const { openWhatsAppWebLink } = useWhatsAppWeb();
   const {
@@ -49,7 +49,14 @@ const WhatsAppWebModal = ({
     openWhatsAppWebLink(whatsappMassage, phoneNumber);
   };
   const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
-  console.log("quoteItemValue", { quoteItemValue, clientContactsValue })
+
+  useEffect(() => {
+    if (openModal) {
+      const value = quoteItemValue?.documentContacts[0]
+      setSelectedClient(value);
+      setPhoneNumber(value?.contactPhone);
+    }
+  }, [openModal]);
 
   return (
     <>
@@ -72,6 +79,7 @@ const WhatsAppWebModal = ({
               setSelectedClient(value);
               setPhoneNumber(value?.contactPhone);
             }}
+            value={selectedClient}
           />
           <GomakeTextInput
             placeholder={t("sales.quote.phone")}
