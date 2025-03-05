@@ -171,7 +171,7 @@ const SettingQuoteMenu = ({
               <div style={classes.menuRowStyle}>
                 <div style={classes.menuTabStyle}>{t("accounting.defaultVat")}</div>
                 <AutoCompleteUpdatedValue
-                  value={vatStatus}
+                  value={vatStatus || t("accounting.defaultVat")}
                   options={vatStatusList}
                   onBlur={onBlurVatStatus}
                   isUpdate={isUpdateVatStatus}
