@@ -18,7 +18,7 @@ import { ActionsListComponent } from "@/widgets/production-floor/filters/select/
 import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useMediaQuery } from "@mui/material";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 const ProductionFloorHeader = ({
   filterGroups,
@@ -27,11 +27,9 @@ const ProductionFloorHeader = ({
 }: any) => {
   const {
     view,
-    setView,
     showAllJobsButton,
     paths,
     onClickPath,
-    navigateToProductionFloor,
     onClickBack,
     currentPathIndex,
     onStationsChange,
@@ -41,7 +39,7 @@ const ProductionFloorHeader = ({
   const dir = t("direction");
   const updateViewInUrl = useUpdateViewInUrl();
   const { CheckPermission } = useUserPermission();
-  const isMobileScreen = useMediaQuery("(max-width:768px)");
+  const isMobileScreen = useIsMobile();
 
   return (
     <Stack

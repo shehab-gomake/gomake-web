@@ -20,10 +20,23 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { MoreActionsButton } from "../navigation-buttons/more-actions-button";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { ActionCountDown } from "./action-count-down/action-count-down";
+import { useIsMobile } from "@/hooks/use-responsive";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
-  return <span style={classes.title}>{title}</span>;
+  const isMobile = useIsMobile();
+
+  return (
+    <span
+      style={{
+        ...classes.title,
+        ...(isMobile && { ...FONT_FAMILY.Inter(600, 16) }),
+      }}
+    >
+      {title}
+    </span>
+  );
 };
 const HeaderDividerComponent = () => {
   const { classes } = useStyle();
@@ -34,6 +47,104 @@ const doneBoardMissionsColors = {
   bfColor: "#D9F5DC",
 };
 
+const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
+  const { classes } = useStyle();
+  const fieldMappings = [
+    {
+      condition: boardMissionsDetails.createdDate,
+      label: t("productionFloor.started"),
+      value: DateHourFormatterShort(
+        convertUtcToLocalIsoString(boardMissionsDetails.createdDate?.toString())
+      ),
+    },
+    {
+      condition: boardMissionsDetails.dueDate,
+      label: t("productionFloor.deliveredOn"),
+      value: DateHourFormatterShort(
+        convertUtcToLocalIsoString(boardMissionsDetails.dueDate?.toString())
+      ),
+    },
+    {
+      condition: boardMissionsDetails.agentName,
+      label: t("productionFloor.agent"),
+      value: boardMissionsDetails.agentName,
+    },
+    {
+      condition: boardMissionsDetails.contactName,
+      label: t("sales.quote.contactName"),
+      value: boardMissionsDetails.contactName,
+    },
+    {
+      condition: boardMissionsDetails.clientEmail,
+      label: t("login.email"),
+      value: boardMissionsDetails.clientEmail,
+    },
+    {
+      condition:
+        boardMissionsDetails.clientPhone &&
+        clearPhoneNumberPrefix(boardMissionsDetails.clientPhone) !== "",
+      label: t("sales.quote.phone"),
+      value: !CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
+        ? clearPhoneNumberPrefix(boardMissionsDetails.clientPhone)
+        : boardMissionsDetails.clientPhone,
+    },
+  ];
+
+  const statusLabels = [
+    {
+      condition: boardMissionsDetails?.isNeedExample,
+      label: t("boardMissions.sampleRequired"),
+      background: "#BE0270",
+    },
+    {
+      condition: boardMissionsDetails?.isUrgentWork,
+      label: t("boardMissions.urgent"),
+      background: undefined,
+    },
+    {
+      condition: boardMissionsDetails?.isRepetitiveWork,
+      label: t("boardMissions.isRepetitiveWork"),
+      background: "#B93815",
+    },
+    {
+      condition: boardMissionsDetails?.isHaveDelivery,
+      label: t("boardMissions.isHaveDelivery"),
+      background: "#F4A100",
+    },
+  ];
+
+  return (
+    <Stack
+      direction={"row"}
+      alignItems={"center"}
+      gap={"12px"}
+      flexWrap={"wrap"}
+    >
+      {/* Render Fields */}
+      {fieldMappings.map(
+        ({ condition, label, value }, index) =>
+          condition && (
+            <Stack direction={"row"} gap={"5px"} key={index}>
+              <span style={classes.newParameterLabel}>{label}</span>
+              <span style={classes.newParameterValue}>{value}</span>
+            </Stack>
+          )
+      )}
+
+      {/* Render Status Labels */}
+      {statusLabels.map(
+        ({ condition, label, background }, index) =>
+          condition && (
+            <span key={index} style={{ ...classes.labelsStyle, background }}>
+              {label}
+            </span>
+          )
+      )}
+    </Stack>
+  );
+};
+
+//!here important
 const BoardMissionsDetailsHeader = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -50,7 +161,6 @@ const BoardMissionsDetailsHeader = () => {
     isLoadingStatus,
     onToggleTimer,
     timerLoading,
-    stations,
     sortedStations,
   } = useBoardMissionsDetailsHeader();
 
@@ -76,6 +186,8 @@ const BoardMissionsDetailsHeader = () => {
     }
   }, [boards, boardMissionsDetails]);
 
+  const isMobile = useIsMobile();
+
   return (
     <>
       {isLoading ? (
@@ -86,7 +198,11 @@ const BoardMissionsDetailsHeader = () => {
         >
           {/* Avatar Skeleton */}
           <Stack direction="row" gap="14px" alignItems="center">
-            <Skeleton variant="rectangular" width={80} height={80} />
+            <Skeleton
+              variant="rectangular"
+              width={isMobile ? 60 : 80}
+              height={isMobile ? 60 : 80}
+            />
 
             <Stack gap="10px">
               {/* Skeleton for product/client names */}
@@ -127,302 +243,238 @@ const BoardMissionsDetailsHeader = () => {
           </Stack>
         </Stack>
       ) : (
-        <Stack
-          direction={"row"}
-          justifyContent={"space-between"}
-          alignItems="flex-start"
-        >
-          <Stack gap={"14px"} direction={"row"} alignItems={"center"}>
-            {/* Avatar */}
-            <Stack
-              style={{ borderRadius: "12px", border: "2px solid #E6E4E4" }}
-            >
-              <Avatar
-                src={boardMissionsDetails?.boardMissionImage}
-                style={{ width: "80px", height: "80px", borderRadius: "8px" }}
-                variant={"square"}
+        <>
+          <Stack
+            direction={"row"}
+            justifyContent={"space-between"}
+            alignItems="flex-start"
+          >
+            <Stack gap={"14px"} direction={"row"} alignItems={"center"}>
+              {/* Avatar */}
+              <Stack
+                style={{ borderRadius: "12px", border: "2px solid #E6E4E4" }}
               >
-                <TocIcon style={{ width: "60px", height: "60px" }} />
-              </Avatar>
-            </Stack>
+                <Avatar
+                  src={boardMissionsDetails?.boardMissionImage}
+                  sx={{
+                    width: isMobile ? 60 : 80,
+                    height: isMobile ? 60 : 80,
+                    borderRadius: "8px",
+                  }}
+                  variant={"square"}
+                >
+                  <TocIcon style={{ width: "60px", height: "60px" }} />
+                </Avatar>
+              </Stack>
 
-            <Stack gap={"10px"}>
-              {/* First row */}
-              <Stack direction={"row"} alignItems={"center"} gap={"5px"}>
+              <Stack gap={"10px"}>
+                {/* First row */}
                 <Stack
                   direction={"row"}
                   alignItems={"center"}
                   gap={"5px"}
-                  height={"25px"}
-                  minHeight={"fit-content"}
+                  style={{ ...(isMobile && { flexWrap: "wrap" }) }}
                 >
-                  <HeaderTitleComponent
-                    title={boardMissionsDetails?.productName}
-                  />
-                  <HeaderDividerComponent />
-                  <HeaderTitleComponent
-                    title={boardMissionsDetails.clientName}
-                  />
-                  <HeaderDividerComponent />
-                  <HeaderTitleComponent
-                    title={`${boardMissionsDetails.boardMissionNumber}/${
-                      boardMissionsDetails.orderNumber
-                    }${!!boardMissionsDetails.productType ? "/" : ""}`}
-                  />
-                  <span style={classes.productType}>
-                    {boardMissionsDetails.sectionName}
-                  </span>
-                </Stack>
-                {/* Status */}
-                <Stack
-                  padding={"0 5px"}
-                  direction={"row"}
-                  gap={"5px"}
-                  color={
-                    boardMissionsDetails?.isReady
-                      ? doneBoardMissionsColors.color
-                      : boardMissionsDetails?.boardMissionStatus?.textColor
-                  }
-                >
-                  {isLoadingStatus ? (
-                    <Skeleton
-                      variant="rectangular"
-                      width={120}
-                      height={40}
-                      sx={{ borderRadius: "5px" }}
+                  <Stack
+                    direction={"row"}
+                    alignItems={"center"}
+                    gap={"5px"}
+                    height={"25px"}
+                    minHeight={"fit-content"}
+                  >
+                    <HeaderTitleComponent
+                      title={boardMissionsDetails?.productName}
                     />
-                  ) : boardMissionsDetails?.isReady ? (
-                    <span
-                      style={{
-                        ...classes.doneLabel,
-                        color: doneBoardMissionsColors.color,
-                        border: `1px solid ${doneBoardMissionsColors.color}`,
-                        background: doneBoardMissionsColors.bfColor,
-                      }}
-                    >
-                      {t("boardMissions.done")}
+                    <HeaderDividerComponent />
+                    <HeaderTitleComponent
+                      title={boardMissionsDetails.clientName}
+                    />
+                    <HeaderDividerComponent />
+                    <HeaderTitleComponent
+                      title={`${boardMissionsDetails.boardMissionNumber}/${
+                        boardMissionsDetails.orderNumber
+                      }${!!boardMissionsDetails.productType ? "/" : ""}`}
+                    />
+                    <span style={classes.productType}>
+                      {boardMissionsDetails.sectionName}
                     </span>
-                  ) : (
-                    <BoardStatusComponent
-                      statusId={boardMissionsDetails.boardMissionStatus?.id}
-                      id={boardMissionsDetails?.boardMissionId}
-                      onChange={handleStatusChange}
-                      isFromMissionView={true}
-                      currentStation={boardMissionsDetails?.currentActionName}
-                      statusColorBg={
-                        boardMissionsDetails?.boardMissionStatus
-                          ?.backgroundColor
-                      }
-                      statusColorText={
-                        boardMissionsDetails?.boardMissionStatus?.textColor
-                      }
-                      statusText={t(
-                        `productionStatuses.${boardMissionsDetails.boardMissionStatus?.name}`
-                      )}
-                    />
-                  )}
-                </Stack>
-                {!boardMissionsDetails?.isReady &&
-                  (isLoadingTimer ? (
-                    <Stack direction={"row"} alignItems={"center"} gap={"8px"}>
-                      <Skeleton variant="circular" width={32} height={32} />
+                  </Stack>
+                  {/* Status */}
+                  <Stack
+                    padding={"0 5px"}
+                    direction={"row"}
+                    gap={"5px"}
+                    color={
+                      boardMissionsDetails?.isReady
+                        ? doneBoardMissionsColors.color
+                        : boardMissionsDetails?.boardMissionStatus?.textColor
+                    }
+                  >
+                    {isLoadingStatus ? (
                       <Skeleton
                         variant="rectangular"
-                        width={90}
+                        width={120}
                         height={40}
-                        style={{ borderRadius: 12 }}
+                        sx={{ borderRadius: "5px" }}
                       />
-                    </Stack>
-                  ) : (
-                    <ActionCountDown
-                      loading={timerLoading}
-                      onToggle={onToggleTimer}
-                      {...boardMissionsDetails?.currentStation
-                        ?.boardMissionActionTimer}
-                    />
-                  ))}
-              </Stack>
-              {/* Second row */}
-              <Stack direction={"row"} alignItems={"center"} gap={"12px"}>
-                {boardMissionsDetails.createdDate && (
-                  <Stack direction={"row"} gap={"5px"}>
-                    <span style={classes.newParameterLabel}>
-                      {t("productionFloor.started")}
-                    </span>
-                    <span style={classes.newParameterValue}>
-                      {DateHourFormatterShort(
-                        convertUtcToLocalIsoString(
-                          boardMissionsDetails.createdDate?.toString()
-                        )
-                      )}
-                    </span>
-                  </Stack>
-                )}
-                {boardMissionsDetails.dueDate && (
-                  <Stack direction={"row"} gap={"5px"}>
-                    <span style={classes.newParameterLabel}>
-                      {t("productionFloor.deliveredOn")}
-                    </span>
-                    <span style={classes.newParameterValue}>
-                      {DateHourFormatterShort(
-                        convertUtcToLocalIsoString(
-                          boardMissionsDetails.dueDate?.toString()
-                        )
-                      )}
-                    </span>
-                  </Stack>
-                )}
-                {boardMissionsDetails.agentName && (
-                  <Stack direction={"row"} gap={"5px"}>
-                    <span style={classes.newParameterLabel}>
-                      {t("productionFloor.agent")}
-                    </span>
-                    <span style={classes.newParameterValue}>
-                      {boardMissionsDetails.agentName}
-                    </span>
-                  </Stack>
-                )}
-
-                {boardMissionsDetails.contactName && (
-                  <Stack direction={"row"} gap={"5px"}>
-                    <span style={classes.newParameterLabel}>
-                      {t("sales.quote.contactName")}
-                    </span>
-                    <span style={classes.newParameterValue}>
-                      {boardMissionsDetails.contactName}
-                    </span>
-                  </Stack>
-                )}
-
-                {boardMissionsDetails.clientEmail && (
-                  <Stack direction={"row"} gap={"5px"}>
-                    <span style={classes.newParameterLabel}>
-                      {t("login.email")}
-                    </span>
-                    <span style={classes.newParameterValue}>
-                      {boardMissionsDetails.clientEmail}
-                    </span>
-                  </Stack>
-                )}
-                {boardMissionsDetails.clientPhone &&
-                  clearPhoneNumberPrefix(boardMissionsDetails.clientPhone) !==
-                    "" && (
-                    <Stack direction={"row"} gap={"5px"}>
-                      <span style={classes.newParameterLabel}>
-                        {t("sales.quote.phone")}
+                    ) : boardMissionsDetails?.isReady ? (
+                      <span
+                        style={{
+                          ...classes.doneLabel,
+                          color: doneBoardMissionsColors.color,
+                          border: `1px solid ${doneBoardMissionsColors.color}`,
+                          background: doneBoardMissionsColors.bfColor,
+                        }}
+                      >
+                        {t("boardMissions.done")}
                       </span>
-                      <span style={classes.newParameterValue}>
-                        {!CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
-                          ? clearPhoneNumberPrefix(
-                              boardMissionsDetails.clientPhone
-                            )
-                          : boardMissionsDetails.clientPhone}
-                      </span>
-                    </Stack>
-                  )}
-
-                {boardMissionsDetails?.isNeedExample && (
-                  <span
-                    style={{ ...classes.labelsStyle, background: "#BE0270" }}
-                  >
-                    {t("boardMissions.sampleRequired")}
-                  </span>
-                )}
-                {boardMissionsDetails?.isUrgentWork && (
-                  <span style={classes.labelsStyle}>
-                    {t("boardMissions.urgent")}
-                  </span>
-                )}
-
-                {boardMissionsDetails?.isRepetitiveWork && (
-                  <span
-                    style={{ ...classes.labelsStyle, background: "#B93815" }}
-                  >
-                    {t("boardMissions.isRepetitiveWork")}
-                  </span>
-                )}
-
-                {boardMissionsDetails?.isHaveDelivery && (
-                  <span
-                    style={{ ...classes.labelsStyle, background: "#F4A100" }}
-                  >
-                    {t("boardMissions.isHaveDelivery")}
-                  </span>
+                    ) : (
+                      <BoardStatusComponent
+                        statusId={boardMissionsDetails.boardMissionStatus?.id}
+                        id={boardMissionsDetails?.boardMissionId}
+                        onChange={handleStatusChange}
+                        isFromMissionView={true}
+                        currentStation={boardMissionsDetails?.currentActionName}
+                        statusColorBg={
+                          boardMissionsDetails?.boardMissionStatus
+                            ?.backgroundColor
+                        }
+                        statusColorText={
+                          boardMissionsDetails?.boardMissionStatus?.textColor
+                        }
+                        statusText={t(
+                          `productionStatuses.${boardMissionsDetails.boardMissionStatus?.name}`
+                        )}
+                      />
+                    )}
+                  </Stack>
+                  {!boardMissionsDetails?.isReady &&
+                    (isLoadingTimer ? (
+                      <Stack
+                        direction={"row"}
+                        alignItems={"center"}
+                        gap={"8px"}
+                      >
+                        <Skeleton
+                          variant="circular"
+                          width={isMobile ? 22 : 32}
+                          height={isMobile ? 22 : 32}
+                        />
+                        <Skeleton
+                          variant="rectangular"
+                          width={isMobile ? 80 : 90}
+                          height={isMobile ? 30 : 40}
+                          style={{ borderRadius: 12 }}
+                        />
+                      </Stack>
+                    ) : (
+                      <ActionCountDown
+                        loading={timerLoading}
+                        onToggle={onToggleTimer}
+                        {...boardMissionsDetails?.currentStation
+                          ?.boardMissionActionTimer}
+                      />
+                    ))}
+                </Stack>
+                {/* Second row */}
+                {!isMobile && (
+                  <InfoSection
+                    boardMissionsDetails={boardMissionsDetails}
+                    CheckPreferenceValue={CheckPreferenceValue}
+                    t={t}
+                  />
                 )}
               </Stack>
             </Stack>
-          </Stack>
-          {/* Navigation buttons + Actions and Documents buttons*/}
-          <Stack gap={"10px"}>
-            <Stack
-              direction={"row"}
-              gap={"10px"}
-              alignItems={"center"}
-              alignSelf={"flex-end"}
-            >
-              <Tooltip
-                title={`${boardFromTable?.previousBoardMission?.productName} |  ${boardFromTable?.previousBoardMission?.clientName} | ${boardFromTable?.previousBoardMission?.boardMissionNumber} / ${boardFromTable?.previousBoardMission?.orderNumber}`}
-                arrow
-              >
-                <IconButton
-                  onClick={() =>
-                    onNavigateBoardMissions(
-                      boardFromTable?.previousBoardMission?.boardMissionId,
-                      boardFromTable?.previousBoardMission?.productType
-                    )
-                  }
-                  style={{ border: "1px solid", width: "40px", height: "40px" }}
-                  color={"error"}
-                  disabled={!boardFromTable?.previousBoardMission}
+            {/* Navigation buttons + Actions and Documents buttons*/}
+            {!isMobile && (
+              <Stack gap={"10px"}>
+                <Stack
+                  direction={"row"}
+                  gap={"10px"}
+                  alignItems={"center"}
+                  alignSelf={"flex-end"}
                 >
-                  {direction === "ltr" ? (
-                    <NavigateBeforeIcon />
-                  ) : (
-                    <NavigateNextIcon />
-                  )}
-                </IconButton>
-              </Tooltip>
-              <Tooltip
-                title={`${boardFromTable?.nextBoardMission?.productName} |  ${boardFromTable?.nextBoardMission?.clientName} | ${boardFromTable?.nextBoardMission?.boardMissionNumber} / ${boardFromTable?.nextBoardMission?.orderNumber}`}
-                arrow
-              >
-                <IconButton
-                  onClick={() =>
-                    onNavigateBoardMissions(
-                      boardFromTable?.nextBoardMission?.boardMissionId,
-                      boardFromTable?.nextBoardMission?.productType
-                    )
-                  }
-                  style={{ border: "1px solid", width: "40px", height: "40px" }}
-                  color={"success"}
-                  disabled={!boardFromTable?.nextBoardMission}
-                >
-                  {direction === "ltr" ? (
-                    <NavigateNextIcon />
-                  ) : (
-                    <NavigateBeforeIcon />
-                  )}
-                </IconButton>
-              </Tooltip>
-            </Stack>
-            <Stack direction={"row"} alignItems={"center"} gap={"12px"}>
-              <ApprovalFileStatusComponent
-                height={"30px"}
-                width={"30px"}
-                fileStatus={boardMissionsDetails.showGraphicsApprovalAlert}
-                t={t}
-              />
-              <DocumentsButton />
-              <PermissionCheck
-                userPermission={
-                  Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
-                }
-              >
-                <MoreActionsButton />
-              </PermissionCheck>
-            </Stack>
+                  <Tooltip
+                    title={`${boardFromTable?.previousBoardMission?.productName} |  ${boardFromTable?.previousBoardMission?.clientName} | ${boardFromTable?.previousBoardMission?.boardMissionNumber} / ${boardFromTable?.previousBoardMission?.orderNumber}`}
+                    arrow
+                  >
+                    <IconButton
+                      onClick={() =>
+                        onNavigateBoardMissions(
+                          boardFromTable?.previousBoardMission?.boardMissionId,
+                          boardFromTable?.previousBoardMission?.productType
+                        )
+                      }
+                      style={{
+                        border: "1px solid",
+                        width: "40px",
+                        height: "40px",
+                      }}
+                      color={"error"}
+                      disabled={!boardFromTable?.previousBoardMission}
+                    >
+                      {direction === "ltr" ? (
+                        <NavigateBeforeIcon />
+                      ) : (
+                        <NavigateNextIcon />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip
+                    title={`${boardFromTable?.nextBoardMission?.productName} |  ${boardFromTable?.nextBoardMission?.clientName} | ${boardFromTable?.nextBoardMission?.boardMissionNumber} / ${boardFromTable?.nextBoardMission?.orderNumber}`}
+                    arrow
+                  >
+                    <IconButton
+                      onClick={() =>
+                        onNavigateBoardMissions(
+                          boardFromTable?.nextBoardMission?.boardMissionId,
+                          boardFromTable?.nextBoardMission?.productType
+                        )
+                      }
+                      style={{
+                        border: "1px solid",
+                        width: "40px",
+                        height: "40px",
+                      }}
+                      color={"success"}
+                      disabled={!boardFromTable?.nextBoardMission}
+                    >
+                      {direction === "ltr" ? (
+                        <NavigateNextIcon />
+                      ) : (
+                        <NavigateBeforeIcon />
+                      )}
+                    </IconButton>
+                  </Tooltip>
+                </Stack>
+                <Stack direction={"row"} alignItems={"center"} gap={"12px"}>
+                  <ApprovalFileStatusComponent
+                    height={"30px"}
+                    width={"30px"}
+                    fileStatus={boardMissionsDetails.showGraphicsApprovalAlert}
+                    t={t}
+                  />
+                  <DocumentsButton />
+                  <PermissionCheck
+                    userPermission={
+                      Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
+                    }
+                  >
+                    <MoreActionsButton />
+                  </PermissionCheck>
+                </Stack>
+              </Stack>
+            )}
           </Stack>
-        </Stack>
+          {isMobile && (
+            <InfoSection
+              boardMissionsDetails={boardMissionsDetails}
+              CheckPreferenceValue={CheckPreferenceValue}
+              t={t}
+            />
+          )}
+        </>
       )}
     </>
   );

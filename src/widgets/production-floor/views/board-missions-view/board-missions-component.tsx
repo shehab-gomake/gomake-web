@@ -27,7 +27,6 @@ interface IProps {
   updateStatus?: any;
 }
 
-//!here
 const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
   const { getAllActivities } = useBoardMissionsActivities();
   const { getAllBoardMissionsFiles } = useBoardMissionsFiles();
