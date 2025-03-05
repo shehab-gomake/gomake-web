@@ -23,7 +23,7 @@ interface IProps {
 const ClientBalanceComponent = ({
   clientBalance,
   clientId,
-  clientType = CLIENT_TYPE.SUPPLIER,
+  clientType = CLIENT_TYPE.CUSTOMER,
 }: IProps) => {
   const {
     showCustomerModal,
@@ -99,7 +99,7 @@ const ClientBalanceComponent = ({
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
         showUpdateButton={true}
-        selectedTabIndex={6}
+        selectedTabIndex={5}
       />
     </>
   );
