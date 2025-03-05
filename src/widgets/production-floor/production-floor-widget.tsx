@@ -101,6 +101,7 @@ const ProductionFloorWidget = () => {
         <ProductionFloorFilters
           getStationFilterGroups={getStationFilterGroups}
           connectionId={connectionId}
+          isMobile={isMobile}
         />
       )}
       <Stack overflow={"auto"} maxHeight={"100%"}>
