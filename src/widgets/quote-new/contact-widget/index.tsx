@@ -10,8 +10,8 @@ import { useRouter } from "next/router";
 import { ModalType } from "@/enums";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { quoteItemState } from "@/store/quote-item";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { useEffect, useRef, useState } from "react";
 import { updateDocumentContactsReorderApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 
@@ -101,7 +101,12 @@ const ContactNewWidget = ({
     setDocumentContacts(transformedArray);
     updateDocumentContactsReorder(transformedArray);
   };
-
+  const addContactWidgetRef = useRef<HTMLDivElement>(null); // Create a ref
+  useEffect(() => {
+    if (isDisplayWidget && addContactWidgetRef.current) {
+      addContactWidgetRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [isDisplayWidget]);
   return (
     <>
       <div style={classes.mainContainer}>
@@ -175,27 +180,30 @@ const ContactNewWidget = ({
         )}
       </div>
       {isDisplayWidget && (
-        <AddContactNewWidget
-          clientContactsValue={clientContactsValue}
-          onBlurContactName={onBlurContactName}
-          setIsUpdateContactName={setIsUpdateContactName}
-          setSelectedContactById={setSelectedContactById}
-          selectedContactById={selectedContactById}
-          onBlurContactMobile={onBlurContactMobile}
-          isUpdateContactMobile={isUpdateContactMobile}
-          setIsUpdateContactMobile={setIsUpdateContactMobile}
-          onInputChangePhone={onInputChangePhone}
-          onBlurContactEmail={onBlurContactEmail}
-          isUpdateContactEmail={isUpdateContactEmail}
-          setIsUpdateContactEmail={setIsUpdateContactEmail}
-          onInputChangeMail={onInputChangeMail}
-          onClickAddNewContact={onClickAddNewContact}
-          setIsDisplayWidget={setIsDisplayWidget}
-          documentType={documentType}
-          getQuote={getQuote}
-          getAllClientContacts={getAllClientContacts}
-          onOpenNewContact={onOpenNewContact}
-        />
+        <div ref={addContactWidgetRef}>
+          <AddContactNewWidget
+            clientContactsValue={clientContactsValue}
+            onBlurContactName={onBlurContactName}
+            setIsUpdateContactName={setIsUpdateContactName}
+            setSelectedContactById={setSelectedContactById}
+            selectedContactById={selectedContactById}
+            onBlurContactMobile={onBlurContactMobile}
+            isUpdateContactMobile={isUpdateContactMobile}
+            setIsUpdateContactMobile={setIsUpdateContactMobile}
+            onInputChangePhone={onInputChangePhone}
+            onBlurContactEmail={onBlurContactEmail}
+            isUpdateContactEmail={isUpdateContactEmail}
+            setIsUpdateContactEmail={setIsUpdateContactEmail}
+            onInputChangeMail={onInputChangeMail}
+            onClickAddNewContact={onClickAddNewContact}
+            setIsDisplayWidget={setIsDisplayWidget}
+            documentType={documentType}
+            getQuote={getQuote}
+            getAllClientContacts={getAllClientContacts}
+            onOpenNewContact={onOpenNewContact}
+          />
+        </div>
+
       )}
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
