@@ -118,7 +118,7 @@ const ContactNewWidget = ({
                   {(provided) => (
                     <div {...provided.droppableProps} ref={provided.innerRef}>
                       {documentContacts?.slice(0, displayedItems).sort((a, b) => a.index - b.index).map((item, index) => (
-                        <Draggable key={item.id} draggableId={item.contactID} index={index}>
+                        <Draggable key={item.id} draggableId={item.contactID ?? item.id} index={index}>
                           {(provided) => (
                             <div
                               ref={provided.innerRef}
