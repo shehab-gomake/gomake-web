@@ -38,13 +38,10 @@ const HeaderTitleComponent = ({ title }: { title?: string }) => {
     </span>
   );
 };
+
 const HeaderDividerComponent = () => {
   const { classes } = useStyle();
   return <Divider orientation={"vertical"} style={classes.divider} flexItem />;
-};
-const doneBoardMissionsColors = {
-  color: "#66D671",
-  bfColor: "#D9F5DC",
 };
 
 const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
@@ -144,7 +141,11 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   );
 };
 
-//!here important
+const doneBoardMissionsColors = {
+  color: "#66D671",
+  bfColor: "#D9F5DC",
+};
+
 const BoardMissionsDetailsHeader = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();

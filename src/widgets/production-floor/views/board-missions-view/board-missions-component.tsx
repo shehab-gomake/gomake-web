@@ -108,6 +108,14 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
           renderSkeletons()
         ) : isMobileScreen ? (
           <>
+            <CardContainer label={t("productionFloor.actions")}>
+              <BoardMissionsStationsComponent
+                stations={stations}
+                subWorkFlows={subWorkFlows}
+                boardMissions={boardMissions}
+                getStations={getStations}
+              />
+            </CardContainer>
             <CardContainer
               label={t("sales.quote.notes")}
               style={classes.mobileCard}
@@ -166,20 +174,13 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
                 />
               </CardContainer>
             )}
-            <CardContainer label={t("productionFloor.actions")}>
-              <BoardMissionsStationsComponent
-                stations={stations}
-                subWorkFlows={subWorkFlows}
-                boardMissions={boardMissions}
-                getStations={getStations}
-              />
-            </CardContainer>
+
             {/* <CardContainer
               label={t("productionFloor.activities")}
               style={{ height: "50vh" }}
             >
               <BoardMissionsActivities />
-            </CardContainer> */}
+            </CardContainer>
             {!!companyProfile.filesApiAddress && (
               <CardContainer
                 style={{ height: "30vh" }}
@@ -195,7 +196,7 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
               >
                 <BoardMissionsFiles />
               </CardContainer>
-            )}
+            )} */}
           </>
         ) : (
           <>
