@@ -626,7 +626,9 @@ const BoardMissionsStationActionItem = ({
                     alignItems={"center"}
                     gap={"10px"}
                   >
-                    <span style={{ ...FONT_FAMILY.Inter(500, 14) }}>
+                    <span
+                      style={{ ...FONT_FAMILY.Inter(500, isMobile ? 13 : 14) }}
+                    >
                       {actionName}
                     </span>
                     {source === EWorkSource.OUT && supplierId ? (
@@ -663,13 +665,12 @@ const BoardMissionsStationActionItem = ({
                                     : machineName}
                                 </>
                               ) : (
-                                <>Select New Machine</>
+                                <>{t("boardMissions.selectNewMachine")}</>
                               )}
                             </Button>
                           ) : (
                             <Stack
                               direction={"row"}
-                              gap={"5px"}
                               alignItems={"center"}
                               onClick={(e) => e.stopPropagation()}
                             >
@@ -678,7 +679,10 @@ const BoardMissionsStationActionItem = ({
                                   placeholder={t(
                                     "materials.inputs.selectMachine"
                                   )}
-                                  style={{ height: "40px" }}
+                                  style={{
+                                    height: "40px",
+                                    marginBottom: "3px",
+                                  }}
                                   value={contactsFilter}
                                   onChange={onMachinesInputChange}
                                   onClick={() => setOpenMachine(!openMachine)}
@@ -687,17 +691,7 @@ const BoardMissionsStationActionItem = ({
                                   <ClickOutside
                                     onClick={() => setOpenMachine(false)}
                                   >
-                                    <Paper
-                                      sx={{
-                                        position: "absolute",
-                                        top: "100%",
-                                        left: 0,
-                                        right: 0,
-                                        maxHeight: "200px",
-                                        overflowY: "auto",
-                                        zIndex: 9999999999999999999,
-                                      }}
-                                    >
+                                    <Paper sx={classes.paperStyle}>
                                       {machinesList?.map((value, index) => {
                                         return (
                                           <MenuItem
@@ -705,8 +699,17 @@ const BoardMissionsStationActionItem = ({
                                             onClick={() =>
                                               onMachineClick(value, value.label)
                                             }
+                                            sx={{
+                                              ...FONT_FAMILY.Inter(
+                                                500,
+                                                isMobile ? 14 : 16
+                                              ),
+                                            }}
                                           >
-                                            {value.label?.slice(0, 18) + "..."}
+                                            {value.label?.slice(
+                                              0,
+                                              isMobile ? 16 : 18
+                                            ) + "..."}
                                           </MenuItem>
                                         );
                                       })}
@@ -719,8 +722,15 @@ const BoardMissionsStationActionItem = ({
                                   e.stopPropagation();
                                   setChooseMachine(false);
                                 }}
+                                sx={{
+                                  fontSize: isMobile ? "16px" : "24px",
+                                }}
                               >
-                                <ClearRoundedIcon />
+                                <ClearRoundedIcon
+                                  sx={{
+                                    fontSize: isMobile ? "18px" : "20px",
+                                  }}
+                                />
                               </IconButton>
                             </Stack>
                           )}
@@ -752,7 +762,7 @@ const BoardMissionsStationActionItem = ({
                             {employeeName ? (
                               employeeName
                             ) : (
-                              <>Select New Employee</>
+                              <>{t("boardMissions.selectNewEmployee")}</>
                             )}
                           </Button>
                         ) : (
@@ -767,24 +777,17 @@ const BoardMissionsStationActionItem = ({
                                 placeholder={t(
                                   "products.profits.exceptions.selectEmployee"
                                 )}
-                                style={{ height: "40px" }}
+                                style={{
+                                  height: "40px",
+                                  marginBottom: "3px",
+                                }}
                                 value={contactsFilter}
                                 onChange={onContactsInputChange}
                                 onClick={() => setOpen(!open)}
                               />
                               {!!open && (
                                 <ClickOutside onClick={() => setOpen(false)}>
-                                  <Paper
-                                    sx={{
-                                      position: "absolute",
-                                      top: "100%",
-                                      left: 0,
-                                      right: 0,
-                                      maxHeight: "200px",
-                                      overflowY: "auto",
-                                      zIndex: 9999999999999999999,
-                                    }}
-                                  >
+                                  <Paper sx={classes.paperStyle}>
                                     {employeesList?.map((value, index) => {
                                       return (
                                         <MenuItem
@@ -792,6 +795,12 @@ const BoardMissionsStationActionItem = ({
                                           onClick={() =>
                                             onContactClick(value, value.label)
                                           }
+                                          sx={{
+                                            ...FONT_FAMILY.Inter(
+                                              500,
+                                              isMobile ? 14 : 16
+                                            ),
+                                          }}
                                         >
                                           {value.label}
                                         </MenuItem>
@@ -820,7 +829,7 @@ const BoardMissionsStationActionItem = ({
                         orientation={"vertical"}
                         flexItem
                         style={{
-                          height: "30px",
+                          height: "20px",
                           alignSelf: "center",
                           color: "#D6D6D6",
                         }}
