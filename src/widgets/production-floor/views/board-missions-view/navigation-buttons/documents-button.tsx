@@ -231,6 +231,7 @@ const DocumentsButton = ({ isMobile = false }) => {
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.printAndMoveToReadyTitle")}
+        subTitle={" "}
         yesBtn={t("boardMissions.printAndTransferToReady")}
         noBtn={t("boardMissions.printOnly")}
         openModal={openConfirmModal}
@@ -240,6 +241,15 @@ const DocumentsButton = ({ isMobile = false }) => {
           setOpenMarkReadyModal(true);
         }}
         onClickNo={() => setOpenPackagesModal(true)}
+        style={
+          isMobile
+            ? {
+                width: "95vw",
+                maxWidth: 600,
+                minWidth: "unset",
+              }
+            : undefined
+        }
       />
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
@@ -251,6 +261,15 @@ const DocumentsButton = ({ isMobile = false }) => {
         onClose={() => setOpenMarkReadyModal(false)}
         onClickYes={() => onClickMoveBoardMissionToDone(true)}
         onClickNo={() => onClickMoveBoardMissionToDone(false)}
+        style={
+          isMobile
+            ? {
+                width: "95vw",
+                maxWidth: 600,
+                minWidth: "unset",
+              }
+            : undefined
+        }
       />
     </div>
   );
