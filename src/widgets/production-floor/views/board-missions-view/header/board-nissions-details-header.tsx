@@ -215,33 +215,35 @@ const BoardMissionsDetailsHeader = () => {
               </Stack>
             </Stack>
           </Stack>
-          <Stack gap={"10px"}>
-            {/* Navigation buttons Skeleton */}
-            <Stack
-              direction="row"
-              gap="10px"
-              alignItems="center"
-              alignSelf={"flex-end"}
-            >
-              <Skeleton variant="circular" width={40} height={40} />
-              <Skeleton variant="circular" width={40} height={40} />
+          {!isMobile && (
+            <Stack gap={"10px"}>
+              {/* Navigation buttons Skeleton */}
+              <Stack
+                direction="row"
+                gap="10px"
+                alignItems="center"
+                alignSelf={"flex-end"}
+              >
+                <Skeleton variant="circular" width={40} height={40} />
+                <Skeleton variant="circular" width={40} height={40} />
+              </Stack>
+              {/* Action Buttons (DocumentsButton and MoreActionsButton) Skeletons  */}
+              <Stack direction={"row"} alignItems={"center"} gap={"12px"}>
+                <Skeleton
+                  variant="rectangular"
+                  width={200}
+                  height={40}
+                  style={{ borderRadius: 12 }}
+                />
+                <Skeleton
+                  variant="rectangular"
+                  width={50}
+                  height={40}
+                  style={{ borderRadius: 12 }}
+                />
+              </Stack>
             </Stack>
-            {/* Action Buttons (DocumentsButton and MoreActionsButton) Skeletons  */}
-            <Stack direction={"row"} alignItems={"center"} gap={"12px"}>
-              <Skeleton
-                variant="rectangular"
-                width={200}
-                height={40}
-                style={{ borderRadius: 12 }}
-              />
-              <Skeleton
-                variant="rectangular"
-                width={50}
-                height={40}
-                style={{ borderRadius: 12 }}
-              />
-            </Stack>
-          </Stack>
+          )}
         </Stack>
       ) : (
         <>
@@ -264,7 +266,12 @@ const BoardMissionsDetailsHeader = () => {
                   }}
                   variant={"square"}
                 >
-                  <TocIcon style={{ width: "60px", height: "60px" }} />
+                  <TocIcon
+                    style={{
+                      width: isMobile ? "40px" : "60px",
+                      height: isMobile ? "40px" : "60px",
+                    }}
+                  />
                 </Avatar>
               </Stack>
 
@@ -474,6 +481,30 @@ const BoardMissionsDetailsHeader = () => {
               CheckPreferenceValue={CheckPreferenceValue}
               t={t}
             />
+          )}
+
+          {isMobile && (
+            <Stack
+              direction={"row"}
+              alignItems={"center"}
+              gap={"12px"}
+              justifyContent={isMobile ? "flex-end" : undefined}
+            >
+              <ApprovalFileStatusComponent
+                height={isMobile ? "20px" : "30px"}
+                width={isMobile ? "20px" : "30px"}
+                fileStatus={boardMissionsDetails.showGraphicsApprovalAlert}
+                t={t}
+              />
+              <DocumentsButton isMobile={isMobile} />
+              <PermissionCheck
+                userPermission={
+                  Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
+                }
+              >
+                <MoreActionsButton isMobile={isMobile} />
+              </PermissionCheck>
+            </Stack>
           )}
         </>
       )}

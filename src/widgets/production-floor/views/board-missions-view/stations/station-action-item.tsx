@@ -74,7 +74,6 @@ interface IProps extends IBoardMissionsStation {
   isSubAction?: boolean;
 }
 
-//!here
 const BoardMissionsStationActionItem = ({
   id,
   actionId,
