@@ -12,6 +12,7 @@ import {
 import { Line } from "react-chartjs-2";
 import { LineChartProps } from "@/pages-components/products/profits-new/interface";
 import { useTranslation } from "react-i18next";
+import { ETransition } from "@/pages-components/products/profits-new/enums/profites-enum";
 
 ChartJS.register(
   CategoryScale,
@@ -36,16 +37,18 @@ export const options = {
   },
 };
 
-export function LineChart({ actionProfitRowChartData }: LineChartProps) {
-  const { t } = useTranslation(); 
+export function LineChart({ actionProfitRowChartData, selectedTransition }: LineChartProps) {
+  const { t } = useTranslation();
   const data = {
     labels: actionProfitRowChartData?.profitAxis,
     datasets: [
       {
-        label: actionProfitRowChartData?.label  || t("products.profits.pricingListWidget.cost"),
+        label: actionProfitRowChartData?.label || t("products.profits.pricingListWidget.cost"),
         data: actionProfitRowChartData?.costAxis,
         borderColor: "#FF4DCA",
         backgroundColor: "#FF4DCA",
+        stepped: selectedTransition?.value === ETransition.STEPS ? true : false,
+
       },
     ],
   };
