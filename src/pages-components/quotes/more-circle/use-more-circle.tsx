@@ -199,7 +199,7 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          !isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder,
+          !isPauseOrder && isOrder && !isCanceledOrder,
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <PDFIcon />,
         name: t("sales.quote.boardMissionsPdf"),
