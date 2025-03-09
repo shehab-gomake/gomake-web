@@ -1,4 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useIsMobile } from "@/hooks/use-responsive";
 import {
   adaptRight,
   convertHeightToVH,
@@ -22,11 +23,13 @@ const useStyle = ({
   customGap?: number;
 }) => {
   const { primaryColor } = useGomakeTheme();
+  const isMobile = useIsMobile();
+
   const classes = useMemo(() => {
     return {
       container: {
         width: "100%",
-        height: "100vh",
+        //  height: "100vh",
         display: "flex",
         flexDirection: "row" as "row",
         // gap: customGap ? LAYOUT_DEFAULT_GAP : 0,
@@ -44,7 +47,8 @@ const useStyle = ({
         width: navStatus?.isClosed ? 125 : 245,
         minWidth: navStatus?.isClosed ? 125 : 260,
         transitionDuration: "0.4s",
-        height: "100vh",
+        // height: "100vh",
+        height: isMobile ? "auto" : "100vh",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start" as "flex-start",
@@ -57,12 +61,12 @@ const useStyle = ({
         position: "relative" as "relative",
         zIndex: 1,
       },
-
       rightContainer: {
         width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
-        height: "100vh",
+        // height: "100vh",
+        height: isMobile ? "auto" : "100vh",
         maxHeight: "100vh",
         overflow: "scroll",
       },
@@ -174,7 +178,7 @@ const useStyle = ({
         backgroundColor: primaryColor(500),
       },
     };
-  }, [isHover, navStatus]);
+  }, [isHover, navStatus, isMobile]);
   return {
     classes,
   };
