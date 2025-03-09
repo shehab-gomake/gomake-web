@@ -10,6 +10,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useRecoilState } from "recoil";
 import { boardMissionMaterialState } from "./states";
 import { MaterialStockUnit } from "@/widgets/materials-widget/enums";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 interface IProps {
   openModal: boolean;
@@ -26,6 +27,8 @@ const MaterialsAndProductionTimeModalWidget = ({
 }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
+
   const [state, setState] = useRecoilState<any>(boardMissionMaterialState);
 
   const convertMinutesToSeconds = (minutes: number) => minutes * 60;
@@ -72,7 +75,7 @@ const MaterialsAndProductionTimeModalWidget = ({
       }
       insideStyle={{
         ...classes.materialsQuantityModalStyle,
-        ...(showIsReady && { width: "fit-content" }),
+        ...(showIsReady && { width: isMobile ? "90vw" : "fit-content" }),
       }}
       style={{ zIndex: 999999 }}
       withRoundedCloseIcon={false}
@@ -161,7 +164,12 @@ const MaterialsAndProductionTimeModalWidget = ({
           )}
         </Stack>
         {/* Buttons */}
-        <Stack direction="row" gap="15px" justifyContent="flex-end">
+        <Stack
+          direction="row"
+          gap="15px"
+          justifyContent="flex-end"
+          style={{ ...(isMobile && { flexWrap: "wrap" as "wrap" }) }}
+        >
           {showIsReady ? (
             <>
               <GomakePrimaryButton
