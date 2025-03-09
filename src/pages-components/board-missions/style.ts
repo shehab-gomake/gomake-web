@@ -135,6 +135,7 @@ const useStyle = () => {
         maxHeight: 600,
         gap: "10px",
         zIndex: 999999,
+        ...(isMobile && { padding: "0px 10px 10px 10px" }),
       },
       yesBtn: {
         height: 44,

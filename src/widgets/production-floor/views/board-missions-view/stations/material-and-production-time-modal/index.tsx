@@ -75,14 +75,18 @@ const MaterialsAndProductionTimeModalWidget = ({
       }
       insideStyle={{
         ...classes.materialsQuantityModalStyle,
-        ...(showIsReady && { width: isMobile ? "90vw" : "fit-content" }),
+
+        ...(showIsReady && {
+          width: isMobile ? "90vw" : "fit-content",
+        }),
       }}
       style={{ zIndex: 999999 }}
       withRoundedCloseIcon={false}
       modalTitleStyle={{
         ...(showIsReady
           ? { ...FONT_FAMILY.Inter(600, 16), textAlign: "center" }
-          : FONT_FAMILY.Inter(600, 18)),
+          : { ...FONT_FAMILY.Inter(600, 18) }),
+        ...(isMobile && { padding: "5px" }),
         color: "#000000",
       }}
     >
@@ -168,7 +172,9 @@ const MaterialsAndProductionTimeModalWidget = ({
           direction="row"
           gap="15px"
           justifyContent="flex-end"
-          style={{ ...(isMobile && { flexWrap: "wrap" as "wrap" }) }}
+          style={{
+            ...(isMobile && showIsReady ? { flexWrap: "wrap" } : {}),
+          }}
         >
           {showIsReady ? (
             <>
