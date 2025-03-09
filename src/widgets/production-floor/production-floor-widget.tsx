@@ -155,7 +155,11 @@ const ProductionFloorWidget = () => {
               right: 10,
             }}
           >
-            <ClearRoundedIcon width={48} height={48} />
+            <ClearRoundedIcon
+              width={48}
+              height={48}
+              stroke={isMobile ? "black" : ""}
+            />
           </IconButton>
           {!!boardMissionsId && (
             <BoardMissionsComponent

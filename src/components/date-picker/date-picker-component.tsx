@@ -111,7 +111,7 @@ const GoMakeDatepicker = ({
         modalTitle={t("datepicker.datepicker")}
         insideStyle={{
           width: "fit-content",
-          height: "fit-content",
+          height: "auto",
           padding: isMobile ? "10px" : "10px 20px",
         }}
         openModal={openDatepicker}
