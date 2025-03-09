@@ -566,3 +566,10 @@ df-messenger {
   background-color: inherit !important;
   border: 0 !important;
 }
+
+.custom-date-range-picker {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 5px;
+}
