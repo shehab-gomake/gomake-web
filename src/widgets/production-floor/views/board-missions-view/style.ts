@@ -1,7 +1,12 @@
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = (notes, productWorksTypes, relatedOrderItems) => {
+const useStyle = (
+  notes,
+  productWorksTypes,
+  relatedOrderItems,
+  isMobileScreen
+) => {
   const columnOneGridTemplateRows =
     Array.isArray(notes) && notes.length > 0
       ? "calc(15% - 6px) auto"
@@ -17,6 +22,16 @@ const useStyle = (notes, productWorksTypes, relatedOrderItems) => {
         height: "calc(100% - 100px)",
         gap: "10px",
       },
+
+      MobileContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        width: "100%",
+        gap: "10px",
+        height: "90%",
+        overflow: "scroll" as "scroll",
+      },
+
       ColumnOneRowTwoGridContainer: {
         display: "grid",
         width: "100%",
@@ -68,8 +83,13 @@ const useStyle = (notes, productWorksTypes, relatedOrderItems) => {
         padding: "0px",
         textTransform: "capitalize" as "capitalize",
       },
+
+      mobileCard: {
+        background: "#F6F6F6",
+        height: "15vh",
+      },
     };
-  }, [notes, productWorksTypes, relatedOrderItems]);
+  }, [notes, productWorksTypes, relatedOrderItems, isMobileScreen]);
   return {
     classes,
   };

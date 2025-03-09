@@ -19,27 +19,35 @@ const useStyle = () => {
       },
       parameterLabel: {
         ...FONT_FAMILY.Inter(500, 14),
+        fontSize: "clamp(12px, 3vw, 14px)",
+
         color: grayColor(500),
       },
       parameterValue: {
         ...FONT_FAMILY.Inter(600, 14),
+        fontSize: "clamp(12px, 3vw, 14px)",
+
         color: grayColor(700),
       },
       productType: {
         ...FONT_FAMILY.Inter(700, 20),
+        fontSize: "clamp(16px, 4vw, 20px)",
         color: secondColor(600),
       },
       newParameterLabel: {
         ...FONT_FAMILY.Inter(400, 16),
-        // color: "#98A2B3",
+        fontSize: "clamp(14px, 3.5vw, 16px)",
         color: "#676B71",
       },
       newParameterValue: {
         ...FONT_FAMILY.Inter(500, 16),
+        fontSize: "clamp(14px, 3.5vw, 16px)",
         color: grayColor(900),
       },
       labelsStyle: {
         ...FONT_FAMILY.Inter(600, 14),
+        fontSize: "clamp(12px, 3vw, 14px)",
+
         color: "#FFFFFF",
         display: "inline-flex",
         padding: "var(--spacing-xs, 4px) var(--spacing-lg, 12px)",
@@ -49,6 +57,8 @@ const useStyle = () => {
       },
       detailTitle: {
         ...FONT_FAMILY.Lexend(500, 14),
+        fontSize: "clamp(12px, 3vw, 14px)",
+
         color: neutralColor(500),
         width: "max-content",
       },
@@ -61,6 +71,7 @@ const useStyle = () => {
         textAlign: "center" as "center",
         lineHeight: "20px",
         ...FONT_FAMILY.Inter(500, 14),
+        fontSize: "clamp(12px, 3vw, 14px)",
       },
     };
   }, [theme]);

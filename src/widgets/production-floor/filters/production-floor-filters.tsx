@@ -17,7 +17,7 @@ import { SearchInputComponent } from "@/components/form-inputs/search-input-comp
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { filtersInputs } from "@/widgets/production-floor/filters/filters-inputs";
 import { SelectComponent } from "@/widgets/production-floor/filters/select/select-component";
-import { minWidth, styled } from "@mui/system";
+import { styled } from "@mui/system";
 import { toRgba } from "@/utils/helpers";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { fetchS3JsonContent } from "@/utils/S3Content";
@@ -122,22 +122,6 @@ const Circle = styled(Box)<{ numColor: string; dir: string }>(
   })
 );
 
-const IconButtonWrapper = styled("div")({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  position: "relative",
-  "& .clear-icon": {
-    visibility: "hidden",
-    opacity: 0,
-    transition: "visibility 0.2s, opacity 0.2s",
-  },
-  "&:hover .clear-icon": {
-    visibility: "visible",
-    opacity: 1,
-  },
-});
-
 const CustomGroupComponent = ({
   onClick,
   onClickDelete,
@@ -163,7 +147,15 @@ const CustomGroupComponent = ({
           width: "100%",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        {/* First Box - Group Name */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flex: "1 1 auto",
+            minWidth: 0,
+          }}
+        >
           <Typography
             variant="subtitle2"
             sx={{
@@ -172,27 +164,36 @@ const CustomGroupComponent = ({
               overflow: "hidden",
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",
+              maxWidth: "100%",
             }}
           >
             {group?.name}
           </Typography>
         </Box>
-
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        {/* Second Box - Status Circles & Delete Icon */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexShrink: 0,
+            // gap: "6px",
+          }}
+        >
           <Circle numColor="#E7D000" dir={dir}>
             {group?.inProcessCount}
           </Circle>
           <Circle numColor="#D92D20" dir={dir}>
             {group?.stuckCount}
           </Circle>
-          <Circle
-            numColor={group?.color}
-            dir={dir}
-            sx={{
-              backgroundColor: "transparent",
-            }}
-          >
-            {group.id !== "all" && (
+          {group.id !== "all" && (
+            <Circle
+              numColor={group?.color}
+              dir={dir}
+              sx={{
+                backgroundColor: "transparent",
+              }}
+            >
+              (
               <IconButton
                 onClick={onClickDelete}
                 size="small"
@@ -209,8 +210,9 @@ const CustomGroupComponent = ({
                   }}
                 />
               </IconButton>
-            )}
-          </Circle>
+              )
+            </Circle>
+          )}
         </Box>
       </CardContent>
     </CustomGroup>
@@ -225,7 +227,11 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 });
 
-const ProductionFloorFilters = ({ getStationFilterGroups, connectionId }) => {
+const ProductionFloorFilters = ({
+  getStationFilterGroups,
+  connectionId,
+  isMobile,
+}) => {
   const { classes } = useStyle();
   const { push } = useRouter();
   const { tagsList } = filtersInputs();
@@ -284,7 +290,9 @@ const ProductionFloorFilters = ({ getStationFilterGroups, connectionId }) => {
     const updateContainerWidth = () => {
       if (scrollContainerRef.current) {
         // setContainerWidth(scrollContainerRef.current.clientWidth );
-        setContainerWidth(scrollContainerRef.current.clientWidth + 300);
+        setContainerWidth(
+          scrollContainerRef.current.clientWidth + (isMobile ? 100 : 300)
+        );
       }
     };
     updateContainerWidth();
@@ -293,7 +301,7 @@ const ProductionFloorFilters = ({ getStationFilterGroups, connectionId }) => {
     return () => {
       window.removeEventListener("resize", updateContainerWidth);
     };
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     if (scrollContainerRef.current) {

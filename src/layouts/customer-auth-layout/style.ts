@@ -79,8 +79,8 @@ const useStyle = ({
         flexDirection: "column" as "column",
         backgroundColor: "#F6F6F6",
         height: "100%",
-
-        overflow: "scroll",
+        // overflow: "scroll",
+        overflow: "auto",
       },
       poweredContainer: {
         display: "flex",

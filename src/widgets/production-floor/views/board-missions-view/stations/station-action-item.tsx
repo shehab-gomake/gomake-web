@@ -61,6 +61,7 @@ import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-com
 import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { formatSecondsToHHMMSS } from "@/utils/helpers";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 interface IProps extends IBoardMissionsStation {
   delay: number;
@@ -102,10 +103,11 @@ const BoardMissionsStationActionItem = ({
   realProductionTime,
   isSubAction = false,
 }: IProps) => {
+  const isMobile = useIsMobile();
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
-  const isRTL = dir === "rtl";
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData } =
@@ -468,7 +470,7 @@ const BoardMissionsStationActionItem = ({
                   {isEditable && (
                     <div>
                       {loading ? (
-                        <CircularProgress size={30} />
+                        <CircularProgress size={isMobile ? 20 : 30} />
                       ) : isDone ? (
                         <Button
                           variant={"contained"}
@@ -478,7 +480,7 @@ const BoardMissionsStationActionItem = ({
                           }}
                           style={{
                             padding: "5px 8px",
-                            ...FONT_FAMILY.Inter(600, 14),
+                            ...FONT_FAMILY.Inter(600, isMobile ? 12 : 14),
                             backgroundColor: "#FFF",
                             color: "#475467",
                             borderRadius: "8px",
@@ -492,15 +494,17 @@ const BoardMissionsStationActionItem = ({
                         <PrimaryButton
                           variant={"contained"}
                           sx={{
-                            height: "30px",
-                            width: "30px",
-                            minWidth: "30px",
+                            height: isMobile ? "25px" : "30px",
+                            width: isMobile ? "25px" : "30px",
+                            minWidth: isMobile ? "25px" : "30px",
                             padding: 0,
                             borderRadius: "8px",
                           }}
                           onClick={onClickOpenDoneModal}
                         >
-                          <CheckIcon />
+                          <CheckIcon
+                            sx={isMobile ? { fontSize: "16px" } : undefined}
+                          />
                         </PrimaryButton>
                       )}
                     </div>
@@ -583,7 +587,10 @@ const BoardMissionsStationActionItem = ({
         <Fade
           in={true}
           timeout={delay}
-          style={{ width: "100%", position: "relative" }}
+          style={{
+            width: "100%",
+            position: "relative",
+          }}
         >
           <Stack
             direction={"row"}
@@ -599,15 +606,28 @@ const BoardMissionsStationActionItem = ({
             }}
           >
             <Stack>
-              <Stack direction={"row"} justifyContent={"space-between"}>
-                <Stack direction={"row"} gap={"16px"} alignItems={"center"}>
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="baseline"
+                width={"100%"}
+              >
+                <Stack
+                  direction={"row"}
+                  gap={isMobile ? "8px" : "16px"}
+                  alignItems={"center"}
+                  width="90%"
+                  flexWrap={"wrap"}
+                >
                   <Stack
                     style={classes.sectionTitle}
                     direction={"row"}
                     alignItems={"center"}
                     gap={"10px"}
                   >
-                    <span style={{ ...FONT_FAMILY.Inter(500, 14) }}>
+                    <span
+                      style={{ ...FONT_FAMILY.Inter(500, isMobile ? 13 : 14) }}
+                    >
                       {actionName}
                     </span>
                     {source === EWorkSource.OUT && supplierId ? (
@@ -644,13 +664,12 @@ const BoardMissionsStationActionItem = ({
                                     : machineName}
                                 </>
                               ) : (
-                                <>Select New Machine</>
+                                <>{t("boardMissions.selectNewMachine")}</>
                               )}
                             </Button>
                           ) : (
                             <Stack
                               direction={"row"}
-                              gap={"5px"}
                               alignItems={"center"}
                               onClick={(e) => e.stopPropagation()}
                             >
@@ -659,7 +678,10 @@ const BoardMissionsStationActionItem = ({
                                   placeholder={t(
                                     "materials.inputs.selectMachine"
                                   )}
-                                  style={{ height: "40px" }}
+                                  style={{
+                                    height: "40px",
+                                    marginBottom: "3px",
+                                  }}
                                   value={contactsFilter}
                                   onChange={onMachinesInputChange}
                                   onClick={() => setOpenMachine(!openMachine)}
@@ -668,17 +690,7 @@ const BoardMissionsStationActionItem = ({
                                   <ClickOutside
                                     onClick={() => setOpenMachine(false)}
                                   >
-                                    <Paper
-                                      sx={{
-                                        position: "absolute",
-                                        top: "100%",
-                                        left: 0,
-                                        right: 0,
-                                        maxHeight: "200px",
-                                        overflowY: "auto",
-                                        zIndex: 9999999999999999999,
-                                      }}
-                                    >
+                                    <Paper sx={classes.paperStyle}>
                                       {machinesList?.map((value, index) => {
                                         return (
                                           <MenuItem
@@ -686,8 +698,17 @@ const BoardMissionsStationActionItem = ({
                                             onClick={() =>
                                               onMachineClick(value, value.label)
                                             }
+                                            sx={{
+                                              ...FONT_FAMILY.Inter(
+                                                500,
+                                                isMobile ? 14 : 16
+                                              ),
+                                            }}
                                           >
-                                            {value.label?.slice(0, 18) + "..."}
+                                            {value.label?.slice(
+                                              0,
+                                              isMobile ? 16 : 18
+                                            ) + "..."}
                                           </MenuItem>
                                         );
                                       })}
@@ -700,8 +721,15 @@ const BoardMissionsStationActionItem = ({
                                   e.stopPropagation();
                                   setChooseMachine(false);
                                 }}
+                                sx={{
+                                  fontSize: isMobile ? "16px" : "24px",
+                                }}
                               >
-                                <ClearRoundedIcon />
+                                <ClearRoundedIcon
+                                  sx={{
+                                    fontSize: isMobile ? "18px" : "20px",
+                                  }}
+                                />
                               </IconButton>
                             </Stack>
                           )}
@@ -733,7 +761,7 @@ const BoardMissionsStationActionItem = ({
                             {employeeName ? (
                               employeeName
                             ) : (
-                              <>Select New Employee</>
+                              <>{t("boardMissions.selectNewEmployee")}</>
                             )}
                           </Button>
                         ) : (
@@ -748,24 +776,17 @@ const BoardMissionsStationActionItem = ({
                                 placeholder={t(
                                   "products.profits.exceptions.selectEmployee"
                                 )}
-                                style={{ height: "40px" }}
+                                style={{
+                                  height: "40px",
+                                  marginBottom: "3px",
+                                }}
                                 value={contactsFilter}
                                 onChange={onContactsInputChange}
                                 onClick={() => setOpen(!open)}
                               />
                               {!!open && (
                                 <ClickOutside onClick={() => setOpen(false)}>
-                                  <Paper
-                                    sx={{
-                                      position: "absolute",
-                                      top: "100%",
-                                      left: 0,
-                                      right: 0,
-                                      maxHeight: "200px",
-                                      overflowY: "auto",
-                                      zIndex: 9999999999999999999,
-                                    }}
-                                  >
+                                  <Paper sx={classes.paperStyle}>
                                     {employeesList?.map((value, index) => {
                                       return (
                                         <MenuItem
@@ -773,6 +794,12 @@ const BoardMissionsStationActionItem = ({
                                           onClick={() =>
                                             onContactClick(value, value.label)
                                           }
+                                          sx={{
+                                            ...FONT_FAMILY.Inter(
+                                              500,
+                                              isMobile ? 14 : 16
+                                            ),
+                                          }}
                                         >
                                           {value.label}
                                         </MenuItem>
@@ -801,7 +828,7 @@ const BoardMissionsStationActionItem = ({
                         orientation={"vertical"}
                         flexItem
                         style={{
-                          height: "60%",
+                          height: "20px",
                           alignSelf: "center",
                           color: "#D6D6D6",
                         }}
@@ -837,6 +864,55 @@ const BoardMissionsStationActionItem = ({
                     </>
                   )}
                 </Stack>
+                {/* Completed and Check */}
+                <PermissionCheck
+                  userPermission={
+                    Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
+                  }
+                >
+                  {isEditable && !isHideTimeAndDate && (
+                    <div>
+                      {loading ? (
+                        <CircularProgress size={isMobile ? 20 : 30} />
+                      ) : isDone ? (
+                        <Button
+                          variant={"outlined"}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onClickBackToProcess(boardMissionActionId).then();
+                          }}
+                          style={{
+                            padding: "5px 8px",
+                            ...FONT_FAMILY.Inter(600, isMobile ? 12 : 14),
+                            backgroundColor: "#FFF",
+                            color: "#475467",
+                            borderRadius: "8px",
+                            textTransform: "capitalize",
+                            border: "1px solid #475467",
+                          }}
+                        >
+                          {t("boardMissions.completed")}
+                        </Button>
+                      ) : (
+                        <PrimaryButton
+                          variant={"contained"}
+                          sx={{
+                            height: isMobile ? "25px" : "30px",
+                            width: isMobile ? "25px" : "30px",
+                            minWidth: isMobile ? "25px" : "30px",
+                            padding: 0,
+                            borderRadius: "8px",
+                          }}
+                          onClick={onClickOpenDoneModal}
+                        >
+                          <CheckIcon
+                            sx={isMobile ? { fontSize: "16px" } : undefined}
+                          />
+                        </PrimaryButton>
+                      )}
+                    </div>
+                  )}
+                </PermissionCheck>
               </Stack>
               <Collapse
                 in={isSubAction ? true : isOpen}
@@ -850,7 +926,7 @@ const BoardMissionsStationActionItem = ({
                     <Stack
                       padding={"10px 0"}
                       direction={"row"}
-                      gap={"16px"}
+                      gap={isMobile ? "8px" : "16px"}
                       flexWrap={"wrap"}
                     >
                       <ParametersMapping
@@ -867,7 +943,7 @@ const BoardMissionsStationActionItem = ({
                       <Stack
                         padding={"10px 0"}
                         direction={"row"}
-                        gap={"16px"}
+                        gap={isMobile ? "8px" : "16px"}
                         flexWrap={"wrap"}
                       >
                         <ParametersMapping
@@ -889,58 +965,9 @@ const BoardMissionsStationActionItem = ({
                   )}
               </Collapse>
             </Stack>
-
-            {/* Completed and Check */}
-            <PermissionCheck
-              userPermission={
-                Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
-              }
-            >
-              {isEditable && !isHideTimeAndDate && (
-                <div>
-                  {loading ? (
-                    <CircularProgress size={30} />
-                  ) : isDone ? (
-                    <Button
-                      variant={"outlined"}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onClickBackToProcess(boardMissionActionId).then();
-                      }}
-                      style={{
-                        padding: "5px 8px",
-                        ...FONT_FAMILY.Inter(600, 14),
-                        backgroundColor: "#FFF",
-                        color: "#475467",
-                        borderRadius: "8px",
-                        textTransform: "capitalize",
-                        border: "1px solid #475467",
-                      }}
-                    >
-                      {t("boardMissions.completed")}
-                    </Button>
-                  ) : (
-                    <PrimaryButton
-                      variant={"contained"}
-                      sx={{
-                        height: "30px",
-                        width: "30px",
-                        minWidth: "30px",
-                        padding: 0,
-                        borderRadius: "8px",
-                      }}
-                      onClick={onClickOpenDoneModal}
-                    >
-                      <CheckIcon />
-                    </PrimaryButton>
-                  )}
-                </div>
-              )}
-            </PermissionCheck>
           </Stack>
         </Fade>
       )}
-
       {activeStation && (
         <MaterialsAndProductionTimeModalWidget
           openModal={openMaterialsModal}

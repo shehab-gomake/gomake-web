@@ -30,9 +30,7 @@ import { DescreptionWidget } from "@/widgets/production-floor/descreption-widget
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
 import { ApprovalFileStatusComponent } from "./approval-file-status-component";
 import { ExpandIcon } from "@/icons/expand-icon";
-
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
-
 
 interface IProps {
   boardMission: IBoardMissions;
