@@ -1,8 +1,10 @@
-import {useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import moment from "moment";
 import {getTimeLineJobsApi, updateJobTimeApi} from "@/services/api-service/jobs-time-line/jobs-time-line-endpoints";
 import {useGomakeAxios} from "@/hooks";
 import {IGanttGroup, IGanttJob} from "@/widgets/production-floor/views/gantt-view/interface";
+import {useRecoilState} from "recoil";
+import {productionFloorFiltersState} from "@/widgets/production-floor/state/production-floor-filters";
 
 const useGantt = () => {
     const {callApi} = useGomakeAxios();
@@ -18,7 +20,8 @@ const useGantt = () => {
     const [openGroups, setOpenGroups] = useState({});
     const [groups, setGroups] = useState<IGanttGroup[]>([]);
     const [items, setItems] = useState<IGanttJob[]>([]);
-
+    const [filtersState] = useRecoilState(productionFloorFiltersState);
+    const [loadingItemId, setLoadingItemId] = useState<string>('');
     const getData = async (month) => {
         // Calculate start and end dates for the selected month in UTC
         const startOfMonth = moment()
@@ -54,15 +57,7 @@ const useGantt = () => {
     };
 
     const handleItemResize = async (itemId, time, edge) => {
-        const updatedItem = items.find(j => j.id === itemId);
-        if (updatedItem) {
-            await updateJobTimeApi(callApi, () => {
-            }, {
-                id: updatedItem.id,
-                startDate: updatedItem.start_time.toDate().toLocaleString(),
-                endDate: new Date(time).toLocaleString()
-            })
-        }
+        setLoadingItemId(itemId);
         const updatedItems = items.map((item) =>
             item.id === itemId
                 ? edge === "left"
@@ -71,9 +66,24 @@ const useGantt = () => {
                 : item
         );
         setItems(updatedItems);
+        const updatedItem = items.find(j => j.id === itemId);
+        if (updatedItem) {
+            await updateJobTimeApi(callApi, (res) => {
+                    setLoadingItemId('');
+                if (res.success) {
+                    getData(currentMonth.month());
+                }
+            }, {
+                id: updatedItem.id,
+                startDate: updatedItem.start_time.toDate().toLocaleString(),
+                endDate: new Date(time).toLocaleString()
+            })
+        }
+
     };
 
     const handleItemMove = async (itemId, dragTime, newGroupOrder) => {
+        setLoadingItemId(itemId);
         const updatedItem = items.find(j => j.id === itemId);
         if (updatedItem) {
             await updateJobTimeApi(callApi, () => {
@@ -174,6 +184,38 @@ const useGantt = () => {
             }));
         }
     };
+
+    const handleZoomIn = () => {
+        const zoomFactor = 1.2; // Zoom in by reducing the visible range
+        const duration = visibleTimeRange.end - visibleTimeRange.start;
+        const newDuration = duration * zoomFactor;
+        const center = (visibleTimeRange.start + visibleTimeRange.end) / 2;
+
+        setVisibleTimeRange({
+            start: center - newDuration ,
+            end: center + newDuration ,
+        });
+    };
+
+    const handleZoomOut = () => {
+        const zoomFactor = 2; // Zoom out by increasing the visible range
+        const duration = visibleTimeRange.end - visibleTimeRange.start;
+        const newDuration = duration * zoomFactor;
+        const center = (visibleTimeRange.start + visibleTimeRange.end) / 2;
+
+        setVisibleTimeRange({
+            start: center - newDuration / 2,
+            end: center + newDuration / 2,
+        });
+    };
+
+    const getGanttData = useCallback(()=>{
+        getData(currentMonth.month()).then()
+    }, [currentMonth]);
+
+    useEffect(() => {
+        getGanttData();
+    }, [filtersState.stations]);
     return {
         timeRange,
         setTimeRange,
@@ -192,7 +234,11 @@ const useGantt = () => {
         setCurrentMonth,
         onTimeChange,
         visibleTimeRange,
-        scrollTimeline
+        scrollTimeline,
+        handleZoomIn,
+        handleZoomOut,
+        getGanttData,
+        loadingItemId
     };
 };
 

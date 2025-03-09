@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles';
 import {useRouter} from "next/router";
-import { Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
+import {Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
 import Stack from "@mui/material/Stack";
 import {IGanttJob} from "@/widgets/production-floor/views/gantt-view/interface";
 import {Instance} from "@popperjs/core";
@@ -10,7 +10,7 @@ import {OrderJObNumbersComponent} from "@/widgets/production-floor/kanban-view/k
 import {useTranslation} from "react-i18next";
 import {useStyle} from "@/widgets/production-floor/kanban-view/kanban-card/style";
 
-const JobComponent = ({item, getItemProps}: { item: IGanttJob; getItemProps: any }) => {
+const JobComponent = ({item, getItemProps, isLoading}: { item: IGanttJob; getItemProps: any; isLoading: boolean; }) => {
     const isEditable = item.isEditable;
     const positionRef = useRef<{ x: number; y: number }>({
         x: 0,
@@ -30,7 +30,7 @@ const JobComponent = ({item, getItemProps}: { item: IGanttJob; getItemProps: any
         <div
             {...getItemProps({
                 style: {
-                    background: isEditable ? item.bgColor : "#2E3091",
+                    background: isLoading ? `linear-gradient(90deg, ${item.bgColor} 25%, ${'white'} 50%, ${item.bgColor} 75%)` : isEditable ? item.bgColor : "#2E3091",
                     pointerEvents: isEditable ? "auto" : "none",
                     color: "white",
                     borderRadius: 0,
@@ -159,3 +159,13 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
 }));
 
 export {JobComponent}
+
+// Helper function to lighten a hex color
+const lightenColor = (hex: string, percent: number) => {
+    const num = parseInt(hex.replace("#", ""), 16);
+    const r = (num >> 16) + Math.round((255 - (num >> 16)) * percent);
+    const g = ((num >> 8) & 0x00ff) + Math.round((255 - ((num >> 8) & 0x00ff)) * percent);
+    const b = (num & 0x0000ff) + Math.round((255 - (num & 0x0000ff)) * percent);
+    return `#${(r < 255 ? r : 255).toString(16).padStart(2, "0")}${(g < 255 ? g : 255).toString(16).padStart(2, "0")}${(b < 255 ? b : 255).toString(16).padStart(2, "0")}`;
+};
+
