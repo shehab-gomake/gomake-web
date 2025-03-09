@@ -605,7 +605,7 @@ const BoardMissionsStationActionItem = ({
                 : "1px solid var(--Colors-Border-border-primary, #D0D5DD)",
             }}
           >
-            <Stack>
+            <Stack style={{ width: "100%" }}>
               <Stack
                 direction="row"
                 justifyContent="space-between"

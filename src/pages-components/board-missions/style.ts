@@ -120,7 +120,7 @@ const useStyle = () => {
         color: errorColor(300),
       },
       modalStyle: {
-        width: isMobile ? "90%" : "40%",
+        width: isMobile ? "90vw" : "40%",
         borderRadius: "8px",
         height: "auto",
         maxHeight: 600,
@@ -128,13 +128,14 @@ const useStyle = () => {
         zIndex: 999999,
       },
       materialsQuantityModalStyle: {
-        width: "500px",
-        maxWidth: "40%",
+        width: isMobile ? "90vw" : "500px",
+        maxWidth: isMobile ? "90vw" : "40%",
         borderRadius: "8px",
         height: "auto",
         maxHeight: 600,
         gap: "10px",
         zIndex: 999999,
+        ...(isMobile && { padding: "0px 10px 10px 10px" }),
       },
       yesBtn: {
         height: 44,
@@ -162,7 +163,7 @@ const useStyle = () => {
         backgroundColor: "#FFF",
         color: "#344054",
         border: `1px solid #D0D5DD`,
-        width: "33%",
+        ...(!isMobile && { width: "33%" }),
       },
       subTitle: {
         ...FONT_FAMILY.Lexend(400, 13),
