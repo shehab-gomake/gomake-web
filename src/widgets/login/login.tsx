@@ -2,19 +2,29 @@
 import { LoginLeftSide } from "./left-side/left-side";
 import { LoginRightSide } from "./right-side/right-side";
 import { useStyle } from "./style";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
-import { useMediaQuery } from "@mui/material";
+import { useMediaQuery, useTheme } from "@mui/material";
 
 const LoginWidget = () => {
   const { classes } = useStyle();
+  const theme = useTheme();
   const { t, getCompanyLogo } = useCompanyProfile();
-  const isMobile = useMediaQuery("(max-width: 768px)");
+  const [isClient, setIsClient] = useState(false);
+  // const isMobile = useMediaQuery("(max-width: 768px)");
+
+  // i.e., < 600px
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"), {
+    noSsr: false,
+  });
 
   useEffect(() => {
+    setIsClient(true);
     getCompanyLogo().then();
     localStorage.removeItem("auth-token");
   }, []);
+
+  if (!isClient) return null;
 
   return isMobile ? (
     <div style={classes.mobileContainer}>
