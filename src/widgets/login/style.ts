@@ -2,7 +2,7 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
-const useStyle = () => {
+const useStyle = (mobileHeight) => {
   const { theme, primaryColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
@@ -22,7 +22,7 @@ const useStyle = () => {
         justifyContent: "space-between" as "space-between",
         width: "100%",
         // height: "100vh",
-        height: "-webkit-fill-available",
+        height: mobileHeight,
       },
       insideStyle: {
         width: "620px",

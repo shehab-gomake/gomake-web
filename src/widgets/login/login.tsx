@@ -5,12 +5,15 @@ import { useStyle } from "./style";
 import { useEffect, useState } from "react";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useMediaQuery, useTheme } from "@mui/material";
+import { useMobileHeight } from "@/hooks/use-responsive";
 
 const LoginWidget = () => {
-  const { classes } = useStyle();
   const theme = useTheme();
   const { t, getCompanyLogo } = useCompanyProfile();
   const [isClient, setIsClient] = useState(false);
+  const mobileHeight = useMobileHeight();
+  const { classes } = useStyle(mobileHeight);
+
   // const isMobile = useMediaQuery("(max-width: 768px)");
 
   // i.e., < 600px
