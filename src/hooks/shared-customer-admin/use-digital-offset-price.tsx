@@ -5179,6 +5179,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               templateId: productTemplate?.templateId,
               documentType: docType,
               documentItemId: documentItemId,
+              priceRecovery: priceRecovery,
             },
             false,
             newRequestAbortController
