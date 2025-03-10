@@ -1,5 +1,5 @@
 import { useGomakeAuth, useGomakeRouter } from "@/hooks";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -33,6 +33,15 @@ const useAuthLayoutHook = (
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
+
+  const changeRoute = useCallback((route: string) => {
+    navigate(route);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("auth-token");
+    changeRoute("/login");
+  };
 
   const tabs1: any = useMemo(() => {
     return [
@@ -491,6 +500,7 @@ const useAuthLayoutHook = (
     canAccess,
     profile,
     navigate,
+    handleLogout,
   };
 };
 export { useAuthLayoutHook };
