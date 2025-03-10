@@ -49,7 +49,7 @@ const useStyle = (mobileHeight) => {
         color: primaryColor(500),
       },
     };
-  }, [theme]);
+  }, [theme, mobileHeight]);
   return {
     classes,
   };
