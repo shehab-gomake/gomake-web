@@ -13,6 +13,7 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useDepartmentModal } from "./use-department-modal";
 import { useSetRecoilState } from "recoil";
 import { selectedGroupIdState } from "@/widgets/production-floor/state/filter-group";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 interface DepartmentModalProps {
   openModal: boolean;
@@ -28,6 +29,8 @@ const DepartmentModal = ({
 }: DepartmentModalProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
+
   const setSelectedGroupId = useSetRecoilState<string | null>(
     selectedGroupIdState
   );
@@ -69,8 +72,8 @@ const DepartmentModal = ({
       withRoundedCloseIcon={false}
       insideStyle={{
         ...classes.saveSelectionModalStyle,
-        width: "20%",
-        minWidth: "400px",
+        width: isMobile ? "90vw" : "20%",
+        minWidth: isMobile ? "300px" : "400px",
       }}
     >
       <Stack direction={"column"} gap={"25px"}>
