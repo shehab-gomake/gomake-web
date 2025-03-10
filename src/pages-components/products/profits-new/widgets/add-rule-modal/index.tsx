@@ -791,12 +791,12 @@ const AddRuleModal = ({
                             {t("properties.statment")}
                           </label>
                           <SecondSwitch
-                            checked={rule.statement === "Yes"}
+                            checked={rule.statement === "true"}
                             onChange={(e, value) => {
                               handleChange(
                                 index,
                                 "statement",
-                                value === true ? "Yes" : "No"
+                                value === true ? "true" : "false"
                               );
                             }}
                           />
