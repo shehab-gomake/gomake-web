@@ -1,6 +1,6 @@
-import { styled } from '@mui/material/styles';
+import {styled} from '@mui/material/styles';
 import {useRouter} from "next/router";
-import {Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
+import {Skeleton, Tooltip, tooltipClasses, TooltipProps} from "@mui/material";
 import Stack from "@mui/material/Stack";
 import {IGanttJob} from "@/widgets/production-floor/views/gantt-view/interface";
 import {Instance} from "@popperjs/core";
@@ -9,9 +9,12 @@ import {toRgba} from "@/utils/helpers";
 import {OrderJObNumbersComponent} from "@/widgets/production-floor/kanban-view/kanban-card/order-job-num-coponent";
 import {useTranslation} from "react-i18next";
 import {useStyle} from "@/widgets/production-floor/kanban-view/kanban-card/style";
+import {useRecoilState} from "recoil";
+import {loadingGanttItemId} from "@/widgets/production-floor/views/gantt-view/state";
 
-const JobComponent = ({item, getItemProps, isLoading}: { item: IGanttJob; getItemProps: any; isLoading: boolean; }) => {
+const JobComponent = ({item, getItemProps,}: { item: IGanttJob; getItemProps: any; }) => {
     const isEditable = item.isEditable;
+    const [loadingItemId] = useRecoilState<string>(loadingGanttItemId);
     const positionRef = useRef<{ x: number; y: number }>({
         x: 0,
         y: 0,
@@ -30,7 +33,7 @@ const JobComponent = ({item, getItemProps, isLoading}: { item: IGanttJob; getIte
         <div
             {...getItemProps({
                 style: {
-                    background: isLoading ? `linear-gradient(90deg, ${item.bgColor} 25%, ${'white'} 50%, ${item.bgColor} 75%)` : isEditable ? item.bgColor : "#2E3091",
+                    background: loadingItemId === item.id ? 'inherit' : isEditable ? item.bgColor : "#2E3091",
                     pointerEvents: isEditable ? "auto" : "none",
                     color: "white",
                     borderRadius: 0,
@@ -43,51 +46,56 @@ const JobComponent = ({item, getItemProps, isLoading}: { item: IGanttJob; getIte
                 },
             })}
         >
-            <HtmlTooltip  slotProps={{
-                popper: {
-                    popperRef,
-                    anchorEl: {
-                        getBoundingClientRect: () => {
-                            return new DOMRect(
-                                positionRef.current.x,
-                                areaRef.current!?.getBoundingClientRect().y,
-                            );
+            {
+                loadingItemId === item.id ?
+                    <Skeleton width={'100%'} height={'100%'}/> :
+                    <HtmlTooltip slotProps={{
+                        popper: {
+                            popperRef,
+                            anchorEl: {
+                                getBoundingClientRect: () => {
+                                    return new DOMRect(
+                                        positionRef.current.x,
+                                        areaRef.current!?.getBoundingClientRect().y,
+                                    );
+                                },
+                            },
                         },
-                    },
-                },
-            }} arrow placement="top" title={<JobTooltipComponent {...item}/>}>
-                <div ref={areaRef}
-                     onMouseMove={handleMouseMove} className="rct-item-content"
-                     style={{textAlign: "center", width: '100%'}}>
-                    <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        gap: '5px',
-                        maxHeight: '100%',
-                        overflow: 'hidden'
-                    }}>
-                        <div/>
-                        <span style={{
-                            display: 'inline-block',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',}}>{item.title}</span>
-                        <div>
-                            {
-                                isEditable && <div style={{
-                                    width: '14px',
-                                    height: '14px',
-                                    borderRadius: '50%',
-                                    border: '2px solid #FFF',
-                                    backgroundColor: item.statusColor,
-                                    marginLeft: 'auto'
-                                }}/>
-                            }
+                    }} arrow placement="top" title={<JobTooltipComponent {...item}/>}>
+                        <div ref={areaRef}
+                             onMouseMove={handleMouseMove} className="rct-item-content"
+                             style={{textAlign: "center", width: '100%'}}>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: '5px',
+                                maxHeight: '100%',
+                                overflow: 'hidden'
+                            }}>
+                                <div/>
+                                <span style={{
+                                    display: 'inline-block',
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                }}>{item.title}</span>
+                                <div>
+                                    {
+                                        isEditable && <div style={{
+                                            width: '14px',
+                                            height: '14px',
+                                            borderRadius: '50%',
+                                            border: '2px solid #FFF',
+                                            backgroundColor: item.statusColor,
+                                            marginLeft: 'auto'
+                                        }}/>
+                                    }
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-            </HtmlTooltip>
+                    </HtmlTooltip>
+            }
         </div>
     );
 };
@@ -99,8 +107,8 @@ const JobTooltipComponent = ({
                                  boardMissionNumber,
                                  orderNumber,
                                  numberOfJobsInOrder,
-    boardMissionId,
-    productType
+                                 boardMissionId,
+                                 productType
                              }: IGanttJob) => {
     const {t} = useTranslation();
     const {classes} = useStyle();
@@ -143,9 +151,9 @@ const JobTooltipComponent = ({
     )
 }
 
-const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
-    <Tooltip {...props} classes={{ popper: className }} >{props.children}</Tooltip>
-))(({ theme }) => ({
+const HtmlTooltip = styled(({className, ...props}: TooltipProps) => (
+    <Tooltip {...props} classes={{popper: className}}>{props.children}</Tooltip>
+))(({theme}) => ({
     [`& .${tooltipClasses.tooltip}`]: {
         backgroundColor: '#FFF',
         fontSize: theme.typography.pxToRem(12),
@@ -160,12 +168,4 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
 
 export {JobComponent}
 
-// Helper function to lighten a hex color
-const lightenColor = (hex: string, percent: number) => {
-    const num = parseInt(hex.replace("#", ""), 16);
-    const r = (num >> 16) + Math.round((255 - (num >> 16)) * percent);
-    const g = ((num >> 8) & 0x00ff) + Math.round((255 - ((num >> 8) & 0x00ff)) * percent);
-    const b = (num & 0x0000ff) + Math.round((255 - (num & 0x0000ff)) * percent);
-    return `#${(r < 255 ? r : 255).toString(16).padStart(2, "0")}${(g < 255 ? g : 255).toString(16).padStart(2, "0")}${(b < 255 ? b : 255).toString(16).padStart(2, "0")}`;
-};
 

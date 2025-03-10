@@ -32,9 +32,7 @@ const TimelineWidget = () => {
         onTimeChange,
         visibleTimeRange,
         scrollTimeline,
-        handleZoomIn,
-        handleZoomOut,
-        loadingItemId
+        handleClickZoom
     } = useGantt();
 
     const handleItemSelect = (itemId) => {
@@ -106,8 +104,8 @@ const TimelineWidget = () => {
                     <ChevronRightIcon/>
                 </IconButton>
                 <Stack padding={'0 10px 0 0'} gap={'5px'}>
-                        <RemoveIcon onClick={handleZoomIn} style={{height: '20px', width: '20px', cursor: 'pointer'}} />
-                        <AddIcon onClick={handleZoomOut} style={{height: '20px', width: '20px', cursor: 'pointer'}} />
+                        <RemoveIcon onClick={()=>handleClickZoom('in')} style={{height: '20px', width: '20px', cursor: 'pointer'}} />
+                        <AddIcon onClick={()=>handleClickZoom('out')} style={{height: '20px', width: '20px', cursor: 'pointer'}} />
                 </Stack>
             </Stack>
             <Timeline
@@ -124,8 +122,9 @@ const TimelineWidget = () => {
                 onItemResize={handleItemResize}
                 onZoom={handleZoom}
                 canResize={"right"}
+                canChangeGroup={false}
                 itemRenderer={(props) => {
-                    return <JobComponent {...props} isLoading={loadingItemId === props.item.id} />;
+                    return <JobComponent {...props} />;
                 }}
                 onTimeChange={onTimeChange}
                 visibleTimeStart={visibleTimeRange.start}
@@ -175,15 +174,15 @@ const TimelineWidget = () => {
                             const momentStart = moment(start);
                             switch (unit) {
                                 case "year":
-                                    return `${start.getFullYear()}`;
+                                    return `${start?.getFullYear()}`;
                                 case "month":
-                                    return `${momentStart.format("MMMM")}`;
+                                    return `${momentStart?.format("MMMM")}`;
                                 case "day":
-                                    return `${momentStart.format("DD")}`;
+                                    return `${momentStart?.format("DD")}`;
                                 case "hour":
-                                    return `${momentStart.format("hh:mm A")}`;
+                                    return `${momentStart?.format("hh:mm A")}`;
                                 case "minute":
-                                    return `${momentStart.format("mm")}`;
+                                    return `${momentStart?.format("mm")}`;
                                 default:
                                     return "";
                             }
