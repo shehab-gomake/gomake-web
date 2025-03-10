@@ -335,6 +335,7 @@ const useAddRuleModal = ({
     if (conditions.length === 0 || isRuleEmpty(conditions[0])) {
       return t("products.profits.pricingListWidget.noRuleFount");
     }
+    debugger
     const textArray = conditions.map((condition) => {
       const categoryLabel = condition?.category
         ? condition.category.id !== "Property output" &&
@@ -355,7 +356,14 @@ const useAddRuleModal = ({
         categoryLabel === ""
       ) {
         const statementLabel = condition?.statement?.label ?? "";
-        text += `${statement2Label} ${conditionLabel}  ${statementLabel}`;
+        let translatedStatementLabel = statementLabel;
+        if(condition.statement2 && condition.statement2.type === 3 && statementLabel === "true"){
+          translatedStatementLabel = t('modal.yes');
+        }
+        if(condition.statement2 && condition.statement2.type === 3 && (!statementLabel ||  statementLabel === "false")){
+          translatedStatementLabel = t('modal.no');
+        }
+        text += `${statement2Label} ${conditionLabel}  ${translatedStatementLabel}`;
       } else if (
         typeof condition?.statement === "object" &&
         typeof condition?.statement2 === "object"
@@ -365,7 +373,14 @@ const useAddRuleModal = ({
       } else {
         const statementLabel = condition?.statement ?? "";
         if (statementLabel.length > 0) {
-          text += `${categoryLabel} ${statement2Label} ${conditionLabel} ${statementLabel}`;
+          let translatedStatementLabel = statementLabel; 
+          if(condition.statement2 && condition.statement2.type === 3 && statementLabel === "true"){
+            translatedStatementLabel = t('modal.yes'); 
+          }
+          if(condition.statement2 && condition.statement2.type === 3 && (!statementLabel ||  statementLabel === "false")){
+            translatedStatementLabel = t('modal.no');
+          }
+          text += `${categoryLabel} ${statement2Label} ${conditionLabel} ${translatedStatementLabel}`;
         } else {
           text += `${categoryLabel} ${conditionLabel} ${statement2Label}`;
         }
@@ -466,6 +481,7 @@ const useAddRuleModal = ({
   ]);
 
   const createProperties = useCallback(async () => {
+    debugger
     if (!propertieValue) {
       alertFaultAdded();
       return;
