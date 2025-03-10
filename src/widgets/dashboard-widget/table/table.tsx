@@ -22,7 +22,7 @@ import {ShutterIcon} from "@/components/icons/shutter-icon";
 import {MachineTimeProgressComponent} from "@/widgets/dashboard-widget/table/machine-time-progress-component";
 import * as XLSX from "xlsx";
 import {saveAs} from "file-saver";
-
+import DownloadIcon from '@mui/icons-material/Download';
 export const exportExcel = (rows, filename) => {
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
@@ -159,7 +159,9 @@ const BoardMissionsTable = ({boardsMissions, usedMachines}: IBoardMissionsTable)
     return (
         boards().length > 0 ?
             <>
-                <Button onClick={exportToExcel}> export</Button>
+                <Stack direction={'row'} padding={'0 3px 0 0'} justifyContent={'flex-end'}>
+                <IconButton onClick={exportToExcel}> <DownloadIcon/></IconButton>
+                </Stack>
                 <div style={{position: 'relative', width: '100%', right: 10}}>
                     {canScrollRight && <IconButton
                         onClick={() => scroll(direction === 'ltr' ? "right" : 'left')}
