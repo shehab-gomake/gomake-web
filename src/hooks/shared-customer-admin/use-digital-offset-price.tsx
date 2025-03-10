@@ -5157,6 +5157,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 );
             });
           }
+          const docType = router?.query?.documentType ?? "0";
+          const documentItemId = router?.query?.documentItemId ?? "";
           const res: any = await callApi(
             "POST",
             productTemplate?.isHaveFixedAction
@@ -5175,6 +5177,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               isChargeForNewDie: isChargeForNewDie,
               productType: productTemplate?.productType,
               templateId: productTemplate?.templateId,
+              documentType: docType,
+              documentItemId: documentItemId,
             },
             false,
             newRequestAbortController
