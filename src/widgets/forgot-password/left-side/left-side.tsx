@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { useMobileHeight } from "@/hooks/use-responsive";
 
 interface ForgotPasswordLeftSideProps {
   isMobile?: boolean;
@@ -14,6 +15,9 @@ const ForgotPasswordLeftSide = ({ isMobile }: ForgotPasswordLeftSideProps) => {
   const [email, setEmail] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [error, setError] = useState(false);
+  const { classes } = useStyle();
+  const mobileHeight = useMobileHeight();
+
   const onClickSendEmail = () => {
     if (email?.length <= 0) {
       setErrorMsg(t("login.thisFieldRequired"));
@@ -24,13 +28,17 @@ const ForgotPasswordLeftSide = ({ isMobile }: ForgotPasswordLeftSideProps) => {
     }
   };
 
-  const { classes } = useStyle();
   return (
     <div
       style={{
         ...classes.leftContainer,
-        ...(isMobile ? { width: "100%",height: "-webkit-fill-available",
-minHeight:"unset"} : {}),
+        ...(isMobile
+          ? {
+              width: "100%",
+              height: mobileHeight,
+              minHeight: "unset",
+            }
+          : {}),
       }}
     >
       <Image
