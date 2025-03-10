@@ -5188,7 +5188,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 );
             });
           }
-          const docType = router?.query?.documentType ?? "0";
+          const docType = +(router?.query?.documentType) ?? 0;
           const documentItemId = router?.query?.documentItemId ?? "";
           const res: any = await callApi(
             "POST",
