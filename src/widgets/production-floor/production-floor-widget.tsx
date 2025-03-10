@@ -22,7 +22,7 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-floor-socket-io";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
-import { useIsMobile } from "@/hooks/use-responsive";
+import { useIsMobile, useMobileHeight } from "@/hooks/use-responsive";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -30,6 +30,7 @@ const ProductionFloorWidget = () => {
   const { connectionId } = useProductionFloorSocketIO(view);
   const { groupsId, boardMissionsId, step, productType } = query;
   const isMobile = useIsMobile();
+  const mobileHeight = useMobileHeight();
 
   const {
     filterGroups,
@@ -136,7 +137,9 @@ const ProductionFloorWidget = () => {
         <Stack
           paddingBottom={"10px"}
           width={"100vw"}
-          height={"calc(100vh - 50px)"}
+          // height={"calc(100vh - 50px)"}
+          height={`calc(${mobileHeight} - 50px)`}
+
         >
           <IconButton
             onClick={() => {
@@ -158,7 +161,6 @@ const ProductionFloorWidget = () => {
             <ClearRoundedIcon
               width={48}
               height={48}
-              style={{ color: isMobile ? "black" : "" }}
             />
           </IconButton>
           {!!boardMissionsId && (

@@ -1,5 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { useIsMobile } from "@/hooks/use-responsive";
+import { useIsMobile, useMobileHeight } from "@/hooks/use-responsive";
 import {
   adaptRight,
   convertHeightToVH,
@@ -24,6 +24,8 @@ const useStyle = ({
 }) => {
   const { primaryColor } = useGomakeTheme();
   const isMobile = useIsMobile();
+    const mobileHeight = useMobileHeight();
+  
 
   const classes = useMemo(() => {
     return {
@@ -47,7 +49,6 @@ const useStyle = ({
         width: navStatus?.isClosed ? 125 : 245,
         minWidth: navStatus?.isClosed ? 125 : 260,
         transitionDuration: "0.4s",
-        // height: "100vh",
         height: isMobile ? "auto" : "100vh",
         display: "flex",
         flexDirection: "column" as "column",
@@ -65,8 +66,7 @@ const useStyle = ({
         width: "100%",
         display: "flex",
         flexDirection: "column" as "column",
-        // height: "100vh",
-        height: isMobile ? "auto" : "100vh",
+        height: isMobile ? mobileHeight: "100vh", 
         maxHeight: "100vh",
         overflow: "scroll",
       },
@@ -178,7 +178,7 @@ const useStyle = ({
         backgroundColor: primaryColor(500),
       },
     };
-  }, [isHover, navStatus, isMobile]);
+  }, [isHover, navStatus , isMobile, mobileHeight]);
   return {
     classes,
   };
