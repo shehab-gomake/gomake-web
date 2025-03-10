@@ -214,18 +214,17 @@ const useMoreCircle = () => {
         icon: <DuplicateIcon />,
         name: t("sales.quote.duplicate"),
       },
-      {
-        condition: !isPauseOrder && showNewDuplicate,
-        onClick: () =>
-          navigate(
-            `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`
-          ),
-        icon: <DuplicateIcon />,
-        name: t("sales.quote.duplicate"),
-        isLink: true,
-        href: `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`,
-      },
-
+      // {
+      //   condition: !isPauseOrder && showNewDuplicate,
+      //   onClick: () =>
+      //     navigate(
+      //       `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`
+      //     ),
+      //   icon: <DuplicateIcon />,
+      //   name: t("sales.quote.duplicate"),
+      //   isLink: true,
+      //   href: `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`,
+      // },
       {
         condition: !isPauseOrder && showNewDuplicate,
         onClick: () =>
