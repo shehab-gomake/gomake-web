@@ -21,7 +21,8 @@ const useStyle = () => {
         alignItems: "center",
         justifyContent: "space-between" as "space-between",
         width: "100%",
-        height: "100vh",
+        // height: "100vh",
+        height: "-webkit-fill-available",
       },
       insideStyle: {
         width: "620px",

@@ -29,7 +29,8 @@ const ForgotPasswordLeftSide = ({ isMobile }: ForgotPasswordLeftSideProps) => {
     <div
       style={{
         ...classes.leftContainer,
-        ...(isMobile ? { width: "100%" } : {}),
+        ...(isMobile ? { width: "100%",height: "-webkit-fill-available",
+minHeight:"unset"} : {}),
       }}
     >
       <Image
