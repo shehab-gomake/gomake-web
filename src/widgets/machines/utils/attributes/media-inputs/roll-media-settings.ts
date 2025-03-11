@@ -1,8 +1,9 @@
 import {minMaxInput} from "@/widgets/machines/utils/attributes/media-inputs/min-max-input";
+import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
 
 const rollMediaSettings = (state: Record<string, any>) => {
     return [
-        ...minMaxInput(state, 'rollWidth', 'rollWidth'),
+        ...minMaxInput(state, 'rollWidth', 'rollWidth', EMeasurementUnits.CM),
         {
             name: "maxRollDiameter",
             label: "machineAttributes.maxRollDiameter",
@@ -13,6 +14,7 @@ const rollMediaSettings = (state: Record<string, any>) => {
             value: state?.attributes?.maxRollDiameter ? state?.attributes?.maxRollDiameter : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxRollDiameter,
+            unit: EMeasurementUnits.INCH
         },
     ]
 }
