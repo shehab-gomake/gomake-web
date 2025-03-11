@@ -14,7 +14,7 @@ import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boar
 import { useGomakeAxios } from "@/hooks";
 import { useRouter } from "next/router";
 
-const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
+const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduct?:boolean) => {
   const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
@@ -96,7 +96,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
         currentChunk,
         totalChunks,
         file?.name,
-        fileType
+        fileType,
       );
 
       if (!response || !response.success) {
@@ -173,6 +173,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
     const formData = new FormData();
     formData.append("file", chunk);
     formData.append("orderItemId", orderItemId);
+    formData.append("isComplexProduct", isComplexProduct ? "true" : "false");
     formData.append("fileName", fileName);
     formData.append(
       "takeScreenShot",

@@ -22,6 +22,7 @@ const FilesGroupComponent = ({
   filePath,
   graphicsFilePath,
   boardMissionId,
+  isComplexProduct
 }: IUploadingFileGroup) => {
   const { primaryColor } = useGomakeTheme();
   const [isOverGraphics, setIsOverGraphics] = useState(false);
@@ -29,7 +30,7 @@ const FilesGroupComponent = ({
   const { handleFileUpload } = useUploadFiles(
     orderItemId,
     filePath,
-    graphicsFilePath
+    graphicsFilePath, isComplexProduct
   );
   const { push, pathname } = useRouter();
   const fileInputRef = useRef(null);
