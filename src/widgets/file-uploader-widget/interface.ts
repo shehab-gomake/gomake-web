@@ -6,6 +6,7 @@ export interface IUploadingFileGroup {
   title: string;
   filesInfo: IUploadingFile[];
   extension?: any;
+  isComplexProduct?: boolean;
 }
 
 export interface IUploadingFile {
