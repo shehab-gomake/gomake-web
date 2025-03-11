@@ -48,10 +48,13 @@ const DeliveriesPageWidget = () => {
     setDeliveryTypeValue,
     getAllShipmentTypes,
     shipmentTypes,
+    getDeliveriesTable,
+    allDeliveries,
   } = useDeliveries();
 
   useEffect(() => {
     getAllShipmentTypes();
+    getDeliveriesTable();
   }, []);
 
   return (
@@ -206,7 +209,7 @@ const DeliveriesPageWidget = () => {
           <PrimaryTable
             stickyHeader={true}
             maxHeight={"calc(100vh - 400px)"}
-            rows={[]}
+            rows={allDeliveries}
             headers={tableHeaders}
           />
         </div>

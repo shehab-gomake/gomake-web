@@ -11,6 +11,9 @@ import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { useRouter } from "next/router";
 import { useIsMobile } from "@/hooks/use-responsive";
 import { useQuoteGetData } from "../quote-new/use-quote-get-data";
+import { getDeliveriesTableApi } from "@/services/api-service/document-deliveries/get-deliveries-table";
+import { useDateFormat } from "@/hooks/use-date-format";
+import { DocumentDeliveryStatuses } from "../quotes/widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
 
 interface Query {
   customerId?: string;
@@ -126,6 +129,52 @@ const useDeliveries = () => {
     });
   };
 
+  const [allDeliveries, setAllDeliveries] = useState();
+
+  const { formatCustomDateTime } = useDateFormat();
+
+  const getDeliveriesTable = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const data = res?.data?.data;
+        const totalItems = res?.data?.totalItems;
+        const mapData = data?.map((quote: any) => [
+          formatCustomDateTime(quote?.createdDate).split(" ")[0],
+          quote?.clientName,
+          quote?.agentName,
+          quote?.orderNumber,
+          quote?.worksNames,
+          quote?.numberOfItems,
+          t(
+            `sales.documentDeliveries.${
+              DocumentDeliveryStatuses[quote?.deliveryStatus]
+            }`
+          ),
+        ]);
+
+        setAllDeliveries(mapData);
+        setPagesCount(Math.ceil(totalItems / pageSize));
+      }
+    };
+
+    if (!router.isReady) {
+      return;
+    }
+
+    const currentPageNumber = router.query.pageNumber;
+    const currentFinalPatternSearch = router.query.finalPatternSearch;
+    const currentCustomerId = router.query.customerId;
+    const currentAgentId = router.query.agentId;
+
+    await getDeliveriesTableApi(callApi, callBack, {
+      clientId: currentCustomerId || customer?.id,
+      agentId: currentAgentId || agent?.id,
+      pageNumber: currentPageNumber || page,
+      pageSize: pageSize,
+      searchPattern: currentFinalPatternSearch,
+    });
+  };
+
   return {
     t,
     isMobile,
@@ -159,6 +208,8 @@ const useDeliveries = () => {
     setDeliveryTypeValue,
     getAllShipmentTypes,
     shipmentTypes,
+    getDeliveriesTable,
+    allDeliveries,
   };
 };
 
