@@ -1329,8 +1329,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameterType: childParam?.parameterType,
                         isQuantityParameter: childParam?.isQuantityParameter,
                         values: item.defaultValue
-                          ? [unitType === UNIT_TYPE.IMPERIAL ? (item?.defaultValue * childParam?.factor).toFixed(3) : item?.defaultValue]
-                          : [unitType === UNIT_TYPE.IMPERIAL ? (childParam?.defaultValue * childParam?.factor).toFixed(3) : childParam?.defaultValue],
+                          ? [unitType === UNIT_TYPE.IMPERIAL && childParam?.code != "Width" && childParam?.code != "Height" ? (item?.defaultValue * childParam?.factor).toFixed(3) : item?.defaultValue]
+                          : [unitType === UNIT_TYPE.IMPERIAL && childParam?.code != "Width" && childParam?.code != "Height" ? (childParam?.defaultValue * childParam?.factor).toFixed(3) : childParam?.defaultValue],
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: childParam?.actionIndex,
@@ -4103,7 +4103,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   temp[myindex] = {
                     ...temp[myindex],
                     parameterCode: myparameter?.code,
-                    values: unitType === UNIT_TYPE.IMPERIAL ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
+                    values: unitType === UNIT_TYPE.IMPERIAL && myparameter?.code != "Width" && myparameter?.code != "Height" ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
                     isDisabled: hasValues(data?.value),
                     factor: myparameter?.factor,
                   };
@@ -4117,7 +4117,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   subSectionId: subSection?.id,
                   ParameterType: myparameter?.parameterType,
                   isQuantityParameter: myparameter?.isQuantityParameter,
-                  values: unitType === UNIT_TYPE.IMPERIAL ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
+                  values: unitType === UNIT_TYPE.IMPERIAL && myparameter?.code != "Width" && myparameter?.code != "Height" ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
                   actionIndex: myparameter?.actionIndex,
                   parameterName: myparameter?.name,
                   parameterCode: myparameter?.code,
