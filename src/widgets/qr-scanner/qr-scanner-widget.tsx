@@ -1,23 +1,43 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Box, Typography, Button, Card, CardContent } from "@mui/material";
 import { useRouter } from "next/router";
 import QrReader from "react-qr-scanner";
 import { useTranslation } from "react-i18next";
+import { getOrderIdFromQrCode } from "@/services/api-service/qr-scanner/qr-scanner-endpoints";
+import { useGomakeAxios, useGomakeRouter } from "@/hooks";
+import { useStyle } from "./style";
 
 const QRScannerPage = () => {
   const { t } = useTranslation();
-
+  const { classes } = useStyle();
   const router = useRouter();
   const [scanResult, setScanResult] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [isScanning, setIsScanning] = useState<boolean>(true);
+  const { callApi } = useGomakeAxios();
+  const { navigate } = useGomakeRouter();
 
-  const handleScan = (data: { text: string } | null) => {
+  const handleScan = async (data: { text: string } | null) => {
+    if (!data) return;
+
     setLoading(true);
-    if (data) {
-      setScanResult(data.text);
+    const callBack = (res: { success: boolean; data?: string }) => {
+      const Id = res?.data;
+      if (res?.success && Id) {
+        setScanResult(data.text);
+        navigate(`/production-floor?boardMissionsId=${Id}&step=stations`);
+      } else {
+        console.error("Failed to retrieve order ID.");
+        setScanResult("Invalid QR Code or No Order Found");
+      }
       setLoading(false);
-      setIsScanning(false); // Hide the QR scanner after a successful scan
+      setIsScanning(false);
+    };
+    try {
+      await getOrderIdFromQrCode(callApi, callBack, { qrCode: data.text });
+    } catch (error) {
+      console.error("QR Scan error:", error);
+      setLoading(false);
     }
   };
 
@@ -42,14 +62,7 @@ const QRScannerPage = () => {
       bgcolor="#f7f7f7"
       p={3}
     >
-      <Card
-        sx={{
-          width: "100%",
-          maxWidth: 400,
-          borderRadius: "15px",
-          boxShadow: 3,
-        }}
-      >
+      <Card sx={classes.cardContainer}>
         <CardContent>
           <Typography
             variant="h5"
@@ -73,25 +86,24 @@ const QRScannerPage = () => {
               <QrReader
                 delay={300}
                 facingMode="environment"
+                // !here
                 // constraints={{
-                //   video: { facingMode: "environment" },
+                //   video: { facingMode: { exact: "environment" } },
                 // }}
-                constraints={{
-                  video: { facingMode: { exact: "environment" } },
-                }}
                 style={{
                   width: "100%",
                   borderRadius: "20px",
                   border: "4px solid #2e3092",
                   boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
                   padding: "10px",
+                  height: "auto",
+                  objectFit: "contain",
                 }}
                 onScan={handleScan}
                 onError={handleError}
               />
             </Box>
           )}
-
           {loading ? (
             <Typography
               variant="body2"
@@ -150,16 +162,7 @@ const QRScannerPage = () => {
               color="primary"
               fullWidth
               onClick={() => router.push("/")}
-              sx={{
-                borderRadius: "5px",
-                padding: "10px",
-                fontWeight: "bold",
-                textTransform: "none",
-                backgroundColor: "#2e3092",
-                "&:hover": {
-                  backgroundColor: "#1d1f75", // Slightly darker shade for hover effect
-                },
-              }}
+              sx={classes.backToHome}
             >
               {t("productionFloor.backToHome")}
             </Button>
