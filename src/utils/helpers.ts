@@ -264,6 +264,8 @@ export const convertTitleUnits = (unit: string | null) => {
       return "LB"; // Convert grams to LB
       case "g":
         return "LB"; // Convert grams to LB
+    case "gsm":
+      return "lbs"; // Convert grams to LB
     case "um":
       return "pt"; // Convert microns to points
     case "liter":
