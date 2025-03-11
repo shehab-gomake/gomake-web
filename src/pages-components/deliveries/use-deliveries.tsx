@@ -1,12 +1,11 @@
 import { useTranslation } from "react-i18next";
-import { useStyle } from "./style";
 import {
   useAgentsList,
   useCustomerDropDownList,
   useGomakeAxios,
   useSnackBar,
 } from "@/hooks";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { useRouter } from "next/router";
 import { useIsMobile } from "@/hooks/use-responsive";
@@ -14,28 +13,21 @@ import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { getDeliveriesTableApi } from "@/services/api-service/document-deliveries/get-deliveries-table";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { DocumentDeliveryStatuses } from "../quotes/widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
+import { useDebounce } from "@/utils/use-debounce";
 
 interface Query {
   customerId?: string;
   customerName?: string;
   agentId?: string;
   pageNumber?: number;
+  shipmentTypeId?: string;
 }
 
 const useDeliveries = () => {
   const { t } = useTranslation();
   const isMobile = useIsMobile();
-  const direction = t("direction");
-  const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const {
-    alertFaultUpdate,
-    alertFaultDuplicate,
-    alertFaultGetData,
-    alertSuccessUpdate,
-    alertFault,
-  } = useSnackBar();
-
+  const { alertFaultGetData } = useSnackBar();
   const router = useRouter();
   const [page, setPage] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
@@ -48,7 +40,7 @@ const useDeliveries = () => {
   const [patternSearch, setPatternSearch] = useState<any>(
     router.query.finalPatternSearch || null
   );
-
+  const [finalPatternSearch, setFinalPatternSearch] = useState<any>("");
   const searchInputRef = useRef(null);
   const open = Boolean(anchorEl);
 
@@ -97,7 +89,10 @@ const useDeliveries = () => {
     setPage(1);
     setCustomer(null);
     setAgent(null);
+    setDeliveryTypeValue(null);
     setPatternSearch("");
+    setFinalPatternSearch("");
+
     const query = {};
     router.push({
       pathname: router.pathname,
@@ -120,6 +115,10 @@ const useDeliveries = () => {
     if (page) query.pageNumber = page;
     else delete query.pageNumber;
 
+    if (deliveryTypeValue?.value)
+      query.shipmentTypeId = deliveryTypeValue?.value;
+    else delete query.shipmentTypeId;
+
     handleClose();
     setPage(1);
 
@@ -133,7 +132,7 @@ const useDeliveries = () => {
 
   const { formatCustomDateTime } = useDateFormat();
 
-  const getDeliveriesTable = async () => {
+  const getDeliveriesTable = async (isClear: boolean = false) => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data?.data;
@@ -154,6 +153,8 @@ const useDeliveries = () => {
 
         setAllDeliveries(mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
+      } else {
+        alertFaultGetData();
       }
     };
 
@@ -165,15 +166,124 @@ const useDeliveries = () => {
     const currentFinalPatternSearch = router.query.finalPatternSearch;
     const currentCustomerId = router.query.customerId;
     const currentAgentId = router.query.agentId;
+    const currentShipmentTypeId = router.query.shipmentTypeId;
 
-    await getDeliveriesTableApi(callApi, callBack, {
-      clientId: currentCustomerId || customer?.id,
-      agentId: currentAgentId || agent?.id,
-      pageNumber: currentPageNumber || page,
-      pageSize: pageSize,
-      searchPattern: currentFinalPatternSearch,
-    });
+    await getDeliveriesTableApi(
+      callApi,
+      callBack,
+      isClear
+        ? {
+            pageNumber: currentPageNumber || page,
+            pageSize: pageSize,
+          }
+        : {
+            pageNumber: currentPageNumber || page,
+            pageSize: pageSize,
+            clientId: currentCustomerId || customer?.id,
+            agentId: currentAgentId || agent?.id,
+            shipmentTypeId: currentShipmentTypeId || deliveryTypeValue?.value,
+            searchPattern:
+              finalPatternSearch !== null &&
+              finalPatternSearch !== undefined &&
+              finalPatternSearch !== ""
+                ? finalPatternSearch
+                : currentFinalPatternSearch,
+          }
+    );
   };
+
+  const debouncePatternSearch = useDebounce(patternSearch, 1000);
+  const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (debouncePatternSearch == null) return;
+
+    const trimmedSearch = debouncePatternSearch.trim();
+    setFinalPatternSearch(trimmedSearch);
+
+    // Create a new query object
+    const newQuery = { ...router.query };
+
+    if (trimmedSearch) {
+      newQuery.finalPatternSearch = trimmedSearch;
+      newQuery.pageNumber = "1";
+    } else {
+      delete newQuery.finalPatternSearch; // Remove the parameter if empty
+      newQuery.pageNumber = "1";
+    }
+
+    // Only push if the query is actually changing
+    const hasQueryChanged =
+      JSON.stringify(newQuery) !== JSON.stringify(router.query);
+
+    if (hasQueryChanged) {
+      router.push(
+        {
+          pathname: router.pathname,
+          query: newQuery,
+        },
+        undefined,
+        { shallow: true } // Optional: prevents full page reload
+      );
+    }
+  }, [debouncePatternSearch]);
+
+  useEffect(() => {
+    const {
+      customerId,
+      customerName,
+      agentId,
+      finalPatternSearch,
+      shipmentTypeId,
+    } = router.query;
+
+    if (customerId) {
+      setCustomer({ id: customerId as string, name: customerName as string });
+    }
+
+    if (agentId) {
+      const selectedAgent = agentsCategories?.find(
+        (agent: any) => agent?.id === agentId
+      );
+      setAgent(selectedAgent);
+    }
+
+    if (finalPatternSearch && typeof finalPatternSearch === "string") {
+      if (
+        !(
+          searchInputRef &&
+          searchInputRef.current &&
+          document.activeElement.id == searchInputRef.current.id
+        )
+      ) {
+        setPatternSearch(finalPatternSearch);
+        setFinalPatternSearch(finalPatternSearch);
+      }
+    }
+    if (shipmentTypeId) {
+      const shipmentTypeToSet = shipmentTypes?.find(
+        (type) => type.value === shipmentTypeId
+      );
+      if (shipmentTypeToSet) {
+        setDeliveryTypeValue(shipmentTypeToSet);
+      }
+    }
+  }, [router, agentsCategories, shipmentTypes]);
+
+  useEffect(() => {
+    const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
+
+    // Serialize the current query for comparison
+    const serializedQuery = JSON.stringify(router.query);
+
+    if (isNotFilteredData) {
+      getDeliveriesTable(true);
+      setHasFetchedQuery(null);
+    } else if (hasFetchedQuery !== serializedQuery) {
+      getDeliveriesTable();
+      setHasFetchedQuery(serializedQuery); // Mark this query as fetched
+    }
+  }, [pageSize, router.query]);
 
   return {
     t,

@@ -35,9 +35,7 @@ const DeliveriesPageWidget = () => {
     handleCustomerChange,
     isFetching,
     agent,
-    setAgent,
     patternSearch,
-    setPatternSearch,
     onChangeDocumentSearch,
     onClickClearFilter,
     searchInputRef,
@@ -54,7 +52,6 @@ const DeliveriesPageWidget = () => {
 
   useEffect(() => {
     getAllShipmentTypes();
-    getDeliveriesTable();
   }, []);
 
   return (
