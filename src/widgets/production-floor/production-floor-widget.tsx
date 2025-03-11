@@ -23,6 +23,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-floor-socket-io";
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import { useIsMobile, useMobileHeight } from "@/hooks/use-responsive";
+import QRScannerFab from "../qr-scanner/qr-scanner-fab";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -139,7 +140,6 @@ const ProductionFloorWidget = () => {
           width={"100vw"}
           // height={"calc(100vh - 50px)"}
           height={`calc(${mobileHeight} - 50px)`}
-
         >
           <IconButton
             onClick={() => {
@@ -158,10 +158,7 @@ const ProductionFloorWidget = () => {
               right: 10,
             }}
           >
-            <ClearRoundedIcon
-              width={48}
-              height={48}
-            />
+            <ClearRoundedIcon width={48} height={48} />
           </IconButton>
           {!!boardMissionsId && (
             <BoardMissionsComponent
@@ -173,24 +170,7 @@ const ProductionFloorWidget = () => {
         <FilesUploaderWidget />
         <QrListenerWidget listening={!!boardMissionsId} />
       </Drawer>
-      {/* QR scanner */}
-      {isMobile && (
-        <Fab
-          color="primary"
-          sx={{
-            position: "fixed",
-            bottom: 20,
-            right: 20,
-            backgroundColor: "#2e3092",
-            color: "white",
-            "&:hover": { backgroundColor: "#115293" },
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
-          }}
-          onClick={handleOpenQRScanner}
-        >
-          <QrCodeScannerIcon sx={{ fontSize: 28 }} />
-        </Fab>
-      )}
+      <QRScannerFab />
     </Stack>
   );
 };
