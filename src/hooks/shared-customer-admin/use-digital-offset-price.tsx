@@ -369,7 +369,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentCalculationSessionId(result.productItemValueDraftId);
     stIsFlowChanged(result.isFlowChanged);
     setAdditionalProductItems(result.additionalProductItems);
-    
+
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
@@ -5601,19 +5601,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       return { ...subProduct, parameters: filteredParameters };
     });
   }
-  function removeHiddenParametersFromSubProductsParameters(
-    parameters,
-    productTemplate
-  ) {
-    return parameters.filter((param) => {
+  function removeHiddenParametersFromSubProductsParameters(parameters, productTemplate) {
+    // Create a new array to store the filtered parameters
+    const updatedParameters = [];
+
+    // Loop through each parameter in the input list
+    for (const param of parameters) {
       let matchingTemplateParam = null;
-      const section = productTemplate.sections.find(
-        (x) => x.id == param.sectionId
-      );
+
+      // Find the matching template parameter in the productTemplate
+      const section = productTemplate.sections.find((x) => x.id === param.sectionId);
       if (section && section.subSections) {
-        const subSection = section.subSections.find(
-          (x) => x.id == param.subSectionId
-        );
+        const subSection = section.subSections.find((x) => x.id === param.subSectionId);
         if (subSection && subSection.parameters) {
           matchingTemplateParam = subSection.parameters.find(
             (templateParam) =>
@@ -5623,13 +5622,47 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
         }
       }
-      if (matchingTemplateParam?.parameterType === 12) {
-        return true;
+
+      // Check if the parameter should be removed
+      if (
+        matchingTemplateParam &&
+        matchingTemplateParam.settingParameters?.length > 0 &&
+        matchingTemplateParam.isHidden
+      ) {
+        // Skip this parameter and its related settingParameters
+        continue;
       }
 
-      // For other parameters, check if they're not hidden
-      return matchingTemplateParam ? !matchingTemplateParam.isHidden : true;
-    });
+      // Check if the parameter is related to a hidden settingParameter
+      const isRelatedToHiddenSetting = parameters.some((p) => {
+        const section = productTemplate.sections.find((x) => x.id === p.sectionId);
+        if (section && section.subSections) {
+          const subSection = section.subSections.find((x) => x.id === p.subSectionId);
+          if (subSection && subSection.parameters) {
+            const templateParam = subSection.parameters.find(
+              (templateParam) =>
+                templateParam.id === p.parameterId &&
+                templateParam.actionIndex === p.actionIndex &&
+                !templateParam?.isHiddenInSetting
+            );
+            return (
+              templateParam &&
+              templateParam.isHidden &&
+              templateParam.settingParameters?.some((sp) => sp.id === param.parameterId)
+            );
+          }
+        }
+        return false;
+      });
+
+      // If the parameter is not hidden and not related to a hidden settingParameter, include it
+      if (!isRelatedToHiddenSetting) {
+        updatedParameters.push(param);
+      }
+    }
+
+    // Return the updated parameters list
+    return updatedParameters;
   }
   useEffect(() => {
     if (productTemplate?.length > 0) {
