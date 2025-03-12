@@ -1,7 +1,7 @@
 import { ICalculatedWorkFlow } from "@/widgets/product-pricing-widget/interface";
 import { useEffect, useState } from "react";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
-import { Collapse, Fade, IconButton } from "@mui/material";
+import { Collapse, Fade, IconButton, Tooltip } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
 import {
@@ -19,6 +19,7 @@ import { SortIcon } from "@/icons";
 import { useRecoilValue } from "recoil";
 import { permissionsState } from "@/store";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { _renderIconLogs } from "@/utils/constants";
 
 interface ISubWorkFlowComponentProps extends ICalculatedWorkFlow {
   isEditableActions?: boolean;
@@ -51,7 +52,7 @@ const SubWorkFlowComponent = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const direction = t("direction");
-  const hasActionException = actions.some((action) => action.actionException);
+  const hasActionException: any = actions.find((action) => action.actionException);
   const [actionsList, setActionsList] = useState(actions);
   useEffect(() => {
     setActionsList(actions);
@@ -134,7 +135,7 @@ const SubWorkFlowComponent = ({
           >
             {hasActionException && (
               <IconButton>
-                <FmdBadIcon style={{ color: "#F04349" }} />
+                {_renderIconLogs(hasActionException?.actionException?.exceptionType, 24, 24)}
               </IconButton>
             )}
             <IconButton
