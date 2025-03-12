@@ -113,9 +113,9 @@ const QRScannerPage = () => {
                 delay={300}
                 facingMode="environment"
                 // !here
-                // constraints={{
-                //   video: { facingMode: { exact: "environment" } },
-                // }}
+                constraints={{
+                  video: { facingMode: { exact: "environment" } },
+                }}
                 style={{
                   width: "100%",
                   borderRadius: "20px",
