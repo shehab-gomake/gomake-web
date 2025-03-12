@@ -189,6 +189,7 @@ const useNewProfits = () => {
           setIsLoading(false);
         } else {
           setActionProfitRowsList([]);
+          getActionProfitRowChartData();
           setIsLoading(false);
         }
       }
