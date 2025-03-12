@@ -8,9 +8,12 @@ import { HeaderTitle } from "@/widgets/header-title/header-title";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { isValidCustomer } from "@/utils/helpers";
-import { useState } from "react";
 
-const AgingReportWidget = () => {
+interface IProps {
+  clientType: CLIENT_TYPE;
+}
+
+const AgingReportWidget = ({ clientType }: IProps) => {
   const {
     t,
     handleClickSelectDate,
@@ -44,15 +47,21 @@ const AgingReportWidget = () => {
     isFetching,
     tableHeader,
     handleSortAgingReport,
-    isDescOrder
-  } = useAgingReport();
-  const { classes } = useStyle();
+    isDescOrder,
+    supplierList,
+    isPurchaseReport,
+  } = useAgingReport(clientType);
 
+  const { classes } = useStyle();
 
   return (
     <div style={classes.mainContainer}>
       <HeaderTitle
-        title={t("tabs.agingReport")}
+        title={
+          clientType === CLIENT_TYPE.SUPPLIER
+            ? t("tabs.supplierAging")
+            : t("tabs.agingReport")
+        }
         marginTop={"0px"}
         marginBottom={"0px"}
       />
@@ -76,6 +85,8 @@ const AgingReportWidget = () => {
         handleDateChange={handleDateChange}
         fromDate={fromDate}
         toDate={toDate}
+        isPurchaseReport={isPurchaseReport}
+        supplierList={supplierList}
       />
 
       <Divider />
@@ -105,10 +116,16 @@ const AgingReportWidget = () => {
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
         codeFlag={true}
-        typeClient={CLIENT_TYPE.CUSTOMER}
+        typeClient={
+          isPurchaseReport ? CLIENT_TYPE.SUPPLIER : CLIENT_TYPE.CUSTOMER
+        }
         isgetAllCustomers={false}
         openModal={showCustomerModal}
-        modalTitle={t("customers.modal.editTitle")}
+        modalTitle={
+          isPurchaseReport
+            ? t("suppliers.editModalTitle")
+            : t("customers.modal.editTitle")
+        }
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}

@@ -82,9 +82,9 @@ const accountingInputs = (state, isSupplier,t) => {
         },
         {
             name: "vatStatus",
-            label: "accounting.vatStatus",
+            label: "accounting.defaultVat",
             type: "select",
-            placeholder: "accounting.vatStatus",
+            placeholder: "accounting.defaultVat",
             required: false,
             parameterKey: "vatStatus",
             options: vatStatusList,

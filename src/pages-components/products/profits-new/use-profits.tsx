@@ -49,6 +49,10 @@ const useNewProfits = () => {
       label: t("products.profits.pricingListWidget.steps"),
       value: ETransition.STEPS,
     },
+    {
+      label: t("products.profits.pricingListWidget.bucket"),
+      value: ETransition.BUCKET,
+    },
   ];
 
   const PricingByList = [
@@ -83,6 +87,10 @@ const useNewProfits = () => {
     {
       label: t("boardMissions.package"),
       value: EPricingBy.PACKAGE,
+    },
+    {
+      label: t("products.profits.pricingListWidget.unitLengthInMeter"),
+      value: EPricingBy.UNIT_LENGTH_IN_METER,
     },
   ];
   const [PricingBy, setPricingBy] = useState([]);

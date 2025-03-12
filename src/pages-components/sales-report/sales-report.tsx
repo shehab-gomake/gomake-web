@@ -5,8 +5,13 @@ import { SalesReportHeaderWidget } from "./widgets/header-widget";
 import { SalesReportButtonWidget } from "./widgets/button-widget";
 import { useSalesReport } from "./use-sales-report";
 import { HeaderTitle } from "@/widgets/header-title/header-title";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
-const SalesReportWidget = () => {
+interface IProps {
+  clientType: CLIENT_TYPE;
+}
+
+const SalesReportWidget = ({ clientType }: IProps) => {
   const { classes } = useStyle();
   const {
     t,
@@ -35,12 +40,16 @@ const SalesReportWidget = () => {
     tableData,
     handleExportRows,
     onClickExportExcelReport,
-  } = useSalesReport();
+    supplierList,
+    isPurchaseReport,
+  } = useSalesReport(clientType);
 
   return (
     <div style={classes.mainContainer}>
       <HeaderTitle
-        title={t("tabs.salesReport")}
+        title={
+          isPurchaseReport ? t("tabs.purchasesReport") : t("tabs.salesReport")
+        }
         marginTop={"0px"}
         marginBottom={"0px"}
       />
@@ -61,6 +70,8 @@ const SalesReportWidget = () => {
         fromDate={fromDate}
         toDate={toDate}
         isFetchingCustomers={isFetching}
+        isPurchaseReport={isPurchaseReport}
+        supplierList={supplierList}
       />
       <Divider />
       <SalesReportButtonWidget

@@ -26,6 +26,18 @@ const companyCommunicationInputs = (state: ICompanyProfile) => {
       machineInputType: "input",
       isValid: !!state.mailServiceEmail,
     },
+    {
+      name: "",
+      label: "",
+      type: "outlookLogin",
+      placeholder: "profileSettings.serviceEmail",
+      required: true,
+      parameterKey: "",
+      options: [],
+      value: null,
+      machineInputType: "input",
+      isValid: true,
+    },
   ];
 };
 

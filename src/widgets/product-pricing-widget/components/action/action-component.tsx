@@ -24,6 +24,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   currentProductItemValueState,
   outsourceSuppliersState,
+  workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import Button from "@mui/material/Button";
@@ -255,7 +256,7 @@ const ActionContainerComponent = ({
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(isActionEmployeeUpdatedState);
-
+  // const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
   const suppliers = useMemo(() => {
     return suppliersState?.map((s) => ({
       value: s.supplierId,
@@ -330,11 +331,34 @@ const ActionContainerComponent = ({
       updateActionData(id, source, "source", productType).then();
     }
   };
+  const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
+
   const handleSupplierChange = (e, value) => {
     if (isFromSetting) {
       updateProductAction({ actionId, value: value?.value, fieldName: "supplierid" })
     } else {
-      updateActionData(id, value?.value, "supplierId", productType).then();
+      const actionSelected = workFlows[0]?.actions?.find((action) => action.id === id);
+      if (actionSelected) {
+        // Create a new object with the updated supplierId
+        const updatedAction = { ...actionSelected, supplierId: value?.value };
+
+        setWorkFlows((prevWorkFlows) => {
+          // Create a deep copy of the workFlows array
+          const updatedWorkFlows = prevWorkFlows.map((workflow, index) => {
+            if (index === 0) {
+              // Create a new actions array with the updated action
+              const updatedActions = workflow.actions.map((action) =>
+                action.id === id ? updatedAction : action
+              );
+              // Return a new workflow object with the updated actions
+              return { ...workflow, actions: updatedActions };
+            }
+          });
+          return updatedWorkFlows;
+        });
+      }
+
+      updateActionData(id, value?.value ?? null, "supplierId", productType).then();
     }
   };
   const calculateProfitInMoney = () => {
@@ -354,7 +378,6 @@ const ActionContainerComponent = ({
     }
     return "";
   }, [supplierId, suppliers, suppliersState]);
-
 
   useEffect(() => {
     if (foldOptionValueId) {
@@ -767,7 +790,7 @@ const ActionContainerComponent = ({
                         </span>
                       </Stack>}
                       {
-                        !isFromSetting && <Divider
+                        !isFromSetting && source !== EWorkSource.OUT && <Divider
                           orientation={"vertical"}
                           style={{ height: "50%", margin: "auto 0" }}
                           flexItem

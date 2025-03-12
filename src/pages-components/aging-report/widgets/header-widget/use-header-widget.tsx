@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 
 import { useStyle } from "./style";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 export interface AgingReportHeaderWidgetProps {
   handleClickSelectDate: () => void;
@@ -21,6 +22,8 @@ export interface AgingReportHeaderWidgetProps {
   fromDate?: Date | null;
   toDate?: Date | null;
   isFetchingCustomers?: boolean;
+  supplierList?: any[];
+  isPurchaseReport?: boolean;
 }
 const useAgingReportHeader = () => {
   const { classes } = useStyle();

@@ -27,6 +27,8 @@ const SalesReportHeaderWidget = ({
   fromDate,
   toDate,
   isFetchingCustomers,
+  isPurchaseReport,
+  supplierList,
 }: SalesReportHeaderWidgetProps) => {
   const { classes, t } = useSalesReportHeader();
   const dir: "rtl" | "ltr" = t("direction");
@@ -63,18 +65,32 @@ const SalesReportHeaderWidget = ({
         />
       </div>
       <div style={classes.date2FilterContainer}>
-        <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
+        <h3 style={classes.filterLabelStyle}>
+          {" "}
+          {isPurchaseReport
+            ? t("reports.supplier")
+            : t("productionFloor.customer")}
+        </h3>
         <GoMakeAutoComplate
           key={customer?.id}
-          options={renderOptions()}
-          defaultFiltering={false}
-          onChangeTextField={checkWhatRenderArray}
           getOptionLabel={(option: any) => `${option.name}`}
           style={classes.textInputStyle}
-          placeholder={t("sales.quote.chooseCustomer")}
           onChange={handleCustomerChange}
           value={customer}
           loading={isFetchingCustomers}
+          defaultFiltering={isPurchaseReport ? true : false}
+          options={isPurchaseReport ? supplierList : renderOptions()}
+          onChangeTextField={(e) => {
+            if (isPurchaseReport) {
+              return;
+            }
+            checkWhatRenderArray(e);
+          }}
+          placeholder={t(
+            `sales.quote.${
+              isPurchaseReport ? "chooseSupplier" : "chooseCustomer"
+            }`
+          )}
         />
       </div>
       <div style={classes.date2FilterContainer}>

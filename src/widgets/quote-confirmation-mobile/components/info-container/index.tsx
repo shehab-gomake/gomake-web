@@ -6,7 +6,7 @@ import { useRecoilValue } from "recoil";
 import { quoteConfirmationState } from "@/store";
 import { BusinessWidget } from "./business";
 import { ContactsWidget } from "./contacts";
-import { DateFormatterDDMMYYYY } from "@/utils/adapter";
+import { DateFormatterDDMMYYYY } from "@/utils/date-formatters";
 
 const InfoContainer = ({ isPrePaymentPage, documentTitle }) => {
   const { classes } = useStyle();

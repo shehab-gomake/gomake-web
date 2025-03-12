@@ -57,6 +57,8 @@ import { useOrdersSignalr, useQuotesSignalr } from "@/hooks";
 import Stack from "@mui/material/Stack";
 import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
 import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
+import { SettingVatListMenu } from "@/widgets/quote-new/setting-vat-menu";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -124,8 +126,12 @@ const QuoteNewPageWidget = ({
     openDeliveryTimeCancelModal,
     anchorElSettingMenu,
     openSettingMenu,
+    anchorElSettingMenuForVat,
+    openNewSttingMenuForVat,
     handleSettingMenuClick,
     handleSettingMenuClose,
+    handleSettingMenuClickForVat,
+    handleSettingMenuCloseForVat,
     onClickClosePriceModal,
     onClickOpenDeliveryTimeModal,
     onClickOpenPriceModal,
@@ -209,7 +215,11 @@ const QuoteNewPageWidget = ({
     onBlurCurrency,
     setIsUpdateCurrency,
     isUpdateCurrency,
+    setIsUpdateVatStatus,
+    onBlurVatStatus,
+    isUpdateVatStatus,
     updateCurrency,
+    updateVatStatus,
     refreshExchangeRate,
     getQuote,
     handleSaveBtnClickForDocument,
@@ -259,7 +269,9 @@ const QuoteNewPageWidget = ({
     isWhatsAppWeb,
     setIsWhatsAppWeb,
     isShowSettingIcon,
+    showVatListInSettingIconNew,
     isInvoice,
+    isDeliveryNote,
     onClickOpenChangeProductionStatusModal,
     openChangeProductionStatusModal,
     onClickCloseChangeProductionStatusModal,
@@ -282,8 +294,10 @@ const QuoteNewPageWidget = ({
     confirmCreateDocument,
     onClickConfirmCreateDocument,
     onClickCloseConfirmCreateDocument,
+    isReceipt,
     isMoveToReady,
     handleCheckboxChange,
+    isPurchaseDocument,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -377,7 +391,7 @@ const QuoteNewPageWidget = ({
   }, []);
 
   useEffect(() => {
-    if (documentType === DOCUMENT_TYPE.receipt) resetReceiptState();
+    if (isReceipt) resetReceiptState();
   }, []);
 
   useEffect(() => {
@@ -496,6 +510,14 @@ const QuoteNewPageWidget = ({
                         <SettingNewIcon />
                       </IconButton>
                     )}
+                    {showVatListInSettingIconNew && (
+                      <IconButton
+                        style={{ marginRight: 4 }}
+                        onClick={handleSettingMenuClickForVat}
+                      >
+                        <SettingNewIcon />
+                      </IconButton>
+                    )}
                   </div>
                 )}
               </div>
@@ -568,6 +590,11 @@ const QuoteNewPageWidget = ({
                     <ClientBalanceComponent
                       clientBalance={quoteState.clientBalance}
                       clientId={quoteState?.client?.id}
+                      clientType={
+                        isPurchaseDocument
+                          ? CLIENT_TYPE.SUPPLIER
+                          : CLIENT_TYPE.CUSTOMER
+                      }
                     />
                   </Stack>
                 </div>
@@ -652,7 +679,7 @@ const QuoteNewPageWidget = ({
                 paddingRight: 12,
               }}
             >
-              {documentType !== DOCUMENT_TYPE.receipt && (
+              {!isReceipt && (
                 <QuoteForPriceTable
                   documentItems={
                     isQuoteConfirmation
@@ -694,7 +721,7 @@ const QuoteNewPageWidget = ({
                   />
                 </>
               )}
-              {documentType === DOCUMENT_TYPE.receipt && <ReceiptsTable />}
+              {isReceipt && <ReceiptsTable />}
             </div>
             {!isPrePaymentPage && (
               <WriteCommentComp
@@ -821,11 +848,24 @@ const QuoteNewPageWidget = ({
         setIsUpdateCurrency={setIsUpdateCurrency}
         isUpdateCurrency={isUpdateCurrency}
         updateCurrency={updateCurrency}
+        updateVatStatus={updateVatStatus}
         onClickRefresh={refreshExchangeRate}
         sortDocumentItems={sortDocumentItems}
         updateDiscountType={updateDiscountType}
         updateDocumentPreference={updateDocumentPreference}
         documentType={documentType}
+        onBlurVatStatus={onBlurVatStatus}
+        setIsUpdateVatStatus={setIsUpdateVatStatus}
+        isUpdateVatStatus={isUpdateVatStatus}
+      />
+      <SettingVatListMenu
+        handleClose={handleSettingMenuCloseForVat}
+        open={openNewSttingMenuForVat}
+        anchorEl={anchorElSettingMenuForVat}
+        onBlurVatStatus={onBlurVatStatus}
+        setIsUpdateVatStatus={setIsUpdateVatStatus}
+        isUpdateVatStatus={isUpdateVatStatus}
+        updateVatStatus={updateVatStatus}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}

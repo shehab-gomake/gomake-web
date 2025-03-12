@@ -366,8 +366,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const result = res?.data?.data?.data;
     setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
     setCurrentProductItemValueDraftId(result.productItemValueDraftId);
+    setCurrentCalculationSessionId(result.productItemValueDraftId);
     stIsFlowChanged(result.isFlowChanged);
     setAdditionalProductItems(result.additionalProductItems);
+    
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
@@ -777,8 +779,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subSection.parameters.forEach((parameter) => {
               if (
                 parameter?.isHidden &&
-                !parameter?.isHiddenInSetting &&
+                // !parameter?.isHiddenInSetting &&
                 !parameter?.setSettingIcon
+                && relatedParameters.some(
+                  (relatedParam) => relatedParam.parameterId === parameter?.id && !relatedParam.isHiddenInSetting
+                )
               ) {
                 if (parameter.isUnderParameterId !== null) {
                   underParameterIdsArray.push({
@@ -1324,8 +1329,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameterType: childParam?.parameterType,
                         isQuantityParameter: childParam?.isQuantityParameter,
                         values: item.defaultValue
-                          ? [unitType === UNIT_TYPE.IMPERIAL ? (item?.defaultValue * childParam?.factor).toFixed(3) : item?.defaultValue]
-                          : [unitType === UNIT_TYPE.IMPERIAL ? (childParam?.defaultValue * childParam?.factor).toFixed(3) : childParam?.defaultValue],
+                          ? [unitType === UNIT_TYPE.IMPERIAL && childParam?.code != "Width" && childParam?.code != "Height" ? (item?.defaultValue * childParam?.factor).toFixed(3) : item?.defaultValue]
+                          : [unitType === UNIT_TYPE.IMPERIAL && childParam?.code != "Width" && childParam?.code != "Height" ? (childParam?.defaultValue * childParam?.factor).toFixed(3) : childParam?.defaultValue],
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: childParam?.actionIndex,
@@ -4098,7 +4103,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   temp[myindex] = {
                     ...temp[myindex],
                     parameterCode: myparameter?.code,
-                    values: unitType === UNIT_TYPE.IMPERIAL ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
+                    values: unitType === UNIT_TYPE.IMPERIAL && myparameter?.code != "Width" && myparameter?.code != "Height" ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
                     isDisabled: hasValues(data?.value),
                     factor: myparameter?.factor,
                   };
@@ -4112,7 +4117,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   subSectionId: subSection?.id,
                   ParameterType: myparameter?.parameterType,
                   isQuantityParameter: myparameter?.isQuantityParameter,
-                  values: unitType === UNIT_TYPE.IMPERIAL ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
+                  values: unitType === UNIT_TYPE.IMPERIAL && myparameter?.code != "Width" && myparameter?.code != "Height" ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
                   actionIndex: myparameter?.actionIndex,
                   parameterName: myparameter?.name,
                   parameterCode: myparameter?.code,
@@ -5059,7 +5064,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const convertSubProductsValuesToImperial = (subProducts) => {
     return subProducts.map((subProduct) => {
       return {
-        ...subProduct,parameters:convertValuesToImperial(subProduct.parameters)
+        ...subProduct, parameters: convertValuesToImperial(subProduct.parameters)
       }
     });
   }
@@ -5137,10 +5142,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             );
           const convertedItemParameters = convertValuesToImperial(itemParmetersValues);
           const convertedGeneralParameters = convertValuesToImperial(updatedGeneralParameters);
-          if(calculationSubProducts && calculationSubProducts.length > 0) {
+          if (calculationSubProducts && calculationSubProducts.length > 0) {
             calculationSubProducts = convertSubProductsValuesToImperial(calculationSubProducts);
           }
-          
+
 
 
           if (calculationSubProducts && calculationSubProducts.length > 0) {
@@ -5152,6 +5157,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 );
             });
           }
+          const docType = +(router?.query?.documentType) ?? 0;
+          const documentItemId = router?.query?.documentItemId;
           const res: any = await callApi(
             "POST",
             productTemplate?.isHaveFixedAction
@@ -5170,6 +5177,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               isChargeForNewDie: isChargeForNewDie,
               productType: productTemplate?.productType,
               templateId: productTemplate?.templateId,
+              documentType: docType,
+              documentItemId: documentItemId,
+              priceRecovery: priceRecovery,
             },
             false,
             newRequestAbortController

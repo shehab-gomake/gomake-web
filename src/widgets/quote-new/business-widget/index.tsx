@@ -133,13 +133,19 @@ const BusinessNewWidget = ({
     <>
       <div style={{ ...classes.businessContainerStyle, marginBottom: "10px" }}>
         <AutoCompleteUpdatedValue
-          label={t("sales.quote.businessName")}
+          label={
+            isPurchaseDocument
+              ? t("sales.quote.supplierName")
+              : t("sales.quote.businessName")
+          }
           defaultFiltering={isPurchaseDocument ? true : false}
           value={
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
               : quoteStateValue?.client?.name
               ? quoteStateValue?.client?.name
+              : isPurchaseDocument
+              ? t("sales.quote.chooseSupplier")
               : t("sales.quote.selectBusinessName")
           }
           options={isPurchaseDocument ? mappedSuppliers : mappedCustomers}
@@ -175,7 +181,7 @@ const BusinessNewWidget = ({
             value={clientName}
             placeholder={clientName ? clientName : t("reports.enterClientName")}
             label={t("reports.clientName")}
-            onBlur={onBlurClientName}
+            onBlur={() => onBlurClientName(clientName)}
             setIsUpdate={setIsUpdateClientName}
             isUpdate={isUpdateClientName}
             onInputChange={(v) => setClientName(v)}
@@ -187,7 +193,11 @@ const BusinessNewWidget = ({
               ? `${quoteConfirm?.client?.code}`
               : `${quoteStateValue?.client?.code}`
           }
-          label={t("sales.quote.businessCode")}
+          label={
+            isPurchaseDocument
+              ? t("suppliers.supplierCode")
+              : t("sales.quote.businessCode")
+          }
           onBlur={onBlurBusinessCode}
           setIsUpdate={
             isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode
@@ -232,9 +242,10 @@ const BusinessNewWidget = ({
             placeholder={
               purchaseNumber
                 ? purchaseNumber
-                : t("sales.quote.noPurchaseNumber")
+                :
+                  documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? t("sales.quote.noInvoiceNumber") : t("sales.quote.noPurchaseNumber")
             }
-            label={t("sales.quote.purchaseNumber")}
+            label={documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? t("sales.quote.invoiceNumber") : t("sales.quote.purchaseNumber")}
             onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
             // isUpdate={canEditDocument && isUpdatePurchaseNumber}
             isUpdate={canEditPurchaseNumber && isUpdatePurchaseNumber}

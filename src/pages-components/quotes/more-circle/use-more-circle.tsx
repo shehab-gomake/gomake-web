@@ -72,6 +72,17 @@ const useMoreCircle = () => {
     onClickStartProduction,
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
+    const isSupplierPayments = documentType === DOCUMENT_TYPE.supplierPayments;
+
+    const getDocumentPath = (id?: string, extraParams: string = "") => {
+      if (isSupplierPayments) {
+        return `/${
+          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+        }?isOutgoingPayments=true${id ? `&id=${id}` : ""}${extraParams}`;
+      }
+      return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
+    };
+
     const { callApi } = useGomakeAxios();
     const { pathname } = useRouter();
     const { alertFaultAdded } = useSnackBar();
@@ -145,16 +156,17 @@ const useMoreCircle = () => {
         isLink: isCreateStatus,
         href: `/quote`,
       },
+
       {
         condition:
           !isPauseOrder &&
           documentType !== DOCUMENT_TYPE.quote &&
           quote?.isEditable,
-        onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
+        onClick: () => navigate(getDocumentPath(quote?.id)),
         icon: <EditingIcon />,
         name: t("sales.quote.edit"),
         isLink: true,
-        href: `/${documentPath}?Id=${quote?.id}`,
+        href: getDocumentPath(quote?.id),
       },
       {
         condition:
@@ -187,7 +199,7 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          !isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder,
+          !isPauseOrder && isOrder && !isCanceledOrder,
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <PDFIcon />,
         name: t("sales.quote.boardMissionsPdf"),
@@ -210,6 +222,24 @@ const useMoreCircle = () => {
         name: t("sales.quote.duplicate"),
         isLink: true,
         href: `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`,
+      },
+
+      {
+        condition: !isPauseOrder && showNewDuplicate,
+        onClick: () =>
+          navigate(
+            getDocumentPath(
+              null,
+              "?isNewCreation=true&documentToDuplicateId=" + quote?.id
+            )
+          ),
+        icon: <DuplicateIcon />,
+        name: t("sales.quote.duplicate"),
+        isLink: true,
+        href: getDocumentPath(
+          null,
+          "?isNewCreation=true&documentToDuplicateId=" + quote?.id
+        ),
       },
       {
         condition:
@@ -370,8 +400,8 @@ const useMoreCircle = () => {
           isOrder
             ? onClickOpenIrrelevantModal(quote)
             : quote?.creditCardTotal > 0
-              ? onOpenCancelReceiptModalRefund(quote)
-              : onOpenCancelReceiptModal(quote),
+            ? onOpenCancelReceiptModalRefund(quote)
+            : onOpenCancelReceiptModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },

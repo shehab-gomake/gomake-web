@@ -31,6 +31,10 @@ import React from "react";
 import {
     WorkingDaysComponent
 } from "@/widgets/settings-profile-widget/components/profiles/working-days/working-days-component";
+import {
+    OutlookEmailLoginComponent
+} from "@/widgets/settings-profile-widget/components/profiles/sender-email-auth/outlook-email-login";
+import GoogleAuth from "@/widgets/settings-profile-widget/components/profiles/sender-email-auth/google-email-login";
 
 interface ICompanyProfileComponentProps {
     taxLoginUrl: string;
@@ -154,11 +158,14 @@ const CompanyProfileComponent = ({
                             ) : (
                                 section.inputs.map((companyInput) => (
                                     <div key={companyInput.parameterKey}>
+                                        {
+                                           // companyInput.type === 'outlookLogin' ? <Stack direction={'row'} gap={'10px'} paddingTop={'37px'}><OutlookEmailLoginComponent/> <GoogleAuth/> </Stack> :
                                         <FormInput
                                             input={companyInput as IInput}
                                             changeState={changeState}
                                             error={(companyInput.required && !companyInput.value) || !companyInput.isValid}
                                         />
+                                        }
 
                                         {companyInput.parameterKey === "mailServiceEmail" && (
                                             <div
