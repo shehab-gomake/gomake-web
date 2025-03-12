@@ -154,7 +154,6 @@ const UpdateDeliveryStatusModal = ({
           </Stack>
         </Stack>
         <PrimaryTable
-          isMobileView={false}
           stickyFirstCol={false}
           stickyHeader={true}
           maxHeight={"calc(100vh - 300px)"}
