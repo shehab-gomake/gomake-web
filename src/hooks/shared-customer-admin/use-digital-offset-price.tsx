@@ -369,7 +369,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setCurrentCalculationSessionId(result.productItemValueDraftId);
     stIsFlowChanged(result.isFlowChanged);
     setAdditionalProductItems(result.additionalProductItems);
-    
+
     setCalculationProgress({
       totalWorkFlowsCount: 0,
       currentWorkFlowsCount: 0,
@@ -1744,7 +1744,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       });
                       param.valuesConfigs = param?.valuesConfigs?.filter((x) =>
                         paramMaterialValues?.find((m) =>
-                          compareStrings(m.valueId, x.valueIds[0])
+                          compareStrings(
+                            m.valueId,
+                            (x.valueIds && x.valueIds[0]) || (x.values && x.values[0])
+                          )
                         )
                       );
                       param.valuesConfigs = param?.valuesConfigs?.filter(
