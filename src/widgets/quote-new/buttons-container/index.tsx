@@ -1,5 +1,5 @@
 import { useStyle } from "./style";
-import { ArrowDownNewIcon, PlusIcon } from "@/icons";
+import { ArrowDownNewIcon, EditIcon, PlusIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
 import {
   GoMakeDeleteModal,
@@ -33,6 +33,7 @@ const ButtonsContainer = ({
   handleSaveBtnClick,
   handleSendBtnClick,
   onOpenDeliveryModal,
+  onOpenUpdateDeliveryModal,
   documentType,
   onOpenCopyFromOrder,
   onClickOpenNewItemNotesModal,
@@ -104,7 +105,7 @@ const ButtonsContainer = ({
     handleOrderConfirmation,
     setOpenReceiptCreationModal,
   } = useButtonsContainer(documentType);
-
+  console.log("quoteItemValue", quoteItemValue)
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
       quoteItemValue.isSendWhatsappWeb ||
@@ -175,11 +176,22 @@ const ButtonsContainer = ({
         )}
         {canAddDelivery && canEditDocument && (
           <GomakePrimaryButton
-            leftIcon={<PlusIcon stroke={"#344054"} />}
+            leftIcon={quoteItemValue?.isHaveDeliveryItem ? <EditIcon stroke={"#344054"} /> : <PlusIcon stroke={"#344054"} />}
             style={classes.btnContainer}
-            onClick={() => onOpenDeliveryModal()}
+            onClick={() => {
+              if (quoteItemValue?.isHaveDeliveryItem) {
+                onOpenUpdateDeliveryModal()
+              } else {
+                if (quoteItemValue?.isShowDeliveryItems) {
+                  onOpenDeliveryModal()
+                } else {
+                  onOpenUpdateDeliveryModal()
+                }
+              }
+            }
+            }
           >
-            {t("sales.quote.addDelivery")}
+            {quoteItemValue?.isHaveDeliveryItem ? t("sales.quote.updateDelivery") : t("sales.quote.addDelivery")}
           </GomakePrimaryButton>
         )}
         {isNewCreation &&

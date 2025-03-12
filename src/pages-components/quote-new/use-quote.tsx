@@ -301,12 +301,20 @@ const useQuoteNew = ({
   };
 
   const [openAddDeliveryModal, setOpenAddDeliveryModal] = useState(false);
+  const [openUpdateDeliveryModal, setOpenUpdateDeliveryModal] = useState(false);
 
   const onOpenDeliveryModal = () => {
     setOpenAddDeliveryModal(true);
   };
   const onCloseDeliveryModal = () => {
     setOpenAddDeliveryModal(false);
+  };
+
+  const onOpenUpdateDeliveryModal = () => {
+    setOpenUpdateDeliveryModal(true);
+  };
+  const onCloseUpdateDeliveryModal = () => {
+    setOpenUpdateDeliveryModal(false);
   };
 
   const [isMoveToReady, setIsMoveToReady] = useState(false);
@@ -541,11 +549,11 @@ const useQuoteNew = ({
   const changeVatValueForVatStatus = (vatStatus: number) => {
     switch (vatStatus) {
       //case EnumVATStatus.Must17Percents:
-        //return 0.17;
+      //return 0.17;
       case EnumVATStatus.Must18Percents:
         return 0.18;
-     // case EnumVATStatus.Must16Percents:
-       // return 0.16;
+      // case EnumVATStatus.Must16Percents:
+      // return 0.16;
       case EnumVATStatus.Exempt:
         return 0.18;
       default:
@@ -1180,11 +1188,12 @@ const useQuoteNew = ({
     }
   };
 
-  const onAddDelivery = async (shipmentType: any) => {
+  const onAddDelivery = async (shipmentType: any, deliveryPrice?) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessAdded();
         onCloseDeliveryModal();
+        onCloseUpdateDeliveryModal();
         if (
           router?.query?.isNewCreation &&
           (docType === DOCUMENT_TYPE.deliveryNote ||
@@ -1217,7 +1226,7 @@ const useQuoteNew = ({
             newItem,
             1,
             newItem.price,
-            updatedQuoteItemValue
+            updatedQuoteItemValue,
           );
         } else getQuote();
       } else {
@@ -1228,6 +1237,8 @@ const useQuoteNew = ({
       delivery: {
         documentId: quoteItemValue?.id,
         shipmentTypeId: shipmentType?.value,
+        deliveryPrice,
+
       },
       documentType: docType,
     });
@@ -2266,6 +2277,9 @@ const useQuoteNew = ({
     openAddDeliveryModal,
     onOpenDeliveryModal,
     onCloseDeliveryModal,
+    openUpdateDeliveryModal,
+    onOpenUpdateDeliveryModal,
+    onCloseUpdateDeliveryModal,
     onAddDelivery,
     handleSaveBtnClick,
     handleRejectBtnClick,
