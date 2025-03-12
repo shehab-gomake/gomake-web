@@ -41,6 +41,9 @@ const useMoreCircle = () => {
   const isSendPaymentToClient = CheckPermission(
     Permissions.SHOW_PRODUCTION_FLOOR
   );
+  const canCloseDocumentManually = CheckPermission(
+    Permissions.CAN_CLOSE_MANUALLY
+  );
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
@@ -198,8 +201,7 @@ const useMoreCircle = () => {
         name: t("sales.quote.pdf"),
       },
       {
-        condition:
-          !isPauseOrder && isOrder && !isCanceledOrder,
+        condition: !isPauseOrder && isOrder && !isCanceledOrder,
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <PDFIcon />,
         name: t("sales.quote.boardMissionsPdf"),
@@ -212,18 +214,17 @@ const useMoreCircle = () => {
         icon: <DuplicateIcon />,
         name: t("sales.quote.duplicate"),
       },
-      {
-        condition: !isPauseOrder && showNewDuplicate,
-        onClick: () =>
-          navigate(
-            `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`
-          ),
-        icon: <DuplicateIcon />,
-        name: t("sales.quote.duplicate"),
-        isLink: true,
-        href: `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`,
-      },
-
+      // {
+      //   condition: !isPauseOrder && showNewDuplicate,
+      //   onClick: () =>
+      //     navigate(
+      //       `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`
+      //     ),
+      //   icon: <DuplicateIcon />,
+      //   name: t("sales.quote.duplicate"),
+      //   isLink: true,
+      //   href: `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`,
+      // },
       {
         condition: !isPauseOrder && showNewDuplicate,
         onClick: () =>
@@ -360,7 +361,8 @@ const useMoreCircle = () => {
             !isCanceledOrder) ||
             (isDeliveryNote && quote?.isCanClose) ||
             (isInvoice && quote?.isCanClose)) &&
-          quote?.isEditable,
+          quote?.isEditable &&
+          canCloseDocumentManually,
         onClick: () =>
           quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
             ? onClickOpenCloseOrderNotesModal(quote)

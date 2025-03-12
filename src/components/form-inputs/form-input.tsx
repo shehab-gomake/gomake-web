@@ -34,7 +34,6 @@ const FormInput = ({
     loading,
     keyItem,
 }: IFormInput) => {
-    console.log("keyItem", keyItem)
     const [options, setOptions] = useState([]);
     const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
     const { callApi } = useGomakeAxios();
@@ -76,8 +75,9 @@ const FormInput = ({
     };
 
     const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
-        const value = translateUnit && input.unit ? restoreUnitValue(input.unit, parseFloat(e.target.value)) :  e.target.value;
-        changeState(input.parameterKey, translateUnit && input.unit && e.target.value.endsWith('.') ? value + '.' : value);
+        //const value = translateUnit && input.unit ? restoreUnitValue(input.unit, parseFloat(e.target.value)) : e.target.value;
+        //changeState(input.parameterKey, translateUnit && input.unit && e.target.value.endsWith('.') ? value + '.' : value);
+        changeState(input.parameterKey, e.target.value as string);
     };
 
     const onChangePhoneNumber = (phone: string) => {
@@ -399,7 +399,8 @@ const FormInput = ({
                                 }
                                 placeholder={t(input.placeholder)}
                                 disabled={!!readonly}
-                                value={translateUnit && input.unit ? (String(input.value).endsWith('.') ? convertUnitValue(input.unit, parseFloat(input.value)) + '.' : convertUnitValue(input.unit, parseFloat(input.value))) : input.value}
+                                value={input.value}
+                                //value={translateUnit && input.unit ? (String(input.value).endsWith('.') ? convertUnitValue(input.unit, parseFloat(input.value)) + '.' : convertUnitValue(input.unit, parseFloat(input.value))) : input.value}
                             />
                         )}
                     </div>

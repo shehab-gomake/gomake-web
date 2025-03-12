@@ -807,11 +807,11 @@ const AddRuleModal = ({
                             {t("properties.statment")}
                           </label>
                           <GomakeTextInput
-                            key={
-                              selectedCategories?.id +
-                              index +
-                              selectedStatment2?.id
-                            }
+                            // key={
+                            //   selectedCategories?.id +
+                            //   index +
+                            //   selectedStatment2?.id
+                            // }
                             style={clasess.textInputContainer}
                             placeholder={t("properties.statment")}
                             onChange={(e) =>

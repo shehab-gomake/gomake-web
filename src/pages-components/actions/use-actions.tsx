@@ -41,7 +41,9 @@ const useActions = () => {
   };
 
   const getActions = useCallback(async () => {
-    const data = await getAllPrintHouseActions(callApi, setAllActions);
+    const data = await getAllPrintHouseActions(callApi, setAllActions, {
+      WithRelatedActions: false
+    });
     const mapData = data?.map((action) => [
       action?.name,
       action?.isActive ? (
@@ -125,9 +127,9 @@ const useActions = () => {
     t("products.actions.active"),
     CheckPermission(Permissions.EDIT_MACHINE) && t("products.actions.profit"),
     CheckPermission(Permissions.EDIT_MACHINE) &&
-      t("products.actions.outSource"),
+    t("products.actions.outSource"),
     CheckPermission(Permissions.EDIT_PROPERTIES) &&
-      t("products.actions.properties"),
+    t("products.actions.properties"),
   ];
 
   const filterArray = (array: any, searchText: string) =>

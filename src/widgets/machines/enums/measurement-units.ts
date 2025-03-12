@@ -47,6 +47,7 @@ export enum EMeasurementUnits {
     INCH_P_MIN = 'inchMinute',
     INCH_SEC = 'inchSecond',
     SQUARE_FEET = 'squareFeet',
-    LB = 'lb'
+    LB = 'lb',
+    PT = 'pt',
 
 }

@@ -566,6 +566,10 @@ df-messenger {
   background-color: inherit !important;
   border: 0 !important;
 }
+.react-calendar-timeline .rct-sidebar .rct-sidebar-row {
+  padding: 0 !important;
+}
+
 
 .custom-date-range-picker {
   display: flex !important;

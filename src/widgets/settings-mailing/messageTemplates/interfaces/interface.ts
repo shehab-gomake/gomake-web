@@ -1,3 +1,4 @@
+import { BodyTypeEnum } from "@/enums/accounting-enums";
 import { SMSTemplatesEnum } from "../enums/enum";
 
 export interface SMSTemplateGroup {
@@ -24,5 +25,9 @@ export interface ISMSTemplate {
     fileBase64: string | ArrayBuffer,
     isMailToPrintHouse?: boolean,
     isSendGridVerificated?: boolean,
+    smsTemplateBodies?: {
+        type: BodyTypeEnum,
+        body: string
+    }[]
 }
 

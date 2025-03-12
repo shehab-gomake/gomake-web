@@ -17,7 +17,7 @@ const useInputUnit = () => {
         },
         [EMeasurementUnits.UM]: {
             imperialRatio:39.3701,
-            imperialUnit: EMeasurementUnits.MICRO_INCH
+            imperialUnit: EMeasurementUnits.PT
         },
         [EMeasurementUnits.METER]: {
             imperialRatio: 39.37007874,
