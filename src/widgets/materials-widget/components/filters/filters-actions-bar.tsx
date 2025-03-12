@@ -157,7 +157,6 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     value: product.id,
     label: product.name,
   }));
-  console.log("materialTableFilters", materialTableFilters)
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0
   return (
@@ -232,7 +231,6 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
               />
             );
           } else {
-            console.log("unitunitunit", unit)
             return (
               <GoMakeAutoComplate
                 key={materialCategory + "-" + key}
