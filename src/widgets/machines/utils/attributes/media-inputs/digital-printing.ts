@@ -19,7 +19,7 @@ const digitalPrinting = (state: Record<string, any>) => {
             required: true,
             parameterKey: "sheetsLoss",
             options: [],
-            value: state?.sheetsLoss
+            value: state?.attributes?.sheetsLoss
         },
         ...mediaDimensionsSettings(state),
         ...marginWithoutPrintingSettings(state),
