@@ -29,6 +29,9 @@ const useDeliveries = () => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData } = useSnackBar();
   const router = useRouter();
+  const { query } = useRouter();
+  const { orderId } = query;
+
   const [page, setPage] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -140,9 +143,9 @@ const useDeliveries = () => {
         const mapData = data?.map((quote: any) => [
           formatCustomDateTime(quote?.createdDate).split(" ")[0],
           quote?.clientName,
-          quote?.agentName,
+          quote?.agentName ?? "-",
           quote?.orderNumber,
-          quote?.worksNames,
+          quote?.worksNames ?? "-",
           quote?.numberOfItems,
           t(
             `sales.documentDeliveries.${
@@ -320,6 +323,7 @@ const useDeliveries = () => {
     shipmentTypes,
     getDeliveriesTable,
     allDeliveries,
+    orderId,
   };
 };
 

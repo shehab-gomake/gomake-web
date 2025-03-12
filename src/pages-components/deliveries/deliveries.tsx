@@ -3,7 +3,11 @@ import { HeaderTitle } from "@/widgets";
 import { useDeliveries } from "./use-deliveries";
 import { IconButton, Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { GoMakeAutoComplate, GomakePrimaryButton } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakePrimaryButton,
+} from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
@@ -12,7 +16,13 @@ import TuneIcon from "@mui/icons-material/Tune";
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useEffect } from "react";
+import { UpdateDeliveryStatusModal } from "../quotes/widgets/delivery-status-button/delivery-status-modal/delivery-status-modal";
+import { DOCUMENT_TYPE } from "../quotes/enums";
+import { useClientContactsList } from "@/hooks/use-client-contacts";
+import { useDeliveryStatusButton } from "../quotes/widgets/delivery-status-button/use-delivery-status";
+import { ModalType } from "@/enums";
 
+// !here
 const DeliveriesPageWidget = () => {
   const { classes } = useStyle();
   const {
@@ -46,13 +56,55 @@ const DeliveriesPageWidget = () => {
     setDeliveryTypeValue,
     getAllShipmentTypes,
     shipmentTypes,
-    getDeliveriesTable,
     allDeliveries,
+    orderId,
   } = useDeliveries();
+
+  const {
+    openDeliveryModal,
+    onCloseDeliveryModal,
+    renderTableRows,
+    editableQuantities,
+    setEditableQuantities,
+    setDocumentItems,
+    getDocumentDeliveryItems,
+    selectedItem,
+    removeDocumentDeliveryItem,
+    onCloseDeleteModal,
+    openDeleteModal,
+  } = useDeliveryStatusButton();
+
+  const { getClientContacts, clientContacts } = useClientContactsList();
+
+  const handleOpenDeliveryModal = (orderId) => {
+    getDocumentDeliveryItems(DOCUMENT_TYPE.order, orderId);
+    // getClientContacts(document?.customerId);
+  };
+
+  const handleCloseDeliveryModal = () => {
+    onCloseDeliveryModal();
+
+    // Remove orderId from URL
+    const { orderId, ...newQuery } = router.query;
+    router.push(
+      {
+        pathname: router.pathname,
+        query: newQuery,
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
 
   useEffect(() => {
     getAllShipmentTypes();
   }, []);
+
+  useEffect(() => {
+    if (orderId) {
+      handleOpenDeliveryModal(orderId);
+    }
+  }, [router.query.orderId]);
 
   return (
     <>
@@ -202,10 +254,11 @@ const DeliveriesPageWidget = () => {
               inputRef={searchInputRef}
             />
           </div>
-          {/* document table */}
+          {/* table */}
           <PrimaryTable
+            stickyFirstCol={false}
             stickyHeader={true}
-            maxHeight={"calc(100vh - 400px)"}
+            maxHeight={"calc(100vh - 265px)"}
             rows={allDeliveries}
             headers={tableHeaders}
           />
@@ -228,6 +281,24 @@ const DeliveriesPageWidget = () => {
         />
       </Stack>
       <QRScannerFab />
+      <UpdateDeliveryStatusModal
+        openModal={openDeliveryModal}
+        onCloseModal={handleCloseDeliveryModal}
+        document={document}
+        documentItems={renderTableRows()}
+        editableQuantities={editableQuantities}
+        setEditableQuantities={setEditableQuantities}
+        setDocumentItems={setDocumentItems}
+        clientContacts={clientContacts}
+        documentType={DOCUMENT_TYPE.order}
+        documentId={orderId?.toString()}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
+        openModal={openDeleteModal}
+        onClose={onCloseDeleteModal}
+        onClickDelete={() => removeDocumentDeliveryItem(selectedItem)}
+      />
     </>
   );
 };

@@ -94,6 +94,7 @@ const ClickableStatusButton = ({
         setDocumentItems={setDocumentItems}
         clientContacts={clientContacts}
         documentType={documentType}
+        documentId={document?.id}
       />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}

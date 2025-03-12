@@ -11,6 +11,7 @@ export interface IUpdateDeliveryStatusModalProps {
   onCloseModal: () => void;
   document: any;
   documentItems: any;
+  documentId: string;
   editableQuantities?: any;
   setEditableQuantities?: any;
   setDocumentItems?: any;

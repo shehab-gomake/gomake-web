@@ -10,7 +10,8 @@ const QRScannerFab: React.FC = () => {
   const { classes } = useStyle();
 
   const handleOpenQRScanner = () => {
-    router.push("/qr-scanner");
+    let currentPath = router.pathname.replace(/^\/+/, "");
+    router.push(`/qr-scanner?from=${encodeURIComponent(currentPath)}`);
   };
 
   if (!isMobile) return null;

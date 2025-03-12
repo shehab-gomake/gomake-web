@@ -13,6 +13,7 @@ import { SignatureModal } from "./components/signature-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 const UpdateDeliveryStatusModal = ({
   document,
@@ -24,8 +25,10 @@ const UpdateDeliveryStatusModal = ({
   setDocumentItems,
   clientContacts,
   documentType,
+  documentId,
 }: IUpdateDeliveryStatusModalProps) => {
   const { classes } = useStyle();
+  const isMobile = useIsMobile();
   const {
     t,
     tableHeaders,
@@ -69,7 +72,11 @@ const UpdateDeliveryStatusModal = ({
       modalTitle={`${t(`sales.quote.${DOCUMENT_TYPE[documentType]}`)} #${
         document?.number
       }`}
-      insideStyle={{ width: "70%", height: "fit-content" }}
+      insideStyle={{
+        width: isMobile ? "90vw" : "70%",
+        height: "fit-content",
+        ...(isMobile && { padding: "10px 10px 0px 10px" }),
+      }}
       openModal={openModal}
       onClose={handleCloseModal}
       modalTitleStyle={classes.modalTitle}
@@ -87,7 +94,7 @@ const UpdateDeliveryStatusModal = ({
               {t("sales.documentDeliveries.recipient")}
             </span>
             <GoMakeSelect
-              key={`select-client-${document?.id}`}
+              key={`select-client-${documentId}`}
               style={{
                 width: 170,
                 height: "40px",
@@ -103,7 +110,7 @@ const UpdateDeliveryStatusModal = ({
               {t("sales.documentDeliveries.recipientName")}
             </span>
             <GoMakeTextInput
-              key={`receipt-name-${document?.id}`}
+              key={`receipt-name-${documentId}`}
               style={{
                 width: 170,
                 height: "40px",
@@ -147,6 +154,7 @@ const UpdateDeliveryStatusModal = ({
           </Stack>
         </Stack>
         <PrimaryTable
+          isMobileView={false}
           stickyFirstCol={false}
           stickyHeader={true}
           maxHeight={"calc(100vh - 300px)"}
@@ -176,7 +184,7 @@ const UpdateDeliveryStatusModal = ({
         openModal={isSignatureModalOpen}
         onCloseModal={closeSignatureModal}
         onCloseAllModals={handleCloseSignModal}
-        documentId={document?.id}
+        documentId={documentId}
         documentType={documentType}
         selectedItems={selectedItems}
         setSelectedItems={setSelectedItems}

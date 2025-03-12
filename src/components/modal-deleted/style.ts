@@ -4,12 +4,12 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums";
 import { useIsMobile } from "@/hooks/use-responsive";
+
 const useStyle = ({ modalType }: { modalType: ModalType }) => {
   const { t } = useTranslation();
-  const { theme, primaryColor, errorColor } = useGomakeTheme();
+  const { theme, errorColor } = useGomakeTheme();
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === "rtl";
-
   const isMobile = useIsMobile();
 
   const classes = useMemo(() => {
@@ -18,8 +18,8 @@ const useStyle = ({ modalType }: { modalType: ModalType }) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        width: "-webkit-fill-available",
-        minWidth: 600,
+        width: isMobile ? "90vw" : "-webkit-fill-available",
+        minWidth: isMobile ? "unset" : 600,
         borderRadius: 12,
         backgroundColor: "#FFFFFF",
         position: "absolute" as "absolute",
