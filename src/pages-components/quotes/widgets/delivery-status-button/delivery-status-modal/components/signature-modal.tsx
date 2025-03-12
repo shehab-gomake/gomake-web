@@ -88,7 +88,7 @@ const SignatureModal = ({
   return (
     <GoMakeModal
       modalTitle={t("sales.documentDeliveries.signature")}
-      insideStyle={{ width: "640px", height: "fit-content" }}
+      insideStyle={{ width: "640px", maxWidth: "90vw", height: "fit-content" }}
       openModal={openModal}
       onClose={onCloseModal}
       modalTitleStyle={classes.modalTitle}

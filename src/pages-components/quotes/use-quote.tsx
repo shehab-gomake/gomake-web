@@ -1302,7 +1302,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
-
   useEffect(() => {
     const isNotFilteredData = Object.keys(router?.query || {}).length === 0;
 

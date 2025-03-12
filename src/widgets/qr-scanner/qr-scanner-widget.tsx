@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { getOrderIdFromQrCode } from "@/services/api-service/qr-scanner/qr-scanner-endpoints";
 import { useGomakeAxios, useGomakeRouter } from "@/hooks";
 import { useStyle } from "./style";
+import { getBoardMissionsIdByQrCodeApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const QRScannerPage = () => {
   const { t } = useTranslation();
@@ -16,25 +17,50 @@ const QRScannerPage = () => {
   const [isScanning, setIsScanning] = useState<boolean>(true);
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
+  const { query } = useRouter();
+  const { from } = query;
 
   const handleScan = async (data: { text: string } | null) => {
     if (!data) return;
 
     setLoading(true);
-    const callBack = (res: { success: boolean; data?: string }) => {
-      const Id = res?.data;
-      if (res?.success && Id) {
-        setScanResult(data.text);
-        navigate(`/production-floor?boardMissionsId=${Id}&step=stations`);
-      } else {
-        console.error("Failed to retrieve order ID.");
-        setScanResult("Invalid QR Code or No Order Found");
-      }
-      setLoading(false);
-      setIsScanning(false);
-    };
+
     try {
-      await getOrderIdFromQrCode(callApi, callBack, { qrCode: data.text });
+      if (from === "production-floor") {
+        //  Get Board Mission ID
+        await getBoardMissionsIdByQrCodeApi(
+          callApi,
+          (res) => {
+            if (res?.success && res.data?.boardMissionId) {
+              setScanResult(data.text);
+              navigate(
+                `/production-floor?boardMissionsId=${res.data.boardMissionId}&step=stations`
+              );
+            } else {
+              setScanResult("Invalid QR Code or No Board Mission Found");
+            }
+            setLoading(false);
+            setIsScanning(false);
+          },
+          data.text
+        );
+      } else if (from === "deliveries") {
+        //  Get Order Mission ID
+        await getOrderIdFromQrCode(
+          callApi,
+          (res) => {
+            if (res?.success && res.data) {
+              setScanResult(data.text);
+              navigate(`/deliveries?orderId=${res.data}`);
+            } else {
+              setScanResult("Invalid QR Code or No Order Found");
+            }
+            setLoading(false);
+            setIsScanning(false);
+          },
+          { qrCode: data.text }
+        );
+      }
     } catch (error) {
       console.error("QR Scan error:", error);
       setLoading(false);
@@ -87,9 +113,9 @@ const QRScannerPage = () => {
                 delay={300}
                 facingMode="environment"
                 // !here
-                // constraints={{
-                //   video: { facingMode: { exact: "environment" } },
-                // }}
+                constraints={{
+                  video: { facingMode: { exact: "environment" } },
+                }}
                 style={{
                   width: "100%",
                   borderRadius: "20px",

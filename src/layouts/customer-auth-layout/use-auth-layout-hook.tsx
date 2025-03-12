@@ -21,6 +21,7 @@ import {
 import { ActionsIcon } from "@/icons/side-list-icons/actions";
 import { SettingsIcon } from "@/icons/side-list-icons/settings";
 import { CustomerServiceIcon } from "@/icons/side-list-icons/customer-service";
+import { DeliveriesIcon } from "@/icons/side-list-icons/deliveries";
 
 const useAuthLayoutHook = (
   permissionEnumValue?: Permissions,
@@ -56,6 +57,17 @@ const useAuthLayoutHook = (
         },
         isProduction: true,
         tourData: "menu-home",
+      },
+      {
+        isLine: false,
+        key: "deliveries",
+        title: "tabs.deliveries",
+        path: "/deliveries",
+        isList: false,
+        icon: () => {
+          return <DeliveriesIcon />;
+        },
+        isProduction: true,
       },
       {
         isLine: false,
