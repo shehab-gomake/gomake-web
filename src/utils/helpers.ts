@@ -289,6 +289,7 @@ export const convertTitleUnits = (unit: string | null) => {
 
 export const convertValueToImperial = (unit: string | null, value: any) => {
   try {
+    return value;
     if (!unit) return value; // Return value as-is if no unit
 
     switch (unit) {
@@ -327,7 +328,7 @@ export const convertValueToImperial = (unit: string | null, value: any) => {
 
 export const convertValueToOriginalUnit = (unit: string | null, value: any) => {
   if (!unit) return value; // Return value as-is if no unit
-
+  return value;
   switch (unit) {
       case "cm":
           return convert(value).from("in").to("cm").toFixed(3);
