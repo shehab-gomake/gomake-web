@@ -27,11 +27,14 @@ import { DateRangePicker } from "rsuite";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
 import { DotIcon } from "@/icons";
-import { printHouseUsePrintNode } from "@/store/print-house-profile";
+import {printHouseProfile, printHouseUsePrintNode} from "@/store/print-house-profile";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { isValidCustomer } from "@/utils/helpers";
 import { createGlobalStyle } from "styled-components";
+import {addOrderBoardMissionsToFileUploaderApi} from "@/services/api-service/board-missions/board-missions-table";
+import {useGomakeAxios} from "@/hooks";
+import {fileUploaderConnectionIdState} from "@/store/file-uploader-state";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -116,12 +119,26 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     setShowCustomerModal,
     setCustomerForEdit,
   } = useBoardMissions({ isPurchaseJobs });
-
+  const { callApi } = useGomakeAxios();
+  const [companyProfile] = useRecoilState(printHouseProfile);
+  const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [newOrderId, setNewOrderId] = useRecoilState(
     newOrderIdToPrintJobsState
   );
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
-
+  useEffect(()=>{
+      debugger
+      if(router.isReady && companyProfile.filesApiAddress && newOrderId && connectionId){
+          const callBack = (res) => {
+              
+          };
+          addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
+              orderId: newOrderId,
+              connectionId: connectionId,
+          }).then();
+          setNewOrderId("");
+      }
+  },[newOrderId])
   useEffect(() => {
     getAllProducts();
   }, []);

@@ -289,6 +289,7 @@ export const convertTitleUnits = (unit: string | null) => {
 
 export const convertValueToImperial = (unit: string | null, value: any) => {
   try {
+    return value;
     if (!unit) return value; // Return value as-is if no unit
 
     switch (unit) {
@@ -299,9 +300,9 @@ export const convertValueToImperial = (unit: string | null, value: any) => {
       case "g":
         return convert(value).from("g").to("lb").toFixed(3);
       case "gsm":
-        return (value / 2.708).toFixed(3);
+        return  Math.round(value / 2.708).toString()
       case "um":
-        return (value / 25.4).toFixed(3);
+        return Math.round(value / 25.4).toString()
       case "m":
         return convert(value).from("m").to("yd").toFixed(3);
       case "kg":
@@ -327,7 +328,7 @@ export const convertValueToImperial = (unit: string | null, value: any) => {
 
 export const convertValueToOriginalUnit = (unit: string | null, value: any) => {
   if (!unit) return value; // Return value as-is if no unit
-
+  return value;
   switch (unit) {
       case "cm":
           return convert(value).from("in").to("cm").toFixed(3);

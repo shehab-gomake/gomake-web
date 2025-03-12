@@ -1,8 +1,11 @@
-import {useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import moment from "moment";
 import {getTimeLineJobsApi, updateJobTimeApi} from "@/services/api-service/jobs-time-line/jobs-time-line-endpoints";
 import {useGomakeAxios} from "@/hooks";
 import {IGanttGroup, IGanttJob} from "@/widgets/production-floor/views/gantt-view/interface";
+import {useRecoilState} from "recoil";
+import {productionFloorFiltersState} from "@/widgets/production-floor/state/production-floor-filters";
+import {loadingGanttItemId} from "@/widgets/production-floor/views/gantt-view/state";
 
 const useGantt = () => {
     const {callApi} = useGomakeAxios();
@@ -18,7 +21,8 @@ const useGantt = () => {
     const [openGroups, setOpenGroups] = useState({});
     const [groups, setGroups] = useState<IGanttGroup[]>([]);
     const [items, setItems] = useState<IGanttJob[]>([]);
-
+    const [filtersState] = useRecoilState(productionFloorFiltersState);
+    const [, setLoadingItemId] = useRecoilState<string>(loadingGanttItemId);
     const getData = async (month) => {
         // Calculate start and end dates for the selected month in UTC
         const startOfMonth = moment()
@@ -53,16 +57,18 @@ const useGantt = () => {
         await getTimeLineJobsApi(callApi, callBack, {startDate: startOfMonth, endDate: endOfMonth});
     };
 
+
     const handleItemResize = async (itemId, time, edge) => {
-        const updatedItem = items.find(j => j.id === itemId);
-        if (updatedItem) {
-            await updateJobTimeApi(callApi, () => {
-            }, {
-                id: updatedItem.id,
-                startDate: updatedItem.start_time.toDate().toLocaleString(),
-                endDate: new Date(time).toLocaleString()
-            })
+        const callBack = res => {
+            setLoadingItemId('');
+            if (res.success) {
+                getData(currentMonth.month()).then();
+            } else {
+                setItems(prevState => prevState.map(j => j.id === updatedItem.id ? updatedItem : j));
+            }
         }
+        setLoadingItemId(itemId);
+        const updatedItem = items.find(j => j.id === itemId);
         const updatedItems = items.map((item) =>
             item.id === itemId
                 ? edge === "left"
@@ -71,13 +77,47 @@ const useGantt = () => {
                 : item
         );
         setItems(updatedItems);
+        if (updatedItem) {
+            await updateJobTimeApi(callApi, callBack, {
+                id: updatedItem.id,
+                startDate: updatedItem.start_time.toDate().toLocaleString(),
+                endDate: new Date(time).toLocaleString()
+            })
+        }
+
     };
 
     const handleItemMove = async (itemId, dragTime, newGroupOrder) => {
         const updatedItem = items.find(j => j.id === itemId);
+        const callBack = res => {
+            setLoadingItemId('');
+            if (res.success) {
+                getData(currentMonth.month()).then();
+            } else {
+                 setItems(prevState => prevState.map(j => j.id === updatedItem.id ? updatedItem : j));
+            }
+        }
+        if (updatedItem.group !== groups[newGroupOrder].id) {
+            return;
+        }
+        setLoadingItemId(itemId);
         if (updatedItem) {
-            await updateJobTimeApi(callApi, () => {
-            }, {
+            const updatedItems = items.map((item) =>
+                item.id === itemId
+                    ? {
+                        ...item,
+                        start_time: moment(dragTime),
+                        end_time: moment(dragTime).add(
+                            item.end_time.diff(item.start_time),
+                            "milliseconds"
+                        ),
+                        group: groups[newGroupOrder].id,
+                    }
+                    : item
+            );
+            setItems(updatedItems);
+
+            await updateJobTimeApi(callApi, callBack, {
                 id: updatedItem.id,
                 startDate: moment(dragTime),
                 endDate: moment(dragTime).add(
@@ -86,23 +126,9 @@ const useGantt = () => {
                 ),
             })
         }
-        const updatedItems = items.map((item) =>
-            item.id === itemId
-                ? {
-                    ...item,
-                    start_time: moment(dragTime),
-                    end_time: moment(dragTime).add(
-                        item.end_time.diff(item.start_time),
-                        "milliseconds"
-                    ),
-                    group: groups[newGroupOrder].id,
-                }
-                : item
-        );
-        setItems(updatedItems);
+
     };
 
-    // Fetch data for the current month when the component mounts or the month changes
 
     // Toggle group expansion
     const toggleGroup = (id) => {
@@ -174,6 +200,58 @@ const useGantt = () => {
             }));
         }
     };
+
+
+
+
+    const handleClickZoom = (direction) => {
+        const MAX_ZOOM_OUT_DURATION = 1000 * 60 * 60 * 24 * 365; // 12 months in milliseconds
+        const ONE_MINUTE = 1000 * 60;
+        const ONE_HOUR = ONE_MINUTE * 60; // 1 hour in milliseconds
+        // const ONE_DAY = ONE_HOUR * 24; // 1 day in milliseconds
+        // const ONE_MONTH = ONE_DAY * 30; // Approximation for a month
+        // const ONE_YEAR = ONE_DAY * 365; // 1 year in milliseconds
+        const SEVEN_HOURS = ONE_HOUR * 7; // 7 hours in milliseconds
+
+        const zoomFactor = direction === "in" ? 1.1 : 0.9; // Adjust zoom factor for in/out
+        const duration = visibleTimeRange.end - visibleTimeRange.start;
+        let newDuration = duration * zoomFactor;
+        const center = (visibleTimeRange.start + visibleTimeRange.end) / 2;
+
+        // Prevent zooming out if duration is <= 5 minutes
+        if (direction === "out" && duration <= ONE_MINUTE * 5) {
+            return;
+        }
+
+        // If zooming in and time range is < 7 hours, reduce by 1 hour
+        if (direction === "in" && duration < SEVEN_HOURS && duration > ONE_HOUR) {
+            newDuration = duration - ONE_HOUR;
+        }
+
+        // Prevent zooming out beyond 12 months
+        if (direction === "out" && newDuration > MAX_ZOOM_OUT_DURATION) return;
+        //
+        // // Ensure zooming does not cross time unit boundaries
+        // if (duration >= ONE_YEAR && newDuration < ONE_YEAR) return; // Year to Month
+        // if (duration >= ONE_MONTH && newDuration < ONE_MONTH) return; // Month to Day
+        // if (duration >= ONE_DAY && newDuration < ONE_DAY) return; // Day to Hour
+        // if (duration >= ONE_HOUR && newDuration < ONE_HOUR) return; // Hour to Minute
+
+        setVisibleTimeRange({
+            start: center - newDuration / 2,
+            end: center + newDuration / 2,
+        });
+    };
+
+
+
+    const getGanttData = useCallback(() => {
+        getData(currentMonth.month()).then()
+    }, [currentMonth]);
+
+    useEffect(() => {
+        getGanttData();
+    }, [filtersState.stations]);
     return {
         timeRange,
         setTimeRange,
@@ -192,7 +270,9 @@ const useGantt = () => {
         setCurrentMonth,
         onTimeChange,
         visibleTimeRange,
-        scrollTimeline
+        scrollTimeline,
+        getGanttData,
+        handleClickZoom
     };
 };
 
