@@ -14,6 +14,8 @@ import { getDeliveriesTableApi } from "@/services/api-service/document-deliverie
 import { useDateFormat } from "@/hooks/use-date-format";
 import { DocumentDeliveryStatuses } from "../quotes/widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
 import { useDebounce } from "@/utils/use-debounce";
+import { ClickableStatusButton } from "../quotes/widgets/delivery-status-button/delivery-status-button";
+import { DOCUMENT_TYPE } from "../quotes/enums";
 
 interface Query {
   customerId?: string;
@@ -30,7 +32,7 @@ const useDeliveries = () => {
   const { alertFaultGetData } = useSnackBar();
   const router = useRouter();
   const { query } = useRouter();
-  const { orderId } = query;
+  const { orderId, customerId, documentNumber } = query;
 
   const [page, setPage] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
@@ -73,6 +75,7 @@ const useDeliveries = () => {
     t("sales.quote.worksName"),
     t("sales.quote.itemsNumber"),
     t("sales.documentDeliveries.deliveryStatus"),
+    t("customers.modal.shipmentType"),
   ];
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -140,18 +143,26 @@ const useDeliveries = () => {
       if (res?.success) {
         const data = res?.data?.data;
         const totalItems = res?.data?.totalItems;
-        const mapData = data?.map((quote: any) => [
-          formatCustomDateTime(quote?.createdDate).split(" ")[0],
-          quote?.clientName,
-          quote?.agentName ?? "-",
-          quote?.orderNumber,
-          quote?.worksNames ?? "-",
-          quote?.numberOfItems,
-          t(
-            `sales.documentDeliveries.${
-              DocumentDeliveryStatuses[quote?.deliveryStatus]
-            }`
-          ),
+        const mapData = data?.map((item: any) => [
+          formatCustomDateTime(item?.createdDate).split(" ")[0],
+          item?.clientName,
+          item?.agentName ?? "-",
+          item?.orderNumber,
+          item?.worksNames ?? "-",
+          item?.numberOfItems,
+          <ClickableStatusButton
+            id={item?.orderId}
+            document={{
+              ...item,
+              id: item?.orderId,
+              customerId: item?.clientId,
+              number: item?.orderNumber,
+            }}
+            documentType={DOCUMENT_TYPE.order}
+          />,
+          item?.isSelfCollection
+            ? t("sales.documentDeliveries.selfCollection")
+            : item?.shipmentTypeName,
         ]);
 
         setAllDeliveries(mapData);
@@ -170,6 +181,9 @@ const useDeliveries = () => {
     const currentCustomerId = router.query.customerId;
     const currentAgentId = router.query.agentId;
     const currentShipmentTypeId = router.query.shipmentTypeId;
+    const isSelfCollection =
+      currentShipmentTypeId === "self_pickup" ||
+      deliveryTypeValue?.value === "self_pickup";
 
     await getDeliveriesTableApi(
       callApi,
@@ -184,7 +198,13 @@ const useDeliveries = () => {
             pageSize: pageSize,
             clientId: currentCustomerId || customer?.id,
             agentId: currentAgentId || agent?.id,
-            shipmentTypeId: currentShipmentTypeId || deliveryTypeValue?.value,
+            // If it's self pickup, pass isSelfCollection as true; otherwise, pass shipmentTypeId
+            ...(isSelfCollection
+              ? { isSelfCollection: true }
+              : {
+                  shipmentTypeId:
+                    currentShipmentTypeId || deliveryTypeValue?.value,
+                }),
             searchPattern:
               finalPatternSearch !== null &&
               finalPatternSearch !== undefined &&
@@ -324,6 +344,8 @@ const useDeliveries = () => {
     getDeliveriesTable,
     allDeliveries,
     orderId,
+    customerId,
+    documentNumber,
   };
 };
 
