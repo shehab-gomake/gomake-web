@@ -24,6 +24,7 @@ const QRScannerPage = () => {
     if (!data) return;
 
     setLoading(true);
+    setIsScanning(false);
 
     try {
       if (from === "production-floor") {
@@ -40,7 +41,7 @@ const QRScannerPage = () => {
               setScanResult("Invalid QR Code or No Board Mission Found");
             }
             setLoading(false);
-            setIsScanning(false);
+            // setIsScanning(false);
           },
           data.text
         );
@@ -50,7 +51,6 @@ const QRScannerPage = () => {
           callApi,
           (res) => {
             if (res?.success && res.data) {
-              debugger;
               setScanResult(data.text);
               navigate(
                 `/deliveries?orderId=${res.data?.orderId}&customerId=${res.data?.customerId}&documentNumber=${res.data?.orderNumber}`
@@ -59,7 +59,7 @@ const QRScannerPage = () => {
               setScanResult("Invalid QR Code or No Order Found");
             }
             setLoading(false);
-            setIsScanning(false);
+            // setIsScanning(false);
           },
           { qrCode: data.text }
         );
