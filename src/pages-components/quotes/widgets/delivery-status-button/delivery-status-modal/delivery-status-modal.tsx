@@ -75,8 +75,8 @@ const UpdateDeliveryStatusModal = ({
       }`}
       insideStyle={{
         width: isMobile ? "90vw" : "70%",
-        height: "fit-content",
-        ...(isMobile && { padding: "10px 10px 0px 10px" }),
+        height: isMobile ? "unset":"fit-content",
+        ...(isMobile && { padding: "10px 10px 0px 10px" , maxHeight:"70vh"}),
       }}
       openModal={openModal}
       onClose={handleCloseModal}
@@ -157,7 +157,7 @@ const UpdateDeliveryStatusModal = ({
         <PrimaryTable
           stickyFirstCol={false}
           stickyHeader={true}
-          maxHeight={"calc(100vh - 300px)"}
+          maxHeight={isMobile ? "30vh":"calc(100vh - 300px)"}
           rows={documentItems}
           headers={tableHeaders}
           variant={"RoundTable"}
@@ -192,6 +192,7 @@ const UpdateDeliveryStatusModal = ({
         setEditableQuantities={setEditableQuantities}
         setDocumentItems={setDocumentItems}
         deliveryState={deliveryState}
+        isMobile={isMobile}
       />
     </GoMakeModal>
   );
