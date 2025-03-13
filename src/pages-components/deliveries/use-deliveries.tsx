@@ -30,7 +30,7 @@ const useDeliveries = () => {
   const { alertFaultGetData } = useSnackBar();
   const router = useRouter();
   const { query } = useRouter();
-  const { orderId } = query;
+  const { orderId, customerId, documentNumber } = query;
 
   const [page, setPage] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
@@ -324,6 +324,8 @@ const useDeliveries = () => {
     getDeliveriesTable,
     allDeliveries,
     orderId,
+    customerId,
+    documentNumber,
   };
 };
 

@@ -22,7 +22,7 @@ const QRScannerFab: React.FC = () => {
       sx={classes.mainContainer}
       onClick={handleOpenQRScanner}
     >
-      <QrCodeScannerIcon sx={{ fontSize: 28 }} />
+      <QrCodeScannerIcon sx={{ fontSize: 25 }} />
     </Fab>
   );
 };

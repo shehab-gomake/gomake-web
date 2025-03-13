@@ -26,6 +26,7 @@ const UpdateDeliveryStatusModal = ({
   clientContacts,
   documentType,
   documentId,
+  documentNumber,
 }: IUpdateDeliveryStatusModalProps) => {
   const { classes } = useStyle();
   const isMobile = useIsMobile();
@@ -70,7 +71,7 @@ const UpdateDeliveryStatusModal = ({
   return (
     <GoMakeModal
       modalTitle={`${t(`sales.quote.${DOCUMENT_TYPE[documentType]}`)} #${
-        document?.number
+        documentNumber ?? document?.number
       }`}
       insideStyle={{
         width: isMobile ? "90vw" : "70%",

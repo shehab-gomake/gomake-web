@@ -19,21 +19,26 @@ import { PrimaryCheckbox } from "../check-box/primary-check-box";
 import { useMemo, useState } from "react";
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { adaptMarginRight } from "@/utils/adapter";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 const PrimaryTableCell = styled(TableCell)(() => {
   const { primaryColor } = useGomakeTheme();
+  const isMobile = useIsMobile();
+
   return {
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: primaryColor(50),
       color: primaryColor(900),
       ...FONT_FAMILY.Lexend(500, 14),
-      padding: "5px 5px",
+      padding: isMobile ? "5px 10px" : "5px",
+
       height: 47,
     },
     [`&.${tableCellClasses.body}`]: {
       ...FONT_FAMILY.Lexend(500, 14),
       color: primaryColor(500),
-      padding: "3px 0",
+      padding: isMobile ? "5px 10px" : "3px 0",
+
       height: 47,
     },
   };
@@ -152,7 +157,7 @@ const PrimaryTable = ({
   onSelectionChange,
   rowCheckboxCondition = () => true,
   handleSortAgingReport,
-  isDescOrder
+  isDescOrder,
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -195,17 +200,17 @@ const PrimaryTable = ({
     variant === "ClassicTable"
       ? ClassicTableCell
       : variant === "RoundTable"
-        ? RoundTableCell
-        : PrimaryTableCell;
+      ? RoundTableCell
+      : PrimaryTableCell;
 
   const TableRow =
     variant === "ClassicTable"
       ? ClassicTableRow
       : variant === "OddEvenTable"
-        ? OddEvenTableRow
-        : variant === "RoundTable"
-          ? RoundTableRow
-          : PrimaryTableRow;
+      ? OddEvenTableRow
+      : variant === "RoundTable"
+      ? RoundTableRow
+      : PrimaryTableRow;
 
   // Sorting logic
   const sortedRows = useMemo(() => {
@@ -288,20 +293,25 @@ const PrimaryTable = ({
                   >
                     {isAgingeport ? header?.name : header}
                     {/* Show sorting icon only when it's the sorted header */}
-                    {withSort && isAgingeport ? header?.name : header !== "" && sortConfig?.key === index && (
-                      <IconButton
-                        size="small"
-                        style={{ ...adaptMarginRight(dir, 4) }}
-                      >
-                        {sortConfig.direction === "asc" ? (
-                          <ArrowUpward sx={{ fontSize: "18px" }} />
-                        ) : (
-                          <ArrowDownward sx={{ fontSize: "18px" }} />
+                    {withSort && isAgingeport
+                      ? header?.name
+                      : header !== "" &&
+                        sortConfig?.key === index && (
+                          <IconButton
+                            size="small"
+                            style={{ ...adaptMarginRight(dir, 4) }}
+                          >
+                            {sortConfig.direction === "asc" ? (
+                              <ArrowUpward sx={{ fontSize: "18px" }} />
+                            ) : (
+                              <ArrowDownward sx={{ fontSize: "18px" }} />
+                            )}
+                          </IconButton>
                         )}
-                      </IconButton>
-                    )}
-                    {
-                      isAgingeport && (header?.key === "cardName" || header?.key === "cardCode" || header?.key === "balanceDue") && (
+                    {isAgingeport &&
+                      (header?.key === "cardName" ||
+                        header?.key === "cardCode" ||
+                        header?.key === "balanceDue") && (
                         <IconButton
                           size="small"
                           style={{ ...adaptMarginRight(dir, 4) }}
@@ -313,8 +323,7 @@ const PrimaryTable = ({
                             <ArrowDownward sx={{ fontSize: "18px" }} />
                           )}
                         </IconButton>
-                      )
-                    }
+                      )}
                   </div>
                 </TableCell>
               ))}
@@ -330,8 +339,8 @@ const PrimaryTable = ({
                     isAgingeport && isAgingDetailedReport && row[0] == " "
                       ? "#F6F6F6"
                       : isLastItemTotal && rowIndex === rows.length - 1
-                        ? "#EFDDFF"
-                        : "inherit",
+                      ? "#EFDDFF"
+                      : "inherit",
                 }}
               >
                 {enableCheckboxes && (

@@ -12,6 +12,7 @@ export interface IUpdateDeliveryStatusModalProps {
   document: any;
   documentItems: any;
   documentId: string;
+  documentNumber?: string;
   editableQuantities?: any;
   setEditableQuantities?: any;
   setDocumentItems?: any;
