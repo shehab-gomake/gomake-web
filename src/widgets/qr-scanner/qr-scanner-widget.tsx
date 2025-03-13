@@ -50,8 +50,11 @@ const QRScannerPage = () => {
           callApi,
           (res) => {
             if (res?.success && res.data) {
+              debugger;
               setScanResult(data.text);
-              navigate(`/deliveries?orderId=${res.data}`);
+              navigate(
+                `/deliveries?orderId=${res.data?.orderId}&customerId=${res.data?.customerId}&documentNumber=${res.data?.orderNumber}`
+              );
             } else {
               setScanResult("Invalid QR Code or No Order Found");
             }
@@ -112,7 +115,6 @@ const QRScannerPage = () => {
               <QrReader
                 delay={300}
                 facingMode="environment"
-                // !here
                 constraints={{
                   video: { facingMode: { exact: "environment" } },
                 }}

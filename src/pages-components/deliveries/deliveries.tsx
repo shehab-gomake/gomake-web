@@ -88,7 +88,7 @@ const DeliveriesPageWidget = () => {
   };
 
   useEffect(() => {
-    getAllShipmentTypes();
+    getAllShipmentTypes(true);
   }, []);
 
   useEffect(() => {

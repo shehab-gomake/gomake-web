@@ -138,7 +138,6 @@ const useDeliveryStatusButton = () => {
     }));
   };
 
-  //!here
   const getDocumentDeliveryItems = async (documentType, documentId) => {
     const callBack = (res) => {
       if (res.success) {
