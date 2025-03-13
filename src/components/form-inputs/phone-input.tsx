@@ -67,6 +67,7 @@ const PhoneInputComponent = ({
   border: 0px !important;
   width: 100%;
   box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.08) !important;
+  -webkit-appearance: none;
 }
 .react-international-phone-input-container
   .react-international-phone-country-selector-button {

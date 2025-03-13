@@ -74,7 +74,7 @@ const UpdateDeliveryStatusModal = ({
         documentNumber ?? document?.number
       }`}
       insideStyle={{
-        width: isMobile ? "90vw" : "70%",
+        width: isMobile ? "95vw" : "70%",
         height: isMobile ? "unset":"fit-content",
         ...(isMobile && { padding: "10px 10px 0px 10px" , maxHeight:"70vh"}),
       }}
@@ -88,7 +88,7 @@ const UpdateDeliveryStatusModal = ({
           display={"flex"}
           flexWrap={"wrap"}
           direction={"row"}
-          gap={"10px"}
+          gap={isMobile ? "5px":"10px"}
         >
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
             <span style={classes.labelStyle}>

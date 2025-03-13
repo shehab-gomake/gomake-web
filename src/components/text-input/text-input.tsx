@@ -24,6 +24,7 @@ const StyledTextField = styled(TextField, {
     color: props?.error ? "red" : "#000000",
     boxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
     WebkitBoxShadow: "0px 1px 10px rgba(0, 0, 0, 0.08)",
+    WebkitAppearance: "none",
     backgroundColor: "#FFF",
     width: "100%",
     borderBottom: props.error
