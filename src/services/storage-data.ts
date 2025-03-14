@@ -30,6 +30,9 @@ export const updateTokenStorage = (token: string) => {
 export const updateTempUserTokenStorage = (token: string) => {
   setItem("temp-auth-token", token);
 };
+export const removeTempUserTokenStorage = () => {
+  removeItem("temp-auth-token");
+};
 export const clearStorage = () => {
   localStorage.clear();
 };

@@ -51,7 +51,7 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
 
   const getTempUserToken = useCallback(async () => {
     const TokenRes: any = await callApi("GET", "/v1/auth/get-temp-user-token", {
-      token: router?.query?.token ?? "",
+      token: router?.query?.recordId,
     });
     if (TokenRes?.success) {
       const userToken = TokenRes?.data?.data?.result?.token;
