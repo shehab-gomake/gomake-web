@@ -71,7 +71,6 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
   const canEditComments = documentState?.isEditable && CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
   const canEditNotes = CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
   const canNotEditConfirmationComments = documentState?.isConfirmed || documentState?.documentStatus === QUOTE_STATUSES.Canceled;
-  console.log("relatedDocuments", relatedDocuments)
   return (
     <div style={classes.writeCommentContainer}>
       {
@@ -86,7 +85,6 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
             style={classes.autoComplateStyle}
             placeholder={t("sales.quote.selectDocuments")}
             onChange={(e, item) => {
-              console.log("item", item)
               if (!item?.isHeader && item?.value) {
                 if (item?.documentType === 12) {
                   const url = `/quotes?documentNumber=${item.documentNumber}`;

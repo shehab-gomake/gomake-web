@@ -74,8 +74,6 @@ const QrListenerWidget = ({ listening }: IProps) => {
       : 0;
     return Array(quantityOfPackages).fill(initialQuantityPerPackage);
   });
-  console.log("packageQuantities", packageQuantities)
-
   useEffect(() => {
     if (qrData?.quantity && quantityPerPackage > 0) {
       const totalQuantity = qrData.quantity;

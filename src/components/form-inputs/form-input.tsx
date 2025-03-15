@@ -34,7 +34,6 @@ const FormInput = ({
     loading,
     keyItem,
 }: IFormInput) => {
-    console.log("keyItem", keyItem)
     const [options, setOptions] = useState([]);
     const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
     const { callApi } = useGomakeAxios();

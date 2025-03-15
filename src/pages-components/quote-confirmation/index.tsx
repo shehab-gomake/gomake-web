@@ -5,7 +5,7 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import { QuoteNewPageWidget } from "../quote-new/quote";
 import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 import { useQuoteConfirmation } from "./use-quote-confirmation";
-import { updateTempUserTokenStorage } from "@/services/storage-data";
+import {clearStorage, removeTempUserTokenStorage, updateTempUserTokenStorage} from "@/services/storage-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import PageNotFound from "@/pages/404.page";
 import { QuoteNewPageSkeletonWidget } from "../quote-new/quote-skeleton";
@@ -51,6 +51,7 @@ const QuoteConfirmationPageWidget = ({
   useEffect(() => {
     const handlePrePaymentPage = async () => {
       if (isPrePaymentPage) {
+        removeTempUserTokenStorage();
         try {
           const userToken = await getTempUserToken();
           if (!userToken) {

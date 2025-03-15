@@ -128,7 +128,6 @@ const useWorkFlows = () => {
   const getProductActions = async () => {
     const productId = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
     const callBack = (res) => {
-      console.log(res)
       if (res.success) {
         setProductActions(res?.data);
       }

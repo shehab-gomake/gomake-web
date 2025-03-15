@@ -29,3 +29,9 @@ export enum EnumTermsPayment {
     Net90Eom,
     Net120Eom,
 }
+
+export enum BodyTypeEnum {
+    Mail,
+    SMS,
+    Whatsapp,
+  }

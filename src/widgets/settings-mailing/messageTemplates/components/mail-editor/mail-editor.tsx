@@ -14,13 +14,18 @@ import { ISMSTemplate } from "../../interfaces/interface";
 import { mailInputs, mailInputs1, mailInputs2, mailInputs3 } from "./inputs";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
-import { Stack } from "@mui/material";
+import { Checkbox, Stack } from "@mui/material";
 import { QuillEditor } from "./quill-editor";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { languageOptionsState, languagesState } from "@/store/languages";
-import { GoMakeAutoComplate } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton } from "@/components";
 import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { AddNewButton } from "@/components/button/add-new-button";
+import { BodyTypeEnum } from "@/enums/accounting-enums";
+import { CheckboxIcon } from "@/icons/checkbox-icon";
+import { CheckboxCheckedIcon } from "@/icons";
+import { useEffect } from "react";
 
 export interface IProps {
   onClickSave: (value: any) => void;
@@ -34,6 +39,15 @@ const EmailSettings = ({ onClickSave }: IProps) => {
   const [body, setBody] = useRecoilState<string>(smsBodyState);
   // const languages = useRecoilValue(languagesState);
   const languages = useRecoilValue(languageOptionsState);
+
+  useEffect(() => {
+    if (state?.smsTemplateBodies === null) {
+      setState({
+        ...state,
+        smsTemplateBodies: [],
+      });
+    }
+  }, [state]);
 
   const setLanguageState = useSetRecoilState<string>(languageTemplateState);
   const handleUpdateClick = () => {
@@ -58,6 +72,48 @@ const EmailSettings = ({ onClickSave }: IProps) => {
     onOpenDeleteModal();
     setLanguageState(value?.value);
   };
+
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const handleBodyTypeToggle = (type: BodyTypeEnum) => {
+    setState((prevState) => {
+      const isTypePresent = prevState.smsTemplateBodies.some(body => body.type === type);
+      const updatedBodies = isTypePresent
+        ? prevState.smsTemplateBodies.filter(body => body.type !== type)
+        : [...prevState.smsTemplateBodies, { type, body }];
+
+      return {
+        ...prevState,
+        smsTemplateBodies: updatedBodies,
+      };
+    });
+  };
+
+  const handleSaveBodyTypes = () => {
+    setIsModalOpen(false);
+  };
+
+  // Function to update body content for a specific type
+  const handleBodyContentChange = (type: BodyTypeEnum, content: string) => {
+    setState((prevState: ISMSTemplate) => ({
+      ...prevState,
+      smsTemplateBodies: prevState.smsTemplateBodies.map((body) =>
+        body.type === type ? { ...body, body: content } : body
+      ),
+    }));
+  };
+
+
+
+
+  const handleAddNewButtonClick = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
 
   return (
     <div style={classes.containerStyle}>
@@ -89,6 +145,65 @@ const EmailSettings = ({ onClickSave }: IProps) => {
       <div style={classes.subSection}>
         <h3 style={classes.subSectionHeader}>{t("mailingSettings.body")}</h3>
         <QuillEditor value={body} setValue={setBody} />
+      </div>
+      <div style={classes.subSection}>
+        {/* <h3 style={classes.subSectionHeader}>
+          {t("mailingSettings.specialBody")}
+        </h3> */}
+        <AddNewButton
+          label={t("mailingSettings.specialBody")}
+          onClick={handleAddNewButtonClick}
+        />
+        <GoMakeModal
+          insideStyle={{ height: "fit-content" }}
+          openModal={isModalOpen}
+          onClose={handleModalClose}
+          modalTitle={"Select Body Types"}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "5px", marginTop: 20 }}>
+
+            {Object.keys(BodyTypeEnum)
+              .filter((key) => isNaN(Number(key)))
+              .map((key) => {
+                return (
+                  <div key={key} >
+                    <Checkbox
+                      checked={state?.smsTemplateBodies?.some(body => body.type === BodyTypeEnum[key as keyof typeof BodyTypeEnum])}
+                      onChange={() => handleBodyTypeToggle(BodyTypeEnum[key as keyof typeof BodyTypeEnum])}
+                      icon={<CheckboxIcon />}
+                      checkedIcon={<CheckboxCheckedIcon />}
+                    />
+                    <label>{t(`mailingSettings.${key}`)}</label>
+                  </div>
+                )
+              })}
+            <GomakePrimaryButton style={{ width: "100%", height: "40px", marginTop: "10px" }} onClick={handleSaveBodyTypes}>{t("materials.buttons.save")}</GomakePrimaryButton>
+          </div>
+        </GoMakeModal>
+        {state?.smsTemplateBodies && state?.smsTemplateBodies.length > 0 && state?.smsTemplateBodies.map((body) => {
+          return (
+            <div key={body.type} style={classes.subSection}>
+              <h3 style={classes.subSectionHeader}>
+                {t(`mailingSettings.${BodyTypeEnum[body.type]?.toLowerCase()}Body`)}
+              </h3>
+              <QuillEditor
+                value={body.body || ""}
+                setValue={(content) => handleBodyContentChange(body.type, content)}
+              />
+            </div>
+          )
+        })}
+        {/* {selectedBodyTypes.map((type) => (
+          <div key={type} style={classes.subSection}>
+            <h3 style={classes.subSectionHeader}>
+              {t(`mailingSettings.${BodyTypeEnum[type].toLowerCase()}Body`)}
+            </h3>
+            <QuillEditor
+              value={bodyContents[type] || ""}
+              setValue={(content) => handleBodyContentChange(type, content)}
+            />
+          </div>
+        ))} */}
       </div>
       <div style={classes.subSection}>
         <h3 style={classes.subSectionHeader}>
