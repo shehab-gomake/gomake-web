@@ -1,4 +1,8 @@
-import { GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
+import {
+  GoMakeModal,
+  GomakePrimaryButton,
+  GomakeTextInput,
+} from "@/components";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../../style";
 import {
@@ -29,8 +33,6 @@ interface NotesForActionModalProps {
   documentType?: number;
 }
 
-
-
 const NotesForActionModal = ({
   onClose,
   openModal,
@@ -43,7 +45,7 @@ const NotesForActionModal = ({
   isHaveJobName = false,
   jobName,
   setJobName,
-  documentType
+  documentType,
 }: NotesForActionModalProps) => {
   const { classes } = useStyle();
   const [myValue, setMyValue] = useState<string>("");
@@ -56,11 +58,20 @@ const NotesForActionModal = ({
     setMyValue(value);
   }, [value]);
 
+  // If you need to use the debounced version again, please let me know, Lama.
+  // const handleTextChange = useCallback(
+  //   debounce((value: string) => {
+  //     setMyValue(value);
+  //     setValue(value);
+  //   }, 300),
+  //   [setValue]
+  // );
+
   const handleTextChange = useCallback(
-    debounce((value: string) => {
+    (value: string) => {
       setMyValue(value);
       setValue(value);
-    }, 300),
+    },
     [setValue]
   );
 
@@ -125,27 +136,33 @@ const NotesForActionModal = ({
           ...containerStyle,
         }}
       >
-        {isHaveJobName && (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && (
-          <div style={{ display: "flex", flexDirection: "column", justifyContent: "flex-start", alignItems: "flex-start", gap: 10, marginBottom: 10 }}>
-            <div>
-              Enter Job Name
-            </div>
-            <GomakeTextInput
-              placeholder={t("sales.cart.jobName")}
-              onChange={(e: any) => {
-                setJobName(e.target.value);
+        {isHaveJobName &&
+          (documentType === DOCUMENT_TYPE.quote ||
+            documentType === DOCUMENT_TYPE.order) && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
+                gap: 10,
+                marginBottom: 10,
               }}
-              value={jobName}
-            />
-
-          </div>
-
-        )}
+            >
+              <div>Enter Job Name</div>
+              <GomakeTextInput
+                placeholder={t("sales.cart.jobName")}
+                onChange={(e: any) => {
+                  setJobName(e.target.value);
+                }}
+                value={jobName}
+              />
+            </div>
+          )}
 
         {typeof window !== "undefined" && (
           <Suspense>
             <ReactQuill
-
               formats={formats}
               style={style}
               value={myValue}
