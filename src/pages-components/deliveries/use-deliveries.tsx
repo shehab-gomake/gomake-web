@@ -68,13 +68,13 @@ const useDeliveries = () => {
   }>();
 
   const tableHeaders = [
-    t("sales.quote.creationDate"),
     t("sales.quote.client"),
+    t("sales.documentDeliveries.deliveryStatus"),
+    t("sales.quote.creationDate"),
     t("sales.quote.agent"),
     t("sales.quote.orderNumber"),
     t("sales.quote.worksName"),
     t("sales.quote.itemsNumber"),
-    t("sales.documentDeliveries.deliveryStatus"),
     t("customers.modal.shipmentType"),
   ];
 
@@ -144,12 +144,7 @@ const useDeliveries = () => {
         const data = res?.data?.data;
         const totalItems = res?.data?.totalItems;
         const mapData = data?.map((item: any) => [
-          formatCustomDateTime(item?.createdDate).split(" ")[0],
           item?.clientName,
-          item?.agentName ?? "-",
-          item?.orderNumber,
-          item?.worksNames ?? "-",
-          item?.numberOfItems,
           <ClickableStatusButton
             id={item?.orderId}
             document={{
@@ -159,7 +154,14 @@ const useDeliveries = () => {
               number: item?.orderNumber,
             }}
             documentType={DOCUMENT_TYPE.order}
+            openModalOnClick={true}
           />,
+          formatCustomDateTime(item?.createdDate).split(" ")[0],
+          item?.agentName ?? "-",
+          item?.orderNumber,
+          item?.worksNames ?? "-",
+          item?.numberOfItems,
+
           item?.isSelfCollection
             ? t("sales.documentDeliveries.selfCollection")
             : item?.shipmentTypeName,

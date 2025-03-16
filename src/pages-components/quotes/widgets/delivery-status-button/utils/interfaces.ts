@@ -4,6 +4,7 @@ export interface ITaskCategoryLabelProps {
   id: string;
   document: any;
   documentType: DOCUMENT_TYPE;
+  openModalOnClick?: boolean;
 }
 
 export interface IUpdateDeliveryStatusModalProps {
