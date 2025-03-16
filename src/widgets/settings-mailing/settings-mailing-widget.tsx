@@ -4,7 +4,10 @@ import { ITab } from "@/components/tabs/interface";
 import { MessageTemplates } from "./messageTemplates/message-templates";
 import { AddButton } from "@/components/button/add-button";
 import { GoMakeDeleteModal, GoMakeModal } from "@/components";
-import { AddNewSMSTemplateGroup } from "./messageTemplates/components/add-new/add-new";
+import {
+  ActionType,
+  AddNewSMSTemplateGroup,
+} from "./messageTemplates/components/add-new/add-new";
 import {
   editModalState,
   groupModalState,
@@ -44,6 +47,7 @@ const SettingsMailingWidget = () => {
     onCloseDeleteModal,
     onOpenDeleteModal,
   } = useMessageTemplate();
+
   const { agentsCategories } = useAgentsList();
   const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
   const [openEditModal, setOpenEditModal] =
@@ -70,7 +74,7 @@ const SettingsMailingWidget = () => {
     },
     {
       title: t("mailingSettings.messageGroups"),
-      component: <MessageGroups getSMSTemplateGroups={getSMSTemplateGroups} />,
+      component: <MessageGroups />,
     },
   ];
 
@@ -89,19 +93,22 @@ const SettingsMailingWidget = () => {
           onClick={() => setOpenModal(true)}
         />
       </PrimaryTabsComponent>
-      <GoMakeModal
-        insideStyle={classes.groupModalStyle}
+      <GoMakeDeleteModal
+        modalType={ModalType.ADD}
+        subTitle={" "}
         openModal={openModal}
+        title={t("mailingSettings.addNewGroup")}
         onClose={() => {
           setOpenModal(false), setNewTemplateGroup(null);
         }}
-        modalTitle={t("mailingSettings.addNewGroup")}
+        onClickDelete={onAddSMSTemplateGroup}
+        style={{ width: "30%", minWidth: "400px" }}
       >
         <AddNewSMSTemplateGroup
-          onClickAdd={onAddSMSTemplateGroup}
           agentsCategories={agentsCategories}
+          actionType={ActionType.ADD}
         />
-      </GoMakeModal>
+      </GoMakeDeleteModal>
       <GoMakeModal
         insideStyle={classes.editorModalStyle}
         openModal={openEditModal}

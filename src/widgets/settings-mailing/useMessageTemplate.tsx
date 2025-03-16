@@ -46,9 +46,8 @@ const useMessageTemplate = () => {
   const [editModal, setEditModal] = useRecoilState<boolean>(editModalState);
   const [templateGroup, setTemplateGroup] =
     useRecoilState<SMSTemplateGroup>(templateGroupState);
-  const setNewTemplateGroup = useSetRecoilState<SMSTemplateGroup>(
-    templateGroupStateNew
-  );
+  const [newTemplateGroup, setNewTemplateGroup] =
+    useRecoilState<SMSTemplateGroup>(templateGroupStateNew);
   const [types, setTypes] = useState<{ value: string; text: string }[]>([]);
   const [SMSTemplate, setSMSTemplate] =
     useRecoilState<ISMSTemplate>(smsTemplateState);
@@ -138,7 +137,7 @@ const useMessageTemplate = () => {
   const getSMSTemplateGroups = () => {
     const callBackFunction = (data) => {
       if (data.success) {
-        setAllSMSTemplateGroups(data.data);
+        setAllSMSTemplateGroups(data?.data);
       }
     };
     getAllSMSTemplatesGroupsApi(callApi, callBackFunction).then();
@@ -158,7 +157,8 @@ const useMessageTemplate = () => {
   };
 
   // add new group
-  const onAddSMSTemplateGroup = async (templateGroupNew) => {
+
+  const onAddSMSTemplateGroup = async () => {
     const callback = (data) => {
       if (data.success) {
         alertSuccessAdded();
@@ -169,7 +169,7 @@ const useMessageTemplate = () => {
         alertFaultAdded();
       }
     };
-    await addSMSTemplateGroup(callApi, callback, templateGroupNew);
+    await addSMSTemplateGroup(callApi, callback, newTemplateGroup);
   };
 
   // save changes

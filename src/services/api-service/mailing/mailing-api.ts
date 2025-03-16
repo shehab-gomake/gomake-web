@@ -122,6 +122,16 @@ const deleteSMSTemplateGroupApi = async (callApi, callBack, data) => {
   );
 };
 
+const updateSMSTemplateGroupApi = async (callApi, callBack, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_SMS_TEMPLATES_GROUP_URL,
+    callBack,
+    data
+  );
+};
+
 export {
   updateSMSTemplateApi,
   getAllSMSTemplatesApi,
@@ -131,4 +141,5 @@ export {
   getAllTemplateTypesApi,
   getSMSTemplateApi,
   deleteSMSTemplateGroupApi,
+  updateSMSTemplateGroupApi,
 };

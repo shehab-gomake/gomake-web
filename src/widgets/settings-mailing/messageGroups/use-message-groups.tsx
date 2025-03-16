@@ -1,6 +1,6 @@
 import { EditPencilIcon } from "@/components/icons/edit-pencil-icon";
 import { TrashIcon } from "@/components/icons/trash-icon";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useAgentsList, useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   deleteRoleApi,
   getAllRolesApi,
@@ -9,11 +9,14 @@ import {
 import { IconButton, Stack } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { allSMSTemplateGroupsState } from "../states/state";
-import { deleteSMSTemplateGroupApi } from "@/services/api-service/mailing/mailing-api";
+import {
+  deleteSMSTemplateGroupApi,
+  updateSMSTemplateGroupApi,
+} from "@/services/api-service/mailing/mailing-api";
 
-const useMessageGroups = (getSMSTemplateGroups) => {
+const useMessageGroups = () => {
   const {
     alertFaultUpdate,
     alertSuccessUpdate,
@@ -22,19 +25,23 @@ const useMessageGroups = (getSMSTemplateGroups) => {
   } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-
-  const [allOriginRoles, setAllOriginRoles] = useState<any>([]);
-  const [allRoles, setAllRoles] = useState<any>([]);
-  const [modalState, setModalState] = useState<boolean>(false);
+  const { agentsCategories } = useAgentsList();
+  const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(
+    allSMSTemplateGroupsState
+  );
+  const [editModalState, setEditModalState] = useState<boolean>(false);
   const [deleteModalState, setDeleteModalState] = useState<boolean>(false);
-
-  const [modalInputValue, setModalInputValue] = useState<string>("");
   const [updateGroupId, setUpdateGroupId] = useState<string>("");
+  const [updateGroupState, setUpdateGroupState] = useState<{
+    id: string;
+    name: string;
+    agentId: string;
+    recordID: number;
+  }>();
 
-  const onClickUpdate = (role) => {
-    setModalState(true);
-    setModalInputValue(role.name);
-    setUpdateGroupId(role.id);
+  const onClickUpdate = (group) => {
+    setEditModalState(true);
+    setUpdateGroupState(group);
   };
 
   const onClickDelete = (roleId) => {
@@ -45,6 +52,16 @@ const useMessageGroups = (getSMSTemplateGroups) => {
   const onCloseDeleteModal = () => {
     setDeleteModalState(false);
     setUpdateGroupId("");
+    setUpdateGroupState({
+      id: "",
+      name: "",
+      agentId: "",
+      recordID: 0,
+    });
+  };
+
+  const onCloseEditModal = () => {
+    setEditModalState(false);
   };
 
   const tableHeaders = [
@@ -57,28 +74,30 @@ const useMessageGroups = (getSMSTemplateGroups) => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
-        setModalInputValue("");
-        setUpdateGroupId("");
-        setModalState(false);
+        setEditModalState(false);
+        setAllSMSTemplateGroups((prevGroups) =>
+          prevGroups.map((group) =>
+            group.id === updateGroupState.id
+              ? { ...group, ...updateGroupState }
+              : group
+          )
+        );
       } else {
         alertFaultUpdate();
       }
     };
-    const role = allOriginRoles.find((r) => r?.id === updateGroupId);
-    await updateRoleNameApi(callApi, callBack, {
-      id: updateGroupId,
-      name: modalInputValue,
-      recordID: role?.recordID,
-    });
+    await updateSMSTemplateGroupApi(callApi, callBack, updateGroupState);
   };
 
-  const deleteMessageGroups = async (groupId: string) => {
+  const deleteMessageGroups = async () => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessDelete();
         setUpdateGroupId("");
         setDeleteModalState(false);
-        getSMSTemplateGroups();
+        setAllSMSTemplateGroups((prevGroups) =>
+          prevGroups.filter((group) => group.id !== updateGroupId)
+        );
       } else {
         alertFaultDelete();
       }
@@ -88,21 +107,24 @@ const useMessageGroups = (getSMSTemplateGroups) => {
     });
   };
 
-  const allSMSTemplateGroups = useRecoilValue<any>(allSMSTemplateGroupsState);
   const SMSTemplatesGroups = useMemo(
     () =>
       allSMSTemplateGroups.map(
-        (group: { value: string; text: string; agentId: string }) => [
-          group?.text,
-          group?.agentId, // Display value
-
-          <Stack direction="row" justifyContent="center" key={group?.value}>
-            <IconButton
-            //  onClick={() => onClickUpdate(role)}
-            >
+        (group: {
+          id: string;
+          name: string;
+          agentId: string;
+          recordID: number;
+        }) => [
+          group?.name,
+          group?.agentId &&
+            agentsCategories?.find((agent) => agent?.id === group?.agentId)
+              ?.label,
+          <Stack direction="row" justifyContent="center" key={group?.id}>
+            <IconButton onClick={() => onClickUpdate(group)}>
               <EditPencilIcon height={20} width={20} />
             </IconButton>
-            <IconButton onClick={() => onClickDelete(group.value)}>
+            <IconButton onClick={() => onClickDelete(group.id)}>
               <TrashIcon height={20} width={20} />
             </IconButton>
           </Stack>,
@@ -114,18 +136,18 @@ const useMessageGroups = (getSMSTemplateGroups) => {
   return {
     t,
     tableHeaders,
-    allRoles,
-    modalState,
-    modalInputValue,
     updateGroupId,
-    setModalState,
-    setModalInputValue,
     updateMessageGroups,
     deleteMessageGroups,
     deleteModalState,
     setDeleteModalState,
     SMSTemplatesGroups,
     onCloseDeleteModal,
+    agentsCategories,
+    editModalState,
+    onCloseEditModal,
+    updateGroupState,
+    setUpdateGroupState,
   };
 };
 

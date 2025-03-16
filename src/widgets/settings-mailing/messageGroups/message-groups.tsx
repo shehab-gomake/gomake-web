@@ -1,14 +1,13 @@
 import { useMessageGroups } from "./use-message-groups";
-import { useEffect } from "react";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { useStyle } from "./style";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
+import {
+  ActionType,
+  AddNewSMSTemplateGroup,
+} from "../messageTemplates/components/add-new/add-new";
 
-interface IGroupsProps {
-  getSMSTemplateGroups: () => void;
-}
-const MessageGroups = ({ getSMSTemplateGroups }: IGroupsProps) => {
+const MessageGroups = () => {
   const {
     t,
     tableHeaders,
@@ -16,7 +15,13 @@ const MessageGroups = ({ getSMSTemplateGroups }: IGroupsProps) => {
     deleteModalState,
     onCloseDeleteModal,
     deleteMessageGroups,
-  } = useMessageGroups(getSMSTemplateGroups);
+    updateMessageGroups,
+    agentsCategories,
+    editModalState,
+    onCloseEditModal,
+    updateGroupState,
+    setUpdateGroupState,
+  } = useMessageGroups();
 
   return (
     <div style={{ position: "relative" }}>
@@ -35,7 +40,24 @@ const MessageGroups = ({ getSMSTemplateGroups }: IGroupsProps) => {
         onClose={onCloseDeleteModal}
         onClickDelete={deleteMessageGroups}
         onClickCancel={onCloseDeleteModal}
+        style={{ width: "30%", minWidth: "400px" }}
       />
+      <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
+        subTitle={" "}
+        openModal={editModalState}
+        title={t("mailingSettings.editGroup")}
+        onClose={onCloseEditModal}
+        onClickDelete={updateMessageGroups}
+        style={{ width: "30%", minWidth: "400px" }}
+      >
+        <AddNewSMSTemplateGroup
+          agentsCategories={agentsCategories}
+          actionType={ActionType.EDIT}
+          state={updateGroupState}
+          setState={setUpdateGroupState}
+        />
+      </GoMakeDeleteModal>
     </div>
   );
 };
