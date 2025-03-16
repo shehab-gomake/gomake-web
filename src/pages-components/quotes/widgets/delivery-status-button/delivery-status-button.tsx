@@ -14,6 +14,7 @@ const ClickableStatusButton = ({
   id,
   document,
   documentType,
+  openModalOnClick = false,
 }: ITaskCategoryLabelProps) => {
   const {
     t,
@@ -50,40 +51,45 @@ const ClickableStatusButton = ({
 
   return (
     <>
-      <span onClick={handleMenuClick} style={classes.spanStyle}>
+      <span
+        onClick={openModalOnClick ? handleChangeStatusClick : handleMenuClick}
+        style={classes.spanStyle}
+      >
         {t(
           `sales.documentDeliveries.${
             DocumentDeliveryStatuses[document?.deliveryStatus]
           }`
         )}
       </span>
-      <Menu
-        key={`Status-menu-${id}`}
-        anchorEl={anchorChangeEl}
-        open={Boolean(anchorChangeEl)}
-        onClose={handleMenuClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: isRtl ? "right" : "left",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: isRtl ? "right" : "left",
-        }}
-        PaperProps={{
-          sx: classes.menuPaperStyle,
-        }}
-      >
-        <MenuItem
-          style={classes.menuRowStyle}
-          onClick={handleChangeStatusClick}
+      {!openModalOnClick && (
+        <Menu
+          key={`Status-menu-${id}`}
+          anchorEl={anchorChangeEl}
+          open={Boolean(anchorChangeEl)}
+          onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: isRtl ? "right" : "left",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: isRtl ? "right" : "left",
+          }}
+          PaperProps={{
+            sx: classes.menuPaperStyle,
+          }}
         >
-          <ChangeIcon />
-          <Typography style={classes.menuText}>
-            {t("sales.documentDeliveries.changeStatus")}
-          </Typography>
-        </MenuItem>
-      </Menu>
+          <MenuItem
+            style={classes.menuRowStyle}
+            onClick={handleChangeStatusClick}
+          >
+            <ChangeIcon />
+            <Typography style={classes.menuText}>
+              {t("sales.documentDeliveries.changeStatus")}
+            </Typography>
+          </MenuItem>
+        </Menu>
+      )}
       <UpdateDeliveryStatusModal
         openModal={openDeliveryModal}
         onCloseModal={onCloseDeliveryModal}
