@@ -24,6 +24,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { useStyle } from "./style";
 import { ModalType } from "@/enums";
 import { useAgentsList } from "@/hooks";
+import { MessageGroups } from "./messageGroups/message-groups";
 
 const SettingsMailingWidget = () => {
   const { t } = useTranslation();
@@ -66,6 +67,10 @@ const SettingsMailingWidget = () => {
           getSMSTemplateTypes={getSMSTemplateTypes}
         />
       ),
+    },
+    {
+      title: t("mailingSettings.messageGroups"),
+      component: <MessageGroups getSMSTemplateGroups={getSMSTemplateGroups} />,
     },
   ];
 
