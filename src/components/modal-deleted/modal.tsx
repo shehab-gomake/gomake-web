@@ -76,7 +76,7 @@ const GoMakeDeleteModal = ({
       {...props}
       style={{
         outline: "none",
-        zIndex: 999999,
+        // zIndex: 999999,
       }}
     >
       <div style={{ ...classes.container, ...props.style }}>

@@ -1,4 +1,4 @@
-const groupNameInput = (state: any, agentsCategories: string[]) => {
+const groupNameInput = (state: any, agentsCategories: any[]) => {
   return [
     {
       name: "groupName",
