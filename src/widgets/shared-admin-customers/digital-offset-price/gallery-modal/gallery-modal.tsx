@@ -95,7 +95,7 @@ const GalleryModal = ({
           window.open(pdfUrl, '_blank');
         }
       } else {
-        // Handle the error case
+        alertFault("error adding template")
       }
     };
     await createDieCutFromTemplateMakerApi(callApi, callBack, reqObj);
