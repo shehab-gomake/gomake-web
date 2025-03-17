@@ -307,7 +307,7 @@ const EditableKeyValueViewComponent = ({
         setEdit(false);
     }
     return (
-        <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
+        <Stack direction={'row'} gap={'10px'} alignItems={'center'} justifyContent={'center'}>
             <span style={classes.detailTitle}>{name}</span>
             {edit ? <UpdateValueInput value={editValue} onUpdate={handleValueUpdate} onInputChange={onInputChange}
                 clickedOut={handleValueUpdate} onCancel={handleCancelUpdate} /> :

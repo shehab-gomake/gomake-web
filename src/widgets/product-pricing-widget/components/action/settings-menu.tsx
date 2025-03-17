@@ -25,7 +25,8 @@ const SettingsMenu = ({
   id,
   sectionName,
   deleteActionFromProduct,
-  isFromSetting
+  isFromSetting,
+  hideRelatedActions
 }) => {
   const { t } = useTranslation();
   const currentSignalRConnectionId = useRecoilValue(currentCalculationConnectionId);
@@ -74,42 +75,51 @@ const SettingsMenu = ({
   };
   return (
     <>
-      <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-        <MenuItem onClick={onClickProfit} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <ProfitIcon />
-          {t("products.profits.admin.title")}
-        </MenuItem>
-        <MenuItem onClick={onClickProporties} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <ProportiesIcon />
-          {t("products.profits.admin.proporties")}
-        </MenuItem>
-        <MenuItem onClick={onClickOsSettings} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <OsSettingsIcon />
-          {t("products.profits.admin.OSSettings")}
-        </MenuItem>
-        {machineName && (
-          <MenuItem onClick={onClickMachine} style={{ display: "flex", alignItems: "center", gap: "10px" }}
-          >
-            <PrinterIcon />
-            {t("products.offsetPrice.admin.machine")}
+      {
+        !hideRelatedActions ? <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
+          <MenuItem onClick={onClickProfit} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <ProfitIcon />
+            {t("products.profits.admin.title")}
           </MenuItem>
-        )}
-        <PermissionCheck userPermission={Permissions.CUSTOMIZE_WORKFLOW}>
-          <Divider />
-          <MenuItem style={{ display: "flex", alignItems: "center", gap: "10px" }} onClick={() => {
-            if (isFromSetting) {
-              deleteActionFromProduct(actionId)
-            }
-            else {
-              onClickOpenDeleteModal()
-            }
-          }}>
-            <DeleteSettingsIcon />
-            {t("navigationButtons.delete")}
+          <MenuItem onClick={onClickProporties} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <ProportiesIcon />
+            {t("products.profits.admin.proporties")}
           </MenuItem>
-        </PermissionCheck>
+          <MenuItem onClick={onClickOsSettings} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <OsSettingsIcon />
+            {t("products.profits.admin.OSSettings")}
+          </MenuItem>
+          {machineName && (
+            <MenuItem onClick={onClickMachine} style={{ display: "flex", alignItems: "center", gap: "10px" }}
+            >
+              <PrinterIcon />
+              {t("products.offsetPrice.admin.machine")}
+            </MenuItem>
+          )}
+          <PermissionCheck userPermission={Permissions.CUSTOMIZE_WORKFLOW}>
+            <Divider />
+            <MenuItem style={{ display: "flex", alignItems: "center", gap: "10px" }} onClick={() => {
+              if (isFromSetting) {
+                deleteActionFromProduct(actionId)
+              }
+              else {
+                onClickOpenDeleteModal()
+              }
+            }}>
+              <DeleteSettingsIcon />
+              {t("navigationButtons.delete")}
+            </MenuItem>
+          </PermissionCheck>
 
-      </GoMakeMenu>
+        </GoMakeMenu> :
+          <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
+            <MenuItem onClick={onClickProfit} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <ProfitIcon />
+              {t("products.profits.admin.title")}
+            </MenuItem>
+          </GoMakeMenu>
+      }
+
       <ThreeOptionsModal
         openModal={openDeleteModal}
         onClose={onClickCloseDeleteModal}
