@@ -94,7 +94,7 @@ const AddContactNewWidget = ({
     }
   };
   const filteredContacts = clientContactsValue.filter(contact =>
-    !quoteItemValue?.documentContacts.some(docContact => docContact.contactID === contact.id)
+    !quoteItemValue?.documentContacts?.some(docContact => docContact.contactID === contact.id)
   );
   return (
     <>
