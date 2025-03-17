@@ -6,7 +6,6 @@ import { PriceProfitHeaderWidget } from "./widgets/header/header-price-profit-wi
 import { PriceProfitTable } from "./widgets/table/table-price-profit-widge";
 import { GoMakeModal } from "@/components";
 import { GaussianChart } from "@/pages-components/gussian-chart/gussian-chart";
-import CircleIcon from "@mui/icons-material/Circle";
 
 const PriceProfitWidge = () => {
   const { classes } = useStyle();
@@ -126,26 +125,8 @@ const PriceProfitWidge = () => {
         onClose={handleCloseChartModal}
         modalTitle={" "}
         insideStyle={classes.modalStyle}
-        style={{ zIndex: 999999 }}
         withRoundedCloseIcon={false}
       >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            padding: "0px 60px",
-            gap: "20px",
-          }}
-        >
-          <span style={{ fontSize: "14px" }}>
-            <CircleIcon style={{ color: "rgba(75,192,192,1)", fontSize: 14 }} />{" "}
-            Calculate Price
-          </span>
-          <span style={{ fontSize: "14px" }}>
-            <CircleIcon style={{ color: "rgba(255,99,132,1)", fontSize: 14 }} />{" "}
-            User Price
-          </span>
-        </div>
         <GaussianChart />
       </GoMakeModal>
     </div>

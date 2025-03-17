@@ -17,12 +17,11 @@ const useStyle = () => {
         borderColor: "#E0E0E0",
       },
       modalStyle: {
-        width: "40%",
+        width: "50%",
         borderRadius: "8px",
         height: "auto",
         maxHeight: 600,
         gap: "10px",
-        zIndex: 999999,
       },
     };
   }, []);
