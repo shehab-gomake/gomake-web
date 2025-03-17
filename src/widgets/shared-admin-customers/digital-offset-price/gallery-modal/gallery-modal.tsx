@@ -7,6 +7,12 @@ import { SearchInputComponent } from "@/components/form-inputs/search-input-comp
 import { ReChooseIcon } from "@/icons";
 import { GalleryModalMapping } from "./gallery-modal-mapping";
 import { Skeleton } from "@mui/material";
+import { useCallback, useState } from "react";
+import { getPrintHouseMaterialsByMaterialKey } from "@/services/hooks/get-print-house-materials-by-key";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { createDieCutFromTemplateMakerApi } from "@/services/api-service/materials/materials-endpoints";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const GalleryModal = ({
   openModal,
@@ -45,7 +51,10 @@ const GalleryModal = ({
     selectParameterButton,
     filteredMaterialData,
     setMaterialData,
-    isDiesParameter
+    isDiesParameter,
+    checkRequiredParameters,
+    subProducts,
+    setSearchResult
   } = useGalleryModal({
     onClose,
     onChangeSubProductsForPrice,
@@ -55,7 +64,59 @@ const GalleryModal = ({
     getProductById,
     template,
     _getParameter,
+
   });
+  const [category, setCategory] = useState<any>()
+  const { callApi } = useGomakeAxios();
+  const { alertFault } = useSnackBar();
+  const { CheckPermission } = useUserPermission();
+
+  const createNewTemplateEndPoint = async () => {
+    const unitWidth = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.values[0];
+    const unitLength = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitLength")?.values[0];
+    const unitHeight = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitHeight")?.values[0];
+    const reqObj = {
+      dieCutCategory: category,
+      unitWidth: Number(unitWidth),
+      unitLength: Number(unitLength),
+      unitHeight: Number(unitHeight),
+      // sheetsCategory: category,
+      // sheetsWeight: widthParameter,
+      // sheetsColor: heightParameter,
+    }
+    const callBack = (res) => {
+      if (res.success) {
+        setSearchResult((prev: any) => {
+          return [res.data.data, ...prev,] // Add the new item to the data list
+        });
+
+        const pdfUrl = res.data.pdfUrl;
+        if (pdfUrl) {
+          window.open(pdfUrl, '_blank');
+        }
+      } else {
+        // Handle the error case
+      }
+    };
+    await createDieCutFromTemplateMakerApi(callApi, callBack, reqObj);
+  }
+
+
+
+  const createNewTemplate = () => {
+    const result = checkRequiredParameters(subProducts);
+    if (result && category) {
+      createNewTemplateEndPoint()
+    } else {
+
+      const errorMessage = !result
+        ? t("products.offsetPrice.admin.errorMakerTemplete1")
+        : t("products.offsetPrice.admin.errorMakerTemplete2");
+      alertFault(errorMessage)
+    }
+  }
+
+
 
 
   return (
@@ -86,20 +147,37 @@ const GalleryModal = ({
 
         </div>
         <div style={clasess.bodyContainer}>
-          <div style={clasess.headerContainer}>
-            {materialTableFilters &&
-              materialTableFilters.map(({ key, values }) => {
-                return (
-                  <GoMakeAutoComplate
-                    key={key}
-                    onChange={(e, v) => setMaterialDataFilter(v)}
-                    style={{ width: "200px" }}
-                    options={values}
-                    placeholder={key}
-                  />
-                );
-              })}
-            <SearchInputComponent onChange={onChangeSearch} />
+          <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 10 }}>
+            <div style={clasess.headerContainer}>
+              {materialTableFilters &&
+                materialTableFilters.map(({ key, values }) => {
+                  return (
+                    <GoMakeAutoComplate
+                      key={key}
+                      onChange={(e, v) => {
+                        setMaterialDataFilter(v)
+                        if (key === "category") {
+                          setCategory(v)
+                        }
+                      }}
+                      style={{ width: "200px" }}
+                      options={values}
+                      placeholder={key}
+                    />
+                  );
+                })}
+              <SearchInputComponent onChange={onChangeSearch} />
+            </div>
+            {
+              CheckPermission(Permissions.IS_CAN_CREATE_NEW_TEMPLATE) &&
+              <GomakePrimaryButton
+                style={{ width: "fit-content", minWidth: "fit-content", height: "40px" }}
+                onClick={createNewTemplate}
+              >
+                {t("products.offsetPrice.admin.createNewTemplate")}
+              </GomakePrimaryButton>
+            }
+
           </div>
           <div style={clasess.mainContainer}>
             {fixedCartData?.filter((card) => card.isShow)?.map((card, index) => {
