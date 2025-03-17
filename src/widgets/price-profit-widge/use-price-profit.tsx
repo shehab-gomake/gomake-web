@@ -1,6 +1,18 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useDisplayProfitProfilesSignalr } from "@/hooks/signalr/use-display-profit-profiles-signalr";
-import { getAllPricingProfileSettingForDropDownListApi, getAllProfitProfileProductByProductIdApi, getProfitsProfilePdfApi, reCalculatePriceApi, resetPrintHousePriceApi, updatePrintHousePriceApi, updateProfitProfileProductHiddenApi, updateProfitProfileProductParameterApi, updateProfitProfileProductQuantitiesApi, updateProfitProfileProductSelectedApi, updateSelectedPrintHousePricesApi } from "@/services/api-service/products/product-endpoints";
+import {
+  getAllPricingProfileSettingForDropDownListApi,
+  getAllProfitProfileProductByProductIdApi,
+  getProfitsProfilePdfApi,
+  reCalculatePriceApi,
+  resetPrintHousePriceApi,
+  updatePrintHousePriceApi,
+  updateProfitProfileProductHiddenApi,
+  updateProfitProfileProductParameterApi,
+  updateProfitProfileProductQuantitiesApi,
+  updateProfitProfileProductSelectedApi,
+  updateSelectedPrintHousePricesApi,
+} from "@/services/api-service/products/product-endpoints";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 
@@ -15,20 +27,26 @@ interface PricingProfileSetting {
 const usePriceProfit = () => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData, alertSuccessUpdate } = useSnackBar();
-  const [pricingProfileSetting, setPricingProfileSetting] = useState<PricingProfileSetting[]>([])
-  const [selectedPricingProfileSetting, setSelectedPricingProfileSetting] = useState<PricingProfileSetting | null>(null)
-  const router = useRouter()
+  const [pricingProfileSetting, setPricingProfileSetting] = useState<
+    PricingProfileSetting[]
+  >([]);
+  const [selectedPricingProfileSetting, setSelectedPricingProfileSetting] =
+    useState<PricingProfileSetting | null>(null);
+  const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [isUpdateQuantity, setIsUpdateQuantity] = useState(false)
+  const [isUpdateQuantity, setIsUpdateQuantity] = useState(false);
   const [isUpdate, setIsUpdate] = useState(false);
-  const [anchorElSetting, setAnchorElSetting] = useState<null | HTMLElement>(null);
+  const [anchorElSetting, setAnchorElSetting] = useState<null | HTMLElement>(
+    null
+  );
   const open = Boolean(anchorEl);
   const openSetting = Boolean(anchorElSetting);
   const [anchorElPrint, setAnchorElPrint] = useState<null | HTMLElement>(null);
   const openPrint = Boolean(anchorElPrint);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null)
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [products, setProducts] = useState<any>([]);
-  const [requestAbortController, setRequestAbortController] = useState<AbortController>(null);
+  const [requestAbortController, setRequestAbortController] =
+    useState<AbortController>(null);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -49,37 +67,47 @@ const usePriceProfit = () => {
     setAnchorElPrint(event.currentTarget);
   };
 
+  const [openChartModal, setOpenChartModal] = useState<boolean>(false);
+  const handleOpenChartModal = () => {
+    setOpenChartModal(true);
+  };
 
+  const handleCloseChartModal = () => {
+    setOpenChartModal(false);
+  };
   const handleCheckboxChange = (index: number) => {
-    setProducts(prevProducts => ({
+    setProducts((prevProducts) => ({
       ...prevProducts,
       data: prevProducts.data.map((product, i) =>
         i === index ? { ...product, isSelected: !product.isSelected } : product
-      )
+      ),
     }));
   };
 
   const handleRestoreOriginalPrice = (data: any) => {
-    updatePrintHousePrice(data, false, false)
-    handleClose()
+    updatePrintHousePrice(data, false, false);
+    handleClose();
   };
 
   const handleUpdateNewPrice = (data: any) => {
-    updatePrintHousePrice(data, true, false)
-    handleClose()
+    updatePrintHousePrice(data, true, false);
+    handleClose();
   };
 
   const handleReviewCalculation = (data: any) => {
-    window.open(`/products/create?profitsProfileRowId=${data?.rowId}&quantity=${data?.quantity}`, "_blank");
-    handleClose()
+    window.open(
+      `/products/create?profitsProfileRowId=${data?.rowId}&quantity=${data?.quantity}`,
+      "_blank"
+    );
+    handleClose();
   };
 
   const onBlurPriceChange = async (item) => {
     setIsUpdate(false);
   };
-  const [newPrintHousePrice, setNewPrintHousePrice] = useState(null)
+  const [newPrintHousePrice, setNewPrintHousePrice] = useState(null);
   const handlePriceChange = (index: number, idx: number, newValue: string) => {
-    setNewPrintHousePrice(Number(newValue))
+    setNewPrintHousePrice(Number(newValue));
     setProducts((prevProducts) => {
       const updatedProducts = { ...prevProducts }; // Corrected to spread the object
       const productToUpdate = { ...updatedProducts.data[index] }; // Access the data array
@@ -87,7 +115,7 @@ const usePriceProfit = () => {
 
       updatedPricePerQuantity[idx] = {
         ...updatedPricePerQuantity[idx],
-        calculatedPrice: newValue
+        calculatedPrice: newValue,
       };
 
       productToUpdate.pricePerQuantity = updatedPricePerQuantity;
@@ -98,71 +126,76 @@ const usePriceProfit = () => {
   };
 
   const handleHideProduct = (index: number, value: boolean) => {
-    setProducts(prevProducts => {
+    setProducts((prevProducts) => {
       const updatedProducts = {
         ...prevProducts,
         data: prevProducts.data.map((product, i) =>
           i === index ? { ...product, isHidden: !value } : product
-        )
+        ),
       };
       return updatedProducts;
     });
   };
 
   const updateDropdownValue = (value: any, index: number) => {
-    setProducts(prevProducts => {
-      const updatedParameters = prevProducts.requiredParameters.map((param, i) => {
-        if (i === index) {
-          const updatedValues = param.values.map(val => ({
-            ...val,
-            isDefault: val?.id === value?.id // Set `isDefault` true only for selected item
-          }));
-          return { ...param, values: updatedValues };
+    setProducts((prevProducts) => {
+      const updatedParameters = prevProducts.requiredParameters.map(
+        (param, i) => {
+          if (i === index) {
+            const updatedValues = param.values.map((val) => ({
+              ...val,
+              isDefault: val?.id === value?.id, // Set `isDefault` true only for selected item
+            }));
+            return { ...param, values: updatedValues };
+          }
+          return param;
         }
-        return param;
-      });
+      );
       return { ...prevProducts, requiredParameters: updatedParameters };
     });
   };
 
   const updateDropdownMaterialValue = (value: any, index: number) => {
-    setProducts(prevProducts => {
-      const updatedParameters = prevProducts.requiredParameters.map((param, i) => {
-        if (i === index) {
-          const updatedValues = param.materialValues.map(val => ({
-            ...val,
-          }));
-          return {
-            ...param,
-            materialValues: updatedValues,
-            defaultValue: value?.value // Set defaultValue to the selected value
-          };
+    setProducts((prevProducts) => {
+      const updatedParameters = prevProducts.requiredParameters.map(
+        (param, i) => {
+          if (i === index) {
+            const updatedValues = param.materialValues.map((val) => ({
+              ...val,
+            }));
+            return {
+              ...param,
+              materialValues: updatedValues,
+              defaultValue: value?.value, // Set defaultValue to the selected value
+            };
+          }
+          return param;
         }
-        return param;
-      });
+      );
       return { ...prevProducts, requiredParameters: updatedParameters };
     });
   };
 
   const updateTextInputValue = (value: string, index: number) => {
-    setProducts(prevProducts => {
-      const updatedParameters = prevProducts.requiredParameters.map((param, i) => {
-        if (i === index) {
-          // Ensure the key name is `defaultValue` in `param`
-          return { ...param, defaultValue: value };
+    setProducts((prevProducts) => {
+      const updatedParameters = prevProducts.requiredParameters.map(
+        (param, i) => {
+          if (i === index) {
+            // Ensure the key name is `defaultValue` in `param`
+            return { ...param, defaultValue: value };
+          }
+          return param;
         }
-        return param;
-      });
+      );
 
       return { ...prevProducts, requiredParameters: updatedParameters };
     });
   };
   const onBlurQuantityChange = () => {
-    updateProfitProfileProductQuantities()
-
+    updateProfitProfileProductQuantities();
   };
   const handleQuantity = (index: number, value: string) => {
-    setProducts(prevProducts => {
+    setProducts((prevProducts) => {
       const updatedHeaders = prevProducts.headers.map((header, i) => {
         if (i === index) {
           return { ...header, quantity: Number(value) }; // Update the quantity
@@ -177,170 +210,200 @@ const usePriceProfit = () => {
   const getAllPricingProfileSettingForDropDownList = useCallback(async () => {
     const callBack = (res) => {
       if (res?.success) {
-        setPricingProfileSetting(res?.data)
+        setPricingProfileSetting(res?.data);
       }
     };
     await getAllPricingProfileSettingForDropDownListApi(callApi, callBack);
   }, []);
 
-  const getAllProfitProfileProductByProductId = useCallback(async (productId: string) => {
-    setProducts([])
-    // Abort any ongoing request
-    if (requestAbortController) {
-      requestAbortController.abort();
-    }
-
-    // Create a new AbortController instance
-    const newRequestAbortController = new AbortController();
-    setRequestAbortController(newRequestAbortController);
-
-    const callBack = (res) => {
-      if (res?.success) {
-        setProducts(res?.data);
+  const getAllProfitProfileProductByProductId = useCallback(
+    async (productId: string) => {
+      setProducts([]);
+      // Abort any ongoing request
+      if (requestAbortController) {
+        requestAbortController.abort();
       }
-    };
 
-    // Pass the signal from the AbortController to the API call
-    await getAllProfitProfileProductByProductIdApi(
-      callApi,
-      callBack,
-      { productId },
-      false,
-      newRequestAbortController // Pass the signal here
-    );
+      // Create a new AbortController instance
+      const newRequestAbortController = new AbortController();
+      setRequestAbortController(newRequestAbortController);
 
-  }, [requestAbortController]);
+      const callBack = (res) => {
+        if (res?.success) {
+          setProducts(res?.data);
+        }
+      };
+
+      // Pass the signal from the AbortController to the API call
+      await getAllProfitProfileProductByProductIdApi(
+        callApi,
+        callBack,
+        { productId },
+        false,
+        newRequestAbortController // Pass the signal here
+      );
+    },
+    [requestAbortController]
+  );
   useEffect(() => {
-    getAllPricingProfileSettingForDropDownList()
-  }, [])
+    getAllPricingProfileSettingForDropDownList();
+  }, []);
 
   useEffect(() => {
     if (router.query.productId) {
-      const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
+      const productId = Array.isArray(router.query.productId)
+        ? router.query.productId[0]
+        : router.query.productId;
       getAllProfitProfileProductByProductId(productId);
     }
-  }, [router])
-
-  const updateProfitProfileProductParameter = useCallback(async (data: any, value: any) => {
-    const callBack = (res) => {
-      const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
-
-      if (res?.success) {
-        setProducts(prevProducts => ({
-          ...prevProducts,
-          requiredParameters: res?.data
-        }));
-      }
-      else {
-        getAllProfitProfileProductByProductId(productId);
-      }
-    };
-    await updateProfitProfileProductParameterApi(callApi, callBack, {
-      productId: router.query.productId,
-      parameterId: data?.parameterId,
-      parameterName: data?.parameterName,
-      sectionId: data?.sectionId,
-      subSectionId: data?.subSectionId,
-      defaultValue: value?.valueId ? value?.valueId : value?.id ? value?.id : value
-    });
   }, [router]);
 
+  const updateProfitProfileProductParameter = useCallback(
+    async (data: any, value: any) => {
+      const callBack = (res) => {
+        const productId = Array.isArray(router.query.productId)
+          ? router.query.productId[0]
+          : router.query.productId;
+
+        if (res?.success) {
+          setProducts((prevProducts) => ({
+            ...prevProducts,
+            requiredParameters: res?.data,
+          }));
+        } else {
+          getAllProfitProfileProductByProductId(productId);
+        }
+      };
+      await updateProfitProfileProductParameterApi(callApi, callBack, {
+        productId: router.query.productId,
+        parameterId: data?.parameterId,
+        parameterName: data?.parameterName,
+        sectionId: data?.sectionId,
+        subSectionId: data?.subSectionId,
+        defaultValue: value?.valueId
+          ? value?.valueId
+          : value?.id
+          ? value?.id
+          : value,
+      });
+    },
+    [router]
+  );
+
   const updateProfitProfileProductQuantities = useCallback(async () => {
-    const quantities = products?.headers?.map(item => item.quantity);
-    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
+    const quantities = products?.headers?.map((item) => item.quantity);
+    const productId = Array.isArray(router.query.productId)
+      ? router.query.productId[0]
+      : router.query.productId;
     const callBack = (res) => {
       if (res?.success) {
         setIsUpdateQuantity(false);
-        setProducts(res?.data)
-      }
-      else {
+        setProducts(res?.data);
+      } else {
         setIsUpdateQuantity(false);
-        getAllProfitProfileProductByProductId(productId)
+        getAllProfitProfileProductByProductId(productId);
       }
     };
     await updateProfitProfileProductQuantitiesApi(callApi, callBack, {
       productId: productId,
-      quantities: quantities
+      quantities: quantities,
     });
   }, [products, router]);
 
-  const updatePrintHousePrice = useCallback(async (data: any, isNewPrice: boolean, isCalculatedPrice?: boolean) => {
-    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
+  const updatePrintHousePrice = useCallback(
+    async (data: any, isNewPrice: boolean, isCalculatedPrice?: boolean) => {
+      const productId = Array.isArray(router.query.productId)
+        ? router.query.productId[0]
+        : router.query.productId;
 
-    const callBack = (res) => {
-      if (res?.success) {
-        setIsUpdate(false);
-        setProducts(res?.data)
-      }
-      else {
-        setIsUpdate(false);
-        getAllProfitProfileProductByProductId(productId)
+      const callBack = (res) => {
+        if (res?.success) {
+          setIsUpdate(false);
+          setProducts(res?.data);
+        } else {
+          setIsUpdate(false);
+          getAllProfitProfileProductByProductId(productId);
+        }
+      };
+      await updatePrintHousePriceApi(callApi, callBack, {
+        productId: productId,
+        subProductId: data?.productId,
+        quantity: data?.quantity,
+        printHousePrice: isCalculatedPrice
+          ? Number(data?.calculatedPrice)
+          : Number(data?.printHousePrice),
+        rowId: data?.rowId,
+        isNewPrice: isNewPrice,
+      });
+    },
+    [router, newPrintHousePrice]
+  );
 
-      }
-    };
-    await updatePrintHousePriceApi(callApi, callBack, {
-      productId: productId,
-      subProductId: data?.productId,
-      quantity: data?.quantity,
-      printHousePrice: isCalculatedPrice ? Number(data?.calculatedPrice) : Number(data?.printHousePrice),
-      rowId: data?.rowId,
-      isNewPrice: isNewPrice
-    });
-  }, [router, newPrintHousePrice]);
+  const updateProfitProfileProductHidden = useCallback(
+    async (data: any, handleClose: () => void) => {
+      const productId = Array.isArray(router.query.productId)
+        ? router.query.productId[0]
+        : router.query.productId;
+      const callBack = (res) => {
+        if (res?.success) {
+          setIsUpdate(false);
+          setProducts(res?.data);
+          handleClose();
+        } else {
+          handleClose();
+          getAllProfitProfileProductByProductId(productId);
+        }
+      };
+      await updateProfitProfileProductHiddenApi(callApi, callBack, {
+        productId: productId,
+        rowId: data?.rowId,
+      });
+    },
+    [router]
+  );
 
-  const updateProfitProfileProductHidden = useCallback(async (data: any, handleClose: () => void) => {
-    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
-    const callBack = (res) => {
-      if (res?.success) {
-        setIsUpdate(false);
-        setProducts(res?.data)
-        handleClose()
-      }
-      else {
-        handleClose()
-        getAllProfitProfileProductByProductId(productId)
-      }
-    }
-    await updateProfitProfileProductHiddenApi(callApi, callBack, {
-      productId: productId,
-      rowId: data?.rowId,
-    });
-  }, [router])
+  const updateProfitProfileProductSelected = useCallback(
+    async (data: any) => {
+      const productId = Array.isArray(router.query.productId)
+        ? router.query.productId[0]
+        : router.query.productId;
 
-  const updateProfitProfileProductSelected = useCallback(async (data: any,) => {
-    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
+      const callBack = (res) => {
+        if (res?.success) {
+          setIsUpdate(false);
+          setProducts(res?.data);
+        } else {
+          getAllProfitProfileProductByProductId(productId);
+        }
+      };
+      await updateProfitProfileProductSelectedApi(callApi, callBack, {
+        productId: productId,
+        rowId: data?.rowId,
+      });
+    },
+    [router]
+  );
 
-    const callBack = (res) => {
-      if (res?.success) {
-        setIsUpdate(false);
-        setProducts(res?.data)
-      }
-      else {
-        getAllProfitProfileProductByProductId(productId)
-      }
-    }
-    await updateProfitProfileProductSelectedApi(callApi, callBack, {
-      productId: productId,
-      rowId: data?.rowId,
-    });
-  }, [router])
-
-  const updateSelectedPrintHousePrices = useCallback(async (isNewPrice: boolean) => {
-    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
-    const callBack = (res) => {
-      if (res?.success) {
-        setIsUpdate(false);
-        setProducts(res?.data)
-      }
-      else {
-        getAllProfitProfileProductByProductId(productId)
-      }
-    }
-    await updateSelectedPrintHousePricesApi(callApi, callBack, {
-      productId: productId,
-      isNewPrice,
-    });
-  }, [router])
+  const updateSelectedPrintHousePrices = useCallback(
+    async (isNewPrice: boolean) => {
+      const productId = Array.isArray(router.query.productId)
+        ? router.query.productId[0]
+        : router.query.productId;
+      const callBack = (res) => {
+        if (res?.success) {
+          setIsUpdate(false);
+          setProducts(res?.data);
+        } else {
+          getAllProfitProfileProductByProductId(productId);
+        }
+      };
+      await updateSelectedPrintHousePricesApi(callApi, callBack, {
+        productId: productId,
+        isNewPrice,
+      });
+    },
+    [router]
+  );
 
   const onClickPrint = async (isSelected?: boolean) => {
     const downloadPdf = (url) => {
@@ -366,45 +429,43 @@ const usePriceProfit = () => {
 
     await getProfitsProfilePdfApi(callApi, callBack, {
       productId: router.query.productId,
-      isSelectedProducts: isSelected
+      isSelectedProducts: isSelected,
     });
-
   };
-  const { } = useDisplayProfitProfilesSignalr({ setProducts })
-
+  const {} = useDisplayProfitProfilesSignalr({ setProducts });
 
   const resetPrintHousePrice = useCallback(async () => {
-    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
+    const productId = Array.isArray(router.query.productId)
+      ? router.query.productId[0]
+      : router.query.productId;
     const callBack = (res) => {
       if (res?.success) {
-        setProducts(res?.data)
-        handleCloseSetting()
-
+        setProducts(res?.data);
+        handleCloseSetting();
+      } else {
+        getAllProfitProfileProductByProductId(productId);
+        handleCloseSetting();
       }
-      else {
-        getAllProfitProfileProductByProductId(productId)
-        handleCloseSetting()
-      }
-    }
+    };
     await resetPrintHousePriceApi(callApi, callBack, {
       productId: productId,
     });
-  }, [router])
+  }, [router]);
 
   const reCalculatePrice = async () => {
-    const productId = Array.isArray(router.query.productId) ? router.query.productId[0] : router.query.productId;
+    const productId = Array.isArray(router.query.productId)
+      ? router.query.productId[0]
+      : router.query.productId;
 
     const callBack = (res) => {
       if (res.success) {
         // alertSuccessUpdate();
       }
-    }
+    };
     await reCalculatePriceApi(callApi, callBack, {
-      productId
-    })
-  }
-
-
+      productId,
+    });
+  };
 
   return {
     open,
@@ -448,7 +509,10 @@ const usePriceProfit = () => {
     updateSelectedPrintHousePrices,
     onClickPrint,
     resetPrintHousePrice,
-    reCalculatePrice
+    reCalculatePrice,
+    handleCloseChartModal,
+    handleOpenChartModal,
+    openChartModal,
   };
 };
 

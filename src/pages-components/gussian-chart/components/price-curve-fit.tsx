@@ -5,20 +5,12 @@ import {
   CategoryScale,
   LinearScale,
   LineElement,
-  ChartOptions,
 } from "chart.js";
 
 // Register necessary components for Chart.js
-ChartJS.register(
-  PointElement,
-  CategoryScale,
-  LinearScale,
-  LineElement,
-  annotationPlugin
-);
+ChartJS.register(PointElement, CategoryScale, LinearScale, LineElement);
 
-import annotationPlugin from "chartjs-plugin-annotation";
-ChartJS.register(annotationPlugin);
+import { useTranslation } from "react-i18next";
 
 const PriceCurveFit = ({
   calculatedPricesCosts,
@@ -28,6 +20,8 @@ const PriceCurveFit = ({
   pointsX,
   pointsY,
 }) => {
+  const { t } = useTranslation();
+
   const data = {
     datasets: [
       // First line: calculatedPricesCosts vs calculatedPrices
@@ -82,13 +76,13 @@ const PriceCurveFit = ({
       x: {
         title: {
           display: true,
-          text: "Cost", // X-axis title
+          text: t("pricingWidget.cost"), // X-axis title
         },
       },
       y: {
         title: {
           display: true,
-          text: "Price", // Y-axis title
+          text: t("sales.quote.price"), // Y-axis title
         },
         ticks: {
           // Format the tick values to show large numbers with commas
@@ -116,7 +110,7 @@ const PriceCurveFit = ({
   //             borderRadius: 5,
   //             color: "white",
   //             textAlign: "center",
-  //           } as any, // ✅ Fix: Cast to 'any' if TS still complains
+  //           } as any,
   //           calculatePriceDescription: {
   //             type: "label",
   //             xValue: 3500,
@@ -128,7 +122,7 @@ const PriceCurveFit = ({
   //             borderRadius: 5,
   //             color: "white",
   //             textAlign: "center",
-  //           } as any, // ✅ Fix: Cast to 'any' if needed
+  //           } as any,
   //         },
   //       },
   //     },
