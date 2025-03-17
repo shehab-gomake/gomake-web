@@ -140,11 +140,11 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
       checked: showGraphics,
       onChange: handleSwitchCheckForShowGraphics,
     },
-    {
-      label: t("sales.quote.showDelivery"),
-      checked: showDelivery,
-      onChange: handleSwitchCheckForShowDelivery,
-    },
+    // {
+    //   label: t("sales.quote.showDelivery"),
+    //   checked: showDelivery,
+    //   onChange: handleSwitchCheckForShowDelivery,
+    // },
   ];
   return {
     quoteStateValue,

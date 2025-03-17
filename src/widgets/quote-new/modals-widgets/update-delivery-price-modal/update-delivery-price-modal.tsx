@@ -22,7 +22,7 @@ const UpdateDeliveryPriceModal = ({ openModal, onClose, onClickAdd }) => {
     if (quoteItemValue?.deliveryPrice) {
       setDeliveryPriceValue(quoteItemValue?.deliveryPrice);
     }
-  }, [quoteItemValue?.deliveryPrice]);
+  }, [quoteItemValue?.deliveryPrice, openModal]);
   useEffect(() => {
     getAllShipmentTypes();
   }, []);
@@ -37,21 +37,15 @@ const UpdateDeliveryPriceModal = ({ openModal, onClose, onClickAdd }) => {
       <GoMakeModal
         openModal={openModal}
         modalTitle={t("sales.quote.updateDelivery")}
-        onClose={handleModalClose}
+        onClose={() => {
+          setDeliveryPriceValue(undefined);
+          handleModalClose()
+        }}
         insideStyle={classes.insideStyle}
       >
         <div style={classes.mainContainer}>
           <div style={classes.autoComplateRowContainer}>
             <div style={{ width: "100%", marginTop: 15 }}>
-              {/* <GoMakeAutoComplate
-                options={shipmentTypes}
-                value={deliveryTypeValue}
-                placeholder={t("sales.quote.selectDelivery")}
-                style={classes.selectTypeContainer}
-                onChange={(e: any, value: any) => {
-                  setDeliveryTypeValue(value);
-                }}
-              /> */}
               <div style={{ width: "100%", marginTop: 15 }}>
                 <GomakeTextInput
                   placeholder={t("sales.quote.deliveryPrice")}
