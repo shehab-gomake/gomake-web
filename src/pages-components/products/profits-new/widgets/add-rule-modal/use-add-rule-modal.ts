@@ -74,6 +74,7 @@ const useAddRuleModal = ({
         label: t("products.profits.exceptions.machineTypeCategory"),
         id: "Machine category",
       },
+      { label: t("products.profits.exceptions.materialType"), id: "MATERIALTYPE" },
       { label: t("products.profits.exceptions.products"), id: "Products" },
       {
         label: t("products.profits.exceptions.productType"),
@@ -108,6 +109,7 @@ const useAddRuleModal = ({
     Agent: 8,
     Employee: 9,
     ProductType: 10,
+    MATERIALTYPE : 11,
   };
 
   const { Outputs } = useOutputs({ shouldRenderOutputsOnMount: openModal });
