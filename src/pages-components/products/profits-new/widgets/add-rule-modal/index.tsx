@@ -848,6 +848,37 @@ const AddRuleModal = ({
                       />
                     </div>
                   )}
+                  {rule.category?.id === "MATERIALTYPE" && (
+                    <div>
+                      <label style={clasess.inputLable}>
+                        {t("properties.statment")}
+                      </label>
+
+                      <GoMakeAutoComplate
+                        options={materialsTypes?.map((value) => {
+                          return {
+                            ...value,
+                            label: value.materialTypeName,
+                            id: value.materialTypeKey,
+                          };
+                        })}
+                        // options={categoriesList?.map((value) => {
+                        //   return {
+                        //     ...value,
+                        //     label: value.name,
+                        //     id: value.id,
+                        //   };
+                        // })}
+                        style={clasess.dropDownListContainer}
+                        placeholder={t("properties.statment")}
+                        value={rule.statement2}
+                        onChange={(e, value) => {
+                          handleChange(index, "statement2", value);
+                          handleChange(index, "statement", null);
+                        }}
+                      />
+                    </div>
+                  )}
 
                   {rule.category?.id === "Employee" && (
                     <div>

@@ -25,6 +25,13 @@ const useStyle = () => {
         width: "100%",
 
       },
+      childrenMaterialHedar: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        gap: 10,
+      },
       filterByStatus: {
         display: "flex",
         flexDirection: "row" as "row",
@@ -60,6 +67,13 @@ const useStyle = () => {
       filterMenuContainer: {
         marginTop: 2,
         marginLeft: 0,
+      },
+      manageProfitsButton: {
+        width: "fit-content",
+        height: 40,
+        borderRadius: 8,
+        padding: "8px 10px",
+        ...FONT_FAMILY.Inter(600, 12),
       }
     };
   }, [theme]);
