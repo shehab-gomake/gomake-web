@@ -110,10 +110,12 @@ const SettingsMenu = ({
               {t("navigationButtons.delete")}
             </MenuItem>
           </PermissionCheck>
-
         </GoMakeMenu> :
           <GoMakeMenu handleClose={handleClose} open={open} anchorEl={anchorEl}>
-            <MenuItem onClick={onClickProfit} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <MenuItem onClick={() => {
+              const uri = `/products/profits?actionId=5f3e9084-6724-4358-9f94-8c63019c8894&actionName=Raw materials`;
+              window.open(uri, "_blank");
+            }} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
               <ProfitIcon />
               {t("products.profits.admin.title")}
             </MenuItem>
