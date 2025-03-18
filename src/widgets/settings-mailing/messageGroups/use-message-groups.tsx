@@ -1,15 +1,10 @@
 import { EditPencilIcon } from "@/components/icons/edit-pencil-icon";
 import { TrashIcon } from "@/components/icons/trash-icon";
-import { useAgentsList, useGomakeAxios, useSnackBar } from "@/hooks";
-import {
-  deleteRoleApi,
-  getAllRolesApi,
-  updateRoleNameApi,
-} from "@/services/api-service/users/roles-api";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { IconButton, Stack } from "@mui/material";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { allSMSTemplateGroupsState } from "../states/state";
 import {
   deleteSMSTemplateGroupApi,
@@ -25,7 +20,6 @@ const useMessageGroups = () => {
   } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const { agentsCategories } = useAgentsList();
   const [allSMSTemplateGroups, setAllSMSTemplateGroups] = useRecoilState<any>(
     allSMSTemplateGroupsState
   );
@@ -35,7 +29,6 @@ const useMessageGroups = () => {
   const [updateGroupState, setUpdateGroupState] = useState<{
     id: string;
     name: string;
-    agentId: string;
     recordID: number;
   }>();
 
@@ -55,7 +48,6 @@ const useMessageGroups = () => {
     setUpdateGroupState({
       id: "",
       name: "",
-      agentId: "",
       recordID: 0,
     });
   };
@@ -64,11 +56,7 @@ const useMessageGroups = () => {
     setEditModalState(false);
   };
 
-  const tableHeaders = [
-    t("mailingSettings.groupName"),
-    t("mailingSettings.groupAgent"),
-    t("properties.more"),
-  ];
+  const tableHeaders = [t("mailingSettings.groupName"), t("properties.more")];
 
   const updateMessageGroups = async () => {
     const callBack = (res) => {
@@ -117,9 +105,6 @@ const useMessageGroups = () => {
           recordID: number;
         }) => [
           group?.name,
-          group?.agentId &&
-            agentsCategories?.find((agent) => agent?.id === group?.agentId)
-              ?.label,
           <Stack direction="row" justifyContent="center" key={group?.id}>
             <IconButton onClick={() => onClickUpdate(group)}>
               <EditPencilIcon height={20} width={20} />
@@ -143,7 +128,6 @@ const useMessageGroups = () => {
     setDeleteModalState,
     SMSTemplatesGroups,
     onCloseDeleteModal,
-    agentsCategories,
     editModalState,
     onCloseEditModal,
     updateGroupState,

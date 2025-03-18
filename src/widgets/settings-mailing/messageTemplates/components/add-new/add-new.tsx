@@ -11,18 +11,12 @@ export enum ActionType {
   ADD = "add",
 }
 interface IProps {
-  agentsCategories?: any;
   actionType: ActionType;
   state?: any;
   setState?: any;
 }
 
-const AddNewSMSTemplateGroup = ({
-  agentsCategories,
-  actionType,
-  state,
-  setState,
-}: IProps) => {
+const AddNewSMSTemplateGroup = ({ actionType, state, setState }: IProps) => {
   const [templateGroup, setTemplateGroup] = useRecoilState<SMSTemplateGroup>(
     templateGroupStateNew
   );
@@ -35,10 +29,7 @@ const AddNewSMSTemplateGroup = ({
 
   return (
     <Stack direction={"row"}>
-      {groupNameInput(
-        isAddAction ? templateGroup : state,
-        agentsCategories
-      ).map((item) => (
+      {groupNameInput(isAddAction ? templateGroup : state).map((item) => (
         <FormInput
           input={item as IInput}
           changeState={onChangeInputs}
