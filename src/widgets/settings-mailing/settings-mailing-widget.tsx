@@ -26,7 +26,6 @@ import {
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { useStyle } from "./style";
 import { ModalType } from "@/enums";
-import { useAgentsList } from "@/hooks";
 import { MessageGroups } from "./messageGroups/message-groups";
 
 const SettingsMailingWidget = () => {
@@ -48,7 +47,6 @@ const SettingsMailingWidget = () => {
     onOpenDeleteModal,
   } = useMessageTemplate();
 
-  const { agentsCategories } = useAgentsList();
   const [openModal, setOpenModal] = useRecoilState<boolean>(groupModalState);
   const [openEditModal, setOpenEditModal] =
     useRecoilState<boolean>(editModalState);
@@ -104,10 +102,7 @@ const SettingsMailingWidget = () => {
         onClickDelete={onAddSMSTemplateGroup}
         style={{ width: "30%", minWidth: "400px" }}
       >
-        <AddNewSMSTemplateGroup
-          agentsCategories={agentsCategories}
-          actionType={ActionType.ADD}
-        />
+        <AddNewSMSTemplateGroup actionType={ActionType.ADD} />
       </GoMakeDeleteModal>
       <GoMakeModal
         insideStyle={classes.editorModalStyle}

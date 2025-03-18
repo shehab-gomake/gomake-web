@@ -16,7 +16,6 @@ const MessageGroups = () => {
     onCloseDeleteModal,
     deleteMessageGroups,
     updateMessageGroups,
-    agentsCategories,
     editModalState,
     onCloseEditModal,
     updateGroupState,
@@ -52,7 +51,6 @@ const MessageGroups = () => {
         style={{ width: "30%", minWidth: "400px" }}
       >
         <AddNewSMSTemplateGroup
-          agentsCategories={agentsCategories}
           actionType={ActionType.EDIT}
           state={updateGroupState}
           setState={setUpdateGroupState}
