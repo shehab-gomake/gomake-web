@@ -18,8 +18,13 @@ import { ActionsListComponent } from "@/widgets/production-floor/filters/select/
 import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded";
 
-const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: any) => {
+const ProductionFloorHeader = ({
+  filterGroups,
+  setFilterGroups,
+  connectionId,
+}: any) => {
   const {
     view,
     setView,
@@ -121,13 +126,9 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: a
               variant={
                 view === EProductionFloorView.GANTT ? "contained" : "outlined"
               }
-              // onClick={() => {
-              //   setView(EProductionFloorView.DASHBOARD);
-              //   navigateToProductionFloor();
-              // }}
               onClick={() => updateViewInUrl(EProductionFloorView.GANTT)}
             >
-              <AvTimerIcon />
+              <HourglassEmptyRoundedIcon />
             </PrimaryButton>
           )}
 
@@ -136,10 +137,6 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: a
             variant={
               view === EProductionFloorView.DASHBOARD ? "contained" : "outlined"
             }
-            // onClick={() => {
-            //   setView(EProductionFloorView.DASHBOARD);
-            //   navigateToProductionFloor();
-            // }}
             onClick={() => updateViewInUrl(EProductionFloorView.DASHBOARD)}
           >
             <AvTimerIcon />
@@ -149,10 +146,6 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: a
             variant={
               view === EProductionFloorView.KANBAN ? "contained" : "outlined"
             }
-            // onClick={() => {
-            //   setView(EProductionFloorView.KANBAN);
-            //   navigateToProductionFloor();
-            // }}
             onClick={() => updateViewInUrl(EProductionFloorView.KANBAN)}
           >
             <GridViewIcon />
@@ -162,10 +155,6 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: a
             variant={
               view === EProductionFloorView.TABLE ? "contained" : "outlined"
             }
-            // onClick={() => {
-            //   setView(EProductionFloorView.TABLE);
-            //   navigateToProductionFloor();
-            // }}
             onClick={() => updateViewInUrl(EProductionFloorView.TABLE)}
           >
             <ViewHeadlineIcon />
