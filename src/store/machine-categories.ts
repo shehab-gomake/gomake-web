@@ -216,5 +216,10 @@ export const machineCategoriesState = atom<IMachineCategory[]>({
         {id: ECategoryId.LIGHT_BOXES_LETTER_ASSEMBLY, name: 'machinesCategories.lightBoxesLetterAssembly', color: defaultTheme.neutral.dark["700"]},
         {id: ECategoryId.ADHESIVE_TAPE, name: 'machinesCategories.adhesiveTape', color: defaultTheme.neutral.dark["700"]},
         {id: ECategoryId.ROLL_OFF_SET_PRINTING, name: 'machinesCategories.rollOffSetPrinting', color: defaultTheme.neutral.dark["700"]},
+        {
+            id: ECategoryId.BOOK_BLOCK_MACHINE,
+            name: 'machinesCategories.bookBlockMachine',
+            color: defaultTheme.success.dark["600"]
+        },
     ],
 });
