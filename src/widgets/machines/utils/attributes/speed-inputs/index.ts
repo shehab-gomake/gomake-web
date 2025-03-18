@@ -62,6 +62,7 @@ import {embroideryMachine} from "@/widgets/machines/utils/attributes/speed-input
 import {letterSidesBendingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/letter-sides-bending-machine";
 import {lightBoxesLetters} from "@/widgets/machines/utils/attributes/speed-inputs/light-boxes-letters";
 import {rollOffsetPrinting} from "@/widgets/machines/utils/attributes/speed-inputs/roll-offset-printing";
+import {bookBlockMachine} from "@/widgets/machines/utils/attributes/speed-inputs/book-block-machine";
 
 
 const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) => {
@@ -194,6 +195,8 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
             return spiralClosingMachine(state).filter(atrr => atrr.parameterKey !== 'actionType');
         case ECategoryId.ROLL_OFF_SET_PRINTING:
             return rollOffsetPrinting(state);
+        case ECategoryId.BOOK_BLOCK_MACHINE:
+            return bookBlockMachine(state);
         default:
             return [];
     }

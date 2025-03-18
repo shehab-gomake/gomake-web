@@ -69,6 +69,7 @@ import {lightBoxesSteps} from "@/widgets/machines/utils/steps/light-boxes-steps"
 import {adhesiveTapeMachineSteps} from "@/widgets/machines/utils/steps/adhesive-tape-machine-steps";
 import {connectedMachinesStep} from "@/widgets/machines/utils/steps/connected-machines-step";
 import {rollOffSetPrintingSteps} from "@/widgets/machines/utils/steps/roll-off-set-printing-steps";
+import {bookBlockMachineSteps} from "@/widgets/machines/utils/steps/book-block-machine-steps";
 
 const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:any): IStep[] => {
     let steps: IStep[];
@@ -264,6 +265,9 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:a
             break;
         case ECategoryId.ROLL_OFF_SET_PRINTING:
             steps = rollOffSetPrintingSteps;
+            break;
+        case ECategoryId.BOOK_BLOCK_MACHINE:
+            steps = bookBlockMachineSteps(isAdmin);
             break;
         default:
             steps = [];
