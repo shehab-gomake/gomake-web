@@ -16,6 +16,9 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
+import { ITab } from "@/components/tabs/interface";
+import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
+import { TimeFrameTabs } from "./state";
 
 const TimelineWidget = () => {
   const {
@@ -43,6 +46,7 @@ const TimelineWidget = () => {
     getDateLabel,
     navigateTimeline,
     handleTabChange,
+    timeFrameTabs,
   } = useGantt();
 
   // !here when it work ?
@@ -70,7 +74,7 @@ const TimelineWidget = () => {
             onClick={() => toggleGroup(group.id)}
             direction="row"
             alignItems="center"
-            style={{ cursor: "pointer", ...FONT_FAMILY.Inter(500, 12) }}
+            style={{ cursor: "pointer", ...FONT_FAMILY.Inter(500, 14) }}
           >
             {openGroups[group.id] ? (
               <KeyboardArrowUpIcon />
@@ -84,7 +88,7 @@ const TimelineWidget = () => {
             style={{
               paddingLeft: 20,
               backgroundColor: "#FFF",
-              ...FONT_FAMILY.Inter(500, 12),
+              ...FONT_FAMILY.Inter(500, 14),
               overflow: "hidden",
               textOverflow: "ellipsis",
             }}
@@ -98,23 +102,23 @@ const TimelineWidget = () => {
   useEffect(() => {
     let start, end;
     switch (activeTab) {
-      case "hour":
+      case TimeFrameTabs.HOUR:
         start = currentDate.clone().startOf("hour");
         end = currentDate.clone().endOf("hour");
         break;
-      case "day":
+      case TimeFrameTabs.DAY:
         start = currentDate.clone().startOf("day");
         end = currentDate.clone().endOf("day");
         break;
-      case "week":
+      case TimeFrameTabs.WEEK:
         start = currentDate.clone().startOf("week");
         end = currentDate.clone().endOf("week");
         break;
-      case "month":
+      case TimeFrameTabs.MONTH:
         start = currentDate.clone().startOf("month");
         end = currentDate.clone().endOf("month");
         break;
-      case "year":
+      case TimeFrameTabs.YEAR:
         start = currentDate.clone().startOf("year");
         end = currentDate.clone().endOf("year");
         break;
@@ -155,13 +159,13 @@ const TimelineWidget = () => {
             <ChevronRightIcon />
           </IconButton>
         </div>
-        <Tabs value={activeTab} onChange={handleTabChange}>
-          <Tab label="Hour" value="hour" />
-          <Tab label="Day" value="day" />
-          <Tab label="Week" value="week" />
-          <Tab label="Month" value="month" />
-          <Tab label="Year" value="year" />
-        </Tabs>
+        <PrimaryTabsComponent
+          selectedTabIndex={activeTab}
+          tabs={timeFrameTabs}
+          selectedColor="primary"
+          // variant="ButtonedTabs"
+          onSelectTab={handleTabChange}
+        />
       </Stack>
 
       <div style={{ position: "relative", direction: "ltr" }}>
@@ -176,10 +180,10 @@ const TimelineWidget = () => {
           height={"60px"}
           style={{ background: "#ededf5" }}
         >
-          <IconButton onClick={() => scrollTimeline("right")}>
+          {/* <IconButton onClick={() => scrollTimeline("right")}>
             <ChevronRightIcon />
-          </IconButton>
-          {/* <Stack padding={"0 10px"} gap={"5px"}>
+          </IconButton> */}
+          <Stack padding={"0 10px"} gap={"5px"}>
             <RemoveIcon
               // onClick={() => handleClickZoom("in")} //!old
               onClick={() => handleClickZoom("out")}
@@ -190,7 +194,7 @@ const TimelineWidget = () => {
               onClick={() => handleClickZoom("in")}
               style={{ height: "20px", width: "20px", cursor: "pointer" }}
             />
-          </Stack> */}
+          </Stack>
         </Stack>
         <Timeline
           groups={
@@ -235,12 +239,12 @@ const TimelineWidget = () => {
                     }}
                   >
                     {t("productionFloor.stations")}
-                    <IconButton
+                    {/* <IconButton
                       style={{ position: "absolute", right: 0 }}
                       onClick={() => scrollTimeline("left")}
                     >
                       <KeyboardArrowLeftIcon />
-                    </IconButton>
+                    </IconButton> */}
                   </div>
                 );
               }}

@@ -11,8 +11,12 @@ import {
 } from "@/widgets/production-floor/views/gantt-view/interface";
 import { useRecoilState } from "recoil";
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
-import { loadingGanttItemId } from "@/widgets/production-floor/views/gantt-view/state";
+import {
+  loadingGanttItemId,
+  TimeFrameTabs,
+} from "@/widgets/production-floor/views/gantt-view/state";
 import { useTranslation } from "react-i18next";
+import { ITab } from "@/components/tabs/interface";
 
 const useGantt = () => {
   const { t } = useTranslation();
@@ -338,8 +342,25 @@ const useGantt = () => {
   }, [filtersState.stations]);
 
   /************************************ NEW *******************************/
-  const [activeTab, setActiveTab] = useState("day");
+  const [activeTab, setActiveTab] = useState(TimeFrameTabs.HOUR);
 
+  const timeFrameTabs: ITab[] = [
+    {
+      title: t("productionFloor.hour"),
+    },
+    {
+      title: t("productionFloor.day"),
+    },
+    {
+      title: t("productionFloor.week"),
+    },
+    {
+      title: t("productionFloor.month"),
+    },
+    {
+      title: t("productionFloor.year"),
+    },
+  ];
   const handleItemSelectOld = (itemId) => {
     const selectedItem = items.find((item) => item.id === itemId);
     if (selectedItem) {
@@ -377,17 +398,17 @@ const useGantt = () => {
 
   const getDateLabel = () => {
     switch (activeTab) {
-      case "year":
+      case TimeFrameTabs.YEAR:
         return currentDate.format("YYYY");
-      case "month":
+      case TimeFrameTabs.MONTH:
         return currentDate.format("MMMM YYYY");
-      case "week":
+      case TimeFrameTabs.WEEK:
         const weekStart = currentDate.clone().startOf("week").format("MMM DD");
         const weekEnd = currentDate.clone().endOf("week").format("DD, YYYY");
         return `${weekStart}-${weekEnd}`;
-      case "day":
+      case TimeFrameTabs.DAY:
         return currentDate.format("MMM DD, YYYY");
-      case "hour":
+      case TimeFrameTabs.HOUR:
         return currentDate.format("MMM DD, YYYY hh:mm A");
       default:
         return "";
@@ -398,15 +419,15 @@ const useGantt = () => {
     setCurrentDate((prevDate) => {
       const newDate = prevDate.clone();
       switch (activeTab) {
-        case "year":
+        case 4:
           return newDate.add(direction, "year");
-        case "month":
+        case 3:
           return newDate.add(direction, "month");
-        case "week":
+        case 2:
           return newDate.add(direction, "week");
-        case "day":
+        case 1:
           return newDate.add(direction, "day");
-        case "hour":
+        case 0:
           return newDate.add(direction, "hour");
         default:
           return newDate;
@@ -414,7 +435,7 @@ const useGantt = () => {
     });
   };
 
-  const handleTabChange = (_, newValue) => {
+  const handleTabChange = (newValue) => {
     setActiveTab(newValue);
     setCurrentDate(moment()); // Reset currentDate to now when changing tabs
   };
@@ -452,6 +473,7 @@ const useGantt = () => {
     getDateLabel,
     navigateTimeline,
     handleTabChange,
+    timeFrameTabs,
   };
 };
 
