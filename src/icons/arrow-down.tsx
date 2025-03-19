@@ -1,8 +1,8 @@
 const ArrowDownIcon = (props: any) => {
   return (
     <svg
-      width="16"
-      height="11"
+      width={props?.width || "16"}
+      height={props?.height || "11"}
       viewBox="0 0 20 11"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

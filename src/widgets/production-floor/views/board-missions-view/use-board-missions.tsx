@@ -17,11 +17,13 @@ import { Skeleton } from "@mui/material";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { useBoardMissionsNotes } from "./stations/notes/use-board-missions-notes";
 import { relatedOrderItemsComponentState } from "./stations/state";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 const useBoardMissions = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const { query } = router;
+  const isMobileScreen = useIsMobile();
   const { notes } = useBoardMissionsNotes();
   const { callApi } = useGomakeAxios();
   const [boardMissionsDetails, setBoardMissionsDetails] = useRecoilState(
@@ -47,7 +49,12 @@ const useBoardMissions = () => {
 
   const relatedOrderItems = useRecoilValue(relatedOrderItemsComponentState);
 
-  const { classes } = useStyle(notes, productWorksTypes, relatedOrderItems);
+  const { classes } = useStyle(
+    notes,
+    productWorksTypes,
+    relatedOrderItems,
+    isMobileScreen
+  );
   const isLoadingStations = stations?.length === 0;
   const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
 
@@ -130,6 +137,14 @@ const useBoardMissions = () => {
     </>
   );
 
+  const renderMobileSkeletons = () => (
+    <Skeleton
+      variant="rectangular"
+      width="100%"
+      height="15vh"
+      style={{ borderRadius: "8px" }}
+    />
+  );
   const renderDetailsSkeletons1 = () => (
     <Skeleton
       variant="rectangular"
@@ -174,6 +189,8 @@ const useBoardMissions = () => {
     renderDetailsSkeletons1,
     renderDetailsSkeletons2,
     relatedOrderItems,
+    isMobileScreen,
+    renderMobileSkeletons,
   };
 };
 

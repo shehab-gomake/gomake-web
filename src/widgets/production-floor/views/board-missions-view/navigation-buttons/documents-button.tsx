@@ -1,6 +1,6 @@
 import { PrimaryButton } from "@/components/button/primary-button";
 import { CircularProgress, MenuItem, Paper } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { ArrowDownIcon } from "@/icons";
 
 import {
@@ -21,8 +21,10 @@ import { isReadyBoardMissionsState } from "@/widgets/production-floor/views/boar
 import { moveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { PrintPackingSlipModalWidget } from "@/widgets/production-floor/views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { ModalType } from "@/enums";
+import { FONT_FAMILY } from "@/utils/font-family";
+import { adaptPaddingRight } from "@/utils/adapter";
 
-const DocumentsButton = () => {
+const DocumentsButton = ({ isMobile = false }) => {
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
   const [open, setOpen] = useState<boolean>(false);
   const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
@@ -36,6 +38,8 @@ const DocumentsButton = () => {
   const { primaryColor } = useGomakeTheme();
   const { alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } =
     useSnackBar();
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
   const menuList = useMemo(
     () => [
       {
@@ -151,23 +155,40 @@ const DocumentsButton = () => {
       }}
     >
       <PrimaryButton
-        style={{ backgroundColor: primaryColor(300), borderRadius: "12px" }}
+        ref={buttonRef}
+        style={{
+          backgroundColor: primaryColor(300),
+          borderRadius: isMobile ? "8px" : "12px",
+          ...(isMobile && { height: "30px", ...FONT_FAMILY.Inter(500, 14) }),
+        }}
         onClick={() => setOpen(!open)}
         variant={"contained"}
         disabled={downloading}
-        startIcon={dir === "rtl" ? <ArrowDownIcon fill={"#FFF"} /> : undefined}
+        startIcon={
+          dir === "rtl" ? (
+            <ArrowDownIcon
+              fill={"#FFF"}
+              width={isMobile ? "13px" : undefined}
+              height={isMobile ? "10px" : undefined}
+            />
+          ) : undefined
+        }
         endIcon={
           downloading ? (
-            <CircularProgress size={25} />
+            <CircularProgress size={isMobile ? 18 : 25} />
           ) : dir === "ltr" ? (
-            <ArrowDownIcon fill={"#FFF"} />
+            <ArrowDownIcon
+              fill={"#FFF"}
+              width={isMobile ? "13px" : undefined}
+              height={isMobile ? "10px" : undefined}
+            />
           ) : undefined
         }
       >
         {t("productionFloor.documents")}
       </PrimaryButton>
       {!!open && (
-        <ClickOutside onClick={() => setOpen(false)}>
+        <ClickOutside exceptionRef={buttonRef} onClick={() => setOpen(false)}>
           <Paper
             sx={{
               position: "absolute",
@@ -186,8 +207,9 @@ const DocumentsButton = () => {
                       justifyContent: "flex-start",
                       alignItems: "center",
                       gap: 8,
-                      paddingLeft: 15,
                       color: primaryColor(300),
+                      ...adaptPaddingRight(dir, isMobile ? 10 : 15),
+                      ...(isMobile && { ...FONT_FAMILY.Inter(500, 12) }),
                     }}
                     key={index}
                     onClick={item?.onclick}
@@ -209,6 +231,7 @@ const DocumentsButton = () => {
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.printAndMoveToReadyTitle")}
+        subTitle={" "}
         yesBtn={t("boardMissions.printAndTransferToReady")}
         noBtn={t("boardMissions.printOnly")}
         openModal={openConfirmModal}
@@ -218,6 +241,15 @@ const DocumentsButton = () => {
           setOpenMarkReadyModal(true);
         }}
         onClickNo={() => setOpenPackagesModal(true)}
+        style={
+          isMobile
+            ? {
+                width: "95vw",
+                maxWidth: 600,
+                minWidth: "unset",
+              }
+            : undefined
+        }
       />
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
@@ -229,6 +261,15 @@ const DocumentsButton = () => {
         onClose={() => setOpenMarkReadyModal(false)}
         onClickYes={() => onClickMoveBoardMissionToDone(true)}
         onClickNo={() => onClickMoveBoardMissionToDone(false)}
+        style={
+          isMobile
+            ? {
+                width: "95vw",
+                maxWidth: 600,
+                minWidth: "unset",
+              }
+            : undefined
+        }
       />
     </div>
   );

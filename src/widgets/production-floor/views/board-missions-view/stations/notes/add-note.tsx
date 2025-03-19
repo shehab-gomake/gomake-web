@@ -5,6 +5,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useBoardMissionsNotes } from "@/widgets/production-floor/views/board-missions-view/stations/notes/use-board-missions-notes";
 import { useTranslation } from "react-i18next";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 interface IProps {
   openModal: boolean;
@@ -15,20 +16,30 @@ const BoardMissionsAddNote = ({ openModal, onClose }: IProps) => {
   const { t } = useTranslation();
   const { newNote, setNewNote, handleAddNote, addingNote } =
     useBoardMissionsNotes(onClose);
+  const isMobile = useIsMobile();
 
   return (
     <GoMakeModal
       style={{ zIndex: 999999 }}
-      insideStyle={{ width: "400px", height: "350px" }}
+      insideStyle={{ width: isMobile ? "90vw" : "400px", height: "350px" }}
       openModal={openModal}
       onClose={onClose}
+      withRoundedCloseIcon={false}
       modalTitle={t("productionFloor.addYourNote")}
+      modalTitleStyle={
+        isMobile ? { ...FONT_FAMILY.Inter(500, 22), padding: "0px 18px" } : {}
+      }
     >
-      <Stack height={"100%"} gap={"20px"}>
+      <Stack
+        height={"100%"}
+        gap={"20px"}
+        padding={isMobile ? "10px 0px" : undefined}
+      >
         <Textarea
           style={{
             height: "100%",
-            width: "100%",
+            width: isMobile ? "90%" : "100%",
+            alignSelf: "center",
             ...FONT_FAMILY.Inter(400, 16),
           }}
           placeholder={t("productionFloor.fillYourNote")}
@@ -40,7 +51,8 @@ const BoardMissionsAddNote = ({ openModal, onClose }: IProps) => {
           gap={"12px"}
           direction={"row"}
           justifyContent={"space-between"}
-          alignItems={"center"}
+          width={isMobile ? "90%" : "100%"}
+          alignSelf={"center"}
         >
           <PrimaryButton onClick={onClose} variant={"outlined"}>
             {t("reports.cancel")}

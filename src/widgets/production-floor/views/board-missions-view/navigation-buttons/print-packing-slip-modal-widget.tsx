@@ -6,6 +6,8 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { useEffect, useMemo, useState } from "react";
 import { getDeliveryTickerPdfApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useIsMobile } from "@/hooks/use-responsive";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface IProps {
   boardMissionId: string;
@@ -19,6 +21,7 @@ const PrintPackingSlipModalWidget = ({
   openModal,
   onClose,
 }: IProps) => {
+  const isMobile = useIsMobile();
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [quantityOfPackages, setQuantityOfPackages] = useState<number>(1);
@@ -31,7 +34,7 @@ const PrintPackingSlipModalWidget = ({
 
   const remainingQuantity =
     quantity - quantityPerPackage * (quantityOfPackages - 1);
-  const { alertFaultGetData, alertFault } = useSnackBar();
+  const { alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
 
   const handleQuantityOfPackagesChange = (event) => {
@@ -67,7 +70,10 @@ const PrintPackingSlipModalWidget = ({
   useEffect(() => {
     if (quantity && quantityPerPackage > 0) {
       const totalQuantity = quantity;
-      const fullPackages = Math.max(0, Math.floor(totalQuantity / quantityPerPackage));
+      const fullPackages = Math.max(
+        0,
+        Math.floor(totalQuantity / quantityPerPackage)
+      );
       const remainingQuantity = totalQuantity % quantityPerPackage;
 
       let newPackageQuantities = Array(fullPackages).fill(quantityPerPackage);
@@ -88,7 +94,9 @@ const PrintPackingSlipModalWidget = ({
 
       if (index === quantityOfPackages - 1) {
         const totalQuantity = quantity || 0;
-        const sumOfOtherPackages = updatedQuantities.slice(0, -1).reduce((acc, val) => acc + val, 0);
+        const sumOfOtherPackages = updatedQuantities
+          .slice(0, -1)
+          .reduce((acc, val) => acc + val, 0);
         updatedQuantities[index] = totalQuantity - sumOfOtherPackages;
       }
 
@@ -152,6 +160,7 @@ const PrintPackingSlipModalWidget = ({
       openModal={openModal}
       onClose={onClose}
       modalTitle={t("boardMissions.packagesTitle")}
+      modalTitleStyle={isMobile ? { ...FONT_FAMILY.Inter(500, 18) } : undefined}
       insideStyle={classes.modalStyle}
       style={{ zIndex: 999999 }}
     >

@@ -13,9 +13,10 @@ interface IProps {
   status: IProductionStatus;
   boardsMissions: IBoardMissions[];
   count?: number;
+  isMobile?: boolean;
 }
 
-function KanbanColumnComponent({ status, boardsMissions }: IProps) {
+function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
   const { classes } = useStyle();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const { updateStatus, t, RTL } = useProductionFloorData();
@@ -64,7 +65,7 @@ function KanbanColumnComponent({ status, boardsMissions }: IProps) {
       width={"100%"}
       borderRadius={"16px"}
       style={{
-        margin: "0 10px",
+        ...(!isMobile && { margin: "0 10px" }),
         padding: "10px",
         backgroundColor: "white",
         opacity: isOver ? 0.6 : 1,

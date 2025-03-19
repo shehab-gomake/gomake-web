@@ -6,13 +6,14 @@ import { IInput } from "./interfaces";
 import { useStyle } from "./style";
 import { useRecoilValue } from "recoil";
 import { companyProfileState } from "@/store/company-profile";
-import { Link } from "@mui/material";
+import { Link, useMediaQuery } from "@mui/material";
 import { TermModal } from "../terms-modal/TermModal";
-import { useEffect } from "react";
 
 const LoginLeftSide = () => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   const userProfile = useRecoilValue(companyProfileState);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   const {
     errors,
     inputs,
@@ -27,15 +28,30 @@ const LoginLeftSide = () => {
   } = useGomakeLogin();
 
   return (
-    <div style={clasess.leftContainer}>
+    <div style={isMobile ? classes.MobileSubContainer : classes.leftContainer}>
       {userProfile?.loginLogo && (
-        <div style={clasess.logoContainer}>
-          <Image src={userProfile?.loginLogo} alt="logo" style={{ objectFit: "contain" }} width={200} height={200} />
+        <div style={classes.logoContainer}>
+          <Image
+            src={userProfile?.loginLogo}
+            alt="logo"
+            style={{
+              objectFit: "contain",
+              borderRadius: 8,
+              ...(isMobile && { marginBottom: "20px" }),
+            }}
+            width={isMobile ? 70 : 150}
+            height={isMobile ? 70 : 150}
+          />
         </div>
       )}
 
-      <div style={clasess.loginContainer}>
-        <div style={clasess.loginLbl}>{t("login.login")}</div>
+      <div
+        style={{
+          ...classes.loginContainer,
+          ...(isMobile && { padding: "0px 20px" }),
+        }}
+      >
+        <div style={classes.loginLbl}>{t("login.login")}</div>
         {inputs.map((input: IInput) => (
           <InputContainer
             key={input.key}
@@ -46,13 +62,19 @@ const LoginLeftSide = () => {
             handleKeyPress={handleKeyPress}
           />
         ))}
-        <Link underline="none" style={clasess.forgotStyle} href="/forgot-password">
+        <Link
+          underline="none"
+          style={classes.forgotStyle}
+          href="/forgot-password"
+        >
           {t("login.forgotPassword")}
         </Link>
-        <div style={clasess.errorMsgStyle}>{errorMsg}</div>
+        <div style={classes.errorMsgStyle}>{errorMsg}</div>
       </div>
-      <div style={clasess.btnContainer}>
-        <GomakePrimaryButton onClick={onClickLogin}>{t("login.login")}</GomakePrimaryButton>
+      <div style={classes.btnContainer}>
+        <GomakePrimaryButton onClick={onClickLogin}>
+          {t("login.login")}
+        </GomakePrimaryButton>
       </div>
       <TermModal
         open={isModalOpen}

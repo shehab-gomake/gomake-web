@@ -3,19 +3,23 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums";
+import { useIsMobile } from "@/hooks/use-responsive";
+
 const useStyle = ({ modalType }: { modalType: ModalType }) => {
   const { t } = useTranslation();
-  const { theme, primaryColor, errorColor } = useGomakeTheme();
+  const { theme, errorColor } = useGomakeTheme();
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === "rtl";
+  const isMobile = useIsMobile();
+
   const classes = useMemo(() => {
     return {
       container: {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        width: "-webkit-fill-available",
-        minWidth: 600,
+        width: isMobile ? "90vw" : "-webkit-fill-available",
+        minWidth: isMobile ? "unset" : 600,
         borderRadius: 12,
         backgroundColor: "#FFFFFF",
         position: "absolute" as "absolute",
@@ -68,6 +72,7 @@ const useStyle = ({ modalType }: { modalType: ModalType }) => {
         alignItems: "center",
         gap: 11,
         width: "100%",
+        ...(isMobile && { flexWrap: "wrap" as "wrap" }),
       },
       confirmBtn: {
         height: 44,
@@ -116,7 +121,7 @@ const useStyle = ({ modalType }: { modalType: ModalType }) => {
         border: `1px solid #7375CD`,
       },
     };
-  }, [theme, RTL, modalType]);
+  }, [theme, RTL, modalType, isMobile]);
 
   return {
     classes,

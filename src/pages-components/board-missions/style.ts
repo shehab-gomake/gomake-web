@@ -1,9 +1,12 @@
 import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 const useStyle = () => {
   const { theme, secondColor, errorColor, primaryColor } = useGomakeTheme();
+  const isMobile = useIsMobile();
+
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -72,7 +75,6 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(550, 14),
         color: primaryColor(400),
         marginBottom: 7,
-        
       },
       inputValueStyle: {
         ...FONT_FAMILY.Lexend(500, 14),
@@ -118,7 +120,7 @@ const useStyle = () => {
         color: errorColor(300),
       },
       modalStyle: {
-        width: "40%",
+        width: isMobile ? "90vw" : "40%",
         borderRadius: "8px",
         height: "auto",
         maxHeight: 600,
@@ -126,13 +128,14 @@ const useStyle = () => {
         zIndex: 999999,
       },
       materialsQuantityModalStyle: {
-        width: "500px",
-        maxWidth: "40%",
+        width: isMobile ? "90vw" : "500px",
+        maxWidth: isMobile ? "90vw" : "40%",
         borderRadius: "8px",
         height: "auto",
         maxHeight: 600,
         gap: "10px",
         zIndex: 999999,
+        ...(isMobile && { padding: "0px 10px 10px 10px" }),
       },
       yesBtn: {
         height: 44,
@@ -160,7 +163,7 @@ const useStyle = () => {
         backgroundColor: "#FFF",
         color: "#344054",
         border: `1px solid #D0D5DD`,
-        width: "33%",
+        ...(!isMobile && { width: "33%" }),
       },
       subTitle: {
         ...FONT_FAMILY.Lexend(400, 13),
@@ -170,12 +173,12 @@ const useStyle = () => {
         width: "70%",
         alignSelf: "center" as "center",
       },
-      tableAtagStyle:{
+      tableAtagStyle: {
         color: "inherit" as "inherit",
-        textDecoration:"unset" as "unset",
-      }
+        textDecoration: "unset" as "unset",
+      },
     };
-  }, [theme]);
+  }, [theme, isMobile]);
   return {
     classes,
   };

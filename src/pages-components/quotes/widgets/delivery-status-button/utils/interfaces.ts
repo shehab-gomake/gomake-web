@@ -4,6 +4,7 @@ export interface ITaskCategoryLabelProps {
   id: string;
   document: any;
   documentType: DOCUMENT_TYPE;
+  openModalOnClick?: boolean;
 }
 
 export interface IUpdateDeliveryStatusModalProps {
@@ -11,6 +12,8 @@ export interface IUpdateDeliveryStatusModalProps {
   onCloseModal: () => void;
   document: any;
   documentItems: any;
+  documentId: string;
+  documentNumber?: string;
   editableQuantities?: any;
   setEditableQuantities?: any;
   setDocumentItems?: any;

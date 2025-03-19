@@ -22,6 +22,7 @@ export interface ISignatureModalProps {
   setEditableQuantities?: any;
   setDocumentItems?: any;
   deliveryState?: any;
+  isMobile?:boolean;
 }
 
 const SignatureModal = ({
@@ -36,6 +37,7 @@ const SignatureModal = ({
   setEditableQuantities,
   setDocumentItems,
   deliveryState,
+  isMobile=false
 }: ISignatureModalProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -85,10 +87,11 @@ const SignatureModal = ({
     });
   };
 
+  
   return (
     <GoMakeModal
       modalTitle={t("sales.documentDeliveries.signature")}
-      insideStyle={{ width: "640px", height: "fit-content" }}
+      insideStyle={{ width: "640px", maxWidth: "90vw", height:isMobile ? "unset":"fit-content" ,minHeight: "auto"}}
       openModal={openModal}
       onClose={onCloseModal}
       modalTitleStyle={classes.modalTitle}
