@@ -186,7 +186,7 @@ const BoardMissionsComponent = ({ boardMissionsId, productType }: IProps) => {
                     style={{
                       overflowY:
                         relatedOrderItems?.length > 0 ||
-                        productWorksTypes.length > 0
+                        productWorksTypes?.length > 0
                           ? "auto"
                           : "visible",
 

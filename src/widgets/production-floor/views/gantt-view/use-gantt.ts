@@ -18,7 +18,6 @@ const useGantt = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const [currentMonth, setCurrentMonth] = useState(moment()); // Track the currently displayed month
-
   const [timeRange, setTimeRange] = useState({
     // defaultTimeStart: moment().startOf("hour").add(-2, "hours"),
     // defaultTimeEnd: moment().startOf("hour").add(3, "hours"),
@@ -36,6 +35,8 @@ const useGantt = () => {
   const [items, setItems] = useState<IGanttJob[]>([]);
   const [filtersState] = useRecoilState(productionFloorFiltersState);
   const [, setLoadingItemId] = useRecoilState<string>(loadingGanttItemId);
+
+  //!here when it work
   const getData = async (month) => {
     // Calculate start and end dates for the selected month in UTC
     const startOfMonth = moment()
@@ -151,7 +152,7 @@ const useGantt = () => {
     setOpenGroups((prevState) => ({ ...prevState, [id]: !prevState[id] }));
   };
 
-  const handleZoom = ({ visibleTimeStart, visibleTimeEnd }) => {
+  const handleZoomOld = ({ visibleTimeStart, visibleTimeEnd }) => {
     const startTime = moment(visibleTimeStart);
     const endTime = moment(visibleTimeEnd);
     const durationHours = endTime.diff(startTime, "hours");
@@ -181,6 +182,48 @@ const useGantt = () => {
       // alert("day");
     } else {
       // alert("day"); // Default to day if no significant difference
+    }
+  };
+
+  const handleZoom = ({ visibleTimeStart, visibleTimeEnd }) => {
+    const startTime = moment(visibleTimeStart);
+    const endTime = moment(visibleTimeEnd);
+
+    const durationHours = endTime.diff(startTime, "hours");
+    const durationDays = endTime.diff(startTime, "days");
+    const durationMonths = endTime.diff(startTime, "months");
+
+    // Example constraints (optional):
+    const MIN_DURATION = moment.duration(5, "minutes").asMilliseconds();
+    const MAX_DURATION = moment.duration(365, "days").asMilliseconds();
+
+    let newStart = visibleTimeStart;
+    let newEnd = visibleTimeEnd;
+    const durationMs = visibleTimeEnd - visibleTimeStart;
+
+    // Limit minimum zoom (e.g., 5 minutes)
+    if (durationMs < MIN_DURATION) {
+      const center = (visibleTimeStart + visibleTimeEnd) / 2;
+      newStart = center - MIN_DURATION / 2;
+      newEnd = center + MIN_DURATION / 2;
+    }
+
+    // Limit maximum zoom (e.g., 1 year)
+    if (durationMs > MAX_DURATION) {
+      const center = (visibleTimeStart + visibleTimeEnd) / 2;
+      newStart = center - MAX_DURATION / 2;
+      newEnd = center + MAX_DURATION / 2;
+    }
+
+    // Update visible time range consistently
+    setVisibleTimeRange({
+      start: newStart,
+      end: newEnd,
+    });
+
+    // Adjust current month based on zoom level
+    if (durationMonths >= 1) {
+      setCurrentMonth(startTime);
     }
   };
 
@@ -222,7 +265,7 @@ const useGantt = () => {
     }
   };
 
-  const handleClickZoom = (direction) => {
+  const handleClickZoomOld = (direction) => {
     const MAX_ZOOM_OUT_DURATION = 1000 * 60 * 60 * 24 * 365; // 12 months in milliseconds
     const ONE_MINUTE = 1000 * 60;
     const ONE_HOUR = ONE_MINUTE * 60; // 1 hour in milliseconds
@@ -261,6 +304,31 @@ const useGantt = () => {
     });
   };
 
+  const handleClickZoom = (direction) => {
+    const MAX_ZOOM_DURATION = 1000 * 60 * 60 * 24 * 365; // 12 months
+    const MIN_ZOOM_DURATION = 1000 * 60 * 5; // 5 minutes minimum zoom
+    const ZOOM_IN_FACTOR = 0.8; // Zooming in makes duration shorter (show less time)
+    const ZOOM_OUT_FACTOR = 1.25; // Zooming out makes duration longer (show more time)
+
+    const duration = visibleTimeRange.end - visibleTimeRange.start;
+    let newDuration;
+
+    if (direction === "in") {
+      newDuration = duration * ZOOM_IN_FACTOR;
+      if (newDuration < MIN_ZOOM_DURATION) newDuration = MIN_ZOOM_DURATION;
+    } else {
+      newDuration = duration * ZOOM_OUT_FACTOR;
+      if (newDuration > MAX_ZOOM_DURATION) newDuration = MAX_ZOOM_DURATION;
+    }
+
+    const center = (visibleTimeRange.start + visibleTimeRange.end) / 2;
+
+    setVisibleTimeRange({
+      start: center - newDuration / 2,
+      end: center + newDuration / 2,
+    });
+  };
+
   const getGanttData = useCallback(() => {
     getData(currentMonth.month()).then();
   }, [currentMonth]);
@@ -268,6 +336,89 @@ const useGantt = () => {
   useEffect(() => {
     getGanttData();
   }, [filtersState.stations]);
+
+  /************************************ NEW *******************************/
+  const [activeTab, setActiveTab] = useState("day");
+
+  const handleItemSelectOld = (itemId) => {
+    const selectedItem = items.find((item) => item.id === itemId);
+    if (selectedItem) {
+      setItems((prev) =>
+        prev.map((item) => ({
+          ...item,
+          selected: selectedItem?.title === item.title,
+          isHasSelected: true,
+        }))
+      );
+    }
+  };
+
+  const handleItemSelect = (itemId) => {
+    setItems((prevItems) =>
+      prevItems.map((item) => ({
+        ...item,
+        selected: item.id === itemId,
+        isHasSelected: true,
+      }))
+    );
+  };
+
+  const handleItemDeselect = () => {
+    setItems((prevItems) =>
+      prevItems.map((item) => ({
+        ...item,
+        selected: false,
+        isHasSelected: false,
+      }))
+    );
+  };
+
+  const [currentDate, setCurrentDate] = useState(moment());
+
+  const getDateLabel = () => {
+    switch (activeTab) {
+      case "year":
+        return currentDate.format("YYYY");
+      case "month":
+        return currentDate.format("MMMM YYYY");
+      case "week":
+        const weekStart = currentDate.clone().startOf("week").format("MMM DD");
+        const weekEnd = currentDate.clone().endOf("week").format("DD, YYYY");
+        return `${weekStart}-${weekEnd}`;
+      case "day":
+        return currentDate.format("MMM DD, YYYY");
+      case "hour":
+        return currentDate.format("MMM DD, YYYY hh:mm A");
+      default:
+        return "";
+    }
+  };
+
+  const navigateTimeline = (direction) => {
+    setCurrentDate((prevDate) => {
+      const newDate = prevDate.clone();
+      switch (activeTab) {
+        case "year":
+          return newDate.add(direction, "year");
+        case "month":
+          return newDate.add(direction, "month");
+        case "week":
+          return newDate.add(direction, "week");
+        case "day":
+          return newDate.add(direction, "day");
+        case "hour":
+          return newDate.add(direction, "hour");
+        default:
+          return newDate;
+      }
+    });
+  };
+
+  const handleTabChange = (_, newValue) => {
+    setActiveTab(newValue);
+    setCurrentDate(moment()); // Reset currentDate to now when changing tabs
+  };
+
   return {
     timeRange,
     setTimeRange,
@@ -291,6 +442,16 @@ const useGantt = () => {
     handleClickZoom,
     setVisibleTimeRange,
     t,
+
+    activeTab,
+    setActiveTab,
+    handleItemSelect,
+    handleItemDeselect,
+    currentDate,
+    setCurrentDate,
+    getDateLabel,
+    navigateTimeline,
+    handleTabChange,
   };
 };
 

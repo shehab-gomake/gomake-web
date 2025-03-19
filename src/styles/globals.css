@@ -527,8 +527,11 @@ df-messenger {
   position: relative;
   z-index: 300;
 }
+
+/* !here */
 .react-calendar-timeline .rct-header-root {
   background-color: #fff;
+  /* pointer-events: none !important; */
 }
 
 .react-calendar-timeline .rct-dateHeader-primary {
@@ -570,3 +573,19 @@ df-messenger {
   padding: 0 !important;
 }
 
+/* new gantt */
+/* .react-calendar-timeline .rct-dateHeader {
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  padding: 6px 0;
+}
+
+.react-calendar-timeline .rct-horizontal-lines .rct-hl-even,
+.react-calendar-timeline .rct-horizontal-lines .rct-hl-odd {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.react-calendar-timeline .rct-calendar-header {
+  background: #ededf5;
+} */

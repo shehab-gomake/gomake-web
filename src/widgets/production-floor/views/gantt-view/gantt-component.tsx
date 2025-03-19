@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import Timeline, {
   TimelineHeaders,
   SidebarHeader,
@@ -16,7 +16,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import KeyboardReturnRoundedIcon from "@mui/icons-material/KeyboardReturnRounded";
+
 const TimelineWidget = () => {
   const {
     t,
@@ -36,51 +36,16 @@ const TimelineWidget = () => {
     scrollTimeline,
     handleClickZoom,
     setVisibleTimeRange,
+    activeTab,
+    handleItemSelect,
+    handleItemDeselect,
+    currentDate,
+    getDateLabel,
+    navigateTimeline,
+    handleTabChange,
   } = useGantt();
 
-  const [activeTab, setActiveTab] = useState("hour");
-
-  // const handleTabChange = (_, newValue) => {
-  //   setActiveTab(newValue);
-  //   let start, end;
-
-  //   switch (newValue) {
-  //     case "hour":
-  //       start = moment().startOf("hour");
-  //       end = moment().endOf("hour");
-  //       break;
-  //     case "day":
-  //       start = moment().startOf("day");
-  //       end = moment().endOf("day");
-  //       break;
-  //     case "week":
-  //       start = moment().startOf("week");
-  //       end = moment().endOf("week");
-  //       break;
-  //     case "month":
-  //       start = moment().startOf("month");
-  //       end = moment().endOf("month");
-  //       break;
-  //     case "year":
-  //       start = moment().startOf("year");
-  //       end = moment().endOf("year");
-  //       break;
-  //     default:
-  //       start = moment().startOf("hour");
-  //       end = moment().endOf("hour");
-  //   }
-
-  //   onTimeChange(start.valueOf(), end.valueOf(), () => {});
-  //   // setVisibleTimeRange({ start: start.valueOf(), end: end.valueOf() });
-  // };
-
-  const handleTabChange = (_, newValue) => {
-    setActiveTab(newValue);
-    const start = moment().startOf(newValue);
-    const end = moment().endOf(newValue);
-    onTimeChange(start.valueOf(), end.valueOf(), () => {});
-  };
-
+  // !here when it work ?
   useEffect(() => {
     getData(currentMonth.month()).then();
   }, [currentMonth]);
@@ -130,59 +95,37 @@ const TimelineWidget = () => {
       }));
   }, [groups, openGroups, items]);
 
-  const getDateLabel = () => {
+  useEffect(() => {
+    let start, end;
     switch (activeTab) {
-      case "year":
-        return moment().format("YYYY");
-      case "month":
-        return moment().format("MMMM YYYY");
-      case "week":
-        const weekStart = moment().startOf("week").format("MMM DD");
-        const weekEnd = moment().endOf("week").format("DD, YYYY");
-        return `${weekStart}-${weekEnd}`;
-      case "day":
-        return moment().format("MMM DD, YYYY");
       case "hour":
-        return moment().format("MMM DD, YYYY hh:mm A");
+        start = currentDate.clone().startOf("hour");
+        end = currentDate.clone().endOf("hour");
+        break;
+      case "day":
+        start = currentDate.clone().startOf("day");
+        end = currentDate.clone().endOf("day");
+        break;
+      case "week":
+        start = currentDate.clone().startOf("week");
+        end = currentDate.clone().endOf("week");
+        break;
+      case "month":
+        start = currentDate.clone().startOf("month");
+        end = currentDate.clone().endOf("month");
+        break;
+      case "year":
+        start = currentDate.clone().startOf("year");
+        end = currentDate.clone().endOf("year");
+        break;
       default:
-        return "";
+        start = currentDate.clone().startOf("hour");
+        end = currentDate.clone().endOf("hour");
     }
-  };
 
-  //!old
-  // const handleItemSelect = (itemId) => {
-  //   const selectedItem = items.find((item) => item.id === itemId);
-  //   if (selectedItem) {
-  //     setItems((prev) =>
-  //       prev.map((item) => ({
-  //         ...item,
-  //         selected: selectedItem?.title === item.title,
-  //         isHasSelected: true,
-  //       }))
-  //     );
-  //   }
-  // };
-
-  //!new
-  const handleItemSelect = (itemId) => {
-    setItems((prevItems) =>
-      prevItems.map((item) => ({
-        ...item,
-        selected: item.id === itemId,
-        isHasSelected: true,
-      }))
-    );
-  };
-
-  const handleItemDeselect = () => {
-    setItems((prevItems) =>
-      prevItems.map((item) => ({
-        ...item,
-        selected: false,
-        isHasSelected: false,
-      }))
-    );
-  };
+    onTimeChange(start.valueOf(), end.valueOf(), () => {});
+    // setVisibleTimeRange({ start: start.valueOf(), end: end.valueOf() });
+  }, [currentDate, activeTab]);
 
   return (
     <Stack gap={"10px"}>
@@ -195,25 +138,23 @@ const TimelineWidget = () => {
             width: "200px",
             ...FONT_FAMILY.Inter(500, 14),
             position: "relative",
-            background: "#504fa11a",
           }}
         >
           <IconButton
             style={{ position: "absolute", left: 0 }}
-            onClick={() => scrollTimeline("left")}
+            onClick={() => navigateTimeline(-1)} // Go backward
           >
             <KeyboardArrowLeftIcon />
           </IconButton>
-
           {getDateLabel()}
 
           <IconButton
             style={{ position: "absolute", right: 0 }}
-            onClick={() => scrollTimeline("right")}
+            onClick={() => navigateTimeline(1)} // Go forward
           >
             <ChevronRightIcon />
           </IconButton>
-        </div>{" "}
+        </div>
         <Tabs value={activeTab} onChange={handleTabChange}>
           <Tab label="Hour" value="hour" />
           <Tab label="Day" value="day" />
@@ -235,21 +176,21 @@ const TimelineWidget = () => {
           height={"60px"}
           style={{ background: "#ededf5" }}
         >
-          {/* <IconButton onClick={() => scrollTimeline("right")}>
+          <IconButton onClick={() => scrollTimeline("right")}>
             <ChevronRightIcon />
-          </IconButton> */}
-          <Stack padding={"0 10px"} gap={"5px"}>
+          </IconButton>
+          {/* <Stack padding={"0 10px"} gap={"5px"}>
             <RemoveIcon
-              onClick={() => handleClickZoom("in")}
-              style={{ height: "20px", width: "20px", cursor: "pointer" }}
-            />
-            <AddIcon
+              // onClick={() => handleClickZoom("in")} //!old
               onClick={() => handleClickZoom("out")}
               style={{ height: "20px", width: "20px", cursor: "pointer" }}
             />
-            {/* <RemoveIcon onClick={() => handleClickZoom("out")} />
-            <AddIcon onClick={() => handleClickZoom("in")} /> */}
-          </Stack>
+            <AddIcon
+              // onClick={() => handleClickZoom("out")} //!old
+              onClick={() => handleClickZoom("in")}
+              style={{ height: "20px", width: "20px", cursor: "pointer" }}
+            />
+          </Stack> */}
         </Stack>
         <Timeline
           groups={
@@ -294,12 +235,12 @@ const TimelineWidget = () => {
                     }}
                   >
                     {t("productionFloor.stations")}
-                    {/* <IconButton
+                    <IconButton
                       style={{ position: "absolute", right: 0 }}
                       onClick={() => scrollTimeline("left")}
                     >
                       <KeyboardArrowLeftIcon />
-                    </IconButton> */}
+                    </IconButton>
                   </div>
                 );
               }}
@@ -316,7 +257,9 @@ const TimelineWidget = () => {
                   case "day":
                     return `${momentStart?.format("DD")}`;
                   case "hour":
-                    return `${momentStart?.format("hh:mm A")}`;
+                    // return `${momentStart?.format("hh:mm A")}`;
+                    return `${momentStart.format("ha")}`; // <-- Simplified format here
+
                   case "minute":
                     return `${momentStart?.format("mm")}`;
                   default:
