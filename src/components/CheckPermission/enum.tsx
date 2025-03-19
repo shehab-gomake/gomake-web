@@ -119,7 +119,7 @@ export enum Permissions {
   SHOW_ERP_DOCUMENTS_TABLE_SUMMERY = "ShowErpDocumentsTableSummery",
   // ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
   CAN_CLOSE_MANUALLY = "CanCloseManually",
-
+  SHOW_DELIVERIES = "ShowDeliveries",
   //purchase group
   SHOW_PURCHASE_ORDERS = "ShowPurchaseOrders",
   SHOW_PURCHASE_INVOICES = "ShowPurchaseInvoices",
