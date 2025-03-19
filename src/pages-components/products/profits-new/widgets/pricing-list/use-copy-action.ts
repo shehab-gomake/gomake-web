@@ -5,6 +5,7 @@ import { actionLists } from "@/store";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
+import { ETypeException } from "../../enums/profites-enum";
 
 interface EAction {
   id: string;
@@ -15,7 +16,7 @@ interface EAction {
   isActive: boolean;
   index: number | null; // index can be a number or null
 }
-const useCopyAction = ({ getAllActionProfitRowsByActionId }) => {
+const useCopyAction = ({ getAllActionProfitRowsByActionId,selectedPricingTableItems }) => {
   const router = useRouter();
   const { callApi } = useGomakeAxios();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -105,13 +106,17 @@ const useCopyAction = ({ getAllActionProfitRowsByActionId }) => {
   }, []);
 
   const updateOutSourceActionSupplier = useCallback(async (supplierId) => {
+    const requestData = {
+      actionId: router.query.actionId,
+      supplierId,
+      ...(selectedPricingTableItems?.exceptionType !== ETypeException.DEFAULT && {
+          exceptionId: selectedPricingTableItems?.id
+      })
+  };
     const res = await callApi(
       "PUT",
       `/v1/printhouse-config/profits/update-out-source-action-supplier`,
-      {
-        actionId: router.query.actionId,
-        supplierId
-      }
+      requestData
     );
     if (res?.success) {
       alertSuccessUpdate();
