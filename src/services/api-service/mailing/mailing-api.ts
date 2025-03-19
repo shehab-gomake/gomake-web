@@ -40,7 +40,7 @@ const getAllSMSTemplatesApi: ICallAndSetData = async (
 const getSMSTemplateApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: { id: string; lang: string }
+  data: { id: string; lang: string; SMSTemplatesGroupId: string }
 ) => {
   return await getSetApiData(
     callApi,
