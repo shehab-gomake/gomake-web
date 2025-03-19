@@ -20,8 +20,10 @@ const useGantt = () => {
   const [currentMonth, setCurrentMonth] = useState(moment()); // Track the currently displayed month
 
   const [timeRange, setTimeRange] = useState({
-    defaultTimeStart: moment().startOf("hour").add(-2, "hours"),
-    defaultTimeEnd: moment().startOf("hour").add(3, "hours"),
+    // defaultTimeStart: moment().startOf("hour").add(-2, "hours"),
+    // defaultTimeEnd: moment().startOf("hour").add(3, "hours"),
+    defaultTimeStart: moment().startOf("hour"),
+    defaultTimeEnd: moment().endOf("hour"),
   });
 
   const [visibleTimeRange, setVisibleTimeRange] = useState({
@@ -287,6 +289,7 @@ const useGantt = () => {
     scrollTimeline,
     getGanttData,
     handleClickZoom,
+    setVisibleTimeRange,
     t,
   };
 };
