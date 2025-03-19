@@ -76,7 +76,7 @@ const GoMakeDeleteModal = ({
       {...props}
       style={{
         outline: "none",
-        zIndex: 999999,
+        // zIndex: 999999,
       }}
     >
       <div style={{ ...classes.container, ...props.style }}>
@@ -101,7 +101,6 @@ const GoMakeDeleteModal = ({
           <div style={classes.subTitle}>
             {subTitle ? t(subTitle) : _renderSubTitle(modalType)}
           </div>
-
           {children && <div style={classes.children}>{children}</div>}
           <div style={classes.btnsContainer}>
             <GomakePrimaryButton

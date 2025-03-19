@@ -4,7 +4,7 @@ import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-
 
 const useAgentsList = () => {
   const { callApi } = useGomakeAxios();
-  const [agentsCategories, setAgentsCategories] = useState<[]>();
+  const [agentsCategories, setAgentsCategories] = useState<any[]>();
   const [agent, setAgent] = useState<{ label: string; id: string } | null>();
   const handleAgentChange = (e: any, value: any) => {
     setAgent(value);
@@ -32,7 +32,7 @@ const useAgentsList = () => {
     setAgent,
     agentsCategories,
     handleAgentChange,
-    getAgentCategories
+    getAgentCategories,
   };
 };
 
