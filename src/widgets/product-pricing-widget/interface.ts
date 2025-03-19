@@ -105,6 +105,7 @@ export interface IWorkFlowAction {
   isNeedFolds?: boolean;
   foldOptionValueId?: string;
   sectionName?: string;
+  relatedActions?: any[];
 }
 
 export interface IOutput {

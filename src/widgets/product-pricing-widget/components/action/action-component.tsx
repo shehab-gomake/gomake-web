@@ -214,9 +214,9 @@ const ActionContainerComponent = ({
   sectionName,
   isFromSetting,
   deleteActionFromProduct,
-  updateProductAction
+  updateProductAction,
+  relatedActions
 }: IActionContainerComponentProps) => {
-
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [chooseMachine, setChooseMachine] = useState<boolean>(false);
@@ -255,6 +255,7 @@ const ActionContainerComponent = ({
     foldOptions
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
+  const [hideRelatedActions, setHideRelatedActions] = useState<boolean>(false);
   const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(isActionEmployeeUpdatedState);
   // const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
   const suppliers = useMemo(() => {
@@ -308,6 +309,39 @@ const ActionContainerComponent = ({
       ).then();
     }
   };
+  const handleDeliveryTimeUpdateRelatedActions = (data, newValue: string) => {
+    updateActionData(
+      data?.id,
+      +newValue,
+      "totalProductionTime",
+      data?.productType || productType
+    ).then();
+  }
+  const handleCostUpdateRelatedActions = (data, newValue: string) => {
+    updateActionData(
+      data?.id,
+      +newValue,
+      "totalCost",
+      data?.productType || productType
+    ).then();
+  }
+  const handleProfitUpdateRelatedActions = (data, newValue: string) => {
+    updateActionData(
+      data?.id,
+      +newValue,
+      "profit",
+      data?.productType || productType
+    ).then();
+  }
+  const handleUpdatePriceRelatedActions = (data, newValue: string) => {
+    updateActionData(
+      data?.id,
+      +newValue,
+      "totalPrice",
+      data?.productType || productType
+    ).then();
+  }
+
   const handleCostUpdate = (newCost: string) => {
     if (isFromSetting) {
       updateProductAction({ actionId, value: newCost, fieldName: "totalcost" })
@@ -331,6 +365,15 @@ const ActionContainerComponent = ({
       updateActionData(id, source, "source", productType).then();
     }
   };
+  const handleSourceChangeRelatedActions = (data, source: EWorkSource) => {
+    updateActionData(
+      data?.id,
+      source,
+      "source",
+      data?.productType || productType
+    ).then();
+  }
+
   const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
 
   const handleSupplierChange = (e, value) => {
@@ -366,11 +409,18 @@ const ActionContainerComponent = ({
     const totalCostValues = totalCostValue ? totalCostValue : 0;
     return (totalPriceValues - totalCostValues).toFixed(2);
   }
+
   const calculateOutSourceProfitInMoney = () => {
     const totalPriceValues = totalPriceValue ? totalPriceValue : 0;
     const totalCostValues = totalCostValue ? totalCostValue : 0;
     return (totalPriceValues - totalCostValues).toFixed(2);
   }
+  const calculateProfitInRelaredActionsMoney = (action) => {
+    const totalPriceValues = action?.totalPrice ? action?.totalPrice?.values[0] : 0;
+    const totalCostValues = action?.totalCost ? action?.totalCost?.values[0] : 0;
+    return (totalPriceValues - totalCostValues).toFixed(2);
+  }
+
   const getSupplierId = useCallback(() => {
     if (supplierId) {
       const supplier = suppliers?.find((sup) => sup.value === supplierId);
@@ -890,6 +940,7 @@ const ActionContainerComponent = ({
                   <IconButton
                     onClick={(e) => {
                       e.stopPropagation();
+                      setHideRelatedActions(false)
                       handleClick(e);
                     }}
                   >
@@ -907,6 +958,91 @@ const ActionContainerComponent = ({
                   </IconButton>}
                 </div>
               </Stack>
+              <Divider />
+              {
+                relatedActions?.length > 0 && (
+                  <div style={{ padding: "10px 0", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%", flexWrap: "wrap" }}>
+                    {
+                      relatedActions.map((action) => (
+                        <Stack
+                          style={classes.sectionTitle}
+                          direction={"row"}
+                          alignItems={"center"}
+                          gap={"16px"}
+                          flexWrap={"wrap"}
+                        >
+                          <span>{action.name}</span>
+
+                          {isNeedFolds && <span style={{ width: 118 }} />}
+                          {isNeedMaterial && <span style={{ width: 118 }} />}
+                          {isNeedEmployee && <span style={{ width: 118 }} />}
+                          {isNeedMachine && <span style={{ width: 118 }} />}
+                          <Divider orientation={"vertical"} flexItem style={{ marginRight: 16 }} />
+                          <EditableKeyValueViewComponent
+                            onUpdate={(v) => handleDeliveryTimeUpdateRelatedActions(action, v)}
+                            {...action?.totalProductionTime}
+                            source={action?.source}
+                            name={t("home.headers.deliveryTime")}
+                          />
+                          <Divider orientation={"vertical"} style={{ height: "20px", }} />
+                          <EditableKeyValueViewComponent
+                            onUpdate={(v) => handleCostUpdateRelatedActions(action, v)}
+                            {...action?.totalCost}
+                            source={action?.source}
+                            name={t("machineAttributes.cost")}
+                          />
+                          <Divider orientation={"vertical"} style={{ height: "20px", }} />
+                          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 3 }}>
+                            <EditableKeyValueViewComponent
+                              onUpdate={(v) => handleProfitUpdateRelatedActions(action, v)}
+                              {...action?.profit}
+                              source={action?.source}
+                              name={t("products.profits.pricingListWidget.profit")}
+                            />
+                            <span>
+                              {`(${calculateProfitInRelaredActionsMoney(action)} ${action?.totalPrice ? action?.totalPrice.defaultUnit : ""
+                                })`}
+                            </span>
+                          </div>
+                          <Divider orientation={"vertical"} style={{ height: "20px", }} />
+                          <EditableKeyValueViewComponent
+                            onUpdate={(v) => handleUpdatePriceRelatedActions(action, v)}
+                            {...action?.totalPrice}
+                            source={action?.source}
+                            name={t("sales.quote.price")}
+                            valueColor={secondColor(500)}
+                          />
+                          <Divider orientation={"vertical"} flexItem />
+                          <InOutSourceSelect value={action?.source} onChange={(v) => handleSourceChangeRelatedActions(action, v)} />
+                        </Stack>
+                      ))
+                    }
+                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                      <div onClick={(e) => e.stopPropagation()}>
+
+                      </div>
+                      <div>
+                        <IconButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setHideRelatedActions(true);
+                            handleClick(e);
+                          }}
+                        >
+                          <SettingsIcon
+                            stroke={"rgba(237, 2, 140, 1)"}
+                            width={24}
+                            height={24}
+                          />
+                        </IconButton>
+                      </div>
+                      <div style={{ width: 40, }} />
+                    </div>
+                  </div>
+
+                )
+              }
+
               <Collapse
                 in={isOpen}
                 collapsedSize={0}
@@ -970,6 +1106,7 @@ const ActionContainerComponent = ({
                 sectionName={sectionName}
                 deleteActionFromProduct={deleteActionFromProduct}
                 isFromSetting={isFromSetting}
+                hideRelatedActions={hideRelatedActions}
               />
               <GoMakeDeleteModal
                 modalType={ModalType.ADD}
