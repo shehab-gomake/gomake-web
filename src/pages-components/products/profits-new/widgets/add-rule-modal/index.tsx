@@ -862,13 +862,6 @@ const AddRuleModal = ({
                             id: value.materialTypeKey,
                           };
                         })}
-                        // options={categoriesList?.map((value) => {
-                        //   return {
-                        //     ...value,
-                        //     label: value.name,
-                        //     id: value.id,
-                        //   };
-                        // })}
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
                         value={rule.statement2}
