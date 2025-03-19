@@ -40,51 +40,45 @@ const TimelineWidget = () => {
 
   const [activeTab, setActiveTab] = useState("hour");
 
+  // const handleTabChange = (_, newValue) => {
+  //   setActiveTab(newValue);
+  //   let start, end;
+
+  //   switch (newValue) {
+  //     case "hour":
+  //       start = moment().startOf("hour");
+  //       end = moment().endOf("hour");
+  //       break;
+  //     case "day":
+  //       start = moment().startOf("day");
+  //       end = moment().endOf("day");
+  //       break;
+  //     case "week":
+  //       start = moment().startOf("week");
+  //       end = moment().endOf("week");
+  //       break;
+  //     case "month":
+  //       start = moment().startOf("month");
+  //       end = moment().endOf("month");
+  //       break;
+  //     case "year":
+  //       start = moment().startOf("year");
+  //       end = moment().endOf("year");
+  //       break;
+  //     default:
+  //       start = moment().startOf("hour");
+  //       end = moment().endOf("hour");
+  //   }
+
+  //   onTimeChange(start.valueOf(), end.valueOf(), () => {});
+  //   // setVisibleTimeRange({ start: start.valueOf(), end: end.valueOf() });
+  // };
+
   const handleTabChange = (_, newValue) => {
     setActiveTab(newValue);
-    let start, end;
-
-    switch (newValue) {
-      case "hour":
-        start = moment().startOf("hour");
-        end = moment().endOf("hour");
-        break;
-      case "day":
-        start = moment().startOf("day");
-        end = moment().endOf("day");
-        break;
-      case "week":
-        start = moment().startOf("week");
-        end = moment().endOf("week");
-        break;
-      case "month":
-        start = moment().startOf("month");
-        end = moment().endOf("month");
-        break;
-      case "year":
-        start = moment().startOf("year");
-        end = moment().endOf("year");
-        break;
-      default:
-        start = moment().startOf("hour");
-        end = moment().endOf("hour");
-    }
-
+    const start = moment().startOf(newValue);
+    const end = moment().endOf(newValue);
     onTimeChange(start.valueOf(), end.valueOf(), () => {});
-    // setVisibleTimeRange({ start: start.valueOf(), end: end.valueOf() });
-  };
-
-  const handleItemSelect = (itemId) => {
-    const selectedItem = items.find((item) => item.id === itemId);
-    if (selectedItem) {
-      setItems((prev) =>
-        prev.map((item) => ({
-          ...item,
-          selected: selectedItem?.title === item.title,
-          isHasSelected: true,
-        }))
-      );
-    }
   };
 
   useEffect(() => {
@@ -136,15 +130,99 @@ const TimelineWidget = () => {
       }));
   }, [groups, openGroups, items]);
 
+  const getDateLabel = () => {
+    switch (activeTab) {
+      case "year":
+        return moment().format("YYYY");
+      case "month":
+        return moment().format("MMMM YYYY");
+      case "week":
+        const weekStart = moment().startOf("week").format("MMM DD");
+        const weekEnd = moment().endOf("week").format("DD, YYYY");
+        return `${weekStart}-${weekEnd}`;
+      case "day":
+        return moment().format("MMM DD, YYYY");
+      case "hour":
+        return moment().format("MMM DD, YYYY hh:mm A");
+      default:
+        return "";
+    }
+  };
+
+  //!old
+  // const handleItemSelect = (itemId) => {
+  //   const selectedItem = items.find((item) => item.id === itemId);
+  //   if (selectedItem) {
+  //     setItems((prev) =>
+  //       prev.map((item) => ({
+  //         ...item,
+  //         selected: selectedItem?.title === item.title,
+  //         isHasSelected: true,
+  //       }))
+  //     );
+  //   }
+  // };
+
+  //!new
+  const handleItemSelect = (itemId) => {
+    setItems((prevItems) =>
+      prevItems.map((item) => ({
+        ...item,
+        selected: item.id === itemId,
+        isHasSelected: true,
+      }))
+    );
+  };
+
+  const handleItemDeselect = () => {
+    setItems((prevItems) =>
+      prevItems.map((item) => ({
+        ...item,
+        selected: false,
+        isHasSelected: false,
+      }))
+    );
+  };
+
   return (
-    <Stack>
-      <Tabs value={activeTab} onChange={handleTabChange}>
-        <Tab label="Hour" value="hour" />
-        <Tab label="Day" value="day" />
-        <Tab label="Week" value="week" />
-        <Tab label="Month" value="month" />
-        <Tab label="Year" value="year" />
-      </Tabs>
+    <Stack gap={"10px"}>
+      <Stack direction={"row"} justifyContent={"space-between"}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "200px",
+            ...FONT_FAMILY.Inter(500, 14),
+            position: "relative",
+            background: "#504fa11a",
+          }}
+        >
+          <IconButton
+            style={{ position: "absolute", left: 0 }}
+            onClick={() => scrollTimeline("left")}
+          >
+            <KeyboardArrowLeftIcon />
+          </IconButton>
+
+          {getDateLabel()}
+
+          <IconButton
+            style={{ position: "absolute", right: 0 }}
+            onClick={() => scrollTimeline("right")}
+          >
+            <ChevronRightIcon />
+          </IconButton>
+        </div>{" "}
+        <Tabs value={activeTab} onChange={handleTabChange}>
+          <Tab label="Hour" value="hour" />
+          <Tab label="Day" value="day" />
+          <Tab label="Week" value="week" />
+          <Tab label="Month" value="month" />
+          <Tab label="Year" value="year" />
+        </Tabs>
+      </Stack>
+
       <div style={{ position: "relative", direction: "ltr" }}>
         <Stack
           alignItems={"center"}
@@ -157,10 +235,10 @@ const TimelineWidget = () => {
           height={"60px"}
           style={{ background: "#ededf5" }}
         >
-          <IconButton onClick={() => scrollTimeline("right")}>
+          {/* <IconButton onClick={() => scrollTimeline("right")}>
             <ChevronRightIcon />
-          </IconButton>
-          <Stack padding={"0 10px 0 0"} gap={"5px"}>
+          </IconButton> */}
+          <Stack padding={"0 10px"} gap={"5px"}>
             <RemoveIcon
               onClick={() => handleClickZoom("in")}
               style={{ height: "20px", width: "20px", cursor: "pointer" }}
@@ -169,6 +247,8 @@ const TimelineWidget = () => {
               onClick={() => handleClickZoom("out")}
               style={{ height: "20px", width: "20px", cursor: "pointer" }}
             />
+            {/* <RemoveIcon onClick={() => handleClickZoom("out")} />
+            <AddIcon onClick={() => handleClickZoom("in")} /> */}
           </Stack>
         </Stack>
         <Timeline
@@ -186,7 +266,6 @@ const TimelineWidget = () => {
           onZoom={handleZoom}
           canResize={"right"}
           canChangeGroup={false}
-          //!here
           itemRenderer={(props) => {
             return <JobComponent {...props} />;
           }}
@@ -194,15 +273,7 @@ const TimelineWidget = () => {
           visibleTimeStart={visibleTimeRange.start}
           visibleTimeEnd={visibleTimeRange.end}
           onItemSelect={handleItemSelect}
-          onItemDeselect={() =>
-            setItems((prev) =>
-              prev.map((item) => ({
-                ...item,
-                selected: false,
-                isHasSelected: false,
-              }))
-            )
-          }
+          onItemDeselect={handleItemDeselect}
           selected={items.filter((item) => !!item.selected).map((i) => i.id)}
           dragSnap={1000 * 60}
         >
@@ -223,12 +294,12 @@ const TimelineWidget = () => {
                     }}
                   >
                     {t("productionFloor.stations")}
-                    <IconButton
+                    {/* <IconButton
                       style={{ position: "absolute", right: 0 }}
                       onClick={() => scrollTimeline("left")}
                     >
                       <KeyboardArrowLeftIcon />
-                    </IconButton>
+                    </IconButton> */}
                   </div>
                 );
               }}
