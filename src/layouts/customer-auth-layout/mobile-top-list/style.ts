@@ -32,27 +32,13 @@ const useStyle = () => {
         justifyContent: "center",
         zIndex: 9999999999999999,
       },
-      container: {
-        width: "100%",
-        height: "100vh",
-        display: "flex",
-        flexDirection: "row" as "row",
-        // gap: customGap ? LAYOUT_DEFAULT_GAP : 0,
-        backgroundColor: "#F6F6F6",
-      },
-      logoContainer: {
-        display: "flex",
-        marginTop: 0,
-        backgroundColor: "#504FA1",
-        borderRadius: 8,
-        padding: 10,
-      },
+  
+
       leftContainer: {
         backgroundColor: primaryColor(500),
         width: "100%",
         minWidth: 245,
         transitionDuration: "0.4s",
-        // height: "100vh",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "flex-start" as "flex-start",
@@ -64,57 +50,12 @@ const useStyle = () => {
         zIndex: 1,
       },
 
-      rightContainer: {
-        width: "100%",
-        display: "flex",
-        flexDirection: "column" as "column",
-        height: "100vh",
-        maxHeight: "100vh",
-        overflow: "scroll",
-      },
-      headerContainer: {
-        display: "flex",
-        flexDirection: "column" as "column",
-        alignItems: "center",
-        justifyContent: "center",
-        width: "100%",
-        backgroundColor: "#F6F6F6",
-      },
-      bodyContainer: {
-        display: "flex",
-        flexDirection: "column" as "column",
-        backgroundColor: "#F6F6F6",
-        height: "100%",
-
-        overflow: "scroll",
-      },
-      poweredContainer: {
-        display: "flex",
-        flexDirection: "column" as "column",
-        justifyContent: "flex-start",
-        alignItems: "flex-start",
-        marginTop: "10px",
-        marginBottom: "10px",
-        gap: "7px",
-        width: "100%",
-      },
-      poweredByLbl: {
-        ...FONT_FAMILY.Lexend(400, 12),
-        color: "#FFF",
-      },
-      goMakeByLbl: {
-        ...FONT_FAMILY.Lexend(400, 28),
-        color: "#FFF",
-      },
       tabsContainer: {
         alignSelf: "flex-start",
         width: "100%",
         marginTop: "10px",
       },
-      lastTabsContainer: {
-        alignSelf: "flex-start",
-        width: "100%",
-      },
+      
       tabContainer: {
         display: "flex",
         flexDirection: "row" as "row",

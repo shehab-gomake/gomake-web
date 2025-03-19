@@ -1,6 +1,6 @@
-import { IconButton, Stack } from "@mui/material";
+import { Fab, IconButton, Stack } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   EProductionFloorView,
   productionFloorViewState,
@@ -15,19 +15,23 @@ import { BoardMissionsComponent } from "@/widgets/production-floor/views/board-m
 import { DashboardWidget } from "@/widgets/dashboard-widget";
 import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-uploader-widget";
 import QrListenerWidget from "@/widgets/qr-listener/qr-listener-widget";
-import { useProductionFloorSignalr } from "@/hooks/signalr/use-production-floor-signalr";
 import { ProductionFloorFilters } from "./filters/production-floor-filters";
 import { useProductionFloorData } from "./use-production-floor-data";
 import { TimelineWidget } from "@/widgets/production-floor/views/gantt-view/gantt-component";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-floor-socket-io";
+import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
+import { useIsMobile, useMobileHeight } from "@/hooks/use-responsive";
+import QRScannerFab from "../qr-scanner/qr-scanner-fab";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
   const { query, replace, pathname, push } = useRouter();
   const { connectionId } = useProductionFloorSocketIO(view);
   const { groupsId, boardMissionsId, step, productType } = query;
+  const isMobile = useIsMobile();
+  const mobileHeight = useMobileHeight();
 
   const {
     filterGroups,
@@ -35,6 +39,7 @@ const ProductionFloorWidget = () => {
     getStationFilterGroups,
     updateStatus,
     setSelectedGroupId,
+    handleOpenQRScanner,
   } = useProductionFloorData();
 
   useEffect(() => {
@@ -94,10 +99,12 @@ const ProductionFloorWidget = () => {
         setFilterGroups={setFilterGroups}
         connectionId={connectionId}
       />
+
       {view !== EProductionFloorView.DASHBOARD && (
         <ProductionFloorFilters
           getStationFilterGroups={getStationFilterGroups}
           connectionId={connectionId}
+          isMobile={isMobile}
         />
       )}
       <Stack overflow={"auto"} maxHeight={"100%"}>
@@ -116,6 +123,7 @@ const ProductionFloorWidget = () => {
         )}
         <QrListenerWidget listening={!boardMissionsId} />
       </Stack>
+
       <Drawer
         sx={{ zIndex: 999999 }}
         open={!!boardMissionsId}
@@ -130,7 +138,8 @@ const ProductionFloorWidget = () => {
         <Stack
           paddingBottom={"10px"}
           width={"100vw"}
-          height={"calc(100vh - 50px)"}
+          // height={"calc(100vh - 50px)"}
+          height={`calc(${mobileHeight} - 50px)`}
         >
           <IconButton
             onClick={() => {
@@ -161,6 +170,7 @@ const ProductionFloorWidget = () => {
         <FilesUploaderWidget />
         <QrListenerWidget listening={!!boardMissionsId} />
       </Drawer>
+      <QRScannerFab />
     </Stack>
   );
 };

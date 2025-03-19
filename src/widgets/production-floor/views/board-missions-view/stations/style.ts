@@ -4,10 +4,13 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 import { adaptRight } from "@/utils/adapter";
+import { useIsMobile } from "@/hooks/use-responsive";
 const useStyle = () => {
   const { theme, neutralColor, primaryColor, secondColor } = useGomakeTheme();
   const { t } = useTranslation();
   const direction = t("direction");
+  const isMobile = useIsMobile();
+
   const classes = useMemo(() => {
     return {
       detailTitle: {
@@ -30,7 +33,7 @@ const useStyle = () => {
       },
       machineTitle: {
         color: secondColor(500),
-        ...FONT_FAMILY.Lexend(500, 14),
+        ...FONT_FAMILY.Lexend(500, isMobile ? 12 : 14),
         textTransform: "capitalize" as "capitalize",
         "& .MuiButton-endIcon": {
           ...(direction === "rtl" && {
@@ -41,7 +44,7 @@ const useStyle = () => {
       },
       supplierTitle: {
         color: secondColor(500),
-        ...FONT_FAMILY.Lexend(500, 14),
+        ...FONT_FAMILY.Lexend(500, isMobile ? 12 : 14),
         textTransform: "capitalize" as "capitalize",
         padding: "7px 5px",
       },
@@ -149,8 +152,17 @@ const useStyle = () => {
         alignSelf: "center",
         color: "#D6D6D6",
       },
+      paperStyle: {
+        position: "absolute",
+        top: "100%",
+        left: 0,
+        right: 0,
+        maxHeight: "200px",
+        overflowY: "auto",
+        zIndex: 9999999999999999999,
+      },
     };
-  }, [theme, direction]);
+  }, [theme, direction, isMobile]);
   return {
     classes,
   };

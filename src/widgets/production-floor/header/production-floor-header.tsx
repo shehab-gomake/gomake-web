@@ -18,15 +18,18 @@ import { ActionsListComponent } from "@/widgets/production-floor/filters/select/
 import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { useIsMobile } from "@/hooks/use-responsive";
 
-const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: any) => {
+const ProductionFloorHeader = ({
+  filterGroups,
+  setFilterGroups,
+  connectionId,
+}: any) => {
   const {
     view,
-    setView,
     showAllJobsButton,
     paths,
     onClickPath,
-    navigateToProductionFloor,
     onClickBack,
     currentPathIndex,
     onStationsChange,
@@ -36,12 +39,16 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: a
   const dir = t("direction");
   const updateViewInUrl = useUpdateViewInUrl();
   const { CheckPermission } = useUserPermission();
+  const isMobileScreen = useIsMobile();
 
   return (
     <Stack
       direction={"row"}
       justifyContent={"space-between"}
       alignItems={"center"}
+      style={{
+        ...(isMobileScreen && { display: "contents" }),
+      }}
     >
       <Stack direction={"row"} alignItems={"center"} gap={"10px"}>
         {(showAllJobsButton || view === EProductionFloorView.GROUPS) &&
@@ -73,6 +80,7 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: a
           style={{
             ...FONT_FAMILY.Lexend(700, 20),
             color: "#2E3092",
+            ...(isMobileScreen && { marginTop: "5px" }),
           }}
         >
           {t("tabs.productFloor")}
@@ -121,10 +129,6 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: a
               variant={
                 view === EProductionFloorView.GANTT ? "contained" : "outlined"
               }
-              // onClick={() => {
-              //   setView(EProductionFloorView.DASHBOARD);
-              //   navigateToProductionFloor();
-              // }}
               onClick={() => updateViewInUrl(EProductionFloorView.GANTT)}
             >
               <AvTimerIcon />
@@ -136,10 +140,6 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: a
             variant={
               view === EProductionFloorView.DASHBOARD ? "contained" : "outlined"
             }
-            // onClick={() => {
-            //   setView(EProductionFloorView.DASHBOARD);
-            //   navigateToProductionFloor();
-            // }}
             onClick={() => updateViewInUrl(EProductionFloorView.DASHBOARD)}
           >
             <AvTimerIcon />
@@ -149,10 +149,6 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: a
             variant={
               view === EProductionFloorView.KANBAN ? "contained" : "outlined"
             }
-            // onClick={() => {
-            //   setView(EProductionFloorView.KANBAN);
-            //   navigateToProductionFloor();
-            // }}
             onClick={() => updateViewInUrl(EProductionFloorView.KANBAN)}
           >
             <GridViewIcon />
@@ -162,10 +158,6 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: a
             variant={
               view === EProductionFloorView.TABLE ? "contained" : "outlined"
             }
-            // onClick={() => {
-            //   setView(EProductionFloorView.TABLE);
-            //   navigateToProductionFloor();
-            // }}
             onClick={() => updateViewInUrl(EProductionFloorView.TABLE)}
           >
             <ViewHeadlineIcon />

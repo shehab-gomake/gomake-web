@@ -1,6 +1,6 @@
 import { PrimaryButton } from "@/components/button/primary-button";
 import { CircularProgress, MenuItem, Paper } from "@mui/material";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useRecoilState } from "recoil";
 import { printHouseProfile } from "@/store/print-house-profile";
@@ -23,7 +23,7 @@ import {
 } from "@/store/file-uploader-state";
 import { addBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 
-const MoreActionsButton = () => {
+const MoreActionsButton = ({ isMobile = false }) => {
   const { t } = useTranslation();
   const direction = t("direction");
   const { callApi } = useGomakeAxios();
@@ -99,24 +99,30 @@ const MoreActionsButton = () => {
     await getDocumentContactsApi(callApi, callBack, boardMissions.orderId);
   };
 
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
   return (
     <div style={{ position: "relative", zIndex: 9999999999 }}>
       <PrimaryButton
+        ref={buttonRef}
         disabled={loading}
-        onClick={() => setOpen(!open)}
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent ClickOutside from closing the menu
+          setOpen((prevState) => !prevState); // Toggle state with a callback
+        }}
         variant={"contained"}
         sx={{
-          minWidth: "40px",
-          width: "40px",
-          height: "40px",
+          minWidth: isMobile ? "30px" : "40px",
+          width: isMobile ? "30px" : "40px",
+          height: isMobile ? "30px" : "40px",
           padding: 0,
-          borderRadius: "12px",
+          borderRadius: isMobile ? "8px" : "12px",
         }}
       >
         {loading ? <CircularProgress size={"20px"} /> : <MoreHorizIcon />}
       </PrimaryButton>
       {!!open && (
-        <ClickOutside onClick={() => setOpen(false)}>
+        <ClickOutside exceptionRef={buttonRef} onClick={() => setOpen(false)}>
           <Paper
             sx={{
               position: "absolute",

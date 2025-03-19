@@ -16,7 +16,11 @@ import {
   getReceiptInvoicesPdfApi,
   getReceiptPdfApi,
 } from "@/services/api-service/generic-doc/receipts-api";
-import { checkedItemsIdsState, finalTotalPaymentState } from "./states";
+import {
+  allocatedSumsState,
+  checkedItemsIdsState,
+  finalTotalPaymentState,
+} from "./states";
 import {
   checkArrayNotEmptyOrEmailNotEmpty,
   checkArrayNotEmptyOrPhoneNotEmpty,
@@ -58,7 +62,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [, setShowPrintJobsModal] = useRecoilState(newOrderIdToPrintJobsState);
   const [openReceiptCreationModal, setOpenReceiptCreationModal] =
     useRecoilState(openReceiptCreationModalState);
-
   const [openOrderNowPrePaymentModal, setOpenOrderNowPrePaymentModal] =
     useState(false);
 
@@ -240,12 +243,25 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const checkedItemsIds = useRecoilValue(checkedItemsIdsState);
 
+  const allocatedSums = useRecoilValue(allocatedSumsState);
   const onClickCreateNewReceipt = async () => {
+    // const filteredReceiptItems = Object.values(checkedItemsIds)
+    //   .map((id) => quoteItemValue.receiptItems.find((item) => item.id === id))
+    //   .filter(Boolean);
     const isOutgoingPayments = router.query.isOutgoingPayments === "true";
+    const filteredReceiptItems = Object.keys(checkedItemsIds)
+      .map((key) => {
+        const item = quoteItemValue.receiptItems.find(
+          (item) => item.id === checkedItemsIds[key]
+        );
 
-    const filteredReceiptItems = Object.values(checkedItemsIds)
-      .map((id) => quoteItemValue.receiptItems.find((item) => item.id === id))
-      .filter(Boolean);
+        const sumApplied = allocatedSums[key] || 0;
+
+        return item ? { ...item, sumApplied } : null;
+      }).filter(Boolean);
+
+      
+
     const newReceiptItem = {
       ...quoteItemValue,
       receiptItems: filteredReceiptItems,

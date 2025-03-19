@@ -7,6 +7,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useTranslation } from "react-i18next";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 interface IStatusBtnProps {
   id?: string;
@@ -39,6 +40,7 @@ const BoardStatusComponent = ({
   const open = Boolean(anchorEl);
   const [menuWidth, setMenuWidth] = useState<number>(0);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (buttonRef.current) {
@@ -88,7 +90,7 @@ const BoardStatusComponent = ({
           color: newTextColor,
           width: "fit-content",
           minWidth: "fit-content",
-          height: 36,
+          height: isMobile ? 30 : 36,
           pointerEvents: canChangeStatus ? "auto" : "none",
           opacity: 1,
           display: "inline-flex",
@@ -97,7 +99,7 @@ const BoardStatusComponent = ({
           boxShadow: "none",
           padding: "5px 10px",
           lineHeight: "16px",
-          ...FONT_FAMILY.Lexend(500, 13),
+          ...FONT_FAMILY.Lexend(500, isMobile ? 11 : 13),
           "&:hover": {
             opacity: 0.7,
             backgroundColor: boardStatus()?.backgroundColor,
@@ -113,12 +115,12 @@ const BoardStatusComponent = ({
         disabled={!canChangeStatus}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
-          <div style={{ width: "max-content", }}>
+          <div style={{ width: "max-content" }}>
             {anchorEl
               ? t("customers.selectStatus")
               : isFromMissionView
-                ? `${statusText} / ${currentStation}`
-                : t("productionStatuses." + boardStatus()?.name)}
+              ? `${statusText} / ${currentStation}`
+              : t("productionStatuses." + boardStatus()?.name)}
           </div>
           {anchorEl ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
         </div>
@@ -140,7 +142,7 @@ const BoardStatusComponent = ({
         {statuses?.map((status) => (
           <Button
             sx={{
-              ...FONT_FAMILY.Lexend(500, 13),
+              ...FONT_FAMILY.Lexend(500, isMobile ? 11 : 13),
               width: "100%",
               textTransform: "capitalize",
               justifyContent: "center",
