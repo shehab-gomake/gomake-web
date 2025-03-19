@@ -25,6 +25,7 @@ export enum Permissions {
   SHOW_COSTS_IN_CALCULATIONS = "ShowCostsInCalculations",
   ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
   CAN_SELECT_CLIENT_IN_HOME_PAGE = "CanSelectClientInHomePage",
+  IS_CAN_CREATE_NEW_TEMPLATE = "IsCanCreateNewTemplate",
 
   //SHOW_PROFITS_IN_CALCULATIONS = "ShowProfitsInCalculations",
   CUSTOMIZE_WORKFLOW = "CustomizeWorkflow",
