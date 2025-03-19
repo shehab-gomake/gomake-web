@@ -11,19 +11,32 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { endOfToday, startOfYear } from "date-fns";
 import { ERPDocumentsTypesEnum } from "@/enums";
 import { getAndSetClientContacts } from "@/services/hooks";
+import { initialFromDate } from "@/utils/helpers";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
-const useLedgerReport = ({ customerId }: any) => {
+interface IProps {
+  clientType: CLIENT_TYPE;
+  customerId?: string;
+}
+
+const useLedgerReport = ({ customerId, clientType }: IProps) => {
   const { alertFaultGetData, alertSuccessGetData, alertFault, alertSuccess } =
     useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
   const {
     customer,
     renderOptions,
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-  } = useCustomerDropDownList();
+    supplierList,
+  } = useCustomerDropDownList({
+    shouldRenderCustomersOnMount: !isPurchaseReport,
+    shouldRenderSuppliersOnMount: isPurchaseReport,
+  });
+
   const [clientContactsValue, setClientContactsValue] = useState<any>([]);
 
   const getAllClientContacts = useCallback(async () => {
@@ -32,11 +45,18 @@ const useLedgerReport = ({ customerId }: any) => {
     });
   }, [customer, customerId]);
 
-  const { navigate } = useGomakeRouter();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [isExtended, setIsExtended] = useState<boolean>(false);
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+
+  const startOfPreviousYear = () => {
+    const currentYear = new Date().getFullYear();
+    return new Date(currentYear - 1, 0, 1); // January 1st of the previous year
+  };
+
+  const [fromDate, setFromDate] = useState<Date>(
+    initialFromDate("ledger-report-date", startOfPreviousYear())
+  );
   const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
   const [selectedContactById, setSelectedContactById] = useState<any>();
@@ -183,7 +203,10 @@ const useLedgerReport = ({ customerId }: any) => {
       alertFault("alerts.pleaseEnsureDatesSelected");
       return;
     }
-
+    if (!customerId && !customer) {
+      alertFault("reports.pleaseSelectCustomer");
+      return;
+    }
     const formattedStartDate = format(fromDate, "yyyy-MM-dd");
     const formattedEndDate = format(toDate, "yyyy-MM-dd");
     const res = await callApi(
@@ -194,6 +217,9 @@ const useLedgerReport = ({ customerId }: any) => {
         startDate: formattedStartDate,
         endDate: formattedEndDate,
         isExtended: isExtended,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       },
       true,
       null
@@ -212,6 +238,7 @@ const useLedgerReport = ({ customerId }: any) => {
     });
     anchor.click();
   };
+
   const getAgingReportFilter = useCallback(async () => {
     if (!fromDate || !toDate) {
       alertFault("alerts.pleaseEnsureDatesSelected");
@@ -228,6 +255,9 @@ const useLedgerReport = ({ customerId }: any) => {
         endDate: formattedEndDate,
         clientId: customerId ? customerId : customer?.id,
         isExtended: isExtended,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       }
     );
     if (res?.success) {
@@ -312,6 +342,7 @@ const useLedgerReport = ({ customerId }: any) => {
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
+      localStorage.setItem("ledger-report-date", value[0]);
       setFromDate(value[0]);
       setToDate(value[1]);
     } else {
@@ -319,6 +350,20 @@ const useLedgerReport = ({ customerId }: any) => {
       setToDate(null);
     }
   };
+
+  const [erpAccountsList, setErpAccountsList] = useState([]);
+
+  const getErpAccountsList = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.GET,
+      `/v1/erp-service/receipts/get-erp-accounts`
+    );
+    if (res?.success) {
+      setErpAccountsList(res.data?.data?.data || []);
+    } else {
+      alertFaultGetData();
+    }
+  }, []);
 
   return {
     t,
@@ -357,6 +402,10 @@ const useLedgerReport = ({ customerId }: any) => {
     toDate,
     customerId,
     isFetching,
+    erpAccountsList,
+    getErpAccountsList,
+    supplierList,
+    isPurchaseReport,
   };
 };
 

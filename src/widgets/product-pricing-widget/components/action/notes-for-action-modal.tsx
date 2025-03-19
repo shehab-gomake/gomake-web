@@ -1,4 +1,8 @@
-import { GoMakeModal, GomakePrimaryButton } from "@/components";
+import {
+  GoMakeModal,
+  GomakePrimaryButton,
+  GomakeTextInput,
+} from "@/components";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "../../style";
 import {
@@ -11,6 +15,7 @@ import {
 } from "react";
 import { debounce } from "@mui/material";
 import dynamic from "next/dynamic";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 interface NotesForActionModalProps {
@@ -22,6 +27,10 @@ interface NotesForActionModalProps {
   setValue: (value: string) => void;
   modalTitle?: string;
   id?: string | number;
+  isHaveJobName?: boolean;
+  jobName?: string;
+  setJobName?: (value: string) => void;
+  documentType?: number;
 }
 
 const NotesForActionModal = ({
@@ -33,9 +42,14 @@ const NotesForActionModal = ({
   setValue,
   modalTitle,
   id,
+  isHaveJobName = false,
+  jobName,
+  setJobName,
+  documentType,
 }: NotesForActionModalProps) => {
   const { classes } = useStyle();
   const [myValue, setMyValue] = useState<string>("");
+
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -44,11 +58,20 @@ const NotesForActionModal = ({
     setMyValue(value);
   }, [value]);
 
+  // If you need to use the debounced version again, please let me know, Lama.
+  // const handleTextChange = useCallback(
+  //   debounce((value: string) => {
+  //     setMyValue(value);
+  //     setValue(value);
+  //   }, 300),
+  //   [setValue]
+  // );
+
   const handleTextChange = useCallback(
-    debounce((value: string) => {
+    (value: string) => {
       setMyValue(value);
       setValue(value);
-    }, 300),
+    },
     [setValue]
   );
 
@@ -113,6 +136,30 @@ const NotesForActionModal = ({
           ...containerStyle,
         }}
       >
+        {isHaveJobName &&
+          (documentType === DOCUMENT_TYPE.quote ||
+            documentType === DOCUMENT_TYPE.order) && (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "flex-start",
+                alignItems: "flex-start",
+                gap: 10,
+                marginBottom: 10,
+              }}
+            >
+              <div>Enter Job Name</div>
+              <GomakeTextInput
+                placeholder={t("sales.cart.jobName")}
+                onChange={(e: any) => {
+                  setJobName(e.target.value);
+                }}
+                value={jobName}
+              />
+            </div>
+          )}
+
         {typeof window !== "undefined" && (
           <Suspense>
             <ReactQuill

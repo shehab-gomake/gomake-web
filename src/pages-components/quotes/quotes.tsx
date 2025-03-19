@@ -19,7 +19,7 @@ import { CardsSection } from "./widgets/statistics-section/statistics-sections";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { AddRuleModal } from "../products/profits-new/widgets/add-rule-modal";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IconButton } from "@mui/material";
 import { GoMakeMenu } from "@/components";
 import { InputAdornment } from "@mui/material";
@@ -45,6 +45,7 @@ import {
 import { TotalCardComponent } from "./widgets/statistics-section/total-card";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission";
+import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -199,6 +200,16 @@ const QuotesListPageWidget = ({
     deliveryStatuses,
     deliveryStatus,
     setDeliveryStatus,
+    setFromDate,
+    setToDate,
+    supplierList,
+    isPurchaseDocument,
+    isSendToClient,
+    isReceipt,
+    isSupplierPayments,
+    isPurchaseOrder,
+    isMoveToReady,
+    handleCheckboxChange,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -217,11 +228,23 @@ const QuotesListPageWidget = ({
   const RTL = dir === "rtl";
   const GlobalStyle = createGlobalStyle`
   .rs-picker-popup-daterange {
-    left: ${({ RTL }: any) => (RTL ? "auto" : "150px")} !important;
-    right: ${({ RTL }: any) => (RTL ? "150px" : "auto")} !important;
+    left: ${({ RTL }: any) => (RTL ? "auto" : "515px")} !important;
+    right: ${({ RTL }: any) => (RTL ? "530px" : "auto")} !important;
+    top: 320px !important;
   }
 `;
 
+  const pickerRef = useRef(null);
+
+  const handleSelect = (date) => {
+    if (!fromDate) {
+      setFromDate(date);
+    } else if (!toDate) {
+      setToDate(date);
+      onSelectDeliveryTimeDates([fromDate, date]);
+      pickerRef.current.close();
+    }
+  };
   const renderCreateNewButton = (onClickHandler) => (
     <Button
       sx={{
@@ -308,6 +331,8 @@ const QuotesListPageWidget = ({
                   renderOrderCard(
                     isOrder
                       ? onclickCreateNew
+                      : isSupplierPayments
+                      ? () => navigate(`/${documentPath}`)
                       : () => navigate(`/${documentPath}?isNewCreation=true`)
                   )}
               </div>
@@ -346,18 +371,39 @@ const QuotesListPageWidget = ({
                           <div style={classes.selectedFilterContainer}>
                             <div style={classes.statusFilterContainer}>
                               <div style={classes.filterLabelStyle}>
-                                {t("sales.quote.customer")}
+                                {isPurchaseDocument
+                                  ? t("reports.supplier")
+                                  : t("productionFloor.customer")}
                               </div>
                               <GoMakeAutoComplate
                                 key={customerId?.id}
-                                options={renderOptions() ? renderOptions() : []}
+                                options={
+                                  isPurchaseDocument
+                                    ? supplierList
+                                    : renderOptions()
+                                    ? renderOptions()
+                                    : []
+                                }
                                 getOptionLabel={(option: any) =>
                                   `${option.name}`
                                 }
-                                defaultFiltering={false}
-                                onChangeTextField={checkWhatRenderArray}
+                                defaultFiltering={
+                                  isPurchaseDocument ? true : false
+                                }
+                                onChangeTextField={(e) => {
+                                  if (isPurchaseDocument) {
+                                    return;
+                                  }
+                                  checkWhatRenderArray(e);
+                                }}
                                 style={classes.textInputStyle}
-                                placeholder={t("sales.quote.chooseCustomer")}
+                                placeholder={t(
+                                  `sales.quote.${
+                                    isPurchaseDocument
+                                      ? "chooseSupplier"
+                                      : "chooseCustomer"
+                                  }`
+                                )}
                                 onChange={(e: any, value: any) => {
                                   setCustomerId(value);
                                 }}
@@ -564,10 +610,13 @@ const QuotesListPageWidget = ({
                               </h3>
                               <GlobalStyle RTL={RTL} />
                               <DateRangePicker
+                                ref={pickerRef}
                                 onChange={onSelectDeliveryTimeDates}
+                                onSelect={handleSelect}
                                 value={
                                   fromDate && toDate ? [fromDate, toDate] : null
                                 }
+                                // oneTap
                               />
                             </div>
                           </div>
@@ -644,6 +693,19 @@ const QuotesListPageWidget = ({
                     ]
                   : documentType === DOCUMENT_TYPE.purchaseInvoice ||
                     documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+                  ? [
+                      "7%",
+                      "15%",
+                      "10%",
+                      "13%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "5%",
+                    ]
+                  : isReceipt || isSupplierPayments
                   ? [
                       "7%",
                       "15%",
@@ -792,10 +854,18 @@ const QuotesListPageWidget = ({
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
         codeFlag={true}
-        typeClient={CLIENT_TYPE.CUSTOMER}
+        typeClient={
+          isPurchaseDocument && !isPurchaseOrder
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER
+        }
         isgetAllCustomers={false}
         openModal={showCustomerModal}
-        modalTitle={t("customers.modal.editTitle")}
+        modalTitle={
+          isPurchaseDocument && !isPurchaseOrder
+            ? t("suppliers.editModalTitle")
+            : t("customers.modal.editTitle")
+        }
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
@@ -813,6 +883,7 @@ const QuotesListPageWidget = ({
         onClickClosePaymentModal={onClickClosePaymentModal}
         paymentModalTitle={paymentModalTitle}
         documentType={documentType}
+        isSendToClient={isSendToClient}
       />
       <MakePaymentModal
         openMakePaymentModal={openMakePaymentModal}
@@ -831,7 +902,7 @@ const QuotesListPageWidget = ({
       />
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
-        title={`Do you want to print the delivery note with prices ?`}
+        title={t("sales.quote.printDeliveryNoteWithPrices")}
         openModal={openPrintPDFModal}
         yesBtn={t("sales.quote.yesBtn")}
         cancelBtn={t("sales.quote.noBtn")}
@@ -853,26 +924,49 @@ const QuotesListPageWidget = ({
         onClickDelete={onClickCancelReceipt}
       />
       <GoMakeDeleteModal
-        modalType={ModalType.EDIT}
-        title={"sales.moveOrderToReadyWhenCloseOrderTitle"}
-        yesBtn={t("sales.moveToReadyAndCloseOrder")}
-        cancelBtn={t("sales.closeOrderWithoutMoveToReady")}
+        modalType={ModalType.WARNING}
+        title={
+          isSelectedCLoseAsDeliveryNote
+            ? "customers.modal.closeOrderAsDeliveryNote"
+            : "customers.modal.closeOrderAsInvoice"
+        }
+        subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
+        yesBtn={
+          isSelectedCLoseAsDeliveryNote
+            ? t("customers.modal.closeAsDeliveryNote")
+            : t("customers.modal.closeAsInvoice")
+        }
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}
-        onClickDelete={moveOrderToReady}
-        onClickCancel={() => {
-          if (isSelectedCLoseAsDeliveryNote) {
-            const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
-            window.open(path, "_blank");
-          } else {
-            // i think no need for the condition because his modal only for order
-            const path = isOrder
-              ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-              : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-            window.open(path, "_blank");
-          }
-        }}
-      />
+        onClickDelete={
+          isMoveToReady
+            ? moveOrderToReady
+            : () => {
+                if (isSelectedCLoseAsDeliveryNote) {
+                  const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
+                  window.open(path, "_blank");
+                } else {
+                  const path = isOrder
+                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  window.open(path, "_blank");
+                }
+              }
+        }
+      >
+        <div
+          style={{
+            ...classes.inputLbl,
+            color: isMoveToReady ? "black" : "#475467",
+          }}
+        >
+          <PrimaryCheckbox
+            checked={isMoveToReady}
+            onChange={handleCheckboxChange}
+          />
+          {t("sales.moveToReadyAndCloseOrder")}
+        </div>
+      </GoMakeDeleteModal>
       <ThreeOptionsModal
         title={t("payment.cancelReceipt")}
         yesBtn={t("payment.CancelWithRefund")}

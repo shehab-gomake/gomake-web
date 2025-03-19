@@ -1,7 +1,16 @@
+import { UNIT_TYPE } from "@/enums/tabs-icon-enums";
 import { ICompanyProfile } from "@/store/company-profile";
+import { useTranslation } from "react-i18next";
 
 
 const companyProfileInputs = (state: ICompanyProfile, currencies) => {
+    const { t } = useTranslation();
+    const unitTypeOptions = [
+        { value: UNIT_TYPE.UNITS, text: t("profileSettings.units") },
+        { value: UNIT_TYPE.IMPERIAL, text: t("profileSettings.imperial") },
+    ];
+
+
 
     return [
         {
@@ -14,6 +23,17 @@ const companyProfileInputs = (state: ICompanyProfile, currencies) => {
             options: [],
             value: state.name,
             isValid: !!state.name,
+        },
+        {
+            name: "businessNumber",
+            label: "profileSettings.businessNumber",
+            type: "number",
+            placeholder: "profileSettings.businessNumber",
+            required: false,
+            parameterKey: "business_ID",
+            options: [],
+            value: state.business_ID,
+            isValid: state?.business_ID?.length >= 9,
         },
         {
             name: "dashboardCode",
@@ -51,6 +71,19 @@ const companyProfileInputs = (state: ICompanyProfile, currencies) => {
             options: [],
             value: state.employeeWorkingHourCost,
             isValid: !!state.employeeWorkingHourCost,
+        },
+        {
+            name: "unitType",
+            label: "profileSettings.unitsType",
+            type: "select",
+            placeholder: "profileSettings.unitsType",
+            required: false,
+            parameterKey: "unitType",
+            options: unitTypeOptions,
+            value: state.unitType,
+            isValid: true,
+
+
         },
     ];
 }

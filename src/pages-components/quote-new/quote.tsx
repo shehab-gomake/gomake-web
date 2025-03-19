@@ -33,7 +33,7 @@ import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { OtherReasonModal } from "@/widgets/quote-new/total-price-and-vat/other-reason-modal";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
-import { LoginTaxesUrl, fetchTaxesAuthority } from "@/utils/taxes-authority";
+import { fetchTaxesAuthority, LoginTaxesUrl } from "@/utils/taxes-authority";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { WhatsAppWebModal } from "@/widgets/quote-new/modals-widgets/whats-app-web-modal";
 import { AddNewContactModal } from "@/widgets/quote-new/modals-widgets/add-new-contact-modal";
@@ -53,6 +53,12 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ModalType } from "@/enums";
 import { DuplicateQuickModal } from "@/widgets/quote-new/modals-widgets/duplicate-quick-modal";
+import { useOrdersSignalr, useQuotesSignalr } from "@/hooks";
+import Stack from "@mui/material/Stack";
+import { ClientBalanceComponent } from "@/components/client-balance/client-balance";
+import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
+import { SettingVatListMenu } from "@/widgets/quote-new/setting-vat-menu";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -120,8 +126,12 @@ const QuoteNewPageWidget = ({
     openDeliveryTimeCancelModal,
     anchorElSettingMenu,
     openSettingMenu,
+    anchorElSettingMenuForVat,
+    openNewSttingMenuForVat,
     handleSettingMenuClick,
     handleSettingMenuClose,
+    handleSettingMenuClickForVat,
+    handleSettingMenuCloseForVat,
     onClickClosePriceModal,
     onClickOpenDeliveryTimeModal,
     onClickOpenPriceModal,
@@ -205,7 +215,11 @@ const QuoteNewPageWidget = ({
     onBlurCurrency,
     setIsUpdateCurrency,
     isUpdateCurrency,
+    setIsUpdateVatStatus,
+    onBlurVatStatus,
+    isUpdateVatStatus,
     updateCurrency,
+    updateVatStatus,
     refreshExchangeRate,
     getQuote,
     handleSaveBtnClickForDocument,
@@ -219,8 +233,7 @@ const QuoteNewPageWidget = ({
     onClickCloseWhatsAppModal,
     sortDocumentItems,
     updateDiscountType,
-    updateIsShowDetails,
-    updateIsShowPrices,
+    updateDocumentPreference,
     getWhatsAppMessage,
     getWhatsAppMessageForReceipt,
     whatsappMassage,
@@ -256,7 +269,9 @@ const QuoteNewPageWidget = ({
     isWhatsAppWeb,
     setIsWhatsAppWeb,
     isShowSettingIcon,
+    showVatListInSettingIconNew,
     isInvoice,
+    isDeliveryNote,
     onClickOpenChangeProductionStatusModal,
     openChangeProductionStatusModal,
     onClickCloseChangeProductionStatusModal,
@@ -279,11 +294,22 @@ const QuoteNewPageWidget = ({
     confirmCreateDocument,
     onClickConfirmCreateDocument,
     onClickCloseConfirmCreateDocument,
+    isReceipt,
+    isMoveToReady,
+    handleCheckboxChange,
+    isPurchaseDocument,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
+  if (documentType == DOCUMENT_TYPE.quote) {
+    const { } = useQuotesSignalr({ getQuote });
+  }
+  if (documentType == DOCUMENT_TYPE.order) {
+    const { } = useOrdersSignalr({ getQuote });
+  }
+
   const dir: "rtl" | "ltr" = t("direction");
 
   const handleChangeCreationDate = (newDate) => {
@@ -365,7 +391,7 @@ const QuoteNewPageWidget = ({
   }, []);
 
   useEffect(() => {
-    if (documentType === DOCUMENT_TYPE.receipt) resetReceiptState();
+    if (isReceipt) resetReceiptState();
   }, []);
 
   useEffect(() => {
@@ -484,6 +510,14 @@ const QuoteNewPageWidget = ({
                         <SettingNewIcon />
                       </IconButton>
                     )}
+                    {showVatListInSettingIconNew && (
+                      <IconButton
+                        style={{ marginRight: 4 }}
+                        onClick={handleSettingMenuClickForVat}
+                      >
+                        <SettingNewIcon />
+                      </IconButton>
+                    )}
                   </div>
                 )}
               </div>
@@ -491,13 +525,23 @@ const QuoteNewPageWidget = ({
                 <div style={classes.firstBorder} />
               ) : (
                 <div style={classes.datesContainer}>
-                  {
-                    !isQuoteConfirmation && quoteState?.createdBy &&
-                    <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 10 }}>
-                      <div style={classes.createdByContainer}>{t("sales.quote.createBy")}</div>
-                      <div style={classes.createdByContainer}>{quoteState?.createdBy}</div>
+                  {!isQuoteConfirmation && quoteState?.createdBy && (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        gap: 10,
+                      }}
+                    >
+                      <div style={classes.createdByContainer}>
+                        {t("sales.quote.createBy")}
+                      </div>
+                      <div style={classes.createdByContainer}>
+                        {quoteState?.createdBy}
+                      </div>
                     </div>
-                  }
+                  )}
                   <ThemeProvider theme={theme}>
                     <CssBaseline />
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -542,9 +586,23 @@ const QuoteNewPageWidget = ({
                       )}
                     </LocalizationProvider>
                   </ThemeProvider>
+                  <Stack flex={1} direction={"row"} justifyContent={"flex-end"}>
+                    <ClientBalanceComponent
+                      clientBalance={quoteState.clientBalance}
+                      clientId={quoteState?.client?.id}
+                      clientType={
+                        isPurchaseDocument
+                          ? CLIENT_TYPE.SUPPLIER
+                          : CLIENT_TYPE.CUSTOMER
+                      }
+                    />
+                  </Stack>
                 </div>
               )}
-              <div style={classes.bordersecondContainer}>
+              <div
+                style={classes.bordersecondContainer}
+                className="custom-scrollbar"
+              >
                 <BusinessNewWidget
                   values={quoteState}
                   onBlurBusinessName={onBlurBusinessName}
@@ -621,7 +679,7 @@ const QuoteNewPageWidget = ({
                 paddingRight: 12,
               }}
             >
-              {documentType !== DOCUMENT_TYPE.receipt && (
+              {!isReceipt && (
                 <QuoteForPriceTable
                   documentItems={
                     isQuoteConfirmation
@@ -663,7 +721,7 @@ const QuoteNewPageWidget = ({
                   />
                 </>
               )}
-              {documentType === DOCUMENT_TYPE.receipt && <ReceiptsTable />}
+              {isReceipt && <ReceiptsTable />}
             </div>
             {!isPrePaymentPage && (
               <WriteCommentComp
@@ -688,7 +746,6 @@ const QuoteNewPageWidget = ({
                 handleSendBtnClick={handleSendBtnClick}
                 documentType={documentType}
                 onOpenCopyFromOrder={onOpenCopyFromOrder}
-                handleSaveBtnClickForDocument={handleSaveBtnClickForDocument}
                 onClickOpenNewItemNotesModal={onClickOpenNewItemNotesModal}
                 handleRejectBtnClick={handleRejectBtnClick}
                 handleAcceptBtnClick={handleAcceptBtnClick}
@@ -698,7 +755,6 @@ const QuoteNewPageWidget = ({
                 onClickSendReceiptToClient={onClickSendReceiptToClient}
                 handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
                 onClickConfirmCreateDocument={onClickConfirmCreateDocument}
-
               />
             </div>
           )}
@@ -736,7 +792,7 @@ const QuoteNewPageWidget = ({
         openModal={openCopyFromOrderModal}
         onClose={onCloseCopyFromOrder}
         documentType={documentType}
-        cliendDocumentType={copyFromDocumentType}
+        copyFromDocumentType={copyFromDocumentType}
       />
       <DuplicateItemModal
         openModal={openDuplicateWithDifferentQTYModal}
@@ -792,13 +848,24 @@ const QuoteNewPageWidget = ({
         setIsUpdateCurrency={setIsUpdateCurrency}
         isUpdateCurrency={isUpdateCurrency}
         updateCurrency={updateCurrency}
+        updateVatStatus={updateVatStatus}
         onClickRefresh={refreshExchangeRate}
         sortDocumentItems={sortDocumentItems}
         updateDiscountType={updateDiscountType}
-        updateIsShowDetails={updateIsShowDetails}
-        updateIsShowPrices={updateIsShowPrices}
+        updateDocumentPreference={updateDocumentPreference}
         documentType={documentType}
-        getQuote={getQuote}
+        onBlurVatStatus={onBlurVatStatus}
+        setIsUpdateVatStatus={setIsUpdateVatStatus}
+        isUpdateVatStatus={isUpdateVatStatus}
+      />
+      <SettingVatListMenu
+        handleClose={handleSettingMenuCloseForVat}
+        open={openNewSttingMenuForVat}
+        anchorEl={anchorElSettingMenuForVat}
+        onBlurVatStatus={onBlurVatStatus}
+        setIsUpdateVatStatus={setIsUpdateVatStatus}
+        isUpdateVatStatus={isUpdateVatStatus}
+        updateVatStatus={updateVatStatus}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}
@@ -868,27 +935,51 @@ const QuoteNewPageWidget = ({
         }}
       />
       <GoMakeDeleteModal
-        modalType={ModalType.EDIT}
-        title={"sales.moveOrderToReadyWhenCloseOrderTitle"}
-        yesBtn={t("sales.moveToReadyAndCloseOrder")}
-        cancelBtn={t("sales.closeOrderWithoutMoveToReady")}
+        modalType={ModalType.WARNING}
+        title={
+          isSelectedCLoseAsDeliveryNote
+            ? "customers.modal.closeOrderAsDeliveryNote"
+            : "customers.modal.closeOrderAsInvoice"
+        }
+        subTitle={"customers.modal.thisOrderIsAlreadyInProcess"}
+        yesBtn={
+          isSelectedCLoseAsDeliveryNote
+            ? t("customers.modal.closeAsDeliveryNote")
+            : t("customers.modal.closeAsInvoice")
+        }
         openModal={openChangeProductionStatusModal}
         onClose={onClickCloseChangeProductionStatusModal}
-        onClickDelete={moveOrderToReady}
-        onClickCancel={() => {
-          if (isSelectedCLoseAsDeliveryNote) {
-            navigate(
-              `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-            );
-          } else {
-            const path =
-              documentType === DOCUMENT_TYPE.order
-                ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-            navigate(path);
-          }
-        }}
-      />
+        onClickDelete={
+          isMoveToReady
+            ? moveOrderToReady
+            : () => {
+              if (isSelectedCLoseAsDeliveryNote) {
+                navigate(
+                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                );
+              } else {
+                const path =
+                  documentType === DOCUMENT_TYPE.order
+                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                navigate(path);
+              }
+            }
+        }
+      >
+        <div
+          style={{
+            ...classes.inputLbl,
+            color: isMoveToReady ? "black" : "#475467",
+          }}
+        >
+          <PrimaryCheckbox
+            checked={isMoveToReady}
+            onChange={handleCheckboxChange}
+          />
+          {t("sales.moveToReadyAndCloseOrder")}
+        </div>
+      </GoMakeDeleteModal>
       <NewItemNotesModal
         openModal={openNewItemNotesModal}
         onClose={onClickCloseNewItemNotesModal}

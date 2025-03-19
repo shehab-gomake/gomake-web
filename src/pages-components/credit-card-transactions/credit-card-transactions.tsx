@@ -68,6 +68,7 @@ const CreditCardTransactionsWidget = () => {
             maxHeight={"100vh"}
             rows={allCreditCardTransaction}
             headers={tableHeaders}
+            variant="OddEvenTable"
           />
         </div>
         <GoMakePagination

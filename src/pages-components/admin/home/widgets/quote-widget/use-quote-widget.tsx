@@ -23,6 +23,7 @@ import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { prevSelectedClientState, ProductCategoryType } from "./states";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
+import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
@@ -45,9 +46,14 @@ const useQuoteWidget = () => {
   const [isDisabled, setIsDisabled] = useState(true);
   const [QuoteId, setQuoteId] = useState("");
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
+  const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
 
-  const { renderOptions, checkWhatRenderArray, isFetching } =
-    useCustomerDropDownList();
+  const {
+    renderOptions,
+    checkWhatRenderArray,
+    isFetching,
+    customersListCreateQuote,
+  } = useCustomerDropDownList();
 
   const onClickOpenModal = (quoteId: any) => {
     setOpenModal(true);
@@ -215,7 +221,7 @@ const useQuoteWidget = () => {
   useEffect(() => {
     //getAllProducts();
     getAllProductsAndMaterials();
-  }, [selectedClient, selectedClientType]);
+  }, [selectedClient, selectedClientType, selectedTab]);
 
   useEffect(() => {
     getAllReports();
@@ -235,10 +241,7 @@ const useQuoteWidget = () => {
   const [customer, setCustomer] = useState([]);
 
   const onCustomerAdd = (customer) => {
-    handleClickToSelectedCustomer(
-      userQuote?.client?.id,
-      customer
-    ).then();
+    handleClickToSelectedCustomer(userQuote?.client?.id, customer).then();
     setOpenCustomerModal(false);
   };
 
@@ -253,7 +256,9 @@ const useQuoteWidget = () => {
 
   useEffect(() => {
     if (products?.length > 0 && combinedData?.length > 0) {
-      const findDefaultProduct = products.find((item) => item.isDefaultInHomePage);
+      const findDefaultProduct = products.find(
+        (item) => item.isDefaultInHomePage
+      );
       if (findDefaultProduct) {
         handleProductChange(findDefaultProduct?.id);
       }
@@ -266,7 +271,7 @@ const useQuoteWidget = () => {
         setProducts(res?.data?.products);
         const transformProducts = (products) => {
           return {
-            value: "products",
+            value: ETab.PRODUCTS,
             selectable: false,
             title: t("tabs.products"),
             text: t("tabs.products"),
@@ -283,7 +288,7 @@ const useQuoteWidget = () => {
 
         const transformMaterials = (materials) => {
           return {
-            value: "materials",
+            value: ETab.MATERIALS,
             title: t("tabs.materials"),
             text: t("tabs.materials"),
             level: 0,
@@ -311,9 +316,30 @@ const useQuoteWidget = () => {
             })),
           };
         };
+        const attachParentReferences = (nodes, parent = null) => {
+          if (!Array.isArray(nodes)) return [];
 
+          return nodes.map((node) => {
+            const newNode = { ...node, parent };
+            if (newNode.children) {
+              newNode.children = attachParentReferences(
+                newNode.children,
+                newNode
+              );
+            }
+            return newNode;
+          });
+        };
         const transformedProducts = transformProducts(res?.data?.products);
         const transformedMaterials = transformMaterials(res?.data?.materials);
+        transformedProducts.children = attachParentReferences(
+          transformedProducts.children,
+          transformedProducts
+        );
+        transformedMaterials.children = attachParentReferences(
+          transformedMaterials.children,
+          transformedMaterials
+        );
 
         // Combine the transformed data
         const combinedFinalData = [transformedProducts, transformedMaterials];
@@ -325,8 +351,9 @@ const useQuoteWidget = () => {
       await getAllProductAndMaterialsApi(callApi, callBack, {
         clientId: selectedClient?.id,
         clientTypeId: selectedClientType?.id,
+        selectionType: selectedTab,
       });
-  }, [selectedClient, selectedClientType]);
+  }, [selectedClient, selectedClientType, selectedTab]);
 
   const handleProductChange = (e) => {
     const selectedValue = e;
@@ -373,6 +400,11 @@ const useQuoteWidget = () => {
     });
   };
 
+  const onSelectTab = (v) => {
+    setSelectedTab(v);
+    localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
+  };
+
   return {
     clientTypesValue,
     isDisabled,
@@ -416,6 +448,10 @@ const useQuoteWidget = () => {
     combinedData,
     handleProductChange,
     isFetching,
+    selectedTab,
+    setSelectedTab,
+    onSelectTab,
+    customersListCreateQuote,
   };
 };
 

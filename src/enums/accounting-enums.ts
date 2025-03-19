@@ -5,8 +5,10 @@ export enum DebitLimitTypes {
 }
 
 export enum EnumVATStatus {
-    Must = 1,
-    Exempt,
+    Must18Percents = 0,
+    // Must17Percents,
+    // Must16Percents,
+    Exempt =3,
 }
 
 export enum EnumInvoiceClosureMethod {
@@ -27,3 +29,9 @@ export enum EnumTermsPayment {
     Net90Eom,
     Net120Eom,
 }
+
+export enum BodyTypeEnum {
+    Mail,
+    SMS,
+    Whatsapp,
+  }

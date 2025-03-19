@@ -12,12 +12,16 @@ import {
 } from "@/widgets/file-uploader-widget/interface";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { useGomakeAxios } from "@/hooks";
+import { useRouter } from "next/router";
 
-const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
+const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduct?:boolean) => {
   const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
+  const { query } = useRouter();
+  const { productType } = query;
+
   const [uploadingFiles, setUploadingFiles] =
     useRecoilState(uploadingFilesState);
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
@@ -74,7 +78,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
       orderItemId,
       filename: file?.name,
       source: finalPath,
-      productType: "",
+      productType: !!productType ? productType.toString() : "",
       signalRConnectId: connectionId,
       status: EUploadingFileStatus.UPLOADING,
       fileType,
@@ -92,7 +96,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
         currentChunk,
         totalChunks,
         file?.name,
-        fileType
+        fileType,
       );
 
       if (!response || !response.success) {
@@ -118,7 +122,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
           filename: file?.name,
           source: finalPath,
           screenShot: "",
-          productType: "",
+          productType: !!productType ? productType.toString() : "",
           signalRConnectId: connectionId,
           status: EUploadingFileStatus.ERROR,
           fileType,
@@ -150,7 +154,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
           filename: file?.name,
           source: finalPath,
           screenShot: response.screenShot,
-          productType: "",
+          productType: !!productType ? productType.toString() : "",
           signalRConnectId: connectionId,
           status: EUploadingFileStatus.Uploaded,
           fileType,
@@ -169,6 +173,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
     const formData = new FormData();
     formData.append("file", chunk);
     formData.append("orderItemId", orderItemId);
+    formData.append("isComplexProduct", isComplexProduct ? "true" : "false");
     formData.append("fileName", fileName);
     formData.append(
       "takeScreenShot",
@@ -211,10 +216,12 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath) => {
     const res: any = await callApi(
       "POST",
       `/v1/erp-service/board-missions/set-order-item-file-status`,
-        {
-          ...dto,
-          boardMissionIds: uploadingFiles.map(fileGroup => fileGroup.boardMissionId)
-        },
+      {
+        ...dto,
+        boardMissionIds: uploadingFiles.map(
+          (fileGroup) => fileGroup.boardMissionId
+        ),
+      },
       false
     );
   };

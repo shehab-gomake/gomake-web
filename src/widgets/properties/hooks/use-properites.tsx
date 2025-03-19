@@ -66,7 +66,7 @@ const useProperites = ({ classes }) => {
     getMachincesByActionId()
   }, [])
   const getSuccessEvent = (property, rule) => {
-    if (property.ruleType === 1) {
+    if (property?.ruleType === 1) {
       const params = parameters.find(
         (param) => param?.id === property?.propertyId
       )?.values;
@@ -109,7 +109,7 @@ const useProperites = ({ classes }) => {
                 <div style={classes.item}>
                   {successEvent ? (
                     <>
-                      {index + 1}- {rule.expression} value=
+                      {index + 1}- {rule.expression} {t("products.profits.exceptions.value")} =
                       {successEvent}
                     </>
                   ) : (
@@ -252,6 +252,21 @@ const useProperites = ({ classes }) => {
     [selectedProperties]
   );
 
+  const ToggleIsShowInOutSourceDetails = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.PUT,
+      `/v1/printhouse-config/print-house-action/toggle-is-show-in-out-source-details/${router.query.actionId}/${selectedProperties?.ruleType}/${selectedProperties?.propertyId}`,
+    );
+    if (res?.success) {
+      alertSuccessUpdate();
+      getProperitesService();
+    } else {
+      alertFaultUpdate();
+    }
+
+
+  }, [selectedProperties]);
+
 
   function updateProperties(allProperties, inputs, outputs) {
     allProperties.forEach((property) => {
@@ -263,7 +278,7 @@ const useProperites = ({ classes }) => {
         if (matchingOutput) {
           property.defaultUnit = matchingOutput.defaultUnit;
         }
-      } else if (property.ruleType === 1) {
+      } else if (property?.ruleType === 1) {
         // RuleType is 1, check for matching Input ID
         const matchingInput = inputs.find(
           (input) => input.id === property.propertyId
@@ -318,8 +333,10 @@ const useProperites = ({ classes }) => {
     setHiddenData,
     reOrderPropertiesTables,
     updateIsHiddenFromWorkFlow,
-    updateIsHiddenFromCalculation
+    updateIsHiddenFromCalculation,
+    ToggleIsShowInOutSourceDetails
   };
 };
+
 
 export { useProperites };

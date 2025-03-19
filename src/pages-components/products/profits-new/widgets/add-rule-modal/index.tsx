@@ -91,6 +91,7 @@ const AddRuleModal = ({
     filterData,
     openModal,
   });
+
   const [selectedCategories, setSelectedCategories] = useState<any>("");
   const [selectedStatment2, setSelectedStatment2] = useState<any>("");
   const [selectedProfitModel, setSelectedProfitModel] = useState<number>(null);
@@ -756,7 +757,9 @@ const AddRuleModal = ({
                     <>
                       {rules[index]?.statement2?.type === 0 ||
                         rules[index]?.statement2?.type === 5 ||
-                        rules[index]?.statement2?.type === 4 ? (
+                        rules[index]?.statement2?.type === 4 ||
+                        rules[index]?.statement2?.type === 10 ||
+                        rules[index]?.statement2?.type === 11 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}
@@ -788,12 +791,12 @@ const AddRuleModal = ({
                             {t("properties.statment")}
                           </label>
                           <SecondSwitch
-                            checked={rule.statement === "Yes"}
+                            checked={rule.statement === "true"}
                             onChange={(e, value) => {
                               handleChange(
                                 index,
                                 "statement",
-                                value === true ? "Yes" : "No"
+                                value === true ? "true" : "false"
                               );
                             }}
                           />
@@ -804,11 +807,11 @@ const AddRuleModal = ({
                             {t("properties.statment")}
                           </label>
                           <GomakeTextInput
-                            key={
-                              selectedCategories?.id +
-                              index +
-                              selectedStatment2?.id
-                            }
+                            // key={
+                            //   selectedCategories?.id +
+                            //   index +
+                            //   selectedStatment2?.id
+                            // }
                             style={clasess.textInputContainer}
                             placeholder={t("properties.statment")}
                             onChange={(e) =>

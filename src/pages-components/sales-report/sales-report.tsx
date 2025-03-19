@@ -5,8 +5,13 @@ import { SalesReportHeaderWidget } from "./widgets/header-widget";
 import { SalesReportButtonWidget } from "./widgets/button-widget";
 import { useSalesReport } from "./use-sales-report";
 import { HeaderTitle } from "@/widgets/header-title/header-title";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
-const SalesReportWidget = () => {
+interface IProps {
+  clientType: CLIENT_TYPE;
+}
+
+const SalesReportWidget = ({ clientType }: IProps) => {
   const { classes } = useStyle();
   const {
     t,
@@ -23,7 +28,7 @@ const SalesReportWidget = () => {
     onChangeDisplayByGroups,
     handleDocumentTypeChange,
     documentType,
-    documentsTypeList,
+    reportsTypeList,
     displayByGroups,
     tableHeaders,
     getTotalTableDataRows,
@@ -31,12 +36,20 @@ const SalesReportWidget = () => {
     fromDate,
     toDate,
     isFetching,
-  } = useSalesReport();
+    getNewTableDataRows,
+    tableData,
+    handleExportRows,
+    onClickExportExcelReport,
+    supplierList,
+    isPurchaseReport,
+  } = useSalesReport(clientType);
 
   return (
     <div style={classes.mainContainer}>
       <HeaderTitle
-        title={t("tabs.salesReport")}
+        title={
+          isPurchaseReport ? t("tabs.purchasesReport") : t("tabs.salesReport")
+        }
         marginTop={"0px"}
         marginBottom={"0px"}
       />
@@ -50,26 +63,42 @@ const SalesReportWidget = () => {
         handleCustomerChange={handleCustomerChange}
         displayByGroups={displayByGroups}
         onChangeDisplayByGroups={onChangeDisplayByGroups}
-        documentsTypeList={documentsTypeList}
+        reportsTypeList={reportsTypeList}
         handleDocumentTypeChange={handleDocumentTypeChange}
         documentType={documentType}
         handleDateChange={handleDateChange}
         fromDate={fromDate}
         toDate={toDate}
         isFetchingCustomers={isFetching}
+        isPurchaseReport={isPurchaseReport}
+        supplierList={supplierList}
       />
       <Divider />
-      <SalesReportButtonWidget onClickBtn1={onClickBtn1} />
-      {showTable && (
-        <PrimaryTable
-          rows={[...getTableDataRows(), ...getTotalTableDataRows()]}
-          headers={tableHeaders}
-          // maxHeight={650}
-          maxHeight={"calc(100vh - 318px)"}
-          isLastItemTotal={true}
-          stickyHeader={true}
-        />
-      )}
+      <SalesReportButtonWidget
+        onClickBtn1={onClickBtn1}
+        onPrintClick={handleExportRows}
+        onClickExportExcelReport={onClickExportExcelReport}
+      />
+      {showTable &&
+        (Array.isArray(tableData) ? tableData : []).map((item) => {
+          return (
+            <div style={classes.tableTitleContainer}>
+              <div style={classes.titleStyle}>
+                {item.accountName}-{item.accountCode}
+              </div>
+              <PrimaryTable
+                rows={getNewTableDataRows(item?.data)}
+                headers={tableHeaders}
+                maxHeight={"calc(100vh - 450px)"}
+                stickyHeader={true}
+                variant="OddEvenTable"
+              />
+              <div style={classes.totalStyle}>
+                {t("deposits.total")} : {item.total.toFixed(2)}
+              </div>
+            </div>
+          );
+        })}
     </div>
   );
 };

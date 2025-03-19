@@ -11,6 +11,8 @@ const getCategoryCoatingInputs = (categoryId: string, state: Record<string, any>
             return rollDigitalPrinting(state);
         case ECategoryId.FLEXO_PRINTING:
             return flexoPrinting(state);
+            case ECategoryId.ROLL_OFF_SET_PRINTING:
+                return ofssetPrinting(state);
         default:
             return []
     }

@@ -21,13 +21,11 @@ const RowMappingWidget = ({
   const { classes } = useStyle({ headerHeight });
   const { t } = useTranslation();
   const router = useRouter();
-  const { GetDateWithoutHoursFormat } = useDateFormat();
-
+  const { formatISODateTime } = useDateFormat();
   const handleAllocatedSumChange = (event) => {
     const newAllocatedSum = event.target.value;
     const minValue = Math.min(0, item?.sumApplied);
     const maxValue = item?.sumApplied > 0 ? item?.sumApplied : 0;
-
     if (
       isNaN(newAllocatedSum) ||
       newAllocatedSum < minValue ||
@@ -35,10 +33,8 @@ const RowMappingWidget = ({
     ) {
       return;
     }
-
     setAllocatedSum(index, Number(newAllocatedSum));
   };
-
   return (
     <TableRow
       key={item.id}
@@ -72,7 +68,7 @@ const RowMappingWidget = ({
           color: "#000000",
         }}
       >
-        {GetDateWithoutHoursFormat(item?.docDate)}
+        {formatISODateTime(item?.docDate).split(" ")[0]}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -81,7 +77,7 @@ const RowMappingWidget = ({
           color: "#000000",
         }}
       >
-        {item?.dueDate ? GetDateWithoutHoursFormat(item?.dueDate) : "-"}
+        {item?.dueDate ? formatISODateTime(item?.dueDate).split(" ")[0] : "-"}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{

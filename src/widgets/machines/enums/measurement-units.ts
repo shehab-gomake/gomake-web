@@ -9,6 +9,7 @@ export enum EMeasurementUnits {
     PERCENTAGE = 'percentage',
     MINUTE = 'minute',
     INCH = 'inch',
+    MICRO_INCH = 'microInch',
     SQUARE_METER = 'squareMeter',
     SQUARE_CM = 'squareCM',
     SETS_HOUR = 'setsHour',
@@ -39,5 +40,14 @@ export enum EMeasurementUnits {
     CUPS_PER_HOUR = 'cupsPerHour',
     SQUARE_CM_HOUR = 'squareCMPerH',
     LETTERS_PER_HOUR = 'lettersHour',
-    PROFILE_PER_HOUR = 'profileHour'
+    PROFILE_PER_HOUR = 'profileHour',
+    SQUARE_FEET_HOUR = 'squareFeetHour',
+    INCH_PER_HOUR = 'inchHour',
+    SQUARE_FEET_P_MIN = 'squareFeetMinute',
+    INCH_P_MIN = 'inchMinute',
+    INCH_SEC = 'inchSecond',
+    SQUARE_FEET = 'squareFeet',
+    LB = 'lb',
+    PT = 'pt',
+
 }

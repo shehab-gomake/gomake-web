@@ -122,6 +122,7 @@ export type PricingListTableRowProps = {
 };
 export type LineChartProps = {
   actionProfitRowChartData: ActionProfitRowChartData;
+  selectedTransition?: SelectedTransition;
 };
 export type AddStepModalProps = {
   openModal: boolean;

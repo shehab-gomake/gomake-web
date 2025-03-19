@@ -1,4 +1,4 @@
-import { useSnackBar } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   isLoadgingState,
   subProductsParametersState,
@@ -17,12 +17,18 @@ import {
   selectedWorkFlowState,
   sliderCurrentProductItemValuePriceState,
 } from "@/widgets/product-pricing-widget/state";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { EWidgetProductType } from "../enums";
+import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
+import { useRouter } from "next/router";
+import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
+import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
 const useRightSideWidget = ({ includeVAT, widgetType }) => {
+  const router = useRouter();
+  const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const direction = t("direction");
   const isRtl = direction === "rtl";
@@ -55,6 +61,144 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   ] = useRecoilState<number>(sliderCurrentProductItemValuePriceState);
   const [priceIncludeVat, setPriceIncludeVat] = useState<any>();
 
+  const [selectedProduct, setSelectedProduct] = useState<any>({});
+  const [combinedData, setCombinedData] = useState<any>([]);
+  const [products, setProducts] = useState([]);
+  const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
+  const onSelectTab = (v) => {
+    setSelectedTab(v);
+    localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
+  };
+  useEffect(() => {
+    if (combinedData?.length > 0) {
+      const products = combinedData?.find((item) => item.value === ETab.PRODUCTS)?.children;
+      const findDefaultProduct = products.find(
+        (item) => item.value === router?.query?.productId
+      );
+      if (findDefaultProduct) {
+        handleProductChange(findDefaultProduct?.value);
+      }
+    }
+  }, [combinedData, router?.query?.productId])
+  const handleProductChange = (e) => {
+    const selectedValue = e;
+    // Find the selected node from combinedData
+    const findNodeByKey = (key, nodes) => {
+      for (const node of nodes) {
+        if (node.value === key) {
+          return node;
+        }
+        if (node.children) {
+          const found = findNodeByKey(key, node.children);
+          if (found) {
+            return found;
+          }
+        }
+      }
+      return null;
+    };
+
+    const selectedNode = findNodeByKey(selectedValue, combinedData);
+
+    if (selectedNode && !selectedNode.children) {
+      router.push({
+        pathname: router.pathname,
+        query: { ...router.query, productId: selectedValue },
+      });
+      setSelectedProduct({
+        id: selectedValue,
+        category: selectedNode?.category,
+      });
+    } else {
+      setSelectedProduct(null);
+    }
+  };
+
+  const getAllProductsAndMaterials = useCallback(async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const transformProducts = (products) => {
+          return {
+            value: ETab.PRODUCTS,
+            selectable: false,
+            title: t("tabs.products"),
+            text: t("tabs.products"),
+            level: 0,
+            children: products.map((product) => ({
+              value: product.id, // Using product id as the key
+              title: product.name, // Using product name as the label,
+              text: product.name,
+              code: product.code,
+              level: 1,
+              category: ProductCategoryType.PRODUCT,
+            })),
+          };
+        };
+        const transformMaterials = (materials) => {
+          return {
+            value: ETab.MATERIALS,
+            title: t("tabs.materials"),
+            text: t("tabs.materials"),
+            level: 0,
+            selectable: false,
+            children: materials.map((material) => ({
+              value: material.materialTypeName,
+              title: material.materialTypeName,
+              text: material.materialTypeName,
+              level: 1, // Material Types are level 1
+              selectable: false,
+              category: ProductCategoryType.MATERIAL,
+              children: material.categories.map((category) => ({
+                value: `${material.materialTypeName}-${category.categoryName}`,
+                title: category.categoryName,
+                text: category.categoryName,
+                selectable: false,
+                level: 2, // Categories are level 2
+                category: ProductCategoryType.MATERIAL,
+                children: category.rows.map((row) => ({
+                  value: row.id,
+                  title: row.value,
+                  text: row.value,
+                  level: 3, // Rows are level 3
+                  category: ProductCategoryType.MATERIAL,
+                })),
+              })),
+            })),
+          };
+        };
+
+        const transformedProducts = transformProducts(res?.data?.products);
+        const transformedMaterials = transformMaterials(res?.data?.materials);
+
+        // Combine the transformed data
+        const combinedFinalData = [transformedProducts, transformedMaterials];
+        setCombinedData(combinedFinalData);
+      }
+    };
+
+    if (router?.query?.customerId && router?.query?.clientTypeId) {
+      await getAllProductAndMaterialsApi(callApi, callBack, {
+        clientId: router?.query?.customerId,
+        clientTypeId: router?.query?.clientTypeId,
+        selectionType: selectedTab
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (products?.length > 0 && combinedData?.length > 0) {
+      const findDefaultProduct = products.find(
+        (item) => item.id === router?.query?.productId
+      );
+      if (findDefaultProduct) {
+        handleProductChange(findDefaultProduct?.id);
+      }
+    }
+  }, [combinedData, router?.query?.productId]);
+  useEffect(() => {
+    getAllProductsAndMaterials();
+  }, []);
+
   useEffect(() => {
     setCalculationExceptionsLogs([]);
   }, []);
@@ -86,7 +230,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   /* Slider */
   const priceToUse =
     widgetType === EWidgetProductType.EDIT ||
-    widgetType === EWidgetProductType.DUPLICATE
+      widgetType === EWidgetProductType.DUPLICATE
       ? calculatedPriceProductItemValue
       : currentProductItemValueTotalPrice;
 
@@ -108,10 +252,12 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   };
 
   useEffect(() => {
-    if (sliderCurrentProductItemValueTotalPrice !== null) {
+    if (sliderCurrentProductItemValueTotalPrice !== null && !priceIncludeVat) {
       setPriceIncludeVat(
-        sliderCurrentProductItemValueTotalPrice * (1 + systemVAT)
+        (sliderCurrentProductItemValueTotalPrice * (1 + systemVAT))?.toFixed(3)
       );
+    } else {
+      setPriceIncludeVat(null);
     }
   }, [sliderCurrentProductItemValueTotalPrice]);
 
@@ -136,6 +282,13 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     setSliderCurrentProductItemValueTotalPrice,
     alertFault,
     priceIncludeVat,
+    setPriceIncludeVat,
+    systemVAT,
+    selectedProduct,
+    combinedData,
+    handleProductChange,
+    selectedTab,
+    onSelectTab,
   };
 };
 

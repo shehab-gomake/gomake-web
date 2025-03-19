@@ -1,42 +1,44 @@
-import React, {ChangeEvent, SyntheticEvent, useEffect, useState} from "react";
-import {useTranslation} from "react-i18next";
-import {useGomakeAxios} from "@/hooks";
-import {useStyle} from "@/components/form-inputs/style";
-import {IFormInput} from "@/components/form-inputs/interfaces";
+import React, { ChangeEvent, SyntheticEvent, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useGomakeAxios } from "@/hooks";
+import { useStyle } from "@/components/form-inputs/style";
+import { IFormInput } from "@/components/form-inputs/interfaces";
 import {
     GoMakeAutoComplate,
     GomakeTextInput,
     SecondSwitch,
     PrimarySwitch,
 } from "@/components";
-import {MuiColorInput} from "mui-color-input";
-import {ImageUploadComponent} from "./image-input";
+import { MuiColorInput } from "mui-color-input";
+import { ImageUploadComponent } from "./image-input";
 import Stack from "@mui/material/Stack";
-import {Checkbox, Paper} from "@mui/material";
-import {CheckboxCheckedIcon, CheckboxIcon} from "@/icons";
-import {PhoneInputComponent} from "./phone-input";
-import {useRecoilValue} from "recoil";
+import { Checkbox, Paper } from "@mui/material";
+import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
+import { PhoneInputComponent } from "./phone-input";
+import { useRecoilValue } from "recoil";
 import {
     materialsClientsState,
     materialsMachinesState,
     materialsParametersState,
 } from "@/widgets/materials-widget/state";
-import {productsForDropDownList} from "@/store";
-import {GoMakeImageFiled} from "../image-filed/image-filed";
+import { productsForDropDownList } from "@/store";
+import { GoMakeImageFiled } from "../image-filed/image-filed";
+import { useInputUnit } from "@/components/form-inputs/use-input-units";
 
 const FormInput = ({
-                       input,
-                       error,
-                       changeState,
-                       readonly,
-                       checkWhatRenderArray,
-                       loading,
-                   }: IFormInput) => {
+    input,
+    error,
+    changeState,
+    readonly,
+    checkWhatRenderArray,
+    loading,
+    keyItem,
+}: IFormInput) => {
     const [options, setOptions] = useState([]);
     const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
-    const {callApi} = useGomakeAxios();
-    const {t} = useTranslation();
-    const {classes} = useStyle();
+    const { callApi } = useGomakeAxios();
+    const { t } = useTranslation();
+    const { classes } = useStyle();
     const [color, setColor] = useState<string>(input.value);
     const [selectedNameFile, setSelectedNameFile] = useState<string>(input.value);
     const [values, setValues] = useState([]);
@@ -44,7 +46,8 @@ const FormInput = ({
     const clientsCategories = useRecoilValue<any>(materialsClientsState);
     const parametersCategories = useRecoilValue<any>(materialsParametersState);
     const productValue = useRecoilValue(productsForDropDownList);
-    const [optionsUrl, setOptionsUrl] = useState<string>('')
+    const [optionsUrl, setOptionsUrl] = useState<string>('');
+    const { translateUnit, restoreUnitValue, convertUnitValue, units } = useInputUnit();
     const machinesCategoriesList = machinesCategories.map((machine) => ({
         ...machine,
         value: machine.id,
@@ -72,6 +75,8 @@ const FormInput = ({
     };
 
     const onChangeState = (e: ChangeEvent<HTMLInputElement>) => {
+        //const value = translateUnit && input.unit ? restoreUnitValue(input.unit, parseFloat(e.target.value)) : e.target.value;
+        //changeState(input.parameterKey, translateUnit && input.unit && e.target.value.endsWith('.') ? value + '.' : value);
         changeState(input.parameterKey, e.target.value as string);
     };
 
@@ -129,7 +134,7 @@ const FormInput = ({
             setOptionsUrl(input.optionsUrl);
         } else if (input.options && input.options.length > 0) {
             setOptions(
-                input.options.map(({value, text}) => ({label: text, value}))
+                input.options.map(({ value, text }) => ({ label: text, value }))
             );
         } else if (
             input.options?.length === 0 &&
@@ -197,7 +202,7 @@ const FormInput = ({
             callApi("GET", optionsUrl).then((res) => {
                 if (res?.success) {
                     setOptions(
-                        res?.data?.data?.data?.map(({value, text}) => ({
+                        res?.data?.data?.data?.map(({ value, text }) => ({
                             label: text,
                             value,
                         }))
@@ -227,7 +232,7 @@ const FormInput = ({
                             >
                                 <span>{t(input.label)}</span>
                                 {input.unit && (
-                                    <small>{`${t("measurementUnits." + input.unit)}`}</small>
+                                    <small>{`${t(`measurementUnits.${translateUnit && input.unit ? units[input.unit].imperialUnit : input.unit}`)}`}</small>
                                 )}
                             </Stack>
                         }
@@ -241,7 +246,7 @@ const FormInput = ({
                             />
                         ) : input.type === "select" || input?.type === "products_list" ? (
                             <GoMakeAutoComplate
-                                key={`${input.value}`}
+                                key={keyItem ? keyItem : `${input.value}-${selectedLabel}-${selectedOptions}`}
                                 style={{
                                     minWidth: 180,
                                     border: 0,
@@ -260,7 +265,7 @@ const FormInput = ({
                                 error={error}
                                 disabled={!!readonly}
                                 placeholder={t(input.placeholder)}
-                                options={input.multiple ? [{label: 'all', value: 'all'}, ...options] : options}
+                                options={input.multiple ? [{ label: 'all', value: 'all' }, ...options] : options}
                                 onChangeTextField={
                                     input.parameterKey === "clients"
                                         ? checkWhatRenderArray
@@ -313,8 +318,8 @@ const FormInput = ({
                                                                     );
                                                                 }
                                                             }}
-                                                            icon={<CheckboxIcon/>}
-                                                            checkedIcon={<CheckboxCheckedIcon/>}
+                                                            icon={<CheckboxIcon />}
+                                                            checkedIcon={<CheckboxCheckedIcon />}
                                                             checked={option.value === 'all' ?
                                                                 values.length === options.length && options.length > 0 :
                                                                 values?.length > 0
@@ -330,7 +335,7 @@ const FormInput = ({
                                         : undefined
                                 }
                                 PaperComponent={(props: any) => (
-                                    <Paper style={{width: "180px"}} {...props}>
+                                    <Paper style={{ width: "180px" }} {...props}>
                                         {props?.children}
                                     </Paper>
                                 )}
@@ -367,7 +372,7 @@ const FormInput = ({
                             />
                         ) : input.type === "password" ? (
                             <GomakeTextInput
-                                style={{height: "40px", minWidth: 180}}
+                                style={{ height: "40px", minWidth: 180 }}
                                 onChange={onChangeState}
                                 type={input.type}
                                 error={
@@ -385,7 +390,7 @@ const FormInput = ({
                             />
                         ) : (
                             <GomakeTextInput
-                                style={{height: "40px", minWidth: 180}}
+                                style={{ height: "40px", minWidth: 180 }}
                                 onChange={onChangeState}
                                 type={input.type}
                                 error={
@@ -395,6 +400,7 @@ const FormInput = ({
                                 placeholder={t(input.placeholder)}
                                 disabled={!!readonly}
                                 value={input.value}
+                                //value={translateUnit && input.unit ? (String(input.value).endsWith('.') ? convertUnitValue(input.unit, parseFloat(input.value)) + '.' : convertUnitValue(input.unit, parseFloat(input.value))) : input.value}
                             />
                         )}
                     </div>
@@ -404,4 +410,4 @@ const FormInput = ({
     );
 };
 
-export {FormInput};
+export { FormInput };

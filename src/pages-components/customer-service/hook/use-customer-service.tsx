@@ -251,7 +251,6 @@ const useCustomerService = (isAdmin: boolean) => {
         text: printHouseName,
       },
     };
-    debugger
     if(columnValues.long_text){
       columnValues.long_text = columnValues.long_text.replaceAll("\n","\\n");
       columnValues.long_text = columnValues.long_text.replaceAll('"',"'");
@@ -344,7 +343,7 @@ const useCustomerService = (isAdmin: boolean) => {
   };
 
   const getIssues = async () => {
-    const query = `
+    /*const query = `
     query {
       boards(ids: [${boardId}]) {
         name
@@ -365,12 +364,47 @@ const useCustomerService = (isAdmin: boolean) => {
         }
       }
     }
-  `;
+  `;*/
+    let query = "";
+    if(isAdmin){
+      query = `
+        query { 
+          boards (ids: ${boardId}) 
+          { 
+                items_page (limit: 500)
+                 { 
+                    cursor items { id name column_values { id text value
+                  }
+                }
+              }
+          }
+        }
+    `;
+    }else{
+      query = `
+        query { 
+          boards (ids: ${boardId}) 
+          { 
+                items_page (limit: 500, query_params: {
+                    rules: [
+                        {column_id:"link_mkm7eghn" , compare_value: ["${printHouseProfileState.name}"]
+                        }
+                    ], operator: and
+                })
+                 { 
+                    cursor items { id name column_values { id text value
+                  }
+                }
+              }
+          }
+        }
+    `;
+    }
     const data = { query };
     const callBack = (res) => {
       if (res?.success) {
         const issues =
-          res.data.data.boards[0]?.groups[0]?.items_page.items || [];
+          res.data.data.boards[0]?.items_page.items || [];
 
         const formattedData = issues.map(({ name, id, column_values }) => {
           const columnData =

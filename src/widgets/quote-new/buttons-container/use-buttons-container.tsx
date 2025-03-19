@@ -248,6 +248,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     // const filteredReceiptItems = Object.values(checkedItemsIds)
     //   .map((id) => quoteItemValue.receiptItems.find((item) => item.id === id))
     //   .filter(Boolean);
+    const isOutgoingPayments = router.query.isOutgoingPayments === "true";
     const filteredReceiptItems = Object.keys(checkedItemsIds)
       .map((key) => {
         const item = quoteItemValue.receiptItems.find(
@@ -257,8 +258,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         const sumApplied = allocatedSums[key] || 0;
 
         return item ? { ...item, sumApplied } : null;
-      })
-      .filter(Boolean);
+      }).filter(Boolean);
+
+      
 
     const newReceiptItem = {
       ...quoteItemValue,
@@ -272,7 +274,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       if (res?.success) {
         const receiptId = res?.data;
         alertSuccessAdded();
-        navigate(`/receipt?Id=${receiptId}`);
+
+        isOutgoingPayments
+          ? router.replace(`/receipt?isOutgoingPayments=true&Id=${receiptId}`)
+          : router.replace(`/receipt?Id=${receiptId}`);
         onClickOpenReceiptCreation();
       } else {
         alertFaultAdded();
@@ -493,16 +498,15 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     isOrder,
     isQuote,
     openReceiptCreationModal,
-    onClickOpenReceiptCreation,
     onClickCloseReceiptCreation,
     openExportReceiptPdfModal,
     onOpenExportReceiptPdfModal,
     onCloseExportReceiptPdfModal,
     handleClickPrint,
-
     openOrderNowPrePaymentModal,
     onClickCloseOrderNowPreModal,
     handleOrderConfirmation,
+    setOpenReceiptCreationModal,
   };
 };
 

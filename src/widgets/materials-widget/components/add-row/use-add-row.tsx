@@ -21,6 +21,10 @@ const useAddCategoryRow = (isAdmin: boolean) => {
 
 
     const onAddCategoryRow = async (dataRow) => {
+        const stringifiedDataRow = Object.fromEntries(
+            Object.entries(dataRow).map(([key, value]) => [key, String(value)])
+        );
+
         const callBack = (res) => {
             if (res.success) {
                 alertSuccessAdded();
@@ -34,14 +38,14 @@ const useAddCategoryRow = (isAdmin: boolean) => {
             await addMaterialCategoryRowApi(callApi, callBack, {
                 materialKey: materialType,
                 categoryKey: materialCategory,
-                rowData: dataRow
+                rowData: stringifiedDataRow
             })
         } else {
             await addPrintHouseMaterialCategoryRowApi(callApi, callBack, {
                 materialKey: materialType,
                 categoryKey: materialCategory,
                 supplierId: supplierId === "" ? undefined : supplierId ?? undefined,
-                rowData: dataRow
+                rowData: stringifiedDataRow
             })
         }
     }

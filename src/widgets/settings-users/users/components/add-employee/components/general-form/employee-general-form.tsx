@@ -35,6 +35,10 @@ import { ActionsListComponent } from "@/widgets/production-floor/filters/select/
 import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 import { printNodeInputs } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/print-node-inputs";
 import { usePrintNodePrinters } from "@/hooks/use-print-node-printers";
+import {
+  OutlookEmailLoginComponent
+} from "@/widgets/settings-profile-widget/components/profiles/sender-email-auth/outlook-email-login";
+import GoogleAuth from "@/widgets/settings-profile-widget/components/profiles/sender-email-auth/google-email-login";
 
 const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
   const { t } = useTranslation();
@@ -223,6 +227,13 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
             onChange={handelIsAgentChange}
           />
         </div>
+        {
+          /*!!state.employee.isAgent &&
+            <Stack direction="row" spacing={2}>
+              <OutlookEmailLoginComponent/>
+              <GoogleAuth/>
+            </Stack>*/
+        }
         {/* {
                     !!state.employee.isAgent && <>
                         <h3 style={classes.subSectionHeader}>{t('usersSettings.agent')}</h3>

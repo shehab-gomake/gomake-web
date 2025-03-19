@@ -40,6 +40,8 @@ const AddContactNewWidget = ({
   const { t } = useTranslation();
   const [newContactName, setNewContactName] = useState("");
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
+  console.log("clientContactsValue", { clientContactsValue, quoteItemValue })
+
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
 
@@ -91,7 +93,9 @@ const AddContactNewWidget = ({
       onClickAddNewContact();
     }
   };
-
+  const filteredContacts = clientContactsValue.filter(contact =>
+    !quoteItemValue?.documentContacts?.some(docContact => docContact.contactID === contact.id)
+  );
   return (
     <>
       <div style={classes.businessContainerStyle}>
@@ -99,7 +103,7 @@ const AddContactNewWidget = ({
           label={t("sales.quote.contactName")}
           options={[
             { id: "new", text: t("sales.quote.addNewContact") }, // Add New Contact option
-            ...clientContactsValue.map((contact) => ({
+            ...filteredContacts.map((contact) => ({
               ...contact,
               value: contact.id,
               text: contact.name,

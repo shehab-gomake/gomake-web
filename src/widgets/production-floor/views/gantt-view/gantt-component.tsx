@@ -1,5 +1,9 @@
 import React, {useEffect, useMemo} from "react";
-import Timeline, {TimelineHeaders, SidebarHeader, DateHeader} from "react-calendar-timeline";
+import Timeline, {
+    TimelineHeaders,
+    SidebarHeader,
+    DateHeader,
+} from "react-calendar-timeline";
 import {useGantt} from "@/widgets/production-floor/views/gantt-view/use-gantt";
 import Stack from "@mui/material/Stack";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -8,9 +12,10 @@ import {JobComponent} from "@/widgets/production-floor/views/gantt-view/job-comp
 import moment from "moment";
 import {FONT_FAMILY} from "@/utils/font-family";
 import {IconButton} from "@mui/material";
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 const TimelineWidget = () => {
     const {
         groups,
@@ -26,19 +31,22 @@ const TimelineWidget = () => {
         handleZoom,
         onTimeChange,
         visibleTimeRange,
-        scrollTimeline
+        scrollTimeline,
+        handleClickZoom
     } = useGantt();
+
     const handleItemSelect = (itemId) => {
         const selectedItem = items.find((item) => item.id === itemId);
         if (selectedItem) {
-            setItems(prev => prev.map(item => ({
-                ...item,
-                selected: selectedItem?.title === item.title,
-                isHasSelected: true
-            })))
+            setItems((prev) =>
+                prev.map((item) => ({
+                    ...item,
+                    selected: selectedItem?.title === item.title,
+                    isHasSelected: true,
+                }))
+            );
         }
     };
-
 
     useEffect(() => {
         getData(currentMonth.month()).then();
@@ -46,7 +54,15 @@ const TimelineWidget = () => {
 
     const filteredGroups = useMemo(() => {
         return groups
-            .filter((group) => group.isRoot || openGroups[group.parent] || items.some(item => item.group === group.id && item.isHasSelected && item.selected))
+            .filter(
+                (group) =>
+                    group.isRoot ||
+                    openGroups[group.parent] ||
+                    items.some(
+                        (item) =>
+                            item.group === group.id && item.isHasSelected && item.selected
+                    )
+            )
             .map((group) => ({
                 ...group,
                 height: 40,
@@ -58,23 +74,46 @@ const TimelineWidget = () => {
                         alignItems="center"
                         style={{cursor: "pointer", ...FONT_FAMILY.Inter(500, 12)}}
                     >
-                        {openGroups[group.id] ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
+                        {openGroups[group.id] ? (
+                            <KeyboardArrowUpIcon/>
+                        ) : (
+                            <KeyboardArrowDownIcon/>
+                        )}
                         {group.title}
                     </Stack>
                 ) : (
-                    <div style={{
-                        paddingLeft: 20,
-                        backgroundColor: "#FFF", ...FONT_FAMILY.Inter(500, 12)
-                    }}>{group.title}</div>
+                    <div
+                        style={{
+                            paddingLeft: 20,
+                            backgroundColor: "#FFF",
+                            ...FONT_FAMILY.Inter(500, 12),
+                        }}
+                    >
+                        {group.title}
+                    </div>
                 ),
             }));
     }, [groups, openGroups, items]);
 
     return (
-        <div style={{position: 'relative'}}>
-                <IconButton style={{position: 'absolute', right: -10, top: 8, zIndex: 99999}} onClick={() => scrollTimeline('right')}><ChevronRightIcon/></IconButton>
+        <div style={{position: "relative", direction: 'ltr'}}>
+            <Stack bgcolor={'#FFF'} alignItems={'center'} direction={'row'} gap={'10px'} position={'absolute'} right={'0px'} top={'0px'} zIndex={99999} height={'60px'}>
+                <IconButton
+                    onClick={() => scrollTimeline("right")}
+                >
+                    <ChevronRightIcon/>
+                </IconButton>
+                <Stack padding={'0 10px 0 0'} gap={'5px'}>
+                        <RemoveIcon onClick={()=>handleClickZoom('in')} style={{height: '20px', width: '20px', cursor: 'pointer'}} />
+                        <AddIcon onClick={()=>handleClickZoom('out')} style={{height: '20px', width: '20px', cursor: 'pointer'}} />
+                </Stack>
+            </Stack>
             <Timeline
-                groups={filteredGroups.length > 0 ? filteredGroups : [{id: 'empty', title: 'No Groups Available'}]}
+                groups={
+                    filteredGroups.length > 0
+                        ? filteredGroups
+                        : [{id: "empty", title: "No Groups Available"}]
+                }
                 items={items.length > 0 ? items : []}
                 defaultTimeStart={timeRange.defaultTimeStart}
                 defaultTimeEnd={timeRange.defaultTimeEnd}
@@ -82,59 +121,73 @@ const TimelineWidget = () => {
                 onItemMove={handleItemMove}
                 onItemResize={handleItemResize}
                 onZoom={handleZoom}
-                canResize={'right'}
+                canResize={"right"}
+                canChangeGroup={false}
                 itemRenderer={(props) => {
-                    return <JobComponent {...props}/>
+                    return <JobComponent {...props} />;
                 }}
                 onTimeChange={onTimeChange}
                 visibleTimeStart={visibleTimeRange.start}
                 visibleTimeEnd={visibleTimeRange.end}
                 onItemSelect={handleItemSelect}
-                onItemDeselect={() => setItems(prev => prev.map(item => ({
-                    ...item,
-                    selected: false,
-                    isHasSelected: false
-                })))}
-                selected={items.filter(item => !!item.selected).map(i => i.id)}
+                onItemDeselect={() =>
+                    setItems((prev) =>
+                        prev.map((item) => ({
+                            ...item,
+                            selected: false,
+                            isHasSelected: false,
+                        }))
+                    )
+                }
+                selected={items.filter((item) => !!item.selected).map((i) => i.id)}
                 dragSnap={1000 * 60}
             >
-                <TimelineHeaders
-                    style={{...FONT_FAMILY.Inter(500, 12)}}
-                >
+                <TimelineHeaders style={{...FONT_FAMILY.Inter(500, 12)}}>
                     <SidebarHeader>
                         {({getRootProps}) => {
-                            return <div {...getRootProps()} style={{
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                width: '200px',
-                                ...FONT_FAMILY.Inter(500, 14),
-                                position: "relative",
-                            }}>
-                                stations
-                <IconButton style={{position: 'absolute', right: 0}} onClick={() => scrollTimeline('left')}><KeyboardArrowLeftIcon/></IconButton>
-                            </div>
+                            return (
+                                <div
+                                    {...getRootProps()}
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        alignItems: "center",
+                                        width: "200px",
+                                        ...FONT_FAMILY.Inter(500, 14),
+                                        position: "relative",
+                                    }}
+                                >
+                                    stations
+                                    <IconButton
+                                        style={{position: "absolute", right: 0}}
+                                        onClick={() => scrollTimeline("left")}
+                                    >
+                                        <KeyboardArrowLeftIcon/>
+                                    </IconButton>
+                                </div>
+                            );
                         }}
                     </SidebarHeader>
+                    <DateHeader unit="primaryHeader"/>
                     <DateHeader
-                        unit="primaryHeader"/>
-                    <DateHeader labelFormat={([start, end], unit) => {
-                        const momentStart = moment(start);
-                        switch (unit) {
-                            case "year":
-                                return `${start.getFullYear()}`;
-                            case "month":
-                                return `${momentStart.format("MMMM")}`;
-                            case "day":
-                                return `${momentStart.format("DD")}`;
-                            case "hour":
-                                return `${momentStart.format("hh:mm A")}`;
-                            case "minute":
-                                return `${momentStart.format("mm")}`;
-                            default:
-                                return "";
-                        }
-                    }}/>
+                        labelFormat={([start, end], unit) => {
+                            const momentStart = moment(start);
+                            switch (unit) {
+                                case "year":
+                                    return `${start?.getFullYear()}`;
+                                case "month":
+                                    return `${momentStart?.format("MMMM")}`;
+                                case "day":
+                                    return `${momentStart?.format("DD")}`;
+                                case "hour":
+                                    return `${momentStart?.format("hh:mm A")}`;
+                                case "minute":
+                                    return `${momentStart?.format("mm")}`;
+                                default:
+                                    return "";
+                            }
+                        }}
+                    />
                 </TimelineHeaders>
             </Timeline>
         </div>

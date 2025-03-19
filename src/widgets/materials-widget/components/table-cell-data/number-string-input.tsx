@@ -9,15 +9,22 @@ import { useRecoilValue } from "recoil";
 import { materialCategorySuppliersState } from "../../state";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
-import { ModalType } from "@/enums";
+import { ModalType, UNIT_TYPE } from "@/enums";
+import { convertValueToImperial } from "@/utils/helpers";
+import { convertValueToOriginalUnit } from "@/utils/helpers";
 
+import { userState } from "@/store/user";
 
-const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRowData) => {
+const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin, unit }: IRowData) => {
+
     const { classes } = useStyle();
     const { t } = useTranslation();
     const [isUpdate, setIsUpdate] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [updateValue, setUpdateValue] = useState('');
+    const user = useRecoilValue<any>(userState);
+    const unitType = user?.printHouseProfile?.unitType || 0
+
     const materialSuppliers = useRecoilValue(materialCategorySuppliersState)
     const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1
 
@@ -32,8 +39,9 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRo
     const { updateCellData } = useTableCellData(isAdmin);
     const onClick = () => {
         if (isEditable) {
+            const data = unitType === UNIT_TYPE.IMPERIAL ? convertValueToImperial(unit, value) : value
             setIsUpdate(true);
-            setUpdateValue(value as string);
+            setUpdateValue(data);
         }
     }
     const onInputChange = (v: string) => {
@@ -46,11 +54,13 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRo
                 onClickOpenDeleteTableRowModal()
             }
             else {
+                const originalValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
                 setIsLoading(true)
-                updateCellData(id, parameterKey, updateValue).then(
+                updateCellData(id, parameterKey, originalValue).then(
                     () => {
                         setIsLoading(false);
                         setIsUpdate(false);
+
 
                     }
                 );
@@ -64,11 +74,32 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRo
         return onBlur
     }, [updateValue])
 
+
+
+
     return (
         <>
-            {isUpdate ? isLoading ? <DotsLoader /> : <UpdateValueInput clickedOut={onClickOut()} onInputChange={onInputChange} value={updateValue as string} onUpdate={onBlur}
-                onCancel={() => setIsUpdate(false)} /> :
-                isEditable ? <PrimaryButton style={{ minWidth: "max-content" }} sx={classes.clickableData} onClick={onClick} variant={'text'}>{value}</PrimaryButton> : <span>{value}</span>
+            {isUpdate ? isLoading ?
+                <DotsLoader /> :
+                <UpdateValueInput
+                    clickedOut={onClickOut()}
+                    onInputChange={onInputChange}
+                    value={updateValue as string}
+                    onUpdate={onBlur}
+                    onCancel={() => setIsUpdate(false)}
+                />
+                :
+                isEditable ?
+                    <PrimaryButton
+                        style={{ minWidth: "max-content" }}
+                        sx={classes.clickableData}
+                        onClick={onClick}
+                        variant={'text'}
+                    >
+                        {unitType === UNIT_TYPE.IMPERIAL ? convertValueToImperial(unit, value) : value}
+                    </PrimaryButton>
+                    : <span>{unitType === UNIT_TYPE.IMPERIAL ? convertValueToImperial(unit, value) : value}</span>
+
             }
             <GoMakeDeleteModal
                 modalType={ModalType.EDIT}
@@ -79,9 +110,11 @@ const NumberStringInput = ({ value, isEditable, parameterKey, id, isAdmin }: IRo
                 yesBtn={t("documentingSettings.update")}
                 onClickDelete={() => {
                     setIsLoading(true)
-                    updateCellData(id, parameterKey, updateValue).then(
+                    const originalValue = unitType === UNIT_TYPE.IMPERIAL ? convertValueToOriginalUnit(unit, updateValue) : updateValue;
+                    updateCellData(id, parameterKey, originalValue).then(
                         () => {
                             setIsLoading(false);
+
                             setIsUpdate(false);
 
                         }

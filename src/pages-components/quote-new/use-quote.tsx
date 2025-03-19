@@ -44,11 +44,11 @@ import {
   updateDocuementItemSelectApi,
   updateDocumentContactApi,
   updateDocumentCurrencyApi,
+  updateDocumentPreferenceApi,
   updateDocumentTitleApi,
+  updateDocumentVatStatusApi,
   updateDueDateApi,
   updateExchangeRateApi,
-  updateIsShowDetailsApi,
-  updateIsShowPricesApi,
   updateOccasionalClientNameApi,
   updatePurchaseNumberApi,
 } from "@/services/api-service/generic-doc/documents-api";
@@ -74,6 +74,10 @@ import {
   isAtLeastOneSelected,
 } from "@/utils/helpers";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
+import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget/state";
+import { ClientChangeSource } from "./store/quote";
+import { validateDocument } from "@/utils/validators";
+import { EnumVATStatus } from "@/enums/accounting-enums";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -111,6 +115,21 @@ const useQuoteNew = ({
   const [selectDate, setSelectDate] = useState(
     isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
   ); // Represents the Delivery Date for Quotes and Orders, and the Due Date for other documents
+
+  const isOutgoingPayments = router.query.isOutgoingPayments === "true";
+  const isSupplierPayments = docType === DOCUMENT_TYPE.supplierPayments;
+  const isPurchaseOrder = docType === DOCUMENT_TYPE.purchaseOrder;
+  const isPurchaseInvoice = docType === DOCUMENT_TYPE.purchaseInvoice;
+  const isPurchaseInvoiceRefund =
+    docType === DOCUMENT_TYPE.purchaseInvoiceRefund;
+
+  const isPurchaseDocument =
+    isPurchaseOrder ||
+    isPurchaseInvoice ||
+    isPurchaseInvoiceRefund ||
+    isSupplierPayments ||
+    isOutgoingPayments;
+
   const [creationDate, setCreationDate] = useState(
     isQuoteConfirmation
       ? quoteConfirm?.creationDate
@@ -134,11 +153,15 @@ const useQuoteNew = ({
   const [clientName, setClientName] = useState(
     quoteItemValue?.occasionalClientName
   );
+
   const [isUpdateExchangeRate, setIsUpdateExchangeRate] = useState<
     number | null
   >(null);
 
   const [isUpdateCurrency, setIsUpdateCurrency] = useState<string>(null);
+  const [isUpdateVatStatus, setIsUpdateVatStatus] = useState<number | null>(
+    null
+  );
   const [, setIsUpdateBusinessCode] = useState<number | null>(null);
   const [isUpdateAddress, setIsUpdateAddress] = useState<number | null>(null);
   const [isUpdateAgent, setIsUpdateAgent] = useState<number | null>(null);
@@ -180,10 +203,13 @@ const useQuoteNew = ({
   );
   const [anchorElSettingMenu, setAnchorElSettingMenu] =
     useState<null | HTMLElement>(null);
+  const [anchorElSettingMenuForVat, setAnchorElSettingMenuForVat] =
+    useState<null | HTMLElement>(null);
   const [displayedItems, setDisplayedItems] = useState<number>(2);
   const openSendBtn = Boolean(anchorElSendBtn);
   const openCancelBtn = Boolean(anchorElCancelBtn);
   const openSettingMenu = Boolean(anchorElSettingMenu);
+  const openNewSttingMenuForVat = Boolean(anchorElSettingMenuForVat);
   const isQuote = docType === DOCUMENT_TYPE.quote;
   const isOrder = docType === DOCUMENT_TYPE.order;
 
@@ -193,7 +219,7 @@ const useQuoteNew = ({
   const isInvoice =
     docType === DOCUMENT_TYPE.invoice ||
     docType === DOCUMENT_TYPE.invoiceRefund;
-
+  const isReceipt = docType === DOCUMENT_TYPE.receipt;
   const [openWhatsAppModal, setOpenWatsAppModal] = useState(false);
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
   const [openNewItemNotesModal, setOpenNewItemNotesModal] = useState(false);
@@ -251,6 +277,14 @@ const useQuoteNew = ({
   const handleSettingMenuClose = () => {
     setAnchorElSettingMenu(null);
   };
+  const handleSettingMenuClickForVat = (
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    setAnchorElSettingMenuForVat(event.currentTarget);
+  };
+  const handleSettingMenuCloseForVat = () => {
+    setAnchorElSettingMenuForVat(null);
+  };
   const handleCancelBtnClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElCancelBtn(event.currentTarget);
   };
@@ -275,6 +309,11 @@ const useQuoteNew = ({
     setOpenAddDeliveryModal(false);
   };
 
+  const [isMoveToReady, setIsMoveToReady] = useState(false);
+  const handleCheckboxChange = () => {
+    setIsMoveToReady(!isMoveToReady);
+  };
+
   const [openChangeProductionStatusModal, setOpenChangeProductionStatusModal] =
     useState(false);
   const [selectedDocument, setSelectedDocument] = useState<any>({});
@@ -283,6 +322,7 @@ const useQuoteNew = ({
   );
   const onClickCloseChangeProductionStatusModal = () => {
     setOpenChangeProductionStatusModal(false);
+    setIsMoveToReady(false);
   };
   const onClickOpenChangeProductionStatusModal = (order) => {
     setSelectedDocument(order);
@@ -341,21 +381,28 @@ const useQuoteNew = ({
     }
   };
 
-  const updateOccasionalClientName = async () => {
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessUpdate();
-      } else {
-        alertFaultUpdate();
-      }
-    };
-    await updateOccasionalClientNameApi(callApi, callBack, {
-      documentType: 0,
-      document: {
-        documentId: quoteItemValue?.id,
-        occasionalClientName: clientName,
-      },
-    });
+  const updateOccasionalClientName = async (value) => {
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      updatedQuoteItemValue.occasionalClientName = value;
+      setQuoteItemValue(updatedQuoteItemValue);
+    } else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+        } else {
+          alertFaultUpdate();
+        }
+      };
+
+      await updateOccasionalClientNameApi(callApi, callBack, {
+        documentType: docType,
+        document: {
+          documentId: quoteItemValue?.id,
+          occasionalClientName: clientName,
+        },
+      });
+    }
   };
 
   const onBlurPurchaseNumber = async (value) => {
@@ -368,8 +415,8 @@ const useQuoteNew = ({
     setIsUpdateDocumentTitle(null);
   };
 
-  const onBlurClientName = async () => {
-    updateOccasionalClientName();
+  const onBlurClientName = async (value) => {
+    updateOccasionalClientName(value);
     setIsUpdateClientName(null);
   };
 
@@ -396,6 +443,10 @@ const useQuoteNew = ({
 
   const onBlurCurrency = async () => {
     setIsUpdateCurrency(null);
+  };
+
+  const onBlurVatStatus = async () => {
+    setIsUpdateVatStatus(null);
   };
 
   const getAllEmployees = useCallback(async () => {
@@ -487,6 +538,53 @@ const useQuoteNew = ({
       },
     });
   };
+  const changeVatValueForVatStatus = (vatStatus: number) => {
+    switch (vatStatus) {
+      //case EnumVATStatus.Must17Percents:
+        //return 0.17;
+      case EnumVATStatus.Must18Percents:
+        return 0.18;
+     // case EnumVATStatus.Must16Percents:
+       // return 0.16;
+      case EnumVATStatus.Exempt:
+        return 0.18;
+      default:
+        return 0.18;
+    }
+  };
+
+  const updateVatStatus = async (vatStatus: number) => {
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      updatedQuoteItemValue.vatStatus = vatStatus;
+      updatedQuoteItemValue.vat = changeVatValueForVatStatus(vatStatus);
+      setQuoteItemValue(updatedQuoteItemValue);
+      setIsUpdateVatStatus(null);
+      getCalculateQuoteItem(
+        updatedQuoteItemValue,
+        2,
+        quoteItemValue.discount,
+        updatedQuoteItemValue
+      );
+    } else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+          setIsUpdateVatStatus(null);
+          getQuote();
+        } else {
+          alertFaultUpdate();
+        }
+      };
+      await updateDocumentVatStatusApi(callApi, callBack, {
+        documentType: docType,
+        document: {
+          documentId: quoteItemValue?.id,
+          vatStatus: vatStatus,
+        },
+      });
+    }
+  };
 
   const updateDocumentTitle = async (value: string) => {
     if (router.query.isNewCreation) {
@@ -550,9 +648,12 @@ const useQuoteNew = ({
     }
   }, []);
 
+  const [routerChangedFromClientSelect, setRouterChangedFromClientSelect] =
+    useState(false);
   const onChangeSelectBusiness = async (
     item: any,
-    prevDocumentItem: any | null = null
+    clientChangeSource: ClientChangeSource = ClientChangeSource.REGULAR_CHANGE,
+    prevDocumentItem: any | null = null //in case we change client and click "save and change client"
   ) => {
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
       setLoadingWithShadow(true);
@@ -583,6 +684,7 @@ const useQuoteNew = ({
                   undefined,
                   { shallow: true }
                 );
+                setRouterChangedFromClientSelect(true);
               }
             }
           }
@@ -613,18 +715,31 @@ const useQuoteNew = ({
       );
       if (res?.success) {
         const _data = res?.data?.data?.result || {};
-        const { orderId, deliveryNoteId, documentId, ...newQuery } =
-          router.query;
-        router.replace(
-          {
-            pathname: router.pathname,
-            query: { ...newQuery },
-          },
-          undefined,
-          { shallow: true }
-        );
 
-        if (prevDocumentItem) {
+        if (clientChangeSource === ClientChangeSource.SAVE_AND_START_NEW_DOC) {
+          const {
+            orderId,
+            deliveryNoteId,
+            documentId,
+            documentToDuplicateId,
+            ...newQuery
+          } = router.query;
+
+          router.replace(
+            {
+              pathname: router.pathname,
+              query: { ...newQuery },
+            },
+            undefined,
+            { shallow: true }
+          );
+
+          setRouterChangedFromClientSelect(true);
+        }
+        if (
+          clientChangeSource === ClientChangeSource.SAVE_AND_CHANGE_CLIENT &&
+          prevDocumentItem
+        ) {
           setQuoteItemValue({
             ..._data,
             documentItems: prevDocumentItem?.documentItems,
@@ -888,6 +1003,7 @@ const useQuoteNew = ({
               discountAmount: newQuoteItemValue?.discountAmount,
               totalPayment: newQuoteItemValue?.totalPayment,
               vat: newQuoteItemValue?.vat,
+              vatStatus: newQuoteItemValue?.vatStatus,
               totalVAT: newQuoteItemValue?.totalVAT,
             },
             data: data,
@@ -1497,18 +1613,11 @@ const useQuoteNew = ({
   const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
 
   const handleSaveBtnClickForDocument = async () => {
-    if (
-      !quoteItemValue?.documentItems ||
-      quoteItemValue.documentItems.length === 0
-    ) {
-      alertFault("alerts.noItems");
-      return;
-    }
-    if (quoteItemValue?.totalPrice === 0) {
-      alertFault("alerts.cannotCreateWithPriceZero");
-      return;
-    }
-
+    // const validationError = validateDocument(quoteItemValue);
+    // if (validationError) {
+    //   alertFault(validationError);
+    //   return;
+    // }
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessAdded();
@@ -1518,10 +1627,10 @@ const useQuoteNew = ({
           docType === DOCUMENT_TYPE.invoice ||
           docType === DOCUMENT_TYPE.deliveryNote
         ) {
-          navigate(`/${documentPath}?Id=${_data?.id}`);
+          router.replace(`/${documentPath}?Id=${_data?.id}`);
           onClickOpenInvoiceCreation();
         } else {
-          navigate(`/${documentPath}?Id=${_data?.id}`);
+          router.replace(`/${documentPath}?Id=${_data?.id}`);
         }
       } else {
         alertFaultAdded();
@@ -1542,10 +1651,20 @@ const useQuoteNew = ({
     });
   };
 
-  const onClickDeleteAddress = async (item: any) => {
+  const onClickDeleteAddress = async (item: any, addressType: EAddressType) => {
+    const addressArray =
+      addressType === EAddressType.BILLING
+        ? "documentBillingAddresses"
+        : "documentDeliveryAddresses";
+
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
-      updatedQuoteItemValue.documentAddresses = [];
+
+      // Remove the address with the matching ID
+      updatedQuoteItemValue[addressArray] = updatedQuoteItemValue[
+        addressArray
+      ]?.filter((address) => address.id !== item.id);
+
       setQuoteItemValue(updatedQuoteItemValue);
     } else {
       const callBack = (res) => {
@@ -1556,12 +1675,14 @@ const useQuoteNew = ({
           alertFaultDelete();
         }
       };
+
       await deleteDocumentAddressApi(callApi, callBack, {
         documentAddressId: item?.id,
         documentType: docType,
       });
     }
   };
+
   const setCardTransactions = useSetRecoilState<transactionOptionsData[]>(
     creditTransactionsState
   );
@@ -1692,13 +1813,15 @@ const useQuoteNew = ({
     setTaxDate(
       isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate
     );
+
+    setClientName(quoteItemValue?.occasionalClientName);
   }, [quoteItemValue, quoteConfirm]);
 
   //!important
   const prevRouterQueryRef = useRef(router.query);
   const hasMountedRef = useRef(false);
   useEffect(() => {
-    if (!isQuoteConfirmation) {
+    if (!isQuoteConfirmation && !routerChangedFromClientSelect) {
       if (!hasMountedRef.current) {
         getQuote();
         getAllEmployees();
@@ -1716,6 +1839,7 @@ const useQuoteNew = ({
         }
       }
     }
+    setRouterChangedFromClientSelect(false);
   }, [isQuoteConfirmation, router.query]);
 
   // useEffect(() => {
@@ -1768,9 +1892,9 @@ const useQuoteNew = ({
     },
   ];
 
-  const documentTitle = documentsTitles.find(
-    (item) => item.value === docType
-  ).label;
+  const documentTitle = isOutgoingPayments
+    ? t("supplierPayments.supplierPayment")
+    : documentsTitles.find((item) => item.value === docType).label;
 
   const [openLoginModal, setOpenLoginModal] = useState<boolean>(false);
 
@@ -1840,24 +1964,11 @@ const useQuoteNew = ({
       },
     });
   };
-  const updateIsShowDetails = async () => {
-    const callBack = (res) => {
-      if (res?.success) {
-        alertSuccessUpdate();
-        getQuote();
-      } else {
-        alertFaultUpdate();
-      }
-    };
-    await updateIsShowDetailsApi(callApi, callBack, {
-      documentType: docType,
-      document: {
-        documentId: quoteItemValue?.id,
-      },
-    });
-  };
 
-  const updateIsShowPrices = async () => {
+  const updateDocumentPreference = async (
+    value: string,
+    documentSettingTYpe: number
+  ) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1866,10 +1977,11 @@ const useQuoteNew = ({
         alertFaultUpdate();
       }
     };
-    await updateIsShowPricesApi(callApi, callBack, {
+    await updateDocumentPreferenceApi(callApi, callBack, {
       documentType: docType,
-      document: {
-        documentId: quoteItemValue?.id,
+      data: {
+        value: value,
+        documentSetting: documentSettingTYpe,
       },
     });
   };
@@ -1933,6 +2045,8 @@ const useQuoteNew = ({
     router.query.isNewCreation &&
     (isDeliveryNote || isInvoice)
   );
+  const showVatListInSettingIconNew =
+    router.query.isNewCreation && (isDeliveryNote || isInvoice);
 
   const moveOrderToReady = async () => {
     const callBack = (res) => {
@@ -2007,7 +2121,6 @@ const useQuoteNew = ({
   );
 
   const handleSendUsingWhatsAppWeb = () => {
-    debugger;
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
       quoteItemValue?.documentContacts
     );
@@ -2073,10 +2186,14 @@ const useQuoteNew = ({
     openDeliveryTimeCancelModal,
     anchorElSettingMenu,
     openSettingMenu,
+    anchorElSettingMenuForVat,
+    openNewSttingMenuForVat,
     onClickSendQuoteToClient,
     onClickSendReceiptToClient,
     handleSettingMenuClick,
+    handleSettingMenuClickForVat,
     handleSettingMenuClose,
+    handleSettingMenuCloseForVat,
     onClickOpenPriceModal,
     onClickOpenModal,
     onClickClosePriceModal,
@@ -2159,10 +2276,14 @@ const useQuoteNew = ({
     onBlurCurrency,
     setIsUpdateExchangeRate,
     setIsUpdateCurrency,
+    setIsUpdateVatStatus,
+    onBlurVatStatus,
+    isUpdateVatStatus,
     isUpdateExchangeRate,
     isUpdateCurrency,
     updateExchangeRate,
     updateCurrency,
+    updateVatStatus,
     refreshExchangeRate,
     getQuote,
     openCopyFromOrderModal,
@@ -2177,8 +2298,7 @@ const useQuoteNew = ({
     onClickOpenWhatsAppModal,
     onClickCloseWhatsAppModal,
     sortDocumentItems,
-    updateIsShowDetails,
-    updateIsShowPrices,
+    updateDocumentPreference,
     getWhatsAppMessage,
     getWhatsAppMessageForReceipt,
     whatsappMassage,
@@ -2218,6 +2338,7 @@ const useQuoteNew = ({
     isWhatsAppWeb,
     setIsWhatsAppWeb,
     isShowSettingIcon,
+    showVatListInSettingIconNew,
     isInvoice,
     onClickOpenChangeProductionStatusModal,
     openChangeProductionStatusModal,
@@ -2241,6 +2362,12 @@ const useQuoteNew = ({
     confirmCreateDocument,
     onClickConfirmCreateDocument,
     onClickCloseConfirmCreateDocument,
+    isOutgoingPayments,
+    isReceipt,
+    isMoveToReady,
+    handleCheckboxChange,
+    isDeliveryNote,
+    isPurchaseDocument,
   };
 };
 

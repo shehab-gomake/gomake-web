@@ -15,10 +15,12 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useGomakeAxios } from "@/hooks";
 import { Stack } from "@mui/material";
-import { productsForDropDownList } from "@/store";
+import { productsForDropDownList, userState } from "@/store";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { updateSupplierPriorityApi } from "@/services/api-service/materials/materials-endpoints";
 import { SortIcon } from "@/icons";
+import { UNIT_TYPE } from "@/enums";
+import { convertTitleUnits, convertValueToImperial } from "@/utils/helpers";
 
 interface FiltersActionsBarProps {
   isAdmin: boolean;
@@ -155,11 +157,28 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     value: product.id,
     label: product.name,
   }));
-
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0
   return (
     <Stack direction={"row"} gap={2} alignItems={"center"}>
       {materialTableFilters &&
-        materialTableFilters.map(({ key, values }) => {
+        materialTableFilters.map(({ key, values, unit }) => {
+          const convertedUnitText = unitType === UNIT_TYPE.IMPERIAL ? convertTitleUnits(unit) : unit;
+          const convertedValues = unit
+            ? values.map(value => {
+              if (value.includes("X")) {
+                const [width, height] = value.split("X");
+
+                const convertedWidth = convertValueToImperial(unit, width);
+                const convertedHeight = convertValueToImperial(unit, height);
+                return `${convertedWidth}X${convertedHeight}`;
+              } else {
+                return convertValueToImperial(unit, value);
+              }
+            })
+            : values;
+          const convertedUnit = unitType === UNIT_TYPE.IMPERIAL ? convertedValues : values;
+
           if (key === "productId") {
             return (
               <GoMakeAutoComplate
@@ -215,11 +234,11 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             return (
               <GoMakeAutoComplate
                 key={materialCategory + "-" + key}
-                onChange={(e, v) => setFilterValue(key, v)}
+                onChange={(e, v) => setFilterValue(key, v, unit)}
                 style={{ width: "200px" }}
                 value={getFilterValue(key)}
-                options={values}
-                placeholder={key}
+                options={convertedUnit}
+                placeholder={convertedUnitText ? key + " " + "(" + convertedUnitText + ")" : key}
               />
             );
           }

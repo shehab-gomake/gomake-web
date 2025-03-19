@@ -11,6 +11,7 @@ const DELETE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/delete-document-item";
 const ADD_DOCUMENT_CONTACT_URL =
   "/v1/erp-service/document/add-document-contact";
+const UPDATE_DOCUMENT_CONTACTS_REORDER_URL = "/v1/erp-service/document/update-document-contacts-reorder";
 const UPDATE_DOCUMENT_CONTACT_URL =
   "/v1/erp-service/document/update-document-contact";
 const DELETE_DOCUMENT_CONTACT_URL =
@@ -19,9 +20,12 @@ const ADD_DOCUMENT_ADDRESS_URL =
   "/v1/erp-service/document/add-document-address";
 const UPDATE_DOCUMENT_ADDRESS_URL =
   "/v1/erp-service/document/update-document-address";
+const UPDATE_DOCUMENT_PREFERENCE_URL =
+  "/v1/erp-service/document/update-document-preference";
 const DELETE_DOCUMENT_ADDRESS_URL =
   "/v1/erp-service/documents/delete-document-address";
 const DUPLICATE_DOCUMENT_URL = "/v1/erp-service/documents/duplicate-document";
+
 const DUPLICATE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/duplicate-document-item-with-another-quantity";
 const CHANGE_DOCUMENT_CLIENT_URL =
@@ -52,7 +56,8 @@ const GET_CALCULATE_DOCUMENT_ITEM_URL =
 const GET_CALCULATE_DOCUMENT_URL =
   "/v1/erp-service/documents/calculate-document";
 const ADD_ITEM_URL = "/v1/erp-service/documents/add-item";
-const ADD_GENERIC_PRODUCT_TO_DOCUMENT_URL = "/v1/erp-service/documents/add-generic-product-to-document";
+const ADD_GENERIC_PRODUCT_TO_DOCUMENT_URL =
+  "/v1/erp-service/documents/add-generic-product-to-document";
 const UPDATE_DOCUMENT_URL = "/v1/erp-service/documents/update-document";
 const UPDATE_OCCASIONAL_CLIENT_NAME_URL =
   "/v1/erp-service/documents/update-occasional-client-name";
@@ -64,6 +69,8 @@ const GET_PRODUCT_ITEM_BY_ID_URL =
   "/v1/erp-service/documents/get-product-document-item-by-id";
 const UPDATE_DOCUMENT_CURRENCY_URL =
   "/v1/erp-service/documents/update-document-currency";
+const UPDATE_DOCUMENT_VAT_STATUS_URL =
+  "/v1/erp-service/documents/update-document-vat-status";
 const UPDATE_EXCHANGE_RATE_URL =
   "/v1/erp-service/documents/update-document-exchange-rate";
 const REFRESH_EXCHANGE_RATE_URL =
@@ -127,7 +134,13 @@ const CREATE_DOCUMENT_URL = "/v1/erp-service/documents/create-document";
 const START_ORDER_PRODUCTION_URL =
   "/v1/erp-service/documents/start-order-production";
 
-const getDocumentApi: ICallAndSetData = async (callApi, setState, data,loading, abortController) => {
+const getDocumentApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data,
+  loading,
+  abortController
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
@@ -204,6 +217,19 @@ const addDocumentContactApi: ICallAndSetData = async (
   );
 };
 
+const updateDocumentContactsReorderApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_DOCUMENT_CONTACTS_REORDER_URL,
+    setState,
+    data
+  );
+};
 const addCustomerContactApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -274,6 +300,19 @@ const updateDocumentAddressApi: ICallAndSetData = async (
   );
 };
 
+const updateDocumentPreferenceApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_DOCUMENT_PREFERENCE_URL,
+    setState,
+    data
+  );
+};
 const deleteDocumentAddressApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -474,7 +513,11 @@ const addItemApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
-const addGenericProductToDocumentApi: ICallAndSetData = async (callApi, setState, data) => {
+const addGenericProductToDocumentApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
@@ -564,6 +607,20 @@ const updateDocumentCurrencyApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.PUT,
     UPDATE_DOCUMENT_CURRENCY_URL,
+    setState,
+    data
+  );
+};
+
+const updateDocumentVatStatusApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {  
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_DOCUMENT_VAT_STATUS_URL,
     setState,
     data
   );
@@ -917,11 +974,7 @@ const makePaymentForOrderApi: ICallAndSetData = async (
   );
 };
 
-const quickDuplicateApi: ICallAndSetData = async (
-  callApi,
-  setState,
-  data
-) => {
+const quickDuplicateApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.PUT,
@@ -1086,16 +1139,19 @@ export {
   getAllDocumentsApi,
   deleteDocumentItemApi,
   addDocumentContactApi,
+  updateDocumentContactsReorderApi,
   updateDocumentContactApi,
   deleteDocumentContactApi,
   addDocumentAddressApi,
   updateDocumentAddressApi,
+  updateDocumentPreferenceApi,
   deleteDocumentAddressApi,
   changeDocumentClientApi,
   getIfCartExistApi,
   duplicateDocumentApi,
   duplicateWithAnotherQuantityApi,
   getDocumentPdfApi,
+
   updatePurchaseNumberApi,
   addDeliveryApi,
   cancelDocumentApi,
@@ -1111,6 +1167,7 @@ export {
   updateAgentApi,
   getProductByItemIdApi,
   updateDocumentCurrencyApi,
+  updateDocumentVatStatusApi,
   updateExchangeRateApi,
   refreshExchangeRateApi,
   createNewDocumentApi,
@@ -1153,5 +1210,5 @@ export {
   createDocumentApi,
   startOrderProductionApi,
   addGenericProductToDocumentApi,
-  quickDuplicateApi
+  quickDuplicateApi,
 };

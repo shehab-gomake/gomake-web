@@ -1,3 +1,4 @@
+import { EMeasurementUnits } from "@/widgets/machines/enums/measurement-units";
 
 const rollSheeterMachine = (state: Record<string, any>) => {
     return [
@@ -12,6 +13,7 @@ const rollSheeterMachine = (state: Record<string, any>) => {
             value: state?.attributes?.setupTimeMin ? state?.attributes?.setupTimeMin : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.setupTimeMin,
+            unit: EMeasurementUnits.MINUTE
         },
         {
             name: "maxSpeed",
@@ -24,6 +26,7 @@ const rollSheeterMachine = (state: Record<string, any>) => {
             value: state.attributes?.maxSpeed ? state.attributes?.maxSpeed : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.maxSpeed,
+            unit: EMeasurementUnits.MM_P_SECOND
         },
         {
             name: "sheetDelay",
@@ -36,6 +39,7 @@ const rollSheeterMachine = (state: Record<string, any>) => {
             value: state.attributes?.sheetDelay ? state.attributes?.sheetDelay : '',
             machineInputType: 'input',
             isValid: !!state?.attributes?.sheetDelay,
+            unit: EMeasurementUnits.SECOND
         },
     ]
 }

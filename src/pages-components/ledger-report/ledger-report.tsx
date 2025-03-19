@@ -8,14 +8,20 @@ import { useLedgerReport } from "./use-ledger-report";
 import { useStyle } from "./style";
 import { CreateNewTransactionModal } from "./widgets/create-transaction-modal";
 import { HeaderTitle } from "@/widgets/header-title";
+import { useEffect } from "react";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 interface LedgerReportWidgetProps {
+  clientType: CLIENT_TYPE;
   customerId?: string;
   isFromCustomerCard?: boolean;
+  autoShowCard?: boolean;
 }
 const LedgerReportWidget = ({
   customerId,
   isFromCustomerCard = false,
+  autoShowCard = false,
+  clientType,
 }: LedgerReportWidgetProps) => {
   const { classes } = useStyle();
   const {
@@ -52,13 +58,30 @@ const LedgerReportWidget = ({
     fromDate,
     toDate,
     isFetching,
-  } = useLedgerReport({ customerId });
+    erpAccountsList,
+    getErpAccountsList,
+    supplierList,
+    isPurchaseReport,
+  } = useLedgerReport({ customerId, clientType });
 
+  useEffect(() => {
+    getErpAccountsList();
+  }, []);
+
+  useEffect(() => {
+    if (autoShowCard && customerId) {
+      onClickShowCard();
+    }
+  }, [autoShowCard, customerId]);
   return (
     <div style={classes.mainContainer}>
       {!isFromCustomerCard && (
         <HeaderTitle
-          title={t("tabs.ledgerReport")}
+          title={
+            isPurchaseReport
+              ? t("tabs.supplierLedger")
+              : t("tabs.customerLedger")
+          }
           marginTop={"0px"}
           marginBottom={"0px"}
         />
@@ -75,6 +98,8 @@ const LedgerReportWidget = ({
         toDate={toDate}
         customerId={customerId}
         isFetchingCustomers={isFetching}
+        isPurchaseReport={isPurchaseReport}
+        supplierList={supplierList}
       />
       <Divider />
       <LedgerReportButtonWidget
@@ -91,6 +116,7 @@ const LedgerReportWidget = ({
           maxHeight={"100vh"}
           stickyFirstCol={false}
           stickyHeader={true}
+          variant="OddEvenTable"
         />
       )}
       <SendEmailLedgerReportModal
@@ -113,6 +139,8 @@ const LedgerReportWidget = ({
       <CreateNewTransactionModal
         onCloseModal={onClickCloseCreateTransactionModal}
         openModal={isopenCreateTransactionModal}
+        erpAccountsList={erpAccountsList}
+        isPurchaseReport={isPurchaseReport}
       />
     </div>
   );

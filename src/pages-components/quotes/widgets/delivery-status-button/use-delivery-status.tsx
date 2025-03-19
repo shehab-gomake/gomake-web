@@ -28,7 +28,7 @@ const useDeliveryStatusButton = () => {
   const { callApi } = useGomakeAxios();
   const { alertFaultGetData, alertFaultDelete, alertSuccessDelete } =
     useSnackBar();
-  const { getFormattedLocalDate } = useDateFormat();
+  const { formatISODateTime } = useDateFormat();
   const [documentItems, setDocumentItems] = useState<any>();
   const [editableQuantities, setEditableQuantities] = useState({});
   const [openDeliveryModal, setOpenDeliveryModal] = useState<boolean>(false);
@@ -284,6 +284,7 @@ const useDeliveryStatusButton = () => {
         documentItem?.productName,
         <CharacterDetails
           details={documentItem?.details}
+          workName={documentItem?.workName}
           showLessHeightFit={true}
           canUpdate={false}
         />,
@@ -307,7 +308,7 @@ const useDeliveryStatusButton = () => {
         ),
         _renderDeliveryStatus(deliveryStatus, id),
         <img src={signImage} style={{ width: "80px", maxHeight: "40px" }} />,
-        signedAt && getFormattedLocalDate(signedAt),
+        signedAt && formatISODateTime(signedAt),
         isDeliveredItem ? (
           <span
             onClick={(e) => handleDetailsClick(e, documentItem)}

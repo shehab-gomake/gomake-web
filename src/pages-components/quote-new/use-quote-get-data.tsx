@@ -17,7 +17,10 @@ import { currencyUnitState } from "@/store/currency-units";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { addressModalState } from "@/widgets/quote-new/business-widget/address-widget/state";
+import {
+  addressModalState,
+  EAddressType,
+} from "@/widgets/quote-new/business-widget/address-widget/state";
 import {
   addDocumentAddressApi,
   getDocumentApi,
@@ -95,6 +98,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   };
 
   // in case of an error all these routes have been moved from use-quote.tsx to current hook (use-quote-get-data.tsx)
+
   const getQuote = useCallback(async () => {
     if (requestAbortController) {
       requestAbortController.abort();
@@ -149,6 +153,9 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           alertFaultGetData();
         }
       } else if (docType === DOCUMENT_TYPE.receipt) {
+        const isOutgoingPayments = router?.query?.isOutgoingPayments === "true";
+        const supplierPaymentId = router?.query?.id;
+
         const callBack = (res) => {
           if (res?.success) {
             const _data = res?.data || {};
@@ -158,7 +165,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           }
         };
         await getReceiptByIdApi(callApi, callBack, {
-          receiptId: router?.query?.Id,
+          receiptId: isOutgoingPayments ? supplierPaymentId : router?.query?.Id,
         });
       } else {
         const newRequestAbortController = new AbortController();
@@ -235,6 +242,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
       }
     }
   }, [callApi, docType, requestAbortController, router, setQuoteItemValue]);
+
   // const getQuote = async () => {
   //   if (
   //     router?.query?.isNewCreation &&
@@ -359,7 +367,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   // };
 
   const onClickAddNewAddress = useCallback(
-    async (item: any, isUpdate: boolean) => {
+    async (item: any, isUpdate: boolean, addressType: EAddressType) => {
       if (!item?.addressId || !item?.city) {
         alertRequiredFields();
         return;
@@ -372,8 +380,12 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           street: item?.street,
           city: item?.city,
           entry: item?.entry,
+          type: addressType,
           apartment: item?.apartment,
           clientId: quoteItemValue?.customerID,
+          floor: item?.floor,
+          postbox: item?.postbox,
+          zipCode: item?.zipCode,
         }
       );
       if (res?.success) {
@@ -381,10 +393,12 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         const result = await getAllClientAddress();
         isUpdate
           ? updateClientAddress(
-              result.find((item) => item.id === res.data.data.result)
+              result.find((item) => item.id === res.data.data.result),
+              addressType
             )
           : onClickAddAddress(
-              result.find((item) => item.id === res.data.data.result)
+              result.find((item) => item.id === res.data.data.result),
+              addressType
             );
       } else {
         alertFaultAdded();
@@ -393,58 +407,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
     [quoteItemValue, router]
   );
 
-  const updateClientAddress = async (item: any) => {
-    if (!item?.city) {
-      alertRequiredFields();
-      return;
-    }
-    if (router.query.isNewCreation) {
-      const updatedQuoteItemValue = { ...quoteItemValue };
-      const updatedAddresses = updatedQuoteItemValue.documentAddresses.map(
-        (address) => {
-          if (address.id === item.id) {
-            return {
-              ...address,
-              street: item.street,
-              city: item.city,
-              entry: item.entry,
-              apartment: item.apartment,
-              notes: item.notes || "",
-            };
-          }
-          return address;
-        }
-      );
-      updatedQuoteItemValue.documentAddresses = updatedAddresses;
-      setQuoteItemValue(updatedQuoteItemValue);
-      setOpenModal(false);
-    } else {
-      const callBack = (res) => {
-        if (res?.success) {
-          alertSuccessUpdate();
-          getQuote();
-          setOpenModal(false);
-        } else {
-          alertFaultAdded();
-        }
-      };
-      await updateDocumentAddressApi(callApi, callBack, {
-        documentType: docType,
-        address: {
-          id: quoteItemValue?.documentAddresses[0]?.id,
-          addressID: quoteItemValue?.documentAddresses[0]?.addressID,
-          street: item?.street,
-          city: item?.city,
-          entry: item?.entry,
-          apartment: item?.apartment,
-          notes: item?.notes || "",
-          documentID: quoteItemValue?.id,
-        },
-      });
-    }
-  };
-
-  const onClickAddAddress = async (item: any) => {
+  const onClickAddAddress = async (item: any, addressType: EAddressType) => {
     if (!item?.city) {
       alertRequiredFields();
       return;
@@ -452,23 +415,35 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
 
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
-      if (!Array.isArray(updatedQuoteItemValue.documentAddresses)) {
-        updatedQuoteItemValue.documentAddresses = [];
+      const addressArray =
+        addressType === EAddressType.BILLING
+          ? "documentBillingAddresses"
+          : "documentDeliveryAddresses";
+
+      if (!Array.isArray(updatedQuoteItemValue[addressArray])) {
+        updatedQuoteItemValue[addressArray] = [];
       }
+
       const newAddress = {
         id: uuidv4(),
         addressID: item?.addressId,
         street: item?.street,
         city: item?.city,
         entry: item?.entry,
+        type: addressType,
         apartment: item?.apartment,
         notes: "",
         documentID: updatedQuoteItemValue?.id,
+        floor: item?.floor,
+        postbox: item?.postbox,
+        zipCode: item?.zipCode,
       };
-      updatedQuoteItemValue.documentAddresses = [
-        ...updatedQuoteItemValue.documentAddresses,
+
+      updatedQuoteItemValue[addressArray] = [
+        ...updatedQuoteItemValue[addressArray],
         newAddress,
       ];
+
       setQuoteItemValue(updatedQuoteItemValue);
       setOpenModal(false);
     } else {
@@ -481,6 +456,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           alertFaultAdded();
         }
       };
+
       await addDocumentAddressApi(callApi, callBack, {
         documentType: docType,
         address: {
@@ -488,9 +464,84 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           street: item?.street,
           city: item?.city,
           entry: item?.entry,
+          type: addressType,
           apartment: item?.apartment,
           notes: item?.notes || "",
           documentID: quoteItemValue?.id,
+          floor: item?.floor,
+          postbox: item?.postbox,
+          zipCode: item?.zipCode,
+        },
+      });
+    }
+  };
+
+  const updateClientAddress = async (item: any, addressType: EAddressType) => {
+    if (!item?.city) {
+      alertRequiredFields();
+      return;
+    }
+
+    if (router.query.isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      const addressArray =
+        addressType === EAddressType.BILLING
+          ? "documentBillingAddresses"
+          : "documentDeliveryAddresses";
+
+      const updatedAddresses = updatedQuoteItemValue[addressArray].map(
+        (address) => {
+          if (address.id === item.id) {
+            return {
+              ...address,
+              street: item.street,
+              city: item.city,
+              entry: item.entry,
+              apartment: item.apartment,
+              notes: item.notes || "",
+              floor: item?.floor,
+              postbox: item?.postbox,
+              zipCode: item?.zipCode,
+            };
+          }
+          return address;
+        }
+      );
+
+      updatedQuoteItemValue[addressArray] = updatedAddresses;
+      setQuoteItemValue(updatedQuoteItemValue);
+      setOpenModal(false);
+    } else {
+      const callBack = (res) => {
+        if (res?.success) {
+          alertSuccessUpdate();
+          getQuote();
+          setOpenModal(false);
+        } else {
+          alertFaultAdded();
+        }
+      };
+
+      const addressArray =
+        addressType === EAddressType.BILLING
+          ? "documentBillingAddresses"
+          : "documentDeliveryAddresses";
+
+      await updateDocumentAddressApi(callApi, callBack, {
+        documentType: docType,
+        address: {
+          id: quoteItemValue?.[addressArray]?.[0]?.id,
+          addressID: quoteItemValue?.[addressArray]?.[0]?.addressID,
+          street: item?.street,
+          city: item?.city,
+          entry: item?.entry,
+          apartment: item?.apartment,
+          notes: item?.notes || "",
+          documentID: quoteItemValue?.id,
+          type: addressType,
+          floor: item?.floor,
+          postbox: item?.postbox,
+          zipCode: item?.zipCode,
         },
       });
     }

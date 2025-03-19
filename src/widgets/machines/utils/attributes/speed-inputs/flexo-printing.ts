@@ -1,4 +1,5 @@
 import {EMeasurementUnits} from "@/widgets/machines/enums/measurement-units";
+import {maxSpeedInput} from "@/widgets/machines/utils/attributes/speed-inputs/max-speed-input";
 
 const flexoPrinting = (state: Record<string, any>) => {
     return [
@@ -15,6 +16,7 @@ const flexoPrinting = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.setupTimeMin,
         },
+        ...maxSpeedInput(state, EMeasurementUnits.METER_P_MIN),
         {
             name: 'machineAttributes.speedByColor',
             parameterKey: 'speedByColor',
@@ -38,7 +40,8 @@ const flexoPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.speed",
                     required: true,
                     parameterKey: "speed",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.METER_P_MIN
                 },
             ]
         },
@@ -57,7 +60,8 @@ const flexoPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.weight",
                     required: true,
                     parameterKey: "weight",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.GRAM
                 },
                 {
                     name: "targetWeight",
@@ -66,7 +70,8 @@ const flexoPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.targetWeight",
                     required: true,
                     parameterKey: "targetWeight",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.GRAM
                 },
                 {
                     name: "speedPercentage",
@@ -75,7 +80,8 @@ const flexoPrinting = (state: Record<string, any>) => {
                     placeholder: "machineAttributes.speedPercentage",
                     required: true,
                     parameterKey: "speedPercentage",
-                    options: []
+                    options: [],
+                    unit: EMeasurementUnits.PERCENTAGE
                 },
 
             ]

@@ -7,6 +7,7 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { GomakeTextInput } from "@/components";
 import { ERPDocumentsTypesEnum } from "@/enums";
 import { adaptPaddingRight } from "@/utils/adapter";
+import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
 
 export interface JustmentsModalProps {
   getClientPaymentItems: any;
@@ -75,6 +76,7 @@ const useAdjustmentsModal = ({
     t("reports.documentNumber"),
     t("reports.documentType"),
     t("reports.documentDate"),
+    t("reports.dueDate"),
     t("reports.totalPrice"),
     t("reports.adjustablePrice"),
   ];
@@ -167,11 +169,19 @@ const useAdjustmentsModal = ({
         )}`
       ),
       data?.docDate?.split("T")[0],
+      data?.dueDate?.split("T")[0],
       data?.fixedPrice,
-      <div key={inputErrors[index]}>
-        <GomakeTextInput
+      <div
+        key={inputErrors[index]}
+        style={{ display: "flex", justifyContent: "center" }}
+      >
+        <GoMakeTextInput
           key={inputErrors[index]}
-          style={{ height: 40, ...adaptPaddingRight(direction, 20) }}
+          style={{
+            height: 40,
+            ...adaptPaddingRight(direction, 20),
+            width: "90%",
+          }}
           id={`priceInput-${index}`}
           type="number"
           value={data.price || ""}
@@ -205,14 +215,14 @@ const useAdjustmentsModal = ({
       name: t("reports.match"),
       onclick: onClickMatchItems,
     },
-    {
-      name: t("reports.balanceCancellation"),
-      onclick: onClickOpenDeleteModal,
-    },
-    {
-      name: t("reports.transferBalance"),
-      onclick: onClickOpenTransferModal,
-    },
+    // {
+    //   name: t("reports.balanceCancellation"),
+    //   onclick: onClickOpenDeleteModal,
+    // },
+    // {
+    //   name: t("reports.transferBalance"),
+    //   onclick: onClickOpenTransferModal,
+    // },
   ];
 
   const cancelTransactionsApi = useCallback(async () => {

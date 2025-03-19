@@ -22,6 +22,7 @@ const useStyle = () => {
         paddingLeft: 20,
         paddingRight: 20,
       },
+
       firstRowContainer: {
         display: "flex",
         flexDirection: "column" as "column",
@@ -31,6 +32,7 @@ const useStyle = () => {
         backgroundColor: "#F6F6F6",
         marginBottom: 15,
       },
+
       secondRowContainer: {
         display: "flex",
         flexDirection: "column" as "column",
@@ -48,8 +50,13 @@ const useStyle = () => {
       containerStyle: {
         display: "grid",
         gridTemplateColumns: "49.5% 49.5%",
-        gridColumnGap: "1%"
+        gridColumnGap: "1%",
       },
+
+      mobileContainerStyle: {
+        display: "flex",
+      },
+
       widgetStyle: {
         height: "100%",
         width: "100%",
@@ -57,8 +64,8 @@ const useStyle = () => {
       skeltonStyle: {
         width: "100%",
         height: "100%",
-        borderRadius: "8px"
-      }
+        borderRadius: "8px",
+      },
     };
   }, [i18next.language, t]);
   return {

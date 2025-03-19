@@ -1,6 +1,6 @@
 import { IconButton, Stack } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   EProductionFloorView,
   productionFloorViewState,
@@ -19,11 +19,14 @@ import { useProductionFloorSignalr } from "@/hooks/signalr/use-production-floor-
 import { ProductionFloorFilters } from "./filters/production-floor-filters";
 import { useProductionFloorData } from "./use-production-floor-data";
 import { TimelineWidget } from "@/widgets/production-floor/views/gantt-view/gantt-component";
+import { PermissionCheck } from "@/components/CheckPermission";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-floor-socket-io";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
   const { query, replace, pathname, push } = useRouter();
-  const { connectionId, closeConnection } = useProductionFloorSignalr();
+  const { connectionId } = useProductionFloorSocketIO(view);
   const { groupsId, boardMissionsId, step, productType } = query;
 
   const {
@@ -31,11 +34,18 @@ const ProductionFloorWidget = () => {
     setFilterGroups,
     getStationFilterGroups,
     updateStatus,
+    setSelectedGroupId,
   } = useProductionFloorData();
 
   useEffect(() => {
     getStationFilterGroups();
   }, []);
+
+  useEffect(() => {
+    if (view === EProductionFloorView.FILTER_GROUPS) {
+      setSelectedGroupId("all");
+    }
+  }, [view]);
 
   useEffect(() => {
     if (!!boardMissionsId && !step) {
@@ -50,11 +60,11 @@ const ProductionFloorWidget = () => {
     }
   }, [groupsId, boardMissionsId, step]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     return () => {
       closeConnection();
     };
-  }, []);
+  }, []);*/
 
   useEffect(() => {
     const { view: viewQuery } = query;
@@ -82,20 +92,25 @@ const ProductionFloorWidget = () => {
       <ProductionFloorHeader
         filterGroups={filterGroups}
         setFilterGroups={setFilterGroups}
+        connectionId={connectionId}
       />
       {view !== EProductionFloorView.DASHBOARD && (
         <ProductionFloorFilters
-          filterGroups={filterGroups}
           getStationFilterGroups={getStationFilterGroups}
+          connectionId={connectionId}
         />
       )}
       <Stack overflow={"auto"} maxHeight={"100%"}>
         {view === EProductionFloorView.DASHBOARD ? (
           <DashboardWidget />
         ) : view === EProductionFloorView.GANTT ? (
-          <TimelineWidget />
+          <PermissionCheck
+            userPermission={Permissions.SHOW_PRODUCTION_TIME_LINE}
+          >
+            <TimelineWidget />
+          </PermissionCheck>
         ) : view === EProductionFloorView.GROUPS ? (
-          <GroupsTable />
+          <GroupsTable connectionId={connectionId} />
         ) : (
           <ProductionFloorBoardMissionsViews connectionId={connectionId} />
         )}
@@ -138,9 +153,7 @@ const ProductionFloorWidget = () => {
           </IconButton>
           {!!boardMissionsId && (
             <BoardMissionsComponent
-              connectionId={connectionId}
               productType={!!productType ? productType.toString() : ""}
-              step={step?.toString()}
               boardMissionsId={boardMissionsId?.toString()}
             />
           )}

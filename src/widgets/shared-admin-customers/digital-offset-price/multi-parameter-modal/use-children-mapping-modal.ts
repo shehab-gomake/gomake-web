@@ -40,12 +40,12 @@ const useChildMapping = ({ parameters, settingParameters,setSettingParameters })
     const valueIds = materialData.map(item => item.valueId);
   
     return parameters.map(param => {
-      if (param.code === "printingcolorsDetail") {
+      if (param.code === "printingcolorsDetail" || param.code === "printingcolorsDetailSide2") {
         return {
           ...param,
           defaultValueArray: param.defaultValueArray ?? valueIds // Use existing values if not null, otherwise use valueIds
         };
-      } else if (param.code === "Colorloadpercentage" || param.code === "ColorLayers") {
+      } else if (param.code === "Colorloadpercentage" || param.code === "ColorLayers" || param.code === "ColorloadpercentageSide2" || param.code === "ColorLayersSide2") {
         return {
           ...param,
           defaultValueArray: param.defaultValueArray ?? Array(materialLength).fill(param.defaultValue) // Use existing values if not null, otherwise initialize with default values

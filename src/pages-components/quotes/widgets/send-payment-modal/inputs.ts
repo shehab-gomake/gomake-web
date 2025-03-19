@@ -4,7 +4,6 @@ const PaymentInputs = (state) => {
   const selectedContact =
     state?.documentContacts &&
     state.documentContacts[state?.selectedContactIndex];
-
   return [
     {
       name: "contactName",

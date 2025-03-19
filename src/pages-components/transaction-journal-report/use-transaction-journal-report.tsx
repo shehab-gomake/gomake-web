@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import {
@@ -14,42 +14,74 @@ import { getAndSetCustomerById } from "@/services/api-service/customers/customer
 import { useSetRecoilState } from "recoil";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetClientTypes } from "@/services/hooks";
-import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "@/pages/customers/enums";
+import {
+  CLIENT_TYPE,
+  CLIENT_TYPE_Id,
+  DEFAULT_VALUES,
+} from "@/pages/customers/enums";
 import { IconButton } from "@mui/material";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useDateFormat } from "@/hooks/use-date-format";
-import LinkIcon from "@mui/icons-material/Link";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import LinkOffIcon from "@mui/icons-material/LinkOff";
-import { adaptMarginLeft } from "@/utils/adapter";
+import { downloadCpaFileApi } from "@/services/api-service/settings/finance-api";
+import { initialFromDate } from "@/utils/helpers";
 
 export interface FilterState {
   fromAccount: string;
   toAccount: string;
   startDate: Date | null;
   endDate: Date | null;
+  accountCode?: string;
 }
 
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
+  clientType?: CLIENT_TYPE;
 }
+
+export const getDocumentTypeName = (t, transType: number): string => {
+  switch (transType) {
+    case DocumentsTypeReportList.Invoice:
+      return t("reports.invoice");
+    case DocumentsTypeReportList.InvoiceRefund:
+      return t("reports.invoiceRefund");
+    case DocumentsTypeReportList.PurchaseInvoice:
+      return t("reports.purchaseInvoice");
+    case DocumentsTypeReportList.PurchaseInvoiceRefund:
+      return t("reports.purchaseInvoiceRefund");
+    case DocumentsTypeReportList.Payments:
+      return t("reports.Payments");
+    case DocumentsTypeReportList.Deposits:
+      return t("reports.deposits");
+    case DocumentsTypeReportList.JournalEntry:
+      return t("reports.journalEntry");
+    case DocumentsTypeReportList.OutGoingPayments:
+      return t("reports.outGoingPayments");
+    case DocumentsTypeReportList.SalesDocuments:
+      return t("reports.salesDocuments");
+    default:
+      return "Unknown";
+  }
+};
 
 const useTransactionJournalReport = ({
   reportType,
+  clientType,
 }: TransactionJournalReportWidgetProps) => {
-  const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
+
+  const { alertFault, alertFaultGetData, alertSuccessGetData, alertSuccess } =
+    useSnackBar();
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const dir = t("direction");
-  const { getFormattedLocalDate, GetDateWithoutHoursFormat } = useDateFormat();
-
+  const { formatISODateTime } = useDateFormat();
   const { documentsTypeList, documentType, handleDocumentTypeChange } =
     useDocumentsType();
   const [showTable, setShowTable] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
+  const [fromDate, setFromDate] = useState<Date>(
+    initialFromDate("transaction-journal-report-date")
+  );
   const [toDate, setToDate] = useState<Date>(endOfToday());
   const [dataTable, setDataTable] = useState<any>([]);
-  // New states for customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
@@ -57,6 +89,13 @@ const useTransactionJournalReport = ({
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
   const [isOpenCreateTransactionModal, setIsCreateTransactionModal] =
     useState<boolean>(false);
+  const {
+    customer,
+    renderOptions,
+    checkWhatRenderArray,
+    handleCustomerChange,
+    isFetching,
+  } = useCustomerDropDownList();
 
   const onClickCloseCreateTransactionModal = () => {
     setIsCreateTransactionModal(false);
@@ -73,34 +112,9 @@ const useTransactionJournalReport = ({
   const [filterState, setFilterState] = useState<FilterState>({
     fromAccount: "",
     toAccount: "",
-    startDate: startOfYear(new Date()),
+    startDate: initialFromDate("accounting-transactions-report-date"),
     endDate: endOfToday(),
   });
-
-  const getDocumentTypeName = (transType: number): string => {
-    switch (transType) {
-      case DocumentsTypeReportList.Invoice:
-        return t("reports.invoice");
-      case DocumentsTypeReportList.InvoiceRefund:
-        return t("reports.invoiceRefund");
-      case DocumentsTypeReportList.PurchaseInvoice:
-        return t("reports.purchaseInvoice");
-      case DocumentsTypeReportList.PurchaseInvoiceRefund:
-        return t("reports.purchaseInvoiceRefund");
-      case DocumentsTypeReportList.Payments:
-        return t("reports.Payments");
-      case DocumentsTypeReportList.Deposits:
-        return t("reports.deposits");
-      case DocumentsTypeReportList.JournalEntry:
-        return t("reports.journalEntry");
-      case DocumentsTypeReportList.OutGoingPayments:
-        return t("reports.outGoingPayments");
-      case DocumentsTypeReportList.SalesDocuments:
-        return t("reports.salesDocuments");
-      default:
-        return "Unknown";
-    }
-  };
 
   const getTableDataRows = useCallback(
     (dataTable, onClickOpenCustomerModal) => {
@@ -133,7 +147,7 @@ const useTransactionJournalReport = ({
             ) : (
               <span>{data?.docNumber}</span>
             ),
-            getDocumentTypeName(data?.transType),
+            getDocumentTypeName(t, data?.transType),
             data?.transNumber,
             data?.accountCode,
             data?.accountName,
@@ -229,6 +243,9 @@ const useTransactionJournalReport = ({
       {
         startDate: formattedStartDate,
         endDate: formattedEndDate,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       },
       true,
       null
@@ -268,6 +285,9 @@ const useTransactionJournalReport = ({
           reportType === EReportType.DailyPayments
             ? DocumentsTypeReportList.Payments
             : documentType?.id,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
       }
     );
     if (res?.success) {
@@ -293,7 +313,8 @@ const useTransactionJournalReport = ({
       EHttpMethod.POST,
       `/v1/erp-service/reports/get-accounting-transaction-report`,
       {
-        ...filterState,
+        // ...filterState,
+        accountCode: filterState?.accountCode,
         startDate: formattedStartDate,
         endDate: formattedEndDate,
         pageNumber: pageNumber,
@@ -324,6 +345,7 @@ const useTransactionJournalReport = ({
       EHttpMethod.POST,
       `/v1/erp-service/reports/get-adjustments-report`,
       {
+        clientId: customer?.id,
         pageNumber,
         pageSize,
       }
@@ -345,8 +367,12 @@ const useTransactionJournalReport = ({
             reference: adjustment?.document?.documentNumber,
             sum: adjustment?.amount,
             adjustmentSum: adjustment?.allocatedAmount,
-            valueDate: GetDateWithoutHoursFormat(adjustment?.document?.dueDate),
-            docDate: GetDateWithoutHoursFormat(adjustment?.document?.docDate),
+            valueDate: formatISODateTime(adjustment?.document?.dueDate).split(
+              " "
+            )[0],
+            docDate: formatISODateTime(adjustment?.document?.docDate).split(
+              " "
+            )[0],
           })) || [],
       }));
 
@@ -356,7 +382,7 @@ const useTransactionJournalReport = ({
     } else {
       alertFaultGetData();
     }
-  }, [reportType, pageNumber, pageSize]);
+  }, [reportType, pageNumber, pageSize, customer]);
 
   const ExportAccountingReportPDF = useCallback(async () => {
     if (!filterState.startDate || !filterState.endDate) {
@@ -406,6 +432,7 @@ const useTransactionJournalReport = ({
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
+      localStorage.setItem("transaction-journal-report-date", value[0]);
       setFromDate(value[0]);
       setToDate(value[1]);
     } else {
@@ -468,7 +495,9 @@ const useTransactionJournalReport = ({
       case EReportType.TransactionJournal:
         return t("tabs.transactionJournalReport");
       case EReportType.DailyPayments:
-        return t("tabs.dailyPaymentsReport");
+        return isPurchaseReport
+          ? t("tabs.paymentsReport")
+          : t("tabs.receiptsReport");
       case EReportType.AccountingTransaction:
         return t("tabs.accountingTransactionReport");
       case EReportType.AdjustmentsReport:
@@ -480,6 +509,7 @@ const useTransactionJournalReport = ({
 
   const handleDatesChange = (value) => {
     if (value && value.length === 2) {
+      localStorage.setItem("accounting-transactions-report-date", value[0]);
       setFilterState((prevState) => ({
         ...prevState,
         startDate: value[0],
@@ -503,14 +533,6 @@ const useTransactionJournalReport = ({
     });
     setPageNumber(1);
   };
-
-  const {
-    customer,
-    renderOptions,
-    checkWhatRenderArray,
-    handleCustomerChange,
-    isFetching,
-  } = useCustomerDropDownList();
 
   const [isOpenAdjustmentsModal, setIsOpenAdjustmentsModal] =
     useState<boolean>(false);
@@ -574,22 +596,68 @@ const useTransactionJournalReport = ({
       `/v1/erp-service/reports/export-accounting-report-excel`,
       {
         myBody: {
-          ...filterState,
+          // ...filterState,
+          accountCode: filterState?.accountCode,
           startDate: formattedStartDate,
           endDate: formattedEndDate,
-          pageNumber: pageNumber,
-          pageSize,
+          pageNumber: 0,
+          pageSize: 0,
         },
       },
       true,
       null
     );
-    const downloadLink = document.createElement("a");
-    const link = res.data.data.data;
-    downloadLink.href = link;
-    downloadLink.download = `AccountingReport.xlsx`;
-    downloadLink.click();
+    if (res?.success) {
+      const base64Data = res?.data?.data?.data?.base64Excel;
+      const contentType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      const linkSource = `data:${contentType};base64,${base64Data}`;
+      const downloadLink = document.createElement("a");
+      downloadLink.href = linkSource;
+      downloadLink.download = "AccountingTransactionReport.xlsx";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    } else {
+      alertFaultGetData();
+    }
   }, [reportType, filterState, pageNumber, pageSize]);
+
+  const [erpAccountsList, setErpAccountsList] = useState([]);
+
+  const getErpAccountsList = useCallback(async () => {
+    const res = await callApi(
+      EHttpMethod.GET,
+      `/v1/erp-service/receipts/get-erp-accounts`
+    );
+    if (res?.success) {
+      setErpAccountsList(res.data?.data?.data || []);
+    } else {
+      alertFaultGetData();
+    }
+  }, []);
+
+  const onClickDownloadMovingFiles = async () => {
+    const formattedStartDate = format(filterState.startDate, "yyyy-MM-dd");
+    const formattedEndDate = format(filterState.endDate, "yyyy-MM-dd");
+
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccess("financesWidget.filesSentSuccessfully");
+        // const downloadLink = document.createElement("a");
+        // downloadLink.href = res.data;
+        // downloadLink.download = "Account_Files.zip";
+        // downloadLink.click();
+      } else {
+        alertFaultGetData();
+      }
+    };
+
+    await downloadCpaFileApi(callApi, callBack, {
+      startDate: formattedStartDate,
+      endDate: formattedEndDate,
+    });
+  };
 
   return {
     t,
@@ -641,6 +709,9 @@ const useTransactionJournalReport = ({
     clientPaymentsList,
     setClientPaymentsList,
     onClickExportAccountingReportExcel,
+    erpAccountsList,
+    getErpAccountsList,
+    onClickDownloadMovingFiles,
   };
 };
 

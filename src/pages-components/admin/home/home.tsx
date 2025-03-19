@@ -2,7 +2,7 @@ import { QuoteWidget } from "./widgets/quote-widget/quote-widget";
 import { useStyle } from "./style";
 import { HomeTableWidget } from "./widgets/home-table-widget/home-table-widget";
 import { useHome } from "./use-home";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { CardsWidget } from "./widgets/cards-widget/cards-widget";
 import { Skeleton } from "@mui/material";
 import { useRecoilValue } from "recoil";
@@ -14,7 +14,7 @@ import { ChatBotComponent } from "@/components/chat-bot/chat-bot";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
-const HomePageComponentForAdmin = ({ isAdmin }) => {
+const HomePageComponentForAdmin = ({ isAdmin, isMobileScreen }) => {
   const { classes } = useStyle();
   const { Title, setIsDisplay, isDisplay, flag, selectedClient, t } = useHome();
   const allReports = useRecoilValue<any>(homeReportsState);
@@ -88,24 +88,33 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
       <div style={classes.firstRowContainer}>
         <ChatBotComponent />
         <div style={classes.titleStyle}>{Title}</div>
-        <div style={classes.containerStyle}>
+        <div
+          style={
+            isMobileScreen
+              ? classes.mobileContainerStyle
+              : classes.containerStyle
+          }
+        >
           <div style={classes.widgetStyle}>
-            <QuoteWidget isAdmin={isAdmin} />
+            <QuoteWidget isAdmin={isAdmin} isMobileScreen={isMobileScreen} />
           </div>
-          <div style={classes.widgetStyle}>
-            <PermissionCheck
-              userPermission={Permissions.SHOW_HOME_PAGE_STATISTICS}
-            >
-              {allReports ? (
-                <CardsWidget />
-              ) : (
-                <Skeleton variant="rectangular" sx={classes.skeltonStyle} />
-              )}
-            </PermissionCheck>
-          </div>
+
+          {!isMobileScreen && (
+            <div style={classes.widgetStyle}>
+              <PermissionCheck
+                userPermission={Permissions.SHOW_HOME_PAGE_STATISTICS}
+              >
+                {allReports ? (
+                  <CardsWidget />
+                ) : (
+                  <Skeleton variant="rectangular" sx={classes.skeltonStyle} />
+                )}
+              </PermissionCheck>
+            </div>
+          )}
         </div>
       </div>
-      {isDisplay && (
+      {!isMobileScreen && isDisplay && (
         <div style={classes.secondRowContainer}>
           <div style={classes.titleStyle}>
             {t("sales.quote.documents")}{" "}
@@ -114,7 +123,7 @@ const HomePageComponentForAdmin = ({ isAdmin }) => {
             </span>
           </div>
           <div style={{ marginBottom: 20 }}>
-            <HomeTableWidget />
+            <HomeTableWidget clientId={selectedClient?.id} clientBalance={selectedClient?.clientBalance} />
           </div>
         </div>
       )}

@@ -13,6 +13,8 @@ const getCategoryBasicInputs = (categoryId: string, state: Record<string, any>) 
             return digitalPrinting(state);
         case ECategoryId.OFSSET_PRINTING:
             return basicSettingResolution(state);
+        case ECategoryId.ROLL_OFF_SET_PRINTING:
+            return basicSettingResolution(state);
         case ECategoryId.ROLL_DIGITAL_PRINTING:
             return generalPrintingSettings(state);
         case ECategoryId.FLEXO_PRINTING:

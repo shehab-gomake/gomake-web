@@ -11,10 +11,11 @@ export const addressSelectState = selector({
     const data = get(clientAddressState);
 
     const newData = [
-      { label: "add new address", value: null },
+      { label: "add new address", value: null, type: null },
       ...data.map((item, index) => ({
         label: item?.city ?? `unKnown address - ${index}`,
         value: item?.id,
+        type: item?.type,
       })),
     ];
     return newData;

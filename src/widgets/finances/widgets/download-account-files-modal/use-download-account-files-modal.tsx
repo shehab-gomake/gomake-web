@@ -3,7 +3,7 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { downloadCpaFileApi } from "@/services/api-service/settings/finance-api";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {useDateFormat} from "@/hooks/use-date-format";
+import { useDateFormat } from "@/hooks/use-date-format";
 interface FileType {
   id: number;
   label: string;
@@ -11,8 +11,13 @@ interface FileType {
 const useDownloadAccountFilesModal = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const { alertSuccessUpdate, alertFaultUpdate, alertFaultGetData } = useSnackBar();
-  const { GetDateFormat, getFormattedLocalDate } = useDateFormat();
+  const {
+    alertSuccessUpdate,
+    alertFaultUpdate,
+    alertFaultGetData,
+    alertSuccess,
+  } = useSnackBar();
+  const { GetDateFormat } = useDateFormat();
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [fromDate, setFromDate] = useState<Date>();
   const [toDate, setToDate] = useState<Date>();
@@ -22,24 +27,23 @@ const useDownloadAccountFilesModal = () => {
     setFromDate(value[0]);
     setToDate(value[1]);
   };
-  const onChangeFileTypeState = (event: React.ChangeEvent<HTMLInputElement>, value: FileType) => {
+  const onChangeFileTypeState = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    value: FileType
+  ) => {
     setFileType(value);
-  }
+  };
   const fileTypeList: FileType[] = [
     { id: CpaFileType.ALL, label: t("financesWidget.all") },
     { id: CpaFileType.Incoming, label: t("financesWidget.incoming") },
     { id: CpaFileType.Payments, label: t("financesWidget.payments") },
     { id: CpaFileType.Deposits, label: t("financesWidget.deposits") },
-  ]
+  ];
 
   const onClickDownloadTable = async (onClose) => {
     const callBack = (res) => {
       if (res.success) {
-        const downloadLink = document.createElement("a");
-        downloadLink.href = res.data;
-        downloadLink.download = "Account_Files.zip";
-        downloadLink.click();
-
+        alertSuccess("financesWidget.filesSentSuccessfully");
         onClose();
       } else {
         alertFaultGetData();
@@ -53,14 +57,13 @@ const useDownloadAccountFilesModal = () => {
     });
   };
 
-
   return {
     resetDatePicker,
     fileType,
     fileTypeList,
     onSelectDeliveryTimeDates,
     onChangeFileTypeState,
-    onClickDownloadTable
+    onClickDownloadTable,
   };
 };
 

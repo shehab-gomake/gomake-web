@@ -26,7 +26,10 @@ const useAuthLayoutHook = (
   permissionEnumValue?: Permissions,
   allowAnonymous?: boolean
 ) => {
-  const { isAuth, isLanguageUpdated } = useGomakeAuth(permissionEnumValue, allowAnonymous);
+  const { isAuth, isLanguageUpdated } = useGomakeAuth(
+    permissionEnumValue,
+    allowAnonymous
+  );
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
@@ -57,16 +60,16 @@ const useAuthLayoutHook = (
         },
         isProduction: true,
       },
-      {
-        isLine: true,
-        key: "line_1",
-        isProduction: true,
-      },
     ];
   }, []);
 
   const tabs2: any = useMemo(() => {
     return [
+      {
+        isLine: true,
+        key: "line_1",
+        isProduction: true,
+      },
       {
         isLine: false,
         key: "sales",
@@ -141,6 +144,12 @@ const useAuthLayoutHook = (
         isList: true,
         list: [
           {
+            key: "purchaseJobs",
+            title: "tabs.purchaseJobs",
+            path: "/purchase-jobs",
+            Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
+          },
+          {
             key: "purchase order",
             title: "tabs.purchaseOrder",
             path: "/purchaseOrders",
@@ -156,12 +165,6 @@ const useAuthLayoutHook = (
             key: "purchase invoice refund",
             title: "tabs.purchaseInvoiceRefund",
             path: "/purchaseInvoiceRefunds",
-            Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
-          },
-          {
-            key: "purchaseJobs",
-            title: "tabs.purchaseJobs",
-            path: "/purchase-jobs",
             Permission: Permissions.SHOW_PURCHASE_INVOICES_REFUND,
           },
         ],
@@ -182,6 +185,12 @@ const useAuthLayoutHook = (
             title: "tabs.receipts",
             path: "/receipts",
             Permission: Permissions.SHOW_RECEIPTS,
+          },
+          {
+            key: "payments",
+            title: "tabs.supplierPayments",
+            path: "/supplier-payments",
+            Permission: Permissions.SHOW_SUPPLIER_PAYMENTS,
           },
           {
             key: "deposits",
@@ -220,11 +229,11 @@ const useAuthLayoutHook = (
         },
         isProduction: true,
       },
+
       {
         isLine: false,
-        key: "reports",
-        title: "tabs.reports",
-        //Permission: Permissions.SHOW_REPORTS,
+        key: "customerReports",
+        title: "tabs.customerReports",
         isList: true,
         list: [
           {
@@ -235,19 +244,14 @@ const useAuthLayoutHook = (
           },
           {
             key: "ledgerReport",
-            title: "tabs.ledgerReport",
+            title: "tabs.customerLedger",
             path: "/ledger-report",
             Permission: Permissions.SHOW_LEDGER_REPORT,
           },
-          {
-            key: "transactionJournalReport",
-            title: "tabs.transactionJournalReport",
-            path: "/transaction-journal-report",
-            Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
-          },
+
           {
             key: "dailyPaymentsReport",
-            title: "tabs.dailyPaymentsReport",
+            title: "tabs.receiptsReport",
             path: "/daily-payments-report",
             Permission: Permissions.SHOW_DAILY_PAYMENT_REPORT,
           },
@@ -263,6 +267,60 @@ const useAuthLayoutHook = (
             path: "/credit-card-transactions",
             Permission: Permissions.SHOW_CREDIT_CARD_TRANSACTIONS,
           },
+        ],
+        icon: () => {
+          return <ReportsIcon />;
+        },
+        isProduction: true,
+      },
+      {
+        isLine: false,
+        key: "supplierReports",
+        title: "tabs.supplierReports",
+        isList: true,
+        list: [
+          {
+            key: "supplierAging",
+            title: "tabs.supplierAging",
+            path: "/supplier-aging",
+            Permission: Permissions.SHOW_SUPPLIER_AGING_REPORT,
+          },
+          {
+            key: "supplierLedger",
+            title: "tabs.supplierLedger",
+            path: "/supplier-ledger",
+            Permission: Permissions.SHOW_SUPPLIER_LEDGER_REPORT,
+          },
+          {
+            key: "paymentsReport",
+            title: "tabs.paymentsReport",
+            path: "/payments-report",
+            Permission: Permissions.SHOW_SUPPLIER_PAYMENT_REPORT,
+          },
+          {
+            key: "purchasesReport",
+            title: "tabs.purchasesReport",
+            path: "/purchases-report",
+            Permission: Permissions.SHOW_PURCHASES_REPORT,
+          },
+        ],
+        icon: () => {
+          return <ReportsIcon />;
+        },
+        isProduction: true,
+      },
+      {
+        isLine: false,
+        key: "accountingReports",
+        title: "tabs.accountingReports",
+        isList: true,
+        list: [
+          // {
+          //   key: "transactionJournalReport",
+          //   title: "tabs.transactionJournalReport",
+          //   path: "/transaction-journal-report",
+          //   Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
+          // },
           {
             key: "accountingTransactionReport",
             title: "tabs.accountingTransactionReport",
@@ -274,6 +332,12 @@ const useAuthLayoutHook = (
             title: "tabs.adjustmentsReport",
             path: "/adjustments-report",
             Permission: Permissions.SHOW_TRANSACTION_JOURNAL_REPORT,
+          },
+          {
+            key: "exportFiles",
+            title: "tabs.exportFiles",
+            path: "/export-files",
+            Permission: Permissions.SHOW_FINANCE,
           },
         ],
         icon: () => {
@@ -368,9 +432,14 @@ const useAuthLayoutHook = (
         isProduction: true,
         tourData: "menu-companyReports",
       },
+    ];
+  }, []);
+
+  const tabs4: any = useMemo(() => {
+    return [
       {
         isLine: true,
-        key: "line_3",
+        key: "line_2",
         isProduction: true,
       },
       {
@@ -397,36 +466,28 @@ const useAuthLayoutHook = (
         isProduction: true,
         tourData: "menu-settings",
       },
+      // Add any other new tabs here as needed
     ];
   }, []);
 
   useEffect(() => {
-    if(allowAnonymous){
-      setCanAccess(true)
-      return
+    if (allowAnonymous) {
+      setCanAccess(true);
+      return;
     }
     if (typeof isAuth === "boolean") {
       setCanAccess(isAuth && isLanguageUpdated);
     }
   }, [isAuth, isLanguageUpdated]);
 
-  // const getUserProfile = async () => {
-  //   const res = await callApi("GET", "/v1/get-print-house-profile");
-  //   if (res.success) {
-  //     setProfile(res?.data?.data?.data);
-  //   }
-  // };
-  // useEffect(() => {
-  //   getUserProfile();
-  // }, []);
-
-  const permissionsOfTabs = [tabs1, tabs2, tabs3];
+  const permissionsOfTabs = [tabs1, tabs2, tabs3, tabs4];
 
   return {
     permissionsOfTabs,
     tabs1,
     tabs2,
     tabs3,
+    tabs4,
     canAccess,
     profile,
     navigate,

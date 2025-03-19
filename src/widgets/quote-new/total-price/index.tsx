@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { InputUpdatedValues } from "../input-updated-values";
@@ -9,6 +9,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
+import { DocumentCalculationType } from "@/enums";
 
 const TotalPriceComp = ({
   documentType,
@@ -27,23 +28,43 @@ const TotalPriceComp = ({
 
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const onBlurTotalPayment = async () => {
-    getCalculateQuote(2, quoteItems?.totalPayment);
+    getCalculateQuote(DocumentCalculationType.TotalPayment, quoteItems?.totalPayment);
     setIsUpdateTotalPayment(null);
   };
   const onInputTotalPayment = (e) => {
     changeQuoteItems("totalPayment", e);
   };
   const [isUpdateDiscount, setIsUpdateDiscount] = useState(null);
+  const [isUpdateDiscountAmount, setIsUpdateDiscountAmount] = useState(null);
+  const [previousDiscountAmount, setPreviousDiscountAmount] = useState(quoteItems?.discountAmount);
+
   const onBlurDiscount = async () => {
-    getCalculateQuote(0, quoteItems?.discount);
+    getCalculateQuote(DocumentCalculationType.Discount, quoteItems?.discount);
     setIsUpdateDiscount(null);
   };
+  const onBlurDiscountAmount = async () => {
+    if (quoteItems?.discountAmount !== previousDiscountAmount) {
+      getCalculateQuote(DocumentCalculationType.DiscountAmount, quoteItems?.discountAmount);
+      setPreviousDiscountAmount(quoteItems?.discountAmount);
+    }
+    setIsUpdateDiscountAmount(null);
+  };
+
   const onInputDiscount = (e) => {
     changeQuoteItems("discount", e);
   };
+  const onInputDiscountAmount = (e) => {
+    changeQuoteItems("discountAmount", e);
+
+  };
+
+
 
   const canUpdateDiscount = router.query.isNewCreation ? true :
     (quoteItems?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_DISCOUNT));
+
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
 
   return (
     <div style={classes.tableFooterContainer}>
@@ -55,12 +76,16 @@ const TotalPriceComp = ({
           style={{
             ...classes.oddRowContainer,
             width: "19%",
-            paddingLeft: 36,
+            paddingLeft: 24,
           }}
         >
-          {(quoteItems?.totalPrice) +
-            " " +
-            getCurrencyUnitText(quoteItems?.currency)}
+          {
+            isRTL ?
+              <>{(quoteItems?.totalPrice) + " " + getCurrencyUnitText(quoteItems?.currency)}</>
+              :
+              <>{getCurrencyUnitText(quoteItems?.currency) + " " + (quoteItems?.totalPrice)}</>
+          }
+
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
           {t("sales.quote.discount")}
@@ -74,14 +99,38 @@ const TotalPriceComp = ({
               setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
               onInputChange={(e) => onInputDiscount(e)}
             />
-            % {isQuoteConfirmation ? quoteItems?.discountAmount != 0 && `(-${quoteItems?.discountAmount + " " + quoteItems?.currency})` : quoteItemValue?.discountAmount != 0 && `(-${quoteItemValue?.discountAmount + " " + quoteItems?.currency})`}
+            %
+            {isQuoteConfirmation ? quoteItems?.discountAmount != 0 && `(-${quoteItems?.discountAmount + " " + quoteItems?.currency})` :
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginLeft: 10, marginRight: 10 }}>
+                (<InputUpdatedValues
+                  value={quoteItems?.discountAmount ? quoteItems?.discountAmount : 0}
+                  onBlur={onBlurDiscountAmount}
+                  isUpdate={canUpdateDiscount && isUpdateDiscountAmount}
+                  setIsUpdate={!isQuoteConfirmation && setIsUpdateDiscountAmount}
+                  sign={" " + quoteItems?.currency}
+                  speicalStyle={{
+                    ...FONT_FAMILY.Inter(400, 14),
+                  }}
+                  inputMainContainerStyle={{
+                    gap: 0,
+                  }}
+                  onInputChange={(e) => onInputDiscountAmount(e)}
+                  width={"150px"}
+                />)
+              </div>
+            }
+
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
           {`${t("sales.quote.vat")} (${Number(quoteItems?.vat) * 100}%)`}
         </div>
         <div style={{ ...classes.oddRowContainer, width: "23%" }}>
-          {quoteItems?.totalVAT + " " + getCurrencyUnitText(quoteItems?.currency)}
+          {isRTL ?
+            <>{quoteItems?.totalVAT + " " + getCurrencyUnitText(quoteItems?.currency)}</>
+            :
+            <>{getCurrencyUnitText(quoteItems?.currency) + " " + quoteItems?.totalVAT}</>
+          }
         </div>
       </div>
       <div style={classes.firstRowForFooterContainer}>
@@ -99,9 +148,11 @@ const TotalPriceComp = ({
           style={{
             ...classes.oddRowContainer,
             width: "87%",
+            padding: isRTL ? "12px" : "12px 24px",
           }}
         >
           <div style={classes.cellTextInputStyle}>
+            {!isRTL && getCurrencyUnitText(quoteItems?.currency)}
             <InputUpdatedValues
               value={quoteItems?.totalPayment}
               onBlur={onBlurTotalPayment}
@@ -111,9 +162,13 @@ const TotalPriceComp = ({
               speicalStyle={{
                 color: "#F135A3",
                 ...FONT_FAMILY.Inter(700, 18),
+                padding: 0,
+              }}
+              inputMainContainerStyle={{
+                gap: 0
               }}
             />
-            {getCurrencyUnitText(quoteItems?.currency)}
+            {isRTL && getCurrencyUnitText(quoteItems?.currency)}
           </div>
         </div>
       </div>

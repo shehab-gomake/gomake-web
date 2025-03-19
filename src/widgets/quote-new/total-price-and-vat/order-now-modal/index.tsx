@@ -35,30 +35,31 @@ const OrderNowModal = ({
             </span>
           </Stack>
           <div style={classes.mainBtnContainer}>
-            <GomakePrimaryButton
-              style={classes.btnStyle}
-              onClick={confirmWithNotification}
-            >
-              {t("sales.quote.confirmWithNotification")}
-            </GomakePrimaryButton>
-            <GomakePrimaryButton
-              style={classes.secondBtn}
-              onClick={confirmWithoutNotification}
-            >
-              {t("sales.quote.confirmWithoutNotification")}
-            </GomakePrimaryButton>
-            <GomakePrimaryButton
-              style={{
-                borderRadius: "8px",
-                height: "40px",
-                background: "white",
-                color: "#000000",
-                border: "1px solid  #D0D5DD",
-              }}
-              onClick={onClose}
-            >
-              {t("sales.quote.cancel")}
-            </GomakePrimaryButton>
+                <GomakePrimaryButton
+                    style={{
+                      borderRadius: "8px",
+                      height: "40px",
+                      background: "white",
+                      color: "#000000",
+                      border: "1px solid  #D0D5DD",
+                    }}
+                    onClick={onClose}
+                >
+                    {t("sales.quote.cancel")}
+                </GomakePrimaryButton>
+                <GomakePrimaryButton
+                    style={classes.secondBtn}
+                    onClick={confirmWithoutNotification}
+                >
+                    {t("sales.quote.confirmWithoutNotification")}
+                </GomakePrimaryButton>
+                <GomakePrimaryButton
+                    style={classes.btnStyle}
+                    onClick={confirmWithNotification}
+                >
+                    {t("sales.quote.confirmWithNotification")}
+                </GomakePrimaryButton>
+            
           </div>
         </div>
       </GoMakeModal>

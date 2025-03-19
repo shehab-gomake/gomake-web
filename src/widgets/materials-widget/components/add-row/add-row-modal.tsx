@@ -52,7 +52,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
       { key: string; value: string; inputType: number; values: any[] }[]
     >(materialHeadersState);
 
-    const notebookTypesObj = materialHeaders?.find(
+  const notebookTypesObj = materialHeaders?.find(
     (item) => item.key === "notebookTypes"
   );
 
@@ -76,7 +76,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
   }, [notebookTypesObj]);
 
   const onChangeInputs = (key, value) => {
-    setRowData({ ...rowData, [key]: value });
+    setRowData({ ...rowData, [key]: value as string });
   };
   return (
     <GoMakeModal
@@ -91,7 +91,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
         <Stack style={classes.inputsDivStyle}>
           {rowInputs(
             rowData,
-            isFetching, 
+            isFetching,
             materialHeaders,
             currencies,
             machinesCategories,
@@ -105,6 +105,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
                 readonly={false}
                 checkWhatRenderArray={checkWhatRenderArray}
                 loading={item?.loading || false}
+                keyItem={"item"}
               />
             </Stack>
           ))}

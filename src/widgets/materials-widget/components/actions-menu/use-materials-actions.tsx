@@ -47,17 +47,20 @@ import {
 } from "@/services/api-service/materials/materials-endpoints";
 import { useExchangeRate } from "@/hooks/use-exchange-rate";
 import { useMaterialsCategories } from "../../use-materials-categories";
-import { EMaterialsTabsIcon } from "@/enums";
+import { EMaterialsTabsIcon, UNIT_TYPE } from "@/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
-import { actionMenuState, openPriceModalState } from "@/store";
+import { actionMenuState, openPriceModalState, userState } from "@/store";
 import { useMaterials } from "@/widgets/materials-widget/use-materials";
 import { CreateOrder } from "@/icons/material-tabs/create-order";
+import { convertValueToOriginalUnit } from "@/utils/helpers";
 
 const useMaterialsActions = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
   const { navigate } = useGomakeRouter();
   const { query } = useRouter();
   const { materialType, materialCategory } = query;
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0
   const { getMaterialCategories } = useMaterials(isAdmin);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
@@ -368,7 +371,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
           )
         )
       }
-      if (action?.key.toLowerCase().includes("price")&&!openPriceModal) {
+      if (action?.key.toLowerCase().includes("price") && !openPriceModal) {
         onClickOpenPriceModal();
       }
       setAction(null);
@@ -670,9 +673,15 @@ const useMaterialsActions = (isAdmin: boolean) => {
   };
   const duplicatePrintHouseMaterials = useCallback(async () => {
     const transformedArray = properties.map((item) => {
+
+      const convertedValues = item.values.map(value =>
+        unitType === UNIT_TYPE.IMPERIAL ?
+          convertValueToOriginalUnit(item?.key?.unit, value) :
+          value
+      );
       const key = item?.key?.key?.toLowerCase();
-      const value = String(item.values[item?.values?.length - 1]);
-      const uniqueValues = Array.from(new Set(item.values));
+      const value = convertedValues[convertedValues.length - 1];
+      const uniqueValues = Array.from(new Set(convertedValues));
 
       return {
         key,
@@ -680,7 +689,6 @@ const useMaterialsActions = (isAdmin: boolean) => {
         values: uniqueValues
       };
     });
-
 
     const requestBody: any = {
       props: transformedArray,
@@ -724,12 +732,19 @@ const useMaterialsActions = (isAdmin: boolean) => {
   }, [properties]);
   const duplicateMaterials = useCallback(async () => {
     const transformedArray = properties.map((item) => {
-      const key = item.key.key.toLowerCase();
-      const value = item.value;
+      const convertedValues = item.values.map(value =>
+        unitType === UNIT_TYPE.IMPERIAL ?
+          convertValueToOriginalUnit(item?.key?.unit, value) :
+          value
+      );
+      const key = item?.key?.key?.toLowerCase();
+      const value = convertedValues[convertedValues.length - 1];
+      const uniqueValues = Array.from(new Set(convertedValues));
 
       return {
         key,
         value,
+        values: uniqueValues
       };
     });
 

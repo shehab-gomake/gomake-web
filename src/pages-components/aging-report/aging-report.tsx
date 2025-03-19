@@ -9,7 +9,11 @@ import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { isValidCustomer } from "@/utils/helpers";
 
-const AgingReportWidget = () => {
+interface IProps {
+  clientType: CLIENT_TYPE;
+}
+
+const AgingReportWidget = ({ clientType }: IProps) => {
   const {
     t,
     handleClickSelectDate,
@@ -41,13 +45,23 @@ const AgingReportWidget = () => {
     setCustomerForEdit,
     onClickOpenCustomerModal, // New handler
     isFetching,
-  } = useAgingReport();
+    tableHeader,
+    handleSortAgingReport,
+    isDescOrder,
+    supplierList,
+    isPurchaseReport,
+  } = useAgingReport(clientType);
+
   const { classes } = useStyle();
 
   return (
     <div style={classes.mainContainer}>
       <HeaderTitle
-        title={t("tabs.agingReport")}
+        title={
+          clientType === CLIENT_TYPE.SUPPLIER
+            ? t("tabs.supplierAging")
+            : t("tabs.agingReport")
+        }
         marginTop={"0px"}
         marginBottom={"0px"}
       />
@@ -71,6 +85,8 @@ const AgingReportWidget = () => {
         handleDateChange={handleDateChange}
         fromDate={fromDate}
         toDate={toDate}
+        isPurchaseReport={isPurchaseReport}
+        supplierList={supplierList}
       />
 
       <Divider />
@@ -84,9 +100,14 @@ const AgingReportWidget = () => {
       {showTable && (
         <PrimaryTable
           rows={getTableDataRows(onClickOpenCustomerModal)} // Pass handler here
-          headers={transformedHeaders}
+          headers={tableHeader}
           maxHeight={"100vh"}
           stickyHeader={true}
+          variant={detailedReport ? "PrimaryTable " : "OddEvenTable"}
+          isAgingeport={true}
+          isAgingDetailedReport={detailedReport}
+          handleSortAgingReport={handleSortAgingReport}
+          isDescOrder={isDescOrder}
         />
       )}
 
@@ -95,10 +116,16 @@ const AgingReportWidget = () => {
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
         codeFlag={true}
-        typeClient={CLIENT_TYPE.CUSTOMER}
+        typeClient={
+          isPurchaseReport ? CLIENT_TYPE.SUPPLIER : CLIENT_TYPE.CUSTOMER
+        }
         isgetAllCustomers={false}
         openModal={showCustomerModal}
-        modalTitle={t("customers.modal.editTitle")}
+        modalTitle={
+          isPurchaseReport
+            ? t("suppliers.editModalTitle")
+            : t("customers.modal.editTitle")
+        }
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}

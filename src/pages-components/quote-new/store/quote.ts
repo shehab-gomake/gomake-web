@@ -14,7 +14,7 @@ export const QuoteNumberState = atom({
 
 export const QuoteIfExistState = atom({
   key: "QuoteIfExistState",
-  default: "", 
+  default: "",
 });
 
 interface ReportItem {
@@ -26,3 +26,9 @@ export const homeReportsState = atom<ReportItem[]>({
   key: "homeReportsState",
   default: null,
 });
+
+export enum ClientChangeSource {
+  REGULAR_CHANGE = 1,
+  SAVE_AND_START_NEW_DOC = 2,
+  SAVE_AND_CHANGE_CLIENT = 3,
+}

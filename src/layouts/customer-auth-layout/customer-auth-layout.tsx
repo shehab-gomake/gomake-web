@@ -7,9 +7,12 @@ import { HeaderWidget } from "@/widgets/header";
 import { navStatusState } from "@/store/nav-status";
 import { hoverStatusState } from "@/store";
 import { LAYOUT_DEFAULT_GAP } from "@/utils/layout-config";
-import { GoMakeModal } from "@/components";
+import { GoMakeAlertModal, GoMakeModal } from "@/components";
 import { useHtmlTour } from "@/layouts/customer-auth-layout/use-html-tour";
 import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-uploader-widget";
+import { MobileHeaderWidget } from "./mobile-top-list/mobile-header-widget";
+import { useEffect, useState } from "react";
+import { useUploadingNewVersionSocketIo } from "@/hooks/socket-io/use-upload-new-version-socket-io";
 
 const CustomerAuthLayout = ({
   children,
@@ -18,7 +21,11 @@ const CustomerAuthLayout = ({
   allowAnonymous,
   disableHeaderSideMenu,
   className,
+  backgroundColor,
 }: IAuthLayout) => {
+  const { openAlertModal, setOpenAlertModal } =
+    useUploadingNewVersionSocketIo();
+
   const { canAccess } = useAuthLayoutHook(permissionEnumValue, allowAnonymous);
   const { classes } = useStyle({
     isHover: false,
@@ -29,19 +36,43 @@ const CustomerAuthLayout = ({
   const isHover = useRecoilValue(hoverStatusState);
   const { htmlTour, openModal, onCloseModal } = useHtmlTour();
 
+  // const isMobileScreen = useMediaQuery({ query: "(max-width: 768px)" });
+  const [isMobileScreen, setIsMobileScreen] = useState(false);
+
+  useEffect(() => {
+    updateScreenWidth();
+    window.addEventListener("resize", updateScreenWidth);
+    return () => {
+      window.removeEventListener("resize", updateScreenWidth);
+    };
+  }, []);
+
+  const updateScreenWidth = () => {
+    setIsMobileScreen(window.innerWidth <= 768);
+  };
   return disableHeaderSideMenu ? (
     <>
-      {(
-        <div style={{ ...classes.bodyContainer, backgroundColor: "#FFF" }}>
+      {canAccess && (
+        <div
+          style={{
+            ...classes.bodyContainer,
+            backgroundColor: backgroundColor ?? "#FFF",
+          }}
+        >
           {children}
         </div>
       )}
     </>
   ) : (
     <>
-      {(
+      {
         <div style={classes.container}>
-          <LeftSideLayout customGap={customGap} />
+          {isMobileScreen ? (
+            <div></div>
+          ) : (
+            <LeftSideLayout customGap={customGap} />
+          )}
+
           <div
             style={classes.rightContainer}
             onMouseEnter={() => {
@@ -50,7 +81,8 @@ const CustomerAuthLayout = ({
               }
             }}
           >
-            <HeaderWidget />
+            {isMobileScreen ? <MobileHeaderWidget /> : <HeaderWidget />}
+
             {canAccess && (
               <div style={classes.bodyContainer} className={className}>
                 {children}
@@ -68,8 +100,16 @@ const CustomerAuthLayout = ({
               style={{ padding: "10px" }}
             />
           </GoMakeModal>
+          <GoMakeAlertModal
+            openModal={openAlertModal}
+            onClose={() => setOpenAlertModal(false)}
+            subTitle={"modal.alertNewVersion"}
+            yesBtn={"modal.ok"}
+            onClickConfirm={() => setOpenAlertModal(false)}
+            withCancelBtn={false}
+          />
         </div>
-      )}
+      }
     </>
   );
 };

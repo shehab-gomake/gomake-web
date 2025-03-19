@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Box,
   Stack,
@@ -10,6 +10,7 @@ import {
   Paper,
   MenuItem,
   CircularProgress,
+  ClickAwayListener,
 } from "@mui/material";
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
@@ -27,6 +28,8 @@ import { useRouter } from "next/router";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
+import {useRecoilState} from "recoil";
+import {filterGroupsState} from "@/widgets/production-floor/state/filter-group";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -189,22 +192,24 @@ const CustomGroupComponent = ({
               backgroundColor: "transparent",
             }}
           >
-            <IconButton
-              onClick={onClickDelete}
-              size="small"
-              style={{
-                padding: "4px",
-              }}
-            >
-              <ClearIcon
-                className="clear-icon"
-                style={{
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  color: isSelected ? "#FFF" : group?.color,
-                }}
-              />
-            </IconButton>
+            {
+              group.id !== "all" && (<IconButton
+                    onClick={onClickDelete}
+                    size="small"
+                    style={{
+                      padding: "4px",
+                    }}
+                >
+                  <ClearIcon
+                      className="clear-icon"
+                      style={{
+                        cursor: "pointer",
+                        fontSize: "14px",
+                        color: isSelected ? "#FFF" : group?.color,
+                      }}
+                  />
+                </IconButton>)
+            }
           </Circle>
         </Box>
       </CardContent>
@@ -220,11 +225,13 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 });
 
-const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
+const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
   const { classes } = useStyle();
   const { push } = useRouter();
   const { tagsList } = filtersInputs();
   const [containerWidth, setContainerWidth] = useState(0);
+  const [filterGroups, setFilterGroups] = useRecoilState<IFilterGroupsList[]>(filterGroupsState);
+
   const {
     t,
     dir,
@@ -255,7 +262,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     handleDeleteConfirm,
     handleCancel,
     handleClearClick,
-  } = useProductionFloorFilters({ getStationFilterGroups });
+  } = useProductionFloorFilters({ getStationFilterGroups:getStationFilterGroups,connectionId:connectionId });
 
   useEffect(() => {
     const fetchMachinesColors = async () => {
@@ -315,8 +322,9 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     }
   }, [filterGroups, containerWidth]);
 
+
   const getMissionsList = useCallback(() => {
-    return  missionsList;
+    return missionsList;
   }, [missionsList]);
 
   const renderMenuItem = (option, handleClick) => (
@@ -337,16 +345,19 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     </MenuItem>
   );
 
-  const SearchMissionList = ({ missionsList, handleMissionClick }) => (
-    <Paper elevation={3} sx={classes.paperStyle}>
-      <ScrollableDiv>
-        {missionsList?.map((option) =>
-          renderMenuItem(option, handleMissionClick)
-        )}
-      </ScrollableDiv>
-    </Paper>
-  );
+  const SearchMissionList = ({ missionsList, handleMissionClick }) => {
+    return (
+      <Paper elevation={3} sx={classes.paperStyle}>
+        <ScrollableDiv>
+          {missionsList?.map((option) =>
+            renderMenuItem(option, handleMissionClick)
+          )}
+        </ScrollableDiv>
+      </Paper>
+    );
+  };
 
+  //!there is no productType
   const handleMissionClick = (id) => {
     push(`/production-floor?boardMissionsId=${id}&step=stations`).then(() => {
       setSearch("");
@@ -354,26 +365,53 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
     });
   };
 
+  const [isListOpen, setIsListOpen] = useState(false);
+  const searchInputRef = useRef(null);
+  const handleSearchChange = (value) => {
+    setSearch(value);
+    if (!value) {
+      setIsListOpen(false);
+      setMissionsList([]);
+    } else {
+      setIsListOpen(true);
+      setMissionsList(getMissionsList());
+    }
+  };
+
   return (
     <Stack style={classes.headerFilterContainer}>
-      <Stack>
-        <SearchInputComponent
-          bgColor={"#F8F8F8"}
-          value={search}
-          onChange={setSearch}
-          filtersButton={
-            isSearchLoading && (
-              <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
-            )
+      <ClickAwayListener
+        onClickAway={(event) => {
+          if (
+            searchInputRef.current &&
+            searchInputRef.current.contains(event.target)
+          ) {
+            return;
           }
-        />
-        {getMissionsList().length !== 0 && !!search && (
+          setIsListOpen(false);
+        }}
+      >
+        <Stack>
+          <div ref={searchInputRef}>
+            <SearchInputComponent
+              bgColor={"#F8F8F8"}
+              value={search}
+              onChange={handleSearchChange}
+              filtersButton={
+                isSearchLoading && (
+                  <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
+                )
+              }
+            />
+          </div>
+          {getMissionsList().length !== 0 && isListOpen && (
             <SearchMissionList
               missionsList={getMissionsList()}
               handleMissionClick={handleMissionClick}
             />
           )}
-      </Stack>
+        </Stack>
+      </ClickAwayListener>
       <SelectComponent
         buttonLabel={"productionFloor.tags"}
         list={tagsList}
@@ -393,7 +431,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
         {visibleFilterGroups?.map((group, index) => (
           <CustomGroupComponent
             dir={dir}
-            key={index}
+            key={'visibleGroup' + index}
             group={group}
             onClick={() => handleSelectGroup(group?.id)}
             onClickDelete={(event) => {
@@ -434,7 +472,7 @@ const ProductionFloorFilters = ({ filterGroups, getStationFilterGroups }) => {
                 {hiddenFilterGroups?.map((group, index) => (
                   <CustomGroupComponent
                     dir={dir}
-                    key={index}
+                    key={'hiddenGroup' + index}
                     group={group}
                     onClick={() => handleSelectGroup(group?.id)}
                     onClickDelete={(event) => {

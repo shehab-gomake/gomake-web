@@ -11,20 +11,21 @@ import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { isValidCustomer } from "@/utils/helpers";
 import { AccountingTransactionReportHeader } from "./widgets/header-widget/acconting-header";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import CollapsibleTable from "./widgets/collapse-table";
 import { CreateNewTransactionModal } from "../ledger-report/widgets/create-transaction-modal";
 import { AdjustmentsLedgerReportModal } from "../ledger-report/widgets/adjustments-modal";
 import { GoMakeAutoComplate } from "@/components";
-import { useCustomerDropDownList } from "@/hooks";
 
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
+  clientType?: CLIENT_TYPE;
 }
 
 const TransactionJournalReportWidget = ({
   reportType,
+  clientType = CLIENT_TYPE.CUSTOMER,
 }: TransactionJournalReportWidgetProps) => {
   const { classes } = useStyle();
   const {
@@ -76,7 +77,10 @@ const TransactionJournalReportWidget = ({
     clientPaymentsList,
     setClientPaymentsList,
     onClickExportAccountingReportExcel,
-  } = useTransactionJournalReport({ reportType });
+    erpAccountsList,
+    getErpAccountsList,
+    onClickDownloadMovingFiles,
+  } = useTransactionJournalReport({ reportType, clientType });
 
   const isAccountingTransaction =
     reportType === EReportType.AccountingTransaction;
@@ -95,6 +99,10 @@ const TransactionJournalReportWidget = ({
       getClientPaymentItems();
     }
   }, [customer, isOpenAdjustmentsModal]);
+
+  useEffect(() => {
+    getErpAccountsList();
+  }, []);
 
   return (
     <div
@@ -128,13 +136,13 @@ const TransactionJournalReportWidget = ({
           />
         </div>
       )}
-
       {isAccountingTransaction && (
         <AccountingTransactionReportHeader
           handleDateChange={handleDatesChange}
           filterState={filterState}
           setFilterState={setFilterState}
           handleClickClear={handleClearFilters}
+          erpAccountsList={erpAccountsList}
         />
       )}
       {!isAdjustmentsReport && !isAccountingTransaction && (
@@ -155,9 +163,10 @@ const TransactionJournalReportWidget = ({
         onClickCreateNewTransaction={onClickOpenCreateTransactionModal}
         onClickOpenAdjustmentsModal={onClickOpenAdjustmentsModal}
         onClickExportAccountingReportExcel={onClickExportAccountingReportExcel}
+        onClickDownloadMovingFiles={onClickDownloadMovingFiles}
         reportType={reportType}
       />
-      {reportType === EReportType.AdjustmentsReport && (
+      {isAdjustmentsReport && (
         <CollapsibleTable
           rows={rows}
           headers={headers}
@@ -170,6 +179,7 @@ const TransactionJournalReportWidget = ({
           headers={tableHeaders}
           maxHeight={"calc(100vh - 300px)"}
           stickyHeader={true}
+          variant="OddEvenTable"
         />
       )}
       {!isAccountingTransaction && !isAdjustmentsReport && (
@@ -188,6 +198,7 @@ const TransactionJournalReportWidget = ({
                       headers={tableHeaders}
                       maxHeight={"calc(100vh - 300px)"}
                       stickyHeader={true}
+                      variant="OddEvenTable"
                     />
                   );
                 })}
@@ -208,6 +219,7 @@ const TransactionJournalReportWidget = ({
                         )}
                         headers={tableHeaders}
                         maxHeight={400}
+                        variant="OddEvenTable"
                       />
                       <div style={classes.totalStyle}>
                         {t("deposits.total")} : {item.total.toFixed(2)}
@@ -235,6 +247,7 @@ const TransactionJournalReportWidget = ({
       <CreateNewTransactionModal
         onCloseModal={onClickCloseCreateTransactionModal}
         openModal={isOpenCreateTransactionModal}
+        erpAccountsList={erpAccountsList}
       />
       <AdjustmentsLedgerReportModal
         customerId={customer?.id}

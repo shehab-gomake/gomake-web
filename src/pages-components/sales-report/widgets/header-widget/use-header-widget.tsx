@@ -12,13 +12,17 @@ export interface SalesReportHeaderWidgetProps {
   handleCustomerChange: any;
   displayByGroups: boolean;
   onChangeDisplayByGroups: any;
-  documentsTypeList: any;
+  documentsTypeList?: any;
+  reportsTypeList?: any;
   handleDocumentTypeChange: any;
   documentType: any;
   handleDateChange?: any;
   fromDate?: Date | null;
   toDate?: Date | null;
   isFetchingCustomers?: boolean;
+
+  isPurchaseReport?: boolean;
+  supplierList?: any[];
 }
 const useSalesReportHeader = () => {
   const { classes } = useStyle();

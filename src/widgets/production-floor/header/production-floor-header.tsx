@@ -16,8 +16,10 @@ import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import { SettingsIcon } from "../../../icons/settings-icon";
 import { ActionsListComponent } from "@/widgets/production-floor/filters/select/actions-select/action-list-select-component";
 import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
+import { useUserPermission } from "@/hooks/use-permission";
+import { Permissions } from "@/components/CheckPermission/enum";
 
-const ProductionFloorHeader = ({ filterGroups, setFilterGroups }: any) => {
+const ProductionFloorHeader = ({ filterGroups, setFilterGroups,connectionId }: any) => {
   const {
     view,
     setView,
@@ -29,10 +31,11 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups }: any) => {
     currentPathIndex,
     onStationsChange,
     useUpdateViewInUrl,
-  } = useProductionFloorHeader();
+  } = useProductionFloorHeader(connectionId);
   const { t } = useTranslation();
   const dir = t("direction");
   const updateViewInUrl = useUpdateViewInUrl();
+  const { CheckPermission } = useUserPermission();
 
   return (
     <Stack
@@ -112,19 +115,22 @@ const ProductionFloorHeader = ({ filterGroups, setFilterGroups }: any) => {
         )}
         <SelectGroup />
         <ButtonGroup dir={"ltr"}>
-          <PrimaryButton
-            style={{ width: "40px", height: "40px", padding: 0 }}
-            variant={
-              view === EProductionFloorView.GANTT ? "contained" : "outlined"
-            }
-            // onClick={() => {
-            //   setView(EProductionFloorView.DASHBOARD);
-            //   navigateToProductionFloor();
-            // }}
-            onClick={() => updateViewInUrl(EProductionFloorView.GANTT)}
-          >
-            <AvTimerIcon />
-          </PrimaryButton>
+          {CheckPermission(Permissions.SHOW_PRODUCTION_TIME_LINE) && (
+            <PrimaryButton
+              style={{ width: "40px", height: "40px", padding: 0 }}
+              variant={
+                view === EProductionFloorView.GANTT ? "contained" : "outlined"
+              }
+              // onClick={() => {
+              //   setView(EProductionFloorView.DASHBOARD);
+              //   navigateToProductionFloor();
+              // }}
+              onClick={() => updateViewInUrl(EProductionFloorView.GANTT)}
+            >
+              <AvTimerIcon />
+            </PrimaryButton>
+          )}
+
           <PrimaryButton
             style={{ width: "40px", height: "40px", padding: 0 }}
             variant={

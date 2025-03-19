@@ -167,7 +167,7 @@ const PricingList = ({
         addNewStepForActionProfitRow={addNewStepForActionProfitRow}
       />
       <div style={classes.chartContainer}>
-        <LineChart actionProfitRowChartData={actionProfitRowChartData} />
+        <LineChart actionProfitRowChartData={actionProfitRowChartData} selectedTransition={selectedTransition} />
       </div>
       <Menu
         open={Boolean(anchorEl)}

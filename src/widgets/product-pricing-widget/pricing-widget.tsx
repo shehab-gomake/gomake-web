@@ -6,7 +6,10 @@ import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/i
 import { SubWorkFlowsComponent } from "@/widgets/product-pricing-widget/components/work-flow/sub-work-flow-component";
 import { WorkFlowsComponent } from "@/widgets/product-pricing-widget/components/work-flow/work-flow-component";
 import { Actions } from "@/widgets/product-pricing-widget/components/action/action-component";
-import { EPricingViews, EWorkSource } from "@/widgets/product-pricing-widget/enums";
+import {
+  EPricingViews,
+  EWorkSource,
+} from "@/widgets/product-pricing-widget/enums";
 import { IPricingWidgetProps } from "@/widgets/product-pricing-widget/interface";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
@@ -14,16 +17,17 @@ import { usePricingWidget } from "./use-pricing-widget";
 import { useRecoilValue } from "recoil";
 import { calculationResultState } from "./state";
 import { useState } from "react";
-import ReadMoreIcon from '@mui/icons-material/ReadMore';
+import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { GoMakeDeleteModal } from "@/components";
-
 import { ActionsListMenu } from "./components/actions-menu";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { SectionNameListMenu } from "./components/sections-menu";
-import { ModalType } from "@/enums";
+import { ModalType, UNIT_TYPE } from "@/enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { _renderDeliveryDate } from "@/utils/helpers";
+import { MobileActions } from "./components/action/mobile-action-component";
 
 const PricingWidget = ({
   workFlows,
@@ -31,8 +35,10 @@ const PricingWidget = ({
   widgetType,
   setSelectedWorkFlowCalculatedIsLoaded,
   selectedWorkFlowCalculatedIsLoaded,
-  getSelectedWorkFlow
+  getSelectedWorkFlow,
+  isMobileScreen,
 }: IPricingWidgetProps) => {
+
   const { classes } = useStyle();
   const {
     view,
@@ -70,23 +76,36 @@ const PricingWidget = ({
     handleCloseSectionNameListMenu,
     handleOpenSectionNameListMenu,
     reOderMainActions,
-    reOderSubWorkFlows
-
-  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
-  const isHasSubWorkFlowsOrProductTypeActions = hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)
+    reOderSubWorkFlows,
+  } = usePricingWidget({
+    workFlows,
+    getOutSourcingSuppliers,
+    widgetType,
+    selectedWorkFlowCalculatedIsLoaded,
+    getSelectedWorkFlow,
+  });
+  const isHasSubWorkFlowsOrProductTypeActions =
+    hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow);
   const sectionNames = getSectionNames(selectedWorkFlow);
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
+
+
+
   return (
     <Stack gap={"16px"} width={"100%"}>
-      <Stack direction={"row"} justifyContent={"space-between"}>
+      <Stack
+        direction={"row"}
+        justifyContent={"space-between"}
+        style={{ display: "flex", flexWrap: "wrap", rowGap: "10px" }}
+      >
         {!!workFlows && view !== EPricingViews.OUTSOURCE_WORKFLOW ? (
           <ButtonGroup sx={classes.buttonGroup} orientation={"horizontal"}>
             <PrimaryButton
               onClick={() => {
-                setView(EPricingViews.SELECTED_WORKFLOW)
-                settledWorkFlowsByTabList([])
+                setView(EPricingViews.SELECTED_WORKFLOW);
+                settledWorkFlowsByTabList([]);
               }}
               sx={classes.button}
               variant={
@@ -94,81 +113,115 @@ const PricingWidget = ({
                   ? "contained"
                   : "outlined"
               }
-
             >
               {t("pricingWidget.selected")}
             </PrimaryButton>
             {calculationResult &&
+              !isMobileScreen &&
               calculationResult?.tabs?.map((section, index) => (
                 <PrimaryButton
                   key={index}
                   data-tour="allWorkflowsBtn"
                   onClick={() => {
-                    handleTabClick(section.productType)
-                    setSelectedTab(section)
-                  }
-                  }
+                    handleTabClick(section.productType);
+                    setSelectedTab(section);
+                  }}
                   sx={classes.button}
                   variant={
-                    view === EPricingViews.OTHERS_WORKFLOWS && selectedTab?.productType === section.productType
-                      ? 'contained'
-                      : 'outlined'
+                    view === EPricingViews.OTHERS_WORKFLOWS &&
+                      selectedTab?.productType === section.productType
+                      ? "contained"
+                      : "outlined"
                   }
                 >
-                  {section.isNeedTranslation ? t("workFlowTabs." + section.name) : section.name} ({section.count + 1})
+                  {section.isNeedTranslation
+                    ? t("workFlowTabs." + section.name)
+                    : section.name}{" "}
+                  ({section.count + 1})
                 </PrimaryButton>
               ))}
-
           </ButtonGroup>
         ) : (
           <div />
         )}
-        <Stack direction={"row"} gap={"10px"}>
+        <Stack
+          direction={"row"}
+          gap={"10px"}
+          alignItems={"center"}
+          style={{ display: "flex", flexWrap: "wrap" }}
+        >
+          <Stack
+            direction={"row"}
+            gap={"10px"}
+            alignItems={"center"}
+            style={{ cursor: "pointer" }}
+          >
+            <span style={classes.detailTitle}>
+              {t("home.headers.deliveryDate")}
+            </span>
+            <span style={classes.detailValue}>
+              {_renderDeliveryDate(selectedWorkFlow?.deliveryDate)}
+            </span>
+          </Stack>
           <PermissionCheck userPermission={Permissions.CUSTOMIZE_WORKFLOW}>
-            {
-              isHasSubWorkFlowsOrProductTypeActions && view === EPricingViews.SELECTED_WORKFLOW &&
-              <div style={classes.autoCompleteSelectedSectionName} onClick={(e) => {
-                handleOpenSectionNameListMenu(e)
-                setIsUnderlined(false)
-              }}>
-                {t("pricingWidget.addAction")}
-                <ArrowDropDownIcon />
-              </div>
-            }
-            {!isHasSubWorkFlowsOrProductTypeActions && view === EPricingViews.SELECTED_WORKFLOW &&
-              <div style={classes.autoCompleteSelectedSectionName} onClick={(e) => {
-                handleOpenActionsListMenu(e)
-                setIsUnderlined(true)
-              }}>
-                {t("pricingWidget.addAction")}
-                <ArrowDropDownIcon />
-              </div>
-            }
+            {isHasSubWorkFlowsOrProductTypeActions &&
+              view === EPricingViews.SELECTED_WORKFLOW &&
+              !isMobileScreen && (
+                <div
+                  style={classes.autoCompleteSelectedSectionName}
+                  onClick={(e) => {
+                    handleOpenSectionNameListMenu(e);
+                    setIsUnderlined(false);
+                  }}
+                >
+                  {t("pricingWidget.addAction")}
+                  <ArrowDropDownIcon />
+                </div>
+              )}
+            {!isHasSubWorkFlowsOrProductTypeActions &&
+              view === EPricingViews.SELECTED_WORKFLOW &&
+              !isMobileScreen && (
+                <div
+                  style={classes.autoCompleteSelectedSectionName}
+                  onClick={(e) => {
+                    handleOpenActionsListMenu(e);
+                    setIsUnderlined(true);
+                  }}
+                >
+                  {t("pricingWidget.addAction")}
+                  <ArrowDropDownIcon />
+                </div>
+              )}
           </PermissionCheck>
+
           <InOutSourceSelect
             onChange={(v: EWorkSource) => {
-              setSelectedWorkFlowCalculatedIsLoaded(true)
+              setSelectedWorkFlowCalculatedIsLoaded(true);
               setView(
                 v === EWorkSource.OUT
                   ? EPricingViews.OUTSOURCE_WORKFLOW
                   : EPricingViews.SELECTED_WORKFLOW
-              )
-              updateProductItemValue(v)
-              setIsChangeView(false)
+              );
+              updateProductItemValue(v);
+              setIsChangeView(false);
             }}
             disabled={!selectedWorkFlow}
-            withPartially={selectedWorkFlow?.actions?.some(
-              (action) => action.source === EWorkSource.OUT
-            ) && view !== EPricingViews.OUTSOURCE_WORKFLOW && !selectedWorkFlowCalculatedIsLoaded}
+            withPartially={
+              selectedWorkFlow?.actions?.some(
+                (action) => action.source === EWorkSource.OUT
+              ) &&
+              view !== EPricingViews.OUTSOURCE_WORKFLOW &&
+              !selectedWorkFlowCalculatedIsLoaded
+            }
             value={
               view === EPricingViews.OUTSOURCE_WORKFLOW
                 ? EWorkSource.OUT
                 : EWorkSource.INTERNAL
             }
           />
-
         </Stack>
       </Stack>
+
       {selectedWorkFlow && (
         <GeneralInformationComponent
           details={selectedWorkFlow?.generalInformation}
@@ -178,7 +231,15 @@ const PricingWidget = ({
       <Divider />
 
       {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && (
-        <div data-tour={'actions-container'}>
+        <div
+          data-tour={"actions-container"}
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            width: "100%",
+          }}
+        >
+          {/* waiting */}
           <SubWorkFlowsComponent
             widgetType={widgetType}
             isEditableActions={true}
@@ -186,50 +247,72 @@ const PricingWidget = ({
             reOderMainActions={reOderMainActions}
             reOderSubWorkFlows={reOderSubWorkFlows}
           />
-          <Actions
-            actions={selectedWorkFlow?.actions}
-            productType={selectedWorkFlow.productType}
-            widgetType={widgetType}
-            selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
-            reOderMainActions={reOderMainActions}
-          />
+          {isMobileScreen ? (
+            <MobileActions
+              actions={selectedWorkFlow?.actions}
+              productType={selectedWorkFlow.productType}
+              widgetType={widgetType}
+              selectedWorkFlowCalculatedIsLoaded={
+                selectedWorkFlowCalculatedIsLoaded
+              }
+            />
+          ) : (
+            <Actions
+              actions={selectedWorkFlow?.actions}
+              productType={selectedWorkFlow.productType}
+              widgetType={widgetType}
+              selectedWorkFlowCalculatedIsLoaded={
+                selectedWorkFlowCalculatedIsLoaded
+              }
+              reOderMainActions={reOderMainActions}
+            />
+          )}
         </div>
       )}
-      {selectedWorkFlowsByTabList?.length > 0 && view === EPricingViews.OTHERS_WORKFLOWS && (
-        <div data-tour={'allWorkflowsContainer'}>
-          <WorkFlowsComponent
-            showSelected={() => setView(EPricingViews.SELECTED_WORKFLOW)}
-            workflows={selectedWorkFlowsByTabList}
-            getWorkFlowsActions={getWorkFlowsActions}
-            selectedWorkFlowId={selectedWorkFlowId}
-            setSelectedWorkFlowId={setSelectedWorkFlowId}
-            widgetType={widgetType}
-          />
-          {
-            pageSize < allCountSelectedTabWorkFlow &&
-            <>
-              <div style={{
-                display: 'flex',
-                flexDirection: "row",
-                justifyContent: "center",
-                alignItems: "center",
-                gap: 10,
-                ...FONT_FAMILY.Lexend(500, 14),
-                cursor: "pointer",
-                color: "#2E3092"
-              }} onClick={handleScroll}>{t("sales.quote.showMore")} <ReadMoreIcon style={{ color: "#2E3092" }} /></div>
-            </>
-          }
 
-
-        </div>
-      )}
+      {/* waiting */}
+      {selectedWorkFlowsByTabList?.length > 0 &&
+        view === EPricingViews.OTHERS_WORKFLOWS && (
+          <div data-tour={"allWorkflowsContainer"}>
+            <WorkFlowsComponent
+              isMobileScreen={isMobileScreen}
+              showSelected={() => setView(EPricingViews.SELECTED_WORKFLOW)}
+              workflows={selectedWorkFlowsByTabList}
+              getWorkFlowsActions={getWorkFlowsActions}
+              selectedWorkFlowId={selectedWorkFlowId}
+              setSelectedWorkFlowId={setSelectedWorkFlowId}
+              widgetType={widgetType}
+            />
+            {pageSize < allCountSelectedTabWorkFlow && (
+              <>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: 10,
+                    ...FONT_FAMILY.Lexend(500, 14),
+                    cursor: "pointer",
+                    color: "#2E3092",
+                  }}
+                  onClick={handleScroll}
+                >
+                  {t("sales.quote.showMore")}{" "}
+                  <ReadMoreIcon style={{ color: "#2E3092" }} />
+                </div>
+              </>
+            )}
+          </div>
+        )}
       {view === EPricingViews.OUTSOURCE_WORKFLOW && (
         <OutSourceSuppliers
           widgetType={widgetType}
           onClickAddOutSourceAction={onClickAddOutSourceAction}
           selectedWorkFlow={selectedWorkFlow}
-          selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
+          selectedWorkFlowCalculatedIsLoaded={
+            selectedWorkFlowCalculatedIsLoaded
+          }
           onClickRemoveOutSourceAction={onClickRemoveOutSourceAction}
         />
       )}
@@ -254,10 +337,13 @@ const PricingWidget = ({
         open={openSectionNameListMenu}
         anchorEl={anchorElSectionNameListMenu}
         handleOpen={handleOpenActionsListMenu}
-        sectionNames={[...sectionNames, {
-          sectionName: t("pricingWidget.general"),
-          productType: null
-        }]}
+        sectionNames={[
+          ...sectionNames,
+          {
+            sectionName: t("pricingWidget.general"),
+            productType: null,
+          },
+        ]}
         setSectionNames={setSectionNames}
       />
     </Stack>

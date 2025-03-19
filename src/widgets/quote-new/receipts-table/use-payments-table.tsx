@@ -33,6 +33,8 @@ import {
   cashAccountCodeState,
   allocatedSumsState,
   totalAllocatedDocumentsState,
+  totalSupplierCreditCardState,
+  supplierCreditCardTabState,
 } from "../buttons-container/states";
 import { quoteItemState } from "@/store";
 import { useRouter } from "next/router";
@@ -48,6 +50,7 @@ import { usePaymentMethodsTabs } from "../buttons-container/payment/payment-meth
 const usePaymentsTable = () => {
   const { t } = useTranslation();
   const router = useRouter();
+  const isOutgoingPayments = router.query?.isOutgoingPayments === "true";
   const [checkedItems, setCheckedItems] = useState<boolean[]>([]);
   const [documentItemValue, setDocumentItemValue] =
     useRecoilState<any>(quoteItemState);
@@ -99,6 +102,18 @@ const usePaymentsTable = () => {
   const [cashAccountCode, setCashAccountCode] =
     useRecoilState<any>(cashAccountCodeState);
   const resetCashAccountCode = useResetRecoilState(cashAccountCodeState);
+  //supplier credit card
+  const [totalSupplierCreditCard, setTotalSupplierCreditCard] =
+    useRecoilState<number>(totalSupplierCreditCardState);
+  const [supplierCreditCardState, setSupplierCreditCardState] = useRecoilState(
+    supplierCreditCardTabState
+  );
+  const resetTotalSupplierCreditCard = useResetRecoilState(
+    totalSupplierCreditCardState
+  );
+  const resetSupplierCreditCardTabStateTabState = useResetRecoilState(
+    supplierCreditCardTabState
+  );
   // creditCard
   const [totalCreditCard, setTotalCreditCard] =
     useRecoilState<number>(totalCreditCardState);
@@ -205,8 +220,14 @@ const usePaymentsTable = () => {
       wtTaxableAmount: Number(taxDeduction),
       checksAccount: checkAccountCode,
       cashAccount: cashAccountCode,
-      // creditCardTotal: totalCreditCard,
-      creditCardTotal: creditCardTotalValue,
+      // creditCardTotal: creditCardTotalValue,
+      creditCardTotal: isOutgoingPayments
+        ? Number(totalSupplierCreditCard)
+        : creditCardTotalValue,
+      creditCardAccount: supplierCreditCardState?.creditCardAccount,
+      creditCardTransactionDate:
+        supplierCreditCardState?.creditCardTransactionDate,
+      creditCardReference: supplierCreditCardState?.creditCardReference,
       receiptCreditCards: isSecondCreditCardEmpty
         ? transactionData
           ? [transactionData]
@@ -256,6 +277,9 @@ const usePaymentsTable = () => {
       secondCreditCard: secondCreditCard,
       cardWidget: cardWidgetValue,
       selectedCreditTransaction: transactionSelected,
+
+      totalSupplierCreditCard: totalSupplierCreditCard,
+      supplierCreditCardState: supplierCreditCardState,
     });
   };
 
@@ -264,6 +288,8 @@ const usePaymentsTable = () => {
     setTotalCash(previousState.totalCash);
     setTotalTransfer(previousState.totalTransfer);
     setTransferState(previousState.transferState);
+    setTotalSupplierCreditCard(previousState.totalSupplierCreditCard);
+    setSupplierCreditCardState(previousState.supplierCreditCardState);
     setTotalChecks(previousState.totalChecks);
     setChecksReceipt(previousState.checksReceipt);
     setTaxDeduction(previousState.taxDeduction);
@@ -290,6 +316,7 @@ const usePaymentsTable = () => {
     resetTotalSum();
     resetTotalBit();
     resetTotalCash();
+    resetTotalSupplierCreditCard();
     resetTotalTransfer();
     resetTransferTabState();
     resetTotalChecks();
@@ -500,6 +527,7 @@ const usePaymentsTable = () => {
     setRemainingTotal,
     allocatedSums,
     setAllocatedSums,
+    isOutgoingPayments,
   };
 };
 

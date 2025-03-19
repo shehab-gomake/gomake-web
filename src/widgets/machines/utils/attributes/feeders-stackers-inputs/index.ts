@@ -15,6 +15,8 @@ const getCategoryFeedersStackersInputs = (categoryId: string, state: Record<stri
             return enhancementMachine(state);
         case ECategoryId.ANALOG_ENHANCEMENT_MACHINE:
             return enhancementMachine(state);
+        case ECategoryId.ROLL_OFF_SET_PRINTING:
+            return ofssetPrinting(state);
         default:
             return []
     }

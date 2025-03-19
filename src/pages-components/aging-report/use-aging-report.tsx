@@ -8,24 +8,33 @@ import {
 import { EHttpMethod } from "@/services/api-service/enums";
 import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
-import { endOfToday, startOfYear } from "date-fns";
+import { endOfToday } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { useSetRecoilState } from "recoil";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
-import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { getAndSetClientTypes } from "@/services/hooks";
+import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
+import { DocumentsTypeReportList } from "@/enums";
+import { initialFromDate } from "@/utils/helpers";
 
-const useAgingReport = () => {
+const useAgingReport = (clientType: CLIENT_TYPE) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertFault, alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const isPurchaseReport = clientType === CLIENT_TYPE.SUPPLIER;
   const {
     customer,
     renderOptions,
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-  } = useCustomerDropDownList();
+    supplierList,
+  } = useCustomerDropDownList({
+    shouldRenderCustomersOnMount: !isPurchaseReport,
+    shouldRenderSuppliersOnMount: isPurchaseReport,
+  });
+
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const [selectDate, setSelectDate] = useState<string>(
     new Date().toISOString().split("T")[0]
@@ -35,9 +44,11 @@ const useAgingReport = () => {
   const [showTable, setShowTable] = useState<boolean>(false);
   const [tableHeader, setTableHeader] = useState<any>([]);
   const [tableData, setTableData] = useState<any>([]);
-  const [fromDate, setFromDate] = useState<Date>(startOfYear(new Date()));
-  const [toDate, setToDate] = useState<Date>(endOfToday());
+  const [fromDate, setFromDate] = useState<Date>(
+    initialFromDate("aging-report-date")
+  );
 
+  const [toDate, setToDate] = useState<Date>(endOfToday());
   // New states and logic for handling customer modal
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerForEdit, setCustomerForEdit] = useState(null);
@@ -46,11 +57,19 @@ const useAgingReport = () => {
     const containsNumber = /\d/.test(header.key);
     return containsNumber ? header.name : t(`reports.${header.key}`);
   });
-
   const dateRef = useRef(null);
+  const [orderBy, setOrderBy] = useState<string>("cardCode");
+  const [isDescOrder, setIsDescOrder] = useState<boolean>(true);
+
+  const handleSortAgingReport = (key: string) => {
+    setOrderBy(key);
+    setIsDescOrder(!isDescOrder);
+    getAgingReportFilter(detailedReport, key, isDescOrder);
+  };
 
   const handleDateChange = (value) => {
     if (value && value.length === 2) {
+      localStorage.setItem("aging-report-date", value[0]);
       setFromDate(value[0]);
       setToDate(value[1]);
     } else {
@@ -65,6 +84,8 @@ const useAgingReport = () => {
 
   const onChangeDetailedReport = () => {
     setDetailedReport(!detailedReport);
+    setShowTable(false);
+    getAgingReportFilter(!detailedReport);
   };
 
   const onChangeByReferenceDate = () => {
@@ -73,8 +94,10 @@ const useAgingReport = () => {
 
   const getTableDataRows = useCallback(
     (onClickOpenCustomerModal) => {
-      return tableData.flatMap((data: any) => {
+      return tableData?.flatMap((data: any) => {
         const rows = [];
+
+        // Main row without totals
         const mainRow = tableHeader.map((header: any) => {
           const nestedKey = header.key;
           const value = nestedKey
@@ -92,26 +115,26 @@ const useAgingReport = () => {
             );
           }
 
-          if (Array.isArray(value)) {
-            return value.map((item: any) => {
-              return tableHeader.map((nestedHeader: any) => {
-                const nestedValue = nestedHeader.key
-                  .split(".")
-                  .reduce((acc, part) => acc && acc[part], item);
-                return nestedValue || "";
-              });
-            });
-          } else if (typeof value === "object" && value !== null) {
-            return Object.entries(value)
-              .map(([key, val]) => `${key}: ${val}`)
-              .join(", ");
-          } else {
-            return value || "";
+          // Hide total values in the main row
+          if (
+            [
+              "balanceDue",
+              "_0to30",
+              "_31to60",
+              "_61to90",
+              "_91to120",
+              "_120plus",
+            ].includes(nestedKey) &&
+            detailedReport
+          ) {
+            return "";
           }
-        });
 
+          return value || "";
+        });
         rows.push(mainRow);
 
+        // Add detailed rows
         if (Array.isArray(data.data) && detailedReport) {
           rows.push(
             ...data.data.map((nestedItem: any) => {
@@ -120,10 +143,72 @@ const useAgingReport = () => {
                 const nestedValue = header.key
                   .split(".")
                   .reduce((acc, part) => acc && acc[part], nestedItem);
+                if (header.key === "docNumber") {
+                  let documentPath;
+                  switch (nestedItem?.docType) {
+                    case DocumentsTypeReportList.Invoice:
+                      documentPath = "invoices";
+                      break;
+                    case DocumentsTypeReportList.InvoiceRefund:
+                      documentPath = "invoiceRefunds";
+                      break;
+                    case DocumentsTypeReportList.PurchaseInvoice:
+                      documentPath = "purchaseInvoices";
+                      break;
+                    case DocumentsTypeReportList.PurchaseInvoiceRefund:
+                      documentPath = "purchaseInvoiceRefunds";
+                      break;
+                    default:
+                      documentPath = null;
+                  }
+                  return (
+                    <>
+                      {documentPath ? (
+                        <a
+                          style={{
+                            cursor: "pointer",
+                            color: "inherit",
+                            textDecoration: "unset",
+                          }}
+                          href={`/${documentPath}?documentNumber=${nestedValue}`}
+                        >
+                          {nestedValue}
+                        </a>
+                      ) : (
+                        <span>{nestedValue}</span>
+                      )}
+                    </>
+                  );
+                }
+                if (header.key === "type") {
+                  return getDocumentTypeName(t, nestedItem?.docType);
+                }
                 return nestedValue || "";
               });
             })
           );
+        }
+
+        // Add totals row
+        if (detailedReport) {
+          const totalsRow = tableHeader.map((header: any, index: number) => {
+            if (index === 0) return " "; // Add "isTotal" to the first column
+            const nestedKey = header.key;
+            if (
+              [
+                "balanceDue",
+                "_0to30",
+                "_31to60",
+                "_61to90",
+                "_91to120",
+                "_120plus",
+              ].includes(nestedKey)
+            ) {
+              return data[nestedKey] || "";
+            }
+            return "";
+          });
+          rows.push(totalsRow);
         }
 
         return rows;
@@ -131,10 +216,9 @@ const useAgingReport = () => {
     },
     [tableData, tableHeader, detailedReport]
   );
-
   const onClickBtn1 = () => {
     setShowTable(false);
-    getAgingReportFilter();
+    getAgingReportFilter(detailedReport);
   };
 
   const onClickBtn2 = () => {
@@ -145,46 +229,54 @@ const useAgingReport = () => {
     ExportAgingReportExcel();
   };
 
-  const getAgingReportFilter = useCallback(async () => {
-    if (!fromDate || !toDate) {
-      alertFault("alerts.pleaseEnsureDatesSelected");
-      return;
-    }
-
-    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
-    const formattedEndDate = format(toDate, "yyyy-MM-dd");
-
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/erp-service/reports/get-aging-report`,
-      {
-        startDate: formattedStartDate,
-        endDate: formattedEndDate,
-        clientId: customer?.id,
-        referDate: selectDate ? selectDate : new Date(),
-        agentId: agent?.id,
-        byCreationDate: byReferenceDate,
-        expendedReport: detailedReport,
+  const getAgingReportFilter = useCallback(
+    async (expendedReport = false, orderBy?, isDescOrder?) => {
+      if (!fromDate || !toDate) {
+        alertFault("alerts.pleaseEnsureDatesSelected");
+        return;
       }
-    );
-    if (res?.success) {
-      setTableData(res?.data?.data?.data?.data);
-      setTableHeader(res?.data?.data?.data?.headers);
-      alertSuccessGetData();
-      setShowTable(true);
-    } else {
-      alertFaultGetData();
-      setShowTable(false);
-    }
-  }, [
-    fromDate,
-    toDate,
-    detailedReport,
-    agent,
-    customer,
-    selectDate,
-    byReferenceDate,
-  ]);
+
+      const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+      const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/erp-service/reports/get-aging-report`,
+        {
+          startDate: formattedStartDate,
+          endDate: formattedEndDate,
+          clientId: customer?.id,
+          referDate: selectDate ? selectDate : new Date(),
+          agentId: agent?.id,
+          byCreationDate: byReferenceDate,
+          expendedReport: expendedReport,
+          orderBy, //balanceDue  cardCode    cardName
+          isDescOrder,
+          cardType: isPurchaseReport
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER,
+        }
+      );
+      if (res?.success) {
+        setTableData(res?.data?.data?.data?.data);
+        setTableHeader(res?.data?.data?.data?.headers);
+        alertSuccessGetData();
+        setShowTable(true);
+      } else {
+        alertFaultGetData();
+        setShowTable(false);
+      }
+    },
+    [
+      fromDate,
+      toDate,
+      detailedReport,
+      agent,
+      customer,
+      selectDate,
+      byReferenceDate,
+    ]
+  );
 
   const ExportAgingReportPDF = useCallback(async () => {
     if (!fromDate || !toDate) {
@@ -207,6 +299,11 @@ const useAgingReport = () => {
           agentId: agent?.id,
           byCreationDate: byReferenceDate,
           expendedReport: detailedReport,
+          orderBy,
+          isDescOrder,
+          cardType: isPurchaseReport
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER,
         },
       },
       true,
@@ -222,6 +319,8 @@ const useAgingReport = () => {
     customer,
     selectDate,
     byReferenceDate,
+    orderBy,
+    isDescOrder,
   ]);
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
@@ -255,6 +354,9 @@ const useAgingReport = () => {
           agentId: agent?.id,
           byCreationDate: byReferenceDate,
           expendedReport: detailedReport,
+          cardType: isPurchaseReport
+            ? CLIENT_TYPE.SUPPLIER
+            : CLIENT_TYPE.CUSTOMER,
         },
       },
       true,
@@ -265,7 +367,9 @@ const useAgingReport = () => {
     const downloadLink = document.createElement("a");
     const link = URL?.createObjectURL(res.data);
     downloadLink.href = link;
-    downloadLink.download = `aging report.xlsx`;
+    downloadLink.download = isPurchaseReport
+      ? `supplier aging.xlsx`
+      : `customer aging.xlsx`;
     downloadLink.click();
   }, [
     fromDate,
@@ -344,6 +448,13 @@ const useAgingReport = () => {
     setCustomerForEdit,
     onClickOpenCustomerModal, // Expose the function
     isFetching,
+    tableData,
+    tableHeader,
+    getAgingReportFilter,
+    handleSortAgingReport,
+    isDescOrder,
+    supplierList,
+    isPurchaseReport,
   };
 };
 

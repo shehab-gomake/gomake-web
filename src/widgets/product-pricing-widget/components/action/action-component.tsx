@@ -24,6 +24,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   currentProductItemValueState,
   outsourceSuppliersState,
+  workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
 import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
 import Button from "@mui/material/Button";
@@ -37,11 +38,12 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderIconLogs } from "@/utils/constants";
 import { TableOutPutComponent } from "../table-output/table-output-component";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import { isActionEmployeeUpdatedState, permissionsState } from "@/store";
+import { isActionEmployeeUpdatedState, permissionsState, userState } from "@/store";
 import { Draggable } from "react-beautiful-dnd";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons/sort-icon";
-import { ModalType } from "@/enums";
+import { ModalType, } from "@/enums";
+import { _renderDeliveryDate, } from "@/utils/helpers";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -52,6 +54,7 @@ interface IActionContainerComponentProps extends IWorkFlowAction {
   isFromSetting?: boolean
   deleteActionFromProduct?: (selectedAction: any) => void
   updateProductAction?: (data: any) => void
+  deliveryDate?: string
 }
 
 interface IActionsComponentProps {
@@ -186,6 +189,7 @@ const ActionContainerComponent = ({
   profit,
   totalPrice,
   totalProductionTime,
+  deliveryDate,
   totalCost,
   source,
   supplierId,
@@ -252,7 +256,7 @@ const ActionContainerComponent = ({
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(isActionEmployeeUpdatedState);
-
+  // const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
   const suppliers = useMemo(() => {
     return suppliersState?.map((s) => ({
       value: s.supplierId,
@@ -261,6 +265,8 @@ const ActionContainerComponent = ({
   }, [suppliersState]);
   const { classes } = useStyle();
   const { secondColor } = useGomakeTheme();
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0
   const inputsParameters = outputs?.filter(
     (parameter) =>
       parameter && parameter?.propertyType === RuleType.PARAMETER &&
@@ -271,6 +277,7 @@ const ActionContainerComponent = ({
       parameter && parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TEXT
   );
+
   const imageOutputs = outputs?.filter(
     (parameter) =>
       parameter && parameter?.propertyType === RuleType.OUTPUT &&
@@ -324,11 +331,34 @@ const ActionContainerComponent = ({
       updateActionData(id, source, "source", productType).then();
     }
   };
+  const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
+
   const handleSupplierChange = (e, value) => {
     if (isFromSetting) {
       updateProductAction({ actionId, value: value?.value, fieldName: "supplierid" })
     } else {
-      updateActionData(id, value?.value, "supplierId", productType).then();
+      const actionSelected = workFlows[0]?.actions?.find((action) => action.id === id);
+      if (actionSelected) {
+        // Create a new object with the updated supplierId
+        const updatedAction = { ...actionSelected, supplierId: value?.value };
+
+        setWorkFlows((prevWorkFlows) => {
+          // Create a deep copy of the workFlows array
+          const updatedWorkFlows = prevWorkFlows.map((workflow, index) => {
+            if (index === 0) {
+              // Create a new actions array with the updated action
+              const updatedActions = workflow.actions.map((action) =>
+                action.id === id ? updatedAction : action
+              );
+              // Return a new workflow object with the updated actions
+              return { ...workflow, actions: updatedActions };
+            }
+          });
+          return updatedWorkFlows;
+        });
+      }
+
+      updateActionData(id, value?.value ?? null, "supplierId", productType).then();
     }
   };
   const calculateProfitInMoney = () => {
@@ -349,7 +379,6 @@ const ActionContainerComponent = ({
     return "";
   }, [supplierId, suppliers, suppliersState]);
 
-
   useEffect(() => {
     if (foldOptionValueId) {
       const selectedFoldOptionName = foldOptions?.find((option) => option.id == foldOptionValueId)
@@ -358,6 +387,8 @@ const ActionContainerComponent = ({
       }
     }
   }, [foldOptionValueId, foldOptions])
+
+
 
 
   return (
@@ -711,8 +742,17 @@ const ActionContainerComponent = ({
                     onUpdate={handleDeliveryTimeUpdate}
                     {...totalProductionTime}
                     source={source}
-                    name={t("home.headers.productDate")}
+                    name={t("home.headers.deliveryTime")}
                   />
+                  {
+                    deliveryDate && <>
+                      <Divider orientation={"vertical"} flexItem />
+                      <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
+                        <span style={classes.detailTitle}>{t("home.headers.deliveryDate")}</span>
+                        <span style={classes.detailValue}>{_renderDeliveryDate(deliveryDate)}</span>
+                      </Stack>
+                    </>
+                  }
                   {
                     source === EWorkSource.OUT &&
                     <>
@@ -750,7 +790,7 @@ const ActionContainerComponent = ({
                         </span>
                       </Stack>}
                       {
-                        !isFromSetting && <Divider
+                        !isFromSetting && source !== EWorkSource.OUT && <Divider
                           orientation={"vertical"}
                           style={{ height: "50%", margin: "auto 0" }}
                           flexItem
@@ -758,7 +798,7 @@ const ActionContainerComponent = ({
                       }
 
                       {
-                        !isFromSetting && <EditableKeyValueViewComponent
+                        !isFromSetting && source !== EWorkSource.OUT && <EditableKeyValueViewComponent
                           onUpdate={handleUpdatePrice}
                           {...totalPrice}
                           values={totalPriceValue}

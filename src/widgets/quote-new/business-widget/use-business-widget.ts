@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
@@ -7,29 +7,26 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { addressModalState } from "./address-widget/state";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
-import { useCustomerDropDownList, useGomakeAxios, useSupplier } from "@/hooks";
-import { getAndSetAllCustomers } from "@/services/hooks/cart-side/customers/get-all-customers";
+import { useCustomerDropDownList } from "@/hooks";
 
 const useBusinessWidget = ({ values, documentType }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const [isConfirmation, setIsConfirmation] = useState();
-  const { renderOptions, checkWhatRenderArray, isFetching } =
-    useCustomerDropDownList();
-  const { callApi } = useGomakeAxios();
-  const getAllSupplierList = useCallback(async (SearchTerm?) => {
-    await getAndSetAllCustomers(callApi, setSupplierList, {
-      clientType: "S",
-      searchTerm: SearchTerm,
-      onlyCreateOrderClients: false,
+  const isOutgoingPayments = router.query.isOutgoingPayments === "true";
+
+  const isPurchaseDocument =
+    documentType === DOCUMENT_TYPE.purchaseOrder ||
+    documentType === DOCUMENT_TYPE.purchaseInvoice ||
+    documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ||
+    isOutgoingPayments;
+
+  const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
+    useCustomerDropDownList({
+      shouldRenderCustomersOnMount: !isPurchaseDocument,
+      shouldRenderSuppliersOnMount: isPurchaseDocument,
     });
-  }, []);
-  const [supplierList, setSupplierList] = useState([]);
-  useEffect(() => {
-    if (documentType === DOCUMENT_TYPE.purchaseOrder) {
-      getAllSupplierList();
-    }
-  }, []);
+
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
   const [purchaseNumber, setPurchaseNumber] = useState(
     values?.purchaseNumber || t("sales.quote.noPurchaseNumber")
@@ -56,6 +53,7 @@ const useBusinessWidget = ({ values, documentType }) => {
   const isInvoice =
     documentType === DOCUMENT_TYPE.invoice ||
     documentType === DOCUMENT_TYPE.invoiceRefund;
+
   const [openCustomerModal, setOpenCustomerModal] = useState(false);
   const [customer, setCustomer] = useState([]);
   const [isUpdateTaxNumber, setIsUpdateTaxNumber] = useState<number | null>(
@@ -71,6 +69,7 @@ const useBusinessWidget = ({ values, documentType }) => {
   const onCustomerAdd = (customer) => {
     setOpenCustomerModal(false);
   };
+
   const onBlurManualInvoiceNum = async (value) => {
     const updatedQuoteItemValue = { ...quoteStateValue };
     updatedQuoteItemValue.manualInvoiceNumber = value;
@@ -83,7 +82,8 @@ const useBusinessWidget = ({ values, documentType }) => {
     id: customer?.id,
     ...customer,
   }));
-  const mappedSuppliers = supplierList.map((supplier) => ({
+
+  const mappedSuppliers = supplierList?.map((supplier) => ({
     text: supplier?.name,
     id: supplier?.id,
     ...supplier,
@@ -186,6 +186,8 @@ const useBusinessWidget = ({ values, documentType }) => {
     setDocumentTitle,
     isFetching,
     canEditAddress,
+    isPurchaseDocument,
+    isOutgoingPayments,
   };
 };
 

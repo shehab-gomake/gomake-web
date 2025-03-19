@@ -11,7 +11,7 @@ import { resetProductionFloorJobColorApi, updateProductionFloorJobColorApi } fro
 
 interface ITaskCategoryLabelProps {
     id: string;
-    label?: string;
+    label?: any;
     t?: any;
     key: any;
     textColor: string;
@@ -83,7 +83,7 @@ const ClickableLabelComponent = ({ label, t, key, textColor, id }: ITaskCategory
                 onClick={handleMenuClick}
                 style={{
                     // ...FONT_FAMILY.Lexend(600, 12),
-                    ...FONT_FAMILY.Lexend(500, 13),
+                    ...FONT_FAMILY.Lexend(500, 14),
                     color: color || primaryColor(500),
                     padding: '2px 12px',
                     backgroundColor: toRgba(color || primaryColor(50), 0.1),

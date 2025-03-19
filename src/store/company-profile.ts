@@ -35,7 +35,11 @@ export interface ICompanyProfile {
   bankReference?: string;
   depositor?: string;
   business_ID?: string;
-  businessDays?: string;
+  businessDays: {
+    days: number[];
+    startTime: Date;
+    endTime: Date;
+  };
   footerImage?: null | string;
   showContactInfo?: null | string;
   zCreditTerminalNumber?: string;
@@ -57,4 +61,5 @@ export interface ICompanyProfile {
   printnodeUsername?: string;
   printnodePassword?: string;
   employeeWorkingHourCost?: string;
+  unitType?: number;
 }

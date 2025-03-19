@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState } from "recoil";
 
-const useCharacterDetails = ({ details, getQuote, documentItemId, documentType }) => {
+const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, workName }) => {
   const router = useRouter();
   const { t } = useTranslation();
   const dir = t("direction");
@@ -17,11 +17,15 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType }
   const [showAll, setShowAll] = useState(false);
   const [originalValue, setOriginalValue] = useState(details);
   const [data, setData] = useState(details);
+  const [jobName, setJobName] = useState(workName);
+  useEffect(() => {
+    setJobName(workName);
+  }, []);
   const [isValueChanged, setIsValueChanged] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
-
   const truncatedDetails = showAll ? details : details?.slice(0, 90);
 
   const handleShowMore = () => {
@@ -32,7 +36,7 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType }
     setShowAll(false);
   };
 
-  const updateDocumentItemContent = async () => {
+  const updateDocumentItemContent = async (jobName?: string) => {
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(
@@ -52,18 +56,31 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType }
           updatedDocumentItem,
           ...updatedQuoteItemValue.documentItems.slice(documentItemIndex + 1),
         ];
-
         // Update the state with the new document items array
         setQuoteItemValue({
           ...updatedQuoteItemValue,
           documentItems: updatedDocumentItems,
         });
       }
-    } else {
+    }
+    else {
       const callBack = (res) => {
+        const updatedQuoteItemValue = { ...quoteItemValue };
+        const documentItemIndex = updatedQuoteItemValue.documentItems.findIndex(
+          (item) => item.id === documentItemId
+        );
+        const updatedDocumentItem = {
+          ...updatedQuoteItemValue.documentItems[documentItemIndex],
+          details: res?.data,
+        };
+
         if (res?.success) {
           alertSuccessUpdate();
-          getQuote();
+          setQuoteItemValue({
+            ...updatedQuoteItemValue,
+            documentItems: [...updatedQuoteItemValue.documentItems.slice(0, documentItemIndex), updatedDocumentItem, ...updatedQuoteItemValue.documentItems.slice(documentItemIndex + 1)],
+          });
+          // getQuote();
         } else {
           alertFaultUpdate();
         }
@@ -73,9 +90,11 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType }
         contact: {
           documentItemId: documentItemId,
           content: data,
+          jobName: jobName,
         },
       });
     }
+
   };
 
   const handleClose = () => {
@@ -84,12 +103,18 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType }
     }
     setIsEdit(false);
   };
-
   const handleSave = () => {
-    if (isValueChanged) {
-      updateDocumentItemContent();
-      setOriginalValue(data);
+    if (jobName != workName) {
+      updateDocumentItemContent(jobName);
     }
+    else {
+      if (isValueChanged) {
+        updateDocumentItemContent();
+        setOriginalValue(data);
+      }
+    }
+
+
     setIsEdit(false);
   };
 
@@ -116,7 +141,10 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType }
     setData,
     handleClose,
     handleSave,
+    jobName,
+    setJobName
   };
 };
+
 
 export { useCharacterDetails };

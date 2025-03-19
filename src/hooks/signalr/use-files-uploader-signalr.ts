@@ -28,13 +28,13 @@ const useFilesUploaderSignalr = () => {
     if (connectionId) {
       setConnectionId(connectionId);
       getAllBoardMissionsUploadingFiles(
-        callApi,
-        (res) => {
-          setFiles(res?.data);
-          setShowFileUploader(res?.data?.length > 0);
-          setOpen(res?.data?.length > 0);
-        },
-        connectionId
+          callApi,
+          (res) => {
+            setFiles(res?.data);
+            setShowFileUploader(res?.data?.length > 0);
+            setOpen(res?.data?.length > 0);
+          },
+          connectionId
       ).then();
     }
   }, [connectionId]);

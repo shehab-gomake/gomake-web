@@ -1,6 +1,7 @@
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 export enum Permissions {
+  SHOW_CLIENT_BALANCE = "ShowClientBalance",
   // client group
   SHOW_CLIENT = "ShowClient",
   EDIT_CLIENT = "EditClient",
@@ -23,6 +24,7 @@ export enum Permissions {
   UPDATE_QUOTE_DELIVERY_ITEM_PRICES = "UpdateQuoteDeliveryItemPrices",
   SHOW_COSTS_IN_CALCULATIONS = "ShowCostsInCalculations",
   ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
+  CAN_SELECT_CLIENT_IN_HOME_PAGE = "CanSelectClientInHomePage",
 
   //SHOW_PROFITS_IN_CALCULATIONS = "ShowProfitsInCalculations",
   CUSTOMIZE_WORKFLOW = "CustomizeWorkflow",
@@ -93,6 +95,8 @@ export enum Permissions {
   EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR = "EditBoardMissionInProductionFloor",
   SHOW_COSTS_IN_PRODUCTION_FLOOR = "IsShowCostsInProductionFloor",
   IS_CAN_UPDATE_MACHINE_IN_PRODUCTION_FLOOR = "IsCanUpdateMachineInProductionFloor",
+  SHOW_EMPLOYEE_WORKING_HOURS = "ShowEmployeeWorkingHours",
+  SHOW_PRODUCTION_TIME_LINE = "ShowProductionTimeLine",
 
   //board missions group
   SHOW_BOARD_MISSIONS = "IsCanShowBoardMissions",
@@ -113,6 +117,7 @@ export enum Permissions {
   SHOW_INVOICES_REFUND = "ShowInvoicesRefund",
   SHOW_ERP_DOCUMENTS_TABLE_SUMMERY = "ShowErpDocumentsTableSummery",
   // ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
+  CAN_CLOSE_MANUALLY = "CanCloseManually",
 
   //purchase group
   SHOW_PURCHASE_ORDERS = "ShowPurchaseOrders",
@@ -122,6 +127,7 @@ export enum Permissions {
   //banking group
   SHOW_RECEIPTS = "ShowReceipts",
   SHOW_DEPOSITS = "ShowDeposits",
+  SHOW_SUPPLIER_PAYMENTS = "ShowSupplierPayments",
 
   //reports group
   SHOW_REPORTS = "ShowReports",
@@ -136,6 +142,10 @@ export enum Permissions {
   SHOW_HOME_PAGE_STATISTICS = "ShowHomePageStatistics",
   SHOW_LOGS = "ShowLogs",
   GENERATE_REPORT = "GenerateReport",
+  SHOW_SUPPLIER_AGING_REPORT = "ShowSupplierAgingReport",
+  SHOW_SUPPLIER_LEDGER_REPORT = "ShowSupplierLedgerReport",
+  SHOW_SUPPLIER_PAYMENT_REPORT = "ShowSupplierPaymentsReport",
+  SHOW_PURCHASES_REPORT = "ShowPurchasesReport",
 }
 
 export const DocumentPermission = {

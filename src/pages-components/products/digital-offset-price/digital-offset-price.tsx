@@ -5,11 +5,12 @@ import {
   GoMakeDeleteModal,
   GoMakeModal,
   GomakePrimaryButton,
+  GomakeTextInput,
 } from "@/components";
 import { TabsMappingWidget } from "./widgets/tabs-mapping";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
-import { RightSideWidget } from "./widgets/right-side-widget";
+import { RightSideWidget, roundPrice } from "./widgets/right-side-widget";
 import {
   GalleryModal,
   MakeShapeModal,
@@ -22,11 +23,7 @@ import { createTheme, Tabs, ThemeProvider } from "@mui/material";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { useEffect } from "react";
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import {
-  currentProductItemValuePriceState,
-  lastProductItemValuePriceState,
-} from "@/widgets/product-pricing-widget/state";
+import { useRecoilValue } from "recoil";
 import { PriceListPageSkeletonWidget } from "./digital-offset-price-skeleton";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useRouter } from "next/router";
@@ -35,9 +32,11 @@ import { MissionModalWidget } from "./widgets/mission-modal-widget";
 import { ModalType } from "@/enums";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { permissionsState } from "@/store/permissions";
+import { DotsLoader } from "@/components/dots-loader/dots-Loader";
+import { SecondaryButton } from "@/components/button/secondary-button";
 
-const PriceListPageWidget = ({ widgetType }) => {
-  const { clasess } = useStyle();
+const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
+  const { clasess } = useStyle({ isMobileScreen });
   const {
     t,
     handleTabClick,
@@ -87,10 +86,7 @@ const PriceListPageWidget = ({ widgetType }) => {
     isChargeForNewDie,
     setIsChargeForNewDie,
     straightKnife,
-    isChangePriceForEdit,
-    onClickCloseChangePriceModal,
-    setIsChangePriceForEdit,
-    isLoadging,
+    isLoadingPrice,
     saveCurrentStation,
     onClickCloseCurrentStationModal,
     onClickOpenCurrentStationModal,
@@ -104,7 +100,11 @@ const PriceListPageWidget = ({ widgetType }) => {
     subProducts,
     isOpenCreateDefaultWorkFlow,
     onClickCloseCreateDefaultWorkFlow,
-    addItemForQuotes
+    addItemForQuotes,
+    sliderCurrentProductItemValueTotalPrice,
+    systemCurrency,
+    direction,
+    setCanCalculation
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const permissions = useRecoilValue(permissionsState);
@@ -116,12 +116,7 @@ const PriceListPageWidget = ({ widgetType }) => {
   const theme = createTheme({
     direction: dir,
   });
-  const setCurrentProductItemValueTotalPrice = useSetRecoilState<number>(
-    currentProductItemValuePriceState
-  );
-  const lastProductItemValueTotalPrice = useRecoilValue<number>(
-    lastProductItemValuePriceState
-  );
+
   useEffect(() => {
     document.body.setAttribute("dir", dir);
   }, [dir]);
@@ -290,7 +285,18 @@ const PriceListPageWidget = ({ widgetType }) => {
             <div style={clasess.leftSideContainer}>
               <div style={clasess.tabsContainer}>
                 <ThemeProvider theme={theme}>
-                  <Tabs variant="scrollable" scrollButtons={"auto"}>
+                  <Tabs
+                    variant="scrollable"
+                    scrollButtons={"auto"}
+                    TabScrollButtonProps={{
+                      sx: {
+                        "&.Mui-disabled": {
+                          color: "grey",
+                          opacity: 0.5,
+                        },
+                      },
+                    }}
+                  >
                     {[
                       ...visibleSections,
                       ...(permissions.includes(Permissions.SHOW_PRICING_TAB)
@@ -309,6 +315,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                         onRemoveSection={removeSection}
                         setProductTemplate={setProductTemplate}
                         isAdmin={false}
+                        widgetType={widgetType}
                       />
                     ))}
                   </Tabs>
@@ -316,11 +323,18 @@ const PriceListPageWidget = ({ widgetType }) => {
               </div>
               <div
                 className="custom-scrollbar"
-                style={{
-                  height: "calc(100vh - 300px)",
-                  overflow: "scroll",
-                  width: "calc(100% - 330px)",
-                }}
+                style={
+                  !isMobileScreen
+                    ? {
+                      height: "calc(100vh - 300px)",
+                      overflow: "scroll",
+                      width: "calc(100% - 330px)",
+                    }
+                    : {
+                      height: "calc(100vh - 260px)",
+                      overflow: "scroll",
+                    }
+                }
               >
                 <div style={clasess.sectionsContainer}>
                   {[
@@ -338,6 +352,7 @@ const PriceListPageWidget = ({ widgetType }) => {
                             userPermission={Permissions.SHOW_PRICING_TAB}
                           >
                             <PricingWidget
+                              isMobileScreen={isMobileScreen}
                               getOutSourcingSuppliers={getOutSourcingSuppliers}
                               actions={jobActions}
                               workFlows={workFlows}
@@ -401,55 +416,78 @@ const PriceListPageWidget = ({ widgetType }) => {
                 </div>
               </div>
             </div>
-            <RightSideWidget
-              clasess={clasess}
-              template={productTemplate}
-              tabs={tabs}
-              activeTab={activeTab}
-              setUrgentOrder={setUrgentOrder}
-              urgentOrder={urgentOrder}
-              setPrintingNotes={setPrintingNotes}
-              printingNotes={printingNotes}
-              widgetType={widgetType}
-              setPriceRecovery={setPriceRecovery}
-              priceRecovery={priceRecovery}
-              setSampleType={setSampleType}
-              includeVAT={includeVAT}
-              setIncludeVAT={setIncludeVAT}
-              sampleType={sampleType}
-              errorMsg={errorMsg}
-              calculationServerErrorState={calculationServerErrorState}
-              canCalculation={canCalculation}
-              calculationProduct={calculationProduct}
-              subProducts={subProducts}
-            />
+            {!isMobileScreen && (
+              <RightSideWidget
+                clasess={clasess}
+                template={productTemplate}
+                tabs={tabs}
+                activeTab={activeTab}
+                setUrgentOrder={setUrgentOrder}
+                urgentOrder={urgentOrder}
+                setPrintingNotes={setPrintingNotes}
+                printingNotes={printingNotes}
+                widgetType={widgetType}
+                setPriceRecovery={setPriceRecovery}
+                priceRecovery={priceRecovery}
+                setSampleType={setSampleType}
+                includeVAT={includeVAT}
+                setIncludeVAT={setIncludeVAT}
+                sampleType={sampleType}
+                errorMsg={errorMsg}
+                calculationServerErrorState={calculationServerErrorState}
+                canCalculation={canCalculation}
+                calculationProduct={calculationProduct}
+                subProducts={subProducts}
+                setCanCalculation={setCanCalculation}
+              />
+            )}
           </div>
-
-          <div
-            style={{
-              width: "100%",
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-end",
-              alignItems: "center",
-              position: "fixed",
-              bottom: 0,
-              right: 0,
-              boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.08)",
-              height: 65,
-              backgroundColor: "#FFF",
-            }}
-          >
-            <div style={{ width: "68%" }}>
-              <div style={clasess.addPreviousContainer}>
+          {/* buttons section */}
+          <div style={clasess.buttonsContainer}>
+            {isMobileScreen ? (
+              <div
+                style={{
+                  ...clasess.addPreviousContainer,
+                  padding: "0px 8px",
+                  gap: "5px",
+                }}
+              >
+                <div data-tour={"product-pricing"} style={clasess.totalStyle}>
+                  {isLoadingPrice ? (
+                    <DotsLoader />
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        position: "relative",
+                      }}
+                    >
+                      <span style={clasess.totalCurrancyStyle}>
+                        {systemCurrency}
+                      </span>
+                      <GomakeTextInput
+                        disabled={true}
+                        direction={direction}
+                        value={
+                          roundPrice(sliderCurrentProductItemValueTotalPrice) ??
+                          "---------"
+                        }
+                        key={"TotalPriceInputMobile"}
+                        style={clasess.inputPriceStyle}
+                      />
+                    </div>
+                  )}
+                </div>
                 {activeIndex !== 0 && (
-                  <GomakePrimaryButton
-                    style={clasess.previousBtnStyle}
+                  <SecondaryButton
+                    variant="outlined"
                     onClick={handlePreviousClick}
                   >
                     {t("products.offsetPrice.admin.previousBtn")}
-                  </GomakePrimaryButton>
+                  </SecondaryButton>
                 )}
+
                 {[
                   ...productTemplate?.sections,
                   ...(permissions.includes(Permissions.SHOW_PRICING_TAB)
@@ -459,67 +497,100 @@ const PriceListPageWidget = ({ widgetType }) => {
                   1 !==
                   activeIndex && (
                     <div data-tour="next-button">
-                      <GomakePrimaryButton
-                        style={clasess.nextBtnStyle}
+                      <SecondaryButton
+                        variant="contained"
                         onClick={handleNextClick}
                       >
                         {t("products.offsetPrice.admin.nextBtn")}
-                      </GomakePrimaryButton>
+                      </SecondaryButton>
                     </div>
                   )}
               </div>
-            </div>
-            <div
-              style={{
-                width: 220,
-                height: 40,
-                marginLeft: 55,
-                marginRight: 55,
-              }}
-            >
-              {widgetType === EWidgetProductType.EDIT ? (
-                <GomakePrimaryButton
-                  style={
-                    isLoadging
-                      ? clasess.addOrderDisabledBtn
-                      : clasess.addOrderBtn
-                  }
-                  onClick={() => {
-                    if (
-                      DOCUMENT_TYPE.order ===
-                      Number(router.query.documentType) &&
-                      isFlowChanged
-                    ) {
-                      onClickOpenCurrentStationModal();
-                    } else {
-                      updateQuoteItem();
+            ) : (
+              <div style={{ width: "68%" }}>
+                <div style={clasess.addPreviousContainer}>
+                  {activeIndex !== 0 && (
+                    <GomakePrimaryButton
+                      style={clasess.previousBtnStyle}
+                      onClick={handlePreviousClick}
+                    >
+                      {t("products.offsetPrice.admin.previousBtn")}
+                    </GomakePrimaryButton>
+                  )}
+                  {[
+                    ...productTemplate?.sections,
+                    ...(permissions.includes(Permissions.SHOW_PRICING_TAB)
+                      ? [PricingTab]
+                      : []),
+                  ].length -
+                    1 !==
+                    activeIndex && (
+                      <div data-tour="next-button">
+                        <GomakePrimaryButton
+                          style={clasess.nextBtnStyle}
+                          onClick={handleNextClick}
+                        >
+                          {t("products.offsetPrice.admin.nextBtn")}
+                        </GomakePrimaryButton>
+                      </div>
+                    )}
+                </div>
+              </div>
+            )}
+
+            {!isMobileScreen && (
+              <div
+                style={{
+                  width: 220,
+                  height: 40,
+                  marginLeft: 55,
+                  marginRight: 55,
+                }}
+              >
+                {widgetType === EWidgetProductType.EDIT ? (
+                  <GomakePrimaryButton
+                    style={
+                      isLoadingPrice
+                        ? clasess.addOrderDisabledBtn
+                        : clasess.addOrderBtn
                     }
-                  }}
-                  disabled={isLoadging}
-                >
-                  {t("sales.quote.edit")}
-                </GomakePrimaryButton>
-              ) : !router?.query?.profitsProfileRowId ? (
-                <GomakePrimaryButton
-                  data-tour="addPricingBtn"
-                  style={
-                    isLoadging
-                      ? clasess.addOrderDisabledBtn
-                      : clasess.addOrderBtn
-                  }
-                  onClick={navigateForRouter}
-                  disabled={isLoadging}
-                >
-                  {t("products.offsetPrice.admin.addOrderBtn")}
-                </GomakePrimaryButton>
-              ) : (
-                <div></div>
-              )}
-            </div>
+                    onClick={() => {
+                      if (
+                        DOCUMENT_TYPE.order ===
+                        Number(router.query.documentType) &&
+                        isFlowChanged
+                      ) {
+                        onClickOpenCurrentStationModal();
+                      } else {
+                        updateQuoteItem();
+                      }
+                    }}
+                    disabled={isLoadingPrice}
+                  >
+                    {t("sales.quote.edit")}
+                  </GomakePrimaryButton>
+                ) : !router?.query?.profitsProfileRowId ? (
+                  <GomakePrimaryButton
+                    data-tour="addPricingBtn"
+                    style={
+                      isLoadingPrice
+                        ? clasess.addOrderDisabledBtn
+                        : clasess.addOrderBtn
+                    }
+                    onClick={navigateForRouter}
+                    disabled={isLoadingPrice}
+                  >
+                    {t("products.offsetPrice.admin.addOrderBtn")}
+                  </GomakePrimaryButton>
+                ) : (
+                  <div></div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       ) : (
-        <PriceListPageSkeletonWidget />
+        <PriceListPageSkeletonWidget isMobileScreen={isMobileScreen} />
       )}
 
       <MakeShapeModal

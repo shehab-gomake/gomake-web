@@ -41,6 +41,9 @@ const useMoreCircle = () => {
   const isSendPaymentToClient = CheckPermission(
     Permissions.SHOW_PRODUCTION_FLOOR
   );
+  const canCloseDocumentManually = CheckPermission(
+    Permissions.CAN_CLOSE_MANUALLY
+  );
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
@@ -72,6 +75,17 @@ const useMoreCircle = () => {
     onClickStartProduction,
   }) => {
     const documentPath = DOCUMENT_TYPE[documentType];
+    const isSupplierPayments = documentType === DOCUMENT_TYPE.supplierPayments;
+
+    const getDocumentPath = (id?: string, extraParams: string = "") => {
+      if (isSupplierPayments) {
+        return `/${
+          DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
+        }?isOutgoingPayments=true${id ? `&id=${id}` : ""}${extraParams}`;
+      }
+      return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
+    };
+
     const { callApi } = useGomakeAxios();
     const { pathname } = useRouter();
     const { alertFaultAdded } = useSnackBar();
@@ -145,16 +159,17 @@ const useMoreCircle = () => {
         isLink: isCreateStatus,
         href: `/quote`,
       },
+
       {
         condition:
           !isPauseOrder &&
           documentType !== DOCUMENT_TYPE.quote &&
           quote?.isEditable,
-        onClick: () => navigate(`/${documentPath}?Id=${quote?.id}`),
+        onClick: () => navigate(getDocumentPath(quote?.id)),
         icon: <EditingIcon />,
         name: t("sales.quote.edit"),
         isLink: true,
-        href: `/${documentPath}?Id=${quote?.id}`,
+        href: getDocumentPath(quote?.id),
       },
       {
         condition:
@@ -186,8 +201,7 @@ const useMoreCircle = () => {
         name: t("sales.quote.pdf"),
       },
       {
-        condition:
-          !isPauseOrder && isOrder && quote?.isCanClose && !isCanceledOrder,
+        condition: !isPauseOrder && isOrder && !isCanceledOrder,
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <PDFIcon />,
         name: t("sales.quote.boardMissionsPdf"),
@@ -200,16 +214,33 @@ const useMoreCircle = () => {
         icon: <DuplicateIcon />,
         name: t("sales.quote.duplicate"),
       },
+      // {
+      //   condition: !isPauseOrder && showNewDuplicate,
+      //   onClick: () =>
+      //     navigate(
+      //       `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`
+      //     ),
+      //   icon: <DuplicateIcon />,
+      //   name: t("sales.quote.duplicate"),
+      //   isLink: true,
+      //   href: `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`,
+      // },
       {
         condition: !isPauseOrder && showNewDuplicate,
         onClick: () =>
           navigate(
-            `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`
+            getDocumentPath(
+              null,
+              "?isNewCreation=true&documentToDuplicateId=" + quote?.id
+            )
           ),
         icon: <DuplicateIcon />,
         name: t("sales.quote.duplicate"),
         isLink: true,
-        href: `/${documentPath}?isNewCreation=true&documentToDuplicateId=${quote?.id}`,
+        href: getDocumentPath(
+          null,
+          "?isNewCreation=true&documentToDuplicateId=" + quote?.id
+        ),
       },
       {
         condition:
@@ -330,7 +361,8 @@ const useMoreCircle = () => {
             !isCanceledOrder) ||
             (isDeliveryNote && quote?.isCanClose) ||
             (isInvoice && quote?.isCanClose)) &&
-          quote?.isEditable,
+          quote?.isEditable &&
+          canCloseDocumentManually,
         onClick: () =>
           quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
             ? onClickOpenCloseOrderNotesModal(quote)
@@ -391,9 +423,15 @@ const useMoreCircle = () => {
           ((!isPauseOrder && isOrder && !isCanceledOrder) || isInvoice) &&
           quote?.isCanClose &&
           isSendPaymentToClient,
-        onClick: () => onClickSendPayment(quote),
+        onClick: () => onClickSendPayment(quote, false),
         icon: <PayIcon />,
         name: t("sales.quote.sendPayment"),
+      },
+      {
+        condition: true,
+        onClick: () => onClickSendPayment(quote, true),
+        icon: <PayIcon />,
+        name: t("sales.quote.sendToClient"),
       },
       {
         condition:

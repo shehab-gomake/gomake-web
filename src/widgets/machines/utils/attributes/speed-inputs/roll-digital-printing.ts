@@ -43,7 +43,7 @@ const rollDigitalPrinting = (state: Record<string, any>) => {
             machineInputType: 'input',
             isValid: !!state?.attributes?.inJobTypeStopTime,
         },
-        ...printingGeneral(state)
+        ...printingGeneral(state, EMeasurementUnits.METER_P_MIN)
     ]
 }
 

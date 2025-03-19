@@ -16,8 +16,8 @@ const useStyle = () => {
       },
       insideStyle: {
         // width: "600px",
-         height: "300px",
-       },
+        height: "300px",
+      },
       detailValue: {
         ...FONT_FAMILY.Inter(500, 14),
         color: primaryColor(900),
@@ -29,6 +29,10 @@ const useStyle = () => {
       sectionTitle: {
         color: primaryColor(900),
         ...FONT_FAMILY.Lexend(500, 14),
+      },
+      mobileSectionTitle: {
+        color: primaryColor(900),
+        ...FONT_FAMILY.Lexend(500, 13),
       },
       actionContainer: {
         backgroundColor: "#FFF",
@@ -43,11 +47,17 @@ const useStyle = () => {
         height: 40,
         width: 40,
       },
+      toggleActionButtonMobile: {
+        backgroundColor: primaryColor(50),
+        borderRadius: 8,
+        height: 30,
+        width: 30,
+      },
       toggleSubWorkFlowActionButton: {
         backgroundColor: primaryColor(600),
         borderRadius: 8,
-        height: 40,
-        width: 40,
+        height: 30,
+        width: 30,
         color: "white",
       },
       workFlowContainer: {
@@ -57,7 +67,7 @@ const useStyle = () => {
       },
       subWorkFlowContainer: {
         padding: "10px 16px",
-        borderRadius: 16,
+        borderRadius: "8px",
         backgroundColor: primaryColor(300),
         color: "white",
       },
@@ -94,32 +104,35 @@ const useStyle = () => {
         height: "50%",
         ...adaptRight(direction, 5),
       },
-      nameStyle:{
+      nameStyle: {
         // marginRight: 12,
         ...FONT_FAMILY.Inter(400, 12),
-        color:"#FFF"
+        color: "#FFF",
       },
-      secondPartStyle:{
+      secondPartStyle: {
         ...FONT_FAMILY.Inter(700, 14),
-        color:"#FFF"
+        color: "#FFF",
       },
-      totalRealProductionTimeStyle:{
-        display: 'flex',
-         flexDirection: 'row' as "row", alignItems: 'center', gap: '10px'
+      totalRealProductionTimeStyle: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        gap: "10px",
       },
-      lineStyle:{
+      lineStyle: {
         ...FONT_FAMILY.Inter(500, 14),
-        color:"#FFF",
-        height:20,
-        width:1,
-        backgroundColor:"#FFF"
+        color: "#FFF",
+        height: 20,
+        width: 1,
+        backgroundColor: "#FFF",
       },
-      modalStyle:{
+      modalStyle: {
         width: "45%",
+        minWidth: "350px",
         borderRadius: "8px",
         height: "auto",
         gap: "10px",
-        zIndex:5
+        zIndex: 5,
       },
       autoCompleteSelectedAction: {
         width: 200,
@@ -127,7 +140,7 @@ const useStyle = () => {
         border: "1px solid #D0D5DD",
         borderRadius: 8,
         boxShadow: "none",
-        backgroundColor: "#FFF"
+        backgroundColor: "#FFF",
       },
       autoCompleteSelectedSectionName: {
         display: "flex",
@@ -140,10 +153,9 @@ const useStyle = () => {
         borderRadius: 8,
         boxShadow: "none",
         backgroundColor: "#FFF",
-        color:"#344054",
-        ...FONT_FAMILY.Inter(500, 14)
-      }
-
+        color: "#344054",
+        ...FONT_FAMILY.Inter(500, 14),
+      },
     };
   }, [theme, direction]);
   return {
