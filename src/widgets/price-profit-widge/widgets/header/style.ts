@@ -44,6 +44,21 @@ const useStyle = () => {
         backgroundColor: "transparent",
         border: "1px solid #E0E0E0",
       },
+      chartBtn: {
+        display: "flex",
+        alignItems: "center",
+        gap: 1,
+        width: "fit-content",
+        height: 40,
+        borderRadius: "8px !important",
+        paddingX: 1,
+        border: "1px solid #E0E0E0",
+        backgroundColor: "transparent",
+        cursor: "pointer",
+        "&:hover": {
+          backgroundColor: "#f5f5f5",
+        },
+      },
       menuContainer: {
         display: "flex",
         flexDirection: "column" as "column",

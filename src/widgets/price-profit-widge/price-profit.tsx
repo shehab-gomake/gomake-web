@@ -4,6 +4,8 @@ import { usePriceProfit } from "./use-price-profit";
 import { ParmaetersPriceProfitWidget } from "./widgets/parameters/parameters-price-profit-widge";
 import { PriceProfitHeaderWidget } from "./widgets/header/header-price-profit-widge";
 import { PriceProfitTable } from "./widgets/table/table-price-profit-widge";
+import { GoMakeModal } from "@/components";
+import { GaussianChart } from "@/pages-components/gussian-chart/gussian-chart";
 
 const PriceProfitWidge = () => {
   const { classes } = useStyle();
@@ -49,8 +51,11 @@ const PriceProfitWidge = () => {
     updateSelectedPrintHousePrices,
     onClickPrint,
     resetPrintHousePrice,
-    reCalculatePrice
-  } = usePriceProfit()
+    reCalculatePrice,
+    handleCloseChartModal,
+    handleOpenChartModal,
+    openChartModal,
+  } = usePriceProfit();
   return (
     <div style={classes.mainContainer}>
       <PriceProfitHeaderWidget
@@ -68,48 +73,62 @@ const PriceProfitWidge = () => {
         updateSelectedPrintHousePrices={updateSelectedPrintHousePrices}
         onClickPrint={onClickPrint}
         resetPrintHousePrice={resetPrintHousePrice}
+        handleOpenChartModal={handleOpenChartModal}
       />
       <Divider style={classes.divider} />
-      {
-        products && products?.requiredParameters?.length > 0 &&
+      {products && products?.requiredParameters?.length > 0 && (
         <ParmaetersPriceProfitWidget
           parameters={products?.requiredParameters}
           updateDropdownValue={updateDropdownValue}
           updateDropdownMaterialValue={updateDropdownMaterialValue}
           updateTextInputValue={updateTextInputValue}
-          updateProfitProfileProductParameter={updateProfitProfileProductParameter}
+          updateProfitProfileProductParameter={
+            updateProfitProfileProductParameter
+          }
           reCalculatePrice={reCalculatePrice}
         />
-      }
-      {
-        products && products?.headers?.length > 0 && products?.data?.length > 0 &&
-        <PriceProfitTable
-          headers={products?.headers}
-          open={open}
-          anchorEl={anchorEl}
-          handleClose={handleClose}
-          handleOpen={handleOpen}
-          handleCheckboxChange={handleCheckboxChange}
-          handleRestoreOriginalPrice={handleRestoreOriginalPrice}
-          handleUpdateNewPrice={handleUpdateNewPrice}
-          handleReviewCalculation={handleReviewCalculation}
-          selectedProduct={selectedProduct}
-          products={products}
-          setSelectedProduct={setSelectedProduct}
-          handlePriceChange={handlePriceChange}
-          isUpdate={isUpdate}
-          setIsUpdate={setIsUpdate}
-          onBlurPriceChange={onBlurPriceChange}
-          handleHideProduct={handleHideProduct}
-          onBlurQuantityChange={onBlurQuantityChange}
-          handleQuantity={handleQuantity}
-          isUpdateQuantity={isUpdateQuantity}
-          setIsUpdateQuantity={setIsUpdateQuantity}
-          updatePrintHousePrice={updatePrintHousePrice}
-          updateProfitProfileProductHidden={updateProfitProfileProductHidden}
-          updateProfitProfileProductSelected={updateProfitProfileProductSelected}
-        />
-      }
+      )}
+      {products &&
+        products?.headers?.length > 0 &&
+        products?.data?.length > 0 && (
+          <PriceProfitTable
+            headers={products?.headers}
+            open={open}
+            anchorEl={anchorEl}
+            handleClose={handleClose}
+            handleOpen={handleOpen}
+            handleCheckboxChange={handleCheckboxChange}
+            handleRestoreOriginalPrice={handleRestoreOriginalPrice}
+            handleUpdateNewPrice={handleUpdateNewPrice}
+            handleReviewCalculation={handleReviewCalculation}
+            selectedProduct={selectedProduct}
+            products={products}
+            setSelectedProduct={setSelectedProduct}
+            handlePriceChange={handlePriceChange}
+            isUpdate={isUpdate}
+            setIsUpdate={setIsUpdate}
+            onBlurPriceChange={onBlurPriceChange}
+            handleHideProduct={handleHideProduct}
+            onBlurQuantityChange={onBlurQuantityChange}
+            handleQuantity={handleQuantity}
+            isUpdateQuantity={isUpdateQuantity}
+            setIsUpdateQuantity={setIsUpdateQuantity}
+            updatePrintHousePrice={updatePrintHousePrice}
+            updateProfitProfileProductHidden={updateProfitProfileProductHidden}
+            updateProfitProfileProductSelected={
+              updateProfitProfileProductSelected
+            }
+          />
+        )}
+      <GoMakeModal
+        openModal={openChartModal}
+        onClose={handleCloseChartModal}
+        modalTitle={" "}
+        insideStyle={classes.modalStyle}
+        withRoundedCloseIcon={false}
+      >
+        <GaussianChart />
+      </GoMakeModal>
     </div>
   );
 };
