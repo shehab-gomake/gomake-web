@@ -184,7 +184,7 @@ const useMessageTemplate = () => {
         alertFaultUpdate();
       }
     };
-
+    updatedSMSTemplate.smsTemplatesGroupId = templateGroup?.id;
     await updateSMSTemplateApi(callApi, callBack, updatedSMSTemplate);
   };
 
@@ -200,6 +200,7 @@ const useMessageTemplate = () => {
     await getSMSTemplateApi(callApi, callBack, {
       templateId: id,
       lang: language,
+      SMSTemplatesGroupId: templateGroup?.id,
     });
   };
 
