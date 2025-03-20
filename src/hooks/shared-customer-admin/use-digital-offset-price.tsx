@@ -782,7 +782,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 // !parameter?.isHiddenInSetting &&
                 !parameter?.setSettingIcon
                 && relatedParameters.some(
-                  (relatedParam) => relatedParam.parameterId === parameter?.id && !relatedParam.isHiddenInSetting
+                  (relatedParam) => relatedParam.parameterId === parameter?.id && !parameter.isHiddenInSetting
                 )
               ) {
                 if (parameter.isUnderParameterId !== null) {
