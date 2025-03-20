@@ -11,12 +11,11 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { JobComponent } from "@/widgets/production-floor/views/gantt-view/job-component";
 import moment from "moment";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { IconButton, Tab, Tabs } from "@mui/material";
+import { IconButton } from "@mui/material";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import KeyboardArrowLeftIcon from "@mui/icons-material/KeyboardArrowLeft";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { ITab } from "@/components/tabs/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { TimeFrameTabs } from "./state";
 
@@ -184,14 +183,12 @@ const TimelineWidget = () => {
             <ChevronRightIcon />
           </IconButton> */}
           <Stack padding={"0 10px"} gap={"5px"}>
-            <RemoveIcon
-              // onClick={() => handleClickZoom("in")} //!old
-              onClick={() => handleClickZoom("out")}
+            <AddIcon
+              onClick={() => handleClickZoom("in")}
               style={{ height: "20px", width: "20px", cursor: "pointer" }}
             />
-            <AddIcon
-              // onClick={() => handleClickZoom("out")} //!old
-              onClick={() => handleClickZoom("in")}
+            <RemoveIcon
+              onClick={() => handleClickZoom("out")}
               style={{ height: "20px", width: "20px", cursor: "pointer" }}
             />
           </Stack>
@@ -200,9 +197,32 @@ const TimelineWidget = () => {
           groups={
             filteredGroups.length > 0
               ? filteredGroups
-              : [{ id: "empty", title: "No Groups Available" }]
+              : [
+                  {
+                    id: "empty",
+                    title: (
+                      <div
+                        style={{
+                          fontSize: "16px",
+                          fontWeight: "500",
+                          color: "#7A7A7A",
+                          textAlign: "center",
+                          padding: "0px 10px",
+                          backgroundColor: "#F6F6F6",
+                          borderRadius: "8px",
+                        }}
+                      >
+                        {t("productionFloor.noGroupsAvailable")}
+                      </div>
+                    ),
+                  },
+                ]
           }
-          items={items.length > 0 ? items : []}
+          // items={items.length > 0 ? items : []}
+          items={items.filter((item) => {
+            const isGroupOpen = openGroups[item.group];
+            return isGroupOpen ? item.isEditable : true;
+          })}
           defaultTimeStart={timeRange.defaultTimeStart}
           defaultTimeEnd={timeRange.defaultTimeEnd}
           sidebarWidth={200}

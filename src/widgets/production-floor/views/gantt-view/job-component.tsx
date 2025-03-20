@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/production-floor/kanban-view/kanban-card/style";
 import { useRecoilState } from "recoil";
 import { loadingGanttItemId } from "@/widgets/production-floor/views/gantt-view/state";
+import moment from "moment";
 
 const JobComponent = ({
   item,
@@ -47,7 +48,6 @@ const JobComponent = ({
               : "#2E3091",
           pointerEvents: isEditable ? "auto" : "none",
           color: "white",
-          //   borderRadius: 0,
           borderRadius: "14px",
           border: "1px solid #F6F6F6",
           display: "flex",
@@ -55,8 +55,7 @@ const JobComponent = ({
           justifyContent: "center",
           gap: "10px",
           opacity: isEditable && item.isHasSelected && !item.selected ? 0.3 : 1,
-          //   height: "25px",
-          //   minHeight: "25px",
+          minHeight: "22px",
         },
       })}
     >
@@ -84,10 +83,11 @@ const JobComponent = ({
           <div
             ref={areaRef}
             onMouseMove={handleMouseMove}
-            className="rct-item-content"
+            // className="rct-item-content"
             style={{ textAlign: "center", width: "100%" }}
           >
             <div
+              className="rct-item-content"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -112,8 +112,8 @@ const JobComponent = ({
                 {isEditable && (
                   <div
                     style={{
-                      width: "14px",
-                      height: "14px",
+                      width: "12px",
+                      height: "12px",
                       borderRadius: "50%",
                       border: "2px solid #FFF",
                       backgroundColor: item.statusColor,
@@ -135,32 +135,40 @@ const JobTooltipComponent = ({
   productName,
   title,
   bgColor,
-  boardMissionNumber,
+  // boardMissionNumber,
+  jobNumber,
   orderNumber,
   numberOfJobsInOrder,
   boardMissionId,
   productType,
+  start_time,
+  end_time,
 }: IGanttJob) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { push } = useRouter();
+
   const handleOpenMission = () => {
     push(
       `/production-floor?boardMissionsId=${boardMissionId}&productType=${productType}&step=stations`
     );
   };
+
+  const formattedStartTime = moment(start_time).format("HH:mm");
+  const formattedStartDate = moment(start_time).format("MMM DD");
+  const formattedEndTime = moment(end_time).format("HH:mm");
+  const formattedEndDate = moment(end_time).format("MMM DD");
+
   return (
     <Stack
       direction={"column"}
       gap={"15px"}
       padding={"10px"}
-      borderRadius={"12px"}
       width={"100%"}
       onClick={handleOpenMission}
       style={{
-        borderRadius: "8px",
-        border: `1px solid var(--Colors-Yellow-600,${bgColor})`,
-        background: toRgba(bgColor, 0.1),
+        borderRadius: "4px",
+        // border: `1px solid var(--Colors-Yellow-600,${bgColor})`,
         boxShadow: "0px 2px 4px 0px rgba(0, 0, 0, 0.08)",
       }}
     >
@@ -170,11 +178,19 @@ const JobTooltipComponent = ({
         display={"flex"}
         flexWrap={"wrap"}
       >
-        <span style={classes.jobTitle}>
-          {title || t("boardMissions.jobName")}
-        </span>
+        <Stack direction="row" alignItems="center" gap="10px">
+          <div
+            style={{
+              width: "12px",
+              height: "12px",
+              borderRadius: "50%",
+              backgroundColor: bgColor,
+            }}
+          />
+          <span style={{ ...classes.jobTitle }}>{title}</span>
+        </Stack>
         <OrderJObNumbersComponent
-          boardMission={{ boardMissionNumber, orderNumber }}
+          boardMission={{ boardMissionNumber: jobNumber, orderNumber }}
           textColor={bgColor}
           bgColor={toRgba(bgColor, 0.2)}
         />
@@ -199,9 +215,31 @@ const JobTooltipComponent = ({
               "boardMissions.numberOfBoardMissionsInOrder"
             )}`}
           </span>
-          {/*<span style={classes.secondLabel}>{end_time.format('DD-MM-YYYY')}</span>*/}
-          <span style={classes.secondLabel}>"clientName"</span>
         </Stack>
+      </Stack>
+      {/* Time Row */}
+      <Stack
+        direction="row"
+        alignItems="center"
+        justifyContent="center"
+        gap="5px"
+      >
+        <span style={{ fontSize: "24px", fontWeight: "600", color: bgColor }}>
+          {formattedStartTime}
+        </span>
+        <span style={{ fontSize: "12px", fontWeight: "400", color: "#797C80" }}>
+          {formattedStartDate}
+        </span>
+        <span style={{ fontSize: "12px", fontWeight: "600", color: "#797C80" }}>
+          {" "}
+          -{" "}
+        </span>
+        <span style={{ fontSize: "24px", fontWeight: "600", color: bgColor }}>
+          {formattedEndTime}
+        </span>
+        <span style={{ fontSize: "12px", fontWeight: "400", color: "#797C80" }}>
+          {formattedEndDate}
+        </span>
       </Stack>
     </Stack>
   );
@@ -217,7 +255,8 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
     fontSize: theme.typography.pxToRem(12),
     borderRadius: "8px",
     minWidth: "350px",
-    padding: "12px",
+    // padding: "12px",
+    padding: "0px",
   },
   [`& .${tooltipClasses.tooltipArrow} .${tooltipClasses.arrow}`]: {
     color: "#FFF",

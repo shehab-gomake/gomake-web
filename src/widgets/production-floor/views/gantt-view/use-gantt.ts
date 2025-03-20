@@ -361,7 +361,8 @@ const useGantt = () => {
       title: t("productionFloor.year"),
     },
   ];
-  const handleItemSelectOld = (itemId) => {
+
+  const handleItemSelect = (itemId) => {
     const selectedItem = items.find((item) => item.id === itemId);
     if (selectedItem) {
       setItems((prev) =>
@@ -374,7 +375,7 @@ const useGantt = () => {
     }
   };
 
-  const handleItemSelect = (itemId) => {
+  const handleItemSelectNew = (itemId) => {
     setItems((prevItems) =>
       prevItems.map((item) => ({
         ...item,
