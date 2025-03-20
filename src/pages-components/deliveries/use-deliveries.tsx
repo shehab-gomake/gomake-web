@@ -16,6 +16,7 @@ import { DocumentDeliveryStatuses } from "../quotes/widgets/delivery-status-butt
 import { useDebounce } from "@/utils/use-debounce";
 import { ClickableStatusButton } from "../quotes/widgets/delivery-status-button/delivery-status-button";
 import { DOCUMENT_TYPE } from "../quotes/enums";
+import { useDeliveriesSocketIo } from "@/hooks/socket-io/use-deliveries-socket-io";
 
 interface Query {
   customerId?: string;
@@ -347,7 +348,10 @@ const useDeliveries = () => {
       agentId,
       finalPatternSearch,
       shipmentTypeId,
+      pageNumber,
     } = router.query;
+
+    if (pageNumber) setPage(Number(pageNumber)); // Convert to number
 
     if (customerId) {
       setCustomer({ id: customerId as string, name: customerName as string });
@@ -396,6 +400,16 @@ const useDeliveries = () => {
       setHasFetchedQuery(serializedQuery); // Mark this query as fetched
     }
   }, [pageSize, router.query]);
+
+  const { isSocketUpdateDeliveriesTable, setIsSocketUpdateDeliveriesTable } =
+    useDeliveriesSocketIo();
+
+  useEffect(() => {
+    if (isSocketUpdateDeliveriesTable) {
+      getDeliveriesTable();
+      setIsSocketUpdateDeliveriesTable(false);
+    }
+  }, [isSocketUpdateDeliveriesTable]);
 
   return {
     t,
