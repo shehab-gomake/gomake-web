@@ -235,7 +235,7 @@ const TimelineWidget = () => {
                       width: "200px",
                       ...FONT_FAMILY.Inter(500, 14),
                       position: "relative",
-                      background: "#504fa11a",
+                      // background: "#504fa11a",
                     }}
                   >
                     {t("productionFloor.stations")}
@@ -249,6 +249,7 @@ const TimelineWidget = () => {
                 );
               }}
             </SidebarHeader>
+            {/* this the header that top of hours,days, etc..  */}
             <DateHeader unit="primaryHeader" />
             <DateHeader
               labelFormat={([start, end], unit) => {

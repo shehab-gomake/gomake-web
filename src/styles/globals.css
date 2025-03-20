@@ -529,9 +529,8 @@ df-messenger {
 }
 
 /* !here */
-.react-calendar-timeline .rct-header-root {
+/* .react-calendar-timeline .rct-header-root {
   background-color: #fff;
-  /* pointer-events: none !important; */
 }
 
 .react-calendar-timeline .rct-dateHeader-primary {
@@ -571,21 +570,65 @@ df-messenger {
 }
 .react-calendar-timeline .rct-sidebar .rct-sidebar-row {
   padding: 0 !important;
-}
+} */
 
-/* new gantt */
-/* .react-calendar-timeline .rct-dateHeader {
-  font-size: 12px;
+/* IDK */
+.time-line-header {
+  color: #475467;
+  font-size: 16px;
   font-weight: 500;
-  color: #333;
-  padding: 6px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
-.react-calendar-timeline .rct-horizontal-lines .rct-hl-even,
-.react-calendar-timeline .rct-horizontal-lines .rct-hl-odd {
-  border-bottom: 1px solid #f0f0f0;
+.rct-vl {
+  border-left: 1px solid #eaecf0 !important;
+}
+
+.rct-horizontal-lines > * {
+  background-color: inherit !important;
+  /* background-color: #fff !important; */
+  border-bottom: 1px solid #eaecf0 !important;
+}
+
+/* 1) Add a bottom border to the entire header container */
+.react-calendar-timeline .rct-header-root {
+  border-bottom: 1px solid #eaecf0 !important;
+  background-color: #fff;
+  pointer-events: none !important;
+}
+
+/* 2) Add a bottom border to the primary header row */
+.react-calendar-timeline .rct-dateHeader-primary {
+  border-bottom: 1px solid #eaecf0 !important;
+  color: #101828;
+  border-left: 1px solid #eaecf0 !important;
+}
+
+/* 3) Add right borders to each secondary header column (the "smaller" time units) */
+.react-calendar-timeline .rct-dateHeader:not(.rct-dateHeader-primary) {
+  border-left: 1px solid #eaecf0 !important;
+}
+
+/* 4) (Optional) If you want a border around the sidebar header as well */
+.react-calendar-timeline .rct-sidebar .rct-sidebar-row {
+  border-bottom: 1px solid #eaecf0 !important;
+  padding: 0 !important;
+}
+
+.react-calendar-timeline .rct-dateHeader {
+  background-color: #fff;
+  border: 0;
 }
 
 .react-calendar-timeline .rct-calendar-header {
-  background: #ededf5;
-} */
+  border: 0;
+  /* border-left: 1px solid #eaecf0 !important; */
+  /* maybe */
+}
+
+.react-calendar-timeline .rct-sidebar {
+  border: 0;
+}
