@@ -184,7 +184,9 @@ const useMessageTemplate = () => {
         alertFaultUpdate();
       }
     };
-    updatedSMSTemplate.smsTemplatesGroupId = templateGroup?.id;
+    if(templateGroup && templateGroup?.id){
+      updatedSMSTemplate.smsTemplatesGroupId = templateGroup?.id;
+    }
     await updateSMSTemplateApi(callApi, callBack, updatedSMSTemplate);
   };
 

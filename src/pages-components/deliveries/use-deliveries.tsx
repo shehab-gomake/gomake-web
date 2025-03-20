@@ -5,7 +5,7 @@ import {
   useGomakeAxios,
   useSnackBar,
 } from "@/hooks";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { useRouter } from "next/router";
 import { useIsMobile } from "@/hooks/use-responsive";
@@ -16,6 +16,7 @@ import { DocumentDeliveryStatuses } from "../quotes/widgets/delivery-status-butt
 import { useDebounce } from "@/utils/use-debounce";
 import { ClickableStatusButton } from "../quotes/widgets/delivery-status-button/delivery-status-button";
 import { DOCUMENT_TYPE } from "../quotes/enums";
+import { useDeliveriesSocketIo } from "@/hooks/socket-io/use-deliveries-socket-io";
 
 interface Query {
   customerId?: string;
@@ -67,16 +68,27 @@ const useDeliveries = () => {
     value: string;
   }>();
 
-  const tableHeaders = [
-    t("sales.quote.client"),
-    t("sales.documentDeliveries.deliveryStatus"),
-    t("sales.quote.creationDate"),
-    t("sales.quote.agent"),
-    t("sales.quote.orderNumber"),
-    t("sales.quote.worksName"),
-    t("sales.quote.itemsNumber"),
-    t("customers.modal.shipmentType"),
-  ];
+  const tableHeaders = isMobile
+    ? [
+        t("sales.quote.client"),
+        t("sales.documentDeliveries.deliveryStatus"),
+        t("sales.quote.creationDate"),
+        t("sales.quote.agent"),
+        t("sales.quote.orderNumber"),
+        t("sales.quote.worksName"),
+        t("sales.quote.itemsNumber"),
+        t("customers.modal.shipmentType"),
+      ]
+    : [
+        t("sales.quote.creationDate"),
+        t("sales.quote.client"),
+        t("sales.quote.agent"),
+        t("sales.quote.orderNumber"),
+        t("sales.quote.worksName"),
+        t("sales.quote.itemsNumber"),
+        t("sales.documentDeliveries.deliveryStatus"),
+        t("customers.modal.shipmentType"),
+      ];
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -134,40 +146,66 @@ const useDeliveries = () => {
     });
   };
 
-  const [allDeliveries, setAllDeliveries] = useState();
-
   const { formatCustomDateTime } = useDateFormat();
+  const [rawDeliveriesData, setRawDeliveriesData] = useState<any[]>([]);
 
   const getDeliveriesTable = async (isClear: boolean = false) => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data?.data;
         const totalItems = res?.data?.totalItems;
-        const mapData = data?.map((item: any) => [
-          item?.clientName,
-          <ClickableStatusButton
-            id={item?.orderId}
-            document={{
-              ...item,
-              id: item?.orderId,
-              customerId: item?.clientId,
-              number: item?.orderNumber,
-            }}
-            documentType={DOCUMENT_TYPE.order}
-            openModalOnClick={true}
-          />,
-          formatCustomDateTime(item?.createdDate).split(" ")[0],
-          item?.agentName ?? "-",
-          item?.orderNumber,
-          item?.worksNames ?? "-",
-          item?.numberOfItems,
+        // const mapData = data?.map((item: any) =>
+        //   isMobile
+        //     ? [
+        //         item?.clientName,
+        //         <ClickableStatusButton
+        //           id={item?.orderId}
+        //           document={{
+        //             ...item,
+        //             id: item?.orderId,
+        //             customerId: item?.clientId,
+        //             number: item?.orderNumber,
+        //           }}
+        //           documentType={DOCUMENT_TYPE.order}
+        //           openModalOnClick={true}
+        //         />,
+        //         formatCustomDateTime(item?.createdDate).split(" ")[0],
+        //         item?.agentName ?? "-",
+        //         item?.orderNumber,
+        //         item?.worksNames ?? "-",
+        //         item?.numberOfItems,
+        //         item?.isSelfCollection
+        //           ? t("sales.documentDeliveries.selfCollection")
+        //           : item?.shipmentTypeName,
+        //       ]
+        //     : [
+        //         formatCustomDateTime(item?.createdDate).split(" ")[0],
+        //         item?.clientName,
+        //         item?.agentName ?? "-",
+        //         item?.orderNumber,
+        //         item?.worksNames ?? "-",
+        //         item?.numberOfItems,
+        //         <ClickableStatusButton
+        //           id={item?.orderId}
+        //           document={{
+        //             ...item,
+        //             id: item?.orderId,
+        //             customerId: item?.clientId,
+        //             number: item?.orderNumber,
+        //           }}
+        //           documentType={DOCUMENT_TYPE.order}
+        //           openModalOnClick={true}
+        //         />,
 
-          item?.isSelfCollection
-            ? t("sales.documentDeliveries.selfCollection")
-            : item?.shipmentTypeName,
-        ]);
+        //         item?.isSelfCollection
+        //           ? t("sales.documentDeliveries.selfCollection")
+        //           : item?.shipmentTypeName,
+        //       ]
+        // );
 
-        setAllDeliveries(mapData);
+        setRawDeliveriesData(data || []);
+
+        // setAllDeliveries(mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
       } else {
         alertFaultGetData();
@@ -217,6 +255,56 @@ const useDeliveries = () => {
     );
   };
 
+  const allDeliveries = useMemo(() => {
+    return rawDeliveriesData?.map((item: any) =>
+      isMobile
+        ? [
+            item?.clientName,
+            <ClickableStatusButton
+              id={item?.orderId}
+              document={{
+                ...item,
+                id: item?.orderId,
+                customerId: item?.clientId,
+                number: item?.orderNumber,
+              }}
+              documentType={DOCUMENT_TYPE.order}
+              openModalOnClick={true}
+            />,
+            formatCustomDateTime(item?.createdDate).split(" ")[0],
+            item?.agentName ?? "-",
+            item?.orderNumber,
+            item?.worksNames ?? "-",
+            item?.numberOfItems,
+            item?.isSelfCollection
+              ? t("sales.documentDeliveries.selfCollection")
+              : item?.shipmentTypeName,
+          ]
+        : [
+            formatCustomDateTime(item?.createdDate).split(" ")[0],
+            item?.clientName,
+            item?.agentName ?? "-",
+            item?.orderNumber,
+            item?.worksNames ?? "-",
+            item?.numberOfItems,
+            <ClickableStatusButton
+              id={item?.orderId}
+              document={{
+                ...item,
+                id: item?.orderId,
+                customerId: item?.clientId,
+                number: item?.orderNumber,
+              }}
+              documentType={DOCUMENT_TYPE.order}
+              openModalOnClick={true}
+            />,
+            item?.isSelfCollection
+              ? t("sales.documentDeliveries.selfCollection")
+              : item?.shipmentTypeName,
+          ]
+    );
+  }, [rawDeliveriesData, isMobile, t, formatCustomDateTime]);
+
   const debouncePatternSearch = useDebounce(patternSearch, 1000);
   const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
 
@@ -260,7 +348,10 @@ const useDeliveries = () => {
       agentId,
       finalPatternSearch,
       shipmentTypeId,
+      pageNumber,
     } = router.query;
+
+    if (pageNumber) setPage(Number(pageNumber)); // Convert to number
 
     if (customerId) {
       setCustomer({ id: customerId as string, name: customerName as string });
@@ -309,6 +400,16 @@ const useDeliveries = () => {
       setHasFetchedQuery(serializedQuery); // Mark this query as fetched
     }
   }, [pageSize, router.query]);
+
+  const { isSocketUpdateDeliveriesTable, setIsSocketUpdateDeliveriesTable } =
+    useDeliveriesSocketIo();
+
+  useEffect(() => {
+    if (isSocketUpdateDeliveriesTable) {
+      getDeliveriesTable();
+      setIsSocketUpdateDeliveriesTable(false);
+    }
+  }, [isSocketUpdateDeliveriesTable]);
 
   return {
     t,

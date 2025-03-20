@@ -60,17 +60,6 @@ const useAuthLayoutHook = (
       },
       {
         isLine: false,
-        key: "deliveries",
-        title: "tabs.deliveries",
-        path: "/deliveries",
-        isList: false,
-        icon: () => {
-          return <DeliveriesIcon />;
-        },
-        isProduction: true,
-      },
-      {
-        isLine: false,
         key: "productFloor",
         title: "tabs.productFloor",
         path: "/production-floor?view=table",
@@ -139,6 +128,12 @@ const useAuthLayoutHook = (
             title: "tabs.invoiceRefund",
             path: "/invoiceRefunds",
             Permission: Permissions.SHOW_INVOICES_REFUND,
+          },
+          {
+            key: "deliveries",
+            title: "tabs.deliveries",
+            path: "/deliveries",
+            Permission: Permissions.SHOW_DELIVERIES,
           },
         ],
         icon: () => {
