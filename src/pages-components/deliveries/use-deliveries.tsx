@@ -5,7 +5,7 @@ import {
   useGomakeAxios,
   useSnackBar,
 } from "@/hooks";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import { useRouter } from "next/router";
 import { useIsMobile } from "@/hooks/use-responsive";
@@ -67,16 +67,27 @@ const useDeliveries = () => {
     value: string;
   }>();
 
-  const tableHeaders = [
-    t("sales.quote.client"),
-    t("sales.documentDeliveries.deliveryStatus"),
-    t("sales.quote.creationDate"),
-    t("sales.quote.agent"),
-    t("sales.quote.orderNumber"),
-    t("sales.quote.worksName"),
-    t("sales.quote.itemsNumber"),
-    t("customers.modal.shipmentType"),
-  ];
+  const tableHeaders = isMobile
+    ? [
+        t("sales.quote.client"),
+        t("sales.documentDeliveries.deliveryStatus"),
+        t("sales.quote.creationDate"),
+        t("sales.quote.agent"),
+        t("sales.quote.orderNumber"),
+        t("sales.quote.worksName"),
+        t("sales.quote.itemsNumber"),
+        t("customers.modal.shipmentType"),
+      ]
+    : [
+        t("sales.quote.creationDate"),
+        t("sales.quote.client"),
+        t("sales.quote.agent"),
+        t("sales.quote.orderNumber"),
+        t("sales.quote.worksName"),
+        t("sales.quote.itemsNumber"),
+        t("sales.documentDeliveries.deliveryStatus"),
+        t("customers.modal.shipmentType"),
+      ];
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -134,40 +145,66 @@ const useDeliveries = () => {
     });
   };
 
-  const [allDeliveries, setAllDeliveries] = useState();
-
   const { formatCustomDateTime } = useDateFormat();
+  const [rawDeliveriesData, setRawDeliveriesData] = useState<any[]>([]);
 
   const getDeliveriesTable = async (isClear: boolean = false) => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data?.data;
         const totalItems = res?.data?.totalItems;
-        const mapData = data?.map((item: any) => [
-          item?.clientName,
-          <ClickableStatusButton
-            id={item?.orderId}
-            document={{
-              ...item,
-              id: item?.orderId,
-              customerId: item?.clientId,
-              number: item?.orderNumber,
-            }}
-            documentType={DOCUMENT_TYPE.order}
-            openModalOnClick={true}
-          />,
-          formatCustomDateTime(item?.createdDate).split(" ")[0],
-          item?.agentName ?? "-",
-          item?.orderNumber,
-          item?.worksNames ?? "-",
-          item?.numberOfItems,
+        // const mapData = data?.map((item: any) =>
+        //   isMobile
+        //     ? [
+        //         item?.clientName,
+        //         <ClickableStatusButton
+        //           id={item?.orderId}
+        //           document={{
+        //             ...item,
+        //             id: item?.orderId,
+        //             customerId: item?.clientId,
+        //             number: item?.orderNumber,
+        //           }}
+        //           documentType={DOCUMENT_TYPE.order}
+        //           openModalOnClick={true}
+        //         />,
+        //         formatCustomDateTime(item?.createdDate).split(" ")[0],
+        //         item?.agentName ?? "-",
+        //         item?.orderNumber,
+        //         item?.worksNames ?? "-",
+        //         item?.numberOfItems,
+        //         item?.isSelfCollection
+        //           ? t("sales.documentDeliveries.selfCollection")
+        //           : item?.shipmentTypeName,
+        //       ]
+        //     : [
+        //         formatCustomDateTime(item?.createdDate).split(" ")[0],
+        //         item?.clientName,
+        //         item?.agentName ?? "-",
+        //         item?.orderNumber,
+        //         item?.worksNames ?? "-",
+        //         item?.numberOfItems,
+        //         <ClickableStatusButton
+        //           id={item?.orderId}
+        //           document={{
+        //             ...item,
+        //             id: item?.orderId,
+        //             customerId: item?.clientId,
+        //             number: item?.orderNumber,
+        //           }}
+        //           documentType={DOCUMENT_TYPE.order}
+        //           openModalOnClick={true}
+        //         />,
 
-          item?.isSelfCollection
-            ? t("sales.documentDeliveries.selfCollection")
-            : item?.shipmentTypeName,
-        ]);
+        //         item?.isSelfCollection
+        //           ? t("sales.documentDeliveries.selfCollection")
+        //           : item?.shipmentTypeName,
+        //       ]
+        // );
 
-        setAllDeliveries(mapData);
+        setRawDeliveriesData(data || []);
+
+        // setAllDeliveries(mapData);
         setPagesCount(Math.ceil(totalItems / pageSize));
       } else {
         alertFaultGetData();
@@ -216,6 +253,56 @@ const useDeliveries = () => {
           }
     );
   };
+
+  const allDeliveries = useMemo(() => {
+    return rawDeliveriesData?.map((item: any) =>
+      isMobile
+        ? [
+            item?.clientName,
+            <ClickableStatusButton
+              id={item?.orderId}
+              document={{
+                ...item,
+                id: item?.orderId,
+                customerId: item?.clientId,
+                number: item?.orderNumber,
+              }}
+              documentType={DOCUMENT_TYPE.order}
+              openModalOnClick={true}
+            />,
+            formatCustomDateTime(item?.createdDate).split(" ")[0],
+            item?.agentName ?? "-",
+            item?.orderNumber,
+            item?.worksNames ?? "-",
+            item?.numberOfItems,
+            item?.isSelfCollection
+              ? t("sales.documentDeliveries.selfCollection")
+              : item?.shipmentTypeName,
+          ]
+        : [
+            formatCustomDateTime(item?.createdDate).split(" ")[0],
+            item?.clientName,
+            item?.agentName ?? "-",
+            item?.orderNumber,
+            item?.worksNames ?? "-",
+            item?.numberOfItems,
+            <ClickableStatusButton
+              id={item?.orderId}
+              document={{
+                ...item,
+                id: item?.orderId,
+                customerId: item?.clientId,
+                number: item?.orderNumber,
+              }}
+              documentType={DOCUMENT_TYPE.order}
+              openModalOnClick={true}
+            />,
+            item?.isSelfCollection
+              ? t("sales.documentDeliveries.selfCollection")
+              : item?.shipmentTypeName,
+          ]
+    );
+  }, [rawDeliveriesData, isMobile, t, formatCustomDateTime]);
 
   const debouncePatternSearch = useDebounce(patternSearch, 1000);
   const [hasFetchedQuery, setHasFetchedQuery] = useState<string | null>(null);
