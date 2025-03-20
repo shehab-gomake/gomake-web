@@ -26,7 +26,6 @@ const RowMappingWidget = ({
     const newAllocatedSum = event.target.value;
     const minValue = Math.min(0, item?.sumApplied);
     const maxValue = item?.sumApplied > 0 ? item?.sumApplied : 0;
-
     if (
       isNaN(newAllocatedSum) ||
       newAllocatedSum < minValue ||
@@ -34,12 +33,11 @@ const RowMappingWidget = ({
     ) {
       return;
     }
-
     setAllocatedSum(index, Number(newAllocatedSum));
   };
 
   const { formatISODateTime } = useDateFormat();
-  
+
   return (
     <TableRow
       key={item.id}
@@ -141,7 +139,7 @@ const RowMappingWidget = ({
             type="number"
             min={Math.min(0, item?.sumApplied)}
             max={item?.sumApplied > 0 ? item?.sumApplied : 0}
-            // step="0.01"
+          // step="0.01"
           />
           / {item?.sumApplied}
         </PrimaryTableCell>

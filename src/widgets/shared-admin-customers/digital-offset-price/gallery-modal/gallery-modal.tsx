@@ -85,7 +85,7 @@ const GalleryModal = ({
       // sheetsColor: heightParameter,
     }
     const callBack = (res) => {
-      if (res.success) {
+      if (res.success && res.data && res.data.data) {
         setSearchResult((prev: any) => {
           return [res.data.data, ...prev,] // Add the new item to the data list
         });
@@ -95,7 +95,7 @@ const GalleryModal = ({
           window.open(pdfUrl, '_blank');
         }
       } else {
-        // Handle the error case
+        alertFault("error adding template")
       }
     };
     await createDieCutFromTemplateMakerApi(callApi, callBack, reqObj);

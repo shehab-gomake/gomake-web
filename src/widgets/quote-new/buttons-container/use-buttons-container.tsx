@@ -249,6 +249,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     // const filteredReceiptItems = Object.values(checkedItemsIds)
     //   .map((id) => quoteItemValue.receiptItems.find((item) => item.id === id))
     //   .filter(Boolean);
+    const isOutgoingPayments = router.query.isOutgoingPayments === "true";
     const filteredReceiptItems = Object.keys(checkedItemsIds)
       .map((key) => {
         const item = quoteItemValue.receiptItems.find(
@@ -259,13 +260,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
         return item ? { ...item, sumApplied } : null;
       })
-      .filter(Boolean);
+      .filter(Boolean)
 
-
-      const isOutgoingPayments = router.query.isOutgoingPayments === "true";
-
-      
-      const newReceiptItem = {
+    const newReceiptItem = {
       ...quoteItemValue,
       receiptItems: filteredReceiptItems,
     };
@@ -386,8 +383,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         docType === DOCUMENT_TYPE.order
           ? navigate("/orders")
           : docType === DOCUMENT_TYPE.deliveryNote
-          ? navigate("/deliveryNotes")
-          : navigate("/invoices");
+            ? navigate("/deliveryNotes")
+            : navigate("/invoices");
       } else {
         alertFaultUpdate();
       }
