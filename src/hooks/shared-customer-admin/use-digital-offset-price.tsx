@@ -5171,9 +5171,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           const documentItemId = router?.query?.documentItemId;
           const res: any = await callApi(
             "POST",
-            productTemplate?.isHaveFixedAction
-              ? "/v1/erp-service/product-item-value/create-default-work-flow"
-              : `/v1/calculation-service/calculations/calculate-productV2`,
+            //productTemplate?.isHaveFixedAction
+             // ? "/v1/erp-service/product-item-value/create-default-work-flow" :
+              `/v1/calculation-service/calculations/calculate-productV2`,
             {
               calculationSessionId: newCalculationSessionId,
               signalRConnectionId: connectionId,
