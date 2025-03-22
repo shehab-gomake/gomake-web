@@ -1,9 +1,7 @@
 import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useTranslation } from "react-i18next";
-import * as React from "react";
 import { PdfUploadComponent } from "../upload-file/upload-file";
-import { EditorTYPE } from "../../enums/enum";
 import {
   languageTemplateState,
   smsBodyState,
@@ -17,27 +15,29 @@ import { IInput } from "@/components/form-inputs/interfaces";
 import { Checkbox, Stack } from "@mui/material";
 import { QuillEditor } from "./quill-editor";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { languageOptionsState, languagesState } from "@/store/languages";
-import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton } from "@/components";
-import { useMessageTemplate } from "@/widgets/settings-mailing/useMessageTemplate";
-import { FONT_FAMILY } from "@/utils/font-family";
+import { languageOptionsState } from "@/store/languages";
+import {
+  GoMakeAutoComplate,
+  GoMakeModal,
+  GomakePrimaryButton,
+} from "@/components";
 import { AddNewButton } from "@/components/button/add-new-button";
 import { BodyTypeEnum } from "@/enums/accounting-enums";
 import { CheckboxIcon } from "@/icons/checkbox-icon";
 import { CheckboxCheckedIcon } from "@/icons";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 export interface IProps {
   onClickSave: (value: any) => void;
+  onOpenDeleteModal: () => void;
 }
-const EmailSettings = ({ onClickSave }: IProps) => {
+const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
-  const { onOpenDeleteModal } = useMessageTemplate();
   const [state, setState] = useRecoilState<ISMSTemplate>(smsTemplateState);
   const [subject, setSubject] = useRecoilState<string>(smsSubjectState);
   const [body, setBody] = useRecoilState<string>(smsBodyState);
-  // const languages = useRecoilValue(languagesState);
   const languages = useRecoilValue(languageOptionsState);
 
   useEffect(() => {
@@ -73,13 +73,15 @@ const EmailSettings = ({ onClickSave }: IProps) => {
     setLanguageState(value?.value);
   };
 
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleBodyTypeToggle = (type: BodyTypeEnum) => {
     setState((prevState) => {
-      const isTypePresent = prevState.smsTemplateBodies.some(body => body.type === type);
+      const isTypePresent = prevState.smsTemplateBodies.some(
+        (body) => body.type === type
+      );
       const updatedBodies = isTypePresent
-        ? prevState.smsTemplateBodies.filter(body => body.type !== type)
+        ? prevState.smsTemplateBodies.filter((body) => body.type !== type)
         : [...prevState.smsTemplateBodies, { type, body }];
 
       return {
@@ -103,9 +105,6 @@ const EmailSettings = ({ onClickSave }: IProps) => {
     }));
   };
 
-
-
-
   const handleAddNewButtonClick = () => {
     setIsModalOpen(true);
   };
@@ -113,7 +112,6 @@ const EmailSettings = ({ onClickSave }: IProps) => {
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
-
 
   return (
     <div style={classes.containerStyle}>
@@ -160,39 +158,66 @@ const EmailSettings = ({ onClickSave }: IProps) => {
           onClose={handleModalClose}
           modalTitle={"Select Body Types"}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: "5px", marginTop: 20 }}>
-
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "5px",
+              marginTop: 20,
+            }}
+          >
             {Object.keys(BodyTypeEnum)
               .filter((key) => isNaN(Number(key)))
               .map((key) => {
                 return (
-                  <div key={key} >
+                  <div key={key}>
                     <Checkbox
-                      checked={state?.smsTemplateBodies?.some(body => body.type === BodyTypeEnum[key as keyof typeof BodyTypeEnum])}
-                      onChange={() => handleBodyTypeToggle(BodyTypeEnum[key as keyof typeof BodyTypeEnum])}
+                      checked={state?.smsTemplateBodies?.some(
+                        (body) =>
+                          body.type ===
+                          BodyTypeEnum[key as keyof typeof BodyTypeEnum]
+                      )}
+                      onChange={() =>
+                        handleBodyTypeToggle(
+                          BodyTypeEnum[key as keyof typeof BodyTypeEnum]
+                        )
+                      }
                       icon={<CheckboxIcon />}
                       checkedIcon={<CheckboxCheckedIcon />}
                     />
                     <label>{t(`mailingSettings.${key}`)}</label>
                   </div>
-                )
+                );
               })}
-            <GomakePrimaryButton style={{ width: "100%", height: "40px", marginTop: "10px" }} onClick={handleSaveBodyTypes}>{t("materials.buttons.save")}</GomakePrimaryButton>
+            <GomakePrimaryButton
+              style={{ width: "100%", height: "40px", marginTop: "10px" }}
+              onClick={handleSaveBodyTypes}
+            >
+              {t("materials.buttons.save")}
+            </GomakePrimaryButton>
           </div>
         </GoMakeModal>
-        {state?.smsTemplateBodies && state?.smsTemplateBodies.length > 0 && state?.smsTemplateBodies.map((body) => {
-          return (
-            <div key={body.type} style={classes.subSection}>
-              <h3 style={classes.subSectionHeader}>
-                {t(`mailingSettings.${BodyTypeEnum[body.type]?.toLowerCase()}Body`)}
-              </h3>
-              <QuillEditor
-                value={body.body || ""}
-                setValue={(content) => handleBodyContentChange(body.type, content)}
-              />
-            </div>
-          )
-        })}
+        {state?.smsTemplateBodies &&
+          state?.smsTemplateBodies.length > 0 &&
+          state?.smsTemplateBodies.map((body) => {
+            return (
+              <div key={body.type} style={classes.subSection}>
+                <h3 style={classes.subSectionHeader}>
+                  {t(
+                    `mailingSettings.${BodyTypeEnum[
+                      body.type
+                    ]?.toLowerCase()}Body`
+                  )}
+                </h3>
+                <QuillEditor
+                  value={body.body || ""}
+                  setValue={(content) =>
+                    handleBodyContentChange(body.type, content)
+                  }
+                />
+              </div>
+            );
+          })}
         {/* {selectedBodyTypes.map((type) => (
           <div key={type} style={classes.subSection}>
             <h3 style={classes.subSectionHeader}>
@@ -230,7 +255,11 @@ const EmailSettings = ({ onClickSave }: IProps) => {
         ) : (
           <Stack direction={"column"} gap={"18px"}>
             <Stack direction={"column"} gap={"5px"}>
-              <Stack direction={"row"} width={"180px"} alignItems={"flex-start"}>
+              <Stack
+                direction={"row"}
+                width={"180px"}
+                alignItems={"flex-start"}
+              >
                 {mailInputs1(state).map((item) => (
                   <FormInput
                     input={item as IInput}
@@ -238,18 +267,14 @@ const EmailSettings = ({ onClickSave }: IProps) => {
                     error={false}
                     readonly={false}
                   />
-
                 ))}
-
               </Stack>
               <div
                 style={{
                   marginTop: "10px",
                   padding: "0px 5px",
                   ...FONT_FAMILY.Inter(600, 13),
-                  color: state.isSendGridVerificated
-                    ? "green"
-                    : "red",
+                  color: state.isSendGridVerificated ? "green" : "red",
                 }}
               >
                 {state.isSendGridVerificated

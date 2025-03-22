@@ -1,28 +1,43 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { adaptMarginRight, convertWidthToVW } from "@/utils/adapter";
+import {
+  adaptMarginRight,
+  adaptPaddingLeft,
+  adaptPaddingRight,
+  convertWidthToVW,
+} from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useMediaQuery } from "@mui/material";
 
 const useStyle = () => {
   const { theme } = useGomakeTheme();
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRtl = dir === "rtl";
+  const isMobileScreen = useMediaQuery("(max-width:768px)");
+
   const classes = useMemo(() => {
     return {
       headerFilterContainer: {
         display: "flex",
+        ...(isMobileScreen && { flexWrap: "wrap" as "wrap" }),
         flexDirection: "row" as "row",
         backgroundColor: "#FFF",
         alignItems: "center",
-        gap: "20px",
+        gap: isMobileScreen ? "2px" : "20px",
         padding: "12px 0",
+        ...(isMobileScreen && { ...adaptPaddingRight(dir, 5) }),
+        ...(isMobileScreen && { rowGap: "10px" }),
       },
       filtersCardBox: {
         width: "90%",
-        maxHeight: "100px",
         maxWidth: "90%",
+        maxHeight: "100px",
+        ...(isMobileScreen
+          ? { width: "100%", maxWidth: "100%", ...adaptPaddingLeft(dir, 1) }
+          : { width: "90%", maxWidth: "90%" }),
+
         overflowX: "scroll",
         overflowY: "scroll",
         display: "flex",
@@ -74,7 +89,7 @@ const useStyle = () => {
         verticalAlign: "middle",
       },
     };
-  }, [theme, t]);
+  }, [theme, t, isMobileScreen]);
   return {
     classes,
   };

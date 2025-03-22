@@ -74,17 +74,28 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
     }
   }, [quoteItemValue?.customerID]);
 
-  const getAllShipmentTypes = async () => {
+  const getAllShipmentTypes = async (includeSelfPickup = false) => {
     const callBack = (res) => {
       if (res?.success) {
-        const types = res?.data.map((item) => ({
+        let types = res?.data.map((item) => ({
           value: item.id,
           label: item.title,
           price: item?.initialPrice,
         }));
+
+        // Add "Self Pickup" only if the prop is true
+        if (includeSelfPickup) {
+          types.push({
+            value: "self_pickup",
+            label: "Self Pickup",
+            price: 0, // Assuming there's no price for self-pickup
+          });
+        }
+
         setShipmentTypes(types);
       }
     };
+
     await getAllShipmentTypesApi(callApi, callBack);
   };
 

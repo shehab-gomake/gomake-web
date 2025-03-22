@@ -11,6 +11,7 @@ import { useRecoilState } from "recoil";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useTranslation } from "react-i18next";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 interface IProps extends IBoardMissionsStationTimer {
   onToggle?: (seconds: number) => void;
@@ -28,6 +29,8 @@ const ActionCountDown = ({
   const [boardMissionsDetails] = useRecoilState(boardMissionsDetailsState);
   const { errorColor } = useGomakeTheme();
   const { t } = useTranslation();
+  const isMobile = useIsMobile();
+
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
   useEffect(() => {
@@ -75,7 +78,7 @@ const ActionCountDown = ({
   }, [seconds]);
 
   return (
-    <Stack direction={"row"} alignItems={"flex-end"}>
+    <Stack direction={"row"} alignItems={isMobile ? "center" : "flex-end"}>
       <PermissionCheck
         userPermission={Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR}
       >
@@ -90,14 +93,19 @@ const ActionCountDown = ({
             }}
           >
             {loading ? (
-              <CircularProgress size={32} />
+              <CircularProgress size={isMobile ? 22 : 32} />
             ) : isActive ? (
-              <PauseCircleIcon style={{ color: "#43459D", fontSize: "32px" }} />
+              <PauseCircleIcon
+                style={{
+                  color: "#43459D",
+                  fontSize: isMobile ? "22px" : "32px",
+                }}
+              />
             ) : (
               <PlayCircleIcon
                 style={{
                   color: "#43459D",
-                  fontSize: "32px",
+                  fontSize: isMobile ? "22px" : "32px",
                   transform: isRTL ? "scaleX(-1)" : "none",
                 }}
               />
@@ -107,7 +115,7 @@ const ActionCountDown = ({
       </PermissionCheck>
       <span
         style={{
-          ...FONT_FAMILY.Inter(600, 30),
+          ...FONT_FAMILY.Inter(600, isMobile ? 20 : 30),
           color: seconds < 0 ? errorColor(500) : "#101828",
           alignItems: "center",
         }}

@@ -26,6 +26,7 @@ interface IProps {
   pagesCount: number;
   isFromDocumentsOrJobs?: boolean;
   router?: any;
+  isMobile?: boolean;
 }
 
 const GoMakePagination = ({
@@ -38,8 +39,9 @@ const GoMakePagination = ({
   pagesCount,
   isFromDocumentsOrJobs = false,
   router,
+  isMobile = false,
 }: IProps) => {
-  const { classes } = useStyle();
+  const { classes } = useStyle(isMobile);
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const pageOptions = Array.from(

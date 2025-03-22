@@ -11,7 +11,7 @@ const useStyle = () => {
   const clasess = useMemo(() => {
     return {
       insideStyle: {
-        width: "60%",
+        width: "70%",
         minWidth: "340px",
         borderRadius: 5,
         height: "100%",

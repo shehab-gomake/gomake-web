@@ -23,6 +23,7 @@ const UPDATE_MATERIAL_CATEGORY_NUMBERING_URL = "/v1/materials/update-material-ca
 const DELETE_MATERIAL_CATEGORY_URL = "/v1/materials/delete-material-category";
 const DELETE_MATERIAL_CATEGORY_Row_URL = "/v1/materials/delete-material-category-row";
 const CREATE_PURCHASE_ORDER_URL = "/v1/materials/create-purchase-order";
+const CREATE_DIE_CUT_FROM_TEMPLATE_MAKER_URL = "/v1/materials/create-die-cut-from-template-maker";
 const UPLOAD_PRINT_HOUSE_MATERIAL_IMAGE_URL = "/v1/materials/upload-print-house-material-image";
 const ADD_DOCUMENT_ITEM_FROM_MATERIALS = "/v1/printhouse-config/materials/add-document-item-from-material";
 const GET_DOCUMENT_ITEM_DATA_FROM_MATERIALS = "/v1/materials/get-document-item-data-from-material";
@@ -275,6 +276,20 @@ const createPurchaseOrderApi: ICallAndSetData = async (
   );
 };
 
+const createDieCutFromTemplateMakerApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    CREATE_DIE_CUT_FROM_TEMPLATE_MAKER_URL,
+    callBack,
+    data
+  );
+} 
+
 const uploadPrintHouseMaterialApi: ICallAndSetData = async (
   callApi,
   callBack,
@@ -349,6 +364,7 @@ export {
   deleteMaterialCategoryRowApi,
   getDeviceSizeMockApi,
   createPurchaseOrderApi,
+  createDieCutFromTemplateMakerApi,
   uploadPrintHouseMaterialApi,
   addDocumentItemFromMaterialApi,
   getDocumentItemDataFromMaterialApi,

@@ -1,12 +1,11 @@
 import { LoginLeftSide } from "./left-side/left-side";
-import { LoginRightSide } from "./right-side/right-side";
 import { useStyle } from "./style";
 
 const AdminLoginWidget = () => {
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
 
   return (
-    <div style={clasess.container}>
+    <div style={classes.container}>
       <LoginLeftSide />
     </div>
   );

@@ -22,7 +22,7 @@ const CollapseOptionComponent = ({
   ...option
 }: IProps) => {
   return (
-    <Stack direction={"row"} alignItems={"flex-start"} gap={"3px"}>
+    <Stack direction={"row"} alignItems={"baseline"} gap={"3px"}>
       {open || isFilter ? (
         <KeyboardArrowUpIcon
           style={{ cursor: "pointer" }}

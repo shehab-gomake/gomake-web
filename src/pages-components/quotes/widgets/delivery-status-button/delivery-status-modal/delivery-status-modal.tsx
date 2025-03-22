@@ -13,6 +13,7 @@ import { SignatureModal } from "./components/signature-modal";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { PhoneInputComponent } from "@/components/form-inputs/phone-input";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 const UpdateDeliveryStatusModal = ({
   document,
@@ -24,8 +25,11 @@ const UpdateDeliveryStatusModal = ({
   setDocumentItems,
   clientContacts,
   documentType,
+  documentId,
+  documentNumber,
 }: IUpdateDeliveryStatusModalProps) => {
   const { classes } = useStyle();
+  const isMobile = useIsMobile();
   const {
     t,
     tableHeaders,
@@ -67,9 +71,13 @@ const UpdateDeliveryStatusModal = ({
   return (
     <GoMakeModal
       modalTitle={`${t(`sales.quote.${DOCUMENT_TYPE[documentType]}`)} #${
-        document?.number
+        documentNumber ?? document?.number
       }`}
-      insideStyle={{ width: "70%", height: "fit-content" }}
+      insideStyle={{
+        width: isMobile ? "95vw" : "70%",
+        height: isMobile ? "unset":"fit-content",
+        ...(isMobile && { padding: "10px 10px 0px 10px" , maxHeight:"70vh"}),
+      }}
       openModal={openModal}
       onClose={handleCloseModal}
       modalTitleStyle={classes.modalTitle}
@@ -80,14 +88,14 @@ const UpdateDeliveryStatusModal = ({
           display={"flex"}
           flexWrap={"wrap"}
           direction={"row"}
-          gap={"10px"}
+          gap={isMobile ? "5px":"10px"}
         >
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
             <span style={classes.labelStyle}>
               {t("sales.documentDeliveries.recipient")}
             </span>
             <GoMakeSelect
-              key={`select-client-${document?.id}`}
+              key={`select-client-${documentId}`}
               style={{
                 width: 170,
                 height: "40px",
@@ -103,7 +111,7 @@ const UpdateDeliveryStatusModal = ({
               {t("sales.documentDeliveries.recipientName")}
             </span>
             <GoMakeTextInput
-              key={`receipt-name-${document?.id}`}
+              key={`receipt-name-${documentId}`}
               style={{
                 width: 170,
                 height: "40px",
@@ -149,7 +157,7 @@ const UpdateDeliveryStatusModal = ({
         <PrimaryTable
           stickyFirstCol={false}
           stickyHeader={true}
-          maxHeight={"calc(100vh - 300px)"}
+          maxHeight={isMobile ? "30vh":"calc(100vh - 300px)"}
           rows={documentItems}
           headers={tableHeaders}
           variant={"RoundTable"}
@@ -176,7 +184,7 @@ const UpdateDeliveryStatusModal = ({
         openModal={isSignatureModalOpen}
         onCloseModal={closeSignatureModal}
         onCloseAllModals={handleCloseSignModal}
-        documentId={document?.id}
+        documentId={documentId}
         documentType={documentType}
         selectedItems={selectedItems}
         setSelectedItems={setSelectedItems}
@@ -184,6 +192,7 @@ const UpdateDeliveryStatusModal = ({
         setEditableQuantities={setEditableQuantities}
         setDocumentItems={setDocumentItems}
         deliveryState={deliveryState}
+        isMobile={isMobile}
       />
     </GoMakeModal>
   );

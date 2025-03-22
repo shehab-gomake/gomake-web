@@ -59,6 +59,7 @@ import { ClientBalanceComponent } from "@/components/client-balance/client-balan
 import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 import { SettingVatListMenu } from "@/widgets/quote-new/setting-vat-menu";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { UpdateDeliveryPriceModal } from "@/widgets/quote-new/modals-widgets/update-delivery-price-modal/update-delivery-price-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -204,6 +205,9 @@ const QuoteNewPageWidget = ({
     onOpenDeliveryModal,
     openAddDeliveryModal,
     onCloseDeliveryModal,
+    openUpdateDeliveryModal,
+    onOpenUpdateDeliveryModal,
+    onCloseUpdateDeliveryModal,
     onAddDelivery,
     handleSaveBtnClick,
     handleRejectBtnClick,
@@ -741,6 +745,7 @@ const QuoteNewPageWidget = ({
                 openSendBtn={openSendBtn}
                 onOpenNewItem={onOpenNewItem}
                 onOpenDeliveryModal={onOpenDeliveryModal}
+                onOpenUpdateDeliveryModal={onOpenUpdateDeliveryModal}
                 handleCancelBtnClick={handleCancelBtnClick}
                 handleSaveBtnClick={handleSaveBtnClick}
                 handleSendBtnClick={handleSendBtnClick}
@@ -785,6 +790,13 @@ const QuoteNewPageWidget = ({
         <AddDeliveryModal
           openModal={openAddDeliveryModal}
           onClose={onCloseDeliveryModal}
+          onClickAdd={onAddDelivery}
+        />
+      )}
+      {!isPrePaymentPage && (
+        <UpdateDeliveryPriceModal
+          openModal={openUpdateDeliveryModal}
+          onClose={onCloseUpdateDeliveryModal}
           onClickAdd={onAddDelivery}
         />
       )}

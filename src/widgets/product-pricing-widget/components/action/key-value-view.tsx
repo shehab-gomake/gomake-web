@@ -13,7 +13,7 @@ import { NotesForActionModal } from "./notes-for-action-modal";
 import { updateBoardMissionActionOutputApi, updateProductItemDraftActionData, updateProductItemValueOutsourceSupplierCost } from "@/services/api-service/product-item-value-draft/product-item-draft-endpoints";
 import { useGomakeAxios } from "@/hooks";
 import { useRecoilValue } from "recoil";
-import { currentCalculationConnectionId } from "@/store";
+import { currentCalculationConnectionId, permissionsState } from "@/store";
 import { removeTags } from "@/utils/helpers";
 import { EOutSoucrceUpdateKey } from "@/enums";
 
@@ -270,6 +270,7 @@ const EditableKeyValueViewComponent = ({
     outSourceValues,
     source
 }: IKeyValueViewProps) => {
+    const permissions = useRecoilValue(permissionsState);
     const { classes } = useStyle();
     let value = '0';
     //source === EWorkSource.OUT ? !!outSourceValues && outSourceValues[0] ? outSourceValues[0] : '0' : values[0]
@@ -288,9 +289,14 @@ const EditableKeyValueViewComponent = ({
     const [edit, setEdit] = useState<boolean>(false);
     const [editValue, setEditValue] = useState<string>(value);
     const handleValueClick = (e) => {
-        e.stopPropagation();
-        setEditValue(value);
-        setEdit(true);
+        if (
+            permissions.includes(Permissions.UPDATE_CALCULATED_PRICE)
+        ) {
+            e.stopPropagation();
+            setEditValue(value);
+            setEdit(true);
+        }
+
     }
 
     const handleCancelUpdate = () => {
@@ -307,7 +313,7 @@ const EditableKeyValueViewComponent = ({
         setEdit(false);
     }
     return (
-        <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
+        <Stack direction={'row'} gap={'10px'} alignItems={'center'} justifyContent={'center'}>
             <span style={classes.detailTitle}>{name}</span>
             {edit ? <UpdateValueInput value={editValue} onUpdate={handleValueUpdate} onInputChange={onInputChange}
                 clickedOut={handleValueUpdate} onCancel={handleCancelUpdate} /> :

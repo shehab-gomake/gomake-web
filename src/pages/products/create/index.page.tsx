@@ -1,10 +1,10 @@
 import { CustomerAuthLayout } from "@/layouts";
 import { PriceListPageWidget } from "@/pages-components/products/digital-offset-price/digital-offset-price";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import { useMediaQuery } from "react-responsive";
+import { useMediaQuery } from "@mui/material";
 
 export default function DigitalOffsetPrice() {
-  const isMobileScreen = useMediaQuery({ query: "(max-width: 768px)" });
+  const isMobileScreen = useMediaQuery("(max-width:768px)");
 
   return (
     <CustomerAuthLayout backgroundColor={"#f6f6f6"}>

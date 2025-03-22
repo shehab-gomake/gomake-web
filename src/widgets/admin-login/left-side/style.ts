@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 const useStyle = () => {
   const { theme, primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       leftContainer: {
         display: "flex",
@@ -49,7 +49,7 @@ const useStyle = () => {
     };
   }, [theme]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

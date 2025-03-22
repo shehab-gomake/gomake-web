@@ -11,8 +11,8 @@ import { GoMakeAlertModal, GoMakeModal } from "@/components";
 import { useHtmlTour } from "@/layouts/customer-auth-layout/use-html-tour";
 import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-uploader-widget";
 import { MobileHeaderWidget } from "./mobile-top-list/mobile-header-widget";
-import { useEffect, useState } from "react";
 import { useUploadingNewVersionSocketIo } from "@/hooks/socket-io/use-upload-new-version-socket-io";
+import { useMediaQuery } from "@mui/material";
 
 const CustomerAuthLayout = ({
   children,
@@ -23,6 +23,7 @@ const CustomerAuthLayout = ({
   className,
   backgroundColor,
 }: IAuthLayout) => {
+  const isMobileScreen = useMediaQuery("(max-width:768px)");
   const { openAlertModal, setOpenAlertModal } =
     useUploadingNewVersionSocketIo();
 
@@ -36,20 +37,6 @@ const CustomerAuthLayout = ({
   const isHover = useRecoilValue(hoverStatusState);
   const { htmlTour, openModal, onCloseModal } = useHtmlTour();
 
-  // const isMobileScreen = useMediaQuery({ query: "(max-width: 768px)" });
-  const [isMobileScreen, setIsMobileScreen] = useState(false);
-
-  useEffect(() => {
-    updateScreenWidth();
-    window.addEventListener("resize", updateScreenWidth);
-    return () => {
-      window.removeEventListener("resize", updateScreenWidth);
-    };
-  }, []);
-
-  const updateScreenWidth = () => {
-    setIsMobileScreen(window.innerWidth <= 768);
-  };
   return disableHeaderSideMenu ? (
     <>
       {canAccess && (

@@ -26,6 +26,7 @@ import { useCallback } from "react";
 import { ThreeOptionsModal } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { ModalType } from "@/enums";
+import { useMediaQuery } from "@mui/material";
 
 interface IProps {
   status: IProductionStatus;
@@ -34,11 +35,19 @@ interface IProps {
   onClickClient?: (clientId: any) => void;
 }
 
-const StatusTableComponent = ({ status, boards, count,onClickClient }: IProps) => {
+const StatusTableComponent = ({
+  status,
+  boards,
+  count,
+  onClickClient,
+}: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
+  const isMobileScreen = useMediaQuery("(max-width:768px)");
+
   const {
     t,
+    RTL,
     updateStatus,
     onOpenMarkReadyModal,
     openMarkReadyModal,
@@ -48,7 +57,7 @@ const StatusTableComponent = ({ status, boards, count,onClickClient }: IProps) =
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
     selectedMission,
-    tryMoveBoardMissionsToDone
+    tryMoveBoardMissionsToDone,
   } = useProductionFloorData();
 
   const [{ isOver }, drop] = useDrop(
@@ -90,26 +99,37 @@ const StatusTableComponent = ({ status, boards, count,onClickClient }: IProps) =
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-        (board) =>
-          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-            search
-          ) ||
-          `${board?.clientName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          `${board?.productName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          board?.automatedTags?.some((tag) =>
-            `${tag.toLowerCase()}`.includes(search.toLowerCase())
-          ) ||
-          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-      )
+          (board) =>
+            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+              search
+            ) ||
+            `${board?.clientName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            `${board?.productName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            board?.automatedTags?.some((tag) =>
+              `${tag.toLowerCase()}`.includes(search.toLowerCase())
+            ) ||
+            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+        )
       : boards;
   }, [boards, search]);
 
   const getCustomWidth = (index: number) => {
-    const widths = ["3%", "9%", "9%", "9%", "9%", "23%", "12%", "12%", "12%", "2%"];
+    const widths = [
+      "3%",
+      "9%",
+      "9%",
+      "9%",
+      "9%",
+      "23%",
+      "12%",
+      "12%",
+      "12%",
+      "2%",
+    ];
     return widths[index] || "auto";
   };
 
@@ -132,7 +152,9 @@ const StatusTableComponent = ({ status, boards, count,onClickClient }: IProps) =
           },
         }}
       >
-        {`${!status.isGroup ? t("productionStatuses." + status.name) : status.name} (${getBoards().length})`}
+        {`${
+          !status.isGroup ? t("productionStatuses." + status.name) : status.name
+        } (${getBoards().length})`}
       </Button>
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
@@ -148,12 +170,25 @@ const StatusTableComponent = ({ status, boards, count,onClickClient }: IProps) =
                           placeItems: "center",
                           minWidth: getCustomWidth(index),
                           maxWidth: getCustomWidth(index),
-                          width: getCustomWidth(index)
+                          width: getCustomWidth(index),
+                          // Spread the mobile styles conditionally
+                          ...(isMobileScreen && {
+                            position: index <= 1 ? "sticky" : "relative",
+                            [RTL ? "right" : "left"]:
+                              index === 0 ? 0 : index === 1 ? 48 : "auto",
+                            zIndex: index <= 1 ? 2 : 1,
+                            background: index <= 1 ? "#f2f2f5" : "#F9FAFB",
+                          }),
                         }}
                         key={"statusTable" + status.id + index}
                         align={"center"}
                       >
-                        <div style={{ width: "max-content", minWidth: "max-content", }}>
+                        <div
+                          style={{
+                            width: "max-content",
+                            minWidth: "max-content",
+                          }}
+                        >
                           {header}
                         </div>
                       </SecondaryTableCell>
@@ -174,6 +209,8 @@ const StatusTableComponent = ({ status, boards, count,onClickClient }: IProps) =
                             onClickPrintDTicket={onOpenPrintDeliverTicketModal}
                             index={index}
                             onClickClient={onClickClient}
+                            isMobileScreen={isMobileScreen}
+                            isRTL={RTL}
                           />
                         </>
                       );
