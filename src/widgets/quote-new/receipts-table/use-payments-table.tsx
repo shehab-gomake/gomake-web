@@ -185,7 +185,7 @@ const usePaymentsTable = () => {
         return updatedCheckedItemsIds;
       });
       let sum = 0;
-      tableRows.forEach((item, index) => {
+      tableRows?.forEach((item, index) => {
         if (updatedCheckedItems[index]) {
           sum += item.sumApplied;
         }
