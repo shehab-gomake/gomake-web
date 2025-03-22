@@ -80,7 +80,7 @@ const ReceiptsTable = () => {
       const updatedSums = {};
       let remaining = finalTotalPayment;
 
-      tableRows.forEach((item, index) => {
+      tableRows?.forEach((item, index) => {
         if (checkedItems[index]) {
           // If finalTotalPayment is 0, allocate full sumApplied
           let allocatable =
