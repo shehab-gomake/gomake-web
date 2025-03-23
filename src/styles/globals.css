@@ -528,51 +528,6 @@ df-messenger {
   z-index: 300;
 }
 
-/* !here */
-/* .react-calendar-timeline .rct-header-root {
-  background-color: #fff;
-}
-
-.react-calendar-timeline .rct-dateHeader-primary {
-  color: #101828;
-  border: 0;
-}
-
-.time-line-header {
-  color: #475467;
-  font-size: 16px;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-}
-.react-calendar-timeline .rct-dateHeader {
-  background-color: #fff;
-  border: 0;
-}
-.react-calendar-timeline .rct-calendar-header {
-  border: 0;
-}
-.react-calendar-timeline .rct-sidebar {
-  border: 0;
-}
-.react-calendar-timeline .rct-sidebar .rct-sidebar-row {
-  border-bottom: 1px solid #eaecf0;
-}
-
-.rct-vl {
-  border-left: 0 !important;
-}
-.rct-horizontal-lines > * {
-  background-color: inherit !important;
-  border: 0 !important;
-}
-.react-calendar-timeline .rct-sidebar .rct-sidebar-row {
-  padding: 0 !important;
-} */
-
-/* IDK */
 .time-line-header {
   color: #475467;
   font-size: 16px;

@@ -18,7 +18,6 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { TimeFrameTabs } from "./state";
-import { adaptPaddingLeft } from "@/utils/adapter";
 
 const TimelineWidget = () => {
   const {
@@ -45,8 +44,6 @@ const TimelineWidget = () => {
     handleTabChange,
     timeFrameTabs,
     scrollTimeline,
-    dir,
-    isRTL,
   } = useGantt();
 
   useEffect(() => {
@@ -73,19 +70,26 @@ const TimelineWidget = () => {
             onClick={() => toggleGroup(group.id)}
             direction="row"
             alignItems="center"
-            style={{ cursor: "pointer", ...FONT_FAMILY.Inter(500, 14) }}
+            style={{
+              cursor: "pointer",
+              ...FONT_FAMILY.Inter(500, 14),
+            }}
           >
             {openGroups[group.id] ? (
-              <KeyboardArrowUpIcon />
+              <KeyboardArrowUpIcon
+                sx={{ color: "#757575", marginRight: "5px" }}
+              />
             ) : (
-              <KeyboardArrowDownIcon />
+              <KeyboardArrowDownIcon
+                sx={{ color: "#757575", marginRight: "5px" }}
+              />
             )}
             {group.title}
           </Stack>
         ) : (
           <div
             style={{
-              paddingLeft: 20,
+              paddingLeft: 10,
               backgroundColor: "#FFF",
               ...FONT_FAMILY.Inter(500, 14),
               overflow: "hidden",
@@ -132,7 +136,11 @@ const TimelineWidget = () => {
 
   return (
     <Stack gap={"10px"}>
-      <Stack direction={"row"} justifyContent={"space-between"}>
+      <Stack
+        direction={"row"}
+        justifyContent={"space-between"}
+        bgcolor={"#fff"}
+      >
         <div
           style={{
             display: "flex",
@@ -181,7 +189,7 @@ const TimelineWidget = () => {
           <IconButton onClick={() => scrollTimeline("right")}>
             <ChevronRightIcon />
           </IconButton>
-          <Stack style={{ ...adaptPaddingLeft(dir, 8) }} gap={"5px"}>
+          <Stack padding={"0px 8px 0px 0px"} gap={"5px"}>
             <AddIcon
               onClick={() => handleClickZoom("in")}
               style={{ height: "20px", width: "20px", cursor: "pointer" }}
@@ -207,7 +215,7 @@ const TimelineWidget = () => {
                           color: "#7A7A7A",
                           textAlign: "center",
                           padding: "0px 10px",
-                          backgroundColor: "#F6F6F6",
+                          backgroundColor: "red",
                           borderRadius: "8px",
                         }}
                       >

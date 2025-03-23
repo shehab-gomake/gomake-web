@@ -306,7 +306,7 @@ const useGantt = () => {
   }, [filtersState.stations]);
 
   /************************************ NEW *******************************/
-  const [activeTab, setActiveTab] = useState(TimeFrameTabs.HOUR);
+  const [activeTab, setActiveTab] = useState(TimeFrameTabs.DAY);
 
   const timeFrameTabs: ITab[] = [
     {
