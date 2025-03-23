@@ -215,7 +215,6 @@ const TimelineWidget = () => {
                           color: "#7A7A7A",
                           textAlign: "center",
                           padding: "0px 10px",
-                          backgroundColor: "red",
                           borderRadius: "8px",
                         }}
                       >

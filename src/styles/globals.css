@@ -544,30 +544,35 @@ df-messenger {
 
 .rct-horizontal-lines > * {
   background-color: inherit !important;
-  /* background-color: #fff !important; */
   border-bottom: 1px solid #eaecf0 !important;
 }
 
-/* 1) Add a bottom border to the entire header container */
+/* this hide the yellow bg color*/
+/* .rct-vertical-lines > * {
+  background-color: inherit !important;
+  border-left: 1px solid #eaecf0 !important;
+} */
+
+/* Add a bottom border to the entire header container */
 .react-calendar-timeline .rct-header-root {
   border-bottom: 1px solid #eaecf0 !important;
   background-color: #fff;
   pointer-events: none !important;
 }
 
-/* 2) Add a bottom border to the primary header row */
+/* Add a bottom border to the primary header row */
 .react-calendar-timeline .rct-dateHeader-primary {
   border-bottom: 1px solid #eaecf0 !important;
   color: #101828;
   border-left: 1px solid #eaecf0 !important;
 }
 
-/* 3) Add right borders to each secondary header column (the "smaller" time units) */
+/* Add right borders to each secondary header column (the "smaller" time units) */
 .react-calendar-timeline .rct-dateHeader:not(.rct-dateHeader-primary) {
   border-left: 1px solid #eaecf0 !important;
 }
 
-/* 4) (Optional) If you want a border around the sidebar header as well */
+/* (Optional) If you want a border around the sidebar header as well */
 .react-calendar-timeline .rct-sidebar .rct-sidebar-row {
   border-bottom: 1px solid #eaecf0 !important;
   padding: 0 !important;
@@ -580,8 +585,6 @@ df-messenger {
 
 .react-calendar-timeline .rct-calendar-header {
   border: 0;
-  /* border-left: 1px solid #eaecf0 !important; */
-  /* maybe */
 }
 
 .react-calendar-timeline .rct-sidebar {
