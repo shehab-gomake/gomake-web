@@ -18,6 +18,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { TimeFrameTabs } from "./state";
+import { adaptPaddingLeft } from "@/utils/adapter";
 
 const TimelineWidget = () => {
   const {
@@ -43,6 +44,9 @@ const TimelineWidget = () => {
     navigateTimeline,
     handleTabChange,
     timeFrameTabs,
+    scrollTimeline,
+    dir,
+    isRTL,
   } = useGantt();
 
   useEffect(() => {
@@ -167,18 +171,17 @@ const TimelineWidget = () => {
         <Stack
           alignItems={"center"}
           direction={"row"}
-          gap={"10px"}
           position={"absolute"}
           right={"0px"}
           top={"0px"}
           zIndex={99999}
           height={"60px"}
-          style={{ background: "#ededf5" }}
+          style={{ background: "#fff" }}
         >
-          {/* <IconButton onClick={() => scrollTimeline("right")}>
+          <IconButton onClick={() => scrollTimeline("right")}>
             <ChevronRightIcon />
-          </IconButton> */}
-          <Stack padding={"0 10px"} gap={"5px"}>
+          </IconButton>
+          <Stack style={{ ...adaptPaddingLeft(dir, 8) }} gap={"5px"}>
             <AddIcon
               onClick={() => handleClickZoom("in")}
               style={{ height: "20px", width: "20px", cursor: "pointer" }}
@@ -255,12 +258,18 @@ const TimelineWidget = () => {
                     }}
                   >
                     {t("productionFloor.stations")}
-                    {/* <IconButton
-                      style={{ position: "absolute", right: 0 }}
-                      onClick={() => scrollTimeline("left")}
+                    <div
+                      style={{
+                        position: "absolute",
+                        right: 0,
+                        pointerEvents: "auto",
+                        zIndex: 10,
+                      }}
                     >
-                      <KeyboardArrowLeftIcon />
-                    </IconButton> */}
+                      <IconButton onClick={() => scrollTimeline("left")}>
+                        <KeyboardArrowLeftIcon />
+                      </IconButton>
+                    </div>
                   </div>
                 );
               }}

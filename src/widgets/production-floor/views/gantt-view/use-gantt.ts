@@ -20,6 +20,8 @@ import { ITab } from "@/components/tabs/interface";
 
 const useGantt = () => {
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const { callApi } = useGomakeAxios();
   const [timeRange, setTimeRange] = useState({
     // defaultTimeStart: moment().startOf("hour").add(-2, "hours"),
@@ -41,9 +43,7 @@ const useGantt = () => {
   const [currentDate, setCurrentDate] = useState(moment());
   const [currentMonth, setCurrentMonth] = useState(moment());
 
-  //!here when it work
   const getData = async (month) => {
-    debugger;
     // Calculate start and end dates for the selected month in UTC
     const startOfMonth = moment()
       .year(currentMonth.year()) // Ensure the year aligns with the selected month
@@ -242,34 +242,34 @@ const useGantt = () => {
     setVisibleTimeRange({ start: visibleTimeStart, end: visibleTimeEnd });
   };
 
-  const scrollTimeline = (direction) => {
-    const visibleDuration = visibleTimeRange.end - visibleTimeRange.start;
-    const startTime = moment(visibleTimeRange.start);
-    const endTime = moment(visibleTimeRange.end);
-    let scrollAmount: number;
-    const durationHours = endTime.diff(startTime, "hours");
-    const monthsDifference = endTime.diff(startTime, "months");
-    if (durationHours === 1) {
-      scrollAmount = visibleDuration;
-    } else if (durationHours <= 24) {
-      scrollAmount = visibleDuration / 6;
-    } else if (monthsDifference <= 1) {
-      scrollAmount = visibleDuration / 30;
-    } else {
-      scrollAmount = visibleDuration / 12;
-    }
-    if (direction === "left") {
-      setVisibleTimeRange((prevState) => ({
-        start: prevState.start - scrollAmount,
-        end: prevState.end - scrollAmount,
-      }));
-    } else if (direction === "right") {
-      setVisibleTimeRange((prevState) => ({
-        start: prevState.start + scrollAmount,
-        end: prevState.end + scrollAmount,
-      }));
-    }
-  };
+  // const scrollTimeline = (direction) => {
+  //   const visibleDuration = visibleTimeRange.end - visibleTimeRange.start;
+  //   const startTime = moment(visibleTimeRange.start);
+  //   const endTime = moment(visibleTimeRange.end);
+  //   let scrollAmount: number;
+  //   const durationHours = endTime.diff(startTime, "hours");
+  //   const monthsDifference = endTime.diff(startTime, "months");
+  //   if (durationHours === 1) {
+  //     scrollAmount = visibleDuration;
+  //   } else if (durationHours <= 24) {
+  //     scrollAmount = visibleDuration / 6;
+  //   } else if (monthsDifference <= 1) {
+  //     scrollAmount = visibleDuration / 30;
+  //   } else {
+  //     scrollAmount = visibleDuration / 12;
+  //   }
+  //   if (direction === "left") {
+  //     setVisibleTimeRange((prevState) => ({
+  //       start: prevState.start - scrollAmount,
+  //       end: prevState.end - scrollAmount,
+  //     }));
+  //   } else if (direction === "right") {
+  //     setVisibleTimeRange((prevState) => ({
+  //       start: prevState.start + scrollAmount,
+  //       end: prevState.end + scrollAmount,
+  //     }));
+  //   }
+  // };
 
   const handleClickZoom = (direction) => {
     const MAX_ZOOM_DURATION = 1000 * 60 * 60 * 24 * 365; // 12 months
@@ -421,6 +421,69 @@ const useGantt = () => {
     });
   };
 
+  const scrollTimeline = (direction) => {
+    const visibleDuration = visibleTimeRange.end - visibleTimeRange.start;
+    let scrollAmount: number;
+
+    const startTime = moment(visibleTimeRange.start);
+    const endTime = moment(visibleTimeRange.end);
+    const durationHours = endTime.diff(startTime, "hours");
+    const monthsDifference = endTime.diff(startTime, "months");
+
+    if (durationHours === 1) {
+      scrollAmount = visibleDuration;
+    } else if (durationHours <= 24) {
+      scrollAmount = visibleDuration / 6;
+    } else if (monthsDifference <= 1) {
+      scrollAmount = visibleDuration / 30;
+    } else {
+      scrollAmount = visibleDuration / 12;
+    }
+
+    // Calculate new visible range
+    const newStart =
+      direction === "left"
+        ? visibleTimeRange.start - scrollAmount
+        : visibleTimeRange.start + scrollAmount;
+
+    const newEnd =
+      direction === "left"
+        ? visibleTimeRange.end - scrollAmount
+        : visibleTimeRange.end + scrollAmount;
+
+    setVisibleTimeRange({ start: newStart, end: newEnd });
+
+    const newCenterDate = moment((newStart + newEnd) / 2);
+    const previousDate = currentDate.clone();
+
+    const isDifferentPeriod = () => {
+      switch (activeTab) {
+        case TimeFrameTabs.YEAR:
+          return !newCenterDate.isSame(previousDate, "year");
+        case TimeFrameTabs.MONTH:
+          return !newCenterDate.isSame(previousDate, "month");
+        case TimeFrameTabs.WEEK:
+          return !newCenterDate.isSame(previousDate, "week");
+        case TimeFrameTabs.DAY:
+          return !newCenterDate.isSame(previousDate, "day");
+        case TimeFrameTabs.HOUR:
+          return !newCenterDate.isSame(previousDate, "hour");
+        default:
+          return false;
+      }
+    };
+
+    if (isDifferentPeriod()) {
+      setCurrentDate(newCenterDate);
+
+      if (!newCenterDate.isSame(currentMonth, "month")) {
+        const newMonthStart = newCenterDate.clone().startOf("month");
+        setCurrentMonth(newMonthStart);
+        getData(newMonthStart.month());
+      }
+    }
+  };
+
   return {
     timeRange,
     setTimeRange,
@@ -444,7 +507,6 @@ const useGantt = () => {
     handleClickZoom,
     setVisibleTimeRange,
     t,
-
     activeTab,
     setActiveTab,
     handleItemSelect,
@@ -455,6 +517,8 @@ const useGantt = () => {
     navigateTimeline,
     handleTabChange,
     timeFrameTabs,
+    dir,
+    isRTL,
   };
 };
 

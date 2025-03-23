@@ -150,7 +150,9 @@ const JobTooltipComponent = ({
 
   const handleOpenMission = () => {
     push(
-      `/production-floor?boardMissionsId=${boardMissionId}&productType=${productType}&step=stations`
+      `/production-floor?boardMissionsId=${boardMissionId}&productType=${
+        productType ?? ""
+      }&step=stations`
     );
   };
 
