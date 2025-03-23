@@ -39,7 +39,6 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
   style,
 }) => {
   const { classes } = useStyle();
-
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -90,9 +89,10 @@ const ProductDetailsSection: React.FC<SectionProps> = ({
                       <Stack
                         sx={{
                           display: "grid",
-                          gridTemplateColumns: isRTL
-                            ? "repeat(4, minmax(0, 1fr))"
-                            : "repeat(4, minmax(0, 1fr))",
+                          gridTemplateColumns: {
+                            xs: "repeat(2, minmax(0, 1fr))", // 2 columns on small screens
+                            sm: "repeat(4, minmax(0, 1fr))", // 4 columns on larger screens
+                          },
                           rowGap: "10px",
                           direction: isRTL ? "rtl" : "ltr",
                         }}

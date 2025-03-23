@@ -2,19 +2,22 @@ import { allSMSTemplateGroupsState } from "@/widgets/settings-mailing/states/sta
 import { useRecoilValue } from "recoil";
 
 const filterInput = (state: any) => {
-    const allSMSTemplateGroups = useRecoilValue<any>(allSMSTemplateGroupsState);
-    return [
-        {
-            name: "SMSgroup",
-            label: "mailingSettings.group",
-            type: "select",
-            placeholder: "mailingSettings.group",
-            required: false,
-            parameterKey: "id",
-            value: state?.id,
-            options: allSMSTemplateGroups
-        }
-    ];
-}
+  const allSMSTemplateGroups = useRecoilValue<any>(allSMSTemplateGroupsState);
+  return [
+    {
+      name: "SMSgroup",
+      label: "mailingSettings.group",
+      type: "select",
+      placeholder: "mailingSettings.group",
+      required: false,
+      parameterKey: "id",
+      value: state?.id,
+      options: allSMSTemplateGroups.map((group) => ({
+        text: group.name,
+        value: group.id,
+      })),
+    },
+  ];
+};
 
 export { filterInput };

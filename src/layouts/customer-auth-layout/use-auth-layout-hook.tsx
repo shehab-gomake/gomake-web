@@ -1,5 +1,5 @@
 import { useGomakeAuth, useGomakeRouter } from "@/hooks";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { companyProfileState, ICompanyProfile } from "@/store/company-profile";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -21,6 +21,7 @@ import {
 import { ActionsIcon } from "@/icons/side-list-icons/actions";
 import { SettingsIcon } from "@/icons/side-list-icons/settings";
 import { CustomerServiceIcon } from "@/icons/side-list-icons/customer-service";
+import { DeliveriesIcon } from "@/icons/side-list-icons/deliveries";
 
 const useAuthLayoutHook = (
   permissionEnumValue?: Permissions,
@@ -33,6 +34,15 @@ const useAuthLayoutHook = (
   const { navigate } = useGomakeRouter();
   const [canAccess, setCanAccess] = useState<boolean | null>(null);
   const profile = useRecoilValue<ICompanyProfile>(companyProfileState);
+
+  const changeRoute = useCallback((route: string) => {
+    navigate(route);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("auth-token");
+    changeRoute("/login");
+  };
 
   const tabs1: any = useMemo(() => {
     return [
@@ -118,6 +128,12 @@ const useAuthLayoutHook = (
             title: "tabs.invoiceRefund",
             path: "/invoiceRefunds",
             Permission: Permissions.SHOW_INVOICES_REFUND,
+          },
+          {
+            key: "deliveries",
+            title: "tabs.deliveries",
+            path: "/deliveries",
+            Permission: Permissions.SHOW_DELIVERIES,
           },
         ],
         icon: () => {
@@ -491,6 +507,7 @@ const useAuthLayoutHook = (
     canAccess,
     profile,
     navigate,
+    handleLogout,
   };
 };
 export { useAuthLayoutHook };

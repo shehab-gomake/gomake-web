@@ -43,7 +43,13 @@ const CharacterDetails = ({
     jobName,
     setJobName,
     truncatedDetails,
-  } = useCharacterDetails({ details, getQuote, documentItemId, documentType, workName });
+  } = useCharacterDetails({
+    details,
+    getQuote,
+    documentItemId,
+    documentType,
+    workName,
+  });
   const { classes } = useStyleCharacterDetails({ showAll, showLessHeightFit });
 
   return (
@@ -88,8 +94,6 @@ const CharacterDetails = ({
         jobName={jobName}
         setJobName={setJobName}
         documentType={documentType}
-
-
       />
     </>
   );

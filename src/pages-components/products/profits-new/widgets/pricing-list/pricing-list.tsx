@@ -69,13 +69,14 @@ const PricingList = ({
     supplierList,
     selectedSupplier,
     setSelectedSupplier
-  } = useCopyAction({ getAllActionProfitRowsByActionId });
+  } = useCopyAction({ getAllActionProfitRowsByActionId, selectedPricingTableItems });
+
   useEffect(() => {
-    if (actionProfitByActionId?.supplerId) {
-      const supplier = supplierList.find((supplier) => supplier.id === actionProfitByActionId?.supplerId)
+    if (selectedPricingTableItems?.supplierId) {
+      const supplier = supplierList.find((supplier) => supplier.id === selectedPricingTableItems?.supplierId)
       setSelectedSupplier(supplier)
     }
-  }, [actionProfitByActionId, supplierList])
+  }, [selectedPricingTableItems, supplierList])
   return (
     <div style={classes.pricListWidgetMainContainer}>
       <div style={classes.headerMainCointaner}>
@@ -98,6 +99,7 @@ const PricingList = ({
                 style={classes.autoCompleteStyleContainer}
                 onChange={(e, value) => {
                   updateOutSourceActionSupplier(value?.id)
+                  setSelectedSupplier(value)
                 }}
                 getOptionLabel={(option) => option.name}
                 placeholder={t("select supplier")}

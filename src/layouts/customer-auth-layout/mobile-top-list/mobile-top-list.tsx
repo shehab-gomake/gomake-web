@@ -2,11 +2,17 @@ import { Tab } from "./mobile-tab";
 import { useStyle } from "./style";
 import { useAuthLayoutHook } from "../use-auth-layout-hook";
 import { useUserPermission } from "@/hooks/use-permission";
-
+import { Stack } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { useTranslation } from "react-i18next";
 const TopListLayout = () => {
-  const { tabs1, tabs2, tabs3, tabs4 } = useAuthLayoutHook(null, true);
+  const { tabs1, tabs2, tabs3, tabs4, handleLogout } = useAuthLayoutHook(
+    null,
+    true
+  );
   const { CheckPermission } = useUserPermission();
   const { classes } = useStyle();
+  const { t } = useTranslation();
 
   const checkTabPermissions = (tab) => {
     if (tab.isList && tab.list) {
@@ -123,6 +129,13 @@ const TopListLayout = () => {
               );
             }
           })}
+        <div style={classes.tabContainer} onClick={handleLogout}>
+          <Stack direction={"row"} sx={{ gap: "10px" }}>
+            <LogoutIcon />
+            <div style={classes.tabTitle}>{t("login.logOut")}</div>
+          </Stack>
+          <div style={{ marginLeft: 5 }} />
+        </div>
       </div>
     </div>
   );

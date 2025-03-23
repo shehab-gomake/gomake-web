@@ -74,6 +74,7 @@ const useAddRuleModal = ({
         label: t("products.profits.exceptions.machineTypeCategory"),
         id: "Machine category",
       },
+      { label: t("products.profits.exceptions.materialType"), id: "MATERIALTYPE" },
       { label: t("products.profits.exceptions.products"), id: "Products" },
       {
         label: t("products.profits.exceptions.productType"),
@@ -108,6 +109,7 @@ const useAddRuleModal = ({
     Agent: 8,
     Employee: 9,
     ProductType: 10,
+    MATERIALTYPE : 11,
   };
 
   const { Outputs } = useOutputs({ shouldRenderOutputsOnMount: openModal });
@@ -335,7 +337,6 @@ const useAddRuleModal = ({
     if (conditions.length === 0 || isRuleEmpty(conditions[0])) {
       return t("products.profits.pricingListWidget.noRuleFount");
     }
-    debugger
     const textArray = conditions.map((condition) => {
       const categoryLabel = condition?.category
         ? condition.category.id !== "Property output" &&
@@ -420,7 +421,7 @@ const useAddRuleModal = ({
       if (item.statement2 && item.statement2.type === 5 || item.statement2 && item.statement2.type === 10 || item.statement2 && item.statement2.type === 11) {
         return item?.statement?.code;
       }
-      return item?.statement?.id;
+      return item?.statement?.id || item?.statement?.value;
     }
     return item?.statement;
   };
@@ -436,7 +437,8 @@ const useAddRuleModal = ({
       exceptionConditionProperties: rules.map((item) => {
         return {
           statementId: getStatementId(item),
-          statementValue: item.statement2.id,
+          // statementValue: item.statement2.id,
+          statementValue: item?.category?.id === "MATERIALTYPE" ? item.statement2.enumCode : item.statement2.id,
           operator: item.condition.id,
           conditionBetweenStatements: item.linkCondition
             ? item.linkCondition.id
@@ -481,7 +483,6 @@ const useAddRuleModal = ({
   ]);
 
   const createProperties = useCallback(async () => {
-    debugger
     if (!propertieValue) {
       alertFaultAdded();
       return;

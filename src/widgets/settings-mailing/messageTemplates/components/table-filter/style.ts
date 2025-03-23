@@ -9,7 +9,6 @@ const useStyle = () => {
         position: "sticky" as "sticky",
         top: 0,
         width: "100%",
-        // backgroundColor: "#FFF",
         zIndex: 1,
         padding: 1,
         paddingTop: 0,

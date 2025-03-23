@@ -19,6 +19,7 @@ import { Source } from "@/widgets/production-floor/filters/select/actions-select
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded";
+import { useIsMobile } from "@/hooks/use-responsive";
 
 const ProductionFloorHeader = ({
   filterGroups,
@@ -27,11 +28,9 @@ const ProductionFloorHeader = ({
 }: any) => {
   const {
     view,
-    setView,
     showAllJobsButton,
     paths,
     onClickPath,
-    navigateToProductionFloor,
     onClickBack,
     currentPathIndex,
     onStationsChange,
@@ -41,12 +40,16 @@ const ProductionFloorHeader = ({
   const dir = t("direction");
   const updateViewInUrl = useUpdateViewInUrl();
   const { CheckPermission } = useUserPermission();
+  const isMobileScreen = useIsMobile();
 
   return (
     <Stack
       direction={"row"}
       justifyContent={"space-between"}
       alignItems={"center"}
+      style={{
+        ...(isMobileScreen && { display: "contents" }),
+      }}
     >
       <Stack direction={"row"} alignItems={"center"} gap={"10px"}>
         {(showAllJobsButton || view === EProductionFloorView.GROUPS) &&
@@ -78,6 +81,7 @@ const ProductionFloorHeader = ({
           style={{
             ...FONT_FAMILY.Lexend(700, 20),
             color: "#2E3092",
+            ...(isMobileScreen && { marginTop: "5px" }),
           }}
         >
           {t("tabs.productFloor")}

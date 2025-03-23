@@ -1,9 +1,9 @@
-import React from "react";
 import { Box, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { PageNoteFound } from "@/icons/404-page/page-not-found";
 import { PrimaryButton } from "@/components/button/primary-button";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { useMobileHeight } from "@/hooks/use-responsive";
 
 interface PageNotFoundProps {
   hideBackToHomePageBtn?: boolean;
@@ -13,6 +13,7 @@ export default function PageNotFound({
   hideBackToHomePageBtn = false,
 }: PageNotFoundProps) {
   const router = useRouter();
+  const mobileHeight = useMobileHeight();
 
   const handleGoBack = () => {
     router.push("/home").then(() => {
@@ -27,7 +28,7 @@ export default function PageNotFound({
         flexDirection="column"
         alignItems="center"
         justifyContent="center"
-        height="100vh"
+        height={mobileHeight}
         textAlign="center"
         p={2}
         bgcolor="white"

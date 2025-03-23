@@ -28,8 +28,8 @@ import { useRouter } from "next/router";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
-import {useRecoilState} from "recoil";
-import {filterGroupsState} from "@/widgets/production-floor/state/filter-group";
+import { useRecoilState } from "recoil";
+import { filterGroupsState } from "@/widgets/production-floor/state/filter-group";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -122,22 +122,6 @@ const Circle = styled(Box)<{ numColor: string; dir: string }>(
   })
 );
 
-const IconButtonWrapper = styled("div")({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  position: "relative",
-  "& .clear-icon": {
-    visibility: "hidden",
-    opacity: 0,
-    transition: "visibility 0.2s, opacity 0.2s",
-  },
-  "&:hover .clear-icon": {
-    visibility: "visible",
-    opacity: 1,
-  },
-});
-
 const CustomGroupComponent = ({
   onClick,
   onClickDelete,
@@ -163,7 +147,15 @@ const CustomGroupComponent = ({
           width: "100%",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        {/* First Box - Group Name */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flex: "1 1 auto",
+            minWidth: 0,
+          }}
+        >
           <Typography
             variant="subtitle2"
             sx={{
@@ -172,45 +164,55 @@ const CustomGroupComponent = ({
               overflow: "hidden",
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",
+              maxWidth: "100%",
             }}
           >
             {group?.name}
           </Typography>
         </Box>
-
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        {/* Second Box - Status Circles & Delete Icon */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexShrink: 0,
+            // gap: "6px",
+          }}
+        >
           <Circle numColor="#E7D000" dir={dir}>
             {group?.inProcessCount}
           </Circle>
           <Circle numColor="#D92D20" dir={dir}>
             {group?.stuckCount}
           </Circle>
-          <Circle
-            numColor={group?.color}
-            dir={dir}
-            sx={{
-              backgroundColor: "transparent",
-            }}
-          >
-            {
-              group.id !== "all" && (<IconButton
-                    onClick={onClickDelete}
-                    size="small"
-                    style={{
-                      padding: "4px",
-                    }}
-                >
-                  <ClearIcon
-                      className="clear-icon"
-                      style={{
-                        cursor: "pointer",
-                        fontSize: "14px",
-                        color: isSelected ? "#FFF" : group?.color,
-                      }}
-                  />
-                </IconButton>)
-            }
-          </Circle>
+          {group.id !== "all" && (
+            <Circle
+              numColor={group?.color}
+              dir={dir}
+              sx={{
+                backgroundColor: "transparent",
+              }}
+            >
+              (
+              <IconButton
+                onClick={onClickDelete}
+                size="small"
+                style={{
+                  padding: "4px",
+                }}
+              >
+                <ClearIcon
+                  className="clear-icon"
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    color: isSelected ? "#FFF" : group?.color,
+                  }}
+                />
+              </IconButton>
+              )
+            </Circle>
+          )}
         </Box>
       </CardContent>
     </CustomGroup>
@@ -225,12 +227,17 @@ const CustomWidthTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 });
 
-const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
+const ProductionFloorFilters = ({
+  getStationFilterGroups,
+  connectionId,
+  isMobile,
+}) => {
   const { classes } = useStyle();
   const { push } = useRouter();
   const { tagsList } = filtersInputs();
   const [containerWidth, setContainerWidth] = useState(0);
-  const [filterGroups, setFilterGroups] = useRecoilState<IFilterGroupsList[]>(filterGroupsState);
+  const [filterGroups, setFilterGroups] =
+    useRecoilState<IFilterGroupsList[]>(filterGroupsState);
 
   const {
     t,
@@ -262,7 +269,10 @@ const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
     handleDeleteConfirm,
     handleCancel,
     handleClearClick,
-  } = useProductionFloorFilters({ getStationFilterGroups:getStationFilterGroups,connectionId:connectionId });
+  } = useProductionFloorFilters({
+    getStationFilterGroups: getStationFilterGroups,
+    connectionId: connectionId,
+  });
 
   useEffect(() => {
     const fetchMachinesColors = async () => {
@@ -280,7 +290,9 @@ const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
     const updateContainerWidth = () => {
       if (scrollContainerRef.current) {
         // setContainerWidth(scrollContainerRef.current.clientWidth );
-        setContainerWidth(scrollContainerRef.current.clientWidth + 300);
+        setContainerWidth(
+          scrollContainerRef.current.clientWidth + (isMobile ? 100 : 300)
+        );
       }
     };
     updateContainerWidth();
@@ -289,7 +301,7 @@ const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
     return () => {
       window.removeEventListener("resize", updateContainerWidth);
     };
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     if (scrollContainerRef.current) {
@@ -321,7 +333,6 @@ const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
       setHiddenFilterGroups(hidden);
     }
   }, [filterGroups, containerWidth]);
-
 
   const getMissionsList = useCallback(() => {
     return missionsList;
@@ -431,7 +442,7 @@ const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
         {visibleFilterGroups?.map((group, index) => (
           <CustomGroupComponent
             dir={dir}
-            key={'visibleGroup' + index}
+            key={"visibleGroup" + index}
             group={group}
             onClick={() => handleSelectGroup(group?.id)}
             onClickDelete={(event) => {
@@ -472,7 +483,7 @@ const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
                 {hiddenFilterGroups?.map((group, index) => (
                   <CustomGroupComponent
                     dir={dir}
-                    key={'hiddenGroup' + index}
+                    key={"hiddenGroup" + index}
                     group={group}
                     onClick={() => handleSelectGroup(group?.id)}
                     onClickDelete={(event) => {
@@ -494,6 +505,11 @@ const ProductionFloorFilters = ({ getStationFilterGroups ,connectionId}) => {
         onClose={handleCancel}
         onClickDelete={handleDeleteConfirm}
         onClickCancel={handleCancel}
+        style={{
+          width: "90vw",
+          maxWidth: 600,
+          minWidth: "unset",
+        }}
       />
     </Stack>
   );

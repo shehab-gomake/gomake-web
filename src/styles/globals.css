@@ -590,3 +590,10 @@ df-messenger {
 .react-calendar-timeline .rct-sidebar {
   border: 0;
 }
+
+.custom-date-range-picker {
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 5px;
+}

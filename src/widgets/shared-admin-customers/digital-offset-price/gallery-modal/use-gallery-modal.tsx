@@ -16,7 +16,6 @@ import { useTranslation } from "react-i18next";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { filterState } from "@/widgets/materials-widget/state";
 import { useRouter } from "next/router";
-import { selectedShapeForHiddenState } from "./gallery-modal-store-hidden";
 
 const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForNewDie, straightKnife, isParameterSettings, getProductById, template, _getParameter }) => {
   const { callApi } = useGomakeAxios();
@@ -41,7 +40,6 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const dieKissCutParameterForSettings = findParameterByCode(template, "DieKissCut")
 
   const isDiesParameter = dieCutParameterForSettings || dieKissCutParameterForSettings
-
   const filteredMaterialData = !isParameterSettings
     ? materialData?.data?.filter(item => {
       const config = isDiesParameter?.valuesConfigs.find(config => config.id === item.id);
@@ -185,15 +183,20 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     searchText = searchText?.toLowerCase();
     const result = items?.filter((item) =>
       item.rowData.name.value.toLowerCase().includes(searchText) ||
-      (item?.rowData?.type?.value && item?.rowData?.type?.value?.some(type => type?.toLowerCase().includes(searchText))) ||
+      (Array.isArray(item?.rowData?.type?.value) && item?.rowData?.type?.value.some(type => type?.toLowerCase().includes(searchText))) ||
       item?.category?.toLowerCase()?.includes(searchText) ||
       item?.rowData?.code?.value?.toLowerCase().includes(searchText)  // Added filter for description
     );
 
     return result;
   }
-
-  const searchResult = searchByNameOrType(filteredMaterialData, materialDataFilter);
+  const [searchResult, setSearchResult] = useState<any>([])
+  useEffect(() => {
+    if (materialDataFilter) {
+      setSearchResult(searchByNameOrType(filteredMaterialData, materialDataFilter))
+    }
+  }, [materialDataFilter])
+  // const searchResult = searchByNameOrType(filteredMaterialData, materialDataFilter);
   const onChangeSearch = (value: string) => {
     setMaterialDataFilter(value);
   };
@@ -417,6 +420,29 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     }
   }, [template])
 
+  const checkRequiredParameters = (subProducts: any[]): boolean => {
+    const requiredParameterCodes = [
+      "DieUnitWidth",
+      "DieUnitLength",
+      "DieUnitHeight",
+      // "Width",
+      // "Height",
+      // "Sheetcategory",
+      // "SheetWeight",
+      // "SheetColor"
+    ];
+
+    for (const product of subProducts) {
+      const parameterCodes = product.parameters.map((param: any) => param.parameterCode);
+      for (const requiredCode of requiredParameterCodes) {
+        if (!parameterCodes.includes(requiredCode)) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
   return {
     materialData,
     selectedShape,
@@ -441,7 +467,10 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     selectParameterButton,
     setMaterialData,
     filteredMaterialData,
-    isDiesParameter
+    isDiesParameter,
+    checkRequiredParameters,
+    subProducts,
+    setSearchResult
   };
 };
 

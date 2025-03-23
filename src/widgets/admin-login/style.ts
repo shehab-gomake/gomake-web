@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 const useStyle = () => {
   const { theme, primaryColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       container: {
         backgroundColor: "#FFFFFF",
@@ -19,7 +19,7 @@ const useStyle = () => {
     };
   }, [theme]);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

@@ -1,4 +1,5 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useIsMobile } from "@/hooks/use-responsive";
 import { FONT_FAMILY } from "@/utils/font-family";
 import Stack from "@mui/material/Stack";
 import { ReactNode, ReactElement, CSSProperties } from "react";
@@ -19,6 +20,7 @@ const CardContainer = ({
   style,
 }: CardContainerProps) => {
   const { primaryColor } = useGomakeTheme();
+  const isMobileScreen = useIsMobile();
 
   return (
     <Stack
@@ -29,8 +31,7 @@ const CardContainer = ({
         boxShadow: "0px 5px 31px 0px rgba(0, 0, 0, 0.06)",
         display: "flex",
         flexDirection: "column",
-        maxHeight: "100%",
-        overflow: "hidden",
+        ...(!isMobileScreen && { maxHeight: "100%", overflow: "hidden" }),
         ...style,
       }}
     >
