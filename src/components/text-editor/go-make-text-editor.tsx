@@ -102,6 +102,7 @@ const GoMakeTextEditor = ({
         min-height: 80px;
         border-top: 0.5px solid #ccc;
         box-shadow: none;
+        height: 145px !important;
       }
     `;
     document.head.appendChild(style);

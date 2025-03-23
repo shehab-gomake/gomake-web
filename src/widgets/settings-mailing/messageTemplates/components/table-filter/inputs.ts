@@ -11,11 +11,14 @@ const filterInput = (state: any) => {
       placeholder: "mailingSettings.group",
       required: false,
       parameterKey: "id",
-      value: state?.id,
-      options: allSMSTemplateGroups.map((group) => ({
-        text: group.name,
-        value: group.id,
-      })),
+      value: state?.id  ,
+      options: [
+        { text: "Default", value: "00000000-0000-0000-0000-0000000000000" }, // Static option
+        ...allSMSTemplateGroups.map((group) => ({
+            text: group.name,
+            value: group.id,
+        }))
+    ],
     },
   ];
 };
