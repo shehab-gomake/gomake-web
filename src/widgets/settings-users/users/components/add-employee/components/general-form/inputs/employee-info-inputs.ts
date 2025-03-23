@@ -1,3 +1,4 @@
+import { allSMSTemplatesListState } from "@/store";
 import { languageOptionsState } from "@/store/languages";
 import { EmployeeQuoteLimitationType } from "@/widgets/settings-users/users/enums/employee-actions";
 import { Employee } from "@/widgets/settings-users/users/interface/employee";
@@ -5,7 +6,7 @@ import { useRecoilValue } from "recoil";
 
 const employeeInfoInputs = (state: Employee, quoteLimitationOptions: any) => {
   const languages = useRecoilValue(languageOptionsState);
-
+  const allSMSTemplatesList = useRecoilValue(allSMSTemplatesListState);
   return [
     {
       name: "firstName",
@@ -75,9 +76,9 @@ const employeeInfoInputs = (state: Employee, quoteLimitationOptions: any) => {
       required: false,
       parameterKey: "smsTemplatesGroupId",
       value: state.smsTemplatesGroupId,
-      options: [],
+      options: allSMSTemplatesList,
       isValid: true,
-      optionsUrl: "/v1/crm-service/roles/get-all-sms-templates",
+      // optionsUrl: "/v1/crm-service/roles/get-all-sms-templates",
     },
     // {
     //     name: "isGraphicArtist",

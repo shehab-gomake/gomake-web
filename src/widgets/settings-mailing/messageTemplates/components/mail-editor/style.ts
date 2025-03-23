@@ -34,6 +34,7 @@ const useStyle = () => {
                 flexDirection: 'column' as 'column',
                 gap: "10px",
                 alignItems: "flex-start",
+                width: "100%",
             },
             subSectionHeader: {
                 ...FONT_FAMILY.Lexend(400, 16),
