@@ -24,7 +24,6 @@ const TimelineWidget = () => {
     t,
     groups,
     items,
-    setItems,
     timeRange,
     openGroups,
     getData,
@@ -35,9 +34,7 @@ const TimelineWidget = () => {
     handleZoom,
     onTimeChange,
     visibleTimeRange,
-    scrollTimeline,
     handleClickZoom,
-    setVisibleTimeRange,
     activeTab,
     handleItemSelect,
     handleItemDeselect,
@@ -48,10 +45,9 @@ const TimelineWidget = () => {
     timeFrameTabs,
   } = useGantt();
 
-  // !here when it work ?
   useEffect(() => {
-    getData(currentMonth.month()).then();
-  }, [currentMonth]);
+    getData(currentMonth.clone().month());
+  }, [currentMonth.valueOf()]);
 
   const filteredGroups = useMemo(() => {
     return groups

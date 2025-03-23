@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import {
   getTimeLineJobsApi,
   updateJobTimeApi,
@@ -21,7 +21,6 @@ import { ITab } from "@/components/tabs/interface";
 const useGantt = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-  const [currentMonth, setCurrentMonth] = useState(moment()); // Track the currently displayed month
   const [timeRange, setTimeRange] = useState({
     // defaultTimeStart: moment().startOf("hour").add(-2, "hours"),
     // defaultTimeEnd: moment().startOf("hour").add(3, "hours"),
@@ -39,9 +38,12 @@ const useGantt = () => {
   const [items, setItems] = useState<IGanttJob[]>([]);
   const [filtersState] = useRecoilState(productionFloorFiltersState);
   const [, setLoadingItemId] = useRecoilState<string>(loadingGanttItemId);
+  const [currentDate, setCurrentDate] = useState(moment());
+  const [currentMonth, setCurrentMonth] = useState(moment());
 
   //!here when it work
   const getData = async (month) => {
+    debugger;
     // Calculate start and end dates for the selected month in UTC
     const startOfMonth = moment()
       .year(currentMonth.year()) // Ensure the year aligns with the selected month
@@ -269,45 +271,6 @@ const useGantt = () => {
     }
   };
 
-  const handleClickZoomOld = (direction) => {
-    const MAX_ZOOM_OUT_DURATION = 1000 * 60 * 60 * 24 * 365; // 12 months in milliseconds
-    const ONE_MINUTE = 1000 * 60;
-    const ONE_HOUR = ONE_MINUTE * 60; // 1 hour in milliseconds
-    // const ONE_DAY = ONE_HOUR * 24; // 1 day in milliseconds
-    // const ONE_MONTH = ONE_DAY * 30; // Approximation for a month
-    // const ONE_YEAR = ONE_DAY * 365; // 1 year in milliseconds
-    const SEVEN_HOURS = ONE_HOUR * 7; // 7 hours in milliseconds
-
-    const zoomFactor = direction === "in" ? 1.1 : 0.9; // Adjust zoom factor for in/out
-    const duration = visibleTimeRange.end - visibleTimeRange.start;
-    let newDuration = duration * zoomFactor;
-    const center = (visibleTimeRange.start + visibleTimeRange.end) / 2;
-
-    // Prevent zooming out if duration is <= 5 minutes
-    if (direction === "out" && duration <= ONE_MINUTE * 5) {
-      return;
-    }
-
-    // If zooming in and time range is < 7 hours, reduce by 1 hour
-    if (direction === "in" && duration < SEVEN_HOURS && duration > ONE_HOUR) {
-      newDuration = duration - ONE_HOUR;
-    }
-
-    // Prevent zooming out beyond 12 months
-    if (direction === "out" && newDuration > MAX_ZOOM_OUT_DURATION) return;
-    //
-    // // Ensure zooming does not cross time unit boundaries
-    // if (duration >= ONE_YEAR && newDuration < ONE_YEAR) return; // Year to Month
-    // if (duration >= ONE_MONTH && newDuration < ONE_MONTH) return; // Month to Day
-    // if (duration >= ONE_DAY && newDuration < ONE_DAY) return; // Day to Hour
-    // if (duration >= ONE_HOUR && newDuration < ONE_HOUR) return; // Hour to Minute
-
-    setVisibleTimeRange({
-      start: center - newDuration / 2,
-      end: center + newDuration / 2,
-    });
-  };
-
   const handleClickZoom = (direction) => {
     const MAX_ZOOM_DURATION = 1000 * 60 * 60 * 24 * 365; // 12 months
     const MIN_ZOOM_DURATION = 1000 * 60 * 5; // 5 minutes minimum zoom
@@ -333,6 +296,7 @@ const useGantt = () => {
     });
   };
 
+  //!here
   const getGanttData = useCallback(() => {
     getData(currentMonth.month()).then();
   }, [currentMonth]);
@@ -395,8 +359,6 @@ const useGantt = () => {
     );
   };
 
-  const [currentDate, setCurrentDate] = useState(moment());
-
   const getDateLabel = () => {
     switch (activeTab) {
       case TimeFrameTabs.YEAR:
@@ -416,29 +378,47 @@ const useGantt = () => {
     }
   };
 
-  const navigateTimeline = (direction) => {
-    setCurrentDate((prevDate) => {
-      const newDate = prevDate.clone();
-      switch (activeTab) {
-        case 4:
-          return newDate.add(direction, "year");
-        case 3:
-          return newDate.add(direction, "month");
-        case 2:
-          return newDate.add(direction, "week");
-        case 1:
-          return newDate.add(direction, "day");
-        case 0:
-          return newDate.add(direction, "hour");
-        default:
-          return newDate;
-      }
-    });
-  };
-
   const handleTabChange = (newValue) => {
     setActiveTab(newValue);
     setCurrentDate(moment()); // Reset currentDate to now when changing tabs
+
+    //  If switching from year to another tab, update currentMonth as well
+    const newMonth = moment().clone().startOf("month");
+    if (!newMonth.isSame(currentMonth, "month")) {
+      setCurrentMonth(newMonth);
+    }
+  };
+
+  const navigateTimeline = (direction: number) => {
+    setCurrentDate((prevDate) => {
+      const newDate = prevDate.clone();
+
+      switch (activeTab) {
+        case TimeFrameTabs.YEAR:
+          newDate.add(direction, "year");
+          break;
+        case TimeFrameTabs.MONTH:
+          newDate.add(direction, "month");
+          break;
+        case TimeFrameTabs.WEEK:
+          newDate.add(direction, "week");
+          break;
+        case TimeFrameTabs.DAY:
+          newDate.add(direction, "day");
+          break;
+        case TimeFrameTabs.HOUR:
+          newDate.add(direction, "hour");
+          break;
+        default:
+          break;
+      }
+
+      // If month has changed, update currentMonth
+      if (!newDate.isSame(currentMonth, "month")) {
+        setCurrentMonth(newDate.clone().startOf("month"));
+      }
+      return newDate;
+    });
   };
 
   return {
