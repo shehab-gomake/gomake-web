@@ -44,7 +44,8 @@ const PricingList = ({
   updatePackageUnitQuantity,
   addNewStepForActionProfitRow,
   updatePricingByForActionPackage,
-  actionProfitByActionId
+  actionProfitByActionId,
+  getProfitsPricingTables
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -69,14 +70,13 @@ const PricingList = ({
     supplierList,
     selectedSupplier,
     setSelectedSupplier
-  } = useCopyAction({ getAllActionProfitRowsByActionId, selectedPricingTableItems });
-
+  } = useCopyAction({ getAllActionProfitRowsByActionId, selectedPricingTableItems, getProfitsPricingTables });
   useEffect(() => {
     if (selectedPricingTableItems?.supplierId) {
       const supplier = supplierList.find((supplier) => supplier.id === selectedPricingTableItems?.supplierId)
       setSelectedSupplier(supplier)
     }
-  }, [selectedPricingTableItems, supplierList])
+  }, [selectedPricingTableItems, supplierList, actionProfitByActionId, getProfitsPricingTables])
   return (
     <div style={classes.pricListWidgetMainContainer}>
       <div style={classes.headerMainCointaner}>
