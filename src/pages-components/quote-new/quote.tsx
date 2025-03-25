@@ -302,6 +302,8 @@ const QuoteNewPageWidget = ({
     isMoveToReady,
     handleCheckboxChange,
     isPurchaseDocument,
+    isOpenRelatedDocuments,
+    setIsOpenRelatedDocuments
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -1018,24 +1020,41 @@ const QuoteNewPageWidget = ({
         handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
       />
       <GoMakeDeleteModal
-        openModal={confirmCreateDocument}
-        onClose={onClickCloseConfirmCreateDocument}
-        yesBtn={t("sales.quote.yesBtn")}
-        modalType={ModalType.WARNING}
-        title={`${t("sales.quote.titleConfirmCreateDocument", {
-          document: t(
-            `sales.quote.${DOCUMENT_TYPE[documentType]}`
-          ).toLowerCase(),
-        })}?`}
-        subTitle={`${t("sales.quote.subTitleConfirmCreateDocument", {
-          document: t(
-            `sales.quote.${DOCUMENT_TYPE[documentType]}`
-          ).toLowerCase(),
-        })}`}
-        onClickDelete={() => handleSaveBtnClickForDocument()}
-      />
+          openModal={confirmCreateDocument}
+          onClose={onClickCloseConfirmCreateDocument}
+          yesBtn={
+            t("sales.quote.yesBtn")
+          }
+          modalType={ModalType.WARNING}
+          title={`${t("sales.quote.titleConfirmCreateDocument", {
+            document: t(
+                `sales.quote.${DOCUMENT_TYPE[documentType]}`
+            ).toLowerCase(),
+          })}?`}
+          subTitle={`${t("sales.quote.subTitleConfirmCreateDocument", {
+            document: t(
+                `sales.quote.${DOCUMENT_TYPE[documentType]}`
+            ).toLowerCase(),
+          })}`}
+          onClickDelete={() => handleSaveBtnClickForDocument()}
+      >
+        {
+          documentType == DOCUMENT_TYPE.invoiceRefund ? <div
+              style={{
+                ...classes.inputLbl,
+                color: isOpenRelatedDocuments ? "black" : "#475467",
+              }}
+          >
+            <PrimaryCheckbox
+                checked={isOpenRelatedDocuments}
+                onChange={(value) => setIsOpenRelatedDocuments(!isOpenRelatedDocuments)}
+            />
+            {t("sales.openRelatedDocuments")}
+          </div> : <div></div>
+        }
+      </GoMakeDeleteModal>
     </>
   );
 };
 
-export { QuoteNewPageWidget };
+export {QuoteNewPageWidget};
