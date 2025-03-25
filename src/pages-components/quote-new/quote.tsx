@@ -1022,7 +1022,9 @@ const QuoteNewPageWidget = ({
       <GoMakeDeleteModal
           openModal={confirmCreateDocument}
           onClose={onClickCloseConfirmCreateDocument}
-          yesBtn={t("sales.quote.yesBtn")}
+          yesBtn={
+            t("sales.quote.yesBtn")
+          }
           modalType={ModalType.WARNING}
           title={`${t("sales.quote.titleConfirmCreateDocument", {
             document: t(
