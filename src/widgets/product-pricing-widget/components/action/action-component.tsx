@@ -928,11 +928,10 @@ const ActionContainerComponent = ({
                     gap: 10,
                   }}
                 >
-                  {actionException?.exceptionKey && (
+                  {(
                     <Tooltip title={t("CalculationExceptions." + actionException?.exceptionKey)}>
                       <IconButton>
                         {_renderIconLogs(actionException?.exceptionType, 24, 24)}
-
                       </IconButton>
                     </Tooltip>
                   )}
