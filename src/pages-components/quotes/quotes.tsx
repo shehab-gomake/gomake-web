@@ -297,7 +297,10 @@ const QuotesListPageWidget = ({
       {renderCreateNewButton(onclickCreateNew)}
     </>
   );
-
+  const [isDescOrderBE, setIsDescOrderBE] = useState(false);
+  const handleSortBE = (key: string) => {
+    console.log(key);
+  };
   return (
     <>
       {!isFromHomePage && (
@@ -332,8 +335,8 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                      ? () => navigate(`/${documentPath}`)
-                      : () => navigate(`/${documentPath}?isNewCreation=true`)
+                        ? () => navigate(`/${documentPath}`)
+                        : () => navigate(`/${documentPath}?isNewCreation=true`)
                   )}
               </div>
             </div>
@@ -355,12 +358,12 @@ const QuotesListPageWidget = ({
                         {Object.keys(router.query).filter(
                           (key) => key !== "pageNumber"
                         ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
-                        )}
+                            <div
+                              style={{ position: "absolute", top: -5, right: -1 }}
+                            >
+                              <DotIcon />
+                            </div>
+                          )}
                       </IconButton>
                       <GoMakeMenu
                         handleClose={handleClose}
@@ -398,10 +401,9 @@ const QuotesListPageWidget = ({
                                 }}
                                 style={classes.textInputStyle}
                                 placeholder={t(
-                                  `sales.quote.${
-                                    isPurchaseDocument
-                                      ? "chooseSupplier"
-                                      : "chooseCustomer"
+                                  `sales.quote.${isPurchaseDocument
+                                    ? "chooseSupplier"
+                                    : "chooseCustomer"
                                   }`
                                 )}
                                 onChange={(e: any, value: any) => {
@@ -522,7 +524,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder &&
                               documentType !== DOCUMENT_TYPE.receipt && (
                                 <div style={classes.statusFilterContainer}>
@@ -568,7 +570,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder && (
                                 <div
                                   style={{
@@ -616,7 +618,7 @@ const QuotesListPageWidget = ({
                                 value={
                                   fromDate && toDate ? [fromDate, toDate] : null
                                 }
-                                // oneTap
+                              // oneTap
                               />
                             </div>
                           </div>
@@ -670,11 +672,14 @@ const QuotesListPageWidget = ({
               maxHeight={"calc(100vh - 265px)"}
               rows={allQuotes}
               headers={tableHeaders}
+              withSortBE={true}
+              onClickSortBE={handleSortBE}
+              isDescOrderBE={isDescOrderBE}
               columnWidths={
                 isQuote
                   ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
                   : isOrder
-                  ? [
+                    ? [
                       "6%",
                       "5%",
                       "5%",
@@ -691,45 +696,45 @@ const QuotesListPageWidget = ({
                       "5%",
                       "5%",
                     ]
-                  : documentType === DOCUMENT_TYPE.purchaseInvoice ||
-                    documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
-                  ? [
-                      "7%",
-                      "15%",
-                      "10%",
-                      "13%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "5%",
-                    ]
-                  : isReceipt || isSupplierPayments
-                  ? [
-                      "7%",
-                      "15%",
-                      "10%",
-                      "13%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "5%",
-                    ]
-                  : [
-                      "7%",
-                      "8%",
-                      "8%",
-                      "8%",
-                      "10%",
-                      "26%",
-                      "10%",
-                      "10%",
-                      "10%",
-                      "3%",
-                    ]
+                    : documentType === DOCUMENT_TYPE.purchaseInvoice ||
+                      documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+                      ? [
+                        "7%",
+                        "15%",
+                        "10%",
+                        "13%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "10%",
+                        "5%",
+                      ]
+                      : isReceipt || isSupplierPayments
+                        ? [
+                          "7%",
+                          "15%",
+                          "10%",
+                          "13%",
+                          "10%",
+                          "10%",
+                          "10%",
+                          "10%",
+                          "10%",
+                          "5%",
+                        ]
+                        : [
+                          "7%",
+                          "8%",
+                          "8%",
+                          "8%",
+                          "10%",
+                          "26%",
+                          "10%",
+                          "10%",
+                          "10%",
+                          "3%",
+                        ]
               }
             />
           </div>
@@ -942,16 +947,16 @@ const QuotesListPageWidget = ({
           isMoveToReady
             ? moveOrderToReady
             : () => {
-                if (isSelectedCLoseAsDeliveryNote) {
-                  const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
-                  window.open(path, "_blank");
-                } else {
-                  const path = isOrder
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                  window.open(path, "_blank");
-                }
+              if (isSelectedCLoseAsDeliveryNote) {
+                const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
+                window.open(path, "_blank");
+              } else {
+                const path = isOrder
+                  ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                window.open(path, "_blank");
               }
+            }
         }
       >
         <div

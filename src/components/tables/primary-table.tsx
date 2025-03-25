@@ -154,10 +154,13 @@ const PrimaryTable = ({
   withSort = false,
   enableCheckboxes = false,
   isAgingDetailedReport = false,
+  withSortBE = false,
+  onClickSortBE,
   onSelectionChange,
   rowCheckboxCondition = () => true,
   handleSortAgingReport,
   isDescOrder,
+  isDescOrderBE = false,
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -200,17 +203,17 @@ const PrimaryTable = ({
     variant === "ClassicTable"
       ? ClassicTableCell
       : variant === "RoundTable"
-      ? RoundTableCell
-      : PrimaryTableCell;
+        ? RoundTableCell
+        : PrimaryTableCell;
 
   const TableRow =
     variant === "ClassicTable"
       ? ClassicTableRow
       : variant === "OddEvenTable"
-      ? OddEvenTableRow
-      : variant === "RoundTable"
-      ? RoundTableRow
-      : PrimaryTableRow;
+        ? OddEvenTableRow
+        : variant === "RoundTable"
+          ? RoundTableRow
+          : PrimaryTableRow;
 
   // Sorting logic
   const sortedRows = useMemo(() => {
@@ -276,13 +279,16 @@ const PrimaryTable = ({
                   key={`header_${index}`}
                   align="center"
                   style={{
-                    cursor: withSort ? "pointer" : "default",
+                    cursor: withSort || withSortBE ? "pointer" : "default",
                     userSelect: "none",
                     ...(index === 0 && stickyHeader
                       ? { position: "sticky", top: 0 }
                       : {}),
                   }}
-                  onClick={() => withSort && handleSort(index)} // Only activate sort if withSort is true
+                  onClick={() => {
+                    if (withSort) handleSort(index);
+                    if (withSortBE) onClickSortBE(header);
+                  }}
                 >
                   <div
                     style={{
@@ -293,21 +299,21 @@ const PrimaryTable = ({
                   >
                     {isAgingeport ? header?.name : header}
                     {/* Show sorting icon only when it's the sorted header */}
-                    {withSort && isAgingeport
+                    {(withSort || withSortBE) && isAgingeport
                       ? header?.name
                       : header !== "" &&
-                        sortConfig?.key === index && (
-                          <IconButton
-                            size="small"
-                            style={{ ...adaptMarginRight(dir, 4) }}
-                          >
-                            {sortConfig.direction === "asc" ? (
-                              <ArrowUpward sx={{ fontSize: "18px" }} />
-                            ) : (
-                              <ArrowDownward sx={{ fontSize: "18px" }} />
-                            )}
-                          </IconButton>
-                        )}
+                      sortConfig?.key === index && (
+                        <IconButton
+                          size="small"
+                          style={{ ...adaptMarginRight(dir, 4) }}
+                        >
+                          {sortConfig.direction === "asc" ? (
+                            <ArrowUpward sx={{ fontSize: "18px" }} />
+                          ) : (
+                            <ArrowDownward sx={{ fontSize: "18px" }} />
+                          )}
+                        </IconButton>
+                      )}
                     {isAgingeport &&
                       (header?.key === "cardName" ||
                         header?.key === "cardCode" ||
@@ -318,6 +324,20 @@ const PrimaryTable = ({
                           onClick={() => handleSortAgingReport(header?.key)}
                         >
                           {!isDescOrder ? (
+                            <ArrowUpward sx={{ fontSize: "18px" }} />
+                          ) : (
+                            <ArrowDownward sx={{ fontSize: "18px" }} />
+                          )}
+                        </IconButton>
+                      )}
+
+                    {withSortBE &&
+                      (
+                        <IconButton
+                          size="small"
+                          style={{ ...adaptMarginRight(dir, 4) }}
+                        >
+                          {!isDescOrderBE ? (
                             <ArrowUpward sx={{ fontSize: "18px" }} />
                           ) : (
                             <ArrowDownward sx={{ fontSize: "18px" }} />
@@ -339,8 +359,8 @@ const PrimaryTable = ({
                     isAgingeport && isAgingDetailedReport && row[0] == " "
                       ? "#F6F6F6"
                       : isLastItemTotal && rowIndex === rows.length - 1
-                      ? "#EFDDFF"
-                      : "inherit",
+                        ? "#EFDDFF"
+                        : "inherit",
                 }}
               >
                 {enableCheckboxes && (
