@@ -120,6 +120,8 @@ export enum Permissions {
   // ADD_NEW_PRODUCT_FROM_CART = "AddNewProductFromTheCart",
   CAN_CLOSE_MANUALLY = "CanCloseManually",
   SHOW_DELIVERIES = "ShowDeliveries",
+  CAN_OPEN_CLOSED_DOCUMENTS = "CanOpenClosedDocuments",
+
   //purchase group
   SHOW_PURCHASE_ORDERS = "ShowPurchaseOrders",
   SHOW_PURCHASE_INVOICES = "ShowPurchaseInvoices",
