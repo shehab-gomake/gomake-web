@@ -16,9 +16,11 @@ import moment from "moment";
 const JobComponent = ({
   item,
   getItemProps,
+  toggleGroup,
 }: {
   item: IGanttJob;
   getItemProps: any;
+  toggleGroup: any;
 }) => {
   const isEditable = item.isEditable;
   const [loadingItemId] = useRecoilState<string>(loadingGanttItemId);
@@ -36,32 +38,85 @@ const JobComponent = ({
       popperRef.current.update();
     }
   };
+
+  const {
+    onMouseDown: originalMouseDown,
+    onClick: originalClick,
+    ...restProps
+  } = getItemProps({
+    style: {
+      background: isEditable ? item.bgColor : "#2E3091",
+      color: "white",
+      borderRadius: "14px",
+      border: "1px solid #F6F6F6",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "10px",
+      opacity: isEditable && item.isHasSelected && !item.selected ? 0.3 : 1,
+      minHeight: "22px",
+    },
+  });
+
+  const renderJobContent = () => (
+    <div
+      className="rct-item-content"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: "5px",
+        maxHeight: "100%",
+        overflow: "hidden",
+      }}
+    >
+      <div />
+      <span
+        style={{
+          display: "inline-block",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        {item.title}
+      </span>
+      <div>
+        {isEditable && (
+          <div
+            style={{
+              width: "12px",
+              height: "12px",
+              borderRadius: "50%",
+              border: "2px solid #FFF",
+              backgroundColor: item.statusColor,
+              marginLeft: "auto",
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+
   return (
     <div
-      {...getItemProps({
-        style: {
-          background:
-            loadingItemId === item.id
-              ? "inherit"
-              : isEditable
-              ? item.bgColor
-              : "#2E3091",
-          pointerEvents: isEditable ? "auto" : "none",
-          color: "white",
-          borderRadius: "14px",
-          border: "1px solid #F6F6F6",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "10px",
-          opacity: isEditable && item.isHasSelected && !item.selected ? 0.3 : 1,
-          minHeight: "22px",
-        },
-      })}
+      {...restProps}
+      onMouseDown={(e) => {
+        if (!isEditable) {
+          e.stopPropagation();
+        }
+        originalMouseDown?.(e);
+      }}
+      onClick={(e) => {
+        if (!isEditable && item?.group) {
+          toggleGroup(item.group);
+        }
+        originalClick?.(e);
+      }}
     >
       {loadingItemId === item.id ? (
         <Skeleton width={"100%"} height={"100%"} />
-      ) : (
+      ) : isEditable ? (
         <HtmlTooltip
           slotProps={{
             popper: {
@@ -83,48 +138,19 @@ const JobComponent = ({
           <div
             ref={areaRef}
             onMouseMove={handleMouseMove}
-            // className="rct-item-content"
             style={{ textAlign: "center", width: "100%" }}
           >
-            <div
-              className="rct-item-content"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: "5px",
-                maxHeight: "100%",
-                overflow: "hidden",
-              }}
-            >
-              <div />
-              <span
-                style={{
-                  display: "inline-block",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {item.title}
-              </span>
-              <div>
-                {isEditable && (
-                  <div
-                    style={{
-                      width: "12px",
-                      height: "12px",
-                      borderRadius: "50%",
-                      border: "2px solid #FFF",
-                      backgroundColor: item.statusColor,
-                      marginLeft: "auto",
-                    }}
-                  />
-                )}
-              </div>
-            </div>
+            {renderJobContent()}
           </div>
         </HtmlTooltip>
+      ) : (
+        <div
+          ref={areaRef}
+          onMouseMove={handleMouseMove}
+          style={{ textAlign: "center", width: "100%" }}
+        >
+          {renderJobContent()}
+        </div>
       )}
     </div>
   );

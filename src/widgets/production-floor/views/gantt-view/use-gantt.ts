@@ -328,6 +328,11 @@ const useGantt = () => {
 
   const handleItemSelect = (itemId) => {
     const selectedItem = items.find((item) => item.id === itemId);
+
+    if (!selectedItem?.isEditable) {
+      //  Don't do anything if not editable
+      return;
+    }
     if (selectedItem) {
       setItems((prev) =>
         prev.map((item) => ({

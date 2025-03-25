@@ -238,7 +238,7 @@ const TimelineWidget = () => {
           canResize={"right"}
           canChangeGroup={false}
           itemRenderer={(props) => {
-            return <JobComponent {...props} />;
+            return <JobComponent {...props} toggleGroup={toggleGroup} />;
           }}
           onTimeChange={onTimeChange}
           visibleTimeStart={visibleTimeRange.start}
