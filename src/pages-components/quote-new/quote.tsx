@@ -304,6 +304,7 @@ const QuoteNewPageWidget = ({
     isPurchaseDocument,
     isOpenRelatedDocuments,
     setIsOpenRelatedDocuments,
+    isPurchaseInvoice,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
