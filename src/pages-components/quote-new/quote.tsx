@@ -303,17 +303,18 @@ const QuoteNewPageWidget = ({
     handleCheckboxChange,
     isPurchaseDocument,
     isOpenRelatedDocuments,
-    setIsOpenRelatedDocuments
+    setIsOpenRelatedDocuments,
+    isPurchaseInvoice,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
   if (documentType == DOCUMENT_TYPE.quote) {
-    const { } = useQuotesSignalr({ getQuote });
+    const {} = useQuotesSignalr({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const { } = useOrdersSignalr({ getQuote });
+    const {} = useOrdersSignalr({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -372,7 +373,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const { } = useGoMakeTour(quoteSteps, []);
+  const {} = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -416,8 +417,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -486,7 +487,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                      quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -555,7 +556,10 @@ const QuoteNewPageWidget = ({
                         label={t("sales.quote.creationDate")}
                         date={creationDate}
                         handleChange={handleChangeCreationDate}
-                        isEditable={isInvoice && quoteItemValue?.isEditable}
+                        isEditable={
+                          (isInvoice || isPurchaseInvoice) &&
+                          quoteItemValue?.isEditable
+                        }
                         inputRef={creationDateRef}
                         preventOpenCondition={!quoteState.client}
                       />
@@ -967,18 +971,18 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? moveOrderToReady
             : () => {
-              if (isSelectedCLoseAsDeliveryNote) {
-                navigate(
-                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                );
-              } else {
-                const path =
-                  documentType === DOCUMENT_TYPE.order
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                navigate(path);
+                if (isSelectedCLoseAsDeliveryNote) {
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  );
+                } else {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                }
               }
-            }
         }
       >
         <div
@@ -1020,41 +1024,43 @@ const QuoteNewPageWidget = ({
         handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
       />
       <GoMakeDeleteModal
-          openModal={confirmCreateDocument}
-          onClose={onClickCloseConfirmCreateDocument}
-          yesBtn={
-            t("sales.quote.yesBtn")
-          }
-          modalType={ModalType.WARNING}
-          title={`${t("sales.quote.titleConfirmCreateDocument", {
-            document: t(
-                `sales.quote.${DOCUMENT_TYPE[documentType]}`
-            ).toLowerCase(),
-          })}?`}
-          subTitle={`${t("sales.quote.subTitleConfirmCreateDocument", {
-            document: t(
-                `sales.quote.${DOCUMENT_TYPE[documentType]}`
-            ).toLowerCase(),
-          })}`}
-          onClickDelete={() => handleSaveBtnClickForDocument()}
+        openModal={confirmCreateDocument}
+        onClose={onClickCloseConfirmCreateDocument}
+        yesBtn={t("sales.quote.yesBtn")}
+        modalType={ModalType.WARNING}
+        title={`${t("sales.quote.titleConfirmCreateDocument", {
+          document: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}?`}
+        subTitle={`${t("sales.quote.subTitleConfirmCreateDocument", {
+          document: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        onClickDelete={() => handleSaveBtnClickForDocument()}
       >
-        {
-          documentType == DOCUMENT_TYPE.invoiceRefund ? <div
-              style={{
-                ...classes.inputLbl,
-                color: isOpenRelatedDocuments ? "black" : "#475467",
-              }}
+        {documentType == DOCUMENT_TYPE.invoiceRefund ? (
+          <div
+            style={{
+              ...classes.inputLbl,
+              color: isOpenRelatedDocuments ? "black" : "#475467",
+            }}
           >
             <PrimaryCheckbox
-                checked={isOpenRelatedDocuments}
-                onChange={(value) => setIsOpenRelatedDocuments(!isOpenRelatedDocuments)}
+              checked={isOpenRelatedDocuments}
+              onChange={(value) =>
+                setIsOpenRelatedDocuments(!isOpenRelatedDocuments)
+              }
             />
             {t("sales.openRelatedDocuments")}
-          </div> : <div></div>
-        }
+          </div>
+        ) : (
+          <div></div>
+        )}
       </GoMakeDeleteModal>
     </>
   );
 };
 
-export {QuoteNewPageWidget};
+export { QuoteNewPageWidget };
