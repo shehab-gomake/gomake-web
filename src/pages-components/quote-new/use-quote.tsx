@@ -318,7 +318,7 @@ const useQuoteNew = ({
   };
 
   const [isMoveToReady, setIsMoveToReady] = useState(false);
-  const [isOpenRelatedDocuments, setIsOpenRelatedDocuments] = useState(false);
+  const [isOpenRelatedDocuments, setIsOpenRelatedDocuments] = useState(true);
   const handleCheckboxChange = () => {
     setIsMoveToReady(!isMoveToReady);
   };
