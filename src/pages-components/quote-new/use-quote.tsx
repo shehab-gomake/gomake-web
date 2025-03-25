@@ -318,6 +318,7 @@ const useQuoteNew = ({
   };
 
   const [isMoveToReady, setIsMoveToReady] = useState(false);
+  const [isOpenRelatedDocuments, setIsOpenRelatedDocuments] = useState(true);
   const handleCheckboxChange = () => {
     setIsMoveToReady(!isMoveToReady);
   };
@@ -1658,6 +1659,7 @@ const useQuoteNew = ({
         ...(router?.query?.budgetId ? { budgetID: router.query.budgetId } : {}),
         exchangeRate:
           quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
+        isOpenRelatedDocuments:isOpenRelatedDocuments,
       },
     });
   };
@@ -2382,6 +2384,8 @@ const useQuoteNew = ({
     handleCheckboxChange,
     isDeliveryNote,
     isPurchaseDocument,
+    isOpenRelatedDocuments,
+    setIsOpenRelatedDocuments
   };
 };
 
