@@ -304,6 +304,7 @@ const QuoteNewPageWidget = ({
     isPurchaseDocument,
     isOpenRelatedDocuments,
     setIsOpenRelatedDocuments,
+    isPurchaseInvoice,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -555,7 +556,10 @@ const QuoteNewPageWidget = ({
                         label={t("sales.quote.creationDate")}
                         date={creationDate}
                         handleChange={handleChangeCreationDate}
-                        isEditable={isInvoice && quoteItemValue?.isEditable}
+                        isEditable={
+                          (isInvoice || isPurchaseInvoice) &&
+                          quoteItemValue?.isEditable
+                        }
                         inputRef={creationDateRef}
                         preventOpenCondition={!quoteState.client}
                       />

@@ -2385,6 +2385,7 @@ const useQuoteNew = ({
     isPurchaseDocument,
     isOpenRelatedDocuments,
     setIsOpenRelatedDocuments,
+    isPurchaseInvoice,
   };
 };
 
