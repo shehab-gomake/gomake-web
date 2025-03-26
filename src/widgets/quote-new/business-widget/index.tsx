@@ -488,15 +488,35 @@ const BusinessNewWidget = ({
         modalType={ModalType.WARNING}
         openModal={openChangeClientModal}
         onClose={onClickCloseChangeClientModal}
-        title={t("products.profits.titleChangeClient")}
-        subTitle={t("products.profits.subTitleChangeClient")}
+        title={t(
+          `products.profits.${
+            isPurchaseDocument ? "titleChangeSupplier" : "titleChangeClient"
+          }`
+        )}
+        subTitle={t(
+          `products.profits.${
+            isPurchaseDocument
+              ? "subTitleChangeSupplier"
+              : "subTitleChangeClient"
+          }`
+        )}
         yesBtn={t("sales.quote.yesBtn")}
         onClickDelete={() => onChangeSelectBusiness(selectedClient)}
       />
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
-        title={t("products.profits.titleChangeClient")}
-        subTitle={t("sales.cart.subTitleChangeClientFromInvoice")}
+        title={t(
+          `products.profits.${
+            isPurchaseDocument ? "titleChangeSupplier" : "titleChangeClient"
+          }`
+        )}
+        subTitle={t(
+          `sales.cart.${
+            isPurchaseDocument
+              ? "subTitleChangeSupplierFromInvoice"
+              : "subTitleChangeClientFromInvoice"
+          }`
+        )}
         openModal={openChangeClientModalFromInvoice}
         onClose={onClickCloseChangeClientModalFromInvoice}
         onClickYes={() =>
