@@ -6,7 +6,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { DocumentsTypeEnum } from "@/widgets/settings-documenting/documentNumbering/interface/document";
+import { ERPDocumentsTypesEnum } from "@/enums";
 
 const RowMappingWidget = ({
   item,
@@ -96,7 +96,7 @@ const RowMappingWidget = ({
           ...classes.cellContainerStyle,
         }}
       >
-        {t(`documentType.${DocumentsTypeEnum[item?.documentType]}`)}
+        {t(`ERPDocumentsType.${ERPDocumentsTypesEnum[item?.documentType]}`)}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
