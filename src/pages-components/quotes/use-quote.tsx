@@ -591,13 +591,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickMakePayment={onClickMakePayment}
                 onClickCloseAndTrack={onClickOpenTrackModal}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenDocument={OpenDocument}
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
                 onClickPauseOrResume={onClickPauseOrResume}
                 onOpenDuplicateModal={onOpenDuplicateModal}
                 onClickStartProduction={onClickOpenStartProductionModal}
+                onClickReopenDocument={onClickOpenReopenDocumentModal}
               />,
             ];
           } else {
@@ -665,6 +665,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenChangeProductionStatusModal
                 }
                 onClickSendPayment={onClickSendPayment}
+                onClickReopenDocument={onClickOpenReopenDocumentModal}
               />,
             ];
           }
@@ -1061,13 +1062,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickSendPayment={onClickSendPayment}
                 onClickMakePayment={onClickMakePayment}
                 onClickCloseAndTrack={onClickOpenTrackModal}
-                onClickOpenDocument={OpenDocument}
                 onClickOpenChangeProductionStatusModal={
                   onClickOpenChangeProductionStatusModal
                 }
                 onClickPauseOrResume={onClickPauseOrResume}
                 onOpenDuplicateModal={onOpenDuplicateModal}
                 onClickStartProduction={onClickOpenStartProductionModal}
+                onClickReopenDocument={onClickOpenReopenDocumentModal}
               />,
             ];
           } else {
@@ -1134,6 +1135,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenChangeProductionStatusModal
                 }
                 onClickSendPayment={onClickSendPayment}
+                onClickReopenDocument={onClickOpenReopenDocumentModal}
               />,
             ];
           }
@@ -1575,7 +1577,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   };
 
   // table in home page
-
   const getAllDocuments = async (docType) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -1620,13 +1621,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             onClickOpenPriceModal={onClickOpenPriceModal}
             onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
             onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
-            onClickOpenDocument={OpenDocument}
             onClickSendPayment={onClickSendPayment}
             onClickMakePayment={onClickMakePayment}
             onClickCloseAndTrack={onClickOpenTrackModal}
             onClickOpenChangeProductionStatusModal={
               onClickOpenChangeProductionStatusModal
             }
+            onClickReopenDocument={onClickOpenReopenDocumentModal}
           />,
         ]);
         setAllDocuments(mapData);
@@ -2051,6 +2052,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [openStartProductionModal, setOpenStartProductionModal] =
     useState(false);
 
+  const [openReopenDocModal, setOpenReopenDocModal] = useState(false);
+
   // Use this state when opening any modal from the "More" menu list.
   const [selectedDocument, setSelectedDocument] = useState<any>({});
 
@@ -2081,13 +2084,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setDocumentCloseNumber("");
   };
 
-  const onClickOpenDeliveryTimeModal = (order) => {
-    setSelectedDocument(order);
-    setOpenDeliveryTimeCancelModal(true);
+  const onClickOpenReopenDocumentModal = (document) => {
+    setSelectedDocument(document);
+    setOpenReopenDocModal(true);
   };
-  const onClickCloseDeliveryTimeModal = () => {
+
+  const onClickCloseReopenDocumentModal = () => {
     setSelectedDocument(null);
-    setOpenDeliveryTimeCancelModal(false);
+    setOpenReopenDocModal(false);
   };
 
   const onClickOpenStartProductionModal = (order) => {
@@ -2098,6 +2102,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickCloseStartProductionModal = () => {
     setSelectedDocument(null);
     setOpenStartProductionModal(false);
+  };
+
+  const onClickOpenDeliveryTimeModal = (order) => {
+    setSelectedDocument(order);
+    setOpenDeliveryTimeCancelModal(true);
+  };
+  const onClickCloseDeliveryTimeModal = () => {
+    setSelectedDocument(null);
+    setOpenDeliveryTimeCancelModal(false);
   };
 
   const updateCancelQuote = async (quoteStatus: number) => {
@@ -2146,7 +2159,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         alertFaultUpdate();
       }
     };
-
     if (document?.statusTitleText === "Order.Canceled") {
       await OpenCanceledDocumentApi(callApi, callBack, {
         documentType: docType,
@@ -2807,6 +2819,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isMoveToReady,
     handleCheckboxChange,
     direction,
+    onClickCloseReopenDocumentModal,
+    setOpenReopenDocModal,
+    openReopenDocModal,
+    OpenDocument,
   };
 };
 

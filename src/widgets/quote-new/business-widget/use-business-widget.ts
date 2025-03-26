@@ -123,8 +123,10 @@ const useBusinessWidget = ({ values, documentType }) => {
 
   const onClickOpenChangeClientModal = (value) => {
     setSelectedClient(value);
-
-    if (documentType === DOCUMENT_TYPE.invoice) {
+    if (
+      documentType === DOCUMENT_TYPE.invoice ||
+      documentType === DOCUMENT_TYPE.purchaseInvoice
+    ) {
       if (
         quoteStateValue?.documentItems &&
         quoteStateValue.documentItems.length > 0

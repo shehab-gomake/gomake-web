@@ -17,6 +17,7 @@ const AccordionMappingWidget = ({
   relatedParameters,
   updatedProductParameterShowToClient,
   onOpenExternalIdsModal,
+  getProductById
 }) => {
   return (
     <Accordion
@@ -64,6 +65,7 @@ const AccordionMappingWidget = ({
           updatedProductParameterShowToClient={
             updatedProductParameterShowToClient
           }
+          getProductById={getProductById}
         />
       </AccordionDetails>
     </Accordion>

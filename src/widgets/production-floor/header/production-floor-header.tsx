@@ -18,6 +18,7 @@ import { ActionsListComponent } from "@/widgets/production-floor/filters/select/
 import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded";
 import { useIsMobile } from "@/hooks/use-responsive";
 
 const ProductionFloorHeader = ({
@@ -131,7 +132,7 @@ const ProductionFloorHeader = ({
               }
               onClick={() => updateViewInUrl(EProductionFloorView.GANTT)}
             >
-              <AvTimerIcon />
+              <HourglassEmptyRoundedIcon />
             </PrimaryButton>
           )}
 
