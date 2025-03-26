@@ -184,7 +184,7 @@ const useMessageTemplate = () => {
         alertFaultUpdate();
       }
     };
-    if (templateGroup && templateGroup?.id) {
+    if (templateGroup && templateGroup?.id && templateGroup?.id !== "00000000-0000-0000-0000-0000000000000") {
       updatedSMSTemplate.smsTemplatesGroupId = templateGroup?.id;
     }
     await updateSMSTemplateApi(callApi, callBack, updatedSMSTemplate);
@@ -202,7 +202,7 @@ const useMessageTemplate = () => {
     await getSMSTemplateApi(callApi, callBack, {
       templateId: id,
       lang: language,
-      SMSTemplatesGroupId: templateGroup?.id,
+      // SMSTemplatesGroupId: templateGroup?.id,
     });
   };
 
