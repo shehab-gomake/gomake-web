@@ -316,7 +316,7 @@ const usePaymentsTable = () => {
     resetTotalSum();
     resetTotalBit();
     resetTotalCash();
-    resetTotalSupplierCreditCard();
+
     resetTotalTransfer();
     resetTransferTabState();
     resetTotalChecks();
@@ -331,6 +331,8 @@ const usePaymentsTable = () => {
     resetSecondCreditCardState();
     resetIsTransactedState();
     resetSelectedCreditTransaction();
+    resetTotalSupplierCreditCard();
+    resetSupplierCreditCardTabStateTabState();
   };
 
   // Credit card widgets //
