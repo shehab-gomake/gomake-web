@@ -127,6 +127,7 @@ const useMoreCircle = () => {
     const isPurchaseInvoice = documentType === DOCUMENT_TYPE.purchaseInvoice;
     const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
     const isReceipt = documentType === DOCUMENT_TYPE.receipt;
+
     const showNewDuplicate =
       isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
     const isOrdersTracking = pathname === "/ordersTracking";
@@ -196,7 +197,8 @@ const useMoreCircle = () => {
       },
       {
         condition: !isPauseOrder && !isDeliveryNote,
-        onClick: () => onClickPdf(isReceipt ? quote : quote?.id),
+        onClick: () =>
+          onClickPdf(isReceipt || isSupplierPayments ? quote : quote?.id),
         icon: <PDFIcon />,
         name: t("sales.quote.pdf"),
       },

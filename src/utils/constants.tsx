@@ -235,29 +235,35 @@ export const _renderStatus = (
           ))
         : [];
 
-      // !here status navigation
       const secondDocuments = document.secondDocumentNumbers
-        ? document.secondDocumentNumbers.map((item: any, index: number) => (
-            <span key={index}>
-              <a
-                style={{
-                  minWidth: "auto",
-                  height: "auto",
-                  padding: 0,
-                  color: "#2e3092",
-                  cursor: "pointer",
-                  textDecoration: "none",
-                }}
-                href={`/${
+        ? document.secondDocumentNumbers.map((item: any, index: number) => {
+            const isPayment = document.titleSecondDocumentNumber === "Payment";
+            const href = isPayment
+              ? `/receipt?isOutgoingPayments=true&Id=${item.documentId}`
+              : `/${
                   document.titleSecondDocumentNumber.charAt(0).toLowerCase() +
                   document.titleSecondDocumentNumber.slice(1)
-                }?Id=${item.documentId}`}
-              >
-                {item.documentNumber}
-              </a>
-              {index < document.secondDocumentNumbers.length - 1 && ", "}
-            </span>
-          ))
+                }?Id=${item.documentId}`;
+
+            return (
+              <span key={index}>
+                <a
+                  style={{
+                    minWidth: "auto",
+                    height: "auto",
+                    padding: 0,
+                    color: "#2e3092",
+                    cursor: "pointer",
+                    textDecoration: "none",
+                  }}
+                  href={href}
+                >
+                  {item.documentNumber}
+                </a>
+                {index < document.secondDocumentNumbers.length - 1 && ", "}
+              </span>
+            );
+          })
         : [];
 
       let result: JSX.Element[] = [];
