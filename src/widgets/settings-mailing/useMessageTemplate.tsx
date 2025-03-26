@@ -202,7 +202,9 @@ const useMessageTemplate = () => {
     await getSMSTemplateApi(callApi, callBack, {
       templateId: id,
       lang: language,
-      // SMSTemplatesGroupId: templateGroup?.id,
+      ...(templateGroup?.id !== "00000000-0000-0000-0000-0000000000000" && {
+        SMSTemplatesGroupId: templateGroup?.id,
+      }),
     });
   };
 
