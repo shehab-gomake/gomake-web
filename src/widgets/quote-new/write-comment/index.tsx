@@ -18,18 +18,23 @@ interface IProps {
   onClickOpenRelatedDocumentsModal?: () => void;
 }
 
-const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClickOpenRelatedDocumentsModal, documentState }: IProps) => {
+const WriteCommentComp = ({
+  isQuoteConfirmation,
+  getQuote,
+  documentType,
+  onClickOpenRelatedDocumentsModal,
+  documentState,
+}: IProps) => {
   const { classes } = useStyle(isQuoteConfirmation);
   const { CheckDocumentPermission } = useUserPermission();
   const setQuoteState = useSetRecoilState<any>(quoteItemState);
   const setQuoteConfirm = useSetRecoilState<any>(quoteConfirmationState);
-  const setQuoteItemValue = isQuoteConfirmation ? setQuoteConfirm : setQuoteState;
+  const setQuoteItemValue = isQuoteConfirmation
+    ? setQuoteConfirm
+    : setQuoteState;
 
-  const {
-    onUpdateComments,
-    quoteComments,
-    setQuoteComments
-  } = useButtonsConfirmContainer();
+  const { onUpdateComments, quoteComments, setQuoteComments } =
+    useButtonsConfirmContainer();
 
   const {
     handleChange,
@@ -38,14 +43,20 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
     data,
     dataForInternalNotes,
     handleBlurForInternalNotes,
-    handleChangeForInternalNotes
-  } = useWriteCommentComp({ getQuote, documentType, quoteItemValue: documentState, setQuoteItemValue })
+    handleChangeForInternalNotes,
+  } = useWriteCommentComp({
+    getQuote,
+    documentType,
+    quoteItemValue: documentState,
+    setQuoteItemValue,
+  });
 
   const mergeDocumentNumbers = (quoteItemValue) => {
     const groupedDocuments = {};
 
-    quoteItemValue?.documentNumbers?.forEach(doc => {
+    quoteItemValue?.documentNumbers?.forEach((doc) => {
       const { documentType, documentId, documentNumber } = doc;
+      debugger;
       const title = t(renderDocumentTypeForSourceDocumentNumber(documentType));
       const documentPath = ERPDocumentsTypesEnum[documentType];
 
@@ -60,7 +71,7 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
         title,
         value: documentId,
         documentPath,
-        documentType
+        documentType,
       });
     });
 
@@ -68,40 +79,66 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
   };
 
   const relatedDocuments = mergeDocumentNumbers(documentState);
-  const canEditComments = documentState?.isEditable && CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
-  const canEditNotes = CheckDocumentPermission(documentType.toString(), DocumentPermission.EDIT_DOCUMENT);
-  const canNotEditConfirmationComments = documentState?.isConfirmed || documentState?.documentStatus === QUOTE_STATUSES.Canceled;
+
+  const canEditComments =
+    documentState?.isEditable &&
+    CheckDocumentPermission(
+      documentType.toString(),
+      DocumentPermission.EDIT_DOCUMENT
+    );
+
+  const canEditNotes = CheckDocumentPermission(
+    documentType.toString(),
+    DocumentPermission.EDIT_DOCUMENT
+  );
+
+  const canNotEditConfirmationComments =
+    documentState?.isConfirmed ||
+    documentState?.documentStatus === QUOTE_STATUSES.Canceled;
+
   return (
     <div style={classes.writeCommentContainer}>
-      {
-        !isQuoteConfirmation &&
+      {!isQuoteConfirmation && (
         <div style={classes.itemContainer}>
-          <div style={classes.labelTextStyle}>{t("sales.quote.relatedDocuments")}</div>
+          <div style={classes.labelTextStyle}>
+            {t("sales.quote.relatedDocuments")}
+          </div>
           <GoMakeAutoComplate
-            options={Object.keys(relatedDocuments).flatMap(key => [
+            options={Object.keys(relatedDocuments).flatMap((key) => [
               { title: key, isHeader: true },
-              ...relatedDocuments[key]
+              ...relatedDocuments[key],
             ])}
             style={classes.autoComplateStyle}
             placeholder={t("sales.quote.selectDocuments")}
             onChange={(e, item) => {
               if (!item?.isHeader && item?.value) {
-                if (item?.documentType === 12) {
+                if (item?.documentType === ERPDocumentsTypesEnum.quote) {
                   const url = `/quotes?documentNumber=${item.documentNumber}`;
-                  window.open(url, '_blank');
+                  window.open(url, "_blank");
+                } else if (
+                  item?.documentType === ERPDocumentsTypesEnum.supplierPayment
+                ) {
+                  const url = `/receipt?isOutgoingPayments=true&Id=${item.documentId}`;
+                  window.open(url, "_blank");
+                } else {
+                  const url = `/${
+                    item.documentPath.charAt(0).toLowerCase() +
+                    item.documentPath.slice(1)
+                  }?Id=${item.documentId}`;
+                  window.open(url, "_blank");
                 }
-                else {
-                  const url = `/${item.documentPath.charAt(0).toLowerCase() + item.documentPath.slice(1)}?Id=${item.documentId}`;
-                  window.open(url, '_blank');
-                }
-
               }
             }}
             withArrow={true}
             renderOption={(props, option) => {
               if (option.isHeader) {
                 return (
-                  <li {...props} key={option.title} style={{ fontWeight: 'bold', color: 'blue' }} onClick={() => null}>
+                  <li
+                    {...props}
+                    key={option.title}
+                    style={{ fontWeight: "bold", color: "blue" }}
+                    onClick={() => null}
+                  >
                     {option.title}
                   </li>
                 );
@@ -115,29 +152,41 @@ const WriteCommentComp = ({ isQuoteConfirmation, getQuote, documentType, onClick
             }}
           />
         </div>
-      }
+      )}
       <div style={classes.item2Container}>
         <div style={classes.labelTextStyle}>{t("sales.quote.notes")}</div>
         <GomakeTextInput
           style={classes.textInputStyle}
           placeholder={t("sales.quote.writeNotes")}
           value={isQuoteConfirmation ? quoteComments : data}
-          onChange={isQuoteConfirmation ? (e) => setQuoteComments(e.target.value) : handleChange}
+          onChange={
+            isQuoteConfirmation
+              ? (e) => setQuoteComments(e.target.value)
+              : handleChange
+          }
           onBlur={isQuoteConfirmation ? onUpdateComments : handleBlur}
-          disabled={isQuoteConfirmation ? canNotEditConfirmationComments : !canEditNotes}
+          disabled={
+            isQuoteConfirmation ? canNotEditConfirmationComments : !canEditNotes
+          }
         />
       </div>
-      {!isQuoteConfirmation && (documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && <div style={classes.item2Container}>
-        <div style={classes.labelTextStyle}>{t("sales.quote.internalNotes")}</div>
-        <GomakeTextInput
-          style={classes.textInputStyle}
-          placeholder={t("sales.quote.writeInternalNotes")}
-          value={dataForInternalNotes}
-          onChange={handleChangeForInternalNotes}
-          onBlur={handleBlurForInternalNotes}
-          disabled={!canEditComments}
-        />
-      </div>}
+      {!isQuoteConfirmation &&
+        (documentType === DOCUMENT_TYPE.quote ||
+          documentType === DOCUMENT_TYPE.order) && (
+          <div style={classes.item2Container}>
+            <div style={classes.labelTextStyle}>
+              {t("sales.quote.internalNotes")}
+            </div>
+            <GomakeTextInput
+              style={classes.textInputStyle}
+              placeholder={t("sales.quote.writeInternalNotes")}
+              value={dataForInternalNotes}
+              onChange={handleChangeForInternalNotes}
+              onBlur={handleBlurForInternalNotes}
+              disabled={!canEditComments}
+            />
+          </div>
+        )}
     </div>
   );
 };

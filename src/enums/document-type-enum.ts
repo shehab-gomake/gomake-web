@@ -94,6 +94,7 @@ export enum ERPDocumentsTypesEnum {
   agingReport,
   ledgerReport,
   salesReport,
+  supplierPayment,
 }
 
 export enum ORDER_STATUSES {
