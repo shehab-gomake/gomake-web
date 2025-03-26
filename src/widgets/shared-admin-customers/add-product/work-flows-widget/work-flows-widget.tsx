@@ -5,6 +5,9 @@ import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
 import { ActionsListMenu } from "@/widgets/product-pricing-widget/components/actions-menu";
 import { useWorkFlows } from "./use-work-flows";
 import { CircularProgress, Typography } from "@mui/material";
+import { GomakePrimaryButton } from "@/components";
+import { CopyAnotherProductsModal } from "./copy-another-products-modal";
+import { useState } from "react";
 
 const WorkFlowsWidget = () => {
   const { clasess } = useStyle();
@@ -23,19 +26,34 @@ const WorkFlowsWidget = () => {
     updateActionsOrderInProduct,
     updateProductAction,
   } = useWorkFlows();
+  const [openCopyAnotherProductsModal, setOpenCopyAnotherProductsModal] = useState(false);
+
+  const handleOpenCopyAnotherProductsModal = () => {
+    setOpenCopyAnotherProductsModal(true);
+  }
+
+  const handleCloseCopyAnotherProductsModal = () => {
+    setOpenCopyAnotherProductsModal(false);
+  }
 
   return (
     <div style={clasess.mainContainer}>
-      <div
-        style={clasess.autoCompleteSelectedSectionName}
-        onClick={(e) => {
-          handleOpenActionsListMenu(e);
-        }}
-      >
-        {t("pricingWidget.addAction")}
-        <ArrowDropDownIcon />
+      <div style={clasess.headerContainer}>
+        {productActions?.length > 0 && <GomakePrimaryButton style={clasess.copyToAnotherProductsButton} onClick={handleOpenCopyAnotherProductsModal} >
+          {t("pricingWidget.copyToAnotherProducts")}
+        </GomakePrimaryButton>}
+
+        <div
+          style={clasess.autoCompleteSelectedSectionName}
+          onClick={(e) => {
+            handleOpenActionsListMenu(e);
+          }}
+        >
+          {t("pricingWidget.addAction")}
+          <ArrowDropDownIcon />
+        </div>
+
       </div>
-      {/* <GeneralInformationComponent details={generalInformation} /> */}
       <div style={{ width: "100%" }}>
         {productActions?.length > 0 ? (
           <Actions
@@ -74,6 +92,7 @@ const WorkFlowsWidget = () => {
         isFromSetting={true}
         addActionToProduct={addActionToProduct}
       />
+      <CopyAnotherProductsModal openModal={openCopyAnotherProductsModal} onClose={handleCloseCopyAnotherProductsModal} />
     </div>
   );
 };

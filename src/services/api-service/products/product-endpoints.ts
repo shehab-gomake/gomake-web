@@ -51,6 +51,8 @@ const UPDATE_PRODUCT_ACTION_URL =
   "/v1/printhouse-config/products/update-product-action";
 const UPDATE_ACTIONS_ORDER_IN_PRODUCT_URL =
   "/v1/printhouse-config/products/update-actions-order-in-product";
+const COPY_ACTIONS_TO_PRODUCTS_URL =
+  "/v1/printhouse-config/products/copy-actions-to-products";
 const DELETE_ACTION_FROM_PRODUCT_URL =
   "/v1/printhouse-config/products/delete-action-from-product";
 
@@ -331,6 +333,19 @@ const updateActionsOrderInProductApi: ICallAndSetData = async (
   );
 };
 
+const copyActionsToProductsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    COPY_ACTIONS_TO_PRODUCTS_URL,
+    setState,
+    data
+  );
+};
 const deleteActionFromProductApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -421,4 +436,5 @@ export {
   getProductSizesApi,
   reCalculatePriceApi,
   updateProductParametersValuesExternalValuesApi,
+  copyActionsToProductsApi,
 };
