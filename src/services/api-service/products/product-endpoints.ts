@@ -47,10 +47,14 @@ const RE_CALCULATE_PRICE_URL =
   "/v1/printhouse-config/products/calculate-products";
 const ADD_ACTION_TO_PRODUCT_URL =
   "/v1/printhouse-config/products/add-action-to-product";
+const ADD_PARAMETER_TO_PRODUCT_URL =
+  "/v1/printhouse-config/products/add-parameter-to-product";
 const UPDATE_PRODUCT_ACTION_URL =
   "/v1/printhouse-config/products/update-product-action";
 const UPDATE_ACTIONS_ORDER_IN_PRODUCT_URL =
   "/v1/printhouse-config/products/update-actions-order-in-product";
+const COPY_ACTIONS_TO_PRODUCTS_URL =
+  "/v1/printhouse-config/products/copy-actions-to-products";
 const DELETE_ACTION_FROM_PRODUCT_URL =
   "/v1/printhouse-config/products/delete-action-from-product";
 
@@ -302,6 +306,19 @@ const addActionToProductApi: ICallAndSetData = async (
     data
   );
 };
+const addParameterToProductApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_PARAMETER_TO_PRODUCT_URL,
+    setState,
+    data
+  );
+};
 
 const updateProductActionApi: ICallAndSetData = async (
   callApi,
@@ -331,6 +348,19 @@ const updateActionsOrderInProductApi: ICallAndSetData = async (
   );
 };
 
+const copyActionsToProductsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    COPY_ACTIONS_TO_PRODUCTS_URL,
+    setState,
+    data
+  );
+};
 const deleteActionFromProductApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -414,6 +444,7 @@ export {
   updateProfitProfileProductMachineApi,
   resetPrintHousePriceApi,
   addActionToProductApi,
+  addParameterToProductApi,
   updateProductActionApi,
   updateActionsOrderInProductApi,
   deleteActionFromProductApi,
@@ -421,4 +452,5 @@ export {
   getProductSizesApi,
   reCalculatePriceApi,
   updateProductParametersValuesExternalValuesApi,
+  copyActionsToProductsApi,
 };

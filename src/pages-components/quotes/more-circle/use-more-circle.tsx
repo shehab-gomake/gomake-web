@@ -82,7 +82,7 @@ const useMoreCircle = () => {
       if (isSupplierPayments) {
         return `/${
           DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-        }?isOutgoingPayments=true${id ? `&id=${id}` : ""}${extraParams}`;
+        }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
       }
       return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
     };
@@ -129,7 +129,6 @@ const useMoreCircle = () => {
     const isPurchaseInvoice = documentType === DOCUMENT_TYPE.purchaseInvoice;
     const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
     const isReceipt = documentType === DOCUMENT_TYPE.receipt;
-
     const isClosedOrder = isOrder && quote?.statusTitleText === "Order.Closed";
     const isPauseOrder = quote?.statusTitleText === "Order.Paused";
     const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
@@ -206,7 +205,8 @@ const useMoreCircle = () => {
       },
       {
         condition: !isPauseOrder && !isDeliveryNote,
-        onClick: () => onClickPdf(isReceipt ? quote : quote?.id),
+        onClick: () =>
+          onClickPdf(isReceipt || isSupplierPayments ? quote : quote?.id),
         icon: <PDFIcon />,
         name: t("sales.quote.pdf"),
       },
@@ -417,16 +417,21 @@ const useMoreCircle = () => {
         name: t("sales.quote.cancel"),
       },
       {
-        condition: !isPauseOrder && isInvoice && quote?.isCanClose,
+        condition: (isInvoice || isPurchaseInvoice) && quote?.isCanClose,
         onClick: () =>
           navigate(
-            `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`
+            isPurchaseInvoice
+              ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`
+              : `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`
           ),
         icon: <PayIcon />,
         name: t("sales.quote.pay"),
         isLink: true,
-        href: `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`,
+        href: isPurchaseInvoice
+          ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`
+          : `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`,
       },
+
       {
         condition:
           ((!isPauseOrder && isOrder && !isCanceledOrder) || isInvoice) &&

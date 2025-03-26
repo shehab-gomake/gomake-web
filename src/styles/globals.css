@@ -527,14 +527,6 @@ df-messenger {
   position: relative;
   z-index: 300;
 }
-.react-calendar-timeline .rct-header-root {
-  background-color: #fff;
-}
-
-.react-calendar-timeline .rct-dateHeader-primary {
-  color: #101828;
-  border: 0;
-}
 
 .time-line-header {
   color: #475467;
@@ -545,31 +537,59 @@ df-messenger {
   justify-content: center;
   height: 100%;
 }
+
+.rct-vl {
+  border-left: 1px solid #eaecf0 !important;
+}
+
+.rct-horizontal-lines > * {
+  background-color: inherit !important;
+  border-bottom: 1px solid #eaecf0 !important;
+}
+
+/* this hide the yellow bg color*/
+/* .rct-vertical-lines > * {
+  background-color: inherit !important;
+  border-left: 1px solid #eaecf0 !important;
+} */
+
+/* Add a bottom border to the entire header container */
+.react-calendar-timeline .rct-header-root {
+  border-bottom: 1px solid #eaecf0 !important;
+  background-color: #fff;
+  pointer-events: none !important;
+}
+
+/* Add a bottom border to the primary header row */
+.react-calendar-timeline .rct-dateHeader-primary {
+  border-bottom: 1px solid #eaecf0 !important;
+  color: #101828;
+  border-left: 1px solid #eaecf0 !important;
+}
+
+/* Add right borders to each secondary header column (the "smaller" time units) */
+.react-calendar-timeline .rct-dateHeader:not(.rct-dateHeader-primary) {
+  border-left: 1px solid #eaecf0 !important;
+}
+
+/* (Optional) If you want a border around the sidebar header as well */
+.react-calendar-timeline .rct-sidebar .rct-sidebar-row {
+  border-bottom: 1px solid #eaecf0 !important;
+  padding: 0 !important;
+}
+
 .react-calendar-timeline .rct-dateHeader {
   background-color: #fff;
   border: 0;
 }
+
 .react-calendar-timeline .rct-calendar-header {
   border: 0;
 }
+
 .react-calendar-timeline .rct-sidebar {
   border: 0;
 }
-.react-calendar-timeline .rct-sidebar .rct-sidebar-row {
-  border-bottom: 1px solid #eaecf0;
-}
-
-.rct-vl {
-  border-left: 0 !important;
-}
-.rct-horizontal-lines > * {
-  background-color: inherit !important;
-  border: 0 !important;
-}
-.react-calendar-timeline .rct-sidebar .rct-sidebar-row {
-  padding: 0 !important;
-}
-
 
 .custom-date-range-picker {
   display: flex !important;

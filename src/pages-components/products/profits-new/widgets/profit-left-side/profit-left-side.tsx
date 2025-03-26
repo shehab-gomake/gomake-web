@@ -34,7 +34,8 @@ const ProfitLeftSideWidget = ({
   setQuantityOfPackages,
   updatePackageUnitQuantity,
   updatePricingByForActionPackage,
-  actionProfitByActionId
+  actionProfitByActionId,
+  getProfitsPricingTables
 }: ProfitLeftSideProps) => {
   const { clasess } = useStyle();
   return (
@@ -69,6 +70,7 @@ const ProfitLeftSideWidget = ({
         addNewStepForActionProfitRow={addNewStepForActionProfitRow}
         updatePricingByForActionPackage={updatePricingByForActionPackage}
         actionProfitByActionId={actionProfitByActionId}
+        getProfitsPricingTables={getProfitsPricingTables}
       />
       <AddStepModal
         openModal={openAddStepModal}

@@ -135,14 +135,12 @@ export enum DocumentCalculationType {
   Discount,
   DiscountAmount,
   TotalPayment,
-  VAT
+  VAT,
 }
 
-export enum DocumentPreferencesEnum
-        {
-            ShowPrice,
-            ShowDetails,
-            ShowGraphicsItems,
-            ShowDeliveryItems,
-
-        }
+export enum DocumentPreferencesEnum {
+  ShowPrice,
+  ShowDetails,
+  ShowGraphicsItems,
+  ShowDeliveryItems,
+}

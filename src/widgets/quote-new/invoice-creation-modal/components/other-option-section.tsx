@@ -16,12 +16,14 @@ interface OtherOptionsSectionProps {
   quoteItemValue: any;
   docType: any;
   onClose: () => void;
+  isOutgoingPayments: boolean;
 }
 
 const OtherOptionsSection = ({
   quoteItemValue,
   docType,
   onClose,
+  isOutgoingPayments,
 }: OtherOptionsSectionProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -83,7 +85,10 @@ const OtherOptionsSection = ({
     );
 
   const onClickCreateNewInvoice = () => {
-    navigate(`/${documentPath}?isNewCreation=true`);
+    const queryParams = isOutgoingPayments
+      ? "?isOutgoingPayments=true&isNewCreation=true"
+      : "?isNewCreation=true";
+    navigate(`/${documentPath}${queryParams}`);
     onClose();
   };
 
@@ -94,7 +99,9 @@ const OtherOptionsSection = ({
       case DOCUMENT_TYPE.invoice:
         return t("sales.modals.createNewInvoice");
       case DOCUMENT_TYPE.receipt:
-        return t("sales.modals.createNewReceipt");
+        return isOutgoingPayments
+          ? t("sales.modals.createNewPayment")
+          : t("sales.modals.createNewReceipt");
       default:
         return t("sales.modals.createNewDocument");
     }

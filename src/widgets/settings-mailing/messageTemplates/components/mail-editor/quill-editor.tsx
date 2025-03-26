@@ -177,6 +177,7 @@ const QuillEditor = ({ value, setValue }: IProps) => {
               .ql-editor {
                 direction: ${dir};
                 text-align: ${RTL ? "right" : "left"};
+                height: 145px !important;
               }
             `}</style>
             <Suspense fallback={<div>Loading editor...</div>}>

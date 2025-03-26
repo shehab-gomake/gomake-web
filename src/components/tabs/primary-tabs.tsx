@@ -54,8 +54,9 @@ const UnderlinedTabs = styled(Tabs)(
     const { selectedColor } = props;
     return {
       "& .MuiTabs-indicator": {
-        borderBottom: `2px solid ${selectedColor === "secondary" ? secondColor(500) : primaryColor(500)
-          }`,
+        borderBottom: `2px solid ${
+          selectedColor === "secondary" ? secondColor(500) : primaryColor(500)
+        }`,
       },
       "& .MuiButtonBase-root": {
         textTransform: "initial",
@@ -140,23 +141,25 @@ const PrimaryTabsComponent = ({
             />
           ))}
         </TabsContainer>
-        <div>{children}</div>
+        {children && <div>{children}</div>}
       </Stack>
-      {tabs?.map((tab, index: number) => (
-        <CustomTabPanel key={"tabs" + index} value={value} index={index}>
-          {tab?.component}
-          <div style={classes.tabStyle}>
-            {navigationButtons && index + 1 < tabs.length && (
-              <SecondaryButton
-                variant={"contained"}
-                onClick={() => setValue(index + 1)}
-              >
-                Next
-              </SecondaryButton>
-            )}
-          </div>
-        </CustomTabPanel>
-      ))}
+      {tabs?.map((tab, index: number) =>
+        tab.component ? (
+          <CustomTabPanel key={"tabs" + index} value={value} index={index}>
+            {tab.component}
+            <div style={classes.tabStyle}>
+              {navigationButtons && index + 1 < tabs.length && (
+                <SecondaryButton
+                  variant={"contained"}
+                  onClick={() => setValue(index + 1)}
+                >
+                  Next
+                </SecondaryButton>
+              )}
+            </div>
+          </CustomTabPanel>
+        ) : null
+      )}
     </>
   );
 };
