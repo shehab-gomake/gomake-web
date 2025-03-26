@@ -318,7 +318,7 @@ const useQuoteNew = ({
   };
 
   const [isMoveToReady, setIsMoveToReady] = useState(false);
-  const [isOpenRelatedDocuments, setIsOpenRelatedDocuments] = useState(false);
+  const [isOpenRelatedDocuments, setIsOpenRelatedDocuments] = useState(true);
   const handleCheckboxChange = () => {
     setIsMoveToReady(!isMoveToReady);
   };
@@ -1227,7 +1227,7 @@ const useQuoteNew = ({
             newItem,
             1,
             newItem.price,
-            updatedQuoteItemValue,
+            updatedQuoteItemValue
           );
         } else getQuote();
       } else {
@@ -1239,7 +1239,6 @@ const useQuoteNew = ({
         documentId: quoteItemValue?.id,
         shipmentTypeId: shipmentType?.value,
         deliveryPrice,
-
       },
       documentType: docType,
     });
@@ -1659,7 +1658,7 @@ const useQuoteNew = ({
         ...(router?.query?.budgetId ? { budgetID: router.query.budgetId } : {}),
         exchangeRate:
           quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
-        isOpenRelatedDocuments:isOpenRelatedDocuments,
+        isOpenRelatedDocuments: isOpenRelatedDocuments,
       },
     });
   };
@@ -2385,7 +2384,8 @@ const useQuoteNew = ({
     isDeliveryNote,
     isPurchaseDocument,
     isOpenRelatedDocuments,
-    setIsOpenRelatedDocuments
+    setIsOpenRelatedDocuments,
+    isPurchaseInvoice,
   };
 };
 

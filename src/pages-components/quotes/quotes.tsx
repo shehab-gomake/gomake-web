@@ -212,7 +212,10 @@ const QuotesListPageWidget = ({
     handleCheckboxChange,
     handleSortBE,
     isDescOrderBE,
-    isHeaderSortable
+    isHeaderSortable,
+    onClickCloseReopenDocumentModal,
+    openReopenDocModal,
+    OpenDocument,
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -1019,6 +1022,24 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseStartProductionModal}
         subTitle={t("sales.modals.confirmSendToProduction")}
         onClickDelete={startOrderProduction}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={`${t("sales.quote.ReopenModalTitle", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        openModal={openReopenDocModal}
+        onClose={onClickCloseReopenDocumentModal}
+        subTitle={`${t("sales.quote.ReopenModalSubTitle", {
+          documentName: t(
+            `sales.quote.${DOCUMENT_TYPE[documentType]}`
+          ).toLowerCase(),
+        })}`}
+        onClickDelete={() => OpenDocument(selectedDocument)}
+        style={{ width: "35%" }}
+        yesBtn={t("sales.quote.yesBtn")}
       />
     </>
   );
