@@ -414,7 +414,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
-  const getAllQuotes = useCallback(async () => {
+  const getAllQuotes = useCallback(async (order?: any) => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data?.data;
@@ -795,6 +795,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         model: {
           pageNumber: currentPageNumber || page,
           pageSize: pageSize,
+          order: order,
         },
       });
     } else {
@@ -804,6 +805,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           model: {
             pageNumber: currentPageNumber || page,
             pageSize: pageSize,
+            order: order,
           },
           dateRange,
           customerId: currentCustomerId || customerId?.id,
@@ -2660,6 +2662,62 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     return card ? card.value : "0";
   };
 
+  const [isDescOrderBE, setIsDescOrderBE] = useState(false);
+  const columnMappings = {
+    [DOCUMENT_TYPE.quote]: {
+      [t("sales.quote.createdDate")]: 0,
+      [t("sales.quote.client")]: 1,
+      [t("documentingDesign.TableSetting.number")]: 2,
+      [t("sales.quote.totalPrice")]: 3,
+      [t("sales.quote.orderNumber")]: 4,
+    },
+    [DOCUMENT_TYPE.order]: {
+      [t("sales.quote.createdDate")]: 0,
+      [t("sales.quote.orderNumber")]: 1,
+      [t("sales.quote.client")]: 2,
+      [t("sales.quote.purchaseNumber")]: 3,
+      [t("sales.quote.jobs")]: 4,
+      [t("sales.quote.worksName")]: 5,
+      [t("sales.quote.cost")]: 6,
+      [t("sales.quote.totalPrice")]: 7,
+    },
+    default: {
+      [t("sales.quote.createdDate")]: 0,
+      [t("sales.quote.orderNumber")]: 1,
+      [t("sales.quote.client")]: 2,
+      [t("sales.quote.worksName")]: 3,
+      [t("sales.quote.notes")]: 6,
+      [t("sales.quote.totalPrice")]: 7,
+      [t("sales.documentDeliveries.deliveryStatus")]: 8,
+      [t("sales.quote.status")]: 9,
+    },
+  };
+  const isHeaderSortable = (docType: string, header: string) => {
+    const headers = columnMappings[docType] || columnMappings.default;
+    return headers.hasOwnProperty(header);
+  };
+  const handleSortBE = (key: string) => {
+    const direction = isDescOrderBE ? 'desc' : 'asc';
+
+    // Define a mapping of keys to column indices for each document type
+
+
+    // Determine the column index based on the document type and key
+    const columnIndex = columnMappings[docType]?.[key] ?? columnMappings.default[key];
+
+    if (columnIndex !== undefined) {
+      getAllQuotes([
+        {
+          column: columnIndex,
+          dir: direction,
+        },
+      ]);
+      setIsDescOrderBE(!isDescOrderBE);
+    } else {
+      console.error('Invalid key for sorting:', key);
+    }
+  };
+
   return {
     showCustomerModal,
     customerForEdit,
@@ -2819,10 +2877,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isMoveToReady,
     handleCheckboxChange,
     direction,
+    handleSortBE,
+    isDescOrderBE,
+    isHeaderSortable,
     onClickCloseReopenDocumentModal,
     setOpenReopenDocModal,
     openReopenDocModal,
     OpenDocument,
+
   };
 };
 
