@@ -82,7 +82,7 @@ const useMoreCircle = () => {
       if (isSupplierPayments) {
         return `/${
           DOCUMENT_TYPE[DOCUMENT_TYPE.receipt]
-        }?isOutgoingPayments=true${id ? `&id=${id}` : ""}${extraParams}`;
+        }?isOutgoingPayments=true${id ? `&Id=${id}` : ""}${extraParams}`;
       }
       return `/${documentPath}${id ? `?Id=${id}` : ""}${extraParams}`;
     };

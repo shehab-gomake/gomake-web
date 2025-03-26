@@ -7,10 +7,12 @@ import { useMobileHeight } from "@/hooks/use-responsive";
 
 interface PageNotFoundProps {
   hideBackToHomePageBtn?: boolean;
+  message?: string;
 }
 
 export default function PageNotFound({
   hideBackToHomePageBtn = false,
+  message
 }: PageNotFoundProps) {
   const router = useRouter();
   const mobileHeight = useMobileHeight();
@@ -43,8 +45,7 @@ export default function PageNotFound({
           gutterBottom
           style={{ color: "#4B4B4B", fontWeight: 400 }}
         >
-          This page doesn't exist or was removed! We suggest you go back to the
-          home page.
+          {message ?? "This page doesn't exist or was removed! We suggest you go back to the home page."}
         </Typography>
         {!hideBackToHomePageBtn && (
           <PrimaryButton
