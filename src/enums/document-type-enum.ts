@@ -140,9 +140,12 @@ export enum DocumentCalculationType {
 
 export enum DocumentPreferencesEnum
         {
-            ShowPrice,
-            ShowDetails,
-            ShowGraphicsItems,
-            ShowDeliveryItems,
+          ShowPrice,
+          ShowDetails,
+          ShowGraphicsItems,
+          ShowDeliveryItems,
+          ApplyAutomaticDiscount,
+          ShowDiscountItems,
+          HideItemDiscountColumn,
 
         }
