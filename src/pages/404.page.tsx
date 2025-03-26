@@ -36,16 +36,20 @@ export default function PageNotFound({
         bgcolor="white"
       >
         <PageNoteFound />
-        <Typography variant="h2" component="h2" gutterBottom>
-          Page Not Found
-        </Typography>
+        {
+          !message && <Typography variant="h2" component="h2" gutterBottom>
+            Page Not Found
+          </Typography>
+        }
         <Typography
           variant="h6"
           component="h2"
           gutterBottom
           style={{ color: "#4B4B4B", fontWeight: 400 }}
         >
-          {message ?? "This page doesn't exist or was removed! We suggest you go back to the home page."}
+          {message ? <Typography variant="h2" component="h2" gutterBottom>
+            {message}
+          </Typography> : "This page doesn't exist or was removed! We suggest you go back to the home page."}
         </Typography>
         {!hideBackToHomePageBtn && (
           <PrimaryButton
