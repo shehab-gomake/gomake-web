@@ -526,7 +526,9 @@ const BusinessNewWidget = ({
             ClientChangeSource.SAVE_AND_START_NEW_DOC
           )
         }
-        yesBtn={"sales.cart.saveAndChangeClients"}
+        yesBtn={`sales.cart.${
+          isPurchaseDocument ? "saveAndChangeSupplier" : "saveAndChangeClients"
+        }`}
         noBtn={"sales.cart.startNewInvoice"}
       />
     </>
