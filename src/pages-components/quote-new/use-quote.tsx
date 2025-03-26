@@ -645,7 +645,6 @@ const useQuoteNew = ({
     }
   };
 
-  //!here
   useEffect(() => {
     if (
       router?.query?.isNewCreation &&
@@ -660,12 +659,13 @@ const useQuoteNew = ({
 
   const [routerChangedFromClientSelect, setRouterChangedFromClientSelect] =
     useState(false);
-  //!here
+
   const onChangeSelectBusiness = async (
     item: any,
     clientChangeSource: ClientChangeSource = ClientChangeSource.REGULAR_CHANGE,
     prevDocumentItem: any | null = null //in case we change client and click "save and change client"
   ) => {
+    debugger;
     if (router?.query?.isNewCreation && docType === DOCUMENT_TYPE.receipt) {
       setLoadingWithShadow(true);
       const callBack = (res) => {

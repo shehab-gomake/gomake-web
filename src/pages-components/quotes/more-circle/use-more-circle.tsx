@@ -408,16 +408,21 @@ const useMoreCircle = () => {
         name: t("sales.quote.cancel"),
       },
       {
-        condition: isInvoice && quote?.isCanClose,
+        condition: (isInvoice || isPurchaseInvoice) && quote?.isCanClose,
         onClick: () =>
           navigate(
-            `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`
+            isPurchaseInvoice
+              ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`
+              : `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`
           ),
         icon: <PayIcon />,
         name: t("sales.quote.pay"),
         isLink: true,
-        href: `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`,
+        href: isPurchaseInvoice
+          ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`
+          : `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`,
       },
+
       {
         condition:
           ((!isPauseOrder && isOrder && !isCanceledOrder) || isInvoice) &&
