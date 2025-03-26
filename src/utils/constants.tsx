@@ -213,48 +213,51 @@ export const _renderStatus = (
     ) {
       const firstDocuments = document.documentNumbers
         ? document.documentNumbers.map((item: any, index: number) => (
-          <span key={index}>
-            <a
-              style={{
-                minWidth: "auto",
-                height: "auto",
-                padding: 0,
-                color: "#2e3092",
-                cursor: "pointer",
-                textDecoration: "none",
-              }}
-              href={`/${document.titleDocumentNumber.charAt(0).toLowerCase() +
-                document.titleDocumentNumber.slice(1)
+            <span key={index}>
+              <a
+                style={{
+                  minWidth: "auto",
+                  height: "auto",
+                  padding: 0,
+                  color: "#2e3092",
+                  cursor: "pointer",
+                  textDecoration: "none",
+                }}
+                href={`/${
+                  document.titleDocumentNumber.charAt(0).toLowerCase() +
+                  document.titleDocumentNumber.slice(1)
                 }?Id=${item.documentId}`}
-            >
-              {item.documentNumber}
-            </a>
-            {index < document.documentNumbers.length - 1 && ", "}
-          </span>
-        ))
+              >
+                {item.documentNumber}
+              </a>
+              {index < document.documentNumbers.length - 1 && ", "}
+            </span>
+          ))
         : [];
 
+      // !here status navigation
       const secondDocuments = document.secondDocumentNumbers
         ? document.secondDocumentNumbers.map((item: any, index: number) => (
-          <span key={index}>
-            <a
-              style={{
-                minWidth: "auto",
-                height: "auto",
-                padding: 0,
-                color: "#2e3092",
-                cursor: "pointer",
-                textDecoration: "none",
-              }}
-              href={`/${document.titleSecondDocumentNumber.charAt(0).toLowerCase() +
-                document.titleSecondDocumentNumber.slice(1)
+            <span key={index}>
+              <a
+                style={{
+                  minWidth: "auto",
+                  height: "auto",
+                  padding: 0,
+                  color: "#2e3092",
+                  cursor: "pointer",
+                  textDecoration: "none",
+                }}
+                href={`/${
+                  document.titleSecondDocumentNumber.charAt(0).toLowerCase() +
+                  document.titleSecondDocumentNumber.slice(1)
                 }?Id=${item.documentId}`}
-            >
-              {item.documentNumber}
-            </a>
-            {index < document.secondDocumentNumbers.length - 1 && ", "}
-          </span>
-        ))
+              >
+                {item.documentNumber}
+              </a>
+              {index < document.secondDocumentNumbers.length - 1 && ", "}
+            </span>
+          ))
         : [];
 
       let result: JSX.Element[] = [];
@@ -356,7 +359,6 @@ export const findDefaultOption = (parameter) => {
   }
   return null;
 };
-
 
 // /////////////////////// for  modals
 

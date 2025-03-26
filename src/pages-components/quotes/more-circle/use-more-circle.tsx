@@ -408,7 +408,7 @@ const useMoreCircle = () => {
         name: t("sales.quote.cancel"),
       },
       {
-        condition: !isPauseOrder && isInvoice && quote?.isCanClose,
+        condition: isInvoice && quote?.isCanClose,
         onClick: () =>
           navigate(
             `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`
