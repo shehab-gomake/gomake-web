@@ -210,6 +210,9 @@ const QuotesListPageWidget = ({
     isPurchaseOrder,
     isMoveToReady,
     handleCheckboxChange,
+    handleSortBE,
+    isDescOrderBE,
+    isHeaderSortable
   } = useQuotes(documentType, isFromHomePage);
 
   useEffect(() => {
@@ -297,10 +300,8 @@ const QuotesListPageWidget = ({
       {renderCreateNewButton(onclickCreateNew)}
     </>
   );
-  const [isDescOrderBE, setIsDescOrderBE] = useState(false);
-  const handleSortBE = (key: string) => {
-    console.log(key);
-  };
+
+
   return (
     <>
       {!isFromHomePage && (
@@ -675,6 +676,8 @@ const QuotesListPageWidget = ({
               withSortBE={true}
               onClickSortBE={handleSortBE}
               isDescOrderBE={isDescOrderBE}
+              isHeaderSortable={isHeaderSortable}
+              docType={documentType}
               columnWidths={
                 isQuote
                   ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
@@ -724,12 +727,12 @@ const QuotesListPageWidget = ({
                           "5%",
                         ]
                         : [
-                          "7%",
+                          "10%",
                           "8%",
                           "8%",
                           "8%",
                           "10%",
-                          "26%",
+                          "23%",
                           "10%",
                           "10%",
                           "10%",

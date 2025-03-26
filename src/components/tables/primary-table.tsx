@@ -161,11 +161,17 @@ const PrimaryTable = ({
   handleSortAgingReport,
   isDescOrder,
   isDescOrderBE = false,
+  isHeaderSortable,
+  docType,
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
   // State for sorting
   const [sortConfig, setSortConfig] = useState<{
     key: number;
@@ -278,6 +284,8 @@ const PrimaryTable = ({
                 <TableCell
                   key={`header_${index}`}
                   align="center"
+                  onMouseEnter={handleMouseEnter}
+                  onMouseLeave={handleMouseLeave}
                   style={{
                     cursor: withSort || withSortBE ? "pointer" : "default",
                     userSelect: "none",
@@ -331,19 +339,21 @@ const PrimaryTable = ({
                         </IconButton>
                       )}
 
-                    {withSortBE &&
-                      (
-                        <IconButton
-                          size="small"
-                          style={{ ...adaptMarginRight(dir, 4) }}
-                        >
-                          {!isDescOrderBE ? (
-                            <ArrowUpward sx={{ fontSize: "18px" }} />
-                          ) : (
-                            <ArrowDownward sx={{ fontSize: "18px" }} />
-                          )}
-                        </IconButton>
-                      )}
+                    {withSortBE && isHeaderSortable(docType, header) && (
+                      <IconButton
+                        size="small"
+                        style={{
+                          ...adaptMarginRight(dir, 4),
+                          visibility: isHovered ? 'visible' : 'hidden',
+                        }}
+                      >
+                        {!isDescOrderBE ? (
+                          <ArrowUpward sx={{ fontSize: "18px" }} />
+                        ) : (
+                          <ArrowDownward sx={{ fontSize: "18px" }} />
+                        )}
+                      </IconButton>
+                    )}
                   </div>
                 </TableCell>
               ))}

@@ -28,6 +28,8 @@ export interface ITableProps {
   isDescOrder?: boolean;
   onClickSortBE?: (key: any) => void;
   isDescOrderBE?: boolean;
+  isHeaderSortable?: any;
+  docType?: any;
 }
 
 export interface ISecondaryTableProps {
