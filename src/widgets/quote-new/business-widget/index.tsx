@@ -510,13 +510,7 @@ const BusinessNewWidget = ({
             isPurchaseDocument ? "titleChangeSupplier" : "titleChangeClient"
           }`
         )}
-        subTitle={t(
-          `sales.cart.${
-            isPurchaseDocument
-              ? "subTitleChangeSupplierFromInvoice"
-              : "subTitleChangeClientFromInvoice"
-          }`
-        )}
+        subTitle={t(`sales.cart.subTitleChangeClientFromInvoice`)}
         openModal={openChangeClientModalFromInvoice}
         onClose={onClickCloseChangeClientModalFromInvoice}
         onClickYes={() =>
