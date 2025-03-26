@@ -3,7 +3,6 @@ import {
   TableBody,
   TableContainer,
   TableHead,
-  Checkbox,
   TableRow,
 } from "@mui/material";
 import { useStyle } from "./style";
@@ -13,10 +12,10 @@ import { TotalPricesNewReceipts } from "./total-prices-new-receipt";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { TotalPricesReceipts } from "./total-prices-receipt";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { PaymentMethodsDetailsModal } from "./Payment-methods-details/payment-methods-details-modal";
 import { totalAllocatedDocumentsState } from "../buttons-container/states";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useSetRecoilState } from "recoil";
 
 const ReceiptsTable = () => {
   let indexs = 0;

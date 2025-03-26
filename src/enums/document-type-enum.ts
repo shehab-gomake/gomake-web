@@ -135,7 +135,7 @@ export enum DocumentCalculationType {
   Discount,
   DiscountAmount,
   TotalPayment,
-  VAT
+  VAT,
 }
 
 export enum DocumentPreferencesEnum

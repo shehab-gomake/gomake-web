@@ -289,7 +289,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         alertFaultGetData();
       }
     };
-    if (isReceipt) {
+    if (isReceipt || isSupplierPayments) {
       if (withInvoices)
         await getReceiptInvoicesPdfApi(callApi, callBack, {
           receiptId: id,

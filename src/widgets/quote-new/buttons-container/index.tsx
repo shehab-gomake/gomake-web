@@ -105,7 +105,7 @@ const ButtonsContainer = ({
     handleOrderConfirmation,
     setOpenReceiptCreationModal,
   } = useButtonsContainer(documentType);
-  console.log("quoteItemValue", quoteItemValue)
+  console.log("quoteItemValue", quoteItemValue);
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
       quoteItemValue.isSendWhatsappWeb ||
@@ -176,22 +176,29 @@ const ButtonsContainer = ({
         )}
         {canAddDelivery && canEditDocument && (
           <GomakePrimaryButton
-            leftIcon={quoteItemValue?.isHaveDeliveryItem ? <EditIcon stroke={"#344054"} /> : <PlusIcon stroke={"#344054"} />}
+            leftIcon={
+              quoteItemValue?.isHaveDeliveryItem ? (
+                <EditIcon stroke={"#344054"} />
+              ) : (
+                <PlusIcon stroke={"#344054"} />
+              )
+            }
             style={classes.btnContainer}
             onClick={() => {
               if (quoteItemValue?.isHaveDeliveryItem) {
-                onOpenUpdateDeliveryModal()
+                onOpenUpdateDeliveryModal();
               } else {
                 if (quoteItemValue?.isShowDeliveryItems) {
-                  onOpenDeliveryModal()
+                  onOpenDeliveryModal();
                 } else {
-                  onOpenUpdateDeliveryModal()
+                  onOpenUpdateDeliveryModal();
                 }
               }
-            }
-            }
+            }}
           >
-            {quoteItemValue?.isHaveDeliveryItem ? t("sales.quote.updateDelivery") : t("sales.quote.addDelivery")}
+            {quoteItemValue?.isHaveDeliveryItem
+              ? t("sales.quote.updateDelivery")
+              : t("sales.quote.addDelivery")}
           </GomakePrimaryButton>
         )}
         {isNewCreation &&
