@@ -5,11 +5,11 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import { QuoteNewPageWidget } from "../quote-new/quote";
 import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 import { useQuoteConfirmation } from "./use-quote-confirmation";
-import {clearStorage, removeTempUserTokenStorage, updateTempUserTokenStorage} from "@/services/storage-data";
+import { clearStorage, removeTempUserTokenStorage, updateTempUserTokenStorage } from "@/services/storage-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import PageNotFound from "@/pages/404.page";
-import { QuoteNewPageSkeletonWidget } from "../quote-new/quote-skeleton";
 import { QuoteConfirmationMobileSkeltonWidget } from "@/widgets/quote-confirmation-mobile/components/quote-confirmation-mobile-skelton";
+import { useTranslation } from "react-i18next";
 
 interface IProps {
   isPrePaymentPage?: boolean;
@@ -35,7 +35,7 @@ const QuoteConfirmationPageWidget = ({
   } = useQuoteConfirmation({ documentType });
 
   const { classes } = useStyle({ direction });
-
+  const { t } = useTranslation();
   useEffect(() => {
     updateScreenWidth();
     window.addEventListener("resize", updateScreenWidth);
@@ -72,7 +72,7 @@ const QuoteConfirmationPageWidget = ({
   }, [isPrePaymentPage, getTempUserToken]);
 
   if (isPageNotFound && isPrePaymentPage) {
-    return <PageNotFound hideBackToHomePageBtn={true} />;
+    return <PageNotFound hideBackToHomePageBtn={true} message={"this payment is closed"} />;
   }
 
   useEffect(() => {
