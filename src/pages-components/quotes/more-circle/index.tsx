@@ -21,11 +21,11 @@ const MoreMenuWidget = ({
   onClickOpenPrintPDFModal,
   onOpenCancelReceiptModal,
   onOpenCancelReceiptModalRefund,
-  onClickOpenDocument,
   onClickOpenChangeProductionStatusModal,
   onClickPauseOrResume,
   onOpenDuplicateModal,
   onClickStartProduction,
+  onClickReopenDocument,
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -47,11 +47,11 @@ const MoreMenuWidget = ({
     onClickOpenPrintPDFModal,
     onOpenCancelReceiptModal,
     onOpenCancelReceiptModalRefund,
-    onClickOpenDocument,
     onClickOpenChangeProductionStatusModal,
     onClickPauseOrResume,
     onOpenDuplicateModal,
     onClickStartProduction,
+    onClickReopenDocument,
   });
 
   return (
