@@ -24,7 +24,7 @@ import {
   subProductsCopyParametersState,
   subProductsParametersState,
   systemCurrencyState,
-  userState
+  userState,
 } from "@/store";
 import cloneDeep from "lodash/cloneDeep";
 import lodashClonedeep from "lodash.clonedeep";
@@ -136,9 +136,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
+  const [subProductsColorsModal, setSubProductsColorsModal] =
+    useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
-  const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
+  const setSubProductsCopy = useSetRecoilState<any>(
+    subProductsCopyParametersState
+  );
   const [currentProductItemValue, setCurrentProductItemValue] =
     useRecoilState<any>(currentProductItemValueState);
   const [productItemValueDraftId, setCurrentProductItemValueDraftId] =
@@ -300,11 +303,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [isCalculationFinished]);
   const [calculationServerErrorState, setcalculationServerErrorState] =
-      useState(false);
+    useState(false);
+
+  //!here
   const [showCalculationInCompletedAlert, setShowCalculationInCompletedAlert] =
     useState(false);
   const [showCalculationInCompletedModal, setShowCalculationInCompletedModal] =
-      useState(false);
+    useState(false);
   const [currentSignalRConnectionId, setCurrentSignalRConnectionId] =
     useRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] =
@@ -323,7 +328,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       let copy = lodashClonedeep(subProducts);
       setSubProductsCopy(copy);
     }
-
   }, [subProducts, widgetType]);
   const [isCanGetSelected, setIsCanGetSelected] = useState(false);
   useEffect(() => {
@@ -338,7 +342,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (
       calculationResult &&
       calculationResult.productItemValueDraftId ===
-      currentCalculationSessionId &&
+        currentCalculationSessionId &&
       !productTemplate?.isHaveFixedAction
     ) {
       getSelectedWorkFlow(calculationResult?.isNeedPriceUpdate);
@@ -383,12 +387,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       result.productItemValue.totalWorkFlows
     );
     setWorkFlows(result.productItemValue.workFlows);
-    setCurrentProductItemValueTotalPrice(
-      parseFloat(result.totalPrice)
-    );
-    setSliderCurrentProductItemValueTotalPrice(
-      parseFloat(result.totalPrice)
-    );
+    setCurrentProductItemValueTotalPrice(parseFloat(result.totalPrice));
+    setSliderCurrentProductItemValueTotalPrice(parseFloat(result.totalPrice));
 
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result);
@@ -405,13 +405,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   };
 
   const getSelectedWorkFlow = async (IsNeedPriceUpdate?) => {
-
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
     let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
     if (documentItemId) {
-      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery}`;
+      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${
+        IsNeedPriceUpdate ? false : priceRecovery
+      }`;
     }
     const res: any = await callApi("GET", url, {}, false);
     _setDataFromSelectedWorkFlow(res);
@@ -470,13 +471,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (
       signalRPricingResult &&
       signalRPricingResult.productItemValueDraftId ===
-      currentCalculationSessionId
+        currentCalculationSessionId
     ) {
       setLoading(false);
       const totalWorkFlowsCount = signalRPricingResult.totalWorkFlows;
       const currentWorkFlowsCount =
         signalRPricingResult.currentWorkFlowIndex >
-          calculationProgress.currentWorkFlowsCount
+        calculationProgress.currentWorkFlowsCount
           ? signalRPricingResult.currentWorkFlowIndex
           : calculationProgress.currentWorkFlowsCount + 1;
       if (
@@ -536,9 +537,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             flow.id === updatedSelectedWorkFlow?.id
               ? updatedSelectedWorkFlow
               : {
-                ...flow,
-                selected: false,
-              }
+                  ...flow,
+                  selected: false,
+                }
           )
         );
       } else {
@@ -785,9 +786,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               if (
                 parameter?.isHidden &&
                 // !parameter?.isHiddenInSetting &&
-                !parameter?.setSettingIcon
-                && relatedParameters.some(
-                  (relatedParam) => relatedParam.parameterId === parameter?.id && !parameter.isHiddenInSetting
+                !parameter?.setSettingIcon &&
+                relatedParameters.some(
+                  (relatedParam) =>
+                    relatedParam.parameterId === parameter?.id &&
+                    !parameter.isHiddenInSetting
                 )
               ) {
                 if (parameter.isUnderParameterId !== null) {
@@ -965,7 +968,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameterType: parameter?.parameterType,
                         isQuantityParameter: parameter?.isQuantityParameter,
                         ...(value && {
-                          valueIds: [parameter?.parameterType === EParameterTypes.MACHINES_SELECT ? value?.updateName : value?.id],
+                          valueIds: [
+                            parameter?.parameterType ===
+                            EParameterTypes.MACHINES_SELECT
+                              ? value?.updateName
+                              : value?.id,
+                          ],
                           values: [value?.updateName],
                         }),
                         sectionId: section?.id,
@@ -983,11 +991,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
                 } else if (
                   parameter?.parameterType ===
-                  EParameterTypes.SELECT_MATERIALS ||
+                    EParameterTypes.SELECT_MATERIALS ||
                   parameter?.parameterType ===
-                  EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                   parameter?.parameterType ===
-                  EParameterTypes.ADVERTISING_PRODUCT_NAME ||
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME ||
                   parameter?.parameterType === EParameterTypes.BUTTON
                 ) {
                   const value = parameter?.valuesConfigs?.find(
@@ -997,10 +1005,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   if (
                     !value &&
                     parameter?.valuesConfigs &&
-                    (parameter.valuesConfigs = parameter.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
+                    (parameter.valuesConfigs = parameter.valuesConfigs.filter(
+                      (config) => !config.isHidden
+                    )).length === 1 &&
                     parameter?.isRequired &&
                     parameter?.parameterType !==
-                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
+                      EParameterTypes.ADVERTISING_PRODUCT_CATEGORY
                   ) {
                     let existsSubProductParameter = subProduct.parameters.find(
                       (x) =>
@@ -1066,7 +1076,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                             valueIds: [value?.materialValueIds[0]?.valueId],
                             values: [
                               value?.updateName ||
-                              value?.materialValueIds[0]?.valueId,
+                                value?.materialValueIds[0]?.valueId,
                             ],
                           }),
                           sectionId: section?.id,
@@ -1334,8 +1344,25 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         parameterType: childParam?.parameterType,
                         isQuantityParameter: childParam?.isQuantityParameter,
                         values: item.defaultValue
-                          ? [unitType === UNIT_TYPE.IMPERIAL && childParam?.code != "Width" && childParam?.code != "Height" ? (item?.defaultValue * childParam?.factor).toFixed(3) : item?.defaultValue]
-                          : [unitType === UNIT_TYPE.IMPERIAL && childParam?.code != "Width" && childParam?.code != "Height" ? (childParam?.defaultValue * childParam?.factor).toFixed(3) : childParam?.defaultValue],
+                          ? [
+                              unitType === UNIT_TYPE.IMPERIAL &&
+                              childParam?.code != "Width" &&
+                              childParam?.code != "Height"
+                                ? (
+                                    item?.defaultValue * childParam?.factor
+                                  ).toFixed(3)
+                                : item?.defaultValue,
+                            ]
+                          : [
+                              unitType === UNIT_TYPE.IMPERIAL &&
+                              childParam?.code != "Width" &&
+                              childParam?.code != "Height"
+                                ? (
+                                    childParam?.defaultValue *
+                                    childParam?.factor
+                                  ).toFixed(3)
+                                : childParam?.defaultValue,
+                            ],
                         sectionId: section?.id,
                         subSectionId: subSection?.id,
                         actionIndex: childParam?.actionIndex,
@@ -1548,13 +1575,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               if (
                 (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
                   parameter?.parameterType ===
-                  EParameterTypes.MACHINES_SELECT ||
+                    EParameterTypes.MACHINES_SELECT ||
                   parameter?.parameterType ===
-                  EParameterTypes.SELECT_MATERIALS ||
+                    EParameterTypes.SELECT_MATERIALS ||
                   parameter?.parameterType ===
-                  EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
+                    EParameterTypes.ADVERTISING_PRODUCT_CATEGORY ||
                   parameter?.parameterType ===
-                  EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
+                    EParameterTypes.ADVERTISING_PRODUCT_NAME) &&
                 (!parameter?.valuesConfigs ||
                   parameter?.valuesConfigs.length === 0)
               ) {
@@ -1607,24 +1634,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       );
                       return existingConfig
                         ? {
-                          ...existingConfig,
-                          additionalAttribute: data.additionalAttribute,
-                          currency: data.currency,
-                        }
+                            ...existingConfig,
+                            additionalAttribute: data.additionalAttribute,
+                            currency: data.currency,
+                          }
                         : {
-                          id: data.valueId,
-                          isHidden: false,
-                          isDefault: false,
-                          updateName: null,
-                          activateAction: false,
-                          isDeleted: false,
-                          materialValueIds: null,
-                          values: null,
-                          selectedParameterValues: null,
-                          code: null, // Add code if needed
-                          additionalAttribute: data.additionalAttribute,
-                          currency: data.currency,
-                        };
+                            id: data.valueId,
+                            isHidden: false,
+                            isDefault: false,
+                            updateName: null,
+                            activateAction: false,
+                            isDeleted: false,
+                            materialValueIds: null,
+                            values: null,
+                            selectedParameterValues: null,
+                            code: null, // Add code if needed
+                            additionalAttribute: data.additionalAttribute,
+                            currency: data.currency,
+                          };
                     });
                   }
                 } else {
@@ -1751,7 +1778,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                         paramMaterialValues?.find((m) =>
                           compareStrings(
                             m.valueId,
-                            (x.valueIds && x.valueIds[0]) || (x.values && x.values[0])
+                            (x.valueIds && x.valueIds[0]) ||
+                              (x.values && x.values[0])
                           )
                         )
                       );
@@ -1817,7 +1845,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       }
                       if (
                         param?.valuesConfigs &&
-                        (param.valuesConfigs = param.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
+                        (param.valuesConfigs = param.valuesConfigs.filter(
+                          (config) => !config.isHidden
+                        )).length === 1 &&
                         (param?.isRequired ||
                           param?.code == "FlatbedColor" ||
                           param?.code == "SheetColor")
@@ -2552,7 +2582,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const sizeParameter = getParameterByParameterCode(subProducts, "size");
       if (sizeParameter && sizeParameter.isDisabled) {
         disabled = true;
-
       }
       Comp = (
         <SelectChildParameterWidget
@@ -2693,16 +2722,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   errorText && parameter?.isRequired && !value?.values?.[0]
                     ? clasess.parameterRequierdLabelStyle
                     : value?.values?.[0] === "true"
-                      ? inunderParameter
-                        ? clasess.parameterunderParameterStyle
-                        : clasess.parameterType3ActiveLabelStyle
-                      : inunderParameter
-                        ? clasess.underParameterLabelStyle
-                        : clasess.parameterLabelStyle
+                    ? inunderParameter
+                      ? clasess.parameterunderParameterStyle
+                      : clasess.parameterType3ActiveLabelStyle
+                    : inunderParameter
+                    ? clasess.underParameterLabelStyle
+                    : clasess.parameterLabelStyle
                 }
               >
                 {parameter?.name}
-                <small>&nbsp;{unitType === UNIT_TYPE.IMPERIAL ? parameter?.imperialUnit : parameter?.defaultUnit}</small>
+                <small>
+                  &nbsp;
+                  {unitType === UNIT_TYPE.IMPERIAL
+                    ? parameter?.imperialUnit
+                    : parameter?.defaultUnit}
+                </small>
                 {parameter?.isRequired ? (
                   <span style={clasess.spanRequierd}> *</span>
                 ) : null}
@@ -2810,11 +2844,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                           setProductTemplate(productCopy);
                         } else if (
                           parameter?.parameterType ===
-                          EParameterTypes.DROP_DOWN_LIST ||
+                            EParameterTypes.DROP_DOWN_LIST ||
                           parameter?.parameterType ===
-                          EParameterTypes.SELECT_MATERIALS ||
+                            EParameterTypes.SELECT_MATERIALS ||
                           parameter?.parameterType ===
-                          EParameterTypes.MACHINES_SELECT
+                            EParameterTypes.MACHINES_SELECT
                         ) {
                           const valueInArray =
                             relatedParameter.selectedValueIds?.find(
@@ -3456,7 +3490,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               valueIds =
                 relatedParameter.parameterType === 12
                   ? valueToAdd
-                  : defaultConfig.values[0]
+                  : defaultConfig.values[0];
             } else if (defaultConfig && defaultConfig.updateName) {
               valueToAdd = defaultConfig.updateName;
               valueIds =
@@ -3465,7 +3499,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   : defaultConfig.id;
             } else if (
               relatedParameter.valuesConfigs &&
-              (relatedParameter.valuesConfigs = relatedParameter.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
+              (relatedParameter.valuesConfigs =
+                relatedParameter.valuesConfigs.filter(
+                  (config) => !config.isHidden
+                )).length === 1 &&
               relatedParameter.valuesConfigs[0]?.values?.length > 0 &&
               relatedParameter.isRequired
             ) {
@@ -3516,7 +3553,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               ) {
                 const materialPath =
                   relatedParameter.materialPath[
-                  relatedParameter.materialPath.length - 1
+                    relatedParameter.materialPath.length - 1
                   ];
                 const materialRelatedParameters = subSection.parameters.filter(
                   (x) =>
@@ -3595,17 +3632,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                       let isDeleted = false;
 
                       if (param?.additionalValuesConfigs?.length > 0) {
-                        param.additionalValuesConfigs.forEach((additionalConfig) => {
-                          if (parameterValue?.id === additionalConfig?.key) {
-                            additionalConfig.valuesConfigs.forEach((config) => {
-                              if (config.materialValueIds[0]?.valueId === val.valueId) {
-                                isHiddenValue = config.isHidden; // Set isHidden from valuesConfigs
-                                isDefault = config.isDefault;
-                                isDeleted = config.isDeleted;
-                              }
-                            });
+                        param.additionalValuesConfigs.forEach(
+                          (additionalConfig) => {
+                            if (parameterValue?.id === additionalConfig?.key) {
+                              additionalConfig.valuesConfigs.forEach(
+                                (config) => {
+                                  if (
+                                    config.materialValueIds[0]?.valueId ===
+                                    val.valueId
+                                  ) {
+                                    isHiddenValue = config.isHidden; // Set isHidden from valuesConfigs
+                                    isDefault = config.isDefault;
+                                    isDeleted = config.isDeleted;
+                                  }
+                                }
+                              );
+                            }
                           }
-                        });
+                        );
                       }
                       param.valuesConfigs.push({
                         id: val.valueId,
@@ -3641,7 +3685,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     );
                     if (
                       param?.valuesConfigs &&
-                      (param.valuesConfigs = param.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
+                      (param.valuesConfigs = param.valuesConfigs.filter(
+                        (config) => !config.isHidden
+                      )).length === 1 &&
                       param?.isRequired
                     ) {
                       param.valuesConfigs[0].isDefault = true;
@@ -3770,24 +3816,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     );
                     return existingConfig
                       ? {
-                        ...existingConfig,
-                        additionalAttribute: data.additionalAttribute,
-                        currency: data.currency,
-                      }
+                          ...existingConfig,
+                          additionalAttribute: data.additionalAttribute,
+                          currency: data.currency,
+                        }
                       : {
-                        id: data.valueId,
-                        isHidden: false,
-                        isDefault: false,
-                        updateName: null,
-                        activateAction: false,
-                        isDeleted: false,
-                        materialValueIds: null,
-                        values: null,
-                        selectedParameterValues: null,
-                        code: null, // Add code if needed
-                        additionalAttribute: data.additionalAttribute,
-                        currency: data.currency,
-                      };
+                          id: data.valueId,
+                          isHidden: false,
+                          isDefault: false,
+                          updateName: null,
+                          activateAction: false,
+                          isDeleted: false,
+                          materialValueIds: null,
+                          values: null,
+                          selectedParameterValues: null,
+                          code: null, // Add code if needed
+                          additionalAttribute: data.additionalAttribute,
+                          currency: data.currency,
+                        };
                   });
                 }
               } else {
@@ -3832,7 +3878,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             if (parameterDefaultValue) {
               const materialPath =
                 relatedParameter.materialPath[
-                relatedParameter.materialPath.length - 1
+                  relatedParameter.materialPath.length - 1
                 ];
               const materialRelatedParameters = subSection.parameters.filter(
                 (x) =>
@@ -3941,7 +3987,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     }
                     if (
                       param?.valuesConfigs &&
-                      (param.valuesConfigs = param.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
+                      (param.valuesConfigs = param.valuesConfigs.filter(
+                        (config) => !config.isHidden
+                      )).length === 1 &&
                       param?.isRequired
                     ) {
                       param.valuesConfigs[0].isDefault = true;
@@ -3971,7 +4019,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     false
   );
   const user = useRecoilValue<any>(userState);
-  const unitType = user?.printHouseProfile?.unitType || 0
+  const unitType = user?.printHouseProfile?.unitType || 0;
   const onChangeSubProductsForPrice = (
     parameterId: any,
     subSectionId: any,
@@ -4013,7 +4061,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSectionParameter) {
         subSectionParameter.isHidden = false;
       }
-      if (subSectionParameter?.code === "BothsideSameprintcolor" && data.values === "true") {
+      if (
+        subSectionParameter?.code === "BothsideSameprintcolor" &&
+        data.values === "true"
+      ) {
         temp.splice(findIndex, 1);
         removeRelatedParametersFromSubProducts(
           parameterId,
@@ -4022,7 +4073,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           temp,
           subSectionParameter.actionIndex
         );
-
       }
       if (findIndex !== -1) {
         const valuesArray = [data.values].filter(Boolean);
@@ -4047,7 +4097,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             actionIndex,
             subSectionType
           );
-
         } else {
           temp.splice(findIndex, 1);
           removeRelatedParametersFromSubProducts(
@@ -4113,7 +4162,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   temp[myindex] = {
                     ...temp[myindex],
                     parameterCode: myparameter?.code,
-                    values: unitType === UNIT_TYPE.IMPERIAL && myparameter?.code != "Width" && myparameter?.code != "Height" ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
+                    values:
+                      unitType === UNIT_TYPE.IMPERIAL &&
+                      myparameter?.code != "Width" &&
+                      myparameter?.code != "Height"
+                        ? [
+                            (
+                              data?.value?.values[parameterId] *
+                              myparameter?.factor
+                            ).toFixed(3),
+                          ]
+                        : [data?.value?.values[parameterId]],
                     isDisabled: hasValues(data?.value),
                     factor: myparameter?.factor,
                   };
@@ -4127,7 +4186,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   subSectionId: subSection?.id,
                   ParameterType: myparameter?.parameterType,
                   isQuantityParameter: myparameter?.isQuantityParameter,
-                  values: unitType === UNIT_TYPE.IMPERIAL && myparameter?.code != "Width" && myparameter?.code != "Height" ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
+                  values:
+                    unitType === UNIT_TYPE.IMPERIAL &&
+                    myparameter?.code != "Width" &&
+                    myparameter?.code != "Height"
+                      ? [
+                          (
+                            data?.value?.values[parameterId] *
+                            myparameter?.factor
+                          ).toFixed(3),
+                        ]
+                      : [data?.value?.values[parameterId]],
                   actionIndex: myparameter?.actionIndex,
                   parameterName: myparameter?.name,
                   parameterCode: myparameter?.code,
@@ -4274,7 +4343,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         ) {
           const materialPath =
             subSectionParameter.materialPath[
-            subSectionParameter.materialPath.length - 1
+              subSectionParameter.materialPath.length - 1
             ];
           const materialRelatedParameters = subSection.parameters.filter(
             (x) =>
@@ -4404,7 +4473,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   param.additionalValuesConfigs.forEach((additionalConfig) => {
                     if (data?.valueIds === additionalConfig?.key) {
                       additionalConfig.valuesConfigs.forEach((config) => {
-                        if (config.materialValueIds[0]?.valueId === val.valueId && paramMaterialValues?.pathName === config?.path) {
+                        if (
+                          config.materialValueIds[0]?.valueId === val.valueId &&
+                          paramMaterialValues?.pathName === config?.path
+                        ) {
                           isHiddenValue = config.isHidden; // Set isHidden from valuesConfigs
                           isDefault = config.isDefault;
                           isDeleted = config.isDeleted;
@@ -4438,7 +4510,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
               if (
                 param?.valuesConfigs &&
-                (param.valuesConfigs = param.valuesConfigs.filter(config => !config.isHidden)).length === 1 &&
+                (param.valuesConfigs = param.valuesConfigs.filter(
+                  (config) => !config.isHidden
+                )).length === 1 &&
                 param?.isRequired
               ) {
                 param.valuesConfigs[0].isDefault = true;
@@ -4838,11 +4912,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     },
     ...(isShowDetailsTab
       ? [
-        {
-          name: t("reports.details"),
-          onclick: () => onClickDetailsTab,
-        },
-      ]
+          {
+            name: t("reports.details"),
+            onclick: () => onClickDetailsTab,
+          },
+        ]
       : []),
     {
       name: t("quality.production"),
@@ -4930,7 +5004,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             {
               parameters: res?.data?.productItemValue?.itemParmetersValues,
               type: null,
-            }
+            },
           ]);
         } else {
           alertFaultUpdate();
@@ -5074,21 +5148,27 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const convertSubProductsValuesToImperial = (subProducts) => {
     return subProducts.map((subProduct) => {
       return {
-        ...subProduct, parameters: convertValuesToImperial(subProduct.parameters)
-      }
+        ...subProduct,
+        parameters: convertValuesToImperial(subProduct.parameters),
+      };
     });
-  }
+  };
   const convertValuesToImperial = (parameters) => {
     return parameters.map((param) => {
       if (unitType === UNIT_TYPE.IMPERIAL && param.factor) {
         return {
           ...param,
-          values: param?.ParameterType === 5 ? [param?.valueIds[0]] : param.values.map((value) => (parseFloat(value) / param.factor).toFixed(3)),
+          values:
+            param?.ParameterType === 5
+              ? [param?.valueIds[0]]
+              : param.values.map((value) =>
+                  (parseFloat(value) / param.factor).toFixed(3)
+                ),
         };
       }
       return param;
     });
-  }
+  };
 
   const calculationProduct = useDebouncedCallback(
     async (currentSubProducts) => {
@@ -5151,13 +5231,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               generalParameters,
               productTemplate
             );
-          const convertedItemParameters = convertValuesToImperial(itemParmetersValues);
-          const convertedGeneralParameters = convertValuesToImperial(updatedGeneralParameters);
+          const convertedItemParameters =
+            convertValuesToImperial(itemParmetersValues);
+          const convertedGeneralParameters = convertValuesToImperial(
+            updatedGeneralParameters
+          );
           if (calculationSubProducts && calculationSubProducts.length > 0) {
-            calculationSubProducts = convertSubProductsValuesToImperial(calculationSubProducts);
+            calculationSubProducts = convertSubProductsValuesToImperial(
+              calculationSubProducts
+            );
           }
-
-
 
           if (calculationSubProducts && calculationSubProducts.length > 0) {
             calculationSubProducts.forEach((subProduct) => {
@@ -5181,9 +5264,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               clientId: router?.query?.customerId,
               clientTypeId: router?.query?.clientTypeId,
               productId: router?.query?.productId,
-              generalParameters: unitType === UNIT_TYPE.IMPERIAL ? convertedGeneralParameters : updatedGeneralParameters,
+              generalParameters:
+                unitType === UNIT_TYPE.IMPERIAL
+                  ? convertedGeneralParameters
+                  : updatedGeneralParameters,
               subProducts: calculationSubProducts,
-              itemParmetersValues: unitType === UNIT_TYPE.IMPERIAL ? convertedItemParameters : itemParmetersValues,
+              itemParmetersValues:
+                unitType === UNIT_TYPE.IMPERIAL
+                  ? convertedItemParameters
+                  : itemParmetersValues,
               workTypes: workTypes,
               isChargeForNewDie: isChargeForNewDie,
               productType: productTemplate?.productType,
@@ -5203,13 +5292,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
             setLoading(false);
             setcalculationServerErrorState(true);
-            getSelectedWorkFlow(true).then()
+            getSelectedWorkFlow(true).then();
           } else if (!res.success) {
             setCalculationProgress({
               totalWorkFlowsCount: 0,
               currentWorkFlowsCount: 0,
             });
-            getSelectedWorkFlow(true).then()
+            getSelectedWorkFlow(true).then();
             //setLoading(false);
           } else {
             if (productTemplate?.isHaveFixedAction) {
@@ -5230,7 +5319,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               });
               //setLoading(true);
               if (id === "00000000-0000-0000-0000-000000000000") {
-                getSelectedWorkFlow(true).then()
+                getSelectedWorkFlow(true).then();
                 setLoading(false);
               }
             }
@@ -5469,12 +5558,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           if (router?.query?.actionId) {
             createProfitTestCase();
           } else {
-            if(showCalculationInCompletedAlert){
+            if (showCalculationInCompletedAlert) {
               setShowCalculationInCompletedModal(true);
-            }else{
+            } else {
               addItemForQuotes();
             }
-            
           }
         } else {
           setErrorMsg(t("products.offsetPrice.admin.errorReq"));
@@ -5617,7 +5705,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       return { ...subProduct, parameters: filteredParameters };
     });
   }
-  function removeHiddenParametersFromSubProductsParameters(parameters, productTemplate) {
+  function removeHiddenParametersFromSubProductsParameters(
+    parameters,
+    productTemplate
+  ) {
     // Create a new array to store the filtered parameters
     const updatedParameters = [];
 
@@ -5626,9 +5717,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       let matchingTemplateParam = null;
 
       // Find the matching template parameter in the productTemplate
-      const section = productTemplate.sections.find((x) => x.id === param.sectionId);
+      const section = productTemplate.sections.find(
+        (x) => x.id === param.sectionId
+      );
       if (section && section.subSections) {
-        const subSection = section.subSections.find((x) => x.id === param.subSectionId);
+        const subSection = section.subSections.find(
+          (x) => x.id === param.subSectionId
+        );
         if (subSection && subSection.parameters) {
           matchingTemplateParam = subSection.parameters.find(
             (templateParam) =>
@@ -5651,9 +5746,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
       // Check if the parameter is related to a hidden settingParameter
       const isRelatedToHiddenSetting = parameters.some((p) => {
-        const section = productTemplate.sections.find((x) => x.id === p.sectionId);
+        const section = productTemplate.sections.find(
+          (x) => x.id === p.sectionId
+        );
         if (section && section.subSections) {
-          const subSection = section.subSections.find((x) => x.id === p.subSectionId);
+          const subSection = section.subSections.find(
+            (x) => x.id === p.subSectionId
+          );
           if (subSection && subSection.parameters) {
             const templateParam = subSection.parameters.find(
               (templateParam) =>
@@ -5664,7 +5763,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             return (
               templateParam &&
               templateParam.isHidden &&
-              templateParam.settingParameters?.some((sp) => sp.id === param.parameterId)
+              templateParam.settingParameters?.some(
+                (sp) => sp.id === param.parameterId
+              )
             );
           }
         }

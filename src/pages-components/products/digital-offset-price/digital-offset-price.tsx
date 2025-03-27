@@ -107,7 +107,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     setCanCalculation,
     showCalculationInCompletedAlert,
     showCalculationInCompletedModal,
-    setShowCalculationInCompletedModal
+    setShowCalculationInCompletedModal,
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const permissions = useRecoilValue(permissionsState);
@@ -273,7 +273,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
       position: "top",
     },
   ];
-  const { } = useGoMakeTour(productSteps, [relatedParameters]);
+  const {} = useGoMakeTour(productSteps, [relatedParameters]);
 
   return (
     <div>
@@ -329,14 +329,14 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 style={
                   !isMobileScreen
                     ? {
-                      height: "calc(100vh - 300px)",
-                      overflow: "scroll",
-                      width: "calc(100% - 330px)",
-                    }
+                        height: "calc(100vh - 300px)",
+                        overflow: "scroll",
+                        width: "calc(100% - 330px)",
+                      }
                     : {
-                      height: "calc(100vh - 260px)",
-                      overflow: "scroll",
-                    }
+                        height: "calc(100vh - 260px)",
+                        overflow: "scroll",
+                      }
                 }
               >
                 <div style={clasess.sectionsContainer}>
@@ -442,7 +442,9 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 calculationProduct={calculationProduct}
                 subProducts={subProducts}
                 setCanCalculation={setCanCalculation}
-                showCalculationInCompletedAlert={showCalculationInCompletedAlert}
+                showCalculationInCompletedAlert={
+                  showCalculationInCompletedAlert
+                }
               />
             )}
           </div>
@@ -500,15 +502,15 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 ].length -
                   1 !==
                   activeIndex && (
-                    <div data-tour="next-button">
-                      <SecondaryButton
-                        variant="contained"
-                        onClick={handleNextClick}
-                      >
-                        {t("products.offsetPrice.admin.nextBtn")}
-                      </SecondaryButton>
-                    </div>
-                  )}
+                  <div data-tour="next-button">
+                    <SecondaryButton
+                      variant="contained"
+                      onClick={handleNextClick}
+                    >
+                      {t("products.offsetPrice.admin.nextBtn")}
+                    </SecondaryButton>
+                  </div>
+                )}
               </div>
             ) : (
               <div style={{ width: "68%" }}>
@@ -529,15 +531,15 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                   ].length -
                     1 !==
                     activeIndex && (
-                      <div data-tour="next-button">
-                        <GomakePrimaryButton
-                          style={clasess.nextBtnStyle}
-                          onClick={handleNextClick}
-                        >
-                          {t("products.offsetPrice.admin.nextBtn")}
-                        </GomakePrimaryButton>
-                      </div>
-                    )}
+                    <div data-tour="next-button">
+                      <GomakePrimaryButton
+                        style={clasess.nextBtnStyle}
+                        onClick={handleNextClick}
+                      >
+                        {t("products.offsetPrice.admin.nextBtn")}
+                      </GomakePrimaryButton>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -561,7 +563,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                     onClick={() => {
                       if (
                         DOCUMENT_TYPE.order ===
-                        Number(router.query.documentType) &&
+                          Number(router.query.documentType) &&
                         isFlowChanged
                       ) {
                         onClickOpenCurrentStationModal();
@@ -659,21 +661,25 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
       </GoMakeModal>
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
-        subTitle={t("do you want to add this item to the cart. ?")}
-        title={t("this product was not calculated and doesn't have a station ")}
+        subTitle={t(
+          "products.offsetPrice.admin.inCompletedProductAlertSubTitle"
+        )}
+        title={t("products.offsetPrice.admin.unCalcProductAlertTitle")}
         yesBtn={t("modal.yes")}
         openModal={isOpenCreateDefaultWorkFlow}
         onClose={onClickCloseCreateDefaultWorkFlow}
         onClickDelete={() => addItemForQuotes()}
       />
       <GoMakeDeleteModal
-          modalType={ModalType.WARNING}
-          subTitle={t("products.offsetPrice.admin.inCompletedProductAlertSubTitle")}
-          title={t("products.offsetPrice.admin.inCompletedProductAlertTitle")}
-          yesBtn={t("modal.yes")}
-          openModal={showCalculationInCompletedModal}
-          onClose={()=>setShowCalculationInCompletedModal(false)}
-          onClickDelete={() => addItemForQuotes()}
+        modalType={ModalType.WARNING}
+        subTitle={t(
+          "products.offsetPrice.admin.inCompletedProductAlertSubTitle"
+        )}
+        title={t("products.offsetPrice.admin.inCompletedProductAlertTitle")}
+        yesBtn={t("modal.yes")}
+        openModal={showCalculationInCompletedModal}
+        onClose={() => setShowCalculationInCompletedModal(false)}
+        onClickDelete={() => addItemForQuotes()}
       />
     </div>
   );
