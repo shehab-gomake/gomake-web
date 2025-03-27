@@ -251,7 +251,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     setProductItemValueByEdit({});
   }, []);
-
+  const generateConnectionId = (connectionId:string) => {
+    const randomNumber = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
+    let randomConnectionId = connectionId +randomNumber
+    return randomConnectionId;
+  }
   useEffect(() => {
     const oldConnectionId = currentSignalRConnectionId;
     if (oldConnectionId && connectionId && connectionId !== oldConnectionId) {
@@ -337,8 +341,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (
       calculationResult &&
-      calculationResult.productItemValueDraftId ===
-      currentCalculationSessionId &&
+      calculationResult.productItemValueDraftId === currentCalculationSessionId && 
+      //calculationResult.signalRConnectionId === currentSignalRConnectionId &&
       !productTemplate?.isHaveFixedAction
     ) {
       getSelectedWorkFlow(calculationResult?.isNeedPriceUpdate);
@@ -367,41 +371,45 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
     const result = res?.data?.data?.data;
-    setShowCalculationInCompletedAlert(result?.showCalculationInCompletedAlert);
-    setShowCalculationInCompletedModal(false);
-    setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
-    setCurrentProductItemValueDraftId(result.productItemValueDraftId);
-    setCurrentCalculationSessionId(result.productItemValueDraftId);
-    stIsFlowChanged(result.isFlowChanged);
-    setAdditionalProductItems(result.additionalProductItems);
+    const responseConnectionId = result?.signalRConnectionId;
+    if(responseConnectionId === currentSignalRConnectionId){
+      setShowCalculationInCompletedAlert(result?.showCalculationInCompletedAlert);
+      setShowCalculationInCompletedModal(false);
+      setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
+      setCurrentProductItemValueDraftId(result.productItemValueDraftId);
+      setCurrentCalculationSessionId(result.productItemValueDraftId);
+      stIsFlowChanged(result.isFlowChanged);
+      setAdditionalProductItems(result.additionalProductItems);
 
-    setCalculationProgress({
-      totalWorkFlowsCount: 0,
-      currentWorkFlowsCount: 0,
-    });
-    setCurrentProductItemValueTotalWorkFlows(
-      result.productItemValue.totalWorkFlows
-    );
-    setWorkFlows(result.productItemValue.workFlows);
-    setCurrentProductItemValueTotalPrice(
-      parseFloat(result.totalPrice)
-    );
-    setSliderCurrentProductItemValueTotalPrice(
-      parseFloat(result.totalPrice)
-    );
+      setCalculationProgress({
+        totalWorkFlowsCount: 0,
+        currentWorkFlowsCount: 0,
+      });
+      setCurrentProductItemValueTotalWorkFlows(
+          result.productItemValue.totalWorkFlows
+      );
+      setWorkFlows(result.productItemValue.workFlows);
+      setCurrentProductItemValueTotalPrice(
+          parseFloat(result.totalPrice)
+      );
+      setSliderCurrentProductItemValueTotalPrice(
+          parseFloat(result.totalPrice)
+      );
 
-    setJobActions(result?.productItemValue.actions);
-    setCalculationResult(result);
-    if (
-      widgetType === EWidgetProductType.EDIT &&
-      (isActionEmployeeUpdated || isJobNameValue)
-    ) {
-      setIsChangePriceForEdit(true);
-      setIsActionEmployeeUpdated(false);
-      setIsJobNameValue(false);
+      setJobActions(result?.productItemValue.actions);
+      setCalculationResult(result);
+      if (
+          widgetType === EWidgetProductType.EDIT &&
+          (isActionEmployeeUpdated || isJobNameValue)
+      ) {
+        setIsChangePriceForEdit(true);
+        setIsActionEmployeeUpdated(false);
+        setIsJobNameValue(false);
+        setSelectedWorkFlowCalculatedIsLoaded(false);
+      }
       setSelectedWorkFlowCalculatedIsLoaded(false);
     }
-    setSelectedWorkFlowCalculatedIsLoaded(false);
+    
   };
 
   const getSelectedWorkFlow = async (IsNeedPriceUpdate?) => {
@@ -409,7 +417,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
-    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${currentSignalRConnectionId}`;
     if (documentItemId) {
       url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery}`;
     }
@@ -2080,7 +2088,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const itemQuantity = quantity ? +quantity?.values[0] : 1;
     if (!isNaN(sliderCurrentProductItemValueTotalPrice) && itemQuantity) {
       const productItemValue = {
-        signalRConnectionId: connectionId,
+        signalRConnectionId: currentSignalRConnectionId,
         productItemValueId: productItemValueDraftId,
         itemId: itemId,
         productId: router?.query?.productId,
@@ -2111,7 +2119,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     currentProductItemValueTotalPrice,
     sliderCurrentProductItemValueTotalPrice, //!new
     graphicDesigner,
-    connectionId,
+    currentSignalRConnectionId,
     productItemValueDraftId,
     router,
     urgentOrder,
@@ -4938,7 +4946,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       };
       await getProductByItemIdApi(callApi, callBack, {
         documentItemId: router?.query?.documentItemId,
-        signalRConnectionId: connectionId,
+        signalRConnectionId: currentSignalRConnectionId,
         documentType: router?.query?.documentType,
         productId: productId,
       });
@@ -5170,6 +5178,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
           const docType = +(router?.query?.documentType || 0);
           const documentItemId = router?.query?.documentItemId;
+          const conn = generateConnectionId(connectionId)
+          setCurrentSignalRConnectionId(conn);
           const res: any = await callApi(
             "POST",
             productTemplate?.isHaveFixedAction
@@ -5177,7 +5187,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               : `/v1/calculation-service/calculations/calculate-productV2`,
             {
               calculationSessionId: newCalculationSessionId,
-              signalRConnectionId: connectionId,
+              signalRConnectionId: conn,
               clientId: router?.query?.customerId,
               clientTypeId: router?.query?.clientTypeId,
               productId: router?.query?.productId,
@@ -5268,7 +5278,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       "/v1/erp-service/product-item-value/create-default-work-flow",
       {
         calculationSessionId: newCalculationSessionId,
-        signalRConnectionId: connectionId,
+        signalRConnectionId: currentSignalRConnectionId,
         clientId: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
         productId: router?.query?.productId,
@@ -5420,7 +5430,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       };
       await updateDocumentItemApi(callApi, callBack, {
         Item: {
-          signalRConnectionId: connectionId,
+          signalRConnectionId: currentSignalRConnectionId,
           productItemValueId: productItemValueDraftId,
           itemId: router?.query?.documentItemId,
           productId: router?.query?.productId,
