@@ -56,6 +56,7 @@ const useCalculationSocketIO = () => {
       socket.disconnect();
     };
   },[])
+  
   return {
     calculationResult: signalRWorkFlows,
     connectionId,
