@@ -1,5 +1,5 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-import { CheckboxCheckedIcon, CheckboxIcon, ReloadIcon } from "@/icons";
+import {CheckboxCheckedIcon, CheckboxIcon, ReloadIcon, WarningLogsIcon} from "@/icons";
 import {
   Checkbox,
   Divider,
@@ -67,7 +67,8 @@ const RightSideWidget = ({
   canCalculation,
   calculationProduct,
   subProducts,
-  setCanCalculation
+  setCanCalculation,
+  showCalculationInCompletedAlert
 }: any) => {
   const {
     t,
@@ -348,6 +349,9 @@ const RightSideWidget = ({
               </div>
             )}
           </div>
+          {
+            showCalculationInCompletedAlert ? <div><WarningLogsIcon width={20} height={20} /></div> : <div></div>
+          }
           <span style={clasess.totalCurrancyStyle}>
             <Tooltip title={t("products.offsetPrice.admin.updateTotalPrice")}>
               <IconButton

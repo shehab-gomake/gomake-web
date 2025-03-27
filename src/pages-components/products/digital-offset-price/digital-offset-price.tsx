@@ -104,7 +104,10 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     sliderCurrentProductItemValueTotalPrice,
     systemCurrency,
     direction,
-    setCanCalculation
+    setCanCalculation,
+    showCalculationInCompletedAlert,
+    showCalculationInCompletedModal,
+    setShowCalculationInCompletedModal
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const permissions = useRecoilValue(permissionsState);
@@ -439,6 +442,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 calculationProduct={calculationProduct}
                 subProducts={subProducts}
                 setCanCalculation={setCanCalculation}
+                showCalculationInCompletedAlert={showCalculationInCompletedAlert}
               />
             )}
           </div>
@@ -661,6 +665,15 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
         openModal={isOpenCreateDefaultWorkFlow}
         onClose={onClickCloseCreateDefaultWorkFlow}
         onClickDelete={() => addItemForQuotes()}
+      />
+      <GoMakeDeleteModal
+          modalType={ModalType.WARNING}
+          subTitle={t("products.offsetPrice.admin.inCompletedProductAlertSubTitle")}
+          title={t("products.offsetPrice.admin.inCompletedProductAlertTitle")}
+          yesBtn={t("modal.yes")}
+          openModal={showCalculationInCompletedModal}
+          onClose={()=>setShowCalculationInCompletedModal(false)}
+          onClickDelete={() => addItemForQuotes()}
       />
     </div>
   );

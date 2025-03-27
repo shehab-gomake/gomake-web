@@ -129,8 +129,6 @@ const useMoreCircle = () => {
     const isPurchaseInvoice = documentType === DOCUMENT_TYPE.purchaseInvoice;
     const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
     const isReceipt = documentType === DOCUMENT_TYPE.receipt;
-
-
     const isClosedOrder = isOrder && quote?.statusTitleText === "Order.Closed";
     const isPauseOrder = quote?.statusTitleText === "Order.Paused";
     const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";

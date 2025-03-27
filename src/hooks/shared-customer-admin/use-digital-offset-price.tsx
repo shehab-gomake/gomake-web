@@ -302,9 +302,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
     }
   }, [isCalculationFinished]);
-
   const [calculationServerErrorState, setcalculationServerErrorState] =
+      useState(false);
+  const [showCalculationInCompletedAlert, setShowCalculationInCompletedAlert] =
     useState(false);
+  const [showCalculationInCompletedModal, setShowCalculationInCompletedModal] =
+      useState(false);
   const [currentSignalRConnectionId, setCurrentSignalRConnectionId] =
     useRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] =
@@ -366,6 +369,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
     const result = res?.data?.data?.data;
+    setShowCalculationInCompletedAlert(result?.showCalculationInCompletedAlert);
+    setShowCalculationInCompletedModal(false);
     setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
     setCurrentProductItemValueDraftId(result.productItemValueDraftId);
     setCurrentCalculationSessionId(result.productItemValueDraftId);
@@ -1946,6 +1951,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setDeviceSize("");
       setSaveCurrentStation(false);
       setcalculationServerErrorState(false);
+      setShowCalculationInCompletedAlert(false);
+      setShowCalculationInCompletedModal(false);
       // setCurrentSignalRConnectionId(null);
       // setCurrentCalculationSessionId("");
       setRequestAbortController(null);
@@ -5108,7 +5115,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setCalculationExceptionsLogs([]);
       setAdditionalProductItems([]);
       setcalculationServerErrorState(false);
-
+      setShowCalculationInCompletedAlert(false);
+      setShowCalculationInCompletedModal(false);
       let checkParameter = validateParameters(currentSubProducts);
       if (!!checkParameter) {
         const newRequestAbortController = new AbortController();
@@ -5474,7 +5482,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           if (router?.query?.actionId) {
             createProfitTestCase();
           } else {
-            addItemForQuotes();
+            if(showCalculationInCompletedAlert){
+              setShowCalculationInCompletedModal(true);
+            }else{
+              addItemForQuotes();
+            }
+            
           }
         } else {
           setErrorMsg(t("products.offsetPrice.admin.errorReq"));
@@ -5918,7 +5931,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     sliderCurrentProductItemValueTotalPrice,
     systemCurrency,
     direction,
-    setCanCalculation
+    setCanCalculation,
+    showCalculationInCompletedAlert,
+    showCalculationInCompletedModal,
+    setShowCalculationInCompletedModal,
   };
 };
 
