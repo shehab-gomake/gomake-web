@@ -10,7 +10,7 @@ import {
 import { TabsMappingWidget } from "./widgets/tabs-mapping";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
-import { RightSideWidget, roundPrice } from "./widgets/right-side-widget";
+import { RightSideWidget } from "./widgets/right-side-widget";
 import {
   GalleryModal,
   MakeShapeModal,
@@ -34,6 +34,7 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { permissionsState } from "@/store/permissions";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { roundPrice } from "./widgets/calculation-hooks/use-right-side-widget";
 
 const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
   const { clasess } = useStyle({ isMobileScreen });

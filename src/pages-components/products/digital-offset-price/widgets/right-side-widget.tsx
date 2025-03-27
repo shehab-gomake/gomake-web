@@ -16,7 +16,7 @@ import {
 import { EWidgetProductType } from "../enums";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { ProgressBar } from "@/components/progress-bar/progress-bar";
-import { useRightSideWidget } from "./use-right-side-widget";
+import { useRightSideWidget } from "./calculation-hooks/use-right-side-widget";
 import { useEffect, useState } from "react";
 import { _renderIconLogs } from "@/utils/constants";
 import { useRouter } from "next/router";
@@ -30,26 +30,6 @@ import { Box, Slider } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
-
-export const roundPrice = (price) => {
-  try {
-    if (typeof price === "string") {
-      price = Number(price);
-    }
-    if (price && !isNaN(price) && typeof price === "number") {
-      let roundedPrice = price.toFixed(3);
-      let arr = roundedPrice.split(".");
-      let decimalPart = Number(arr[1]);
-      if (!decimalPart) {
-        return arr[0];
-      }
-      return roundedPrice;
-    }
-    return price;
-  } catch (e) {
-    return price;
-  }
-};
 
 const RightSideWidget = ({
   clasess,
@@ -78,8 +58,6 @@ const RightSideWidget = ({
 }: any) => {
   const {
     t,
-    direction,
-    isRtl,
     currentProductItemValueTotalPrice,
     lastProductItemValueTotalPrice,
     calculationProgress,
@@ -101,13 +79,12 @@ const RightSideWidget = ({
     selectedProduct,
     combinedData,
     handleProductChange,
-    selectedTab,
-    onSelectTab,
+    roundPrice,
+    isRTL,
+    direction,
   } = useRightSideWidget({ includeVAT, widgetType });
-  const setSubProducts = useSetRecoilState<any>(subProductsParametersState);
 
-  const dir: "rtl" | "ltr" = t("direction");
-  const isRTL = dir === "rtl";
+  const setSubProducts = useSetRecoilState<any>(subProductsParametersState);
 
   const additionalProductItems = useRecoilValue(additionalProductItemsState);
   const mergedArray = [
@@ -188,25 +165,6 @@ const RightSideWidget = ({
     );
   }, [currentProductItemValueTotalPrice]);
 
-  const roundPrice = (price) => {
-    try {
-      if (typeof price === "string") {
-        price = Number(price);
-      }
-      if (price && !isNaN(price) && typeof price === "number") {
-        let roundedPrice = price.toFixed(3);
-        let arr = roundedPrice.split(".");
-        let decimalPart = Number(arr[1]);
-        if (!decimalPart) {
-          return arr[0];
-        }
-        return roundedPrice;
-      }
-      return price;
-    } catch (e) {
-      return price;
-    }
-  };
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -285,19 +243,15 @@ const RightSideWidget = ({
             />
           </div>
         </div>
-        {template.img ? (
+        {template?.img && (
           <div style={clasess.imgProductContainer}>
             <img src={template.img} alt="gomake" style={{ width: "100%" }} />
           </div>
-        ) : (
-          <></>
         )}
-
         <div style={clasess.totalContainer}>
           <div style={clasess.totalStyleText}>
             {t("products.offsetPrice.admin.total")}
           </div>
-
           <div data-tour={"product-pricing"} style={clasess.totalStyle}>
             {isLoading ? (
               <DotsLoader />
@@ -400,7 +354,7 @@ const RightSideWidget = ({
               />
             </div>
           )}
-        {sliderCurrentProductItemValueTotalPrice && (
+        {!!sliderCurrentProductItemValueTotalPrice && (
           <>
             <div style={clasess.orderContainer}>
               {t("products.offsetPrice.admin.orderToral", {
@@ -452,7 +406,6 @@ const RightSideWidget = ({
             </div>
           </>
         )}
-
         {widgetType === EWidgetProductType.EDIT ||
         widgetType === EWidgetProductType.DUPLICATE ? (
           <div
@@ -506,42 +459,45 @@ const RightSideWidget = ({
         ) : null}
         {/* Slider */}
         <PermissionCheck userPermission={Permissions.UPDATE_CALCULATED_PRICE}>
-          {currentProductItemValueTotalPrice && minDiscount !== maxIncrease && (
-            <Box sx={{ width: 300, textAlign: "center", margin: "20px auto" }}>
+          {currentProductItemValueTotalPrice != null &&
+            minDiscount !== maxIncrease && (
               <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                sx={{ direction: direction }}
+                sx={{ width: 300, textAlign: "center", margin: "20px auto" }}
               >
-                <Typography sx={clasess.labelsStyle}>
-                  {!isRTL && systemCurrency}
-                  {Math.round(minDiscount)}
-                  {isRTL && systemCurrency}
-                </Typography>
-                <Typography sx={clasess.labelsStyle}>
-                  {!isRTL && systemCurrency}
-                  {Math.round(maxIncrease)}
-                  {isRTL && systemCurrency}
-                </Typography>
-              </Box>
-              <Slider
-                value={sliderCurrentProductItemValueTotalPrice}
-                onChange={handleSliderChange}
-                aria-label="Price Change Slider"
-                min={Math.round(Number(minDiscount))}
-                max={Math.round(Number(maxIncrease))}
-                step={1}
-                sx={{
-                  direction: direction,
-                  transform: isRtl ? "scaleX(-1)" : "none",
-                  "& .MuiSlider-track": {
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  sx={{ direction: direction }}
+                >
+                  <Typography sx={clasess.labelsStyle}>
+                    {!isRTL && systemCurrency}
+                    {Math.round(minDiscount)}
+                    {isRTL && systemCurrency}
+                  </Typography>
+                  <Typography sx={clasess.labelsStyle}>
+                    {!isRTL && systemCurrency}
+                    {Math.round(maxIncrease)}
+                    {isRTL && systemCurrency}
+                  </Typography>
+                </Box>
+                <Slider
+                  value={sliderCurrentProductItemValueTotalPrice}
+                  onChange={handleSliderChange}
+                  aria-label="Price Change Slider"
+                  min={Math.round(Number(minDiscount))}
+                  max={Math.round(Number(maxIncrease))}
+                  step={1}
+                  sx={{
                     direction: direction,
-                  },
-                }}
-              />
-            </Box>
-          )}
+                    transform: isRTL ? "scaleX(-1)" : "none",
+                    "& .MuiSlider-track": {
+                      direction: direction,
+                    },
+                  }}
+                />
+              </Box>
+            )}
         </PermissionCheck>
         {/* Slider */}
         <Divider />
