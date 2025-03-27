@@ -562,14 +562,18 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         : clasess.addOrderBtn
                     }
                     onClick={() => {
-                      if (
-                        DOCUMENT_TYPE.order ===
-                          Number(router.query.documentType) &&
-                        isFlowChanged
-                      ) {
-                        onClickOpenCurrentStationModal();
+                      if (showCalculationInCompletedAlert) {
+                        setShowCalculationInCompletedModal(true);
                       } else {
-                        updateQuoteItem();
+                        if (
+                          DOCUMENT_TYPE.order ===
+                            Number(router.query.documentType) &&
+                          isFlowChanged
+                        ) {
+                          onClickOpenCurrentStationModal();
+                        } else {
+                          updateQuoteItem();
+                        }
                       }
                     }}
                     disabled={isLoadingPrice}
@@ -680,7 +684,21 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
         yesBtn={t("modal.yes")}
         openModal={showCalculationInCompletedModal}
         onClose={() => setShowCalculationInCompletedModal(false)}
-        onClickDelete={() => addItemForQuotes()}
+        onClickDelete={() => {
+          if (widgetType === EWidgetProductType.EDIT) {
+            if (
+              DOCUMENT_TYPE.order === Number(router.query.documentType) &&
+              isFlowChanged
+            ) {
+              onClickOpenCurrentStationModal();
+            } else {
+              updateQuoteItem();
+            }
+          } else {
+            addItemForQuotes();
+          }
+          setShowCalculationInCompletedModal(false);
+        }}
       />
     </div>
   );

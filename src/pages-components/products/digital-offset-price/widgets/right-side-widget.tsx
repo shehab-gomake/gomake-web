@@ -314,7 +314,6 @@ const RightSideWidget = ({
               </div>
             )}
           </div>
-          {/* !here */}
           {showCalculationInCompletedAlert && (
             <div style={{ display: "flex", alignItems: "center" }}>
               <WarningIcon />

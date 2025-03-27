@@ -302,10 +302,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
     }
   }, [isCalculationFinished]);
+
   const [calculationServerErrorState, setcalculationServerErrorState] =
     useState(false);
 
-  //!here
   const [showCalculationInCompletedAlert, setShowCalculationInCompletedAlert] =
     useState(false);
   const [showCalculationInCompletedModal, setShowCalculationInCompletedModal] =
@@ -338,6 +338,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setIsCanGetSelected(true);
     }
   }, []);
+
   useEffect(() => {
     if (
       calculationResult &&
@@ -351,6 +352,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       getSelectedWorkFlow(calculationResult?.isNeedPriceUpdate);
     }
   }, [calculationResult, currentCalculationSessionId, priceRecovery]);
+
   const [
     selectedWorkFlowCalculatedIsLoaded,
     setSelectedWorkFlowCalculatedIsLoaded,
@@ -5177,7 +5179,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       setWorkFlows([]);
       setCurrentProductItemValueTotalPrice(null);
-      setSliderCurrentProductItemValueTotalPrice(null); //!new
+      setSliderCurrentProductItemValueTotalPrice(null);
       setJobActions([]);
       setIsCalculationFinished(false);
       setCalculationProgress({
@@ -5332,6 +5334,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     },
     700
   );
+
   const createDefaultWorkFlowApi = async () => {
     let subProductsCopy = cloneDeep(subProducts);
 
@@ -5488,10 +5491,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const updateQuoteItem = async (isSaveCurrentStation?) => {
     setLoadingWithLockScreen(true);
-
-    // First, validate the workflows
     const workflowValidation = validateWorkflows(workFlows[0]);
-
     if (workflowValidation.isValid) {
       // If workflows are valid, proceed with the update
       const callBack = (res) => {
@@ -5540,6 +5540,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setErrorMsg(workflowValidation.errors.join(", "));
     }
   };
+
   const straightKnife = findParameterByCode(productTemplate, "IsStraightKnife");
 
   const navigateForRouter = () => {
@@ -5583,6 +5584,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       jobDetails,
     });
   }, [workFlows, jobActions, jobDetails]);
+
   const setCurrenciesSymbols = useSetRecoilState(currenciesSymbols);
   const getCurrenciesApi = async () => {
     const callBack = (res) => {
