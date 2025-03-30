@@ -361,6 +361,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
 
   const _setDataFromSelectedWorkFlow = (res) => {
+    debugger
     if (!res.success) {
       setCalculationProgress({
         totalWorkFlowsCount: 0,
@@ -379,43 +380,41 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setLoading(false);
     const result = res?.data?.data?.data;
     const responseConnectionId = result?.signalRConnectionId;
-    if(responseConnectionId === currentSignalRConnectionId){
-      setShowCalculationInCompletedAlert(result?.showCalculationInCompletedAlert);
-      setShowCalculationInCompletedModal(false);
-      setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
-      setCurrentProductItemValueDraftId(result.productItemValueDraftId);
-      setCurrentCalculationSessionId(result.productItemValueDraftId);
-      stIsFlowChanged(result.isFlowChanged);
-      setAdditionalProductItems(result.additionalProductItems);
+    setShowCalculationInCompletedAlert(result?.showCalculationInCompletedAlert);
+    setShowCalculationInCompletedModal(false);
+    setCalculationExceptionsLogs(result?.productItemValue?.exceptions);
+    setCurrentProductItemValueDraftId(result.productItemValueDraftId);
+    setCurrentCalculationSessionId(result.productItemValueDraftId);
+    stIsFlowChanged(result.isFlowChanged);
+    setAdditionalProductItems(result.additionalProductItems);
 
-      setCalculationProgress({
-        totalWorkFlowsCount: 0,
-        currentWorkFlowsCount: 0,
-      });
-      setCurrentProductItemValueTotalWorkFlows(
-          result.productItemValue.totalWorkFlows
-      );
-      setWorkFlows(result.productItemValue.workFlows);
-      setCurrentProductItemValueTotalPrice(
-          parseFloat(result.totalPrice)
-      );
-      setSliderCurrentProductItemValueTotalPrice(
-          parseFloat(result.totalPrice)
-      );
+    setCalculationProgress({
+      totalWorkFlowsCount: 0,
+      currentWorkFlowsCount: 0,
+    });
+    setCurrentProductItemValueTotalWorkFlows(
+        result.productItemValue.totalWorkFlows
+    );
+    setWorkFlows(result.productItemValue.workFlows);
+    setCurrentProductItemValueTotalPrice(
+        parseFloat(result.totalPrice)
+    );
+    setSliderCurrentProductItemValueTotalPrice(
+        parseFloat(result.totalPrice)
+    );
 
-      setJobActions(result?.productItemValue.actions);
-      setCalculationResult(result);
-      if (
-          widgetType === EWidgetProductType.EDIT &&
-          (isActionEmployeeUpdated || isJobNameValue)
-      ) {
-        setIsChangePriceForEdit(true);
-        setIsActionEmployeeUpdated(false);
-        setIsJobNameValue(false);
-        setSelectedWorkFlowCalculatedIsLoaded(false);
-      }
+    setJobActions(result?.productItemValue.actions);
+    setCalculationResult(result);
+    if (
+        widgetType === EWidgetProductType.EDIT &&
+        (isActionEmployeeUpdated || isJobNameValue)
+    ) {
+      setIsChangePriceForEdit(true);
+      setIsActionEmployeeUpdated(false);
+      setIsJobNameValue(false);
       setSelectedWorkFlowCalculatedIsLoaded(false);
     }
+    setSelectedWorkFlowCalculatedIsLoaded(false);
     
   };
 
@@ -5951,6 +5950,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     showCalculationInCompletedAlert,
     showCalculationInCompletedModal,
     setShowCalculationInCompletedModal,
+    currentSignalRConnectionId
   };
 };
 

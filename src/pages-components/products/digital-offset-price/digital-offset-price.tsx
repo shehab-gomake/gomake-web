@@ -107,7 +107,8 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     setCanCalculation,
     showCalculationInCompletedAlert,
     showCalculationInCompletedModal,
-    setShowCalculationInCompletedModal
+    setShowCalculationInCompletedModal,
+    currentSignalRConnectionId
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const permissions = useRecoilValue(permissionsState);
@@ -274,7 +275,9 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     },
   ];
   const { } = useGoMakeTour(productSteps, [relatedParameters]);
-
+  const func = ()=>{
+    getSelectedWorkFlow(currentSignalRConnectionId).then()
+  }
   return (
     <div>
       {productTemplate?.sections?.length > 0 ? (
@@ -360,7 +363,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                               actions={jobActions}
                               workFlows={workFlows}
                               widgetType={widgetType}
-                              getSelectedWorkFlow={getSelectedWorkFlow}
+                              getSelectedWorkFlow={func}
                               selectedWorkFlowCalculatedIsLoaded={
                                 selectedWorkFlowCalculatedIsLoaded
                               }
