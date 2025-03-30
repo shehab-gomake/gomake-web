@@ -5214,10 +5214,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             false,
             newRequestAbortController
           );
-          if(conn !== currentSignalRConnectionId){
+          /*if(conn !== currentSignalRConnectionId){
             console.log("exitssss")
             return;
-          }
+          }*/
           if (res?.status === 500) {
             setCalculationProgress({
               totalWorkFlowsCount: 0,
@@ -5235,7 +5235,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
             getSelectedWorkFlow(true).then()
             setLoading(false);
-          } else {
+          } 
+          else {
             if (productTemplate?.isHaveFixedAction) {
               _setDataFromSelectedWorkFlow(res);
               setIsCanGetSelected(true);
