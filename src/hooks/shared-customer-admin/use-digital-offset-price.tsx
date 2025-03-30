@@ -345,10 +345,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       calculationResult.signalRConnectionId === currentSignalRConnectionId &&
       !productTemplate?.isHaveFixedAction
     ) {
-      getSelectedWorkFlow(calculationResult?.isNeedPriceUpdate);
+      getSelectedWorkFlow(calculationResult.signalRConnectionId,calculationResult?.isNeedPriceUpdate);
     }
     if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
-      getSelectedWorkFlow(calculationResult?.isNeedPriceUpdate);
+      getSelectedWorkFlow(calculationResult.signalRConnectionId,calculationResult?.isNeedPriceUpdate);
     }
   }, [calculationResult, currentCalculationSessionId, priceRecovery]);
   const [
@@ -419,12 +419,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     
   };
 
-  const getSelectedWorkFlow = async (IsNeedPriceUpdate?) => {
+  const getSelectedWorkFlow = async (connectionId,IsNeedPriceUpdate?) => {
 
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
-    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${currentSignalRConnectionId}`;
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
     if (documentItemId) {
       url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery}`;
     }
@@ -5226,14 +5226,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             console.log("setLoading 1")
             setLoading(false);
             setcalculationServerErrorState(true);
-            getSelectedWorkFlow(true).then()
+            getSelectedWorkFlow(conn,true).then()
           } 
           else if (!res.success) {
             setCalculationProgress({
               totalWorkFlowsCount: 0,
               currentWorkFlowsCount: 0,
             });
-            getSelectedWorkFlow(true).then()
+            getSelectedWorkFlow(conn,true).then()
             setLoading(false);
           } 
           else {
@@ -5258,7 +5258,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               });
               setLoading(true);
               if (id === "00000000-0000-0000-0000-000000000000") {
-                getSelectedWorkFlow(true).then()
+                getSelectedWorkFlow(conn,true).then()
                 setLoading(false);
               }
             }
