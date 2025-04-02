@@ -4948,6 +4948,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               type: null,
             }
           ]);
+          getSelectedWorkFlow(currentSignalRConnectionId,false);
         } else {
           alertFaultUpdate();
         }
@@ -5172,9 +5173,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           if (calculationSubProducts && calculationSubProducts.length > 0) {
             calculationSubProducts = convertSubProductsValuesToImperial(calculationSubProducts);
           }
-
-
-
           if (calculationSubProducts && calculationSubProducts.length > 0) {
             calculationSubProducts.forEach((subProduct) => {
               subProduct.parameters =
@@ -5184,8 +5182,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 );
             });
           }
-          const docType = +(router?.query?.documentType || 0);
-          const documentItemId = router?.query?.documentItemId;
+          //const docType = +(router?.query?.documentType || 0);
+          //const documentItemId = router?.query?.documentItemId;
           const conn = generateConnectionId(connectionId)
           setCurrentSignalRConnectionId(conn);
           const res: any = await callApi(
@@ -5213,10 +5211,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             false,
             newRequestAbortController
           );
-          /*if(conn !== currentSignalRConnectionId){
-            console.log("exitssss")
-            return;
-          }*/
           if (res?.status === 500) {
             setCalculationProgress({
               totalWorkFlowsCount: 0,
@@ -5244,6 +5238,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             } 
             else {
               const id = res?.data?.data?.data;
+              if(id !== currentCalculationSessionId){
+                console.log("exitssss")
+                return;
+              }
               if (!id) {
                 setcalculationServerErrorState(true);
                 console.log("setLoading 3")
