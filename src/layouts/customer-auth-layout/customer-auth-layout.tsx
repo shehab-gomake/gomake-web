@@ -45,11 +45,11 @@ const CustomerAuthLayout = ({
 
   useEffect(() => {
     const lastSeenVersion = localStorage.getItem("lastSeenAppVersion");
-    if (
-      appVersion &&
-      appVersion !== Number(lastSeenVersion) &&
-      lastSeenVersion
-    ) {
+    if (!lastSeenVersion) {
+      localStorage.setItem("lastSeenAppVersion", appVersion);
+    }
+
+    if (appVersion && appVersion !== Number(lastSeenVersion)) {
       alertNewVersion.open();
       localStorage.setItem("lastSeenAppVersion", appVersion);
     }
