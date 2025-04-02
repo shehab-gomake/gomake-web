@@ -60,6 +60,7 @@ import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 import { SettingVatListMenu } from "@/widgets/quote-new/setting-vat-menu";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { UpdateDeliveryPriceModal } from "@/widgets/quote-new/modals-widgets/update-delivery-price-modal/update-delivery-price-modal";
+import { useModal } from "@/hooks/use-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -77,6 +78,7 @@ const QuoteNewPageWidget = ({
   const router = useRouter();
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
+
   useEffect(() => {
     setQuoteItemValue({});
   }, []);
@@ -305,6 +307,7 @@ const QuoteNewPageWidget = ({
     isOpenRelatedDocuments,
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,
+    systemVAT,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -404,6 +407,23 @@ const QuoteNewPageWidget = ({
   useEffect(() => {
     setDocNumber(quoteState?.number);
   }, [quoteState?.number, router, quoteState, isQuoteConfirmation]);
+
+  const alertModal = useModal();
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    if (quoteState?.id) {
+      const isNewCreation = router.query.isNewCreation === "true";
+      const isCorrectPage =
+        router.pathname === "/invoice" || router.pathname === "/deliveryNote";
+      const isVATMismatch = systemVAT !== quoteState?.vat;
+
+      if (isNewCreation && isCorrectPage && isVATMismatch) {
+        alertModal.open();
+      }
+    }
+  }, [router.isReady, router.query, quoteState]);
 
   return (
     <>
@@ -1059,6 +1079,15 @@ const QuoteNewPageWidget = ({
           <div></div>
         )}
       </GoMakeDeleteModal>
+
+      <GoMakeAlertModal
+        openModal={alertModal.isOpen}
+        onClose={alertModal.close}
+        onClickConfirm={alertModal.close}
+        subTitle="modal.alertDifferentVat"
+        yesBtn="modal.ok"
+        withCancelBtn={false}
+      />
     </>
   );
 };
