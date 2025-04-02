@@ -414,7 +414,6 @@ const QuoteNewPageWidget = ({
     if (!router.isReady) return;
 
     if (quoteState?.id) {
-      debugger;
       const isNewCreation = router.query.isNewCreation === "true";
       const isCorrectPage =
         router.pathname === "/invoice" || router.pathname === "/deliveryNote";
