@@ -251,9 +251,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     setProductItemValueByEdit({});
   }, []);
-  const generateConnectionId = (connectionId:string) => {
+  const generateConnectionId = (connectionId: string) => {
     const randomNumber = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-    let randomConnectionId = connectionId +randomNumber
+    let randomConnectionId = connectionId + randomNumber
     return randomConnectionId;
   }
   useEffect(() => {
@@ -304,11 +304,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [isCalculationFinished]);
   const [calculationServerErrorState, setcalculationServerErrorState] =
-      useState(false);
+    useState(false);
   const [showCalculationInCompletedAlert, setShowCalculationInCompletedAlert] =
     useState(false);
   const [showCalculationInCompletedModal, setShowCalculationInCompletedModal] =
-      useState(false);
+    useState(false);
   const [currentSignalRConnectionId, setCurrentSignalRConnectionId] =
     useRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] =
@@ -341,7 +341,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (
       calculationResult &&
-      calculationResult.productItemValueDraftId === currentCalculationSessionId && 
+      calculationResult.productItemValueDraftId === currentCalculationSessionId &&
       calculationResult.signalRConnectionId === currentSignalRConnectionId &&
       !productTemplate?.isHaveFixedAction
     ) {
@@ -433,7 +433,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (documentItemId) {
       url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery}`;
     }
-   
+
     const res: any = await callApi("GET", url, {}, false);
     _setDataFromSelectedWorkFlow(res,newCalculationSessionId ?? currentCalculationSessionId);
   };
@@ -490,7 +490,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (
       signalRPricingResult &&
-      signalRPricingResult.productItemValueDraftId === currentCalculationSessionId && 
+      signalRPricingResult.productItemValueDraftId === currentCalculationSessionId &&
       signalRPricingResult.signalRConnectionId === currentSignalRConnectionId
     ) {
       //setLoading(false);
@@ -1526,6 +1526,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               ) {
                 defaultValue = subProductParameter.valueIds[0];
               }
+            }
+            if (parameter.code === "BothsideSameprintcolor" &&
+              widgetType != EWidgetProductType.CREATE
+              && product?.productItemValue?.itemParmetersValues?.length > 0
+              && product?.productItemValue?.itemParmetersValues.find(
+                (item) => parameter.relatedParameters.some(
+                  (relatedParam) => relatedParam.parameterId === item.parameterId
+                )
+              )
+            ) {
+              parameter.isHidden = true;
             }
             if (
               relatedToParameter &&
@@ -4041,7 +4052,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSectionParameter) {
         subSectionParameter.isHidden = false;
       }
-      if (subSectionParameter?.code === "BothsideSameprintcolor" && data.values === "true") {
+      if (subSectionParameter?.code === "BothsideSameprintcolor" && data.values === "true" && widgetType == EWidgetProductType.CREATE) {
         temp.splice(findIndex, 1);
         removeRelatedParametersFromSubProducts(
           parameterId,
@@ -4077,14 +4088,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
 
         } else {
-          temp.splice(findIndex, 1);
-          removeRelatedParametersFromSubProducts(
-            parameterId,
-            sectionId,
-            subSectionId,
-            temp,
-            subSectionParameter.actionIndex
-          );
+          if (widgetType == EWidgetProductType.CREATE) {
+            temp.splice(findIndex, 1);
+            removeRelatedParametersFromSubProducts(
+              parameterId,
+              sectionId,
+              subSectionId,
+              temp,
+              subSectionParameter.actionIndex
+            );
+          }
+
         }
       } else {
         temp.push({
@@ -4960,7 +4974,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               type: null,
             }
           ]);
-          getSelectedWorkFlow(currentSignalRConnectionId,false);
+          getSelectedWorkFlow(currentSignalRConnectionId, false);
         } else {
           alertFaultUpdate();
         }
@@ -5252,14 +5266,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             if (productTemplate?.isHaveFixedAction) {
               _setDataFromSelectedWorkFlow(res,currentCalculationSessionId);
               setIsCanGetSelected(true);
-              console.log("setLoading 2")
               setLoading(false);
-            } 
+            }
             else {
               const id = res?.data?.data?.data;
               if (!id) {
                 setcalculationServerErrorState(true);
-                console.log("setLoading 3")
                 setLoading(false);
                 setCurrentCalculationSessionId(null);
               }
@@ -5283,7 +5295,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           }
         }
       } else {
-        console.log("setLoading 4")
         setLoading(false);
         setCurrentCalculationSessionId(null);
       }
@@ -5516,12 +5527,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           if (router?.query?.actionId) {
             createProfitTestCase();
           } else {
-            if(showCalculationInCompletedAlert){
+            if (showCalculationInCompletedAlert) {
               setShowCalculationInCompletedModal(true);
-            }else{
+            } else {
               addItemForQuotes();
             }
-            
+
           }
         } else {
           setErrorMsg(t("products.offsetPrice.admin.errorReq"));
