@@ -251,9 +251,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     setProductItemValueByEdit({});
   }, []);
-  const generateConnectionId = (connectionId:string) => {
+  const generateConnectionId = (connectionId: string) => {
     const randomNumber = Math.floor(Math.random() * (9999 - 1000 + 1)) + 1000;
-    let randomConnectionId = connectionId +randomNumber
+    let randomConnectionId = connectionId + randomNumber
     return randomConnectionId;
   }
   useEffect(() => {
@@ -304,11 +304,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [isCalculationFinished]);
   const [calculationServerErrorState, setcalculationServerErrorState] =
-      useState(false);
+    useState(false);
   const [showCalculationInCompletedAlert, setShowCalculationInCompletedAlert] =
     useState(false);
   const [showCalculationInCompletedModal, setShowCalculationInCompletedModal] =
-      useState(false);
+    useState(false);
   const [currentSignalRConnectionId, setCurrentSignalRConnectionId] =
     useRecoilState(currentCalculationConnectionId);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] =
@@ -341,14 +341,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (
       calculationResult &&
-      calculationResult.productItemValueDraftId === currentCalculationSessionId && 
+      calculationResult.productItemValueDraftId === currentCalculationSessionId &&
       calculationResult.signalRConnectionId === currentSignalRConnectionId &&
       !productTemplate?.isHaveFixedAction
     ) {
-      getSelectedWorkFlow(calculationResult.signalRConnectionId,calculationResult?.isNeedPriceUpdate);
+      getSelectedWorkFlow(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
     }
     if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
-      getSelectedWorkFlow(calculationResult.signalRConnectionId,calculationResult?.isNeedPriceUpdate);
+      getSelectedWorkFlow(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
     }
   }, [calculationResult, currentCalculationSessionId, priceRecovery]);
   const [
@@ -361,7 +361,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   );
 
   const _setDataFromSelectedWorkFlow = (res) => {
-    debugger
     if (!res.success) {
       setCalculationProgress({
         totalWorkFlowsCount: 0,
@@ -393,21 +392,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       currentWorkFlowsCount: 0,
     });
     setCurrentProductItemValueTotalWorkFlows(
-        result.productItemValue.totalWorkFlows
+      result.productItemValue.totalWorkFlows
     );
     setWorkFlows(result.productItemValue.workFlows);
     setCurrentProductItemValueTotalPrice(
-        parseFloat(result.totalPrice)
+      parseFloat(result.totalPrice)
     );
     setSliderCurrentProductItemValueTotalPrice(
-        parseFloat(result.totalPrice)
+      parseFloat(result.totalPrice)
     );
 
     setJobActions(result?.productItemValue.actions);
     setCalculationResult(result);
     if (
-        widgetType === EWidgetProductType.EDIT &&
-        (isActionEmployeeUpdated || isJobNameValue)
+      widgetType === EWidgetProductType.EDIT &&
+      (isActionEmployeeUpdated || isJobNameValue)
     ) {
       setIsChangePriceForEdit(true);
       setIsActionEmployeeUpdated(false);
@@ -415,10 +414,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setSelectedWorkFlowCalculatedIsLoaded(false);
     }
     setSelectedWorkFlowCalculatedIsLoaded(false);
-    
+
   };
 
-  const getSelectedWorkFlow = async (connectionId,IsNeedPriceUpdate?) => {
+  const getSelectedWorkFlow = async (connectionId, IsNeedPriceUpdate?) => {
 
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
@@ -427,7 +426,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (documentItemId) {
       url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery}`;
     }
-   
+
     const res: any = await callApi("GET", url, {}, false);
     _setDataFromSelectedWorkFlow(res);
   };
@@ -484,7 +483,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   useEffect(() => {
     if (
       signalRPricingResult &&
-      signalRPricingResult.productItemValueDraftId === currentCalculationSessionId && 
+      signalRPricingResult.productItemValueDraftId === currentCalculationSessionId &&
       signalRPricingResult.signalRConnectionId === currentSignalRConnectionId
     ) {
       //setLoading(false);
@@ -1520,6 +1519,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               ) {
                 defaultValue = subProductParameter.valueIds[0];
               }
+            }
+            if (parameter.code === "BothsideSameprintcolor" &&
+              widgetType != EWidgetProductType.CREATE
+              && product?.productItemValue?.itemParmetersValues?.length > 0
+              && product?.productItemValue?.itemParmetersValues.find(
+                (item) => parameter.relatedParameters.some(
+                  (relatedParam) => relatedParam.parameterId === item.parameterId
+                )
+              )
+            ) {
+              parameter.isHidden = true;
             }
             if (
               relatedToParameter &&
@@ -4029,7 +4039,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (subSectionParameter) {
         subSectionParameter.isHidden = false;
       }
-      if (subSectionParameter?.code === "BothsideSameprintcolor" && data.values === "true") {
+      if (subSectionParameter?.code === "BothsideSameprintcolor" && data.values === "true" && widgetType == EWidgetProductType.CREATE) {
         temp.splice(findIndex, 1);
         removeRelatedParametersFromSubProducts(
           parameterId,
@@ -4065,14 +4075,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           );
 
         } else {
-          temp.splice(findIndex, 1);
-          removeRelatedParametersFromSubProducts(
-            parameterId,
-            sectionId,
-            subSectionId,
-            temp,
-            subSectionParameter.actionIndex
-          );
+          if (widgetType == EWidgetProductType.CREATE) {
+            temp.splice(findIndex, 1);
+            removeRelatedParametersFromSubProducts(
+              parameterId,
+              sectionId,
+              subSectionId,
+              temp,
+              subSectionParameter.actionIndex
+            );
+          }
+
         }
       } else {
         temp.push({
@@ -4948,7 +4961,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               type: null,
             }
           ]);
-          getSelectedWorkFlow(currentSignalRConnectionId,false);
+          getSelectedWorkFlow(currentSignalRConnectionId, false);
         } else {
           alertFaultUpdate();
         }
@@ -5216,35 +5229,31 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               totalWorkFlowsCount: 0,
               currentWorkFlowsCount: 0,
             });
-            console.log("setLoading 1")
             setLoading(false);
             setcalculationServerErrorState(true);
-            getSelectedWorkFlow(conn,true).then()
-          } 
+            getSelectedWorkFlow(conn, true).then()
+          }
           else if (!res.success) {
             setCalculationProgress({
               totalWorkFlowsCount: 0,
               currentWorkFlowsCount: 0,
             });
-            getSelectedWorkFlow(conn,true).then()
+            getSelectedWorkFlow(conn, true).then()
             setLoading(false);
-          } 
+          }
           else {
             if (productTemplate?.isHaveFixedAction) {
               _setDataFromSelectedWorkFlow(res);
               setIsCanGetSelected(true);
-              console.log("setLoading 2")
               setLoading(false);
-            } 
+            }
             else {
               const id = res?.data?.data?.data;
-              if(id !== currentCalculationSessionId){
-                console.log("exitssss")
+              if (id !== currentCalculationSessionId) {
                 return;
               }
               if (!id) {
                 setcalculationServerErrorState(true);
-                console.log("setLoading 3")
                 setLoading(false);
                 setCurrentCalculationSessionId(null);
               }
@@ -5255,14 +5264,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               });
               setLoading(true);
               if (id === "00000000-0000-0000-0000-000000000000") {
-                getSelectedWorkFlow(conn,true).then()
+                getSelectedWorkFlow(conn, true).then()
                 setLoading(false);
               }
             }
           }
         }
       } else {
-        console.log("setLoading 4")
         setLoading(false);
         setCurrentCalculationSessionId(null);
       }
@@ -5495,12 +5503,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           if (router?.query?.actionId) {
             createProfitTestCase();
           } else {
-            if(showCalculationInCompletedAlert){
+            if (showCalculationInCompletedAlert) {
               setShowCalculationInCompletedModal(true);
-            }else{
+            } else {
               addItemForQuotes();
             }
-            
+
           }
         } else {
           setErrorMsg(t("products.offsetPrice.admin.errorReq"));
