@@ -4974,7 +4974,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               type: null,
             }
           ]);
-          getSelectedWorkFlow(currentSignalRConnectionId, false);
+          getSelectedWorkFlow(currentSignalRConnectionId,false,res?.data?.productItemValue?.id);
         } else {
           alertFaultUpdate();
         }
