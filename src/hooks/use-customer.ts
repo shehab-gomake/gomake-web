@@ -63,7 +63,17 @@ const useCustomer = (
       //setSystemCurrency(user.systemCurrency)
       setSystemCurrency(user.printHouseProfile.systemCurrency);
       setSystemVAT(user.systemVat);
-      setVersionState(user.appVersion);
+      //setVersionState(user.appVersion);
+      const appVersion = user.appVersion
+      const userAppVersion = localStorage.getItem("appVersion");
+      debugger
+      if(!userAppVersion){
+        localStorage.setItem("appVersion",appVersion);
+      }
+      if(userAppVersion && appVersion && userAppVersion !== appVersion){
+        localStorage.setItem("appVersion",appVersion);
+        window.location.reload();
+      }
       setPriceChangePercents({
         minPercent: user?.minPriceChangePercents,
         maxPercent: user?.maxPriceChangePercents,

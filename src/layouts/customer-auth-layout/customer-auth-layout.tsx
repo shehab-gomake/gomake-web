@@ -43,7 +43,7 @@ const CustomerAuthLayout = ({
   const alertNewVersion = useModal();
   const appVersion = useRecoilValue(versionState);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const lastSeenVersion = localStorage.getItem("lastSeenAppVersion");
     if (!lastSeenVersion) {
       localStorage.setItem("lastSeenAppVersion", appVersion);
@@ -53,7 +53,7 @@ const CustomerAuthLayout = ({
       alertNewVersion.open();
       localStorage.setItem("lastSeenAppVersion", appVersion);
     }
-  }, [appVersion]);
+  }, [appVersion]);*/
 
   return disableHeaderSideMenu ? (
     <>
