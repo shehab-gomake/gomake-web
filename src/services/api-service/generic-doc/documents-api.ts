@@ -11,7 +11,8 @@ const DELETE_DOCUMENT_ITEM_URL =
   "/v1/erp-service/documents/delete-document-item";
 const ADD_DOCUMENT_CONTACT_URL =
   "/v1/erp-service/document/add-document-contact";
-const UPDATE_DOCUMENT_CONTACTS_REORDER_URL = "/v1/erp-service/document/update-document-contacts-reorder";
+const UPDATE_DOCUMENT_CONTACTS_REORDER_URL =
+  "/v1/erp-service/document/update-document-contacts-reorder";
 const UPDATE_DOCUMENT_CONTACT_URL =
   "/v1/erp-service/document/update-document-contact";
 const DELETE_DOCUMENT_CONTACT_URL =
@@ -616,7 +617,7 @@ const updateDocumentVatStatusApi: ICallAndSetData = async (
   callApi,
   setState,
   data
-) => {  
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
@@ -657,14 +658,17 @@ const refreshExchangeRateApi: ICallAndSetData = async (
 const createNewDocumentApi: ICallAndSetData = async (
   callApi,
   setState,
-  documentType: DOCUMENT_TYPE
+  payload: { documentType: DOCUMENT_TYPE; clientId?: string }
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
     CREATE_NEW_DOCUMENT_URL,
     setState,
-    documentType
+    payload,
+    true,
+    null,
+    true
   );
 };
 
@@ -1151,7 +1155,6 @@ export {
   duplicateDocumentApi,
   duplicateWithAnotherQuantityApi,
   getDocumentPdfApi,
-
   updatePurchaseNumberApi,
   addDeliveryApi,
   cancelDocumentApi,
