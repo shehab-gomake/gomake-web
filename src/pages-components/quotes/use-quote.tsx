@@ -82,6 +82,8 @@ import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery
 import { DocumentDeliveryStatuses } from "./widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
 import { EMessageStatus } from "@/enums/document-type-enum";
 import { useDocumentsTableSocketIo } from "@/hooks/socket-io/use-documents-table-socket-io";
+import { QuoteIfExistState } from "../quote-new/store/quote";
+import { userQuoteState } from "@/store/user-qoute-state";
 
 interface Query {
   customerId?: string;
@@ -256,6 +258,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const onClickOpenModal = (quote: any) => {
     setSelectedQuote(quote);
     setOpenModal(true);
+  };
+
+  const userQuoteIfExist = useRecoilValue<any>(userQuoteState);
+  const onClickEditQuote = (quote: any) => {
+    if (userQuoteIfExist) onClickOpenModal(quote);
+    else updateQuoteStatus(quote);
   };
 
   const onClickCloseLogsModal = () => {
@@ -439,7 +447,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
-                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
@@ -471,7 +478,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
-                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
@@ -499,7 +505,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
-                onClickOpenModal={onClickOpenModal}
+                onClickEditQuote={onClickEditQuote}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
@@ -576,7 +582,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
-                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
@@ -652,7 +657,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
-                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
@@ -688,7 +692,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
-            onClickOpenModal={onClickOpenModal}
             onClickPdf={onOpenExportReceiptPdfModal}
             onClickDuplicate={onClickDocumentDuplicate}
             onClickLoggers={onClickDocumentLogs}
@@ -911,7 +914,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
-                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
@@ -943,7 +945,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
-                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
@@ -971,7 +972,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
-                onClickOpenModal={onClickOpenModal}
+                onClickEditQuote={onClickEditQuote}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
@@ -1047,7 +1048,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
-                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
@@ -1122,7 +1122,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
-                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
@@ -1157,7 +1156,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
-            onClickOpenModal={onClickOpenModal}
             onClickPdf={onOpenExportReceiptPdfModal}
             onClickDuplicate={onClickDocumentDuplicate}
             onClickLoggers={onClickDocumentLogs}
@@ -1514,7 +1512,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     ? t("tabs.ordersTracking")
     : documentsLabels.find((item) => item.value === docType)?.label;
 
-  const updateQuoteStatus = async () => {
+  const updateQuoteStatus = async (quote?) => {
     const callBack = (res) => {
       if (res?.success) {
         navigate("/quote");
@@ -1529,7 +1527,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await updateDocumentApi(callApi, callBack, {
       documentType: 0,
       document: {
-        documentId: selectedQuote?.id,
+        documentId: quote?.id ?? selectedQuote?.id,
       },
     });
   };
@@ -1540,6 +1538,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   ) => {
     const callBack = (res) => {
       if (res?.success) {
+        debugger;
         const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
         const documentId = res?.data?.documentId;
         if (!isAnotherQuoteInCreate) {
@@ -1611,7 +1610,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           <MoreMenuWidget
             quote={document}
             documentType={docType}
-            onClickOpenModal={onClickOpenModal}
+            onClickEditQuote={onClickEditQuote}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickDocumentDuplicate}
             onClickLoggers={onClickDocumentLogs}

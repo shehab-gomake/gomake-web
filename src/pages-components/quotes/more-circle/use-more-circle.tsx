@@ -55,7 +55,6 @@ const useMoreCircle = () => {
     t,
     quote,
     documentType,
-    onClickOpenModal,
     onClickPdf,
     onClickDuplicate,
     onClickLoggers,
@@ -73,6 +72,7 @@ const useMoreCircle = () => {
     onOpenDuplicateModal,
     onClickStartProduction,
     onClickReopenDocument,
+    onClickEditQuote,
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
@@ -161,7 +161,7 @@ const useMoreCircle = () => {
       {
         condition: !isPauseOrder && isQuote && isEditableDocument,
         onClick: () => {
-          isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote);
+          isCreateStatus ? navigate(`/quote`) : onClickEditQuote(quote);
         },
         icon: <EditingIcon />,
         name: t("sales.quote.edit"),
