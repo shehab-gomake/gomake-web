@@ -26,7 +26,7 @@ import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import { ModalType } from "@/enums";
 import { useUserPermission } from "@/hooks/use-permission";
 
-const QuoteWidget = ({ isAdmin = true, isMobileScreen = false }) => {
+const QuoteWidget = ({ isMobileScreen = false }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
@@ -40,7 +40,6 @@ const QuoteWidget = ({ isAdmin = true, isMobileScreen = false }) => {
     anchorEl,
     isDisabled,
     handleClick,
-    onClickCreateQuote,
     onClickCreateQuoteForCustomer,
     open,
     openModal,
@@ -73,9 +72,9 @@ const QuoteWidget = ({ isAdmin = true, isMobileScreen = false }) => {
     handleProductChange,
     isFetching,
     selectedTab,
-    setSelectedTab,
     onSelectTab,
     customersListCreateQuote,
+    onclickCreateNew,
   } = useQuoteWidget();
 
   useEffect(() => {
@@ -192,11 +191,7 @@ const QuoteWidget = ({ isAdmin = true, isMobileScreen = false }) => {
             <PermissionCheck userPermission={Permissions.CREATE_QUOTES}>
               <GomakePrimaryButton
                 onClick={
-                  isDisabled
-                    ? handleClick
-                    : isAdmin
-                      ? onClickCreateQuote
-                      : onClickCreateQuoteForCustomer
+                  isDisabled ? handleClick : onClickCreateQuoteForCustomer
                 }
                 variant="contained"
                 style={{ width: "100%", height: 40 }}
@@ -223,11 +218,9 @@ const QuoteWidget = ({ isAdmin = true, isMobileScreen = false }) => {
         <div data-tour="create-quote" style={{ width: "50%" }}>
           <GomakePrimaryButton
             onClick={
-              isDisabled
-                ? handleClick
-                : isAdmin
-                  ? onClickCreateQuote
-                  : onClickCreateQuoteForCustomer
+              !selectedProduct?.id
+                ? onclickCreateNew
+                : onClickCreateQuoteForCustomer
             }
             variant="contained"
             style={{ width: "100%", height: 40 }}
