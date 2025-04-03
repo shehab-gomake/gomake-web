@@ -237,6 +237,7 @@ export const clearPhoneNumberPrefix = (phoneNumber) => {
 };
 
 export const _renderDeliveryDate = (dateString: string) => {
+  if (!dateString) return "";
   const date = new Date(dateString);
 
   const time = date.toLocaleTimeString([], {
