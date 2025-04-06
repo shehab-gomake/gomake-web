@@ -169,6 +169,7 @@ const PrimaryTable = ({
   const { classes } = useStyle(maxHeight, dir);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
   const [isHovered, setIsHovered] = useState(false);
+  const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
 
   const handleMouseEnter = () => setIsHovered(true);
   const handleMouseLeave = () => setIsHovered(false);
@@ -284,8 +285,8 @@ const PrimaryTable = ({
                 <TableCell
                   key={`header_${index}`}
                   align="center"
-                  onMouseEnter={handleMouseEnter}
-                  onMouseLeave={handleMouseLeave}
+                  onMouseEnter={() => setHoveredColumn(header)}
+                  onMouseLeave={() => setHoveredColumn(null)}
                   style={{
                     cursor: withSort || withSortBE ? "pointer" : "default",
                     userSelect: "none",
@@ -344,7 +345,7 @@ const PrimaryTable = ({
                         size="small"
                         style={{
                           ...adaptMarginRight(dir, 4),
-                          visibility: isHovered ? 'visible' : 'hidden',
+                          visibility: hoveredColumn === header ? 'visible' : 'hidden',
                         }}
                       >
                         {!isDescOrderBE ? (
