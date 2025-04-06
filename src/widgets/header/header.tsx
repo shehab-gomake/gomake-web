@@ -63,7 +63,7 @@ const HeaderWidget = () => {
 
   return (
     <div style={classes.container}>
-      <a
+      {/* <a
         href="https://calendly.com/gomakeinc/intro-to-gomake?month=2025-04"
         target="_blank"
         rel="noopener noreferrer"
@@ -77,7 +77,7 @@ const HeaderWidget = () => {
       >
         <CalendarToday style={{ fontSize: 18 }} />
         {t("Book a demo")}
-      </a>
+      </a> */}
 
       {/* <SearchInputComponent onChange={() => null} searchInputStyle={classes.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />
