@@ -17,6 +17,9 @@ import { currentPathState } from "@/pages-components/customer-service/store/curr
 import { useRouter } from "next/router";
 import { MessengerNotifications } from "@/widgets/messenger-notifications-widget/messenger-notifications";
 import { SystemNotifications } from "@/widgets/system-notifications-widget/system-notifications";
+import { PrimaryButton } from "@/components/button/primary-button";
+import { CalendarToday } from "@mui/icons-material";
+
 const HeaderWidget = () => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -60,6 +63,22 @@ const HeaderWidget = () => {
 
   return (
     <div style={classes.container}>
+      {/* <a
+        href="https://calendly.com/gomakeinc/intro-to-gomake?month=2025-04"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={classes.bookADemo}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = "#FFC107"; // hover effect
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = "#FFF";
+        }}
+      >
+        <CalendarToday style={{ fontSize: 18 }} />
+        {t("Book a demo")}
+      </a> */}
+
       {/* <SearchInputComponent onChange={() => null} searchInputStyle={classes.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />
       <div style={classes.rightSideContainer}>
