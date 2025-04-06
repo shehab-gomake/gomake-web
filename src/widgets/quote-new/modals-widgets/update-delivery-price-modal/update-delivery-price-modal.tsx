@@ -44,7 +44,7 @@ const UpdateDeliveryPriceModal = ({ openModal, onClose, onClickAdd }) => {
         insideStyle={classes.insideStyle}
       >
         <div style={classes.mainContainer}>
-          {(!quoteItemValue?.isHaveDeliveryItem && !quoteItemValue?.isShowDeliveryItems) && <div style={classes.autoComplateRowContainer}>
+          {<div style={classes.autoComplateRowContainer}>
             <div style={{ width: "100%", marginTop: 15 }}>
               <GoMakeAutoComplate
                 options={shipmentTypes}
