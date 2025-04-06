@@ -23,7 +23,7 @@ const AccordionMappingWidget = ({
   const parameterList = subProducts?.find(
     (x) => x.type === subSection?.type
   )?.parameters;
-  const hasMatchingParameter = (parameterList, subSection) => {
+  const hasMatchingParameter = (parameterList) => {
     for (let param of subSection.parameters) {
       let matchingParameter = parameterList?.find(
         (p) => p.parameterId === param.id && p.subSectionId === subSection.id && !param.isHiddenInSetting
@@ -34,7 +34,7 @@ const AccordionMappingWidget = ({
     }
     return false;
   };
-  const hasMissingRequiredParameters = (parameterList, item) => {
+  const hasMissingRequiredParameters = (parameterList) => {
     if (Array.isArray(subSection?.parameters)) {
       const subProductParameters = parameterList || [];
       const subProductParameterCodes = subProductParameters.map(p => p.parameterCode);
@@ -42,8 +42,9 @@ const AccordionMappingWidget = ({
       for (const parameter of subSection.parameters) {
         if (
           parameter.isRequired && !parameter.isHidden && !parameter.isHiddenInSetting &&
-          !subProductParameterCodes.includes(parameter.code) &&
-          subProductParameterSubSectionIds.includes(subSection.id)
+          !subProductParameterCodes.includes(parameter.code)
+          // &&
+          // subProductParameterSubSectionIds.includes(subSection.id)
         ) {
           return true;
         }
@@ -53,8 +54,9 @@ const AccordionMappingWidget = ({
       return false;
     }
   };
-  const hasMissing = hasMissingRequiredParameters(parameterList, subSection);
-  const hasMatching = hasMatchingParameter(parameterList, subSection);
+  const hasMissing = hasMissingRequiredParameters(parameterList);
+  const hasMatching = hasMatchingParameter(parameterList);
+
   return (
     <Accordion
       expanded={expanded === `panel_${index}`}
