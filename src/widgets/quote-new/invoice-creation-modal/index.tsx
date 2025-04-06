@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { SendInvoiceSection } from "./components/send-invoice-section";
 import { OtherOptionsSection } from "./components/other-option-section";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { useRouter } from "next/router";
 
 interface InvoiceCreationModal {
   openModal: boolean;
@@ -20,22 +21,28 @@ const InvoiceCreationModal = ({
   openModal,
   onClose,
   docType,
-  onClickSendDocumentToClient, 
-  handleSendUsingWhatsAppWeb
+  onClickSendDocumentToClient,
+  handleSendUsingWhatsAppWeb,
 }: InvoiceCreationModal) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
+  const router = useRouter();
+  const isOutgoingPayments = router.query.isOutgoingPayments === "true";
 
   const modalTitleMap = {
     [DOCUMENT_TYPE.deliveryNote]: t("sales.modals.proceedToCreateDeliveryNote"),
     [DOCUMENT_TYPE.invoice]: t("sales.modals.proceedToCreateInvoice"),
-    [DOCUMENT_TYPE.receipt]: t("sales.modals.proceedToCreateReceipt"),
+    [DOCUMENT_TYPE.receipt]: isOutgoingPayments
+      ? t("sales.modals.proceedToCreatePayment")
+      : t("sales.modals.proceedToCreateReceipt"),
+
     [DOCUMENT_TYPE.deliveryNoteRefund]: t(
       "sales.modals.proceedToCreateDeliveryNote"
     ),
     [DOCUMENT_TYPE.invoiceRefund]: t("sales.modals.proceedToCreateInvoice"),
   };
+
   const modalTitle = modalTitleMap[docType];
 
   return (
@@ -62,6 +69,7 @@ const InvoiceCreationModal = ({
             quoteItemValue={quoteItemValue}
             docType={docType}
             onClose={onClose}
+            isOutgoingPayments={isOutgoingPayments}
           />
         </div>
       </GoMakeModal>

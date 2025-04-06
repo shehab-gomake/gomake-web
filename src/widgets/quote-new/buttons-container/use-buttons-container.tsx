@@ -62,7 +62,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [, setShowPrintJobsModal] = useRecoilState(newOrderIdToPrintJobsState);
   const [openReceiptCreationModal, setOpenReceiptCreationModal] =
     useRecoilState(openReceiptCreationModalState);
-
   const [openOrderNowPrePaymentModal, setOpenOrderNowPrePaymentModal] =
     useState(false);
 
@@ -206,7 +205,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       if (res?.success) {
         const pdfLink = res.data;
         downloadPdf(pdfLink);
-        // window.open(pdfLink, "_blank");
       } else {
         alertFaultGetData();
       }
@@ -238,18 +236,20 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   };
 
   const getFormattedDocumentPath = (docType: DOCUMENT_TYPE): string => {
-    const documentPath = DOCUMENT_TYPE[docType];
+    const documentPath = isOutgoingPayments
+      ? "supplierPayment"
+      : DOCUMENT_TYPE[docType];
     return documentPath.charAt(0).toUpperCase() + documentPath.slice(1);
   };
 
   const checkedItemsIds = useRecoilValue(checkedItemsIdsState);
 
   const allocatedSums = useRecoilValue(allocatedSumsState);
+
   const onClickCreateNewReceipt = async () => {
     // const filteredReceiptItems = Object.values(checkedItemsIds)
     //   .map((id) => quoteItemValue.receiptItems.find((item) => item.id === id))
     //   .filter(Boolean);
-    const isOutgoingPayments = router.query.isOutgoingPayments === "true";
     const filteredReceiptItems = Object.keys(checkedItemsIds)
       .map((key) => {
         const item = quoteItemValue.receiptItems.find(
@@ -260,7 +260,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
         return item ? { ...item, sumApplied } : null;
       })
-      .filter(Boolean)
+      .filter(Boolean);
 
     const newReceiptItem = {
       ...quoteItemValue,
@@ -274,7 +274,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       if (res?.success) {
         const receiptId = res?.data;
         alertSuccessAdded();
-
         isOutgoingPayments
           ? router.replace(`/receipt?isOutgoingPayments=true&Id=${receiptId}`)
           : router.replace(`/receipt?Id=${receiptId}`);
@@ -305,6 +304,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const isInvoice = docType === DOCUMENT_TYPE.invoice;
   const isQuote = docType === DOCUMENT_TYPE.quote;
   const isOrder = docType === DOCUMENT_TYPE.order;
+  const isOutgoingPayments = router.query.isOutgoingPayments === "true";
+
   const canEditDocument =
     quoteItemValue?.isEditable &&
     CheckDocumentPermission(
@@ -383,8 +384,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         docType === DOCUMENT_TYPE.order
           ? navigate("/orders")
           : docType === DOCUMENT_TYPE.deliveryNote
-            ? navigate("/deliveryNotes")
-            : navigate("/invoices");
+          ? navigate("/deliveryNotes")
+          : navigate("/invoices");
       } else {
         alertFaultUpdate();
       }

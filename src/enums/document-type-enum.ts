@@ -94,6 +94,7 @@ export enum ERPDocumentsTypesEnum {
   agingReport,
   ledgerReport,
   salesReport,
+  supplierPayment,
 }
 
 export enum ORDER_STATUSES {
@@ -135,14 +136,12 @@ export enum DocumentCalculationType {
   Discount,
   DiscountAmount,
   TotalPayment,
-  VAT
+  VAT,
 }
 
-export enum DocumentPreferencesEnum
-        {
-            ShowPrice,
-            ShowDetails,
-            ShowGraphicsItems,
-            ShowDeliveryItems,
-
-        }
+export enum DocumentPreferencesEnum {
+  ShowPrice,
+  ShowDetails,
+  ShowGraphicsItems,
+  ShowDeliveryItems,
+}

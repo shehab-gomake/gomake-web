@@ -104,7 +104,11 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     sliderCurrentProductItemValueTotalPrice,
     systemCurrency,
     direction,
-    setCanCalculation
+    setCanCalculation,
+    showCalculationInCompletedAlert,
+    showCalculationInCompletedModal,
+    setShowCalculationInCompletedModal,
+    currentSignalRConnectionId
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const permissions = useRecoilValue(permissionsState);
@@ -271,7 +275,9 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     },
   ];
   const { } = useGoMakeTour(productSteps, [relatedParameters]);
-
+  const func = ()=>{
+    getSelectedWorkFlow(currentSignalRConnectionId).then()
+  }
   return (
     <div>
       {productTemplate?.sections?.length > 0 ? (
@@ -357,7 +363,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                               actions={jobActions}
                               workFlows={workFlows}
                               widgetType={widgetType}
-                              getSelectedWorkFlow={getSelectedWorkFlow}
+                              getSelectedWorkFlow={func}
                               selectedWorkFlowCalculatedIsLoaded={
                                 selectedWorkFlowCalculatedIsLoaded
                               }
@@ -439,6 +445,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 calculationProduct={calculationProduct}
                 subProducts={subProducts}
                 setCanCalculation={setCanCalculation}
+                showCalculationInCompletedAlert={showCalculationInCompletedAlert}
               />
             )}
           </div>
@@ -661,6 +668,15 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
         openModal={isOpenCreateDefaultWorkFlow}
         onClose={onClickCloseCreateDefaultWorkFlow}
         onClickDelete={() => addItemForQuotes()}
+      />
+      <GoMakeDeleteModal
+          modalType={ModalType.WARNING}
+          subTitle={t("products.offsetPrice.admin.inCompletedProductAlertSubTitle")}
+          title={t("products.offsetPrice.admin.inCompletedProductAlertTitle")}
+          yesBtn={t("modal.yes")}
+          openModal={showCalculationInCompletedModal}
+          onClose={()=>setShowCalculationInCompletedModal(false)}
+          onClickDelete={() => addItemForQuotes()}
       />
     </div>
   );
