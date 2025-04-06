@@ -122,6 +122,7 @@ const ParameterWidget = () => {
                               }
                               _renderParameterType={_renderParameterType}
                               relatedParameters={relatedParameters}
+                              getProductById={getProductById}
                             />
                           );
                         } else {
@@ -147,6 +148,7 @@ const ParameterWidget = () => {
                               }
                               _renderParameterType={_renderParameterType}
                               relatedParameters={relatedParameters}
+                              getProductById={getProductById}
                             />
                           );
                         }

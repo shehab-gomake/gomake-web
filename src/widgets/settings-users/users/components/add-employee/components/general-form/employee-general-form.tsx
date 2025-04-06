@@ -35,10 +35,8 @@ import { ActionsListComponent } from "@/widgets/production-floor/filters/select/
 import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 import { printNodeInputs } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/print-node-inputs";
 import { usePrintNodePrinters } from "@/hooks/use-print-node-printers";
-import {
-  OutlookEmailLoginComponent
-} from "@/widgets/settings-profile-widget/components/profiles/sender-email-auth/outlook-email-login";
-import GoogleAuth from "@/widgets/settings-profile-widget/components/profiles/sender-email-auth/google-email-login";
+import { getAllSMSTemplatesListApi } from "@/services/api-service/mailing/mailing-api";
+import { allSMSTemplatesListState } from "@/store";
 
 const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
   const { t } = useTranslation();
@@ -133,6 +131,24 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     });
   };
 
+  const [allSMSTemplatesList, setAllSMSTemplatesList] = useRecoilState<any>(allSMSTemplatesListState);
+  const getAllSMSTemplatesList = useCallback(async () => {
+    await getAllSMSTemplatesListApi(callApi, (fetchedData: any) => {
+      // Add the default option
+      const templatesWithDefault = [
+        { text: t("customers.modal.default"), value: null },
+        ...fetchedData.data.map((group: any) => ({
+          text: group.text,
+          value: group.value,
+        }))
+      ];
+      setAllSMSTemplatesList(templatesWithDefault);
+    }, {});
+  }, []);
+
+  useEffect(() => {
+    getAllSMSTemplatesList();
+  }, []);
   const quoteLimitationOptions = Object.keys(EmployeeQuoteLimitationType)
     .filter((key) => isNaN(Number(key)))
     .map((key) => ({

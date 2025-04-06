@@ -6,7 +6,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useTranslation } from "react-i18next";
 import { useRouter } from "next/router";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { DocumentsTypeEnum } from "@/widgets/settings-documenting/documentNumbering/interface/document";
+import { ERPDocumentsTypesEnum } from "@/enums";
 
 const RowMappingWidget = ({
   item,
@@ -21,7 +21,7 @@ const RowMappingWidget = ({
   const { classes } = useStyle({ headerHeight });
   const { t } = useTranslation();
   const router = useRouter();
-  const { formatISODateTime } = useDateFormat();
+
   const handleAllocatedSumChange = (event) => {
     const newAllocatedSum = event.target.value;
     const minValue = Math.min(0, item?.sumApplied);
@@ -35,6 +35,9 @@ const RowMappingWidget = ({
     }
     setAllocatedSum(index, Number(newAllocatedSum));
   };
+
+  const { formatISODateTime } = useDateFormat();
+
   return (
     <TableRow
       key={item.id}
@@ -96,7 +99,7 @@ const RowMappingWidget = ({
           ...classes.cellContainerStyle,
         }}
       >
-        {t(`documentType.${DocumentsTypeEnum[item?.documentType]}`)}
+        {t(`ERPDocumentsType.${ERPDocumentsTypesEnum[item?.documentType]}`)}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -136,7 +139,7 @@ const RowMappingWidget = ({
             type="number"
             min={Math.min(0, item?.sumApplied)}
             max={item?.sumApplied > 0 ? item?.sumApplied : 0}
-            // step="0.01"
+          // step="0.01"
           />
           / {item?.sumApplied}
         </PrimaryTableCell>

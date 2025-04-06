@@ -22,6 +22,8 @@ const DELETE_SMS_TEMPLATES_GROUP_URL =
 const UPDATE_SMS_TEMPLATES_GROUP_URL =
   "/v1/communication-service/sms-templates-groups/update-smsTemplates-group";
 
+const GET_ALL_SMS_TEMPLATES_List_URL = "/v1/crm-service/roles/get-all-sms-templates";
+
 const getAllSMSTemplatesApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -36,6 +38,19 @@ const getAllSMSTemplatesApi: ICallAndSetData = async (
   );
 };
 
+const getAllSMSTemplatesListApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {  
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_SMS_TEMPLATES_List_URL,
+    setState,
+    data
+  );
+};
 //get by id
 const getSMSTemplateApi: ICallAndSetData = async (
   callApi,
@@ -135,6 +150,7 @@ const updateSMSTemplateGroupApi = async (callApi, callBack, data) => {
 export {
   updateSMSTemplateApi,
   getAllSMSTemplatesApi,
+  getAllSMSTemplatesListApi,
   addSMSTemplateGroup,
   getAllSMSTemplatesGroupsApi,
   getAllTemplateVariablesApi,

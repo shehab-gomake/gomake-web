@@ -14,7 +14,7 @@ const OrderJObNumbersComponent = ({
   return (
     <span
       style={{
-        // cursor: "pointer",
+        cursor: "pointer",
         padding: "0px 5px",
         display: "inline-block",
         width: "fit-content",

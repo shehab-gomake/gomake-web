@@ -55,7 +55,6 @@ const useMoreCircle = () => {
     t,
     quote,
     documentType,
-    onClickOpenModal,
     onClickPdf,
     onClickDuplicate,
     onClickLoggers,
@@ -68,12 +67,14 @@ const useMoreCircle = () => {
     onClickOpenPrintPDFModal,
     onOpenCancelReceiptModal,
     onOpenCancelReceiptModalRefund,
-    onClickOpenDocument,
     onClickOpenChangeProductionStatusModal,
     onClickPauseOrResume,
     onOpenDuplicateModal,
     onClickStartProduction,
+    onClickReopenDocument,
+    onClickEditQuote,
   }) => {
+    const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
     const isSupplierPayments = documentType === DOCUMENT_TYPE.supplierPayments;
 
@@ -117,6 +118,7 @@ const useMoreCircle = () => {
         connectionId: connectionId,
       });
     };
+
     const isQuote = documentType === DOCUMENT_TYPE.quote;
     const isOrder = documentType === DOCUMENT_TYPE.order;
     const isDeliveryNote = documentType === DOCUMENT_TYPE.deliveryNote;
@@ -127,15 +129,15 @@ const useMoreCircle = () => {
     const isPurchaseInvoice = documentType === DOCUMENT_TYPE.purchaseInvoice;
     const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
     const isReceipt = documentType === DOCUMENT_TYPE.receipt;
+    const isClosedOrder = isOrder && quote?.statusTitleText === "Order.Closed";
+    const isPauseOrder = quote?.statusTitleText === "Order.Paused";
+    const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
+    const isClosedDeliveryNote =
+      quote?.statusTitleText === "DeliveryNote.Closed";
+    const isClosedInvoice = quote?.statusTitleText === "Invoice.Closed";
     const showNewDuplicate =
       isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
     const isOrdersTracking = pathname === "/ordersTracking";
-
-    const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
-    const isClosedOrder = quote?.statusTitleText === "Order.Closed";
-    const isPauseOrder = quote?.statusTitleText === "Order.Paused";
-    const isPrePaymentOrder =
-      isOrder && quote?.statusTitleText === "Order.WaitingForPayment";
 
     const isShowLogs = CheckPermission(Permissions.SHOW_LOGS);
     const isSendPaymentToClient = CheckPermission(
@@ -144,15 +146,22 @@ const useMoreCircle = () => {
     const isShowPurchaseOrders = CheckPermission(
       Permissions.SHOW_PURCHASE_ORDERS
     );
-
     const isCreateStatus =
       isQuote && quote?.documentStatus === QUOTE_STATUSES.Create;
 
+    const isCanReOpenManuallyClosedDocument = quote?.isCanCancelManualClose;
+    const isCanReopenCanceledOrder = isOrder && isCanceledOrder;
+    const isCanReOpenClosedDocument =
+      CheckPermission(Permissions.CAN_OPEN_CLOSED_DOCUMENTS) &&
+      ((isOrder && isClosedOrder) ||
+        (isDeliveryNote && isClosedDeliveryNote) ||
+        (isInvoice && isClosedInvoice));
+
     return [
       {
-        condition: !isPauseOrder && isQuote && quote?.isEditable,
+        condition: !isPauseOrder && isQuote && isEditableDocument,
         onClick: () => {
-          isCreateStatus ? navigate(`/quote`) : onClickOpenModal(quote);
+          isCreateStatus ? navigate(`/quote`) : onClickEditQuote(quote);
         },
         icon: <EditingIcon />,
         name: t("sales.quote.edit"),
@@ -164,7 +173,7 @@ const useMoreCircle = () => {
         condition:
           !isPauseOrder &&
           documentType !== DOCUMENT_TYPE.quote &&
-          quote?.isEditable,
+          isEditableDocument,
         onClick: () => navigate(getDocumentPath(quote?.id)),
         icon: <EditingIcon />,
         name: t("sales.quote.edit"),
@@ -196,7 +205,8 @@ const useMoreCircle = () => {
       },
       {
         condition: !isPauseOrder && !isDeliveryNote,
-        onClick: () => onClickPdf(isReceipt ? quote : quote?.id),
+        onClick: () =>
+          onClickPdf(isReceipt || isSupplierPayments ? quote : quote?.id),
         icon: <PDFIcon />,
         name: t("sales.quote.pdf"),
       },
@@ -261,7 +271,7 @@ const useMoreCircle = () => {
           isOrder &&
           quote?.isCanClose &&
           !isCanceledOrder &&
-          quote?.isEditable,
+          isEditableDocument,
         onClick: () => {
           if (quote?.productionStatus) {
             navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`);
@@ -282,7 +292,7 @@ const useMoreCircle = () => {
             quote?.isCanClose &&
             !isCanceledOrder) ||
             (isDeliveryNote && quote?.isCanClose)) &&
-          quote?.isEditable,
+          isEditableDocument,
         onClick: () => {
           if (isOrder) {
             if (quote?.productionStatus) {
@@ -361,7 +371,7 @@ const useMoreCircle = () => {
             !isCanceledOrder) ||
             (isDeliveryNote && quote?.isCanClose) ||
             (isInvoice && quote?.isCanClose)) &&
-          quote?.isEditable &&
+          isEditableDocument &&
           canCloseDocumentManually,
         onClick: () =>
           quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
@@ -372,11 +382,10 @@ const useMoreCircle = () => {
       },
       {
         condition:
-          !isPauseOrder &&
-          isOrder &&
-          quote?.isEditable &&
-          (quote?.isCanCancelManualClose || isCanceledOrder),
-        onClick: () => onClickOpenDocument(quote),
+          isCanReopenCanceledOrder ||
+          isCanReOpenManuallyClosedDocument ||
+          isCanReOpenClosedDocument,
+        onClick: () => onClickReopenDocument(quote),
         icon: <UnLockIcon />,
         name: t("sales.quote.open"),
       },
@@ -397,7 +406,7 @@ const useMoreCircle = () => {
             quote?.isCanClose &&
             !isCanceledOrder) ||
             (isReceipt && quote?.status !== "Receipt.Canceled")) &&
-          quote?.isEditable,
+          isEditableDocument,
         onClick: () =>
           isOrder
             ? onClickOpenIrrelevantModal(quote)
@@ -408,16 +417,21 @@ const useMoreCircle = () => {
         name: t("sales.quote.cancel"),
       },
       {
-        condition: !isPauseOrder && isInvoice && quote?.isCanClose,
+        condition: (isInvoice || isPurchaseInvoice) && quote?.isCanClose,
         onClick: () =>
           navigate(
-            `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`
+            isPurchaseInvoice
+              ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`
+              : `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`
           ),
         icon: <PayIcon />,
         name: t("sales.quote.pay"),
         isLink: true,
-        href: `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`,
+        href: isPurchaseInvoice
+          ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quote?.number}&ClientId=${quote?.customerId}`
+          : `/receipt?isNewCreation=true&documentNumber=${quote?.accountingNumber}&ClientId=${quote?.customerId}`,
       },
+
       {
         condition:
           ((!isPauseOrder && isOrder && !isCanceledOrder) || isInvoice) &&
@@ -448,13 +462,13 @@ const useMoreCircle = () => {
           !isCanceledOrder &&
           !isPauseOrder &&
           !isClosedOrder &&
-          quote?.isEditable,
+          isEditableDocument,
         onClick: () => onClickPauseOrResume(quote?.id),
         icon: <PauseIcon />,
         name: t("sales.quote.pause"),
       },
       {
-        condition: isOrder && isPauseOrder && quote?.isEditable,
+        condition: isOrder && isPauseOrder,
         onClick: () => onClickPauseOrResume(quote?.id),
         icon: <ResumeIcon />,
         name: t("sales.quote.resume"),
