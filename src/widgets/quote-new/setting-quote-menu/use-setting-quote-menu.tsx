@@ -17,12 +17,10 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     quoteStateValue?.isShowDetails
   );
   const [showPrices, setShowPrices] = useState(quoteStateValue?.isShowPrice);
-  const [showGraphics, setShowGraphics] = useState(
-    quoteStateValue?.isShowGraphicsItems
-  );
-  const [showDelivery, setShowDelivery] = useState(
-    quoteStateValue?.isShowDeliveryItems
-  );
+  const [showGraphics, setShowGraphics] = useState(quoteStateValue?.isShowGraphicsItems);
+  const [showDelivery, setShowDelivery] = useState(quoteStateValue?.isShowDeliveryItems);
+  const [hideItemDiscountColumn, setHideItemDiscountColumn] = useState(quoteStateValue?.hideItemDiscountColumn);
+
 
   const currencies =
     useRecoilValue<{ label: string; value: string }[]>(currenciesState);
@@ -41,7 +39,6 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   const vatStatus = vatStatusList.find(
     (status) => status.value === quoteStateValue?.vatStatus
   )?.text;
-
   const [exchangeRate, setExchangeRate] = useState(
     quoteStateValue?.exchangeRate || "-"
   );
@@ -56,12 +53,8 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     setShowPrices(quoteStateValue?.isShowPrice);
     setShowGraphics(quoteStateValue?.isShowGraphicsItems);
     setShowDelivery(quoteStateValue?.isShowDeliveryItems);
-  }, [
-    quoteStateValue?.isShowDetails,
-    quoteStateValue?.isShowPrice,
-    quoteStateValue?.isShowGraphicsItems,
-    quoteStateValue?.isShowDeliveryItems,
-  ]);
+    setHideItemDiscountColumn(quoteStateValue?.hideItemDiscountColumn);
+  }, [quoteStateValue?.isShowDetails, quoteStateValue?.isShowPrice, quoteStateValue?.isShowGraphicsItems, quoteStateValue?.isShowDeliveryItems, quoteStateValue?.hideItemDiscountColumn]);
 
   useEffect(() => {
     setExchangeRate(quoteStateValue?.exchangeRate || "-");
@@ -98,6 +91,7 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
       DocumentPreferencesEnum.ShowGraphicsItems
     );
   };
+
   const handleSwitchCheckForShowDelivery = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
@@ -106,6 +100,13 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
       event.target.checked,
       DocumentPreferencesEnum.ShowDeliveryItems
     );
+  };
+
+  const handleSwitchCheckForHideItemDiscountColumn = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setHideItemDiscountColumn(event.target.checked);
+    updateDocumentPreference(event.target.checked, DocumentPreferencesEnum.HideItemDiscountColumn);
   };
 
   const handleTableSorting = (event: React.MouseEvent<HTMLElement>) => {
@@ -166,6 +167,11 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     //   checked: showDelivery,
     //   onChange: handleSwitchCheckForShowDelivery,
     // },
+    {
+      label: t("sales.quote.hideItemDiscountColumn"),
+      checked: hideItemDiscountColumn,
+      onChange: handleSwitchCheckForHideItemDiscountColumn,
+    },
   ];
   return {
     quoteStateValue,
