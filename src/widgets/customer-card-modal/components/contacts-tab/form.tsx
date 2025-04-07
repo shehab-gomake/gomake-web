@@ -1,4 +1,3 @@
-import * as React from "react";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { RemoveIcon } from "@/components/icons/icons";
@@ -18,7 +17,7 @@ interface IProps {
     tel1?: number;
     tel2?: number;
     phone?: number;
-    fax?: string;
+    // fax?: string;
     mail?: string;
     index?: number;
   };
@@ -33,7 +32,7 @@ const ContactForm = ({ contact, onDelete, setContact }: IProps) => {
     setContact({ ...contact, [key]: value });
   };
 
-  return ( 
+  return (
     <div>
       <div style={classes.customerInfoStyle}>
         {contactInputs1(contact).map((item) => (
@@ -48,7 +47,10 @@ const ContactForm = ({ contact, onDelete, setContact }: IProps) => {
         ))}
       </div>
       <Stack direction={"row"} marginTop={"10px"} marginBottom={"10px"}>
-        <a style={classes.removeFormStyle} onClick={() => onDelete(contact.index)}>
+        <a
+          style={classes.removeFormStyle}
+          onClick={() => onDelete(contact.index)}
+        >
           <RemoveIcon />
           <button style={classes.buttonsStyle}>
             {t("customers.buttons.remove")}

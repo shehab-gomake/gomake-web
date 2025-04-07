@@ -15,6 +15,7 @@ interface IProps {
   customStyle?: React.CSSProperties; // Add the style property
   defaultCountry?: string;
   variant?: "default" | "circular";
+  placeholder?: string;
 }
 
 const PhoneInputComponent = ({
@@ -24,6 +25,7 @@ const PhoneInputComponent = ({
   customStyle,
   defaultCountry,
   variant = "default",
+  placeholder = "",
 }: IProps) => {
   const printHouseProfileState = useRecoilValue<any>(printHouseProfile);
   const { CheckPreferenceValue } = usePrintHousePreferences();
@@ -59,6 +61,14 @@ const PhoneInputComponent = ({
       border: 1px solid #D0D5DD !important;
       box-shadow: 0px 1px 2px 0px rgba(4, 24, 65, 0.05);
     }
+
+    .react-international-phone-input::placeholder {
+     color: #B1B1B1 !important;
+  opacity: 1;
+  font-family: 'Heebo', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  }
   `;
 
   const GlobalStyle = createGlobalStyle`
@@ -75,8 +85,16 @@ const PhoneInputComponent = ({
   border: 0px !important;
   box-shadow: 0px 1px 10px rgba(0, 0, 0, 0.08) !important;
 }
+
+.react-international-phone-input::placeholder {
+ color: #B1B1B1 !important;
+  opacity: 1;
+  font-family: 'Heebo', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  }
 `;
-//
+  //
   return (
     <div onKeyPress={handleKeyPress}>
       {variant === "circular" ? <GlobalStyleCircular /> : <GlobalStyle />}
@@ -91,16 +109,19 @@ const PhoneInputComponent = ({
         disableDialCodeAndPrefix={
           !CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
         }
-        disableFormatting={!CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)}
+        disableFormatting={
+          !CheckPreferenceValue(EPreferences.SHOW_PHONE_PREFIX)
+        }
         value={value || ""}
         onChange={(value) => {
           value.length !== 4 && onChange(value);
         }}
         autoFocus={autoFocus}
         style={{ minWidth: 150, ...customStyle }}
+        placeholder={placeholder}
       />
     </div>
   );
 };
 
-export {PhoneInputComponent};
+export { PhoneInputComponent };
