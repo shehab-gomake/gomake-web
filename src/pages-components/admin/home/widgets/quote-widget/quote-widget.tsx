@@ -84,7 +84,7 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
       setQuoteIfExist(true);
       setSelectedClient(userQuote.client);
       const clientType = clientTypesValue.find(
-        (c) => c.id == userQuote.client.clientTypeId
+        (c) => c.id == userQuote?.client?.clientTypeId
       );
       setSelectedClientType(clientType);
     } else {
@@ -190,9 +190,11 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
           <div style={classes.btnContainer}>
             <PermissionCheck userPermission={Permissions.CREATE_QUOTES}>
               <GomakePrimaryButton
-                onClick={
-                  isDisabled ? handleClick : onClickCreateQuoteForCustomer
-                }
+                // onClick={
+                //   isDisabled ? handleClick : onClickCreateQuoteForCustomer
+                // }
+
+                onClick={onClickCreateQuoteForCustomer}
                 variant="contained"
                 style={{ width: "100%", height: 40 }}
               >

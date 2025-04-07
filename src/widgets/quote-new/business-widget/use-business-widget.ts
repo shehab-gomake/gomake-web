@@ -28,7 +28,7 @@ const useBusinessWidget = ({
   const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
     useCustomerDropDownList({
       // shouldRenderCustomersOnMount: !isPurchaseDocument,
-      shouldRenderCustomersOnMount: false, //!here
+      shouldRenderCustomersOnMount: false,
       shouldRenderSuppliersOnMount: isPurchaseDocument,
     });
 
@@ -146,8 +146,6 @@ const useBusinessWidget = ({
         setOpenChangeClientModal(true);
       }
     } else {
-      //!here make sure its done
-      debugger;
       if (!quoteStateValue?.client) {
         onChangeSelectBusiness(value);
         return;

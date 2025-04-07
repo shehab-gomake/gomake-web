@@ -54,7 +54,7 @@ const useQuoteWidget = () => {
     checkWhatRenderArray,
     isFetching,
     customersListCreateQuote,
-  } = useCustomerDropDownList({ shouldRenderCustomersOnMount: false }); //!here
+  } = useCustomerDropDownList({ shouldRenderCustomersOnMount: false });
 
   const onClickOpenModal = (quoteId: any) => {
     setOpenModal(true);
@@ -131,7 +131,7 @@ const useQuoteWidget = () => {
         setQuoteIfExist(true);
         setSelectedClient(client);
         const clientType = clientTypesValue.find(
-          (c) => c.id === client.clientTypeId
+          (c) => c.id === client?.clientTypeId
         );
         setSelectedClientType(clientType);
       }
