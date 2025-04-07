@@ -303,14 +303,18 @@ const RightSideWidget = ({
                   display: "flex",
                   alignItems: "center",
                   position: "relative",
+                  width: "100%",
                 }}
               >
                 <span
                   style={{
                     ...clasess.totalCurrancyStyle,
                     position: "absolute",
-                    left: 30,
-                    zIndex: 999999,
+                    // left: 30,
+                    // zIndex: 999999,
+                    left: 10,
+                    zIndex: 2,
+                    pointerEvents: "none",
                   }}
                 >
                   {systemCurrency}
@@ -352,8 +356,8 @@ const RightSideWidget = ({
                   style={{
                     ...clasess.inputPriceStyle,
                     ...(showCalculationInCompletedAlert && {
-                      color: "#f44336 !important",
-                      WebkitTextFillColor: "#f44336 !important",
+                      color: "#f44336",
+                      WebkitTextFillColor: "#f44336",
                     }),
                   }}
                 />
