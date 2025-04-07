@@ -11,6 +11,7 @@ import {
   MenuItem,
   CircularProgress,
   ClickAwayListener,
+  Checkbox,
 } from "@mui/material";
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
@@ -22,14 +23,17 @@ import { toRgba } from "@/utils/helpers";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { fetchS3JsonContent } from "@/utils/S3Content";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
-import ClearIcon from "@mui/icons-material/Clear";
 import { useStyle } from "./style";
 import { useRouter } from "next/router";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeDeleteModal, GoMakeMenu, GoMakeModal, GomakePrimaryButton } from "@/components";
 import { ModalType } from "@/enums";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { useRecoilState } from "recoil";
 import { filterGroupsState } from "@/widgets/production-floor/state/filter-group";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { CheckboxCheckedIcon } from "@/icons";
+import { CheckboxIcon } from "@/icons";
+import { ModalFilters } from "./modal-filters";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -38,6 +42,8 @@ interface CustomGroupsProps {
   onClickDelete: (v) => void;
   group: IFilterGroupsList;
   isFromMenu?: boolean;
+  handleClickMenu?: (e: React.MouseEvent<HTMLElement>) => void;
+  setSelectedGroup?: any;
 }
 
 const ScrollableDiv = styled("div")(({ theme }) => ({
@@ -129,6 +135,8 @@ const CustomGroupComponent = ({
   group,
   dir,
   isFromMenu,
+  handleClickMenu,
+  setSelectedGroup
 }: CustomGroupsProps) => {
   return (
     <CustomGroup
@@ -195,6 +203,25 @@ const CustomGroupComponent = ({
             >
               (
               <IconButton
+                onClick={(e) => {
+                  handleClickMenu(e);
+                  setSelectedGroup(group);
+                }}
+                size="small"
+                style={{
+                  padding: "4px",
+                  cursor: "pointer",
+                }}
+              >
+                <MoreVertIcon
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "16px",
+                    color: isSelected ? "#FFF" : group?.color,
+                  }}
+                />
+              </IconButton>
+              {/* <IconButton
                 onClick={onClickDelete}
                 size="small"
                 style={{
@@ -209,7 +236,7 @@ const CustomGroupComponent = ({
                     color: isSelected ? "#FFF" : group?.color,
                   }}
                 />
-              </IconButton>
+              </IconButton> */}
               )
             </Circle>
           )}
@@ -253,6 +280,10 @@ const ProductionFloorFilters = ({
     handleMoreClick,
     handleClose,
     anchorEl,
+    anchorElMenu,
+    openMenu,
+    handleClickMenu,
+    handleCloseMenu,
     setMachinesColors,
     scrollContainerRef,
     visibleFilterGroups,
@@ -269,11 +300,20 @@ const ProductionFloorFilters = ({
     handleDeleteConfirm,
     handleCancel,
     handleClearClick,
+    selectedGroup,
+    setSelectedGroup,
+    openModalDuplicateGroup,
+    onClickOpenModalDuplicateGroup,
+    onClickCloseModalDuplicateGroup,
+    users,
+    selectedUsers,
+    handleSelectAllUsers,
+    handleUserSelect,
+    duplicateStationFilterByGroupId
   } = useProductionFloorFilters({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
   });
-
   useEffect(() => {
     const fetchMachinesColors = async () => {
       try {
@@ -451,6 +491,8 @@ const ProductionFloorFilters = ({
             }}
             isSelected={selectedGroupId === group?.id ? true : false}
             isFromMenu={false}
+            handleClickMenu={handleClickMenu}
+            setSelectedGroup={setSelectedGroup}
           />
         ))}
         {hiddenFilterGroups.length > 0 && (
@@ -492,6 +534,8 @@ const ProductionFloorFilters = ({
                     }}
                     isSelected={selectedGroupId === group?.id ? true : false}
                     isFromMenu={true}
+                    handleClickMenu={handleClickMenu}
+                    setSelectedGroup={setSelectedGroup}
                   />
                 ))}
               </Stack>
@@ -511,6 +555,30 @@ const ProductionFloorFilters = ({
           minWidth: "unset",
         }}
       />
+      <GoMakeMenu handleClose={handleCloseMenu} open={openMenu} anchorEl={anchorElMenu}>
+        <MenuItem onClick={onClickOpenModalDuplicateGroup}>
+          <div>{t("productionFloor.copyToUsers")}</div>
+        </MenuItem>
+        <MenuItem onClick={(event) => {
+          event.stopPropagation();
+          handleClearClick(selectedGroup?.id);
+          handleCloseMenu();
+        }}>
+          <div>{t("navigationButtons.delete")}</div>
+        </MenuItem>
+
+      </GoMakeMenu>
+      <ModalFilters
+        openModalDuplicateGroup={openModalDuplicateGroup}
+        onClickCloseModalDuplicateGroup={onClickCloseModalDuplicateGroup}
+        handleCloseMenu={handleCloseMenu}
+        selectedUsers={selectedUsers}
+        users={users}
+        handleSelectAllUsers={handleSelectAllUsers}
+        handleUserSelect={handleUserSelect}
+        duplicateStationFilterByGroupId={duplicateStationFilterByGroupId}
+      />
+
     </Stack>
   );
 };
