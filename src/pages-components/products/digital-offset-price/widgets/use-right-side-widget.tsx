@@ -25,10 +25,12 @@ import { getAllProductAndMaterialsApi } from "@/services/api-service/products/pr
 import { useRouter } from "next/router";
 import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const router = useRouter();
   const { callApi } = useGomakeAxios();
+  const { errorColor, primaryColor } = useGomakeTheme();
   const { t } = useTranslation();
   const direction = t("direction");
   const isRtl = direction === "rtl";
@@ -269,7 +271,6 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       setPriceIncludeVat(null);
     }
   }, [sliderCurrentProductItemValueTotalPrice]);
-
   return {
     t,
     direction,
@@ -298,6 +299,8 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     handleProductChange,
     selectedTab,
     onSelectTab,
+    errorColor,
+    primaryColor,
   };
 };
 
