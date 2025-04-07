@@ -25,6 +25,7 @@ import { getAllProductAndMaterialsApi } from "@/services/api-service/products/pr
 import { useRouter } from "next/router";
 import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 export const roundPrice = (price: number | string) => {
   const numericPrice = Number(price);
@@ -36,6 +37,7 @@ export const roundPrice = (price: number | string) => {
 const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const router = useRouter();
   const { callApi } = useGomakeAxios();
+  const { errorColor, primaryColor } = useGomakeTheme();
   const { t } = useTranslation();
   const direction = t("direction");
   const isRTL = direction === "rtl";
@@ -323,6 +325,8 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     selectedTab,
     onSelectTab,
     roundPrice,
+    errorColor,
+    primaryColor,
   };
 };
 
