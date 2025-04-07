@@ -57,7 +57,7 @@ const SelectComponent = ({ buttonLabel, list, onChange, style, checkWhatRenderAr
     const [filter, setFilter] = useState<string>();
     const open = Boolean(anchorEl);
     const { t } = useTranslation();
-     const direction = t('direction')
+    const direction = t('direction')
     // const isRTL = direction === "rtl";
 
     const handleClick = (event: any) => {
@@ -150,7 +150,7 @@ const SelectComponent = ({ buttonLabel, list, onChange, style, checkWhatRenderAr
                 <span>{t(buttonLabel)}</span>
                 <KeyboardArrowDownIcon />
             </Button>
-            <StyledMenu 
+            <StyledMenu
                 dir={direction}
                 anchorEl={anchorEl}
                 open={open}
@@ -160,7 +160,7 @@ const SelectComponent = ({ buttonLabel, list, onChange, style, checkWhatRenderAr
                         <GomakeTextInput placeholder={t('productionFloor.search')} value={filter} onChange={handleFilterChange} />
                     </div>
                     {
-                        getList().map((item, index) => {
+                        getList()?.map((item, index) => {
                             return <MenuItem key={item.id + index}>
                                 <FormControlLabel label={item.name}
                                     control={<Checkbox checked={item.checked}
