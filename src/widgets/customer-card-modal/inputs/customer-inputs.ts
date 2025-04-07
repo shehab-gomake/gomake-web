@@ -22,12 +22,12 @@ const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
       name: "name",
       label:
         typeClient === "C"
-          ? "customers.modal.customerName"
+          ? "customers.modal.clientName"
           : "suppliers.supplierName",
       type: "text",
       placeholder:
         typeClient === "C"
-          ? "customers.modal.customerName"
+          ? "customers.modal.clientName"
           : "suppliers.supplierName",
       required: true,
       parameterKey: "name",

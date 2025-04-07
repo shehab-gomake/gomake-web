@@ -27,7 +27,6 @@ const nextConfig = {
     domains: [process.env.BASE_HOST || "localhost", "i.ibb.co"],
     unoptimized: true,
   },
-  
   webpack: (config) => {
     config.resolve.alias.canvas = false;
     config.resolve.fallback = {
@@ -44,9 +43,6 @@ const nextConfig = {
   pageExtensions: ["page.tsx", "page.ts", "page.jsx", "page.js"],
   experimental: {
     optimizePackageImports: ["icon-library"],
-    useDeploymentId: true,
-    // Optionally, use with Server Actions
-    useDeploymentIdServerActions: true,
   },
 };
 const withBundleAnalyzer = require("@next/bundle-analyzer")({

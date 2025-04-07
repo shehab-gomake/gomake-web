@@ -82,8 +82,6 @@ import { ClickableStatusButton } from "./widgets/delivery-status-button/delivery
 import { DocumentDeliveryStatuses } from "./widgets/delivery-status-button/delivery-status-modal/use-delivery-status-modal";
 import { EMessageStatus } from "@/enums/document-type-enum";
 import { useDocumentsTableSocketIo } from "@/hooks/socket-io/use-documents-table-socket-io";
-import { QuoteIfExistState } from "../quote-new/store/quote";
-import { userQuoteState } from "@/store/user-qoute-state";
 
 interface Query {
   customerId?: string;
@@ -260,12 +258,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenModal(true);
   };
 
-  const userQuoteIfExist = useRecoilValue<any>(userQuoteState);
-  const onClickEditQuote = (quote: any) => {
-    if (userQuoteIfExist) onClickOpenModal(quote);
-    else updateQuoteStatus(quote);
-  };
-
   const onClickCloseLogsModal = () => {
     setOpenLogsModal(false);
     setEmployeeId(null);
@@ -422,7 +414,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
-  const getAllQuotes = useCallback(async (order?: any) => {
+  const getAllQuotes = useCallback(async () => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data?.data;
@@ -447,6 +439,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
+                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
@@ -478,6 +471,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
+                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
@@ -505,7 +499,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
-                onClickEditQuote={onClickEditQuote}
+                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
@@ -582,6 +576,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
+                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
@@ -657,6 +652,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
+                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
@@ -692,6 +688,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
+            onClickOpenModal={onClickOpenModal}
             onClickPdf={onOpenExportReceiptPdfModal}
             onClickDuplicate={onClickDocumentDuplicate}
             onClickLoggers={onClickDocumentLogs}
@@ -798,7 +795,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         model: {
           pageNumber: currentPageNumber || page,
           pageSize: pageSize,
-          order: order,
         },
       });
     } else {
@@ -808,7 +804,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           model: {
             pageNumber: currentPageNumber || page,
             pageSize: pageSize,
-            order: order,
           },
           dateRange,
           customerId: currentCustomerId || customerId?.id,
@@ -916,6 +911,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
+                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
@@ -947,6 +943,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
+                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickLoggers={onClickDocumentLogs}
                 onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
@@ -974,7 +971,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
-                onClickEditQuote={onClickEditQuote}
+                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
@@ -1050,6 +1047,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
+                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
@@ -1124,6 +1122,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
+                onClickOpenModal={onClickOpenModal}
                 onClickPdf={onClickQuotePdf}
                 onClickDuplicate={onClickDocumentDuplicate}
                 onClickLoggers={onClickDocumentLogs}
@@ -1158,6 +1157,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           <MoreMenuWidget
             quote={quote}
             documentType={docType}
+            onClickOpenModal={onClickOpenModal}
             onClickPdf={onOpenExportReceiptPdfModal}
             onClickDuplicate={onClickDocumentDuplicate}
             onClickLoggers={onClickDocumentLogs}
@@ -1514,7 +1514,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     ? t("tabs.ordersTracking")
     : documentsLabels.find((item) => item.value === docType)?.label;
 
-  const updateQuoteStatus = async (quote?) => {
+  const updateQuoteStatus = async () => {
     const callBack = (res) => {
       if (res?.success) {
         navigate("/quote");
@@ -1529,7 +1529,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await updateDocumentApi(callApi, callBack, {
       documentType: 0,
       document: {
-        documentId: quote?.id ?? selectedQuote?.id,
+        documentId: selectedQuote?.id,
       },
     });
   };
@@ -1540,7 +1540,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   ) => {
     const callBack = (res) => {
       if (res?.success) {
-        debugger;
         const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
         const documentId = res?.data?.documentId;
         if (!isAnotherQuoteInCreate) {
@@ -1612,7 +1611,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           <MoreMenuWidget
             quote={document}
             documentType={docType}
-            onClickEditQuote={onClickEditQuote}
+            onClickOpenModal={onClickOpenModal}
             onClickPdf={onClickQuotePdf}
             onClickDuplicate={onClickDocumentDuplicate}
             onClickLoggers={onClickDocumentLogs}
@@ -2661,62 +2660,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     return card ? card.value : "0";
   };
 
-  const [isDescOrderBE, setIsDescOrderBE] = useState(false);
-  const columnMappings = {
-    [DOCUMENT_TYPE.quote]: {
-      [t("sales.quote.createdDate")]: 0,
-      [t("sales.quote.client")]: 1,
-      [t("documentingDesign.TableSetting.number")]: 2,
-      [t("sales.quote.totalPrice")]: 3,
-      [t("sales.quote.orderNumber")]: 4,
-    },
-    [DOCUMENT_TYPE.order]: {
-      [t("sales.quote.createdDate")]: 0,
-      [t("sales.quote.orderNumber")]: 1,
-      [t("sales.quote.client")]: 2,
-      [t("sales.quote.purchaseNumber")]: 3,
-      [t("sales.quote.jobs")]: 4,
-      [t("sales.quote.worksName")]: 5,
-      [t("sales.quote.cost")]: 6,
-      [t("sales.quote.totalPrice")]: 7,
-    },
-    default: {
-      [t("sales.quote.createdDate")]: 0,
-      [t("sales.quote.orderNumber")]: 1,
-      [t("sales.quote.client")]: 2,
-      [t("sales.quote.worksName")]: 3,
-      [t("sales.quote.notes")]: 6,
-      [t("sales.quote.totalPrice")]: 7,
-      [t("sales.documentDeliveries.deliveryStatus")]: 8,
-      [t("sales.quote.status")]: 9,
-    },
-  };
-  const isHeaderSortable = (docType: string, header: string) => {
-    const headers = columnMappings[docType] || columnMappings.default;
-    return headers.hasOwnProperty(header);
-  };
-  const handleSortBE = (key: string) => {
-    const direction = isDescOrderBE ? 'desc' : 'asc';
-
-    // Define a mapping of keys to column indices for each document type
-
-
-    // Determine the column index based on the document type and key
-    const columnIndex = columnMappings[docType]?.[key] ?? columnMappings.default[key];
-
-    if (columnIndex !== undefined) {
-      getAllQuotes([
-        {
-          column: columnIndex,
-          dir: direction,
-        },
-      ]);
-      setIsDescOrderBE(!isDescOrderBE);
-    } else {
-      console.error('Invalid key for sorting:', key);
-    }
-  };
-
   return {
     showCustomerModal,
     customerForEdit,
@@ -2866,24 +2809,20 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     deliveryStatuses,
     deliveryStatus,
     setDeliveryStatus,
+    setFromDate,
+    setToDate,
     isPurchaseDocument,
     supplierList,
     isSendToClient,
-    setFromDate,
-    setToDate,
     onClickOpenCustomerModal,
     isPurchaseOrder,
     isMoveToReady,
     handleCheckboxChange,
     direction,
-    handleSortBE,
-    isDescOrderBE,
-    isHeaderSortable,
     onClickCloseReopenDocumentModal,
     setOpenReopenDocModal,
     openReopenDocModal,
     OpenDocument,
-
   };
 };
 

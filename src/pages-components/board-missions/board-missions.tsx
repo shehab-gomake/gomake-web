@@ -27,17 +27,14 @@ import { DateRangePicker } from "rsuite";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
 import { DotIcon } from "@/icons";
-import {
-  printHouseProfile,
-  printHouseUsePrintNode,
-} from "@/store/print-house-profile";
+import {printHouseProfile, printHouseUsePrintNode} from "@/store/print-house-profile";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { isValidCustomer } from "@/utils/helpers";
 import { createGlobalStyle } from "styled-components";
-import { addOrderBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
-import { useGomakeAxios } from "@/hooks";
-import { fileUploaderConnectionIdState } from "@/store/file-uploader-state";
+import {addOrderBoardMissionsToFileUploaderApi} from "@/services/api-service/board-missions/board-missions-table";
+import {useGomakeAxios} from "@/hooks";
+import {fileUploaderConnectionIdState} from "@/store/file-uploader-state";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -129,22 +126,19 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     newOrderIdToPrintJobsState
   );
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
-  useEffect(() => {
-    debugger;
-    if (
-      router.isReady &&
-      companyProfile.filesApiAddress &&
-      newOrderId &&
-      connectionId
-    ) {
-      const callBack = (res) => {};
-      addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
-        orderId: newOrderId,
-        connectionId: connectionId,
-      }).then();
-      setNewOrderId("");
-    }
-  }, [newOrderId]);
+  useEffect(()=>{
+      debugger
+      if(router.isReady && companyProfile.filesApiAddress && newOrderId && connectionId){
+          const callBack = (res) => {
+              
+          };
+          addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
+              orderId: newOrderId,
+              connectionId: connectionId,
+          }).then();
+          setNewOrderId("");
+      }
+  },[newOrderId])
   useEffect(() => {
     getAllProducts();
   }, []);
@@ -189,10 +183,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                     {Object.keys(router.query).filter(
                       (key) => key !== "pageNumber"
                     ).length > 0 && (
-                      <div style={{ position: "absolute", top: -5, right: -1 }}>
-                        <DotIcon />
-                      </div>
-                    )}
+                        <div style={{ position: "absolute", top: -5, right: -1 }}>
+                          <DotIcon />
+                        </div>
+                      )}
                   </IconButton>
                   <GoMakeMenu
                     handleClose={handleClose}
@@ -201,11 +195,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                   >
                     <div style={classes.filtersContainer}>
                       <div style={classes.selectedFilterContainer}>
+                        {/* here */}
                         <div style={classes.statusFilterContainer}>
                           <h3 style={classes.filterLabelStyle}>
-                            {isPurchaseJobs
-                              ? t("reports.supplier")
-                              : t("sales.quote.customer")}
+                            {t("sales.quote.customer")}
                           </h3>
                           <GoMakeAutoComplate
                             key={customer?.id}
@@ -225,13 +218,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                             }}
                             getOptionLabel={(option: any) => `${option.name}`}
                             style={classes.textInputStyle}
-                            placeholder={t(
-                              `sales.quote.${
-                                isPurchaseJobs
-                                  ? "chooseSupplier"
-                                  : "chooseCustomer"
-                              }`
-                            )}
+                            placeholder={t("sales.quote.chooseCustomer")}
                             onChange={handleCustomerChange}
                             value={customer}
                             withArrow={true}
@@ -376,55 +363,55 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               !isPurchaseJobs
                 ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                   ? [
-                      "7%",
-                      "7%",
-                      "6%",
-                      "6%",
-                      "7%",
-                      "7%",
-                      "8%",
-                      "7%",
-                      "4%",
-                      "6%",
-                      "12%",
-                      "7%",
-                      "7%",
-                      "13%",
-                      "3%",
-                    ]
-                  : [
-                      "7%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "8%",
-                      "7%",
-                      "18%",
-                      "7%",
-                      "15%",
-                      "7%",
-                      "3%",
-                    ]
-                : [
                     "7%",
-                    "5%",
-                    "6%",
                     "7%",
                     "6%",
+                    "6%",
                     "7%",
-                    "11%",
+                    "7%",
                     "8%",
-                    "6%",
-                    "8%",
-                    "5%",
-                    "5%",
-                    "7%",
                     "7%",
                     "4%",
-                    "2%",
+                    "6%",
+                    "12%",
+                    "7%",
+                    "7%",
+                    "13%",
+                    "3%",
                   ]
+                  : [
+                    "7%",
+                    "7%",
+                    "7%",
+                    "7%",
+                    "7%",
+                    "7%",
+                    "8%",
+                    "7%",
+                    "18%",
+                    "7%",
+                    "15%",
+                    "7%",
+                    "3%",
+                  ]
+                : [
+                  "7%",
+                  "5%",
+                  "6%",
+                  "7%",
+                  "6%",
+                  "7%",
+                  "11%",
+                  "8%",
+                  "6%",
+                  "8%",
+                  "5%",
+                  "5%",
+                  "7%",
+                  "7%",
+                  "4%",
+                  "2%",
+                ]
             }
           />
         </div>

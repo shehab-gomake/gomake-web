@@ -296,6 +296,7 @@ const useGantt = () => {
     });
   };
 
+  //!here
   const getGanttData = useCallback(() => {
     getData(currentMonth.month()).then();
   }, [currentMonth]);

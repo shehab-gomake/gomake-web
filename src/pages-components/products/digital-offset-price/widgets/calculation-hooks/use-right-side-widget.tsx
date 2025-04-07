@@ -20,18 +20,27 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { EWidgetProductType } from "../enums";
+import { EWidgetProductType } from "../../enums";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { useRouter } from "next/router";
 import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+
+export const roundPrice = (price: number | string) => {
+  const numericPrice = Number(price);
+  if (!numericPrice || isNaN(numericPrice)) return price;
+  const rounded = numericPrice.toFixed(3);
+  return rounded.endsWith(".000") ? numericPrice.toFixed(0) : rounded;
+};
 
 const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const router = useRouter();
   const { callApi } = useGomakeAxios();
+  const { errorColor, primaryColor } = useGomakeTheme();
   const { t } = useTranslation();
   const direction = t("direction");
-  const isRtl = direction === "rtl";
+  const isRTL = direction === "rtl";
   const { alertFault } = useSnackBar();
   const [calculationExceptionsLogs, setCalculationExceptionsLogs] =
     useRecoilState<any>(calculationExceptionsLogsState);
@@ -65,13 +74,17 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const [combinedData, setCombinedData] = useState<any>([]);
   const [products, setProducts] = useState([]);
   const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
+
   const onSelectTab = (v) => {
     setSelectedTab(v);
     localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
   };
+
   useEffect(() => {
     if (combinedData?.length > 0) {
-      const products = combinedData?.find((item) => item.value === ETab.PRODUCTS)?.children;
+      const products = combinedData?.find(
+        (item) => item.value === ETab.PRODUCTS
+      )?.children;
       const findDefaultProduct = products.find(
         (item) => item.value === router?.query?.productId
       );
@@ -79,7 +92,8 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
         handleProductChange(findDefaultProduct?.value);
       }
     }
-  }, [combinedData, router?.query?.productId])
+  }, [combinedData, router?.query?.productId]);
+
   const handleProductChange = (e) => {
     const selectedValue = e;
     // Find the selected node from combinedData
@@ -180,7 +194,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       await getAllProductAndMaterialsApi(callApi, callBack, {
         clientId: router?.query?.customerId,
         clientTypeId: router?.query?.clientTypeId,
-        selectionType: selectedTab
+        selectionType: selectedTab,
       });
     }
   }, []);
@@ -195,6 +209,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       }
     }
   }, [combinedData, router?.query?.productId]);
+
   useEffect(() => {
     getAllProductsAndMaterials();
   }, []);
@@ -230,7 +245,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   /* Slider */
   const priceToUse =
     widgetType === EWidgetProductType.EDIT ||
-      widgetType === EWidgetProductType.DUPLICATE
+    widgetType === EWidgetProductType.DUPLICATE
       ? calculatedPriceProductItemValue
       : currentProductItemValueTotalPrice;
 
@@ -244,7 +259,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const handleSliderChange = (event, newValue) => {
     const validMaxIncrease = Math.round(Number(maxIncrease));
     const validMinDiscount = Math.round(Number(minDiscount));
-    const adjustedValue = isRtl
+    const adjustedValue = isRTL
       ? validMaxIncrease - newValue + validMinDiscount
       : newValue;
 
@@ -261,10 +276,30 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     }
   }, [sliderCurrentProductItemValueTotalPrice]);
 
+  const roundPrice = (price) => {
+    try {
+      if (typeof price === "string") {
+        price = Number(price);
+      }
+      if (price && !isNaN(price) && typeof price === "number") {
+        let roundedPrice = price.toFixed(3);
+        let arr = roundedPrice.split(".");
+        let decimalPart = Number(arr[1]);
+        if (!decimalPart) {
+          return arr[0];
+        }
+        return roundedPrice;
+      }
+      return price;
+    } catch (e) {
+      return price;
+    }
+  };
+
   return {
     t,
     direction,
-    isRtl,
+    isRTL,
     currentProductItemValueTotalPrice,
     lastProductItemValueTotalPrice,
     calculationProgress,
@@ -289,6 +324,9 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     handleProductChange,
     selectedTab,
     onSelectTab,
+    roundPrice,
+    errorColor,
+    primaryColor,
   };
 };
 

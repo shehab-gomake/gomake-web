@@ -77,8 +77,15 @@ const PricingWidget = ({
     handleOpenSectionNameListMenu,
     reOderMainActions,
     reOderSubWorkFlows,
-  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
-  const isHasSubWorkFlowsOrProductTypeActions = hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)
+  } = usePricingWidget({
+    workFlows,
+    getOutSourcingSuppliers,
+    widgetType,
+    selectedWorkFlowCalculatedIsLoaded,
+    getSelectedWorkFlow,
+  });
+  const isHasSubWorkFlowsOrProductTypeActions =
+    hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow);
   const sectionNames = getSectionNames(selectedWorkFlow);
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");

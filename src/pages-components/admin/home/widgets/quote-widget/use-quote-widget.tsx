@@ -14,7 +14,6 @@ import {
   homeReportsState,
 } from "@/pages-components/quote-new/store/quote";
 import {
-  createNewDocumentApi,
   getAllReportsApi,
   getIfCartExistApi,
   saveDocumentApi,
@@ -84,6 +83,16 @@ const useQuoteWidget = () => {
       return true;
     }
   };
+
+  const getAllCustomersCreateQuote = useCallback(async (SearchTerm?) => {
+    // await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
+    //   clientType: documentType === DOCUMENT_TYPE.purchaseOrder || documentType === DOCUMENT_TYPE.purchaseInvoice || documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ? "S" : "C",
+    //   onlyCreateOrderClients: documentType != DOCUMENT_TYPE.quote ? true : false,
+    //   searchTerm: SearchTerm,
+    // });
+  }, []);
+
+  const [clientListData, setClientListData] = useState([]);
 
   const handleOpenModal = (newClient) => {
     //setPreviousClient(selectedClient ? selectedClient : previousClient);
@@ -157,6 +166,24 @@ const useQuoteWidget = () => {
     });
   };
 
+  const onClickCreateQuote = () => {
+    if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
+      addDocumentItemFromMaterial();
+    } else
+      navigate(
+        `/admin/products/digital-offset-price?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&productId=${selectedProduct?.id}`
+      );
+  };
+
+  const onClickCreateQuoteForCustomer = () => {
+    if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
+      addDocumentItemFromMaterial();
+    } else
+      navigate(
+        `/products/create?clientTypeId=${selectedClientType?.id}&customerId=${selectedClient?.id}&customerName=${selectedClient?.name}&productId=${selectedProduct?.id}`
+      );
+  };
+
   const _renderErrorMessage = () => {
     if (!selectedClient?.id) {
       return t("home.admin.pleaseSelectCustomer");
@@ -192,6 +219,7 @@ const useQuoteWidget = () => {
   };
 
   useEffect(() => {
+    //getAllProducts();
     getAllProductsAndMaterials();
   }, [selectedClient, selectedClientType, selectedTab]);
 
@@ -288,7 +316,6 @@ const useQuoteWidget = () => {
             })),
           };
         };
-
         const attachParentReferences = (nodes, parent = null) => {
           if (!Array.isArray(nodes)) return [];
 
@@ -320,13 +347,12 @@ const useQuoteWidget = () => {
       }
     };
 
-    // if (selectedClient?.id && selectedClientType?.id) //!don't remove it
-
-    await getAllProductAndMaterialsApi(callApi, callBack, {
-      clientId: selectedClient?.id,
-      clientTypeId: selectedClientType?.id,
-      selectionType: selectedTab,
-    });
+    if (selectedClient?.id && selectedClientType?.id)
+      await getAllProductAndMaterialsApi(callApi, callBack, {
+        clientId: selectedClient?.id,
+        clientTypeId: selectedClientType?.id,
+        selectionType: selectedTab,
+      });
   }, [selectedClient, selectedClientType, selectedTab]);
 
   const handleProductChange = (e) => {
@@ -379,52 +405,6 @@ const useQuoteWidget = () => {
     localStorage.setItem("homePageSelectedTab", JSON.stringify(v));
   };
 
-  const onClickCreateQuoteForCustomer = () => {
-    if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
-      addDocumentItemFromMaterial();
-      return;
-    }
-
-    const hasSelectedClient = selectedClient?.id;
-    const fallbackClient = renderOptions()?.[0];
-
-    const clientId = hasSelectedClient
-      ? selectedClient?.id
-      : fallbackClient?.id;
-
-    const clientName = hasSelectedClient
-      ? selectedClient?.name
-      : fallbackClient?.name;
-
-    const clientTypeId = hasSelectedClient
-      ? selectedClientType?.id
-      : fallbackClient?.clientTypeId;
-
-    if (!clientId || !clientTypeId || !selectedProduct?.id) {
-      alertFaultUpdate();
-      return;
-    }
-
-    navigate(
-      `/products/create?clientTypeId=${clientTypeId}&customerId=${clientId}&customerName=${clientName}&productId=${selectedProduct?.id}`
-    );
-  };
-
-  const onclickCreateNew = async () => {
-    const callBack = (res) => {
-      if (res?.success) {
-        navigate("/quote");
-      } else {
-        alertFaultUpdate();
-      }
-    };
-
-    await createNewDocumentApi(callApi, callBack, {
-      documentType: 0,
-      ...(selectedClient?.id && { clientId: selectedClient?.id }),
-    });
-  };
-
   return {
     clientTypesValue,
     isDisabled,
@@ -449,6 +429,7 @@ const useQuoteWidget = () => {
     handleClickToSelectedCustomer,
     checkWhatRenderArray,
     renderOptions,
+    onClickCreateQuote,
     onClickCreateQuoteForCustomer,
     _renderErrorMessage,
     onClickSaveQuote,
@@ -471,8 +452,6 @@ const useQuoteWidget = () => {
     setSelectedTab,
     onSelectTab,
     customersListCreateQuote,
-    navigate,
-    onclickCreateNew,
   };
 };
 

@@ -8,5 +8,4 @@ export interface ICalculationSignalRResult {
     exceptions?:IExceptionsLog[]
     isCalculationFinished:boolean;
     isNeedPriceUpdate?:boolean;
-    signalRConnectionId?:string;
 }
