@@ -9,7 +9,11 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useCustomerDropDownList } from "@/hooks";
 
-const useBusinessWidget = ({ values, documentType }) => {
+const useBusinessWidget = ({
+  values,
+  documentType,
+  onChangeSelectBusiness,
+}) => {
   const { t } = useTranslation();
   const router = useRouter();
   const [isConfirmation, setIsConfirmation] = useState();
@@ -23,7 +27,8 @@ const useBusinessWidget = ({ values, documentType }) => {
 
   const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
     useCustomerDropDownList({
-      shouldRenderCustomersOnMount: !isPurchaseDocument,
+      // shouldRenderCustomersOnMount: !isPurchaseDocument,
+      shouldRenderCustomersOnMount: false, //!here
       shouldRenderSuppliersOnMount: isPurchaseDocument,
     });
 
@@ -122,7 +127,12 @@ const useBusinessWidget = ({ values, documentType }) => {
   };
 
   const onClickOpenChangeClientModal = (value) => {
+    // If the selected client is the same as the current one, do nothing
+    if (quoteStateValue?.client?.id === value?.id) {
+      return;
+    }
     setSelectedClient(value);
+
     if (
       documentType === DOCUMENT_TYPE.invoice ||
       documentType === DOCUMENT_TYPE.purchaseInvoice
@@ -136,6 +146,14 @@ const useBusinessWidget = ({ values, documentType }) => {
         setOpenChangeClientModal(true);
       }
     } else {
+      //!here make sure its done
+      if (
+        !quoteStateValue?.client ||
+        quoteStateValue?.client?.id === "d917d594-87fe-42f1-b777-1571242dd4c2"
+      ) {
+        onChangeSelectBusiness(value);
+        return;
+      }
       setOpenChangeClientModal(true);
     }
   };

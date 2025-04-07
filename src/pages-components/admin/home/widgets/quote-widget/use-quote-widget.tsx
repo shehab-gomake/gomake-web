@@ -54,7 +54,7 @@ const useQuoteWidget = () => {
     checkWhatRenderArray,
     isFetching,
     customersListCreateQuote,
-  } = useCustomerDropDownList();
+  } = useCustomerDropDownList({ shouldRenderCustomersOnMount: false }); //!here
 
   const onClickOpenModal = (quoteId: any) => {
     setOpenModal(true);
@@ -320,8 +320,6 @@ const useQuoteWidget = () => {
       }
     };
 
-    // if (selectedClient?.id && selectedClientType?.id) //!don't remove it
-
     await getAllProductAndMaterialsApi(callApi, callBack, {
       clientId: selectedClient?.id,
       clientTypeId: selectedClientType?.id,
@@ -411,7 +409,6 @@ const useQuoteWidget = () => {
     }
   };
 
-  // !here
   const onclickCreateNew = async () => {
     const callBack = (res) => {
       if (res?.success) {
