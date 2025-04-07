@@ -10,7 +10,7 @@ import {
 import { TabsMappingWidget } from "./widgets/tabs-mapping";
 import { AccordionMappingWidget } from "./widgets/accordion-mapping";
 import { SectionMappingWidget } from "./widgets/section-mapping";
-import { RightSideWidget } from "./widgets/right-side-widget";
+import { RightSideWidget, roundPrice } from "./widgets/right-side-widget";
 import {
   GalleryModal,
   MakeShapeModal,
@@ -34,7 +34,6 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { permissionsState } from "@/store/permissions";
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { roundPrice } from "./widgets/calculation-hooks/use-right-side-widget";
 
 const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
   const { clasess } = useStyle({ isMobileScreen });
@@ -333,14 +332,14 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 style={
                   !isMobileScreen
                     ? {
-                        height: "calc(100vh - 300px)",
-                        overflow: "scroll",
-                        width: "calc(100% - 330px)",
-                      }
+                      height: "calc(100vh - 300px)",
+                      overflow: "scroll",
+                      width: "calc(100% - 330px)",
+                    }
                     : {
-                        height: "calc(100vh - 260px)",
-                        overflow: "scroll",
-                      }
+                      height: "calc(100vh - 260px)",
+                      overflow: "scroll",
+                    }
                 }
               >
                 <div style={clasess.sectionsContainer}>
@@ -446,9 +445,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 calculationProduct={calculationProduct}
                 subProducts={subProducts}
                 setCanCalculation={setCanCalculation}
-                showCalculationInCompletedAlert={
-                  showCalculationInCompletedAlert
-                }
+                showCalculationInCompletedAlert={showCalculationInCompletedAlert}
               />
             )}
           </div>
@@ -506,15 +503,15 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                 ].length -
                   1 !==
                   activeIndex && (
-                  <div data-tour="next-button">
-                    <SecondaryButton
-                      variant="contained"
-                      onClick={handleNextClick}
-                    >
-                      {t("products.offsetPrice.admin.nextBtn")}
-                    </SecondaryButton>
-                  </div>
-                )}
+                    <div data-tour="next-button">
+                      <SecondaryButton
+                        variant="contained"
+                        onClick={handleNextClick}
+                      >
+                        {t("products.offsetPrice.admin.nextBtn")}
+                      </SecondaryButton>
+                    </div>
+                  )}
               </div>
             ) : (
               <div style={{ width: "68%" }}>
@@ -535,15 +532,15 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                   ].length -
                     1 !==
                     activeIndex && (
-                    <div data-tour="next-button">
-                      <GomakePrimaryButton
-                        style={clasess.nextBtnStyle}
-                        onClick={handleNextClick}
-                      >
-                        {t("products.offsetPrice.admin.nextBtn")}
-                      </GomakePrimaryButton>
-                    </div>
-                  )}
+                      <div data-tour="next-button">
+                        <GomakePrimaryButton
+                          style={clasess.nextBtnStyle}
+                          onClick={handleNextClick}
+                        >
+                          {t("products.offsetPrice.admin.nextBtn")}
+                        </GomakePrimaryButton>
+                      </div>
+                    )}
                 </div>
               </div>
             )}
@@ -565,18 +562,14 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                         : clasess.addOrderBtn
                     }
                     onClick={() => {
-                      if (showCalculationInCompletedAlert) {
-                        setShowCalculationInCompletedModal(true);
+                      if (
+                        DOCUMENT_TYPE.order ===
+                        Number(router.query.documentType) &&
+                        isFlowChanged
+                      ) {
+                        onClickOpenCurrentStationModal();
                       } else {
-                        if (
-                          DOCUMENT_TYPE.order ===
-                            Number(router.query.documentType) &&
-                          isFlowChanged
-                        ) {
-                          onClickOpenCurrentStationModal();
-                        } else {
-                          updateQuoteItem();
-                        }
+                        updateQuoteItem();
                       }
                     }}
                     disabled={isLoadingPrice}
@@ -669,39 +662,21 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
       </GoMakeModal>
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
-        subTitle={t(
-          "products.offsetPrice.admin.inCompletedProductAlertSubTitle"
-        )}
-        title={t("products.offsetPrice.admin.unCalcProductAlertTitle")}
+        subTitle={t("do you want to add this item to the cart. ?")}
+        title={t("this product was not calculated and doesn't have a station ")}
         yesBtn={t("modal.yes")}
         openModal={isOpenCreateDefaultWorkFlow}
         onClose={onClickCloseCreateDefaultWorkFlow}
         onClickDelete={() => addItemForQuotes()}
       />
       <GoMakeDeleteModal
-        modalType={ModalType.WARNING}
-        subTitle={t(
-          "products.offsetPrice.admin.inCompletedProductAlertSubTitle"
-        )}
-        title={t("products.offsetPrice.admin.inCompletedProductAlertTitle")}
-        yesBtn={t("modal.yes")}
-        openModal={showCalculationInCompletedModal}
-        onClose={() => setShowCalculationInCompletedModal(false)}
-        onClickDelete={() => {
-          if (widgetType === EWidgetProductType.EDIT) {
-            if (
-              DOCUMENT_TYPE.order === Number(router.query.documentType) &&
-              isFlowChanged
-            ) {
-              onClickOpenCurrentStationModal();
-            } else {
-              updateQuoteItem();
-            }
-          } else {
-            addItemForQuotes();
-          }
-          setShowCalculationInCompletedModal(false);
-        }}
+          modalType={ModalType.WARNING}
+          subTitle={t("products.offsetPrice.admin.inCompletedProductAlertSubTitle")}
+          title={t("products.offsetPrice.admin.inCompletedProductAlertTitle")}
+          yesBtn={t("modal.yes")}
+          openModal={showCalculationInCompletedModal}
+          onClose={()=>setShowCalculationInCompletedModal(false)}
+          onClickDelete={() => addItemForQuotes()}
       />
     </div>
   );
