@@ -97,10 +97,6 @@ const RightSideWidget = ({
     selectedProduct,
     combinedData,
     handleProductChange,
-    selectedTab,
-    onSelectTab,
-    roundPrice,
-    errorColor,
     primaryColor,
   } = useRightSideWidget({ includeVAT, widgetType });
   const setSubProducts = useSetRecoilState<any>(subProductsParametersState);

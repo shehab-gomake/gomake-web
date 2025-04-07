@@ -262,25 +262,6 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       setPriceIncludeVat(null);
     }
   }, [sliderCurrentProductItemValueTotalPrice]);
-  const roundPrice = (price) => {
-    try {
-      if (typeof price === "string") {
-        price = Number(price);
-      }
-      if (price && !isNaN(price) && typeof price === "number") {
-        let roundedPrice = price.toFixed(3);
-        let arr = roundedPrice.split(".");
-        let decimalPart = Number(arr[1]);
-        if (!decimalPart) {
-          return arr[0];
-        }
-        return roundedPrice;
-      }
-      return price;
-    } catch (e) {
-      return price;
-    }
-  };
   return {
     t,
     direction,
@@ -309,7 +290,6 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     handleProductChange,
     selectedTab,
     onSelectTab,
-    roundPrice,
     errorColor,
     primaryColor,
   };
