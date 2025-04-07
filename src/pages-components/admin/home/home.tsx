@@ -14,11 +14,10 @@ import { ChatBotComponent } from "@/components/chat-bot/chat-bot";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
-const HomePageComponentForAdmin = ({ isMobileScreen }) => {
+const HomePageComponentForAdmin = ({ isAdmin, isMobileScreen }) => {
   const { classes } = useStyle();
   const { Title, setIsDisplay, isDisplay, flag, selectedClient, t } = useHome();
   const allReports = useRecoilValue<any>(homeReportsState);
-
   const homeSteps: StepType[] = [
     {
       selector: '[data-tour="quote-widget"]',
@@ -97,7 +96,7 @@ const HomePageComponentForAdmin = ({ isMobileScreen }) => {
           }
         >
           <div style={classes.widgetStyle}>
-            <QuoteWidget isMobileScreen={isMobileScreen} />
+            <QuoteWidget isAdmin={isAdmin} isMobileScreen={isMobileScreen} />
           </div>
 
           {!isMobileScreen && (
@@ -124,10 +123,7 @@ const HomePageComponentForAdmin = ({ isMobileScreen }) => {
             </span>
           </div>
           <div style={{ marginBottom: 20 }}>
-            <HomeTableWidget
-              clientId={selectedClient?.id}
-              clientBalance={selectedClient?.clientBalance}
-            />
+            <HomeTableWidget clientId={selectedClient?.id} clientBalance={selectedClient?.clientBalance} />
           </div>
         </div>
       )}

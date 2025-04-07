@@ -21,7 +21,7 @@ const RowMappingWidget = ({
   const { classes } = useStyle({ headerHeight });
   const { t } = useTranslation();
   const router = useRouter();
-
+  const { formatISODateTime } = useDateFormat();
   const handleAllocatedSumChange = (event) => {
     const newAllocatedSum = event.target.value;
     const minValue = Math.min(0, item?.sumApplied);
@@ -35,9 +35,6 @@ const RowMappingWidget = ({
     }
     setAllocatedSum(index, Number(newAllocatedSum));
   };
-
-  const { formatISODateTime } = useDateFormat();
-
   return (
     <TableRow
       key={item.id}
@@ -139,7 +136,7 @@ const RowMappingWidget = ({
             type="number"
             min={Math.min(0, item?.sumApplied)}
             max={item?.sumApplied > 0 ? item?.sumApplied : 0}
-          // step="0.01"
+            // step="0.01"
           />
           / {item?.sumApplied}
         </PrimaryTableCell>

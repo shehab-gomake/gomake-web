@@ -58,7 +58,9 @@ const SettingQuoteMenu = ({
     _renderSortingBy,
     setExchangeRate,
     t,
-  } = useSttingsQuoteMenu({ updateDocumentPreference });
+  } = useSttingsQuoteMenu({ updateDocumentPreference })
+
+
 
   return (
     <>
@@ -91,40 +93,34 @@ const SettingQuoteMenu = ({
           </div>
 
           <Divider />
-          {(documentType === DOCUMENT_TYPE.quote ||
-            documentType === DOCUMENT_TYPE.order) && (
-            <>
-              <div
-                onClick={handleAutomaticDiscount}
-                className="table-sorting"
-                style={classes.menuTabStyle}
-              >
-                {quoteStateValue?.discountType !== null ? (
-                  <div style={classes.selectedTabStyle}>
-                    <div style={classes.mainTabContainer}>
-                      {t("sales.quote.automaticDiscount")}
-                      <DotIcon />
-                    </div>
-                    <div style={classes.selectedTabContainer}>
-                      <Check style={{ width: 16, height: 16 }} />{" "}
-                      {_renderSelectionType(quoteStateValue?.discountType)}
-                    </div>
+          {(documentType === DOCUMENT_TYPE.quote || documentType === DOCUMENT_TYPE.order) && <>
+            <div
+              onClick={handleAutomaticDiscount}
+              className="table-sorting"
+              style={classes.menuTabStyle}
+            >
+              {quoteStateValue?.discountType !== null ? (
+                <div style={classes.selectedTabStyle}>
+                  <div style={classes.mainTabContainer}>
+                    {t("sales.quote.automaticDiscount")}
+                    <DotIcon />
                   </div>
-                ) : (
-                  t("sales.quote.automaticDiscount")
-                )}
-              </div>
-              <Divider />
-            </>
-          )}
+                  <div style={classes.selectedTabContainer}>
+                    <Check style={{ width: 16, height: 16 }} />{" "}
+                    {_renderSelectionType(quoteStateValue?.discountType)}
+                  </div>
+                </div>
+              ) : (
+                t("sales.quote.automaticDiscount")
+              )}
+            </div>
+            <Divider />
+          </>}
           {switchConfigs.map((config, index) => (
             <React.Fragment key={index}>
               <div style={classes.menuRowStyle}>
                 <div style={classes.menuTabStyle}>{config.label}</div>
-                <SecondSwitch
-                  checked={config.checked}
-                  onChange={config.onChange}
-                />
+                <SecondSwitch checked={config.checked} onChange={config.onChange} />
               </div>
               <Divider />
             </React.Fragment>
@@ -165,27 +161,28 @@ const SettingQuoteMenu = ({
               onChange={(e, value) => updateCurrency(value?.value)}
             />
           </div>
-          {documentType !== DOCUMENT_TYPE.invoice &&
-            documentType !== DOCUMENT_TYPE.deliveryNote &&
-            documentType !== DOCUMENT_TYPE.invoiceRefund &&
-            documentType !== DOCUMENT_TYPE.deliveryNoteRefund && (
-              <>
-                <Divider />
-                <div style={classes.menuRowStyle}>
-                  <div style={classes.menuTabStyle}>{t("sales.quote.vat")}</div>
-                  <AutoCompleteUpdatedValue
-                    value={vatStatus || t("accounting.defaultVat")}
-                    options={vatStatusList}
-                    onBlur={onBlurVatStatus}
-                    isUpdate={isUpdateVatStatus}
-                    setIsUpdate={setIsUpdateVatStatus}
-                    getOptionLabel={(item) => item.text}
-                    onChange={(e, value) => updateVatStatus(value?.value)}
-                  />
-                </div>
-              </>
-            )}
+          {
+            documentType !== DOCUMENT_TYPE.invoice
+            && documentType !== DOCUMENT_TYPE.deliveryNote
+            && documentType !== DOCUMENT_TYPE.invoiceRefund
+            && documentType !== DOCUMENT_TYPE.deliveryNoteRefund
+            && <>
+              <Divider />
+              <div style={classes.menuRowStyle}>
+                <div style={classes.menuTabStyle}>{t("accounting.defaultVat")}</div>
+                <AutoCompleteUpdatedValue
+                  value={vatStatus || t("accounting.defaultVat")}
+                  options={vatStatusList}
+                  onBlur={onBlurVatStatus}
+                  isUpdate={isUpdateVatStatus}
+                  setIsUpdate={setIsUpdateVatStatus}
+                  getOptionLabel={(item) => item.text}
+                  onChange={(e, value) => updateVatStatus(value?.value)}
+                />
+              </div>
+            </>}
         </div>
+
       </GoMakeMenu>
       <TableSortingMenu
         handleClose={handleTableSortingClose}

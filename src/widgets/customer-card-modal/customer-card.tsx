@@ -521,7 +521,6 @@ const CustomerCardWidget = ({
             : t("suppliers.supplierTypes")
         }
         clientTypeId={clientTypeId}
-        typeClient={typeClient}
       />
     </GoMakeModal>
   );

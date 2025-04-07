@@ -150,10 +150,10 @@ const TableRowComponent = ({
       checked
         ? [...selectedIds, boardMission]
         : selectedIds.filter(
-          (selectedBoard) =>
-            selectedBoard.id !== id &&
-            selectedBoard.productType === boardMission.productType
-        )
+            (selectedBoard) =>
+              selectedBoard.id !== id &&
+              selectedBoard.productType === boardMission.productType
+          )
     );
   };
 

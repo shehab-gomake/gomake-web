@@ -13,9 +13,6 @@ import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-upload
 import { MobileHeaderWidget } from "./mobile-top-list/mobile-header-widget";
 import { useUploadingNewVersionSocketIo } from "@/hooks/socket-io/use-upload-new-version-socket-io";
 import { useMediaQuery } from "@mui/material";
-import { useEffect } from "react";
-import { useModal } from "@/hooks/use-modal";
-import { versionState } from "@/store/version";
 
 const CustomerAuthLayout = ({
   children,
@@ -39,21 +36,6 @@ const CustomerAuthLayout = ({
   const setNavStatus = useSetRecoilState(navStatusState);
   const isHover = useRecoilValue(hoverStatusState);
   const { htmlTour, openModal, onCloseModal } = useHtmlTour();
-
-  const alertNewVersion = useModal();
-  const appVersion = useRecoilValue(versionState);
-
-  /*useEffect(() => {
-    const lastSeenVersion = localStorage.getItem("lastSeenAppVersion");
-    if (!lastSeenVersion) {
-      localStorage.setItem("lastSeenAppVersion", appVersion);
-    }
-
-    if (appVersion && appVersion !== Number(lastSeenVersion)) {
-      alertNewVersion.open();
-      localStorage.setItem("lastSeenAppVersion", appVersion);
-    }
-  }, [appVersion]);*/
 
   return disableHeaderSideMenu ? (
     <>
@@ -111,17 +93,6 @@ const CustomerAuthLayout = ({
             subTitle={"modal.alertNewVersion"}
             yesBtn={"modal.ok"}
             onClickConfirm={() => setOpenAlertModal(false)}
-            withCancelBtn={false}
-          />
-          <GoMakeAlertModal
-            openModal={alertNewVersion.isOpen}
-            onClose={alertNewVersion.close}
-            onClickConfirm={() => {
-              alertNewVersion.close();
-              window.location.reload();
-            }}
-            subTitle="modal.alertNewAppVersion"
-            yesBtn="modal.reload"
             withCancelBtn={false}
           />
         </div>

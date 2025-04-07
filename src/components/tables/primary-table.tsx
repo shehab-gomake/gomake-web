@@ -154,25 +154,15 @@ const PrimaryTable = ({
   withSort = false,
   enableCheckboxes = false,
   isAgingDetailedReport = false,
-  withSortBE = false,
-  onClickSortBE,
   onSelectionChange,
   rowCheckboxCondition = () => true,
   handleSortAgingReport,
   isDescOrder,
-  isDescOrderBE = false,
-  isHeaderSortable,
-  docType,
 }: ITableProps) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const { classes } = useStyle(maxHeight, dir);
   const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
-  const [isHovered, setIsHovered] = useState(false);
-  const [hoveredColumn, setHoveredColumn] = useState<string | null>(null);
-
-  const handleMouseEnter = () => setIsHovered(true);
-  const handleMouseLeave = () => setIsHovered(false);
   // State for sorting
   const [sortConfig, setSortConfig] = useState<{
     key: number;
@@ -210,17 +200,17 @@ const PrimaryTable = ({
     variant === "ClassicTable"
       ? ClassicTableCell
       : variant === "RoundTable"
-        ? RoundTableCell
-        : PrimaryTableCell;
+      ? RoundTableCell
+      : PrimaryTableCell;
 
   const TableRow =
     variant === "ClassicTable"
       ? ClassicTableRow
       : variant === "OddEvenTable"
-        ? OddEvenTableRow
-        : variant === "RoundTable"
-          ? RoundTableRow
-          : PrimaryTableRow;
+      ? OddEvenTableRow
+      : variant === "RoundTable"
+      ? RoundTableRow
+      : PrimaryTableRow;
 
   // Sorting logic
   const sortedRows = useMemo(() => {
@@ -285,19 +275,14 @@ const PrimaryTable = ({
                 <TableCell
                   key={`header_${index}`}
                   align="center"
-                  onMouseEnter={() => setHoveredColumn(header)}
-                  onMouseLeave={() => setHoveredColumn(null)}
                   style={{
-                    cursor: withSort || withSortBE ? "pointer" : "default",
+                    cursor: withSort ? "pointer" : "default",
                     userSelect: "none",
                     ...(index === 0 && stickyHeader
                       ? { position: "sticky", top: 0 }
                       : {}),
                   }}
-                  onClick={() => {
-                    if (withSort) handleSort(index);
-                    if (withSortBE) onClickSortBE(header);
-                  }}
+                  onClick={() => withSort && handleSort(index)} // Only activate sort if withSort is true
                 >
                   <div
                     style={{
@@ -308,21 +293,21 @@ const PrimaryTable = ({
                   >
                     {isAgingeport ? header?.name : header}
                     {/* Show sorting icon only when it's the sorted header */}
-                    {(withSort || withSortBE) && isAgingeport
+                    {withSort && isAgingeport
                       ? header?.name
                       : header !== "" &&
-                      sortConfig?.key === index && (
-                        <IconButton
-                          size="small"
-                          style={{ ...adaptMarginRight(dir, 4) }}
-                        >
-                          {sortConfig.direction === "asc" ? (
-                            <ArrowUpward sx={{ fontSize: "18px" }} />
-                          ) : (
-                            <ArrowDownward sx={{ fontSize: "18px" }} />
-                          )}
-                        </IconButton>
-                      )}
+                        sortConfig?.key === index && (
+                          <IconButton
+                            size="small"
+                            style={{ ...adaptMarginRight(dir, 4) }}
+                          >
+                            {sortConfig.direction === "asc" ? (
+                              <ArrowUpward sx={{ fontSize: "18px" }} />
+                            ) : (
+                              <ArrowDownward sx={{ fontSize: "18px" }} />
+                            )}
+                          </IconButton>
+                        )}
                     {isAgingeport &&
                       (header?.key === "cardName" ||
                         header?.key === "cardCode" ||
@@ -339,22 +324,6 @@ const PrimaryTable = ({
                           )}
                         </IconButton>
                       )}
-
-                    {withSortBE && isHeaderSortable(docType, header) && (
-                      <IconButton
-                        size="small"
-                        style={{
-                          ...adaptMarginRight(dir, 4),
-                          visibility: hoveredColumn === header ? 'visible' : 'hidden',
-                        }}
-                      >
-                        {!isDescOrderBE ? (
-                          <ArrowUpward sx={{ fontSize: "18px" }} />
-                        ) : (
-                          <ArrowDownward sx={{ fontSize: "18px" }} />
-                        )}
-                      </IconButton>
-                    )}
                   </div>
                 </TableCell>
               ))}
@@ -370,8 +339,8 @@ const PrimaryTable = ({
                     isAgingeport && isAgingDetailedReport && row[0] == " "
                       ? "#F6F6F6"
                       : isLastItemTotal && rowIndex === rows.length - 1
-                        ? "#EFDDFF"
-                        : "inherit",
+                      ? "#EFDDFF"
+                      : "inherit",
                 }}
               >
                 {enableCheckboxes && (

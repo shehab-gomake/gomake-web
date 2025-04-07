@@ -36,37 +36,38 @@ const TabsMappingWidget = ({
   const { t } = useTranslation();
   const subProducts = useRecoilValue<any>(subProductsParametersState);
 
-  const hasMissingRequiredParameters = (item2) => {
-    if (!Array.isArray(item2?.subSections)) {
-      return false;
-    }
+  const hasMissingRequiredParameters = (item) => {
+    if (Array.isArray(item?.subSections)) {
+      for (const subSection of item.subSections) {
+        const subProduct =
+          subProducts.find((sp) => sp.type === subSection?.type) || {};
+        const subProductParameters = subProduct.parameters || [];
+        const subProductParameterCodes = subProductParameters.map(
+          (p) => p.parameterCode
+        );
+        const subProductParameterSectionIds = subProductParameters.map(
+          (p) => p.sectionId
+        );
+        const subProductParameterSubSectionIds = subProductParameters.map(
+          (p) => p.subSectionId
+        );
 
-    for (const subSection of item2.subSections) {
-      // Find matching subProduct
-      const subProduct = subProducts.find((sp) => sp.type === subSection?.type);
-
-      // Get parameters for this subSection
-      const subProductParameters = subProduct?.parameters?.filter(p =>
-        p.sectionId === item.id &&
-        p.subSectionId === subSection.id
-      ) || [];
-
-      // Check each parameter in the subSection
-      if (Array.isArray(subSection?.parameters)) {
-        for (const parameter of subSection.parameters) {
-          const isParameterMissing =
-            parameter.isRequired &&
-            !parameter.isHiddenInSetting &&
-            !parameter.isHidden &&
-            !subProductParameters.some(p => p.parameterCode === parameter.code);
-
-          if (isParameterMissing) {
-            return true;
+        if (Array.isArray(subSection?.parameters)) {
+          for (const parameter of subSection.parameters) {
+            if (
+              parameter.isRequired &&
+              !parameter.isHiddenInSetting &&
+              !parameter.isHidden &&
+              !subProductParameterCodes.includes(parameter.code) &&
+              subProductParameterSectionIds.includes(item.id) &&
+              subProductParameterSubSectionIds.includes(subSection.id)
+            ) {
+              return true;
+            }
           }
         }
       }
     }
-
     return false;
   };
 

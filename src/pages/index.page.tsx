@@ -10,7 +10,10 @@ export default function Home() {
       className={`custom-scrollbar`}
       backgroundColor={"#f6f6f6"}
     >
-      <HomePageComponentForAdmin isMobileScreen={isMobileScreen} />
+      <HomePageComponentForAdmin
+        isAdmin={false}
+        isMobileScreen={isMobileScreen}
+      />
     </CustomerAuthLayout>
   );
 }

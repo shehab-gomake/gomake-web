@@ -238,7 +238,7 @@ const FormInput = ({
                 {input.unit && (
                   <small>{`${t(
                     `measurementUnits.${translateUnit && input.unit
-                      ? units[input.unit]?.imperialUnit
+                      ? units[input.unit].imperialUnit
                       : input.unit
                     }`
                   )}`}</small>

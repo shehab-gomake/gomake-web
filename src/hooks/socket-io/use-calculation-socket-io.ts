@@ -32,20 +32,21 @@ const useCalculationSocketIO = () => {
     });
     socket.on("startCalculationSession", async (newData) => {
       setStartCalculationData(newData);
+      setCalculationExceptionsLogs(newData.calculationExceptions);
     });
     socket.on("updateSelectedWorkFlow", (newData) => {
-      //setUpdatedSelectedWorkFlow(newData);
+      setUpdatedSelectedWorkFlow(newData);
       //setIsChangePriceForEdit(true)
     });
     socket.on("UpdatePricing", (newData) => {
-      //setSignalRPricingResult(newData);
+      setSignalRPricingResult(newData);
     });
     socket.on("calculationFinished", (newData) => {
-      //newData.isCalculationFinished = true;
-      //setSignalRPricingResult(newData);
+      newData.isCalculationFinished = true;
+      setSignalRPricingResult(newData);
     });
     socket.on("calculationServerError", () => {
-      //setCalculationServerErrorState(true);
+      setCalculationServerErrorState(true);
     });
     socket.on('connect', () => {
       setConnectionId(socket.id);
@@ -55,7 +56,6 @@ const useCalculationSocketIO = () => {
       socket.disconnect();
     };
   },[])
-  
   return {
     calculationResult: signalRWorkFlows,
     connectionId,

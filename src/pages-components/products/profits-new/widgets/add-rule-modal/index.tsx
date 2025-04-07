@@ -112,6 +112,7 @@ const AddRuleModal = ({
     setSelectedOutputs(selectedOutputs);
     setSelectedParameters(selectedParameters);
   }, [selectedProperties, Outputs, parametersStateValue]);
+
   const _renderInptsForProperties = () => {
 
     if (selectedProperties?.ruleType === 0) {
@@ -354,29 +355,6 @@ const AddRuleModal = ({
                 onChange={(e: any, value: any) => {
                   setPropertieValue(value?.value as string);
                 }}
-              />
-            </div>
-          );
-        case EParameterTypes.SELECT_MATERIALS:
-          return (
-            <div style={{ width: "20%" }}>
-              <div style={clasess.selectTypeStyle}>
-                {t("products.profits.exceptions.selectValue")}
-                <span style={clasess.spanUnitStyle}>
-                  {selectedOutputs?.defaultUnit}
-                </span>
-              </div>
-              <GoMakeAutoComplate
-                options={selectedParameters?.values?.map((value) => {
-                  return {
-                    ...value,
-                    label: value.name,
-                    id: value.id,
-                  };
-                })}
-                style={clasess.dropDownListContainer}
-                placeholder={t("products.profits.exceptions.selectValue")}
-                onChange={(e, value) => setPropertieValue(value?.id)}
               />
             </div>
           );

@@ -8,6 +8,7 @@ import Link from "next/link";
 const MoreMenuWidget = ({
   quote,
   documentType,
+  onClickOpenModal,
   onClickPdf,
   onClickDuplicate,
   onClickLoggers,
@@ -25,7 +26,6 @@ const MoreMenuWidget = ({
   onOpenDuplicateModal,
   onClickStartProduction,
   onClickReopenDocument,
-  onClickEditQuote,
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -34,6 +34,7 @@ const MoreMenuWidget = ({
     t,
     quote,
     documentType,
+    onClickOpenModal,
     onClickPdf,
     onClickDuplicate,
     onClickLoggers,
@@ -51,7 +52,6 @@ const MoreMenuWidget = ({
     onOpenDuplicateModal,
     onClickStartProduction,
     onClickReopenDocument,
-    onClickEditQuote,
   });
 
   return (

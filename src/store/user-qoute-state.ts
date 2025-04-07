@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
-export const userQuoteState = atom<boolean>({
-  key: "userQuoteState",
+export const userQouteState = atom<boolean>({
+  key: "userQouteState",
   default: null,
 });

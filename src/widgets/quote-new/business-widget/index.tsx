@@ -15,7 +15,6 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums";
 import { EAddressType } from "./address-widget/state";
-import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
 import { ClientChangeSource } from "@/pages-components/quote-new/store/quote";
 
 const BusinessNewWidget = ({
