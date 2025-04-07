@@ -12,6 +12,7 @@ import { ArrowUpIcon } from "@/icons";
 import { useRef } from "react";
 import { createGlobalStyle } from "styled-components";
 import { useTranslation } from "react-i18next";
+import React from "react";
 
 interface IUpdateValueAutoCompleteProps {
   value?: any;
@@ -38,7 +39,7 @@ const UpdateValueAutoComplete = ({
 }: IUpdateValueAutoCompleteProps) => {
   const { secondColor } = useGomakeTheme();
   const { t } = useTranslation();
-  const optionsListEl = useRef();
+  const optionsListEl = useRef<HTMLDivElement | null>(null);
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === "rtl";
   const GlobalStyle = createGlobalStyle`
@@ -120,11 +121,20 @@ const UpdateValueAutoComplete = ({
             }
             style={{ height: 26 }}
             clearIcon={false}
-            PaperComponent={(props) => (
-              <Paper ref={optionsListEl} {...props}>
-                {props?.children}
+
+            PaperComponent={React.useCallback((props) => (
+              <Paper
+                ref={optionsListEl}
+                {...props}
+                elevation={1}
+                sx={{
+                  ...(props as any).sx,
+                  zIndex: 1500 // Ensure proper stacking
+                }}
+              >
+                {props.children}
               </Paper>
-            )}
+            ), [])}
             filterOptions={defaultFiltering ? undefined : (x) => x}
           />
         </Paper>
