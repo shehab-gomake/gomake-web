@@ -16,7 +16,7 @@ interface IProps {
   languagesOptions: any;
   renderTableSearch: any;
   showTable?: boolean;
-
+  profileState?: any;
 }
 
 const GeneralTab = ({
@@ -28,20 +28,29 @@ const GeneralTab = ({
   renderTabPanelTextArea,
   languagesOptions,
   renderTableSearch,
-  showTable
+  showTable,
+  profileState,
 }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const divRef = useRef(null);
+
   useEffect(() => {
     if (divRef.current && showTable) {
       const divElement = divRef.current;
       const lastChild = divElement.lastElementChild;
       if (lastChild) {
-        lastChild.scrollIntoView({ behavior: 'smooth' });
+        lastChild.scrollIntoView({ behavior: "smooth" });
       }
     }
-  }, [showTable])
+  }, [showTable]);
+
+  useEffect(() => {
+    if (!customer?.clientLang && profileState?.systemLang) {
+      setCustomer((prev) => ({ ...prev, clientLang: profileState.systemLang }));
+    }
+  }, [customer?.clientLang, profileState?.systemLang]);
+
   return (
     <div style={classes.tabsContainer} ref={divRef}>
       <div style={classes.customerInfoStyle}>

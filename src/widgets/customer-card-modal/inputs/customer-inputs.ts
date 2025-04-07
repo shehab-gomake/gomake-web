@@ -1,8 +1,11 @@
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { useUserPermission } from "@/hooks/use-permission";
 
 const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
   const { CheckPreferenceValue } = usePrintHousePreferences();
+  const { CheckPermission } = useUserPermission();
 
   return [
     {
@@ -80,7 +83,7 @@ const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
       value: state?.currency,
       isValid: true,
     },
-    {
+    CheckPermission(Permissions.SHOW_CPA_CODE) && {
       name: "cpaClientCode",
       label: "customers.modal.CPAcode",
       type: "text",
