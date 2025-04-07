@@ -41,6 +41,7 @@ const HeaderWidget = () => {
     openSupport,
     anchorSupportEl,
     handleCloseSupport,
+    calendlyLink,
   } = useHeader();
   const setShowTourModal = useSetRecoilState(showTourModalState);
   const userAvatar = () => {
@@ -59,25 +60,28 @@ const HeaderWidget = () => {
   };
 
   const currentPath = useRecoilValue(currentPathState);
-  const router = useRouter();
 
   return (
     <div style={classes.container}>
-      {/* <a
-        href="https://calendly.com/gomakeinc/intro-to-gomake?month=2025-04"
-        target="_blank"
-        rel="noopener noreferrer"
-        style={classes.bookADemo}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = "#FFC107"; // hover effect
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = "#FFF";
-        }}
-      >
-        <CalendarToday style={{ fontSize: 18 }} />
-        {t("Book a demo")}
-      </a> */}
+      {!user?.isDemoUser && (
+        <a
+          href={calendlyLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={classes.bookADemo}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = "#2e3092";
+            e.currentTarget.style.color = "#FFFFFF";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = "#FFF";
+            e.currentTarget.style.color = "#000";
+          }}
+        >
+          <CalendarToday style={{ fontSize: 18 }} />
+          {t("login.bookADemo")}
+        </a>
+      )}
 
       {/* <SearchInputComponent onChange={() => null} searchInputStyle={classes.searchInputContainer} /> */}
       <div style={{ width: "100%" }} />

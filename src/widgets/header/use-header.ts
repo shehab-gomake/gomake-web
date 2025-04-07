@@ -13,7 +13,9 @@ const useHeader = () => {
   const { navigate } = useGomakeRouter();
   const { user } = useCustomer();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [anchorSupportEl, setAnchorSupportEl] = useState<null | HTMLElement>(null);
+  const [anchorSupportEl, setAnchorSupportEl] = useState<null | HTMLElement>(
+    null
+  );
   const [anchorNotifyEl, setAnchorNotifyEl] = useState<null | HTMLElement>(
     null
   );
@@ -47,12 +49,13 @@ const useHeader = () => {
     navigate(`/quote`);
   };
   const [userQuote, setUserQuote] = useState<any>(null);
-  const [userQuoteIfExist, setUserQuoteIfExist] = useRecoilState<boolean>(userQouteState);
+  const [userQuoteIfExist, setUserQuoteIfExist] =
+    useRecoilState<boolean>(userQouteState);
   const getAndSetExistQuote = async () => {
     const callBack = (res) => {
       if (res?.success) {
         setUserQuote(res?.data?.result);
-        setUserQuoteIfExist(res?.data?.succ)
+        setUserQuoteIfExist(res?.data?.succ);
       }
     };
     await getIfCartExistApi(callApi, callBack, { documentType: 0 }, false);
@@ -75,7 +78,11 @@ const useHeader = () => {
       }
     }
   }, [userQuote]);
-  
+
+  const now = new Date();
+  const currentMonth = now.toISOString().slice(0, 7); // format: "YYYY-MM"
+  const calendlyLink = `https://calendly.com/gomakeinc/intro-to-gomake?month=${currentMonth}`;
+
   return {
     user,
     open,
@@ -91,7 +98,8 @@ const useHeader = () => {
     handleClickSupport,
     openSupport,
     anchorSupportEl,
-    handleCloseSupport
+    handleCloseSupport,
+    calendlyLink,
   };
 };
 
