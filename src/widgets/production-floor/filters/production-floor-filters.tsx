@@ -11,8 +11,8 @@ import {
   MenuItem,
   CircularProgress,
   ClickAwayListener,
-  Checkbox,
 } from "@mui/material";
+import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorFilters } from "@/widgets/production-floor/filters/use-production-floor-filters";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
@@ -25,15 +25,14 @@ import { fetchS3JsonContent } from "@/utils/S3Content";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import { useStyle } from "./style";
 import { useRouter } from "next/router";
-import { GoMakeDeleteModal, GoMakeMenu, GoMakeModal, GomakePrimaryButton } from "@/components";
+import { GoMakeDeleteModal, GoMakeMenu } from "@/components";
 import { ModalType } from "@/enums";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { useRecoilState } from "recoil";
 import { filterGroupsState } from "@/widgets/production-floor/state/filter-group";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { CheckboxCheckedIcon } from "@/icons";
-import { CheckboxIcon } from "@/icons";
 import { ModalFilters } from "./modal-filters";
+import { useUserPermission } from "@/hooks/use-permission";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -221,22 +220,6 @@ const CustomGroupComponent = ({
                   }}
                 />
               </IconButton>
-              {/* <IconButton
-                onClick={onClickDelete}
-                size="small"
-                style={{
-                  padding: "4px",
-                }}
-              >
-                <ClearIcon
-                  className="clear-icon"
-                  style={{
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    color: isSelected ? "#FFF" : group?.color,
-                  }}
-                />
-              </IconButton> */}
               )
             </Circle>
           )}
@@ -265,7 +248,7 @@ const ProductionFloorFilters = ({
   const [containerWidth, setContainerWidth] = useState(0);
   const [filterGroups, setFilterGroups] =
     useRecoilState<IFilterGroupsList[]>(filterGroupsState);
-
+  const { CheckPermission } = useUserPermission();
   const {
     t,
     dir,
@@ -556,9 +539,12 @@ const ProductionFloorFilters = ({
         }}
       />
       <GoMakeMenu handleClose={handleCloseMenu} open={openMenu} anchorEl={anchorElMenu}>
-        <MenuItem onClick={onClickOpenModalDuplicateGroup}>
-          <div>{t("productionFloor.copyToUsers")}</div>
-        </MenuItem>
+        {CheckPermission(Permissions.IS_CAN_SHARE_GROUP) &&
+          <MenuItem onClick={onClickOpenModalDuplicateGroup}>
+            <div>{t("productionFloor.copyToUsers")}</div>
+          </MenuItem>
+        }
+
         <MenuItem onClick={(event) => {
           event.stopPropagation();
           handleClearClick(selectedGroup?.id);
