@@ -133,7 +133,6 @@ const BusinessNewWidget = ({
   return (
     <>
       <div style={{ ...classes.businessContainerStyle, marginBottom: "10px" }}>
-        {/* !here */}
         <AutoCompleteUpdatedValue
           label={
             isPurchaseDocument
@@ -150,7 +149,6 @@ const BusinessNewWidget = ({
               ? t("sales.quote.chooseSupplier")
               : t("sales.quote.selectBusinessName")
           }
-          // value={t("sales.quote.selectBusinessName")}
           options={isPurchaseDocument ? mappedSuppliers : mappedCustomers}
           onBlur={onBlurBusinessName}
           isUpdate={canEditDocument && isUpdateBusinessName}

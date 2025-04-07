@@ -147,10 +147,8 @@ const useBusinessWidget = ({
       }
     } else {
       //!here make sure its done
-      if (
-        !quoteStateValue?.client ||
-        quoteStateValue?.client?.id === "d917d594-87fe-42f1-b777-1571242dd4c2"
-      ) {
+      debugger;
+      if (!quoteStateValue?.client) {
         onChangeSelectBusiness(value);
         return;
       }
