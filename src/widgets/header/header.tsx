@@ -63,7 +63,7 @@ const HeaderWidget = () => {
 
   return (
     <div style={classes.container}>
-      {!user?.isDemoUser && (
+      {user?.isDemoUser && (
         <a
           href={calendlyLink}
           target="_blank"
