@@ -37,7 +37,7 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
                     parameterKey: "width",
                     options: [],
                     value: state.attributes?.minMarginWithoutEnhancement?.width ? state.attributes?.minMarginWithoutEnhancement?.width : '',
-                    unit: EMeasurementUnits.CM
+                    unit: EMeasurementUnits.MM
                 },
                 {
                     name: "maxMediaDimensions",
@@ -48,7 +48,7 @@ const digitalEnhancementMachine = (state: Record<string, any>) => {
                     parameterKey: "length",
                     options: [],
                     value: state.attributes?.minMarginWithoutEnhancement?.length ? state.attributes?.minMarginWithoutEnhancement?.length : '',
-                    unit: EMeasurementUnits.CM
+                    unit: EMeasurementUnits.MM
 
                 },
             ]
