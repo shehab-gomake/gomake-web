@@ -24,6 +24,8 @@ import { Box, Slider } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { ReloadPriceIcon } from "@/icons/reload-price";
+import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 
 export const roundPrice = (price) => {
   try {
@@ -97,6 +99,9 @@ const RightSideWidget = ({
     handleProductChange,
     selectedTab,
     onSelectTab,
+    roundPrice,
+    errorColor,
+    primaryColor,
   } = useRightSideWidget({ includeVAT, widgetType });
   const setSubProducts = useSetRecoilState<any>(subProductsParametersState);
 
@@ -344,14 +349,22 @@ const RightSideWidget = ({
                     }
                   }}
                   key={"TotalPriceInput"}
-                  style={clasess.inputPriceStyle}
+                  style={{
+                    ...clasess.inputPriceStyle,
+                    ...(showCalculationInCompletedAlert && {
+                      color: "#f44336 !important",
+                      WebkitTextFillColor: "#f44336 !important",
+                    }),
+                  }}
                 />
               </div>
             )}
           </div>
-          {
-            showCalculationInCompletedAlert ? <div><WarningLogsIcon width={20} height={20} /></div> : <div></div>
-          }
+          {showCalculationInCompletedAlert && (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <WarningAmberRoundedIcon htmlColor={"#f44336"} />
+            </div>
+          )}
           <span style={clasess.totalCurrancyStyle}>
             <Tooltip title={t("products.offsetPrice.admin.updateTotalPrice")}>
               <IconButton
@@ -359,7 +372,7 @@ const RightSideWidget = ({
                   calculationProduct(subProducts);
                 }}
               >
-                <ReloadIcon />
+                <ReloadPriceIcon color={primaryColor(500)} />
               </IconButton>
             </Tooltip>
           </span>

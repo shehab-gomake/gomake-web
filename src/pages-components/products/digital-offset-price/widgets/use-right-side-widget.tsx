@@ -25,10 +25,12 @@ import { getAllProductAndMaterialsApi } from "@/services/api-service/products/pr
 import { useRouter } from "next/router";
 import { ProductCategoryType } from "@/pages-components/admin/home/widgets/quote-widget/states";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const router = useRouter();
   const { callApi } = useGomakeAxios();
+  const { errorColor, primaryColor } = useGomakeTheme();
   const { t } = useTranslation();
   const direction = t("direction");
   const isRtl = direction === "rtl";
@@ -260,7 +262,25 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       setPriceIncludeVat(null);
     }
   }, [sliderCurrentProductItemValueTotalPrice]);
-
+  const roundPrice = (price) => {
+    try {
+      if (typeof price === "string") {
+        price = Number(price);
+      }
+      if (price && !isNaN(price) && typeof price === "number") {
+        let roundedPrice = price.toFixed(3);
+        let arr = roundedPrice.split(".");
+        let decimalPart = Number(arr[1]);
+        if (!decimalPart) {
+          return arr[0];
+        }
+        return roundedPrice;
+      }
+      return price;
+    } catch (e) {
+      return price;
+    }
+  };
   return {
     t,
     direction,
@@ -289,6 +309,9 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     handleProductChange,
     selectedTab,
     onSelectTab,
+    roundPrice,
+    errorColor,
+    primaryColor,
   };
 };
 
