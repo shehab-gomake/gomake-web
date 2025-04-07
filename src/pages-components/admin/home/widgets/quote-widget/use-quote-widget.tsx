@@ -385,31 +385,33 @@ const useQuoteWidget = () => {
       return;
     }
 
-    const hasSelectedClient = selectedClient?.id;
-    const fallbackClient = renderOptions()?.[0];
+    const hasSelectedClient = !!selectedClient?.id;
 
-    const clientId = hasSelectedClient
-      ? selectedClient?.id
-      : fallbackClient?.id;
+    if (hasSelectedClient) {
+      const clientId = selectedClient.id;
+      const clientName = selectedClient.name;
+      const clientTypeId = selectedClientType?.id;
 
-    const clientName = hasSelectedClient
-      ? selectedClient?.name
-      : fallbackClient?.name;
+      if (!clientId || !clientTypeId || !selectedProduct?.id) {
+        alertFaultUpdate();
+        return;
+      }
 
-    const clientTypeId = hasSelectedClient
-      ? selectedClientType?.id
-      : fallbackClient?.clientTypeId;
+      navigate(
+        `/products/create?clientTypeId=${clientTypeId}&customerId=${clientId}&customerName=${clientName}&productId=${selectedProduct.id}`
+      );
+    } else {
+      // Navigate with just the productId
+      if (!selectedProduct?.id) {
+        alertFaultUpdate();
+        return;
+      }
 
-    if (!clientId || !clientTypeId || !selectedProduct?.id) {
-      alertFaultUpdate();
-      return;
+      navigate(`/products/create?productId=${selectedProduct.id}`);
     }
-
-    navigate(
-      `/products/create?clientTypeId=${clientTypeId}&customerId=${clientId}&customerName=${clientName}&productId=${selectedProduct?.id}`
-    );
   };
 
+  // !here
   const onclickCreateNew = async () => {
     const callBack = (res) => {
       if (res?.success) {

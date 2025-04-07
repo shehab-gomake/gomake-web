@@ -71,7 +71,9 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   };
   useEffect(() => {
     if (combinedData?.length > 0) {
-      const products = combinedData?.find((item) => item.value === ETab.PRODUCTS)?.children;
+      const products = combinedData?.find(
+        (item) => item.value === ETab.PRODUCTS
+      )?.children;
       const findDefaultProduct = products.find(
         (item) => item.value === router?.query?.productId
       );
@@ -79,7 +81,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
         handleProductChange(findDefaultProduct?.value);
       }
     }
-  }, [combinedData, router?.query?.productId])
+  }, [combinedData, router?.query?.productId]);
   const handleProductChange = (e) => {
     const selectedValue = e;
     // Find the selected node from combinedData
@@ -176,14 +178,20 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       }
     };
 
-    if (router?.query?.customerId && router?.query?.clientTypeId) {
-      await getAllProductAndMaterialsApi(callApi, callBack, {
-        clientId: router?.query?.customerId,
-        clientTypeId: router?.query?.clientTypeId,
-        selectionType: selectedTab
-      });
+    const clientId = router?.query?.customerId;
+    const clientTypeId = router?.query?.clientTypeId;
+
+    const params: any = {
+      selectionType: selectedTab,
+    };
+
+    if (clientId && clientTypeId) {
+      params.clientId = clientId;
+      params.clientTypeId = clientTypeId;
     }
-  }, []);
+
+    await getAllProductAndMaterialsApi(callApi, callBack, params);
+  }, [selectedTab, router?.query]);
 
   useEffect(() => {
     if (products?.length > 0 && combinedData?.length > 0) {
@@ -195,6 +203,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
       }
     }
   }, [combinedData, router?.query?.productId]);
+
   useEffect(() => {
     getAllProductsAndMaterials();
   }, []);
@@ -230,7 +239,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   /* Slider */
   const priceToUse =
     widgetType === EWidgetProductType.EDIT ||
-      widgetType === EWidgetProductType.DUPLICATE
+    widgetType === EWidgetProductType.DUPLICATE
       ? calculatedPriceProductItemValue
       : currentProductItemValueTotalPrice;
 
