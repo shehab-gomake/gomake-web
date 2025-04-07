@@ -18,6 +18,7 @@ export interface ITableProps {
   columnWidths?: string[];
   onDragEnd?: any;
   withSort?: boolean;
+  withSortBE?: boolean;
   onSelectionChange?: (selectedRows: Set<number>) => void;
   enableCheckboxes?: boolean;
   rowCheckboxCondition?: (any) => boolean;
@@ -25,6 +26,10 @@ export interface ITableProps {
   handleSortAgingReport?: (key: string) => void;
   isAgingDetailedReport?: boolean;
   isDescOrder?: boolean;
+  onClickSortBE?: (key: any) => void;
+  isDescOrderBE?: boolean;
+  isHeaderSortable?: any;
+  docType?: any;
 }
 
 export interface ISecondaryTableProps {

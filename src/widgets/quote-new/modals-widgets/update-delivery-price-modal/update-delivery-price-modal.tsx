@@ -44,18 +44,29 @@ const UpdateDeliveryPriceModal = ({ openModal, onClose, onClickAdd }) => {
         insideStyle={classes.insideStyle}
       >
         <div style={classes.mainContainer}>
-          <div style={classes.autoComplateRowContainer}>
+          {<div style={classes.autoComplateRowContainer}>
             <div style={{ width: "100%", marginTop: 15 }}>
-              <div style={{ width: "100%", marginTop: 15 }}>
-                <GomakeTextInput
-                  placeholder={t("sales.quote.deliveryPrice")}
-                  value={deliveryPriceValue}
-                  onChange={(e: any, value: any) => {
-                    setDeliveryPriceValue(e.target.value);
-                  }}
-                />
-              </div>
-
+              <GoMakeAutoComplate
+                options={shipmentTypes}
+                value={deliveryTypeValue}
+                placeholder={t("sales.quote.selectDelivery")}
+                style={classes.selectTypeContainer}
+                onChange={(e: any, value: any) => {
+                  setDeliveryTypeValue(value);
+                  setDeliveryPriceValue(value?.price);
+                }}
+              />
+            </div>
+          </div>}
+          <div style={classes.autoComplateRowContainer}>
+            <div style={{ width: "100%", }}>
+              <GomakeTextInput
+                placeholder={t("sales.quote.deliveryPrice")}
+                value={deliveryPriceValue}
+                onChange={(e: any, value: any) => {
+                  setDeliveryPriceValue(e.target.value);
+                }}
+              />
             </div>
           </div>
           <div style={classes.btnContainer}>

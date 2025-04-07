@@ -101,6 +101,7 @@ const GoMakeDeleteModal = ({
           <div style={classes.subTitle}>
             {subTitle ? t(subTitle) : _renderSubTitle(modalType)}
           </div>
+
           {children && <div style={classes.children}>{children}</div>}
           <div style={classes.btnsContainer}>
             <GomakePrimaryButton

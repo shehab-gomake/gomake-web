@@ -67,6 +67,7 @@ const DropDownListParameterWidget = ({
       (index !== -1 && temp[index]?.values) ? { updateName: temp[index].values } : undefined
     );
   }, [parameter, index,]);
+
   useEffect(() => {
     if (parameter?.parameterType === EParameterTypes.MACHINES_SELECT) {
       setSelectedValue(

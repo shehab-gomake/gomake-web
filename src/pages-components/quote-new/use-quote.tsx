@@ -14,6 +14,7 @@ import {
   quoteConfirmationState,
   quoteItemState,
   openReceiptCreationModalState,
+  systemVATState,
 } from "@/store";
 import { useQuoteGetData } from "./use-quote-get-data";
 import {
@@ -100,6 +101,7 @@ const useQuoteNew = ({
     alertFaultDelete,
     alertFault,
   } = useSnackBar();
+  const systemVAT = useRecoilValue<number>(systemVATState);
 
   const router = useRouter();
   const { callApi } = useGomakeAxios();
@@ -547,16 +549,13 @@ const useQuoteNew = ({
       },
     });
   };
+
   const changeVatValueForVatStatus = (vatStatus: number) => {
     switch (vatStatus) {
-      //case EnumVATStatus.Must17Percents:
-      //return 0.17;
-      case EnumVATStatus.Must18Percents:
-        return 0.18;
-      // case EnumVATStatus.Must16Percents:
-      // return 0.16;
+      case EnumVATStatus.MustXPercents:
+        return systemVAT;
       case EnumVATStatus.Exempt:
-        return 0.18;
+        return 0;
       default:
         return 0.18;
     }
@@ -2387,6 +2386,7 @@ const useQuoteNew = ({
     isOpenRelatedDocuments,
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,
+    systemVAT,
   };
 };
 

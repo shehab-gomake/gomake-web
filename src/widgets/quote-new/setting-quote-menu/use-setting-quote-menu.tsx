@@ -19,22 +19,26 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   const [showPrices, setShowPrices] = useState(quoteStateValue?.isShowPrice);
   const [showGraphics, setShowGraphics] = useState(quoteStateValue?.isShowGraphicsItems);
   const [showDelivery, setShowDelivery] = useState(quoteStateValue?.isShowDeliveryItems);
+  const [hideItemDiscountColumn, setHideItemDiscountColumn] = useState(quoteStateValue?.hideItemDiscountColumn);
+
 
   const currencies =
     useRecoilValue<{ label: string; value: string }[]>(currenciesState);
   const matchingCurrency = currencies.find(
     (currency) => currency.value === quoteStateValue?.currency
   )?.label;
-  const vatStatusList: { value: number; text: string }[] = Object.values(EnumVATStatus)
-    .filter(value => typeof value === 'number')
-    .map(value => ({
+  const vatStatusList: { value: number; text: string }[] = Object.values(
+    EnumVATStatus
+  )
+    .filter((value) => typeof value === "number")
+    .map((value) => ({
       value: value as number,
-      text: t(`accounting.${EnumVATStatus[value]}`)
+      text: t(`accounting.${EnumVATStatus[value]}`),
     }));
+
   const vatStatus = vatStatusList.find(
     (status) => status.value === quoteStateValue?.vatStatus
   )?.text;
-  console.log("quoteStateValue", { quoteStateValue, matchingCurrency });
   const [exchangeRate, setExchangeRate] = useState(
     quoteStateValue?.exchangeRate || "-"
   );
@@ -49,8 +53,8 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     setShowPrices(quoteStateValue?.isShowPrice);
     setShowGraphics(quoteStateValue?.isShowGraphicsItems);
     setShowDelivery(quoteStateValue?.isShowDeliveryItems);
-  }, [quoteStateValue?.isShowDetails, quoteStateValue?.isShowPrice, quoteStateValue?.isShowGraphicsItems, quoteStateValue?.isShowDeliveryItems]);
-
+    setHideItemDiscountColumn(quoteStateValue?.hideItemDiscountColumn);
+  }, [quoteStateValue?.isShowDetails, quoteStateValue?.isShowPrice, quoteStateValue?.isShowGraphicsItems, quoteStateValue?.isShowDeliveryItems, quoteStateValue?.hideItemDiscountColumn]);
 
   useEffect(() => {
     setExchangeRate(quoteStateValue?.exchangeRate || "-");
@@ -62,34 +66,52 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
 
   const handleSwitchCheck = (event: ChangeEvent<HTMLInputElement>) => {
     setDetailsView(event.target.checked);
-    updateDocumentPreference(event.target.checked, DocumentPreferencesEnum.ShowDetails);
+    updateDocumentPreference(
+      event.target.checked,
+      DocumentPreferencesEnum.ShowDetails
+    );
   };
-
 
   const handleSwitchCheckForShowPrice = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
     setShowPrices(event.target.checked);
-    updateDocumentPreference(event.target.checked, DocumentPreferencesEnum.ShowPrice);
+    updateDocumentPreference(
+      event.target.checked,
+      DocumentPreferencesEnum.ShowPrice
+    );
   };
 
   const handleSwitchCheckForShowGraphics = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
     setShowGraphics(event.target.checked);
-    updateDocumentPreference(event.target.checked, DocumentPreferencesEnum.ShowGraphicsItems);
+    updateDocumentPreference(
+      event.target.checked,
+      DocumentPreferencesEnum.ShowGraphicsItems
+    );
   };
+
   const handleSwitchCheckForShowDelivery = (
     event: ChangeEvent<HTMLInputElement>
   ) => {
     setShowDelivery(event.target.checked);
-    updateDocumentPreference(event.target.checked, DocumentPreferencesEnum.ShowDeliveryItems);
+    updateDocumentPreference(
+      event.target.checked,
+      DocumentPreferencesEnum.ShowDeliveryItems
+    );
+  };
+
+  const handleSwitchCheckForHideItemDiscountColumn = (
+    event: ChangeEvent<HTMLInputElement>
+  ) => {
+    setHideItemDiscountColumn(event.target.checked);
+    updateDocumentPreference(event.target.checked, DocumentPreferencesEnum.HideItemDiscountColumn);
   };
 
   const handleTableSorting = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElTableSorting(event.currentTarget);
   };
-
 
   const handleTableSortingClose = () => {
     setAnchorElTableSorting(null);
@@ -145,6 +167,11 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     //   checked: showDelivery,
     //   onChange: handleSwitchCheckForShowDelivery,
     // },
+    {
+      label: t("sales.quote.hideItemDiscountColumn"),
+      checked: hideItemDiscountColumn,
+      onChange: handleSwitchCheckForHideItemDiscountColumn,
+    },
   ];
   return {
     quoteStateValue,
