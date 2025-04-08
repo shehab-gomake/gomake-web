@@ -125,10 +125,11 @@ const Actions = ({
                         <div
                           ref={provided.innerRef}
                           {...provided.draggableProps}
-                          {...provided.dragHandleProps}
                         >
                           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <SortIcon />
+                            <div {...provided.dragHandleProps}>
+                              <SortIcon />
+                            </div>
                             <ActionContainerComponent
                               data-toure={'action'}
                               widgetType={widgetType}
@@ -452,7 +453,7 @@ const ActionContainerComponent = ({
           >
 
             <Stack
-              // onClick={() => setIsOpen(!isOpen && !isFromSetting)}
+              onClick={() => setIsOpen(!isOpen && !isFromSetting)}
               style={{
                 ...classes.actionContainer,
                 border: isOpen ? classes.actionContainerBorder : "unset",
