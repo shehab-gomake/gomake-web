@@ -45,6 +45,8 @@ const useCustomers = (
 ) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const { alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } =
     useSnackBar();
   const { CheckPermission } = useUserPermission();
@@ -79,7 +81,6 @@ const useCustomers = (
   ];
 
   const getCustomersRows = useCallback(() => {
-    
     return allCustomers?.map((customer) => [
       customer?.customerCode,
       customer?.name,
@@ -152,6 +153,8 @@ const useCustomers = (
   const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
     clientTypesCategoriesState
   );
+
+  //!here
   const getClientTypesCategories = async (cardType: CLIENT_TYPE_Id) => {
     const callBack = (res) => {
       if (res.success) {
@@ -388,6 +391,7 @@ const useCustomers = (
     openErrorsModal,
     handleErrorsModalClose,
     errorMessages,
+    isRTL,
   };
 };
 export { useCustomers };
