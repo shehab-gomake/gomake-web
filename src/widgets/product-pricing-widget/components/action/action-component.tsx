@@ -452,7 +452,7 @@ const ActionContainerComponent = ({
           >
 
             <Stack
-              onClick={() => setIsOpen(!isOpen && !isFromSetting)}
+              // onClick={() => setIsOpen(!isOpen && !isFromSetting)}
               style={{
                 ...classes.actionContainer,
                 border: isOpen ? classes.actionContainerBorder : "unset",
@@ -495,6 +495,7 @@ const ActionContainerComponent = ({
                             value: s.supplierId,
                             label: s.supplierName,
                           }))}
+                          disableClearable={true}
                         />
                       </Stack>
                     ) : (
@@ -530,6 +531,7 @@ const ActionContainerComponent = ({
                               onClick={(e) => e.stopPropagation()}
                             >
                               <GoMakeAutoComplate
+                                disableClearable={true}
                                 onChange={(e, v) => {
                                   if (isFromSetting) {
                                     updateProductAction({ actionId, value: v?.value, fieldName: "machineid", machineName: v?.label })
@@ -549,6 +551,7 @@ const ActionContainerComponent = ({
                                       printingActionId: id,
 
                                     })
+
                                   }
                                   setChooseMachine(false);
                                 }}
@@ -602,6 +605,7 @@ const ActionContainerComponent = ({
                               onClick={(e) => e.stopPropagation()}
                             >
                               <GoMakeAutoComplate
+                                disableClearable={true}
                                 onChange={(e, v) => {
                                   if (isFromSetting) {
                                     updateProductAction({ actionId, emplyeeName: v?.label, value: v?.value, fieldName: "employeeid" })
@@ -676,6 +680,7 @@ const ActionContainerComponent = ({
                               onClick={(e) => e.stopPropagation()}
                             >
                               <GoMakeAutoComplate
+                                disableClearable={true}
                                 onChange={(e, v) => {
                                   selectNewMaterials(
                                     v?.value,
@@ -747,6 +752,7 @@ const ActionContainerComponent = ({
                               onClick={(e) => e.stopPropagation()}
                             >
                               <GoMakeAutoComplate
+                                disableClearable={true}
                                 onChange={(e, v) => {
                                   selectNewFold(
                                     v?.id,
