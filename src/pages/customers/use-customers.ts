@@ -7,7 +7,7 @@ import {
 } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   agentsCategoriesState,
   clientTypesCategoriesState,
@@ -18,7 +18,7 @@ import {
   getAndSetCustomersPagination,
   importClientApi,
 } from "@/services/api-service/customers/customers-api";
-import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "./enums";
+import { DEFAULT_VALUES } from "./enums";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { EHttpMethod } from "@/services/api-service/enums";
@@ -151,12 +151,7 @@ const useCustomers = (
     isActive,
   });
 
-  const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
-    clientTypesCategoriesState
-  );
-
-  //!here
-
+  const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
   const { getClientTypesCategories } = useClientTypesList();
 
   const [agentsCategories, setAgentsCategories] = useRecoilState(
@@ -335,6 +330,9 @@ const useCustomers = (
     }
   };
 
+  const [value, setValue] = useState(0);
+  const [openClientTypeModal, setOpenClientTypeModal] = useState(false);
+
   return {
     getAgentCategories,
     getClientTypesCategories,
@@ -382,6 +380,10 @@ const useCustomers = (
     handleErrorsModalClose,
     errorMessages,
     isRTL,
+    value,
+    setValue,
+    openClientTypeModal,
+    setOpenClientTypeModal,
   };
 };
 export { useCustomers };

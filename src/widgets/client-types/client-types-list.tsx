@@ -1,8 +1,8 @@
 import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
-import { useClientTypes } from "./use-client-types-list";
-import { ClientTypeModal } from "./components/edit-client-type-modal";
+import { useClientTypesList } from "./use-client-types-list";
+import { ClientTypeModal } from "./components/add-edit-client-type-modal";
 
 interface ClientTypesListProps {
   clientType: CLIENT_TYPE;
@@ -16,9 +16,8 @@ const ClientTypesList = ({ clientType }: ClientTypesListProps) => {
     openModal,
     setOpenModal,
     selectedClientTypeId,
-    clientTypesCategories,
-    clientTypeId,
-  } = useClientTypes(clientType);
+    cardTypeId,
+  } = useClientTypesList(clientType);
 
   return (
     <div style={classes.mainContainer}>
@@ -35,8 +34,8 @@ const ClientTypesList = ({ clientType }: ClientTypesListProps) => {
           onClose={() => setOpenModal(false)}
           modalTitle="Edit Client Type"
           selectedClientTypeId={selectedClientTypeId}
-          clientTypeId={clientTypeId}
-          clientTypesCategories={clientTypesCategories}
+          cardTypeId={cardTypeId}
+          actionType="edit"
         />
       )}
     </div>

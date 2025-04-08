@@ -8,7 +8,7 @@ import { deleteClientTypeApi } from "@/services/api-service/customers/clientType
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
 
-export const useClientTypes = (clientType: CLIENT_TYPE) => {
+export const useClientTypesList = (clientType: CLIENT_TYPE) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultDelete } = useSnackBar();
   const { t } = useTranslation();
@@ -17,7 +17,7 @@ export const useClientTypes = (clientType: CLIENT_TYPE) => {
     clientTypesCategoriesState
   );
 
-  const clientTypeId =
+  const cardTypeId =
     clientType === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
 
   const tableHeaders = [
@@ -72,6 +72,6 @@ export const useClientTypes = (clientType: CLIENT_TYPE) => {
     setOpenModal,
     selectedClientTypeId,
     clientTypesCategories,
-    clientTypeId,
+    cardTypeId,
   };
 };

@@ -4,7 +4,6 @@ import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 
-//!here the main
 const useClientTypesList = () => {
   const { callApi } = useGomakeAxios();
   const [clientTypesCategories, setClientTypesCategories] = useRecoilState(

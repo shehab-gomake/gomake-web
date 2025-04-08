@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
   const { t } = useTranslation();
-  const { errorColor } = useGomakeTheme();
+  const { errorColor, primaryColor, theme } = useGomakeTheme();
 
   const classes = useMemo(() => {
     return {
@@ -20,11 +20,10 @@ const useStyle = () => {
       },
       insideStyle: {
         width: "fit-content",
-        borderRadius: 8,
+        borderRadius: "16px",
         gap: "8px",
         height: "auto",
         maxHeight: 400,
-        backgroundColor: "#f7f7f7",
       },
       addBtnStyle: {
         width: "50%",
@@ -86,6 +85,7 @@ const useStyle = () => {
       textInputContainer: {
         maxWidth: "40%",
         width: "max-content",
+        gap: "10px",
       },
       parameterContainer: {
         display: "flex",
@@ -119,8 +119,44 @@ const useStyle = () => {
         width: "50%",
         height: 40,
       },
+      inputLbl: {
+        color: primaryColor(900),
+        ...FONT_FAMILY.Lexend(600, 14),
+        display: "flex",
+        alignItems: "flex-end",
+      },
+      divWithPer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        gap: 5,
+      },
+      modalTitle: {
+        ...FONT_FAMILY.Inter(500, 20),
+        color: "#000000",
+        paddingBottom: "10px",
+      },
+      cancelBtnStyle: {
+        width: "50%",
+        borderRadius: "8px",
+        height: "44px",
+        backgroundColor: "white",
+        color: "#000000",
+        border: "1px solid #D0D5DD",
+        "&:hover": {
+          backgroundColor: "#f5f5f5",
+          border: "1px solid #D0D5DD",
+          borderRadius: "8px",
+          boxShadow: "none",
+        },
+      },
+      btnStyle: {
+        width: "50%",
+        borderRadius: "8px",
+        height: "44px",
+      },
     };
-  }, [i18next.language, t]);
+  }, [i18next.language, t, theme]);
   return {
     classes,
   };
