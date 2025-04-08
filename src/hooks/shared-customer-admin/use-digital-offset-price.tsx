@@ -4974,6 +4974,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
   const getProductQuoteItemById = async (materials, productId?) => {
     if (connectionId) {
+      const conn = generateConnectionId(connectionId);
+      setCurrentSignalRConnectionId(conn)
       const callBack = (res) => {
         if (res?.success) {
           const updatedTemplate = updateIsHidden(res?.data, subProducts);
@@ -4992,14 +4994,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               type: null,
             }
           ]);
-          getSelectedWorkFlow(currentSignalRConnectionId, false, res?.data?.productItemValue?.id);
+          getSelectedWorkFlow(conn,false,res?.data?.productItemValue?.id);
         } else {
           alertFaultUpdate();
         }
       };
       await getProductByItemIdApi(callApi, callBack, {
         documentItemId: router?.query?.documentItemId,
-        signalRConnectionId: currentSignalRConnectionId,
+        signalRConnectionId: conn,
         documentType: router?.query?.documentType,
         productId: productId,
       });
