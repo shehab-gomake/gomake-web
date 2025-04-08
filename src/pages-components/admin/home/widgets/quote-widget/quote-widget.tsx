@@ -84,7 +84,7 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
       setQuoteIfExist(true);
       setSelectedClient(userQuote.client);
       const clientType = clientTypesValue.find(
-        (c) => c.id == userQuote.client.clientTypeId
+        (c) => c.id == userQuote?.client?.clientTypeId
       );
       setSelectedClientType(clientType);
     } else {

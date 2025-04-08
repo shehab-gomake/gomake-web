@@ -221,5 +221,10 @@ export const machineCategoriesState = atom<IMachineCategory[]>({
             name: 'machinesCategories.bookBlockMachine',
             color: defaultTheme.success.dark["600"]
         },
+        {
+            id: ECategoryId.DEVICE_MAKING_MACHINE,
+            name: 'machinesCategories.deviceMakingMachine',
+            color: defaultTheme.success.dark["600"]
+        },
     ],
 });
