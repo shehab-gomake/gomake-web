@@ -2,11 +2,12 @@ import { useMemo, useState } from "react";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { useRecoilState } from "recoil";
 import { IconButton } from "@mui/material";
-import { RemoveIcon, EditIcon } from "@/icons";
 import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { deleteClientTypeApi } from "@/services/api-service/customers/clientTypes-api";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useTranslation } from "react-i18next";
+import { EditPencilIcon } from "@/components/icons/edit-pencil-icon";
+import { TrashIcon } from "@/components/icons/trash-icon";
 
 export const useClientTypesList = (clientType: CLIENT_TYPE) => {
   const { callApi } = useGomakeAxios();
@@ -56,10 +57,10 @@ export const useClientTypesList = (clientType: CLIENT_TYPE) => {
       `${item?.discount}%`,
       <div key={`actions-${item.id}`}>
         <IconButton onClick={() => handleEdit(item.id)} size="small">
-          <EditIcon />
+          <EditPencilIcon height={20} width={20} />
         </IconButton>
         <IconButton onClick={() => handleDelete(item.id)} size="small">
-          <RemoveIcon />
+          <TrashIcon height={20} width={20} />
         </IconButton>
       </div>,
     ]);

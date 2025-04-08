@@ -61,7 +61,7 @@ const ClientTypeModal = ({
       <span style={classes.inputLbl}>{label}</span>
       <div style={classes.divWithPer}>
         <GomakeTextInput
-          style={{ ...classes.textInputStyle, width: 75 }}
+          style={{ ...classes.textInputStyle, width: 100 }}
           value={value}
           type="number"
           onChange={onChange}
