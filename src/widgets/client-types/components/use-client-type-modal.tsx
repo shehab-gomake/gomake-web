@@ -1,24 +1,23 @@
+import { useClientTypesList } from "@/hooks/use-client-types";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import {
   addClientTypeApi,
   deleteClientTypeApi,
-  getAndSetClientTypes,
   updateClientTypeApi,
 } from "@/services/api-service/customers/clientTypes-api";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 //!here
 const useClientType = (clientTypeId: CLIENT_TYPE_Id) => {
   const { callApi } = useGomakeAxios();
   const [clientTypeName, setClientTypeName] = useState();
-  const [clientTypesCategories, setClientTypesCategories] = useRecoilState<any>(
-    clientTypesCategoriesState
-  );
+  const clientTypesCategories = useRecoilValue<any>(clientTypesCategoriesState);
   const [editedValues, setEditedValues] = useState({});
   const [originalValues, setOriginalValues] = useState({});
+  const { getClientTypesCategories } = useClientTypesList();
 
   useEffect(() => {
     if (clientTypesCategories) {
@@ -33,20 +32,6 @@ const useClientType = (clientTypeId: CLIENT_TYPE_Id) => {
       setEditedValues(initialValues);
     }
   }, [clientTypesCategories]);
-
-  const getClientTypesCategories = async (cardType: CLIENT_TYPE_Id) => {
-    const callBack = (res) => {
-      if (res.success) {
-        const clientTypes = res.data.map((types) => ({
-          label: types.name,
-          id: types.id,
-          additionProfits: types?.additionProfits ?? 0,
-        }));
-        setClientTypesCategories(clientTypes);
-      }
-    };
-    await getAndSetClientTypes(callApi, callBack, { cardType: cardType });
-  };
 
   const addClientType = async (name: string) => {
     const callBack = (res) => {

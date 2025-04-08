@@ -6,10 +6,12 @@ import { RemoveIcon, EditIcon } from "@/icons";
 import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { deleteClientTypeApi } from "@/services/api-service/customers/clientTypes-api";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useTranslation } from "react-i18next";
 
 export const useClientTypes = (clientType: CLIENT_TYPE) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultDelete } = useSnackBar();
+  const { t } = useTranslation();
 
   const [clientTypesCategories, setClientTypesCategories] = useRecoilState<any>(
     clientTypesCategoriesState
@@ -18,7 +20,12 @@ export const useClientTypes = (clientType: CLIENT_TYPE) => {
   const clientTypeId =
     clientType === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
 
-  const tableHeaders = ["Name", "Additional Profits", , "discount", "Actions"]; //!here fix
+  const tableHeaders = [
+    t("customers.name"),
+    t("customers.modal.additionProfits"),
+    t("sales.quote.discount"),
+    t("tabs.actions"),
+  ];
   const [openModal, setOpenModal] = useState(false);
   const [selectedClientTypeId, setSelectedClientTypeId] = useState<
     string | null

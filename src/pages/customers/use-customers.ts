@@ -12,7 +12,6 @@ import {
   agentsCategoriesState,
   clientTypesCategoriesState,
 } from "./customer-states";
-import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import {
   getAndSetCustomerById,
@@ -28,6 +27,8 @@ import { useSnackBar } from "@/hooks";
 import { clearPhoneNumberPrefix, isValidCustomer } from "@/utils/helpers";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
+import { useClientTypesList } from "@/hooks/use-client-types";
+
 export interface IStatus {
   label: string;
   value: string;
@@ -155,19 +156,8 @@ const useCustomers = (
   );
 
   //!here
-  const getClientTypesCategories = async (cardType: CLIENT_TYPE_Id) => {
-    const callBack = (res) => {
-      if (res.success) {
-        const clientTypes = res.data.map((types) => ({
-          label: types.name,
-          id: types.id,
-          additionProfits: types?.additionProfits ?? 0,
-        }));
-        setClientTypesCategories(clientTypes);
-      }
-    };
-    await getAndSetClientTypes(callApi, callBack, { cardType: cardType });
-  };
+
+  const { getClientTypesCategories } = useClientTypesList();
 
   const [agentsCategories, setAgentsCategories] = useRecoilState(
     agentsCategoriesState
