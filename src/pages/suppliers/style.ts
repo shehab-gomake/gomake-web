@@ -14,6 +14,7 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         paddingLeft: 20,
         paddingRight: 20,
+        paddingTop: 10,
         height: "100%",
         overflowY: "auto" as "auto",
       },

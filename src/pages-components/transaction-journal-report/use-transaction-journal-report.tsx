@@ -9,21 +9,15 @@ import {
 } from "@/hooks";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { DocumentsTypeReportList, EReportType } from "@/enums";
-import { endOfToday, startOfYear } from "date-fns";
+import { endOfToday } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
-import { useSetRecoilState } from "recoil";
-import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
-import { getAndSetClientTypes } from "@/services/hooks";
-import {
-  CLIENT_TYPE,
-  CLIENT_TYPE_Id,
-  DEFAULT_VALUES,
-} from "@/pages/customers/enums";
+import { CLIENT_TYPE, DEFAULT_VALUES } from "@/pages/customers/enums";
 import { IconButton } from "@mui/material";
 import { DeleteIcon } from "@/widgets/settings-mailing/messageTemplates/components/more-circle/icons/delete";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { downloadCpaFileApi } from "@/services/api-service/settings/finance-api";
 import { initialFromDate } from "@/utils/helpers";
+import { useClientTypesList } from "@/hooks/use-client-types";
 
 export interface FilterState {
   fromAccount: string;
@@ -466,25 +460,7 @@ const useTransactionJournalReport = ({
     await getAndSetCustomerById(callApi, callBack, { customerId });
   };
 
-  const setClientTypesCategories = useSetRecoilState(
-    clientTypesCategoriesState
-  );
-
-  const getClientTypesCategories = async () => {
-    const callBack = (res) => {
-      if (res) {
-        const clientTypes = res.map((types) => ({
-          label: types.name,
-          id: types.id,
-          additionProfits: types?.additionProfits ?? 0,
-        }));
-        setClientTypesCategories(clientTypes);
-      }
-    };
-    await getAndSetClientTypes(callApi, callBack, {
-      cardType: CLIENT_TYPE_Id.CUSTOMER,
-    });
-  };
+  const { getClientTypesCategories } = useClientTypesList();
 
   useEffect(() => {
     getClientTypesCategories();
