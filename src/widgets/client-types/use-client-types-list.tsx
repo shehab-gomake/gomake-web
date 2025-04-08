@@ -14,6 +14,19 @@ export const useClientTypesList = (clientType: CLIENT_TYPE) => {
   const { alertFaultDelete } = useSnackBar();
   const { t } = useTranslation();
 
+  const [selectedTypeId, setSelectedTypeId] = useState<string>("");
+
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
+
+  const onCloseDeleteModal = () => {
+    setSelectedTypeId("");
+    setOpenDeleteModal(false);
+  };
+  const onOpenDeleteModal = (typeId) => {
+    setSelectedTypeId(typeId);
+    setOpenDeleteModal(true);
+  };
+
   const [clientTypesCategories, setClientTypesCategories] = useRecoilState<any>(
     clientTypesCategoriesState
   );
@@ -59,7 +72,7 @@ export const useClientTypesList = (clientType: CLIENT_TYPE) => {
         <IconButton onClick={() => handleEdit(item.id)} size="small">
           <EditPencilIcon height={20} width={20} />
         </IconButton>
-        <IconButton onClick={() => handleDelete(item.id)} size="small">
+        <IconButton onClick={() => onOpenDeleteModal(item.id)} size="small">
           <TrashIcon height={20} width={20} />
         </IconButton>
       </div>,
@@ -67,6 +80,7 @@ export const useClientTypesList = (clientType: CLIENT_TYPE) => {
   }, [clientTypesCategories]);
 
   return {
+    t,
     rows,
     tableHeaders,
     openModal,
@@ -74,5 +88,9 @@ export const useClientTypesList = (clientType: CLIENT_TYPE) => {
     selectedClientTypeId,
     clientTypesCategories,
     cardTypeId,
+    handleDelete,
+    openDeleteModal,
+    selectedTypeId,
+    onCloseDeleteModal,
   };
 };

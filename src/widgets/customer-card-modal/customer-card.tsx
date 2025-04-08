@@ -528,7 +528,7 @@ const CustomerCardWidget = ({
           onClose={onClickCloseClientType}
           modalTitle={
             typeClient === "C"
-              ? t("customers.addCustomerType")
+              ? t("customers.buttons.addClientType")
               : t("suppliers.addSupplierType")
           }
           cardTypeId={clientTypeId}
