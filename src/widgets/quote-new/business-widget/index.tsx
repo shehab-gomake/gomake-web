@@ -188,22 +188,24 @@ const BusinessNewWidget = ({
             onInputChange={(v) => setClientName(v)}
           />
         )}
-        <InputUpdatedValues
-          value={
-            isQuoteConfirmation
-              ? `${quoteConfirm?.client?.code}`
-              : `${quoteStateValue?.client?.code}`
-          }
-          label={
-            isPurchaseDocument
-              ? t("suppliers.supplierCode")
-              : t("sales.quote.businessCode")
-          }
-          onBlur={onBlurBusinessCode}
-          setIsUpdate={
-            isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode
-          }
-        />
+        {quoteStateValue?.client && (
+          <InputUpdatedValues
+            value={
+              isQuoteConfirmation
+                ? `${quoteConfirm?.client?.code}`
+                : `${quoteStateValue?.client?.code}`
+            }
+            label={
+              isPurchaseDocument
+                ? t("suppliers.supplierCode")
+                : t("sales.quote.businessCode")
+            }
+            onBlur={onBlurBusinessCode}
+            setIsUpdate={
+              isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode
+            }
+          />
+        )}
         {!isQuoteConfirmation && (
           <AutoCompleteUpdatedValue
             label={t("sales.quote.agent")}
