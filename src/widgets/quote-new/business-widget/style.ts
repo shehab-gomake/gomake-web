@@ -19,8 +19,8 @@ const useStyle = ({ isRTL }) => {
       },
       plusStyle: {
         color: secondColor(500),
-        marginLeft: isRTL ? "0" : "-23px",
-        marginRight: isRTL ? "-23px" : "0",
+        marginLeft: isRTL ? "0" : "-17px",
+        marginRight: isRTL ? "-17px" : "0",
         ...FONT_FAMILY.Lexend(400, 20),
         cursor: "pointer",
       },

@@ -96,7 +96,7 @@ const BusinessNewWidget = ({
     setDocumentTitle,
     isFetching,
     isPurchaseDocument,
-  } = useBusinessWidget({ values, documentType });
+  } = useBusinessWidget({ values, documentType, onChangeSelectBusiness });
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
   const { classes } = useStyle({ isRTL });
