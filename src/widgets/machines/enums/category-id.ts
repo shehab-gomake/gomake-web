@@ -64,4 +64,5 @@ export enum ECategoryId {
     ADHESIVE_TAPE = '63',
     ROLL_OFF_SET_PRINTING = '64',
     BOOK_BLOCK_MACHINE = '65',
+    DEVICE_MAKING_MACHINE = '66',
 }
