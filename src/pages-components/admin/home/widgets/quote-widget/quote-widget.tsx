@@ -143,6 +143,23 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
                     value
                   ).then();
                 }}
+                noOptionsText={t("home.admin.searchForCustomer")}
+                componentsProps={{
+                  paper: {
+                    sx: {
+                      "& .MuiAutocomplete-noOptions": {
+                        padding: "10px",
+                        color: "#2e3092",
+                        fontWeight: 400,
+                        fontSize: "14px",
+                        fontFamily: "Lexend",
+                        textAlign: "center",
+                        borderRadius: "6px",
+                        backgroundColor: "#f9f9f9",
+                      },
+                    },
+                  },
+                }}
               />
             </div>
             <div data-tour="select-type" style={{ width: "30%" }}>
