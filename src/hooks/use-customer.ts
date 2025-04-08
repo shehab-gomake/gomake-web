@@ -66,7 +66,6 @@ const useCustomer = (
       //setVersionState(user.appVersion);
       const appVersion = user.appVersion
       const userAppVersion = localStorage.getItem("appVersion");
-      debugger
       if(!userAppVersion){
         localStorage.setItem("appVersion",appVersion);
       }
