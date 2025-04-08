@@ -15,7 +15,7 @@ const filtersInputs = () => {
         type: 'select',
         multiple: true,
         values: filters?.automatedTags,
-        options: tags.map(tag =>({text: tag, value: tag})),
+        options: tags?.map(tag =>({text: tag, value: tag})),
         name: '',
         required: false,
         parameterKey: 'tags',

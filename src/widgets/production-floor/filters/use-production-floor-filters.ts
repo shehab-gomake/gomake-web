@@ -14,24 +14,24 @@ import {
 } from "@/widgets/production-floor/interfaces/filters";
 import { setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { boardsMissionsState,jobsStatusesState } from "@/widgets/production-floor/state/boards";
+import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
 import {
   EProductionFloorView,
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
 import { useRouter } from "next/router";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
 import { productionFloorPathsState } from "@/widgets/production-floor/state/production-floor-paths";
 import { useTranslation } from "react-i18next";
 import { selectedChipIdsState } from "../state/text-search";
 import {
-  deleteStationFilterByGroupIdApi, getJobsByGroups,
-  getStationFilterByGroupIdApi,
+  deleteStationFilterByGroupIdApi,  duplicateStationFilterByGroupIdApi,  getStationFilterByGroupIdApi,
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { selectedGroupIdState } from "../state/filter-group";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
+import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employees-api";
 
 interface onStationsChangeProps {
   stations: IStation[];
@@ -41,6 +41,14 @@ interface onStationsChangeProps {
 interface IUseProductionFloorFiltersProps {
   getStationFilterGroups?: any;
   connectionId: string;
+}
+
+interface ISelectedGroup {
+  id: string;
+  name: string;
+  inProcessCount: number;
+  stuckCount: number;
+  color: string;
 }
 
 const useProductionFloorFilters = ({
@@ -240,6 +248,18 @@ const useProductionFloorFilters = ({
     setAnchorEl(null);
   };
 
+  const [anchorElMenu, setAnchorElMenu] = useState<null | HTMLElement>(null);
+  const openMenu = Boolean(anchorElMenu);
+
+  const handleClickMenu = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    setAnchorElMenu(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchorElMenu(null);
+  };
+
+
   const handleChipClick = (card: { label: string; machineId: string }) => {
     const { label, machineId } = card;
     setSelectedChips((prevSelectedChips) => {
@@ -270,7 +290,14 @@ const useProductionFloorFilters = ({
   const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
     selectedGroupIdState
   );
-
+  const [selectedGroup, setSelectedGroup] = useState<ISelectedGroup | null>(null);
+  const [openModalDuplicateGroup, setOpenModalDuplicateGroup] = useState(false);
+  const onClickOpenModalDuplicateGroup = () => {
+    setOpenModalDuplicateGroup(true);
+  }
+  const onClickCloseModalDuplicateGroup = () => {
+    setOpenModalDuplicateGroup(false);
+  }
   const handleSelectGroup = (groupId: string) => {
     if (selectedGroupId === groupId) {
       setSelectedGroupId(null);
@@ -343,7 +370,49 @@ const useProductionFloorFilters = ({
     setOpenModal(false);
     setSelectedIdToDelete("");
   };
+  const [users, setUsers] = useState([]);
+  const getAllUsers = () => {
+    const callBackFunction = (data) => {
+      if (data.success) {
+        setUsers(data.data);
+      }
+    };
+    getAllUsersEmployeesApi(callApi, callBackFunction).then();
+  };
+  useEffect(() => {
+    getAllUsers();
+  }, []);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+const handleSelectAllUsers = (event: React.ChangeEvent<HTMLInputElement>) => {
+  if (event.target.checked) {
+    setSelectedUsers(users.map(user => user.id));
+  } else {
+    setSelectedUsers([]);
+  }
+};
 
+const handleUserSelect = (userId: string) => {
+  setSelectedUsers(prev => {
+    if (prev.includes(userId)) {
+      return prev.filter(id => id !== userId);
+    } else {
+      return [...prev, userId];
+    }
+  });
+};
+const duplicateStationFilterByGroupId = async () => {
+  const callBack = (res) => {
+    if (res.success) {
+      alertSuccessUpdate();
+      onClickCloseModalDuplicateGroup()
+      handleCloseMenu();
+    }
+  };
+  await duplicateStationFilterByGroupIdApi(callApi, callBack, {
+    id: selectedGroup?.id,
+    selectedUsers,
+  }).then();
+};
   return {
     t,
     dir,
@@ -394,6 +463,20 @@ const useProductionFloorFilters = ({
     handleDeleteConfirm,
     handleCancel,
     handleClearClick,
+    anchorElMenu,
+    openMenu,
+    handleClickMenu,
+    handleCloseMenu,
+    selectedGroup, 
+    setSelectedGroup,
+    openModalDuplicateGroup,
+    onClickOpenModalDuplicateGroup,
+    onClickCloseModalDuplicateGroup,
+    users,
+    selectedUsers,
+    handleSelectAllUsers,
+    handleUserSelect,
+    duplicateStationFilterByGroupId
   };
 };
 
