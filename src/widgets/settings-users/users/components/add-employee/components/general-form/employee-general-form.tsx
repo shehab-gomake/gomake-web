@@ -48,6 +48,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
   const [actionRequierdForEmployee, setActionRequierdForEmployee] = useState(
     []
   );
+  const profileState = useRecoilValue(userProfileState);
   const { callApi } = useGomakeAxios();
   const { printers, isPrintHouseUsePrintNode, getPrinterBins } =
     usePrintNodePrinters();
@@ -74,6 +75,11 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
           quotePriceLimit: 0,
           [key]: newValue,
         },
+      });
+    } else if (key === "systemLanguage") {
+      setState({
+        ...state,
+        [key]: value,
       });
     } else
       setState({
@@ -132,22 +138,19 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     });
   };
 
-  const profileState = useRecoilValue(userProfileState);
   useEffect(() => {
-    if (!state?.employee?.userLang && profileState?.systemLang) {
+    if (!state?.systemLanguage && profileState?.systemLang) {
       setState((prev) => ({
         ...prev,
-        employee: {
-          ...prev.employee,
-          userLang: profileState.systemLang,
-        },
+        systemLanguage: profileState.systemLang,
       }));
     }
-  }, [profileState?.systemLang, state?.employee?.userLang]);
+  }, [profileState?.systemLang, state?.systemLanguage]);
 
   const setAllSMSTemplatesList = useSetRecoilState<any>(
     allSMSTemplatesListState
   );
+
   const getAllSMSTemplatesList = useCallback(async () => {
     await getAllSMSTemplatesListApi(
       callApi,
@@ -179,7 +182,11 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
 
   const inputs = useCallback(() => {
     return {
-      employee: employeeInfoInputs(state.employee, quoteLimitationOptions),
+      employee: employeeInfoInputs(
+        state.employee,
+        state,
+        quoteLimitationOptions
+      ),
       account: accountInputs(state, action),
       agent: agentInputs(state.employee),
       ips: ipAddressesInputs(state),
