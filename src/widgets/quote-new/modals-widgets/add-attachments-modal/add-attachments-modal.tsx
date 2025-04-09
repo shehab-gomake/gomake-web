@@ -47,6 +47,7 @@ const AddAttachmentsModal = ({ openModal, onClose, documentType, getQuote }) => 
               maxHeight={400}
               rows={getAttachmentsRows()}
               headers={[t("fileUploader.fileName"), t("fileUploader.openFile"), t("fileUploader.deleteFile")]}
+              columnWidths={["70%", "15%", "15%"]}
             />
 
             <GoMakeDeleteModal
