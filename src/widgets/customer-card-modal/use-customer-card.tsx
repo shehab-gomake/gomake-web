@@ -619,6 +619,7 @@ const useCustomerCard = ({
     setNewGroupId,
     CheckPermission,
     profileState,
+    systemCurrency,
   };
 };
 

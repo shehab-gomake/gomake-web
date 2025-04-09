@@ -128,6 +128,7 @@ const CustomerCardWidget = ({
     setNewGroupId,
     CheckPermission,
     profileState,
+    systemCurrency,
   } = useCustomerCard({
     t,
     customer,
@@ -327,6 +328,15 @@ const CustomerCardWidget = ({
     },
   ].filter(Boolean);
 
+  useEffect(() => {
+    if (!customer?.currency && systemCurrency) {
+      setCustomer((prev) => ({
+        ...prev,
+        currency: systemCurrency,
+      }));
+    }
+  }, [customer?.currency, systemCurrency]);
+
   return (
     <GoMakeModal
       openModal={open}
@@ -353,22 +363,19 @@ const CustomerCardWidget = ({
             </span>
           </Stack>
           <div style={classes.customerInfoStyle}>
-            {customerInputs(
-              typeClient,
-              codeFlag,
-              customer,
-              clientTypesCategories
-            ).map((item) => (
-              <div style={{ marginBottom: 10 }}>
-                <FormInput
-                  key={"customer-input"}
-                  input={item as IInput}
-                  changeState={onChangeInputs}
-                  error={item.required && !item.value}
-                  readonly={!!item.readonly}
-                />
-              </div>
-            ))}
+            {customerInputs(typeClient, customer, showUpdateButton).map(
+              (item) => (
+                <div style={{ marginBottom: 10 }}>
+                  <FormInput
+                    key={"customer-input"}
+                    input={item as IInput}
+                    changeState={onChangeInputs}
+                    error={item.required && !item.value}
+                    readonly={!!item.readonly}
+                  />
+                </div>
+              )
+            )}
             <div style={classes.itemOnFirstContainer}>
               <div style={classes.labelTitleStyle}>
                 <div style={classes.inputLbl}>
