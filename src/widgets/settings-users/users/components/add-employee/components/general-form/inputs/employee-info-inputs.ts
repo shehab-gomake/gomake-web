@@ -64,8 +64,8 @@ const employeeInfoInputs = (state: Employee, quoteLimitationOptions: any) => {
       required: false,
       parameterKey: "userLang",
       options: languages,
-      value: state.userLang,
-      isValid: !!state.userLang,
+      value: state?.userLang,
+      isValid: !!state?.userLang,
       readonly: false,
     },
     {
