@@ -452,8 +452,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           ? mission.station.machineName
           : mission.station.employeeName;
       if (empName)
-        return `${mission.boardMissionStatus.name} \n\r ${mission.station.actionName} \n\r ${empName}`;
-      return `${mission.boardMissionStatus.name} \n\r ${mission.station.actionName}`;
+        return `${t("productionStatuses." + mission.boardMissionStatus.name)} \n\r ${mission.station.actionName} \n\r ${empName}`;
+      return `${t("productionStatuses." + mission.boardMissionStatus.name)} \n\r ${mission.station.actionName}`;
     }
     return "";
   };
@@ -505,8 +505,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 {mission?.orderNumber}
               </a>,
               mission?.outSourceType === null
-                ? EWorkSource[0]
-                : EWorkSource[mission?.outSourceType],
+                ? `${t("boardMissions." + EWorkSource[0])}`
+                : `${t("boardMissions." + EWorkSource[mission?.outSourceType])}`,
               mission?.quantity,
               ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                 ? [mission?.cost + " " + getCurrencyUnitText(mission?.currency)]
