@@ -172,19 +172,7 @@ export default function Customers() {
               rows={getCustomersRows()}
               headers={tableHeaders}
             />
-            <CustomerCardWidget
-              isValidCustomer={isValidCustomer}
-              customerAction={CUSTOMER_ACTIONS.Edit}
-              codeFlag={true}
-              typeClient={CLIENT_TYPE.CUSTOMER}
-              getAllCustomers={getAllCustomers}
-              openModal={showCustomerModal}
-              modalTitle={t("customers.modal.editTitle")}
-              onClose={() => setShowCustomerModal(false)}
-              customer={customerForEdit}
-              setCustomer={setCustomerForEdit}
-              showUpdateButton={true}
-            />
+
             <ThreeOptionsModal
               modalType={ModalType.WARNING}
               title={t("customers.modal.exportClients")}
@@ -242,6 +230,19 @@ export default function Customers() {
           actionType="add"
         />
       )}
+      <CustomerCardWidget
+        isValidCustomer={isValidCustomer}
+        customerAction={CUSTOMER_ACTIONS.Edit}
+        codeFlag={true}
+        typeClient={CLIENT_TYPE.CUSTOMER}
+        getAllCustomers={getAllCustomers}
+        openModal={showCustomerModal}
+        modalTitle={t("customers.modal.editTitle")}
+        onClose={() => setShowCustomerModal(false)}
+        customer={customerForEdit}
+        setCustomer={setCustomerForEdit}
+        showUpdateButton={true}
+      />
     </CustomerAuthLayout>
   );
 }
