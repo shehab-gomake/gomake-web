@@ -5,11 +5,12 @@ import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
 import { ActionsListMenu } from "@/widgets/product-pricing-widget/components/actions-menu";
 import { useWorkFlows } from "./use-work-flows";
 import { CircularProgress, Typography } from "@mui/material";
-import { GomakePrimaryButton } from "@/components";
+import { GomakePrimaryButton, SecondSwitch } from "@/components";
 import { CopyAnotherProductsModal } from "./copy-another-products-modal";
 import { useState } from "react";
 
-const WorkFlowsWidget = () => {
+const WorkFlowsWidget = ({ productState, getProductById }: any) => {
+  console.log("productState", productState)
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
@@ -25,9 +26,9 @@ const WorkFlowsWidget = () => {
     deleteActionFromProduct,
     updateActionsOrderInProduct,
     updateProductAction,
-  } = useWorkFlows();
+    toggleIgnoreCalculatedWorkflows
+  } = useWorkFlows({ getProductById });
   const [openCopyAnotherProductsModal, setOpenCopyAnotherProductsModal] = useState(false);
-
   const handleOpenCopyAnotherProductsModal = () => {
     setOpenCopyAnotherProductsModal(true);
   }
@@ -39,6 +40,15 @@ const WorkFlowsWidget = () => {
   return (
     <div style={clasess.mainContainer}>
       <div style={clasess.headerContainer}>
+        <div style={clasess.switchContainer}>
+          <SecondSwitch
+            checked={productState?.ignoreCalculatedWorkflows}
+            onChange={(e) => toggleIgnoreCalculatedWorkflows()}
+          />
+          <span style={clasess.switchLabel}>
+            {t("pricingWidget.ignoreCalculatedWorkflow")}
+          </span>
+        </div>
         {productActions?.length > 0 && <GomakePrimaryButton style={clasess.copyToAnotherProductsButton} onClick={handleOpenCopyAnotherProductsModal} >
           {t("pricingWidget.copyToAnotherProducts")}
         </GomakePrimaryButton>}
