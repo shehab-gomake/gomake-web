@@ -924,17 +924,43 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     }
   }, [missionItem, quantityPerPackage]);
 
+  // const handlePackageQuantityChange = (index: number, newValue: number) => {
+  //   setPackageQuantities((prevQuantities) => {
+  //     const updatedQuantities = [...prevQuantities];
+  //     updatedQuantities[index] = newValue;
+
+  //     if (index === quantityOfPackages - 1) {
+  //       const totalQuantity = missionItem?.quantity || 0;
+  //       const sumOfOtherPackages = updatedQuantities
+  //         .slice(0, -1)
+  //         .reduce((acc, val) => acc + val, 0);
+  //       updatedQuantities[index] = totalQuantity - sumOfOtherPackages;
+  //     }
+
+  //     return updatedQuantities;
+  //   });
+  // };
+
   const handlePackageQuantityChange = (index: number, newValue: number) => {
     setPackageQuantities((prevQuantities) => {
       const updatedQuantities = [...prevQuantities];
+      const totalQuantity = missionItem?.quantity || 0;
+
+      // Set the new value for the changed package
       updatedQuantities[index] = newValue;
 
       if (index === quantityOfPackages - 1) {
-        const totalQuantity = missionItem?.quantity || 0;
+        // If last package is changed, put remaining in first package
+        const sumOfOtherPackages = updatedQuantities
+          .slice(1)
+          .reduce((acc, val) => acc + val, 0);
+        updatedQuantities[0] = totalQuantity - sumOfOtherPackages;
+      } else {
+        // If any other package is changed, put remaining in last package
         const sumOfOtherPackages = updatedQuantities
           .slice(0, -1)
           .reduce((acc, val) => acc + val, 0);
-        updatedQuantities[index] = totalQuantity - sumOfOtherPackages;
+        updatedQuantities[quantityOfPackages - 1] = totalQuantity - sumOfOtherPackages;
       }
 
       return updatedQuantities;
