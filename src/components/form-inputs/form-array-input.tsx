@@ -48,7 +48,6 @@ const FormArrayInput = ({
     });
     setErrors(requiredErrors);
     if (canAdd) {
-      debugger;
       updateState(parameterKey, [...value, state]);
       setState({ name: "" });
     } else {
