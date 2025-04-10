@@ -192,6 +192,8 @@ const useQuoteNew = ({
     openDuplicateWithDifferentQTYModal,
     setOpenDuplicateWithDifferentQTYModal,
   ] = useState(false);
+  const [isAddQuantity, setIsAddQuantity] = useState(false);
+
   const [openQuickDuplicateModal, setOpenQuickDuplicateModal] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [amountValue, setAmountValue] = useState();
@@ -350,8 +352,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1089,10 +1091,11 @@ const useQuoteNew = ({
   const onCloseQuickDuplicate = () => {
     setOpenQuickDuplicateModal(false);
   };
-  const onClickQuickDuplicate = (quoteItem) => {
+  const onClickQuickDuplicate = (quoteItem, isAddQuantity = false) => {
     onOpenQuickDuplicate();
     setQuateItemId(quoteItem?.id);
     setQuoteItem(quoteItem);
+    setIsAddQuantity(isAddQuantity);
   };
 
   const duplicateQuoteItemWithAnotherQuantity = async () => {
@@ -1175,7 +1178,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -2387,6 +2390,7 @@ const useQuoteNew = ({
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,
     systemVAT,
+    isAddQuantity
   };
 };
 
