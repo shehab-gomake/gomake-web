@@ -30,7 +30,6 @@ const FooterSection = ({ onCloseModal }: any) => {
     setTotalPayment,
   } = usePaymentsTable();
 
-  //!here new instead of  totalSum
   const totalAllocatedDocuments = useRecoilValue<number>(
     totalAllocatedDocumentsState
   );
