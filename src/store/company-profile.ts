@@ -62,4 +62,19 @@ export interface ICompanyProfile {
   printnodePassword?: string;
   employeeWorkingHourCost?: string;
   unitType?: number;
+
+  //!here new
+  clearanceCompany?: CreditClearanceCompanies;
+  terminalNumber?: string;
+  terminalPassword?: string;
+  pinPads?: Array<{
+    name: string;
+    number: string;
+  }>;
+}
+
+export enum CreditClearanceCompanies {
+  PAYME,
+  Z_CREDIT,
+  YAAD_PAY,
 }
