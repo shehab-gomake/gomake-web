@@ -42,12 +42,6 @@ export interface ICompanyProfile {
   };
   footerImage?: null | string;
   showContactInfo?: null | string;
-  zCreditTerminalNumber?: string;
-  zCreditPassword?: string;
-  zCreditPinPadId?: string;
-  creditClearanceCompany?: number;
-  yaadPayMasof?: string;
-  yaadPayPassP?: string;
   dashboardCode?: string;
   id?: string;
   name?: string;
@@ -64,7 +58,7 @@ export interface ICompanyProfile {
   unitType?: number;
 
   //!here new
-  clearanceCompany?: CreditClearanceCompanies;
+  creditClearanceCompany?: CreditClearanceCompanies;
   terminalNumber?: string;
   terminalPassword?: string;
   pinPads?: Array<{
