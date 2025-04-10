@@ -5,7 +5,6 @@ import {
 
 const companyCreditCardsInputs = (state: ICompanyProfile) => {
   const clearanceCompanies = [
-    { value: CreditClearanceCompanies.PAYME, text: "PAYME" },
     { value: CreditClearanceCompanies.Z_CREDIT, text: "Z-credit" },
     { value: CreditClearanceCompanies.YAAD_PAY, text: "Yaad pay" },
   ];
