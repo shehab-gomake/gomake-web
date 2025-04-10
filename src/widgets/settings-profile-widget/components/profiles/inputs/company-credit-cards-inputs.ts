@@ -3,10 +3,16 @@ import {
   ICompanyProfile,
 } from "@/store/company-profile";
 
-const companyCreditCardsInputs = (state: ICompanyProfile) => {
+const companyCreditCardsInputs = (state: ICompanyProfile, t) => {
   const clearanceCompanies = [
-    { value: CreditClearanceCompanies.Z_CREDIT, text: "Z-credit" },
-    { value: CreditClearanceCompanies.YAAD_PAY, text: "Yaad pay" },
+    {
+      value: CreditClearanceCompanies.Z_CREDIT,
+      text: t("profileSettings.zCredit"),
+    },
+    {
+      value: CreditClearanceCompanies.YAAD_PAY,
+      text: t("profileSettings.yaadPay"),
+    },
   ];
 
   return [

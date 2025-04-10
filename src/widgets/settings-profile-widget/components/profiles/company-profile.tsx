@@ -92,7 +92,7 @@ const CompanyProfileComponent = ({
     },
 
     {
-      inputs: companyCreditCardsInputs(profile),
+      inputs: companyCreditCardsInputs(profile, t),
       title: "profileSettings.creditCards",
     },
     {

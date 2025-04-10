@@ -6,6 +6,7 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { GoMakeAutoComplate } from "@/components";
 import { useEffect } from "react";
+import { adaptPaddingRight } from "@/utils/adapter";
 
 const CreditCardTab = ({
   firstWidget,
@@ -39,6 +40,8 @@ const CreditCardTab = ({
     transactionSelected,
     cardTransactionsOptions,
     handleChooseExistingCard,
+    pinPadsOptions,
+    dir,
   } = usePaymentMethodsTabs();
 
   useEffect(() => {
@@ -95,7 +98,7 @@ const CreditCardTab = ({
         </div>
       )}
       {!transactionSelected && (
-        <div dir="ltr" style={classes.mainContainer}>
+        <div style={classes.mainContainer}>
           {firstWidget && (
             <div style={classes.firstWidgetStyle}>
               <div style={classes.creditCardInputsContainer}>
@@ -105,20 +108,29 @@ const CreditCardTab = ({
                   style={{
                     ...classes.creditCardInputs,
                     width: "55%",
-                    paddingLeft: "5px",
+                    ...adaptPaddingRight(dir, 5),
+                    direction: dir,
                   }}
                   placeholder="Card number"
                   value={creditCard?.cardNumber}
                 />
                 <input
                   onChange={handleExpiryDateChange}
-                  style={{ ...classes.creditCardInputs, width: "20%" }}
+                  style={{
+                    ...classes.creditCardInputs,
+                    width: "20%",
+                    direction: dir,
+                  }}
                   placeholder="MM/YY"
                   value={creditCard?.expDate_MMYY}
                 />
                 <input
                   {...getCVCProps({ onChange: handleCVVChange })}
-                  style={{ ...classes.creditCardInputs, width: "20%" }}
+                  style={{
+                    ...classes.creditCardInputs,
+                    width: "20%",
+                    direction: dir,
+                  }}
                   placeholder="CVV"
                   value={creditCard?.cvv}
                 />
@@ -274,9 +286,21 @@ const CreditCardTab = ({
           {thirdWidget && (
             <div style={classes.firstWidgetStyle}>
               <div style={classes.creditCardSecondInputsContainer}>
+                <GoMakeAutoComplate
+                  key={"Select a PIN pad"}
+                  style={classes.selectInputs}
+                  placeholder={t("payment.selectPinPad")}
+                  options={pinPadsOptions}
+                  value={pinPadsOptions?.find(
+                    (option) => option.value === creditCard?.pinPadId
+                  )}
+                  onChange={(e, value) =>
+                    handleChangeInputs("pinPadId", value?.value)
+                  }
+                />
                 <input
                   key={"Total-3"}
-                  style={classes.creditSecondCardInputs}
+                  style={{ ...classes.creditSecondCardInputs, width: "100%" }}
                   placeholder="Total"
                   value={totalCreditCard}
                   onChange={(e) => {
