@@ -15,9 +15,9 @@ const useStyle = () => {
         height: "100%",
       },
       insideStyle: {
-        width: "30%",
+        width: "50%",
         borderRadius: 5,
-        height: "30%",
+        height: "fit-content",
       },
       textInputStyle: {
         width: "100%",
@@ -47,6 +47,13 @@ const useStyle = () => {
       },
       selectTypeContainer: {
         width: "100%",
+      },
+      primaryButtonChooseFile: {
+        width: "fit-content",
+        height: "36px",
+      },
+      attachmentsContainer: {
+        marginTop: "15px",
       },
     };
   }, []);

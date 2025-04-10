@@ -11,6 +11,7 @@ const GET_MATERIAL_TABLE_HEADERS_URL = "/v1/materials/GetMaterialTypeTableHeader
 const DOWNLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/download-material-excel";
 const UPLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/upload-material-excel-file";
 const UPDATE_MATERIALS_IMAGES = "/v1/materials/update-materials-images";
+const UPLOAD_DOCUMENT_ATTACHMENT = "/v1/erp-service/documents/upload-document-attachment"
 const UPDATE_SUPPLIER_PRIORITY = "/v1/materials/update-supplier-priority";
 const GET_MATERIAL_CATEGORIES_URL = "/v1/materials/GetMaterialCategories";
 const getDeviceSizeMockURL = "/v1/materials/get-device-size-material";
@@ -348,6 +349,20 @@ const toggleMaterialTypeActiveApi: ICallAndSetData = async (
   );
 };
 
+const uploadDocumentAttachmentApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPLOAD_DOCUMENT_ATTACHMENT,
+    callBack,
+    data
+  );
+};
+
 export {
   getMaterialsTypesApi,
   getMaterialTableHeadersApi,
@@ -370,5 +385,6 @@ export {
   getDocumentItemDataFromMaterialApi,
   updateMaterialCategoryNumberingApi,
   updateSupplierPriorityApi,
-  toggleMaterialTypeActiveApi
+  toggleMaterialTypeActiveApi,
+  uploadDocumentAttachmentApi
 };

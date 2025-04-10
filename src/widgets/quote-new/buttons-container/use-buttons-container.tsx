@@ -62,6 +62,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [, setShowPrintJobsModal] = useRecoilState(newOrderIdToPrintJobsState);
   const [openReceiptCreationModal, setOpenReceiptCreationModal] =
     useRecoilState(openReceiptCreationModalState);
+
   const [openOrderNowPrePaymentModal, setOpenOrderNowPrePaymentModal] =
     useState(false);
 
@@ -260,7 +261,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
         return item ? { ...item, sumApplied } : null;
       })
-      .filter(Boolean);
+      .filter(Boolean)
 
     const newReceiptItem = {
       ...quoteItemValue,
@@ -384,8 +385,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         docType === DOCUMENT_TYPE.order
           ? navigate("/orders")
           : docType === DOCUMENT_TYPE.deliveryNote
-          ? navigate("/deliveryNotes")
-          : navigate("/invoices");
+            ? navigate("/deliveryNotes")
+            : navigate("/invoices");
       } else {
         alertFaultUpdate();
       }

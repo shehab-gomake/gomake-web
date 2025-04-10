@@ -1,10 +1,17 @@
 import { allSMSTemplatesListState } from "@/store";
 import { languageOptionsState } from "@/store/languages";
 import { EmployeeQuoteLimitationType } from "@/widgets/settings-users/users/enums/employee-actions";
-import { Employee } from "@/widgets/settings-users/users/interface/employee";
+import {
+  Employee,
+  IUserData,
+} from "@/widgets/settings-users/users/interface/employee";
 import { useRecoilValue } from "recoil";
 
-const employeeInfoInputs = (state: Employee, quoteLimitationOptions: any) => {
+const employeeInfoInputs = (
+  state: Employee,
+  userState: IUserData,
+  quoteLimitationOptions: any
+) => {
   const languages = useRecoilValue(languageOptionsState);
   const allSMSTemplatesList = useRecoilValue(allSMSTemplatesListState);
   return [
@@ -57,15 +64,15 @@ const employeeInfoInputs = (state: Employee, quoteLimitationOptions: any) => {
     //     isValid: !!state.pinCodeForLoginWithApplication,
     // },
     {
-      name: "userLang",
+      name: "systemLanguage",
       label: "customers.modal.language",
       type: "select",
       placeholder: "customers.modal.language",
       required: false,
-      parameterKey: "userLang",
+      parameterKey: "systemLanguage",
       options: languages,
-      value: state.userLang,
-      isValid: !!state.userLang,
+      value: userState?.systemLanguage,
+      isValid: !!userState?.systemLanguage,
       readonly: false,
     },
     {

@@ -61,6 +61,7 @@ import { SettingVatListMenu } from "@/widgets/quote-new/setting-vat-menu";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { UpdateDeliveryPriceModal } from "@/widgets/quote-new/modals-widgets/update-delivery-price-modal/update-delivery-price-modal";
 import { useModal } from "@/hooks/use-modal";
+import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -308,7 +309,10 @@ const QuoteNewPageWidget = ({
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,
     systemVAT,
-    isAddQuantity
+    isAddQuantity,
+    openAddAttachmentsModal,
+    onOpenAddAttachmentsModal,
+    onCloseAddAttachmentsModal,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -787,6 +791,7 @@ const QuoteNewPageWidget = ({
                 onClickSendReceiptToClient={onClickSendReceiptToClient}
                 handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
                 onClickConfirmCreateDocument={onClickConfirmCreateDocument}
+                onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal}
               />
             </div>
           )}
@@ -798,7 +803,7 @@ const QuoteNewPageWidget = ({
         !isPrePaymentPage &&
         !quoteConfirm?.isConfirmed &&
         quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled && (
-          <ButtonsConfirmContainer />
+          <ButtonsConfirmContainer onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal} />
         )}
       <AddNewItemModal
         openModal={openAddNewItemModal}
@@ -1089,6 +1094,12 @@ const QuoteNewPageWidget = ({
         subTitle="modal.alertDifferentVat"
         yesBtn="modal.ok"
         withCancelBtn={false}
+      />
+      <AddAttachmentsModal
+        openModal={openAddAttachmentsModal}
+        onClose={onCloseAddAttachmentsModal}
+        documentType={documentType}
+        getQuote={getQuote}
       />
     </>
   );
