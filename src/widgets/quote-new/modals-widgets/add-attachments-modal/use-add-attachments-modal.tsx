@@ -32,12 +32,12 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
             reader.onload = (event) => {
                 const arrayBuffer = event.target.result;
                 const data = new Uint8Array(arrayBuffer as ArrayBuffer);
-                // Convert data to a Base64 string
-                const base64Content = btoa(
-                    new Uint8Array(data).reduce(function (data, byte) {
+                // Convert data to a Base64 string with proper data URI format
+                const base64Content = `data:${file.type};base64,${btoa(
+                    new Uint8Array(data).reduce((data, byte) => {
                         return data + String.fromCharCode(byte);
-                    }, "")
-                );
+                    }, '')
+                )}`;
 
                 uploadDocumentAttachmentApi(callApi, () => {
                     getQuote();
