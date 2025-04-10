@@ -26,6 +26,16 @@ const useStyle = () => {
         width: "100%",
         gap: 15,
       },
+      switchContainer:{
+        display: "flex",
+        flexDirection: "row" as "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+      },
+      switchLabel:{
+        ...FONT_FAMILY.Inter(700, 14),
+        color: "#344054",
+      },
       autoCompleteSelectedSectionName: {
         display: "flex",
         alignItems: "center",
