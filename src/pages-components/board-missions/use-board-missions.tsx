@@ -496,7 +496,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 {mission?.clientName}
               </div>,
               mission?.productType
-                ? `${mission?.number} / ${mission?.productType}`
+                ? `${mission?.number} / ${mission?.productTypeName ? mission?.productTypeName : mission?.productType}`
                 : mission?.number,
               <a
                 style={classes.tableAtagStyle}
@@ -654,7 +654,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             </div>,
             mission?.supplierName,
             mission?.productType
-              ? `${mission?.number} / ${mission?.productType}`
+              ? `${mission?.number} / ${mission?.productTypeName ? mission?.productTypeName : mission?.productType}`
               : mission?.number,
             mission?.orderNumber,
             mission?.purchaseOrderNumber,
