@@ -31,7 +31,6 @@ interface ICompanyProfileComponentProps {
   taxLoginUrl: string;
 }
 
-//!here
 const CompanyProfileComponent = ({
   taxLoginUrl,
 }: ICompanyProfileComponentProps) => {

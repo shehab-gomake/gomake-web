@@ -121,7 +121,7 @@ const FormArrayInput = ({
               <Collapse>
                 <div
                   key={"row" + index}
-                  style={{ ...classes.inputsRow, paddingTop: 12 }}
+                  style={{ ...classes.inputsRow, paddingTop: 20 }}
                 >
                   {inputs.map((input) => (
                     <FormInput
