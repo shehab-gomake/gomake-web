@@ -7,6 +7,7 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { GoMakeAutoComplate } from "@/components";
 import { useEffect } from "react";
 import { adaptPaddingRight } from "@/utils/adapter";
+import { getItem, setItem } from "@/services/storage-data";
 
 const CreditCardTab = ({
   firstWidget,
@@ -21,7 +22,6 @@ const CreditCardTab = ({
 }) => {
   const { classes } = useStyle();
   const { getCardNumberProps, getCVCProps } = usePaymentInputs();
-
   const {
     t,
     handleCardNumberChange,
@@ -75,6 +75,14 @@ const CreditCardTab = ({
     );
     handleChangeInputs("transactionSum", documentItemValue?.creditCardTotal);
   }, [firstWidget, secondWidget, thirdWidget]);
+
+  useEffect(() => {
+    const storedPinPadId = getItem("lastUsedPinPadId");
+    if (storedPinPadId && !creditCard?.pinPadId) {
+      debugger;
+      handleChangeInputs("pinPadId", storedPinPadId);
+    }
+  }, []);
 
   return (
     <div
@@ -294,9 +302,13 @@ const CreditCardTab = ({
                   value={pinPadsOptions?.find(
                     (option) => option.value === creditCard?.pinPadId
                   )}
-                  onChange={(e, value) =>
-                    handleChangeInputs("pinPadId", value?.value)
-                  }
+                  onChange={(e, value) => {
+                    const selectedValue = value?.value;
+                    if (selectedValue) {
+                      setItem("lastUsedPinPadId", selectedValue);
+                    }
+                    handleChangeInputs("pinPadId", selectedValue);
+                  }}
                 />
                 <input
                   key={"Total-3"}
