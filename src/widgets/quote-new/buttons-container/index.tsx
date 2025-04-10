@@ -43,6 +43,7 @@ const ButtonsContainer = ({
   onClickSendReceiptToClient,
   handleSendUsingWhatsAppWeb,
   onClickConfirmCreateDocument,
+  onClickOpenAddAttachmentsModal
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -199,6 +200,24 @@ const ButtonsContainer = ({
             {quoteItemValue?.isHaveDeliveryItem
               ? t("sales.quote.updateDelivery")
               : t("sales.quote.addDelivery")}
+          </GomakePrimaryButton>
+        )}
+        {(
+          <GomakePrimaryButton
+            leftIcon={
+              quoteItemValue?.attachments?.length > 0 ? (
+                <EditIcon stroke={"#344054"} />
+              ) : (
+                <PlusIcon stroke={"#344054"} />
+              )
+            }
+            style={classes.btnContainer}
+            onClick={onClickOpenAddAttachmentsModal}
+
+          >
+            {quoteItemValue?.attachments?.length > 0
+              ? t("sales.quote.editAttachments")
+              : t("sales.quote.addAttachments")}
           </GomakePrimaryButton>
         )}
         {isNewCreation &&
