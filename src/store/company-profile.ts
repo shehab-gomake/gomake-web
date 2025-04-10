@@ -68,7 +68,6 @@ export interface ICompanyProfile {
 }
 
 export enum CreditClearanceCompanies {
-  PAYME,
-  Z_CREDIT,
+  Z_CREDIT = 1,
   YAAD_PAY,
 }
