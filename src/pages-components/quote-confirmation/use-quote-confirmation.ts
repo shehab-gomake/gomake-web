@@ -16,8 +16,9 @@ import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-pro
 
 interface IProps {
   documentType?: DOCUMENT_TYPE;
+  isPrePaymentPage?: boolean;
 }
-const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
+const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) => {
   const router = useRouter();
   const { t } = useTranslation();
   const direction = t("direction");
@@ -51,7 +52,7 @@ const useQuoteConfirmation = ({ documentType }: IProps = {}) => {
 
   const getTempUserToken = useCallback(async () => {
     const TokenRes: any = await callApi("GET", "/v1/auth/get-temp-user-token", {
-      token: router?.query?.recordId,
+      token: isPrePaymentPage ? router?.query?.recordId : router?.query?.Id,
     });
     if (TokenRes?.success) {
       const userToken = TokenRes?.data?.data?.result?.token;

@@ -802,7 +802,7 @@ const QuoteNewPageWidget = ({
         !isPrePaymentPage &&
         !quoteConfirm?.isConfirmed &&
         quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled && (
-          <ButtonsConfirmContainer />
+          <ButtonsConfirmContainer onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal} />
         )}
       <AddNewItemModal
         openModal={openAddNewItemModal}

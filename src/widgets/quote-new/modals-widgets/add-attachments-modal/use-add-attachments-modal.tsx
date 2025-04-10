@@ -14,6 +14,7 @@ interface AttachmentPayload {
     documentType: number;
     fileName: string;
     base64Content: string;
+    fileUrl?: string;
 }
 const useAddAttachmentsModal = ({ getQuote, documentType }) => {
     const { t } = useTranslation();
@@ -63,7 +64,9 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
                     ? `${attachment.fileName.substring(0, 35)}...`
                     : attachment.fileName}
             </h4>,
-            <IconButton>
+            <IconButton onClick={() => {
+                window.open(attachment.fileUrl, '_blank');
+            }}>
                 <FileOpenIcon />
             </IconButton>,
             <IconButton onClick={() => {
