@@ -22,7 +22,6 @@ export default function GuestsWidget() {
         navigate("/login");
       }
       updateTokenStorage(userToken);
-      debugger;
       const product = router?.query?.product;
       if (product) {
         const ProductRes: any = await callApi(

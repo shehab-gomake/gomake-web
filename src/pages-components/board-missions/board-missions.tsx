@@ -130,7 +130,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   );
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
   useEffect(() => {
-    debugger;
     if (
       router.isReady &&
       companyProfile.filesApiAddress &&
