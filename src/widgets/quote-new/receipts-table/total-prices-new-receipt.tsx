@@ -127,7 +127,6 @@ const TotalPricesNewReceipts = ({ sum, taxDeduction, totalPayment }) => {
         >
           <div>
             {Number(totalPayment) +
-              Number(taxDeduction) +
               " " +
               getCurrencyUnitText(quoteItemValue?.currency)}
           </div>
