@@ -38,7 +38,6 @@ import { useRouter } from "next/router";
 const usePaymentMethodsTabs = () => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
-
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
@@ -480,6 +479,7 @@ const usePaymentMethodsTabs = () => {
     handleTotalSupplierCreditCardChange,
     pinPadsOptions,
     dir,
+    setCreditCard,
   };
 };
 

@@ -42,6 +42,7 @@ const CreditCardTab = ({
     handleChooseExistingCard,
     pinPadsOptions,
     dir,
+    setCreditCard,
   } = usePaymentMethodsTabs();
 
   useEffect(() => {
@@ -78,11 +79,13 @@ const CreditCardTab = ({
 
   useEffect(() => {
     const storedPinPadId = getItem("lastUsedPinPadId");
-    if (storedPinPadId && !creditCard?.pinPadId) {
-      debugger;
-      handleChangeInputs("pinPadId", storedPinPadId);
+    if (pinPadsOptions && storedPinPadId && !creditCard?.pinPadId) {
+      setCreditCard((prev) => ({
+        ...prev,
+        pinPadId: storedPinPadId,
+      }));
     }
-  }, []);
+  }, [pinPadsOptions]);
 
   return (
     <div
@@ -295,7 +298,7 @@ const CreditCardTab = ({
             <div style={classes.firstWidgetStyle}>
               <div style={classes.creditCardSecondInputsContainer}>
                 <GoMakeAutoComplate
-                  key={"Select a PIN pad"}
+                  key={creditCard?.pinPadId || "Select a PIN pad"}
                   style={classes.selectInputs}
                   placeholder={t("payment.selectPinPad")}
                   options={pinPadsOptions}
