@@ -67,9 +67,9 @@ const pinPadsInputs = (state: ICompanyProfile) => {
       inputs: [
         {
           name: "name",
-          label: "profileSettings.name",
+          label: "profileSettings.pinPadName",
           type: "text",
-          placeholder: "profileSettings.name",
+          placeholder: "profileSettings.pinPadName",
           required: false,
           parameterKey: "name",
           options: [],
@@ -78,9 +78,9 @@ const pinPadsInputs = (state: ICompanyProfile) => {
         },
         {
           name: "number",
-          label: "machineAttributes.number",
+          label: "profileSettings.pinPadNumber",
           type: "text",
-          placeholder: "machineAttributes.number",
+          placeholder: "profileSettings.pinPadNumber",
           required: false,
           parameterKey: "number",
           options: [],
