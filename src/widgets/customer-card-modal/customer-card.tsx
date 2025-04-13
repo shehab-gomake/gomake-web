@@ -268,13 +268,13 @@ const CustomerCardWidget = ({
           <Stack direction={"column"}>
             {addresses?.map((x) => (
               <AddressForm
-                key={x.index}
+                key={`${x.index}-${x.isDefault}`}
                 address={x}
                 onDelete={deleteAddressForm}
                 setAddress={(updatedAddressData) =>
                   updateAddress(x.index, updatedAddressData)
                 }
-              ></AddressForm>
+              />
             ))}
           </Stack>
         </Stack>
