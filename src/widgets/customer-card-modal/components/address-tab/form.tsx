@@ -24,7 +24,7 @@ interface IProps {
     po?: string;
     county?: string;
     remarks?: string;
-    default?: boolean;
+    isDefault?: boolean;
     index?: number;
     type?: EAddressType;
   };
