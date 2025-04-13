@@ -49,7 +49,8 @@ export enum Permissions {
   SHOW_PROFITS = "ShowProfit",
   EDIT_PROFITS = "EditProfitInActions",
   EDIT_PROPERTIES = "EditPropertiesInActions",
-
+  CAN_UPDATE_MACHINES_IN_WORK_FLOW_ACTION = "CanUpdateMachinesInWorkFloeAction",
+  CAN_UPDATE_EMPLOYEES_IN_WORK_FLOW_ACTION = "CanUpdateEmployyesInWorkFloeAction",
   //settings group
   SHOW_PROFILE_COMPANY = "ShowCompanyProfile",
   EDIT_COMPANY_PROFILE = "UpdateCompanyProfile",
