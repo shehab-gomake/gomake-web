@@ -66,8 +66,6 @@ const TableRowComponent = ({
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
   );
-  console.log("boardMission", boardMission);
-
   const { CheckPermission } = useUserPermission();
   const canDrag =
     CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR) &&

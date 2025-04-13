@@ -124,8 +124,6 @@ const StatusTableComponent = ({
       : boards;
   }, [boards, search]);
 
-  console.log("getBoards", getBoards());
-
   const getCustomWidth = (index: number) => {
     const widths = [
       "3%",
