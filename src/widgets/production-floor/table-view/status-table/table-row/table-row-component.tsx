@@ -31,6 +31,7 @@ import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp
 import { ApprovalFileStatusComponent } from "./approval-file-status-component";
 import { ExpandIcon } from "@/icons/expand-icon";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
+import { DateHourFormatterShort } from "@/utils/date-formatters";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -65,7 +66,7 @@ const TableRowComponent = ({
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
   );
-  console.log("isUrgentWork", isUrgentWork);
+  console.log("boardMission", boardMission);
 
   const { CheckPermission } = useUserPermission();
   const canDrag =
@@ -280,8 +281,11 @@ const TableRowComponent = ({
             <div />
             <div />
             <DateTimeProductionFloorComponent
-              dateString={boardMission.boardMissionCreatedDate}
+              dateString={convertUtcToLocalIsoString(boardMission.dueDate?.toString())}
             />
+            {/* {DateHourFormatterShort(
+              convertUtcToLocalIsoString(boardMission.boardMissionCreatedDate?.toString())
+            )} */}
             <div
               style={{
                 display: "flex",
