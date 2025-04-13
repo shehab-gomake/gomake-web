@@ -252,6 +252,7 @@ const TableRowComponent = ({
                 color: "#000000",
               }}
             >
+              {boardMission?.productType ? boardMission?.sectionName ? boardMission?.sectionName + " / " : boardMission?.productType + " / " : null}
               {`${boardMission?.boardMissionNumber}`}
               <br />
               {`${boardMission?.orderNumber}`}
