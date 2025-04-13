@@ -44,18 +44,18 @@ const ProductionFloorTableView = () => {
   const matchSearch = (mission) => {
     return search
       ? `${mission.boardMissionNumber}\\${mission.orderNumber}`.includes(
-          search
-        ) ||
-          `${mission.clientName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          `${mission.productName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          mission.automatedTags?.some((tag) =>
-            tag.toLowerCase().includes(search.toLowerCase())
-          ) ||
-          `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+        search
+      ) ||
+      `${mission.clientName?.toLowerCase()}`.includes(
+        search.toLowerCase()
+      ) ||
+      `${mission.productName?.toLowerCase()}`.includes(
+        search.toLowerCase()
+      ) ||
+      mission.automatedTags?.some((tag) =>
+        tag.toLowerCase().includes(search.toLowerCase())
+      ) ||
+      `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
       : true;
   };
   const allFilteredMissions = filteredDataByMachine.flatMap(
@@ -75,14 +75,19 @@ const ProductionFloorTableView = () => {
 
   return (
     <Stack gap={"20px"}>
-      {filteredDataByMachine.map((statusBoards, index) => (
-        <StatusTableComponent
-          key={index}
-          status={statusBoards?.boardMissionStatus?.boardMissionStatus}
-          boards={statusBoards?.boardMissions}
-          onClickClient={getCustomerForEdit}
-        />
-      ))}
+      {filteredDataByMachine.map((statusBoards, index) => {
+        const allBoardMissions = filteredDataByMachine
+          .flatMap(board => board.boardMissions)
+        return (
+          <StatusTableComponent
+            key={index}
+            status={statusBoards?.boardMissionStatus?.boardMissionStatus}
+            boards={statusBoards?.boardMissions}
+            onClickClient={getCustomerForEdit}
+            allBoardMissions={allBoardMissions}
+          />
+        );
+      })}
       <CustomerCardWidget
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}

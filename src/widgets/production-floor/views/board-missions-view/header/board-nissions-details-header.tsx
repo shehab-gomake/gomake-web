@@ -299,9 +299,8 @@ const BoardMissionsDetailsHeader = () => {
                     />
                     <HeaderDividerComponent />
                     <HeaderTitleComponent
-                      title={`${boardMissionsDetails.boardMissionNumber}/${
-                        boardMissionsDetails.orderNumber
-                      }${!!boardMissionsDetails.productType ? "/" : ""}`}
+                      title={`${boardMissionsDetails.boardMissionNumber}/${boardMissionsDetails.orderNumber
+                        }${!!boardMissionsDetails.productType ? "/" : ""}`}
                     />
                     <span style={classes.productType}>
                       {boardMissionsDetails.sectionName}

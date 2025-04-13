@@ -35,6 +35,7 @@ export interface IBoardMissions {
   productionFloorJobColor?: string;
   numberOfJobsInOrder?: number | string;
   description?: string;
+  sectionName?: string;
 }
 
 export interface IBoardMissionsDetails {
