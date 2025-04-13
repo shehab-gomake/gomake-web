@@ -437,6 +437,7 @@ const ActionContainerComponent = ({
       }
     }
   }, [foldOptionValueId, foldOptions])
+  const permissions = useRecoilValue(permissionsState);
 
 
 
@@ -504,9 +505,11 @@ const ActionContainerComponent = ({
                           {!chooseMachine ? (
                             <Button
                               onClick={(e) => {
-                                e.stopPropagation();
-                                setChooseMachine(true);
-                                onClickGetMachineForAction(actionId)
+                                if (permissions.includes(Permissions.CAN_UPDATE_MACHINES_IN_WORK_FLOW_ACTION)) {
+                                  e.stopPropagation();
+                                  setChooseMachine(true);
+                                  onClickGetMachineForAction(actionId)
+                                }
                               }}
                               variant={"text"}
                               style={classes.sectionTitle}
@@ -585,9 +588,11 @@ const ActionContainerComponent = ({
                           {!chooseEmployee ? (
                             <Button
                               onClick={(e) => {
-                                e.stopPropagation();
-                                setChooseEmployee(true);
-                                onClickGetEmployeeForAction(actionId)
+                                if (permissions.includes(Permissions.CAN_UPDATE_EMPLOYEES_IN_WORK_FLOW_ACTION)) {
+                                  e.stopPropagation();
+                                  setChooseEmployee(true);
+                                  onClickGetEmployeeForAction(actionId)
+                                }
                               }}
                               variant={"text"}
                               style={classes.sectionTitle}
