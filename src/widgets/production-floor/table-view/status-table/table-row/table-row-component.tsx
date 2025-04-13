@@ -41,6 +41,7 @@ interface IProps {
   index: number;
   isMobileScreen: boolean;
   isRTL?: boolean;
+  isUrgentWork?: boolean;
 }
 
 enum EDropArea {
@@ -58,11 +59,13 @@ const TableRowComponent = ({
   index,
   isMobileScreen,
   isRTL,
+  isUrgentWork
 }: IProps) => {
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
   );
+  console.log("isUrgentWork", isUrgentWork);
 
   const { CheckPermission } = useUserPermission();
   const canDrag =
@@ -243,7 +246,6 @@ const TableRowComponent = ({
             }}
           >
             <div />
-            <div />
 
             <div
               style={{
@@ -286,6 +288,9 @@ const TableRowComponent = ({
                 flexDirection: "row",
                 justifyContent: "center",
                 alignItems: "center",
+                maxWidth: isUrgentWork ? "50px" : null,
+                minWidth: isUrgentWork ? "50px" : null,
+                width: isUrgentWork ? "50px" : null,
               }}
             >
               {boardMission.showGraphicsApprovalAlert && (
