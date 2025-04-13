@@ -54,7 +54,13 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     setShowGraphics(quoteStateValue?.isShowGraphicsItems);
     setShowDelivery(quoteStateValue?.isShowDeliveryItems);
     setHideItemDiscountColumn(quoteStateValue?.hideItemDiscountColumn);
-  }, [quoteStateValue?.isShowDetails, quoteStateValue?.isShowPrice, quoteStateValue?.isShowGraphicsItems, quoteStateValue?.isShowDeliveryItems, quoteStateValue?.hideItemDiscountColumn]);
+  }, [
+    quoteStateValue?.isShowDetails,
+    quoteStateValue?.isShowPrice,
+    quoteStateValue?.isShowGraphicsItems,
+    quoteStateValue?.isShowDeliveryItems,
+    quoteStateValue?.hideItemDiscountColumn,
+  ]);
 
 
   useEffect(() => {
@@ -107,7 +113,10 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     event: ChangeEvent<HTMLInputElement>
   ) => {
     setHideItemDiscountColumn(event.target.checked);
-    updateDocumentPreference(event.target.checked, DocumentPreferencesEnum.HideItemDiscountColumn);
+    updateDocumentPreference(
+      event.target.checked,
+      DocumentPreferencesEnum.HideItemDiscountColumn
+    );
   };
 
   const handleTableSorting = (event: React.MouseEvent<HTMLElement>) => {
@@ -158,11 +167,11 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
       checked: showPrices,
       onChange: handleSwitchCheckForShowPrice,
     },
-    {
-      label: t("sales.quote.showGraphics"),
-      checked: showGraphics,
-      onChange: handleSwitchCheckForShowGraphics,
-    },
+    // {
+    //   label: t("sales.quote.showGraphics"),
+    //   checked: showGraphics,
+    //   onChange: handleSwitchCheckForShowGraphics,
+    // },
     // {
     //   label: t("sales.quote.showDelivery"),
     //   checked: showDelivery,
