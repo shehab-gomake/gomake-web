@@ -33,18 +33,25 @@ interface IProps {
   boards: IBoardMissions[];
   count?: number;
   onClickClient?: (clientId: any) => void;
+  allBoardMissions?: IBoardMissions[];
 }
 
 const StatusTableComponent = ({
   status,
   boards,
   count,
+  allBoardMissions,
   onClickClient,
 }: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const isMobileScreen = useMediaQuery("(max-width:768px)");
-
+  const hasUrgentOrApproval = allBoardMissions?.some(board =>
+    board.isUrgentWork ||
+    board.showGraphicsApprovalAlert === 1 ||
+    board.showGraphicsApprovalAlert === 0 ||
+    board.showGraphicsApprovalAlert === 2
+  );
   const {
     t,
     RTL,
@@ -99,29 +106,29 @@ const StatusTableComponent = ({
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-          (board) =>
-            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-              search
-            ) ||
-            `${board?.clientName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            `${board?.productName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            board?.automatedTags?.some((tag) =>
-              `${tag.toLowerCase()}`.includes(search.toLowerCase())
-            ) ||
-            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-        )
+        (board) =>
+          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+            search
+          ) ||
+          `${board?.clientName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          `${board?.productName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          board?.automatedTags?.some((tag) =>
+            `${tag.toLowerCase()}`.includes(search.toLowerCase())
+          ) ||
+          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+      )
       : boards;
   }, [boards, search]);
 
   const getCustomWidth = (index: number) => {
     const widths = [
       "3%",
-      "9%",
-      "9%",
+      "13%",
+      "7%",
       "9%",
       "9%",
       "23%",
@@ -152,9 +159,8 @@ const StatusTableComponent = ({
           },
         }}
       >
-        {`${
-          !status.isGroup ? t("productionStatuses." + status.name) : status.name
-        } (${getBoards().length})`}
+        {`${!status.isGroup ? t("productionStatuses." + status.name) : status.name
+          } (${getBoards().length})`}
       </Button>
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
@@ -196,25 +202,26 @@ const StatusTableComponent = ({
                   </SecondaryTableRow>
                 </TableHead>
                 <TableBody>
-                  {[...getBoards()]
-                    ?.sort((a, b) => a.priority - b.priority)
-                    ?.map((boardMission, index) => {
-                      return (
-                        <>
-                          <TableRowComponent
-                            key={"status" + status.id + boardMission.id + index}
-                            boardMission={boardMission}
-                            status={status}
-                            onClickDone={tryMoveBoardMissionsToDone}
-                            onClickPrintDTicket={onOpenPrintDeliverTicketModal}
-                            index={index}
-                            onClickClient={onClickClient}
-                            isMobileScreen={isMobileScreen}
-                            isRTL={RTL}
-                          />
-                        </>
-                      );
-                    })}
+                  {(() => {
+
+
+                    return [...getBoards()]
+                      ?.sort((a, b) => a.priority - b.priority)
+                      ?.map((boardMission, index) => (
+                        <TableRowComponent
+                          key={"status" + status.id + boardMission.id + index}
+                          boardMission={boardMission}
+                          status={status}
+                          onClickDone={tryMoveBoardMissionsToDone}
+                          onClickPrintDTicket={onOpenPrintDeliverTicketModal}
+                          index={index}
+                          onClickClient={onClickClient}
+                          isMobileScreen={isMobileScreen}
+                          isRTL={RTL}
+                          isUrgentWork={hasUrgentOrApproval}
+                        />
+                      ));
+                  })()}
                 </TableBody>
               </Table>
             </TableContainer>
