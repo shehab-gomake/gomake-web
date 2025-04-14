@@ -164,7 +164,7 @@ const addressInputs1 = (
       required: false,
       parameterKey: "isDefault",
       options: [],
-      value: state?.isDefault,
+      value: !!state?.isDefault,
       isValid: true,
     },
   ];
