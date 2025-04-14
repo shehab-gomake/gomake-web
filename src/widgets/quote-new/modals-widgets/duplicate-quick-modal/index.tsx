@@ -19,7 +19,8 @@ const DuplicateQuickModal = ({
   quoteItemId,
   documentType,
   getQuote,
-  quoteItem
+  quoteItem,
+  isAddQuantity
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -42,12 +43,24 @@ const DuplicateQuickModal = ({
     if (quoteItem?.productID && openModal) {
       getProductSizes()
     }
+    if (isAddQuantity && openModal) {
+      setGroups([{
+        id: 1,
+        parameters: [{
+          name: {
+            label: t("boardMissions.quantity"),
+            value: "4991945c-5e07-4773-8f11-2e3483b70b53"
+          },
+          value: ""
+        }]
+      }])
+    }
   }, [quoteItem, openModal])
   return (
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={t("products.addProduct.admin.advancedDuplicate")}
+        modalTitle={isAddQuantity ? t("sales.quote.addQuantity") : t("products.addProduct.admin.advancedDuplicate")}
         onClose={() => {
           onClose()
           setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }])
@@ -82,14 +95,24 @@ const DuplicateQuickModal = ({
                         { label: t("boardMissions.jobName"), value: "a330193f-492c-40a8-86f3-8edf5c8f0d5e" },
                         { label: t("boardMissions.quantity"), value: "4991945c-5e07-4773-8f11-2e3483b70b53" },
                         { label: t("machineAttributes.size"), value: "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4" },
-                        // { label: t("machineAttributes.width"), value: "4ba9a275-4fbc-4313-b284-e9b1cf8b452e" },
-                        // { label: t("machineAttributes.length"), value: "d2c965d3-6b08-4380-9d4b-17c361d7e484" },
-                      ]}
+                      ].filter(option =>
+                        // Filter out options that are already selected in other parameters of the same group
+                        !group.parameters.some((p, i) =>
+                          i !== index && p.name?.value === option.value
+                        )
+                      )}
+                      // options={[
+                      //   { label: t("boardMissions.jobName"), value: "a330193f-492c-40a8-86f3-8edf5c8f0d5e" },
+                      //   { label: t("boardMissions.quantity"), value: "4991945c-5e07-4773-8f11-2e3483b70b53" },
+                      //   { label: t("machineAttributes.size"), value: "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4" },
+                      // ]}
                       onChange={(e, value) => handleDropdownChange(groupIndex, index, value)}
                       value={param?.name}
                       style={clasess.groupParameterInput}
                       placeholder={t("products.profits.exceptions.selectParameter")}
                       withArrow={true}
+                      disabled={isAddQuantity} // Add disabled prop
+
                     />
                   </div>
                   <div style={clasess.groupParameterDropdown2}>
@@ -148,9 +171,9 @@ const DuplicateQuickModal = ({
                     }
                   </div>
                   <div style={clasess.groupParameterAddContainer}>
-                    <div onClick={() => addParameter(groupIndex)} style={clasess.groupParameterAdd}>
+                    {!isAddQuantity ? <div onClick={() => addParameter(groupIndex)} style={clasess.groupParameterAdd}>
                       <AddModalIcon />
-                    </div>
+                    </div> : <div style={clasess.groupParameterAdd2} />}
                     {group.parameters.length > 1 && (
                       <div onClick={() => deleteParameter(groupIndex, index)} style={clasess.groupParameterAdd}>
                         <DeleteModalIcon width="40" height="40" />

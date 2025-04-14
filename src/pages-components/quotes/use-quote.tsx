@@ -8,14 +8,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApprovalStatus, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
-import {
-  getAllProductsForDropDownList,
-  getAndSetClientTypes,
-} from "@/services/hooks";
-import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
+import { getAllProductsForDropDownList } from "@/services/hooks";
+import { useRecoilValue, useRecoilState } from "recoil";
 import {
   agentsCategoriesState,
-  clientTypesCategoriesState,
   isSelectedCLoseAsDeliveryNoteState,
 } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
@@ -84,6 +80,7 @@ import { EMessageStatus } from "@/enums/document-type-enum";
 import { useDocumentsTableSocketIo } from "@/hooks/socket-io/use-documents-table-socket-io";
 import { QuoteIfExistState } from "../quote-new/store/quote";
 import { userQuoteState } from "@/store/user-qoute-state";
+import { useClientTypesList } from "@/hooks/use-client-types";
 
 interface Query {
   customerId?: string;
@@ -223,7 +220,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
     useCustomerDropDownList({
-      shouldRenderCustomersOnMount: !isPurchaseDocument,
+      shouldRenderCustomersOnMount: !isPurchaseDocument && !isFromHomePage,
       shouldRenderSuppliersOnMount: isPurchaseDocument,
     });
 
@@ -1544,7 +1541,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   ) => {
     const callBack = (res) => {
       if (res?.success) {
-        debugger;
         const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
         const documentId = res?.data?.documentId;
         if (!isAnotherQuoteInCreate) {
@@ -1586,55 +1582,72 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const callBack = (res) => {
       if (res?.success) {
         const data = res?.data?.data;
-        const mapData = data?.map((document: any) => [
-          <div
-            style={{ cursor: "pointer" }}
-            onClick={() => onClickOpenCustomerModal(document?.customerId)}
-          >
-            {document?.customerName}
-          </div>,
-          document?.agentName,
-          document?.number,
-          document?.clientType,
-          document?.worksNames,
-          docType === DOCUMENT_TYPE.receipt
-            ? document?.creationDate?.split("T")[0]
-            : formatCustomDateTime(document?.createdDate),
-          document?.totalPrice + " " + getCurrencyUnitText(document?.currency),
-          <div style={{ display: "flex", justifyContent: "center" }}>
-            <h2
-              style={
-                document?.documentStatus == 2
-                  ? classes.openBtnStyle
-                  : classes.closeBtnStyle
-              }
+        const mapData = data?.map((document: any) => {
+          const baseRow = [
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => onClickOpenCustomerModal(document?.customerId)}
             >
-              {_renderStatus(docType, document, t, navigate)}
-            </h2>
-          </div>,
-          document?.notes,
-          <MoreMenuWidget
-            quote={document}
-            documentType={docType}
-            onClickEditQuote={onClickEditQuote}
-            onClickPdf={onClickQuotePdf}
-            onClickDuplicate={onClickDocumentDuplicate}
-            onClickLoggers={onClickDocumentLogs}
-            onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
-            onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-            onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
-            onClickOpenPriceModal={onClickOpenPriceModal}
-            onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-            onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
-            onClickSendPayment={onClickSendPayment}
-            onClickMakePayment={onClickMakePayment}
-            onClickCloseAndTrack={onClickOpenTrackModal}
-            onClickOpenChangeProductionStatusModal={
-              onClickOpenChangeProductionStatusModal
-            }
-            onClickReopenDocument={onClickOpenReopenDocumentModal}
-          />,
-        ]);
+              {document?.customerName}
+            </div>,
+            document?.agentName,
+            document?.number,
+            document?.clientType,
+            document?.worksNames,
+            isReceipt
+              ? document?.creationDate?.split("T")[0]
+              : formatCustomDateTime(document?.createdDate),
+            document?.totalPrice +
+              " " +
+              getCurrencyUnitText(document?.currency),
+            <div style={{ display: "flex", justifyContent: "center" }}>
+              <h2
+                style={
+                  document?.documentStatus == 2
+                    ? classes.openBtnStyle
+                    : classes.closeBtnStyle
+                }
+              >
+                {_renderStatus(docType, document, t, navigate)}
+              </h2>
+            </div>,
+          ];
+
+          if (isOrder) {
+            baseRow.push(
+              document?.productionStatus === true
+                ? t("boardMissions.done")
+                : t("boardMissions.inProduction")
+            );
+          }
+
+          baseRow.push(
+            <MoreMenuWidget
+              quote={document}
+              documentType={docType}
+              onClickEditQuote={onClickEditQuote}
+              onClickPdf={onClickQuotePdf}
+              onClickDuplicate={onClickDocumentDuplicate}
+              onClickLoggers={onClickDocumentLogs}
+              onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+              onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+              onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
+              onClickOpenPriceModal={onClickOpenPriceModal}
+              onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+              onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
+              onClickSendPayment={onClickSendPayment}
+              onClickMakePayment={onClickMakePayment}
+              onClickCloseAndTrack={onClickOpenTrackModal}
+              onClickOpenChangeProductionStatusModal={
+                onClickOpenChangeProductionStatusModal
+              }
+              onClickReopenDocument={onClickOpenReopenDocumentModal}
+            />
+          );
+
+          return baseRow;
+        });
+
         setAllDocuments(mapData);
       }
     };
@@ -1694,7 +1707,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     t("home.headers.productDate"),
     t("home.headers.finalPrice"),
     t("home.headers.status"),
-    t("home.headers.remark"),
+    ...(isOrder ? [t("boardMissions.productionStatus")] : []),
     t("home.headers.more"),
   ];
 
@@ -2230,25 +2243,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await getAndSetCustomerById(callApi, callBack, { customerId: customerId });
   };
 
-  const setClientTypesCategories = useSetRecoilState(
-    clientTypesCategoriesState
-  );
-
-  const getClientTypesCategories = async () => {
-    const callBack = (res) => {
-      if (res) {
-        const clientTypes = res.map((types) => ({
-          label: types.name,
-          id: types.id,
-          additionProfits: types?.additionProfits ?? 0,
-        }));
-        setClientTypesCategories(clientTypes);
-      }
-    };
-    await getAndSetClientTypes(callApi, callBack, {
-      cardType: CLIENT_TYPE_Id.CUSTOMER,
-    });
-  };
+  const { getClientTypesCategories } = useClientTypesList();
 
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [isSendToClient, setIsSendToClient] = useState(false);

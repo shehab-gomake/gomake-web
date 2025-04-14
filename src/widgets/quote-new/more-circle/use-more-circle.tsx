@@ -87,11 +87,18 @@ const useMoreCircle = ({
         documentType !== DOCUMENT_TYPE.purchaseInvoiceRefund,
     },
     {
-      name: "advancedDuplicate",
+      name: "addQuantity",
       icon: <DuplicateMenuIcon />,
-      onclick: () => onClickQuickDuplicate(quoteItem),
+      onclick: () => onClickQuickDuplicate(quoteItem, true),
       condition: quoteItem?.isShowAdvancedDuplicate
     },
+    {
+      name: "advancedDuplicate",
+      icon: <DuplicateMenuIcon />,
+      onclick: () => onClickQuickDuplicate(quoteItem, false),
+      condition: quoteItem?.isShowAdvancedDuplicate
+    },
+
     {
       name: "duplicateItemWithDifferentQTY",
       icon: <DuplicateWithDifferentMenuIcon />,

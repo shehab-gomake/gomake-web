@@ -11,6 +11,7 @@ import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
 import { DocumentCalculationType } from "@/enums";
 
+//!here
 const TotalPriceComp = ({
   documentType,
   getCalculateQuote,
@@ -18,7 +19,7 @@ const TotalPriceComp = ({
   changeQuoteItems,
   isQuoteConfirmation = false,
 }) => {
-  const router = useRouter()
+  const router = useRouter();
   const { classes } = useStyle();
   const { t } = useTranslation();
   const [isUpdateTotalPayment, setIsUpdateTotalPayment] = useState(null);
@@ -28,7 +29,10 @@ const TotalPriceComp = ({
 
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
   const onBlurTotalPayment = async () => {
-    getCalculateQuote(DocumentCalculationType.TotalPayment, quoteItems?.totalPayment);
+    getCalculateQuote(
+      DocumentCalculationType.TotalPayment,
+      quoteItems?.totalPayment
+    );
     setIsUpdateTotalPayment(null);
   };
   const onInputTotalPayment = (e) => {
@@ -36,7 +40,9 @@ const TotalPriceComp = ({
   };
   const [isUpdateDiscount, setIsUpdateDiscount] = useState(null);
   const [isUpdateDiscountAmount, setIsUpdateDiscountAmount] = useState(null);
-  const [previousDiscountAmount, setPreviousDiscountAmount] = useState(quoteItems?.discountAmount);
+  const [previousDiscountAmount, setPreviousDiscountAmount] = useState(
+    quoteItems?.discountAmount
+  );
 
   const onBlurDiscount = async () => {
     getCalculateQuote(DocumentCalculationType.Discount, quoteItems?.discount);
@@ -44,7 +50,10 @@ const TotalPriceComp = ({
   };
   const onBlurDiscountAmount = async () => {
     if (quoteItems?.discountAmount !== previousDiscountAmount) {
-      getCalculateQuote(DocumentCalculationType.DiscountAmount, quoteItems?.discountAmount);
+      getCalculateQuote(
+        DocumentCalculationType.DiscountAmount,
+        quoteItems?.discountAmount
+      );
       setPreviousDiscountAmount(quoteItems?.discountAmount);
     }
     setIsUpdateDiscountAmount(null);
@@ -55,13 +64,15 @@ const TotalPriceComp = ({
   };
   const onInputDiscountAmount = (e) => {
     changeQuoteItems("discountAmount", e);
-
   };
 
-
-
-  const canUpdateDiscount = router.query.isNewCreation ? true :
-    (quoteItems?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_DISCOUNT));
+  const canUpdateDiscount = router.query.isNewCreation
+    ? true
+    : quoteItems?.isEditable &&
+      CheckDocumentPermission(
+        documentType,
+        DocumentPermission.UPDATE_DOCUMENT_DISCOUNT
+      );
 
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -79,13 +90,19 @@ const TotalPriceComp = ({
             paddingLeft: 24,
           }}
         >
-          {
-            isRTL ?
-              <>{(quoteItems?.totalPrice) + " " + getCurrencyUnitText(quoteItems?.currency)}</>
-              :
-              <>{getCurrencyUnitText(quoteItems?.currency) + " " + (quoteItems?.totalPrice)}</>
-          }
-
+          {isRTL ? (
+            <>
+              {quoteItems?.totalPrice +
+                " " +
+                getCurrencyUnitText(quoteItems?.currency)}
+            </>
+          ) : (
+            <>
+              {getCurrencyUnitText(quoteItems?.currency) +
+                " " +
+                quoteItems?.totalPrice}
+            </>
+          )}
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
           {t("sales.quote.discount")}
@@ -93,20 +110,38 @@ const TotalPriceComp = ({
         <div style={{ ...classes.oddRowContainer, width: "19%" }}>
           <div style={classes.cellTextInputStyle}>
             <InputUpdatedValues
-              value={(quoteItems?.discount ? quoteItems?.discount : 0)}
+              value={quoteItems?.discount ? quoteItems?.discount : 0}
               onBlur={onBlurDiscount}
               isUpdate={canUpdateDiscount && isUpdateDiscount}
-              setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount}
+              setIsUpdate={
+                isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount
+              }
               onInputChange={(e) => onInputDiscount(e)}
             />
             %
-            {isQuoteConfirmation ? quoteItems?.discountAmount != 0 && `(-${quoteItems?.discountAmount + " " + quoteItems?.currency})` :
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginLeft: 10, marginRight: 10 }}>
-                (<InputUpdatedValues
-                  value={quoteItems?.discountAmount ? quoteItems?.discountAmount : 0}
+            {isQuoteConfirmation ? (
+              quoteItems?.discountAmount != 0 &&
+              `(-${quoteItems?.discountAmount + " " + quoteItems?.currency})`
+            ) : (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginLeft: 10,
+                  marginRight: 10,
+                }}
+              >
+                (
+                <InputUpdatedValues
+                  value={
+                    quoteItems?.discountAmount ? quoteItems?.discountAmount : 0
+                  }
                   onBlur={onBlurDiscountAmount}
                   isUpdate={canUpdateDiscount && isUpdateDiscountAmount}
-                  setIsUpdate={!isQuoteConfirmation && setIsUpdateDiscountAmount}
+                  setIsUpdate={
+                    !isQuoteConfirmation && setIsUpdateDiscountAmount
+                  }
                   sign={" " + quoteItems?.currency}
                   speicalStyle={{
                     ...FONT_FAMILY.Inter(400, 14),
@@ -116,21 +151,29 @@ const TotalPriceComp = ({
                   }}
                   onInputChange={(e) => onInputDiscountAmount(e)}
                   width={"150px"}
-                />)
+                />
+                )
               </div>
-            }
-
+            )}
           </div>
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
           {`${t("sales.quote.vat")} (${Number(quoteItems?.vat) * 100}%)`}
         </div>
         <div style={{ ...classes.oddRowContainer, width: "23%" }}>
-          {isRTL ?
-            <>{quoteItems?.totalVAT + " " + getCurrencyUnitText(quoteItems?.currency)}</>
-            :
-            <>{getCurrencyUnitText(quoteItems?.currency) + " " + quoteItems?.totalVAT}</>
-          }
+          {isRTL ? (
+            <>
+              {quoteItems?.totalVAT +
+                " " +
+                getCurrencyUnitText(quoteItems?.currency)}
+            </>
+          ) : (
+            <>
+              {getCurrencyUnitText(quoteItems?.currency) +
+                " " +
+                quoteItems?.totalVAT}
+            </>
+          )}
         </div>
       </div>
       <div style={classes.firstRowForFooterContainer}>
@@ -157,7 +200,11 @@ const TotalPriceComp = ({
               value={quoteItems?.totalPayment}
               onBlur={onBlurTotalPayment}
               isUpdate={canUpdateDiscount && isUpdateTotalPayment}
-              setIsUpdate={isQuoteConfirmation ? setIsConfirmation : setIsUpdateTotalPayment}
+              setIsUpdate={
+                isQuoteConfirmation
+                  ? setIsConfirmation
+                  : setIsUpdateTotalPayment
+              }
               onInputChange={(e) => onInputTotalPayment(e)}
               speicalStyle={{
                 color: "#F135A3",
@@ -165,7 +212,7 @@ const TotalPriceComp = ({
                 padding: 0,
               }}
               inputMainContainerStyle={{
-                gap: 0
+                gap: 0,
               }}
             />
             {isRTL && getCurrencyUnitText(quoteItems?.currency)}

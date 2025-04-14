@@ -158,6 +158,17 @@ const useCompanyProfile = () => {
     }));
   };
 
+  const updatePinPadState = (key, value: any) => {
+    const updatedValue = value?.map((row) =>
+      row.isActive === undefined ? { ...row, isActive: true } : row
+    );
+
+    profileChange({
+      ...profile,
+      pinPads: updatedValue,
+    });
+  };
+
   return {
     t,
     getProfile,
@@ -176,6 +187,7 @@ const useCompanyProfile = () => {
     taxLoginUrl,
     onToggleWorkingDays,
     onWorkingTimeChange,
+    updatePinPadState,
   };
 };
 

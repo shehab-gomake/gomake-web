@@ -12,7 +12,6 @@ const useStyle = () => {
   const classes = useMemo(() => {
     return {
       mainContainerStyle: {
-        
         backgroundColor: "#FDFDFD",
         marginBottom: 10,
       },
@@ -33,8 +32,6 @@ const useStyle = () => {
         paddingTop: "27px",
         paddingBottom: "27px",
         background: "#FDFDFD",
-
-
       },
       secondInsideStyle: {
         paddingLeft: 0,
@@ -53,7 +50,7 @@ const useStyle = () => {
         height: "fit-content",
         maxHeight: CONTAINER_TABS_MAX_HEIGHT,
         overflow: "auto",
-        position: 'sticky' as 'sticky',
+        position: "sticky" as "sticky",
       },
       footerStyle: {
         display: "flex",
@@ -69,7 +66,7 @@ const useStyle = () => {
         width: "100%",
         height: "fit-content",
         overflow: "auto",
-        flex:1
+        flex: 1,
       },
       colStyle: {
         display: "flex",
@@ -204,7 +201,7 @@ const useStyle = () => {
         color: primaryColor(900),
         justifyContent: "space-between",
         display: "flex",
-        width: "100%"
+        width: "100%",
       },
       dropDownListStyle: {
         width: "100%",
@@ -218,6 +215,9 @@ const useStyle = () => {
         color: secondColor(500),
         cursor: "pointer",
         paddingLeft: 5,
+
+        alignItems: "center",
+        justifyContent: "center",
       },
       itemOnFirstContainer: {
         display: "flex",
@@ -251,7 +251,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 14),
         lineHeight: "normal",
         marginBottom: 10,
-      }
+      },
     };
   }, [theme]);
   return {

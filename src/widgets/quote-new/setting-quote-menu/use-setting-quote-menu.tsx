@@ -21,7 +21,6 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   const [showDelivery, setShowDelivery] = useState(quoteStateValue?.isShowDeliveryItems);
   const [hideItemDiscountColumn, setHideItemDiscountColumn] = useState(quoteStateValue?.hideItemDiscountColumn);
 
-
   const currencies =
     useRecoilValue<{ label: string; value: string }[]>(currenciesState);
   const matchingCurrency = currencies.find(
@@ -39,6 +38,7 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   const vatStatus = vatStatusList.find(
     (status) => status.value === quoteStateValue?.vatStatus
   )?.text;
+
   const [exchangeRate, setExchangeRate] = useState(
     quoteStateValue?.exchangeRate || "-"
   );
@@ -54,7 +54,14 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     setShowGraphics(quoteStateValue?.isShowGraphicsItems);
     setShowDelivery(quoteStateValue?.isShowDeliveryItems);
     setHideItemDiscountColumn(quoteStateValue?.hideItemDiscountColumn);
-  }, [quoteStateValue?.isShowDetails, quoteStateValue?.isShowPrice, quoteStateValue?.isShowGraphicsItems, quoteStateValue?.isShowDeliveryItems, quoteStateValue?.hideItemDiscountColumn]);
+  }, [
+    quoteStateValue?.isShowDetails,
+    quoteStateValue?.isShowPrice,
+    quoteStateValue?.isShowGraphicsItems,
+    quoteStateValue?.isShowDeliveryItems,
+    quoteStateValue?.hideItemDiscountColumn,
+  ]);
+
 
   useEffect(() => {
     setExchangeRate(quoteStateValue?.exchangeRate || "-");
@@ -106,7 +113,10 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     event: ChangeEvent<HTMLInputElement>
   ) => {
     setHideItemDiscountColumn(event.target.checked);
-    updateDocumentPreference(event.target.checked, DocumentPreferencesEnum.HideItemDiscountColumn);
+    updateDocumentPreference(
+      event.target.checked,
+      DocumentPreferencesEnum.HideItemDiscountColumn
+    );
   };
 
   const handleTableSorting = (event: React.MouseEvent<HTMLElement>) => {
@@ -157,11 +167,11 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
       checked: showPrices,
       onChange: handleSwitchCheckForShowPrice,
     },
-    {
-      label: t("sales.quote.showGraphics"),
-      checked: showGraphics,
-      onChange: handleSwitchCheckForShowGraphics,
-    },
+    // {
+    //   label: t("sales.quote.showGraphics"),
+    //   checked: showGraphics,
+    //   onChange: handleSwitchCheckForShowGraphics,
+    // },
     // {
     //   label: t("sales.quote.showDelivery"),
     //   checked: showDelivery,

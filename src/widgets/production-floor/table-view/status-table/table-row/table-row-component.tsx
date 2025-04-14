@@ -31,6 +31,7 @@ import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp
 import { ApprovalFileStatusComponent } from "./approval-file-status-component";
 import { ExpandIcon } from "@/icons/expand-icon";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
+import { DateHourFormatterShort } from "@/utils/date-formatters";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -41,6 +42,7 @@ interface IProps {
   index: number;
   isMobileScreen: boolean;
   isRTL?: boolean;
+  isUrgentWork?: boolean;
 }
 
 enum EDropArea {
@@ -58,12 +60,12 @@ const TableRowComponent = ({
   index,
   isMobileScreen,
   isRTL,
+  isUrgentWork
 }: IProps) => {
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
   );
-
   const { CheckPermission } = useUserPermission();
   const canDrag =
     CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR) &&
@@ -243,7 +245,6 @@ const TableRowComponent = ({
             }}
           >
             <div />
-            <div />
 
             <div
               style={{
@@ -252,6 +253,7 @@ const TableRowComponent = ({
                 color: "#000000",
               }}
             >
+              {boardMission?.productType ? boardMission?.sectionName ? boardMission?.sectionName + " / " : boardMission?.productType + " / " : null}
               {`${boardMission?.boardMissionNumber}`}
               <br />
               {`${boardMission?.orderNumber}`}
@@ -277,14 +279,20 @@ const TableRowComponent = ({
             <div />
             <div />
             <DateTimeProductionFloorComponent
-              dateString={boardMission.boardMissionCreatedDate}
+              dateString={convertUtcToLocalIsoString(boardMission.dueDate?.toString())}
             />
+            {/* {DateHourFormatterShort(
+              convertUtcToLocalIsoString(boardMission.boardMissionCreatedDate?.toString())
+            )} */}
             <div
               style={{
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "center",
                 alignItems: "center",
+                maxWidth: isUrgentWork ? "50px" : null,
+                minWidth: isUrgentWork ? "50px" : null,
+                width: isUrgentWork ? "50px" : null,
               }}
             >
               {boardMission.showGraphicsApprovalAlert && (

@@ -239,8 +239,8 @@ const useCustomerService = (isAdmin: boolean) => {
     let printHouseName =
       printHouses.find((ph) => ph.domain === domain)?.label ||
       (formattedDomain ?? null);
-    if(printHouseName){
-      printHouseName = printHouseName.replaceAll('"',"'");
+    if (printHouseName) {
+      printHouseName = printHouseName.replaceAll('"', "'");
     }
     let columnValues = {
       long_text: ticketState?.description,
@@ -251,12 +251,12 @@ const useCustomerService = (isAdmin: boolean) => {
         text: printHouseName,
       },
     };
-    if(columnValues.long_text){
-      columnValues.long_text = columnValues.long_text.replaceAll("\n","\\n");
-      columnValues.long_text = columnValues.long_text.replaceAll('"',"'");
+    if (columnValues.long_text) {
+      columnValues.long_text = columnValues.long_text.replaceAll("\n", "\\n");
+      columnValues.long_text = columnValues.long_text.replaceAll('"', "'");
     }
     let columnValuesString = JSON.stringify(columnValues).replace(/"/g, '\\"');
-    
+
     const mutation = `mutation { create_item (board_id: "${boardId}", group_id: "${groupId}", item_name: "${
       ticketState?.title || "New task"
     }", column_values: "${columnValuesString}") { id }}`;
@@ -366,7 +366,7 @@ const useCustomerService = (isAdmin: boolean) => {
     }
   `;*/
     let query = "";
-    if(isAdmin){
+    if (isAdmin) {
       query = `
         query { 
           boards (ids: ${boardId}) 
@@ -380,16 +380,22 @@ const useCustomerService = (isAdmin: boolean) => {
           }
         }
     `;
-    }else{
+    } else {
+      const sanitizedDomain = printHouseProfileState?.name.replace(/"/g, "'");
+      const compareValueString = JSON.stringify([sanitizedDomain]);
+
       query = `
         query { 
           boards (ids: ${boardId}) 
           { 
                 items_page (limit: 500, query_params: {
-                    rules: [
-                        {column_id:"link_mkm7eghn" , compare_value: ["${printHouseProfileState.name}"]
-                        }
-                    ], operator: and
+              rules: [
+          {
+            column_id: "link_mkm7eghn",
+            compare_value: ${compareValueString}
+          }
+        ],
+                    operator: and
                 })
                  { 
                     cursor items { id name column_values { id text value
@@ -403,8 +409,7 @@ const useCustomerService = (isAdmin: boolean) => {
     const data = { query };
     const callBack = (res) => {
       if (res?.success) {
-        const issues =
-          res.data.data.boards[0]?.items_page.items || [];
+        const issues = res.data.data.boards[0]?.items_page.items || [];
 
         const formattedData = issues.map(({ name, id, column_values }) => {
           const columnData =

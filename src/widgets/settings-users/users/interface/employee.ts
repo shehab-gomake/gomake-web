@@ -34,7 +34,6 @@ export interface Employee {
   stationsFilter?: IStation[];
   printerId?: number;
   printerBin?: string;
-  userLang?: string;
   minPriceChangePercents?: number | null;
   maxPriceChangePercents?: number | null;
 }
@@ -50,4 +49,5 @@ export interface IUserData {
   employee: Employee;
   email: string;
   isMailVerified?: boolean;
+  systemLanguage?: string;
 }

@@ -407,13 +407,28 @@ const useCustomerCard = ({
   };
 
   const updateAddress = (index, updatedAddressData) => {
-    setAddresses((prevAddresses) =>
-      prevAddresses.map((address) =>
-        address.index === index
-          ? { ...address, ...updatedAddressData }
-          : address
-      )
-    );
+    setAddresses((prevAddresses) => {
+      const updatedList = prevAddresses?.map((address) => {
+        if (address?.index === index) {
+          return { ...address, ...updatedAddressData };
+        }
+        return address;
+      });
+
+      const updatedAddress = updatedList.find((a) => a.index === index);
+
+      // If isDefault was set to true, reset others of same type ( billing/delivery)
+      if (updatedAddressData.isDefault) {
+        return updatedList.map((address) => {
+          if (address.index !== index && address.type === updatedAddress.type) {
+            return { ...address, isDefault: false };
+          }
+          return address;
+        });
+      }
+
+      return updatedList;
+    });
   };
 
   // User info
@@ -619,6 +634,7 @@ const useCustomerCard = ({
     setNewGroupId,
     CheckPermission,
     profileState,
+    systemCurrency,
   };
 };
 

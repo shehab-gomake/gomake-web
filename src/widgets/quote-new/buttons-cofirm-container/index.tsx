@@ -10,8 +10,10 @@ import { QuoteStatuses } from "../total-price-and-vat/enums";
 import { OtherReasonModal } from "../total-price-and-vat/other-reason-modal";
 import { ApproveSignatureModal } from "../total-price-and-vat/approve-signature-modal";
 import { ModalType } from "@/enums";
+import { quoteItemState } from "@/store/quote-item";
+import { useRecoilState, useRecoilValue } from "recoil";
 
-const ButtonsConfirmContainer = () => {
+const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const {
@@ -37,7 +39,9 @@ const ButtonsConfirmContainer = () => {
     onClickOpenApproveSignatureModal,
     onClickCloseApproveSignatureModal,
   } = useButtonsConfirmContainer();
+  const quoteItemValue = useRecoilValue<any>(quoteItemState);
 
+  console.log("quoteItemValue", quoteItemValue);
   return (
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
@@ -59,8 +63,11 @@ const ButtonsConfirmContainer = () => {
           variant="outlined"
           startIcon={<AttachIcon />}
           style={classes.btnStyle}
+          onClick={onClickOpenAddAttachmentsModal}
         >
-          {t("sales.quote.attachFiles")}
+          {quoteItemValue?.attachments?.length > 0
+            ? t("sales.quote.editAttachments")
+            : t("sales.quote.attachFiles")}
         </SecondaryButton>
         <SecondaryButton
           variant="contained"
