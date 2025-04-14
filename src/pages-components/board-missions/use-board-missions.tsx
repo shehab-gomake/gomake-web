@@ -452,8 +452,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           ? mission.station.machineName
           : mission.station.employeeName;
       if (empName)
-        return `${mission.boardMissionStatus.name} \n\r ${mission.station.actionName} \n\r ${empName}`;
-      return `${mission.boardMissionStatus.name} \n\r ${mission.station.actionName}`;
+        return `${t("productionStatuses." + mission.boardMissionStatus.name)} \n\r ${mission.station.actionName} \n\r ${empName}`;
+      return `${t("productionStatuses." + mission.boardMissionStatus.name)} \n\r ${mission.station.actionName}`;
     }
     return "";
   };
@@ -496,7 +496,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 {mission?.clientName}
               </div>,
               mission?.productType
-                ? `${mission?.number} / ${mission?.productType}`
+                ? `${mission?.number} / ${mission?.productTypeName ? mission?.productTypeName : mission?.productType}`
                 : mission?.number,
               <a
                 style={classes.tableAtagStyle}
@@ -505,8 +505,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 {mission?.orderNumber}
               </a>,
               mission?.outSourceType === null
-                ? EWorkSource[0]
-                : EWorkSource[mission?.outSourceType],
+                ? `${t("boardMissions." + EWorkSource[0])}`
+                : `${t("boardMissions." + EWorkSource[mission?.outSourceType])}`,
               mission?.quantity,
               ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                 ? [mission?.cost + " " + getCurrencyUnitText(mission?.currency)]
@@ -654,7 +654,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             </div>,
             mission?.supplierName,
             mission?.productType
-              ? `${mission?.number} / ${mission?.productType}`
+              ? `${mission?.number} / ${mission?.productTypeName ? mission?.productTypeName : mission?.productType}`
               : mission?.number,
             mission?.orderNumber,
             mission?.purchaseOrderNumber,

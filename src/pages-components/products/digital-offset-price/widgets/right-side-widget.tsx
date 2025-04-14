@@ -1,5 +1,10 @@
 import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-import {CheckboxCheckedIcon, CheckboxIcon, ReloadIcon, WarningLogsIcon} from "@/icons";
+import {
+  CheckboxCheckedIcon,
+  CheckboxIcon,
+  ReloadIcon,
+  WarningLogsIcon,
+} from "@/icons";
 import {
   Checkbox,
   Divider,
@@ -24,6 +29,8 @@ import { Box, Slider } from "@mui/material";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { ReloadPriceIcon } from "@/icons/reload-price";
+import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 
 export const roundPrice = (price) => {
   try {
@@ -68,7 +75,7 @@ const RightSideWidget = ({
   calculationProduct,
   subProducts,
   setCanCalculation,
-  showCalculationInCompletedAlert
+  showCalculationInCompletedAlert,
 }: any) => {
   const {
     t,
@@ -95,8 +102,7 @@ const RightSideWidget = ({
     selectedProduct,
     combinedData,
     handleProductChange,
-    selectedTab,
-    onSelectTab,
+    primaryColor,
   } = useRightSideWidget({ includeVAT, widgetType });
   const setSubProducts = useSetRecoilState<any>(subProductsParametersState);
 
@@ -122,7 +128,7 @@ const RightSideWidget = ({
             t.actionName === item.actionName &&
             t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
             t?.exception?.exceptionMessage ===
-            item?.exception?.exceptionMessage &&
+              item?.exception?.exceptionMessage &&
             JSON.parse(t.values || "[]")
               .sort()
               .join(",") === itemValuesSorted
@@ -200,7 +206,7 @@ const RightSideWidget = ({
     } catch (e) {
       return price;
     }
-  }
+  };
   return (
     <div style={clasess.rightSideMainContainer}>
       <div style={clasess.rightSideContainer}>
@@ -210,11 +216,12 @@ const RightSideWidget = ({
           >{`${documentNumberText}: ${router?.query?.documentNumber} `}</div>
         )}
         <div style={clasess.headerClientRightSide}>
-          <div style={clasess.clientContainer}>
-            <div style={clasess.labelTextStyle}>
-              {t("products.offsetPrice.admin.client")}
-            </div>
-            {clientDefaultValue && (
+          {clientDefaultValue && (
+            <div style={clasess.clientContainer}>
+              <div style={clasess.labelTextStyle}>
+                {t("products.offsetPrice.admin.client")}
+              </div>
+
               <Typography
                 key={"client-name"}
                 style={clasess.clientTypographyStyle}
@@ -222,14 +229,15 @@ const RightSideWidget = ({
                 {clientDefaultValue?.label ||
                   t("products.offsetPrice.admin.client")}
               </Typography>
-            )}
-          </div>
-          <div style={clasess.typeContainer}>
-            <div style={clasess.labelTextStyle}>
-              {t("products.offsetPrice.admin.type")}
             </div>
+          )}
 
-            {clientTypeDefaultValue && (
+          {/* Client types Select */}
+          {clientTypeDefaultValue && (
+            <div style={clasess.typeContainer}>
+              <div style={clasess.labelTextStyle}>
+                {t("products.offsetPrice.admin.type")}
+              </div>
               <GoMakeAutoComplate
                 options={clientTypesCategories}
                 disableClearable
@@ -237,8 +245,11 @@ const RightSideWidget = ({
                 placeholder={t("customers.selectAgent")}
                 onChange={(e, v) => {
                   if (v) {
-                    if (widgetType === EWidgetProductType.EDIT || widgetType === EWidgetProductType.DUPLICATE) {
-                      setCanCalculation(true)
+                    if (
+                      widgetType === EWidgetProductType.EDIT ||
+                      widgetType === EWidgetProductType.DUPLICATE
+                    ) {
+                      setCanCalculation(true);
                     }
                     router.push({
                       pathname: router.pathname,
@@ -249,14 +260,11 @@ const RightSideWidget = ({
                 }}
                 value={clientTypeDefaultValue}
               />
-              // <Typography
-              //   key={"client-type"}
-              //   style={clasess.clientDropDownListStyle}>
-              //   {clientTypeDefaultValue?.label || t("products.offsetPrice.admin.type")}
-              // </Typography>
-            )}
-          </div>
+            </div>
+          )}
         </div>
+
+        {/* Product Select */}
         <div style={clasess.autoComplateRowContainer}>
           <div
             data-tour="select-product"
@@ -266,8 +274,8 @@ const RightSideWidget = ({
               value={selectedProduct}
               options={combinedData}
               onChange={(e) => {
-                setSubProducts([])
-                handleProductChange(e)
+                setSubProducts([]);
+                handleProductChange(e);
               }}
               placeholder={t("home.admin.selectProductOrMaterial")}
               selectedTab={ETab.PRODUCTS}
@@ -298,14 +306,18 @@ const RightSideWidget = ({
                   display: "flex",
                   alignItems: "center",
                   position: "relative",
+                  width: "100%",
                 }}
               >
                 <span
                   style={{
                     ...clasess.totalCurrancyStyle,
                     position: "absolute",
-                    left: 30,
-                    zIndex: 999999,
+                    // left: 30,
+                    // zIndex: 999999,
+                    left: 10,
+                    zIndex: 2,
+                    pointerEvents: "none",
                   }}
                 >
                   {systemCurrency}
@@ -320,14 +332,16 @@ const RightSideWidget = ({
                     if (currentProductItemValueTotalPrice > 0) {
                       const inputValue = Number(e.target.value);
                       if (maxIncrease && minDiscount) {
-                        if (inputValue < minDiscount || inputValue > maxIncrease) {
+                        if (
+                          inputValue < minDiscount ||
+                          inputValue > maxIncrease
+                        ) {
                           alertFault("Value is out of the allowed range!");
                           setSliderCurrentProductItemValueTotalPrice(
                             currentProductItemValueTotalPrice
                           ); // Reset to valid value
                         }
                       }
-
                     }
                   }}
                   onChange={(e: any) => {
@@ -344,14 +358,22 @@ const RightSideWidget = ({
                     }
                   }}
                   key={"TotalPriceInput"}
-                  style={clasess.inputPriceStyle}
+                  style={{
+                    ...clasess.inputPriceStyle,
+                    ...(showCalculationInCompletedAlert && {
+                      color: "#f44336",
+                      WebkitTextFillColor: "#f44336",
+                    }),
+                  }}
                 />
               </div>
             )}
           </div>
-          {
-            showCalculationInCompletedAlert ? <div><WarningLogsIcon width={20} height={20} /></div> : <div></div>
-          }
+          {showCalculationInCompletedAlert && (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <WarningAmberRoundedIcon htmlColor={"#f44336"} />
+            </div>
+          )}
           <span style={clasess.totalCurrancyStyle}>
             <Tooltip title={t("products.offsetPrice.admin.updateTotalPrice")}>
               <IconButton
@@ -359,7 +381,7 @@ const RightSideWidget = ({
                   calculationProduct(subProducts);
                 }}
               >
-                <ReloadIcon />
+                <ReloadPriceIcon color={primaryColor(500)} />
               </IconButton>
             </Tooltip>
           </span>
@@ -367,7 +389,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-          calculationProgress.totalWorkFlowsCount && (
+            calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -391,14 +413,15 @@ const RightSideWidget = ({
             <div style={clasess.orderContainer}>
               {t("products.offsetPrice.admin.orderToral", {
                 prieceNum: quantity?.values[0],
-                price: roundPrice(isNaN(
-                  sliderCurrentProductItemValueTotalPrice / quantity?.values[0]
-                )
-                  ? 0
-                  : (
-                    (sliderCurrentProductItemValueTotalPrice || 0) /
-                    (quantity?.values[0] || 1)
-                  )),
+                price: roundPrice(
+                  isNaN(
+                    sliderCurrentProductItemValueTotalPrice /
+                      quantity?.values[0]
+                  )
+                    ? 0
+                    : (sliderCurrentProductItemValueTotalPrice || 0) /
+                        (quantity?.values[0] || 1)
+                ),
                 unitPrice: systemCurrency,
               })}
             </div>
@@ -439,7 +462,7 @@ const RightSideWidget = ({
         )}
 
         {widgetType === EWidgetProductType.EDIT ||
-          widgetType === EWidgetProductType.DUPLICATE ? (
+        widgetType === EWidgetProductType.DUPLICATE ? (
           <div
             style={{
               display: "flex",
@@ -710,11 +733,12 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "
-                            }${renderExceptionMessage(
-                              item?.exception?.exceptionKey,
-                              item?.exception?.values
-                            )}${renderValues(item?.exception?.values)}`}
+                          {`${item.actionName ? item.actionName + ": " : ""}${
+                            item?.exception?.exceptionMessage || " "
+                          }${renderExceptionMessage(
+                            item?.exception?.exceptionKey,
+                            item?.exception?.values
+                          )}${renderValues(item?.exception?.values)}`}
                         </div>
                       </div>
                     </div>
@@ -741,11 +765,12 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item?.exceptionMessage || " "
-                            }${renderExceptionMessage(
-                              item?.exceptionKey,
-                              item?.values
-                            )}${renderValues(item?.values)}`}
+                          {`${
+                            item?.exceptionMessage || " "
+                          }${renderExceptionMessage(
+                            item?.exceptionKey,
+                            item?.values
+                          )}${renderValues(item?.values)}`}
                         </div>
                       </div>
                     </div>

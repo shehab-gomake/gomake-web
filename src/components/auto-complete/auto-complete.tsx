@@ -127,6 +127,8 @@ const GoMakeAutoComplate = ({
   arrowIcon,
   open, // Add the `open` prop
   onOpen, // Add the `onOpen` prop
+  noOptionsText,
+  componentsProps,
 }: {
   value?: any;
   onChange?: any;
@@ -156,6 +158,8 @@ const GoMakeAutoComplate = ({
   arrowIcon?: React.ReactNode;
   open?: boolean;
   onOpen?: () => void;
+  noOptionsText?: string;
+  componentsProps?: any;
 }) => {
   const [selectedOption, setSelectedOption] = useState<any>();
   const { t } = useTranslation();
@@ -264,6 +268,8 @@ const GoMakeAutoComplate = ({
       getOptionSelected={(option: any, value: any) => option?.id === value?.id}
       PaperComponent={PaperComponent}
       filterOptions={defaultFiltering ? undefined : (x) => x} //? Bypass default filtering
+      noOptionsText={noOptionsText}
+      componentsProps={componentsProps}
     />
   );
 };

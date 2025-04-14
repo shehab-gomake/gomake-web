@@ -22,6 +22,9 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 // import { clearPhoneNumberPrefix } from "@/utils/helpers";
 import { EPreferences } from "@/enums/prefernces";
 import { clearPhoneNumberPrefix } from "@/utils/helpers";
+import { useUserPermission } from "@/hooks/use-permission";
+import { IUserProfile } from "../settings-profile-widget/components/profiles/interface";
+import { userProfileState } from "@/store/user-profile";
 
 const useCustomerCard = ({
   t,
@@ -55,7 +58,7 @@ const useCustomerCard = ({
   // const languagesOptions = useRecoilValue(languagesState);
   const languagesOptions = useRecoilValue(languageOptionsState);
   const { CheckPreferenceValue } = usePrintHousePreferences();
-
+  const { CheckPermission } = useUserPermission();
   const customerTableHeaders = [
     t("customers.customerCode"),
     t("customers.name"),
@@ -64,6 +67,7 @@ const useCustomerCard = ({
     t("customers.status"),
     t("home.headers.more"),
   ];
+  const profileState = useRecoilValue(userProfileState);
 
   const handleHideTable = () => setShowTable(false);
 
@@ -525,7 +529,7 @@ const useCustomerCard = ({
       setShowTable(true);
     });
   };
-  const [dlientGroupList, setClientGroupList] = useState([]);
+  const [clientGroupList, setClientGroupList] = useState([]);
   const getClientsGroups = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -609,10 +613,12 @@ const useCustomerCard = ({
     updateUserPassword,
     onUpdatePass,
     onChangeInputs,
-    dlientGroupList,
+    clientGroupList,
     addGroupName,
     newGroupId,
     setNewGroupId,
+    CheckPermission,
+    profileState,
   };
 };
 

@@ -54,7 +54,7 @@ const useQuoteWidget = () => {
     checkWhatRenderArray,
     isFetching,
     customersListCreateQuote,
-  } = useCustomerDropDownList();
+  } = useCustomerDropDownList({ shouldRenderCustomersOnMount: false });
 
   const onClickOpenModal = (quoteId: any) => {
     setOpenModal(true);
@@ -131,7 +131,7 @@ const useQuoteWidget = () => {
         setQuoteIfExist(true);
         setSelectedClient(client);
         const clientType = clientTypesValue.find(
-          (c) => c.id === client.clientTypeId
+          (c) => c.id === client?.clientTypeId
         );
         setSelectedClientType(clientType);
       }
@@ -320,8 +320,6 @@ const useQuoteWidget = () => {
       }
     };
 
-    // if (selectedClient?.id && selectedClientType?.id) //!don't remove it
-
     await getAllProductAndMaterialsApi(callApi, callBack, {
       clientId: selectedClient?.id,
       clientTypeId: selectedClientType?.id,
@@ -385,29 +383,30 @@ const useQuoteWidget = () => {
       return;
     }
 
-    const hasSelectedClient = selectedClient?.id;
-    const fallbackClient = renderOptions()?.[0];
+    const hasSelectedClient = !!selectedClient?.id;
 
-    const clientId = hasSelectedClient
-      ? selectedClient?.id
-      : fallbackClient?.id;
+    if (hasSelectedClient) {
+      const clientId = selectedClient.id;
+      const clientName = selectedClient.name;
+      const clientTypeId = selectedClientType?.id;
 
-    const clientName = hasSelectedClient
-      ? selectedClient?.name
-      : fallbackClient?.name;
+      if (!clientId || !clientTypeId || !selectedProduct?.id) {
+        alertFaultUpdate();
+        return;
+      }
 
-    const clientTypeId = hasSelectedClient
-      ? selectedClientType?.id
-      : fallbackClient?.clientTypeId;
+      navigate(
+        `/products/create?clientTypeId=${clientTypeId}&customerId=${clientId}&customerName=${clientName}&productId=${selectedProduct.id}`
+      );
+    } else {
+      // Navigate with just the productId
+      if (!selectedProduct?.id) {
+        alertFaultUpdate();
+        return;
+      }
 
-    if (!clientId || !clientTypeId || !selectedProduct?.id) {
-      alertFaultUpdate();
-      return;
+      navigate(`/products/create?productId=${selectedProduct.id}`);
     }
-
-    navigate(
-      `/products/create?clientTypeId=${clientTypeId}&customerId=${clientId}&customerName=${clientName}&productId=${selectedProduct?.id}`
-    );
   };
 
   const onclickCreateNew = async () => {

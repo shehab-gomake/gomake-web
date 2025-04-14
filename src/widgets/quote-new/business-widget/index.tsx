@@ -15,6 +15,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums";
 import { EAddressType } from "./address-widget/state";
+import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
 import { ClientChangeSource } from "@/pages-components/quote-new/store/quote";
 
 const BusinessNewWidget = ({
@@ -95,7 +96,7 @@ const BusinessNewWidget = ({
     setDocumentTitle,
     isFetching,
     isPurchaseDocument,
-  } = useBusinessWidget({ values, documentType });
+  } = useBusinessWidget({ values, documentType, onChangeSelectBusiness });
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
   const { classes } = useStyle({ isRTL });
@@ -187,22 +188,24 @@ const BusinessNewWidget = ({
             onInputChange={(v) => setClientName(v)}
           />
         )}
-        <InputUpdatedValues
-          value={
-            isQuoteConfirmation
-              ? `${quoteConfirm?.client?.code}`
-              : `${quoteStateValue?.client?.code}`
-          }
-          label={
-            isPurchaseDocument
-              ? t("suppliers.supplierCode")
-              : t("sales.quote.businessCode")
-          }
-          onBlur={onBlurBusinessCode}
-          setIsUpdate={
-            isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode
-          }
-        />
+        {quoteStateValue?.client && (
+          <InputUpdatedValues
+            value={
+              isQuoteConfirmation
+                ? `${quoteConfirm?.client?.code}`
+                : `${quoteStateValue?.client?.code}`
+            }
+            label={
+              isPurchaseDocument
+                ? t("suppliers.supplierCode")
+                : t("sales.quote.businessCode")
+            }
+            onBlur={onBlurBusinessCode}
+            setIsUpdate={
+              isQuoteConfirmation ? setIsConfirmation : setIsUpdateBusinessCode
+            }
+          />
+        )}
         {!isQuoteConfirmation && (
           <AutoCompleteUpdatedValue
             label={t("sales.quote.agent")}

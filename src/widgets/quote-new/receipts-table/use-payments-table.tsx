@@ -243,7 +243,18 @@ const usePaymentsTable = () => {
   };
 
   const handleTaxDeductionChange = (event) => {
-    setTaxDeduction(event.target.value);
+    const newValue = event.target.value || 0;
+    setTaxDeduction(newValue);
+    setTotalPayment(
+      Number(newValue) +
+        Number(totalCash) +
+        Number(totalBit) +
+        Number(totalTransfer) +
+        Number(totalChecks) +
+        (isOutgoingPayments
+          ? Number(totalSupplierCreditCard)
+          : Number(totalCreditCard))
+    );
   };
 
   // Previous State //
@@ -316,7 +327,7 @@ const usePaymentsTable = () => {
     resetTotalSum();
     resetTotalBit();
     resetTotalCash();
-    resetTotalSupplierCreditCard();
+
     resetTotalTransfer();
     resetTransferTabState();
     resetTotalChecks();
@@ -331,6 +342,8 @@ const usePaymentsTable = () => {
     resetSecondCreditCardState();
     resetIsTransactedState();
     resetSelectedCreditTransaction();
+    resetTotalSupplierCreditCard();
+    resetSupplierCreditCardTabStateTabState();
   };
 
   // Credit card widgets //

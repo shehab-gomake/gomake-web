@@ -17,6 +17,7 @@ const generalInputs = (typeClient, state, languagesOptions, t) => {
       text: t(`customers.modal.${DiscountType[DiscountType.bySku]}`),
     },
   ];
+
   return [
     {
       name: "phone1",
@@ -74,17 +75,17 @@ const generalInputs = (typeClient, state, languagesOptions, t) => {
       isValid: !!state?.mail,
       regex: emailRegex,
     },
-    {
-      name: "fax",
-      label: "customers.modal.fax",
-      type: "text",
-      placeholder: "customers.modal.fax",
-      required: false,
-      parameterKey: "fax",
-      options: [],
-      value: state?.fax,
-      isValid: true,
-    },
+    // {
+    //   name: "fax",
+    //   label: "customers.modal.fax",
+    //   type: "text",
+    //   placeholder: "customers.modal.fax",
+    //   required: false,
+    //   parameterKey: "fax",
+    //   options: [],
+    //   value: state?.fax,
+    //   isValid: true,
+    // },
     {
       name: "agent",
       label: "customers.modal.agent",

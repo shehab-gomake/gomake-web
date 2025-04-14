@@ -191,6 +191,21 @@ const useStyle = () => {
       iconBtnContainer: {
         padding: "2px",
       },
+      bookADemo: {
+        width: "300px",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "8px",
+        padding: "8px 16px",
+        // backgroundColor: "#FFD700", // gold, change as you wish
+        color: "#000", // black text
+        borderRadius: "20px",
+        textDecoration: "none",
+        fontWeight: 600,
+        fontSize: "14px",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+        transition: "all 0.2s ease",
+      },
     };
   }, [i18next.language, t]);
   return {
