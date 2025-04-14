@@ -189,6 +189,8 @@ const useQuoteNew = ({
     openDuplicateWithDifferentQTYModal,
     setOpenDuplicateWithDifferentQTYModal,
   ] = useState(false);
+  const [isAddQuantity, setIsAddQuantity] = useState(false);
+
   const [openQuickDuplicateModal, setOpenQuickDuplicateModal] = useState(false);
   const [selectedContactById, setSelectedContactById] = useState<any>();
   const [amountValue, setAmountValue] = useState();
@@ -1095,10 +1097,11 @@ const useQuoteNew = ({
   const onCloseQuickDuplicate = () => {
     setOpenQuickDuplicateModal(false);
   };
-  const onClickQuickDuplicate = (quoteItem) => {
+  const onClickQuickDuplicate = (quoteItem, isAddQuantity = false) => {
     onOpenQuickDuplicate();
     setQuateItemId(quoteItem?.id);
     setQuoteItem(quoteItem);
+    setIsAddQuantity(isAddQuantity);
   };
 
   const duplicateQuoteItemWithAnotherQuantity = async () => {
@@ -2375,6 +2378,7 @@ const useQuoteNew = ({
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,
     systemVAT,
+    isAddQuantity,
     openAddAttachmentsModal,
     onOpenAddAttachmentsModal,
     onCloseAddAttachmentsModal,

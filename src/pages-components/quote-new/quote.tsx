@@ -309,6 +309,7 @@ const QuoteNewPageWidget = ({
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,
     systemVAT,
+    isAddQuantity,
     openAddAttachmentsModal,
     onOpenAddAttachmentsModal,
     onCloseAddAttachmentsModal,
@@ -852,6 +853,7 @@ const QuoteNewPageWidget = ({
         quoteItem={quoteItem}
         documentType={documentType}
         getQuote={getQuote}
+        isAddQuantity={isAddQuantity}
       />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
