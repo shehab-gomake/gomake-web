@@ -63,6 +63,7 @@ import {letterSidesBendingMachine} from "@/widgets/machines/utils/attributes/spe
 import {lightBoxesLetters} from "@/widgets/machines/utils/attributes/speed-inputs/light-boxes-letters";
 import {rollOffsetPrinting} from "@/widgets/machines/utils/attributes/speed-inputs/roll-offset-printing";
 import {bookBlockMachine} from "@/widgets/machines/utils/attributes/speed-inputs/book-block-machine";
+import {deviceMakingMachine} from "@/widgets/machines/utils/attributes/speed-inputs/device-making-machines";
 
 
 const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) => {
@@ -197,6 +198,8 @@ const getCategorySpeedInputs = (categoryId: string, state: Record<string, any>) 
             return rollOffsetPrinting(state);
         case ECategoryId.BOOK_BLOCK_MACHINE:
             return bookBlockMachine(state);
+        case ECategoryId.DEVICE_MAKING_MACHINE:
+            return deviceMakingMachine(state);
         default:
             return [];
     }

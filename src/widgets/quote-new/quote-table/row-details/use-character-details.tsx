@@ -35,6 +35,15 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
   const handleShowLess = () => {
     setShowAll(false);
   };
+  const formatContent = (str: string) => {
+    // First replace closing </p> tags with <br/>
+    let formatted = str.replace(/<\/p>/g, '<br/>');
+    // Then remove remaining <p> tags
+    formatted = formatted.replace(/<p>/g, '');
+    // Keep <strong> tags and <br/> tags, remove any other HTML tags
+    formatted = formatted.replace(/<(?!\/?strong|\/?br\/?)[^>]+>/g, '');
+    return formatted;
+  };
 
   const updateDocumentItemContent = async (jobName?: string) => {
     if (router.query.isNewCreation) {
@@ -89,7 +98,7 @@ const useCharacterDetails = ({ details, getQuote, documentItemId, documentType, 
         documentType: documentType ?? DOCUMENT_TYPE.quote,
         contact: {
           documentItemId: documentItemId,
-          content: data,
+          content: formatContent(data),
           jobName: jobName,
         },
       });

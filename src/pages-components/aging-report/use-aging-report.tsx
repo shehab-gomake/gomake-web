@@ -55,8 +55,12 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
 
   const transformedHeaders = tableHeader?.map((header) => {
     const containsNumber = /\d/.test(header.key);
-    return containsNumber ? header.name : t(`reports.${header.key}`);
+    return {
+      ...header,
+      name: containsNumber ? header.name : t(`reports.${header.key}`),
+    };
   });
+
   const dateRef = useRef(null);
   const [orderBy, setOrderBy] = useState<string>("cardCode");
   const [isDescOrder, setIsDescOrder] = useState<boolean>(true);

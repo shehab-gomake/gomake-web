@@ -177,6 +177,8 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
             return spiralClosingMachine(state);
         case ECategoryId.BOOK_BLOCK_MACHINE:
             return rollMediaSettings(state);
+        case ECategoryId.DEVICE_MAKING_MACHINE:
+            return creatingDiesMachine(state);
         default:
             return []
     }

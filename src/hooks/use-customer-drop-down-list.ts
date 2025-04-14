@@ -55,7 +55,8 @@ const useCustomerDropDownList = ({
       await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
         clientType: "C",
         searchTerm: SearchTerm as string,
-        onlyCreateOrderClients: false,
+        // onlyCreateOrderClients: false,
+        onlyCreateOrderClients: true,
       });
       setIsFetching(false); // Finish fetching
     },

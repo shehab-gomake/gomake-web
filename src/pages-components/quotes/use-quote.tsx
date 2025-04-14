@@ -422,407 +422,361 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     });
   };
 
-  const getAllQuotes = useCallback(async (order?: any) => {
-    const callBack = (res) => {
-      if (res?.success) {
-        const data = res?.data?.data;
-        const totalItems = res?.data?.totalItems;
-        const mapData = data?.map((quote: any) => {
-          if (isPurchaseOrder) {
-            return [
-              formatCustomDateTime(quote?.creationDate),
-              quote?.number,
-              quote?.orderNumber,
-              quote?.supplierName,
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.clientId)}
-              >
-                {quote?.clientName}
-              </div>,
-              quote?.itemsNumber,
-              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
-              quote?.notes,
-              _renderStatus(docType, quote, t, navigate),
-              <MoreMenuWidget
-                quote={quote}
-                documentType={docType}
-                onClickPdf={onClickQuotePdf}
-                onClickLoggers={onClickDocumentLogs}
-                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={
-                  onClickOpenChangeProductionStatusModal
-                }
-                onClickSendPayment={onClickSendPayment}
-              />,
-            ];
-          } else if (isPurchaseInvoice || isPurchaseInvoiceRefund) {
-            const purchaseOrderNumbers = quote?.orderNumbers
-              ? quote?.orderNumbers.join(", ")
-              : "";
-            return [
-              formatCustomDateTime(quote?.createdDate),
-              quote?.number,
-              quote?.invoiceNumber,
-              purchaseOrderNumbers,
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-              >
-                {quote?.customerName}
-              </div>,
-              quote?.itemsNumber,
-              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
-              quote?.notes,
-              _renderStatus(docType, quote, t, navigate),
-              <MoreMenuWidget
-                quote={quote}
-                documentType={docType}
-                onClickPdf={onClickQuotePdf}
-                onClickLoggers={onClickDocumentLogs}
-                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={
-                  onClickOpenChangeProductionStatusModal
-                }
-                onClickSendPayment={onClickSendPayment}
-              />,
-            ];
-          } else if (isQuote) {
-            return [
-              formatCustomDateTime(quote?.createdDate),
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-              >
-                {quote?.customerName}
-              </div>,
-              quote?.agentName,
-              quote?.number,
-              quote?.worksNames,
-              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
-              quote?.notes,
-              _renderStatus(docType, quote, t, navigate),
-              <MoreMenuWidget
-                quote={quote}
-                documentType={docType}
-                onClickEditQuote={onClickEditQuote}
-                onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickDocumentDuplicate}
-                onClickLoggers={onClickDocumentLogs}
-                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={
-                  onClickOpenChangeProductionStatusModal
-                }
-                onClickSendPayment={onClickSendPayment}
-              />,
-            ];
-          } else if (isOrder) {
-            const jobsElement = CheckPermission(
-              Permissions.SHOW_BOARD_MISSIONS
-            ) ? (
-              <a
-                style={{
-                  cursor: "pointer",
-                  color: "inherit",
-                  textDecoration: "unset",
-                }}
-                href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
-              >
-                {quote?.jobs}
-              </a>
-            ) : (
-              quote?.jobs
-            );
+  const getAllQuotes = useCallback(
+    async (order?: any) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          const data = res?.data?.data;
+          const totalItems = res?.data?.totalItems;
+          const mapData = data?.map((quote: any) => {
+            if (isPurchaseOrder) {
+              return [
+                formatCustomDateTime(quote?.creationDate),
+                quote?.number,
+                quote?.orderNumber,
+                quote?.supplierName,
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => onClickOpenCustomerModal(quote?.clientId)}
+                >
+                  {quote?.clientName}
+                </div>,
+                quote?.itemsNumber,
+                quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+                quote?.notes,
+                _renderStatus(docType, quote, t, navigate),
+                <MoreMenuWidget
+                  quote={quote}
+                  documentType={docType}
+                  onClickPdf={onClickQuotePdf}
+                  onClickLoggers={onClickDocumentLogs}
+                  onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                  onClickOpenChangeProductionStatusModal={
+                    onClickOpenChangeProductionStatusModal
+                  }
+                  onClickSendPayment={onClickSendPayment}
+                />,
+              ];
+            } else if (isPurchaseInvoice || isPurchaseInvoiceRefund) {
+              const purchaseOrderNumbers = quote?.orderNumbers
+                ? quote?.orderNumbers.join(", ")
+                : "";
+              return [
+                formatCustomDateTime(quote?.createdDate),
+                quote?.number,
+                quote?.invoiceNumber,
+                purchaseOrderNumbers,
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+                >
+                  {quote?.customerName}
+                </div>,
+                quote?.itemsNumber,
+                quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+                quote?.notes,
+                _renderStatus(docType, quote, t, navigate),
+                <MoreMenuWidget
+                  quote={quote}
+                  documentType={docType}
+                  onClickPdf={onClickQuotePdf}
+                  onClickLoggers={onClickDocumentLogs}
+                  onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                  onClickOpenChangeProductionStatusModal={
+                    onClickOpenChangeProductionStatusModal
+                  }
+                  onClickSendPayment={onClickSendPayment}
+                />,
+              ];
+            } else if (isQuote) {
+              return [
+                formatCustomDateTime(quote?.createdDate),
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+                >
+                  {quote?.customerName}
+                </div>,
+                quote?.agentName,
+                quote?.number,
+                quote?.worksNames,
+                quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+                quote?.notes,
+                _renderStatus(docType, quote, t, navigate),
+                <MoreMenuWidget
+                  quote={quote}
+                  documentType={docType}
+                  onClickEditQuote={onClickEditQuote}
+                  onClickPdf={onClickQuotePdf}
+                  onClickDuplicate={onClickDocumentDuplicate}
+                  onClickLoggers={onClickDocumentLogs}
+                  onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                  onClickOpenChangeProductionStatusModal={
+                    onClickOpenChangeProductionStatusModal
+                  }
+                  onClickSendPayment={onClickSendPayment}
+                />,
+              ];
+            } else if (isOrder) {
+              const jobsElement = CheckPermission(
+                Permissions.SHOW_BOARD_MISSIONS
+              ) ? (
+                <a
+                  style={{
+                    cursor: "pointer",
+                    color: "inherit",
+                    textDecoration: "unset",
+                  }}
+                  href={`/jobs?pageNumber=1&finalPatternSearch=${quote?.number}`}
+                >
+                  {quote?.jobs}
+                </a>
+              ) : (
+                quote?.jobs
+              );
 
-            const statusPayment = `${
-              quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
-            }/${
-              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
-            }`;
+              const statusPayment = `${
+                quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
+              }/${
+                quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+              }`;
 
-            return [
-              formatCustomDateTime(quote?.createdDate),
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-              >
-                {quote?.customerName}
-              </div>,
-              quote?.agentName,
-              quote?.number,
-              quote?.sourceDocumentNumber?.map((item, index) => {
-                return (
-                  <span key={index}>
-                    {item?.documentNumber}
-                    <br />
-                  </span>
-                );
-              }),
-              quote?.purchaseNumber,
-              quote?.productionStatus === true
-                ? t("boardMissions.done")
-                : t("boardMissions.inProduction"),
-              jobsElement,
-              ...(CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS)
-                ? [quote?.cost]
-                : []),
-              quote?.worksNames,
-              isOrdersTracking
-                ? statusPayment
-                : quote?.totalPrice +
-                  " " +
-                  getCurrencyUnitText(quote?.currency),
-              quote?.notes,
-              <ClickableStatusButton
-                id={quote?.id}
-                document={quote}
-                documentType={docType}
-              />,
-              _renderStatus(docType, quote, t, navigate),
-              <MoreMenuWidget
-                quote={quote}
-                documentType={docType}
-                onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickDocumentDuplicate}
-                onClickLoggers={onClickDocumentLogs}
-                onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
-                onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
-                onClickOpenPriceModal={onClickOpenPriceModal}
-                onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-                onClickOpenCloseOrderNotesModal={
-                  onClickOpenCloseOrderNotesModal
-                }
-                onClickSendPayment={onClickSendPayment}
-                onClickMakePayment={onClickMakePayment}
-                onClickCloseAndTrack={onClickOpenTrackModal}
-                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={
-                  onClickOpenChangeProductionStatusModal
-                }
-                onClickPauseOrResume={onClickPauseOrResume}
-                onOpenDuplicateModal={onOpenDuplicateModal}
-                onClickStartProduction={onClickOpenStartProductionModal}
-                onClickReopenDocument={onClickOpenReopenDocumentModal}
-              />,
-            ];
-          } else {
-            return [
-              formatCustomDateTime(quote?.createdDate),
-              <div
-                style={{ cursor: "pointer" }}
-                onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-              >
-                {quote?.customerName}
-              </div>,
-              quote?.agentName,
-              quote?.number,
-              quote?.sourceDocumentNumber?.map((item, index) => {
-                return (
-                  <a
-                    key={index}
-                    href={`${renderURLDocumentType(
-                      item?.sourceDocumentType,
-                      item.documentId
-                    )}`}
-                    style={{
-                      cursor: "pointer",
-                      color: "inherit",
-                      textDecoration: "unset",
-                    }}
-                  >
-                    {t(
-                      renderDocumentTypeForSourceDocumentNumber(
-                        item?.sourceDocumentType
-                      )
-                    )}
-                    :{item?.documentNumber}
-                    <br />
-                  </a>
-                );
-              }),
-              quote?.worksNames,
-              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
-              quote?.notes,
-
-              isInvoice || isDeliveryNote ? (
+              return [
+                formatCustomDateTime(quote?.createdDate),
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+                >
+                  {quote?.customerName}
+                </div>,
+                quote?.agentName,
+                quote?.number,
+                quote?.sourceDocumentNumber?.map((item, index) => {
+                  return (
+                    <span key={index}>
+                      {item?.documentNumber}
+                      <br />
+                    </span>
+                  );
+                }),
+                quote?.purchaseNumber,
+                quote?.productionStatus === true
+                  ? t("boardMissions.done")
+                  : t("boardMissions.inProduction"),
+                jobsElement,
+                ...(CheckPermission(Permissions.SHOW_COSTS_IN_ORDERS)
+                  ? [quote?.cost]
+                  : []),
+                quote?.worksNames,
+                isOrdersTracking
+                  ? statusPayment
+                  : quote?.totalPrice +
+                    " " +
+                    getCurrencyUnitText(quote?.currency),
+                quote?.notes,
                 <ClickableStatusButton
                   id={quote?.id}
                   document={quote}
                   documentType={docType}
-                />
-              ) : (
-                <div>—</div>
-              ),
-              _renderStatus(docType, quote, t, navigate),
-              <MoreMenuWidget
-                quote={quote}
-                documentType={docType}
-                onClickPdf={onClickQuotePdf}
-                onClickDuplicate={onClickDocumentDuplicate}
-                onClickLoggers={onClickDocumentLogs}
-                onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
-                onClickOpenCloseOrderNotesModal={
-                  onClickOpenCloseOrderNotesModal
-                }
-                onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-                onClickOpenChangeProductionStatusModal={
-                  onClickOpenChangeProductionStatusModal
-                }
-                onClickSendPayment={onClickSendPayment}
-                onClickReopenDocument={onClickOpenReopenDocumentModal}
-              />,
-            ];
-          }
-        });
+                />,
+                _renderStatus(docType, quote, t, navigate),
+                <MoreMenuWidget
+                  quote={quote}
+                  documentType={docType}
+                  onClickPdf={onClickQuotePdf}
+                  onClickDuplicate={onClickDocumentDuplicate}
+                  onClickLoggers={onClickDocumentLogs}
+                  onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
+                  onClickOpenDeliveryTimeModal={onClickOpenDeliveryTimeModal}
+                  onClickOpenPriceModal={onClickOpenPriceModal}
+                  onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+                  onClickOpenCloseOrderNotesModal={
+                    onClickOpenCloseOrderNotesModal
+                  }
+                  onClickSendPayment={onClickSendPayment}
+                  onClickMakePayment={onClickMakePayment}
+                  onClickCloseAndTrack={onClickOpenTrackModal}
+                  onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                  onClickOpenChangeProductionStatusModal={
+                    onClickOpenChangeProductionStatusModal
+                  }
+                  onClickPauseOrResume={onClickPauseOrResume}
+                  onOpenDuplicateModal={onOpenDuplicateModal}
+                  onClickStartProduction={onClickOpenStartProductionModal}
+                  onClickReopenDocument={onClickOpenReopenDocumentModal}
+                />,
+              ];
+            } else {
+              return [
+                formatCustomDateTime(quote?.createdDate),
+                <div
+                  style={{ cursor: "pointer" }}
+                  onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+                >
+                  {quote?.customerName}
+                </div>,
+                quote?.agentName,
+                quote?.number,
+                quote?.sourceDocumentNumber?.map((item, index) => {
+                  return (
+                    <a
+                      key={index}
+                      href={`${renderURLDocumentType(
+                        item?.sourceDocumentType,
+                        item.documentId
+                      )}`}
+                      style={{
+                        cursor: "pointer",
+                        color: "inherit",
+                        textDecoration: "unset",
+                      }}
+                    >
+                      {t(
+                        renderDocumentTypeForSourceDocumentNumber(
+                          item?.sourceDocumentType
+                        )
+                      )}
+                      :{item?.documentNumber}
+                      <br />
+                    </a>
+                  );
+                }),
+                quote?.worksNames,
+                quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+                quote?.notes,
 
-        const mapReceiptData = data?.map((quote: any) => [
-          formatCustomDateTime(quote?.creationDate).split(" ")[0],
-          <div
-            style={{ cursor: "pointer" }}
-            onClick={() => onClickOpenCustomerModal(quote?.customerId)}
-          >
-            {quote?.customerName}
-          </div>,
-          quote?.agentName,
-          quote?.number,
-          _renderPaymentType(quote?.paymentType),
-          quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
-          quote?.notes,
-          t(`documentStatus.${quote?.status}`),
-          <MoreMenuWidget
-            quote={quote}
-            documentType={docType}
-            onClickPdf={onOpenExportReceiptPdfModal}
-            onClickDuplicate={onClickDocumentDuplicate}
-            onClickLoggers={onClickDocumentLogs}
-            onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
-            onOpenCancelReceiptModal={onOpenCancelReceiptModal}
-            onOpenCancelReceiptModalRefund={onOpenCancelReceiptModalRefund}
-            onClickOpenChangeProductionStatusModal={
-              onClickOpenChangeProductionStatusModal
+                isInvoice || isDeliveryNote ? (
+                  <ClickableStatusButton
+                    id={quote?.id}
+                    document={quote}
+                    documentType={docType}
+                  />
+                ) : (
+                  <div>—</div>
+                ),
+                _renderStatus(docType, quote, t, navigate),
+                <MoreMenuWidget
+                  quote={quote}
+                  documentType={docType}
+                  onClickPdf={onClickQuotePdf}
+                  onClickDuplicate={onClickDocumentDuplicate}
+                  onClickLoggers={onClickDocumentLogs}
+                  onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+                  onClickOpenCloseOrderNotesModal={
+                    onClickOpenCloseOrderNotesModal
+                  }
+                  onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+                  onClickOpenChangeProductionStatusModal={
+                    onClickOpenChangeProductionStatusModal
+                  }
+                  onClickSendPayment={onClickSendPayment}
+                  onClickReopenDocument={onClickOpenReopenDocumentModal}
+                />,
+              ];
             }
-            onClickSendPayment={onClickSendPayment}
-          />,
-        ]);
-        setAllQuotes(
-          isReceipt || isSupplierPayments ? mapReceiptData : mapData
-        );
-        setPagesCount(Math.ceil(totalItems / pageSize));
+          });
 
-        setAllStatistics({
-          documentStatisticsList: res?.data?.documentStatisticsList ?? [],
-          totalItems: totalItems ?? 0,
-        });
+          const mapReceiptData = data?.map((quote: any) => [
+            formatCustomDateTime(quote?.creationDate).split(" ")[0],
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => onClickOpenCustomerModal(quote?.customerId)}
+            >
+              {quote?.customerName}
+            </div>,
+            quote?.agentName,
+            quote?.number,
+            _renderPaymentType(quote?.paymentType),
+            quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+            quote?.notes,
+            t(`documentStatus.${quote?.status}`),
+            <MoreMenuWidget
+              quote={quote}
+              documentType={docType}
+              onClickPdf={onOpenExportReceiptPdfModal}
+              onClickDuplicate={onClickDocumentDuplicate}
+              onClickLoggers={onClickDocumentLogs}
+              onClickOpenPrintPDFModal={onClickOpenPrintPDFModal}
+              onOpenCancelReceiptModal={onOpenCancelReceiptModal}
+              onOpenCancelReceiptModalRefund={onOpenCancelReceiptModalRefund}
+              onClickOpenChangeProductionStatusModal={
+                onClickOpenChangeProductionStatusModal
+              }
+              onClickSendPayment={onClickSendPayment}
+            />,
+          ]);
+          setAllQuotes(
+            isReceipt || isSupplierPayments ? mapReceiptData : mapData
+          );
+          setPagesCount(Math.ceil(totalItems / pageSize));
+
+          setAllStatistics({
+            documentStatisticsList: res?.data?.documentStatisticsList ?? [],
+            totalItems: totalItems ?? 0,
+          });
+        }
+      };
+      if (!router.isReady) {
+        return;
       }
-    };
-    if (!router.isReady) {
-      return;
-    }
-    const currentPageNumber = router.query.pageNumber;
-    const currentStatusId = router.query.statusId;
-    const currentFinalPatternSearch = router.query.finalPatternSearch;
-    const currentCustomerId = router.query.customerId;
-    const currentAgentId = router.query.agentId;
-    const currentApprovalStatusId = router.query.approvalStatusId;
-    const currentMinPrice = router.query.minPrice || minPrice;
-    const currentMaxPrice = router.query.maxPrice || maxPrice;
-    const currentFromDate = router.query.fromDate
-      ? new Date(
-          Array.isArray(router.query.fromDate)
-            ? router.query.fromDate[0]
-            : router.query.fromDate
-        )
-      : null;
-    const currentToDate = router.query.toDate
-      ? new Date(
-          Array.isArray(router.query.toDate)
-            ? router.query.toDate[0]
-            : router.query.toDate
-        )
-      : null;
+      const currentPageNumber = router.query.pageNumber;
+      const currentStatusId = router.query.statusId;
+      const currentFinalPatternSearch = router.query.finalPatternSearch;
+      const currentCustomerId = router.query.customerId;
+      const currentAgentId = router.query.agentId;
+      const currentApprovalStatusId = router.query.approvalStatusId;
+      const currentMinPrice = router.query.minPrice || minPrice;
+      const currentMaxPrice = router.query.maxPrice || maxPrice;
+      const currentFromDate = router.query.fromDate
+        ? new Date(
+            Array.isArray(router.query.fromDate)
+              ? router.query.fromDate[0]
+              : router.query.fromDate
+          )
+        : null;
+      const currentToDate = router.query.toDate
+        ? new Date(
+            Array.isArray(router.query.toDate)
+              ? router.query.toDate[0]
+              : router.query.toDate
+          )
+        : null;
 
-    const currentAccountingStatus = router.query.accountingStatus
-      ? accountingStatuses.find(
-          (status) => status.value === Number(router.query.accountingStatus)
-        )
-      : null;
+      const currentAccountingStatus = router.query.accountingStatus
+        ? accountingStatuses.find(
+            (status) => status.value === Number(router.query.accountingStatus)
+          )
+        : null;
 
-    const currentDeliveryStatusStatus = router.query.deliveryStatus
-      ? deliveryStatuses.find(
-          (status) => status.value === Number(router.query.deliveryStatus)
-        )
-      : null;
+      const currentDeliveryStatusStatus = router.query.deliveryStatus
+        ? deliveryStatuses.find(
+            (status) => status.value === Number(router.query.deliveryStatus)
+          )
+        : null;
 
-    const currentProductionStatus = router.query.productionStatus
-      ? productionStatuses.find(
-          (status) => status.value === Number(router.query.productionStatus)
-        )
-      : null;
+      const currentProductionStatus = router.query.productionStatus
+        ? productionStatuses.find(
+            (status) => status.value === Number(router.query.productionStatus)
+          )
+        : null;
 
-    const currentIsCanceled = router.query.isCanceled;
-    const currentIsPaused = router.query.isPaused;
+      const currentIsCanceled = router.query.isCanceled;
+      const currentIsPaused = router.query.isPaused;
 
-    const currentProductsIds = Array.isArray(router.query.productsIds)
-      ? router.query.productsIds
-      : router.query.productsIds
-      ? [router.query.productsIds]
-      : productIds;
+      const currentProductsIds = Array.isArray(router.query.productsIds)
+        ? router.query.productsIds
+        : router.query.productsIds
+        ? [router.query.productsIds]
+        : productIds;
 
-    if (isReceipt || isSupplierPayments) {
-      await getAllReceiptsApi(callApi, callBack, {
-        ...(!isReceipt && {
-          isOutgoingPayments: true,
-        }),
-        clientId: currentCustomerId || customerId?.id,
-        agentId: currentAgentId || agentId?.id,
-        status: currentAccountingStatus?.value ?? accountingStatus?.value,
-        patternSearch:
-          finalPatternSearch !== null &&
-          finalPatternSearch !== undefined &&
-          finalPatternSearch !== ""
-            ? finalPatternSearch
-            : currentFinalPatternSearch,
-
-        ...(currentFromDate
-          ? { fromDate: GetDateFormat(currentFromDate) }
-          : {}),
-        ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
-
-        ...(currentMinPrice && currentMinPrice !== ""
-          ? { minPrice: currentMinPrice }
-          : {}),
-        ...(currentMaxPrice && currentMaxPrice !== ""
-          ? { maxPrice: currentMaxPrice }
-          : {}),
-
-        model: {
-          pageNumber: currentPageNumber || page,
-          pageSize: pageSize,
-          order: order,
-        },
-      });
-    } else {
-      await getAllDocumentsApi(callApi, callBack, {
-        documentType: docType,
-        data: {
-          model: {
-            pageNumber: currentPageNumber || page,
-            pageSize: pageSize,
-            order: order,
-          },
-          dateRange,
-          customerId: currentCustomerId || customerId?.id,
+      if (isReceipt || isSupplierPayments) {
+        await getAllReceiptsApi(callApi, callBack, {
+          ...(!isReceipt && {
+            isOutgoingPayments: true,
+          }),
+          clientId: currentCustomerId || customerId?.id,
           agentId: currentAgentId || agentId?.id,
-          statusId: quoteStatusId?.value || currentStatusId || statusId?.value,
-          approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
-
-          ...(currentMinPrice && currentMinPrice !== ""
-            ? { minPrice: currentMinPrice }
-            : {}),
-          ...(currentMaxPrice && currentMaxPrice !== ""
-            ? { maxPrice: currentMaxPrice }
-            : {}),
-
+          status: currentAccountingStatus?.value ?? accountingStatus?.value,
           patternSearch:
             finalPatternSearch !== null &&
             finalPatternSearch !== undefined &&
@@ -835,51 +789,101 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             : {}),
           ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
 
-          ...(currentProductsIds?.length
-            ? { productList: currentProductsIds }
+          ...(currentMinPrice && currentMinPrice !== ""
+            ? { minPrice: currentMinPrice }
+            : {}),
+          ...(currentMaxPrice && currentMaxPrice !== ""
+            ? { maxPrice: currentMaxPrice }
             : {}),
 
-          closeStatus:
-            currentAccountingStatus?.value ?? accountingStatus?.value,
-          deliveryStatus:
-            currentDeliveryStatusStatus?.value ?? deliveryStatus?.value,
-          productionStatus:
-            currentProductionStatus?.value ?? productionStatus?.value,
+          model: {
+            pageNumber: currentPageNumber || page,
+            pageSize: pageSize,
+            order: order,
+          },
+        });
+      } else {
+        await getAllDocumentsApi(callApi, callBack, {
+          documentType: docType,
+          data: {
+            model: {
+              pageNumber: currentPageNumber || page,
+              pageSize: pageSize,
+              order: order,
+            },
+            dateRange,
+            customerId: currentCustomerId || customerId?.id,
+            agentId: currentAgentId || agentId?.id,
+            statusId:
+              quoteStatusId?.value || currentStatusId || statusId?.value,
+            approvalStatus: currentApprovalStatusId || approvalStatusId?.value,
 
-          isCanceled: currentIsCanceled || isCanceledState,
-          isPaused: currentIsPaused || isPausedOrders,
-          isOrderInTracking: isOrdersTracking,
-        },
-      });
-    }
-  }, [
-    docType,
-    callApi,
-    finalPatternSearch,
-    customerId,
-    agentId,
-    isReceipt,
-    isSupplierPayments,
-    page,
-    pageSize,
-    statusId,
-    approvalStatusId,
-    quoteStatusId,
-    accountingStatus,
-    deliveryStatus,
-    productionStatus,
-    dateRange,
-    minPrice,
-    maxPrice,
-    productIds,
-    isCanceledState,
-    isPausedOrders,
-    fromDate,
-    toDate,
-    onClickOpenModal,
-    onClickQuotePdf,
-    onClickDocumentLogs,
-  ]);
+            ...(currentMinPrice && currentMinPrice !== ""
+              ? { minPrice: currentMinPrice }
+              : {}),
+            ...(currentMaxPrice && currentMaxPrice !== ""
+              ? { maxPrice: currentMaxPrice }
+              : {}),
+
+            patternSearch:
+              finalPatternSearch !== null &&
+              finalPatternSearch !== undefined &&
+              finalPatternSearch !== ""
+                ? finalPatternSearch
+                : currentFinalPatternSearch,
+
+            ...(currentFromDate
+              ? { fromDate: GetDateFormat(currentFromDate) }
+              : {}),
+            ...(currentToDate ? { toDate: GetDateFormat(currentToDate) } : {}),
+
+            ...(currentProductsIds?.length
+              ? { productList: currentProductsIds }
+              : {}),
+
+            closeStatus:
+              currentAccountingStatus?.value ?? accountingStatus?.value,
+            deliveryStatus:
+              currentDeliveryStatusStatus?.value ?? deliveryStatus?.value,
+            productionStatus:
+              currentProductionStatus?.value ?? productionStatus?.value,
+
+            isCanceled: currentIsCanceled || isCanceledState,
+            isPaused: currentIsPaused || isPausedOrders,
+            isOrderInTracking: isOrdersTracking,
+          },
+        });
+      }
+    },
+    [
+      docType,
+      callApi,
+      finalPatternSearch,
+      customerId,
+      agentId,
+      isReceipt,
+      isSupplierPayments,
+      page,
+      pageSize,
+      statusId,
+      approvalStatusId,
+      quoteStatusId,
+      accountingStatus,
+      deliveryStatus,
+      productionStatus,
+      dateRange,
+      minPrice,
+      maxPrice,
+      productIds,
+      isCanceledState,
+      isPausedOrders,
+      fromDate,
+      toDate,
+      onClickOpenModal,
+      onClickQuotePdf,
+      onClickDocumentLogs,
+    ]
+  );
 
   const { isSocketUpdateDocumentsTable, setIsSocketUpdateDocumentsTable } =
     useDocumentsTableSocketIo(docType);
@@ -2696,13 +2700,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     return headers.hasOwnProperty(header);
   };
   const handleSortBE = (key: string) => {
-    const direction = isDescOrderBE ? 'desc' : 'asc';
+    const direction = isDescOrderBE ? "desc" : "asc";
 
     // Define a mapping of keys to column indices for each document type
 
-
     // Determine the column index based on the document type and key
-    const columnIndex = columnMappings[docType]?.[key] ?? columnMappings.default[key];
+    const columnIndex =
+      columnMappings[docType]?.[key] ?? columnMappings.default[key];
 
     if (columnIndex !== undefined) {
       getAllQuotes([
@@ -2713,7 +2717,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       ]);
       setIsDescOrderBE(!isDescOrderBE);
     } else {
-      console.error('Invalid key for sorting:', key);
+      console.error("Invalid key for sorting:", key);
     }
   };
 
@@ -2883,7 +2887,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenReopenDocModal,
     openReopenDocModal,
     OpenDocument,
-
   };
 };
 
