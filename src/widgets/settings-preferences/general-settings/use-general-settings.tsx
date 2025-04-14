@@ -6,7 +6,6 @@ import {
   updatePreferencesApi,
 } from "@/services/api-service/preferences/preferences-endpoint";
 import { useGomakeAxios } from "@/hooks";
-import { EPreferences } from "@/enums/prefernces";
 
 export enum PreferenceValueType {
   Number = 0,
@@ -20,6 +19,8 @@ const useGeneralSettings = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [selectedSetting, setSelectedSetting] = useState<any>();
   const [allPreferences, setAllPreferences] = useState<any>();
+  const [groups, setGroups] = useState<any[]>([]);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
 
   const handleOpenModal = (settingItem) => {
     setSelectedSetting(settingItem);
@@ -43,6 +44,26 @@ const useGeneralSettings = () => {
     const callBack = (res) => {
       if (res?.success) {
         const _data = res?.data;
+        const groupMap = new Map();
+        _data.forEach((item: any) => {
+          const tabKey = item?.tabKey;
+          const groupName = tabKey || "Others";
+
+          if (!groupMap.has(groupName)) {
+            groupMap.set(groupName, {
+              id: tabKey || "Others",
+              name: t(`preferences.groups.${groupName}`),
+            });
+          }
+        });
+
+        let generatedGroups = Array.from(groupMap.values());
+        // Move "Others" to the last position
+        const othersIndex = generatedGroups.findIndex((g) => g.id === "others");
+        if (othersIndex !== -1) {
+          const [others] = generatedGroups.splice(othersIndex, 1);
+          generatedGroups.push(others); // push to end
+        }
         const mapData = _data?.map((item: any) => {
           let displayValue = "";
 
@@ -68,6 +89,7 @@ const useGeneralSettings = () => {
               item?.preferenceValues?.find((opt) => opt.id === item?.value)
                 ?.value || item?.value;
           }
+
           return [
             // t(`preferences.${EPreferences[item?.code]}`),
             t(`preferences.${item?.name}`),
@@ -82,6 +104,7 @@ const useGeneralSettings = () => {
           ];
         });
         setAllPreferences(mapData);
+        setGroups(generatedGroups);
       }
     };
     await getAllPreferencesApi(callApi, callBack);
@@ -151,6 +174,9 @@ const useGeneralSettings = () => {
     getAllPreferences,
     allPreferences,
     updatePreferences,
+    activeTabIndex,
+    setActiveTabIndex,
+    groups,
   };
 };
 
