@@ -6,11 +6,16 @@ import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
-const NewItemNotesModal = ({ openModal, onClose, handleSaveBtnClickForDocument, documentType }: {
+const NewItemNotesModal = ({
+  openModal,
+  onClose,
+  handleSaveBtnClickForDocument,
+  documentType,
+}: {
   openModal: boolean;
   onClose: () => void;
   handleSaveBtnClickForDocument?: any;
-  documentType?: any
+  documentType?: any;
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -19,32 +24,34 @@ const NewItemNotesModal = ({ openModal, onClose, handleSaveBtnClickForDocument, 
     const documentPath = DOCUMENT_TYPE[docType];
     return documentPath.charAt(0).toUpperCase() + documentPath.slice(1);
   };
-  
+
   return (
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={`${t("modal.notesClient")} "${quoteItemValue?.client?.name}"`}
+        modalTitle={`${t("modal.notesClient")} "${
+          quoteItemValue?.client?.name
+        }"`}
         onClose={onClose}
         insideStyle={clasess.insideStyle}
       >
         <>
           <div style={clasess.noteTextStyle}>
-            {documentType === DOCUMENT_TYPE.invoice ? quoteItemValue?.client?.closeOrderNotes : quoteItemValue?.client?.newItemNotes}
+            {documentType === DOCUMENT_TYPE.invoice
+              ? quoteItemValue?.client?.closeOrderNotes
+              : quoteItemValue?.client?.newItemNotes}
           </div>
-          {
-            documentType === DOCUMENT_TYPE.invoice &&
+          {documentType === DOCUMENT_TYPE.invoice && (
             <GomakePrimaryButton
               style={clasess.btnThirdContainer}
               onClick={() => {
-                handleSaveBtnClickForDocument()
-                onClose()
+                handleSaveBtnClickForDocument();
+                onClose();
               }}
             >
               {t(`sales.quote.create${getFormattedDocumentPath(documentType)}`)}
             </GomakePrimaryButton>
-          }
-
+          )}
         </>
       </GoMakeModal>
     </>

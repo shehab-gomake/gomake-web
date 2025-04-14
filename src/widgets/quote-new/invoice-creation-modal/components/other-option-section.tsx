@@ -11,6 +11,7 @@ import {
 } from "@/services/api-service/generic-doc/receipts-api";
 import { useState } from "react";
 import { ThreeOptionsModal } from "@/components";
+import { DeliveriesIcon } from "@/icons/side-list-icons/deliveries";
 
 interface OtherOptionsSectionProps {
   quoteItemValue: any;
@@ -84,6 +85,12 @@ const OtherOptionsSection = ({
       `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.accountingNumber}&ClientId=${quoteItemValue?.customerID}`
     );
 
+  const onClickProceedToDelivery = () => {
+    navigate(
+      `/orders?deliveryOrderId=${quoteItemValue?.orderIdForDeliveryCreation}&deliveryCustomerId=${quoteItemValue?.customerID}&deliveryOrderNumber=${quoteItemValue?.number}`
+    );
+  };
+
   const onClickCreateNewInvoice = () => {
     const queryParams = isOutgoingPayments
       ? "?isOutgoingPayments=true&isNewCreation=true"
@@ -139,6 +146,16 @@ const OtherOptionsSection = ({
       >
         {getCreateButtonText()}
       </Button>
+
+      {!!quoteItemValue?.orderIdForDeliveryCreation && (
+        <Button
+          sx={classes.optionsButtons}
+          onClick={onClickProceedToDelivery}
+          startIcon={<DeliveriesIcon />}
+        >
+          {t("sales.modals.proceedToDelivery")}
+        </Button>
+      )}
       <ThreeOptionsModal
         hideIcon
         title={t("sales.modals.printReceipt")}

@@ -255,7 +255,6 @@ export const allocatedSumsState = atom<Record<string, number>>({
   default: {},
 });
 
-//!here new
 export const totalAllocatedDocumentsState = atom<number>({
   key: "totalAllocatedDocumentsState",
   default: 0,
