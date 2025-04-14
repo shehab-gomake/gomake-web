@@ -56,8 +56,6 @@ export interface ICompanyProfile {
   printnodePassword?: string;
   employeeWorkingHourCost?: string;
   unitType?: number;
-
-  //!here new
   creditClearanceCompany?: CreditClearanceCompanies;
   terminalNumber?: string;
   terminalPassword?: string;

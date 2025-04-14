@@ -126,7 +126,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
   const { query, pathname } = useRouter();
-  const { quoteNumber } = query;
+  const {
+    quoteNumber,
+    deliveryOrderId,
+    deliveryOrderNumber,
+    deliveryCustomerId,
+  } = query;
   const { errorColor } = useGomakeTheme();
   const { GetDateFormat, formatCustomDateTime, formatISODateTime } =
     useDateFormat();
@@ -2882,6 +2887,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenReopenDocModal,
     openReopenDocModal,
     OpenDocument,
+    deliveryOrderId,
+    deliveryOrderNumber,
+    deliveryCustomerId,
   };
 };
 
