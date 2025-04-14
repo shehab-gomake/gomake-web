@@ -1,6 +1,5 @@
 import { Button, Stack } from "@mui/material";
-import { useQuotes } from "@/pages-components/quotes/use-quote";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { isValidCustomer } from "@/utils/helpers";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
@@ -9,9 +8,10 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { useEffect, useState } from "react";
 import { getClientBalanceApi } from "@/services/api-service/customers/customers-api";
 import { useGomakeAxios } from "@/hooks";
-import { Typography } from "@mui/material";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { WalletIcon } from "@/pages-components/quotes/widgets/icons/header-section-icons";
+import { useTranslation } from "react-i18next";
+import { useCustomerEdit } from "@/hooks/use-customer-edit";
 
 interface IProps {
   clientId: string;
@@ -25,15 +25,16 @@ const ClientBalanceComponent = ({
   clientId,
   clientType = CLIENT_TYPE.CUSTOMER,
 }: IProps) => {
+  const { t } = useTranslation();
+  const direction = t("direction");
   const {
     showCustomerModal,
-    setShowCustomerModal,
-    t,
     customerForEdit,
     setCustomerForEdit,
-    onClickOpenCustomerModal,
-    direction,
-  } = useQuotes(DOCUMENT_TYPE.order, false);
+    getCustomerForEdit,
+    closeModal,
+  } = useCustomerEdit();
+
   const { callApi } = useGomakeAxios();
   const [balance, setBalance] = useState<number>(clientBalance);
 
@@ -75,14 +76,13 @@ const ClientBalanceComponent = ({
                   ...(direction === "rtl" && { margin: "0px 2px 0px 5px" }),
                 },
               }}
-              onClick={() => onClickOpenCustomerModal(clientId)}
+              onClick={() => getCustomerForEdit(clientId)}
             >
               {balance}
             </Button>
           </Stack>
         )}
       </PermissionCheck>
-
       <CustomerCardWidget
         isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
@@ -95,7 +95,7 @@ const ClientBalanceComponent = ({
         }
         isgetAllCustomers={false}
         openModal={showCustomerModal}
-        onClose={() => setShowCustomerModal(false)}
+        onClose={closeModal}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
         showUpdateButton={true}
