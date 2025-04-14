@@ -34,9 +34,9 @@ const useDownloadAccountFilesModal = () => {
     setFileType(value);
   };
   const fileTypeList: FileType[] = [
-    { id: CpaFileType.ALL, label: t("financesWidget.all") },
-    { id: CpaFileType.Incoming, label: t("financesWidget.incoming") },
-    { id: CpaFileType.Payments, label: t("financesWidget.payments") },
+    { id: CpaFileType.ALL, label: t("financesWidget.moveIn") },
+    { id: CpaFileType.Incoming, label: t("financesWidget.openFormat") },
+    { id: CpaFileType.Payments, label: t("financesWidget.openFormatSuppOnly") },
     { id: CpaFileType.Deposits, label: t("financesWidget.deposits") },
   ];
 
