@@ -10,13 +10,11 @@ import { format } from "date-fns";
 import { useTranslation } from "react-i18next";
 import { endOfToday } from "date-fns";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
-import { useSetRecoilState } from "recoil";
-import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
-import { getAndSetClientTypes } from "@/services/hooks";
 import { getDocumentTypeName } from "../transaction-journal-report/use-transaction-journal-report";
 import { DocumentsTypeReportList } from "@/enums";
 import { initialFromDate } from "@/utils/helpers";
+import { useClientTypesList } from "@/hooks/use-client-types";
 
 const useAgingReport = (clientType: CLIENT_TYPE) => {
   const { t } = useTranslation();
@@ -395,28 +393,11 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     };
     await getAndSetCustomerById(callApi, callBack, { customerId });
   };
-  const setClientTypesCategories = useSetRecoilState(
-    clientTypesCategoriesState
-  );
 
-  const getClientTypesCategories = async () => {
-    const callBack = (res) => {
-      if (res) {
-        const clientTypes = res.map((types) => ({
-          label: types.name,
-          id: types.id,
-          additionProfits: types?.additionProfits ?? 0,
-        }));
-        setClientTypesCategories(clientTypes);
-      }
-    };
-    await getAndSetClientTypes(callApi, callBack, {
-      cardType: CLIENT_TYPE_Id.CUSTOMER,
-    });
-  };
+  const { getClientTypesCategories } = useClientTypesList();
 
   useEffect(() => {
-    getClientTypesCategories();
+    getClientTypesCategories(CLIENT_TYPE_Id.CUSTOMER);
   }, []);
 
   return {

@@ -6,9 +6,7 @@ import { CustomTabPanel } from "@/components/tabs/tab-panel";
 import { ITabsProps } from "@/components/tabs/interface";
 import Stack from "@mui/material/Stack";
 import { SecondaryButton } from "@/components/button/secondary-button";
-import { useRecoilState } from "recoil";
-import { selectedHorizontalTabState } from "./state";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useStyle } from "./style";
 
 const ButtonTabs = styled(Tabs)(
@@ -95,9 +93,11 @@ const PrimaryTabsComponent = ({
   variant,
   selectedTabIndex = 0,
   withBackGround = false,
+  style,
 }: ITabsProps) => {
   const { classes } = useStyle();
-  const [value, setValue] = useRecoilState<number>(selectedHorizontalTabState);
+  const [value, setValue] = useState<number>(selectedTabIndex);
+
   const TabComponent = variant === "ButtonedTabs" ? ButtonTab : UnderlinedTab;
   const TabsContainer =
     variant === "ButtonedTabs" ? ButtonTabs : UnderlinedTabs;
@@ -125,6 +125,7 @@ const PrimaryTabsComponent = ({
         zIndex={9}
         marginBottom={2}
         bgcolor={withBackGround && "#ffffff"}
+        style={style}
       >
         <TabsContainer
           value={value}
