@@ -111,9 +111,6 @@ const useQuoteNew = ({
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const [openReceiptCreationModal, setOpenReceiptCreationModal] =
     useRecoilState(openReceiptCreationModalState);
-  const [selectDate, setSelectDate] = useState(
-    isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
-  ); // Represents the Delivery Date for Quotes and Orders, and the Due Date for other documents
 
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
   const isSupplierPayments = docType === DOCUMENT_TYPE.supplierPayments;
@@ -137,6 +134,11 @@ const useQuoteNew = ({
   const [taxDate, setTaxDate] = useState(
     isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate
   );
+
+  const [selectDate, setSelectDate] = useState(
+    isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
+  ); // Represents the Delivery Date for Quotes and Orders, and the Due Date for other documents
+
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<
     number | null
   >(null);

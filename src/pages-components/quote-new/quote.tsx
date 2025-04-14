@@ -48,7 +48,6 @@ import { useQuoteGetData } from "./use-quote-get-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { DateField } from "@/components/date-picker/date-filed";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ModalType } from "@/enums";
@@ -62,6 +61,7 @@ import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { UpdateDeliveryPriceModal } from "@/widgets/quote-new/modals-widgets/update-delivery-price-modal/update-delivery-price-modal";
 import { useModal } from "@/hooks/use-modal";
 import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -576,7 +576,10 @@ const QuoteNewPageWidget = ({
                   )}
                   <ThemeProvider theme={theme}>
                     <CssBaseline />
-                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <LocalizationProvider
+                      dateAdapter={AdapterMoment}
+                      adapterLocale="en-gb"
+                    >
                       <DateField
                         label={t("sales.quote.creationDate")}
                         date={creationDate}
