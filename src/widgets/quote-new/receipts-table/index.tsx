@@ -64,14 +64,10 @@ const ReceiptsTable = () => {
     return totalAllocated;
   };
 
-  //!here new
   useEffect(() => {
     setTotalAllocatedDocuments(calculateTotalAllocatedSum());
   }, [tableRows, checkedItems, allocatedSums]);
 
-  //-----------------------------------------------------------------------------------------------------------------------
-
-  //!here new
   useEffect(() => {
     setRemainingTotal(finalTotalPayment);
 
@@ -194,7 +190,6 @@ const ReceiptsTable = () => {
   //   });
   // };
 
-  //!here new
   const handleAllocationChange = (index, isChecked, sumApplied) => {
     setAllocatedSums((prev) => {
       const updated = { ...prev };

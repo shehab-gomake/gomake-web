@@ -75,8 +75,8 @@ const UpdateDeliveryStatusModal = ({
       }`}
       insideStyle={{
         width: isMobile ? "95vw" : "70%",
-        height: isMobile ? "unset":"fit-content",
-        ...(isMobile && { padding: "10px 10px 0px 10px" , maxHeight:"70vh"}),
+        height: isMobile ? "unset" : "fit-content",
+        ...(isMobile && { padding: "10px 10px 0px 10px", maxHeight: "70vh" }),
       }}
       openModal={openModal}
       onClose={handleCloseModal}
@@ -88,7 +88,7 @@ const UpdateDeliveryStatusModal = ({
           display={"flex"}
           flexWrap={"wrap"}
           direction={"row"}
-          gap={isMobile ? "5px":"10px"}
+          gap={isMobile ? "5px" : "10px"}
         >
           <Stack marginBottom={"10px"} direction={"column"} gap={"4px"}>
             <span style={classes.labelStyle}>
@@ -157,7 +157,7 @@ const UpdateDeliveryStatusModal = ({
         <PrimaryTable
           stickyFirstCol={false}
           stickyHeader={true}
-          maxHeight={isMobile ? "30vh":"calc(100vh - 300px)"}
+          maxHeight={isMobile ? "30vh" : "calc(100vh - 300px)"}
           rows={documentItems}
           headers={tableHeaders}
           variant={"RoundTable"}

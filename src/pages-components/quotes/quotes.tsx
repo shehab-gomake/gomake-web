@@ -46,6 +46,9 @@ import { TotalCardComponent } from "./widgets/statistics-section/total-card";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
+import { useDeliveryStatusButton } from "./widgets/delivery-status-button/use-delivery-status";
+import { useClientContactsList } from "@/hooks/use-client-contacts";
+import { UpdateDeliveryStatusModal } from "./widgets/delivery-status-button/delivery-status-modal/delivery-status-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -57,7 +60,7 @@ const QuotesListPageWidget = ({
 }: IProps) => {
   const { classes } = useStyle();
   const router = useRouter();
-
+  const { getClientContacts, clientContacts } = useClientContactsList();
   const {
     onClickCloseModal,
     setPatternSearch,
@@ -216,7 +219,23 @@ const QuotesListPageWidget = ({
     onClickCloseReopenDocumentModal,
     openReopenDocModal,
     OpenDocument,
+    deliveryOrderId,
+    deliveryOrderNumber,
+    deliveryCustomerId,
   } = useQuotes(documentType, isFromHomePage);
+  const {
+    openDeliveryModal,
+    onCloseDeliveryModal,
+    renderTableRows,
+    editableQuantities,
+    setEditableQuantities,
+    setDocumentItems,
+    getDocumentDeliveryItems,
+    selectedItem,
+    removeDocumentDeliveryItem,
+    onCloseDeleteModal,
+    openDeleteModal,
+  } = useDeliveryStatusButton();
 
   useEffect(() => {
     if (router.query.orderNumber) {
@@ -251,6 +270,7 @@ const QuotesListPageWidget = ({
       pickerRef.current.close();
     }
   };
+
   const renderCreateNewButton = (onClickHandler) => (
     <Button
       sx={{
@@ -304,6 +324,21 @@ const QuotesListPageWidget = ({
     </>
   );
 
+  const handleOpenDeliveryModal = (orderId) => {
+    getDocumentDeliveryItems(DOCUMENT_TYPE.order, orderId);
+    getClientContacts(deliveryCustomerId);
+  };
+
+  const handleCloseDeliveryModal = () => {
+    onCloseDeliveryModal();
+    router.push(router.pathname, undefined, { shallow: true });
+  };
+
+  useEffect(() => {
+    if (deliveryOrderId) {
+      handleOpenDeliveryModal(deliveryOrderId);
+    }
+  }, [router.query.deliveryOrderId]);
 
   return (
     <>
@@ -339,8 +374,8 @@ const QuotesListPageWidget = ({
                     isOrder
                       ? onclickCreateNew
                       : isSupplierPayments
-                        ? () => navigate(`/${documentPath}`)
-                        : () => navigate(`/${documentPath}?isNewCreation=true`)
+                      ? () => navigate(`/${documentPath}`)
+                      : () => navigate(`/${documentPath}?isNewCreation=true`)
                   )}
               </div>
             </div>
@@ -362,12 +397,12 @@ const QuotesListPageWidget = ({
                         {Object.keys(router.query).filter(
                           (key) => key !== "pageNumber"
                         ).length > 0 && (
-                            <div
-                              style={{ position: "absolute", top: -5, right: -1 }}
-                            >
-                              <DotIcon />
-                            </div>
-                          )}
+                          <div
+                            style={{ position: "absolute", top: -5, right: -1 }}
+                          >
+                            <DotIcon />
+                          </div>
+                        )}
                       </IconButton>
                       <GoMakeMenu
                         handleClose={handleClose}
@@ -388,8 +423,8 @@ const QuotesListPageWidget = ({
                                   isPurchaseDocument
                                     ? supplierList
                                     : renderOptions()
-                                      ? renderOptions()
-                                      : []
+                                    ? renderOptions()
+                                    : []
                                 }
                                 getOptionLabel={(option: any) =>
                                   `${option.name}`
@@ -405,9 +440,10 @@ const QuotesListPageWidget = ({
                                 }}
                                 style={classes.textInputStyle}
                                 placeholder={t(
-                                  `sales.quote.${isPurchaseDocument
-                                    ? "chooseSupplier"
-                                    : "chooseCustomer"
+                                  `sales.quote.${
+                                    isPurchaseDocument
+                                      ? "chooseSupplier"
+                                      : "chooseCustomer"
                                   }`
                                 )}
                                 onChange={(e: any, value: any) => {
@@ -528,7 +564,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder &&
                               documentType !== DOCUMENT_TYPE.receipt && (
                                 <div style={classes.statusFilterContainer}>
@@ -574,7 +610,7 @@ const QuotesListPageWidget = ({
                             )}
                             {documentType !== DOCUMENT_TYPE.purchaseInvoice &&
                               documentType !==
-                              DOCUMENT_TYPE.purchaseInvoiceRefund &&
+                                DOCUMENT_TYPE.purchaseInvoiceRefund &&
                               documentType !== DOCUMENT_TYPE.purchaseOrder && (
                                 <div
                                   style={{
@@ -622,7 +658,7 @@ const QuotesListPageWidget = ({
                                 value={
                                   fromDate && toDate ? [fromDate, toDate] : null
                                 }
-                              // oneTap
+                                // oneTap
                               />
                             </div>
                           </div>
@@ -685,7 +721,7 @@ const QuotesListPageWidget = ({
                 isQuote
                   ? ["11%", "11%", "7%", "7%", "20%", "11%", "10%", "16%", "6%"]
                   : isOrder
-                    ? [
+                  ? [
                       "6%",
                       "5%",
                       "5%",
@@ -702,45 +738,45 @@ const QuotesListPageWidget = ({
                       "5%",
                       "5%",
                     ]
-                    : documentType === DOCUMENT_TYPE.purchaseInvoice ||
-                      documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
-                      ? [
-                        "7%",
-                        "15%",
-                        "10%",
-                        "13%",
-                        "10%",
-                        "10%",
-                        "10%",
-                        "10%",
-                        "10%",
-                        "5%",
-                      ]
-                      : isReceipt || isSupplierPayments
-                        ? [
-                          "7%",
-                          "15%",
-                          "10%",
-                          "13%",
-                          "10%",
-                          "10%",
-                          "10%",
-                          "10%",
-                          "10%",
-                          "5%",
-                        ]
-                        : [
-                          "10%",
-                          "8%",
-                          "8%",
-                          "8%",
-                          "10%",
-                          "23%",
-                          "10%",
-                          "10%",
-                          "10%",
-                          "3%",
-                        ]
+                  : documentType === DOCUMENT_TYPE.purchaseInvoice ||
+                    documentType === DOCUMENT_TYPE.purchaseInvoiceRefund
+                  ? [
+                      "7%",
+                      "15%",
+                      "10%",
+                      "13%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "5%",
+                    ]
+                  : isReceipt || isSupplierPayments
+                  ? [
+                      "7%",
+                      "15%",
+                      "10%",
+                      "13%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "5%",
+                    ]
+                  : [
+                      "10%",
+                      "8%",
+                      "8%",
+                      "8%",
+                      "10%",
+                      "23%",
+                      "10%",
+                      "10%",
+                      "10%",
+                      "3%",
+                    ]
               }
             />
           </div>
@@ -953,16 +989,16 @@ const QuotesListPageWidget = ({
           isMoveToReady
             ? moveOrderToReady
             : () => {
-              if (isSelectedCLoseAsDeliveryNote) {
-                const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
-                window.open(path, "_blank");
-              } else {
-                const path = isOrder
-                  ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                  : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                window.open(path, "_blank");
+                if (isSelectedCLoseAsDeliveryNote) {
+                  const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
+                  window.open(path, "_blank");
+                } else {
+                  const path = isOrder
+                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  window.open(path, "_blank");
+                }
               }
-            }
         }
       >
         <div
@@ -1040,6 +1076,26 @@ const QuotesListPageWidget = ({
         onClickDelete={() => OpenDocument(selectedDocument)}
         style={{ width: "35%" }}
         yesBtn={t("sales.quote.yesBtn")}
+      />
+      {/* Delivery Modal */}
+      <UpdateDeliveryStatusModal
+        openModal={openDeliveryModal}
+        onCloseModal={handleCloseDeliveryModal}
+        document={document}
+        documentItems={renderTableRows()}
+        editableQuantities={editableQuantities}
+        setEditableQuantities={setEditableQuantities}
+        setDocumentItems={setDocumentItems}
+        clientContacts={clientContacts}
+        documentType={DOCUMENT_TYPE.order}
+        documentId={deliveryOrderId?.toString()}
+        documentNumber={deliveryOrderNumber?.toString()}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
+        openModal={openDeleteModal}
+        onClose={onCloseDeleteModal}
+        onClickDelete={() => removeDocumentDeliveryItem(selectedItem)}
       />
     </>
   );
