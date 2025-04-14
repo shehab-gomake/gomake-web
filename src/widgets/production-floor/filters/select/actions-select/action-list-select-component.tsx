@@ -88,8 +88,8 @@ const ActionsListComponent = ({
     }
     return list?.length > 0
       ? list?.sort((a, b) =>
-          a.checked === b.checked ? 0 : !!a.checked ? -1 : 0
-        )
+        a.checked === b.checked ? 0 : !!a.checked ? -1 : 0
+      )
       : [];
   }, [actionsList, filter]);
 

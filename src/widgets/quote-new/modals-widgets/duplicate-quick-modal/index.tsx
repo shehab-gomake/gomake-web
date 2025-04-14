@@ -19,7 +19,8 @@ const DuplicateQuickModal = ({
   quoteItemId,
   documentType,
   getQuote,
-  quoteItem
+  quoteItem,
+  isAddQuantity
 }) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -42,12 +43,24 @@ const DuplicateQuickModal = ({
     if (quoteItem?.productID && openModal) {
       getProductSizes()
     }
+    if (isAddQuantity && openModal) {
+      setGroups([{
+        id: 1,
+        parameters: [{
+          name: {
+            label: t("boardMissions.quantity"),
+            value: "4991945c-5e07-4773-8f11-2e3483b70b53"
+          },
+          value: ""
+        }]
+      }])
+    }
   }, [quoteItem, openModal])
   return (
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={t("products.addProduct.admin.advancedDuplicate")}
+        modalTitle={isAddQuantity ? t("sales.quote.addQuantity") : t("products.addProduct.admin.advancedDuplicate")}
         onClose={() => {
           onClose()
           setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }])
@@ -90,6 +103,8 @@ const DuplicateQuickModal = ({
                       style={clasess.groupParameterInput}
                       placeholder={t("products.profits.exceptions.selectParameter")}
                       withArrow={true}
+                      disabled={isAddQuantity} // Add disabled prop
+
                     />
                   </div>
                   <div style={clasess.groupParameterDropdown2}>
@@ -148,9 +163,9 @@ const DuplicateQuickModal = ({
                     }
                   </div>
                   <div style={clasess.groupParameterAddContainer}>
-                    <div onClick={() => addParameter(groupIndex)} style={clasess.groupParameterAdd}>
+                    {!isAddQuantity ? <div onClick={() => addParameter(groupIndex)} style={clasess.groupParameterAdd}>
                       <AddModalIcon />
-                    </div>
+                    </div> : <div style={clasess.groupParameterAdd2} />}
                     {group.parameters.length > 1 && (
                       <div onClick={() => deleteParameter(groupIndex, index)} style={clasess.groupParameterAdd}>
                         <DeleteModalIcon width="40" height="40" />

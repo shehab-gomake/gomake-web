@@ -138,15 +138,15 @@ export enum DocumentCalculationType {
   TotalPayment,
   VAT,
 }
+
 export enum DocumentPreferencesEnum
-{
-  ShowPrice,
-  ShowDetails,
-  ShowGraphicsItems,
-  ShowDeliveryItems,
-  ApplyAutomaticDiscount,
-  ShowDiscountItems,
-  HideItemDiscountColumn,
+        {
+          ShowPrice,
+          ShowDetails,
+          ShowGraphicsItems,
+          ShowDeliveryItems,
+          ApplyAutomaticDiscount,
+          ShowDiscountItems,
+          HideItemDiscountColumn,
 
-}
-
+        }

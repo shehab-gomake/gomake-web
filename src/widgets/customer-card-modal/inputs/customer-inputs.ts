@@ -3,22 +3,21 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 
-const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
+const customerInputs = (typeClient, state, isEditMode) => {
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const { CheckPermission } = useUserPermission();
 
   return [
-    {
+    isEditMode && {
       name: "code",
       label: "customers.modal.code",
       type: "text",
-      placeholder: "customers.modal.code",
+      placeholder: isEditMode ? "" : "customers.modal.code",
       required: false,
       parameterKey: "code",
       options: [],
       value: state?.code,
       isValid: true,
-      // readonly: codeFlag ?? true,
       readonly: true,
     },
     {
@@ -51,26 +50,7 @@ const customerInputs = (typeClient, codeFlag, state, clientTypesCategories) => {
       value: state?.buisnessNumber,
       isValid: true,
     },
-    // {
-    //   name: "clientTypeId",
-    //   label:
-    //     typeClient === "C"
-    //       ? "customers.modal.clientType"
-    //       : "suppliers.supplierType",
-    //   type: "select",
-    //   placeholder:
-    //     typeClient === "C"
-    //       ? "customers.modal.clientType"
-    //       : "suppliers.supplierType",
-    //   required: true,
-    //   parameterKey: "clientTypeId",
-    //   options: clientTypesCategories.map((type) => ({
-    //     value: type?.id,
-    //     text: type?.label,
-    //   })),
-    //   value: state?.clientTypeId,
-    //   isValid: true,
-    // },
+
     {
       name: "Currency",
       label: "customers.modal.currency",

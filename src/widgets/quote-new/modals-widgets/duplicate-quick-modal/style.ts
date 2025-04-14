@@ -87,6 +87,10 @@ const useStyle = () => {
         height: 40,
         cursor: "pointer",
       },
+      groupParameterAdd2:{
+        width: 40,
+        height: 40,
+      },
       groupParameterAddContainer:{
         display: "flex",
         flexDirection: "row" as "row",

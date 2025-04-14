@@ -45,4 +45,5 @@ export interface IFormArrayInputsProps {
   disableUpdateValues?: boolean;
   disabled?: boolean;
   disableAddValue?: boolean;
+  containerStyle?: React.CSSProperties;
 }

@@ -346,11 +346,9 @@ const BoardMissionsStationActionItem = ({
       if (res.success) {
         alertSuccessUpdate();
         const currentActionId = res?.data?.currentStationId;
-        debugger;
         setStations(
           stations.map((station) => {
             if (station?.boardMissionActionId === boardMissionActionId) {
-              debugger;
               return {
                 ...station,
                 isDone: true,

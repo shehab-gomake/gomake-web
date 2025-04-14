@@ -32,7 +32,7 @@ const QuoteConfirmationPageWidget = ({
     companyLogo,
     getCompanyLogo,
     quoteConfirm,
-  } = useQuoteConfirmation({ documentType });
+  } = useQuoteConfirmation({ documentType, isPrePaymentPage });
 
   const { classes } = useStyle({ direction });
   const { t } = useTranslation();
@@ -64,7 +64,13 @@ const QuoteConfirmationPageWidget = ({
           setIsPageNotFound(true);
         }
       } else {
-        getQuoteConfirmation();
+        const userToken = await getTempUserToken();
+        if (!userToken) {
+          setIsPageNotFound(true);
+        } else {
+          updateTempUserTokenStorage(userToken);
+          await getQuoteConfirmation();
+        }
       }
     };
 

@@ -12,7 +12,7 @@ import {
   IProductionFloorFilter,
   IStation,
 } from "@/widgets/production-floor/interfaces/filters";
-import { setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { getPrintHouseActions, setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
 import {
@@ -27,11 +27,15 @@ import { useTranslation } from "react-i18next";
 import { selectedChipIdsState } from "../state/text-search";
 import {
   deleteStationFilterByGroupIdApi,  duplicateStationFilterByGroupIdApi,  getStationFilterByGroupIdApi,
+  getStationFilterGroupByIdApi,
+  updateStationFilterGroupApi,
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
 import { selectedGroupIdState } from "../state/filter-group";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
 import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employees-api";
+import { Source } from "./select/actions-select/use-actions-list";
+import { actionsListState } from "../state/actions-list";
 
 interface onStationsChangeProps {
   stations: IStation[];
@@ -292,11 +296,18 @@ const useProductionFloorFilters = ({
   );
   const [selectedGroup, setSelectedGroup] = useState<ISelectedGroup | null>(null);
   const [openModalDuplicateGroup, setOpenModalDuplicateGroup] = useState(false);
+  const [openModalEditGroup, setOpenModalEditGroup] = useState(false);
   const onClickOpenModalDuplicateGroup = () => {
     setOpenModalDuplicateGroup(true);
   }
   const onClickCloseModalDuplicateGroup = () => {
     setOpenModalDuplicateGroup(false);
+  }
+  const onClickOpenModalEditGroup = () => {
+    setOpenModalEditGroup(true);
+  }
+  const onClickCloseModalEditGroup = () => {
+    setOpenModalEditGroup(false);
   }
   const handleSelectGroup = (groupId: string) => {
     if (selectedGroupId === groupId) {
@@ -413,6 +424,40 @@ const duplicateStationFilterByGroupId = async () => {
     selectedUsers,
   }).then();
 };
+
+const getStationFilterByIdGroup = async (id) => {
+  const callBack = (res) => {
+    if (res.success) {
+      setSelectedGroup((prev) => ({
+        ...prev,
+        stations: res?.data?.stations
+      }))
+    }
+  };
+  await getStationFilterGroupByIdApi(callApi, callBack, {
+    id: id,
+  }).then();
+};
+
+useEffect(() => {
+  if(selectedGroupId && openModalEditGroup){
+    getStationFilterByIdGroup(selectedGroup?.id)
+  }
+}, [selectedGroupId,openModalEditGroup])
+const [actions, setActions] = useRecoilState(actionsListState);
+const getActions = async () => {
+  const callBack = (res) => {
+    if (res.success) {
+      setActions(res?.data);
+    }
+  };
+  await getPrintHouseActions(callApi, callBack, );
+};
+
+useEffect(() => {
+  getActions();
+}, []);
+
   return {
     t,
     dir,
@@ -476,7 +521,11 @@ const duplicateStationFilterByGroupId = async () => {
     selectedUsers,
     handleSelectAllUsers,
     handleUserSelect,
-    duplicateStationFilterByGroupId
+    duplicateStationFilterByGroupId,
+    openModalEditGroup,
+    onClickOpenModalEditGroup,
+    onClickCloseModalEditGroup,
+    actions,
   };
 };
 

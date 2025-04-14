@@ -5,30 +5,35 @@ import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 
 const useClientTypesList = () => {
-    const { callApi } = useGomakeAxios();
-    const [clientTypesCategories, setClientTypesCategories] = useRecoilState(clientTypesCategoriesState);
+  const { callApi } = useGomakeAxios();
+  const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
+    clientTypesCategoriesState
+  );
 
-    const getClientTypesCategories = async () => {
-        const callBack = (res) => {
-            if (res.success) {
-                const clientTypes = res.data.map((types) => ({
-                    label: types.name,
-                    id: types.id,
-                    additionProfits : types?.additionProfits  ?? 0,  
-
-                }));
-                setClientTypesCategories(clientTypes);
-            }
-        };
-        await getAndSetClientTypes(callApi, callBack, { cardType: CLIENT_TYPE_Id.CUSTOMER });
+  const getClientTypesCategories = async (
+    cardTypeId: CLIENT_TYPE_Id = CLIENT_TYPE_Id.CUSTOMER
+  ) => {
+    const callBack = (res) => {
+      if (res.success) {
+        const clientTypes = res.data.map((types) => ({
+          label: types.name,
+          id: types.id,
+          additionProfits: types?.additionProfits ?? 0,
+          discount: types?.discount ?? 0,
+        }));
+        setClientTypesCategories(clientTypes);
+      }
     };
+    await getAndSetClientTypes(callApi, callBack, {
+      cardType: cardTypeId,
+    });
+  };
 
-
-    return {
-        clientTypesCategories,
-        setClientTypesCategories,
-        getClientTypesCategories
-    };
+  return {
+    clientTypesCategories,
+    setClientTypesCategories,
+    getClientTypesCategories,
+  };
 };
 
 export { useClientTypesList };

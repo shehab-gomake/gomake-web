@@ -21,7 +21,6 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   const [showDelivery, setShowDelivery] = useState(quoteStateValue?.isShowDeliveryItems);
   const [hideItemDiscountColumn, setHideItemDiscountColumn] = useState(quoteStateValue?.hideItemDiscountColumn);
 
-
   const currencies =
     useRecoilValue<{ label: string; value: string }[]>(currenciesState);
   const matchingCurrency = currencies.find(
@@ -39,6 +38,7 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   const vatStatus = vatStatusList.find(
     (status) => status.value === quoteStateValue?.vatStatus
   )?.text;
+
   const [exchangeRate, setExchangeRate] = useState(
     quoteStateValue?.exchangeRate || "-"
   );
@@ -55,6 +55,7 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     setShowDelivery(quoteStateValue?.isShowDeliveryItems);
     setHideItemDiscountColumn(quoteStateValue?.hideItemDiscountColumn);
   }, [quoteStateValue?.isShowDetails, quoteStateValue?.isShowPrice, quoteStateValue?.isShowGraphicsItems, quoteStateValue?.isShowDeliveryItems, quoteStateValue?.hideItemDiscountColumn]);
+
 
   useEffect(() => {
     setExchangeRate(quoteStateValue?.exchangeRate || "-");

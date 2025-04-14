@@ -60,7 +60,7 @@ import { SettingVatListMenu } from "@/widgets/quote-new/setting-vat-menu";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { UpdateDeliveryPriceModal } from "@/widgets/quote-new/modals-widgets/update-delivery-price-modal/update-delivery-price-modal";
 import { useModal } from "@/hooks/use-modal";
-// import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 interface IProps {
@@ -309,16 +309,20 @@ const QuoteNewPageWidget = ({
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,
     systemVAT,
+    isAddQuantity,
+    openAddAttachmentsModal,
+    onOpenAddAttachmentsModal,
+    onCloseAddAttachmentsModal,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
   if (documentType == DOCUMENT_TYPE.quote) {
-    const {} = useQuotesSignalr({ getQuote });
+    const { } = useQuotesSignalr({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const {} = useOrdersSignalr({ getQuote });
+    const { } = useOrdersSignalr({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -377,7 +381,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const {} = useGoMakeTour(quoteSteps, []);
+  const { } = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -438,8 +442,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -508,7 +512,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                      quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -790,6 +794,7 @@ const QuoteNewPageWidget = ({
                 onClickSendReceiptToClient={onClickSendReceiptToClient}
                 handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
                 onClickConfirmCreateDocument={onClickConfirmCreateDocument}
+                onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal}
               />
             </div>
           )}
@@ -801,7 +806,7 @@ const QuoteNewPageWidget = ({
         !isPrePaymentPage &&
         !quoteConfirm?.isConfirmed &&
         quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled && (
-          <ButtonsConfirmContainer />
+          <ButtonsConfirmContainer onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal} />
         )}
       <AddNewItemModal
         openModal={openAddNewItemModal}
@@ -851,6 +856,7 @@ const QuoteNewPageWidget = ({
         quoteItem={quoteItem}
         documentType={documentType}
         getQuote={getQuote}
+        isAddQuantity={isAddQuantity}
       />
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
@@ -995,18 +1001,18 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? moveOrderToReady
             : () => {
-                if (isSelectedCLoseAsDeliveryNote) {
-                  navigate(
-                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                  );
-                } else {
-                  const path =
-                    documentType === DOCUMENT_TYPE.order
-                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                  navigate(path);
-                }
+              if (isSelectedCLoseAsDeliveryNote) {
+                navigate(
+                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                );
+              } else {
+                const path =
+                  documentType === DOCUMENT_TYPE.order
+                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                navigate(path);
               }
+            }
         }
       >
         <div
@@ -1091,6 +1097,12 @@ const QuoteNewPageWidget = ({
         subTitle="modal.alertDifferentVat"
         yesBtn="modal.ok"
         withCancelBtn={false}
+      />
+      <AddAttachmentsModal
+        openModal={openAddAttachmentsModal}
+        onClose={onCloseAddAttachmentsModal}
+        documentType={documentType}
+        getQuote={getQuote}
       />
     </>
   );

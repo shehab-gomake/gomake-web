@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { getAllActionsApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useState } from "react";
@@ -7,8 +7,9 @@ import { useRouter } from "next/router";
 import { getOutsourcingSuppliersListApi } from "@/services/api-service/suppliers/suppliers-endpoints";
 import { outsourceSuppliersState } from "@/widgets/product-pricing-widget/state";
 import { useSetRecoilState } from "recoil";
+import { EHttpMethod } from "@/services/api-service/enums";
 
-const useWorkFlows = () => {
+const useWorkFlows = ({ getProductById }: any) => {
   const { callApi } = useGomakeAxios();
   const {
     alertFaultUpdate,
@@ -149,6 +150,22 @@ const useWorkFlows = () => {
   useEffect(() => {
     getOutSourcingSuppliers();
   }, []);
+
+  const toggleIgnoreCalculatedWorkflows = useCallback(async () => {
+    const res: any = await callApi(
+      EHttpMethod.PUT,
+      "/v1/printhouse-config/products/toggle-ignore-calculated-workflows",
+      {
+        productId: router.query?.id,
+      }
+    );
+    if (res?.success) {
+      alertSuccessUpdate()
+      getProductById()
+    } else {
+      alertFaultUpdate()
+    }
+  }, []);
   return {
     actionListDropDown,
     anchorElActionsListMenu,
@@ -161,7 +178,8 @@ const useWorkFlows = () => {
     addActionToProduct,
     deleteActionFromProduct,
     updateActionsOrderInProduct,
-    updateProductAction
+    updateProductAction,
+    toggleIgnoreCalculatedWorkflows
   };
 };
 
