@@ -18,7 +18,6 @@ const useButtonsConfirmContainer = () => {
     const [rejectStatus, setRejectStatus] = useState<QuoteStatuses>();
     const [isButtonClicked, setIsButtonClicked] = useState(false);
     const { getQuoteConfirmation } = useQuoteConfirmation();
-
     const handleRejectBtnClick = (event: React.MouseEvent<HTMLElement>) => {
         setIsButtonClicked(true);
         setAnchorElRejectBtn(event.currentTarget);

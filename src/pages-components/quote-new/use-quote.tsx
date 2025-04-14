@@ -301,6 +301,15 @@ const useQuoteNew = ({
 
   const [openAddDeliveryModal, setOpenAddDeliveryModal] = useState(false);
   const [openUpdateDeliveryModal, setOpenUpdateDeliveryModal] = useState(false);
+  const [openAddAttachmentsModal, setOpenAddAttachmentsModal] = useState(false);
+
+  const onOpenAddAttachmentsModal = () => {
+    setOpenAddAttachmentsModal(true);
+  };
+
+  const onCloseAddAttachmentsModal = () => {
+    setOpenAddAttachmentsModal(false);
+  };
 
   const onOpenDeliveryModal = () => {
     setOpenAddDeliveryModal(true);
@@ -347,8 +356,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1172,7 +1181,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -2366,6 +2375,9 @@ const useQuoteNew = ({
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,
     systemVAT,
+    openAddAttachmentsModal,
+    onOpenAddAttachmentsModal,
+    onCloseAddAttachmentsModal,
   };
 };
 
