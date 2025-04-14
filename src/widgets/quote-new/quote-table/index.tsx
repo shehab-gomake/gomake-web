@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Table,
   TableBody,
@@ -62,8 +62,11 @@ const QuoteForPriceTable = ({
     documentType === DOCUMENT_TYPE.invoice ||
     documentType === DOCUMENT_TYPE.invoiceRefund;
 
-  const [visibleChilds, setVisibleChilds] = useState<{ [key: number]: boolean }>(
-    documentItems?.reduce((acc, _, index) => ({ ...acc, [index]: true }), {}) || {}
+  const [visibleChilds, setVisibleChilds] = useState<{
+    [key: number]: boolean;
+  }>(
+    documentItems?.reduce((acc, _, index) => ({ ...acc, [index]: true }), {}) ||
+      {}
   );
   // Function to toggle visibility of child items for a specific parent item
   const toggleChildVisibility = (parentIndex: number) => {
@@ -73,21 +76,55 @@ const QuoteForPriceTable = ({
     }));
   };
 
-
   const _renderIconcalculationStatus = (calculationStatus) => {
     if (calculationStatus === ECalculationStatus.Calculating) {
-      return <div style={{ display: "flex", alignItems: "center", gap: "5px" }}><CalculatingIcon /><a>{t("general.calculating")}</a></div>;;
+      return (
+        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+          <CalculatingIcon />
+          <a>{t("general.calculating")}</a>
+        </div>
+      );
     }
     if (calculationStatus === ECalculationStatus.Failed) {
-      return <div style={{ display: "flex", alignItems: "center", gap: "5px", color: "#344054", }}><NotCalculatingIcon />{t("general.error")}!
-        <span style={{ color: "#2E3092", textDecoration: "underline", cursor: "pointer" }} onClick={() => getQuote()}>{t("general.tryAgain")}</span>
-      </div>
-
+      return (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            color: "#344054",
+          }}
+        >
+          <NotCalculatingIcon />
+          {t("general.error")}!
+          <span
+            style={{
+              color: "#2E3092",
+              textDecoration: "underline",
+              cursor: "pointer",
+            }}
+            onClick={() => getQuote()}
+          >
+            {t("general.tryAgain")}
+          </span>
+        </div>
+      );
     }
-  }
+  };
+
+  const tableContainerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (tableContainerRef.current) {
+      tableContainerRef.current.scrollTop =
+        tableContainerRef.current.scrollHeight;
+    }
+  }, [documentItems?.length]);
+
   return (
     <div>
       <TableContainer
+        ref={tableContainerRef}
         style={{
           maxHeight: 420,
           overflow: "scroll",
@@ -150,7 +187,8 @@ const QuoteForPriceTable = ({
                     setIsShowChilds={() => toggleChildVisibility(parentIndex)}
                     _renderIconcalculationStatus={_renderIconcalculationStatus}
                   />
-                  {item?.childsDocumentItems && !visibleChilds[parentIndex] &&
+                  {item?.childsDocumentItems &&
+                    !visibleChilds[parentIndex] &&
                     item?.childsDocumentItems?.map(
                       (childItem: any, childIndex: number) => {
                         indexs++;
@@ -170,10 +208,14 @@ const QuoteForPriceTable = ({
                             childList={item?.childsDocumentItems}
                             isQuoteConfirmation={isQuoteConfirmation}
                             documentType={documentType}
-                            onChangeSelectedItemRowForQoute={onChangeSelectedItemRowForQoute}
+                            onChangeSelectedItemRowForQoute={
+                              onChangeSelectedItemRowForQoute
+                            }
                             quoteItems={quoteItems}
                             getQuote={getQuote}
-                            _renderIconcalculationStatus={_renderIconcalculationStatus}
+                            _renderIconcalculationStatus={
+                              _renderIconcalculationStatus
+                            }
                           />
                         );
                       }
