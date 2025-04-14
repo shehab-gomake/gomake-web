@@ -123,11 +123,13 @@ const ButtonsContainer = ({
   };
 
   const handleAddItemClick = () => {
-    if (!quoteItemValue?.client) {
-      alertFault("home.admin.pleaseSelectCustomer");
-    } else {
-      onOpenNewItem();
-    }
+    // if (!quoteItemValue?.client) {
+    //   alertFault("home.admin.pleaseSelectCustomer");
+    // }
+    //  else {
+    //   onOpenNewItem();
+    // }
+    onOpenNewItem();
   };
 
   useEffect(() => {
