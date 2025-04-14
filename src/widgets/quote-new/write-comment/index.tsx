@@ -56,7 +56,6 @@ const WriteCommentComp = ({
 
     quoteItemValue?.documentNumbers?.forEach((doc) => {
       const { documentType, documentId, documentNumber } = doc;
-      debugger;
       const title = t(renderDocumentTypeForSourceDocumentNumber(documentType));
       const documentPath = ERPDocumentsTypesEnum[documentType];
 

@@ -42,12 +42,6 @@ export interface ICompanyProfile {
   };
   footerImage?: null | string;
   showContactInfo?: null | string;
-  zCreditTerminalNumber?: string;
-  zCreditPassword?: string;
-  zCreditPinPadId?: string;
-  creditClearanceCompany?: number;
-  yaadPayMasof?: string;
-  yaadPayPassP?: string;
   dashboardCode?: string;
   id?: string;
   name?: string;
@@ -62,4 +56,18 @@ export interface ICompanyProfile {
   printnodePassword?: string;
   employeeWorkingHourCost?: string;
   unitType?: number;
+
+  //!here new
+  creditClearanceCompany?: CreditClearanceCompanies;
+  terminalNumber?: string;
+  terminalPassword?: string;
+  pinPads?: Array<{
+    name: string;
+    number: string;
+  }>;
+}
+
+export enum CreditClearanceCompanies {
+  Z_CREDIT = 1,
+  YAAD_PAY,
 }

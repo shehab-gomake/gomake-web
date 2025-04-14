@@ -37,6 +37,7 @@ import { useRouter } from "next/router";
 
 const usePaymentMethodsTabs = () => {
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
@@ -384,6 +385,12 @@ const usePaymentMethodsTabs = () => {
     { label: t("payment.credit"), value: 6 },
   ];
 
+  const pinPadsOptions =
+    quoteItemValue?.pinPads?.map((pinPad) => ({
+      label: pinPad?.name,
+      value: pinPad?.number,
+    })) || [];
+
   const numberOfPayments = Array.from({ length: 13 }, (_, index) => ({
     label: index + 1,
     value: index + 1,
@@ -470,6 +477,9 @@ const usePaymentMethodsTabs = () => {
     creditCardAccountsOptions,
     totalSupplierCreditCard,
     handleTotalSupplierCreditCardChange,
+    pinPadsOptions,
+    dir,
+    setCreditCard,
   };
 };
 

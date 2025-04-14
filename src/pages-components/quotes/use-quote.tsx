@@ -1541,7 +1541,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   ) => {
     const callBack = (res) => {
       if (res?.success) {
-        debugger;
         const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
         const documentId = res?.data?.documentId;
         if (!isAnotherQuoteInCreate) {
