@@ -61,7 +61,6 @@ import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { UpdateDeliveryPriceModal } from "@/widgets/quote-new/modals-widgets/update-delivery-price-modal/update-delivery-price-modal";
 import { useModal } from "@/hooks/use-modal";
 import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
-// import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 interface IProps {
