@@ -82,10 +82,6 @@ const useHeader = () => {
     }
   }, [userQuote]);
 
-  const now = new Date();
-  const currentMonth = now.toISOString().slice(0, 7); // format: "YYYY-MM"
-  const calendlyLink = `https://calendly.com/gomakeinc/intro-to-gomake?month=${currentMonth}`;
-
   return {
     user,
     open,
@@ -102,7 +98,6 @@ const useHeader = () => {
     openSupport,
     anchorSupportEl,
     handleCloseSupport,
-    calendlyLink,
   };
 };
 

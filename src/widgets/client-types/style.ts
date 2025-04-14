@@ -1,18 +1,29 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
+import i18next from "i18next";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
-  const { errorColor, theme, primaryColor } = useGomakeTheme();
+  const { t } = useTranslation();
+  const { errorColor, primaryColor, theme } = useGomakeTheme();
+
   const classes = useMemo(() => {
     return {
+      mainContainer: {
+        display: "flex",
+        flexDirection: "column" as "column",
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 10,
+        height: "100%",
+      },
       insideStyle: {
         width: "fit-content",
-        borderRadius: 8,
+        borderRadius: "16px",
         gap: "8px",
         height: "auto",
         maxHeight: 400,
-        backgroundColor: "#f7f7f7",
       },
       addBtnStyle: {
         width: "50%",
@@ -55,7 +66,7 @@ const useStyle = () => {
         left: 0,
         position: "relative" as "relative",
       },
-       textInputStyle: {
+      textInputStyle: {
         display: "flex",
         width: "100%",
         height: "40px",
@@ -74,6 +85,7 @@ const useStyle = () => {
       textInputContainer: {
         maxWidth: "40%",
         width: "max-content",
+        gap: "10px",
       },
       parameterContainer: {
         display: "flex",
@@ -97,17 +109,54 @@ const useStyle = () => {
         backgroundColor: "#FFF",
         borderRadius: 4,
       },
-      addClientTypeBtnContainer:{
+      addClientTypeBtnContainer: {
         marginTop: "10px",
         display: "flex",
         justifyContent: "center" as "center",
         width: "100%",
       },
-      addClientTypeBtn:{
-        width: "50%", height: 40
-      }
+      addClientTypeBtn: {
+        width: "50%",
+        height: 40,
+      },
+      inputLbl: {
+        color: primaryColor(900),
+        ...FONT_FAMILY.Lexend(600, 14),
+        display: "flex",
+        alignItems: "flex-end",
+      },
+      divWithPer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "center",
+        gap: 5,
+      },
+      modalTitle: {
+        ...FONT_FAMILY.Inter(500, 20),
+        color: "#000000",
+        paddingBottom: "10px",
+      },
+      cancelBtnStyle: {
+        width: "50%",
+        borderRadius: "8px",
+        height: "44px",
+        backgroundColor: "white",
+        color: "#000000",
+        border: "1px solid #D0D5DD",
+        "&:hover": {
+          backgroundColor: "#f5f5f5",
+          border: "1px solid #D0D5DD",
+          borderRadius: "8px",
+          boxShadow: "none",
+        },
+      },
+      btnStyle: {
+        width: "50%",
+        borderRadius: "8px",
+        height: "44px",
+      },
     };
-  }, [theme]);
+  }, [i18next.language, t, theme]);
   return {
     classes,
   };

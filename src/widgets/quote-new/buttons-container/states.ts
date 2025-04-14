@@ -70,6 +70,7 @@ export interface CreditCardData {
   customerEmail?: string;
   transactionType?: any;
   numberOfPayments?: number;
+  pinPadId?: number;
 }
 
 export interface ReceiptCreditCardData {

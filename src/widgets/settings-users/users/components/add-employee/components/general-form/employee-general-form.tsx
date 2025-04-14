@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { IInput } from "@/widgets/machines/utils/interfaces-temp/inputs-interfaces";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { employeeState } from "@/store/employee-state";
 import { useStyle } from "@/widgets/settings-users/users/components/add-employee/components/general-form/style";
 import { employeeInfoInputs } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/employee-info-inputs";
@@ -37,6 +37,7 @@ import { printNodeInputs } from "@/widgets/settings-users/users/components/add-e
 import { usePrintNodePrinters } from "@/hooks/use-print-node-printers";
 import { getAllSMSTemplatesListApi } from "@/services/api-service/mailing/mailing-api";
 import { allSMSTemplatesListState } from "@/store";
+import { userProfileState } from "@/store/user-profile";
 
 const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
   const { t } = useTranslation();
@@ -47,6 +48,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
   const [actionRequierdForEmployee, setActionRequierdForEmployee] = useState(
     []
   );
+  const profileState = useRecoilValue(userProfileState);
   const { callApi } = useGomakeAxios();
   const { printers, isPrintHouseUsePrintNode, getPrinterBins } =
     usePrintNodePrinters();
@@ -73,6 +75,11 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
           quotePriceLimit: 0,
           [key]: newValue,
         },
+      });
+    } else if (key === "systemLanguage") {
+      setState({
+        ...state,
+        [key]: value,
       });
     } else
       setState({
@@ -131,24 +138,41 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
     });
   };
 
-  const [allSMSTemplatesList, setAllSMSTemplatesList] = useRecoilState<any>(allSMSTemplatesListState);
+  useEffect(() => {
+    if (!state?.systemLanguage && profileState?.systemLang) {
+      setState((prev) => ({
+        ...prev,
+        systemLanguage: profileState.systemLang,
+      }));
+    }
+  }, [profileState?.systemLang, state?.systemLanguage]);
+
+  const setAllSMSTemplatesList = useSetRecoilState<any>(
+    allSMSTemplatesListState
+  );
+
   const getAllSMSTemplatesList = useCallback(async () => {
-    await getAllSMSTemplatesListApi(callApi, (fetchedData: any) => {
-      // Add the default option
-      const templatesWithDefault = [
-        { text: t("customers.modal.default"), value: null },
-        ...fetchedData.data.map((group: any) => ({
-          text: group.text,
-          value: group.value,
-        }))
-      ];
-      setAllSMSTemplatesList(templatesWithDefault);
-    }, {});
+    await getAllSMSTemplatesListApi(
+      callApi,
+      (fetchedData: any) => {
+        // Add the default option
+        const templatesWithDefault = [
+          { text: t("customers.modal.default"), value: null },
+          ...fetchedData.data.map((group: any) => ({
+            text: group.text,
+            value: group.value,
+          })),
+        ];
+        setAllSMSTemplatesList(templatesWithDefault);
+      },
+      {}
+    );
   }, []);
 
   useEffect(() => {
     getAllSMSTemplatesList();
   }, []);
+
   const quoteLimitationOptions = Object.keys(EmployeeQuoteLimitationType)
     .filter((key) => isNaN(Number(key)))
     .map((key) => ({
@@ -158,7 +182,11 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
 
   const inputs = useCallback(() => {
     return {
-      employee: employeeInfoInputs(state.employee, quoteLimitationOptions),
+      employee: employeeInfoInputs(
+        state.employee,
+        state,
+        quoteLimitationOptions
+      ),
       account: accountInputs(state, action),
       agent: agentInputs(state.employee),
       ips: ipAddressesInputs(state),
@@ -243,13 +271,11 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
             onChange={handelIsAgentChange}
           />
         </div>
-        {
-          /*!!state.employee.isAgent &&
+        {/*!!state.employee.isAgent &&
             <Stack direction="row" spacing={2}>
               <OutlookEmailLoginComponent/>
               <GoogleAuth/>
-            </Stack>*/
-        }
+            </Stack>*/}
         {/* {
                     !!state.employee.isAgent && <>
                         <h3 style={classes.subSectionHeader}>{t('usersSettings.agent')}</h3>

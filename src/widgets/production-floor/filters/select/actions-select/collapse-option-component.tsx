@@ -31,10 +31,10 @@ const CollapseOptionComponent = ({
       ) : (
         <KeyboardArrowDownIcon
           style={{
-            cursor: option.machines.length > 0 ? "pointer" : "default",
-            opacity: option.machines.length > 0 ? 1 : 0,
+            cursor: option?.machines?.length > 0 ? "pointer" : "default",
+            opacity: option?.machines?.length > 0 ? 1 : 0,
           }}
-          onClick={option.machines.length > 0 ? onToggleCollapse : undefined}
+          onClick={option?.machines?.length > 0 ? onToggleCollapse : undefined}
         />
       )}
       <Stack>

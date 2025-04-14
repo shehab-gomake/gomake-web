@@ -8,14 +8,10 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ApprovalStatus, LogActionType, QUOTE_STATUSES } from "./enums";
 import { MoreMenuWidget } from "./more-circle";
-import {
-  getAllProductsForDropDownList,
-  getAndSetClientTypes,
-} from "@/services/hooks";
-import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
+import { getAllProductsForDropDownList } from "@/services/hooks";
+import { useRecoilValue, useRecoilState } from "recoil";
 import {
   agentsCategoriesState,
-  clientTypesCategoriesState,
   isSelectedCLoseAsDeliveryNoteState,
 } from "@/pages/customers/customer-states";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
@@ -84,6 +80,7 @@ import { EMessageStatus } from "@/enums/document-type-enum";
 import { useDocumentsTableSocketIo } from "@/hooks/socket-io/use-documents-table-socket-io";
 import { QuoteIfExistState } from "../quote-new/store/quote";
 import { userQuoteState } from "@/store/user-qoute-state";
+import { useClientTypesList } from "@/hooks/use-client-types";
 
 interface Query {
   customerId?: string;
@@ -1544,7 +1541,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   ) => {
     const callBack = (res) => {
       if (res?.success) {
-        debugger;
         const isAnotherQuoteInCreate = res?.data?.isAnotherQuoteInCreate;
         const documentId = res?.data?.documentId;
         if (!isAnotherQuoteInCreate) {
@@ -2230,25 +2226,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     await getAndSetCustomerById(callApi, callBack, { customerId: customerId });
   };
 
-  const setClientTypesCategories = useSetRecoilState(
-    clientTypesCategoriesState
-  );
-
-  const getClientTypesCategories = async () => {
-    const callBack = (res) => {
-      if (res) {
-        const clientTypes = res.map((types) => ({
-          label: types.name,
-          id: types.id,
-          additionProfits: types?.additionProfits ?? 0,
-        }));
-        setClientTypesCategories(clientTypes);
-      }
-    };
-    await getAndSetClientTypes(callApi, callBack, {
-      cardType: CLIENT_TYPE_Id.CUSTOMER,
-    });
-  };
+  const { getClientTypesCategories } = useClientTypesList();
 
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [isSendToClient, setIsSendToClient] = useState(false);

@@ -7,19 +7,18 @@ import {
 } from "react";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   agentsCategoriesState,
   clientTypesCategoriesState,
 } from "./customer-states";
-import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 import {
   getAndSetCustomerById,
   getAndSetCustomersPagination,
   importClientApi,
 } from "@/services/api-service/customers/customers-api";
-import { CLIENT_TYPE_Id, DEFAULT_VALUES } from "./enums";
+import { DEFAULT_VALUES } from "./enums";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
 import { EHttpMethod } from "@/services/api-service/enums";
@@ -28,6 +27,8 @@ import { useSnackBar } from "@/hooks";
 import { clearPhoneNumberPrefix, isValidCustomer } from "@/utils/helpers";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
+import { useClientTypesList } from "@/hooks/use-client-types";
+
 export interface IStatus {
   label: string;
   value: string;
@@ -45,6 +46,8 @@ const useCustomers = (
 ) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const { alertFaultGetData, alertFaultUpdate, alertSuccessUpdate } =
     useSnackBar();
   const { CheckPermission } = useUserPermission();
@@ -79,7 +82,6 @@ const useCustomers = (
   ];
 
   const getCustomersRows = useCallback(() => {
-    
     return allCustomers?.map((customer) => [
       customer?.customerCode,
       customer?.name,
@@ -149,22 +151,8 @@ const useCustomers = (
     isActive,
   });
 
-  const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
-    clientTypesCategoriesState
-  );
-  const getClientTypesCategories = async (cardType: CLIENT_TYPE_Id) => {
-    const callBack = (res) => {
-      if (res.success) {
-        const clientTypes = res.data.map((types) => ({
-          label: types.name,
-          id: types.id,
-          additionProfits: types?.additionProfits ?? 0,
-        }));
-        setClientTypesCategories(clientTypes);
-      }
-    };
-    await getAndSetClientTypes(callApi, callBack, { cardType: cardType });
-  };
+  const clientTypesCategories = useRecoilValue(clientTypesCategoriesState);
+  const { getClientTypesCategories } = useClientTypesList();
 
   const [agentsCategories, setAgentsCategories] = useRecoilState(
     agentsCategoriesState
@@ -342,6 +330,9 @@ const useCustomers = (
     }
   };
 
+  const [value, setValue] = useState(0);
+  const [openClientTypeModal, setOpenClientTypeModal] = useState(false);
+
   return {
     getAgentCategories,
     getClientTypesCategories,
@@ -388,6 +379,11 @@ const useCustomers = (
     openErrorsModal,
     handleErrorsModalClose,
     errorMessages,
+    isRTL,
+    value,
+    setValue,
+    openClientTypeModal,
+    setOpenClientTypeModal,
   };
 };
 export { useCustomers };

@@ -22,6 +22,7 @@ const EditProductWidget = () => {
     router,
     dir,
     handleGoBack,
+    getProductById
   } = useAddProduct();
   // const WorkFlowsTab = {
   //   id: "c66465de-95d6-4ea3-bd3f-7efe6664cb0555",
@@ -91,7 +92,7 @@ const EditProductWidget = () => {
           <ParameterWidget />
         ) : activeTab === t("pricingWidget.workFlow") ? (
           <PermissionCheck userPermission={Permissions.ADD_WORK_FLOW_TO_PRODUCT}>
-            <WorkFlowsWidget />
+            <WorkFlowsWidget productState={productState} getProductById={getProductById} />
           </PermissionCheck>
         ) : (
           <GraphicWidget />

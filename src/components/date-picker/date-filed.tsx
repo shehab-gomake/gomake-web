@@ -103,25 +103,27 @@ const DateField: React.FC<IDateFieldProps> = ({
           open={open}
           onOpen={() => setOpen(true)}
           onClose={() => setOpen(false)}
-          value={date ? moment(date).toDate() : null} //!not sure about the format
+          value={date ? moment(date) : null}
           // onChange={handleDateChange}
-          onAccept={handleDateChange} // Triggered only when "OK" is clicked
+          onAccept={handleDateChange}
           disabled={!isEditable}
           slots={{
             textField: textFieldSlot,
           }}
+          format="DD/MM/YYYY HH:mm"
         />
       ) : (
         <DatePicker
           open={open}
           onOpen={() => setOpen(true)}
           onClose={() => setOpen(false)}
-          value={date ? moment(date).toDate() : null} //!not sure about the format
+          value={date ? moment(date) : null}
           onChange={handleDateChange}
           disabled={!isEditable}
           slots={{
             textField: textFieldSlot,
           }}
+          format="DD/MM/YYYY"
         />
       )}
     </Box>
