@@ -112,6 +112,7 @@ const useAddProduct = () => {
     router,
     dir,
     handleGoBack,
+    getProductById
   };
 };
 

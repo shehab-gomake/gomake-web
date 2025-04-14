@@ -136,6 +136,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+
+  const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(productTemplate?.ignoreCalculatedWorkflows);
+  useEffect(() => {
+    setIgnoreCalculatedWorkflows(productTemplate?.ignoreCalculatedWorkflows || false);
+  }, [productTemplate?.ignoreCalculatedWorkflows]);
+
+  console.log("ignoreCalculatedWorkflows", ignoreCalculatedWorkflows)
+
   const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
@@ -430,7 +438,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
     const documentItemId = router?.query?.documentItemId;
-    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}`;
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow?signalRConnectionId=${connectionId}&ignoreCalculatedWorkflows=${ignoreCalculatedWorkflows ? ignoreCalculatedWorkflows : false}`;
     if (documentItemId) {
       url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery}`;
     }
@@ -4994,7 +5002,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               type: null,
             }
           ]);
-          getSelectedWorkFlow(conn,false,res?.data?.productItemValue?.id);
+          getSelectedWorkFlow(conn, false, res?.data?.productItemValue?.id);
         } else {
           alertFaultUpdate();
         }
