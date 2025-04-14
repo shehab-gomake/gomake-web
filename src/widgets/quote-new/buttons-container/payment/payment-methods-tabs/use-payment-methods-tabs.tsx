@@ -18,6 +18,7 @@ import {
   creditTransactionsState,
   receiptCreditCardState,
   selectedCreditTransactionState,
+  taxDeductionState,
   totalBitState,
   totalCashState,
   totalChecksState,
@@ -147,6 +148,9 @@ const usePaymentMethodsTabs = () => {
     />,
   ];
 
+  const [taxDeduction, setTaxDeduction] =
+    useRecoilState<number>(taxDeductionState);
+
   // Cash tab ///
   const [totalCash, setTotalCash] = useRecoilState<number>(totalCashState);
   const handleTotalCashChange = (value) => {
@@ -158,7 +162,8 @@ const usePaymentMethodsTabs = () => {
         Number(totalChecks) +
         (isOutgoingPayments
           ? Number(totalSupplierCreditCard)
-          : Number(totalCreditCard))
+          : Number(totalCreditCard)) +
+        Number(taxDeduction)
     );
   };
 
@@ -172,7 +177,8 @@ const usePaymentMethodsTabs = () => {
       Number(value) +
         Number(totalCash) +
         Number(totalChecks) +
-        Number(totalCreditCard)
+        Number(totalCreditCard) +
+        Number(taxDeduction)
     );
   };
 
@@ -189,7 +195,8 @@ const usePaymentMethodsTabs = () => {
         Number(totalChecks) +
         (isOutgoingPayments
           ? Number(totalSupplierCreditCard)
-          : Number(totalCreditCard))
+          : Number(totalCreditCard)) +
+        Number(taxDeduction)
     );
   };
 
@@ -202,7 +209,8 @@ const usePaymentMethodsTabs = () => {
       Number(value) +
         Number(totalCash) +
         Number(totalChecks) +
-        Number(totalTransfer)
+        Number(totalTransfer) +
+        Number(taxDeduction)
     );
   };
 
@@ -216,7 +224,8 @@ const usePaymentMethodsTabs = () => {
         Number(totalCash) +
         Number(totalBit) +
         Number(totalChecks) +
-        Number(totalTransfer)
+        Number(totalTransfer) +
+        Number(taxDeduction)
     );
   };
 
@@ -233,9 +242,17 @@ const usePaymentMethodsTabs = () => {
         Number(totalTransfer) +
         (isOutgoingPayments
           ? Number(totalSupplierCreditCard)
-          : Number(totalCreditCard))
+          : Number(totalCreditCard)) +
+        Number(taxDeduction)
     );
-  }, [data, totalCash, totalBit, totalTransfer, isOutgoingPayments]);
+  }, [
+    data,
+    totalCash,
+    totalBit,
+    totalTransfer,
+    isOutgoingPayments,
+    taxDeduction,
+  ]);
 
   /************************ Account code ************************/
 
