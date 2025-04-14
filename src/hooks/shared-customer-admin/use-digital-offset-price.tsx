@@ -355,10 +355,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     ) {
       console.log("getSelectedWorkFlow 4")
       getSelectedWorkFlow(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
+      getSelectedWorkFlowDeliveryDate(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
     }
     if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
       console.log("getSelectedWorkFlow 5")
       getSelectedWorkFlow(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
+      getSelectedWorkFlowDeliveryDate(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
     }
   }, [calculationResult, currentCalculationSessionId, priceRecovery]);
   const [
@@ -387,7 +389,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setcalculationServerErrorState(true)
       return;
     }
-    debugger
     setLoading(false);
     const result = res?.data?.data?.data;
     if (result.productItemValueDraftId === calculationSessionId) {
@@ -444,6 +445,23 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     const res: any = await callApi("GET", url, {}, false);
     _setDataFromSelectedWorkFlow(res, newCalculationSessionId ?? currentCalculationSessionId);
+  };
+
+  const getSelectedWorkFlowDeliveryDate = async (connectionId, IsNeedPriceUpdate?, newCalculationSessionId?) => {
+
+    // setSelectedWorkFlowCalculatedIsLoaded(true)
+    const docType = router?.query?.documentType ?? "0";
+    const documentItemId = router?.query?.documentItemId;
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow-delivery-date?signalRConnectionId=${connectionId}`;
+    if (documentItemId) {
+      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery}`;
+    }
+
+    const res: any = await callApi("GET", url, {}, false);
+    const result = res?.data?.data?.data;
+    setWorkFlows(result.productItemValue.workFlows);
+
+    // _setDataFromSelectedWorkFlow(res,newCalculationSessionId ?? currentCalculationSessionId);
   };
 
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {

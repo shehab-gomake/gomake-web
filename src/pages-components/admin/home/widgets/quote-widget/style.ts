@@ -1,13 +1,13 @@
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { FONT_FAMILY } from "@/utils/font-family";
-import {adaptPaddingRight} from "@/utils/adapter";
+import { adaptPaddingRight } from "@/utils/adapter";
 import { useTranslation } from "react-i18next";
 
 const useStyle = () => {
-  const { theme , errorColor , primaryColor } = useGomakeTheme();
-  const {t} = useTranslation();
-  const direction = t('direction');
+  const { theme, errorColor, primaryColor } = useGomakeTheme();
+  const { t } = useTranslation();
+  const direction = t("direction");
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -29,7 +29,7 @@ const useStyle = () => {
           "0 1px 0px 0 rgba(0, 0, 0, 0.08), 0 0px 5px 0 rgba(0, 0, 0, 0.08)",
         gap: 30,
       },
-      customerSectionStyle:{
+      customerSectionStyle: {
         width: "100%",
         gap: "10px",
         display: "flex",
@@ -46,7 +46,7 @@ const useStyle = () => {
       },
       selectCustomerContainer: {
         width: "100%",
-        // border: `1px solid ${secondColor(300)}`,
+        border: `none`,
         borderRadius: "4px",
         height: 40,
         display: "flex",
@@ -55,6 +55,7 @@ const useStyle = () => {
       selectTypeContainer: {
         width: "100%",
         // border: `1px solid ${secondColor(300)}`,
+        border: `none`,
       },
       btnContainer: {
         display: "flex",
@@ -85,7 +86,7 @@ const useStyle = () => {
       AmberIconStyle: {
         width: 120,
         height: 120,
-        color: errorColor(300)
+        color: errorColor(300),
       },
     };
   }, [theme]);

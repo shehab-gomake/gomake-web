@@ -33,6 +33,7 @@ import { filterGroupsState } from "@/widgets/production-floor/state/filter-group
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ModalFilters } from "./modal-filters";
 import { useUserPermission } from "@/hooks/use-permission";
+import { ModalEditGroup } from "./edit-group-modal";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -284,6 +285,7 @@ const ProductionFloorFilters = ({
     handleCancel,
     handleClearClick,
     selectedGroup,
+    actions,
     setSelectedGroup,
     openModalDuplicateGroup,
     onClickOpenModalDuplicateGroup,
@@ -292,7 +294,10 @@ const ProductionFloorFilters = ({
     selectedUsers,
     handleSelectAllUsers,
     handleUserSelect,
-    duplicateStationFilterByGroupId
+    duplicateStationFilterByGroupId,
+    openModalEditGroup,
+    onClickOpenModalEditGroup,
+    onClickCloseModalEditGroup
   } = useProductionFloorFilters({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
@@ -544,6 +549,9 @@ const ProductionFloorFilters = ({
             <div>{t("productionFloor.copyToUsers")}</div>
           </MenuItem>
         }
+        <MenuItem onClick={onClickOpenModalEditGroup}>
+          <div>{t("navigationButtons.edit")}</div>
+        </MenuItem>
 
         <MenuItem onClick={(event) => {
           event.stopPropagation();
@@ -563,6 +571,15 @@ const ProductionFloorFilters = ({
         handleSelectAllUsers={handleSelectAllUsers}
         handleUserSelect={handleUserSelect}
         duplicateStationFilterByGroupId={duplicateStationFilterByGroupId}
+      />
+
+      <ModalEditGroup
+        openModalEditGroup={openModalEditGroup}
+        onClickCloseModalEditGroup={onClickCloseModalEditGroup}
+        handleCloseMenu={handleCloseMenu}
+        selectedGroupId={selectedGroup}
+        actions={actions}
+        getStationFilterGroups={getStationFilterGroups}
       />
 
     </Stack>

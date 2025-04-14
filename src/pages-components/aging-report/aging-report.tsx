@@ -100,7 +100,7 @@ const AgingReportWidget = ({ clientType }: IProps) => {
       {showTable && (
         <PrimaryTable
           rows={getTableDataRows(onClickOpenCustomerModal)} // Pass handler here
-          headers={tableHeader}
+          headers={transformedHeaders}
           maxHeight={"100vh"}
           stickyHeader={true}
           variant={detailedReport ? "PrimaryTable " : "OddEvenTable"}

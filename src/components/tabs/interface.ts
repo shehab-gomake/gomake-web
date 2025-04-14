@@ -11,6 +11,7 @@ export interface ITabsProps {
   variant?: TAB_TYPE;
   withBackGround?: boolean;
   selectedTabIndex?: number;
+  style?: React.CSSProperties;
 }
 
 export interface ITab {

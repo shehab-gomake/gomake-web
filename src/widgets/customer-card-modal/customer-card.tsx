@@ -10,11 +10,9 @@ import { useTranslation } from "react-i18next";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { customerInputs } from "./inputs/customer-inputs";
-import { Stack } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { ChangePasswordComponent } from "@/components/change-password/change-password-component";
-import { ClientTypeModal } from "./components/add-client-type-modal/add-client-type-modal";
-import { SettingIcon } from "@/widgets";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useCustomerCard } from "./use-customer-card";
@@ -28,6 +26,8 @@ import { GeneralTab } from "./components/general-tab/form";
 import { BudgetTab } from "./components/budget-tab";
 import { LedgerReportWidget } from "@/pages-components/ledger-report/ledger-report";
 import { ClientBalance } from "./components/client-balance/client-balance";
+import { ClientTypeModal } from "../client-types/components/add-edit-client-type-modal";
+import { PlusIcon } from "@/icons";
 
 interface IProps {
   isValidCustomer?: (
@@ -128,6 +128,7 @@ const CustomerCardWidget = ({
     setNewGroupId,
     CheckPermission,
     profileState,
+    systemCurrency,
   } = useCustomerCard({
     t,
     customer,
@@ -327,6 +328,15 @@ const CustomerCardWidget = ({
     },
   ].filter(Boolean);
 
+  useEffect(() => {
+    if (!customer?.currency && systemCurrency) {
+      setCustomer((prev) => ({
+        ...prev,
+        currency: systemCurrency,
+      }));
+    }
+  }, [customer?.currency, systemCurrency]);
+
   return (
     <GoMakeModal
       openModal={open}
@@ -353,22 +363,19 @@ const CustomerCardWidget = ({
             </span>
           </Stack>
           <div style={classes.customerInfoStyle}>
-            {customerInputs(
-              typeClient,
-              codeFlag,
-              customer,
-              clientTypesCategories
-            ).map((item) => (
-              <div style={{ marginBottom: 10 }}>
-                <FormInput
-                  key={"customer-input"}
-                  input={item as IInput}
-                  changeState={onChangeInputs}
-                  error={item.required && !item.value}
-                  readonly={!!item.readonly}
-                />
-              </div>
-            ))}
+            {customerInputs(typeClient, customer, showUpdateButton).map(
+              (item) => (
+                <div style={{ marginBottom: 10 }}>
+                  <FormInput
+                    key={"customer-input"}
+                    input={item as IInput}
+                    changeState={onChangeInputs}
+                    error={item.required && !item.value}
+                    readonly={!!item.readonly}
+                  />
+                </div>
+              )
+            )}
             <div style={classes.itemOnFirstContainer}>
               <div style={classes.labelTitleStyle}>
                 <div style={classes.inputLbl}>
@@ -382,9 +389,13 @@ const CustomerCardWidget = ({
                   </Stack>
                   <span style={classes.required}>*</span>
                 </div>
-                <span onClick={onClickOpenClientType} style={classes.plusInput}>
-                  <SettingIcon width={20} height={20} />
-                </span>
+                <IconButton
+                  onClick={onClickOpenClientType}
+                  size="small"
+                  sx={{ padding: "4px" }}
+                >
+                  <PlusIcon />
+                </IconButton>
               </div>
               <div style={{ width: "180px" }}>
                 <GoMakeAutoComplate
@@ -518,17 +529,19 @@ const CustomerCardWidget = ({
       >
         <ChangePasswordComponent onChangePassword={onUpdatePass} />
       </GoMakeModal>
-      <ClientTypeModal
-        openModal={isClientType}
-        onClose={onClickCloseClientType}
-        modalTitle={
-          typeClient === "C"
-            ? t("customers.customerTypes")
-            : t("suppliers.supplierTypes")
-        }
-        clientTypeId={clientTypeId}
-        typeClient={typeClient}
-      />
+      {isClientType && (
+        <ClientTypeModal
+          openModal={isClientType}
+          onClose={onClickCloseClientType}
+          modalTitle={
+            typeClient === "C"
+              ? t("customers.buttons.addClientType")
+              : t("suppliers.addSupplierType")
+          }
+          cardTypeId={clientTypeId}
+          actionType="add"
+        />
+      )}
     </GoMakeModal>
   );
 };

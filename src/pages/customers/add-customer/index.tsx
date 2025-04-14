@@ -5,12 +5,22 @@ import { AddButton } from "@/components/button/add-button";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "../enums";
 
 interface IProps {
-  isValidCustomer?: (value: any, value1: any, value2: any, value3: any,preferences:any) => boolean;
+  isValidCustomer?: (
+    value: any,
+    value1: any,
+    value2: any,
+    value3: any,
+    preferences: any
+  ) => boolean;
   onCustomerAdd: (customer: any) => void;
   typeClient: CLIENT_TYPE;
 }
 
-const AddCustomerButton = ({ isValidCustomer, onCustomerAdd, typeClient }: IProps) => {
+const AddCustomerButton = ({
+  isValidCustomer,
+  onCustomerAdd,
+  typeClient,
+}: IProps) => {
   const [open, setOpen] = useState(false);
   const { t } = useTranslation();
   const [customer, setCustomer] = useState([]);
@@ -24,13 +34,25 @@ const AddCustomerButton = ({ isValidCustomer, onCustomerAdd, typeClient }: IProp
         typeClient={typeClient}
         onCustomerAdd={onCustomerAdd}
         openModal={open}
-        modalTitle={typeClient == "C" ? t("customers.modal.addTitle") : t("suppliers.addModalTitle")}
+        modalTitle={
+          typeClient == "C"
+            ? t("customers.modal.addTitle")
+            : t("suppliers.addModalTitle")
+        }
         onClose={() => setOpen(false)}
         showAddButton={true}
         customer={customer}
         setCustomer={setCustomer}
       />
-      <AddButton onClick={() => setOpen(!open)} label={typeClient == "C" ? t("customers.buttons.addCustomer") : t("suppliers.buttons.addSupplier")}></AddButton>
+      <AddButton
+        style={{ width: "fit-content", alignSelf: "flex-end" }}
+        onClick={() => setOpen(!open)}
+        label={
+          typeClient == "C"
+            ? t("customers.buttons.addCustomer")
+            : t("suppliers.buttons.addSupplier")
+        }
+      />
     </>
   );
 };

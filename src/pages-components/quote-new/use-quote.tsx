@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
-import { getAndSetAllEmployees, getAndSetClientTypes } from "@/services/hooks";
+import { getAndSetAllEmployees } from "@/services/hooks";
 import { v4 as uuidv4 } from "uuid";
 import {
   IContactData,
@@ -64,11 +64,7 @@ import {
   transactionOptionsData,
 } from "@/widgets/quote-new/buttons-container/states";
 import { QuoteStatuses } from "@/widgets/quote-new/total-price-and-vat/enums";
-import {
-  clientTypesCategoriesState,
-  isSelectedCLoseAsDeliveryNoteState,
-} from "@/pages/customers/customer-states";
-import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { isSelectedCLoseAsDeliveryNoteState } from "@/pages/customers/customer-states";
 import {
   checkArrayNotEmptyOrEmailNotEmpty,
   checkArrayNotEmptyOrPhoneNotEmpty,
@@ -79,6 +75,7 @@ import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget
 import { ClientChangeSource } from "./store/quote";
 import { validateDocument } from "@/utils/validators";
 import { EnumVATStatus } from "@/enums/accounting-enums";
+import { useClientTypesList } from "@/hooks/use-client-types";
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -304,6 +301,15 @@ const useQuoteNew = ({
 
   const [openAddDeliveryModal, setOpenAddDeliveryModal] = useState(false);
   const [openUpdateDeliveryModal, setOpenUpdateDeliveryModal] = useState(false);
+  const [openAddAttachmentsModal, setOpenAddAttachmentsModal] = useState(false);
+
+  const onOpenAddAttachmentsModal = () => {
+    setOpenAddAttachmentsModal(true);
+  };
+
+  const onCloseAddAttachmentsModal = () => {
+    setOpenAddAttachmentsModal(false);
+  };
 
   const onOpenDeliveryModal = () => {
     setOpenAddDeliveryModal(true);
@@ -350,8 +356,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1175,7 +1181,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1918,25 +1924,7 @@ const useQuoteNew = ({
     setOpenLoginModal(true);
   };
 
-  const setClientTypesCategories = useSetRecoilState(
-    clientTypesCategoriesState
-  );
-
-  const getClientTypesCategories = async () => {
-    const callBack = (res) => {
-      if (res) {
-        const clientTypes = res.map((types) => ({
-          label: types.name,
-          id: types.id,
-          additionProfits: types?.additionProfits ?? 0,
-        }));
-        setClientTypesCategories(clientTypes);
-      }
-    };
-    await getAndSetClientTypes(callApi, callBack, {
-      cardType: CLIENT_TYPE_Id.CUSTOMER,
-    });
-  };
+  const { getClientTypesCategories } = useClientTypesList();
 
   useEffect(() => {
     if (!isPrePaymentPage) getClientTypesCategories();
@@ -2387,6 +2375,9 @@ const useQuoteNew = ({
     setIsOpenRelatedDocuments,
     isPurchaseInvoice,
     systemVAT,
+    openAddAttachmentsModal,
+    onOpenAddAttachmentsModal,
+    onCloseAddAttachmentsModal,
   };
 };
 

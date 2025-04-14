@@ -6,6 +6,7 @@ import { useBoardMissionsNotes } from "@/widgets/production-floor/views/board-mi
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { useTranslation } from "react-i18next";
+import parse from "html-react-parser";
 
 enum NoteTypeEnum {
   general = 0,
@@ -39,7 +40,7 @@ const BoardMissionsNote = ({ index, note }: IProps) => {
           }:`}
         </span>
         <span style={{ ...FONT_FAMILY.Inter(500, 16), color: "#344054" }}>
-          {note?.value}
+          {parse(note?.value)}
         </span>
       </Stack>
       <PermissionCheck
