@@ -10,6 +10,7 @@ import { GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/docu
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import { PStatus } from "../enums";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { DocumentPermission } from "@/components/CheckPermission/enum";
 import {
   addBoardMissionsToFileUploaderApi,
   printJobUsingPrintNodeApi,
@@ -24,6 +25,7 @@ import { MarkAsUnReadyIcon } from "./icons/mark-as-un-ready";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { EditIcon } from "@/icons";
 import { useUserPermission } from "@/hooks/use-permission";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 const useMoreCircle = ({
   mission,
@@ -45,6 +47,7 @@ const useMoreCircle = ({
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
   const [companyProfile] = useRecoilState(printHouseProfile);
+
   const downloadPdf = (url) => {
     const anchor = document.createElement("a");
     anchor.href = url;
@@ -99,11 +102,17 @@ const useMoreCircle = ({
     };
     await printJobUsingPrintNodeApi(callApi, callBack, jobId);
   };
-  const { CheckPermission } = useUserPermission();
+  const { CheckPermission, CheckDocumentPermission } = useUserPermission();
 
   const isSendPaymentToClient = CheckPermission(
     Permissions.SHOW_PRODUCTION_FLOOR
   );
+
+  const isCanEditJob = CheckDocumentPermission(
+    DOCUMENT_TYPE.order.toString(),
+    DocumentPermission.UPDATE_DOCUMENT_ITEM
+  );
+
   const isShowLogs = CheckPermission(Permissions.SHOW_LOGS);
 
   const menuList = [
@@ -112,8 +121,9 @@ const useMoreCircle = ({
       name: (
         <a
           style={classes.menuTitleStyle}
-          href={`/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
-            }&step=stations`}
+          href={`/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission?.productType}` : ""
+          }&step=stations`}
         >
           {t("boardMissions.viewTask")}
         </a>
@@ -121,18 +131,19 @@ const useMoreCircle = ({
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
       onclick: () =>
         navigate(
-          `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
+          `/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission?.productType}` : ""
           }&step=stations`
         ),
     },
     {
-      condition: mission?.isEditable && isSendPaymentToClient,
+      condition: mission?.isEditable && isCanEditJob,
       name: (
         <a style={classes.menuTitleStyle} href={handleClickEdit(mission)}>
           {t("materials.buttons.edit")}
         </a>
       ),
-      icon: <EditIcon />,
+      icon: <EditIcon stroke={"#8283BE"} />,
       onclick: () => navigate(handleClickEdit(mission)),
     },
     {
@@ -193,7 +204,8 @@ const useMoreCircle = ({
       icon: <LoggerIcon />,
       onclick: () => {
         window.open(
-          `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission.productType}` : ""
+          `/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission.productType}` : ""
           }&step=stations`,
           "_blank"
         );
