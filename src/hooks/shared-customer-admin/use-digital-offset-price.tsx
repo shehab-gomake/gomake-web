@@ -346,11 +346,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       !productTemplate?.isHaveFixedAction
     ) {
       console.log("getSelectedWorkFlow 4")
-      getSelectedWorkFlow(calculationResult.signalRConnectionId,calculationResult?.isNeedPriceUpdate);
+      getSelectedWorkFlow(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
+      getSelectedWorkFlowDeliveryDate(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
     }
     if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
       console.log("getSelectedWorkFlow 5")
-      getSelectedWorkFlow(calculationResult.signalRConnectionId,calculationResult?.isNeedPriceUpdate);
+      getSelectedWorkFlow(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
+      getSelectedWorkFlowDeliveryDate(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
     }
   }, [calculationResult, currentCalculationSessionId, priceRecovery]);
   const [
@@ -362,8 +364,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     calculatedPriceProductItemValueState
   );
 
-  const _setDataFromSelectedWorkFlow = (res,calculationSessionId?) => {
-    
+  const _setDataFromSelectedWorkFlow = (res, calculationSessionId?) => {
+
     if (!res.success) {
       setCalculationProgress({
         totalWorkFlowsCount: 0,
@@ -379,10 +381,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setcalculationServerErrorState(true)
       return;
     }
-    debugger
     setLoading(false);
     const result = res?.data?.data?.data;
-    if(result.productItemValueDraftId === calculationSessionId){
+    if (result.productItemValueDraftId === calculationSessionId) {
       const responseConnectionId = result?.signalRConnectionId;
       setShowCalculationInCompletedAlert(result?.showCalculationInCompletedAlert);
       setShowCalculationInCompletedModal(false);
@@ -397,21 +398,21 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         currentWorkFlowsCount: 0,
       });
       setCurrentProductItemValueTotalWorkFlows(
-          result.productItemValue.totalWorkFlows
+        result.productItemValue.totalWorkFlows
       );
       setWorkFlows(result.productItemValue.workFlows);
       setCurrentProductItemValueTotalPrice(
-          parseFloat(result.totalPrice)
+        parseFloat(result.totalPrice)
       );
       setSliderCurrentProductItemValueTotalPrice(
-          parseFloat(result.totalPrice)
+        parseFloat(result.totalPrice)
       );
 
       setJobActions(result?.productItemValue.actions);
       setCalculationResult(result);
       if (
-          widgetType === EWidgetProductType.EDIT &&
-          (isActionEmployeeUpdated || isJobNameValue)
+        widgetType === EWidgetProductType.EDIT &&
+        (isActionEmployeeUpdated || isJobNameValue)
       ) {
         setIsChangePriceForEdit(true);
         setIsActionEmployeeUpdated(false);
@@ -420,11 +421,11 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       setSelectedWorkFlowCalculatedIsLoaded(false);
     }
-    
-    
+
+
   };
 
-  const getSelectedWorkFlow = async (connectionId,IsNeedPriceUpdate?,newCalculationSessionId?) => {
+  const getSelectedWorkFlow = async (connectionId, IsNeedPriceUpdate?, newCalculationSessionId?) => {
 
     // setSelectedWorkFlowCalculatedIsLoaded(true)
     const docType = router?.query?.documentType ?? "0";
@@ -435,7 +436,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
 
     const res: any = await callApi("GET", url, {}, false);
-    _setDataFromSelectedWorkFlow(res,newCalculationSessionId ?? currentCalculationSessionId);
+    _setDataFromSelectedWorkFlow(res, newCalculationSessionId ?? currentCalculationSessionId);
+  };
+
+  const getSelectedWorkFlowDeliveryDate = async (connectionId, IsNeedPriceUpdate?, newCalculationSessionId?) => {
+
+    // setSelectedWorkFlowCalculatedIsLoaded(true)
+    const docType = router?.query?.documentType ?? "0";
+    const documentItemId = router?.query?.documentItemId;
+    let url = `/v1/erp-service/productItemValueDrafts/get-selected-work-flow-delivery-date?signalRConnectionId=${connectionId}`;
+    if (documentItemId) {
+      url += `&documentItemId=${documentItemId}&docType=${docType}&restoreAdditonalProductPrice=${IsNeedPriceUpdate ? false : priceRecovery}`;
+    }
+
+    const res: any = await callApi("GET", url, {}, false);
+    const result = res?.data?.data?.data;
+    setWorkFlows(result.productItemValue.workFlows);
+
+    // _setDataFromSelectedWorkFlow(res,newCalculationSessionId ?? currentCalculationSessionId);
   };
 
   const setSelectedWorkflow = (newWorkFlows, currentWorkFlows) => {
@@ -1927,7 +1945,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   // ]);
 
   useEffect(() => {
-    if(!router?.isReady){
+    if (!router?.isReady) {
       return;
     }
     if (connectionId) {
@@ -2010,7 +2028,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         });
       }
     }
-  }, [connectionId,router?.query?.productId]);
+  }, [connectionId, router?.query?.productId]);
 
   useEffect(() => {
     if (
@@ -5246,15 +5264,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             });
             setcalculationServerErrorState(true);
             console.log("getSelectedWorkFlow 1")
-            getSelectedWorkFlow(conn,true).then()
-          } 
+            getSelectedWorkFlow(conn, true).then()
+          }
           else if (!res.success) {
             debugger
             setCalculationProgress({
               totalWorkFlowsCount: 0,
               currentWorkFlowsCount: 0,
             });
-            if(res.status){
+            if (res.status) {
               setLoading(false);
               setcalculationServerErrorState(true);
             }
@@ -5263,10 +5281,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             //getSelectedWorkFlow(conn,true).then()
             //console.log("setLoading 7")
             //setLoading(false);
-          } 
+          }
           else {
             if (productTemplate?.isHaveFixedAction) {
-              _setDataFromSelectedWorkFlow(res,currentCalculationSessionId);
+              _setDataFromSelectedWorkFlow(res, currentCalculationSessionId);
               setIsCanGetSelected(true);
               setLoading(false);
             }
@@ -5279,20 +5297,20 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
               if (id === "00000000-0000-0000-0000-000000000000") {
                 console.log("getSelectedWorkFlow 3")
-                getSelectedWorkFlow(conn,true,newCalculationSessionId).then();
+                getSelectedWorkFlow(conn, true, newCalculationSessionId).then();
               }
-              if(id !== currentCalculationSessionId){
+              if (id !== currentCalculationSessionId) {
                 console.log("exitssss")
                 return;
               }
-              
+
               setCurrentCalculationSessionId(id);
               setCalculationProgress({
                 totalWorkFlowsCount: 0,
                 currentWorkFlowsCount: 0,
               });
               setLoading(true);
-              
+
             }
           }
         }
@@ -5345,7 +5363,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       false
     );
     if (res?.success) {
-      _setDataFromSelectedWorkFlow(res,currentCalculationSessionId);
+      _setDataFromSelectedWorkFlow(res, currentCalculationSessionId);
       setIsCanGetSelected(true);
       setLoading(false);
     }
