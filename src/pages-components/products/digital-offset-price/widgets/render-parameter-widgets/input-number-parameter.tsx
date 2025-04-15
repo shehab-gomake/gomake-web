@@ -24,13 +24,13 @@ const InputNumberParameterWidget = ({
   const [openModal, setOpenModal] = useRecoilState<boolean>(openQuantityComponentModalState);
   const productTypesNumber = useRecoilValue<number>(productTypesNumberState);
   const productSetsParam = useRecoilValue<string>(productSetsParamState);
-  const checkIfNotHaveValue = () =>{
-      try {
-          return !temp[index]?.values || temp[index]?.values.every(value => value === undefined);
-      }catch (error){
-          console.log(error);
-          return false;
-      }
+  const checkIfNotHaveValue = () => {
+    try {
+      return !temp[index]?.values || temp[index]?.values.every(value => value === undefined);
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
   }
   return (
     <div data-tour={parameter?.id?.toString()} style={{ display: "flex", flexDirection: "row", width: "100%" }}>

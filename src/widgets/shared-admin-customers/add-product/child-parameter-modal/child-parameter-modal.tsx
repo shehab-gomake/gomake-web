@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import {
+  GoMakeAutoComplate,
   GoMakeModal,
   GomakePrimaryButton,
   GomakeTextInput,
@@ -11,6 +12,7 @@ import { PlusIcon, ReOrderIcon, RemoveIcon } from "@/icons";
 import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useSnackBar } from "@/hooks";
+import { EParameterTypes } from "@/enums";
 
 const ChildParameterModal = ({
   openModal,
@@ -20,6 +22,7 @@ const ChildParameterModal = ({
   updatedValuesConfigsForParameters,
   selectedSectonId,
   selectedSubSection,
+  _renderParameterType,
 }: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
@@ -180,7 +183,7 @@ const ChildParameterModal = ({
                                   snapshot.isDragging,
                                   provided.draggableProps.style
                                 )}
-                                // style={clasess.addNewValueContainer}
+                              // style={clasess.addNewValueContainer}
                               >
                                 <div
                                   style={{
@@ -231,22 +234,50 @@ const ChildParameterModal = ({
                                         style={clasess.textInputContainer}
                                         key={`child_${indexChild}`}
                                       >
-                                        <GomakeTextInput
-                                          style={clasess.textInputStyle}
-                                          placeholder={`Enter ${value?.name}`}
-                                          onChange={(e) => {
-                                            changeItems(index, "values", {
-                                              ...state.valuesConfigs[index]
-                                                .values,
-                                              [value?.id]: e.target.value,
-                                            });
-                                          }}
-                                          defaultValue={
-                                            state.valuesConfigs[index].values[
-                                              value?.id
-                                            ]
-                                          }
-                                        />
+                                        {
+                                          value?.parameterType === EParameterTypes.INPUT_NUMBER || value?.parameterType === EParameterTypes.INPUT_TEXT ?
+                                            <GomakeTextInput
+                                              style={clasess.textInputStyle}
+                                              placeholder={`Enter ${value?.name}`}
+                                              onChange={(e) => {
+                                                changeItems(index, "values", {
+                                                  ...state.valuesConfigs[index]
+                                                    .values,
+                                                  [value?.id]: e.target.value,
+                                                });
+                                              }}
+                                              defaultValue={
+                                                state.valuesConfigs[index].values[
+                                                value?.id
+                                                ]
+                                              }
+                                              type={value?.parameterType === EParameterTypes.INPUT_NUMBER ? "number" : "text"}
+                                            />
+                                            :
+                                            value?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
+                                              value?.parameterType === EParameterTypes.MACHINES_SELECT ?
+                                              <GoMakeAutoComplate
+                                                options={value?.valuesConfigs}
+                                                disabled={value?.isHidden}
+                                                placeholder={value.name}
+                                                style={clasess.dropDownListStyle}
+                                                getOptionLabel={(option: any) => option.updateName}
+                                                onChange={(e: any, value: any) => {
+                                                  changeItems(index, "values", {
+                                                    ...state.valuesConfigs[index]
+                                                      .values,
+                                                    [value?.id]: value?.id,
+                                                  });
+                                                }}
+                                                defaultValue={
+                                                  state.valuesConfigs[index].values[
+                                                  value?.id
+                                                  ]
+                                                }
+                                              />
+                                              :
+                                              null
+                                        }
                                       </div>
                                     );
                                   }

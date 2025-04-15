@@ -188,6 +188,7 @@ const ParameterWidget = () => {
             updatedValuesConfigsForParameters={
               updatedValuesConfigsForParameters
             }
+            _renderParameterType={_renderParameterType}
           />
           <ExternalValuesIdModal
             openModal={openExternalIdsModal}

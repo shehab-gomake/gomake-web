@@ -142,8 +142,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     setIgnoreCalculatedWorkflows(productTemplate?.ignoreCalculatedWorkflows || false);
   }, [productTemplate?.ignoreCalculatedWorkflows]);
 
-  console.log("ignoreCalculatedWorkflows", ignoreCalculatedWorkflows)
-
   const [subProductsColorsModal, setSubProductsColorsModal] = useRecoilState<any>(subProductsCopyParametersState);
   const [isSetTemplete, setIsSetTemplete] = useState<boolean>(false);
   const setSubProductsCopy = useSetRecoilState<any>(subProductsCopyParametersState);
@@ -353,12 +351,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       calculationResult.signalRConnectionId === currentSignalRConnectionId &&
       !productTemplate?.isHaveFixedAction
     ) {
-      console.log("getSelectedWorkFlow 4")
       getSelectedWorkFlow(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
       getSelectedWorkFlowDeliveryDate(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
     }
     if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
-      console.log("getSelectedWorkFlow 5")
       getSelectedWorkFlow(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
       getSelectedWorkFlowDeliveryDate(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
     }
@@ -4190,25 +4186,54 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   temp.splice(myindex, 1);
                 }
               } else {
-                temp.push({
-                  parameterId: myparameter?.id,
-                  sectionId: section?.id,
-                  subSectionId: subSection?.id,
-                  ParameterType: myparameter?.parameterType,
-                  isQuantityParameter: myparameter?.isQuantityParameter,
-                  values: unitType === UNIT_TYPE.IMPERIAL && myparameter?.code != "Width" && myparameter?.code != "Height" ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
-                  actionIndex: myparameter?.actionIndex,
-                  parameterName: myparameter?.name,
-                  parameterCode: myparameter?.code,
-                  isDisabled: hasValues(data?.value),
-                  factor: myparameter?.factor,
-                  unitKey: myparameter?.unitKey,
-                  unitType: myparameter?.unitType,
-                  actionId: myparameter?.actionId,
-                  valuesConfigs: myparameter?.valuesConfigs,
-                  isGeneralInfoInProductionFloor:
-                    myparameter?.isGeneralInfoInProductionFloor,
-                });
+                if (myparameter?.parameterType == 0) {
+                  let values = myparameter?.valuesConfigs?.filter(valueConfig =>
+                    data?.value?.values &&
+                    valueConfig.id in data.value.values
+                  )
+                  temp.push({
+                    parameterId: myparameter?.id,
+                    sectionId: section?.id,
+                    subSectionId: subSection?.id,
+                    ParameterType: myparameter?.parameterType,
+                    isQuantityParameter: myparameter?.isQuantityParameter,
+                    values: [values[0]?.updateName],
+                    valueIds: [values[0]?.id],
+                    actionIndex: myparameter?.actionIndex,
+                    parameterName: myparameter?.name,
+                    parameterCode: myparameter?.code,
+                    isDisabled: hasValues(data?.value),
+                    factor: myparameter?.factor,
+                    unitKey: myparameter?.unitKey,
+                    unitType: myparameter?.unitType,
+                    actionId: myparameter?.actionId,
+                    valuesConfigs: myparameter?.valuesConfigs,
+                    isGeneralInfoInProductionFloor:
+                      myparameter?.isGeneralInfoInProductionFloor,
+                  });
+                }
+                else {
+
+                  temp.push({
+                    parameterId: myparameter?.id,
+                    sectionId: section?.id,
+                    subSectionId: subSection?.id,
+                    ParameterType: myparameter?.parameterType,
+                    isQuantityParameter: myparameter?.isQuantityParameter,
+                    values: unitType === UNIT_TYPE.IMPERIAL && myparameter?.code != "Width" && myparameter?.code != "Height" ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
+                    actionIndex: myparameter?.actionIndex,
+                    parameterName: myparameter?.name,
+                    parameterCode: myparameter?.code,
+                    isDisabled: data?.values === "custom" ? false : hasValues(data?.value),
+                    factor: myparameter?.factor,
+                    unitKey: myparameter?.unitKey,
+                    unitType: myparameter?.unitType,
+                    actionId: myparameter?.actionId,
+                    valuesConfigs: myparameter?.valuesConfigs,
+                    isGeneralInfoInProductionFloor:
+                      myparameter?.isGeneralInfoInProductionFloor,
+                  });
+                }
               }
             }
           });
@@ -5272,7 +5297,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               currentWorkFlowsCount: 0,
             });
             setcalculationServerErrorState(true);
-            console.log("getSelectedWorkFlow 1")
             getSelectedWorkFlow(conn, true).then()
           }
           else if (!res.success) {
@@ -5285,11 +5309,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               setLoading(false);
               setcalculationServerErrorState(true);
             }
-            //if(currentCalculationSessionId === newCalculationSessionId && )
-            //console.log("getSelectedWorkFlow 2")
-            //getSelectedWorkFlow(conn,true).then()
-            //console.log("setLoading 7")
-            //setLoading(false);
           }
           else {
             if (productTemplate?.isHaveFixedAction) {
@@ -5305,11 +5324,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 setCurrentCalculationSessionId(null);
               }
               if (id === "00000000-0000-0000-0000-000000000000") {
-                console.log("getSelectedWorkFlow 3")
                 getSelectedWorkFlow(conn, true, newCalculationSessionId).then();
               }
               if (id !== currentCalculationSessionId) {
-                console.log("exitssss")
                 return;
               }
 
@@ -5639,7 +5656,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               section.isHidden = false;
             } else {
               section.isHidden = !parameter.selectedValueIds.includes(
-                matchingParameter.valueIds[0]
+                matchingParameter?.valueIds[0]
               );
             }
           } else {
