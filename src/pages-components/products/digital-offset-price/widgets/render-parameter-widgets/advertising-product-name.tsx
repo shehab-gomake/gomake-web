@@ -1,5 +1,5 @@
 import { GoMakeAutoComplate } from "@/components";
-import { AdvertisingIcon } from "@/icons";
+import { AddIcon, AddNewIcon, AdvertisingIcon, PlusIcon } from "@/icons";
 import { useRecoilState } from "recoil";
 import { subProductsParametersState } from "@/store/general-parameters-state";
 import { useEffect } from "react";
@@ -13,6 +13,7 @@ const AdvertisingProductNameParameterWidget = ({
   subSection,
   section,
 }: any) => {
+  console.log("parameter", parameter)
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
 
   const defaultObject = parameter.valuesConfigs.find(
@@ -60,9 +61,25 @@ const AdvertisingProductNameParameterWidget = ({
   return (
     <div style={clasess.advertisingProductNameMain}>
       <GoMakeAutoComplate
-        options={parameter?.valuesConfigs?.filter(value => {
-          return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
-        })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
+        options={parameter?.code === "DiecutType"
+          ? [{ id: "new", updateName: "creating new category" }, ...parameter?.valuesConfigs?.filter(value => {
+            return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+          })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)]
+          : parameter?.code === "DieCutter"
+            ? [
+              { id: "add_new", updateName: "add new die cut", type: "add" },
+              { id: "generate_new", updateName: "generate new die cut", type: "generate" },
+              ...parameter?.valuesConfigs?.filter(value => {
+                return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+              })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
+            ]
+            : parameter?.valuesConfigs?.filter(value => {
+              return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+            })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
+        }
+        // options={parameter?.valuesConfigs?.filter(value => {
+        //   return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+        // })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
         key={parameter?.valuesConfigs + temp[index]?.values}
         style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
         placeholder={parameter?.name}
@@ -91,6 +108,37 @@ const AdvertisingProductNameParameterWidget = ({
             (attr) => attr.valueId === 'image'
           )?.value;
 
+          // Special handling for DiecutType's first item
+          if (parameter.code === "DiecutType" && option.id === "new") {
+            return (
+              <li {...props} style={{ backgroundColor: '#2E3092', color: "white", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+                <div style={{ width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+                  <AddNewIcon color="white" />
+                </div>
+                {option.updateName}
+              </li>
+            );
+          }
+
+          // Special handling for DieCutter's new options
+          if (parameter.code === "DieCutter" && (option.id === "add_new" || option.id === "generate_new")) {
+            return (
+              <li {...props} style={{
+                backgroundColor: option.id === "add_new" ? '#2E3092' : '#FF69B4',
+                color: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-start"
+              }}>
+                <div style={{ width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+                  <AddNewIcon color="white" />
+                </div>
+                {option.updateName}
+              </li>
+            );
+          }
+
+          // Regular rendering for other items
           return (
             <li {...props}>
               {image ? (
@@ -104,7 +152,8 @@ const AdvertisingProductNameParameterWidget = ({
                   <AdvertisingIcon width="40" height="40" />
                 </div>
               )}
-              {option.updateName} <span style={{ margin: 10, fontSize: 12, color: "#CCC" }}>({_renderSomeValues(option)})</span>
+              {option.updateName}
+              {parameter.code != "DiecutType" && parameter.code != "DieCutter" && <span style={{ margin: 10, fontSize: 12, color: "#CCC" }}>({_renderSomeValues(option)})</span>}
             </li>
           );
         }}
