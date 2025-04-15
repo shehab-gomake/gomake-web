@@ -19,6 +19,7 @@ export interface IPricingWidgetProps {
   selectedWorkFlowCalculatedIsLoaded?: boolean;
   setSelectedWorkFlowCalculatedIsLoaded?: any;
   isMobileScreen?: boolean;
+  deliveryDate?: any;
 }
 
 export interface IPricingAction {
