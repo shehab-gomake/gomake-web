@@ -36,6 +36,7 @@ const PricingWidget = ({
   setSelectedWorkFlowCalculatedIsLoaded,
   selectedWorkFlowCalculatedIsLoaded,
   getSelectedWorkFlow,
+  deliveryDate,
   isMobileScreen,
 }: IPricingWidgetProps) => {
 
@@ -143,7 +144,7 @@ const PricingWidget = ({
           alignItems={"center"}
           style={{ display: "flex", flexWrap: "wrap" }}
         >
-          <Stack
+          {deliveryDate && <Stack
             direction={"row"}
             gap={"10px"}
             alignItems={"center"}
@@ -153,9 +154,9 @@ const PricingWidget = ({
               {t("home.headers.deliveryDate")}
             </span>
             <span style={classes.detailValue}>
-              {_renderDeliveryDate(selectedWorkFlow?.deliveryDate)}
+              {_renderDeliveryDate(deliveryDate)}
             </span>
-          </Stack>
+          </Stack>}
           <PermissionCheck userPermission={Permissions.CUSTOMIZE_WORKFLOW}>
             {isHasSubWorkFlowsOrProductTypeActions &&
               view === EPricingViews.SELECTED_WORKFLOW &&

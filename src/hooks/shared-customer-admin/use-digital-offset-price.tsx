@@ -446,7 +446,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const res: any = await callApi("GET", url, {}, false);
     _setDataFromSelectedWorkFlow(res, newCalculationSessionId ?? currentCalculationSessionId);
   };
-
+  const [deliveryDate, setDeliveryDate] = useState<any>();
   const getSelectedWorkFlowDeliveryDate = async (connectionId, IsNeedPriceUpdate?, newCalculationSessionId?) => {
 
     // setSelectedWorkFlowCalculatedIsLoaded(true)
@@ -459,7 +459,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
     const res: any = await callApi("GET", url, {}, false);
     const result = res?.data?.data?.data;
-    setWorkFlows(result.productItemValue.workFlows);
+    setDeliveryDate(result);
+    // setWorkFlows(result.productItemValue.workFlows);
 
     // _setDataFromSelectedWorkFlow(res,newCalculationSessionId ?? currentCalculationSessionId);
   };
@@ -6008,7 +6009,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     showCalculationInCompletedAlert,
     showCalculationInCompletedModal,
     setShowCalculationInCompletedModal,
-    currentSignalRConnectionId
+    currentSignalRConnectionId,
+    deliveryDate
   };
 };
 
