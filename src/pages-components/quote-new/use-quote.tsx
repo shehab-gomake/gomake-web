@@ -31,6 +31,7 @@ import {
   deleteDocumentItemApi,
   duplicateWithAnotherQuantityApi,
   getAllClientActiveBudgetsApi,
+  getDocumentDeliveryDateApi,
   getWhatsAppMessageApi,
   getWhatsAppMessageForReceiptApi,
   moveOrderToReadyApi,
@@ -135,9 +136,11 @@ const useQuoteNew = ({
     isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate
   );
 
-  const [selectDate, setSelectDate] = useState(
-    isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
-  ); // Represents the Delivery Date for Quotes and Orders, and the Due Date for other documents
+  const [selectDate, setSelectDate] = useState<string | null>(null); // Represents the Delivery Date for Quotes and Orders, and the Due Date for other documents
+
+  // const [selectDate, setSelectDate] = useState(
+  //   isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
+  // );
 
   const [isUpdateBusinessName, setIsUpdateBusinessName] = useState<
     number | null
@@ -360,8 +363,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -400,6 +403,16 @@ const useQuoteNew = ({
         },
       });
     }
+  };
+
+  const getQuoteDeliveryDate = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setSelectDate(res?.data ?? null);
+      }
+    };
+
+    await getDocumentDeliveryDateApi(callApi, callBack);
   };
 
   const updateOccasionalClientName = async (value) => {
@@ -1186,7 +1199,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1818,31 +1831,29 @@ const useQuoteNew = ({
   }, [agentListValue, quoteItemValue]);
 
   useEffect(() => {
+    const source = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
+
     setPriceListItems(quoteItemValue?.documentItems);
     setquoteItems(quoteItemValue);
-    setItems(
-      isQuoteConfirmation
-        ? quoteConfirm?.documentContacts
-        : quoteItemValue?.documentContacts
-    );
-    setSelectDate(
-      isQuoteConfirmation ? quoteConfirm?.dueDate : quoteItemValue?.dueDate
-    );
-    setCreationDate(
-      isQuoteConfirmation
-        ? quoteConfirm?.creationDate
-        : quoteItemValue?.creationDate
-    );
-    setTaxDate(
-      isQuoteConfirmation ? quoteConfirm?.taxDate : quoteItemValue?.taxDate
-    );
-
+    setItems(source?.documentContacts);
+    setCreationDate(source?.creationDate);
+    setTaxDate(source?.taxDate);
     setClientName(quoteItemValue?.occasionalClientName);
-  }, [quoteItemValue, quoteConfirm]);
 
-  //!important
+    if (!isQuote) {
+      setSelectDate(source?.dueDate);
+    }
+  }, [quoteItemValue, quoteConfirm, isQuote, isQuoteConfirmation]);
+
+  useEffect(() => {
+    if (isQuote) {
+      getQuoteDeliveryDate();
+    }
+  }, [isQuote]);
+
   const prevRouterQueryRef = useRef(router.query);
   const hasMountedRef = useRef(false);
+
   useEffect(() => {
     if (!isQuoteConfirmation && !routerChangedFromClientSelect) {
       if (!hasMountedRef.current) {
