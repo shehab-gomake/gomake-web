@@ -355,12 +355,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     ) {
       console.log("getSelectedWorkFlow 4")
       getSelectedWorkFlow(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
-      // getSelectedWorkFlowDeliveryDate(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
+      getSelectedWorkFlowDeliveryDate(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
     }
     if (productTemplate?.isHaveFixedAction && isCanGetSelected) {
       console.log("getSelectedWorkFlow 5")
       getSelectedWorkFlow(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
-      // getSelectedWorkFlowDeliveryDate(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
+      getSelectedWorkFlowDeliveryDate(calculationResult.signalRConnectionId, calculationResult?.isNeedPriceUpdate);
     }
   }, [calculationResult, currentCalculationSessionId, priceRecovery]);
   const [
