@@ -26,7 +26,7 @@ import {
   outsourceSuppliersState,
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
-import { GoMakeAutoComplate, GoMakeDeleteModal } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
@@ -44,6 +44,8 @@ import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons/sort-icon";
 import { ModalType, } from "@/enums";
 import { _renderDeliveryDate, } from "@/utils/helpers";
+import { ReChooseIcon } from "@/icons";
+import { ReloadPriceIcon } from "@/icons/reload-price";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -55,6 +57,7 @@ interface IActionContainerComponentProps extends IWorkFlowAction {
   deleteActionFromProduct?: (selectedAction: any) => void
   updateProductAction?: (data: any) => void
   deliveryDate?: string
+  showSaveChangesButton?: boolean
 }
 
 interface IActionsComponentProps {
@@ -216,7 +219,8 @@ const ActionContainerComponent = ({
   isFromSetting,
   deleteActionFromProduct,
   updateProductAction,
-  relatedActions
+  relatedActions,
+  showSaveChangesButton
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -225,7 +229,7 @@ const ActionContainerComponent = ({
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
   const [chooseFold, setChooseFold] = useState<boolean>(false);
   const [selectedfold, setSelectedFold] = useState<any>()
-
+  const [changeWorkFlowOutputDTO, setChangeWorkFlowOutputDTO] = useState<any>([])
 
 
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
@@ -250,6 +254,7 @@ const ActionContainerComponent = ({
     onClickGetEmployeeForAction,
     onClickGetMachineForAction,
     onClickGetMaterialsForAction,
+    changeWorkFlowOutputDTOApi,
     employeesList,
     machinesList,
     materialsList,
@@ -299,6 +304,9 @@ const ActionContainerComponent = ({
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
   const handleDeliveryTimeUpdate = (newValue: string) => {
+    if (newValue === totalProductionTime?.values[0]?.toString()) {
+      return; // Exit early if values match
+    }
     if (isFromSetting) {
       updateProductAction({ actionId, value: newValue, fieldName: "totalProductionTime" })
     } else {
@@ -344,6 +352,9 @@ const ActionContainerComponent = ({
   }
 
   const handleCostUpdate = (newCost: string) => {
+    if (newCost === totalCost?.values[0]?.toString()) {
+      return; // Exit early if values match
+    }
     if (isFromSetting) {
       updateProductAction({ actionId, value: newCost, fieldName: "totalcost" })
     } else {
@@ -351,11 +362,17 @@ const ActionContainerComponent = ({
     }
   };
 
-  const handleProfitUpdate = (profit: string) => {
-    updateActionData(id, +profit, "profit", productType).then();
+  const handleProfitUpdate = (profitNew: string) => {
+    if (profitNew === profit?.values[0]?.toString()) {
+      return; // Exit early if values match
+    }
+    updateActionData(id, +profitNew, "profit", productType).then();
   };
 
   const handleUpdatePrice = (price: string) => {
+    if (price === totalPrice?.values[0]?.toString()) {
+      return; // Exit early if values match
+    }
     updateActionData(id, +price, "totalPrice", productType).then();
   };
 
@@ -940,7 +957,7 @@ const ActionContainerComponent = ({
                     gap: 10,
                   }}
                 >
-                  {(
+                  {actionException && (
                     <Tooltip title={t("CalculationExceptions." + actionException?.exceptionKey)}>
                       <IconButton>
                         {_renderIconLogs(actionException?.exceptionType, 24, 24)}
@@ -1081,10 +1098,13 @@ const ActionContainerComponent = ({
                       direction={"row"}
                       gap={"16px"}
                       flexWrap={"wrap"}
+                      position={"relative"}
                     >
                       <ParametersMapping
                         source={source}
                         parameters={outputsParameters}
+                        changeWorkFlowOutputDTO={changeWorkFlowOutputDTO}
+                        setChangeWorkFlowOutputDTO={setChangeWorkFlowOutputDTO}
                       />
                       {imageOutputs.map((parameter) => (
                         <PrintImageComponent {...parameter} />
@@ -1099,7 +1119,30 @@ const ActionContainerComponent = ({
                       {tableOutputs?.map((parameter) => (
                         <TableOutPutComponent {...parameter} />
                       ))}
+                      {
+                        showSaveChangesButton && changeWorkFlowOutputDTO?.length > 0 &&
+                        <GomakePrimaryButton
+                          leftIcon={<ReloadPriceIcon color={"#FFF"} />}
+                          onClick={() => {
+
+                            changeWorkFlowOutputDTOApi(
+                              actionId,
+                              productType,
+                              actionIndex,
+                              id,
+                              changeWorkFlowOutputDTO,
+                            );
+                          }}
+                          style={{
+                            width: "fit-content", height: "40px", marginBottom: "10px", position: "absolute", right: 0, bottom: 0,
+                            backgroundColor: "rgba(237, 2, 140, 1)",
+                          }}
+                        >
+                          {t("save and re-calculate")}
+                        </GomakePrimaryButton>
+                      }
                     </Stack>
+
                   </>
                 )}
               </Collapse>
