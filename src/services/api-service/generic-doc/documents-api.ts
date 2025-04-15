@@ -135,7 +135,11 @@ const CREATE_DOCUMENT_URL = "/v1/erp-service/documents/create-document";
 const START_ORDER_PRODUCTION_URL =
   "/v1/erp-service/documents/start-order-production";
 
-const DELETE_DOCUMENT_ATTACHMENT_URL ="/v1/erp-service/documents/delete-document-attachment";
+const DELETE_DOCUMENT_ATTACHMENT_URL =
+  "/v1/erp-service/documents/delete-document-attachment";
+
+const GET_ALL_DOCUMENT_DELIVERY_DATE_URL =
+  "/v1/erp-service/documents/get-document-delivery-date";
 
 const getDocumentApi: ICallAndSetData = async (
   callApi,
@@ -1154,6 +1158,18 @@ const deleteDocumentAttachmentApi: ICallAndSetData = async (
   );
 };
 
+const getDocumentDeliveryDateApi: ICallAndSetData = async (
+  callApi,
+  setState
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    GET_ALL_DOCUMENT_DELIVERY_DATE_URL,
+    setState
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1231,4 +1247,5 @@ export {
   addGenericProductToDocumentApi,
   quickDuplicateApi,
   deleteDocumentAttachmentApi,
+  getDocumentDeliveryDateApi,
 };
