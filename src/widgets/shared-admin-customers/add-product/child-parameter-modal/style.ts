@@ -65,6 +65,14 @@ const useStyle = () => {
         // border: `1px solid ${primaryColor(400)}`,
         // boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
+      dropDownListStyle: {
+        width: "100%",
+        borderRadius: 4,
+        height: 40,
+        backgroundColor: "#FFF",
+        border: "0px",
+        boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
+      },
     };
   }, []);
   return {
