@@ -4179,7 +4179,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     ...temp[myindex],
                     parameterCode: myparameter?.code,
                     values: unitType === UNIT_TYPE.IMPERIAL && myparameter?.code != "Width" && myparameter?.code != "Height" ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
-                    isDisabled: data?.values === "custom" ? false : hasValues(data?.value),
+                    isDisabled: hasValues(data?.value),
                     factor: myparameter?.factor,
                   };
                 } else {
@@ -4202,7 +4202,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     actionIndex: myparameter?.actionIndex,
                     parameterName: myparameter?.name,
                     parameterCode: myparameter?.code,
-                    isDisabled: data?.values === "custom" ? false : hasValues(data?.value),
+                    isDisabled: hasValues(data?.value),
                     factor: myparameter?.factor,
                     unitKey: myparameter?.unitKey,
                     unitType: myparameter?.unitType,
