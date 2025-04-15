@@ -1138,7 +1138,7 @@ const ActionContainerComponent = ({
                             backgroundColor: "rgba(237, 2, 140, 1)",
                           }}
                         >
-                          {t("save and re-calculate")}
+                          {t("pricingWidget.saveAndReCalculate")}
                         </GomakePrimaryButton>
                       }
                     </Stack>
