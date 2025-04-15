@@ -29,14 +29,17 @@ interface IParametersMappingProps {
     source?: EWorkSource;
     isWorkFlows?: boolean;
     isProductionFloor?: boolean;
+    changeWorkFlowOutputDTO?: [{ Value: string, orginalName: string }]
+    setChangeWorkFlowOutputDTO?: (changeWorkFlowOutputDTO: [{ Value: string, orginalName: string }]) => void
 }
 
-const ParametersMapping = ({ parameters, source, isWorkFlows = false, isProductionFloor = false }: IParametersMappingProps) => {
+
+const ParametersMapping = ({ parameters, source, isWorkFlows = false, isProductionFloor = false, changeWorkFlowOutputDTO, setChangeWorkFlowOutputDTO }: IParametersMappingProps) => {
     return (
         <>
             {parameters?.flatMap((parameter, index, array) => {
                 const keyValueComponent = (
-                    <KeyValueViewComponent key={`key-value-${index}`} source={source} {...parameter} />
+                    <KeyValueViewComponent key={`key-value-${index}`} changeWorkFlowOutputDTO={changeWorkFlowOutputDTO} setChangeWorkFlowOutputDTO={setChangeWorkFlowOutputDTO} source={source} {...parameter} />
                 );
                 const isLastElement = index >= array.length - 1;
                 const unitType = parameter?.unitType
@@ -135,7 +138,10 @@ const KeyValueViewComponent = ({
     productType,
     orderItemId,
     isOutSource,
-    supplierId
+    supplierId,
+    orginalName,
+    changeWorkFlowOutputDTO,
+    setChangeWorkFlowOutputDTO
 }: any) => {
     const { callApi } = useGomakeAxios();
     const connectionId = useRecoilValue(currentCalculationConnectionId);
@@ -227,13 +233,110 @@ const KeyValueViewComponent = ({
         }
         return text;
     };
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [editValue, setEditValue] = useState<string>("");
+    // ... existing code ...
+
+    const handleEditClick = () => {
+        setIsEditing(true);
+        setEditValue(value);
+    };
+
+    const handleValueUpdate = () => {
+        // When clicking the check mark (✓)
+        setValue(editValue);
+        setIsEditing(false);
+
+        // Save the current value even if it wasn't changed
+        const currentDTO = changeWorkFlowOutputDTO || [];
+        const existingItemIndex = currentDTO.findIndex(item => item?.orginalName === orginalName);
+
+        let newChangeWorkFlowOutputDTO;
+        if (existingItemIndex >= 0) {
+            newChangeWorkFlowOutputDTO = currentDTO.map((item, index) =>
+                index === existingItemIndex
+                    ? { ...item, Value: editValue, orginalName: orginalName }
+                    : item
+            );
+        } else {
+            newChangeWorkFlowOutputDTO = [...currentDTO, { Value: editValue, orginalName: orginalName }];
+        }
+
+        setChangeWorkFlowOutputDTO(newChangeWorkFlowOutputDTO);
+    };
+
+    const handleValueUpdateWhenClickedOut = () => {
+        setIsEditing(false);
+
+        // Only update array if value has changed
+        if (editValue !== value) {
+            const currentDTO = changeWorkFlowOutputDTO || [];
+            const existingItemIndex = currentDTO.findIndex(item => item?.orginalName === orginalName);
+
+            let newChangeWorkFlowOutputDTO;
+            if (existingItemIndex >= 0) {
+                newChangeWorkFlowOutputDTO = currentDTO.map((item, index) =>
+                    index === existingItemIndex
+                        ? { ...item, Value: editValue, orginalName: orginalName }
+                        : item
+                );
+            } else {
+                newChangeWorkFlowOutputDTO = [...currentDTO, { Value: editValue, orginalName: orginalName }];
+            }
+
+            setChangeWorkFlowOutputDTO(newChangeWorkFlowOutputDTO);
+            setValue(editValue);
+        } else {
+            setEditValue(value); // Reset to original value if no change
+        }
+    };
+
+    const handleCancel = () => {
+        // When clicking X button
+        setIsEditing(false);
+        setEditValue(value); // Reset to original value
+        // Don't update changeWorkFlowOutputDTO
+    };
+
+    const handleInputChange = (newValue: string) => {
+        // Real-time input changes
+        setEditValue(newValue);
+
+        const currentDTO = changeWorkFlowOutputDTO || [];
+        const existingItemIndex = currentDTO.findIndex(item => item?.orginalName === orginalName);
+
+        let newChangeWorkFlowOutputDTO;
+        if (existingItemIndex >= 0) {
+            newChangeWorkFlowOutputDTO = currentDTO.map((item, index) =>
+                index === existingItemIndex
+                    ? { ...item, Value: newValue, orginalName: orginalName }
+                    : item
+            );
+        } else {
+            newChangeWorkFlowOutputDTO = [...currentDTO, { Value: newValue, orginalName: orginalName }];
+        }
+
+        setChangeWorkFlowOutputDTO(newChangeWorkFlowOutputDTO);
+    };
     return (
         <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
             <span style={classes.detailTitle}>{name}</span>
-
-            <span style={valueColor ? { ...(htmlElementType === HtmlElementType.TEXT_AREA ? classes.textAreaDetailValue : classes.detailValue), color: valueColor } : (htmlElementType === HtmlElementType.TEXT_AREA ? classes.textAreaDetailValue : classes.detailValue)}>
+            {isEditing && htmlElementType !== HtmlElementType.TEXT_AREA ? (
+                <UpdateValueInput
+                    value={editValue}
+                    onUpdate={handleValueUpdate}
+                    onInputChange={handleInputChange}
+                    clickedOut={handleValueUpdateWhenClickedOut}
+                    onCancel={handleCancel}
+                />
+            ) : (
+                <span style={valueColor ? { ...(htmlElementType === HtmlElementType.TEXT_AREA ? classes.textAreaDetailValue : classes.detailValue), color: valueColor } : (htmlElementType === HtmlElementType.TEXT_AREA ? classes.textAreaDetailValue : classes.detailValue)}>
+                    {!!defaultUnit ? `${truncateText(removeTags(value))} ${defaultUnit}` : truncateText(removeTags(value))}
+                </span>
+            )}
+            {/* <span style={valueColor ? { ...(htmlElementType === HtmlElementType.TEXT_AREA ? classes.textAreaDetailValue : classes.detailValue), color: valueColor } : (htmlElementType === HtmlElementType.TEXT_AREA ? classes.textAreaDetailValue : classes.detailValue)}>
                 {!!defaultUnit ? `${truncateText(removeTags(value))} ${defaultUnit}` : truncateText(removeTags(value))}
-            </span>
+            </span> */}
             {
                 htmlElementType === HtmlElementType.TEXT_AREA && !value && isEditable &&
                 <IconButton onClick={handleOnOpen}>
@@ -246,7 +349,11 @@ const KeyValueViewComponent = ({
                     <EditIcon />
                 </IconButton>
             }
-
+            {htmlElementType !== HtmlElementType.TEXT_AREA && value && isEditable && !isEditing && (
+                <IconButton onClick={handleEditClick}>
+                    <EditIcon />
+                </IconButton>
+            )}
             {
                 openModal && <NotesForActionModal
                     openModal={openModal}
@@ -268,7 +375,8 @@ const EditableKeyValueViewComponent = ({
     defaultUnit,
     onUpdate,
     outSourceValues,
-    source
+    source,
+    orginalName
 }: IKeyValueViewProps) => {
     const permissions = useRecoilValue(permissionsState);
     const { classes } = useStyle();

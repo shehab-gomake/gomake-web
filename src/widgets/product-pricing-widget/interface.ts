@@ -121,6 +121,7 @@ export interface IOutput {
   materialWidth: number;
   materialLength: number;
   rectangles: IRectangle[];
+  orginalName: string;
 }
 
 export interface IOutSourceSupplier {
