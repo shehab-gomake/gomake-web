@@ -293,6 +293,33 @@ const useActionUpdateValues = () => {
     }).then();
   };
 
+
+  const changeWorkFlowOutputDTOApi = (
+    actionId,
+    productType,
+    actionIndex,
+    printingActionId,
+    outputs
+  ) => {
+    updateProductItemDraftActionMachine(callApi, apiCallBackMachine, {
+      actionId: actionId,
+      productType: productType,
+      productItemValueId: currentProductItemValue,
+      actionIndex: actionIndex,
+      signalRConnectionId: connectionId,
+      outputs
+    }).then();
+    // changeWorkFlw(callApi, apiCallBack, {
+    //   actionId: actionId,
+    //   productType: productType,
+    //   productItemValueId: currentProductItemValue,
+    //   actionIndex: actionIndex,
+    //   signalRConnectionId: connectionId,
+    //   printingActionId: printingActionId,
+    //   outputs
+    // }).then();
+  };
+
   const updateActionData = async (
     actionId: string,
     newValue: number,
@@ -390,6 +417,7 @@ const useActionUpdateValues = () => {
     materialsList,
     foldOptions,
     updateWorkFlowForFold,
+    changeWorkFlowOutputDTOApi
   };
 };
 

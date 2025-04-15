@@ -10,7 +10,7 @@ const useStyle = () => {
         width: "60%",
         borderRadius: 5,
         height: "fit-content",
-        maxHeight: "500px",
+        maxHeight: "600px",
       },
       mainContainer: {
         display: "flex",
@@ -19,7 +19,10 @@ const useStyle = () => {
         justifyContent: "flex-start",
         width: "100%",
         gap: 24,
-        marginTop: 24
+        marginTop: 24,
+        overflowY: "auto" as "auto",
+        maxHeight: "400px",
+        padding: 5
       },
       groupContainer: {
         display: "flex",
@@ -31,9 +34,10 @@ const useStyle = () => {
       },
       groupActions: {
         display: "flex",
-        justifyContent: "flex-end",
+        justifyContent: "flex-start",
         alignItems: "center",
         gap: 3,
+        marginTop: 8
       },
       groupTitle: {
         ...FONT_FAMILY.Lexend(500, 14),

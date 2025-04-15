@@ -19,6 +19,7 @@ export interface IPricingWidgetProps {
   selectedWorkFlowCalculatedIsLoaded?: boolean;
   setSelectedWorkFlowCalculatedIsLoaded?: any;
   isMobileScreen?: boolean;
+  deliveryDate?: any;
 }
 
 export interface IPricingAction {
@@ -121,6 +122,7 @@ export interface IOutput {
   materialWidth: number;
   materialLength: number;
   rectangles: IRectangle[];
+  orginalName: string;
 }
 
 export interface IOutSourceSupplier {

@@ -108,7 +108,8 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     showCalculationInCompletedAlert,
     showCalculationInCompletedModal,
     setShowCalculationInCompletedModal,
-    currentSignalRConnectionId
+    currentSignalRConnectionId,
+    deliveryDate
   } = useDigitalOffsetPrice({ clasess, widgetType });
 
   const permissions = useRecoilValue(permissionsState);
@@ -275,7 +276,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
     },
   ];
   const { } = useGoMakeTour(productSteps, [relatedParameters]);
-  const func = ()=>{
+  const func = () => {
     getSelectedWorkFlow(currentSignalRConnectionId).then()
   }
   return (
@@ -370,6 +371,7 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
                               setSelectedWorkFlowCalculatedIsLoaded={
                                 setSelectedWorkFlowCalculatedIsLoaded
                               }
+                              deliveryDate={deliveryDate}
                             />
                           </PermissionCheck>
                         );
@@ -670,13 +672,13 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
         onClickDelete={() => addItemForQuotes()}
       />
       <GoMakeDeleteModal
-          modalType={ModalType.WARNING}
-          subTitle={t("products.offsetPrice.admin.inCompletedProductAlertSubTitle")}
-          title={t("products.offsetPrice.admin.inCompletedProductAlertTitle")}
-          yesBtn={t("modal.yes")}
-          openModal={showCalculationInCompletedModal}
-          onClose={()=>setShowCalculationInCompletedModal(false)}
-          onClickDelete={() => addItemForQuotes()}
+        modalType={ModalType.WARNING}
+        subTitle={t("products.offsetPrice.admin.inCompletedProductAlertSubTitle")}
+        title={t("products.offsetPrice.admin.inCompletedProductAlertTitle")}
+        yesBtn={t("modal.yes")}
+        openModal={showCalculationInCompletedModal}
+        onClose={() => setShowCalculationInCompletedModal(false)}
+        onClickDelete={() => addItemForQuotes()}
       />
     </div>
   );
