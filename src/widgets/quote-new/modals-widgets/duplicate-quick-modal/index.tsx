@@ -67,23 +67,14 @@ const DuplicateQuickModal = ({
         }}
         insideStyle={clasess.insideStyle}
       >
-        <div style={clasess.mainContainer}>
+        <div style={clasess.mainContainer} className={'show-scrollbar'}>
           {groups.map((group, groupIndex) => (
             <div key={group.id} style={{ width: "100%" }}>
               <div style={clasess.groupContainer}>
                 <div>
                   <div style={clasess.groupTitle}>{t("products.addProduct.admin.product")}{` ${group.id}`}</div>
                 </div>
-                <div style={clasess.groupActions}>
-                  <div onClick={() => addGroup(groupIndex)} style={clasess.groupAction}>
-                    <DuplicateModalIcon />
-                  </div>
-                  {groups.length > 1 && (
-                    <div onClick={() => deleteGroup(groupIndex)} style={clasess.groupAction}>
-                      <DeleteModalIcon />
-                    </div>
-                  )}
-                </div>
+
               </div>
               {group.parameters.map((param, index) => (
                 <div key={index} style={clasess.groupParameter}>
@@ -101,11 +92,6 @@ const DuplicateQuickModal = ({
                           i !== index && p.name?.value === option.value
                         )
                       )}
-                      // options={[
-                      //   { label: t("boardMissions.jobName"), value: "a330193f-492c-40a8-86f3-8edf5c8f0d5e" },
-                      //   { label: t("boardMissions.quantity"), value: "4991945c-5e07-4773-8f11-2e3483b70b53" },
-                      //   { label: t("machineAttributes.size"), value: "e3f211c6-c9d2-4ba1-83b6-87d2cf3402b4" },
-                      // ]}
                       onChange={(e, value) => handleDropdownChange(groupIndex, index, value)}
                       value={param?.name}
                       style={clasess.groupParameterInput}
@@ -183,6 +169,16 @@ const DuplicateQuickModal = ({
                 </div>
               ))}
               {group.id !== groups.length && <Divider style={{ marginTop: 24, }} />}
+              <div style={clasess.groupActions}>
+                <div onClick={() => addGroup(groupIndex)} style={clasess.groupAction}>
+                  <DuplicateModalIcon />
+                </div>
+                {groups.length > 1 && (
+                  <div onClick={() => deleteGroup(groupIndex)} style={clasess.groupAction}>
+                    <DeleteModalIcon />
+                  </div>
+                )}
+              </div>
             </div>
           ))}
           <div style={clasess.checkboxContainer}>
@@ -194,22 +190,22 @@ const DuplicateQuickModal = ({
             />
             <div style={clasess.checkboxLabel}>{t("products.addProduct.admin.createSameJobNumber")}</div>
           </div>
-          <div style={clasess.buttonContainer} onClick={() => {
-            setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }])
-            onClose()
-          }}>
-            <GomakePrimaryButton style={clasess.cancelButton}>
-              {t("sales.quote.cancel")}
-            </GomakePrimaryButton>
-            <GomakePrimaryButton style={clasess.addButton} onClick={onClickQuickDuplicate}>
-              <div style={clasess.addButtonContainer}>
-                <CartWithoutBgIcon />
-                <div style={clasess.addButtonText}>  {t("products.offsetPrice.admin.addOrderBtn")}</div>
-              </div>
-            </GomakePrimaryButton>
-          </div>
-        </div>
 
+        </div>
+        <div style={clasess.buttonContainer} onClick={() => {
+          setGroups([{ id: 1, parameters: [{ name: "", value: "" }] }])
+          onClose()
+        }}>
+          <GomakePrimaryButton style={clasess.cancelButton}>
+            {t("sales.quote.cancel")}
+          </GomakePrimaryButton>
+          <GomakePrimaryButton style={clasess.addButton} onClick={onClickQuickDuplicate}>
+            <div style={clasess.addButtonContainer}>
+              <CartWithoutBgIcon />
+              <div style={clasess.addButtonText}>  {t("products.offsetPrice.admin.addOrderBtn")}</div>
+            </div>
+          </GomakePrimaryButton>
+        </div>
       </GoMakeModal >
     </>
   );
