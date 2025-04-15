@@ -96,6 +96,7 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
       t("profileSettings.businessNumber"),
       t("reports.cardcode"),
       t("reports.cardname"),
+      t("customers.modal.agent"),
       `${t("reports.credit")} / ${t("reports.debit")}`,
     ];
 
@@ -139,6 +140,7 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
             data?.businessNumber ?? "-",
             data?.cardCode,
             data?.cardName,
+            data?.agentName ?? "-",
             data?.credit > 0
               ? Number(data?.credit.toFixed(2))
               : data?.debit
