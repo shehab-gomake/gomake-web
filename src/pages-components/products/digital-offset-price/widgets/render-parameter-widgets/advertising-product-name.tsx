@@ -1,9 +1,8 @@
-import { GoMakeAutoComplate } from "@/components";
-import { AddIcon, AddNewIcon, AdvertisingIcon, PlusIcon } from "@/icons";
-import { useRecoilState } from "recoil";
-import { subProductsParametersState } from "@/store/general-parameters-state";
-import { useEffect } from "react";
-
+import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
+import { AddNewIcon, AdvertisingIcon } from "@/icons";
+import { Stack } from "@mui/material";
+import { SecondaryButton } from "@/components/button/secondary-button";
+import { useAdvertisingProductName } from "./use-advertising-product-name";
 const AdvertisingProductNameParameterWidget = ({
   parameter,
   clasess,
@@ -13,62 +12,31 @@ const AdvertisingProductNameParameterWidget = ({
   subSection,
   section,
 }: any) => {
-  console.log("parameter", parameter)
-  const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
 
-  const defaultObject = parameter.valuesConfigs.find(
-    (item) => item.isDefault === true
-  );
-
-  const _renderSomeValues = (value: any) => {
-    const additionalAttribute = value?.additionalAttribute || [];
-    const attributes = additionalAttribute.reduce((acc, attr) => {
-      acc[attr.valueId] = attr.value;
-      return acc;
-    }, {});
-
-    const width = attributes.width;
-    const length = attributes.length;
-    const height = attributes.height;
-    return `${width} * ${length} * ${height}`
-  }
-  const getParameterByCode = (subProducts, code) => {
-    for (let subProduct of subProducts) {
-      for (let parameter of subProduct.parameters) {
-        if (parameter.parameterCode === code) {
-          return parameter;
-        }
-      }
-    }
-    return null;
-  };
-  const AdvertisingCategory = getParameterByCode(subProducts, "AdvertisingProductCategory");
-  const removeAdvertisingProductName = (subProducts) => {
-    return subProducts.map(subProduct => {
-      return {
-        ...subProduct,
-        parameters: subProduct.parameters.filter(parameter => parameter.parameterCode !== "AdvertisingProductName")
-      };
-    });
-  };
-
-  useEffect(() => {
-    if (!AdvertisingCategory) {
-      setSubProducts(removeAdvertisingProductName(subProducts));
-    }
-  }, [AdvertisingCategory]);
-
+  const {
+    defaultObject,
+    openModal,
+    newCategory,
+    setOpenModal,
+    setNewCategory,
+    onAddCategory,
+    _renderSomeValues,
+    t,
+    createNewTemplate,
+    searchResult,
+    category
+  } = useAdvertisingProductName({ parameter })
   return (
     <div style={clasess.advertisingProductNameMain}>
       <GoMakeAutoComplate
         options={parameter?.code === "DiecutType"
-          ? [{ id: "new", updateName: "creating new category" }, ...parameter?.valuesConfigs?.filter(value => {
+          ? [{ id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory") }, ...parameter?.valuesConfigs?.filter(value => {
             return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
           })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)]
           : parameter?.code === "DieCutter"
             ? [
-              { id: "add_new", updateName: "add new die cut", type: "add" },
-              { id: "generate_new", updateName: "generate new die cut", type: "generate" },
+              { id: "add_new", updateName: t("products.offsetPrice.admin.addNewDieCut"), type: "add" },
+              { id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate" },
               ...parameter?.valuesConfigs?.filter(value => {
                 return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
               })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
@@ -77,9 +45,6 @@ const AdvertisingProductNameParameterWidget = ({
               return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
             })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
         }
-        // options={parameter?.valuesConfigs?.filter(value => {
-        //   return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
-        // })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)}
         key={parameter?.valuesConfigs + temp[index]?.values}
         style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
         placeholder={parameter?.name}
@@ -104,6 +69,7 @@ const AdvertisingProductNameParameterWidget = ({
         }
         disabled={parameter?.isLock ? parameter?.isLock : false}
         renderOption={(props, option) => {
+          console.log("option", option)
           const image = option.additionalAttribute?.find(
             (attr) => attr.valueId === 'image'
           )?.value;
@@ -111,8 +77,23 @@ const AdvertisingProductNameParameterWidget = ({
           // Special handling for DiecutType's first item
           if (parameter.code === "DiecutType" && option.id === "new") {
             return (
-              <li {...props} style={{ backgroundColor: '#2E3092', color: "white", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
-                <div style={{ width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
+              <li {...props}
+                onClick={() => setOpenModal(true)}
+                style={{
+                  backgroundColor: '#2E3092',
+                  color: "white",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start"
+                }}>
+                <div
+                  style={{
+                    width: "40px",
+                    height: "40px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-start"
+                  }}>
                   <AddNewIcon color="white" />
                 </div>
                 {option.updateName}
@@ -123,13 +104,21 @@ const AdvertisingProductNameParameterWidget = ({
           // Special handling for DieCutter's new options
           if (parameter.code === "DieCutter" && (option.id === "add_new" || option.id === "generate_new")) {
             return (
-              <li {...props} style={{
-                backgroundColor: option.id === "add_new" ? '#2E3092' : '#FF69B4',
-                color: "white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "flex-start"
-              }}>
+              <li {...props}
+                onClick={() => {
+                  if (option.id === "add_new") {
+                    window.open(`/materials/${parameter?.materialPath[0]}?materialCategory=${category}`, "_blank");
+                  } else {
+                    createNewTemplate()
+                  }
+                }}
+                style={{
+                  backgroundColor: option.id === "add_new" ? '#2E3092' : '#FF69B4',
+                  color: "white",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "flex-start"
+                }}>
                 <div style={{ width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
                   <AddNewIcon color="white" />
                 </div>
@@ -158,6 +147,30 @@ const AdvertisingProductNameParameterWidget = ({
           );
         }}
       />
+      <GoMakeModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        modalTitle={t("materials.buttons.addNew")}
+        insideStyle={{ width: 400, height: "fit-content", padding: 20 }}
+      >
+        <Stack gap={5} justifyContent={'flex-start'} height={'100%'} width={'90%'} margin={'auto'} marginTop={"20px"}>
+          <GomakeTextInput
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            placeholder={t("materials.inputs.addCategory")}
+            style={{ width: '100%', height: "40px" }}
+          />
+          {
+            <SecondaryButton
+              onClick={onAddCategory}
+              variant={'contained'}
+              sx={{ width: '100%' }}
+            >
+              {t("materials.buttons.addNew")}
+            </SecondaryButton>
+          }
+        </Stack>
+      </GoMakeModal>
     </div>
   );
 };
