@@ -21,7 +21,7 @@ import { getClientsGroupstApi } from "@/services/api-service/suppliers/suppliers
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 // import { clearPhoneNumberPrefix } from "@/utils/helpers";
 import { EPreferences } from "@/enums/prefernces";
-import { clearPhoneNumberPrefix } from "@/utils/helpers";
+import { clearPhoneNumberPrefix, isValidCustomer } from "@/utils/helpers";
 import { useUserPermission } from "@/hooks/use-permission";
 import { IUserProfile } from "../settings-profile-widget/components/profiles/interface";
 import { userProfileState } from "@/store/user-profile";
@@ -34,7 +34,6 @@ const useCustomerCard = ({
   setOpenOfferModal,
   userQuote,
   typeClient,
-  isValidCustomer,
   getAllCustomers,
   onCustomerAdd,
   isgetAllCustomers,
@@ -239,22 +238,26 @@ const useCustomerCard = ({
 
     setCustomer(updatedCustomer);
 
-    if (
-      isValidCustomer(
-        updatedCustomer,
-        filteredContacts,
-        filteredAddresses,
-        filteredUsers,
-        CheckPreferenceValue
-      )
-    ) {
+    const { isValid, missingFields } = isValidCustomer(
+      updatedCustomer,
+      filteredContacts,
+      filteredAddresses,
+      filteredUsers,
+      CheckPreferenceValue
+    );
+
+    if (isValid) {
       addNewCustomer(updatedCustomer).then((x) => {
         onCustomerAdd(x);
         handleClose();
         isFromCartPage && onChangeSelectBusiness(x);
       });
     } else {
-      alertRequiredFields();
+      alertFault(
+        `${t("modal.RequiredFields")}: ${missingFields
+          .map((field) => [t(field)])
+          .join(", ")}`
+      );
     }
   };
 
@@ -292,15 +295,16 @@ const useCustomerCard = ({
     }
 
     setCustomer(updatedCustomer);
-    if (
-      isValidCustomer(
-        updatedCustomer,
-        filteredContacts,
-        filteredAddresses,
-        filteredUsers,
-        CheckPreferenceValue
-      )
-    ) {
+
+    const { isValid, missingFields } = isValidCustomer(
+      updatedCustomer,
+      filteredContacts,
+      filteredAddresses,
+      filteredUsers,
+      CheckPreferenceValue
+    );
+
+    if (isValid) {
       editCustomer(updatedCustomer, setCustomer).then((x) => {
         if (isgetAllCustomers) {
           getAllCustomers();
@@ -308,7 +312,11 @@ const useCustomerCard = ({
         handleClose();
       });
     } else {
-      alertRequiredFields();
+      alertFault(
+        `${t("modal.RequiredFields")}: ${missingFields
+          .map((field) => [t(field)])
+          .join(", ")}`
+      );
     }
   };
 

@@ -19,7 +19,6 @@ import {
 import Stack from "@mui/material/Stack";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card";
-import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
@@ -271,7 +270,6 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
         onClickCancel={handleCancel}
       />
       <CustomerCardWidget
-        isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Add}
         codeFlag={false}
         typeClient={"C"}

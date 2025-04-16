@@ -30,13 +30,7 @@ import { ClientTypeModal } from "../client-types/components/add-edit-client-type
 import { PlusIcon } from "@/icons";
 
 interface IProps {
-  isValidCustomer?: (
-    value: any,
-    value1: any,
-    value2: any,
-    value3: any,
-    preferences: any
-  ) => boolean;
+  isValidCustomer?: any;
   customerAction?: CUSTOMER_ACTIONS;
   codeFlag?: boolean;
   typeClient?: string;
@@ -59,7 +53,6 @@ interface IProps {
 }
 
 const CustomerCardWidget = ({
-  isValidCustomer,
   codeFlag,
   typeClient,
   getAllCustomers,
@@ -137,7 +130,6 @@ const CustomerCardWidget = ({
     setOpenOfferModal,
     userQuote,
     typeClient,
-    isValidCustomer,
     getAllCustomers,
     onCustomerAdd,
     isgetAllCustomers,
