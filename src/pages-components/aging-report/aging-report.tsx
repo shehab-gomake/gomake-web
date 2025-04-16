@@ -7,7 +7,6 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { HeaderTitle } from "@/widgets/header-title/header-title";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
-import { isValidCustomer } from "@/utils/helpers";
 
 interface IProps {
   clientType: CLIENT_TYPE;
@@ -113,7 +112,6 @@ const AgingReportWidget = ({ clientType }: IProps) => {
 
       {/* Add CustomerCardWidget */}
       <CustomerCardWidget
-        isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
         codeFlag={true}
         typeClient={

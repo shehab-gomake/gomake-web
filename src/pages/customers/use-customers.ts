@@ -24,7 +24,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useDebounce } from "@/utils/use-debounce";
 import { useSnackBar } from "@/hooks";
-import { clearPhoneNumberPrefix, isValidCustomer } from "@/utils/helpers";
+import { clearPhoneNumberPrefix } from "@/utils/helpers";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { useClientTypesList } from "@/hooks/use-client-types";
@@ -367,7 +367,6 @@ const useCustomers = (
     pageSize,
     filters,
     clientType,
-    isValidCustomer,
     onClickExportClient,
     onClickImportClient,
     setPagesCount,

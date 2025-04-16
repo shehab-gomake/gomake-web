@@ -32,7 +32,6 @@ export default function Customers() {
   const { classes } = useStyle();
   const [pageNumber, setPageNumber] = useState(1);
   const {
-    isValidCustomer,
     ClientTypeId,
     agentId,
     isActive,
@@ -117,7 +116,6 @@ export default function Customers() {
       return (
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
           <AddCustomerButton
-            isValidCustomer={isValidCustomer}
             onCustomerAdd={onCustomerAdd}
             typeClient={CLIENT_TYPE.CUSTOMER}
           />
@@ -231,7 +229,6 @@ export default function Customers() {
         />
       )}
       <CustomerCardWidget
-        isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
         codeFlag={true}
         typeClient={CLIENT_TYPE.CUSTOMER}
