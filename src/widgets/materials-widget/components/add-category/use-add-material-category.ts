@@ -6,6 +6,7 @@ import {
   flagState,
   isDuplicateCategoryModalState,
   isEditCategoryModalState,
+  materialCategoriesState,
   materialTypeTableState,
   openAddCategoryModalState,
   selectedCategoryModalState,
@@ -28,6 +29,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
   const { query } = useRouter();
   const { materialType } = query;
+  const materialCategories = useRecoilValue(materialCategoriesState);
   const materialTypeTable = useRecoilValue(materialTypeTableState);
   const { alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
   const [openModal, setOpenModal] = useRecoilState(openAddCategoryModalState);
@@ -46,17 +48,35 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
   const setActiveFilter = useSetRecoilState(activeFilterState);
   const setFlagState = useSetRecoilState(flagState);
   const { t } = useTranslation();
+  const [attributeValues, setAttributeValues] = useState<Record<string, any>>(
+    {}
+  );
+
+  const additionalAttributes =
+    selectedCategoryModal?.additionalAttributes ??
+    materialCategories?.[0]?.additionalAttributes ??
+    [];
+
   useEffect(() => {
     if (selectedCategoryModal) {
       setNewCategory(selectedCategoryModal?.categoryName);
       setImgUrl(selectedCategoryModal?.imageURL);
     }
   }, [selectedCategoryModal]);
+
   const onSetCategory = (e) => {
     setNewCategory(e.target.value);
   };
+
   const onAddCategory = async () => {
     if (newCategory) {
+      const categoryDefaultAttributeValues = Object.entries(
+        attributeValues
+      ).map(([attributeName, value]) => ({
+        attributeName,
+        value: typeof value === "boolean" ? value.toString() : String(value),
+      }));
+
       const callBack = (res) => {
         if (res.success) {
           alertSuccessAdded();
@@ -64,6 +84,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
           getMaterialCategories(materialType).then();
           setOpenModal(false);
           setFlagState(false);
+          setAttributeValues({});
         } else {
           alertFaultAdded();
         }
@@ -73,12 +94,14 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
           materialTypeKey: materialType.toString(),
           categoryKey: newCategory,
           imageBase64: selectedImgForAdded,
+          categoryDefaultAttributeValues,
         });
       } else {
         await addPrintHouseMaterialCategoryApi(callApi, callBack, {
           materialTypeKey: materialType.toString(),
           categoryKey: newCategory,
           imageBase64: selectedImgForAdded,
+          categoryDefaultAttributeValues,
         });
       }
     } else {
@@ -87,6 +110,13 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
   };
 
   const updatePrintHouseMaterialCategoryName = async () => {
+    const defaultAttributeValues = Object.entries(attributeValues).map(
+      ([attributeName, value]) => ({
+        attributeName,
+        value: typeof value === "boolean" ? value.toString() : String(value),
+      })
+    );
+
     const callBack = (res) => {
       if (res.success) {
         alertSuccessAdded();
@@ -94,6 +124,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
         getMaterialCategories(materialType).then();
         setOpenModal(false);
         setFlagState(false);
+        setAttributeValues({});
       } else {
         alertFaultAdded();
       }
@@ -102,6 +133,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
       materialTypeKey: materialType.toString(),
       categoryKey: selectedCategoryModal?.categoryKey,
       displayName: newCategory,
+      defaultAttributeValues,
     });
   };
 
@@ -142,6 +174,11 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
       imageBase64: data,
     });
   };
+
+  const handleAttributeChange = (name: string, value: any) => {
+    setAttributeValues((prev) => ({ ...prev, [name]: value }));
+  };
+
   return {
     openModal,
     editCategoryModalState,
@@ -161,6 +198,10 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
     materialTypeTable,
     updatePrintHouseMaterialCategoryName,
     duplicatePrintHouseMaterialCategoryName,
+    handleAttributeChange,
+    setAttributeValues,
+    attributeValues,
+    additionalAttributes,
   };
 };
 
