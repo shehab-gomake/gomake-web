@@ -40,7 +40,8 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const dir: "rtl" | "ltr" = t("direction");
-  const { getMaterialCategoryData, pagesCount, pageNumber, setPageNumber, } = useMaterialsCategories(props.isAdmin);
+  const { getMaterialCategoryData, pagesCount, pageNumber, setPageNumber } =
+    useMaterialsCategories(props.isAdmin);
   const pageSize = 14;
   const activeFilter = useRecoilValue(activeFilterState);
   const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
@@ -58,7 +59,6 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
   );
   const supplierId = useRecoilValue(selectedSupplierIdState);
   const flag = useRecoilValue(flagState);
-  const { productList } = useAllProductsDropDownList();
   const {
     materialCategory,
     materialType,
@@ -123,8 +123,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     },
   ];
 
-
-  const { } = useGoMakeTour(materialsSteps, []);
+  const {} = useGoMakeTour(materialsSteps, []);
   const Side = () => (
     <Stack direction={"column"} gap={"10px"}>
       <SideList
@@ -201,9 +200,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           pageSize
         ).then();
       } else {
-        if (
-          supplierId
-        ) {
+        if (supplierId) {
           getMaterialCategoryData(
             materialType?.toString(),
             materialCategory?.toString(),
@@ -309,7 +306,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         )}
       </SideBarContainer>
       <AddSupplierModal />
-      <AddCategoryModal isAdmin={props.isAdmin} productList={productList} />
+      <AddCategoryModal isAdmin={props.isAdmin} />
       <AddRowModal isAdmin={props.isAdmin} />
       <UpdatedNumburingModal isAdmin={props.isAdmin} />
       <CreatePurchaseOrderModal isAdmin={props.isAdmin} />
