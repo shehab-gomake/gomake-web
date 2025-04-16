@@ -31,7 +31,6 @@ const ChildParameterModal = ({
     valuesConfigs: selectedParameter.valuesConfigs,
     childsParameters: selectedParameter.childsParameters,
   });
-  console.log("state", state)
   const isUpdateNameRepeated = (updateName, currentIndex) => {
     const formattedUpdateName = updateName.replace(/\s/g, ""); // Remove spaces from the new updateName
     return state.valuesConfigs.some(
@@ -233,10 +232,12 @@ const ChildParameterModal = ({
                                     const DF = value?.valuesConfigs?.filter(valueConfig =>
                                       state?.valuesConfigs?.some(stateConfig =>
                                         stateConfig?.values &&
-                                        valueConfig.id in stateConfig.values
+                                        Object.values(stateConfig.values).includes(valueConfig.id)
                                       )
                                     )
-                                    console.log("DF", DF)
+                                    // ... existing code ...
+
+
                                     return (
                                       <div
                                         style={clasess.textInputContainer}
@@ -270,11 +271,11 @@ const ChildParameterModal = ({
                                                 placeholder={value.name}
                                                 style={clasess.dropDownListStyle}
                                                 getOptionLabel={(option: any) => option.updateName}
-                                                onChange={(e: any, value: any) => {
+                                                onChange={(e: any, myValue: any) => {
                                                   changeItems(index, "values", {
                                                     ...state.valuesConfigs[index]
                                                       .values,
-                                                    [value?.id]: value?.id,
+                                                    [value?.id]: myValue?.id,
                                                   });
                                                 }}
                                                 defaultValue={DF[index]}
