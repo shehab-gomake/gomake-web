@@ -45,7 +45,7 @@ const PricingList = ({
   addNewStepForActionProfitRow,
   updatePricingByForActionPackage,
   actionProfitByActionId,
-  getProfitsPricingTables
+  getProfitsPricingTables,
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -69,14 +69,25 @@ const PricingList = ({
     updateOutSourceActionSupplier,
     supplierList,
     selectedSupplier,
-    setSelectedSupplier
-  } = useCopyAction({ getAllActionProfitRowsByActionId, selectedPricingTableItems, getProfitsPricingTables });
+    setSelectedSupplier,
+  } = useCopyAction({
+    getAllActionProfitRowsByActionId,
+    selectedPricingTableItems,
+    getProfitsPricingTables,
+  });
   useEffect(() => {
     if (selectedPricingTableItems?.supplierId) {
-      const supplier = supplierList.find((supplier) => supplier.id === selectedPricingTableItems?.supplierId)
-      setSelectedSupplier(supplier)
+      const supplier = supplierList.find(
+        (supplier) => supplier.id === selectedPricingTableItems?.supplierId
+      );
+      setSelectedSupplier(supplier);
     }
-  }, [selectedPricingTableItems, supplierList, actionProfitByActionId, getProfitsPricingTables])
+  }, [
+    selectedPricingTableItems,
+    supplierList,
+    actionProfitByActionId,
+    getProfitsPricingTables,
+  ]);
   return (
     <div style={classes.pricListWidgetMainContainer}>
       <div style={classes.headerMainCointaner}>
@@ -91,15 +102,14 @@ const PricingList = ({
           >
             <SettingsIcon stroke={"#000000"} width={24} height={24} />
           </IconButton>
-          {
-            router?.query?.isOutSource &&
+          {router?.query?.isOutSource && (
             <div style={classes.autoCompleteContainer}>
               <GoMakeAutoComplate
                 options={supplierList}
                 style={classes.autoCompleteStyleContainer}
                 onChange={(e, value) => {
-                  updateOutSourceActionSupplier(value?.id)
-                  setSelectedSupplier(value)
+                  updateOutSourceActionSupplier(value?.id);
+                  setSelectedSupplier(value);
                 }}
                 getOptionLabel={(option) => option.name}
                 placeholder={t("select supplier")}
@@ -107,7 +117,7 @@ const PricingList = ({
                 key={selectedSupplier}
               />
             </div>
-          }
+          )}
           <div style={classes.autoCompleteContainer}>
             <GoMakeAutoComplate
               options={PricingBy}
@@ -116,29 +126,29 @@ const PricingList = ({
                 if (value?.value !== EPricingBy.PACKAGE) {
                   updatePricingByForAction(value);
                 } else {
-                  updatePricingByForActionPackage(value)
-
+                  updatePricingByForActionPackage(value);
                 }
               }}
               value={selectedPricingBy}
               key={selectedPricingTableItems}
             />
           </div>
-          {
-            selectedPricingBy?.value === EPricingBy.PACKAGE &&
+          {selectedPricingBy?.value === EPricingBy.PACKAGE && (
             <div style={classes.autoCompleteContainer}>
               <GomakeTextInput
                 style={classes.autoCompleteStyleContainer}
                 onChange={(e) => {
                   setQuantityOfPackages(e.target.value);
                 }}
-                onBlur={() => quantityOfPackages !== 0 && updatePackageUnitQuantity()}
+                onBlur={() =>
+                  quantityOfPackages !== 0 && updatePackageUnitQuantity()
+                }
                 value={quantityOfPackages}
                 placeholder={t("boardMissions.quantityOfPackages")}
                 type="number"
               />
             </div>
-          }
+          )}
           <div style={classes.autoCompleteContainer}>
             <GoMakeAutoComplate
               options={Transition}
@@ -169,7 +179,10 @@ const PricingList = ({
         addNewStepForActionProfitRow={addNewStepForActionProfitRow}
       />
       <div style={classes.chartContainer}>
-        <LineChart actionProfitRowChartData={actionProfitRowChartData} selectedTransition={selectedTransition} />
+        <LineChart
+          actionProfitRowChartData={actionProfitRowChartData}
+          selectedTransition={selectedTransition}
+        />
       </div>
       <Menu
         open={Boolean(anchorEl)}
