@@ -76,9 +76,15 @@ export const isValidEmail = (email) => {
 };
 
 export const hasValues = (obj) => {
-  if (obj) {
-    return Object?.keys(obj?.values)?.length !== 0;
-  }
+  if (!obj?.values) return false;
+  
+  // Check if the values object has any keys
+  const hasKeys = Object.keys(obj.values).length > 0;
+  
+  // Check if at least one value in the values object is not an empty string
+  const hasNonEmptyValues = Object.values(obj.values).some(value => value !== "");
+  
+  return hasKeys && hasNonEmptyValues;
 };
 
 export const isValidCustomer = (
