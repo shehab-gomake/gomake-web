@@ -270,11 +270,11 @@ const ChildParameterModal = ({
                                                 placeholder={value.name}
                                                 style={clasess.dropDownListStyle}
                                                 getOptionLabel={(option: any) => option.updateName}
-                                                onChange={(e: any, value: any) => {
+                                                onChange={(e: any, myValue: any) => {
                                                   changeItems(index, "values", {
                                                     ...state.valuesConfigs[index]
                                                       .values,
-                                                    [value?.id]: value?.id,
+                                                    [value?.id]: myValue?.id,
                                                   });
                                                 }}
                                                 defaultValue={DF[index]}
