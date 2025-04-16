@@ -31,6 +31,7 @@ const ChildParameterModal = ({
     valuesConfigs: selectedParameter.valuesConfigs,
     childsParameters: selectedParameter.childsParameters,
   });
+  console.log("state", state)
   const isUpdateNameRepeated = (updateName, currentIndex) => {
     const formattedUpdateName = updateName.replace(/\s/g, ""); // Remove spaces from the new updateName
     return state.valuesConfigs.some(
@@ -229,6 +230,13 @@ const ChildParameterModal = ({
 
                                 {state?.childsParameters?.map(
                                   (value: any, indexChild: number) => {
+                                    const DF = value?.valuesConfigs?.filter(valueConfig =>
+                                      state?.valuesConfigs?.some(stateConfig =>
+                                        stateConfig?.values &&
+                                        valueConfig.id in stateConfig.values
+                                      )
+                                    )
+                                    console.log("DF", DF)
                                     return (
                                       <div
                                         style={clasess.textInputContainer}
@@ -269,11 +277,7 @@ const ChildParameterModal = ({
                                                     [value?.id]: value?.id,
                                                   });
                                                 }}
-                                                defaultValue={
-                                                  state.valuesConfigs[index].values[
-                                                  value?.id
-                                                  ]
-                                                }
+                                                defaultValue={DF[index]}
                                               />
                                               :
                                               null
