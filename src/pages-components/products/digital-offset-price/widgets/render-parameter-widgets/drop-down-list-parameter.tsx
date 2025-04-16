@@ -106,7 +106,7 @@ const DropDownListParameterWidget = ({
       parameter?.code
     );
   };
-
+  const myParameter = temp.find((item) => item.parameterId === parameter.id && item?.actionIndex === parameter.actionIndex)
   return (
     <div
       data-tour={parameter?.id}
@@ -117,7 +117,7 @@ const DropDownListParameterWidget = ({
       }
     >
       <GoMakeAutoComplate
-        disabled={parameter?.isLock}
+        disabled={parameter?.isLock ?? myParameter?.isDisabled}
         key={
           parameter?.parameterType === EParameterTypes.MACHINES_SELECT ?
             selectedValue :

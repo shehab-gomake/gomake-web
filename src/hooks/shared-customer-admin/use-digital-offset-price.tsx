@@ -136,8 +136,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("subProducts", subProducts)
-
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(productTemplate?.ignoreCalculatedWorkflows);
   useEffect(() => {
     setIgnoreCalculatedWorkflows(productTemplate?.ignoreCalculatedWorkflows || false);
@@ -4180,8 +4178,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
             if (data?.value?.values) {
               if (myindex !== -1) {
-                console.log("data?.value?.values[parameterId]", data?.value?.values[parameterId])
-                console.log("data?.value?.values[parameterId]", { ss: data?.value?.values, parameterId })
                 if (data?.value?.values[parameterId] !== undefined) {
                   if (myparameter?.parameterType == 0) {
                     temp[myindex] = {
@@ -4204,7 +4200,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   }
 
                 } else {
-                  console.log("values", { ss: temp[myindex], temp })
                   temp.splice(myindex, 1);
                 }
               }
