@@ -4,7 +4,6 @@ export * from "./use-gomake-admin-auth";
 export * from "./use-gomake-router";
 export * from "./use-customer";
 export * from "./use-admin";
-export * from "./use-supplier";
 export * from "./use-snack-bar";
 export * from "./shared-customer-admin";
 export * from "./use-customer-drop-down-list";
