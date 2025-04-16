@@ -46,7 +46,6 @@ import { getAndSetAllCustomers, getAndSetMachincesNew } from "@/services/hooks";
 import { MaterialMenuWidget } from "./components/more-circle";
 import cloneDeep from "lodash.clonedeep";
 import { SideLeftMenuWidget } from "./components/side-list-menu";
-import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { useMaterialsCategories } from "./use-materials-categories";
 import { convertTitleUnits } from "@/utils/helpers";
@@ -55,7 +54,6 @@ import { UNIT_TYPE } from "@/enums";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
-  const { productList } = useAllProductsDropDownList();
   const { materialType, materialCategory } = query;
   const [selectedTableRow, setSelectedTableRow] =
     useState<IMaterialCategoryRow>();
@@ -128,7 +126,7 @@ const useMaterials = (isAdmin: boolean) => {
       materialType?.toString(),
       materialCategory?.toString(),
       materialFilter,
-      supplierId,
+      supplierId
     ).then();
   };
 
@@ -248,9 +246,9 @@ const useMaterials = (isAdmin: boolean) => {
         materialCategoryData.map((row) =>
           materialsIds.includes(row.id)
             ? {
-              ...row,
-              checked: !checked,
-            }
+                ...row,
+                checked: !checked,
+              }
             : { ...row, checked: false }
         )
       );
@@ -286,7 +284,7 @@ const useMaterials = (isAdmin: boolean) => {
     ];
   }, [materialHeaders, materialCategoryData]);
   const user = useRecoilValue<any>(userState);
-  const unitType = user?.printHouseProfile?.unitType || 0
+  const unitType = user?.printHouseProfile?.unitType || 0;
 
   const tableHeadersNew = useCallback(() => {
     return [
@@ -298,21 +296,21 @@ const useMaterials = (isAdmin: boolean) => {
         ? materialHeaders.filter((x) => x.key !== "stock")
         : materialHeaders.filter((header) => !header.isForAdmin)
       ).map((header) => {
-        const convertedUnit = unitType === UNIT_TYPE.IMPERIAL ? convertTitleUnits(header.unit) : header.unit;
+        const convertedUnit =
+          unitType === UNIT_TYPE.IMPERIAL
+            ? convertTitleUnits(header.unit)
+            : header.unit;
 
-        return (
-          header.unit ? (
-            <div>
-              {" "}
-              <div key={header.key}>
-                <span>{header.value}</span>
-                {convertedUnit && <small> ({convertedUnit})</small>}
-              </div>
+        return header.unit ? (
+          <div>
+            {" "}
+            <div key={header.key}>
+              <span>{header.value}</span>
+              {convertedUnit && <small> ({convertedUnit})</small>}
             </div>
-          ) : (
-            <div style={{ textTransform: "capitalize" }}>{header.value}</div>
-          )
-
+          </div>
+        ) : (
+          <div style={{ textTransform: "capitalize" }}>{header.value}</div>
         );
       }),
       t("usersSettings.isActive"),
@@ -487,7 +485,6 @@ const useMaterials = (isAdmin: boolean) => {
     selectedTableRow,
     materialName,
     getClientsMaterials,
-    productList,
     onClickCloseDeleteTableRowWhenHaveMoreSupplierModal,
     toggleIsActive,
     selectedMaterialCategory,

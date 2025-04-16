@@ -45,7 +45,12 @@ export const materialActionState = atom<
   default: [],
 });
 export const materialCategoriesState = atom<
-  { categoryKey: string; categoryName: string; isDeletable: boolean }[]
+  {
+    categoryKey: string;
+    categoryName: string;
+    isDeletable: boolean;
+    additionalAttributes?: any;
+  }[]
 >({
   key: "materialCategoriesState",
   default: [],

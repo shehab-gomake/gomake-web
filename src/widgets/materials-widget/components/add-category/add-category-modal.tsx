@@ -1,96 +1,281 @@
-import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
+import { GoMakeModal, GomakeTextInput } from "@/components";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAddMaterialCategory } from "./use-add-material-category";
-import { Stack } from "@mui/material";
+import { FormControlLabel, MenuItem, Stack, TextField } from "@mui/material";
 import { ImageUploadComponent } from "@/components/form-inputs/image-input";
-import { useEffect } from "react";
+import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
+import { useStyle } from "./style";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 interface IAddCategoryModalProps {
-    isAdmin: boolean;
-    productList?: any[];
+  isAdmin: boolean;
 }
+
+export enum EAttributeType {
+  Text = 0,
+  Number = 1,
+  Boolean = 2,
+  PriceObject = 3,
+  TranslatedText = 4,
+  Enum = 5,
+  SelectFixedValues = 6,
+  Image = 7,
+  MachinesList = 8,
+  ClientsList = 9,
+  ProductSelect = 10,
+  MachineCategorySelect = 11,
+  MultiSelect = 12,
+  FromParameters = 13,
+}
+
 const AddCategoryModal = (props: IAddCategoryModalProps) => {
-    const {
-        openModal,
-        editCategoryModalState,
-        duplicateCategoryModalState,
-        selectedCategoryModal,
-        newCategory,
-        setOpenModal,
-        onAddCategory,
-        onSetCategory,
-        setEditCategoryModalState,
-        setDuplicateCategoryModalState,
-        setSelectedCategoryModal,
-        uploadPrintHouseMaterialImage,
-        t,
-        imgUrl,
-        setSelectedImgForAdded,
-        materialTypeTable,
-        updatePrintHouseMaterialCategoryName,
-        duplicatePrintHouseMaterialCategoryName
-    } = useAddMaterialCategory(props.isAdmin);
+  const { classes } = useStyle();
+  const { primaryColor } = useGomakeTheme();
+  const {
+    openModal,
+    editCategoryModalState,
+    duplicateCategoryModalState,
+    selectedCategoryModal,
+    newCategory,
+    setOpenModal,
+    onAddCategory,
+    onSetCategory,
+    setEditCategoryModalState,
+    setDuplicateCategoryModalState,
+    setSelectedCategoryModal,
+    uploadPrintHouseMaterialImage,
+    t,
+    imgUrl,
+    setSelectedImgForAdded,
+    materialTypeTable,
+    updatePrintHouseMaterialCategoryName,
+    duplicatePrintHouseMaterialCategoryName,
+    handleAttributeChange,
+    setAttributeValues,
+    attributeValues,
+    additionalAttributes,
+  } = useAddMaterialCategory(props.isAdmin);
 
-    return (
-        <GoMakeModal
-            insideStyle={{ width: 400, height: "fit-content", padding: 20 }}
-            openModal={openModal}
-            onClose={() => {
-                setEditCategoryModalState(false)
-                setDuplicateCategoryModalState(false)
-                setSelectedCategoryModal({})
-                setOpenModal(false)
-            }}
-            modalTitle={duplicateCategoryModalState
-                ? t("navigationButtons.duplicate")
-                : editCategoryModalState
-                    ? t("materials.buttons.edit")
-                    : t("materials.buttons.addNew")}
-        >
-            <Stack gap={5} justifyContent={'flex-start'} height={'100%'} width={'90%'} margin={'auto'} marginTop={"20px"}>
-                <GomakeTextInput
-                    value={newCategory}
-                    onChange={onSetCategory}
-                    placeholder={t("materials.inputs.addCategory")}
-                    style={{ width: '100%', height: "40px" }}
-                />
-                {/* <GoMakeAutoComplate
-                    options={props?.productList}
-                    getOptionLabel={(option: any) => `${option.name} - ${option.code}`}
-                    style={{
-                        width: "100%",
-                        borderRadius: 4,
-                        height: 40
-                    }}
-                    placeholder={t("home.admin.selectProduct")}
-                    onChange={(e, value) => {
-                    }}
-                /> */}
+  const actionLabel = duplicateCategoryModalState
+    ? t("navigationButtons.duplicate")
+    : editCategoryModalState
+    ? t("materials.buttons.edit")
+    : t("materials.buttons.addNew");
 
-                {(editCategoryModalState ? selectedCategoryModal?.isCanUploadImage : materialTypeTable?.isCanUploadImage) && (
-                    <ImageUploadComponent
-                        onChange={(value) => editCategoryModalState ? uploadPrintHouseMaterialImage(value) : setSelectedImgForAdded(value)}
-                        value={imgUrl}
-                    />
-                )}
-                {
-                    <SecondaryButton
-                        onClick={duplicateCategoryModalState ? duplicatePrintHouseMaterialCategoryName : editCategoryModalState ? updatePrintHouseMaterialCategoryName : onAddCategory}
-                        variant={'contained'}
-                        sx={{ width: '100%' }}
-                    >
-                        {
-                            duplicateCategoryModalState
-                                ? t("navigationButtons.duplicate")
-                                : editCategoryModalState
-                                    ? t("materials.buttons.edit")
-                                    : t("materials.buttons.addNew")
+  const actionHandler = duplicateCategoryModalState
+    ? duplicatePrintHouseMaterialCategoryName
+    : editCategoryModalState
+    ? updatePrintHouseMaterialCategoryName
+    : onAddCategory;
+
+  const modalTitle = duplicateCategoryModalState
+    ? t("navigationButtons.duplicate")
+    : editCategoryModalState
+    ? t("materials.buttons.edit")
+    : t("materials.buttons.addNew");
+
+  const handleClose = () => {
+    setEditCategoryModalState(false);
+    setDuplicateCategoryModalState(false);
+    setSelectedCategoryModal({});
+    setOpenModal(false);
+    setAttributeValues({});
+  };
+
+  return (
+    <GoMakeModal
+      insideStyle={{ width: 400, height: "fit-content", padding: 20 }}
+      openModal={openModal}
+      onClose={handleClose}
+      modalTitle={modalTitle}
+    >
+      <Stack
+        gap={5}
+        justifyContent={"flex-start"}
+        height={"100%"}
+        width={"90%"}
+        margin={"auto"}
+        marginTop={"20px"}
+      >
+        <GomakeTextInput
+          value={newCategory}
+          onChange={onSetCategory}
+          placeholder={t("materials.inputs.addCategory")}
+          style={{ width: "100%", height: "40px" }}
+        />
+
+        {!duplicateCategoryModalState &&
+          additionalAttributes?.map((attr, index) => {
+            const value = attr?.defaultValue ?? "";
+            const isRequired = attr?.isRequired;
+            const label = t(`materials.attributes.${attr?.name}`);
+            const key = `${attr.name}-${index}`;
+
+            switch (attr.type) {
+              case EAttributeType.SelectFixedValues:
+              case EAttributeType.Enum:
+              case EAttributeType.MultiSelect:
+                return (
+                  <TextField
+                    key={key}
+                    select
+                    label={label}
+                    // required={isRequired}
+                    fullWidth
+                    defaultValue={value}
+                    SelectProps={{
+                      multiple: attr.type === EAttributeType.MultiSelect,
+                    }}
+                    value={
+                      attributeValues[attr.name] ??
+                      (editCategoryModalState ? value : "")
+                    }
+                    onChange={(e) =>
+                      handleAttributeChange(attr.name, e.target.value)
+                    }
+                    sx={{
+                      ...classes.inputContainer,
+                      "& label": {
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        left: "12px",
+                        backgroundColor: "white",
+                        padding: "0 4px",
+                        color: !(
+                          attributeValues[attr.name] ??
+                          (editCategoryModalState ? value : "")
+                        )
+                          ? undefined
+                          : primaryColor(500),
+                        transition: "all 0.2s ease-in-out",
+                      },
+                    }}
+                  >
+                    {attr.values?.map((option) => (
+                      <MenuItem key={option} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                );
+              case EAttributeType.Boolean:
+                return (
+                  <FormControlLabel
+                    key={key}
+                    control={
+                      <PrimaryCheckbox
+                        // defaultChecked={value}
+                        checked={
+                          attributeValues[attr.name] ??
+                          (editCategoryModalState ? value : false)
                         }
-                    </SecondaryButton>
-                }
-            </Stack>
-        </GoMakeModal>
-    )
-}
+                        onChange={(e) =>
+                          handleAttributeChange(attr.name, e.target.checked)
+                        }
+                      />
+                    }
+                    label={label}
+                  />
+                );
+              case EAttributeType.Number:
+                return (
+                  <TextField
+                    key={key}
+                    label={label}
+                    // required={isRequired}
+                    fullWidth
+                    type="number"
+                    defaultValue={value}
+                    value={
+                      attributeValues[attr.name] ??
+                      (editCategoryModalState ? value : "")
+                    }
+                    onChange={(e) =>
+                      handleAttributeChange(
+                        attr.name,
+                        parseFloat(e.target.value)
+                      )
+                    }
+                    sx={{
+                      ...classes.inputContainer,
+                      "& label": {
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        left: "12px",
+                        backgroundColor: "white",
+                        padding: "0 4px",
+                        color: !(
+                          attributeValues[attr.name] ??
+                          (editCategoryModalState ? value : "")
+                        )
+                          ? undefined
+                          : primaryColor(500),
+                        transition: "all 0.2s ease-in-out",
+                      },
+                    }}
+                  />
+                );
+              default:
+                return (
+                  <TextField
+                    key={key}
+                    label={label}
+                    // required={isRequired}
+                    fullWidth
+                    defaultValue={value}
+                    value={
+                      attributeValues[attr.name] ??
+                      (editCategoryModalState ? value : "")
+                    }
+                    onChange={(e) =>
+                      handleAttributeChange(attr.name, e.target.value)
+                    }
+                    sx={{
+                      ...classes.inputContainer,
+                      "& label": {
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        left: "12px",
+                        backgroundColor: "white",
+                        padding: "0 4px",
+                        color: !(
+                          attributeValues[attr.name] ??
+                          (editCategoryModalState ? value : "")
+                        )
+                          ? undefined
+                          : primaryColor(500),
+                        transition: "all 0.2s ease-in-out",
+                      },
+                    }}
+                  />
+                );
+            }
+          })}
 
-export { AddCategoryModal }
+        {(editCategoryModalState
+          ? selectedCategoryModal?.isCanUploadImage
+          : materialTypeTable?.isCanUploadImage) && (
+          <ImageUploadComponent
+            onChange={(value) =>
+              editCategoryModalState
+                ? uploadPrintHouseMaterialImage(value)
+                : setSelectedImgForAdded(value)
+            }
+            value={imgUrl}
+          />
+        )}
+        {
+          <SecondaryButton
+            onClick={actionHandler}
+            variant={"contained"}
+            sx={{ width: "100%" }}
+          >
+            {actionLabel}
+          </SecondaryButton>
+        }
+      </Stack>
+    </GoMakeModal>
+  );
+};
+
+export { AddCategoryModal };
