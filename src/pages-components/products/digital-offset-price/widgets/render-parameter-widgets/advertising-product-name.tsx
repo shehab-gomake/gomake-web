@@ -3,6 +3,7 @@ import { AddNewIcon, AdvertisingIcon } from "@/icons";
 import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAdvertisingProductName } from "./use-advertising-product-name";
+import { TestIcon } from "@/icons/test-icon";
 const AdvertisingProductNameParameterWidget = ({
   parameter,
   clasess,
@@ -31,10 +32,15 @@ const AdvertisingProductNameParameterWidget = ({
     openGenerateModal,
     setOpenGenerateModal,
     viewRequiredParameters,
-    subProducts
-  } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, onChangeSubProductsForPrice, subSection, section, index })
+    subProducts,
+    createNewTemplateEndPoint,
+    isView
+  } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial })
+
+  console.log("searchResult", searchResult)
   return (
     <div style={clasess.advertisingProductNameMain}>
+
       <GoMakeAutoComplate
         options={
           parameter?.code === "DiecutType"
@@ -81,7 +87,6 @@ const AdvertisingProductNameParameterWidget = ({
         }
         disabled={parameter?.isLock ? parameter?.isLock : false}
         renderOption={(props, option) => {
-          console.log("option", option)
           const image = option.additionalAttribute?.find(
             (attr) => attr.valueId === 'image'
           )?.value;
@@ -121,8 +126,7 @@ const AdvertisingProductNameParameterWidget = ({
                   if (option.id === "add_new") {
                     window.open(`/materials/${parameter?.materialPath[0]}?materialCategory=${category}&connectionID=${connectionId}`, "_blank");
                   } else {
-                    // createNewTemplate()
-                    setOpenGenerateModal(true)
+                    createNewTemplate()
                   }
                 }}
                 style={{
@@ -160,6 +164,7 @@ const AdvertisingProductNameParameterWidget = ({
           );
         }}
       />
+
       <GoMakeModal
         open={openModal}
         onClose={() => setOpenModal(false)}
@@ -187,11 +192,12 @@ const AdvertisingProductNameParameterWidget = ({
 
       <GoMakeModal
         open={openGenerateModal}
-        onClose={() => setOpenGenerateModal(false)}
+        onClose={() => isView ? null : setOpenGenerateModal(false)}
         modalTitle={" "}
-        insideStyle={{ width: 500, height: "fit-content", padding: 20 }}
+        insideStyle={{ width: 500, height: !isView ? "fit-content" : 500, padding: 20 }}
+        withClose={isView ? false : true}
       >
-        <Stack gap={"5px"} justifyContent={'flex-start'} margin={'auto'}>
+        {!isView && <Stack gap={"5px"} justifyContent={'flex-start'} margin={'auto'}>
           <h3>
             GoMake will automatically generate a new die-cut!
 
@@ -200,10 +206,24 @@ const AdvertisingProductNameParameterWidget = ({
             return <div>{item}</div>
           })}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-            <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={createNewTemplate}>Generate</GomakePrimaryButton>
+            <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={createNewTemplateEndPoint}>Generate</GomakePrimaryButton>
           </div>
-        </Stack>
 
+        </Stack>}
+        {isView && <div style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.3)",
+          borderRadius: 14,
+        }}>
+          <TestIcon />
+        </div>}
       </GoMakeModal>
     </div>
   );

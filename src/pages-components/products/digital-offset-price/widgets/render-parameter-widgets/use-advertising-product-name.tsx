@@ -7,7 +7,7 @@ import { subProductsParametersState } from "@/store/general-parameters-state";
 import { addPrintHouseMaterialCategoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { createDieCutFromTemplateMakerApi, getMaterialCategoryByMaterialKeyApi } from "@/services/api-service/materials/materials-endpoints";
 
-const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, onChangeSubProductsForPrice, subSection, section, index }) => {
+const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial }) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
@@ -20,7 +20,8 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     (item) => item.isDefault === true
   );
   const [newCategory, setNewCategory] = useState("");
-  console.log("searchResult", searchResult)
+  const [isView, setIsView] = useState(false);
+
   useEffect(() => {
     setSearchResult(parameter?.valuesConfigs)
   }, [parameter])
@@ -101,6 +102,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     return true;
   };
   const createNewTemplateEndPoint = async () => {
+    setIsView(true)
     const unitWidth = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.values[0];
     const unitLength = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitLength")?.values[0];
     const unitHeight = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitHeight")?.values[0];
@@ -161,6 +163,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
             return [formattedData, ...prev,] // Add the new item to the data list
           });
           setOpenGenerateModal(false)
+          setIsView(false)
         }
 
       } else {
@@ -173,7 +176,8 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const createNewTemplate = () => {
     const result = checkRequiredParameters(subProducts);
     if (result) {
-      createNewTemplateEndPoint()
+      // createNewTemplateEndPoint()
+      setOpenGenerateModal(true)
     } else {
       const errorMessage = t("products.offsetPrice.admin.errorMakerTemplate1")
       alertFault(errorMessage)
@@ -235,7 +239,10 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     openGenerateModal,
     setOpenGenerateModal,
     viewRequiredParameters,
-    subProducts
+    subProducts,
+    createNewTemplateEndPoint,
+    isView,
+    setIsView
   };
 };
 
