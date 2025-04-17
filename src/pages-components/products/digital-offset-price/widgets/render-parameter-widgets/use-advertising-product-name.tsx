@@ -21,9 +21,12 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial }
   );
   const [newCategory, setNewCategory] = useState("");
   const [isView, setIsView] = useState(false);
+  const [isRenderData, setIsRenderData] = useState(true)
 
   useEffect(() => {
-    setSearchResult(parameter?.valuesConfigs)
+    if (isRenderData) {
+      setSearchResult(parameter?.valuesConfigs)
+    }
   }, [parameter])
 
   const onAddCategory = async () => {
@@ -164,6 +167,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial }
           });
           setOpenGenerateModal(false)
           setIsView(false)
+          setIsRenderData(false)
         }
 
       } else {
@@ -242,7 +246,8 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial }
     subProducts,
     createNewTemplateEndPoint,
     isView,
-    setIsView
+    setIsView,
+    setIsRenderData
   };
 };
 
