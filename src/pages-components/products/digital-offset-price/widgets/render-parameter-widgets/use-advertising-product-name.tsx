@@ -5,7 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { subProductsParametersState } from "@/store/general-parameters-state";
 import { addPrintHouseMaterialCategoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
-import { createDieCutFromTemplateMakerApi } from "@/services/api-service/materials/materials-endpoints";
+import { createDieCutFromTemplateMakerApi, getMaterialCategoryByMaterialKeyApi } from "@/services/api-service/materials/materials-endpoints";
 
 const useAdvertisingProductName = ({ parameter }) => {
   const { t } = useTranslation();
@@ -20,9 +20,12 @@ const useAdvertisingProductName = ({ parameter }) => {
     (item) => item.isDefault === true
   );
   const [newCategory, setNewCategory] = useState("");
+  const [options, setOptions] = useState([]);
+
   const onAddCategory = async () => {
     const callBack = (res) => {
       if (res.success) {
+        getMaterialCategoryByMaterialKey(parameter?.materialPath[0].toString())
         alertSuccessAdded();
         setOpenModal(false);
       } else {
@@ -137,6 +140,18 @@ const useAdvertisingProductName = ({ parameter }) => {
       alertFault(errorMessage)
     }
   }
+
+
+  const getMaterialCategoryByMaterialKey = async (material) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        setOptions(res?.data[0]?.data)
+      } else {
+        // push("/materials");
+      }
+    };
+    await getMaterialCategoryByMaterialKeyApi(callApi, callBack, material);
+  };
   return {
     defaultObject,
     openModal,
@@ -148,7 +163,9 @@ const useAdvertisingProductName = ({ parameter }) => {
     t,
     createNewTemplate,
     searchResult,
-    category
+    category,
+    getMaterialCategoryByMaterialKey,
+    options
   };
 };
 

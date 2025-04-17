@@ -24,26 +24,40 @@ const AdvertisingProductNameParameterWidget = ({
     t,
     createNewTemplate,
     searchResult,
-    category
+    category,
+    options
   } = useAdvertisingProductName({ parameter })
+  console.log("options", { options, ss: parameter?.valuesConfigs })
   return (
     <div style={clasess.advertisingProductNameMain}>
       <GoMakeAutoComplate
-        options={parameter?.code === "DiecutType"
-          ? [{ id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory") }, ...parameter?.valuesConfigs?.filter(value => {
-            return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
-          })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)]
-          : parameter?.code === "DieCutter"
+        options={
+          parameter?.code === "DiecutType"
             ? [
-              { id: "add_new", updateName: t("products.offsetPrice.admin.addNewDieCut"), type: "add" },
-              { id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate" },
-              ...parameter?.valuesConfigs?.filter(value => {
-                return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+              { id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory") },
+              ...options?.length ? options : parameter?.valuesConfigs?.filter(value => {
+                return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
+                  === null && value?.materialValueIds[0]?.valueId === null);
               })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
             ]
-            : parameter?.valuesConfigs?.filter(value => {
-              return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
-            })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
+            // [{ id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory") },
+            // ...parameter?.valuesConfigs?.filter(value => {
+            //   return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
+            //     === null && value?.materialValueIds[0]?.valueId === null);
+            // })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)]
+
+            :
+            parameter?.code === "DieCutter"
+              ? [
+                { id: "add_new", updateName: t("products.offsetPrice.admin.addNewDieCut"), type: "add" },
+                { id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate" },
+                ...parameter?.valuesConfigs?.filter(value => {
+                  return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+                })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
+              ]
+              : parameter?.valuesConfigs?.filter(value => {
+                return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+              })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
         }
         key={parameter?.valuesConfigs + temp[index]?.values}
         style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
