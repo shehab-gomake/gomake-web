@@ -7,20 +7,23 @@ import { subProductsParametersState } from "@/store/general-parameters-state";
 import { addPrintHouseMaterialCategoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { createDieCutFromTemplateMakerApi, getMaterialCategoryByMaterialKeyApi } from "@/services/api-service/materials/materials-endpoints";
 
-const useAdvertisingProductName = ({ parameter }) => {
+const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, onChangeSubProductsForPrice, subSection, section, index }) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
   const category = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DiecutType")?.values[0];
-
+  const [openGenerateModal, setOpenGenerateModal] = useState(false);
   const [openModal, setOpenModal] = useState(false);
-  const [searchResult, setSearchResult] = useState([]);
+  const [searchResult, setSearchResult] = useState(parameter?.valuesConfigs);
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
   const [newCategory, setNewCategory] = useState("");
-  const [options, setOptions] = useState([]);
+  console.log("searchResult", searchResult)
+  useEffect(() => {
+    setSearchResult(parameter?.valuesConfigs)
+  }, [parameter])
 
   const onAddCategory = async () => {
     const callBack = (res) => {
@@ -116,14 +119,50 @@ const useAdvertisingProductName = ({ parameter }) => {
     }
     const callBack = (res) => {
       if (res.success && res.data && res.data.data) {
-        setSearchResult((prev: any) => {
-          return [res.data.data, ...prev,] // Add the new item to the data list
+        getAllMaterial().then((materials) => {
+          getProductById(materials);
         });
-
-        const pdfUrl = res.data.pdfUrl;
-        if (pdfUrl) {
-          window.open(pdfUrl, '_blank');
+        if (parameter?.code === "DieCutter") {
+          const formattedData = {
+            id: res.data.data.rowData.code.value,
+            activateAction: false,
+            isDefault: false,
+            isDeleted: false,
+            isHidden: false,
+            materialValueIds: null,
+            selectedParameterValues: null,
+            updateName: res.data.data.rowData.name.value,
+            values: [res.data.data.rowData.name.value],
+            additionalAttribute: [
+              {
+                valueId: "name",
+                value: res.data.data.rowData.name.value
+              },
+              {
+                valueId: "image",
+                value: res.data.data.rowData.image.value
+              },
+              {
+                valueId: "width",
+                value: res.data.data.rowData.width.value
+              },
+              {
+                valueId: "length",
+                value: res.data.data.rowData.length.value
+              },
+              {
+                valueId: "code",
+                value: res.data.data.rowData.code.value
+              }
+            ],
+            currency: res.data.data.rowData.currency.value
+          };
+          setSearchResult((prev: any) => {
+            return [formattedData, ...prev,] // Add the new item to the data list
+          });
+          setOpenGenerateModal(false)
         }
+
       } else {
         alertFault(t("products.offsetPrice.admin.errorAddingTemplate"))
       }
@@ -138,6 +177,7 @@ const useAdvertisingProductName = ({ parameter }) => {
     } else {
       const errorMessage = t("products.offsetPrice.admin.errorMakerTemplate1")
       alertFault(errorMessage)
+
     }
   }
 
@@ -145,12 +185,39 @@ const useAdvertisingProductName = ({ parameter }) => {
   const getMaterialCategoryByMaterialKey = async (material) => {
     const callBack = (res) => {
       if (res?.success) {
-        setOptions(res?.data[0]?.data)
-      } else {
-        // push("/materials");
+        getAllMaterial().then((materials) => {
+          getProductById(materials);
+        });
       }
     };
     await getMaterialCategoryByMaterialKeyApi(callApi, callBack, material);
+  };
+
+
+  const viewRequiredParameters = (subProducts: any[]): { parameterInfo: string[], isComplete: boolean } => {
+    const requiredParameterCodes = [
+      "DieUnitWidth",
+      "DieUnitLength",
+      "DieUnitHeight",
+      "SheetWeight",
+      "SheetColor",
+      "Sheetcategory",
+    ];
+
+    const foundParameters = subProducts.flatMap(product =>
+      product.parameters.filter(param =>
+        requiredParameterCodes.includes(param.parameterCode)
+      )
+    );
+
+    const parameterInfo = foundParameters.map(param =>
+      `${param.parameterName}: ${param.values[0]}${param.unitKey ? ` ${param.unitKey}` : ''}`
+    );
+
+    return {
+      parameterInfo,
+      isComplete: foundParameters.length === requiredParameterCodes.length
+    };
   };
   return {
     defaultObject,
@@ -165,7 +232,10 @@ const useAdvertisingProductName = ({ parameter }) => {
     searchResult,
     category,
     getMaterialCategoryByMaterialKey,
-    options
+    openGenerateModal,
+    setOpenGenerateModal,
+    viewRequiredParameters,
+    subProducts
   };
 };
 

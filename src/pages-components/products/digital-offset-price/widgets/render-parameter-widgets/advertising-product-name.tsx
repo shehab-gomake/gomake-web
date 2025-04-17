@@ -1,4 +1,4 @@
-import { GoMakeAutoComplate, GoMakeModal, GomakeTextInput } from "@/components";
+import { GoMakeAutoComplate, GoMakeModal, GomakePrimaryButton, GomakeTextInput } from "@/components";
 import { AddNewIcon, AdvertisingIcon } from "@/icons";
 import { Stack } from "@mui/material";
 import { SecondaryButton } from "@/components/button/secondary-button";
@@ -11,6 +11,9 @@ const AdvertisingProductNameParameterWidget = ({
   onChangeSubProductsForPrice,
   subSection,
   section,
+  connectionId,
+  getProductById,
+  getAllMaterial
 }: any) => {
 
   const {
@@ -25,33 +28,28 @@ const AdvertisingProductNameParameterWidget = ({
     createNewTemplate,
     searchResult,
     category,
-    options
-  } = useAdvertisingProductName({ parameter })
-  console.log("options", { options, ss: parameter?.valuesConfigs })
+    openGenerateModal,
+    setOpenGenerateModal,
+    viewRequiredParameters,
+    subProducts
+  } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, onChangeSubProductsForPrice, subSection, section, index })
   return (
     <div style={clasess.advertisingProductNameMain}>
       <GoMakeAutoComplate
         options={
           parameter?.code === "DiecutType"
-            ? [
-              { id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory") },
-              ...options?.length ? options : parameter?.valuesConfigs?.filter(value => {
-                return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
-                  === null && value?.materialValueIds[0]?.valueId === null);
-              })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
-            ]
-            // [{ id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory") },
-            // ...parameter?.valuesConfigs?.filter(value => {
-            //   return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
-            //     === null && value?.materialValueIds[0]?.valueId === null);
-            // })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)]
-
+            ?
+            [{ id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory") },
+            ...parameter?.valuesConfigs?.filter(value => {
+              return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
+                === null && value?.materialValueIds[0]?.valueId === null);
+            })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)]
             :
             parameter?.code === "DieCutter"
               ? [
                 { id: "add_new", updateName: t("products.offsetPrice.admin.addNewDieCut"), type: "add" },
                 { id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate" },
-                ...parameter?.valuesConfigs?.filter(value => {
+                ...searchResult?.filter(value => {
                   return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
                 })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
               ]
@@ -121,9 +119,10 @@ const AdvertisingProductNameParameterWidget = ({
               <li {...props}
                 onClick={() => {
                   if (option.id === "add_new") {
-                    window.open(`/materials/${parameter?.materialPath[0]}?materialCategory=${category}`, "_blank");
+                    window.open(`/materials/${parameter?.materialPath[0]}?materialCategory=${category}&connectionID=${connectionId}`, "_blank");
                   } else {
-                    createNewTemplate()
+                    // createNewTemplate()
+                    setOpenGenerateModal(true)
                   }
                 }}
                 style={{
@@ -184,6 +183,27 @@ const AdvertisingProductNameParameterWidget = ({
             </SecondaryButton>
           }
         </Stack>
+      </GoMakeModal>
+
+      <GoMakeModal
+        open={openGenerateModal}
+        onClose={() => setOpenGenerateModal(false)}
+        modalTitle={" "}
+        insideStyle={{ width: 500, height: "fit-content", padding: 20 }}
+      >
+        <Stack gap={"5px"} justifyContent={'flex-start'} margin={'auto'}>
+          <h3>
+            GoMake will automatically generate a new die-cut!
+
+          </h3>
+          {viewRequiredParameters(subProducts).parameterInfo.map((item: any) => {
+            return <div>{item}</div>
+          })}
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+            <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={createNewTemplate}>Generate</GomakePrimaryButton>
+          </div>
+        </Stack>
+
       </GoMakeModal>
     </div>
   );

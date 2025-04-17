@@ -1,5 +1,5 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import { filterState, openAddRowModalState, selectedSupplierIdState } from "../../state";
 import { useMaterialsCategories } from "../../use-materials-categories";
@@ -12,7 +12,7 @@ import { addMaterialCategoryRowApi, deleteMaterialCategoryRowApi } from "@/servi
 const useAddCategoryRow = (isAdmin: boolean) => {
     const { callApi } = useGomakeAxios();
     const { query } = useRouter();
-    const { materialType, materialCategory } = query;
+    const { materialType, materialCategory, connectionID } = query;
     const { alertSuccessAdded, alertFaultAdded, alertSuccessDelete, alertFaultDelete } = useSnackBar();
     const supplierId = useRecoilValue(selectedSupplierIdState)
     const setOpenModal = useSetRecoilState<boolean>(openAddRowModalState);
@@ -45,7 +45,8 @@ const useAddCategoryRow = (isAdmin: boolean) => {
                 materialKey: materialType,
                 categoryKey: materialCategory,
                 supplierId: supplierId === "" ? undefined : supplierId ?? undefined,
-                rowData: stringifiedDataRow
+                rowData: stringifiedDataRow,
+                ...(connectionID && { connectionId: connectionID })
             })
         }
     }
