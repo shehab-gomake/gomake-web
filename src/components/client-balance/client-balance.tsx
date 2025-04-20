@@ -1,7 +1,5 @@
 import { Button, Stack } from "@mui/material";
-
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
-import { isValidCustomer } from "@/utils/helpers";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission";
@@ -84,7 +82,6 @@ const ClientBalanceComponent = ({
         )}
       </PermissionCheck>
       <CustomerCardWidget
-        isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
         codeFlag={true}
         typeClient={clientType}

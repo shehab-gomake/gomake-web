@@ -19,7 +19,7 @@ import { useStyle } from "./style";
 import { CancelBtnMenu } from "@/widgets/quote-new/cancel-btn-menu";
 import { SendBtnMenu } from "@/widgets/quote-new/send-btn-menu";
 import { _renderQuoteStatus } from "@/utils/constants";
-import { IconButton } from "@mui/material";
+import { IconButton, Skeleton } from "@mui/material";
 import { SettingQuoteMenu } from "@/widgets/quote-new/setting-quote-menu";
 import { AddDeliveryModal } from "@/widgets/quote-new/modals-widgets/add-delivery-modal/add-delivery-modal";
 import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../quotes/enums";
@@ -319,10 +319,10 @@ const QuoteNewPageWidget = ({
     isPrePaymentPage: isPrePaymentPage,
   });
   if (documentType == DOCUMENT_TYPE.quote) {
-    const { } = useQuotesSignalr({ getQuote });
+    const {} = useQuotesSignalr({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const { } = useOrdersSignalr({ getQuote });
+    const {} = useOrdersSignalr({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -381,7 +381,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const { } = useGoMakeTour(quoteSteps, []);
+  const {} = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -442,8 +442,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                          "properties.create"
-                        )} ${documentTitle.toLowerCase()}`
+                            "properties.create"
+                          )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -512,7 +512,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                        quoteItemValue?.signerName ? (
+                      quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -591,24 +591,28 @@ const QuoteNewPageWidget = ({
                         inputRef={creationDateRef}
                         preventOpenCondition={!quoteState.client}
                       />
-                      {documentType !== DOCUMENT_TYPE.purchaseOrder && (
-                        <DateField
-                          label={
-                            isOrder || isQuote
-                              ? t("sales.quote.deliveryDate")
-                              : t("sales.quote.dateOfReference")
-                          }
-                          date={selectDate}
-                          handleChange={(newDate) => {
-                            setSelectDate(newDate);
-                            setActiveClickAway(true);
-                          }}
-                          isEditable={quoteItemValue?.isEditable}
-                          inputRef={dateRef}
-                          preventOpenCondition={!quoteState.client}
-                          withTime={isOrder || isQuote}
-                        />
-                      )}
+                      {documentType !== DOCUMENT_TYPE.purchaseOrder &&
+                        (isQuote && !selectDate ? (
+                          <Skeleton variant="text" width={200} height={40} />
+                        ) : (
+                          <DateField
+                            label={
+                              isOrder || isQuote
+                                ? t("sales.quote.deliveryDate")
+                                : t("sales.quote.dateOfReference")
+                            }
+                            date={selectDate}
+                            handleChange={(newDate) => {
+                              setSelectDate(newDate);
+                              setActiveClickAway(true);
+                            }}
+                            isEditable={quoteItemValue?.isEditable}
+                            inputRef={dateRef}
+                            preventOpenCondition={!quoteState.client}
+                            withTime={isOrder || isQuote}
+                          />
+                        ))}
+
                       {isInvoice && (
                         <DateField
                           label={t("sales.quote.taxDate")}
@@ -806,7 +810,9 @@ const QuoteNewPageWidget = ({
         !isPrePaymentPage &&
         !quoteConfirm?.isConfirmed &&
         quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled && (
-          <ButtonsConfirmContainer onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal} />
+          <ButtonsConfirmContainer
+            onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal}
+          />
         )}
       <AddNewItemModal
         openModal={openAddNewItemModal}
@@ -1001,18 +1007,18 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? moveOrderToReady
             : () => {
-              if (isSelectedCLoseAsDeliveryNote) {
-                navigate(
-                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                );
-              } else {
-                const path =
-                  documentType === DOCUMENT_TYPE.order
-                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                navigate(path);
+                if (isSelectedCLoseAsDeliveryNote) {
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                  );
+                } else {
+                  const path =
+                    documentType === DOCUMENT_TYPE.order
+                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                  navigate(path);
+                }
               }
-            }
         }
       >
         <div

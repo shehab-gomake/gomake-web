@@ -176,7 +176,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           }
         };
         await getReceiptByIdApi(callApi, callBack, {
-          receiptId: router?.query?.Id ,
+          receiptId: router?.query?.Id,
         });
       } else {
         const newRequestAbortController = new AbortController();
