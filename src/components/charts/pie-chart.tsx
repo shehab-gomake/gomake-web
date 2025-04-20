@@ -5,7 +5,7 @@ import { useStyle } from "./style";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-interface ChartItem {
+export interface ChartItem {
   label: string;
   value: number;
 }
@@ -45,8 +45,11 @@ export const PieChartComponent: React.FC<PieChartComponentProps> = ({
   };
 
   const options = {
+    maintainAspectRatio: false,
+    responsive: true,
     plugins: {
       legend: {
+        display: chartData.length > 1, // Hide legend if only one item
         position: "right" as const,
         labels: {
           boxWidth: 20,
@@ -57,6 +60,9 @@ export const PieChartComponent: React.FC<PieChartComponentProps> = ({
           color: "#4B4B4B",
         },
       },
+    },
+    layout: {
+      padding: 10,
     },
   };
 
@@ -90,11 +96,9 @@ export const PieChartComponent: React.FC<PieChartComponentProps> = ({
           />
         </>
       )}
-      {/* <div style={{ width: "60%" }}>
+      <div style={{ height: 200, position: "relative" }}>
         <Pie data={data} options={options} />
-      </div> */}
-
-      <Pie data={data} options={options} />
+      </div>
     </div>
   );
 };

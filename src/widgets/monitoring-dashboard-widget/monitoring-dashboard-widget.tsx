@@ -5,40 +5,30 @@ import { useStyle } from "./style";
 import { Cards } from "./cards/cards";
 import { useMonitoringDashboard } from "./use-monitoring-dashboard";
 import { IDashboardWidget } from "./interfaces";
-import { GaussianChart } from "@/pages-components/gussian-chart/gussian-chart";
 import { DashboardDates } from "./dates";
-import { DashboardChart } from "./charts/chart";
 import { PieChartComponent } from "@/components/charts/pie-chart";
 
 const MonitoringDashboardWidget = ({}: IDashboardWidget) => {
   const { classes } = useStyle();
-  const { t } = useMonitoringDashboard();
+  const {
+    t,
+    statistics,
+    getSalesChartRoute,
+    getPieProductTypeChart,
+    productTypeChartData,
+    getProductPerformanceChart,
+    getAgentPerformanceChart,
+    getPieAgentChart,
+    agentChartData,
+  } = useMonitoringDashboard();
 
-  // useEffect(() => {
-  //   setStatistics(null);
-  // }, []);
-
-  const statistics = {
-    totalPrice: 57384.398,
-    totalCost: 8595.29,
-    totalProfit: 48789.108,
-  };
-
-  const data = [
-    {
-      label: "paper",
-      value: 37069.6,
-    },
-    {
-      label: "Labels in rolls",
-      value: 381.13,
-    },
-  ];
-
-  const orderData = [
-    { label: "Orders in production", value: 2 },
-    { label: "Orders are ready but not delivered", value: 98 },
-  ];
+  useEffect(() => {
+    getSalesChartRoute();
+    getPieProductTypeChart();
+    getPieAgentChart();
+    // getProductPerformanceChart();
+    // getAgentPerformanceChart();
+  }, []);
 
   return (
     <div style={classes.container}>
@@ -52,10 +42,10 @@ const MonitoringDashboardWidget = ({}: IDashboardWidget) => {
             justifyContent={"space-between"}
             alignItems={"center"}
           >
-            {new Array(6).fill(null).map((_) => (
+            {new Array(3).fill(null).map((_) => (
               <Skeleton
                 variant="rectangular"
-                width={215}
+                width={"33%"}
                 height={80}
                 style={{ borderRadius: 16 }}
               />
@@ -76,10 +66,20 @@ const MonitoringDashboardWidget = ({}: IDashboardWidget) => {
           />
         )}
       </Stack> */}
-      <PieChartComponent
-        chartData={data}
-        chartTitle={t("products.profits.exceptions.productType")}
-      />
+      <div style={classes.piesContainer}>
+        {productTypeChartData?.length > 0 && (
+          <PieChartComponent
+            chartData={productTypeChartData}
+            chartTitle={t("products.profits.exceptions.productType")}
+          />
+        )}
+        {agentChartData?.length > 0 && (
+          <PieChartComponent
+            chartData={agentChartData}
+            chartTitle={t("dashboard-widget.agents")}
+          />
+        )}
+      </div>
     </div>
   );
 };

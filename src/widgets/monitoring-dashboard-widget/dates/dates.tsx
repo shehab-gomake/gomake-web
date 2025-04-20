@@ -1,13 +1,13 @@
 import { GoMakeDatepicker } from "@/components/datepicker";
-import { FixedDatesComponent } from "@/widgets/dashboard-widget/dates/fixed-dates-component";
 import { useStyle } from "./style";
+import { FixedDatesComponent } from "./fixed-dates-component";
 
 const DashboardDates = () => {
   const { classes } = useStyle();
   return (
     <div style={classes.container}>
       <div style={classes.datesContainer}>
-        <FixedDatesComponent />
+        {/* <FixedDatesComponent /> */}
         <GoMakeDatepicker />
       </div>
     </div>

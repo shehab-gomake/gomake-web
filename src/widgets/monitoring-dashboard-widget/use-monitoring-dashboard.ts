@@ -1,200 +1,109 @@
-import { useCallback, useState } from "react";
-import {
-  IBoardMissions,
-  IDashboardStatistic,
-} from "@/widgets/dashboard-widget/interfaces";
-import {
-  IDashboardColumns,
-  IDateRange,
-  IMachine,
-  IMachineProgress,
-} from "@/shared";
-import { useGomakeAxios, useGomakeMachines } from "@/hooks";
-import { TODAY_DATE_RANGE } from "@/shared/constant";
-import { useRecoilValue } from "recoil";
-import { selectedAgentsState } from "@/store/agents-state";
+import { useState } from "react";
+
+import { useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
+import {
+  getAgentPerformanceChartApi,
+  getPieAgentChartApi,
+  getPieProductTypeChartApi,
+  getProductPerformanceChartApi,
+  getSalesChartRouteApi,
+} from "@/services/api-service/reports-service/sales-controller-endpoints";
 
 const useMonitoringDashboard = () => {
-  const [statistics, setStatistics] = useState<IDashboardStatistic>();
+  const [productTypeChartData, setProductTypeChartData] = useState<
+    {
+      label: string;
+      value: number;
+    }[]
+  >();
+
+  const [agentChartData, setAgentChartData] = useState<
+    {
+      label: string;
+      value: number;
+    }[]
+  >();
+
+  const [statistics, setStatistics] = useState();
+
   const { t } = useTranslation();
 
   const { callApi } = useGomakeAxios();
 
-  // const getBoardsMissionsByDateRange = async (dateRange: IDateRange) => {
-  //   if (abortController) {
-  //     abortController.abort();
-  //   }
-  //   const newRequestAbortController = new AbortController();
-  //   setAbortController(newRequestAbortController);
-  //   const res = await callApi(
-  //     "POST",
-  //     "/v1/erp-service/board-missions/get-board-missions-for-dashboard",
-  //     {
-  //       startDate: dateRange?.startDate?.toISOString(),
-  //       endDate: dateRange?.endDate?.toISOString(),
-  //       agents: selectedAgents,
-  //     },
-  //     true,
-  //     newRequestAbortController
-  //   );
-  //   if (res?.success) {
-  //     setBoardsMissions(res?.data?.data?.data?.boardsMissions);
-  //     setMachinesProgress(res?.data?.data?.data?.machinesProgress);
-  //     setDashboardColumns(res?.data?.data?.data?.dashboardColumns);
-  //     setStatistics(res?.data?.data?.data?.statistics);
-  //   }
-  // };
+  const getSalesChartRoute = async () => {
+    const data = {
+      fromDate: "2025-04-11T00:00:00Z",
+      toDate: "2025-04-20T23:59:59Z",
+    };
 
-  // const getLateBoardsMissions = async () => {
-  //   if (abortController) {
-  //     abortController.abort();
-  //   }
-  //   const newRequestAbortController = new AbortController();
-  //   setAbortController(newRequestAbortController);
-  //   const res = await callApi(
-  //     "POST",
-  //     "/v1/erp-service/board-missions/get-board-missions-for-dashboard",
-  //     {
-  //       isLate: true,
-  //     },
-  //     true,
-  //     newRequestAbortController
-  //   );
-  //   if (res?.success) {
-  //     setBoardsMissions(res?.data?.data?.data?.boardsMissions);
-  //     setMachinesProgress(res?.data?.data?.data?.machinesProgress);
-  //     setDashboardColumns(res?.data?.data?.data?.dashboardColumns);
-  //     setStatistics(res?.data?.data?.data?.statistics);
-  //   }
-  // };
+    const callBack = (res) => {
+      if (res.success) {
+        const { salesItems, ...statisticsRest } = res.data;
+        setStatistics(statisticsRest);
+      }
+    };
+    await getSalesChartRouteApi(callApi, callBack, data);
+  };
 
-  // const getLateTodayBoardsMissions = async () => {
-  //   if (abortController) {
-  //     abortController.abort();
-  //   }
-  //   const newRequestAbortController = new AbortController();
-  //   setAbortController(newRequestAbortController);
-  //   const res = await callApi(
-  //     "POST",
-  //     "/v1/erp-service/board-missions/get-board-missions-for-dashboard",
-  //     {
-  //       startDate: TODAY_DATE_RANGE.startDate?.toISOString(),
-  //       endDate: TODAY_DATE_RANGE.endDate?.toISOString(),
-  //       agents: selectedAgents,
-  //       isLate: true,
-  //     },
-  //     true,
-  //     newRequestAbortController
-  //   );
-  //   if (res?.success) {
-  //     setBoardsMissions(res?.data?.data?.data?.boardsMissions);
-  //     setMachinesProgress(res?.data?.data?.data?.machinesProgress);
-  //     setDashboardColumns(res?.data?.data?.data?.dashboardColumns);
-  //     setStatistics(res?.data?.data?.data?.statistics);
-  //   }
-  // };
+  const getPieProductTypeChart = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const data = res.data;
+        setProductTypeChartData(
+          data?.map((product) => ({
+            label: product?.productType,
+            value: product?.totalPrice,
+          }))
+        );
+      }
+    };
+    await getPieProductTypeChartApi(callApi, callBack);
+  };
 
-  // const getAllBoardsMissions = async () => {
-  //   if (abortController) {
-  //     abortController.abort();
-  //   }
-  //   const newRequestAbortController = new AbortController();
-  //   setAbortController(newRequestAbortController);
-  //   const res = await callApi(
-  //     "POST",
-  //     "/v1/erp-service/board-missions/get-board-missions-for-dashboard",
-  //     {},
-  //     true,
-  //     newRequestAbortController
-  //   );
-  //   setBoardsMissions(res?.data?.data?.data?.boardsMissions);
-  //   setMachinesProgress(res?.data?.data?.data?.machinesProgress);
-  //   setDashboardColumns(res?.data?.data?.data?.dashboardColumns);
-  //   setStatistics(res?.data?.data?.data?.statistics);
-  // };
+  const getProductPerformanceChart = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const data = res.data;
+      }
+    };
+    await getProductPerformanceChartApi(callApi, callBack);
+  };
 
-  // const updateBoardMissions = useCallback((boards: IBoardMissions[]) => {
-  //   setBoardsMissions(boards);
-  // }, []);
+  const getAgentPerformanceChart = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const data = res.data;
+      }
+    };
+    await getAgentPerformanceChartApi(callApi, callBack);
+  };
 
-  // const getFilteredBoardsMissions = useCallback(() => {
-  //   let boards = boardsMissions;
-  //   if (machinesProgress && boardsMissions) {
-  //     boards = addCurrentMachineName(boards);
-  //     boards = sortBoardMissionsByUrgent(boards);
-  //     boards = sortBoardMissionsByReady(boards);
-  //     boards = sortBoardMissionsByIsLate(boards);
-  //   }
-  //   return boards?.filter((boardMissions: IBoardMissions) => {
-  //     return getCheckedMachines().some((m) =>
-  //       Object.keys(boardMissions.machinesStatuses).includes(m.id)
-  //     );
-  //   });
-  // }, [boardsMissions, machinesProgress, machines]);
-
-  // const sortBoardMissionsByUrgent = (
-  //   boards: IBoardMissions[]
-  // ): IBoardMissions[] => {
-  //   return boards.sort(
-  //     (board1: IBoardMissions, board2: IBoardMissions) =>
-  //       Number(board2.isUrgent) - Number(board1.isUrgent)
-  //   );
-  // };
-  // const sortBoardMissionsByReady = (
-  //   boards: IBoardMissions[]
-  // ): IBoardMissions[] => {
-  //   return boards.sort(
-  //     (board1: IBoardMissions, board2: IBoardMissions) =>
-  //       Number(board1.isReady) - Number(board2.isReady)
-  //   );
-  // };
-  // const sortBoardMissionsByIsLate = (
-  //   boards: IBoardMissions[]
-  // ): IBoardMissions[] => {
-  //   return boards.sort(
-  //     (board1: IBoardMissions, board2: IBoardMissions) =>
-  //       Number(board2.isLate) - Number(board1.isLate)
-  //   );
-  // };
-
-  // const addCurrentMachineName = (
-  //   boards: IBoardMissions[]
-  // ): IBoardMissions[] => {
-  //   boards.forEach((board: IBoardMissions) => {
-  //     if (board.currentStation.machineId !== null) {
-  //       const machine = machines.find(
-  //         (m: IMachine) => m.id === board.currentStation.machineId
-  //       );
-  //       if (machine) {
-  //         board.currentStation.rowName = machine.name;
-  //       }
-  //     }
-  //     if (board.splittedBoards?.length > 0) {
-  //       board.splittedBoards = addCurrentMachineName(board.splittedBoards);
-  //     }
-  //   });
-  //   return boards;
-  // };
-
-  // const filterMachinesOfBoards = (
-  //   machines: IMachine[],
-  //   boards: IBoardMissions[]
-  // ): IMachine[] => {
-  //   return machines.filter((machine: IMachine) => {
-  //     for (const board of boards) {
-  //       if (board.machinesStatuses[machine.id]) {
-  //         return true;
-  //       }
-  //     }
-  //     return false;
-  //   });
-  // };
+  const getPieAgentChart = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const data = res.data;
+        setAgentChartData(
+          data?.map((product) => ({
+            label: product?.agentName,
+            value: product?.totalPrice,
+          }))
+        );
+      }
+    };
+    await getPieAgentChartApi(callApi, callBack);
+  };
 
   return {
     t,
     statistics,
-    setStatistics,
+    getPieProductTypeChart,
+    productTypeChartData,
+    getSalesChartRoute,
+    getProductPerformanceChart,
+    getAgentPerformanceChart,
+    getPieAgentChart,
+    agentChartData,
   };
 };
 
