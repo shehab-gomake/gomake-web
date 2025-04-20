@@ -40,7 +40,6 @@ const AddContactNewWidget = ({
   const { t } = useTranslation();
   const [newContactName, setNewContactName] = useState("");
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
-  console.log("clientContactsValue", { clientContactsValue, quoteItemValue })
 
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
