@@ -3097,9 +3097,12 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     productTemplate,
     subProducts
   ) => {
-    // if (subSection.optionToDuplicateContent) {
-    //   //return;
-    // }
+    const hasRelatedParams = parameter?.relatedParameters?.length > 0;
+    const hasChildParams = parameter?.childsParameters?.length > 0;
+    const isHidden = parameter.isHidden === true;
+
+
+
     const relatedParametersfilterd = parameter?.relatedParameters?.filter(
       (relatedParameter) =>
         subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
@@ -3126,6 +3129,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         return;
       }
       if (parameter.isHidden == true) {
+
         const sectionCopy = productTemplate.sections.find(
           (x) => x.id === section.id
         );
@@ -3135,6 +3139,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         const param = subSectionCopy.parameters.find(
           (x) => x.id === relatedParameter.parameterId
         );
+        if (hasRelatedParams && hasChildParams && isHidden) {
+          parameter.childsParameters.forEach((childParam) => {
+
+            const myParamFinded = subSectionCopy.parameters.find(
+              (x) => x.id === childParam.id
+            );
+            if (myParamFinded) {
+              myParamFinded.isHidden = false;
+            }
+          });
+        }
         if (param.isHidden == true) {
           processRelatedParameters2(
             param,
@@ -3154,15 +3169,17 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             };
           }
         });
-        param.isHidden = true;
-        processRelatedParameters2(
-          param,
-          subSection,
-          section,
-          productTemplate,
-          subProducts
-        );
-        return;
+        if (!hasRelatedParams && !hasChildParams) {
+          param.isHidden = true;
+          processRelatedParameters2(
+            param,
+            subSection,
+            section,
+            productTemplate,
+            subProducts
+          );
+          return;
+        }
       }
 
       let paramValue = "";
