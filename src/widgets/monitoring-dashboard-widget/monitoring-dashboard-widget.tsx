@@ -5,7 +5,9 @@ import { useStyle } from "./style";
 import { Cards } from "./cards/cards";
 import { useMonitoringDashboard } from "./use-monitoring-dashboard";
 import { PieChartComponent } from "@/components/charts/pie-chart";
-import DashboardChart from "./charts/dashboard-chart";
+import SalesLineChart from "./charts/sales-line-chart";
+import { GoMakeDatepicker } from "@/components/datepicker";
+import { startOfMonth, endOfToday } from "date-fns";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
@@ -19,15 +21,26 @@ const MonitoringDashboardWidget = () => {
     getAgentPerformanceChart,
     getPieAgentChart,
     agentChartData,
+    salesItems,
+    dates,
   } = useMonitoringDashboard();
 
   useEffect(() => {
-    getSalesChartRoute();
     getPieProductTypeChart();
     getPieAgentChart();
     // getProductPerformanceChart();
     // getAgentPerformanceChart();
   }, []);
+
+  useEffect(() => {
+    if (dates?.startDate && dates?.endDate) {
+      getSalesChartRoute(dates?.startDate, dates.endDate);
+    } else {
+      const defaultStart = startOfMonth(new Date());
+      const defaultEnd = endOfToday();
+      getSalesChartRoute(defaultStart, defaultEnd);
+    }
+  }, [dates?.startDate?.toISOString(), dates?.endDate?.toISOString()]);
 
   return (
     <div style={classes.container}>
@@ -51,37 +64,23 @@ const MonitoringDashboardWidget = () => {
           </Stack>
         </Stack>
       )}
+
       <div style={classes.subContainer}>
-        {/* <DashboardChart /> */}
-        <DashboardChart
-          salesItems={[
-            {
-              date: "2025-04-01",
-              totalCost: 3700.46,
-              totalPrice: 17723.04,
-              avgTotalPrice: 17683.04,
-            },
-            {
-              date: "2025-04-02",
-              totalCost: 1026.93,
-              totalPrice: 2637.32,
-              avgTotalPrice: 2637.32,
-            },
-            {
-              date: "2025-04-03",
-              totalCost: 356.36,
-              totalPrice: 13000.88,
-              avgTotalPrice: 13000.88,
-            },
-            {
-              date: "2025-04-04",
-              totalCost: 130.45,
-              totalPrice: 1886.13,
-              avgTotalPrice: 1886.13,
-            },
-          ]}
-          yKeys={["totalCost", "totalPrice", "avgTotalPrice"]}
-        />
+        {salesItems?.length > 0 && (
+          <Stack>
+            <Stack
+              direction={"column"}
+              width={"100%"}
+              justifyContent={"space-between"}
+            >
+              <GoMakeDatepicker />
+              <SalesLineChart
+                salesItems={salesItems}
+                yKeys={["totalCost", "totalPrice", "avgTotalPrice"]}
+              />
+            </Stack>
+          </Stack>
+        )}
       </div>
       <div style={classes.piesContainer}>
         {productTypeChartData?.length > 0 && (

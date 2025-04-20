@@ -1,4 +1,3 @@
-import { Scatter } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   PointElement,
@@ -11,8 +10,8 @@ import {
 } from "chart.js";
 import "chartjs-adapter-date-fns";
 import { useTranslation } from "react-i18next";
-
 import type { ChartOptions } from "chart.js";
+import { Line } from "react-chartjs-2";
 
 // Register necessary components
 ChartJS.register(
@@ -32,8 +31,8 @@ interface SalesItem {
 
 interface PriceCurveFitProps {
   salesItems: SalesItem[];
-  xKey?: string; // default to 'date'
-  yKeys: string[]; // keys to plot on y-axis
+  xKey?: string;
+  yKeys: string[];
 }
 
 const COLORS = [
@@ -45,7 +44,7 @@ const COLORS = [
   "rgba(255,206,86,1)",
 ];
 
-const DashboardChart = ({
+const SalesLineChart = ({
   salesItems,
   xKey = "date",
   yKeys = [],
@@ -53,7 +52,7 @@ const DashboardChart = ({
   const { t } = useTranslation();
 
   const datasets = yKeys.map((key, index) => ({
-    label: t(`sales.chart.${key}`) || key,
+    label: t(`dashboard.${key}`) || key,
     data: salesItems.map((item) => ({
       x: item[xKey],
       y: item[key],
@@ -69,14 +68,14 @@ const DashboardChart = ({
 
   const data = { datasets };
 
-  const options: ChartOptions<"scatter"> = {
+  const options: ChartOptions<"line"> = {
     responsive: true,
     scales: {
       x: {
         type: "time",
         title: {
           display: true,
-          text: t("general.date"),
+          text: t("dashboard.date"),
         },
         time: {
           unit: "day",
@@ -87,7 +86,7 @@ const DashboardChart = ({
         type: "linear",
         title: {
           display: true,
-          text: t("sales.chart.value"),
+          text: t("dashboard.value"),
         },
         ticks: {
           callback: (value: number) => value.toLocaleString(),
@@ -107,7 +106,11 @@ const DashboardChart = ({
     },
   };
 
-  return <Scatter data={data} options={options} />;
+  return (
+    <div style={{ width: "80vw", height: "40vh" }}>
+      <Line data={data} options={{ ...options, responsive: true }} />
+    </div>
+  );
 };
 
-export default DashboardChart;
+export default SalesLineChart;

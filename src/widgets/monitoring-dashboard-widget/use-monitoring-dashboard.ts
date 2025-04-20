@@ -9,8 +9,15 @@ import {
   getProductPerformanceChartApi,
   getSalesChartRouteApi,
 } from "@/services/api-service/reports-service/sales-controller-endpoints";
+import { useRecoilValue } from "recoil";
+import { dashboardDateState } from "@/store";
 
 const useMonitoringDashboard = () => {
+  const { t } = useTranslation();
+  const { callApi } = useGomakeAxios();
+  const { dates } = useRecoilValue(dashboardDateState);
+  const [statistics, setStatistics] = useState();
+
   const [productTypeChartData, setProductTypeChartData] = useState<
     {
       label: string;
@@ -25,22 +32,25 @@ const useMonitoringDashboard = () => {
     }[]
   >();
 
-  const [statistics, setStatistics] = useState();
+  const [salesItems, setSalesItems] = useState<
+    {
+      date: string;
+      totalCost: number;
+      totalPrice: number;
+      avgTotalPrice: number;
+    }[]
+  >();
 
-  const { t } = useTranslation();
-
-  const { callApi } = useGomakeAxios();
-
-  const getSalesChartRoute = async () => {
+  const getSalesChartRoute = async (fromDate?: Date, toDate?: Date) => {
     const data = {
-      fromDate: "2025-04-11T00:00:00Z",
-      toDate: "2025-04-20T23:59:59Z",
+      fromDate: fromDate?.toISOString(),
+      toDate: toDate?.toISOString(),
     };
-
     const callBack = (res) => {
       if (res.success) {
         const { salesItems, ...statisticsRest } = res.data;
         setStatistics(statisticsRest);
+        setSalesItems(salesItems);
       }
     };
     await getSalesChartRouteApi(callApi, callBack, data);
@@ -104,6 +114,8 @@ const useMonitoringDashboard = () => {
     getAgentPerformanceChart,
     getPieAgentChart,
     agentChartData,
+    salesItems,
+    dates,
   };
 };
 
