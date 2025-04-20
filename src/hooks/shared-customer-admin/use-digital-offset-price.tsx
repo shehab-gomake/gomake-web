@@ -254,6 +254,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     signalRPricingResult,
     calculationServerError,
     isCalculationFinished,
+    newDieCutSelect,
     setIsCalculationFinished,
   } = useCalculationSocketIO();
   useEffect(() => {
@@ -2735,6 +2736,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           connectionId={connectionId}
           getProductById={getProductById}
           getAllMaterial={getAllMaterial}
+          newDieCutSelect={newDieCutSelect}
         />
       );
     }

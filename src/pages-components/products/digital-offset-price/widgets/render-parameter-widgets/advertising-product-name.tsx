@@ -14,7 +14,8 @@ const AdvertisingProductNameParameterWidget = ({
   section,
   connectionId,
   getProductById,
-  getAllMaterial
+  getAllMaterial,
+  newDieCutSelect
 }: any) => {
 
   const {
@@ -36,9 +37,8 @@ const AdvertisingProductNameParameterWidget = ({
     createNewTemplateEndPoint,
     isView,
     setIsRenderData
-  } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial })
+  } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect })
 
-  console.log("searchResult", searchResult)
   return (
     <div style={clasess.advertisingProductNameMain}>
 

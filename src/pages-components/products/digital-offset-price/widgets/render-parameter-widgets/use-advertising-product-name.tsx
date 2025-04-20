@@ -7,7 +7,7 @@ import { subProductsParametersState } from "@/store/general-parameters-state";
 import { addPrintHouseMaterialCategoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { createDieCutFromTemplateMakerApi, getMaterialCategoryByMaterialKeyApi } from "@/services/api-service/materials/materials-endpoints";
 
-const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial }) => {
+const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, newDieCutSelect }) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
@@ -104,6 +104,48 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial }
     }
     return true;
   };
+  useEffect(() => {
+    if (newDieCutSelect && parameter?.code === "DieCutter") {
+      const formattedData = {
+        id: newDieCutSelect.rowData.code.value,
+        activateAction: false,
+        isDefault: false,
+        isDeleted: false,
+        isHidden: false,
+        materialValueIds: null,
+        selectedParameterValues: null,
+        updateName: newDieCutSelect.rowData.name.value,
+        values: [newDieCutSelect.rowData.name.value],
+        additionalAttribute: [
+          {
+            valueId: "name",
+            value: newDieCutSelect.rowData.name.value
+          },
+          {
+            valueId: "image",
+            value: newDieCutSelect.rowData.image.value
+          },
+          {
+            valueId: "width",
+            value: newDieCutSelect.rowData.width.value
+          },
+          {
+            valueId: "length",
+            value: newDieCutSelect.rowData.length.value
+          },
+          {
+            valueId: "code",
+            value: newDieCutSelect.rowData.code.value
+          }
+        ],
+        currency: newDieCutSelect.rowData.currency.value
+      };
+      setSearchResult((prev: any) => {
+        return [formattedData, ...prev,] // Add the new item to the data list
+      });
+      setIsRenderData(false)
+    }
+  }, [newDieCutSelect])
   const createNewTemplateEndPoint = async () => {
     setIsView(true)
     const unitWidth = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.values[0];
