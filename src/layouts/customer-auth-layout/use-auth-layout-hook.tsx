@@ -21,6 +21,7 @@ import {
 import { ActionsIcon } from "@/icons/side-list-icons/actions";
 import { SettingsIcon } from "@/icons/side-list-icons/settings";
 import { CustomerServiceIcon } from "@/icons/side-list-icons/customer-service";
+import { DashboardIcon } from "@/icons/side-list-icons/dashboard";
 
 const useAuthLayoutHook = (
   permissionEnumValue?: Permissions,
@@ -66,6 +67,18 @@ const useAuthLayoutHook = (
         Permission: Permissions.SHOW_PRODUCTION_FLOOR,
         icon: () => {
           return <ProductionFloorIcon />;
+        },
+        isProduction: true,
+      },
+
+      {
+        isLine: false,
+        key: "dashboard",
+        title: "tabs.dashboard",
+        path: "/dashboard",
+        isList: false,
+        icon: () => {
+          return <DashboardIcon />;
         },
         isProduction: true,
       },
