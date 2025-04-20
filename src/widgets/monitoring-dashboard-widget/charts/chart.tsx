@@ -44,26 +44,15 @@ const DashboardChart = () => {
   };
 
   return (
-    <Stack>
+    <Stack style={classes.container}>
       <Stack
         direction={"row"}
-        padding={isRTL ? "0px 60px 0px 20px" : "0px 20px 0px 60px"}
+        // padding={isRTL ? "0px 60px 0px 20px" : "0px 20px 0px 60px"}
+        padding={"0px 20px"}
         width={"100%"}
-        justifyContent={"space-between"}
+        justifyContent={"flex-end"}
       >
-        <div style={classes.infoDiv}>
-          <span style={{ fontSize: "14px" }}>
-            <CircleIcon style={{ color: "rgba(75,192,192,1)", fontSize: 14 }} />{" "}
-            Calculate Price
-          </span>
-          <span style={{ fontSize: "14px" }}>
-            <CircleIcon style={{ color: "rgba(255,99,132,1)", fontSize: 14 }} />{" "}
-            User Price
-          </span>
-        </div>
-        <Stack direction={"row"} alignItems={"center"} gap={"5px"}>
-          <GoMakeDatepicker />
-        </Stack>
+        <GoMakeDatepicker />
       </Stack>
       <PriceCurveFit {...chartData} />
     </Stack>

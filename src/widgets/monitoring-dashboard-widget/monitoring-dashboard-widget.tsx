@@ -8,10 +8,11 @@ import { IDashboardWidget } from "./interfaces";
 import { GaussianChart } from "@/pages-components/gussian-chart/gussian-chart";
 import { DashboardDates } from "./dates";
 import { DashboardChart } from "./charts/chart";
+import { PieChartComponent } from "@/components/charts/pie-chart";
 
 const MonitoringDashboardWidget = ({}: IDashboardWidget) => {
   const { classes } = useStyle();
-  // const { statistics, setStatistics } = useMonitoringDashboard();
+  const { t } = useMonitoringDashboard();
 
   // useEffect(() => {
   //   setStatistics(null);
@@ -22,6 +23,22 @@ const MonitoringDashboardWidget = ({}: IDashboardWidget) => {
     totalCost: 8595.29,
     totalProfit: 48789.108,
   };
+
+  const data = [
+    {
+      label: "paper",
+      value: 37069.6,
+    },
+    {
+      label: "Labels in rolls",
+      value: 381.13,
+    },
+  ];
+
+  const orderData = [
+    { label: "Orders in production", value: 2 },
+    { label: "Orders are ready but not delivered", value: 98 },
+  ];
 
   return (
     <div style={classes.container}>
@@ -46,11 +63,11 @@ const MonitoringDashboardWidget = ({}: IDashboardWidget) => {
           </Stack>
         </Stack>
       )}
-      <Stack style={{ height: "100%" }}>
+      {/* <Stack style={{ height: "100%" }}>
         {true ? (
-          // <GaussianChart />
-          <DashboardChart />
+          <GaussianChart />
         ) : (
+          // <DashboardChart />
           <Skeleton
             variant="rectangular"
             width={"100%"}
@@ -58,7 +75,11 @@ const MonitoringDashboardWidget = ({}: IDashboardWidget) => {
             style={{ borderRadius: 16 }}
           />
         )}
-      </Stack>
+      </Stack> */}
+      <PieChartComponent
+        chartData={data}
+        chartTitle={t("products.profits.exceptions.productType")}
+      />
     </div>
   );
 };

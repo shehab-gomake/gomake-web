@@ -6,6 +6,12 @@ const useStyle = () => {
   const direction = t("direction");
   const classes = useMemo(() => {
     return {
+      container: {
+        padding: "10px 0px",
+        backgroundColor: "#fff",
+        boxShadow: "0px 4px 20px rgba(238, 238, 238, 0.501967)",
+        border: "1px solid #F8F9FA",
+      },
       dropDownListStyle: {
         borderRadius: 4,
         height: 40,

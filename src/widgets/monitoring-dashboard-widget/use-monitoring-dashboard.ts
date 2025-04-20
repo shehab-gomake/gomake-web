@@ -13,9 +13,11 @@ import { useGomakeAxios, useGomakeMachines } from "@/hooks";
 import { TODAY_DATE_RANGE } from "@/shared/constant";
 import { useRecoilValue } from "recoil";
 import { selectedAgentsState } from "@/store/agents-state";
+import { useTranslation } from "react-i18next";
 
 const useMonitoringDashboard = () => {
   const [statistics, setStatistics] = useState<IDashboardStatistic>();
+  const { t } = useTranslation();
 
   const { callApi } = useGomakeAxios();
 
@@ -190,6 +192,7 @@ const useMonitoringDashboard = () => {
   // };
 
   return {
+    t,
     statistics,
     setStatistics,
   };
