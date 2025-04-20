@@ -4,13 +4,12 @@ import { useTranslation } from "react-i18next";
 import { ArrowDropDownIcon } from "@mui/x-date-pickers/icons";
 import { ActionsListMenu } from "@/widgets/product-pricing-widget/components/actions-menu";
 import { useWorkFlows } from "./use-work-flows";
-import { CircularProgress, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
 import { GomakePrimaryButton, SecondSwitch } from "@/components";
 import { CopyAnotherProductsModal } from "./copy-another-products-modal";
 import { useState } from "react";
 
 const WorkFlowsWidget = ({ productState, getProductById }: any) => {
-  console.log("productState", productState)
   const { clasess } = useStyle();
   const { t } = useTranslation();
   const {
