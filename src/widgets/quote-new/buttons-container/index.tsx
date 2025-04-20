@@ -1,5 +1,5 @@
 import { useStyle } from "./style";
-import { ArrowDownNewIcon, EditIcon, PlusIcon } from "@/icons";
+import { ArrowDownNewIcon, EditIcon, PlusIcon, WastebasketNew2 } from "@/icons";
 import { useTranslation } from "react-i18next";
 import {
   GoMakeDeleteModal,
@@ -25,6 +25,7 @@ import { InvoiceCreationModal } from "../invoice-creation-modal";
 import { ModalType } from "@/enums";
 import { OrderNowPrePaymentModal } from "../total-price-and-vat/order-now-modal/order-now-pre-payment";
 import { validateDocument } from "@/utils/validators";
+import { DeleteIcon } from "@/components/icons/delete-icon";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -43,7 +44,8 @@ const ButtonsContainer = ({
   onClickSendReceiptToClient,
   handleSendUsingWhatsAppWeb,
   onClickConfirmCreateDocument,
-  onClickOpenAddAttachmentsModal
+  onClickOpenAddAttachmentsModal,
+  onClickOpenDeleteDeliveryModal,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -106,7 +108,6 @@ const ButtonsContainer = ({
     handleOrderConfirmation,
     setOpenReceiptCreationModal,
   } = useButtonsContainer(documentType);
-  console.log("quoteItemValue", quoteItemValue);
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
       quoteItemValue.isSendWhatsappWeb ||
@@ -202,6 +203,18 @@ const ButtonsContainer = ({
             {quoteItemValue?.isHaveDeliveryItem
               ? t("sales.quote.updateDelivery")
               : t("sales.quote.addDelivery")}
+          </GomakePrimaryButton>
+        )}
+
+        {canAddDelivery && canEditDocument && quoteItemValue?.isHaveDeliveryItem && (
+          <GomakePrimaryButton
+            leftIcon={
+              <WastebasketNew2 stroke={"#344054"} />
+            }
+            style={classes.btnContainer}
+            onClick={onClickOpenDeleteDeliveryModal}
+          >
+            {t("sales.quote.deleteDelivery")}
           </GomakePrimaryButton>
         )}
         {(
