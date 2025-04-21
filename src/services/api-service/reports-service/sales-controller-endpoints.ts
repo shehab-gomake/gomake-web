@@ -3,13 +3,12 @@ import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
 const GET_PIE_PRODUCT_TYPE_CHART_URL =
   "/v1/reports-service/sales/get-pie-product-type-chart";
-
 const GET_PIE_AGENT_CHART_URL = "/v1/reports-service/sales/get-pie-agent-chart";
-
 const GET_SALES_CHART_URL = "/v1/reports-service/sales/get-sales-chart";
-
 const GET_AGENT_PERFORMANCE_CHART_URL =
   "/v1/reports-service/sales/get-agent-performance-chart";
+const GET_CLIENT_PERFORMANCE_CHART_URL =
+  "/v1/reports-service/sales/get-client-performance-chart";
 const GET_PRODUCT_PERFORMANCE_CHART_URL =
   "/v1/reports-service/sales/get-product-performance-chart";
 
@@ -63,6 +62,18 @@ const getProductPerformanceChartApi: ICallAndSetData = async (
   );
 };
 
+const getClientPerformanceChartApi: ICallAndSetData = async (
+  callApi,
+  setState
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_CLIENT_PERFORMANCE_CHART_URL,
+    setState
+  );
+};
+
 const getPieAgentChartApi: ICallAndSetData = async (callApi, setState) => {
   return await getSetApiData(
     callApi,
@@ -74,8 +85,9 @@ const getPieAgentChartApi: ICallAndSetData = async (callApi, setState) => {
 
 export {
   getSalesChartRouteApi,
+  getPieAgentChartApi,
   getPieProductTypeChartApi,
   getAgentPerformanceChartApi,
+  getClientPerformanceChartApi,
   getProductPerformanceChartApi,
-  getPieAgentChartApi,
 };

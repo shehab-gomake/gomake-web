@@ -1,9 +1,9 @@
 import { useState } from "react";
-
 import { useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import {
   getAgentPerformanceChartApi,
+  getClientPerformanceChartApi,
   getPieAgentChartApi,
   getPieProductTypeChartApi,
   getProductPerformanceChartApi,
@@ -11,27 +11,26 @@ import {
 } from "@/services/api-service/reports-service/sales-controller-endpoints";
 import { useRecoilValue } from "recoil";
 import { dashboardDateState } from "@/store";
+import { ChartItem } from "./interfaces/charts";
+
+type TableRow = [
+  string, // clientName or AgentName or ProductName
+  number, // totalJobs
+  number, // finalPrice
+  number, // totalCalculatedPrice
+  number, // totalCost
+  number, // totalProfit
+  number, // avgProfit
+  number, // avgPerOrder
+  string, // os
+  number // successRate
+];
 
 const useMonitoringDashboard = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { dates } = useRecoilValue(dashboardDateState);
   const [statistics, setStatistics] = useState();
-
-  const [productTypeChartData, setProductTypeChartData] = useState<
-    {
-      label: string;
-      value: number;
-    }[]
-  >();
-
-  const [agentChartData, setAgentChartData] = useState<
-    {
-      label: string;
-      value: number;
-    }[]
-  >();
-
   const [salesItems, setSalesItems] = useState<
     {
       date: string;
@@ -40,6 +39,12 @@ const useMonitoringDashboard = () => {
       avgTotalPrice: number;
     }[]
   >();
+  const [productTypeChartData, setProductTypeChartData] =
+    useState<ChartItem[]>();
+  const [agentChartData, setAgentChartData] = useState<ChartItem[]>();
+  const [productsRow, setProductsRow] = useState<TableRow[]>([]);
+  const [agentsRow, setAgentsRow] = useState<TableRow[]>([]);
+  const [clientsRow, setClientsRow] = useState<TableRow[]>([]);
 
   const getSalesChartRoute = async (fromDate?: Date, toDate?: Date) => {
     const data = {
@@ -75,6 +80,19 @@ const useMonitoringDashboard = () => {
     const callBack = (res) => {
       if (res.success) {
         const data = res.data;
+        const mapData = data?.map((row) => [
+          row?.productName,
+          row?.totalJobs,
+          row?.finalPrice,
+          row?.totalCalculatedPrice,
+          row?.totalCost,
+          row?.totalProfit,
+          row?.avgProfit,
+          row?.avgPerOrder,
+          row?.os,
+          row?.successRate,
+        ]);
+        setProductsRow(mapData);
       }
     };
     await getProductPerformanceChartApi(callApi, callBack);
@@ -84,9 +102,44 @@ const useMonitoringDashboard = () => {
     const callBack = (res) => {
       if (res.success) {
         const data = res.data;
+        const mapData = data?.map((row) => [
+          row?.agentName,
+          row?.totalJobs,
+          row?.finalPrice,
+          row?.totalCalculatedPrice,
+          row?.totalCost,
+          row?.totalProfit,
+          row?.avgProfit,
+          row?.avgPerOrder,
+          row?.os,
+          row?.successRate,
+        ]);
+        setAgentsRow(mapData);
       }
     };
     await getAgentPerformanceChartApi(callApi, callBack);
+  };
+
+  const getClientPerformanceChart = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const data = res.data;
+        const mapData = data?.map((row) => [
+          row?.clientName,
+          row?.totalJobs,
+          row?.finalPrice,
+          row?.totalCalculatedPrice,
+          row?.totalCost,
+          row?.totalProfit,
+          row?.avgProfit,
+          row?.avgPerOrder,
+          row?.os,
+          row?.successRate,
+        ]);
+        setClientsRow(mapData);
+      }
+    };
+    await getClientPerformanceChartApi(callApi, callBack);
   };
 
   const getPieAgentChart = async () => {
@@ -104,18 +157,41 @@ const useMonitoringDashboard = () => {
     await getPieAgentChartApi(callApi, callBack);
   };
 
+  const baseTableHeaders = [
+    t("dashboard.totalJobs"),
+    t("dashboard.finalPrice"),
+    t("dashboard.totalCalculatedPrice"),
+    t("dashboard.totalCostHed"),
+    t("dashboard.totalProfitHed"),
+    t("dashboard.avgProfit"),
+    t("dashboard.avgPerOrder"),
+    t("dashboard.os"),
+    t("dashboard.successRate"),
+  ];
+
+  const productTableHeaders = [t("dashboard.productName"), ...baseTableHeaders];
+  const clientTableHeaders = [t("dashboard.clientName"), ...baseTableHeaders];
+  const agentTableHeaders = [t("dashboard.agentName"), ...baseTableHeaders];
+
   return {
     t,
+    dates,
+    salesItems,
     statistics,
-    getPieProductTypeChart,
+    agentChartData,
     productTypeChartData,
     getSalesChartRoute,
+    getPieAgentChart,
+    getPieProductTypeChart,
     getProductPerformanceChart,
     getAgentPerformanceChart,
-    getPieAgentChart,
-    agentChartData,
-    salesItems,
-    dates,
+    getClientPerformanceChart,
+    productsRow,
+    productTableHeaders,
+    clientsRow,
+    clientTableHeaders,
+    agentsRow,
+    agentTableHeaders,
   };
 };
 

@@ -10,3 +10,8 @@ export interface ISalesItem {
   totalPrice: number;
   avgTotalPrice: number;
 }
+
+export interface ChartItem {
+  label: string;
+  value: number;
+}

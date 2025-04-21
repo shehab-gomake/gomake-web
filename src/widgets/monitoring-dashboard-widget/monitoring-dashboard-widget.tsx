@@ -8,28 +8,37 @@ import { PieChartComponent } from "@/components/charts/pie-chart";
 import SalesLineChart from "./charts/sales-line-chart";
 import { GoMakeDatepicker } from "@/components/datepicker";
 import { startOfMonth, endOfToday } from "date-fns";
+import { PrimaryTable } from "@/components/tables/primary-table";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
   const {
     t,
+    dates,
+    salesItems,
     statistics,
-    getSalesChartRoute,
-    getPieProductTypeChart,
+    agentChartData,
     productTypeChartData,
+    getSalesChartRoute,
+    getPieAgentChart,
+    getPieProductTypeChart,
     getProductPerformanceChart,
     getAgentPerformanceChart,
-    getPieAgentChart,
-    agentChartData,
-    salesItems,
-    dates,
+    getClientPerformanceChart,
+    productsRow,
+    productTableHeaders,
+    clientsRow,
+    clientTableHeaders,
+    agentsRow,
+    agentTableHeaders,
   } = useMonitoringDashboard();
 
   useEffect(() => {
     getPieProductTypeChart();
     getPieAgentChart();
-    // getProductPerformanceChart();
-    // getAgentPerformanceChart();
+    getProductPerformanceChart();
+    getAgentPerformanceChart();
+    getClientPerformanceChart();
   }, []);
 
   useEffect(() => {
@@ -47,7 +56,7 @@ const MonitoringDashboardWidget = () => {
       {statistics ? (
         <Cards data={statistics} />
       ) : (
-        <Stack style={{ ...classes.SkeletonCardsContainer }} gap={"15px"}>
+        <Stack style={classes.SkeletonCardsContainer} gap={"15px"}>
           <Stack
             direction={"row"}
             justifyContent={"space-between"}
@@ -95,6 +104,36 @@ const MonitoringDashboardWidget = () => {
             chartTitle={t("dashboard.agents")}
           />
         )}
+      </div>
+
+      <div style={classes.subContainer}>
+        <PrimaryTable
+          stickyFirstCol={false}
+          stickyHeader={false}
+          rows={productsRow}
+          headers={productTableHeaders}
+          variant={"OddEvenTable"}
+        />
+      </div>
+
+      <div style={classes.subContainer}>
+        <PrimaryTable
+          stickyFirstCol={false}
+          stickyHeader={false}
+          rows={clientsRow}
+          headers={clientTableHeaders}
+          variant={"OddEvenTable"}
+        />
+      </div>
+
+      <div style={classes.subContainer}>
+        <PrimaryTable
+          stickyFirstCol={false}
+          stickyHeader={false}
+          rows={agentsRow}
+          headers={agentTableHeaders}
+          variant={"RoundTable"}
+        />
       </div>
     </div>
   );
