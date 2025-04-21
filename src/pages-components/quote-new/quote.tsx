@@ -313,16 +313,20 @@ const QuoteNewPageWidget = ({
     openAddAttachmentsModal,
     onOpenAddAttachmentsModal,
     onCloseAddAttachmentsModal,
+    onClickOpenDeleteDeliveryModal,
+    onClickCloseDeleteDeliveryModal,
+    onClickDeleteDelivery,
+    openDeleteDeliveryModal,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
   if (documentType == DOCUMENT_TYPE.quote) {
-    const {} = useQuotesSignalr({ getQuote });
+    const { } = useQuotesSignalr({ getQuote });
   }
   if (documentType == DOCUMENT_TYPE.order) {
-    const {} = useOrdersSignalr({ getQuote });
+    const { } = useOrdersSignalr({ getQuote });
   }
 
   const dir: "rtl" | "ltr" = t("direction");
@@ -381,7 +385,7 @@ const QuoteNewPageWidget = ({
     },
   ];
 
-  const {} = useGoMakeTour(quoteSteps, []);
+  const { } = useGoMakeTour(quoteSteps, []);
 
   const theme = createTheme({
     direction: dir, // Ensure the theme is in RTL mode
@@ -442,8 +446,8 @@ const QuoteNewPageWidget = ({
                     title={
                       router?.query?.isNewCreation
                         ? `${t(
-                            "properties.create"
-                          )} ${documentTitle.toLowerCase()}`
+                          "properties.create"
+                        )} ${documentTitle.toLowerCase()}`
                         : documentTitle
                     }
                     marginBottom={1}
@@ -512,7 +516,7 @@ const QuoteNewPageWidget = ({
                       )}
                     <>
                       {quoteItemValue?.signImageUrl &&
-                      quoteItemValue?.signerName ? (
+                        quoteItemValue?.signerName ? (
                         <div
                           style={classes.signatureApproval}
                           onClick={onClickOpenSignatureApprovalModal}
@@ -799,6 +803,8 @@ const QuoteNewPageWidget = ({
                 handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
                 onClickConfirmCreateDocument={onClickConfirmCreateDocument}
                 onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal}
+                onClickOpenDeleteDeliveryModal={onClickOpenDeleteDeliveryModal}
+
               />
             </div>
           )}
@@ -1007,18 +1013,18 @@ const QuoteNewPageWidget = ({
           isMoveToReady
             ? moveOrderToReady
             : () => {
-                if (isSelectedCLoseAsDeliveryNote) {
-                  navigate(
-                    `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
-                  );
-                } else {
-                  const path =
-                    documentType === DOCUMENT_TYPE.order
-                      ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
-                      : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
-                  navigate(path);
-                }
+              if (isSelectedCLoseAsDeliveryNote) {
+                navigate(
+                  `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`
+                );
+              } else {
+                const path =
+                  documentType === DOCUMENT_TYPE.order
+                    ? `/invoice?isNewCreation=true&orderId=${selectedDocument?.id}`
+                    : `/invoice?isNewCreation=true&deliveryNoteId=${selectedDocument?.id}`;
+                navigate(path);
               }
+            }
         }
       >
         <div
@@ -1095,6 +1101,11 @@ const QuoteNewPageWidget = ({
           <div></div>
         )}
       </GoMakeDeleteModal>
+      <GoMakeDeleteModal
+        openModal={openDeleteDeliveryModal}
+        onClose={onClickCloseDeleteDeliveryModal}
+        onClickDelete={onClickDeleteDelivery}
+      />
 
       <GoMakeAlertModal
         openModal={alertModal.isOpen}

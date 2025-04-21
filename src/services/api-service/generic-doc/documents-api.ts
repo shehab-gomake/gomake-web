@@ -25,6 +25,8 @@ const UPDATE_DOCUMENT_PREFERENCE_URL =
   "/v1/erp-service/document/update-document-preference";
 const DELETE_DOCUMENT_ADDRESS_URL =
   "/v1/erp-service/documents/delete-document-address";
+const DELETE_DELIVERY_ITEM_URL =
+  "/v1/erp-service/documents/delete-delivery-item";
 const DUPLICATE_DOCUMENT_URL = "/v1/erp-service/documents/duplicate-document";
 
 const DUPLICATE_DOCUMENT_ITEM_URL =
@@ -329,6 +331,20 @@ const deleteDocumentAddressApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.DELETE,
     DELETE_DOCUMENT_ADDRESS_URL,
+    setState,
+    data
+  );
+};
+
+const deleteDeliveryItemApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.DELETE,
+    DELETE_DELIVERY_ITEM_URL,
     setState,
     data
   );
@@ -1182,6 +1198,7 @@ export {
   updateDocumentAddressApi,
   updateDocumentPreferenceApi,
   deleteDocumentAddressApi,
+  deleteDeliveryItemApi,
   changeDocumentClientApi,
   getIfCartExistApi,
   duplicateDocumentApi,

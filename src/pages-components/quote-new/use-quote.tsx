@@ -26,6 +26,7 @@ import {
   cancelDocumentApi,
   changeDocumentClientApi,
   createDocumentApi,
+  deleteDeliveryItemApi,
   deleteDocumentAddressApi,
   deleteDocumentContactApi,
   deleteDocumentItemApi,
@@ -309,7 +310,13 @@ const useQuoteNew = ({
   const [openAddDeliveryModal, setOpenAddDeliveryModal] = useState(false);
   const [openUpdateDeliveryModal, setOpenUpdateDeliveryModal] = useState(false);
   const [openAddAttachmentsModal, setOpenAddAttachmentsModal] = useState(false);
-
+  const [openDeleteDeliveryModal, setOpenDeleteDeliveryModal] = useState(false);
+  const onClickOpenDeleteDeliveryModal = () => {
+    setOpenDeleteDeliveryModal(true);
+  };
+  const onClickCloseDeleteDeliveryModal = () => {
+    setOpenDeleteDeliveryModal(false);
+  };
   const onOpenAddAttachmentsModal = () => {
     setOpenAddAttachmentsModal(true);
   };
@@ -363,8 +370,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1199,7 +1206,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -2156,6 +2163,21 @@ const useQuoteNew = ({
 
     //setOpenWatsAppModal(true)
   };
+  const onClickDeleteDelivery = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getQuote();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await deleteDeliveryItemApi(callApi, callBack, {
+      documentId: quoteItemValue?.id,
+      documentType: docType,
+    });
+  };
+
 
   return {
     dateRef,
@@ -2395,6 +2417,10 @@ const useQuoteNew = ({
     openAddAttachmentsModal,
     onOpenAddAttachmentsModal,
     onCloseAddAttachmentsModal,
+    onClickOpenDeleteDeliveryModal,
+    onClickCloseDeleteDeliveryModal,
+    openDeleteDeliveryModal,
+    onClickDeleteDelivery,
   };
 };
 
