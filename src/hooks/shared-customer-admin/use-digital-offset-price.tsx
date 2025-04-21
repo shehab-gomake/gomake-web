@@ -136,6 +136,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  console.log("subProducts", subProducts);
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(productTemplate?.ignoreCalculatedWorkflows);
   useEffect(() => {
     setIgnoreCalculatedWorkflows(productTemplate?.ignoreCalculatedWorkflows || false);
@@ -1461,7 +1462,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         setProductTemplate(productTemplate);
         setSubProducts(filteredSubProductsArray);
         setUnderParameterIds(underParameterIdsArray);
-        setIsSetTemplete(true);
+        setIsSetTemplete(widgetType === EWidgetProductType.EDIT ? false : true);
+        setTimeout(() => {
+          setIsSetTemplete(true);
+        }, 500);
       }
     }
   }, [materialsEnumsValues, allMaterials, productTemplate]);
@@ -1911,43 +1915,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (router?.query?.clientTypeId) {
-  //     setClientTypeDefaultValue(
-  //       clientTypesValue?.find(
-  //         (item: any) => item?.id === router?.query?.clientTypeId
-  //       )
-  //     );
-  //   }
-  //   if (router?.query?.customerId) {
-  //     if (renderOptions()?.find(
-  //       (item: any) => item?.id === router?.query?.customerId
-  //     )) {
-
-  //       setClientDefaultValue(
-  //         renderOptions()?.find(
-  //           (item: any) => item?.id === router?.query?.customerId
-  //         )
-  //       );
-  //     }
-  //     else {
-  //       setClientDefaultValue(
-  //         clientListData?.find(
-  //           (item: any) => item?.id === router?.query?.customerId
-  //         )
-  //       );
-  //     }
-
-  //   }
-  // }, [
-  //   clientTypesValue,
-  //   clientDefaultValue,
-  //   clientTypeDefaultValue,
-  //   router,
-  //   router?.query?.customerId,
-  //   renderOptions,
-  // ]);
-
   useEffect(() => {
     if (!router?.isReady) {
       return;
@@ -2045,16 +2012,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       });
     }
   }, [router?.query?.productId]);
-  /*useEffect(() => {
-    if(!router?.isReady){
-      return;
-    }
-    if (router?.query?.productId && widgetType === EWidgetProductType.CREATE) {
-      getAllMaterial().then((materials) => {
-        getProductById(materials);
-      });
-    }
-  }, [router?.query?.productId]);*/
+
   const exampleTypeValues = useRecoilValue(exampleTypeState);
   const billingMethodValues = useRecoilValue(billingMethodState);
   const listEmployeesValues = useRecoilValue(listEmployeesAtom);
@@ -4015,16 +3973,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         }
       });
     }
-    // let temp2 = [...subProducts];
-    // const index2 = temp2.findIndex((item) => item.type === subSectionType);
-    // temp2[index2] = {
-    //   type: subSectionType,
-    //   sectionId: sectionId,
-    //   sectionName: section.name,
-    //   parameters: parameters,
-    // };
-    // // const updatedSubProducts = removeHiddenParametersFromSubProducts(temp2, productTemplateCopy);
-    // setSubProducts(temp2);
   };
 
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(
@@ -4826,7 +4774,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         sectionName: section.name,
         parameters: temp,
       };
-      // const updatedSubProducts = removeHiddenParametersFromSubProducts(temp2, productTemplateCopy);
       setSubProducts(temp2);
       setSubProductsColorsModal(temp2);
       processRelatedParameters2(
