@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Skeleton } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import { useStyle } from "./style";
@@ -13,6 +13,9 @@ import { BarChartComponent } from "@/components/charts/bar-chart";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
+  const defaultStart = useMemo(() => startOfMonth(new Date()), []);
+  const defaultEnd = useMemo(() => endOfToday(), []);
+
   const {
     t,
     dates,
@@ -43,14 +46,23 @@ const MonitoringDashboardWidget = () => {
   }, []);
 
   useEffect(() => {
-    if (dates?.startDate && dates?.endDate) {
-      getSalesChartRoute(dates?.startDate, dates.endDate);
-    } else {
-      const defaultStart = startOfMonth(new Date());
-      const defaultEnd = endOfToday();
-      getSalesChartRoute(defaultStart, defaultEnd);
-    }
-  }, [dates?.startDate?.toISOString(), dates?.endDate?.toISOString()]);
+    const startDate = dates?.startDate || defaultStart;
+    const endDate = dates?.endDate || defaultEnd;
+    getSalesChartRoute(startDate, endDate);
+  }, [dates?.startDate, dates?.endDate]);
+
+  const renderTableSection = (title: string, rows: any[], headers: any[]) => (
+    <div style={classes.subContainer}>
+      <h3 style={classes.labelStyle}>{t(title)}</h3>
+      <PrimaryTable
+        stickyFirstCol={false}
+        stickyHeader={false}
+        rows={rows}
+        headers={headers}
+        variant="RoundTable"
+      />
+    </div>
+  );
 
   return (
     <div style={classes.container}>
@@ -121,46 +133,21 @@ const MonitoringDashboardWidget = () => {
         </div>
       </div>
 
-      <div style={classes.subContainer}>
-        <h3 style={classes.labelStyle}>
-          {t("dashboard.productPerformanceTitle")}
-        </h3>
-        <PrimaryTable
-          stickyFirstCol={false}
-          stickyHeader={false}
-          rows={productsRow}
-          headers={productTableHeaders}
-          // variant={"OddEvenTable"}
-          variant={"RoundTable"}
-        />
-      </div>
-
-      <div style={classes.subContainer}>
-        <h3 style={classes.labelStyle}>
-          {t("dashboard.clientPerformanceTitle")}
-        </h3>
-        <PrimaryTable
-          stickyFirstCol={false}
-          stickyHeader={false}
-          rows={clientsRow}
-          headers={clientTableHeaders}
-          // variant={"OddEvenTable"}
-          variant={"RoundTable"}
-        />
-      </div>
-
-      <div style={classes.subContainer}>
-        <h3 style={classes.labelStyle}>
-          {t("dashboard.agentPerformanceTitle")}
-        </h3>
-        <PrimaryTable
-          stickyFirstCol={false}
-          stickyHeader={false}
-          rows={agentsRow}
-          headers={agentTableHeaders}
-          variant={"RoundTable"}
-        />
-      </div>
+      {renderTableSection(
+        "dashboard.productPerformanceTitle",
+        productsRow,
+        productTableHeaders
+      )}
+      {renderTableSection(
+        "dashboard.clientPerformanceTitle",
+        clientsRow,
+        clientTableHeaders
+      )}
+      {renderTableSection(
+        "dashboard.agentPerformanceTitle",
+        agentsRow,
+        agentTableHeaders
+      )}
     </div>
   );
 };
