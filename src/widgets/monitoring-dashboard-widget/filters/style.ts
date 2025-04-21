@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
   const { theme, primaryColor, errorColor } = useGomakeTheme();
@@ -40,6 +41,10 @@ const useStyle = () => {
       machinesWrapper: {
         alignSelf: "flex-end",
         marginRight: "auto" as "auto",
+      },
+      buttonLabel: {
+        ...FONT_FAMILY.Lexend(500, 16),
+        color: "rgba(52, 64, 84, 1)",
       },
     };
   }, [theme]);

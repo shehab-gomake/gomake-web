@@ -18,6 +18,7 @@ import { selectedProductsIdsState } from "./filters/states/selected-product-id";
 import { selectedProductTypesIdsState } from "./filters/states/selected-product-type-id";
 import { selectedClientTypesIdsState } from "./filters/states/selected-client-types-ids";
 import { startOfMonth, endOfToday } from "date-fns";
+import { selectedDashClientState } from "./filters/states/selected-client-id";
 
 type TableRow = [
   string, // clientName or AgentName or ProductName
@@ -70,27 +71,12 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
+      }),
     };
-    // const data: Record<string, any> = {
-    //   fromDate: fromDate?.toISOString(),
-    //   toDate: toDate?.toISOString(),
-    // };
 
-    // if (selectedAgentIds && selectedAgentIds.length > 0) {
-    //   data.agents = selectedAgentIds;
-    // }
-
-    // if (selectedProductsIds && selectedProductsIds.length > 0) {
-    //   data.products = selectedProductsIds;
-    // }
-
-    // if (selectedProductTypesIds && selectedProductTypesIds.length > 0) {
-    //   data.productTypes = selectedProductTypesIds;
-    // }
-
-    // if (selectedClientTypesIds && selectedClientTypesIds.length > 0) {
-    //   data.clentTypes = selectedClientTypesIds;
-    // }
     const callBack = (res) => {
       if (res.success) {
         const { salesItems, ...statisticsRest } = res.data;
@@ -116,6 +102,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
+      }),
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
       }),
     };
 
@@ -148,6 +137,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
+      }),
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
       }),
     };
     const callBack = (res) => {
@@ -189,6 +181,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
+      }),
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
       }),
     };
 
@@ -232,6 +227,9 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
+      }),
     };
 
     const callBack = (res) => {
@@ -274,6 +272,9 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClientTypesIds?.length && {
         clentTypes: filters.selectedClientTypesIds,
       }),
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
+      }),
     };
     const callBack = (res) => {
       if (res.success) {
@@ -313,6 +314,8 @@ const useMonitoringDashboard = () => {
   const selectedProductsIds = useRecoilValue(selectedProductsIdsState);
   const selectedProductTypesIds = useRecoilValue(selectedProductTypesIdsState);
 
+  const selectedClient = useRecoilValue(selectedDashClientState);
+
   const filters = useMemo(
     () => ({
       startDate: dates?.startDate || startOfMonth(new Date()),
@@ -321,6 +324,7 @@ const useMonitoringDashboard = () => {
       selectedProductsIds,
       selectedProductTypesIds,
       selectedClientTypesIds,
+      selectedClient,
     }),
     [
       dates?.startDate,
@@ -329,6 +333,7 @@ const useMonitoringDashboard = () => {
       selectedProductsIds,
       selectedProductTypesIds,
       selectedClientTypesIds,
+      selectedClient,
     ]
   );
 
