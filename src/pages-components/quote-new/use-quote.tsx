@@ -1031,6 +1031,7 @@ const useQuoteNew = ({
                 : newQuoteItemValue?.exchangeRate,
             price: quoteItem?.price,
             discount: quoteItem?.discount,
+            isPrintHouseMaterialItem: quoteItem?.printHouseMaterialId ? true : false,
             finalPrice: quoteItemEdit?.finalPrice,
             quantity: quoteItem?.quantity,
             roundPrices: newQuoteItemValue?.client?.roundPrices,

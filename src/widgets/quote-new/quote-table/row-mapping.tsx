@@ -246,7 +246,7 @@ const RowMappingWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          {item?.calculationStatus === null ||
+          {item?.calculationStatus === null || item?.calculationStatus === undefined ||
             item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.quantity}
@@ -271,7 +271,7 @@ const RowMappingWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          {item?.calculationStatus === null ||
+          {item?.calculationStatus === null || item?.calculationStatus === undefined ||
             item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.price}
@@ -295,7 +295,7 @@ const RowMappingWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          {item?.calculationStatus === null ||
+          {item?.calculationStatus === null || item?.calculationStatus === undefined ||
             item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.discount ? item.discount : "0"}
@@ -337,7 +337,7 @@ const RowMappingWidget = ({
             />
           ) : (
             <>
-              {item?.calculationStatus === null ||
+              {item?.calculationStatus === null || item?.calculationStatus === undefined ||
                 item?.calculationStatus === ECalculationStatus.Done ? (
                 <InputUpdatedValues
                   value={item.finalPrice}

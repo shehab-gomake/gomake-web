@@ -825,6 +825,7 @@ const QuoteNewPageWidget = ({
         onClose={onCloseNewItem}
         documentType={documentType}
         getQuote={getQuote}
+        getCalculateQuoteItem={getCalculateQuoteItem}
       />
       <AddNewContactModal
         openModal={openAddNewContactModal}
