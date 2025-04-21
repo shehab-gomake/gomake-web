@@ -19,7 +19,7 @@ const ProductionFloorTableView = () => {
     openCustomerModal,
     setOpenCustomerModal,
     customer,
-    setCustomer,
+    setCustomer
   } = useProductionFloorTable();
   const { t } = useTranslation();
 

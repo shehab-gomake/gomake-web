@@ -64,7 +64,8 @@ const StatusTableComponent = ({
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
     selectedMission,
-    tryMoveBoardMissionsToDone,
+    tryMoveBoardMissionsToDone, 
+    updateJobDueDate
   } = useProductionFloorData();
 
   const [{ isOver }, drop] = useDrop(
@@ -219,6 +220,7 @@ const StatusTableComponent = ({
                           isMobileScreen={isMobileScreen}
                           isRTL={RTL}
                           isUrgentWork={hasUrgentOrApproval}
+                          onUpdateJobDueDate={updateJobDueDate}
                         />
                       ));
                   })()}
