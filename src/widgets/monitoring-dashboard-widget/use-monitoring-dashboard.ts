@@ -31,7 +31,6 @@ const useMonitoringDashboard = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { getCurrencyUnitText } = useQuoteGetData();
-
   const { dates } = useRecoilValue(dashboardDateState);
   const [statistics, setStatistics] = useState();
   const [salesItems, setSalesItems] = useState<
@@ -48,7 +47,6 @@ const useMonitoringDashboard = () => {
   const [productsRow, setProductsRow] = useState<TableRow[]>([]);
   const [agentsRow, setAgentsRow] = useState<TableRow[]>([]);
   const [clientsRow, setClientsRow] = useState<TableRow[]>([]);
-
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currUnit = getCurrencyUnitText(systemCurrency);
 
@@ -90,12 +88,14 @@ const useMonitoringDashboard = () => {
           row?.productName,
           row?.totalJobs,
           row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
-          row?.totalCalculatedPrice,
-          row?.totalCost,
-          row?.totalProfit,
-          row?.avgProfit,
+          row?.totalCalculatedPrice != null
+            ? `${row.totalCalculatedPrice} ${currUnit}`
+            : "-",
+          row?.totalCost != null ? `${row.totalCost} ${currUnit}` : "-",
+          row?.totalProfit != null ? `${row.totalProfit} ${currUnit}` : "-",
+          row?.avgProfit != null ? `${row.avgProfit} ${currUnit}` : "-",
           row?.avgPerOrder,
-          row?.os,
+          row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
         ]);
         setProductsRow(mapData);
@@ -112,12 +112,14 @@ const useMonitoringDashboard = () => {
           row?.agentName,
           row?.totalJobs,
           row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
-          row?.totalCalculatedPrice,
-          row?.totalCost,
-          row?.totalProfit,
-          row?.avgProfit,
+          row?.totalCalculatedPrice != null
+            ? `${row.totalCalculatedPrice} ${currUnit}`
+            : "-",
+          row?.totalCost != null ? `${row.totalCost} ${currUnit}` : "-",
+          row?.totalProfit != null ? `${row.totalProfit} ${currUnit}` : "-",
+          row?.avgProfit != null ? `${row.avgProfit} ${currUnit}` : "-",
           row?.avgPerOrder,
-          row?.os ? "Yes" : "No",
+          row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
         ]);
         setAgentsRow(mapData);
@@ -134,12 +136,14 @@ const useMonitoringDashboard = () => {
           row?.clientName,
           row?.totalJobs,
           row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
-          row?.totalCalculatedPrice,
-          row?.totalCost,
-          row?.totalProfit,
-          row?.avgProfit,
+          row?.totalCalculatedPrice != null
+            ? `${row.totalCalculatedPrice} ${currUnit}`
+            : "-",
+          row?.totalCost != null ? `${row.totalCost} ${currUnit}` : "-",
+          row?.totalProfit != null ? `${row.totalProfit} ${currUnit}` : "-",
+          row?.avgProfit != null ? `${row.avgProfit} ${currUnit}` : "-",
           row?.avgPerOrder,
-          row?.os,
+          row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
         ]);
         setClientsRow(mapData);

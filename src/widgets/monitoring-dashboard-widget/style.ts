@@ -46,7 +46,6 @@ const useStyle = () => {
         justifyContent: "space-between",
         alignItems: "flex-start",
       },
-
       piesContainer: {
         display: "flex",
         flexDirection: "column" as "column",
@@ -59,7 +58,6 @@ const useStyle = () => {
       labelStyle: {
         color: "#333",
         fontWeight: 600,
-        // marginBottom: 16,
       },
     };
   }, []);

@@ -5,13 +5,7 @@ import { GoMakeCurrency } from "../icons/gomake-currency";
 
 const Cards = ({ data }: { data: IStatisticValue }) => {
   const { classes } = useStyle();
-
-  const colors = [
-    "#4BC0C0",
-    "#FF6384",
-    // "#FFCE56"
-    "#9966FF",
-  ];
+  const colors = ["#4BC0C0", "#FF6384", "#9966FF"];
 
   const cardData = [
     {

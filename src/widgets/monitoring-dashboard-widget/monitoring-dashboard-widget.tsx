@@ -6,10 +6,10 @@ import { Cards } from "./cards/cards";
 import { useMonitoringDashboard } from "./use-monitoring-dashboard";
 import { PieChartComponent } from "@/components/charts/pie-chart";
 import SalesLineChart from "./charts/sales-line-chart";
-import { GoMakeDatepicker } from "@/components/datepicker";
 import { startOfMonth, endOfToday } from "date-fns";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { DashboardDates } from "./dates";
+import { BarChartComponent } from "@/components/charts/bar-chart";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
@@ -86,7 +86,6 @@ const MonitoringDashboardWidget = () => {
             sx={{ flex: 2, minWidth: "300px", maxWidth: "65vw" }}
           >
             <h3 style={classes.labelStyle}>{t("dashboard.salesChartTitle")}</h3>
-
             <SalesLineChart
               salesItems={salesItems}
               yKeys={["totalPrice", "totalCost", "avgTotalPrice"]}
@@ -98,7 +97,7 @@ const MonitoringDashboardWidget = () => {
 
         <div style={classes.piesContainer}>
           {productTypeChartData?.length > 0 ? (
-            <PieChartComponent
+            <BarChartComponent
               chartData={productTypeChartData}
               chartTitle={t("products.profits.exceptions.productType")}
             />
@@ -126,7 +125,6 @@ const MonitoringDashboardWidget = () => {
         <h3 style={classes.labelStyle}>
           {t("dashboard.productPerformanceTitle")}
         </h3>
-
         <PrimaryTable
           stickyFirstCol={false}
           stickyHeader={false}
