@@ -58,7 +58,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
       condition: boardMissionsDetails.dueDate,
       label: t("productionFloor.deliveredOn"),
       value: DateHourFormatterShort(
-        convertUtcToLocalIsoString(boardMissionsDetails.dueDate?.toString())
+        (boardMissionsDetails.dueDate?.toString())
       ),
     },
     {
