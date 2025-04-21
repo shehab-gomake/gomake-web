@@ -35,15 +35,19 @@ const AgentsList = () => {
     };
     await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
   };
+
   useEffect(() => {
     getAgentCategories(true);
   }, []);
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const getAgents = () => {
     if (filter) {
       return agents.filter((agent) =>
@@ -66,6 +70,7 @@ const AgentsList = () => {
     },
     [agents]
   );
+
   const checkAllAgents = () => {
     const isChecked = agents.every((agent) => agent.checked);
     const updatedAgents: any[] = agents.map((agent) => {
@@ -73,9 +78,11 @@ const AgentsList = () => {
     });
     setAgents(updatedAgents);
   };
+
   const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
     setFilter(event.currentTarget.value);
   };
+
   return (
     <div>
       <div>

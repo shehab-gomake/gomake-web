@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useGomakeAxios } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import {
@@ -13,6 +13,9 @@ import { useRecoilValue } from "recoil";
 import { dashboardDateState, systemCurrencyState } from "@/store";
 import { ChartItem } from "./interfaces/charts";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
+import { selectedAgentIdsState } from "./filters/states/selected-agent-id";
+import { selectedProductsIdsState } from "./filters/states/selected-product-id";
+import { selectedProductTypesIdsState } from "./filters/states/selected-product-type-id";
 
 type TableRow = [
   string, // clientName or AgentName or ProductName
@@ -31,7 +34,6 @@ const useMonitoringDashboard = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { getCurrencyUnitText } = useQuoteGetData();
-  const { dates } = useRecoilValue(dashboardDateState);
   const [statistics, setStatistics] = useState();
   const [salesItems, setSalesItems] = useState<
     {
@@ -50,11 +52,29 @@ const useMonitoringDashboard = () => {
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currUnit = getCurrencyUnitText(systemCurrency);
 
-  const getSalesChartRoute = async (fromDate?: Date, toDate?: Date) => {
-    const data = {
+  const getSalesChartRoute = async (
+    fromDate?: Date,
+    toDate?: Date,
+    selectedAgentIds?: string[],
+    selectedProductsIds?: string[],
+    selectedProductTypesIds?: string[]
+  ) => {
+    const data: Record<string, any> = {
       fromDate: fromDate?.toISOString(),
       toDate: toDate?.toISOString(),
     };
+
+    if (selectedAgentIds && selectedAgentIds.length > 0) {
+      data.agents = selectedAgentIds;
+    }
+
+    if (selectedProductsIds && selectedProductsIds.length > 0) {
+      data.products = selectedProductsIds;
+    }
+
+    if (selectedProductTypesIds && selectedProductTypesIds.length > 0) {
+      data.productTypes = selectedProductTypesIds;
+    }
     const callBack = (res) => {
       if (res.success) {
         const { salesItems, ...statisticsRest } = res.data;
@@ -183,6 +203,12 @@ const useMonitoringDashboard = () => {
   const clientTableHeaders = [t("dashboard.clientName"), ...baseTableHeaders];
   const agentTableHeaders = [t("dashboard.agentName"), ...baseTableHeaders];
 
+  const { dates } = useRecoilValue(dashboardDateState);
+
+  const selectedAgentIds = useRecoilValue(selectedAgentIdsState);
+  const selectedProductsIds = useRecoilValue(selectedProductsIdsState);
+  const selectedProductTypesIds = useRecoilValue(selectedProductTypesIdsState);
+
   return {
     t,
     dates,
@@ -203,6 +229,9 @@ const useMonitoringDashboard = () => {
     agentsRow,
     agentTableHeaders,
     systemCurrency,
+    selectedAgentIds,
+    selectedProductsIds,
+    selectedProductTypesIds,
   };
 };
 

@@ -8,8 +8,10 @@ import { PieChartComponent } from "@/components/charts/pie-chart";
 import SalesLineChart from "./charts/sales-line-chart";
 import { startOfMonth, endOfToday } from "date-fns";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { DashboardDates } from "./dates";
+import { DashboardFilters } from "./filters";
 import { BarChartComponent } from "@/components/charts/bar-chart";
+import { agentsState } from "@/store/agents-state";
+import { useRecoilValue } from "recoil";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
@@ -35,6 +37,9 @@ const MonitoringDashboardWidget = () => {
     clientTableHeaders,
     agentsRow,
     agentTableHeaders,
+    selectedAgentIds,
+    selectedProductsIds,
+    selectedProductTypesIds,
   } = useMonitoringDashboard();
 
   useEffect(() => {
@@ -46,10 +51,26 @@ const MonitoringDashboardWidget = () => {
   }, []);
 
   useEffect(() => {
-    const startDate = dates?.startDate || defaultStart;
-    const endDate = dates?.endDate || defaultEnd;
-    getSalesChartRoute(startDate, endDate);
-  }, [dates?.startDate, dates?.endDate]);
+    const fetchSalesChartData = async () => {
+      const startDate = dates?.startDate || defaultStart;
+      const endDate = dates?.endDate || defaultEnd;
+      await getSalesChartRoute(
+        startDate,
+        endDate,
+        selectedAgentIds,
+        selectedProductsIds,
+        selectedProductTypesIds
+      );
+    };
+
+    fetchSalesChartData();
+  }, [
+    dates?.startDate,
+    dates?.endDate,
+    selectedAgentIds,
+    selectedProductsIds,
+    selectedProductTypesIds,
+  ]);
 
   const renderTableSection = (title: string, rows: any[], headers: any[]) => (
     <div style={classes.subContainer}>
@@ -67,7 +88,7 @@ const MonitoringDashboardWidget = () => {
   return (
     <div style={classes.container}>
       <div style={classes.subContainer}>
-        <DashboardDates />
+        <DashboardFilters />
       </div>
       {statistics ? (
         <Cards data={statistics} />
@@ -100,7 +121,7 @@ const MonitoringDashboardWidget = () => {
             <h3 style={classes.labelStyle}>{t("dashboard.salesChartTitle")}</h3>
             <SalesLineChart
               salesItems={salesItems}
-              yKeys={["totalPrice", "totalCost", "avgTotalPrice"]}
+              yKeys={["totalPrice", "totalCost"]}
             />
           </Stack>
         ) : (

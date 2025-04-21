@@ -19,7 +19,7 @@ const getSalesChartRouteApi: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
+    EHttpMethod.POST,
     GET_SALES_CHART_URL,
     setState,
     data
@@ -32,7 +32,7 @@ const getPieProductTypeChartApi: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
+    EHttpMethod.POST,
     GET_PIE_PRODUCT_TYPE_CHART_URL,
     setState
   );
@@ -44,7 +44,7 @@ const getAgentPerformanceChartApi: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
+    EHttpMethod.POST,
     GET_AGENT_PERFORMANCE_CHART_URL,
     setState
   );
@@ -56,7 +56,7 @@ const getProductPerformanceChartApi: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
+    EHttpMethod.POST,
     GET_PRODUCT_PERFORMANCE_CHART_URL,
     setState
   );
@@ -68,7 +68,7 @@ const getClientPerformanceChartApi: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
+    EHttpMethod.POST,
     GET_CLIENT_PERFORMANCE_CHART_URL,
     setState
   );
@@ -77,7 +77,7 @@ const getClientPerformanceChartApi: ICallAndSetData = async (
 const getPieAgentChartApi: ICallAndSetData = async (callApi, setState) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
+    EHttpMethod.POST,
     GET_PIE_AGENT_CHART_URL,
     setState
   );
