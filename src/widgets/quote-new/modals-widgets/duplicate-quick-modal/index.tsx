@@ -11,7 +11,7 @@ import { DuplicateModalIcon } from "./icons/duplicate-icon";
 import { DeleteModalIcon } from "./icons/delete-icon";
 import { AddModalIcon } from "./icons/add-icon";
 import { useStyle } from "./style";
-import { useEffect, } from "react";
+import { useEffect } from "react";
 
 const DuplicateQuickModal = ({
   openModal,
@@ -37,7 +37,8 @@ const DuplicateQuickModal = ({
     isRelatedJobs,
     setIsRelatedJobs,
     getProductSizes,
-    productSizes
+    productSizes,
+    lastGroupRef
   } = useDuplicateQuickModal({ getQuote, onClose, documentType, quoteItemId, quoteItem })
   useEffect(() => {
     if (quoteItem?.productID && openModal) {
@@ -56,6 +57,7 @@ const DuplicateQuickModal = ({
       }])
     }
   }, [quoteItem, openModal])
+
   return (
     <>
       <GoMakeModal
@@ -69,7 +71,8 @@ const DuplicateQuickModal = ({
       >
         <div style={clasess.mainContainer} className={'show-scrollbar'}>
           {groups.map((group, groupIndex) => (
-            <div key={group.id} style={{ width: "100%" }}>
+            <div key={group.id} style={{ width: "100%" }}
+              ref={groupIndex === groups.length - 1 ? lastGroupRef : null}>
               <div style={clasess.groupContainer}>
                 <div>
                   <div style={clasess.groupTitle}>{t("products.addProduct.admin.product")}{` ${group.id}`}</div>
