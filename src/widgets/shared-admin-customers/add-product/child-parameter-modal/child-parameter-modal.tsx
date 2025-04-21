@@ -229,6 +229,15 @@ const ChildParameterModal = ({
 
                                 {state?.childsParameters?.map(
                                   (value: any, indexChild: number) => {
+                                    const DF = value?.valuesConfigs?.filter(valueConfig =>
+                                      state?.valuesConfigs?.some(stateConfig =>
+                                        stateConfig?.values &&
+                                        Object.values(stateConfig.values).includes(valueConfig.id)
+                                      )
+                                    )
+                                    // ... existing code ...
+
+
                                     return (
                                       <div
                                         style={clasess.textInputContainer}
@@ -262,18 +271,14 @@ const ChildParameterModal = ({
                                                 placeholder={value.name}
                                                 style={clasess.dropDownListStyle}
                                                 getOptionLabel={(option: any) => option.updateName}
-                                                onChange={(e: any, value: any) => {
+                                                onChange={(e: any, myValue: any) => {
                                                   changeItems(index, "values", {
                                                     ...state.valuesConfigs[index]
                                                       .values,
-                                                    [value?.id]: value?.id,
+                                                    [value?.id]: myValue?.id,
                                                   });
                                                 }}
-                                                defaultValue={
-                                                  state.valuesConfigs[index].values[
-                                                  value?.id
-                                                  ]
-                                                }
+                                                defaultValue={DF[index]}
                                               />
                                               :
                                               null

@@ -7,7 +7,6 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { useBusinessWidget } from "./use-business-widget";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
-import { isValidCustomer } from "@/utils/helpers";
 import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
@@ -473,7 +472,6 @@ const BusinessNewWidget = ({
         />
       )}
       <CustomerCardWidget
-        isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Add}
         codeFlag={false}
         typeClient={"C"}

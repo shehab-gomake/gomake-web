@@ -5,20 +5,17 @@ import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
 import { useEffect } from "react";
 
-interface UseClientTypesListProps {
-  shouldRenderClientTypesOnMount?: boolean;
-}
-
-const useClientTypesList = ({
-  shouldRenderClientTypesOnMount = false,
-}: UseClientTypesListProps = {}) => {
+const useClientTypesList = (
+  autoFetch: boolean = false,
+  cardTypeId: CLIENT_TYPE_Id = CLIENT_TYPE_Id.CUSTOMER
+) => {
   const { callApi } = useGomakeAxios();
   const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
     clientTypesCategoriesState
   );
 
   const getClientTypesCategories = async (
-    cardTypeId: CLIENT_TYPE_Id = CLIENT_TYPE_Id.CUSTOMER
+    typeId: CLIENT_TYPE_Id = cardTypeId
   ) => {
     const callBack = (res) => {
       if (res.success) {
@@ -32,15 +29,15 @@ const useClientTypesList = ({
       }
     };
     await getAndSetClientTypes(callApi, callBack, {
-      cardType: cardTypeId,
+      cardType: typeId,
     });
   };
 
   useEffect(() => {
-    if (shouldRenderClientTypesOnMount) {
+    if (autoFetch) {
       getClientTypesCategories();
     }
-  }, [shouldRenderClientTypesOnMount]);
+  }, [autoFetch]);
 
   return {
     clientTypesCategories,

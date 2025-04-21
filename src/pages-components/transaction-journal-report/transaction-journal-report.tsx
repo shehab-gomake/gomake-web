@@ -8,11 +8,9 @@ import { DocumentsTypeReportList, EReportType } from "@/enums";
 import { HeaderTitle } from "@/widgets/header-title/header-title";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
-import { isValidCustomer } from "@/utils/helpers";
 import { AccountingTransactionReportHeader } from "./widgets/header-widget/acconting-header";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { useEffect } from "react";
-
 import CollapsibleTable from "./widgets/collapse-table";
 import { CreateNewTransactionModal } from "../ledger-report/widgets/create-transaction-modal";
 import { AdjustmentsLedgerReportModal } from "../ledger-report/widgets/adjustments-modal";
@@ -232,7 +230,6 @@ const TransactionJournalReportWidget = ({
         </div>
       )}
       <CustomerCardWidget
-        isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Edit}
         codeFlag={true}
         typeClient={CLIENT_TYPE.CUSTOMER}

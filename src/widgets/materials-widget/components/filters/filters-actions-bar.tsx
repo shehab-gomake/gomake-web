@@ -158,26 +158,28 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     label: product.name,
   }));
   const user = useRecoilValue<any>(userState);
-  const unitType = user?.printHouseProfile?.unitType || 0
+  const unitType = user?.printHouseProfile?.unitType || 0;
   return (
     <Stack direction={"row"} gap={2} alignItems={"center"}>
       {materialTableFilters &&
         materialTableFilters.map(({ key, values, unit }) => {
-          const convertedUnitText = unitType === UNIT_TYPE.IMPERIAL ? convertTitleUnits(unit) : unit;
+          const convertedUnitText =
+            unitType === UNIT_TYPE.IMPERIAL ? convertTitleUnits(unit) : unit;
           const convertedValues = unit
-            ? values.map(value => {
-              if (value.includes("X")) {
-                const [width, height] = value.split("X");
+            ? values.map((value) => {
+                if (value.includes("X")) {
+                  const [width, height] = value.split("X");
 
-                const convertedWidth = convertValueToImperial(unit, width);
-                const convertedHeight = convertValueToImperial(unit, height);
-                return `${convertedWidth}X${convertedHeight}`;
-              } else {
-                return convertValueToImperial(unit, value);
-              }
-            })
+                  const convertedWidth = convertValueToImperial(unit, width);
+                  const convertedHeight = convertValueToImperial(unit, height);
+                  return `${convertedWidth}X${convertedHeight}`;
+                } else {
+                  return convertValueToImperial(unit, value);
+                }
+              })
             : values;
-          const convertedUnit = unitType === UNIT_TYPE.IMPERIAL ? convertedValues : values;
+          const convertedUnit =
+            unitType === UNIT_TYPE.IMPERIAL ? convertedValues : values;
 
           if (key === "productId") {
             return (
@@ -238,7 +240,11 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
                 style={{ width: "200px" }}
                 value={getFilterValue(key)}
                 options={convertedUnit}
-                placeholder={convertedUnitText ? key + " " + "(" + convertedUnitText + ")" : key}
+                placeholder={
+                  convertedUnitText
+                    ? key + " " + "(" + convertedUnitText + ")"
+                    : key
+                }
               />
             );
           }
@@ -340,7 +346,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
               setOpenAddSupplierModal(true);
             }}
           >
-            {t("materials.sheetPaper.addNewSupplier")}
+            {t("materials.sheetPaper.chooseNewSupplier")}
           </Button>
         </Menu>
       </Stack>

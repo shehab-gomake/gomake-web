@@ -136,7 +136,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(productTemplate?.ignoreCalculatedWorkflows);
   useEffect(() => {
     setIgnoreCalculatedWorkflows(productTemplate?.ignoreCalculatedWorkflows || false);
@@ -4154,8 +4153,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
         );
       }
       if (subSectionParameter) {
+
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
+            let values = myparameter?.valuesConfigs?.filter(valueConfig =>
+              data?.value?.values &&
+              Object.values(data.value.values).includes(valueConfig.id)
+            )
             const parameterId = myparameter.id;
             const myindex = temp.findIndex((item) => {
               return (
@@ -4175,22 +4179,33 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             if (data?.value?.values) {
               if (myindex !== -1) {
                 if (data?.value?.values[parameterId] !== undefined) {
-                  temp[myindex] = {
-                    ...temp[myindex],
-                    parameterCode: myparameter?.code,
-                    values: unitType === UNIT_TYPE.IMPERIAL && myparameter?.code != "Width" && myparameter?.code != "Height" ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
-                    isDisabled: hasValues(data?.value),
-                    factor: myparameter?.factor,
-                  };
+                  if (myparameter?.parameterType == 0) {
+                    temp[myindex] = {
+                      ...temp[myindex],
+                      parameterCode: myparameter?.code,
+                      values: [values[0]?.updateName],
+                      valueIds: [values[0]?.id],
+                      isDisabled: hasValues(data?.value),
+                      factor: myparameter?.factor,
+                    };
+                  }
+                  else {
+                    temp[myindex] = {
+                      ...temp[myindex],
+                      parameterCode: myparameter?.code,
+                      values: unitType === UNIT_TYPE.IMPERIAL && myparameter?.code != "Width" && myparameter?.code != "Height" ? [(data?.value?.values[parameterId] * myparameter?.factor).toFixed(3)] : [data?.value?.values[parameterId]],
+                      isDisabled: hasValues(data?.value),
+                      factor: myparameter?.factor,
+                    };
+                  }
+
                 } else {
                   temp.splice(myindex, 1);
                 }
-              } else {
+              }
+              else {
                 if (myparameter?.parameterType == 0) {
-                  let values = myparameter?.valuesConfigs?.filter(valueConfig =>
-                    data?.value?.values &&
-                    valueConfig.id in data.value.values
-                  )
+
                   temp.push({
                     parameterId: myparameter?.id,
                     sectionId: section?.id,
@@ -4224,7 +4239,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     actionIndex: myparameter?.actionIndex,
                     parameterName: myparameter?.name,
                     parameterCode: myparameter?.code,
-                    isDisabled: data?.values === "custom" ? false : hasValues(data?.value),
+                    isDisabled: hasValues(data?.value),
                     factor: myparameter?.factor,
                     unitKey: myparameter?.unitKey,
                     unitType: myparameter?.unitType,
