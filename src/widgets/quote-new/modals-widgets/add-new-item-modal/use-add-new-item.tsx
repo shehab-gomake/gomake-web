@@ -19,7 +19,7 @@ import {
 import { useUserPermission } from "@/hooks/use-permission";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
 
-const useAddNewItem = ({ onClose, getQuote, documentType }) => {
+const useAddNewItem = ({ onClose, getQuote, documentType, getCalculateQuoteItem }) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -229,13 +229,14 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
         const selectedMaterial = res?.data;
         const materialItem = {
           id: uuidv4(),
+          printHouseMaterialId: selectedMaterial?.printHouseMaterialId,
           code: selectedMaterial?.productCode,
           details: selectedMaterial?.details,
           price: selectedMaterial?.unitPrice,
           workName: "",
           discount: 0,
-          finalPrice: 0,
-          quantity: 0,
+          finalPrice: selectedMaterial?.finalPrice || 0,
+          quantity: selectedMaterial?.quantity || 0,
           productName: selectedMaterial?.productName,
           isSelected: false,
           productType: 0,
@@ -249,6 +250,12 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
           newItem,
         ];
         setQuoteItemValue(updatedQuoteItemValue);
+        getCalculateQuoteItem(
+          newItem,
+          1,
+          newItem.price,
+          updatedQuoteItemValue
+        );
         //onClose()
         handleCloseModal();
       } else {
@@ -350,20 +357,19 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
   const onClickCreateQuoteForCustomer = () => {
     if (router.query.isNewCreation) {
       if (selectedProduct?.category === ProductCategoryType.MATERIAL) {
-        if (documentType === DOCUMENT_TYPE.purchaseOrder) {
-          const updatedQuoteItemValue = { ...quoteItemValue };
-          const newItem = active === true ? { ...item } : { ...genericItem };
+        // if (documentType === DOCUMENT_TYPE.purchaseOrder) {
+        //   const updatedQuoteItemValue = { ...quoteItemValue };
+        //   const newItem = active === true ? { ...item } : { ...genericItem };
 
-          updatedQuoteItemValue.documentItems = [
-            ...updatedQuoteItemValue.documentItems,
-            newItem,
-          ];
-          setQuoteItemValue(updatedQuoteItemValue);
-          //onClose()
-          handleCloseModal();
-        } else {
-          getDocumentItemDataFromMaterial();
-        }
+        //   updatedQuoteItemValue.documentItems = [
+        //     ...updatedQuoteItemValue.documentItems,
+        //     newItem,
+        //   ];
+        //   setQuoteItemValue(updatedQuoteItemValue);
+        //   //onClose()
+        //   handleCloseModal();
+        // }
+        getDocumentItemDataFromMaterial();
       } else {
         const updatedQuoteItemValue = { ...quoteItemValue };
         const newItem = active === true ? { ...item } : { ...genericItem };
@@ -397,22 +403,18 @@ const useAddNewItem = ({ onClose, getQuote, documentType }) => {
               const clientTypeId = quoteItemValue?.client?.clientTypeId;
 
               navigate(
-                `/products/create?clientTypeId=${clientTypeId}&customerId=${clientId}&customerName=${clientName}&productId=${
-                  selectedProduct?.id
-                }&documentType=${documentType}${
-                  quoteItemValue?.number
-                    ? `&documentNumber=${quoteItemValue?.number}`
-                    : ""
+                `/products/create?clientTypeId=${clientTypeId}&customerId=${clientId}&customerName=${clientName}&productId=${selectedProduct?.id
+                }&documentType=${documentType}${quoteItemValue?.number
+                  ? `&documentNumber=${quoteItemValue?.number}`
+                  : ""
                 }${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
               );
             } else {
               navigate(
-                `/products/create?productId=${
-                  selectedProduct?.id
-                }&documentType=${documentType}${
-                  quoteItemValue?.number
-                    ? `&documentNumber=${quoteItemValue?.number}`
-                    : ""
+                `/products/create?productId=${selectedProduct?.id
+                }&documentType=${documentType}${quoteItemValue?.number
+                  ? `&documentNumber=${quoteItemValue?.number}`
+                  : ""
                 }${router?.query?.Id ? `&documentId=${router?.query?.Id}` : ""}`
               );
             }
