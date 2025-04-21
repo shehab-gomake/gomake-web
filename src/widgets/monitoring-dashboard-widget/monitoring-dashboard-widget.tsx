@@ -37,40 +37,24 @@ const MonitoringDashboardWidget = () => {
     clientTableHeaders,
     agentsRow,
     agentTableHeaders,
-    selectedAgentIds,
-    selectedProductsIds,
-    selectedProductTypesIds,
+    filters,
+    currUnit,
   } = useMonitoringDashboard();
 
   useEffect(() => {
-    getPieProductTypeChart();
-    getPieAgentChart();
-    getProductPerformanceChart();
-    getAgentPerformanceChart();
-    getClientPerformanceChart();
-  }, []);
-
-  useEffect(() => {
-    const fetchSalesChartData = async () => {
-      const startDate = dates?.startDate || defaultStart;
-      const endDate = dates?.endDate || defaultEnd;
-      await getSalesChartRoute(
-        startDate,
-        endDate,
-        selectedAgentIds,
-        selectedProductsIds,
-        selectedProductTypesIds
-      );
+    const fetchAllData = async () => {
+      await Promise.all([
+        getSalesChartRoute(filters),
+        getPieProductTypeChart(filters),
+        getPieAgentChart(filters),
+        getProductPerformanceChart(filters),
+        getAgentPerformanceChart(filters),
+        getClientPerformanceChart(filters),
+      ]);
     };
 
-    fetchSalesChartData();
-  }, [
-    dates?.startDate,
-    dates?.endDate,
-    selectedAgentIds,
-    selectedProductsIds,
-    selectedProductTypesIds,
-  ]);
+    fetchAllData();
+  }, [filters]);
 
   const renderTableSection = (title: string, rows: any[], headers: any[]) => (
     <div style={classes.subContainer}>
@@ -91,7 +75,7 @@ const MonitoringDashboardWidget = () => {
         <DashboardFilters />
       </div>
       {statistics ? (
-        <Cards data={statistics} />
+        <Cards data={statistics} currUnit={currUnit} />
       ) : (
         <Stack style={classes.SkeletonCardsContainer} gap={"15px"}>
           <Stack

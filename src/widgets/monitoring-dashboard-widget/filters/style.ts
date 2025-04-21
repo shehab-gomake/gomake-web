@@ -14,6 +14,7 @@ const useStyle = () => {
         justifyContent: "flex-start",
         alignItems: "center",
         gap: "16px",
+        flexWrap: "wrap" as "wrap",
       },
       button: {
         width: "fit-content",

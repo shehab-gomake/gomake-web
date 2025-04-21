@@ -28,58 +28,71 @@ const getSalesChartRouteApi: ICallAndSetData = async (
 
 const getPieProductTypeChartApi: ICallAndSetData = async (
   callApi,
-  setState
+  setState,
+  data
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
     GET_PIE_PRODUCT_TYPE_CHART_URL,
-    setState
+    setState,
+    data
   );
 };
 
 const getAgentPerformanceChartApi: ICallAndSetData = async (
   callApi,
-  setState
+  setState,
+  data
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
     GET_AGENT_PERFORMANCE_CHART_URL,
-    setState
+    setState,
+    data
   );
 };
 
 const getProductPerformanceChartApi: ICallAndSetData = async (
   callApi,
-  setState
+  setState,
+  data
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
     GET_PRODUCT_PERFORMANCE_CHART_URL,
-    setState
+    setState,
+    data
   );
 };
 
 const getClientPerformanceChartApi: ICallAndSetData = async (
   callApi,
-  setState
+  setState,
+  data
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
     GET_CLIENT_PERFORMANCE_CHART_URL,
-    setState
+    setState,
+    data
   );
 };
 
-const getPieAgentChartApi: ICallAndSetData = async (callApi, setState) => {
+const getPieAgentChartApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
     GET_PIE_AGENT_CHART_URL,
-    setState
+    setState,
+    data
   );
 };
 

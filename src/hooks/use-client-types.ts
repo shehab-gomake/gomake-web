@@ -3,8 +3,15 @@ import { useRecoilState } from "recoil";
 import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { clientTypesCategoriesState } from "@/pages/customers/customer-states";
 import { getAndSetClientTypes } from "@/services/api-service/customers/clientTypes-api";
+import { useEffect } from "react";
 
-const useClientTypesList = () => {
+interface UseClientTypesListProps {
+  shouldRenderClientTypesOnMount?: boolean;
+}
+
+const useClientTypesList = ({
+  shouldRenderClientTypesOnMount = false,
+}: UseClientTypesListProps = {}) => {
   const { callApi } = useGomakeAxios();
   const [clientTypesCategories, setClientTypesCategories] = useRecoilState(
     clientTypesCategoriesState
@@ -28,6 +35,12 @@ const useClientTypesList = () => {
       cardType: cardTypeId,
     });
   };
+
+  useEffect(() => {
+    if (shouldRenderClientTypesOnMount) {
+      getClientTypesCategories();
+    }
+  }, [shouldRenderClientTypesOnMount]);
 
   return {
     clientTypesCategories,

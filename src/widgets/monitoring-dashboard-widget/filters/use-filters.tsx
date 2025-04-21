@@ -3,22 +3,26 @@ import { selectedAgentIdsState } from "./states/selected-agent-id";
 import { useRecoilState } from "recoil";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { useAgentsList } from "@/hooks/use-agent-list";
-import { useCallback, useState } from "react";
-import { getAllTemplets } from "@/services/hooks";
-import { useGomakeAxios } from "@/hooks";
 import { selectedProductTypesIdsState } from "./states/selected-product-type-id";
 import { selectedProductsIdsState } from "./states/selected-product-id";
+import { useAllProductTypesDropDownList } from "@/hooks/use-product-types-drop-down-list";
+import { useClientTypesList } from "@/hooks/use-client-types";
+import { selectedClientTypesIdsState } from "./states/selected-client-types-ids";
 
 const useSalesDashboardFilters = () => {
   const { t } = useTranslation();
-  const { callApi } = useGomakeAxios();
   const { agentsCategories } = useAgentsList();
   const { productList } = useAllProductsDropDownList();
+  const { allProductTypes } = useAllProductTypesDropDownList();
+
+  const { clientTypesCategories } = useClientTypesList({
+    shouldRenderClientTypesOnMount: true,
+  });
+
   const productItems = productList.map((product) => ({
     id: product.id,
     label: product.name,
   }));
-  const [allProductTypes, setAllProductTypes] = useState<any>();
 
   const [selectedAgentIds, setSelectedAgentIds] = useRecoilState(
     selectedAgentIdsState
@@ -29,6 +33,10 @@ const useSalesDashboardFilters = () => {
   );
   const [selectedProductTypesIds, setSelectedProductTypesIds] = useRecoilState(
     selectedProductTypesIdsState
+  );
+
+  const [selectedClientTypesIds, setSelectedClientTypesIds] = useRecoilState(
+    selectedClientTypesIdsState
   );
 
   const toggleAgent = (id: string) => {
@@ -69,15 +77,19 @@ const useSalesDashboardFilters = () => {
     setSelectedProductTypesIds(isAllSelected ? [] : allIds);
   };
 
-  //!here need to add use-product-types
-  const getAllProductTypes = useCallback(async () => {
-    const result = await getAllTemplets(callApi);
-    const mappedResult = result.map((item: any) => ({
-      id: item.id,
-      label: item.name,
-    }));
-    setAllProductTypes(mappedResult);
-  }, []);
+  const toggleClientType = (id: string) => {
+    setSelectedClientTypesIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+    );
+  };
+
+  const toggleAllClientTypes = () => {
+    const allIds = clientTypesCategories.map((a) => a.id);
+    const isAllSelected = allIds.every((id) =>
+      selectedClientTypesIds.includes(id)
+    );
+    setSelectedClientTypesIds(isAllSelected ? [] : allIds);
+  };
 
   return {
     t,
@@ -89,11 +101,15 @@ const useSalesDashboardFilters = () => {
     toggleAgent,
     selectedProductIds,
     selectedAgentIds,
-    getAllProductTypes,
     allProductTypes,
     toggleAllProductTypes,
     toggleProductType,
     selectedProductTypesIds,
+
+    toggleAllClientTypes,
+    toggleClientType,
+    selectedClientTypesIds,
+    clientTypesCategories,
   };
 };
 

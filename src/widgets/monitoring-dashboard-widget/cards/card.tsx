@@ -14,9 +14,16 @@ export interface IDashboardCard {
   withProgressBar?: boolean;
   status?: EStatus;
   productionTime?: number;
+  unit?: string;
 }
 
-const DashboardCard = ({ label, value, bgColor, children }: IDashboardCard) => {
+const DashboardCard = ({
+  label,
+  value,
+  bgColor,
+  children,
+  unit,
+}: IDashboardCard) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const direction = t("direction");
@@ -50,7 +57,9 @@ const DashboardCard = ({ label, value, bgColor, children }: IDashboardCard) => {
         <Stack gap={"4px"}>
           <span style={classes.label}>{t(`dashboard.${label}`)}</span>
           <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
-            <div style={classes.value}> {value}</div>
+            <div style={classes.value}>
+              {value} {unit}
+            </div>
           </Stack>
         </Stack>
       </Stack>

@@ -16,6 +16,8 @@ import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data
 import { selectedAgentIdsState } from "./filters/states/selected-agent-id";
 import { selectedProductsIdsState } from "./filters/states/selected-product-id";
 import { selectedProductTypesIdsState } from "./filters/states/selected-product-type-id";
+import { selectedClientTypesIdsState } from "./filters/states/selected-client-types-ids";
+import { startOfMonth, endOfToday } from "date-fns";
 
 type TableRow = [
   string, // clientName or AgentName or ProductName
@@ -52,29 +54,43 @@ const useMonitoringDashboard = () => {
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currUnit = getCurrencyUnitText(systemCurrency);
 
-  const getSalesChartRoute = async (
-    fromDate?: Date,
-    toDate?: Date,
-    selectedAgentIds?: string[],
-    selectedProductsIds?: string[],
-    selectedProductTypesIds?: string[]
-  ) => {
-    const data: Record<string, any> = {
-      fromDate: fromDate?.toISOString(),
-      toDate: toDate?.toISOString(),
+  const getSalesChartRoute = async (filters) => {
+    const data: any = {
+      fromDate: filters?.startDate?.toISOString(),
+      toDate: filters?.endDate?.toISOString(),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
     };
+    // const data: Record<string, any> = {
+    //   fromDate: fromDate?.toISOString(),
+    //   toDate: toDate?.toISOString(),
+    // };
 
-    if (selectedAgentIds && selectedAgentIds.length > 0) {
-      data.agents = selectedAgentIds;
-    }
+    // if (selectedAgentIds && selectedAgentIds.length > 0) {
+    //   data.agents = selectedAgentIds;
+    // }
 
-    if (selectedProductsIds && selectedProductsIds.length > 0) {
-      data.products = selectedProductsIds;
-    }
+    // if (selectedProductsIds && selectedProductsIds.length > 0) {
+    //   data.products = selectedProductsIds;
+    // }
 
-    if (selectedProductTypesIds && selectedProductTypesIds.length > 0) {
-      data.productTypes = selectedProductTypesIds;
-    }
+    // if (selectedProductTypesIds && selectedProductTypesIds.length > 0) {
+    //   data.productTypes = selectedProductTypesIds;
+    // }
+
+    // if (selectedClientTypesIds && selectedClientTypesIds.length > 0) {
+    //   data.clentTypes = selectedClientTypesIds;
+    // }
     const callBack = (res) => {
       if (res.success) {
         const { salesItems, ...statisticsRest } = res.data;
@@ -85,7 +101,24 @@ const useMonitoringDashboard = () => {
     await getSalesChartRouteApi(callApi, callBack, data);
   };
 
-  const getPieProductTypeChart = async () => {
+  const getPieProductTypeChart = async (filters) => {
+    const data: any = {
+      fromDate: filters?.startDate?.toISOString(),
+      toDate: filters?.endDate?.toISOString(),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+    };
+
     const callBack = (res) => {
       if (res.success) {
         const data = res.data;
@@ -97,16 +130,33 @@ const useMonitoringDashboard = () => {
         );
       }
     };
-    await getPieProductTypeChartApi(callApi, callBack);
+    await getPieProductTypeChartApi(callApi, callBack, data);
   };
 
-  const getProductPerformanceChart = async () => {
+  const getProductPerformanceChart = async (filters) => {
+    const data: any = {
+      fromDate: filters?.startDate?.toISOString(),
+      toDate: filters?.endDate?.toISOString(),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+    };
     const callBack = (res) => {
       if (res.success) {
         const data = res.data;
         const mapData = data?.map((row) => [
           row?.productName,
           row?.totalJobs,
+          row?.qunatites,
           row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
           row?.totalCalculatedPrice != null
             ? `${row.totalCalculatedPrice} ${currUnit}`
@@ -121,16 +171,34 @@ const useMonitoringDashboard = () => {
         setProductsRow(mapData);
       }
     };
-    await getProductPerformanceChartApi(callApi, callBack);
+    await getProductPerformanceChartApi(callApi, callBack, data);
   };
 
-  const getAgentPerformanceChart = async () => {
+  const getAgentPerformanceChart = async (filters) => {
+    const data: any = {
+      fromDate: filters?.startDate?.toISOString(),
+      toDate: filters?.endDate?.toISOString(),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+    };
+
     const callBack = (res) => {
       if (res.success) {
         const data = res.data;
         const mapData = data?.map((row) => [
           row?.agentName,
           row?.totalJobs,
+          row?.qunatites,
           row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
           row?.totalCalculatedPrice != null
             ? `${row.totalCalculatedPrice} ${currUnit}`
@@ -145,16 +213,34 @@ const useMonitoringDashboard = () => {
         setAgentsRow(mapData);
       }
     };
-    await getAgentPerformanceChartApi(callApi, callBack);
+    await getAgentPerformanceChartApi(callApi, callBack, data);
   };
 
-  const getClientPerformanceChart = async () => {
+  const getClientPerformanceChart = async (filters) => {
+    const data: any = {
+      fromDate: filters?.startDate?.toISOString(),
+      toDate: filters?.endDate?.toISOString(),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+    };
+
     const callBack = (res) => {
       if (res.success) {
         const data = res.data;
         const mapData = data?.map((row) => [
           row?.clientName,
           row?.totalJobs,
+          row?.qunatites,
           row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
           row?.totalCalculatedPrice != null
             ? `${row.totalCalculatedPrice} ${currUnit}`
@@ -169,10 +255,26 @@ const useMonitoringDashboard = () => {
         setClientsRow(mapData);
       }
     };
-    await getClientPerformanceChartApi(callApi, callBack);
+    await getClientPerformanceChartApi(callApi, callBack, data);
   };
 
-  const getPieAgentChart = async () => {
+  const getPieAgentChart = async (filters) => {
+    const data: any = {
+      fromDate: filters?.startDate?.toISOString(),
+      toDate: filters?.endDate?.toISOString(),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+    };
     const callBack = (res) => {
       if (res.success) {
         const data = res.data;
@@ -184,11 +286,12 @@ const useMonitoringDashboard = () => {
         );
       }
     };
-    await getPieAgentChartApi(callApi, callBack);
+    await getPieAgentChartApi(callApi, callBack, data);
   };
 
   const baseTableHeaders = [
     t("dashboard.jobs"),
+    t("dashboard.quantity"),
     t("dashboard.finalPrice"),
     t("dashboard.calculatedPrice"),
     t("dashboard.cost"),
@@ -205,9 +308,29 @@ const useMonitoringDashboard = () => {
 
   const { dates } = useRecoilValue(dashboardDateState);
 
+  const selectedClientTypesIds = useRecoilValue(selectedClientTypesIdsState);
   const selectedAgentIds = useRecoilValue(selectedAgentIdsState);
   const selectedProductsIds = useRecoilValue(selectedProductsIdsState);
   const selectedProductTypesIds = useRecoilValue(selectedProductTypesIdsState);
+
+  const filters = useMemo(
+    () => ({
+      startDate: dates?.startDate || startOfMonth(new Date()),
+      endDate: dates?.endDate || endOfToday(),
+      selectedAgentIds,
+      selectedProductsIds,
+      selectedProductTypesIds,
+      selectedClientTypesIds,
+    }),
+    [
+      dates?.startDate,
+      dates?.endDate,
+      selectedAgentIds,
+      selectedProductsIds,
+      selectedProductTypesIds,
+      selectedClientTypesIds,
+    ]
+  );
 
   return {
     t,
@@ -232,6 +355,9 @@ const useMonitoringDashboard = () => {
     selectedAgentIds,
     selectedProductsIds,
     selectedProductTypesIds,
+    selectedClientTypesIds,
+    filters,
+    currUnit,
   };
 };
 
