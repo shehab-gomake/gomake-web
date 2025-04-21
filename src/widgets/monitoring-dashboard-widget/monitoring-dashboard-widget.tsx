@@ -74,59 +74,87 @@ const MonitoringDashboardWidget = () => {
         </Stack>
       )}
 
-      <div style={classes.subContainer}>
-        {salesItems?.length > 0 && (
-          <Stack>
-            <Stack
-              direction={"column"}
-              width={"100%"}
-              justifyContent={"space-between"}
-            >
+      <div style={classes.secSubContainer}>
+        {salesItems?.length > 0 ? (
+          <Stack
+            direction="column"
+            spacing={2}
+            sx={{ flex: 2, minWidth: "300px", maxWidth: "65vw" }}
+          >
+            <div style={classes.chartHeader}>
+              <h3 style={classes.labelStyle}>
+                {t("dashboard.salesChartTitle")}
+              </h3>
               <GoMakeDatepicker />
-              <SalesLineChart
-                salesItems={salesItems}
-                yKeys={["totalCost", "totalPrice", "avgTotalPrice"]}
-              />
-            </Stack>
+            </div>
+            <SalesLineChart
+              salesItems={salesItems}
+              yKeys={["totalPrice", "totalCost", "avgTotalPrice"]}
+            />
           </Stack>
+        ) : (
+          <Skeleton width={"66%"} height={"100%"} variant="rectangular" />
         )}
-      </div>
-      <div style={classes.piesContainer}>
-        {productTypeChartData?.length > 0 && (
-          <PieChartComponent
-            chartData={productTypeChartData}
-            chartTitle={t("products.profits.exceptions.productType")}
-          />
-        )}
-        {agentChartData?.length > 0 && (
-          <PieChartComponent
-            chartData={agentChartData}
-            chartTitle={t("dashboard.agents")}
-          />
-        )}
+
+        <div style={classes.piesContainer}>
+          {productTypeChartData?.length > 0 ? (
+            <PieChartComponent
+              chartData={productTypeChartData}
+              chartTitle={t("products.profits.exceptions.productType")}
+            />
+          ) : (
+            <Skeleton
+              variant="circular"
+              width={200}
+              height={200}
+              style={{ marginBottom: 16 }}
+            />
+          )}
+
+          {agentChartData?.length > 0 ? (
+            <PieChartComponent
+              chartData={agentChartData}
+              chartTitle={t("dashboard.agents")}
+            />
+          ) : (
+            <Skeleton variant="circular" width={200} height={200} />
+          )}
+        </div>
       </div>
 
       <div style={classes.subContainer}>
+        <h3 style={classes.labelStyle}>
+          {t("dashboard.productPerformanceTitle")}
+        </h3>
+
         <PrimaryTable
           stickyFirstCol={false}
           stickyHeader={false}
           rows={productsRow}
           headers={productTableHeaders}
-          variant={"OddEvenTable"}
+          // variant={"OddEvenTable"}
+          variant={"RoundTable"}
         />
       </div>
 
       <div style={classes.subContainer}>
+        <h3 style={classes.labelStyle}>
+          {t("dashboard.clientPerformanceTitle")}
+        </h3>
         <PrimaryTable
           stickyFirstCol={false}
           stickyHeader={false}
           rows={clientsRow}
           headers={clientTableHeaders}
-          variant={"OddEvenTable"}
+          // variant={"OddEvenTable"}
+          variant={"RoundTable"}
         />
       </div>
 
       <div style={classes.subContainer}>
+        <h3 style={classes.labelStyle}>
+          {t("dashboard.agentPerformanceTitle")}
+        </h3>
         <PrimaryTable
           stickyFirstCol={false}
           stickyHeader={false}

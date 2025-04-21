@@ -158,11 +158,11 @@ const useMonitoringDashboard = () => {
   };
 
   const baseTableHeaders = [
-    t("dashboard.totalJobs"),
+    t("dashboard.jobs"),
     t("dashboard.finalPrice"),
-    t("dashboard.totalCalculatedPrice"),
-    t("dashboard.totalCostHed"),
-    t("dashboard.totalProfitHed"),
+    t("dashboard.calculatedPrice"),
+    t("dashboard.cost"),
+    t("dashboard.profit"),
     t("dashboard.avgProfit"),
     t("dashboard.avgPerOrder"),
     t("dashboard.os"),

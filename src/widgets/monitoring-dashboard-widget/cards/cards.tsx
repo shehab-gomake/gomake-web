@@ -15,12 +15,12 @@ const Cards = ({ data }: { data: IStatisticValue }) => {
 
   const cardData = [
     {
-      labelTranslationKey: "totalCost",
-      value: data.totalCost,
-    },
-    {
       labelTranslationKey: "totalPrice",
       value: data?.totalPrice,
+    },
+    {
+      labelTranslationKey: "totalCost",
+      value: data.totalCost,
     },
     {
       labelTranslationKey: "totalProfit",
