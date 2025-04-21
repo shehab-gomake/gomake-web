@@ -1469,6 +1469,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     }
   }, [materialsEnumsValues, allMaterials, productTemplate]);
 
+  useEffect(() => {
+    if (widgetType === EWidgetProductType.EDIT && productTemplate?.productItemValue && productTemplate?.productItemValue?.itemParmetersValues?.length > 0 && subProducts?.length == 0) {
+      setSubProducts((prev) => {
+        return prev.map((subProduct) => {
+          return {
+            ...subProduct,
+            parameters: productTemplate?.productItemValue?.itemParmetersValues?.filter((item) => item.subProductType === subProduct.type)
+          }
+        })
+      })
+    }
+  }, [productTemplate]);
+
   const initProduct = (product, materials) => {
     if (product && product?.sections?.length > 0) {
       let sectionData: any = product.sections;
