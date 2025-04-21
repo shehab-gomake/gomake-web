@@ -4,7 +4,7 @@ import { useStyle } from "@/widgets/production-floor/views/board-missions-view/h
 import { DateHourFormatterShort } from "@/utils/date-formatters";
 import TocIcon from "@mui/icons-material/Toc";
 import { useTranslation } from "react-i18next";
-import { useEffect } from "react";
+import {useEffect, useRef, useState} from "react";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import NavigateBeforeIcon from "@mui/icons-material/NavigateBefore";
 import { IBoardMissionsDetails } from "@/widgets/production-floor/interfaces/board-missions";
@@ -22,6 +22,13 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { ActionCountDown } from "./action-count-down/action-count-down";
 import { useIsMobile } from "@/hooks/use-responsive";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { DateField } from "@/components/date-picker/date-filed";
+import {AdapterMoment} from "@mui/x-date-pickers/AdapterMoment";
+import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
+import {updateJobDueDateApi} from "@/services/api-service/production-floor/production-floor-endpoints";
+import {useGomakeAxios} from "@/hooks";
+import {useRecoilState} from "recoil";
+import moment from "moment/moment";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
@@ -46,6 +53,8 @@ const HeaderDividerComponent = () => {
 
 const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   const { classes } = useStyle();
+  const { callApi } = useGomakeAxios();
+  const [jobDueDate,setJobDueDate] = useState(boardMissionsDetails.dueDate?.toString());
   const fieldMappings = [
     {
       condition: boardMissionsDetails.createdDate,
@@ -56,10 +65,38 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
     },
     {
       condition: boardMissionsDetails.dueDate,
-      label: t("productionFloor.deliveredOn"),
-      value: DateHourFormatterShort(
-        (boardMissionsDetails.dueDate?.toString())
-      ),
+      label: "",
+      value:
+          <LocalizationProvider
+              dateAdapter={AdapterMoment}
+              adapterLocale="en-gb"
+          >
+            <div >
+              <DateField
+                  label={
+                    t("sales.quote.deliveryDate")
+                  }
+                  date={convertUtcToLocalIsoString(jobDueDate)}
+                  handleChange={(newDate) => {
+                    let utcDueDate = new Date(newDate).toUTCString()
+                    let mom = moment(newDate);
+                    let formattedDueDate = mom.utc().format("YYYY-MM-DD HH:mm:ss");
+                    setJobDueDate(formattedDueDate);
+                    const callBack = ()=> {
+                    }
+                    updateJobDueDateApi(callApi, callBack, {
+                      boardMissionId: boardMissionsDetails.boardMissionId,
+                      dueDate: utcDueDate,
+                    }).then();
+                  }}
+                  isEditable={true}
+                  withTime={true}
+                  inputWidth={"230px"}
+                  format={"DD/MM HH:mm"}
+              />
+            </div>
+          </LocalizationProvider>
+          ,
     },
     {
       condition: boardMissionsDetails.agentName,
