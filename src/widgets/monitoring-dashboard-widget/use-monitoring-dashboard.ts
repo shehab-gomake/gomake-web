@@ -10,8 +10,9 @@ import {
   getSalesChartRouteApi,
 } from "@/services/api-service/reports-service/sales-controller-endpoints";
 import { useRecoilValue } from "recoil";
-import { dashboardDateState } from "@/store";
+import { dashboardDateState, systemCurrencyState } from "@/store";
 import { ChartItem } from "./interfaces/charts";
+import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 
 type TableRow = [
   string, // clientName or AgentName or ProductName
@@ -29,6 +30,8 @@ type TableRow = [
 const useMonitoringDashboard = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
+  const { getCurrencyUnitText } = useQuoteGetData();
+
   const { dates } = useRecoilValue(dashboardDateState);
   const [statistics, setStatistics] = useState();
   const [salesItems, setSalesItems] = useState<
@@ -45,6 +48,9 @@ const useMonitoringDashboard = () => {
   const [productsRow, setProductsRow] = useState<TableRow[]>([]);
   const [agentsRow, setAgentsRow] = useState<TableRow[]>([]);
   const [clientsRow, setClientsRow] = useState<TableRow[]>([]);
+
+  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
+  const currUnit = getCurrencyUnitText(systemCurrency);
 
   const getSalesChartRoute = async (fromDate?: Date, toDate?: Date) => {
     const data = {
@@ -83,14 +89,14 @@ const useMonitoringDashboard = () => {
         const mapData = data?.map((row) => [
           row?.productName,
           row?.totalJobs,
-          row?.finalPrice,
+          row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
           row?.totalCalculatedPrice,
           row?.totalCost,
           row?.totalProfit,
           row?.avgProfit,
           row?.avgPerOrder,
           row?.os,
-          row?.successRate,
+          row?.successRate != null ? `${row.successRate} %` : "-",
         ]);
         setProductsRow(mapData);
       }
@@ -105,14 +111,14 @@ const useMonitoringDashboard = () => {
         const mapData = data?.map((row) => [
           row?.agentName,
           row?.totalJobs,
-          row?.finalPrice,
+          row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
           row?.totalCalculatedPrice,
           row?.totalCost,
           row?.totalProfit,
           row?.avgProfit,
           row?.avgPerOrder,
-          row?.os,
-          row?.successRate,
+          row?.os ? "Yes" : "No",
+          row?.successRate != null ? `${row.successRate} %` : "-",
         ]);
         setAgentsRow(mapData);
       }
@@ -127,14 +133,14 @@ const useMonitoringDashboard = () => {
         const mapData = data?.map((row) => [
           row?.clientName,
           row?.totalJobs,
-          row?.finalPrice,
+          row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
           row?.totalCalculatedPrice,
           row?.totalCost,
           row?.totalProfit,
           row?.avgProfit,
           row?.avgPerOrder,
           row?.os,
-          row?.successRate,
+          row?.successRate != null ? `${row.successRate} %` : "-",
         ]);
         setClientsRow(mapData);
       }
@@ -192,6 +198,7 @@ const useMonitoringDashboard = () => {
     clientTableHeaders,
     agentsRow,
     agentTableHeaders,
+    systemCurrency,
   };
 };
 

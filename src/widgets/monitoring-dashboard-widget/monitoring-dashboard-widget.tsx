@@ -9,6 +9,7 @@ import SalesLineChart from "./charts/sales-line-chart";
 import { GoMakeDatepicker } from "@/components/datepicker";
 import { startOfMonth, endOfToday } from "date-fns";
 import { PrimaryTable } from "@/components/tables/primary-table";
+import { DashboardDates } from "./dates";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
@@ -53,6 +54,9 @@ const MonitoringDashboardWidget = () => {
 
   return (
     <div style={classes.container}>
+      <div style={classes.subContainer}>
+        <DashboardDates />
+      </div>
       {statistics ? (
         <Cards data={statistics} />
       ) : (
@@ -81,12 +85,8 @@ const MonitoringDashboardWidget = () => {
             spacing={2}
             sx={{ flex: 2, minWidth: "300px", maxWidth: "65vw" }}
           >
-            <div style={classes.chartHeader}>
-              <h3 style={classes.labelStyle}>
-                {t("dashboard.salesChartTitle")}
-              </h3>
-              <GoMakeDatepicker />
-            </div>
+            <h3 style={classes.labelStyle}>{t("dashboard.salesChartTitle")}</h3>
+
             <SalesLineChart
               salesItems={salesItems}
               yKeys={["totalPrice", "totalCost", "avgTotalPrice"]}
