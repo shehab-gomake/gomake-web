@@ -15,9 +15,7 @@ const useSalesDashboardFilters = () => {
   const { productList } = useAllProductsDropDownList();
   const { allProductTypes } = useAllProductTypesDropDownList();
 
-  const { clientTypesCategories } = useClientTypesList({
-    shouldRenderClientTypesOnMount: true,
-  });
+  const { clientTypesCategories } = useClientTypesList(true);
 
   const productItems = productList.map((product) => ({
     id: product.id,
