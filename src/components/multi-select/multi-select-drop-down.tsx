@@ -134,7 +134,7 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 
         <div style={{ maxHeight: "300px", overflowY: "auto" }}>
           <FormGroup>
-            {filteredItems.map((item) => (
+            {filteredItems?.map((item) => (
               <MenuItem key={item.id} disableRipple>
                 <FormControlLabel
                   label={item.label}

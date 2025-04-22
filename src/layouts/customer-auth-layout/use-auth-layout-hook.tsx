@@ -70,18 +70,6 @@ const useAuthLayoutHook = (
         },
         isProduction: true,
       },
-
-      {
-        isLine: false,
-        key: "dashboard",
-        title: "tabs.dashboard",
-        path: "/dashboard",
-        isList: false,
-        icon: () => {
-          return <DashboardIcon />;
-        },
-        isProduction: true,
-      },
     ];
   }, []);
 
@@ -146,6 +134,12 @@ const useAuthLayoutHook = (
             title: "tabs.deliveries",
             path: "/deliveries",
             Permission: Permissions.SHOW_DELIVERIES,
+          },
+          {
+            key: "dashboard",
+            title: "tabs.dashboard",
+            path: "/dashboard",
+            Permission: Permissions.SHOW_SALES_DASHBOARD,
           },
         ],
         icon: () => {

@@ -32,7 +32,7 @@ const AddCostModal = ({
       <DialogTitle>
         {type === "actual"
           ? t("dashboard.addActualCost")
-          : t("dashboard.addTargetCost")}
+          : t("dashboard.addTarget")}
       </DialogTitle>
       <DialogContent>
         <TextField

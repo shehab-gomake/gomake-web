@@ -17,8 +17,6 @@ const useStyle = () => {
         borderRadius: "20px",
         border: "1px solid #F8F9FA",
       },
-      // !here new should fix
-      SkeletonChartContainer: {},
       subContainer: {
         display: "flex",
         flexDirection: "column" as "column",

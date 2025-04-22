@@ -125,6 +125,7 @@ export enum Permissions {
   CAN_CLOSE_MANUALLY = "CanCloseManually",
   SHOW_DELIVERIES = "ShowDeliveries",
   CAN_OPEN_CLOSED_DOCUMENTS = "CanOpenClosedDocuments",
+  SHOW_SALES_DASHBOARD = "ShowSalesDashboard",
 
   //purchase group
   SHOW_PURCHASE_ORDERS = "ShowPurchaseOrders",

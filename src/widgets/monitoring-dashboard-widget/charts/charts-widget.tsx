@@ -98,7 +98,7 @@ const ChartsWidget = ({
                 </MenuItem>
                 <MenuItem onClick={() => openModal("target")}>
                   <div style={classes.menuItemReviewContainer}>
-                    {t("dashboard.addTargetCost")}
+                    {t("dashboard.addTarget")}
                   </div>
                 </MenuItem>
               </div>
@@ -133,7 +133,12 @@ const ChartsWidget = ({
             chartTitle={t("dashboard.agents")}
           />
         ) : (
-          <Skeleton variant="circular" width={200} height={200} />
+          <Skeleton
+            variant="rectangular"
+            width={300}
+            height={300}
+            style={{ marginBottom: 16 }}
+          />
         )}
       </div>
       <AddCostModal
