@@ -827,7 +827,7 @@ const ActionContainerComponent = ({
                     deliveryDate && <>
                       <Divider orientation={"vertical"} flexItem />
                       <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
-                        <span style={classes.detailTitle}>{t("home.headers.deliveryDate")}</span>
+                        <span style={classes.detailTitle}>{t("sales.quote.deliveryDate")}</span>
                         <span style={classes.detailValue}>{_renderDeliveryDate(deliveryDate)}</span>
                       </Stack>
                     </>
