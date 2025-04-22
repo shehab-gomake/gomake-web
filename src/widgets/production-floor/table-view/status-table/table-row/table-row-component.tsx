@@ -296,7 +296,7 @@ const TableRowComponent = ({
             {/* {DateHourFormatterShort(
               convertUtcToLocalIsoString(boardMission.boardMissionCreatedDate?.toString())
             )} */}
-             <div style={{visibility: "hidden",width:0,height:0}}>
+             <div style={{visibility: "hidden"}}>
                  <LocalizationProvider
                      dateAdapter={AdapterMoment}
                      adapterLocale="en-gb"
@@ -312,8 +312,8 @@ const TableRowComponent = ({
                              }}
                              isEditable={true}
                              withTime={true}
-                             inputWidth={"130px"}
-                             format={"DD/MM HH:mm"}
+                             inputWidth={"1px"}
+                             //format={"DD/MM HH:mm"}
                              openPicker={openDatePicker}
                              onClose={()=>setOpenDatePicker(false)}
                          />
