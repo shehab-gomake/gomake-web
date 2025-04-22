@@ -221,6 +221,7 @@ const QuotesListPageWidget = ({
     deliveryOrderId,
     deliveryOrderNumber,
     deliveryCustomerId,
+    isSendOrderReadyToClient,
   } = useQuotes(documentType, isFromHomePage);
   const {
     openDeliveryModal,
@@ -929,6 +930,7 @@ const QuotesListPageWidget = ({
         paymentModalTitle={paymentModalTitle}
         documentType={documentType}
         isSendToClient={isSendToClient}
+        isSendOrderReadyToClient={isSendOrderReadyToClient}
       />
       <MakePaymentModal
         openMakePaymentModal={openMakePaymentModal}

@@ -33,6 +33,7 @@ import {
   openFileUploaderList,
   pinFileUploaderState,
 } from "@/store/file-uploader-state";
+import { MailIcon } from "./icons/mail";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -157,6 +158,7 @@ const useMoreCircle = () => {
         (isDeliveryNote && isClosedDeliveryNote) ||
         (isInvoice && isClosedInvoice));
 
+    const isSendOrderReadyToClient = isOrder && quote?.productionStatus;
     return [
       {
         condition: !isPauseOrder && isQuote && isEditableDocument,
@@ -443,9 +445,14 @@ const useMoreCircle = () => {
       },
       {
         condition: true,
-        onClick: () => onClickSendPayment(quote, true),
-        icon: <PayIcon />,
-        name: t("sales.quote.sendToClient"),
+        onClick: () =>
+          onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
+        icon: <MailIcon />,
+        name: t(
+          `sales.quote.${
+            isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
+          }`
+        ),
       },
       {
         condition:
