@@ -4,7 +4,7 @@ import {
   moveBoardMissionToDoneApi,
   updateBoardsMissionsOrderApi,
   updateBoardsMissionsStatusApi,
-  tryMoveBoardMissionToDoneApi,
+  tryMoveBoardMissionToDoneApi, updateJobDueDateApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
@@ -31,6 +31,8 @@ import {
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
 import { useRouter } from "next/router";
+import {formatDate} from "tough-cookie";
+import moment from "moment";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -348,7 +350,24 @@ const useProductionFloorData = () => {
   const handleOpenQRScanner = () => {
     push(`/qr-scanner`);
   };
-
+  const updateJobDueDate = (boardMisionId,dueDate) => {
+    let utcDueDate = new Date(dueDate).toUTCString()
+    let mom = moment(dueDate);
+    let formattedDueDate = mom.utc().format("YYYY-MM-DD HH:mm:ss"); 
+    setData(
+        data.map(status=>
+            status.boardMissions.find(b=>b.id === boardMisionId) ?
+                {...status,boardMissions:status.boardMissions.map(bm=> bm.id === boardMisionId ? {...bm,dueDate:formattedDueDate} : bm)} : status
+        )
+    )
+    const callBack = ()=> {
+     
+    }
+    updateJobDueDateApi(callApi, callBack, {
+      boardMissionId: boardMisionId,
+      dueDate: utcDueDate,
+    }).then();
+  }
   return {
     t,
     RTL,
@@ -373,6 +392,7 @@ const useProductionFloorData = () => {
     getDataByGroups,
     setSelectedGroupId,
     handleOpenQRScanner,
+    updateJobDueDate
   };
 };
 
