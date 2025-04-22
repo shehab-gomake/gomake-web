@@ -34,6 +34,10 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { ModalFilters } from "./modal-filters";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ModalEditGroup } from "./edit-group-modal";
+import {AgentsList} from "@/widgets/agents/agents-list";
+import {selectedAgentsState} from "@/store/agents-state";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
+import {EPreferences} from "@/enums/prefernces";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -187,12 +191,16 @@ const CustomGroupComponent = ({
             // gap: "6px",
           }}
         >
-          <Circle numColor="#E7D000" dir={dir}>
-            {group?.inProcessCount}
-          </Circle>
-          <Circle numColor="#D92D20" dir={dir}>
-            {group?.stuckCount}
-          </Circle>
+          {
+            <Circle numColor="#E7D000" dir={dir}>
+              {group?.inProcessCount}
+            </Circle>
+          }
+          {
+            <Circle numColor="#D92D20" dir={dir}>
+              {group?.stuckCount}
+            </Circle>
+          }
           {group.id !== "all" && (
             <Circle
               numColor={group?.color}
@@ -250,6 +258,7 @@ const ProductionFloorFilters = ({
   const [filterGroups, setFilterGroups] =
     useRecoilState<IFilterGroupsList[]>(filterGroupsState);
   const { CheckPermission } = useUserPermission();
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   const {
     t,
     dir,
@@ -297,11 +306,13 @@ const ProductionFloorFilters = ({
     duplicateStationFilterByGroupId,
     openModalEditGroup,
     onClickOpenModalEditGroup,
-    onClickCloseModalEditGroup
+    onClickCloseModalEditGroup,
+    handleAgentChange
   } = useProductionFloorFilters({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
   });
+  
   useEffect(() => {
     const fetchMachinesColors = async () => {
       try {
@@ -416,7 +427,7 @@ const ProductionFloorFilters = ({
       setMissionsList(getMissionsList());
     }
   };
-
+ 
   return (
     <Stack style={classes.headerFilterContainer}>
       <ClickAwayListener
@@ -451,15 +462,13 @@ const ProductionFloorFilters = ({
           )}
         </Stack>
       </ClickAwayListener>
-      <SelectComponent
-        buttonLabel={"productionFloor.tags"}
-        list={tagsList}
-        onChange={onTagsChange}
-      />
+      {
+        CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && <AgentsList onClose={handleAgentChange}/>
+      }
       <GoMakeDatepicker
         value={deliveryDateFilter}
         onChange={onSelectDeliveryTimeDates}
-        placeholder={t("productionFloor.deliveryTime")}
+        placeholder={t("sales.quote.deliveryDate")}
       />
       <GoMakeDatepicker
         value={createDateFilter}

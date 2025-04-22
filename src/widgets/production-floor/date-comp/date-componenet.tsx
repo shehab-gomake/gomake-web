@@ -29,6 +29,7 @@ const DateTimeProductionFloorComponent = ({
         textAlign: "center",
         paddingLeft: 10,
         paddingRight: 10,
+          fontWeight:"bolder"
       }}
     >
       {formattedDate} <br /> {time}
