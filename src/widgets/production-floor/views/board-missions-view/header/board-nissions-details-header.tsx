@@ -55,6 +55,10 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
   const [jobDueDate,setJobDueDate] = useState(boardMissionsDetails.dueDate?.toString());
+  const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
+  const onClickOpenDatePicker = () => {
+    setOpenDatePicker(true);
+  }
   const fieldMappings = [
     {
       condition: boardMissionsDetails.createdDate,
@@ -65,38 +69,49 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
     },
     {
       condition: boardMissionsDetails.dueDate,
-      label: "",
+      label:  t("sales.quote.deliveryDate"),
       value:
-          <LocalizationProvider
-              dateAdapter={AdapterMoment}
-              adapterLocale="en-gb"
-          >
-            <div >
-              <DateField
-                  label={
-                    t("sales.quote.deliveryDate")
-                  }
-                  date={convertUtcToLocalIsoString(jobDueDate)}
-                  handleChange={(newDate) => {
-                    let utcDueDate = new Date(newDate).toUTCString()
-                    let mom = moment(newDate);
-                    let formattedDueDate = mom.utc().format("YYYY-MM-DD HH:mm:ss");
-                    setJobDueDate(formattedDueDate);
-                    const callBack = ()=> {
-                    }
-                    updateJobDueDateApi(callApi, callBack, {
-                      boardMissionId: boardMissionsDetails.boardMissionId,
-                      dueDate: utcDueDate,
-                    }).then();
-                  }}
-                  isEditable={true}
-                  withTime={true}
-                  inputWidth={"230px"}
-                  format={"DD/MM HH:mm"}
-              />
+          <div>
+
+            <div style={{visibility: "hidden", width: 0, height: 0}}>
+              <LocalizationProvider
+                  dateAdapter={AdapterMoment}
+                  adapterLocale="en-gb"
+              >
+                <div>
+                  <DateField
+                      label={""}
+                      date={convertUtcToLocalIsoString(jobDueDate)}
+                      handleChange={(newDate) => {
+                        let utcDueDate = new Date(newDate).toUTCString()
+                        let mom = moment(newDate);
+                        let formattedDueDate = mom.utc().format("YYYY-MM-DD HH:mm:ss");
+                        setJobDueDate(formattedDueDate);
+                        const callBack = () => {
+                        }
+                        updateJobDueDateApi(callApi, callBack, {
+                          boardMissionId: boardMissionsDetails.boardMissionId,
+                          dueDate: utcDueDate,
+                        }).then();
+                      }}
+                      isEditable={true}
+                      withTime={true}
+                      inputWidth={"100"}
+                      format={"DD/MM HH:mm"}
+                      openPicker={openDatePicker}
+                      onClose={() => setOpenDatePicker(false)}
+                  />
+                </div>
+              </LocalizationProvider>
             </div>
-          </LocalizationProvider>
-          ,
+            <span style={{cursor: "pointer"}} onClick={() => setOpenDatePicker(true)}>
+              {
+                DateHourFormatterShort(
+                    convertUtcToLocalIsoString(jobDueDate)
+                )
+              }
+            </span>
+          </div>,
     },
     {
       condition: boardMissionsDetails.agentName,
