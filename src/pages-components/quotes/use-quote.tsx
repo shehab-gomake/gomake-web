@@ -2252,6 +2252,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
 
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [isSendToClient, setIsSendToClient] = useState(false);
+  const [isSendOrderReadyToClient, setIsSendOrderReadyToClient] =
+    useState(false);
+
   const [paymentModalTitle, setPaymentModalTitle] = useState("");
   const [sendPayment, setSendPayment] =
     useRecoilState<StatePayment>(sendPaymentState);
@@ -2301,8 +2304,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   };
 
-  const onClickSendPayment = async (document: any, isSendToClient: boolean) => {
+  const onClickSendPayment = async (
+    document: any,
+    isSendToClient: boolean,
+    isSendOrderReadyToClient: boolean = false
+  ) => {
     setIsSendToClient(isSendToClient);
+    setIsSendOrderReadyToClient(isSendOrderReadyToClient);
     try {
       await onClickSendPaymentOld(document, isSendToClient);
       setPaymentModalTitle(
@@ -2890,6 +2898,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     deliveryOrderId,
     deliveryOrderNumber,
     deliveryCustomerId,
+    isSendOrderReadyToClient,
   };
 };
 
