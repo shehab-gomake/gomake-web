@@ -1,0 +1,375 @@
+import { useMemo, useState } from "react";
+import { useGomakeAxios } from "@/hooks";
+import { useTranslation } from "react-i18next";
+import {
+  getAgentPerformanceChartApi,
+  getClientPerformanceChartApi,
+  getPieAgentChartApi,
+  getPieProductTypeChartApi,
+  getProductPerformanceChartApi,
+  getSalesChartRouteApi,
+} from "@/services/api-service/reports-service/sales-controller-endpoints";
+import { useRecoilValue } from "recoil";
+import { dashboardDateState, systemCurrencyState } from "@/store";
+import { ChartItem } from "./interfaces/charts";
+import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
+import { selectedAgentIdsState } from "./filters/states/selected-agent-id";
+import { selectedProductsIdsState } from "./filters/states/selected-product-id";
+import { selectedProductTypesIdsState } from "./filters/states/selected-product-type-id";
+import { selectedClientTypesIdsState } from "./filters/states/selected-client-types-ids";
+import { startOfMonth, endOfToday } from "date-fns";
+import { selectedDashClientState } from "./filters/states/selected-client-id";
+
+type TableRow = [
+  string, // clientName or AgentName or ProductName
+  number, // totalJobs
+  number, // finalPrice
+  number, // totalCalculatedPrice
+  number, // totalCost
+  number, // totalProfit
+  number, // avgProfit
+  number, // avgPerOrder
+  string, // os
+  number // successRate
+];
+
+const useMonitoringDashboard = () => {
+  const { t } = useTranslation();
+  const { callApi } = useGomakeAxios();
+  const { getCurrencyUnitText } = useQuoteGetData();
+  const [statistics, setStatistics] = useState();
+  const [salesItems, setSalesItems] = useState<
+    {
+      date: string;
+      totalCost: number;
+      totalPrice: number;
+      avgTotalPrice: number;
+    }[]
+  >();
+  const [productTypeChartData, setProductTypeChartData] =
+    useState<ChartItem[]>();
+  const [agentChartData, setAgentChartData] = useState<ChartItem[]>();
+  const [productsRow, setProductsRow] = useState<TableRow[]>([]);
+  const [agentsRow, setAgentsRow] = useState<TableRow[]>([]);
+  const [clientsRow, setClientsRow] = useState<TableRow[]>([]);
+  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
+  const currUnit = getCurrencyUnitText(systemCurrency);
+
+  // const getSalesChartRoute = async (filters) => {
+  const getSalesChartRoute = async (
+    filters,
+    extraCostData?: { actualCost?: number; target?: number }
+  ) => {
+    const data: any = {
+      fromDate: filters?.startDate?.toISOString(),
+      toDate: filters?.endDate?.toISOString(),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
+      }),
+
+      ...extraCostData,
+    };
+
+    const callBack = (res) => {
+      if (res.success) {
+        const { salesItems, ...statisticsRest } = res.data;
+        setStatistics(statisticsRest);
+        setSalesItems(salesItems);
+      }
+    };
+    await getSalesChartRouteApi(callApi, callBack, data);
+  };
+
+  const getPieProductTypeChart = async (filters) => {
+    const data: any = {
+      fromDate: filters?.startDate?.toISOString(),
+      toDate: filters?.endDate?.toISOString(),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
+      }),
+    };
+
+    const callBack = (res) => {
+      if (res.success) {
+        const data = res.data;
+        setProductTypeChartData(
+          data?.map((product) => ({
+            label: product?.productType,
+            value: product?.totalPrice,
+          }))
+        );
+      }
+    };
+    await getPieProductTypeChartApi(callApi, callBack, data);
+  };
+
+  const getProductPerformanceChart = async (filters) => {
+    const data: any = {
+      fromDate: filters?.startDate?.toISOString(),
+      toDate: filters?.endDate?.toISOString(),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
+      }),
+    };
+    const callBack = (res) => {
+      if (res.success) {
+        const data = res.data;
+        const mapData = data?.map((row) => [
+          row?.productName,
+          row?.totalJobs,
+          row?.qunatites,
+          row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
+          row?.totalCalculatedPrice != null
+            ? `${row.totalCalculatedPrice} ${currUnit}`
+            : "-",
+          row?.totalCost != null ? `${row.totalCost} ${currUnit}` : "-",
+          row?.totalProfit != null ? `${row.totalProfit} ${currUnit}` : "-",
+          row?.avgProfit != null ? `${row.avgProfit} ${currUnit}` : "-",
+          row?.avgPerOrder,
+          row?.os != null ? `${row.os} %` : "-",
+          row?.successRate != null ? `${row.successRate} %` : "-",
+        ]);
+        setProductsRow(mapData);
+      }
+    };
+    await getProductPerformanceChartApi(callApi, callBack, data);
+  };
+
+  const getAgentPerformanceChart = async (filters) => {
+    const data: any = {
+      fromDate: filters?.startDate?.toISOString(),
+      toDate: filters?.endDate?.toISOString(),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
+      }),
+    };
+
+    const callBack = (res) => {
+      if (res.success) {
+        const data = res.data;
+        const mapData = data?.map((row) => [
+          row?.agentName,
+          row?.totalJobs,
+          row?.qunatites,
+          row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
+          row?.totalCalculatedPrice != null
+            ? `${row.totalCalculatedPrice} ${currUnit}`
+            : "-",
+          row?.totalCost != null ? `${row.totalCost} ${currUnit}` : "-",
+          row?.totalProfit != null ? `${row.totalProfit} ${currUnit}` : "-",
+          row?.avgProfit != null ? `${row.avgProfit} ${currUnit}` : "-",
+          row?.avgPerOrder,
+          row?.os != null ? `${row.os} %` : "-",
+          row?.successRate != null ? `${row.successRate} %` : "-",
+        ]);
+        setAgentsRow(mapData);
+      }
+    };
+    await getAgentPerformanceChartApi(callApi, callBack, data);
+  };
+
+  const getClientPerformanceChart = async (filters) => {
+    const data: any = {
+      fromDate: filters?.startDate?.toISOString(),
+      toDate: filters?.endDate?.toISOString(),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
+      }),
+    };
+
+    const callBack = (res) => {
+      if (res.success) {
+        const data = res.data;
+        const mapData = data?.map((row) => [
+          row?.clientName,
+          row?.totalJobs,
+          row?.qunatites,
+          row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
+          row?.totalCalculatedPrice != null
+            ? `${row.totalCalculatedPrice} ${currUnit}`
+            : "-",
+          row?.totalCost != null ? `${row.totalCost} ${currUnit}` : "-",
+          row?.totalProfit != null ? `${row.totalProfit} ${currUnit}` : "-",
+          row?.avgProfit != null ? `${row.avgProfit} ${currUnit}` : "-",
+          row?.avgPerOrder,
+          row?.os != null ? `${row.os} %` : "-",
+          row?.successRate != null ? `${row.successRate} %` : "-",
+        ]);
+        setClientsRow(mapData);
+      }
+    };
+    await getClientPerformanceChartApi(callApi, callBack, data);
+  };
+
+  const getPieAgentChart = async (filters) => {
+    const data: any = {
+      fromDate: filters?.startDate?.toISOString(),
+      toDate: filters?.endDate?.toISOString(),
+      ...(filters.selectedAgentIds?.length && {
+        agents: filters.selectedAgentIds,
+      }),
+      ...(filters.selectedProductsIds?.length && {
+        products: filters.selectedProductsIds,
+      }),
+      ...(filters.selectedProductTypesIds?.length && {
+        productTypes: filters.selectedProductTypesIds,
+      }),
+      ...(filters.selectedClientTypesIds?.length && {
+        clentTypes: filters.selectedClientTypesIds,
+      }),
+      ...(filters.selectedClient?.id && {
+        clients: [filters.selectedClient.id],
+      }),
+    };
+    const callBack = (res) => {
+      if (res.success) {
+        const data = res.data;
+        setAgentChartData(
+          data?.map((product) => ({
+            label: product?.agentName,
+            value: product?.totalPrice,
+          }))
+        );
+      }
+    };
+    await getPieAgentChartApi(callApi, callBack, data);
+  };
+
+  const baseTableHeaders = [
+    t("dashboard.jobs"),
+    t("dashboard.quantity"),
+    t("dashboard.finalPrice"),
+    t("dashboard.calculatedPrice"),
+    t("dashboard.cost"),
+    t("dashboard.profit"),
+    t("dashboard.avgProfit"),
+    t("dashboard.avgPerOrder"),
+    t("dashboard.os"),
+    t("dashboard.successRate"),
+  ];
+
+  const productTableHeaders = [t("dashboard.productName"), ...baseTableHeaders];
+  const clientTableHeaders = [t("dashboard.clientName"), ...baseTableHeaders];
+  const agentTableHeaders = [t("dashboard.agentName"), ...baseTableHeaders];
+
+  const { dates } = useRecoilValue(dashboardDateState);
+
+  const selectedClientTypesIds = useRecoilValue(selectedClientTypesIdsState);
+  const selectedAgentIds = useRecoilValue(selectedAgentIdsState);
+  const selectedProductsIds = useRecoilValue(selectedProductsIdsState);
+  const selectedProductTypesIds = useRecoilValue(selectedProductTypesIdsState);
+
+  const selectedClient = useRecoilValue(selectedDashClientState);
+
+  const filters = useMemo(
+    () => ({
+      startDate: dates?.startDate || startOfMonth(new Date()),
+      endDate: dates?.endDate || endOfToday(),
+      selectedAgentIds,
+      selectedProductsIds,
+      selectedProductTypesIds,
+      selectedClientTypesIds,
+      selectedClient,
+    }),
+    [
+      dates?.startDate,
+      dates?.endDate,
+      selectedAgentIds,
+      selectedProductsIds,
+      selectedProductTypesIds,
+      selectedClientTypesIds,
+      selectedClient,
+    ]
+  );
+
+  return {
+    t,
+    dates,
+    salesItems,
+    statistics,
+    agentChartData,
+    productTypeChartData,
+    getSalesChartRoute,
+    getPieAgentChart,
+    getPieProductTypeChart,
+    getProductPerformanceChart,
+    getAgentPerformanceChart,
+    getClientPerformanceChart,
+    productsRow,
+    productTableHeaders,
+    clientsRow,
+    clientTableHeaders,
+    agentsRow,
+    agentTableHeaders,
+    systemCurrency,
+    selectedAgentIds,
+    selectedProductsIds,
+    selectedProductTypesIds,
+    selectedClientTypesIds,
+    filters,
+    currUnit,
+  };
+};
+
+export { useMonitoringDashboard };
