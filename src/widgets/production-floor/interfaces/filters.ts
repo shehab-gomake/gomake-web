@@ -14,6 +14,7 @@ export interface IProductionFloorFilter {
   groups: IFilterGroup[];
   groupsHistory: IFilterGroup[];
   groupId: string;
+  agentIds?: string[];
 }
 
 export interface IStation {

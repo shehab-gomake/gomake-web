@@ -11,6 +11,8 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Checkbox } from "@mui/material";
 import { CheckboxCheckedIcon } from "@/icons";
 import { CheckboxIcon } from "@/icons";
+import {EPreferences} from "@/enums/prefernces";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
 
 const useStatusTable = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -19,6 +21,7 @@ const useStatusTable = () => {
     selectedBoardsMissionsState
   );
   const { t } = useTranslation();
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   const onClickStatus = () => {
     setIsOpen((prevState) => !prevState);
   };
@@ -64,8 +67,9 @@ const useStatusTable = () => {
         />
       ),
       `${t("productionFloor.job")} / ${t("SourceDocument.order")}`,
-      t("home.headers.deliveryDate"),
+      t("sales.quote.deliveryDate"),
       t("productionFloor.customer"),
+      CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && t("productionFloor.agent"),
       // t("home.headers.jobName"),
       t("sales.quote.productName"),
       t("sales.documentDeliveries.description"),

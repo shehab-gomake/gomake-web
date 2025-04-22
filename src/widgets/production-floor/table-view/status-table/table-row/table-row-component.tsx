@@ -36,6 +36,8 @@ import {AdapterMoment} from "@mui/x-date-pickers/AdapterMoment";
 import {DateField} from "@/components/date-picker/date-filed";
 import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
 import {useGomakeAxios} from "@/hooks";
+import {EPreferences} from "@/enums/prefernces";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -154,7 +156,7 @@ const TableRowComponent = ({
 
   const { updateStatus, updateBoardMissionsOrder, t, onClickPrintJob } =
     useProductionFloorData();
-
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   const onSelectBoardMissions = (id: string, checked: boolean) => {
     setSelectedIds(
       checked
@@ -261,6 +263,7 @@ const TableRowComponent = ({
                 cursor: "pointer",
                 textDecoration: "none",
                 color: "#000000",
+                  fontWeight:"bolder"
               }}
             >
               {boardMission?.productType ? boardMission?.sectionName ? boardMission?.sectionName + " / " : boardMission?.productType + " / " : null}
@@ -284,6 +287,7 @@ const TableRowComponent = ({
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
+               
             }}
           >
             <div />
@@ -362,7 +366,23 @@ const TableRowComponent = ({
           onClick={() => onClickClient(boardMission?.clientId)}
         >
           {getTruncatedLabel(boardMission?.clientName, 15)}
+
         </SecondaryTableCell>
+          {
+              CheckPreferenceValue(
+                  EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR
+              ) && <SecondaryTableCell
+                  align={"center"}
+                  style={{
+                      width: "15px",
+                      cursor: "pointer",
+                      backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+                  }}
+              >
+                  {getTruncatedLabel(boardMission?.agentName, 15)}
+              </SecondaryTableCell>
+          }
+         
         <SecondaryTableCell
           align={"center"}
           style={{

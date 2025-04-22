@@ -8,6 +8,7 @@ export interface IBoardMissions {
   boardMissionNumber: string;
   orderNumber: string;
   jobName: string;
+  agentName: string;
   productName: string;
   productId: string;
   currentStation: ICurrentStation;
