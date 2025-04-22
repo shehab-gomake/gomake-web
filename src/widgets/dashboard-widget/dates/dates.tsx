@@ -17,7 +17,7 @@ const DashboardDates = ({handelSearchValueChange}) => {
                 <FixedDatesComponent/>
                 <GoMakeDatepicker/>
                 <MachineList/>
-                <AgentsList/>
+                <AgentsList onClose={()=>null}/>
                 <DashboardClientsList/>
             </div>
 
