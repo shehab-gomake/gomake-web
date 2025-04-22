@@ -56,7 +56,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
   const { callApi } = useGomakeAxios();
   const [jobDueDate,setJobDueDate] = useState(boardMissionsDetails.dueDate?.toString());
   const fieldMappings = [
-    {
+     {
       condition: boardMissionsDetails.createdDate,
       label: t("productionFloor.started"),
       value: DateHourFormatterShort(
@@ -65,38 +65,10 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
     },
     {
       condition: boardMissionsDetails.dueDate,
-      label: "",
-      value:
-          <LocalizationProvider
-              dateAdapter={AdapterMoment}
-              adapterLocale="en-gb"
-          >
-            <div >
-              <DateField
-                  label={
-                    t("sales.quote.deliveryDate")
-                  }
-                  date={convertUtcToLocalIsoString(jobDueDate)}
-                  handleChange={(newDate) => {
-                    let utcDueDate = new Date(newDate).toUTCString()
-                    let mom = moment(newDate);
-                    let formattedDueDate = mom.utc().format("YYYY-MM-DD HH:mm:ss");
-                    setJobDueDate(formattedDueDate);
-                    const callBack = ()=> {
-                    }
-                    updateJobDueDateApi(callApi, callBack, {
-                      boardMissionId: boardMissionsDetails.boardMissionId,
-                      dueDate: utcDueDate,
-                    }).then();
-                  }}
-                  isEditable={true}
-                  withTime={true}
-                  inputWidth={"230px"}
-                  format={"DD/MM HH:mm"}
-              />
-            </div>
-          </LocalizationProvider>
-          ,
+      label: t("productionFloor.deliveredOn"),
+      value: DateHourFormatterShort(
+        (boardMissionsDetails.dueDate?.toString())
+      ),
     },
     {
       condition: boardMissionsDetails.agentName,
