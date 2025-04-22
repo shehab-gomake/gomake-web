@@ -28,11 +28,17 @@ import {
 import { FormArrayInput } from "@/components/form-inputs/form-array-input";
 
 interface ICompanyProfileComponentProps {
-  taxLoginUrl: string;
+  taxLoginInfo: {
+    isLoggedIn: boolean;
+    loginUrl: string;
+    lastLoginDate: Date;
+  };
+  printHouseTaxLogout?: () => void;
 }
 
 const CompanyProfileComponent = ({
-  taxLoginUrl,
+  taxLoginInfo,
+  printHouseTaxLogout,
 }: ICompanyProfileComponentProps) => {
   const { t } = useTranslation();
   const {
@@ -124,14 +130,10 @@ const CompanyProfileComponent = ({
           title: "profileSettings.printNode",
         }
       : null,
-    ...(taxLoginUrl
-      ? [
-          {
-            inputs: [],
-            title: "profileSettings.taxAuthority",
-          },
-        ]
-      : []),
+    {
+      inputs: [],
+      title: "profileSettings.taxAuthority",
+    },
   ].filter(Boolean);
 
   return (
@@ -163,12 +165,6 @@ const CompanyProfileComponent = ({
       </Stack>
       <Stack direction={"column"} gap={"32px"} paddingTop={"44px"}>
         {formSections.map((section) => {
-          if (
-            section.title === "profileSettings.taxAuthority" &&
-            !taxLoginUrl
-          ) {
-            return null;
-          }
           return (
             <FormInputsSectionComponent
               sectionTitle={section.title ?? null}
@@ -176,12 +172,48 @@ const CompanyProfileComponent = ({
             >
               {section.component && section.component}
               {section.title === "profileSettings.taxAuthority" ? (
-                <SecondaryButton
-                  variant="outlined"
-                  onClick={() => window.open(taxLoginUrl, "_blank")}
-                >
-                  {t("login.login")}
-                </SecondaryButton>
+                <Stack direction={"column"}>
+                  <SecondaryButton
+                    variant="outlined"
+                    onClick={() => {
+                      if (taxLoginInfo?.isLoggedIn) {
+                        printHouseTaxLogout();
+                      } else {
+                        window.open(taxLoginInfo.loginUrl, "_blank");
+                      }
+                    }}
+                    sx={{
+                      color: !taxLoginInfo?.isLoggedIn ? "green" : "red",
+                      borderColor: !taxLoginInfo?.isLoggedIn ? "green" : "red",
+                      "&:hover": {
+                        backgroundColor: !taxLoginInfo?.isLoggedIn
+                          ? "#e6ffe6"
+                          : "#ffe6e6",
+                        borderColor: !taxLoginInfo?.isLoggedIn
+                          ? "darkgreen"
+                          : "darkred",
+                      },
+                    }}
+                  >
+                    {taxLoginInfo?.isLoggedIn
+                      ? t("dashboard-widget.logout")
+                      : t("login.login")}
+                  </SecondaryButton>
+                  {taxLoginInfo?.isLoggedIn && taxLoginInfo.lastLoginDate && (
+                    <div
+                      style={{
+                        marginTop: "8px",
+                        ...FONT_FAMILY.Inter(600, 13),
+                        color: "#666",
+                      }}
+                    >
+                      {t("profileSettings.lastLoginDate")}:{" "}
+                      {new Date(
+                        taxLoginInfo.lastLoginDate
+                      ).toLocaleDateString()}
+                    </div>
+                  )}
+                </Stack>
               ) : (
                 section.inputs.map((companyInput) => (
                   <div key={companyInput.parameterKey}>
