@@ -78,6 +78,8 @@ const TRY_MOVE_BOARD_MISSION_TO_DONE_URL =
   "/v1/erp-service/board-missions/try-move-board-mission-to-done/";
 const UPDATE_DUE_DATE_URL =
     "/v1/erp-service/board-missions/update-due-date";
+const DELETE_JOB_FILE_UR =
+    "/v1/erp-service/board-missions/delete-orderitem-file";
 const getProductionFloorData: ICallAndSetData = async (
   callApi,
   setState,
@@ -646,6 +648,24 @@ const updateJobDueDateApi: ICallAndSetData = async (
       data
   );
 };
+const deleteJobFileApi: ICallAndSetData = async (
+    callApi,
+    callBack,
+    data: {
+      orderItemId: string;
+      filename: string;
+      source: string;
+      productType: string;
+    }
+) => {
+  return await getSetApiData(
+      callApi,
+      EHttpMethod.POST,
+      DELETE_JOB_FILE_UR,
+      callBack,
+      data
+  );
+};
 export {
   boardMissionsUpdateActionEmployee,
   boardMissionsUpdateActionMachine,
@@ -685,5 +705,6 @@ export {
   getBoardMissionActionMaterialsApi,
   updateBoardMissionsActionDoneWithMaterialsApi,
   tryMoveBoardMissionToDoneApi,
-  updateJobDueDateApi
+  updateJobDueDateApi,
+  deleteJobFileApi
 };
