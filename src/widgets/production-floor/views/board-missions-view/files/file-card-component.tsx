@@ -14,6 +14,11 @@ import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boar
 import { DotsLoader } from "@/components/dots-loader/dots-Loader";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
+import {
+    deleteJobFileApi,
+    updateJobDueDateApi
+} from "@/services/api-service/production-floor/production-floor-endpoints";
+import {useGomakeAxios} from "@/hooks";
 
 const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
   const { t } = useTranslation();
@@ -25,30 +30,40 @@ const FileCardComponent = ({ file }: { file: IBoardMissionsFile }) => {
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { query } = useRouter();
+  const { callApi } = useGomakeAxios();
   const { productType } = query;
 
   const onClickDelete = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(
-        companyProfile.filesApiAddress + "/api/Files/DeleteFile",
-        {
-          method: "POST",
-          body: JSON.stringify({
+      const callBack = async ()=>{
+          const response = await fetch(
+              companyProfile.filesApiAddress + "/api/Files/DeleteFile",
+              {
+                  method: "POST",
+                  body: JSON.stringify({
+                      orderItemId: boardMissions.orderItemId,
+                      filename: file.name,
+                      source: file.filePath,
+                      productType: productType || "",
+                  }),
+                  headers: {
+                      authorization: "Bearer " + getUserToken(),
+                      "Content-Type": "application/json",
+                  },
+              }
+          );
+          if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+          }
+      }
+      deleteJobFileApi(callApi, callBack, {
             orderItemId: boardMissions.orderItemId,
             filename: file.name,
             source: file.filePath,
             productType: productType || "",
-          }),
-          headers: {
-            authorization: "Bearer " + getUserToken(),
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+      }).then();
+      
     } catch (error) {
       console.error("Download failed:", error);
     }

@@ -514,7 +514,7 @@ const RightSideWidget = ({
         ) : null}
         {/* Slider */}
         <PermissionCheck userPermission={Permissions.UPDATE_CALCULATED_PRICE}>
-          {currentProductItemValueTotalPrice && minDiscount !== maxIncrease && (
+          {true && (
             <Box sx={{ width: 300, textAlign: "center", margin: "20px auto" }}>
               <Box
                 display="flex"

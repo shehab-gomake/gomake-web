@@ -599,4 +599,5 @@ df-messenger {
 }
 .MuiPopper-root {
   z-index: 999999 !important;
+  direction: ltr !important;
 }
