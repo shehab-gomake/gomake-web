@@ -51,20 +51,48 @@ const SalesLineChart = ({
 }: PriceCurveFitProps) => {
   const { t } = useTranslation();
 
-  const datasets = yKeys.map((key, index) => ({
-    label: t(`dashboard.${key}`) || key,
-    data: salesItems.map((item) => ({
-      x: item[xKey],
-      y: item[key],
-    })),
-    borderColor: COLORS[index % COLORS.length],
-    backgroundColor: COLORS[index % COLORS.length],
-    fill: false,
-    borderWidth: 2,
-    tension: 0,
-    showLine: true,
-    pointRadius: 3,
-  }));
+  // const datasets = yKeys
+  // .filter((key) =>
+  //   salesItems.some((item) => item[key] !== null && item[key] !== undefined)
+  // )
+  // .map((key, index) => {
+  //   const isFlatLine = key === "actualCost" || key === "target";
+
+  //   return {
+  //     label: t(`dashboard.${key}`) || key,
+  //     data: salesItems.map((item) => ({
+  //       x: item[xKey],
+  //       y: item[key],
+  //     })),
+  //     borderColor: COLORS[index % COLORS.length],
+  //     backgroundColor: COLORS[index % COLORS.length],
+  //     fill: false,
+  //     borderWidth: 2,
+  //     tension: 0,
+  //     showLine: true,
+  //     pointRadius: isFlatLine ? 0 : 3,
+  //     pointHoverRadius: isFlatLine ? 0 : 5,
+  //   };
+  // });
+
+  const datasets = yKeys
+    .filter((key) =>
+      salesItems.some((item) => item[key] !== null && item[key] !== undefined)
+    )
+    .map((key, index) => ({
+      label: t(`dashboard.${key}`) || key,
+      data: salesItems.map((item) => ({
+        x: item[xKey],
+        y: item[key],
+      })),
+      borderColor: COLORS[index % COLORS.length],
+      backgroundColor: COLORS[index % COLORS.length],
+      fill: false,
+      borderWidth: 2,
+      tension: 0,
+      showLine: true,
+      pointRadius: 3,
+    }));
 
   const data = { datasets };
 

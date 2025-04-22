@@ -34,27 +34,6 @@ const useStyle = () => {
         justifyContent: "space-between",
       },
 
-      secSubContainer: {
-        display: "flex",
-        flexDirection: "row" as "row",
-        flexWrap: "wrap" as "wrap",
-        gap: "32px",
-        padding: "24px 21px 24px 32px",
-        backgroundColor: "#fff",
-        boxShadow: "0px 4px 20px rgba(238, 238, 238, 0.5)",
-        border: "1px solid #F8F9FA",
-        justifyContent: "space-between",
-        alignItems: "flex-start",
-      },
-      piesContainer: {
-        display: "flex",
-        flexDirection: "column" as "column",
-        gap: "20px",
-        flex: 1,
-        minWidth: "300px",
-        maxWidth: "35vw",
-        alignItems: "center",
-      },
       labelStyle: {
         color: "#333",
         fontWeight: 600,

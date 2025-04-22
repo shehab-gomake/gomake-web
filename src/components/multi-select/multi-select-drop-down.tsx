@@ -5,9 +5,11 @@ import {
   FormGroup,
   MenuItem,
   Button,
+  MenuProps,
+  Menu,
+  styled,
 } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { StyledMenu } from "@/widgets";
 import { GomakeTextInput } from "@/components";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
@@ -25,6 +27,41 @@ interface MultiSelectDropdownProps {
   buttonLabel: string;
   placeholder?: string;
 }
+
+const StyledMenu = styled((props: MenuProps) => (
+  <Menu
+    elevation={0}
+    anchorOrigin={{
+      vertical: "bottom",
+      horizontal: props.dir === "rtl" ? "right" : "left",
+    }}
+    transformOrigin={{
+      vertical: "top",
+      horizontal: props.dir === "rtl" ? "right" : "left",
+    }}
+    {...props}
+  />
+))(() => ({
+  "& .MuiPaper-root": {
+    borderRadius: 6,
+    width: "250px",
+    height: "fit-content",
+    maxHeight: "unset",
+    boxShadow:
+      "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
+    "& .MuiMenu-list": {
+      padding: 0,
+    },
+    "& .MuiMenuItem-root": {
+      fontSize: "12px",
+      color: "#12133A",
+      padding: 0,
+    },
+    "& .MuiFormControlLabel-root": {
+      margin: 0,
+    },
+  },
+}));
 
 export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
   items,
@@ -70,15 +107,22 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         <KeyboardArrowDownIcon />
       </Button>
       <StyledMenu anchorEl={anchorEl} open={open} onClose={handleClose}>
-        <FormGroup>
-          <div style={{ padding: "0 10px" }}>
-            <GomakeTextInput
-              placeholder={t(placeholder)}
-              value={filter}
-              onChange={handleFilterChange}
-            />
-          </div>
-          <MenuItem>
+        <div
+          style={{
+            padding: "10px 10px 0px 10px",
+            borderBottom: "1px solid #eee",
+            background: "#fff",
+            position: "sticky",
+            top: 0,
+            zIndex: 10,
+          }}
+        >
+          <GomakeTextInput
+            placeholder={t(placeholder)}
+            value={filter}
+            onChange={handleFilterChange}
+          />
+          <MenuItem disableRipple>
             <FormControlLabel
               label={t("deposits.selectAll")}
               control={
@@ -86,20 +130,25 @@ export const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
               }
             />
           </MenuItem>
-          {filteredItems?.map((item) => (
-            <MenuItem key={item.id}>
-              <FormControlLabel
-                label={item.label}
-                control={
-                  <Checkbox
-                    checked={selectedIds.includes(item.id)}
-                    onChange={() => onToggle(item.id)}
-                  />
-                }
-              />
-            </MenuItem>
-          ))}
-        </FormGroup>
+        </div>
+
+        <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+          <FormGroup>
+            {filteredItems.map((item) => (
+              <MenuItem key={item.id} disableRipple>
+                <FormControlLabel
+                  label={item.label}
+                  control={
+                    <Checkbox
+                      checked={selectedIds.includes(item.id)}
+                      onChange={() => onToggle(item.id)}
+                    />
+                  }
+                />
+              </MenuItem>
+            ))}
+          </FormGroup>
+        </div>
       </StyledMenu>
     </>
   );

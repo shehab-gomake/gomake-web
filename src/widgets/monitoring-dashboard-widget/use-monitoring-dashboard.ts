@@ -55,7 +55,11 @@ const useMonitoringDashboard = () => {
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currUnit = getCurrencyUnitText(systemCurrency);
 
-  const getSalesChartRoute = async (filters) => {
+  // const getSalesChartRoute = async (filters) => {
+  const getSalesChartRoute = async (
+    filters,
+    extraCostData?: { actualCost?: number; target?: number }
+  ) => {
     const data: any = {
       fromDate: filters?.startDate?.toISOString(),
       toDate: filters?.endDate?.toISOString(),
@@ -75,6 +79,8 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
+
+      ...extraCostData,
     };
 
     const callBack = (res) => {
