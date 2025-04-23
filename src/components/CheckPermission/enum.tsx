@@ -135,6 +135,7 @@ export enum Permissions {
   SHOW_RECEIPTS = "ShowReceipts",
   SHOW_DEPOSITS = "ShowDeposits",
   SHOW_SUPPLIER_PAYMENTS = "ShowSupplierPayments",
+  CANCEL_RECEIPT = "CancelReceipt",
 
   //reports group
   SHOW_REPORTS = "ShowReports",
