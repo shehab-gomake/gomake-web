@@ -391,7 +391,7 @@ const CustomerCardWidget = ({
               </div>
               <div style={{ width: "180px" }}>
                 <GoMakeAutoComplate
-                  key={customer}
+                  key={customer?.clientTypeId || "default"}
                   options={clientTypesCategories}
                   placeholder={
                     typeClient === "C"
@@ -425,7 +425,7 @@ const CustomerCardWidget = ({
                 </div>
                 <div style={{ width: "180px" }}>
                   <GoMakeAutoComplate
-                    key={customer}
+                    key={customer?.clientGroupId}
                     options={
                       clientGroupList.find(
                         (option: any) => option.groupName === inputValue
