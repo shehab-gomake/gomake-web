@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { useGaussianChart } from "./use-gussian-chart";
-import PriceCurveFit from "./components/price-curve-fit";
 import { Stack } from "@mui/material";
 import CircleIcon from "@mui/icons-material/Circle";
 import { useStyle } from "./style";
 import { GoMakeSelect } from "@/components/auto-complete/go-make-select";
 import { PrimaryButton } from "@/components/button/primary-button";
+import PriceCurveFit from "./components/price-curve-fit";
 
 const GaussianChart = () => {
   const {

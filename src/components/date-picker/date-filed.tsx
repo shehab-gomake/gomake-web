@@ -19,6 +19,7 @@ interface IDateFieldProps {
   inputWidth?: string;
   openPicker?: boolean;
   onClose?: () => void;
+  isHidden?: boolean;
 }
 
 const DateField: React.FC<IDateFieldProps> = ({
@@ -33,7 +34,8 @@ const DateField: React.FC<IDateFieldProps> = ({
   format = "DD/MM/YYYY HH:mm",
   inputWidth = null,
   openPicker = false,
-  onClose = null,
+  onClose = null, 
+  isHidden = false,
 }) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -106,7 +108,8 @@ const DateField: React.FC<IDateFieldProps> = ({
         flexDirection: "row",
         alignItems: "center",
         padding: 0,
-        width: inputWidth
+        width: inputWidth,
+       
       } : {
         display: "flex",
         flexDirection: "row",
@@ -133,8 +136,11 @@ const DateField: React.FC<IDateFieldProps> = ({
           slots={{
             textField: textFieldSlot,
           }}
+          sx={isHidden && {display:'none'}}
           format={format}
           ampm={false}
+          
+          
         />
       ) : (
         <DatePicker

@@ -15,6 +15,7 @@ import { staticDateRange } from "@/components/date-picker/const";
 import { endOfToday, startOfYear } from "date-fns";
 import { useIsMobile } from "@/hooks/use-responsive";
 import { PrimaryButton } from "../button/primary-button";
+import moment from "moment";
 
 interface IGoMakeDatepicker {
   onChange: (fromDate: Date, toDate: Date) => void;
@@ -73,14 +74,28 @@ const GoMakeDatepicker = ({
 
   useEffect(() => {
     if (value) {
-      setState({
-        ...state,
-        selection: {
-          ...state.selection,
-          endDate: value.toDate,
-          startDate: value.fromDate,
-        },
-      });
+      if(value && value.fromDate && value.toDate){
+        let mom1 =  moment(value.fromDate);
+        let mom2 =  moment(value.toDate);
+        setState({
+          ...state,
+          selection: {
+            ...state.selection,
+            endDate: mom1.toDate(),
+            startDate: mom2.toDate(),
+          },
+        });
+      }else{
+        setState({
+          ...state,
+          selection: {
+            ...state.selection,
+            endDate: undefined,
+            startDate: undefined,
+          },
+        });
+      }
+      
     }
   }, [value]);
 

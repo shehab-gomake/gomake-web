@@ -33,6 +33,7 @@ import {
 import { useRouter } from "next/router";
 import {formatDate} from "tough-cookie";
 import moment from "moment";
+import {IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -44,12 +45,11 @@ const useProductionFloorData = () => {
   const [data, setData] =
     useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
   const [abortController, setAbortController] = useState(null);
-  const [, setFilters] = useRecoilState(productionFloorFiltersState);
+  const [filtersState, setFilters] = useRecoilState(productionFloorFiltersState);
   const [, setTags] = useRecoilState(tagsState);
   const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
   const [, setPath] = useRecoilState(productionFloorPathsState);
   const [, setJobsStatuses] = useRecoilState(jobsStatusesState);
-
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
     selectedGroupIdState
@@ -57,7 +57,7 @@ const useProductionFloorData = () => {
   const view = useRecoilValue(productionFloorViewState);
   const getData = async (connectionId?: string) => {
     if (view === EProductionFloorView.FILTER_GROUPS) {
-      getDataByGroups(connectionId).then();
+      getDataByGroups(connectionId,filtersState).then();
       return;
     }
     const callBack = (res) => {
@@ -86,26 +86,27 @@ const useProductionFloorData = () => {
   };
   const getDataByGroups = async (
     connectionId?: string,
+    currentFilters?:IProductionFloorFilter,
     clearData?: boolean
   ) => {
     if (clearData) {
       setData([]);
       setJobsStatuses([]);
     }
-
     const callBack = (res) => {
       if (res.success) {
         setData(res?.data?.boardMissionsCollections);
-        setFilters(res?.data?.filter);
+        //setFilters(res?.data?.filter);
         setJobsStatuses(res?.data?.boardMissionStatuses);
         setSelectedGroupId("all");
         setTags(res?.data?.automatedTagsFilter);
         setUserGroups(res?.data?.groups);
         setPath(res?.data?.path ? res?.data?.path : []);
+        setFilterGroups(filterGroups.map(x=>x.id === "all" ? {...x,stuckCount:res?.data?.boradMisstionsStuckCount,inProcessCount:res?.data?.boradMisstionsNotStuckCount} : x))
         //alertSuccessGetData();
       }
     };
-    await getJobsByGroups(callApi, callBack, connectionId, false, null);
+    await getJobsByGroups(callApi, callBack, {connectionId:connectionId,filters:currentFilters}, false, null);
   };
   const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
     const boardsIds = boards?.filter((b) => b.statusId !== statusId);
@@ -334,12 +335,18 @@ const useProductionFloorData = () => {
             inProcessCount: group?.inProcessCount,
           })
         );
+        let inProcessSum = filterGroupsList.reduce((accumulator, currentValue) => {
+          return accumulator + (currentValue.inProcessCount ?? 0)
+        },0);
+        let stuckSum = filterGroupsList.reduce((accumulator, currentValue) => {
+          return accumulator + (currentValue.stuckCount ?? 0)
+        },0);
         const allGroupViewFilter: IFilterGroupsList = {
           id: "all",
           name: t("productionFloor.allFilterGroupsViewName"),
           color: "#7355de",
-          stuckCount: 0,
-          inProcessCount: 0,
+          stuckCount: stuckSum,
+          inProcessCount: inProcessSum,
         };
         setFilterGroups([allGroupViewFilter, ...filterGroupsList]);
       }
