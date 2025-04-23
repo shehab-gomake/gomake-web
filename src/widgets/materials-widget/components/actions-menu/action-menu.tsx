@@ -275,7 +275,7 @@ const ActionMenu = (props: IActionMenuProps) => {
               sx={{ width: "100%" }}
               variant={"contained"}
             >
-              {t("profileSettings.update")}
+              {action?.action === EMaterialsActions.CreatePurchaseOrder ? t("materialsActions." + action?.key) : t("profileSettings.update")}
             </SecondaryButton>
           </Stack>
         </GoMakeModal>

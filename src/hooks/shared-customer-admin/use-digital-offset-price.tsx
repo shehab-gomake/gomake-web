@@ -251,6 +251,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     signalRPricingResult,
     calculationServerError,
     isCalculationFinished,
+    newDieCutSelect,
     setIsCalculationFinished,
   } = useCalculationSocketIO();
   useEffect(() => {
@@ -2697,6 +2698,10 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           onOpeneMultiParameterModal={onOpeneMultiParameterModal}
           subSectionParameters={subSectionParameters}
           list={list}
+          connectionId={connectionId}
+          getProductById={getProductById}
+          getAllMaterial={getAllMaterial}
+          newDieCutSelect={newDieCutSelect}
         />
       );
     }
@@ -4024,6 +4029,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     parameterCode: string,
     dieCut: any
   ) => {
+    console.log("data", data)
+    console.log("parameterId", parameterId)
+    console.log("subSectionId", subSectionId)
+    console.log("sectionId", sectionId)
+    console.log("ParameterType", ParameterType)
+    console.log("parameterName", parameterName)
+    console.log("actionId", actionId)
+
     let copySubProducts = cloneDeep(subProducts);
     const targetSubProduct = copySubProducts.find(
       (item) => item.type === subSectionType
