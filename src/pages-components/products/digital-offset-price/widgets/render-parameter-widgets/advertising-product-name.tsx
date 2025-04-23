@@ -67,7 +67,6 @@ const AdvertisingProductNameParameterWidget = ({
         style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
         placeholder={parameter?.name}
         onChange={(e: any, value: any) => {
-          console.log("value", value)
           setIsRenderData(true)
           onChangeSubProductsForPrice(
             parameter?.id,

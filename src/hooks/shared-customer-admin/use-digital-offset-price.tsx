@@ -136,7 +136,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
-  console.log("subProducts", subProducts)
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(productTemplate?.ignoreCalculatedWorkflows);
   useEffect(() => {
     setIgnoreCalculatedWorkflows(productTemplate?.ignoreCalculatedWorkflows || false);
@@ -4037,7 +4036,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     subProducts,
     false
   );
-  console.log("hasDieCutOrDieKissCut", hasDieCutOrDieKissCut)
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0
   const onChangeSubProductsForPrice = (
@@ -4647,7 +4645,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             let finalUnitWidth = getValue("finalUnitWidth");
             let finalUnitLength = getValue("finalUnitLength");
             let finalUnitHeight = getValue("finalUnitHeight");
-            console.log("dieUnitWidth", dieUnitWidth)
             const dieCutSizesParametersArray = [];
             dieCutSizesParametersArray.push({
               parameterCode: "Width",
