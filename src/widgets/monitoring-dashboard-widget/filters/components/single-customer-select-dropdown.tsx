@@ -11,16 +11,15 @@ import {
 import { useState } from "react";
 import { useCustomerDropDownList } from "@/hooks";
 import { useRecoilState } from "recoil";
-import { selectedDashClientState } from "./states/selected-client-id";
 import { useTranslation } from "react-i18next";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CloseIcon from "@mui/icons-material/Close";
 import { FONT_FAMILY } from "@/utils/font-family";
+import { selectedDashClientState } from "../states/selected-client-id";
 import { useStyle } from "./style";
 
 const SingleSelectSearchDropdown = () => {
   const { classes } = useStyle();
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const [selectedClient, setSelectedClient] = useRecoilState(
@@ -56,26 +55,8 @@ const SingleSelectSearchDropdown = () => {
   return (
     <div>
       <List component="nav">
-        <ListItemButton
-          style={{
-            minWidth: "163px",
-            height: "36px",
-            borderRadius: "8px",
-            border: "1px solid rgba(208, 213, 221, 1)",
-            backgroundColor: "#FFF",
-            ...FONT_FAMILY.Lexend(500, 16),
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "4px",
-            textTransform: "none",
-            boxShadow: "none",
-            padding: "0 8px",
-          }}
-          onClick={handleClick}
-        >
-          <Box sx={{ display: "flex", alignItems: "center", gap: "4px" }}>
+        <ListItemButton style={classes.listItemButton} onClick={handleClick}>
+          <Box sx={classes.boxStyle}>
             <span style={classes.buttonLabel}>
               {selectedClient?.name ?? t("sales.quote.customer")}
             </span>

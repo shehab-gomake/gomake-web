@@ -2,23 +2,12 @@ import { Skeleton } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import { useStyle } from "./style";
 import SalesLineChart from "./components/sales-line-chart";
-import { useTranslation } from "react-i18next";
 import { BarChartComponent } from "@/components/charts/bar-chart";
 import { PieChartComponent } from "@/components/charts/pie-chart";
 import { GomakePrimaryButton } from "@/components";
 import { ArrowDownNewIcon, SettingNewIcon } from "@/icons";
-import { useState } from "react";
 import { GoMakeMenu } from "@/components";
 import { MenuItem } from "@mui/material";
-
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  TextField,
-  DialogActions,
-  Button,
-} from "@mui/material";
 import AddCostModal from "./components/add-cost-modal";
 import { useChartsWidget } from "./use-charts-widget";
 
@@ -82,7 +71,7 @@ const ChartsWidget = ({
             <GomakePrimaryButton
               style={classes.settingBtn}
               leftIcon={<SettingNewIcon color="#182230" />}
-              rightIcon={<ArrowDownNewIcon />}
+              rightIcon={<ArrowDownNewIcon color="#182230" />}
               onClick={handleOpen}
             />
             <GoMakeMenu
