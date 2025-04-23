@@ -1,15 +1,15 @@
 import { Skeleton } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import { useStyle } from "./style";
-import SalesLineChart from "./components/sales-line-chart";
-import { BarChartComponent } from "@/components/charts/bar-chart";
-import { PieChartComponent } from "@/components/charts/pie-chart";
 import { GomakePrimaryButton } from "@/components";
 import { ArrowDownNewIcon, SettingNewIcon } from "@/icons";
 import { GoMakeMenu } from "@/components";
 import { MenuItem } from "@mui/material";
-import AddCostModal from "./components/add-cost-modal";
 import { useChartsWidget } from "./use-charts-widget";
+import {BarChartComponent} from "@/components/gomake-charts/bar-chart";
+import {PieChartComponent} from "@/components/gomake-charts/pie-chart";
+import SalesLineChart from "@/widgets/monitoring-dashboard-widget/dashboard-charts/components/sales-line-chart";
+import AddCostModal from "@/widgets/monitoring-dashboard-widget/dashboard-charts/components/add-cost-modal";
 
 type SalesChartWidgetProps = {
   salesItems: any;

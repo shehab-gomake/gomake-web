@@ -6,7 +6,7 @@ import { Cards } from "./cards/cards";
 import { useMonitoringDashboard } from "./use-monitoring-dashboard";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { DashboardFilters } from "./filters";
-import { ChartsWidget } from "./charts/charts-widget";
+import {ChartsWidget} from "@/widgets/monitoring-dashboard-widget/dashboard-charts/charts-widget";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
