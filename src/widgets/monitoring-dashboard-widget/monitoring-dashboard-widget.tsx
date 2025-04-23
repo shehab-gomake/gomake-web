@@ -85,13 +85,13 @@ const MonitoringDashboardWidget = () => {
           </Stack>
         </Stack>
       )}
-      <ChartsWidget
+      {/* <ChartsWidget
         salesItems={salesItems}
         productTypeChartData={productTypeChartData}
         agentChartData={agentChartData}
         getSalesChartRoute={getSalesChartRoute}
         filters={filters}
-      />
+      /> */}
       {renderTableSection(
         "dashboard.productPerformanceTitle",
         productsRow,
