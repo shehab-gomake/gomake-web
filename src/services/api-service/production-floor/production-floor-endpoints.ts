@@ -1,6 +1,7 @@
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { ICallAndSetData } from "@/services/api-service/interface";
+import {IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
 
 const GET_PRODUCTION_FLOOR_DATA_URL = "/v1/erp-service/board-missions";
 const UPDATE_WORK_JOB_STATUS_URL =
@@ -83,16 +84,19 @@ const DELETE_JOB_FILE_UR =
 const getProductionFloorData: ICallAndSetData = async (
   callApi,
   setState,
-  connectionId: string,
+  data:{
+    connectionId:string;
+    filters?:IProductionFloorFilter
+  },
   lock = false,
   abortController
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.GET,
-    GET_PRODUCTION_FLOOR_DATA_URL + "?connectionId=" + connectionId,
+    EHttpMethod.POST,
+    GET_PRODUCTION_FLOOR_DATA_URL + "?connectionId=" + data.connectionId,
     setState,
-    {},
+    data.filters,
     false,
     abortController
   );

@@ -64,7 +64,7 @@ const GenericProductInput = ({
   </Stack>
 );
 
-const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
+const AddNewItemModal = ({ openModal, onClose, documentType, getQuote, getCalculateQuoteItem }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
 
@@ -90,7 +90,7 @@ const AddNewItemModal = ({ openModal, onClose, documentType, getQuote }) => {
     CheckPermission,
     selectedTab,
     setSelectedTab,
-  } = useAddNewItem({ onClose, getQuote, documentType });
+  } = useAddNewItem({ onClose, getQuote, documentType, getCalculateQuoteItem });
 
   return (
     <>

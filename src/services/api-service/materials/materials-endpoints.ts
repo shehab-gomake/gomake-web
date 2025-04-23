@@ -14,6 +14,7 @@ const UPDATE_MATERIALS_IMAGES = "/v1/materials/update-materials-images";
 const UPLOAD_DOCUMENT_ATTACHMENT = "/v1/erp-service/documents/upload-document-attachment"
 const UPDATE_SUPPLIER_PRIORITY = "/v1/materials/update-supplier-priority";
 const GET_MATERIAL_CATEGORIES_URL = "/v1/materials/GetMaterialCategories";
+const GET_MATERIAL_CATEGORY_BY_MATERIAL_KEY_URL = "/v1/print-house-materials/get-print-house-material-mapped-by-material-key";
 const getDeviceSizeMockURL = "/v1/materials/get-device-size-material";
 const GET_MATERIAL_CATEGORY_DATA_URL = "/v1/materials/GetMaterialCategoryData";
 const UPDATE_MATERIAL_PROPS_URL = "/v1/materials/updateMaterial";
@@ -121,6 +122,20 @@ const getMaterialCategoriesApi: ICallAndSetData = async (
     setState
   );
 };
+
+const getMaterialCategoryByMaterialKeyApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  material: string
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    `${GET_MATERIAL_CATEGORY_BY_MATERIAL_KEY_URL}?materialKey=${material}`,
+    setState
+  );
+};
+
 
 const getDeviceSizeMockApi: ICallAndSetData = async (
   callApi,
@@ -370,6 +385,7 @@ export {
   uploadMaterialExcelFileApi,
   updateMaterialsImagesApi,
   getMaterialCategoriesApi,
+  getMaterialCategoryByMaterialKeyApi,
   getMaterialCategoryDataApi,
   updateMaterialPropApi,
   updateMaterialsPropApi,

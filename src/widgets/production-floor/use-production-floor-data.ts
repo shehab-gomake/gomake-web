@@ -79,7 +79,10 @@ const useProductionFloorData = () => {
     return await getProductionFloorData(
       callApi,
       callBack,
-      connectionId,
+      {
+        connectionId:connectionId,
+        filters:filtersState,
+      },
       false,
       abortController
     );

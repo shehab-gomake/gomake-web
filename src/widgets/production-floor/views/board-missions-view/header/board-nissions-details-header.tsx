@@ -60,7 +60,7 @@ const InfoSection = ({ boardMissionsDetails, CheckPreferenceValue, t }) => {
     setOpenDatePicker(true);
   }
   const fieldMappings = [
-    {
+     {
       condition: boardMissionsDetails.createdDate,
       label: t("productionFloor.started"),
       value: DateHourFormatterShort(

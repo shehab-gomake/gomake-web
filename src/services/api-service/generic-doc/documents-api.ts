@@ -25,6 +25,8 @@ const UPDATE_DOCUMENT_PREFERENCE_URL =
   "/v1/erp-service/document/update-document-preference";
 const DELETE_DOCUMENT_ADDRESS_URL =
   "/v1/erp-service/documents/delete-document-address";
+const DELETE_DELIVERY_ITEM_URL =
+  "/v1/erp-service/documents/delete-delivery-item";
 const DUPLICATE_DOCUMENT_URL = "/v1/erp-service/documents/duplicate-document";
 
 const DUPLICATE_DOCUMENT_ITEM_URL =
@@ -47,6 +49,8 @@ const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery";
 const CANCEL_DOCUMENT_URL = "/v1/erp-service/documents/cancel-document";
 const SEND_DOCUMENT_TO_CLIENT_URL =
   "/v1/erp-service/documents/send-document-to-client";
+const SEND_ORDER_READY_TO_CLIENT_URL =
+  "/v1/jobs-service/board-missions/send-order-ready-to-client";
 const SAVE_DOCUMENT_URL = "/v1/erp-service/documents/save-document";
 const ACCEPT_DOCUMENT_URL = "/v1/erp-service/documents/approved-by-manager";
 const REJECT_DOCUMENT_URL = "/v1/erp-service/documents/rejected-by-manager";
@@ -334,6 +338,20 @@ const deleteDocumentAddressApi: ICallAndSetData = async (
   );
 };
 
+const deleteDeliveryItemApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.DELETE,
+    DELETE_DELIVERY_ITEM_URL,
+    setState,
+    data
+  );
+};
+
 const duplicateDocumentApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -429,6 +447,21 @@ const sendDocumentToClientApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.POST,
     SEND_DOCUMENT_TO_CLIENT_URL,
+    setState,
+    data,
+    true
+  );
+};
+
+const sendOrderReadyToClientApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    SEND_ORDER_READY_TO_CLIENT_URL,
     setState,
     data,
     true
@@ -1182,6 +1215,7 @@ export {
   updateDocumentAddressApi,
   updateDocumentPreferenceApi,
   deleteDocumentAddressApi,
+  deleteDeliveryItemApi,
   changeDocumentClientApi,
   getIfCartExistApi,
   duplicateDocumentApi,
@@ -1248,4 +1282,5 @@ export {
   quickDuplicateApi,
   deleteDocumentAttachmentApi,
   getDocumentDeliveryDateApi,
+  sendOrderReadyToClientApi,
 };
