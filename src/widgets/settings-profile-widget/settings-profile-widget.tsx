@@ -13,8 +13,13 @@ const SettingsProfileWidget = () => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
   const {} = useEmployee();
-  const { getCurrenciesApi, getProfile, checkPrintHouseTaxLogin, taxLoginUrl } =
-    useCompanyProfile();
+  const {
+    getCurrenciesApi,
+    getProfile,
+    checkPrintHouseTaxLogin,
+    taxLoginInfo,
+    printHouseTaxLogout,
+  } = useCompanyProfile();
 
   useEffect(() => {
     checkPrintHouseTaxLogin();
@@ -27,7 +32,12 @@ const SettingsProfileWidget = () => {
     { title: t("profileSettings.profileTab"), component: <UserProfile /> },
     CheckPermission(Permissions.SHOW_PROFILE_COMPANY) && {
       title: t("profileSettings.companyProfile"),
-      component: <CompanyProfileComponent taxLoginUrl={taxLoginUrl} />,
+      component: (
+        <CompanyProfileComponent
+          taxLoginInfo={taxLoginInfo}
+          printHouseTaxLogout={printHouseTaxLogout}
+        />
+      ),
     },
   ];
 

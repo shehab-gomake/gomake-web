@@ -6,6 +6,7 @@ import {
   checkPrintHouseTaxLoginApi,
   getCompanyLoginLogo,
   getCompanyProfile,
+  printHouseTaxLogoutApi,
   updateCompanyLogo,
   updateCompanyProfile,
 } from "@/services/api-service/profiles/company-profile-api";
@@ -15,10 +16,12 @@ import { getCurrencies } from "@/services/api-service/general/enums";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { useState } from "react";
 import { convertTimeToDate } from "@/widgets/employees-working-hours-widgets/use-working-hours";
+import { useModal } from "./use-modal";
 
 const useCompanyProfile = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const alertLogOutModal = useModal();
   const [profile, setProfile] =
     useRecoilState<ICompanyProfile>(companyProfileState);
   const setChangeProfileImage = useSetRecoilState<boolean>(
@@ -124,15 +127,40 @@ const useCompanyProfile = () => {
     await getCurrencies(callApi, callBack);
   };
 
-  const [taxLoginUrl, setTaxLoginUrl] = useState("");
+  const [taxLoginInfo, setTaxLoginInfo] = useState({
+    isLoggedIn: false,
+    loginUrl: "",
+    lastLoginDate: null as Date | null,
+  });
+
   const checkPrintHouseTaxLogin = async () => {
     const callBack = (res) => {
       if (res.success) {
-        setTaxLoginUrl(res?.data);
+        const { isLoggedIn, loginUrl, lastLoginDate } = res.data;
+        setTaxLoginInfo({
+          isLoggedIn,
+          loginUrl,
+          lastLoginDate: lastLoginDate ? new Date(lastLoginDate) : null,
+        });
       }
     };
     await checkPrintHouseTaxLoginApi(callApi, callBack);
   };
+
+  const printHouseTaxLogout = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const { isLoggedIn, loginUrl } = res.data;
+        setTaxLoginInfo({
+          isLoggedIn,
+          loginUrl,
+          lastLoginDate: null,
+        });
+      }
+    };
+    await printHouseTaxLogoutApi(callApi, callBack);
+  };
+
   const onToggleWorkingDays = (toggledDay: number) => {
     setProfile((p) => ({
       ...p,
@@ -184,10 +212,12 @@ const useCompanyProfile = () => {
     currencies,
     countriesWithCodes,
     checkPrintHouseTaxLogin,
-    taxLoginUrl,
+    taxLoginInfo,
     onToggleWorkingDays,
     onWorkingTimeChange,
     updatePinPadState,
+    printHouseTaxLogout,
+    alertLogOutModal,
   };
 };
 
