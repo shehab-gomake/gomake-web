@@ -85,7 +85,6 @@ const MonitoringDashboardWidget = () => {
           </Stack>
         </Stack>
       )}
-      {/* !here */}
       <ChartsWidget
         salesItems={salesItems}
         productTypeChartData={productTypeChartData}
