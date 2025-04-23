@@ -15,9 +15,8 @@ const AdvertisingProductNameParameterWidget = ({
   connectionId,
   getProductById,
   getAllMaterial,
-  newDieCutSelect
+  newDieCutSelect,
 }: any) => {
-
   const {
     defaultObject,
     openModal,
@@ -36,7 +35,7 @@ const AdvertisingProductNameParameterWidget = ({
     subProducts,
     createNewTemplateEndPoint,
     isView,
-    setIsRenderData
+    setIsRenderData,
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect })
 
   return (
@@ -68,6 +67,7 @@ const AdvertisingProductNameParameterWidget = ({
         style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
         placeholder={parameter?.name}
         onChange={(e: any, value: any) => {
+          console.log("value", value)
           setIsRenderData(true)
           onChangeSubProductsForPrice(
             parameter?.id,
@@ -80,7 +80,8 @@ const AdvertisingProductNameParameterWidget = ({
             subSection?.type,
             index,
             parameter?.actionIndex,
-            parameter?.code
+            parameter?.code,
+            value
           );
         }}
         getOptionLabel={(option: any) => option.updateName}
