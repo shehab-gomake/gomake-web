@@ -107,6 +107,8 @@ const ButtonsContainer = ({
     onClickCloseOrderNowPreModal,
     handleOrderConfirmation,
     setOpenReceiptCreationModal,
+    isReceipt,
+    canCancelReceipt,
   } = useButtonsContainer(documentType);
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
@@ -144,7 +146,7 @@ const ButtonsContainer = ({
   return (
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
-        {isNewCreation && documentType === DOCUMENT_TYPE.receipt && (
+        {isNewCreation && isReceipt && (
           <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
         )}
         {isInvoice && quoteItemValue?.isCanClose && (
@@ -206,18 +208,18 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         )}
 
-        {canAddDelivery && canEditDocument && quoteItemValue?.isHaveDeliveryItem && (
-          <GomakePrimaryButton
-            leftIcon={
-              <WastebasketNew2 stroke={"#344054"} />
-            }
-            style={classes.btnContainer}
-            onClick={onClickOpenDeleteDeliveryModal}
-          >
-            {t("sales.quote.deleteDelivery")}
-          </GomakePrimaryButton>
-        )}
-        {(
+        {canAddDelivery &&
+          canEditDocument &&
+          quoteItemValue?.isHaveDeliveryItem && (
+            <GomakePrimaryButton
+              leftIcon={<WastebasketNew2 stroke={"#344054"} />}
+              style={classes.btnContainer}
+              onClick={onClickOpenDeleteDeliveryModal}
+            >
+              {t("sales.quote.deleteDelivery")}
+            </GomakePrimaryButton>
+          )}
+        {
           <GomakePrimaryButton
             leftIcon={
               quoteItemValue?.attachments?.length > 0 ? (
@@ -228,13 +230,12 @@ const ButtonsContainer = ({
             }
             style={classes.btnContainer}
             onClick={onClickOpenAddAttachmentsModal}
-
           >
             {quoteItemValue?.attachments?.length > 0
               ? t("sales.quote.editAttachments")
               : t("sales.quote.addAttachments")}
           </GomakePrimaryButton>
-        )}
+        }
         {isNewCreation &&
           (documentType === DOCUMENT_TYPE.deliveryNote || isInvoice) && (
             <GomakePrimaryButton
@@ -303,7 +304,8 @@ const ButtonsContainer = ({
             {t("materials.buttons.cancel")}
           </GomakePrimaryButton>
         )}
-        {documentType === DOCUMENT_TYPE.receipt &&
+        {isReceipt &&
+          !!canCancelReceipt &&
           !isNewCreation &&
           quoteItemValue.status !== DELIVERY_NOTE_STATUSES.Canceled && (
             <GomakePrimaryButton
@@ -321,14 +323,14 @@ const ButtonsContainer = ({
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
             onClick={() => {
-              if (documentType !== DOCUMENT_TYPE.receipt) {
+              if (!isReceipt) {
                 const validationError = validateDocument(quoteItemValue);
                 if (validationError) {
                   alertFault(validationError);
                   return;
                 }
               }
-              if (documentType === DOCUMENT_TYPE.receipt) {
+              if (isReceipt) {
                 onClickCreateNewReceipt();
               } else if (isInvoice) {
                 if (
