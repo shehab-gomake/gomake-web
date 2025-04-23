@@ -5,7 +5,7 @@ import { useMissionsStationsModal } from "./use-mission-stations-modal";
 import { IActionMachines } from "@/widgets/production-floor/state/actions-list";
 import { CollapseOptionComponent } from "@/widgets/production-floor/filters/select/actions-select/collapse-option-component";
 import { useStyle } from "./style";
-import { FormGroup } from "@mui/material";
+import { FormGroup, Stack } from "@mui/material";
 import { PrimaryButton } from "@/components/button/primary-button";
 
 interface IModalFilters {
@@ -19,6 +19,9 @@ const ScrollableDiv = styled.div`
   max-height: 35vh;
   overflow-y: auto;
   overflow-x: auto;
+  padding: 0 16px;
+  background-color: #fff;
+
   &::-webkit-scrollbar {
     width: 8px;
   }
@@ -70,7 +73,7 @@ const MissionsStationsModal = ({
       insideStyle={classes.modalContainer}
       modalTitle={t("usersSettings.manageStations")}
     >
-      <FormGroup sx={{ marginY: "20px" }}>
+      <FormGroup sx={{ gap: "10px", paddingY: "10px" }}>
         <div style={classes.listContainer}>
           <GomakeTextInput
             sx={classes.searchFiledStyle}

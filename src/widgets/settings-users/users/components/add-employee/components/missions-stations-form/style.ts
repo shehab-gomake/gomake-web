@@ -21,7 +21,22 @@ const useStyle = () => {
         backgroundColor: "#FFF",
         zIndex: 1,
       },
-      modalContainer: { height: "fit-content", width: "40%" },
+
+      modalContainer: {
+        // height: "54vh",
+        height: "fit-content",
+        width: "30%",
+        minHeight: "30vh",
+        minWidth: "500px",
+      },
+      // childrenCon: {
+      //   height: "100%",
+      //   display: "flex",
+      //   flexDirection: "column" as "column",
+      //   justifyContent: "space-between",
+      //   padding: "8px 0px",
+      // },
+
       buttonContainer: {
         display: "flex",
         justifyContent: "center",
