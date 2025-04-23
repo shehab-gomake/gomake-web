@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { quickDuplicateApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios } from "@/hooks";
@@ -14,6 +14,9 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
   const [productSizes, setProductSizes] = useState([]);
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [groups, setGroups] = useState<any>([{ id: 1, parameters: [{ name: "", value: "" }] }]);
+  const lastGroupRef = useRef(null); // Add ref for the last group
+  const prevGroupsLength = useRef(groups.length);
+
 
   const addGroup = (groupIndex) => {
     if (groups[groupIndex]) {
@@ -147,6 +150,13 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
     };
     await getProductSizesApi(callApi, callBack, { productId: quoteItem?.productID });
   };
+  useEffect(() => {
+    // Only scroll if the number of groups has increased (duplicate/add action)
+    if (lastGroupRef.current && groups.length > prevGroupsLength.current) {
+      lastGroupRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+    prevGroupsLength.current = groups.length;
+  }, [groups.length]);
   return {
     groups,
     setGroups,
@@ -160,7 +170,8 @@ const useDuplicateQuickModal = ({ getQuote, onClose, documentType, quoteItemId, 
     isRelatedJobs,
     setIsRelatedJobs,
     getProductSizes,
-    productSizes
+    productSizes,
+    lastGroupRef
   };
 };
 

@@ -345,12 +345,20 @@ const useAddRuleModal = ({
           : ""
         : "";
       const conditionLabel = condition?.condition?.id ?? "";
+      console.log(conditionLabel)
       const statement2Label = condition.statement2?.label ?? "";
       let text = "";
 
       if (condition.linkCondition) {
         text += ` ${condition?.linkCondition.id} `;
       }
+      if (conditionLabel === "%=") {
+        return `${statement2Label} % ${condition?.statement} = 0`;
+      }
+      if (conditionLabel === "%!=") {
+        return `${statement2Label} % ${condition?.statement} != 0`;
+      }
+
       if (
         typeof condition?.statement === "object" &&
         typeof condition?.statement2 === "object" &&
@@ -673,6 +681,8 @@ const useAddRuleModal = ({
       { label: t("properties.conditions.less_than"), id: "<" },
       { label: t("properties.conditions.less_than_or_equal"), id: "<=" },
       { label: t("properties.conditions.not_equal"), id: "!=" },
+      { label: t("properties.conditions.equal_duplicate_of"), id: "%=" },
+      { label: t("properties.conditions.not_equal_duplicate_of"), id: "%!=" },
     ];
   }, []);
 

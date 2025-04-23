@@ -30,12 +30,13 @@ import {
   getStationFilterGroupByIdApi,
   updateStationFilterGroupApi,
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
-import { selectedGroupIdState } from "../state/filter-group";
+import {filterGroupsState, selectedGroupIdState} from "../state/filter-group";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
 import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employees-api";
 import { Source } from "./select/actions-select/use-actions-list";
 import { actionsListState } from "../state/actions-list";
+import {selectedAgentsState} from "@/store/agents-state";
 
 interface onStationsChangeProps {
   stations: IStation[];
@@ -101,13 +102,21 @@ const useProductionFloorFilters = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const groups = filtersState?.groups;
   const [selectedChips, setSelectedChips] = useState<string[]>([]);
+  const selectedAgents = useRecoilValue(selectedAgentsState);
+  const view = useRecoilValue(productionFloorViewState);
   const [selectedChipIds, setSelectedChipIds] =
     useRecoilState(selectedChipIdsState);
   const router = useRouter();
   const setFilters = async (filters: IProductionFloorFilter) => {
+
+    if(view === EProductionFloorView.FILTER_GROUPS ) {
+      getDataByGroups(connectionId,filters).then();
+      return;
+    }
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
+        
         const backendFiltersStations = res?.data?.filter?.stations || [];
         const mergedStations = filters?.stations?.map((station) => {
           const correspondingBackendFilter = backendFiltersStations.find(
@@ -336,7 +345,7 @@ const useProductionFloorFilters = ({
   const getStationFilterGroupById = async (id) => {
     if(id === "all"){
       setData([])
-      await getDataByGroups(connectionId,true)
+      await getDataByGroups(connectionId,filters,true)
       return;
     }
     const callBack = (res) => {
@@ -453,7 +462,13 @@ const getActions = async () => {
   };
   await getPrintHouseActions(callApi, callBack, );
 };
-
+  const handleAgentChange = () => {
+   // const selectedAgents = selectedAgentsState;
+    setFilters({
+      ...filtersState,
+      agentIds:selectedAgents,
+    });
+  }
 useEffect(() => {
   getActions();
 }, []);
@@ -526,6 +541,7 @@ useEffect(() => {
     onClickOpenModalEditGroup,
     onClickCloseModalEditGroup,
     actions,
+    handleAgentChange
   };
 };
 

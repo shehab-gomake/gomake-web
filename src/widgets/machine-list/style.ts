@@ -21,7 +21,8 @@ const useStyle = () => {
                 justifyContent: 'center' as 'center',
                 gap: '4px',
                 textTransform: 'none' as 'none',
-                boxShadow: 'none'
+                boxShadow: 'none',
+                lineHeight: '1',
             },
             machineName: {
                 ...FONT_FAMILY.Lexend(500, 12)

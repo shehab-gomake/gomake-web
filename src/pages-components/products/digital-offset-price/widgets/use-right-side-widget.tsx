@@ -239,11 +239,11 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   }, [subProducts]);
 
   /* Slider */
-  const priceToUse =
-    widgetType === EWidgetProductType.EDIT ||
+  const priceToUse = currentProductItemValueTotalPrice;
+    /*widgetType === EWidgetProductType.EDIT ||
     widgetType === EWidgetProductType.DUPLICATE
       ? calculatedPriceProductItemValue
-      : currentProductItemValueTotalPrice;
+      : currentProductItemValueTotalPrice;*/
 
   const minDiscount =
     priceToUse - (priceToUse * (priceChangePercents?.minPercent || 0)) / 100;

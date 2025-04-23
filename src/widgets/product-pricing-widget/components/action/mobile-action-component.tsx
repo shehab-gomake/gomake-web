@@ -777,7 +777,7 @@ const MobileActionContainerComponent = ({
                         alignItems={"center"}
                       >
                         <span style={classes.detailTitle}>
-                          {t("home.headers.deliveryDate")}
+                          {t("sales.quote.deliveryDate")}
                         </span>
                         <span style={classes.detailValue}>
                           {_renderDeliveryDate(deliveryDate)}
