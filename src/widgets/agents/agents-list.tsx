@@ -12,50 +12,52 @@ import { useStyle } from "@/widgets/machine-list/style";
 import { StyledMenu } from "@/widgets";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 
-interface IProps{
-    onClose: () => void;
+interface IProps {
+  onClose: () => void;
 }
-const AgentsList = (props:IProps) => {
-    const { t } = useTranslation();
-    const { callApi } = useGomakeAxios();
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-    const { classes } = useStyle();
-    const setAgents = useSetRecoilState(agentsState);
-    const agents: any = useRecoilValue(agentsState);
-    const [filter, setFilter] = useState<string>();
+const AgentsList = (props: IProps) => {
+  const { t } = useTranslation();
+  const { callApi } = useGomakeAxios();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const { classes } = useStyle();
+  const setAgents = useSetRecoilState(agentsState);
+  const agents: any = useRecoilValue(agentsState);
+  const [filter, setFilter] = useState<string>();
 
-    const getAgentCategories = async (isAgent: boolean) => {
-        const callBack = (res) => {
-            if (res.success) {
-                const agentNames = res.data.map((agent) => ({
-                    label: agent.text,
-                    id: agent.value,
-                    checked: false
-                }));
-                setAgents(agentNames);
-            }
-        };
-        await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
+  const getAgentCategories = async (isAgent: boolean) => {
+    const callBack = (res) => {
+      if (res.success) {
+        const agentNames = res.data.map((agent) => ({
+          label: agent.text,
+          id: agent.value,
+          checked: false,
+        }));
+        setAgents(agentNames);
+      }
     };
-    useEffect(() => {
-        getAgentCategories(true)
-    }, [])
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-        if(props && props.onClose) {
-            props.onClose();
-        }
-    };
-    const getAgents = () => {
-        if (filter) {
-            return agents.filter((agent) => agent?.label?.toLowerCase()?.includes(filter.toLowerCase()));
-        } else {
-            return agents;
-        }
+    await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
+  };
+  useEffect(() => {
+    getAgentCategories(true);
+  }, []);
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+    if (props && props.onClose) {
+      props.onClose();
+    }
+  };
+
+  const getAgents = () => {
+    if (filter) {
+      return agents.filter((agent) =>
+        agent?.label?.toLowerCase()?.includes(filter.toLowerCase())
+      );
+    } else {
+      return agents;
     }
   };
 
