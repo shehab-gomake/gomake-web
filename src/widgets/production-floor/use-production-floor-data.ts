@@ -282,6 +282,7 @@ const useProductionFloorData = () => {
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: selectedMission.id,
       sendMessage,
+      productType: selectedMission.productType ?? ""
     });
   };
 
