@@ -384,7 +384,7 @@ const getAllBoardMissionsUploadingFiles: ICallAndSetData = async (
 const moveBoardMissionToDoneApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: { boardMissionId: string; sendMessage?: string }
+  data: { boardMissionId: string; sendMessage?: string, productType?: string }
 ) => {
   return await getSetApiData(
     callApi,
@@ -398,7 +398,7 @@ const moveBoardMissionToDoneApi: ICallAndSetData = async (
 const backToProcessApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: { boardMissionId: string; sendMessage?: string }
+  data: { boardMissionId: string; sendMessage?: string, productType?: string }
 ) => {
   return await getSetApiData(
     callApi,

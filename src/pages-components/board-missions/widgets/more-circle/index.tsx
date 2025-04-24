@@ -13,8 +13,20 @@ interface IBoardMissionsProps {
   onClickWorkMissionPdf?: (id: string, actionId: string) => void;
   onOpenModal?: (mission?: any) => void;
   onClickPrintPackagingSlip?: (mission?: any) => void;
+  onClickMarksAsDoneForProductType?: (mission?: any) => void;
 }
-const MoreMenuWidget = ({ mission, onClickDuplicate, onClickLoggers, onClickMarksAsDone, onClickReturnToProduction, onClickOrderSummeryPdf, onClickWorkMissionPdf, onClickPrintPackagingSlip, onOpenModal }: IBoardMissionsProps) => {
+const MoreMenuWidget = ({
+  mission,
+  onClickDuplicate,
+  onClickLoggers,
+  onClickMarksAsDone,
+  onClickReturnToProduction,
+  onClickOrderSummeryPdf,
+  onClickWorkMissionPdf,
+  onClickPrintPackagingSlip,
+  onOpenModal,
+  onClickMarksAsDoneForProductType }
+  : IBoardMissionsProps) => {
   const { classes } = useStyle();
 
   const handleClickEdit = (boardMissions) => {
@@ -25,6 +37,7 @@ const MoreMenuWidget = ({ mission, onClickDuplicate, onClickLoggers, onClickMark
     onClickDuplicate,
     onClickLoggers,
     onClickMarksAsDone,
+    onClickMarksAsDoneForProductType,
     onClickReturnToProduction,
     onClickOrderSummeryPdf,
     onClickWorkMissionPdf,
