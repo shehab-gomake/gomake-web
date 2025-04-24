@@ -95,6 +95,7 @@ const BusinessNewWidget = ({
     setDocumentTitle,
     isFetching,
     isPurchaseDocument,
+    canUpdateAgent,
   } = useBusinessWidget({ values, documentType, onChangeSelectBusiness });
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -215,7 +216,7 @@ const BusinessNewWidget = ({
             }
             options={agentListValue}
             onBlur={onBlurAgent}
-            isUpdate={canEditDocument && isUpdateAgent}
+            isUpdate={canUpdateAgent && isUpdateAgent}
             setIsUpdate={
               isQuoteConfirmation || isExistReceipt
                 ? setIsConfirmation
