@@ -75,59 +75,17 @@ export const isValidEmail = (email) => {
 
 export const hasValues = (obj) => {
   if (!obj?.values) return false;
-  
+
   // Check if the values object has any keys
   const hasKeys = Object.keys(obj.values).length > 0;
-  
+
   // Check if at least one value in the values object is not an empty string
-  const hasNonEmptyValues = Object.values(obj.values).some(value => value !== "");
-  
+  const hasNonEmptyValues = Object.values(obj.values).some(
+    (value) => value !== ""
+  );
+
   return hasKeys && hasNonEmptyValues;
 };
-
-//!old
-// export const isValidCustomer = (
-//   customer,
-//   filteredContacts,
-//   filteredAddresses,
-//   filteredUsers,
-//   CheckPreferenceValue
-// ) => {
-//   const isMissingRequiredCustomerInfo = !(
-//     customer &&
-//     customer.name &&
-//     customer.clientTypeId &&
-//     (!CheckPreferenceValue(
-//       EPreferences.IS_BUSINESS_NUMBER_REQUIRED_IN_CUSTOMERS
-//     ) ||
-//       customer.buisnessNumber)
-//   );
-
-//   if (isMissingRequiredCustomerInfo) return false;
-
-//   // Helper function to validate an array of objects with a required property
-//   const isValidArray = (array, property) => {
-//     return array.every((item) => item[property]);
-//   };
-
-//   // Validate contacts
-//   if (filteredContacts && !isValidArray(filteredContacts, "firstName"))
-//     return false;
-
-//   // Validate addresses
-//   if (filteredAddresses && !isValidArray(filteredAddresses, "address1"))
-//     return false;
-
-//   // Validate users' email addresses
-//   if (filteredUsers && !isValidArray(filteredUsers, "email")) return false;
-
-//   // Validate users without IDs for password presence
-//   const usersWithoutIds = filteredUsers?.filter((user) => !user.id);
-//   if (usersWithoutIds && !isValidArray(usersWithoutIds, "password"))
-//     return false;
-
-//   return true;
-// };
 
 export const isValidCustomer = (
   customer,

@@ -19,7 +19,7 @@ const ProductionFloorTableView = () => {
     openCustomerModal,
     setOpenCustomerModal,
     customer,
-    setCustomer
+    setCustomer,
   } = useProductionFloorTable();
   const { t } = useTranslation();
 
@@ -92,11 +92,9 @@ const ProductionFloorTableView = () => {
         customerAction={CUSTOMER_ACTIONS.Edit}
         typeClient={CLIENT_TYPE.CUSTOMER}
         openModal={openCustomerModal}
-        modalTitle={t("suppliers.editModalTitle")}
         onClose={() => setOpenCustomerModal(false)}
         customer={customer}
         setCustomer={setCustomer}
-        showUpdateButton={true}
       />
     </Stack>
   );
