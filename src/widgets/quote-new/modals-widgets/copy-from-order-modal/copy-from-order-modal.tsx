@@ -33,12 +33,15 @@ const CopyFromOrderModal = ({
     showReadyOnly,
     isCopyFromOrder,
     setDocumentItems,
+    showReadyJobs,
+    setShowReadyJobs,
   } = useCopyFromOrderModal({
     onClose,
     documentType,
     openModal,
     copyFromDocumentType,
   });
+
   return (
     <>
       <GoMakeModal
@@ -67,6 +70,16 @@ const CopyFromOrderModal = ({
                   />
                   <span style={classes.switchLabel}>
                     {t("sales.cart.showReadyItems")}
+                  </span>
+                </div>
+
+                <div style={classes.switchContainer}>
+                  <SecondSwitch
+                    checked={showReadyJobs}
+                    onChange={(e) => setShowReadyJobs(e.target.checked)}
+                  />
+                  <span style={classes.switchLabel}>
+                    {t("sales.cart.showReadyJobs")}
                   </span>
                 </div>
               </div>
