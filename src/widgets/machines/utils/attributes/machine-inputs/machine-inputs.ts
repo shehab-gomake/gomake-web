@@ -53,9 +53,9 @@ const machineInputs = (state: Record<string, any>) => {
             required: false,
             parameterKey: "productionFloorColor",
             options: [],
-            value: state?.productionFloorColor ? state?.productionFloorColor : '',
+            value: state?.attributes?.productionFloorColor ? state?.attributes?.productionFloorColor : '',
             machineInputType: 'input',
-            isValid: !!state?.productionFloorColor,
+            isValid: !!state?.attributes?.productionFloorColor,
         },
         {
             machineInputType: 'multiInput',
