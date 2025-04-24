@@ -41,6 +41,7 @@ import { MissionsStationsModal } from "../missions-stations-form/missions-statio
 import { useModal } from "@/hooks/use-modal";
 import { usePrintHouseActionsList } from "@/hooks/use-print-house-actions";
 import { PenIcon } from "@/icons/pen-icon";
+import { productionFloorColorInputs } from "./inputs/production-floor-color-inputs";
 
 const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
   const { t } = useTranslation();
@@ -82,6 +83,11 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
         },
       });
     } else if (key === "systemLanguage") {
+      setState({
+        ...state,
+        [key]: value,
+      });
+    } else if (key === "productionFloorColor") {
       setState({
         ...state,
         [key]: value,
@@ -207,6 +213,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
           value: bin,
         }))
       ),
+      productionFloorColor: productionFloorColorInputs(state),
     };
   }, [state, printers]);
 
@@ -404,6 +411,21 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
             placeholder={t("sales.quote.maxPrice")}
           />
         </Stack>
+      </div>
+
+      <div style={classes.subSection}>
+        <h3 style={classes.subSectionHeader}>
+          {t("machineAttributes.productionFloorColor")}
+        </h3>
+        <div style={classes.inputsContainer}>
+          {inputs().productionFloorColor.map((color) => (
+            <FormInput
+              key={color.parameterKey}
+              input={color as IInput}
+              changeState={updateEmployeeState}
+              error={false} />
+          ))}
+        </div>
       </div>
 
       {isPrintHouseUsePrintNode && (
