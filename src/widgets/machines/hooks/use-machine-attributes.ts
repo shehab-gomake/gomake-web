@@ -27,8 +27,12 @@ const useMachineAttributes = () => {
     const [errors, setErrors] = useState<Record<string, boolean>>({})
     const printColors = useRecoilValue(printColorsParameterValuesState);
     const changeMachineGeneralAttributes = (key: string, value: any) => {
-        setErrors({...errors, [key]: false});
-        setMachine({...machineState, [key]: value});
+        if(key === "productionFloorColor"){
+            setMachine({...machineState, attributes: {...machineState.attributes, productionFloorColor: value}});
+        }else{
+            setErrors({...errors, [key]: false});
+            setMachine({...machineState, [key]: value});
+        }
     };
 
     const changeMachineAttributes = (key: string, value: any) => {

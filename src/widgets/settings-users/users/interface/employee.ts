@@ -50,4 +50,5 @@ export interface IUserData {
   email: string;
   isMailVerified?: boolean;
   systemLanguage?: string;
+  productionFloorColor?: string;
 }
