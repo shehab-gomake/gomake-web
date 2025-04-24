@@ -15,16 +15,34 @@ const DescreptionWidget = ({ desciption }: { desciption: string }) => {
   };
 
   const plainTextDescription = stripHtmlTags(desciption);
-  const shouldTruncate = plainTextDescription?.length > 70;
-  const displayedText = isExpanded || !shouldTruncate ? plainTextDescription : `${plainTextDescription?.slice(0, 70)}...`;
+  const shouldTruncate = plainTextDescription?.length > 120;
+  const displayedText = isExpanded || !shouldTruncate ? plainTextDescription : `${plainTextDescription?.slice(0, 120)}...`;
 
 
 
   return (
-    <div style={{ ...FONT_FAMILY.Inter(500, 15), color: "#000000", textAlign: "start", }}>
+    <div style={{
+      ...FONT_FAMILY.Inter(500, 15),
+      color: "#000000",
+      textAlign: "start",
+      height: isExpanded ? "auto" : "42px",
+      overflow: "hidden",
+      position: "relative",
+      lineHeight: "21px",
+      display: "flex",
+      flexWrap: "wrap",
+    }}>
       {displayedText}
       {shouldTruncate && (
-        <span onClick={toggleDescription} style={{ color: "#2E3092", cursor: "pointer" }}>
+        <span onClick={toggleDescription} style={{
+          color: "#2E3092",
+          cursor: "pointer",
+          position: isExpanded ? "relative" : "absolute",
+          bottom: isExpanded ? "auto" : 0,
+          right: 0,
+          backgroundColor: "#ffffff",
+          paddingLeft: "4px"
+        }}>
           {isExpanded ? ` ${t("sales.quote.showLess")}` : ` ${t("sales.quote.showMore")}`}
         </span>
       )}

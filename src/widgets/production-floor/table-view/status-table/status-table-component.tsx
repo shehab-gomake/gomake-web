@@ -28,6 +28,8 @@ import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/nav
 import { ModalType } from "@/enums";
 import { useMediaQuery } from "@mui/material";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
 interface IProps {
   status: IProductionStatus;
@@ -68,7 +70,7 @@ const StatusTableComponent = ({
     tryMoveBoardMissionsToDone,
     updateJobDueDate
   } = useProductionFloorData();
-
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
 
   const [{ isOver }, drop] = useDrop(
@@ -140,6 +142,7 @@ const StatusTableComponent = ({
       "7%",
       "9%",
       "9%",
+      CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && "9%",
       "23%",
       "12%",
       "12%",
