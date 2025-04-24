@@ -1011,6 +1011,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       await moveBoardMissionToDoneApi(callApi, callBack, {
         boardMissionId: selectedMission?.id,
         sendMessage,
+        productType: selectedMission?.productType ?? ""
       });
     }
   };
@@ -1027,6 +1028,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     await backToProcessApi(callApi, callBack, {
       boardMissionId: selectedMission?.id,
       sendMessage: false,
+      productType: selectedMission?.productType ?? ""
+
     });
   };
 

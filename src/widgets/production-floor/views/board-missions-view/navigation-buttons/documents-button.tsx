@@ -141,6 +141,7 @@ const DocumentsButton = ({ isMobile = false }) => {
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: boardMissions?.boardMissionId,
       sendMessage,
+      productType: boardMissions?.productType
     });
   };
 
@@ -244,10 +245,10 @@ const DocumentsButton = ({ isMobile = false }) => {
         style={
           isMobile
             ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
             : undefined
         }
       />
@@ -264,10 +265,10 @@ const DocumentsButton = ({ isMobile = false }) => {
         style={
           isMobile
             ? {
-                width: "95vw",
-                maxWidth: 600,
-                minWidth: "unset",
-              }
+              width: "95vw",
+              maxWidth: 600,
+              minWidth: "unset",
+            }
             : undefined
         }
       />
