@@ -125,7 +125,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     setCustomerForEdit,
     selectedMission
   } = useBoardMissions({ isPurchaseJobs });
-  console.log(selectedMission);
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
