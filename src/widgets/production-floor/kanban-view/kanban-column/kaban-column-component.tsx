@@ -6,8 +6,10 @@ import { IProductionStatus } from "@/widgets/production-floor/interfaces/product
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "../../state/text-search";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useStyle } from "../kanban-card/style";
+import { GoMakeDeleteModal } from "@/components";
+import { ModalType } from "@/enums";
 
 interface IProps {
   status: IProductionStatus;
@@ -20,6 +22,10 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
   const { classes } = useStyle();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const { updateStatus, t, RTL } = useProductionFloorData();
+  const [openSimpleApproveModal, setOpenSimpleApproveModal] = useState<boolean>(false);
+  const [statusId, setStatusId] = useState<string>("");
+  const [boardsIdsList, setBoardsIdsList] = useState<IBoardMissions[]>([]);
+
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "task",
@@ -28,7 +34,13 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
         if (didDrop) {
           return;
         }
-        updateStatus([item], status.id).then();
+        if (status.key === "Approval required" && item.isNeedExample) {
+          setStatusId(status.id)
+          setBoardsIdsList([item])
+          setOpenSimpleApproveModal(true)
+        } else {
+          updateStatus([item], status.id).then();
+        }
       },
       collect: (monitor) => ({
         isOver: !!monitor.isOver(),
@@ -41,18 +53,18 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
   const getBoards = useCallback(() => {
     return !!search
       ? boardsMissions?.filter(
-          (board) =>
-            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-              search
-            ) ||
-            `${board?.clientName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            board?.automatedTags?.some((tag) =>
-              `${tag.toLowerCase()}`.includes(search.toLowerCase())
-            ) ||
-            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-        )
+        (board) =>
+          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+            search
+          ) ||
+          `${board?.clientName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          board?.automatedTags?.some((tag) =>
+            `${tag.toLowerCase()}`.includes(search.toLowerCase())
+          ) ||
+          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+      )
       : boardsMissions;
   }, [boardsMissions, search]);
 
@@ -113,6 +125,23 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
           />
         ))}
       </Stack>
+      <GoMakeDeleteModal
+        title={t("sales.quote.simpleApproveMail")}
+        yesBtn={t("modal.yes")}
+        modalType={ModalType.WARNING}
+        subTitle={" "}
+        openModal={openSimpleApproveModal}
+        onClose={() => {
+          setOpenSimpleApproveModal(false)
+          updateStatus(boardsIdsList, statusId)
+        }}
+        onClickDelete={() => {
+          updateStatus(boardsIdsList, statusId)
+        }}
+        onClickCancel={() => {
+          updateStatus(boardsIdsList, statusId)
+        }}
+      />
     </Stack>
   );
 }
