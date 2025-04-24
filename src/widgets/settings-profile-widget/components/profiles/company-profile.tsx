@@ -26,6 +26,8 @@ import {
   pinPadsInputs,
 } from "./inputs/company-credit-cards-inputs";
 import { FormArrayInput } from "@/components/form-inputs/form-array-input";
+import { GoMakeAlertModal, GoMakeDeleteModal } from "@/components";
+import { ModalType } from "@/enums";
 
 interface ICompanyProfileComponentProps {
   taxLoginInfo: {
@@ -52,6 +54,7 @@ const CompanyProfileComponent = ({
     onToggleWorkingDays,
     onWorkingTimeChange,
     updatePinPadState,
+    alertLogOutModal,
   } = useCompanyProfile();
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
 
@@ -177,7 +180,7 @@ const CompanyProfileComponent = ({
                     variant="outlined"
                     onClick={() => {
                       if (taxLoginInfo?.isLoggedIn) {
-                        printHouseTaxLogout();
+                        alertLogOutModal.open();
                       } else {
                         window.open(taxLoginInfo.loginUrl, "_blank");
                       }
@@ -265,6 +268,19 @@ const CompanyProfileComponent = ({
           </SecondaryButton>
         </PermissionCheck>
       </div>
+      <GoMakeDeleteModal
+        openModal={alertLogOutModal.isOpen}
+        modalType={ModalType.WARNING}
+        title={t("dashboard-widget.logout")}
+        subTitle={t("modal.confirmLogout")}
+        yesBtn={t("dashboard-widget.logout")}
+        cancelBtn={t("modal.cancel")}
+        onClose={alertLogOutModal.close}
+        onClickDelete={() => {
+          printHouseTaxLogout();
+          alertLogOutModal.close();
+        }}
+      />
     </div>
   );
 };

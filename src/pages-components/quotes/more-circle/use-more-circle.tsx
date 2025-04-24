@@ -39,12 +39,12 @@ const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
-  const isSendPaymentToClient = CheckPermission(
-    Permissions.SHOW_PRODUCTION_FLOOR
-  );
+
   const canCloseDocumentManually = CheckPermission(
     Permissions.CAN_CLOSE_MANUALLY
   );
+
+  const canCancelReceipt = CheckPermission(Permissions.CANCEL_RECEIPT);
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
@@ -407,7 +407,9 @@ const useMoreCircle = () => {
             isOrder &&
             quote?.isCanClose &&
             !isCanceledOrder) ||
-            (isReceipt && quote?.status !== "Receipt.Canceled")) &&
+            (isReceipt &&
+              !!canCancelReceipt &&
+              quote?.status !== "Receipt.Canceled")) &&
           isEditableDocument,
         onClick: () =>
           isOrder

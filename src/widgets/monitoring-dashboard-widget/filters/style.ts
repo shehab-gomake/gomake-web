@@ -42,10 +42,6 @@ const useStyle = () => {
         alignSelf: "flex-end",
         marginRight: "auto" as "auto",
       },
-      buttonLabel: {
-        ...FONT_FAMILY.Lexend(500, 16),
-        color: "rgba(52, 64, 84, 1)",
-      },
     };
   }, [theme]);
   return {

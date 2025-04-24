@@ -2,7 +2,8 @@ import { GoMakeDatepicker } from "@/components/datepicker";
 import { useStyle } from "./style";
 import { useSalesDashboardFilters } from "./use-filters";
 import { MultiSelectDropdown } from "@/components/multi-select/multi-select-drop-down";
-import { SingleSelectSearchDropdown } from "./single-customer-select-dropdown";
+import { SingleSelectSearchDropdown } from "./components/single-customer-select-dropdown";
+import { FixedDataType } from "./components/fixed-data-type-component";
 
 const DashboardFilters = () => {
   const { classes } = useStyle();
@@ -29,6 +30,7 @@ const DashboardFilters = () => {
   return (
     <div style={classes.datesContainer}>
       <GoMakeDatepicker />
+      <FixedDataType />
       <SingleSelectSearchDropdown />
       <MultiSelectDropdown
         items={clientTypesCategories}

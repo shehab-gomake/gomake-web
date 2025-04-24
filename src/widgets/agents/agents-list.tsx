@@ -12,10 +12,10 @@ import { useStyle } from "@/widgets/machine-list/style";
 import { StyledMenu } from "@/widgets";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
 
-interface IProps{
+interface IProps {
     onClose: () => void;
 }
-const AgentsList = (props:IProps) => {
+const AgentsList = (props: IProps) => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -46,7 +46,7 @@ const AgentsList = (props:IProps) => {
     };
     const handleClose = () => {
         setAnchorEl(null);
-        if(props && props.onClose) {
+        if (props && props.onClose) {
             props.onClose();
         }
     };

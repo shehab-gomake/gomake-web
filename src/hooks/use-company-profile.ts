@@ -16,10 +16,12 @@ import { getCurrencies } from "@/services/api-service/general/enums";
 import { currenciesState } from "@/widgets/materials-widget/state";
 import { useState } from "react";
 import { convertTimeToDate } from "@/widgets/employees-working-hours-widgets/use-working-hours";
+import { useModal } from "./use-modal";
 
 const useCompanyProfile = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
+  const alertLogOutModal = useModal();
   const [profile, setProfile] =
     useRecoilState<ICompanyProfile>(companyProfileState);
   const setChangeProfileImage = useSetRecoilState<boolean>(
@@ -215,6 +217,7 @@ const useCompanyProfile = () => {
     onWorkingTimeChange,
     updatePinPadState,
     printHouseTaxLogout,
+    alertLogOutModal,
   };
 };
 

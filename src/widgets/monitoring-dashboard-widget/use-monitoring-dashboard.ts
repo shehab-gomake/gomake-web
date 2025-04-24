@@ -19,6 +19,7 @@ import { selectedProductTypesIdsState } from "./filters/states/selected-product-
 import { selectedClientTypesIdsState } from "./filters/states/selected-client-types-ids";
 import { startOfMonth, endOfToday } from "date-fns";
 import { selectedDashClientState } from "./filters/states/selected-client-id";
+import { selectedDataTypeState } from "./filters/states/selected-data-type";
 
 type TableRow = [
   string, // clientName or AgentName or ProductName
@@ -55,7 +56,6 @@ const useMonitoringDashboard = () => {
   const systemCurrency = useRecoilValue<any>(systemCurrencyState);
   const currUnit = getCurrencyUnitText(systemCurrency);
 
-  // const getSalesChartRoute = async (filters) => {
   const getSalesChartRoute = async (
     filters,
     extraCostData?: { actualCost?: number; target?: number }
@@ -79,7 +79,9 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
-
+      ...(filters?.selectedDataType !== null && {
+        dataType: filters.selectedDataType,
+      }),
       ...extraCostData,
     };
 
@@ -111,6 +113,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
+      }),
+      ...(filters?.selectedDataType !== null && {
+        dataType: filters.selectedDataType,
       }),
     };
 
@@ -146,6 +151,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
+      }),
+      ...(filters?.selectedDataType !== null && {
+        dataType: filters.selectedDataType,
       }),
     };
     const callBack = (res) => {
@@ -190,6 +198,9 @@ const useMonitoringDashboard = () => {
       }),
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
+      }),
+      ...(filters?.selectedDataType !== null && {
+        dataType: filters.selectedDataType,
       }),
     };
 
@@ -236,6 +247,9 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
+      ...(filters?.selectedDataType !== null && {
+        dataType: filters.selectedDataType,
+      }),
     };
 
     const callBack = (res) => {
@@ -281,6 +295,9 @@ const useMonitoringDashboard = () => {
       ...(filters.selectedClient?.id && {
         clients: [filters.selectedClient.id],
       }),
+      ...(filters?.selectedDataType !== null && {
+        dataType: filters.selectedDataType,
+      }),
     };
     const callBack = (res) => {
       if (res.success) {
@@ -314,13 +331,12 @@ const useMonitoringDashboard = () => {
   const agentTableHeaders = [t("dashboard.agentName"), ...baseTableHeaders];
 
   const { dates } = useRecoilValue(dashboardDateState);
-
   const selectedClientTypesIds = useRecoilValue(selectedClientTypesIdsState);
   const selectedAgentIds = useRecoilValue(selectedAgentIdsState);
   const selectedProductsIds = useRecoilValue(selectedProductsIdsState);
   const selectedProductTypesIds = useRecoilValue(selectedProductTypesIdsState);
-
   const selectedClient = useRecoilValue(selectedDashClientState);
+  const selectedDataType = useRecoilValue(selectedDataTypeState);
 
   const filters = useMemo(
     () => ({
@@ -331,6 +347,7 @@ const useMonitoringDashboard = () => {
       selectedProductTypesIds,
       selectedClientTypesIds,
       selectedClient,
+      selectedDataType,
     }),
     [
       dates?.startDate,
@@ -340,6 +357,7 @@ const useMonitoringDashboard = () => {
       selectedProductTypesIds,
       selectedClientTypesIds,
       selectedClient,
+      selectedDataType,
     ]
   );
 
@@ -369,6 +387,8 @@ const useMonitoringDashboard = () => {
     selectedClientTypesIds,
     filters,
     currUnit,
+    selectedClient,
+    selectedDataType,
   };
 };
 
