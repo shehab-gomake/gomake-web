@@ -3,7 +3,7 @@ import { CurrentStationComponent } from "@/widgets/production-floor/table-view/s
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useDrag, useDrop } from "react-dnd";
 import { useRecoilState } from "recoil";
-import {boardsMissionsState, selectedBoardsMissionsState} from "@/widgets/production-floor/state/boards";
+import { selectedBoardsMissionsState } from "@/widgets/production-floor/state/boards";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -31,14 +31,14 @@ import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp
 import { ApprovalFileStatusComponent } from "./approval-file-status-component";
 import { ExpandIcon } from "@/icons/expand-icon";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
-import { DateHourFormatterShort } from "@/utils/date-formatters";
-import {AdapterMoment} from "@mui/x-date-pickers/AdapterMoment";
-import {DateField} from "@/components/date-picker/date-filed";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {useGomakeAxios} from "@/hooks";
-import {EPreferences} from "@/enums/prefernces";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
-
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DateField } from "@/components/date-picker/date-filed";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { GoMakeDeleteModal } from "@/components";
+import { ModalType } from "@/enums/tabs-icon-enums";
+import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 interface IProps {
   boardMission: IBoardMissions;
   status?: any;
@@ -49,7 +49,7 @@ interface IProps {
   isMobileScreen: boolean;
   isRTL?: boolean;
   isUrgentWork?: boolean;
-  onUpdateJobDueDate?: (boardMissionId:string,dueDate:string) => void;
+  onUpdateJobDueDate?: (boardMissionId: string, dueDate: string) => void;
 }
 
 enum EDropArea {
@@ -67,15 +67,15 @@ const TableRowComponent = ({
   index,
   isMobileScreen,
   isRTL,
-  isUrgentWork, 
+  isUrgentWork,
   onUpdateJobDueDate
 }: IProps) => {
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
   );
+
   const { CheckPermission } = useUserPermission();
-  const { callApi } = useGomakeAxios();
   const canDrag =
     CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR) &&
     !status.isGroup;
@@ -108,7 +108,12 @@ const TableRowComponent = ({
           return;
         }
         if (boardMission.statusId !== item.board.statusId) {
-          updateStatus([item.board], boardMission.statusId).then();
+          if (boardMission.statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && !boardMission.isNeedExample) {
+            handleOpenModal(boardMission.statusId, [boardMission], boardMission.id)
+          }
+          else {
+            updateStatus([item.board], boardMission.statusId).then();
+          }
         }
         if (
           item.board.priority !== boardMission.priority &&
@@ -169,9 +174,10 @@ const TableRowComponent = ({
     );
   };
   const onClickOpenDatePicker = () => {
-      setOpenDatePicker(true);
+    setOpenDatePicker(true);
   }
   drag(drop(ref));
+  const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
 
   return (
     <>
@@ -263,7 +269,7 @@ const TableRowComponent = ({
                 cursor: "pointer",
                 textDecoration: "none",
                 color: "#000000",
-                  fontWeight:"bolder"
+                fontWeight: "bolder"
               }}
             >
               {boardMission?.productType ? boardMission?.sectionName ? boardMission?.sectionName + " / " : boardMission?.productType + " / " : null}
@@ -287,43 +293,43 @@ const TableRowComponent = ({
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
-               
+
             }}
           >
             <div />
             <div />
-              <div onClick={onClickOpenDatePicker}>
-                  <DateTimeProductionFloorComponent
-                      dateString={convertUtcToLocalIsoString(boardMission.dueDate?.toString())}
-                  />
-              </div>
+            <div onClick={onClickOpenDatePicker}>
+              <DateTimeProductionFloorComponent
+                dateString={convertUtcToLocalIsoString(boardMission.dueDate?.toString())}
+              />
+            </div>
             {/* {DateHourFormatterShort(
               convertUtcToLocalIsoString(boardMission.boardMissionCreatedDate?.toString())
             )} */}
-             <div style={{visibility: "hidden"}}>
-                 <LocalizationProvider
-                     dateAdapter={AdapterMoment}
-                     adapterLocale="en-gb"
-                 >
-                     <div >
-                         <DateField
-                             label={""}
-                             date={boardMission.dueDate}
-                             handleChange={(newDate) => {
-                                 //setSelectDate(newDate);
-                                 //setActiveClickAway(true);
-                                 onUpdateJobDueDate(boardMission.id, newDate);
-                             }}
-                             isEditable={true}
-                             withTime={true}
-                             inputWidth={"1px"}
-                             //format={"DD/MM HH:mm"}
-                             openPicker={openDatePicker}
-                             onClose={()=>setOpenDatePicker(false)}
-                         />
-                     </div>
-                 </LocalizationProvider>
-             </div>
+            <div style={{ visibility: "hidden" }}>
+              <LocalizationProvider
+                dateAdapter={AdapterMoment}
+                adapterLocale="en-gb"
+              >
+                <div >
+                  <DateField
+                    label={""}
+                    date={boardMission.dueDate}
+                    handleChange={(newDate) => {
+                      //setSelectDate(newDate);
+                      //setActiveClickAway(true);
+                      onUpdateJobDueDate(boardMission.id, newDate);
+                    }}
+                    isEditable={true}
+                    withTime={true}
+                    inputWidth={"1px"}
+                    //format={"DD/MM HH:mm"}
+                    openPicker={openDatePicker}
+                    onClose={() => setOpenDatePicker(false)}
+                  />
+                </div>
+              </LocalizationProvider>
+            </div>
             <div
               style={{
                 display: "flex",
@@ -368,21 +374,21 @@ const TableRowComponent = ({
           {getTruncatedLabel(boardMission?.clientName, 15)}
 
         </SecondaryTableCell>
-          {
-              CheckPreferenceValue(
-                  EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR
-              ) && <SecondaryTableCell
-                  align={"center"}
-                  style={{
-                      width: "15px",
-                      cursor: "pointer",
-                      backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-                  }}
-              >
-                  {getTruncatedLabel(boardMission?.agentName, 15)}
-              </SecondaryTableCell>
-          }
-         
+        {
+          CheckPreferenceValue(
+            EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR
+          ) && <SecondaryTableCell
+            align={"center"}
+            style={{
+              width: "15px",
+              cursor: "pointer",
+              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+            }}
+          >
+            {getTruncatedLabel(boardMission?.agentName, 15)}
+          </SecondaryTableCell>
+        }
+
         <SecondaryTableCell
           align={"center"}
           style={{
@@ -412,7 +418,14 @@ const TableRowComponent = ({
           <BoardStatusComponent
             statusId={boardMission.statusId}
             id={boardMission.id}
-            onChange={(id, statusId) => updateStatus([boardMission], statusId)}
+            onChange={(id, statusId) => {
+              if (statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && !boardMission.isNeedExample) {
+                handleOpenModal(statusId, [boardMission], boardMission.id)
+              }
+              else {
+                updateStatus([boardMission], statusId)
+              }
+            }}
           />
         </SecondaryTableCell>
         <SecondaryTableCell
@@ -480,6 +493,16 @@ const TableRowComponent = ({
           }
         </TableCell>
       </TableRow>
+      <GoMakeDeleteModal
+        title={t("sales.quote.simpleApproveMail")}
+        yesBtn={t("modal.yes")}
+        modalType={ModalType.WARNING}
+        subTitle={" "}
+        openModal={openSimpleApproveModal}
+        onClose={handleCloseModal}
+        onClickDelete={handleConfirm}
+        onClickCancel={handleCloseModal}
+      />
     </>
   );
 };
