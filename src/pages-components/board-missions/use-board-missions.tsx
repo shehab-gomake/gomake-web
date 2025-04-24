@@ -532,6 +532,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 onOpenModal={onOpenModal}
                 onClickPrintPackagingSlip={onOpenPackagesModal}
                 onClickMarksAsDone={onOpenMarkReadyModal}
+                onClickMarksAsDoneForProductType={onOpenMarkReadyModalForProductType}
                 onClickReturnToProduction={onOpenReturnToProdModal}
                 onClickOrderSummeryPdf={onClickOrderSummeryPdf}
                 onClickWorkMissionPdf={onClickWorkMissionPdf}
@@ -678,6 +679,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               onOpenModal={onOpenModal}
               onClickPrintPackagingSlip={onOpenPackagesModal}
               onClickMarksAsDone={onOpenMarkReadyModal}
+              onClickMarksAsDoneForProductType={onOpenMarkReadyModalForProductType}
               onClickReturnToProduction={onOpenReturnToProdModal}
               onClickOrderSummeryPdf={onClickOrderSummeryPdf}
               onClickWorkMissionPdf={onClickWorkMissionPdf}
@@ -810,6 +812,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+  const [openMarkReadyModalForProductType, setOpenMarkReadyModalForProductType] = useState<boolean>(false);
   const onCloseMarkReadyModal = () => {
     setSelectedMission({});
     setOpenMarkReadyModal(false);
@@ -818,6 +821,17 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setSelectedMission(mission);
     setOpenMarkReadyModal(true);
   };
+  const onOpenMarkReadyModalForProductType = (mission) => {
+    setSelectedMission(mission);
+    setOpenMarkReadyModalForProductType(true);
+  };
+  const onCloseMarkReadyModalForProductType = () => {
+    setSelectedMission({});
+    setOpenMarkReadyModalForProductType(false);
+  };
+
+
+
 
   const [openMarkReadyThenPrintModal, setOpenMarkReadyThenPrintModal] =
     useState<boolean>(false);
@@ -1222,7 +1236,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     openDuplicateModal,
     onCloseDuplicateModal,
     openMarkReadyModal,
+    openMarkReadyModalForProductType,
     onCloseMarkReadyModal,
+    onCloseMarkReadyModalForProductType,
     openReturnToProdModal,
     onCloseReturnToProdModal,
     onClickDuplicateMission,
@@ -1244,6 +1260,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onCloseModal,
     onOpenPackagesModal,
     onOpenMarkReadyModal,
+    onOpenMarkReadyModalForProductType,
     onClickPrintPackagingSlip,
     openMarkReadyThenPrintModal,
     onCloseMarkReadyThenPrintModal,
