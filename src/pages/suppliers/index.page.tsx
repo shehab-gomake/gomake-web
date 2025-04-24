@@ -171,15 +171,13 @@ export default function Home() {
                 headers={tableHeaders}
               />
               <CustomerCardWidget
-                customerAction={CUSTOMER_ACTIONS.Edit}
                 typeClient={CLIENT_TYPE.SUPPLIER}
+                customerAction={CUSTOMER_ACTIONS.Edit}
                 getAllCustomers={getAllCustomers}
                 openModal={showCustomerModal}
-                modalTitle={t("suppliers.editModalTitle")}
                 onClose={() => setShowCustomerModal(false)}
                 customer={customerForEdit}
                 setCustomer={setCustomerForEdit}
-                showUpdateButton={true}
               />
               <ThreeOptionsModal
                 modalType={ModalType.WARNING}

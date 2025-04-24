@@ -22,13 +22,7 @@ const AddCustomerButton = ({ onCustomerAdd, typeClient }: IProps) => {
         typeClient={typeClient}
         onCustomerAdd={onCustomerAdd}
         openModal={open}
-        modalTitle={
-          typeClient == "C"
-            ? t("customers.modal.addTitle")
-            : t("suppliers.addModalTitle")
-        }
         onClose={() => setOpen(false)}
-        showAddButton={true}
         customer={customer}
         setCustomer={setCustomer}
       />

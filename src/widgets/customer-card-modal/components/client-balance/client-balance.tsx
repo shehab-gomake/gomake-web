@@ -1,8 +1,4 @@
 import { Button, Stack } from "@mui/material";
-import { useQuotes } from "@/pages-components/quotes/use-quote";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { CustomerCardWidget } from "@/widgets/customer-card-modal";
-import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { useEffect, useState } from "react";

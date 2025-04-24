@@ -907,15 +907,9 @@ const QuotesListPageWidget = ({
         }
         isgetAllCustomers={false}
         openModal={showCustomerModal}
-        modalTitle={
-          isPurchaseDocument && !isPurchaseOrder
-            ? t("suppliers.editModalTitle")
-            : t("customers.modal.editTitle")
-        }
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
-        showUpdateButton={true}
       />
       <CloseOrderNotesModal
         onClose={onClickCloseCloseOrderNotesModal}

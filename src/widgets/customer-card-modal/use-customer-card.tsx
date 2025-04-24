@@ -20,10 +20,8 @@ import { useUserProfile } from "@/hooks/use-user-profile";
 import { getClientsGroupstApi } from "@/services/api-service/suppliers/suppliers-endpoints";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 // import { clearPhoneNumberPrefix } from "@/utils/helpers";
-import { EPreferences } from "@/enums/prefernces";
-import { clearPhoneNumberPrefix, isValidCustomer } from "@/utils/helpers";
+import { isValidCustomer } from "@/utils/helpers";
 import { useUserPermission } from "@/hooks/use-permission";
-import { IUserProfile } from "../settings-profile-widget/components/profiles/interface";
 import { userProfileState } from "@/store/user-profile";
 
 const useCustomerCard = ({

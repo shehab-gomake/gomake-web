@@ -83,19 +83,13 @@ const ClientBalanceComponent = ({
       </PermissionCheck>
       <CustomerCardWidget
         customerAction={CUSTOMER_ACTIONS.Edit}
-        codeFlag={true}
         typeClient={clientType}
-        modalTitle={
-          clientType === CLIENT_TYPE.SUPPLIER
-            ? t("suppliers.editModalTitle")
-            : t("customers.modal.editTitle")
-        }
+        codeFlag={true}
         isgetAllCustomers={false}
         openModal={showCustomerModal}
         onClose={closeModal}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
-        showUpdateButton={true}
         selectedTabIndex={clientType === CLIENT_TYPE.SUPPLIER ? 5 : 6}
       />
     </>
