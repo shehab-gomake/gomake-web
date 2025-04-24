@@ -37,6 +37,7 @@ const useMoreCircle = ({
   onClickPrintPackagingSlip,
   onOpenModal,
   handleClickEdit,
+  onClickMarksAsDoneForProductType
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -91,7 +92,11 @@ const useMoreCircle = ({
     if (mission?.isReady) {
       onClickReturnToProduction(mission);
     } else {
-      onClickMarksAsDone(mission);
+      if (mission?.productType === null || mission?.productType === "") {
+        onClickMarksAsDone(mission);
+      } else {
+        onClickMarksAsDoneForProductType(mission);
+      }
     }
   };
 
@@ -121,9 +126,8 @@ const useMoreCircle = ({
       name: (
         <a
           style={classes.menuTitleStyle}
-          href={`/production-floor?boardMissionsId=${mission?.id}${
-            mission?.productType ? `&productType=${mission?.productType}` : ""
-          }&step=stations`}
+          href={`/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
+            }&step=stations`}
         >
           {t("boardMissions.viewTask")}
         </a>
@@ -131,8 +135,7 @@ const useMoreCircle = ({
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
       onclick: () =>
         navigate(
-          `/production-floor?boardMissionsId=${mission?.id}${
-            mission?.productType ? `&productType=${mission?.productType}` : ""
+          `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
           }&step=stations`
         ),
     },
@@ -204,8 +207,7 @@ const useMoreCircle = ({
       icon: <LoggerIcon />,
       onclick: () => {
         window.open(
-          `/production-floor?boardMissionsId=${mission?.id}${
-            mission?.productType ? `&productType=${mission.productType}` : ""
+          `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission.productType}` : ""
           }&step=stations`,
           "_blank"
         );
