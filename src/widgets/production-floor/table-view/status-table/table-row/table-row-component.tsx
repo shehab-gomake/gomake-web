@@ -34,12 +34,11 @@ import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-com
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DateField } from "@/components/date-picker/date-filed";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { useGomakeAxios } from "@/hooks";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
-
+import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 interface IProps {
   boardMission: IBoardMissions;
   status?: any;
@@ -75,12 +74,8 @@ const TableRowComponent = ({
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
   );
-  const [openSimpleApproveModal, setOpenSimpleApproveModal] = useState<boolean>(false);
-  const [statusId, setStatusId] = useState<string>("");
-  const [boardsIdsList, setBoardsIdsList] = useState<IBoardMissions[]>([]);
 
   const { CheckPermission } = useUserPermission();
-  const { callApi } = useGomakeAxios();
   const canDrag =
     CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR) &&
     !status.isGroup;
@@ -114,9 +109,7 @@ const TableRowComponent = ({
         }
         if (boardMission.statusId !== item.board.statusId) {
           if (boardMission.statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && !boardMission.isNeedExample) {
-            setOpenSimpleApproveModal(true)
-            setStatusId(boardMission.statusId)
-            setBoardsIdsList([item.board])
+            handleOpenModal(boardMission.statusId, [boardMission], boardMission.id)
           }
           else {
             updateStatus([item.board], boardMission.statusId).then();
@@ -184,6 +177,7 @@ const TableRowComponent = ({
     setOpenDatePicker(true);
   }
   drag(drop(ref));
+  const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
 
   return (
     <>
@@ -426,9 +420,7 @@ const TableRowComponent = ({
             id={boardMission.id}
             onChange={(id, statusId) => {
               if (statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && !boardMission.isNeedExample) {
-                setOpenSimpleApproveModal(true)
-                setStatusId(statusId)
-                setBoardsIdsList([boardMission])
+                handleOpenModal(statusId, [boardMission], boardMission.id)
               }
               else {
                 updateStatus([boardMission], statusId)
@@ -507,16 +499,9 @@ const TableRowComponent = ({
         modalType={ModalType.WARNING}
         subTitle={" "}
         openModal={openSimpleApproveModal}
-        onClose={() => {
-          setOpenSimpleApproveModal(false)
-          updateStatus(boardsIdsList, statusId)
-        }}
-        onClickDelete={() => {
-          updateStatus(boardsIdsList, statusId)
-        }}
-        onClickCancel={() => {
-          updateStatus(boardsIdsList, statusId)
-        }}
+        onClose={handleCloseModal}
+        onClickDelete={handleConfirm}
+        onClickCancel={handleCloseModal}
       />
     </>
   );

@@ -6,10 +6,11 @@ import { IProductionStatus } from "@/widgets/production-floor/interfaces/product
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "../../state/text-search";
-import { useCallback, useState } from "react";
+import { useCallback, } from "react";
 import { useStyle } from "../kanban-card/style";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
+import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 
 interface IProps {
   status: IProductionStatus;
@@ -22,10 +23,7 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
   const { classes } = useStyle();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const { updateStatus, t, RTL } = useProductionFloorData();
-  const [openSimpleApproveModal, setOpenSimpleApproveModal] = useState<boolean>(false);
-  const [statusId, setStatusId] = useState<string>("");
-  const [boardsIdsList, setBoardsIdsList] = useState<IBoardMissions[]>([]);
-
+  const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "task",
@@ -34,10 +32,8 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
         if (didDrop) {
           return;
         }
-        if (status.key === "Approval required" && item.isNeedExample) {
-          setStatusId(status.id)
-          setBoardsIdsList([item])
-          setOpenSimpleApproveModal(true)
+        if (status.key === "Approval required" && !item.isNeedExample) {
+          handleOpenModal(status.id, [item], item.id);
         } else {
           updateStatus([item], status.id).then();
         }
@@ -67,6 +63,8 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
       )
       : boardsMissions;
   }, [boardsMissions, search]);
+
+
 
   return (
     <Stack
@@ -131,16 +129,9 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
         modalType={ModalType.WARNING}
         subTitle={" "}
         openModal={openSimpleApproveModal}
-        onClose={() => {
-          setOpenSimpleApproveModal(false)
-          updateStatus(boardsIdsList, statusId)
-        }}
-        onClickDelete={() => {
-          updateStatus(boardsIdsList, statusId)
-        }}
-        onClickCancel={() => {
-          updateStatus(boardsIdsList, statusId)
-        }}
+        onClose={handleCloseModal}
+        onClickDelete={handleConfirm}
+        onClickCancel={handleCloseModal}
       />
     </Stack>
   );

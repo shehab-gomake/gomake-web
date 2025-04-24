@@ -27,6 +27,7 @@ import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { ModalType } from "@/enums";
 import { useMediaQuery } from "@mui/material";
+import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 
 interface IProps {
   status: IProductionStatus;
@@ -68,9 +69,7 @@ const StatusTableComponent = ({
     updateJobDueDate
   } = useProductionFloorData();
 
-  const [openSimpleApproveModal, setOpenSimpleApproveModal] = useState<boolean>(false);
-  const [statusId, setStatusId] = useState<string>("");
-  const [boardsIdsList, setBoardsIdsList] = useState<IBoardMissions[]>([]);
+  const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
 
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -85,9 +84,7 @@ const StatusTableComponent = ({
         }
         if (item.board.statusId !== status.id) {
           if (status.key === "Approval required" && item.board.isNeedExample) {
-            setStatusId(status.id)
-            setBoardsIdsList(item.selectedIds.length > 0 ? item.selectedIds : [item.board])
-            setOpenSimpleApproveModal(true)
+            handleOpenModal(status.id, item.selectedIds.length > 0 ? item.selectedIds : [item.board], item.board.id)
           } else {
             updateStatus(
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
@@ -264,16 +261,9 @@ const StatusTableComponent = ({
         modalType={ModalType.WARNING}
         subTitle={" "}
         openModal={openSimpleApproveModal}
-        onClose={() => {
-          setOpenSimpleApproveModal(false)
-          updateStatus(boardsIdsList, statusId)
-        }}
-        onClickDelete={() => {
-          updateStatus(boardsIdsList, statusId)
-        }}
-        onClickCancel={() => {
-          updateStatus(boardsIdsList, statusId)
-        }}
+        onClose={handleCloseModal}
+        onClickDelete={handleConfirm}
+        onClickCancel={handleCloseModal}
       />
     </Stack>
   );
