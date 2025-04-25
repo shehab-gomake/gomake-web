@@ -11,6 +11,7 @@ export interface IBoardMissions {
   agentName: string;
   productName: string;
   productId: string;
+  jobDeliveryTimeAlertColor?: string;
   currentStation: ICurrentStation;
   nextStation: INextStation | null;
   statusId: string;

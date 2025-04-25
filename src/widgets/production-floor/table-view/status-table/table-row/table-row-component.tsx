@@ -83,7 +83,6 @@ const TableRowComponent = ({
   const [openDatePicker, setOpenDatePicker] = useState<boolean>(false);
   const { errorColor } = useGomakeTheme();
   const ref = useRef(null);
-
   const [, drag] = useDrag(
     () => ({
       type: "task",
@@ -278,7 +277,8 @@ const TableRowComponent = ({
         <SecondaryTableCell
           align={"center"}
           style={{
-            backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+            backgroundColor: boardMission.jobDeliveryTimeAlertColor ? boardMission.jobDeliveryTimeAlertColor : index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              
           }}
         >
           <div
@@ -287,7 +287,7 @@ const TableRowComponent = ({
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
-               
+              
             }}
           >
             <div />
