@@ -7,8 +7,9 @@ import { selectedChipIdsState } from "../state/text-search";
 import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { useTranslation } from "react-i18next";
+import { useProductionFloorFilters } from "../filters/use-production-floor-filters";
 
-const ProductionFloorTableView = () => {
+const ProductionFloorTableView = ({ connectionId }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
   const {
     data,
@@ -22,6 +23,8 @@ const ProductionFloorTableView = () => {
     setCustomer
   } = useProductionFloorTable();
   const { t } = useTranslation();
+
+  const { setFilters } = useProductionFloorFilters({ connectionId: connectionId, isFetching: false });
 
   const filteredDataByMachine = useMemo(() => {
     if (!selectedChipId.length) return data;
@@ -43,18 +46,18 @@ const ProductionFloorTableView = () => {
   const matchSearch = (mission) => {
     return search
       ? `${mission.boardMissionNumber}\\${mission.orderNumber}`.includes(
-          search
-        ) ||
-          `${mission.clientName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          `${mission.productName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          mission.automatedTags?.some((tag) =>
-            tag.toLowerCase().includes(search.toLowerCase())
-          ) ||
-          `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+        search
+      ) ||
+      `${mission.clientName?.toLowerCase()}`.includes(
+        search.toLowerCase()
+      ) ||
+      `${mission.productName?.toLowerCase()}`.includes(
+        search.toLowerCase()
+      ) ||
+      mission.automatedTags?.some((tag) =>
+        tag.toLowerCase().includes(search.toLowerCase())
+      ) ||
+      `${mission?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
       : true;
   };
   const allFilteredMissions = filteredDataByMachine.flatMap(
@@ -85,6 +88,7 @@ const ProductionFloorTableView = () => {
             boards={statusBoards?.boardMissions}
             onClickClient={getCustomerForEdit}
             allBoardMissions={allBoardMissions}
+            setFilters={setFilters}
           />
         );
       })}

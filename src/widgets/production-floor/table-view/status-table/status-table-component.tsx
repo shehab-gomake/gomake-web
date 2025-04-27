@@ -1,6 +1,8 @@
 import { useStatusTable } from "@/widgets/production-floor/table-view/status-table/use-status-Table";
 import {
+  Box,
   Collapse,
+  IconButton,
   Paper,
   Stack,
   Table,
@@ -22,11 +24,14 @@ import { TableRowComponent } from "@/widgets/production-floor/table-view/status-
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { ThreeOptionsModal } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { ModalType } from "@/enums";
 import { useMediaQuery } from "@mui/material";
+
+import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import { productionFloorFiltersState } from "../../state/production-floor-filters";
 
 interface IProps {
   status: IProductionStatus;
@@ -34,6 +39,7 @@ interface IProps {
   count?: number;
   onClickClient?: (clientId: any) => void;
   allBoardMissions?: IBoardMissions[];
+  setFilters?: any
 }
 
 const StatusTableComponent = ({
@@ -42,10 +48,23 @@ const StatusTableComponent = ({
   count,
   allBoardMissions,
   onClickClient,
+  setFilters
 }: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const isMobileScreen = useMediaQuery("(max-width:768px)");
+  const [filtersState, setFiltersState] = useRecoilState(productionFloorFiltersState);
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  }>({ key: "", direction: "asc" });
+
+  const reSortingCurrentStation = async (direction: "asc" | "desc") => {
+    await setFilters({
+      ...filtersState,
+      currentStation: direction
+    });
+  };
   const hasUrgentOrApproval = allBoardMissions?.some(board =>
     board.isUrgentWork ||
     board.showGraphicsApprovalAlert === 1 ||
@@ -64,7 +83,7 @@ const StatusTableComponent = ({
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
     selectedMission,
-    tryMoveBoardMissionsToDone, 
+    tryMoveBoardMissionsToDone,
     updateJobDueDate
   } = useProductionFloorData();
 
@@ -170,36 +189,67 @@ const StatusTableComponent = ({
               <Table stickyHeader={false}>
                 <TableHead style={{ backgroundColor: status.backgroundColor }}>
                   <SecondaryTableRow>
-                    {tableHeaders(status.id)?.map((header, index) => (
-                      <SecondaryTableCell
-                        style={{
-                          backgroundColor: "#F9FAFB",
-                          placeItems: "center",
-                          minWidth: getCustomWidth(index),
-                          maxWidth: getCustomWidth(index),
-                          width: getCustomWidth(index),
-                          // Spread the mobile styles conditionally
-                          ...(isMobileScreen && {
-                            position: index <= 1 ? "sticky" : "relative",
-                            [RTL ? "right" : "left"]:
-                              index === 0 ? 0 : index === 1 ? 48 : "auto",
-                            zIndex: index <= 1 ? 2 : 1,
-                            background: index <= 1 ? "#f2f2f5" : "#F9FAFB",
-                          }),
-                        }}
-                        key={"statusTable" + status.id + index}
-                        align={"center"}
-                      >
-                        <div
+                    {tableHeaders(status.id)?.map((header, index) => {
+                      console.log("header", header)
+                      return (
+                        <SecondaryTableCell
                           style={{
-                            width: "max-content",
-                            minWidth: "max-content",
+                            backgroundColor: "#F9FAFB",
+                            placeItems: "center",
+                            minWidth: getCustomWidth(index),
+                            maxWidth: getCustomWidth(index),
+                            width: getCustomWidth(index),
+                            // Spread the mobile styles conditionally
+                            ...(isMobileScreen && {
+                              position: index <= 1 ? "sticky" : "relative",
+                              [RTL ? "right" : "left"]:
+                                index === 0 ? 0 : index === 1 ? 48 : "auto",
+                              zIndex: index <= 1 ? 2 : 1,
+                              background: index <= 1 ? "#f2f2f5" : "#F9FAFB",
+                            }),
+                          }}
+                          key={"statusTable" + status.id + index}
+                          align={"center"}
+                          sx={{
+                            '& .sort-icon': {
+                              opacity: 0
+                            },
+                            '&:hover .sort-icon': {
+                              opacity: 1
+                            }
                           }}
                         >
-                          {header}
-                        </div>
-                      </SecondaryTableCell>
-                    ))}
+                          <div
+                            style={{
+                              width: "max-content",
+                              minWidth: "max-content",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              gap: "5px",
+                            }}
+                          >
+                            {header}
+                            {header === t("productionFloor.currentStation") && (
+                              <IconButton
+                                className="sort-icon"
+                                onClick={() => {
+                                  setSortConfig({
+                                    key: t("productionFloor.currentStation"),
+                                    direction: sortConfig.direction === "asc" ? "desc" : "asc"
+                                  })
+                                  reSortingCurrentStation(sortConfig.direction === "asc" ? "desc" : "asc")
+                                }}>
+                                {sortConfig.direction === "asc"
+                                  ? <ArrowUpward sx={{ fontSize: "18px" }} />
+                                  : <ArrowDownward sx={{ fontSize: "18px" }} />
+                                }
+                              </IconButton>
+                            )}
+                          </div>
+                        </SecondaryTableCell>
+                      )
+                    })}
                   </SecondaryTableRow>
                 </TableHead>
                 <TableBody>

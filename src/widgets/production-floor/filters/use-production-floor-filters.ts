@@ -46,6 +46,7 @@ interface onStationsChangeProps {
 interface IUseProductionFloorFiltersProps {
   getStationFilterGroups?: any;
   connectionId: string;
+  isFetching?: boolean;
 }
 
 interface ISelectedGroup {
@@ -58,7 +59,8 @@ interface ISelectedGroup {
 
 const useProductionFloorFilters = ({
   getStationFilterGroups,
-  connectionId
+  connectionId,
+  isFetching =true
 }: IUseProductionFloorFiltersProps) => {
   const [filtersState, setFiltersState] = useRecoilState(
     productionFloorFiltersState
@@ -400,8 +402,10 @@ const useProductionFloorFilters = ({
     getAllUsersEmployeesApi(callApi, callBackFunction).then();
   };
   useEffect(() => {
-    getAllUsers();
-  }, []);
+    if(isFetching){
+      getAllUsers();
+    }
+  }, [isFetching]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 const handleSelectAllUsers = (event: React.ChangeEvent<HTMLInputElement>) => {
   if (event.target.checked) {
@@ -449,10 +453,10 @@ const getStationFilterByIdGroup = async (id) => {
 };
 
 useEffect(() => {
-  if(selectedGroupId && openModalEditGroup){
+  if(selectedGroupId && openModalEditGroup && isFetching){
     getStationFilterByIdGroup(selectedGroup?.id)
   }
-}, [selectedGroupId,openModalEditGroup])
+}, [selectedGroupId,openModalEditGroup,isFetching])
 const [actions, setActions] = useRecoilState(actionsListState);
 const getActions = async () => {
   const callBack = (res) => {
@@ -470,8 +474,10 @@ const getActions = async () => {
     });
   }
 useEffect(() => {
-  getActions();
-}, []);
+  if(isFetching){
+    getActions();
+  }
+}, [isFetching]);
 
   return {
     t,
