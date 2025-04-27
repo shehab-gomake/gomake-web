@@ -23,8 +23,8 @@ const DocumentNumbering = () => {
     setShowTooltip,
     showTooltip,
   } = useDocumentNumbers();
-  const { t } = useTranslation();
 
+  const { t } = useTranslation();
   const onChangeInputs = (key, value) => {
     if (key === "value" && value <= document.nextValue) {
       setShowTooltip(true);
@@ -50,9 +50,9 @@ const DocumentNumbering = () => {
           }
         >
           <Stack direction={"column"} gap={"20px"} padding={3}>
-            <Stack direction={"row"} gap={"19px"}>
+            <Stack direction={"row"}>
               {editDocumentInputs(document).map((item) => (
-                <div>
+                <div style={{ display: "flex", alignItems: "flex-end" }}>
                   <FormInput
                     input={item as IInput}
                     changeState={onChangeInputs}
@@ -68,7 +68,7 @@ const DocumentNumbering = () => {
                       }
                       arrow
                     >
-                      <div style={{ color: "red" }}>⚠️</div>
+                      <div>⚠️</div>
                     </Tooltip>
                   )}{" "}
                 </div>
@@ -94,6 +94,7 @@ const DocumentNumbering = () => {
                 style={classes.btnStyle}
                 onClick={() => onUpdateDocument(document)}
                 variant="contained"
+                disabled={showTooltip}
               >
                 {t("documentingSettings.update")}
               </SecondaryButton>
