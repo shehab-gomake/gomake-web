@@ -39,7 +39,6 @@ const PricingWidget = ({
   deliveryDate,
   isMobileScreen,
 }: IPricingWidgetProps) => {
-
   const { classes } = useStyle();
   const {
     view,
@@ -78,14 +77,19 @@ const PricingWidget = ({
     handleOpenSectionNameListMenu,
     reOderMainActions,
     reOderSubWorkFlows,
-  } = usePricingWidget({ workFlows, getOutSourcingSuppliers, widgetType, selectedWorkFlowCalculatedIsLoaded, getSelectedWorkFlow });
-  const isHasSubWorkFlowsOrProductTypeActions = hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow)
+  } = usePricingWidget({
+    workFlows,
+    getOutSourcingSuppliers,
+    widgetType,
+    selectedWorkFlowCalculatedIsLoaded,
+    getSelectedWorkFlow,
+  });
+  const isHasSubWorkFlowsOrProductTypeActions =
+    hasSubWorkFlowsOrProductTypeActions(selectedWorkFlow);
   const sectionNames = getSectionNames(selectedWorkFlow);
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
-
-
 
   return (
     <Stack gap={"16px"} width={"100%"}>
@@ -123,7 +127,7 @@ const PricingWidget = ({
                   sx={classes.button}
                   variant={
                     view === EPricingViews.OTHERS_WORKFLOWS &&
-                      selectedTab?.productType === section.productType
+                    selectedTab?.productType === section.productType
                       ? "contained"
                       : "outlined"
                   }
@@ -144,19 +148,21 @@ const PricingWidget = ({
           alignItems={"center"}
           style={{ display: "flex", flexWrap: "wrap" }}
         >
-          {deliveryDate && <Stack
-            direction={"row"}
-            gap={"10px"}
-            alignItems={"center"}
-            style={{ cursor: "pointer" }}
-          >
-            <span style={classes.detailTitle}>
-              {t("home.headers.deliveryDate")}
-            </span>
-            <span style={classes.detailValue}>
-              {_renderDeliveryDate(deliveryDate)}
-            </span>
-          </Stack>}
+          {deliveryDate && (
+            <Stack
+              direction={"row"}
+              gap={"10px"}
+              alignItems={"center"}
+              style={{ cursor: "pointer" }}
+            >
+              <span style={classes.detailTitle}>
+                {t("home.headers.deliveryDate")}
+              </span>
+              <span style={classes.detailValue}>
+                {_renderDeliveryDate(deliveryDate)}
+              </span>
+            </Stack>
+          )}
           <PermissionCheck userPermission={Permissions.CUSTOMIZE_WORKFLOW}>
             {isHasSubWorkFlowsOrProductTypeActions &&
               view === EPricingViews.SELECTED_WORKFLOW &&
