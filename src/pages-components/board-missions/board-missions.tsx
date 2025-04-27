@@ -498,11 +498,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClickNo={() => onOpenPackagesModal(missionItem)}
       />
       <GoMakeDeleteModal
-        hideIcon={true}
         modalType={ModalType.WARNING}
         title={t("boardMissions.unReadyModalTitle")}
-        subTitle={t("boardMissions.unReadyModalSubTitle")}
-        yesBtn={t("boardMissions.unReadyWitNotification")}
+        subTitle={" "}
+        yesBtn={t("modal.confirm")}
         cancelBtn={t("modal.cancel")}
         openModal={openReturnToProdModal}
         onClose={onCloseReturnToProdModal}
