@@ -235,11 +235,9 @@ const TransactionJournalReportWidget = ({
         typeClient={CLIENT_TYPE.CUSTOMER}
         isgetAllCustomers={false}
         openModal={showCustomerModal}
-        modalTitle={t("customers.modal.editTitle")}
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
-        showUpdateButton={true}
       />
       <CreateNewTransactionModal
         onCloseModal={onClickCloseCreateTransactionModal}

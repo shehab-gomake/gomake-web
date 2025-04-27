@@ -25,7 +25,6 @@ import { InvoiceCreationModal } from "../invoice-creation-modal";
 import { ModalType } from "@/enums";
 import { OrderNowPrePaymentModal } from "../total-price-and-vat/order-now-modal/order-now-pre-payment";
 import { validateDocument } from "@/utils/validators";
-import { DeleteIcon } from "@/components/icons/delete-icon";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -109,6 +108,7 @@ const ButtonsContainer = ({
     setOpenReceiptCreationModal,
     isReceipt,
     canCancelReceipt,
+    isDeliveryNote,
   } = useButtonsContainer(documentType);
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
@@ -236,16 +236,15 @@ const ButtonsContainer = ({
               : t("sales.quote.addAttachments")}
           </GomakePrimaryButton>
         }
-        {isNewCreation &&
-          (documentType === DOCUMENT_TYPE.deliveryNote || isInvoice) && (
-            <GomakePrimaryButton
-              leftIcon={<PlusIcon stroke={"#344054"} />}
-              style={classes.btnContainer}
-              onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.order)}
-            >
-              {t("sales.quote.copyFromOrder")}
-            </GomakePrimaryButton>
-          )}
+        {isNewCreation && (isDeliveryNote || isInvoice) && (
+          <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.order)}
+          >
+            {t("sales.quote.copyFromOrder")}
+          </GomakePrimaryButton>
+        )}
         {isNewCreation && isInvoice && (
           <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}

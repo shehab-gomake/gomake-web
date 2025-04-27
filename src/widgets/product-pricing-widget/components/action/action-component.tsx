@@ -26,7 +26,11 @@ import {
   outsourceSuppliersState,
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
-import { GoMakeAutoComplate, GoMakeDeleteModal, GomakePrimaryButton } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakePrimaryButton,
+} from "@/components";
 import Button from "@mui/material/Button";
 import { useTranslation } from "react-i18next";
 import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
@@ -38,40 +42,45 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderIconLogs } from "@/utils/constants";
 import { TableOutPutComponent } from "../table-output/table-output-component";
 import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import { isActionEmployeeUpdatedState, permissionsState, userState } from "@/store";
+import {
+  isActionEmployeeUpdatedState,
+  permissionsState,
+  userState,
+} from "@/store";
 import { Draggable } from "react-beautiful-dnd";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons/sort-icon";
-import { ModalType, } from "@/enums";
-import { _renderDeliveryDate, } from "@/utils/helpers";
+import { ModalType } from "@/enums";
+import { _renderDeliveryDate } from "@/utils/helpers";
 import { ReChooseIcon } from "@/icons";
 import { ReloadPriceIcon } from "@/icons/reload-price";
+import { formatValueWithUnit } from "@/utils/is-currency";
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
   productType?: string | null;
-  widgetType?: EWidgetProductType,
-  selectedWorkFlowCalculatedIsLoaded?: boolean
-  sectionName?: string
-  isFromSetting?: boolean
-  deleteActionFromProduct?: (selectedAction: any) => void
-  updateProductAction?: (data: any) => void
-  deliveryDate?: string
-  showSaveChangesButton?: boolean
+  widgetType?: EWidgetProductType;
+  selectedWorkFlowCalculatedIsLoaded?: boolean;
+  sectionName?: string;
+  isFromSetting?: boolean;
+  deleteActionFromProduct?: (selectedAction: any) => void;
+  updateProductAction?: (data: any) => void;
+  deliveryDate?: string;
+  showSaveChangesButton?: boolean;
 }
 
 interface IActionsComponentProps {
   actions: IWorkFlowAction[];
   workFlowId?: string;
   productType?: string | null;
-  widgetType?: EWidgetProductType,
-  selectedWorkFlowCalculatedIsLoaded?: boolean,
-  sectionName?: string
-  reOderMainActions?: (data: any) => void
-  isFromSetting?: boolean
-  deleteActionFromProduct?: (selectedAction: any) => void
-  updateActionsOrderInProduct?: (actions: any) => void
-  updateProductAction?: (data: any) => void
+  widgetType?: EWidgetProductType;
+  selectedWorkFlowCalculatedIsLoaded?: boolean;
+  sectionName?: string;
+  reOderMainActions?: (data: any) => void;
+  isFromSetting?: boolean;
+  deleteActionFromProduct?: (selectedAction: any) => void;
+  updateActionsOrderInProduct?: (actions: any) => void;
+  updateProductAction?: (data: any) => void;
 }
 
 const Actions = ({
@@ -84,102 +93,108 @@ const Actions = ({
   isFromSetting = false,
   deleteActionFromProduct,
   updateActionsOrderInProduct,
-  updateProductAction
+  updateProductAction,
 }: IActionsComponentProps) => {
   const [actionsList, setActionsList] = useState(actions);
   useEffect(() => {
-    setActionsList(actions)
-  }, [actions])
+    setActionsList(actions);
+  }, [actions]);
   const onDragEnd = (result) => {
     if (!result.destination) return;
     const reorderedActions = Array.from(actionsList);
     const [movedAction] = reorderedActions.splice(result.source.index, 1);
     reorderedActions.splice(result.destination.index, 0, movedAction);
-    const formattedActions = reorderedActions.map((action: any, index: number) => ({
-      printingActionId: action?.id,
-      productType: action?.productType,
-      orderIndex: index
-    }));
-    setActionsList(reorderedActions)
+    const formattedActions = reorderedActions.map(
+      (action: any, index: number) => ({
+        printingActionId: action?.id,
+        productType: action?.productType,
+        orderIndex: index,
+      })
+    );
+    setActionsList(reorderedActions);
     if (isFromSetting) {
-      updateActionsOrderInProduct(formattedActions)
-
-    }
-    else {
-      reOderMainActions(formattedActions)
+      updateActionsOrderInProduct(formattedActions);
+    } else {
+      reOderMainActions(formattedActions);
     }
   };
   const permissions = useRecoilValue(permissionsState);
   return (
     <>
-      {
-        permissions.includes(Permissions.CUSTOMIZE_WORKFLOW) ?
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="actionsDroppable">
-              {(provided) => (
-                <Stack
-                  gap={"10px"}
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                >
-                  {actionsList?.map((action, index) => (
-                    <Draggable key={action.id} draggableId={action.id} index={index}>
-                      {(provided) => (
+      {permissions.includes(Permissions.CUSTOMIZE_WORKFLOW) ? (
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="actionsDroppable">
+            {(provided) => (
+              <Stack
+                gap={"10px"}
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {actionsList?.map((action, index) => (
+                  <Draggable
+                    key={action.id}
+                    draggableId={action.id}
+                    index={index}
+                  >
+                    {(provided) => (
+                      <div ref={provided.innerRef} {...provided.draggableProps}>
                         <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
+                          }}
                         >
-                          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                            <div {...provided.dragHandleProps}>
-                              <SortIcon />
-                            </div>
-                            <ActionContainerComponent
-                              data-toure={'action'}
-                              widgetType={widgetType}
-                              productType={productType}
-                              workFlowId={workFlowId}
-                              selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
-                              delay={index * 800}
-                              isFromSetting={isFromSetting}
-                              deleteActionFromProduct={deleteActionFromProduct}
-                              updateProductAction={updateProductAction}
-                              {...action}
-                            />
+                          <div {...provided.dragHandleProps}>
+                            <SortIcon />
                           </div>
+                          <ActionContainerComponent
+                            data-toure={"action"}
+                            widgetType={widgetType}
+                            productType={productType}
+                            workFlowId={workFlowId}
+                            selectedWorkFlowCalculatedIsLoaded={
+                              selectedWorkFlowCalculatedIsLoaded
+                            }
+                            delay={index * 800}
+                            isFromSetting={isFromSetting}
+                            deleteActionFromProduct={deleteActionFromProduct}
+                            updateProductAction={updateProductAction}
+                            {...action}
+                          />
                         </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </Stack>
-              )}
-            </Droppable>
-          </DragDropContext> : <>
-            {actionsList?.map((action, index) => (
-
-              <div style={{ marginBottom: "16px" }}>
-                <ActionContainerComponent
-                  data-toure={'action'}
-                  widgetType={widgetType}
-                  productType={productType}
-                  workFlowId={workFlowId}
-                  selectedWorkFlowCalculatedIsLoaded={selectedWorkFlowCalculatedIsLoaded}
-                  delay={index * 800}
-                  isFromSetting={isFromSetting}
-                  deleteActionFromProduct={deleteActionFromProduct}
-                  updateProductAction={updateProductAction}
-                  {...action}
-                />
-              </div>
-            ))}
-          </>
-      }
-
-
-
-
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </Stack>
+            )}
+          </Droppable>
+        </DragDropContext>
+      ) : (
+        <>
+          {actionsList?.map((action, index) => (
+            <div style={{ marginBottom: "16px" }}>
+              <ActionContainerComponent
+                data-toure={"action"}
+                widgetType={widgetType}
+                productType={productType}
+                workFlowId={workFlowId}
+                selectedWorkFlowCalculatedIsLoaded={
+                  selectedWorkFlowCalculatedIsLoaded
+                }
+                delay={index * 800}
+                isFromSetting={isFromSetting}
+                deleteActionFromProduct={deleteActionFromProduct}
+                updateProductAction={updateProductAction}
+                {...action}
+              />
+            </div>
+          ))}
+        </>
+      )}
     </>
-
   );
 };
 
@@ -220,7 +235,7 @@ const ActionContainerComponent = ({
   deleteActionFromProduct,
   updateProductAction,
   relatedActions,
-  showSaveChangesButton
+  showSaveChangesButton,
 }: IActionContainerComponentProps) => {
   source = source === EWorkSource.OUT ? EWorkSource.OUT : EWorkSource.INTERNAL;
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -228,9 +243,10 @@ const ActionContainerComponent = ({
   const [chooseMaterial, setChooseMaterial] = useState<boolean>(false);
   const [chooseEmployee, setChooseEmployee] = useState<boolean>(false);
   const [chooseFold, setChooseFold] = useState<boolean>(false);
-  const [selectedfold, setSelectedFold] = useState<any>()
-  const [changeWorkFlowOutputDTO, setChangeWorkFlowOutputDTO] = useState<any>([])
-
+  const [selectedfold, setSelectedFold] = useState<any>();
+  const [changeWorkFlowOutputDTO, setChangeWorkFlowOutputDTO] = useState<any>(
+    []
+  );
 
   const currentProductItemValue = useRecoilValue(currentProductItemValueState);
   const { t } = useTranslation();
@@ -258,11 +274,13 @@ const ActionContainerComponent = ({
     employeesList,
     machinesList,
     materialsList,
-    foldOptions
+    foldOptions,
   } = useActionUpdateValues();
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const [hideRelatedActions, setHideRelatedActions] = useState<boolean>(false);
-  const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(isActionEmployeeUpdatedState);
+  const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(
+    isActionEmployeeUpdatedState
+  );
   // const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
   const suppliers = useMemo(() => {
     return suppliersState?.map((s) => ({
@@ -273,34 +291,38 @@ const ActionContainerComponent = ({
   const { classes } = useStyle();
   const { secondColor } = useGomakeTheme();
   const user = useRecoilValue<any>(userState);
-  const unitType = user?.printHouseProfile?.unitType || 0
+  const unitType = user?.printHouseProfile?.unitType || 0;
   const inputsParameters = outputs?.filter(
     (parameter) =>
-      parameter && parameter?.propertyType === RuleType.PARAMETER &&
+      parameter &&
+      parameter?.propertyType === RuleType.PARAMETER &&
       parameter?.htmlElementType === HtmlElementType.TEXT
   );
   const outputsParameters = outputs?.filter(
     (parameter) =>
-      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter &&
+      parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TEXT
   );
 
   const imageOutputs = outputs?.filter(
     (parameter) =>
-      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter &&
+      parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.IMAGE
   );
 
   const textAreaOutputs = outputs?.filter(
     (parameter) =>
-      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter &&
+      parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TEXT_AREA
   );
 
-
   const tableOutputs = outputs?.filter(
     (parameter) =>
-      parameter && parameter?.propertyType === RuleType.OUTPUT &&
+      parameter &&
+      parameter?.propertyType === RuleType.OUTPUT &&
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
   const handleDeliveryTimeUpdate = (newValue: string) => {
@@ -308,7 +330,11 @@ const ActionContainerComponent = ({
       return; // Exit early if values match
     }
     if (isFromSetting) {
-      updateProductAction({ actionId, value: newValue, fieldName: "totalProductionTime" })
+      updateProductAction({
+        actionId,
+        value: newValue,
+        fieldName: "totalProductionTime",
+      });
     } else {
       updateActionData(
         id,
@@ -325,7 +351,7 @@ const ActionContainerComponent = ({
       "totalProductionTime",
       data?.productType || productType
     ).then();
-  }
+  };
   const handleCostUpdateRelatedActions = (data, newValue: string) => {
     updateActionData(
       data?.id,
@@ -333,7 +359,7 @@ const ActionContainerComponent = ({
       "totalCost",
       data?.productType || productType
     ).then();
-  }
+  };
   const handleProfitUpdateRelatedActions = (data, newValue: string) => {
     updateActionData(
       data?.id,
@@ -341,7 +367,7 @@ const ActionContainerComponent = ({
       "profit",
       data?.productType || productType
     ).then();
-  }
+  };
   const handleUpdatePriceRelatedActions = (data, newValue: string) => {
     updateActionData(
       data?.id,
@@ -349,14 +375,14 @@ const ActionContainerComponent = ({
       "totalPrice",
       data?.productType || productType
     ).then();
-  }
+  };
 
   const handleCostUpdate = (newCost: string) => {
     if (newCost === totalCost?.values[0]?.toString()) {
       return; // Exit early if values match
     }
     if (isFromSetting) {
-      updateProductAction({ actionId, value: newCost, fieldName: "totalcost" })
+      updateProductAction({ actionId, value: newCost, fieldName: "totalcost" });
     } else {
       updateActionData(id, +newCost, "totalCost", productType).then();
     }
@@ -378,7 +404,7 @@ const ActionContainerComponent = ({
 
   const handleSourceChange = (source: EWorkSource) => {
     if (isFromSetting) {
-      updateProductAction({ actionId, value: source, fieldName: "source" })
+      updateProductAction({ actionId, value: source, fieldName: "source" });
     } else {
       updateActionData(id, source, "source", productType).then();
     }
@@ -390,15 +416,21 @@ const ActionContainerComponent = ({
       "source",
       data?.productType || productType
     ).then();
-  }
+  };
 
   const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
 
   const handleSupplierChange = (e, value) => {
     if (isFromSetting) {
-      updateProductAction({ actionId, value: value?.value, fieldName: "supplierid" })
+      updateProductAction({
+        actionId,
+        value: value?.value,
+        fieldName: "supplierid",
+      });
     } else {
-      const actionSelected = workFlows[0]?.actions?.find((action) => action.id === id);
+      const actionSelected = workFlows[0]?.actions?.find(
+        (action) => action.id === id
+      );
       if (actionSelected) {
         // Create a new object with the updated supplierId
         const updatedAction = { ...actionSelected, supplierId: value?.value };
@@ -419,25 +451,34 @@ const ActionContainerComponent = ({
         });
       }
 
-      updateActionData(id, value?.value ?? null, "supplierId", productType).then();
+      updateActionData(
+        id,
+        value?.value ?? null,
+        "supplierId",
+        productType
+      ).then();
     }
   };
   const calculateProfitInMoney = () => {
     const totalPriceValues = totalPriceValue ? totalPriceValue : 0;
     const totalCostValues = totalCostValue ? totalCostValue : 0;
     return (totalPriceValues - totalCostValues).toFixed(2);
-  }
+  };
 
   const calculateOutSourceProfitInMoney = () => {
     const totalPriceValues = totalPriceValue ? totalPriceValue : 0;
     const totalCostValues = totalCostValue ? totalCostValue : 0;
     return (totalPriceValues - totalCostValues).toFixed(2);
-  }
+  };
   const calculateProfitInRelaredActionsMoney = (action) => {
-    const totalPriceValues = action?.totalPrice ? action?.totalPrice?.values[0] : 0;
-    const totalCostValues = action?.totalCost ? action?.totalCost?.values[0] : 0;
+    const totalPriceValues = action?.totalPrice
+      ? action?.totalPrice?.values[0]
+      : 0;
+    const totalCostValues = action?.totalCost
+      ? action?.totalCost?.values[0]
+      : 0;
     return (totalPriceValues - totalCostValues).toFixed(2);
-  }
+  };
 
   const getSupplierId = useCallback(() => {
     if (supplierId) {
@@ -449,27 +490,27 @@ const ActionContainerComponent = ({
 
   useEffect(() => {
     if (foldOptionValueId) {
-      const selectedFoldOptionName = foldOptions?.find((option) => option.id == foldOptionValueId)
+      const selectedFoldOptionName = foldOptions?.find(
+        (option) => option.id == foldOptionValueId
+      );
       if (selectedFoldOptionName) {
-        setSelectedFold(selectedFoldOptionName)
+        setSelectedFold(selectedFoldOptionName);
       }
     }
-  }, [foldOptionValueId, foldOptions])
+  }, [foldOptionValueId, foldOptions]);
   const permissions = useRecoilValue(permissionsState);
-
-
-
 
   return (
     <>
-      {selectedWorkFlowCalculatedIsLoaded ? <Skeleton variant="rectangular" width={'100%'} height={'100px'} /> :
+      {selectedWorkFlowCalculatedIsLoaded ? (
+        <Skeleton variant="rectangular" width={"100%"} height={"100px"} />
+      ) : (
         <>
           <Fade
             in={true}
             timeout={delay}
             style={{ width: "100%", position: "relative" }}
           >
-
             <Stack
               onClick={() => setIsOpen(!isOpen && !isFromSetting)}
               style={{
@@ -477,13 +518,11 @@ const ActionContainerComponent = ({
                 border: isOpen ? classes.actionContainerBorder : "unset",
               }}
             >
-
               <Stack
                 padding={"10px 0"}
                 direction={"row"}
                 justifyContent={"space-between"}
               >
-
                 <Stack
                   direction={"row"}
                   gap={"16px"}
@@ -503,12 +542,16 @@ const ActionContainerComponent = ({
                         direction={"row"}
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <Divider orientation={"vertical"} flexItem color={"#000"} />
+                        <Divider
+                          orientation={"vertical"}
+                          flexItem
+                          color={"#000"}
+                        />
                         <GoMakeAutoComplate
                           key={supplierId + suppliers}
                           placeholder={t("materials.sheetPaper.selectSupplier")}
                           value={getSupplierId()}
-                          style={{ width: "200px", }}
+                          style={{ width: "200px" }}
                           onChange={handleSupplierChange}
                           options={suppliersState?.map((s) => ({
                             value: s.supplierId,
@@ -520,29 +563,38 @@ const ActionContainerComponent = ({
                     ) : (
                       isNeedMachine && (
                         <>
-                          <Divider orientation={"vertical"} flexItem color={"#000"} />
+                          <Divider
+                            orientation={"vertical"}
+                            flexItem
+                            color={"#000"}
+                          />
                           {!chooseMachine ? (
                             <Button
                               onClick={(e) => {
-                                if (permissions.includes(Permissions.CAN_UPDATE_MACHINES_IN_WORK_FLOW_ACTION)) {
+                                if (
+                                  permissions.includes(
+                                    Permissions.CAN_UPDATE_MACHINES_IN_WORK_FLOW_ACTION
+                                  )
+                                ) {
                                   e.stopPropagation();
                                   setChooseMachine(true);
-                                  onClickGetMachineForAction(actionId)
+                                  onClickGetMachineForAction(actionId);
                                 }
                               }}
                               variant={"text"}
                               style={classes.sectionTitle}
                             >
-                              {
-                                machineName != null ? <>
+                              {machineName != null ? (
+                                <>
                                   {machineName?.length > 20
                                     ? machineName.slice(0, 20) + "..."
                                     : machineName}
-                                </> : <>
+                                </>
+                              ) : (
+                                <>
                                   {t("materials.sheetPaper.SelecteNewMachine")}
                                 </>
-                              }
-
+                              )}
                             </Button>
                           ) : (
                             <Stack
@@ -555,7 +607,12 @@ const ActionContainerComponent = ({
                                 disableClearable={true}
                                 onChange={(e, v) => {
                                   if (isFromSetting) {
-                                    updateProductAction({ actionId, value: v?.value, fieldName: "machineid", machineName: v?.label })
+                                    updateProductAction({
+                                      actionId,
+                                      value: v?.value,
+                                      fieldName: "machineid",
+                                      machineName: v?.label,
+                                    });
                                   } else {
                                     selectNewMachine(
                                       v?.value,
@@ -570,15 +627,15 @@ const ActionContainerComponent = ({
                                       machineName: v?.label,
                                       machineId: v?.value,
                                       printingActionId: id,
-
-                                    })
-
+                                    });
                                   }
                                   setChooseMachine(false);
                                 }}
                                 style={{ width: "200px" }}
                                 options={machinesList}
-                                placeholder={t("materials.sheetPaper.chooseMachine")}
+                                placeholder={t(
+                                  "materials.sheetPaper.chooseMachine"
+                                )}
                                 value={machineName}
                               />
                               <IconButton
@@ -596,77 +653,95 @@ const ActionContainerComponent = ({
                     )}
                   </Stack>
 
-                  {source != EWorkSource.OUT && <Divider orientation={"vertical"} flexItem />}
+                  {source != EWorkSource.OUT && (
+                    <Divider orientation={"vertical"} flexItem />
+                  )}
                   <Stack
                     style={classes.sectionTitle}
                     direction={"row"}
                     alignItems={"center"}
                     gap={"10px"}
                   >
-                    {
-                      isNeedEmployee && source != EWorkSource.OUT && (
-                        <>
-                          {!chooseEmployee ? (
-                            <Button
-                              onClick={(e) => {
-                                if (permissions.includes(Permissions.CAN_UPDATE_EMPLOYEES_IN_WORK_FLOW_ACTION)) {
-                                  e.stopPropagation();
-                                  setChooseEmployee(true);
-                                  onClickGetEmployeeForAction(actionId)
+                    {isNeedEmployee && source != EWorkSource.OUT && (
+                      <>
+                        {!chooseEmployee ? (
+                          <Button
+                            onClick={(e) => {
+                              if (
+                                permissions.includes(
+                                  Permissions.CAN_UPDATE_EMPLOYEES_IN_WORK_FLOW_ACTION
+                                )
+                              ) {
+                                e.stopPropagation();
+                                setChooseEmployee(true);
+                                onClickGetEmployeeForAction(actionId);
+                              }
+                            }}
+                            variant={"text"}
+                            style={classes.sectionTitle}
+                          >
+                            {employeeName ? (
+                              employeeName
+                            ) : (
+                              <>{t("materials.sheetPaper.selectNewEmployee")}</>
+                            )}
+                          </Button>
+                        ) : (
+                          <Stack
+                            direction={"row"}
+                            gap={"5px"}
+                            alignItems={"center"}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <GoMakeAutoComplate
+                              disableClearable={true}
+                              onChange={(e, v) => {
+                                if (isFromSetting) {
+                                  updateProductAction({
+                                    actionId,
+                                    emplyeeName: v?.label,
+                                    value: v?.value,
+                                    fieldName: "employeeid",
+                                  });
+                                  setChooseEmployee(false);
+                                } else {
+                                  if (widgetType === EWidgetProductType.EDIT) {
+                                    setIsActionEmployeeUpdated(true);
+                                  }
+                                  updateWorkFlowForEmployees(
+                                    actionId,
+                                    productType,
+                                    actionIndex,
+                                    v?.label,
+                                    v?.value,
+                                    id
+                                  );
+                                  setChooseEmployee(false);
                                 }
                               }}
-                              variant={"text"}
-                              style={classes.sectionTitle}
+                              style={{ width: "200px" }}
+                              options={employeesList}
+                              placeholder={t(
+                                "materials.sheetPaper.chooseEmployee"
+                              )}
+                              value={employeeName}
+                            />
+                            <IconButton
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setChooseEmployee(false);
+                              }}
                             >
-                              {employeeName ? employeeName : <>{t("materials.sheetPaper.selectNewEmployee")}</>}
-                            </Button>
-                          ) : (
-                            <Stack
-                              direction={"row"}
-                              gap={"5px"}
-                              alignItems={"center"}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <GoMakeAutoComplate
-                                disableClearable={true}
-                                onChange={(e, v) => {
-                                  if (isFromSetting) {
-                                    updateProductAction({ actionId, emplyeeName: v?.label, value: v?.value, fieldName: "employeeid" })
-                                    setChooseEmployee(false);
-                                  }
-                                  else {
-                                    if (widgetType === EWidgetProductType.EDIT) {
-                                      setIsActionEmployeeUpdated(true);
-                                    }
-                                    updateWorkFlowForEmployees(actionId, productType, actionIndex, v?.label, v?.value, id)
-                                    setChooseEmployee(false);
-                                  }
-
-                                }}
-                                style={{ width: "200px" }}
-                                options={employeesList}
-                                placeholder={t("materials.sheetPaper.chooseEmployee")}
-                                value={employeeName}
-                              />
-                              <IconButton
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setChooseEmployee(false);
-                                }}
-                              >
-                                <ClearRoundedIcon />
-                              </IconButton>
-                            </Stack>
-                          )}
-                        </>
-                      )
-                    }
+                              <ClearRoundedIcon />
+                            </IconButton>
+                          </Stack>
+                        )}
+                      </>
+                    )}
                   </Stack>
-                  {
-                    isNeedEmployee && source != EWorkSource.OUT && <Divider orientation={"vertical"} flexItem />
-                  }
-
-
+                  {isNeedEmployee && source != EWorkSource.OUT && (
+                    <Divider orientation={"vertical"} flexItem />
+                  )}
 
                   <Stack
                     style={classes.sectionTitle}
@@ -674,76 +749,81 @@ const ActionContainerComponent = ({
                     alignItems={"center"}
                     gap={"10px"}
                   >
-                    {
-                      isNeedMaterial && source != EWorkSource.OUT && (
-                        <>
-                          {!chooseMaterial ? (
-                            <Button
+                    {isNeedMaterial && source != EWorkSource.OUT && (
+                      <>
+                        {!chooseMaterial ? (
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setChooseMaterial(true);
+                              onClickGetMaterialsForAction(materials[0]);
+                            }}
+                            variant={"text"}
+                            style={classes.sectionTitle}
+                          >
+                            {materials[0]?.materialCategories?.length > 0 ? (
+                              <>
+                                {materials[0]?.materialCategories[0]?.name
+                                  ?.length > 20
+                                  ? materials[0]?.materialCategories[0]?.name.slice(
+                                      0,
+                                      20
+                                    ) + "..."
+                                  : materials[0]?.materialCategories[0]?.name}
+                              </>
+                            ) : (
+                              <>{t("materials.sheetPaper.selectNewMaterial")}</>
+                            )}
+                          </Button>
+                        ) : (
+                          <Stack
+                            direction={"row"}
+                            gap={"5px"}
+                            alignItems={"center"}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <GoMakeAutoComplate
+                              disableClearable={true}
+                              onChange={(e, v) => {
+                                selectNewMaterials(
+                                  v?.value,
+                                  actionId,
+                                  productType,
+                                  actionIndex
+                                );
+                                setAttributesData({
+                                  actionId,
+                                  productType,
+                                  actionIndex,
+                                  printHouseMaterialSizeName: v?.label,
+                                  printHouseMaterialSizeId: v?.value,
+                                  printingActionId: id,
+                                });
+                                setChooseMaterial(false);
+                              }}
+                              style={{ width: "200px" }}
+                              options={materialsList}
+                              placeholder={t(
+                                "materials.sheetPaper.chooseMaterial"
+                              )}
+                              value={materials[0]?.materialCategories[0]?.name}
+                            />
+                            <IconButton
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setChooseMaterial(true);
-                                onClickGetMaterialsForAction(materials[0])
+                                setChooseMaterial(false);
                               }}
-                              variant={"text"}
-                              style={classes.sectionTitle}
                             >
-                              {materials[0]?.materialCategories?.length > 0 ? <>
-                                {materials[0]?.materialCategories[0]?.name?.length > 20
-                                  ? materials[0]?.materialCategories[0]?.name.slice(0, 20) + "..."
-                                  : materials[0]?.materialCategories[0]?.name}</> : <>
-                                {t("materials.sheetPaper.selectNewMaterial")}
-                              </>}
-
-                            </Button>
-                          ) : (
-                            <Stack
-                              direction={"row"}
-                              gap={"5px"}
-                              alignItems={"center"}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <GoMakeAutoComplate
-                                disableClearable={true}
-                                onChange={(e, v) => {
-                                  selectNewMaterials(
-                                    v?.value,
-                                    actionId,
-                                    productType,
-                                    actionIndex
-                                  );
-                                  setAttributesData({
-                                    actionId,
-                                    productType,
-                                    actionIndex,
-                                    printHouseMaterialSizeName: v?.label,
-                                    printHouseMaterialSizeId: v?.value,
-                                    printingActionId: id,
-                                  })
-                                  setChooseMaterial(false);
-
-                                }}
-                                style={{ width: "200px" }}
-                                options={materialsList}
-                                placeholder={t("materials.sheetPaper.chooseMaterial")}
-                                value={materials[0]?.materialCategories[0]?.name}
-                              />
-                              <IconButton
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setChooseMaterial(false);
-                                }}
-                              >
-                                <ClearRoundedIcon />
-                              </IconButton>
-                            </Stack>
-                          )}
-                        </>
-                      )
-                    }
+                              <ClearRoundedIcon />
+                            </IconButton>
+                          </Stack>
+                        )}
+                      </>
+                    )}
                   </Stack>
-                  {
-                    isNeedMaterial && source != EWorkSource.OUT && <Divider orientation={"vertical"} flexItem />
-                  }
+                  {isNeedMaterial && source != EWorkSource.OUT && (
+                    <Divider orientation={"vertical"} flexItem />
+                  )}
 
                   <Stack
                     style={classes.sectionTitle}
@@ -751,71 +831,70 @@ const ActionContainerComponent = ({
                     alignItems={"center"}
                     gap={"10px"}
                   >
-                    {
-                      isNeedFolds && (
-                        <>
-                          {!chooseFold ? (
-                            <Button
+                    {isNeedFolds && (
+                      <>
+                        {!chooseFold ? (
+                          <Button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setChooseFold(true);
+                            }}
+                            variant={"text"}
+                            style={classes.sectionTitle}
+                          >
+                            {foldOptionValueId ? (
+                              selectedfold?.name
+                            ) : (
+                              <>{t("materials.sheetPaper.selectNewFolds")}</>
+                            )}
+                          </Button>
+                        ) : (
+                          <Stack
+                            direction={"row"}
+                            gap={"5px"}
+                            alignItems={"center"}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <GoMakeAutoComplate
+                              disableClearable={true}
+                              onChange={(e, v) => {
+                                selectNewFold(
+                                  v?.id,
+                                  actionId,
+                                  productType,
+                                  actionIndex
+                                );
+                                setAttributesData({
+                                  actionId,
+                                  productType,
+                                  actionIndex,
+                                  foldOptionValueId: v?.id,
+                                  printingActionId: id,
+                                });
+                                setChooseFold(false);
+                              }}
+                              style={{ width: "200px" }}
+                              options={foldOptions}
+                              placeholder={t(
+                                "materials.sheetPaper.chooseFoldOption"
+                              )}
+                              getOptionLabel={(option) => option.name}
+                              value={selectedfold}
+                            />
+                            <IconButton
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setChooseFold(true);
+                                setChooseFold(false);
                               }}
-                              variant={"text"}
-                              style={classes.sectionTitle}
                             >
-                              {foldOptionValueId ? selectedfold?.name : <>
-                                {t("materials.sheetPaper.selectNewFolds")}
-                              </>}
-                            </Button>
-                          ) : (
-                            <Stack
-                              direction={"row"}
-                              gap={"5px"}
-                              alignItems={"center"}
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <GoMakeAutoComplate
-                                disableClearable={true}
-                                onChange={(e, v) => {
-                                  selectNewFold(
-                                    v?.id,
-                                    actionId,
-                                    productType,
-                                    actionIndex
-                                  );
-                                  setAttributesData({
-                                    actionId,
-                                    productType,
-                                    actionIndex,
-                                    foldOptionValueId: v?.id,
-                                    printingActionId: id,
-
-                                  })
-                                  setChooseFold(false);
-                                }}
-                                style={{ width: "200px" }}
-                                options={foldOptions}
-                                placeholder={t("materials.sheetPaper.chooseFoldOption")}
-                                getOptionLabel={(option) => option.name}
-                                value={selectedfold}
-                              />
-                              <IconButton
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setChooseFold(false);
-                                }}
-                              >
-                                <ClearRoundedIcon />
-                              </IconButton>
-                            </Stack>
-                          )}
-                        </>
-                      )
-                    }
+                              <ClearRoundedIcon />
+                            </IconButton>
+                          </Stack>
+                        )}
+                      </>
+                    )}
                   </Stack>
-                  {
-                    isNeedFolds && <Divider orientation={"vertical"} flexItem />
-                  }
+                  {isNeedFolds && <Divider orientation={"vertical"} flexItem />}
 
                   <EditableKeyValueViewComponent
                     onUpdate={handleDeliveryTimeUpdate}
@@ -823,17 +902,24 @@ const ActionContainerComponent = ({
                     source={source}
                     name={t("home.headers.deliveryTime")}
                   />
-                  {
-                    deliveryDate && <>
+                  {deliveryDate && (
+                    <>
                       <Divider orientation={"vertical"} flexItem />
-                      <Stack direction={'row'} gap={'10px'} alignItems={'center'}>
-                        <span style={classes.detailTitle}>{t("sales.quote.deliveryDate")}</span>
-                        <span style={classes.detailValue}>{_renderDeliveryDate(deliveryDate)}</span>
+                      <Stack
+                        direction={"row"}
+                        gap={"10px"}
+                        alignItems={"center"}
+                      >
+                        <span style={classes.detailTitle}>
+                          {t("sales.quote.deliveryDate")}
+                        </span>
+                        <span style={classes.detailValue}>
+                          {_renderDeliveryDate(deliveryDate)}
+                        </span>
                       </Stack>
                     </>
-                  }
-                  {
-                    source === EWorkSource.OUT &&
+                  )}
+                  {source === EWorkSource.OUT && (
                     <>
                       <Divider
                         orientation={"vertical"}
@@ -852,32 +938,46 @@ const ActionContainerComponent = ({
                         style={{ height: "50%", margin: "auto 0" }}
                         flexItem
                       />
-                      {!isFromSetting && <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
-                        <EditableKeyValueViewComponent
-                          onUpdate={handleProfitUpdate}
-                          {...profit}
-                          values={profitValue}
-                          source={source}
-                          name={t("products.profits.pricingListWidget.profit")}
-                        />
-                        <span>
-                          {source === EWorkSource.OUT
-                            ? `(${calculateOutSourceProfitInMoney()
-                            } ${totalPrice ? totalPrice.defaultUnit : ""})`
-                            : `(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
+                      {!isFromSetting && (
+                        <Stack
+                          direction={"row"}
+                          gap={"3px"}
+                          alignItems={"center"}
+                        >
+                          <EditableKeyValueViewComponent
+                            onUpdate={handleProfitUpdate}
+                            {...profit}
+                            values={profitValue}
+                            source={source}
+                            name={t(
+                              "products.profits.pricingListWidget.profit"
+                            )}
+                          />
+                          <span>
+                            {`(${
+                              source === EWorkSource.OUT
+                                ? formatValueWithUnit(
+                                    calculateOutSourceProfitInMoney(),
+                                    totalPrice?.defaultUnit
+                                  )
+                                : formatValueWithUnit(
+                                    calculateProfitInMoney(),
+                                    totalPrice?.defaultUnit
+                                  )
                             })`}
-                        </span>
-                      </Stack>}
-                      {
-                        !isFromSetting && source !== EWorkSource.OUT && <Divider
+                          </span>
+                        </Stack>
+                      )}
+                      {!isFromSetting && source !== EWorkSource.OUT && (
+                        <Divider
                           orientation={"vertical"}
                           style={{ height: "50%", margin: "auto 0" }}
                           flexItem
                         />
-                      }
+                      )}
 
-                      {
-                        !isFromSetting && source !== EWorkSource.OUT && <EditableKeyValueViewComponent
+                      {!isFromSetting && source !== EWorkSource.OUT && (
+                        <EditableKeyValueViewComponent
                           onUpdate={handleUpdatePrice}
                           {...totalPrice}
                           values={totalPriceValue}
@@ -885,12 +985,13 @@ const ActionContainerComponent = ({
                           valueColor={secondColor(500)}
                           name={t("sales.quote.price")}
                         />
-                      }
+                      )}
                     </>
-                  }
-                  <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
-                    {
-                      source !== EWorkSource.OUT &&
+                  )}
+                  <PermissionCheck
+                    userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}
+                  >
+                    {source !== EWorkSource.OUT && (
                       <>
                         <Divider
                           orientation={"vertical"}
@@ -909,25 +1010,33 @@ const ActionContainerComponent = ({
                           style={{ height: "50%", margin: "auto 0" }}
                           flexItem
                         />
-                        {!isFromSetting && <>
-                          <Stack direction={"row"} gap={"3px"} alignItems={"center"}>
-                            <EditableKeyValueViewComponent
-                              onUpdate={handleProfitUpdate}
-                              {...profit}
-                              values={profitValue}
-                              source={source}
-                              name={t("products.profits.pricingListWidget.profit")}
-                            />
-                            <span>
-                              {`(${calculateProfitInMoney()} ${totalPrice ? totalPrice.defaultUnit : ""
-                                })`}
-                            </span>
-                          </Stack>
-
-                        </>}
-
+                        {!isFromSetting && (
+                          <>
+                            <Stack
+                              direction={"row"}
+                              gap={"3px"}
+                              alignItems={"center"}
+                            >
+                              <EditableKeyValueViewComponent
+                                onUpdate={handleProfitUpdate}
+                                {...profit}
+                                values={profitValue}
+                                source={source}
+                                name={t(
+                                  "products.profits.pricingListWidget.profit"
+                                )}
+                              />
+                              <span>
+                                {`(${formatValueWithUnit(
+                                  calculateProfitInMoney(),
+                                  totalPrice?.defaultUnit
+                                )})`}
+                              </span>
+                            </Stack>
+                          </>
+                        )}
                       </>
-                    }
+                    )}
                   </PermissionCheck>
                   <Divider
                     orientation={"vertical"}
@@ -943,9 +1052,14 @@ const ActionContainerComponent = ({
                     valueColor={secondColor(500)}
                     name={t("sales.quote.price")}
                   />
-                  {!isFromSetting && <Divider orientation={"vertical"} flexItem />}
+                  {!isFromSetting && (
+                    <Divider orientation={"vertical"} flexItem />
+                  )}
                   <div onClick={(e) => e.stopPropagation()}>
-                    <InOutSourceSelect value={source} onChange={handleSourceChange} />
+                    <InOutSourceSelect
+                      value={source}
+                      onChange={handleSourceChange}
+                    />
                   </div>
                 </Stack>
                 <div
@@ -958,9 +1072,17 @@ const ActionContainerComponent = ({
                   }}
                 >
                   {actionException && (
-                    <Tooltip title={t("CalculationExceptions." + actionException?.exceptionKey)}>
+                    <Tooltip
+                      title={t(
+                        "CalculationExceptions." + actionException?.exceptionKey
+                      )}
+                    >
                       <IconButton>
-                        {_renderIconLogs(actionException?.exceptionType, 24, 24)}
+                        {_renderIconLogs(
+                          actionException?.exceptionType,
+                          24,
+                          24
+                        )}
                       </IconButton>
                     </Tooltip>
                   )}
@@ -968,7 +1090,7 @@ const ActionContainerComponent = ({
                   <IconButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      setHideRelatedActions(false)
+                      setHideRelatedActions(false);
                       handleClick(e);
                     }}
                   >
@@ -978,98 +1100,151 @@ const ActionContainerComponent = ({
                       height={24}
                     />
                   </IconButton>
-                  {!isFromSetting && <IconButton
-                    onClick={() => setIsOpen(!isOpen)}
-                    style={classes.toggleActionButton}
-                  >
-                    {isOpen ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                  </IconButton>}
+                  {!isFromSetting && (
+                    <IconButton
+                      onClick={() => setIsOpen(!isOpen)}
+                      style={classes.toggleActionButton}
+                    >
+                      {isOpen ? (
+                        <KeyboardArrowUpIcon />
+                      ) : (
+                        <KeyboardArrowDownIcon />
+                      )}
+                    </IconButton>
+                  )}
                 </div>
               </Stack>
               <Divider />
-              {
-                relatedActions?.length > 0 && (
-                  <div style={{ padding: "10px 0", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", width: "100%", flexWrap: "wrap" }}>
-                    {
-                      relatedActions.map((action) => (
-                        <Stack
-                          style={classes.sectionTitle}
-                          direction={"row"}
-                          alignItems={"center"}
-                          gap={"16px"}
-                          flexWrap={"wrap"}
-                        >
-                          <span>{action.name}</span>
+              {relatedActions?.length > 0 && (
+                <div
+                  style={{
+                    padding: "10px 0",
+                    display: "flex",
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {relatedActions.map((action) => (
+                    <Stack
+                      style={classes.sectionTitle}
+                      direction={"row"}
+                      alignItems={"center"}
+                      gap={"16px"}
+                      flexWrap={"wrap"}
+                    >
+                      <span>{action.name}</span>
 
-                          {isNeedFolds && <span style={{ width: 118 }} />}
-                          {isNeedMaterial && <span style={{ width: 118 }} />}
-                          {isNeedEmployee && <span style={{ width: 118 }} />}
-                          {isNeedMachine && <span style={{ width: 118 }} />}
-                          <Divider orientation={"vertical"} flexItem style={{ marginRight: 16 }} />
-                          <EditableKeyValueViewComponent
-                            onUpdate={(v) => handleDeliveryTimeUpdateRelatedActions(action, v)}
-                            {...action?.totalProductionTime}
-                            source={action?.source}
-                            name={t("home.headers.deliveryTime")}
-                          />
-                          <Divider orientation={"vertical"} style={{ height: "20px", }} />
-                          <EditableKeyValueViewComponent
-                            onUpdate={(v) => handleCostUpdateRelatedActions(action, v)}
-                            {...action?.totalCost}
-                            source={action?.source}
-                            name={t("machineAttributes.cost")}
-                          />
-                          <Divider orientation={"vertical"} style={{ height: "20px", }} />
-                          <div style={{ display: "flex", flexDirection: "row", alignItems: "center", gap: 3 }}>
-                            <EditableKeyValueViewComponent
-                              onUpdate={(v) => handleProfitUpdateRelatedActions(action, v)}
-                              {...action?.profit}
-                              source={action?.source}
-                              name={t("products.profits.pricingListWidget.profit")}
-                            />
-                            <span>
-                              {`(${calculateProfitInRelaredActionsMoney(action)} ${action?.totalPrice ? action?.totalPrice.defaultUnit : ""
-                                })`}
-                            </span>
-                          </div>
-                          <Divider orientation={"vertical"} style={{ height: "20px", }} />
-                          <EditableKeyValueViewComponent
-                            onUpdate={(v) => handleUpdatePriceRelatedActions(action, v)}
-                            {...action?.totalPrice}
-                            source={action?.source}
-                            name={t("sales.quote.price")}
-                            valueColor={secondColor(500)}
-                          />
-                          <Divider orientation={"vertical"} flexItem />
-                          <InOutSourceSelect value={action?.source} onChange={(v) => handleSourceChangeRelatedActions(action, v)} />
-                        </Stack>
-                      ))
-                    }
-                    <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-end", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-                      <div onClick={(e) => e.stopPropagation()}>
-
+                      {isNeedFolds && <span style={{ width: 118 }} />}
+                      {isNeedMaterial && <span style={{ width: 118 }} />}
+                      {isNeedEmployee && <span style={{ width: 118 }} />}
+                      {isNeedMachine && <span style={{ width: 118 }} />}
+                      <Divider
+                        orientation={"vertical"}
+                        flexItem
+                        style={{ marginRight: 16 }}
+                      />
+                      <EditableKeyValueViewComponent
+                        onUpdate={(v) =>
+                          handleDeliveryTimeUpdateRelatedActions(action, v)
+                        }
+                        {...action?.totalProductionTime}
+                        source={action?.source}
+                        name={t("home.headers.deliveryTime")}
+                      />
+                      <Divider
+                        orientation={"vertical"}
+                        style={{ height: "20px" }}
+                      />
+                      <EditableKeyValueViewComponent
+                        onUpdate={(v) =>
+                          handleCostUpdateRelatedActions(action, v)
+                        }
+                        {...action?.totalCost}
+                        source={action?.source}
+                        name={t("machineAttributes.cost")}
+                      />
+                      <Divider
+                        orientation={"vertical"}
+                        style={{ height: "20px" }}
+                      />
+                      <div
+                        style={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                          gap: 3,
+                        }}
+                      >
+                        <EditableKeyValueViewComponent
+                          onUpdate={(v) =>
+                            handleProfitUpdateRelatedActions(action, v)
+                          }
+                          {...action?.profit}
+                          source={action?.source}
+                          name={t("products.profits.pricingListWidget.profit")}
+                        />
+                        <span>
+                          {`(${formatValueWithUnit(
+                            calculateProfitInRelaredActionsMoney(action),
+                            action?.totalPrice?.defaultUnit
+                          )})`}
+                        </span>
                       </div>
-                      <div>
-                        <IconButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setHideRelatedActions(true);
-                            handleClick(e);
-                          }}
-                        >
-                          <SettingsIcon
-                            stroke={"rgba(237, 2, 140, 1)"}
-                            width={24}
-                            height={24}
-                          />
-                        </IconButton>
-                      </div>
-                      <div style={{ width: 40, }} />
+                      <Divider
+                        orientation={"vertical"}
+                        style={{ height: "20px" }}
+                      />
+                      <EditableKeyValueViewComponent
+                        onUpdate={(v) =>
+                          handleUpdatePriceRelatedActions(action, v)
+                        }
+                        {...action?.totalPrice}
+                        source={action?.source}
+                        name={t("sales.quote.price")}
+                        valueColor={secondColor(500)}
+                      />
+                      <Divider orientation={"vertical"} flexItem />
+                      <InOutSourceSelect
+                        value={action?.source}
+                        onChange={(v) =>
+                          handleSourceChangeRelatedActions(action, v)
+                        }
+                      />
+                    </Stack>
+                  ))}
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                      gap: 10,
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <div onClick={(e) => e.stopPropagation()}></div>
+                    <div>
+                      <IconButton
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setHideRelatedActions(true);
+                          handleClick(e);
+                        }}
+                      >
+                        <SettingsIcon
+                          stroke={"rgba(237, 2, 140, 1)"}
+                          width={24}
+                          height={24}
+                        />
+                      </IconButton>
                     </div>
+                    <div style={{ width: 40 }} />
                   </div>
-
-                )
-              }
+                </div>
+              )}
 
               <Collapse
                 in={isOpen}
@@ -1090,61 +1265,67 @@ const ActionContainerComponent = ({
                     </Stack>
                   </>
                 )}
-                {outputsParameters?.length > 0 && source === EWorkSource.INTERNAL && (
-                  <>
-                    <Divider />
-                    <Stack
-                      padding={"10px 0"}
-                      direction={"row"}
-                      gap={"16px"}
-                      flexWrap={"wrap"}
-                      position={"relative"}
-                    >
-                      <ParametersMapping
-                        source={source}
-                        parameters={outputsParameters}
-                        changeWorkFlowOutputDTO={changeWorkFlowOutputDTO}
-                        setChangeWorkFlowOutputDTO={setChangeWorkFlowOutputDTO}
-                      />
-                      {imageOutputs.map((parameter) => (
-                        <PrintImageComponent {...parameter} />
-                      ))}
-                      <Divider orientation={"vertical"} flexItem />
-                      <TextAreaActionsMapping
-                        parameters={textAreaOutputs}
-                        actionId={id}
-                        currentProductItemValue={currentProductItemValue}
-                        productType={productType}
-                      />
-                      {tableOutputs?.map((parameter) => (
-                        <TableOutPutComponent {...parameter} />
-                      ))}
-                      {
-                        showSaveChangesButton && changeWorkFlowOutputDTO?.length > 0 &&
-                        <GomakePrimaryButton
-                          leftIcon={<ReloadPriceIcon color={"#FFF"} />}
-                          onClick={() => {
-
-                            changeWorkFlowOutputDTOApi(
-                              actionId,
-                              productType,
-                              actionIndex,
-                              id,
-                              changeWorkFlowOutputDTO,
-                            );
-                          }}
-                          style={{
-                            width: "fit-content", height: "40px", marginBottom: "10px", position: "absolute", right: 0, bottom: 0,
-                            backgroundColor: "rgba(237, 2, 140, 1)",
-                          }}
-                        >
-                          {t("pricingWidget.saveAndReCalculate")}
-                        </GomakePrimaryButton>
-                      }
-                    </Stack>
-
-                  </>
-                )}
+                {outputsParameters?.length > 0 &&
+                  source === EWorkSource.INTERNAL && (
+                    <>
+                      <Divider />
+                      <Stack
+                        padding={"10px 0"}
+                        direction={"row"}
+                        gap={"16px"}
+                        flexWrap={"wrap"}
+                        position={"relative"}
+                      >
+                        <ParametersMapping
+                          source={source}
+                          parameters={outputsParameters}
+                          changeWorkFlowOutputDTO={changeWorkFlowOutputDTO}
+                          setChangeWorkFlowOutputDTO={
+                            setChangeWorkFlowOutputDTO
+                          }
+                        />
+                        {imageOutputs.map((parameter) => (
+                          <PrintImageComponent {...parameter} />
+                        ))}
+                        <Divider orientation={"vertical"} flexItem />
+                        <TextAreaActionsMapping
+                          parameters={textAreaOutputs}
+                          actionId={id}
+                          currentProductItemValue={currentProductItemValue}
+                          productType={productType}
+                        />
+                        {tableOutputs?.map((parameter) => (
+                          <TableOutPutComponent {...parameter} />
+                        ))}
+                        {showSaveChangesButton &&
+                          changeWorkFlowOutputDTO?.length > 0 && (
+                            <GomakePrimaryButton
+                              leftIcon={<ReloadPriceIcon color={"#FFF"} />}
+                              onClick={() => {
+                                changeWorkFlowOutputDTOApi(
+                                  actionId,
+                                  productType,
+                                  actionIndex,
+                                  id,
+                                  changeWorkFlowOutputDTO
+                                );
+                              }}
+                              style={{
+                                width: "fit-content",
+                                height: "40px",
+                                marginBottom: "10px",
+                                position: "absolute",
+                                right: 0,
+                                bottom: 0,
+                                backgroundColor: "rgba(237, 2, 140, 1)",
+                              }}
+                            >
+                              {t("pricingWidget.saveAndReCalculate")}
+                            </GomakePrimaryButton>
+                          )}
+                      </Stack>
+                    </>
+                  )}
               </Collapse>
               <SettingsMenu
                 handleClose={handleClose}
@@ -1183,12 +1364,10 @@ const ActionContainerComponent = ({
                 onClickDelete={updateWorkFlowForMaterials}
               />
             </Stack>
-
           </Fade>
         </>
-      }
+      )}
     </>
-
   );
 };
 
@@ -1211,22 +1390,22 @@ const ActionComponent = ({
   const parameters = [
     {
       ...totalProductionTime,
-      key: 'totalRealProductionTime',
+      key: "totalRealProductionTime",
     },
     {
       ...totalCost,
-      key: 'totalCost',
+      key: "totalCost",
     },
     {
       ...profit,
-      key: "profit"
+      key: "profit",
     },
     {
       ...totalPrice,
       key: "totalPrice",
       valueColor: secondColor(500),
     },
-  ]
+  ];
   const getSupplierId = useCallback(() => {
     if (supplierId && suppliers?.length > 0) {
       const supplier = suppliers?.find((sup) => sup.supplierId === supplierId);
@@ -1264,7 +1443,11 @@ const ActionComponent = ({
             )}
           </Stack>
           <Divider orientation={"vertical"} flexItem />
-          <ParametersMapping source={source} parameters={parameters} isWorkFlows={true} />
+          <ParametersMapping
+            source={source}
+            parameters={parameters}
+            isWorkFlows={true}
+          />
           <Divider orientation={"vertical"} flexItem />
           <span style={classes.sourceLabel}>
             {source === EWorkSource.OUT

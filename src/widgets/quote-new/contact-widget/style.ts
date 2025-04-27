@@ -47,20 +47,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(500, 10),
         color: "#D92C2C",
       },
-      showLessContainer: {
-        ...FONT_FAMILY.Inter(600, 14),
-        color: primaryColor(500),
-        padding: "8px 14px",
-        cursor: "pointer",
-        minWidth: 104,
-      },
-      mainContainer: {
-        display: "flex",
-        flexDirection: "row" as "row",
-        justifyContent: "space-between",
-        alignItems: "flex-end",
-        width: "100%",
-      },
+
       saveBtnStyle: {
         borderRadius: 4,
         padding: "4px 10px",
@@ -71,6 +58,35 @@ const useStyle = () => {
         width: 60,
         minWidth: "fit-content",
       },
+
+      mainContainer: {
+        display: "flex",
+        flexDirection: "row" as "row",
+        alignItems: "flex-end",
+        width: "100%",
+        gap: "12px",
+      },
+
+      showLessContainer: {
+        ...FONT_FAMILY.Inter(600, 14),
+        color: primaryColor(500),
+        padding: "0px 16px",
+        marginBottom: "5px",
+        border: `1px solid ${primaryColor(500)}`,
+        borderRadius: 6,
+        cursor: "pointer",
+        minWidth: 120,
+        textAlign: "center" as "center",
+        backgroundColor: "transparent",
+        transition: "all 0.2s ease",
+      },
+      // showLessContainer: {
+      //   ...FONT_FAMILY.Inter(600, 14),
+      //   color: primaryColor(500),
+      //   padding: "8px 14px",
+      //   cursor: "pointer",
+      //   minWidth: 104,
+      // },
     };
   }, []);
   return {

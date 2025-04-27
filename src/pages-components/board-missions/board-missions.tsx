@@ -123,7 +123,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     customerForEdit,
     setShowCustomerModal,
     setCustomerForEdit,
-    selectedMission
+    selectedMission,
   } = useBoardMissions({ isPurchaseJobs });
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -139,7 +139,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       newOrderId &&
       connectionId
     ) {
-      const callBack = (res) => { };
+      const callBack = (res) => {};
       addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
         orderId: newOrderId,
         connectionId: connectionId,
@@ -191,10 +191,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                     {Object.keys(router.query).filter(
                       (key) => key !== "pageNumber"
                     ).length > 0 && (
-                        <div style={{ position: "absolute", top: -5, right: -1 }}>
-                          <DotIcon />
-                        </div>
-                      )}
+                      <div style={{ position: "absolute", top: -5, right: -1 }}>
+                        <DotIcon />
+                      </div>
+                    )}
                   </IconButton>
                   <GoMakeMenu
                     handleClose={handleClose}
@@ -215,8 +215,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                               isPurchaseJobs
                                 ? supplierList
                                 : renderOptions()
-                                  ? renderOptions()
-                                  : []
+                                ? renderOptions()
+                                : []
                             }
                             defaultFiltering={isPurchaseJobs ? true : false}
                             onChangeTextField={(e) => {
@@ -228,9 +228,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                             getOptionLabel={(option: any) => `${option.name}`}
                             style={classes.textInputStyle}
                             placeholder={t(
-                              `sales.quote.${isPurchaseJobs
-                                ? "chooseSupplier"
-                                : "chooseCustomer"
+                              `sales.quote.${
+                                isPurchaseJobs
+                                  ? "chooseSupplier"
+                                  : "chooseCustomer"
                               }`
                             )}
                             onChange={handleCustomerChange}
@@ -377,55 +378,55 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               !isPurchaseJobs
                 ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                   ? [
+                      "7%",
+                      "7%",
+                      "6%",
+                      "6%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "4%",
+                      "6%",
+                      "12%",
+                      "7%",
+                      "7%",
+                      "13%",
+                      "3%",
+                    ]
+                  : [
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "18%",
+                      "7%",
+                      "15%",
+                      "7%",
+                      "3%",
+                    ]
+                : [
                     "7%",
+                    "5%",
+                    "6%",
                     "7%",
                     "6%",
-                    "6%",
                     "7%",
-                    "7%",
+                    "11%",
                     "8%",
+                    "6%",
+                    "8%",
+                    "5%",
+                    "5%",
+                    "7%",
                     "7%",
                     "4%",
-                    "6%",
-                    "12%",
-                    "7%",
-                    "7%",
-                    "13%",
-                    "3%",
+                    "2%",
                   ]
-                  : [
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "8%",
-                    "7%",
-                    "18%",
-                    "7%",
-                    "15%",
-                    "7%",
-                    "3%",
-                  ]
-                : [
-                  "7%",
-                  "5%",
-                  "6%",
-                  "7%",
-                  "6%",
-                  "7%",
-                  "11%",
-                  "8%",
-                  "6%",
-                  "8%",
-                  "5%",
-                  "5%",
-                  "7%",
-                  "7%",
-                  "4%",
-                  "2%",
-                ]
             }
           />
         </div>
@@ -477,7 +478,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle2", {
           jobNumber: selectedMission?.number,
-          productType: selectedMission?.productTypeName
+          productType: selectedMission?.productTypeName,
         })}
         // subTitle={" "}
         yesBtn={"modal.yes"}
@@ -497,11 +498,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClickNo={() => onOpenPackagesModal(missionItem)}
       />
       <GoMakeDeleteModal
-        hideIcon={true}
         modalType={ModalType.WARNING}
         title={t("boardMissions.unReadyModalTitle")}
-        subTitle={t("boardMissions.unReadyModalSubTitle")}
-        yesBtn={t("boardMissions.unReadyWitNotification")}
+        subTitle={" "}
+        yesBtn={t("modal.confirm")}
         cancelBtn={t("modal.cancel")}
         openModal={openReturnToProdModal}
         onClose={onCloseReturnToProdModal}
@@ -544,11 +544,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         typeClient={CLIENT_TYPE.CUSTOMER}
         isgetAllCustomers={false}
         openModal={showCustomerModal}
-        modalTitle={t("customers.modal.editTitle")}
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
-        showUpdateButton={true}
       />
     </>
   );

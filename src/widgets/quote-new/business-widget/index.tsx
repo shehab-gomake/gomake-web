@@ -7,7 +7,7 @@ import { InputUpdatedValues } from "../input-updated-values";
 import { useStyle } from "./style";
 import { useBusinessWidget } from "./use-business-widget";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
-import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -95,6 +95,7 @@ const BusinessNewWidget = ({
     setDocumentTitle,
     isFetching,
     isPurchaseDocument,
+    canUpdateAgent,
   } = useBusinessWidget({ values, documentType, onChangeSelectBusiness });
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
@@ -215,7 +216,7 @@ const BusinessNewWidget = ({
             }
             options={agentListValue}
             onBlur={onBlurAgent}
-            isUpdate={canEditDocument && isUpdateAgent}
+            isUpdate={canUpdateAgent && isUpdateAgent}
             setIsUpdate={
               isQuoteConfirmation || isExistReceipt
                 ? setIsConfirmation
@@ -473,13 +474,11 @@ const BusinessNewWidget = ({
       )}
       <CustomerCardWidget
         customerAction={CUSTOMER_ACTIONS.Add}
+        typeClient={CLIENT_TYPE.CUSTOMER}
         codeFlag={false}
-        typeClient={"C"}
         onCustomerAdd={onCustomerAdd}
         openModal={openCustomerModal}
-        modalTitle={t("customers.modal.addTitle")}
         onClose={() => setOpenCustomerModal(false)}
-        showAddButton={true}
         customer={customer}
         setCustomer={setCustomer}
         onChangeSelectBusiness={onChangeSelectBusiness}

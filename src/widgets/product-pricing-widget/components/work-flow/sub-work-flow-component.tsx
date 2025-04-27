@@ -20,6 +20,7 @@ import { useRecoilValue } from "recoil";
 import { permissionsState } from "@/store";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderIconLogs } from "@/utils/constants";
+import { formatValueWithUnit } from "@/utils/is-currency";
 
 interface ISubWorkFlowComponentProps extends ICalculatedWorkFlow {
   isEditableActions?: boolean;
@@ -52,7 +53,9 @@ const SubWorkFlowComponent = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const direction = t("direction");
-  const hasActionException: any = actions.find((action) => action.actionException);
+  const hasActionException: any = actions.find(
+    (action) => action.actionException
+  );
   const [actionsList, setActionsList] = useState(actions);
   useEffect(() => {
     setActionsList(actions);
@@ -107,7 +110,10 @@ const SubWorkFlowComponent = ({
             <div style={classes.totalRealProductionTimeStyle}>
               <span style={classes.nameStyle}>{totalCost?.name}</span>
               <span style={classes.secondPartStyle}>
-                {totalCost?.values[0]} {totalCost?.defaultUnit}
+                {formatValueWithUnit(
+                  totalCost?.values[0],
+                  totalCost?.defaultUnit
+                )}
               </span>
             </div>
             <div style={classes.lineStyle} />
@@ -121,7 +127,10 @@ const SubWorkFlowComponent = ({
             <div style={classes.totalRealProductionTimeStyle}>
               <span style={classes.nameStyle}>{totalPrice?.name}</span>
               <span style={classes.secondPartStyle}>
-                {totalPrice?.values[0]} {totalPrice?.defaultUnit}
+                {formatValueWithUnit(
+                  totalPrice?.values[0],
+                  totalPrice?.defaultUnit
+                )}
               </span>
             </div>
           </Stack>
@@ -135,7 +144,11 @@ const SubWorkFlowComponent = ({
           >
             {hasActionException && (
               <IconButton>
-                {_renderIconLogs(hasActionException?.actionException?.exceptionType, 24, 24)}
+                {_renderIconLogs(
+                  hasActionException?.actionException?.exceptionType,
+                  24,
+                  24
+                )}
               </IconButton>
             )}
             <IconButton

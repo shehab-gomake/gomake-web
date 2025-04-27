@@ -8,6 +8,7 @@ import { addressModalState } from "./address-widget/state";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useCustomerDropDownList } from "@/hooks";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const useBusinessWidget = ({
   values,
@@ -47,6 +48,13 @@ const useBusinessWidget = ({
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
   const isQuote = documentType === DOCUMENT_TYPE.quote;
   const isOrder = documentType === DOCUMENT_TYPE.order;
+  const isInvoice =
+    documentType === DOCUMENT_TYPE.invoice ||
+    documentType === DOCUMENT_TYPE.invoiceRefund;
+  const isDeliveryNote =
+    documentType === DOCUMENT_TYPE.deliveryNote ||
+    documentType === DOCUMENT_TYPE.deliveryNoteRefund;
+
   const isExistReceipt = isReceipt && !router?.query?.isNewCreation;
   const [taxConfirmationNumber, setTaxConfirmationNumber] = useState(
     values?.taxConfirmationNumber || t("sales.quote.noTaxConfirmationNumber")
@@ -54,10 +62,6 @@ const useBusinessWidget = ({
   const [manuaLInvoiceNum, setManuaLInvoiceNum] = useState(
     values?.manualInvoiceNumber || null
   );
-
-  const isInvoice =
-    documentType === DOCUMENT_TYPE.invoice ||
-    documentType === DOCUMENT_TYPE.invoiceRefund;
 
   const [openCustomerModal, setOpenCustomerModal] = useState(false);
   const [customer, setCustomer] = useState([]);
@@ -94,22 +98,33 @@ const useBusinessWidget = ({
     ...supplier,
   }));
 
-  const { CheckDocumentPermission } = useUserPermission();
-  const canEditDocument = router.query.isNewCreation
-    ? true
-    : quoteStateValue?.isEditable &&
-      CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
-
-  const canEditAddress = router.query.isNewCreation
-    ? true
-    : CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
-
-  const canEditPurchaseNumber = CheckDocumentPermission(
+  // Basics Conditions
+  const { CheckDocumentPermission, CheckPermission } = useUserPermission();
+  const isNewCreation = router.query.isNewCreation;
+  const isEditable = quoteStateValue?.isEditable;
+  const hasEditPermission = CheckDocumentPermission(
     documentType,
     DocumentPermission.EDIT_DOCUMENT
   );
 
-  const canEditInvoiceNumber = router.query.isNewCreation ? true : false;
+  const hasUpdateAgentPermission = CheckPermission(
+    Permissions.UPDATE_DOCUMENT_AGENT
+  );
+
+  const canEditDocument = isNewCreation
+    ? true
+    : isEditable && hasEditPermission;
+
+  const canUpdateAgent = isNewCreation
+    ? true
+    : isInvoice || isDeliveryNote
+    ? hasUpdateAgentPermission
+    : isEditable && hasEditPermission;
+
+  const canEditAddress = isNewCreation ? true : hasEditPermission;
+  const canEditPurchaseNumber = hasEditPermission;
+  const canEditInvoiceNumber = !!isNewCreation;
+
   const [openChangeClientModal, setOpenChangeClientModal] = useState(false);
   const [
     openChangeClientModalFromInvoice,
@@ -204,6 +219,7 @@ const useBusinessWidget = ({
     canEditAddress,
     isPurchaseDocument,
     isOutgoingPayments,
+    canUpdateAgent,
   };
 };
 

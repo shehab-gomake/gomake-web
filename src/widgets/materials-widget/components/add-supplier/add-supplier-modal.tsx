@@ -7,8 +7,11 @@ import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { isValidCustomer } from "@/utils/helpers";
-import { CLIENT_TYPE_Id, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import {
+  CLIENT_TYPE,
+  CLIENT_TYPE_Id,
+  CUSTOMER_ACTIONS,
+} from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
@@ -94,14 +97,11 @@ const AddSupplierModal = () => {
         </Stack>
       </GoMakeModal>
       <CustomerCardWidget
-        isValidCustomer={isValidCustomer}
         customerAction={CUSTOMER_ACTIONS.Add}
-        typeClient={"S"}
+        typeClient={CLIENT_TYPE.SUPPLIER}
         onCustomerAdd={onSupplierAdd}
         openModal={openSupplierModal}
-        modalTitle={t("suppliers.addModalTitle")}
         onClose={onCloseSupplierModal}
-        showAddButton={true}
         customer={supplier}
         setCustomer={setSupplier}
       />
