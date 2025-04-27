@@ -148,7 +148,7 @@ const AddProductSkuModal = ({
               </div>
             )}
             <Tooltip
-              title={t("products.addProduct.admin.modalProductSKUTitle")}
+              title={t("products.addProduct.admin.modalProductCodeTitle")}
             >
               <IconButton onClick={() => createNewProductSKU()}>
                 <AddNewIcon />
