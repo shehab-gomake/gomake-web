@@ -99,7 +99,7 @@ const ProductManagementWidget = () => {
                       <div style={classes.selectProductContainer}>
                         <div style={classes.selectProductTextStyle}>
                           {t(
-                            "products.productManagement.admin.selectProductSKU"
+                            "products.productManagement.admin.selectProductCode"
                           )}
                         </div>
                         <div style={{ width: 250 }}>
@@ -107,7 +107,7 @@ const ProductManagementWidget = () => {
                             key={selectedSKU}
                             options={allProductSKU}
                             placeholder={t(
-                              "products.addProduct.admin.modalProductSKU"
+                              "products.addProduct.admin.modalProductCode"
                             )}
                             style={classes.dropDownListStyle}
                             getOptionLabel={(option: any) =>
