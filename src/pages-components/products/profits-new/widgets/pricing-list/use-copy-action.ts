@@ -107,7 +107,7 @@ const useCopyAction = ({ getAllActionProfitRowsByActionId,selectedPricingTableIt
 
   const updateOutSourceActionSupplier = useCallback(async (supplierId) => {
     const requestData = {
-      actionId: router.query.actionId,
+      actionId: router.query.actionId || router.query.productId,
       supplierId,
       ...(selectedPricingTableItems?.exceptionType !== ETypeException.DEFAULT && {
           exceptionId: selectedPricingTableItems?.id
