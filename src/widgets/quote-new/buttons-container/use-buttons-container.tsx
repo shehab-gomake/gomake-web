@@ -304,6 +304,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const isNewCreation = router?.query?.isNewCreation;
   const isInvoice = docType === DOCUMENT_TYPE.invoice;
+  const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote;
   const isQuote = docType === DOCUMENT_TYPE.quote;
   const isOrder = docType === DOCUMENT_TYPE.order;
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
@@ -515,6 +516,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     setOpenReceiptCreationModal,
     isReceipt,
     canCancelReceipt,
+    isDeliveryNote,
   };
 };
 

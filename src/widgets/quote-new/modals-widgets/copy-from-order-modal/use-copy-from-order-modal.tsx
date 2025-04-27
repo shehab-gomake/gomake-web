@@ -37,6 +37,7 @@ const useCopyFromOrderModal = ({
   useEffect(() => {
     if (!openModal) {
       setShowReadyOnly(false);
+      setShowReadyJobs(false);
       if (!isAddToClicked) {
         setSelectedItems(prevSelectedItems);
       } else {
@@ -214,6 +215,7 @@ const useCopyFromOrderModal = ({
       clientId: quoteItemValue?.customerID,
     });
   };
+
   const calculateDocument = useCallback(async () => {
     const sharedDeletedArry = quoteItemValue.documentItems.filter((item) => {
       const isIncludedInOrderItems = documentItems.some((docItem) => {
@@ -302,15 +304,26 @@ const useCopyFromOrderModal = ({
   }, [quoteItemValue, openModal]);
 
   const isCopyFromOrder = copyFromDocumentType === DOCUMENT_TYPE.order;
-  const [showReadyOnly, setShowReadyOnly] = useState(false);
+  const [showReadyOnly, setShowReadyOnly] = useState<boolean>(false);
+
+  const [showReadyJobs, setShowReadyJobs] = useState<boolean>(false);
 
   const filterItems = (documentItemIsReady, items) => {
     let filteredItems = items;
 
+    // If "Show Ready Only" is on, skip documents not ready
     if (!documentItemIsReady && showReadyOnly) {
       return [];
     }
 
+    // If "Show Ready Jobs" is on, filter items by boardMissionsIsReady
+    if (showReadyJobs) {
+      filteredItems = filteredItems.filter(
+        (item) => item?.boardMissionsIsReady
+      );
+    }
+
+    // If there's a search term, apply it
     if (term) {
       const searchTerm = term.toLowerCase();
       filteredItems = filteredItems.filter(
@@ -323,17 +336,6 @@ const useCopyFromOrderModal = ({
 
     return filteredItems;
   };
-
-  // const filterItems = (items) => {
-  //   if (!term) return items; // If no search term, return all items
-  //   const searchTerm = term.toLowerCase();
-  //   return items.filter(item =>
-  //     item?.productName?.toLowerCase()?.includes(searchTerm) ||
-  //     item?.details?.toLowerCase()?.includes(searchTerm) ||
-  //     item?.workName?.toLowerCase()?.includes(searchTerm)
-
-  //   );
-  // };
 
   return {
     t,
@@ -357,6 +359,9 @@ const useCopyFromOrderModal = ({
     showReadyOnly,
     isCopyFromOrder,
     setDocumentItems,
+
+    showReadyJobs,
+    setShowReadyJobs,
   };
 };
 
