@@ -1,10 +1,11 @@
-import { GoMakeAutoComplate, GomakeTextInput } from "@/components";
-
+import { GomakeTextInput } from "@/components";
 import { DeleteMaterial, EditIcon } from "@/icons";
-import { IconButton, Paper } from "@mui/material";
+import { IconButton, Paper, Stack } from "@mui/material";
 import { MuiColorInput } from "mui-color-input";
 import { useState } from "react";
 import PrinterSelector from "./printer-selector";
+import { TrashIcon } from "@/components/icons/trash-icon";
+import { EditPencilIcon } from "@/components/icons/edit-pencil-icon";
 
 const ProductItem = ({
   t,
@@ -57,7 +58,6 @@ const ProductItem = ({
           }
         />
       </div>
-
       {isPrintHouseUsePrintNode && (
         <PrinterSelector
           printerId={editingData.printerId}
@@ -70,13 +70,14 @@ const ProductItem = ({
           t={t}
         />
       )}
-
-      <IconButton onClick={() => onSaveEdit(editingData)}>
-        <EditIcon />
-      </IconButton>
-      <IconButton onClick={() => onClickOpenDeleteRowModal(editingData?.id)}>
-        <DeleteMaterial stroke="red" />
-      </IconButton>
+      <Stack direction={"row"}>
+        <IconButton onClick={() => onSaveEdit(editingData)}>
+          <EditPencilIcon height={20} width={20} color="#2E3092" />
+        </IconButton>
+        <IconButton onClick={() => onClickOpenDeleteRowModal(editingData?.id)}>
+          <TrashIcon height={20} width={20} color="red" />
+        </IconButton>
+      </Stack>
     </div>
   );
 };
