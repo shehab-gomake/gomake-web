@@ -6,13 +6,13 @@ import { useTranslation } from "react-i18next";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useStyle } from "./style";
 
-const GomakeLoadingWithShadow = () => {
+const GomakeLoadingWithShadow = ({ style }: { style?: React.CSSProperties }) => {
   const loading = useRecoilValue(loadingWithShadowState);
   const { t } = useTranslation();
   const { primaryColor } = useGomakeTheme();
   const { classes } = useStyle();
   return (
-    <Backdrop sx={{ zIndex: 9999999999999999 }} open={loading}>
+    <Backdrop sx={{ zIndex: 9999999999999999, ...style }} open={loading}>
       <div style={classes.containerStyle}>
         <CircularProgress
           size="60px"
