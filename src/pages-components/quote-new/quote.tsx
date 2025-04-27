@@ -317,6 +317,7 @@ const QuoteNewPageWidget = ({
     onClickCloseDeleteDeliveryModal,
     onClickDeleteDelivery,
     openDeleteDeliveryModal,
+    contactsListRef,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -714,6 +715,7 @@ const QuoteNewPageWidget = ({
                   getQuote={getQuote}
                   getAllClientContacts={getAllClientContacts}
                   onOpenNewContact={onOpenNewContact}
+                  contactsListRef={contactsListRef}
                 />
               </div>
             </div>

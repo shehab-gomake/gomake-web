@@ -947,8 +947,16 @@ const useQuoteNew = ({
     }
   };
 
+  const contactsListRef = useRef<HTMLDivElement>(null);
+
   const handleShowMore = () => {
-    setDisplayedItems(items.length);
+    setDisplayedItems(items.length); // or whatever logic you have
+    setTimeout(() => {
+      contactsListRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }, 100); // small timeout to allow the new items to render
   };
 
   const handleShowLess = () => {
@@ -2423,6 +2431,7 @@ const useQuoteNew = ({
     onClickCloseDeleteDeliveryModal,
     openDeleteDeliveryModal,
     onClickDeleteDelivery,
+    contactsListRef,
   };
 };
 
