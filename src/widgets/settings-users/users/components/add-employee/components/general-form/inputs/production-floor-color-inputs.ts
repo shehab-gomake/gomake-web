@@ -1,8 +1,8 @@
-import {IUserData} from "@/widgets/settings-users/users/interface/employee";
+import {Employee, } from "@/widgets/settings-users/users/interface/employee";
 import {EmployeeActions} from "@/widgets/settings-users/users/enums/employee-actions";
-import {emailRegex} from "@/utils/regex";
 
-const productionFloorColorInputs = (state: IUserData)  => {
+
+const productionFloorColorInputs = (state: Employee)  => {
     return [
         {
             name: "productionFloorColor",

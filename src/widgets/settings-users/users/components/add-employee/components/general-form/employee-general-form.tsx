@@ -87,11 +87,6 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
         ...state,
         [key]: value,
       });
-    } else if (key === "productionFloorColor") {
-      setState({
-        ...state,
-        [key]: value,
-      });
     } else
       setState({
         ...state,
@@ -213,7 +208,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
           value: bin,
         }))
       ),
-      productionFloorColor: productionFloorColorInputs(state),
+      productionFloorColor: productionFloorColorInputs(state.employee),
     };
   }, [state, printers]);
 
