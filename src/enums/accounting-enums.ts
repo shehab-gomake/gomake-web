@@ -27,6 +27,7 @@ export enum EnumTermsPayment {
   Prepayment,
   Net90Eom,
   Net120Eom,
+  Net70Eom
 }
 
 export enum BodyTypeEnum {
