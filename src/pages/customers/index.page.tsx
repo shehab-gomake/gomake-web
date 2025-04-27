@@ -234,11 +234,9 @@ export default function Customers() {
         typeClient={CLIENT_TYPE.CUSTOMER}
         getAllCustomers={getAllCustomers}
         openModal={showCustomerModal}
-        modalTitle={t("customers.modal.editTitle")}
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
-        showUpdateButton={true}
       />
     </CustomerAuthLayout>
   );
