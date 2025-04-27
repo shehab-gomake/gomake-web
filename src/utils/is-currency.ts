@@ -24,7 +24,7 @@ export const isCurrency = (unit) => {
   return currencySymbols.includes(unit);
 };
 
-//? Used in key val
+// Formats a value with its unit, handling currency differently
 export const formatValueWithUnit = (value, unit) => {
   if (!unit) return value;
   return isCurrency(unit) ? `${unit} ${value}` : `${value} ${unit}`;
