@@ -46,6 +46,18 @@ const machineInputs = (state: Record<string, any>) => {
             isValid: !!state?.nickName,
         },
         {
+            name: "productionFloorColor",
+            label: "machineAttributes.productionFloorColor",
+            type: "color",
+            placeholder: "machineAttributes.productionFloorColor",
+            required: false,
+            parameterKey: "productionFloorColor",
+            options: [],
+            value: state?.attributes?.productionFloorColor ? state?.attributes?.productionFloorColor : '',
+            machineInputType: 'input',
+            isValid: !!state?.attributes?.productionFloorColor,
+        },
+        {
             machineInputType: 'multiInput',
             name: 'machineAttributes.price',
             parameterKey: 'price',

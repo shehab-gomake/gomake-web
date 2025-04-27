@@ -36,6 +36,7 @@ export interface Employee {
   printerBin?: string;
   minPriceChangePercents?: number | null;
   maxPriceChangePercents?: number | null;
+  productionFloorColor?: string;
 }
 
 export interface IUserData {
@@ -50,4 +51,5 @@ export interface IUserData {
   email: string;
   isMailVerified?: boolean;
   systemLanguage?: string;
+  productionFloorColor?: string;
 }
