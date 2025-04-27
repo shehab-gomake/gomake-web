@@ -48,13 +48,15 @@ const ContactNewWidget = ({
   getQuote,
   getAllClientContacts,
   onOpenNewContact,
+  contactsListRef,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const { CheckDocumentPermission } = useUserPermission();
-  const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+  const [quoteItemValue, setQuoteItemValue] =
+    useRecoilState<any>(quoteItemState);
   const canEditDocumentContacts = router.query.isNewCreation
     ? true
     : CheckDocumentPermission(documentType, DocumentPermission.EDIT_DOCUMENT);
@@ -68,8 +70,7 @@ const ContactNewWidget = ({
       const updatedQuoteItemValue = { ...quoteItemValue };
       updatedQuoteItemValue.documentContacts = list;
       setQuoteItemValue(updatedQuoteItemValue);
-    }
-    else {
+    } else {
       const callBack = (res) => {
         if (res?.success) {
         } else {
@@ -78,17 +79,14 @@ const ContactNewWidget = ({
       await updateDocumentContactsReorderApi(callApi, callBack, {
         documentType: documentType,
         documentId: quoteItemValue?.id,
-        documentContacts: list
-
+        documentContacts: list,
       });
     }
-
   };
   const onDragEnd = (result) => {
     if (!result.destination) {
       return;
     }
-
 
     const newList: any = Array.from(documentContacts);
     const [removed] = newList.splice(result.source.index, 1);
@@ -102,51 +100,68 @@ const ContactNewWidget = ({
     updateDocumentContactsReorder(transformedArray);
   };
   const addContactWidgetRef = useRef<HTMLDivElement>(null); // Create a ref
+
   useEffect(() => {
     if (isDisplayWidget && addContactWidgetRef.current) {
       addContactWidgetRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [isDisplayWidget]);
+
   return (
     <>
       <div style={classes.mainContainer}>
         {items?.length > 0 ? (
           <>
-            <div>
+            <div ref={contactsListRef}>
               <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="droppable">
                   {(provided) => (
                     <div {...provided.droppableProps} ref={provided.innerRef}>
-                      {documentContacts?.slice(0, displayedItems).sort((a, b) => a.index - b.index).map((item, index) => (
-                        <Draggable key={item.id} draggableId={item.contactID ?? item.id} index={index}>
-                          {(provided) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                            >
-                              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                <SortIcon />
-                                <ContactMapping
-                                  canEditContacts={canEditDocumentContacts}
-                                  key={`${index}-${item.id}`}
-                                  item={item}
-                                  index={index}
-                                  setIsDisplayWidget={setIsDisplayWidget}
-                                  displayedItems={displayedItems}
-                                  onOpenDeleteModalContact={onOpenDeleteModalContact}
-                                  items={items}
-                                  changeItems={changeItems}
-                                  updateClientContact={updateClientContact}
-                                  isQuoteConfirmation={isQuoteConfirmation}
-                                  clientContactsValue={clientContactsValue}
-                                  onOpenNewContact={onOpenNewContact}
-                                />
+                      {documentContacts
+                        ?.slice(0, displayedItems)
+                        .sort((a, b) => a.index - b.index)
+                        .map((item, index) => (
+                          <Draggable
+                            key={item.id}
+                            draggableId={item.contactID ?? item.id}
+                            index={index}
+                          >
+                            {(provided) => (
+                              <div
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                              >
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 10,
+                                  }}
+                                >
+                                  <SortIcon />
+                                  <ContactMapping
+                                    canEditContacts={canEditDocumentContacts}
+                                    key={`${index}-${item.id}`}
+                                    item={item}
+                                    index={index}
+                                    setIsDisplayWidget={setIsDisplayWidget}
+                                    displayedItems={displayedItems}
+                                    onOpenDeleteModalContact={
+                                      onOpenDeleteModalContact
+                                    }
+                                    items={items}
+                                    changeItems={changeItems}
+                                    updateClientContact={updateClientContact}
+                                    isQuoteConfirmation={isQuoteConfirmation}
+                                    clientContactsValue={clientContactsValue}
+                                    onOpenNewContact={onOpenNewContact}
+                                  />
+                                </div>
                               </div>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
+                            )}
+                          </Draggable>
+                        ))}
                       {provided.placeholder}
                     </div>
                   )}
@@ -169,13 +184,16 @@ const ContactNewWidget = ({
           )
         )}
         {items?.length > 2 && displayedItems === 2 && (
-          <div style={classes.showLessContainer} onClick={handleShowMore}>
-            {t("sales.quote.showMore")}
-          </div>
+          <span style={classes.showLessContainer} onClick={handleShowMore}>
+            {/* {t("sales.quote.showMoreContacts")} {"⮟"} */}
+            {t("sales.quote.showMoreContacts")} {"⇩"}
+          </span>
         )}
+
         {items?.length > 2 && displayedItems > 2 && (
           <div style={classes.showLessContainer} onClick={handleShowLess}>
-            {t("sales.quote.showLess")}
+            {/* {t("sales.quote.showLessContacts")} {"⮝"} */}
+            {t("sales.quote.showLessContacts")} {"⇧"}
           </div>
         )}
       </div>
@@ -203,7 +221,6 @@ const ContactNewWidget = ({
             onOpenNewContact={onOpenNewContact}
           />
         </div>
-
       )}
       <GoMakeDeleteModal
         modalType={ModalType.DELETE}
