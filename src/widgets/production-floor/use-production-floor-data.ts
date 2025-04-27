@@ -81,7 +81,7 @@ const useProductionFloorData = () => {
       callBack,
       {
         connectionId:connectionId,
-        filters:filtersState,
+        // filters:filtersState,
       },
       false,
       abortController

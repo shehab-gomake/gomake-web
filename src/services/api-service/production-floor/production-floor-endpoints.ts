@@ -96,7 +96,7 @@ const getProductionFloorData: ICallAndSetData = async (
 ) => {
   return await getSetApiData(
     callApi,
-    EHttpMethod.POST,
+    EHttpMethod.GET,
     GET_PRODUCTION_FLOOR_DATA_URL + "?connectionId=" + data.connectionId,
     setState,
     data.filters,
