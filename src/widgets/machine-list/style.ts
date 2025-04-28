@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { theme } = useGomakeTheme();
+  const { theme ,secondColor} = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       container: {},
@@ -23,6 +23,14 @@ const useStyle = () => {
         textTransform: "none" as "none",
         boxShadow: "none",
         lineHeight: "1",
+      },
+      buttonCheckedItem:{
+        borderColor:secondColor(500),
+        borderWidth: 1,
+      },
+      buttonUnCheckedItem:{
+        borderColor:"rgba(208, 213, 221, 1)",
+        borderWidth: 1,
       },
       machineName: {
         ...FONT_FAMILY.Lexend(500, 12),
