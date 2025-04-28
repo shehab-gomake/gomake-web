@@ -96,19 +96,22 @@ const AddRowModal = (props: IAddRowModalProps) => {
             currencies,
             machinesCategories,
             clientsCategories
-          ).map((item) => (
-            <Stack width={"47%"}>
-              <FormInput
-                input={item as IInput}
-                changeState={onChangeInputs}
-                error={false}
-                readonly={false}
-                checkWhatRenderArray={checkWhatRenderArray}
-                loading={item?.loading || false}
-                keyItem={"item"}
-              />
-            </Stack>
-          ))}
+          ).map((item) => {
+            console.log("item", item)
+            return (
+              <Stack width={"47%"}>
+                <FormInput
+                  input={item as IInput}
+                  changeState={onChangeInputs}
+                  error={item.required && !item.value}
+                  readonly={false}
+                  checkWhatRenderArray={checkWhatRenderArray}
+                  loading={item?.loading || false}
+                  keyItem={"item"}
+                />
+              </Stack>
+            )
+          })}
         </Stack>
         <SecondaryButton
           variant="contained"

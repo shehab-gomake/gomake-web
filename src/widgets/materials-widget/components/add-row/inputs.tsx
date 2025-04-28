@@ -20,7 +20,7 @@ const rowInputs = (
             label: newMaterialHeaders ? null : "materials.inputs.currency",
             type: "select",
             placeholder: "materials.inputs.currency",
-            required: false,
+            required: header?.isRequired,
             parameterKey: "currency",
             options: currencies.map((currency) => ({
               value: currency.value,
@@ -36,7 +36,7 @@ const rowInputs = (
             label: newMaterialHeaders ? null : "materials.inputs.unitPrice",
             type: "number",
             placeholder: "materials.inputs.unitPrice",
-            required: false,
+            required: header?.isRequired,
             parameterKey: "unitPrice",
             options: [],
             value: state?.parameterKey,
@@ -49,7 +49,7 @@ const rowInputs = (
             label: newMaterialHeaders ? null : header?.value,
             type: "select",
             placeholder: header?.value,
-            required: false,
+            required: header?.isRequired,
             parameterKey: header?.key,
             options: header.values
               ? header.values.map((value) => ({
@@ -68,7 +68,7 @@ const rowInputs = (
             type: "select",
             multiple: true,
             placeholder: header?.value,
-            required: false,
+            required: header?.isRequired,
             parameterKey: header?.key,
             options: header.values
               ? header.values.map((value) => ({
@@ -86,7 +86,7 @@ const rowInputs = (
             label: newMaterialHeaders ? null : header?.value,
             type: "select",
             placeholder: header?.value,
-            required: false,
+            required: header?.isRequired,
             parameterKey: header?.key,
             options: machinesCategories.map((machine) => ({
               value: machine.id,
@@ -107,7 +107,7 @@ const rowInputs = (
             label: newMaterialHeaders ? null : header?.value,
             type: "select",
             placeholder: header?.value,
-            required: false,
+            required: header?.isRequired,
             parameterKey: header?.key,
             options: clientsCategories.map((client) => ({
               value: client.id,
@@ -126,7 +126,7 @@ const rowInputs = (
             type: "select",
             multiple: true,
             placeholder: header?.value,
-            required: false,
+            required: header?.isRequired,
             parameterKey: header?.key,
             options: [],
             value: "",
@@ -144,7 +144,7 @@ const rowInputs = (
                   ? "switch"
                   : EDataTypeEnum[header?.inputType]?.toLowerCase(),
               placeholder: header?.value,
-              required: false,
+              required: header?.isRequired,
               parameterKey: header?.key,
               options: [],
               value: state[header?.key],
@@ -164,7 +164,7 @@ const rowInputs = (
       name: imageCase.key,
       label: newMaterialHeaders ? null : imageCase.value,
       type: "image",
-      required: false,
+      required: imageCase?.isRequired,
       parameterKey: imageCase.key,
       options: [],
       value: state?.[imageCase.key],
