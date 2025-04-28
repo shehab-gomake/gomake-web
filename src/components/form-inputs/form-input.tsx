@@ -24,7 +24,6 @@ import {
 import { productsForDropDownList } from "@/store";
 import { GoMakeImageFiled } from "../image-filed/image-filed";
 import { useInputUnit } from "@/components/form-inputs/use-input-units";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const FormInput = ({
   input,
@@ -48,9 +47,8 @@ const FormInput = ({
   const parametersCategories = useRecoilValue<any>(materialsParametersState);
   const productValue = useRecoilValue(productsForDropDownList);
   const [optionsUrl, setOptionsUrl] = useState<string>("");
-  const { translateUnit, units } =
+  const { translateUnit, restoreUnitValue, convertUnitValue, units } =
     useInputUnit();
-  const { errorColor } = useGomakeTheme();
   const machinesCategoriesList = machinesCategories.map((machine) => ({
     ...machine,
     value: machine.id,
@@ -236,7 +234,7 @@ const FormInput = ({
                 alignItems={"flex-end"}
                 padding={"0 5px"}
               >
-                <span style={{ color: (input.required && !input.value) ? errorColor(500) : "black" }}>{t(input.label)}</span>
+                <span>{t(input.label)}</span>
                 {input.unit && (
                   <small>{`${t(
                     `measurementUnits.${translateUnit && input.unit
