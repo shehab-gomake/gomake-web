@@ -16,6 +16,7 @@ import { useMediaQuery } from "@mui/material";
 import { useEffect } from "react";
 import { useModal } from "@/hooks/use-modal";
 import { versionState } from "@/store/version";
+import { SetupGuideMenu } from "@/widgets/quick-setup/quick-setup-menu/setup-guide-menu";
 
 const CustomerAuthLayout = ({
   children,
@@ -124,6 +125,7 @@ const CustomerAuthLayout = ({
             yesBtn="modal.reload"
             withCancelBtn={false}
           />
+          <SetupGuideMenu />
         </div>
       }
     </>

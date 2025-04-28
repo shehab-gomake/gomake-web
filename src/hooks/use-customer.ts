@@ -13,6 +13,7 @@ import { printHouseProfile } from "@/store/print-house-profile";
 import { priceChangePercentsState } from "@/store/min-max-price-change-percents";
 import { printHousePreferencesState } from "@/store/print-house-preferences";
 import { versionState } from "@/store/version";
+import { setupGuideOpenState } from "@/store/setup-guide-state";
 
 const useCustomer = (
   permissionEnumValue?: Permissions,
@@ -34,6 +35,9 @@ const useCustomer = (
     printHousePreferencesState
   );
   const setVersionState = useSetRecoilState(versionState);
+
+  const setShowSetupMenu = useSetRecoilState(setupGuideOpenState);
+
   const { i18n } = useTranslation();
   const logOut = useCallback(() => {
     setUser({});
@@ -64,6 +68,7 @@ const useCustomer = (
       setSystemCurrency(user.printHouseProfile.systemCurrency);
       setSystemVAT(user.systemVat);
       //setVersionState(user.appVersion);
+      setShowSetupMenu(user?.showSetupMenu);
       const appVersion = user.appVersion;
       const userAppVersion = localStorage.getItem("appVersion");
       if (!userAppVersion) {
