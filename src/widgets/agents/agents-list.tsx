@@ -114,7 +114,7 @@ const AgentsList = (props: IProps) => {
     <div>
       <div>
         <Button
-          style={classes.button}
+          style={agents && agents.length > 0 && agents.some(x=>x.checked) ? {...classes.button,...classes.buttonCheckedItem} : {...classes.button,...classes.buttonUnCheckedItem} }
           variant={"contained"}
           onClick={handleClick}
         >

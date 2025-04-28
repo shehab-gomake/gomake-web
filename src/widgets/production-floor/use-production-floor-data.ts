@@ -114,6 +114,9 @@ const useProductionFloorData = () => {
     if (abortController) {
       abortController.abort();
     }
+    if(!currentFilters){
+      currentFilters = filtersState;
+    }
     const newRequestAbortController = new AbortController();
     setAbortController(newRequestAbortController);
     const callBack = (res) => {
