@@ -121,7 +121,6 @@ const useProductionFloorFilters = ({
   const setFilters = async (filters: IProductionFloorFilter,selectedView:EProductionFloorView) => {
 
     if(selectedView === EProductionFloorView.FILTER_GROUPS ) {
-      debugger
       setFiltersState(filters);
       getDataByGroups(connectionId,filters).then();
       return;

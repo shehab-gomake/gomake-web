@@ -105,7 +105,8 @@ const useProductionFloorData = () => {
   const getDataByGroups = async (
     connectionId?: string,
     currentFilters?: IProductionFloorFilter,
-    clearData?: boolean
+    clearData?: boolean,
+    isFirstLoad?:boolean
   ) => {
     if (clearData) {
       setData([]);
@@ -122,23 +123,33 @@ const useProductionFloorData = () => {
     const callBack = (res) => {
       if (res.success) {
         setData(res?.data?.boardMissionsCollections);
-        //setFilters(res?.data?.filter);
+        setFilters(res?.data?.filter);
+        const agentIdsFromServer = res?.data?.filter?.agentIds || [];
+        setAgents((prevAgents) =>
+            prevAgents.map((agent) => ({
+              ...agent,
+              checked: agentIdsFromServer.includes(agent.id),
+            }))
+        );
         setJobsStatuses(res?.data?.boardMissionStatuses);
         setSelectedGroupId("all");
         setTags(res?.data?.automatedTagsFilter);
         setUserGroups(res?.data?.groups);
         setPath(res?.data?.path ? res?.data?.path : []);
-        setFilterGroups(
-          filterGroups.map((x) =>
-            x.id === "all"
-              ? {
-                  ...x,
-                  stuckCount: res?.data?.boradMisstionsStuckCount,
-                  inProcessCount: res?.data?.boradMisstionsNotStuckCount,
-                }
-              : x
-          )
-        );
+        if(filterGroups && filterGroups.length > 0) {
+          setFilterGroups(
+              filterGroups.map((x) =>
+                  x.id === "all"
+                      ? {
+                        ...x,
+                        stuckCount: res?.data?.boradMisstionsStuckCount,
+                        inProcessCount: res?.data?.boradMisstionsNotStuckCount,
+                      }
+                      : x
+              )
+          );
+        }
+        
         //alertSuccessGetData();
       }
     };
