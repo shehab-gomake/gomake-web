@@ -5304,7 +5304,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             getSelectedWorkFlow(conn, true).then()
           }
           else if (!res.success) {
-            debugger
             setCalculationProgress({
               totalWorkFlowsCount: 0,
               currentWorkFlowsCount: 0,
