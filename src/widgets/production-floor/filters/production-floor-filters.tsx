@@ -468,7 +468,7 @@ const ProductionFloorFilters = ({
       <GoMakeDatepicker
         value={deliveryDateFilter}
         onChange={onSelectDeliveryTimeDates}
-        placeholder={t("sales.quote.deliverydDate")}
+        placeholder={t("sales.quote.deliveryDate")}
       />
       <GoMakeDatepicker
         value={createDateFilter}
