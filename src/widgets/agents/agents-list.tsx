@@ -1,4 +1,4 @@
-import React, { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "@/hooks";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { Checkbox, FormControlLabel, FormGroup } from "@mui/material";
@@ -11,10 +11,13 @@ import MenuItem from "@mui/material/MenuItem";
 import { useStyle } from "@/widgets/machine-list/style";
 import { StyledMenu } from "@/widgets";
 import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-api";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 interface IProps {
-  onClose: () => void;
+  onClickApply?: (selectedAgents: string[]) => void;
+  applyButton?: boolean;
 }
+
 const AgentsList = (props: IProps) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
@@ -24,6 +27,7 @@ const AgentsList = (props: IProps) => {
   const setAgents = useSetRecoilState(agentsState);
   const agents: any = useRecoilValue(agentsState);
   const [filter, setFilter] = useState<string>();
+  const [localAgents, setLocalAgents] = useState<any[]>([]);
 
   const getAgentCategories = async (isAgent: boolean) => {
     const callBack = (res) => {
@@ -38,52 +42,72 @@ const AgentsList = (props: IProps) => {
     };
     await getAndSetEmployees2(callApi, callBack, { isAgent: isAgent });
   };
+
   useEffect(() => {
     getAgentCategories(true);
   }, []);
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+
   const handleClose = () => {
     setAnchorEl(null);
-    if (props && props.onClose) {
-      props.onClose();
+    if (props.applyButton) {
+      setLocalAgents(agents);
+    }
+  };
+
+  const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
+    setFilter(event.currentTarget.value);
+  };
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+    if (props.applyButton) {
+      setLocalAgents(agents); // Copy current agents into local state
     }
   };
 
   const getAgents = () => {
+    const source = props.applyButton ? localAgents : agents;
     if (filter) {
-      return agents.filter((agent) =>
-        agent?.label?.toLowerCase()?.includes(filter.toLowerCase())
+      return source.filter((agent) =>
+        (agent?.name || agent?.label)
+          ?.toLowerCase()
+          ?.includes(filter.toLowerCase())
       );
     } else {
-      return agents;
+      return source;
     }
   };
 
   const setAgentChecked = useCallback(
     (agentId: string) => {
-      const updatedAgents: any[] = agents.map((agent) => {
+      const source = props.applyButton ? localAgents : agents;
+      const updatedAgents = source.map((agent) => {
         if (agent.id === agentId) {
           return { ...agent, checked: !agent.checked };
         }
         return agent;
       });
-      setAgents(updatedAgents);
+      if (props.applyButton) {
+        setLocalAgents(updatedAgents);
+      } else {
+        setAgents(updatedAgents);
+      }
     },
-    [agents]
+    [agents, localAgents, props.applyButton, setAgents]
   );
 
   const checkAllAgents = () => {
-    const isChecked = agents.every((agent) => agent.checked);
-    const updatedAgents: any[] = agents.map((agent) => {
-      return { ...agent, checked: !isChecked };
-    });
-    setAgents(updatedAgents);
-  };
-
-  const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
-    setFilter(event.currentTarget.value);
+    const source = props.applyButton ? localAgents : agents;
+    const isChecked = source.every((agent) => agent.checked);
+    const updatedAgents = source.map((agent) => ({
+      ...agent,
+      checked: !isChecked,
+    }));
+    if (props.applyButton) {
+      setLocalAgents(updatedAgents);
+    } else {
+      setAgents(updatedAgents);
+    }
   };
 
   return (
@@ -105,32 +129,32 @@ const AgentsList = (props: IProps) => {
             "aria-labelledby": "basic-button",
           }}
         >
-          <FormGroup>
-            <div style={classes.searchInput}>
-              <GomakeTextInput
-                placeholder={"search"}
-                value={filter}
-                onChange={handleFilterChange}
-              />
-            </div>
-            <MenuItem style={classes.machineName}>
-              <FormControlLabel
-                label={t("dashboard-widget.all")}
-                control={
-                  <Checkbox
-                    checked={getAgents().every((agent) => agent.checked)}
-                    onChange={() => {
-                      checkAllAgents();
-                    }}
-                  />
-                }
-              />
-            </MenuItem>
-            {getAgents().map((agent: any) => {
-              return (
+          <div style={{ overflowY: "auto", maxHeight: "440px" }}>
+            <FormGroup>
+              <div style={classes.searchInput}>
+                <GomakeTextInput
+                  placeholder={"search"}
+                  value={filter}
+                  onChange={handleFilterChange}
+                />
+              </div>
+              <MenuItem style={classes.machineName}>
+                <FormControlLabel
+                  label={t("dashboard-widget.all")}
+                  control={
+                    <Checkbox
+                      checked={getAgents().every((agent) => agent.checked)}
+                      onChange={() => {
+                        checkAllAgents();
+                      }}
+                    />
+                  }
+                />
+              </MenuItem>
+              {getAgents().map((agent: any) => (
                 <MenuItem style={classes.machineName} key={agent.id}>
                   <FormControlLabel
-                    label={agent.label}
+                    label={agent?.name || agent?.label}
                     control={
                       <Checkbox
                         checked={agent.checked}
@@ -141,9 +165,27 @@ const AgentsList = (props: IProps) => {
                     }
                   />
                 </MenuItem>
-              );
-            })}
-          </FormGroup>
+              ))}
+            </FormGroup>
+          </div>
+          {props.applyButton && (
+            <div style={{ padding: "8px", borderTop: "1px solid #eee" }}>
+              <PrimaryButton
+                variant="contained"
+                style={classes.applyBtnStyle}
+                onClick={() => {
+                  const selectedAgentIds = localAgents
+                    .filter((agent) => agent.checked)
+                    .map((agent) => agent.id);
+                  setAgents(localAgents.slice());
+                  props?.onClickApply?.(selectedAgentIds);
+                  setAnchorEl(null);
+                }}
+              >
+                {t("productionFloor.apply")}
+              </PrimaryButton>
+            </div>
+          )}
         </StyledMenu>
       </div>
     </div>

@@ -19,6 +19,7 @@ import {
 } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
+import { MessageType } from "@/pages-components/quote-new/use-quote";
 
 interface ISendPaymentProps {
   openPaymentModal?: any;
@@ -27,6 +28,7 @@ interface ISendPaymentProps {
   documentType?: DOCUMENT_TYPE;
   isSendToClient?: boolean;
   isSendOrderReadyToClient?: boolean;
+  showAlertModal: (params: { message: string; onConfirm?: () => void }) => void;
 }
 
 const SendPaymentModal = ({
@@ -36,6 +38,7 @@ const SendPaymentModal = ({
   documentType,
   isSendToClient,
   isSendOrderReadyToClient,
+  showAlertModal,
 }: ISendPaymentProps) => {
   const { classes } = useStyle();
   const {
@@ -46,7 +49,7 @@ const SendPaymentModal = ({
     onChangePaymentInputs,
     handleSendPaymentPage,
   } = useSendPaymentModal({ openPaymentModal, documentType });
-  const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
+  const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { openWhatsAppWebLink } = useWhatsAppWeb();
 
@@ -69,23 +72,55 @@ const SendPaymentModal = ({
     const selectedContact =
       payState?.documentContacts &&
       payState.documentContacts[payState?.selectedContactIndex];
-    let messageType = null; // Default messageType
+
+    let messageType: MessageType | null = null;
+
     if (payState.sendByMail && payState.sendBySms) {
-      messageType = 2;
+      messageType = MessageType.Both;
     } else if (payState.sendByMail) {
-      messageType = 0;
+      messageType = MessageType.Email;
     } else if (payState.sendBySms) {
-      messageType = 1;
+      messageType = MessageType.SMS;
     }
+
+    if (messageType === null) {
+      alertFault(t("alerts.checkAtLeastOne"));
+      return;
+    }
+
     const callBack = (res) => {
       if (res?.success) {
-        alertSuccessAdded();
-
+        alertSuccessSend();
         onClickClosePaymentModal();
       } else {
-        alertFaultAdded();
+        if (
+          (messageType === MessageType.Email ||
+            messageType === MessageType.Both) &&
+          res?.errors?.message
+        ) {
+          if (res.errors.message === "agent_not_verified") {
+            showAlertModal({
+              message: t("alerts.agentEmailNotVerified"),
+              onConfirm: async () => {
+                await resendFromPrintHouseMail(
+                  messageType,
+                  isSendOrderReadyToClient
+                );
+              },
+            });
+          } else if (res.errors.message === "printHouse_mail_not_verified") {
+            showAlertModal({
+              message: t("alerts.printHouseMailNotVerified"),
+            });
+          } else {
+            alertFaultSend();
+          }
+        } else {
+          alertFaultSend();
+        }
       }
     };
+
     const documentData: any = {
       [isSendOrderReadyToClient ? "orderId" : "documentId"]:
         payState?.documentId,
@@ -99,7 +134,8 @@ const SendPaymentModal = ({
     if (selectedContact?.contactMail) {
       documentData.contactEmail = selectedContact.contactMail;
     }
-    if (messageType >= 0) {
+
+    if (messageType !== null) {
       if (isSendOrderReadyToClient) {
         await sendOrderReadyToClientApi(callApi, callBack, documentData);
       } else {
@@ -112,6 +148,42 @@ const SendPaymentModal = ({
 
     if (payState?.sendByWhatsapp) {
       handleSendUsingWhatsAppWeb();
+    }
+  };
+
+  const resendFromPrintHouseMail = async (
+    messageType: MessageType,
+    isSendOrderReadyToClient = false
+  ) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessSend();
+        onClickClosePaymentModal();
+      } else {
+        if (res?.errors?.message === "printHouse_mail_not_verified") {
+          showAlertModal({
+            message: t("alerts.printHouseMailNotVerified"),
+          });
+        } else {
+          alertFaultSend();
+        }
+      }
+    };
+
+    const documentData: any = {
+      [isSendOrderReadyToClient ? "orderId" : "documentId"]:
+        payState?.documentId,
+      messageType,
+      sendMailIfNotVerifiedAgent: true,
+    };
+
+    if (isSendOrderReadyToClient) {
+      await sendOrderReadyToClientApi(callApi, callBack, documentData);
+    } else {
+      await sendDocumentToClientApi(callApi, callBack, {
+        documentType,
+        document: documentData,
+      });
     }
   };
 

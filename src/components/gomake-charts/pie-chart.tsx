@@ -37,7 +37,7 @@ export const PieChartComponent: React.FC<PieChartComponentProps> = ({
     datasets: [
       {
         data: values,
-        backgroundColor: backgroundColors.slice(0, labels.length),
+        backgroundColor: backgroundColors.slice(0, labels?.length),
         borderColor: "#fff",
         borderWidth: 2,
       },
@@ -49,7 +49,7 @@ export const PieChartComponent: React.FC<PieChartComponentProps> = ({
     responsive: true,
     plugins: {
       legend: {
-        display: chartData.length > 1, // Hide legend if only one item
+        display: chartData?.length > 1, // Hide legend if only one item
         position: "right" as const,
         labels: {
           boxWidth: 20,
