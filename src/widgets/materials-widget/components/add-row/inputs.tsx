@@ -39,7 +39,7 @@ const rowInputs = (
             required: header?.isRequired,
             parameterKey: "unitPrice",
             options: [],
-            value: state?.parameterKey,
+            value: state["unitPrice"],
             isValid: true,
             unit: header?.unit,
           };
