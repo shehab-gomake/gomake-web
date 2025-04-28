@@ -44,7 +44,7 @@ export const BarChartComponent: React.FC<BarChartComponentProps> = ({
       {
         label: chartTitle,
         data: values,
-        backgroundColor: backgroundColors.slice(0, labels.length),
+        backgroundColor: backgroundColors.slice(0, labels?.length),
         borderRadius: 4,
       },
     ],
