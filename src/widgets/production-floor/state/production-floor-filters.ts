@@ -16,3 +16,7 @@ export const productionFilterSelectedStatusesState = selector<string[]>({
     return filters?.statusIds ? filters?.statusIds : [];
   },
 });
+export const productionFloorAbortControllerState = atom<AbortController>({
+  key: "productionFloorAbortControllerState",
+  default: new AbortController()
+});

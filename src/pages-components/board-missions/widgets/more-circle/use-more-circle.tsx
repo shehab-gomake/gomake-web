@@ -85,6 +85,7 @@ const useMoreCircle = ({
     await addBoardMissionsToFileUploaderApi(callApi, callBack, {
       boardMissionsId: mission?.id,
       connectionId: connectionId,
+      productType:mission?.productType,
     });
   };
 

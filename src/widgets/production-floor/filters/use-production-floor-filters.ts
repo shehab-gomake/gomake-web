@@ -5,7 +5,10 @@ import {
   productionFloorTextSearchState,
   searchLoadingState,
 } from "@/widgets/production-floor/state/text-search";
-import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
+import {
+  productionFloorAbortControllerState,
+  productionFloorFiltersState
+} from "@/widgets/production-floor/state/production-floor-filters";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import {
   IFilterGroup,
@@ -41,6 +44,7 @@ import {selectedAgentsState} from "@/store/agents-state";
 interface onStationsChangeProps {
   stations: IStation[];
   groupId?: string | null;
+  view:EProductionFloorView,
 }
 
 interface IUseProductionFloorFiltersProps {
@@ -106,13 +110,21 @@ const useProductionFloorFilters = ({
   const view = useRecoilValue(productionFloorViewState);
   const [selectedChipIds, setSelectedChipIds] =
     useRecoilState(selectedChipIdsState);
-  const router = useRouter();
-  const setFilters = async (filters: IProductionFloorFilter) => {
+  const [abortController, setAbortController] = useRecoilState(productionFloorAbortControllerState);
 
-    if(view === EProductionFloorView.FILTER_GROUPS ) {
+  const router = useRouter();
+  const setFilters = async (filters: IProductionFloorFilter,selectedView:EProductionFloorView) => {
+
+    if(selectedView === EProductionFloorView.FILTER_GROUPS ) {
+      debugger
       getDataByGroups(connectionId,filters).then();
       return;
     }
+    if (abortController) {
+      abortController.abort();
+    }
+    const newRequestAbortController = new AbortController();
+    setAbortController(newRequestAbortController);
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -150,7 +162,7 @@ const useProductionFloorFilters = ({
         alertFaultUpdate();
       }
     };
-    await setBoardFiltersApi(callApi, callBack, filters);
+    await setBoardFiltersApi(callApi, callBack, filters,true,newRequestAbortController);
   };
 
   const onTagsChange = async (tag: string) => {
@@ -159,7 +171,7 @@ const useProductionFloorFilters = ({
       automatedTags: filtersState?.automatedTags?.includes(tag)
         ? filtersState.automatedTags.filter((t) => t !== tag)
         : [...filtersState.automatedTags, tag],
-    });
+    },view);
   };
 
   const onSelectDeliveryTimeDates = async (fromDate: Date, toDate: Date) => {
@@ -167,7 +179,7 @@ const useProductionFloorFilters = ({
       ...filtersState,
       fromDeliveryTime: fromDate,
       toDeliveryTime: toDate,
-    });
+    },view);
   };
 
   const onSelectCreateDates = async (fromDate: Date, toDate: Date) => {
@@ -175,7 +187,7 @@ const useProductionFloorFilters = ({
       ...filtersState,
       fromCreateDate: fromDate,
       toCreateDate: toDate,
-    });
+    },view);
   };
 
   const handleGroupsFilterChange = (groupId, value, valueId) => {
@@ -194,7 +206,7 @@ const useProductionFloorFilters = ({
                 valueId,
               },
             ],
-    }).then(() => {
+    },view).then(() => {
       setView(EProductionFloorView.TABLE);
       // push("/production-floor").then();
       push("/production-floor?view=table").then();
@@ -206,7 +218,7 @@ const useProductionFloorFilters = ({
       ...filtersState,
       groups: null,
       groupsHistory: null,
-    });
+    },view);
   };
 
   const hasGroupsFilters = useMemo(
@@ -234,18 +246,19 @@ const useProductionFloorFilters = ({
     setFilters({
       ...filtersState,
       groups: groups,
-    }).then();
+    },view).then();
   };
 
   const onStationsChange = ({
     stations,
     groupId = null,
+    view
   }: onStationsChangeProps) => {
     setFilters({
       ...filtersState,
       stations,
       groupId,
-    });
+    },view);
   };
 
   const getColorByMachineId = (machineId) => {
@@ -319,9 +332,10 @@ const useProductionFloorFilters = ({
     setOpenModalEditGroup(false);
   }
   const handleSelectGroup = (groupId: string) => {
+    let selectedView = EProductionFloorView.TABLE;
     if (selectedGroupId === groupId) {
       setSelectedGroupId(null);
-      onStationsChange({ stations: [], groupId: null });
+      onStationsChange({ stations: [], groupId: null ,view: view });
     } else {
       if(selectedGroupId === "all" && groupId !== "all") {
         const viewName = EProductionFloorView[EProductionFloorView.TABLE].toLowerCase();
@@ -335,14 +349,15 @@ const useProductionFloorFilters = ({
         router.push(`/production-floor?view=${viewName}`, undefined, {
           shallow: true,
         });
-        setData([])
+        setData([]);
+        selectedView = EProductionFloorView.TABLE;
       }
       setSelectedGroupId(groupId);
-      getStationFilterGroupById(groupId);
+      getStationFilterGroupById(groupId,selectedView).then();
     }
   };
 
-  const getStationFilterGroupById = async (id) => {
+  const getStationFilterGroupById = async (id,selectedView:EProductionFloorView) => {
     if(id === "all"){
       setData([])
       await getDataByGroups(connectionId,filters,true)
@@ -350,7 +365,7 @@ const useProductionFloorFilters = ({
     }
     const callBack = (res) => {
       if (res.success) {
-        onStationsChange({ stations: res?.data?.stations, groupId: id });
+        onStationsChange({ stations: res?.data?.stations, groupId: id ,view:selectedView});
       }
     };
     await getStationFilterByGroupIdApi(callApi, callBack, {
@@ -363,7 +378,7 @@ const useProductionFloorFilters = ({
       if (res.success) {
         getStationFilterGroups();
         if (id === selectedGroupId) {
-          onStationsChange({ stations: [], groupId: null });
+          onStationsChange({ stations: [], groupId: null ,view });
           setSelectedGroupId(null);
         }
       }
@@ -467,7 +482,7 @@ const getActions = async () => {
     setFilters({
       ...filtersState,
       agentIds:selectedAgents,
-    });
+    },view);
   }
 useEffect(() => {
   getActions();
