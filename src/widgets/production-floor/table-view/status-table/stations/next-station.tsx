@@ -14,6 +14,7 @@ import { useStations } from "./use-stations";
 import { GoMakeDeleteModal } from "@/components";
 import { useTranslation } from "react-i18next";
 import { ModalType } from "@/enums";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
 
 interface IProps extends ICurrentStation, INextStation {
   boardMissionId: string;
@@ -33,6 +34,7 @@ const NextStationComponent = ({
 }: IProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle({ textColor });
+  const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
   const {
     onUpdateToNextStation,
     dir,
@@ -67,7 +69,7 @@ const NextStationComponent = ({
       >
         { (
           <Button sx={classes.moveToBtn} onClick={ nextStationId ? onClickOpenModal : onClickDone}>
-            <span style={classes.actionText}>{nextStationId ? nextStationName : t('productionFloor.moveToDone')}</span>
+            <span style={{...classes.actionText,fontSize:GetProductionFontSizeFromPreferences()}}>{nextStationId ? nextStationName : t('productionFloor.moveToDone')}</span>
             {dir === "ltr" ? <RightArrowIcon /> : <LeftArrowIcon />}
           </Button>
         )}

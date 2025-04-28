@@ -2,11 +2,12 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import parse from "html-react-parser";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
 
 const DescreptionWidget = ({ desciption }: { desciption: string }) => {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
-
+  const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
   const toggleDescription = () => {
     setIsExpanded(!isExpanded);
   };
@@ -21,7 +22,7 @@ const DescreptionWidget = ({ desciption }: { desciption: string }) => {
 
 
   return (
-    <div style={{ ...FONT_FAMILY.Inter(500, 15), color: "#000000", textAlign: "start", }}>
+    <div style={{ ...FONT_FAMILY.Inter(500, 15), color: "#000000", textAlign: "start", fontSize:GetProductionFontSizeFromPreferences(), }}>
       {displayedText}
       {shouldTruncate && (
         <span onClick={toggleDescription} style={{ color: "#2E3092", cursor: "pointer" }}>
