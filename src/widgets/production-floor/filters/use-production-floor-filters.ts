@@ -39,7 +39,6 @@ import { filterGroupsState, selectedGroupIdState } from "../state/filter-group";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employees-api";
-import { Source } from "./select/actions-select/use-actions-list";
 import { actionsListState } from "../state/actions-list";
 import { selectedAgentsState } from "@/store/agents-state";
 
@@ -107,7 +106,7 @@ const useProductionFloorFilters = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const groups = filtersState?.groups;
   const [selectedChips, setSelectedChips] = useState<string[]>([]);
-  const selectedAgents = useRecoilValue(selectedAgentsState);
+  // const selectedAgents = useRecoilValue(selectedAgentsState);
   const view = useRecoilValue(productionFloorViewState);
   const [selectedChipIds, setSelectedChipIds] =
     useRecoilState(selectedChipIdsState);
@@ -473,8 +472,7 @@ const useProductionFloorFilters = ({
     await getPrintHouseActions(callApi, callBack, false);
   };
 
-  const handleAgentChange = () => {
-    // const selectedAgents = selectedAgentsState;
+  const handleAgentChange = (selectedAgents) => {
     setFilters({
       ...filtersState,
       agentIds: selectedAgents,

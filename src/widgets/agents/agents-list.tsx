@@ -14,7 +14,7 @@ import { getAndSetEmployees2 } from "@/services/api-service/customers/employees-
 import { PrimaryButton } from "@/components/button/primary-button";
 
 interface IProps {
-  onClickApply?: () => void;
+  onClickApply?: (selectedAgents: string[]) => void;
   applyButton?: boolean;
 }
 
@@ -49,9 +49,9 @@ const AgentsList = (props: IProps) => {
 
   const handleClose = () => {
     setAnchorEl(null);
-    // if (props.applyButton) {
-    //   setLocalAgents(agents);
-    // }
+    if (props.applyButton) {
+      setLocalAgents(agents);
+    }
   };
 
   const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
@@ -174,10 +174,11 @@ const AgentsList = (props: IProps) => {
                 variant="contained"
                 style={classes.applyBtnStyle}
                 onClick={() => {
-                  setAgents(localAgents);
-                  if (props && props.onClickApply) {
-                    props.onClickApply();
-                  }
+                  const selectedAgentIds = localAgents
+                    .filter((agent) => agent.checked)
+                    .map((agent) => agent.id);
+                  setAgents(localAgents.slice());
+                  props?.onClickApply?.(selectedAgentIds);
                   setAnchorEl(null);
                 }}
               >
