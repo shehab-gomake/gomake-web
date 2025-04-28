@@ -17,7 +17,7 @@ import { selectedAgentIdsState } from "./filters/states/selected-agent-id";
 import { selectedProductsIdsState } from "./filters/states/selected-product-id";
 import { selectedProductTypesIdsState } from "./filters/states/selected-product-type-id";
 import { selectedClientTypesIdsState } from "./filters/states/selected-client-types-ids";
-import { startOfMonth, endOfToday } from "date-fns";
+import { startOfMonth, endOfMonth } from "date-fns";
 import { selectedDashClientState } from "./filters/states/selected-client-id";
 import { selectedDataTypeState } from "./filters/states/selected-data-type";
 
@@ -163,13 +163,13 @@ const useMonitoringDashboard = () => {
           row?.productName,
           row?.totalJobs,
           row?.qunatites,
-          row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
+          row?.finalPrice != null ? `${currUnit} ${row.finalPrice}` : "-",
           row?.totalCalculatedPrice != null
-            ? `${row.totalCalculatedPrice} ${currUnit}`
+            ? `${currUnit} ${row.totalCalculatedPrice}`
             : "-",
-          row?.totalCost != null ? `${row.totalCost} ${currUnit}` : "-",
-          row?.totalProfit != null ? `${row.totalProfit} ${currUnit}` : "-",
-          row?.avgProfit != null ? `${row.avgProfit} ${currUnit}` : "-",
+          row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
+          row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
+          row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
@@ -211,13 +211,13 @@ const useMonitoringDashboard = () => {
           row?.agentName,
           row?.totalJobs,
           row?.qunatites,
-          row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
+          row?.finalPrice != null ? `${currUnit} ${row.finalPrice}` : "-",
           row?.totalCalculatedPrice != null
-            ? `${row.totalCalculatedPrice} ${currUnit}`
+            ? `${currUnit} ${row.totalCalculatedPrice}`
             : "-",
-          row?.totalCost != null ? `${row.totalCost} ${currUnit}` : "-",
-          row?.totalProfit != null ? `${row.totalProfit} ${currUnit}` : "-",
-          row?.avgProfit != null ? `${row.avgProfit} ${currUnit}` : "-",
+          row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
+          row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
+          row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
@@ -259,13 +259,13 @@ const useMonitoringDashboard = () => {
           row?.clientName,
           row?.totalJobs,
           row?.qunatites,
-          row?.finalPrice != null ? `${row.finalPrice} ${currUnit}` : "-",
+          row?.finalPrice != null ? `${currUnit} ${row.finalPrice}` : "-",
           row?.totalCalculatedPrice != null
-            ? `${row.totalCalculatedPrice} ${currUnit}`
+            ? `${currUnit} ${row.totalCalculatedPrice}`
             : "-",
-          row?.totalCost != null ? `${row.totalCost} ${currUnit}` : "-",
-          row?.totalProfit != null ? `${row.totalProfit} ${currUnit}` : "-",
-          row?.avgProfit != null ? `${row.avgProfit} ${currUnit}` : "-",
+          row?.totalCost != null ? `${currUnit} ${row.totalCost}` : "-",
+          row?.totalProfit != null ? `${currUnit} ${row.totalProfit}` : "-",
+          row?.avgProfit != null ? `${currUnit} ${row.avgProfit}` : "-",
           row?.avgPerOrder,
           row?.os != null ? `${row.os} %` : "-",
           row?.successRate != null ? `${row.successRate} %` : "-",
@@ -304,7 +304,7 @@ const useMonitoringDashboard = () => {
         const data = res.data;
         setAgentChartData(
           data?.map((product) => ({
-            label: product?.agentName,
+            label: product?.agentName ?? t("dashboard.noAgent"),
             value: product?.totalPrice,
           }))
         );
@@ -341,7 +341,7 @@ const useMonitoringDashboard = () => {
   const filters = useMemo(
     () => ({
       startDate: dates?.startDate || startOfMonth(new Date()),
-      endDate: dates?.endDate || endOfToday(),
+      endDate: dates?.endDate || endOfMonth(new Date()),
       selectedAgentIds,
       selectedProductsIds,
       selectedProductTypesIds,
