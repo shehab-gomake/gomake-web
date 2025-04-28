@@ -1,8 +1,8 @@
-import React from "react";
 import { GoMakeMenu } from "@/components";
 import { MenuItem } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { MessageType } from "@/pages-components/quote-new/use-quote";
 
 const SendBtnMenu = ({
   handleClose,
@@ -34,9 +34,9 @@ const SendBtnMenu = ({
         <MenuItem
           onClick={() => {
             if (documentType === DOCUMENT_TYPE.receipt) {
-              onClickSendReceiptToClient(0);
+              onClickSendReceiptToClient(MessageType.Email);
             } else {
-              onClickSendQuoteToClient(0);
+              onClickSendQuoteToClient(MessageType.Email);
             }
             handleClose();
           }}
@@ -48,9 +48,9 @@ const SendBtnMenu = ({
         <MenuItem
           onClick={() => {
             if (documentType === DOCUMENT_TYPE.receipt) {
-              onClickSendReceiptToClient(1);
+              onClickSendReceiptToClient(MessageType.SMS);
             } else {
-              onClickSendQuoteToClient(1);
+              onClickSendQuoteToClient(MessageType.SMS);
             }
             handleClose();
           }}

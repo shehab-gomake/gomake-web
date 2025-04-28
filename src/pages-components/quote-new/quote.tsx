@@ -318,6 +318,8 @@ const QuoteNewPageWidget = ({
     onClickDeleteDelivery,
     openDeleteDeliveryModal,
     contactsListRef,
+    alertNotVerifiedMail,
+    alertNotVerifiedModalState,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -1122,6 +1124,18 @@ const QuoteNewPageWidget = ({
         onClose={onCloseAddAttachmentsModal}
         documentType={documentType}
         getQuote={getQuote}
+      />
+      <GoMakeAlertModal
+        openModal={alertNotVerifiedMail.isOpen}
+        onClose={() => {
+          alertNotVerifiedMail.close();
+        }}
+        onClickConfirm={() => {
+          alertNotVerifiedModalState.onConfirm?.();
+          alertNotVerifiedMail.close();
+        }}
+        subTitle={alertNotVerifiedModalState.message}
+        withCancelBtn={!!alertNotVerifiedModalState.onConfirm}
       />
     </>
   );
