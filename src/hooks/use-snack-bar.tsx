@@ -64,6 +64,7 @@ const useSnackBar = () => {
     alertSuccessGetData: () =>
       showAlert("modal.getDataSuccessfully", "success"),
     alertFaultSend: () => showAlert("alerts.sendFailed", "error"),
+    alertSuccessSend: () => showAlert("alerts.sendSuccessfully", "success"), //
   };
 };
 export { useSnackBar };

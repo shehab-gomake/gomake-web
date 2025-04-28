@@ -2,6 +2,7 @@ import { useStyle } from "./style";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useQuotes } from "./use-quote";
 import {
+  GoMakeAlertModal,
   GoMakeAutoComplate,
   GoMakeDeleteModal,
   GoMakeModal,
@@ -222,6 +223,9 @@ const QuotesListPageWidget = ({
     deliveryOrderNumber,
     deliveryCustomerId,
     isSendOrderReadyToClient,
+    alertNotVerifiedMailModal,
+    alertNotVerifiedModalState,
+    showAlertModal,
   } = useQuotes(documentType, isFromHomePage);
   const {
     openDeliveryModal,
@@ -925,6 +929,19 @@ const QuotesListPageWidget = ({
         documentType={documentType}
         isSendToClient={isSendToClient}
         isSendOrderReadyToClient={isSendOrderReadyToClient}
+        showAlertModal={showAlertModal}
+      />
+      <GoMakeAlertModal
+        openModal={alertNotVerifiedMailModal.isOpen}
+        onClose={() => {
+          alertNotVerifiedMailModal.close();
+        }}
+        onClickConfirm={() => {
+          alertNotVerifiedModalState.onConfirm?.();
+          alertNotVerifiedMailModal.close();
+        }}
+        subTitle={alertNotVerifiedModalState.message}
+        withCancelBtn={!!alertNotVerifiedModalState.onConfirm}
       />
       <MakePaymentModal
         openMakePaymentModal={openMakePaymentModal}
