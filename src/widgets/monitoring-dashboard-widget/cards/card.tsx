@@ -4,6 +4,7 @@ import Stack from "@mui/material/Stack";
 import { adaptRight } from "@/utils/adapter";
 import { useStyle } from "./style";
 import { EStatus } from "@/shared";
+import { formatValueWithUnit } from "@/utils/is-currency";
 
 export interface IDashboardCard {
   label: string;
@@ -57,9 +58,7 @@ const DashboardCard = ({
         <Stack gap={"4px"}>
           <span style={classes.label}>{t(`dashboard.${label}`)}</span>
           <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
-            <div style={classes.value}>
-              {value} {unit}
-            </div>
+            <div style={classes.value}>{formatValueWithUnit(value, unit)}</div>
           </Stack>
         </Stack>
       </Stack>
