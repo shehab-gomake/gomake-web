@@ -155,7 +155,7 @@ const TableRowComponent = ({
 
   const { updateStatus, updateBoardMissionsOrder, t, onClickPrintJob } =
     useProductionFloorData();
-  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const { CheckPreferenceValue , GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
   const onSelectBoardMissions = (id: string, checked: boolean) => {
     setSelectedIds(
       checked
@@ -262,7 +262,8 @@ const TableRowComponent = ({
                 cursor: "pointer",
                 textDecoration: "none",
                 color: "#000000",
-                  fontWeight:"bolder"
+                  fontWeight:"bolder",
+                  fontSize:GetProductionFontSizeFromPreferences(),
               }}
             >
               {boardMission?.productType ? boardMission?.sectionName ? boardMission?.sectionName + " / " : boardMission?.productType + " / " : null}
@@ -292,7 +293,7 @@ const TableRowComponent = ({
           >
             <div />
             <div />
-              <div onClick={onClickOpenDatePicker}>
+              <div  onClick={onClickOpenDatePicker}>
                   <DateTimeProductionFloorComponent
                       dateString={convertUtcToLocalIsoString(boardMission.dueDate?.toString())}
                   />
@@ -308,7 +309,7 @@ const TableRowComponent = ({
                      <div >
                          <DateField
                              label={""}
-                             date={boardMission.dueDate}
+                             date={convertUtcToLocalIsoString(boardMission.dueDate?.toString())}
                              handleChange={(newDate) => {
                                  //setSelectDate(newDate);
                                  //setActiveClickAway(true);
@@ -362,6 +363,7 @@ const TableRowComponent = ({
             width: "20px",
             cursor: "pointer",
             backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              fontSize:GetProductionFontSizeFromPreferences(),
           }}
           onClick={() => onClickClient(boardMission?.clientId)}
         >
@@ -377,34 +379,41 @@ const TableRowComponent = ({
                       width: "15px",
                       cursor: "pointer",
                       backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+                      fontSize:GetProductionFontSizeFromPreferences(),
                   }}
               >
                   {getTruncatedLabel(boardMission?.agentName, 15)}
               </SecondaryTableCell>
           }
-         
-        <SecondaryTableCell
-          align={"center"}
-          style={{
-            padding: "0px 10px",
-            backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-          }}
-        >
-          <ClickableLabelComponent
-            label={getTruncatedLabel(boardMission?.productName, 18)}
-            id={boardMission.id}
-            textColor={boardMission?.productionFloorJobColor}
-            t={t}
-            key={boardMission.id}
-          />
-        </SecondaryTableCell>
 
-        <SecondaryTableCell
-          align={"center"}
-          style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
-        >
-          <DescreptionWidget desciption={boardMission.description} />
-        </SecondaryTableCell>
+          {
+              CheckPreferenceValue(EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR) && (<SecondaryTableCell
+                  align={"center"}
+                  style={{
+                      padding: "0px 10px",
+                      backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+                  }}
+              >
+                  <ClickableLabelComponent
+                      label={getTruncatedLabel(boardMission?.productName, 18)}
+                      id={boardMission.id}
+                      textColor={boardMission?.productionFloorJobColor}
+                      t={t}
+                      key={boardMission.id}
+                  />
+              </SecondaryTableCell>)
+          }
+          {
+              CheckPreferenceValue(EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR) && (
+                  <SecondaryTableCell
+                      align={"center"}
+                      style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
+                  >
+                      <DescreptionWidget desciption={boardMission.description} />
+                  </SecondaryTableCell>
+              )
+          }
+        
         <SecondaryTableCell
           align={"center"}
           style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}

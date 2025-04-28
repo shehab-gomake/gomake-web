@@ -8,6 +8,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useTranslation } from "react-i18next";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { useIsMobile } from "@/hooks/use-responsive";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
 
 interface IStatusBtnProps {
   id?: string;
@@ -32,6 +33,7 @@ const BoardStatusComponent = ({
 }: IStatusBtnProps) => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
+  const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
   const canChangeStatus = CheckPermission(
     Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
   );
@@ -99,6 +101,7 @@ const BoardStatusComponent = ({
           boxShadow: "none",
           padding: "5px 10px",
           lineHeight: "16px",
+         
           ...FONT_FAMILY.Lexend(500, isMobile ? 11 : 13),
           "&:hover": {
             opacity: 0.7,
@@ -114,7 +117,7 @@ const BoardStatusComponent = ({
         }}
         disabled={!canChangeStatus}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "5px" ,   fontSize:GetProductionFontSizeFromPreferences(),}}>
           <div style={{ width: "max-content" }}>
             {anchorEl
               ? t("customers.selectStatus")
@@ -147,7 +150,8 @@ const BoardStatusComponent = ({
               textTransform: "capitalize",
               justifyContent: "center",
               boxSizing: "border-box",
-              display: "flex",
+              display: "flex", 
+              fontSize:GetProductionFontSizeFromPreferences(),
               backgroundColor: status.backgroundColor,
               color: status.textColor,
               borderRadius: 0,
