@@ -27,7 +27,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const [rowData, setRowData] = useState<any>({});
-  const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const { alertFaultGetData, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
 
   const { onAddCategoryRow } = useAddCategoryRow(props.isAdmin);
@@ -51,11 +51,9 @@ const AddRowModal = (props: IAddRowModalProps) => {
     useRecoilValue<
       { key: string; value: string; inputType: number; values: any[] }[]
     >(materialHeadersState);
-
   const notebookTypesObj = materialHeaders?.find(
     (item) => item.key === "notebookTypes"
   );
-
   const getParameterValuesById = async (data: any) => {
     const callBack = (res) => {
       if (res.success) {
@@ -78,6 +76,27 @@ const AddRowModal = (props: IAddRowModalProps) => {
   const onChangeInputs = (key, value) => {
     setRowData({ ...rowData, [key]: value as string });
   };
+
+  const validateRequiredFields = (headers: any[], rowData: Record<string, any>) => {
+    const missingFields: string[] = [];
+    // Check each header
+    headers.forEach(header => {
+      // If field is required and either doesn't exist in rowData or is empty
+      if (header.isRequired &&
+        (!rowData.hasOwnProperty(header.key) ||
+          rowData[header.key] === null ||
+          rowData[header.key] === undefined ||
+          rowData[header.key] === '')) {
+        missingFields.push(header.value);
+      }
+    });
+
+    return {
+      isValid: missingFields.length === 0,
+      missingFields
+    };
+  }
+  const validateRequiredFieldsResult = validateRequiredFields(materialHeaders, rowData);
   return (
     <GoMakeModal
       insideStyle={classes.insideStyle}
@@ -101,7 +120,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
               <FormInput
                 input={item as IInput}
                 changeState={onChangeInputs}
-                error={false}
+                error={item.required && !item.value}
                 readonly={false}
                 checkWhatRenderArray={checkWhatRenderArray}
                 loading={item?.loading || false}
@@ -112,7 +131,13 @@ const AddRowModal = (props: IAddRowModalProps) => {
         </Stack>
         <SecondaryButton
           variant="contained"
-          onClick={() => onAddCategoryRow(rowData)}
+          onClick={() => {
+            if (validateRequiredFieldsResult.isValid) {
+              onAddCategoryRow(rowData)
+            } else {
+              alertFault(`Cannot add until required parameters are filled: ${validateRequiredFieldsResult.missingFields.join(', ')}`)
+            }
+          }}
           style={classes.addBtnStyle}
         >
           {t("materials.buttons.add")}
