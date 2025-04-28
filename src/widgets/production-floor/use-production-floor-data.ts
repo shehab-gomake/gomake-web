@@ -7,8 +7,11 @@ import {
   tryMoveBoardMissionToDoneApi,
   updateJobDueDateApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
+import { useRecoilState, useRecoilValue,useSetRecoilState } from "recoil";
+import {
+  productionFloorAbortControllerState,
+  productionFloorFiltersState
+} from "@/widgets/production-floor/state/production-floor-filters";
 import {
   boardsMissionsState,
   jobsStatusesState,
@@ -46,10 +49,8 @@ const useProductionFloorData = () => {
   const setAgents = useSetRecoilState(agentsState);
   const [data, setData] =
     useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
-  const [abortController, setAbortController] = useState(null);
-  const [filtersState, setFilters] = useRecoilState(
-    productionFloorFiltersState
-  );
+  const [abortController, setAbortController] = useRecoilState(productionFloorAbortControllerState);
+  const [filtersState, setFilters] = useRecoilState(productionFloorFiltersState);
   const [, setTags] = useRecoilState(tagsState);
   const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
   const [, setPath] = useRecoilState(productionFloorPathsState);
@@ -96,8 +97,8 @@ const useProductionFloorData = () => {
         connectionId: connectionId,
         // filters:filtersState,
       },
-      false,
-      abortController
+      false, 
+      newRequestAbortController
     );
   };
 
@@ -110,6 +111,14 @@ const useProductionFloorData = () => {
       setData([]);
       setJobsStatuses([]);
     }
+    if (abortController) {
+      abortController.abort();
+    }
+    if(!currentFilters){
+      currentFilters = filtersState;
+    }
+    const newRequestAbortController = new AbortController();
+    setAbortController(newRequestAbortController);
     const callBack = (res) => {
       if (res.success) {
         setData(res?.data?.boardMissionsCollections);
@@ -133,13 +142,7 @@ const useProductionFloorData = () => {
         //alertSuccessGetData();
       }
     };
-    await getJobsByGroups(
-      callApi,
-      callBack,
-      { connectionId: connectionId, filters: currentFilters },
-      false,
-      null
-    );
+    await getJobsByGroups(callApi, callBack, {connectionId:connectionId,filters:currentFilters}, false, newRequestAbortController);
   };
   const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
     const boardsIds = boards?.filter((b) => b.statusId !== statusId);
