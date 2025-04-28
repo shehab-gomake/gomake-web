@@ -107,6 +107,7 @@ const useProductionFloorFilters = ({
   const groups = filtersState?.groups;
   const [selectedChips, setSelectedChips] = useState<string[]>([]);
   // const selectedAgents = useRecoilValue(selectedAgentsState);
+
   const view = useRecoilValue(productionFloorViewState);
   const [selectedChipIds, setSelectedChipIds] =
     useRecoilState(selectedChipIdsState);
@@ -408,9 +409,11 @@ const useProductionFloorFilters = ({
     };
     getAllUsersEmployeesApi(callApi, callBackFunction).then();
   };
+
   useEffect(() => {
     getAllUsers();
   }, []);
+
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const handleSelectAllUsers = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -462,6 +465,7 @@ const useProductionFloorFilters = ({
       getStationFilterByIdGroup(selectedGroup?.id);
     }
   }, [selectedGroupId, openModalEditGroup]);
+
   const [actions, setActions] = useRecoilState(actionsListState);
   const getActions = async () => {
     const callBack = (res) => {

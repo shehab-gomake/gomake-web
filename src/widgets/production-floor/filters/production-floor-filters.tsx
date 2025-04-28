@@ -462,7 +462,6 @@ const ProductionFloorFilters = ({
           )}
         </Stack>
       </ClickAwayListener>
-      {/* !here */}
       {CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && (
         <AgentsList onClickApply={handleAgentChange} applyButton={true} />
       )}
