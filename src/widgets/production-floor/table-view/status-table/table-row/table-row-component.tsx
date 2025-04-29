@@ -42,13 +42,6 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
-import { DateHourFormatterShort } from "@/utils/date-formatters";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { DateField } from "@/components/date-picker/date-filed";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { useGomakeAxios } from "@/hooks";
-import { EPreferences } from "@/enums/prefernces";
-import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ProductionFloorNote } from "../board-note/production-floor-note";
 
 interface IProps {
@@ -79,8 +72,8 @@ const TableRowComponent = ({
   index,
   isMobileScreen,
   isRTL,
-  isUrgentWork, 
-  onUpdateJobDueDate
+  isUrgentWork,
+  onUpdateJobDueDate,
 }: IProps) => {
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
@@ -119,10 +112,16 @@ const TableRowComponent = ({
           return;
         }
         if (boardMission.statusId !== item.board.statusId) {
-          if (boardMission.statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && !boardMission.isNeedExample) {
-            handleOpenModal(boardMission.statusId, [boardMission], boardMission.id)
-          }
-          else {
+          if (
+            boardMission.statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" &&
+            !boardMission.isNeedExample
+          ) {
+            handleOpenModal(
+              boardMission.statusId,
+              [boardMission],
+              boardMission.id
+            );
+          } else {
             updateStatus([item.board], boardMission.statusId).then();
           }
         }
@@ -194,9 +193,14 @@ const TableRowComponent = ({
   };
   const onClickOpenDatePicker = () => {
     setOpenDatePicker(true);
-  }
+  };
   drag(drop(ref));
-  const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
+  const {
+    openSimpleApproveModal,
+    handleOpenModal,
+    handleCloseModal,
+    handleConfirm,
+  } = useSimpleApproveModal(updateStatus);
 
   return (
     <>
@@ -485,11 +489,13 @@ const TableRowComponent = ({
             statusId={boardMission.statusId}
             id={boardMission.id}
             onChange={(id, statusId) => {
-              if (statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && !boardMission.isNeedExample) {
-                handleOpenModal(statusId, [boardMission], boardMission.id)
-              }
-              else {
-                updateStatus([boardMission], statusId)
+              if (
+                statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" &&
+                !boardMission.isNeedExample
+              ) {
+                handleOpenModal(statusId, [boardMission], boardMission.id);
+              } else {
+                updateStatus([boardMission], statusId);
               }
             }}
           />
