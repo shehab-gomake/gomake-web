@@ -44,6 +44,7 @@ import { useProductionFloorData } from "@/widgets/production-floor/use-productio
 import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employees-api";
 import { actionsListState } from "../state/actions-list";
 import { selectedAgentsState } from "@/store/agents-state";
+import moment from "moment";
 
 interface onStationsChangeProps {
   stations: IStation[];
@@ -180,18 +181,34 @@ const useProductionFloorFilters = ({
   };
 
   const onSelectDeliveryTimeDates = async (fromDate: Date, toDate: Date) => {
+    let fromDateMom:string =  null;
+    let toDateMom:string = null;
+    if(fromDate){
+      fromDateMom = moment(fromDate).format("YYYY-MM-DD HH:mm:ss");
+    }
+    if(toDate){
+      toDateMom = moment(toDate).format("YYYY-MM-DD HH:mm:ss");
+    }
     await setFilters({
       ...filtersState,
-      fromDeliveryTime: fromDate,
-      toDeliveryTime: toDate,
+      fromDeliveryTime: fromDateMom,
+      toDeliveryTime: toDateMom,
     },view);
   };
 
   const onSelectCreateDates = async (fromDate: Date, toDate: Date) => {
+    let fromDateMom:string =  null;
+    let toDateMom:string = null;
+    if(fromDate){
+      fromDateMom = moment(fromDate).format("YYYY-MM-DD HH:mm:ss");
+    }
+    if(toDate){
+      toDateMom = moment(toDate).format("YYYY-MM-DD HH:mm:ss");
+    }
     await setFilters({
       ...filtersState,
-      fromCreateDate: fromDate,
-      toCreateDate: toDate,
+      fromCreateDate: fromDateMom,
+      toCreateDate: toDateMom,
     },view);
   };
 
