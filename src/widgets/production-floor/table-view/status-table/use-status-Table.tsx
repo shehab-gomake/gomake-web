@@ -11,8 +11,8 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Checkbox } from "@mui/material";
 import { CheckboxCheckedIcon } from "@/icons";
 import { CheckboxIcon } from "@/icons";
-import {EPreferences} from "@/enums/prefernces";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
 const useStatusTable = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -69,10 +69,18 @@ const useStatusTable = () => {
       `${t("productionFloor.job")} / ${t("SourceDocument.order")}`,
       t("sales.quote.deliveryDate"),
       t("productionFloor.customer"),
-      CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && t("productionFloor.agent"),
+      CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) &&
+        t("productionFloor.agent"),
       // t("home.headers.jobName"),
-      CheckPreferenceValue(EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR) &&  t("sales.quote.productName"),
-      CheckPreferenceValue(EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR) && t("sales.documentDeliveries.description"),
+      CheckPreferenceValue(
+        EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR
+      ) && t("sales.quote.productName"),
+      CheckPreferenceValue(
+        EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR
+      ) && t("sales.documentDeliveries.description"),
+      CheckPreferenceValue(
+        EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR
+      ) && t("sales.quote.notes"),
       t("productionFloor.status"),
       t("productionFloor.currentStation"),
       t("productionFloor.nextStation"),
