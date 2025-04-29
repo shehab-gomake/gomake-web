@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { GoMakeModal } from "@/components";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   currenciesState,
@@ -96,19 +96,21 @@ const AddRowModal = (props: IAddRowModalProps) => {
             currencies,
             machinesCategories,
             clientsCategories
-          ).map((item) => (
-            <Stack width={"47%"}>
-              <FormInput
-                input={item as IInput}
-                changeState={onChangeInputs}
-                error={false}
-                readonly={false}
-                checkWhatRenderArray={checkWhatRenderArray}
-                loading={item?.loading || false}
-                keyItem={"item"}
-              />
-            </Stack>
-          ))}
+          ).map((item) => {
+            return (
+              <Stack width={"47%"}>
+                <FormInput
+                  input={item as IInput}
+                  changeState={onChangeInputs}
+                  error={false}
+                  readonly={false}
+                  checkWhatRenderArray={checkWhatRenderArray}
+                  loading={item?.loading || false}
+                  keyItem={"item"}
+                />
+              </Stack>
+            )
+          })}
         </Stack>
         <SecondaryButton
           variant="contained"
