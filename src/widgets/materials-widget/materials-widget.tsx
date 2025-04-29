@@ -123,7 +123,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     },
   ];
 
-  const {} = useGoMakeTour(materialsSteps, []);
+  const { } = useGoMakeTour(materialsSteps, []);
   const Side = () => (
     <Stack direction={"column"} gap={"10px"}>
       <SideList

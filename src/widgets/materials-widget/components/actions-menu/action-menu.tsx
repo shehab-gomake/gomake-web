@@ -212,7 +212,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                         />
                       </div>
                       <div
-                        style={{ width: "50%", marginTop: -24, height: "100%" }}
+                        style={{ width: "50%", marginTop: -16, height: "100%" }}
                       >
                         {properties[index].key &&
                           rowInputs(
@@ -231,6 +231,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                               }
                               error={false}
                               readonly={false}
+                              hideLabel={true}
                             />
                           ))}
                       </div>

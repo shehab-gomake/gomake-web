@@ -21,7 +21,6 @@ const rowInputs = (
             type: "select",
             placeholder: "materials.inputs.currency",
             required: header?.isRequired,
-            isRequired: header?.isRequired,
             parameterKey: "currency",
             options: currencies.map((currency) => ({
               value: currency.value,
@@ -38,10 +37,9 @@ const rowInputs = (
             type: "number",
             placeholder: "materials.inputs.unitPrice",
             required: header?.isRequired,
-            isRequired: header?.isRequired,
             parameterKey: "unitPrice",
             options: [],
-            value: state?.parameterKey,
+            value: state["unitPrice"],
             isValid: true,
             unit: header?.unit,
           };
@@ -52,7 +50,6 @@ const rowInputs = (
             type: "select",
             placeholder: header?.value,
             required: header?.isRequired,
-            isRequired: header?.isRequired,
             parameterKey: header?.key,
             options: header.values
               ? header.values.map((value) => ({
@@ -72,7 +69,6 @@ const rowInputs = (
             multiple: true,
             placeholder: header?.value,
             required: header?.isRequired,
-            isRequired: header?.isRequired,
             parameterKey: header?.key,
             options: header.values
               ? header.values.map((value) => ({
@@ -91,7 +87,6 @@ const rowInputs = (
             type: "select",
             placeholder: header?.value,
             required: header?.isRequired,
-            isRequired: header?.isRequired,
             parameterKey: header?.key,
             options: machinesCategories.map((machine) => ({
               value: machine.id,
@@ -113,7 +108,6 @@ const rowInputs = (
             type: "select",
             placeholder: header?.value,
             required: header?.isRequired,
-            isRequired: header?.isRequired,
             parameterKey: header?.key,
             options: clientsCategories.map((client) => ({
               value: client.id,
@@ -133,7 +127,6 @@ const rowInputs = (
             multiple: true,
             placeholder: header?.value,
             required: header?.isRequired,
-            isRequired: header?.isRequired,
             parameterKey: header?.key,
             options: [],
             value: "",

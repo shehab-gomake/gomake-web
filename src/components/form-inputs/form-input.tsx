@@ -33,6 +33,7 @@ const FormInput = ({
   checkWhatRenderArray,
   loading,
   keyItem,
+  hideLabel = false
 }: IFormInput) => {
   const [options, setOptions] = useState([]);
   const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
@@ -226,7 +227,7 @@ const FormInput = ({
           }
           key={input.parameterKey}
         >
-          <div style={classes.inputLbl}>
+          {!hideLabel && <div style={classes.inputLbl}>
             {
               <Stack
                 direction={"row"}
@@ -246,7 +247,7 @@ const FormInput = ({
               </Stack>
             }
             {input.required && <span style={classes.required}>*</span>}
-          </div>
+          </div>}
           <div style={classes.inputs}>
             {input.type === "imageFile" ? (
               <GoMakeImageFiled

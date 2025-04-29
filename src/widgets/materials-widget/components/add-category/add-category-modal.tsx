@@ -59,20 +59,20 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
   const actionLabel = duplicateCategoryModalState
     ? t("navigationButtons.duplicate")
     : editCategoryModalState
-    ? t("materials.buttons.edit")
-    : t("materials.buttons.addNew");
+      ? t("materials.buttons.edit")
+      : t("materials.buttons.addNew");
 
   const actionHandler = duplicateCategoryModalState
     ? duplicatePrintHouseMaterialCategoryName
     : editCategoryModalState
-    ? updatePrintHouseMaterialCategoryName
-    : onAddCategory;
+      ? updatePrintHouseMaterialCategoryName
+      : onAddCategory;
 
   const modalTitle = duplicateCategoryModalState
     ? t("navigationButtons.duplicate")
     : editCategoryModalState
-    ? t("materials.buttons.edit")
-    : t("materials.buttons.addNew");
+      ? t("materials.buttons.edit")
+      : t("materials.buttons.addNew");
 
   const handleClose = () => {
     setEditCategoryModalState(false);
@@ -255,15 +255,15 @@ const AddCategoryModal = (props: IAddCategoryModalProps) => {
         {(editCategoryModalState
           ? selectedCategoryModal?.isCanUploadImage
           : materialTypeTable?.isCanUploadImage) && (
-          <ImageUploadComponent
-            onChange={(value) =>
-              editCategoryModalState
-                ? uploadPrintHouseMaterialImage(value)
-                : setSelectedImgForAdded(value)
-            }
-            value={imgUrl}
-          />
-        )}
+            <ImageUploadComponent
+              onChange={(value) =>
+                editCategoryModalState
+                  ? uploadPrintHouseMaterialImage(value)
+                  : setSelectedImgForAdded(value)
+              }
+              value={imgUrl}
+            />
+          )}
         {
           <SecondaryButton
             onClick={actionHandler}
