@@ -49,6 +49,7 @@ const StatusTableComponent = ({
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const isMobileScreen = useMediaQuery("(max-width:768px)");
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   const hasUrgentOrApproval = allBoardMissions?.some(
     (board) =>
       board.isUrgentWork ||
@@ -138,18 +139,25 @@ const StatusTableComponent = ({
 
   const getCustomWidth = (index: number) => {
     const widths = [
-      "3%",
-      "13%",
-      "7%",
-      "9%",
-      "9%",
-      CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && "9%",
-      "23%",
-      "12%",
-      "12%",
-      "12%",
-      "2%",
-    ];
+      "3%", //  checkBox
+      "13%", //  Job / Order
+      "7%", // Delivery Date
+      "9%", // Customer
+      CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && "9%", // Agent
+      CheckPreferenceValue(
+        EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR
+      ) && "8%", // Product name
+      CheckPreferenceValue(
+        EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR
+      ) && "15%", // Description
+      CheckPreferenceValue(
+        EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR
+      ) && "1%", // Notes
+      "12%", // Status
+      "15%", // Current station
+      "12%", // Next station
+      "2%", // More
+    ].filter(Boolean);
     return widths[index] || "auto";
   };
 
