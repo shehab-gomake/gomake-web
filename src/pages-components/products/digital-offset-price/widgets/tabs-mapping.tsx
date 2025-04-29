@@ -1,5 +1,5 @@
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { AddNewIcon, RemoveIcon, WarnIcon, WastebasketNew2 } from "@/icons";
+import { AddNewIcon, EditIcon, RemoveIcon, WarnIcon, WastebasketNew2 } from "@/icons";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { subProductsParametersState } from "@/store/general-parameters-state";
 import { _renderActiveIcon, _renderUnActiveIcon } from "@/utils/constants";
@@ -7,10 +7,11 @@ import { DoneIcon } from "@/widgets";
 
 import { Tooltip } from "@mui/material";
 import { useRouter } from "next/router";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useTranslation } from "react-i18next";
 import { EWidgetProductType } from "../enums";
+import { updateProductSectionNameApi } from "@/services/api-service/products/product-endpoints";
 const TabsMappingWidget = ({
   classes,
   index,
@@ -31,11 +32,15 @@ const TabsMappingWidget = ({
     alertSuccessAdded,
     alertSuccessDelete,
     alertFaultDelete,
+    alertSuccessUpdate,
+    alertFaultUpdate
+
   } = useSnackBar();
   const router = useRouter();
   const { t } = useTranslation();
   const subProducts = useRecoilValue<any>(subProductsParametersState);
-
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState(item.name);
   const hasMissingRequiredParameters = (item2) => {
     if (!Array.isArray(item2?.subSections)) {
       return false;
@@ -69,7 +74,6 @@ const TabsMappingWidget = ({
 
     return false;
   };
-
   const duplicateSectionFunction = useCallback(
     async (item) => {
       const res = await callApi(
@@ -104,6 +108,23 @@ const TabsMappingWidget = ({
     },
     [router]
   );
+
+
+  const handleNameUpdate = async (newName: any) => {
+    const callBack = res => {
+      if (res.success) {
+        alertSuccessUpdate();
+      } else {
+        alertFaultUpdate();
+      }
+    }
+    await updateProductSectionNameApi(callApi, callBack, {
+      productId: router?.query?.id,
+      sectionId: item?.id,
+      name: newName
+    });
+  };
+
 
   return (
     <div>
@@ -170,7 +191,44 @@ const TabsMappingWidget = ({
               : classes.tabNameStyle
           }
         >
-          {item.name}
+          {isEditing ? (
+            <input
+              type="text"
+              value={editedName}
+              onChange={(e) => setEditedName(e.target.value)}
+              onBlur={() => {
+                setIsEditing(false);
+                if (editedName !== item.name) {
+                  handleNameUpdate(editedName);
+                }
+              }}
+              autoFocus
+              style={{
+                border: 'none',
+                background: 'transparent',
+                outline: 'none',
+                fontSize: 'inherit',
+                color: 'inherit',
+                width: '100%'
+              }}
+            />
+          ) : (
+            <>
+              {editedName}
+              {isAdmin && (
+                <span
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEditing(true);
+                  }}
+                  style={{ marginLeft: '8px', cursor: 'pointer' }}
+                >
+                  <EditIcon stroke={index === activeIndex ? "#EC038D" : "#2E3092"} />
+                </span>
+              )}
+            </>
+          )}
+          {/* {item.name} */}
           {/* {!isAdmin && hasMissingRequiredParameters(item) &&
             <Tooltip title={<div style={{ fontSize: 16 }}>
               {t("products.offsetPrice.admin.missingRequiredParameters")}
