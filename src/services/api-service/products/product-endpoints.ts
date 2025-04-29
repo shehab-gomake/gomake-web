@@ -63,6 +63,8 @@ const GET_PRODUCT_ACTIONS_URL =
 const UPDATE_PRODUCT_PARAMETERS_VALUES_EXTERNAL_VALUES_URL =
   "/v1/printhouse-config/products/update-product-parameters-values-external-values";
 
+const UPDATE_SECTION_NAME_URL = "/v1/printhouse-config/products/update-product-section-name";
+
 const addProductProfitRuleApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -425,6 +427,20 @@ const updateProductParametersValuesExternalValuesApi: ICallAndSetData = async (
   );
 };
 
+const updateProductSectionNameApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi, 
+    EHttpMethod.PUT, 
+    UPDATE_SECTION_NAME_URL, 
+    setState, 
+    data
+  );
+};
+
 export {
   addProductProfitRuleApi,
   getProductProfitRulesApi,
@@ -453,4 +469,5 @@ export {
   reCalculatePriceApi,
   updateProductParametersValuesExternalValuesApi,
   copyActionsToProductsApi,
+  updateProductSectionNameApi
 };
