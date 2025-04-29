@@ -6,11 +6,12 @@ import {
   updateBoardsMissionsStatusApi,
   tryMoveBoardMissionToDoneApi,
   updateJobDueDateApi,
+  updateProductionFloorNotesApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { useRecoilState, useRecoilValue,useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   productionFloorAbortControllerState,
-  productionFloorFiltersState
+  productionFloorFiltersState,
 } from "@/widgets/production-floor/state/production-floor-filters";
 import {
   boardsMissionsState,
@@ -49,8 +50,12 @@ const useProductionFloorData = () => {
   const setAgents = useSetRecoilState(agentsState);
   const [data, setData] =
     useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
-  const [abortController, setAbortController] = useRecoilState(productionFloorAbortControllerState);
-  const [filtersState, setFilters] = useRecoilState(productionFloorFiltersState);
+  const [abortController, setAbortController] = useRecoilState(
+    productionFloorAbortControllerState
+  );
+  const [filtersState, setFilters] = useRecoilState(
+    productionFloorFiltersState
+  );
   const [, setTags] = useRecoilState(tagsState);
   const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
   const [, setPath] = useRecoilState(productionFloorPathsState);
@@ -97,7 +102,7 @@ const useProductionFloorData = () => {
         connectionId: connectionId,
         // filters:filtersState,
       },
-      false, 
+      false,
       newRequestAbortController
     );
   };
@@ -106,7 +111,7 @@ const useProductionFloorData = () => {
     connectionId?: string,
     currentFilters?: IProductionFloorFilter,
     clearData?: boolean,
-    isFirstLoad?:boolean
+    isFirstLoad?: boolean
   ) => {
     if (clearData) {
       setData([]);
@@ -115,7 +120,7 @@ const useProductionFloorData = () => {
     if (abortController) {
       abortController.abort();
     }
-    if(!currentFilters){
+    if (!currentFilters) {
       currentFilters = filtersState;
     }
     const newRequestAbortController = new AbortController();
@@ -126,34 +131,40 @@ const useProductionFloorData = () => {
         setFilters(res?.data?.filter);
         const agentIdsFromServer = res?.data?.filter?.agentIds || [];
         setAgents((prevAgents) =>
-            prevAgents.map((agent) => ({
-              ...agent,
-              checked: agentIdsFromServer.includes(agent.id),
-            }))
+          prevAgents.map((agent) => ({
+            ...agent,
+            checked: agentIdsFromServer.includes(agent.id),
+          }))
         );
         setJobsStatuses(res?.data?.boardMissionStatuses);
         setSelectedGroupId("all");
         setTags(res?.data?.automatedTagsFilter);
         setUserGroups(res?.data?.groups);
         setPath(res?.data?.path ? res?.data?.path : []);
-        if(filterGroups && filterGroups.length > 0) {
+        if (filterGroups && filterGroups.length > 0) {
           setFilterGroups(
-              filterGroups.map((x) =>
-                  x.id === "all"
-                      ? {
-                        ...x,
-                        stuckCount: res?.data?.boradMisstionsStuckCount,
-                        inProcessCount: res?.data?.boradMisstionsNotStuckCount,
-                      }
-                      : x
-              )
+            filterGroups.map((x) =>
+              x.id === "all"
+                ? {
+                    ...x,
+                    stuckCount: res?.data?.boradMisstionsStuckCount,
+                    inProcessCount: res?.data?.boradMisstionsNotStuckCount,
+                  }
+                : x
+            )
           );
         }
-        
+
         //alertSuccessGetData();
       }
     };
-    await getJobsByGroups(callApi, callBack, {connectionId:connectionId,filters:currentFilters}, false, newRequestAbortController);
+    await getJobsByGroups(
+      callApi,
+      callBack,
+      { connectionId: connectionId, filters: currentFilters },
+      false,
+      newRequestAbortController
+    );
   };
   const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
     const boardsIds = boards?.filter((b) => b.statusId !== statusId);
@@ -408,6 +419,7 @@ const useProductionFloorData = () => {
   const handleOpenQRScanner = () => {
     push(`/qr-scanner`);
   };
+
   const updateJobDueDate = (boardMisionId, dueDate) => {
     let utcDueDate = new Date(dueDate).toUTCString();
     let mom = moment(dueDate);
@@ -432,6 +444,31 @@ const useProductionFloorData = () => {
       dueDate: utcDueDate,
     }).then();
   };
+
+  const updateNotes = (
+    boardMissionId,
+    productType,
+    notes,
+    reset,
+    closeEditing
+  ) => {
+    const callBack = (res) => {
+      if (res.success) {
+        // alertSuccessUpdate();
+        closeEditing();
+      } else {
+        alertFaultUpdate();
+        reset();
+      }
+    };
+
+    updateProductionFloorNotesApi(callApi, callBack, {
+      boardMissionId: boardMissionId,
+      productType: productType,
+      note: notes,
+    }).then();
+  };
+
   return {
     t,
     RTL,
@@ -457,6 +494,7 @@ const useProductionFloorData = () => {
     setSelectedGroupId,
     handleOpenQRScanner,
     updateJobDueDate,
+    updateNotes,
   };
 };
 

@@ -49,11 +49,12 @@ const StatusTableComponent = ({
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const isMobileScreen = useMediaQuery("(max-width:768px)");
-  const hasUrgentOrApproval = allBoardMissions?.some(board =>
-    board.isUrgentWork ||
-    board.showGraphicsApprovalAlert === 1 ||
-    board.showGraphicsApprovalAlert === 0 ||
-    board.showGraphicsApprovalAlert === 2
+  const hasUrgentOrApproval = allBoardMissions?.some(
+    (board) =>
+      board.isUrgentWork ||
+      board.showGraphicsApprovalAlert === 1 ||
+      board.showGraphicsApprovalAlert === 0 ||
+      board.showGraphicsApprovalAlert === 2
   );
   const {
     t,
@@ -117,21 +118,21 @@ const StatusTableComponent = ({
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-        (board) =>
-          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-            search
-          ) ||
-          `${board?.clientName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          `${board?.productName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          board?.automatedTags?.some((tag) =>
-            `${tag.toLowerCase()}`.includes(search.toLowerCase())
-          ) ||
-          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-      )
+          (board) =>
+            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+              search
+            ) ||
+            `${board?.clientName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            `${board?.productName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            board?.automatedTags?.some((tag) =>
+              `${tag.toLowerCase()}`.includes(search.toLowerCase())
+            ) ||
+            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+        )
       : boards;
   }, [boards, search]);
 
@@ -171,8 +172,9 @@ const StatusTableComponent = ({
           },
         }}
       >
-        {`${!status.isGroup ? t("productionStatuses." + status.name) : status.name
-          } (${getBoards().length})`}
+        {`${
+          !status.isGroup ? t("productionStatuses." + status.name) : status.name
+        } (${getBoards().length})`}
       </Button>
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
@@ -215,8 +217,6 @@ const StatusTableComponent = ({
                 </TableHead>
                 <TableBody>
                   {(() => {
-
-
                     return [...getBoards()]
                       ?.sort((a, b) => a.priority - b.priority)
                       ?.map((boardMission, index) => (
