@@ -114,6 +114,7 @@ const TabsMappingWidget = ({
     const callBack = res => {
       if (res.success) {
         alertSuccessUpdate();
+        getProductById();
       } else {
         alertFaultUpdate();
       }
@@ -214,7 +215,8 @@ const TabsMappingWidget = ({
             />
           ) : (
             <>
-              {editedName}
+              {/* {!isAdmin ? item.name : item.name} */}
+              {item.name}
               {isAdmin && (
                 <span
                   onClick={(e) => {
