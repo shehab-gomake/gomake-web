@@ -75,7 +75,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
   const onChangeInputs = (key, value) => {
     setRowData({ ...rowData, [key]: value as string });
   };
- const validateRequiredFields = (headers: any[], rowData: Record<string, any>) => {
+  const validateRequiredFields = (headers: any[], rowData: Record<string, any>) => {
     let filterheaders = headers?.filter(
       (header) => header.key !== "price Unit / ton"
     );
@@ -108,7 +108,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
       modalTitle={t("materials.buttons.addNewRow")}
     >
       <Stack display={"flex"} direction={"column"} marginTop={"10px"}>
-       <Stack style={classes.inputsDivStyle}>
+        <Stack style={classes.inputsDivStyle}>
           {rowInputs(
             rowData,
             isFetching,
