@@ -44,7 +44,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
   );
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0
-
+  const [requestAbortController, setRequestAbortController] = useState<AbortController | null>(null);
   const getMaterialCategoryData = async (
     materialType: string,
     materialCategory: string,
@@ -53,6 +53,11 @@ const useMaterialsCategories = (isAdmin: boolean) => {
     pageNumber?: number,
     pageSize?: number
   ) => {
+    if (requestAbortController) {
+      requestAbortController.abort();
+    }
+    const newRequestAbortController = new AbortController();
+    setRequestAbortController(newRequestAbortController);
     const callBack = (res) => {
 
 
@@ -111,11 +116,15 @@ const useMaterialsCategories = (isAdmin: boolean) => {
         pageSize,
         isActive,
         customFiltersKeyValueList: convertedCustomFiltersKeyValueList,
-      }).catch((e) => {
+      },
+        false,
+        newRequestAbortController
+      ).catch((e) => {
         setMaterialCategoryData([]);
         setPagesCount(0);
         setMaterialTableFilters([]);
       });
+
     }
   };
 

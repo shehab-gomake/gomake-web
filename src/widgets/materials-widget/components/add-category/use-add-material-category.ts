@@ -85,8 +85,15 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
           setOpenModal(false);
           setFlagState(false);
           setAttributeValues({});
+          setNewCategory("")
         } else {
-          alertFaultAdded();
+          if(res.statusCode ===102){
+            alertFault("login.thisCategoryAlreadyExists")
+          }
+          else{
+            alertFaultAdded();
+
+          }
         }
       };
       if (isAdmin) {

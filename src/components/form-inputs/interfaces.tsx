@@ -32,6 +32,7 @@ export interface IFormInput {
   checkWhatRenderArray?: any;
   loading?: any; // loading while fetching data in DropDownList
   keyItem?: any;
+  hideLabel?: boolean;
 }
 
 export interface IFormArrayInputsProps {
