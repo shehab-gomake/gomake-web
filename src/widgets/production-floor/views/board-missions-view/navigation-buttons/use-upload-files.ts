@@ -14,14 +14,11 @@ import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boar
 import { useGomakeAxios } from "@/hooks";
 import { useRouter } from "next/router";
 
-const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduct?:boolean) => {
+const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduct?:boolean,productType?:string) => {
   const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
-  const { query } = useRouter();
-  const { productType } = query;
-
   const [uploadingFiles, setUploadingFiles] =
     useRecoilState(uploadingFilesState);
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
@@ -61,6 +58,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
           boardMissionId: boardMissions.boardMissionId,
           filePath: filesPath,
           graphicsFilePath: graphicsFilePath,
+          productType:productType,
           title: `${boardMissions.boardMissionNumber} | ${boardMissions.orderNumber} | ${boardMissions.clientName}`,
           filesInfo: [
             {
@@ -96,7 +94,8 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
         currentChunk,
         totalChunks,
         file?.name,
-        fileType,
+        fileType, 
+        productType
       );
 
       if (!response || !response.success) {
@@ -168,10 +167,12 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
     chunkIndex,
     totalChunks,
     fileName,
-    fileType
+    fileType,
+    productType
   ) => {
     const formData = new FormData();
     formData.append("file", chunk);
+    formData.append("productType", productType);
     formData.append("orderItemId", orderItemId);
     formData.append("isComplexProduct", isComplexProduct ? "true" : "false");
     formData.append("fileName", fileName);

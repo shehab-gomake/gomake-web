@@ -14,6 +14,9 @@ const GET_BOARDS_MISSIONS_BY_ID_URL =
   "/v1/erp-service/board-missions/board-missions-data/";
 const GET_BOARD_MISSIONS_STATIONS_URL =
   "/v1/erp-service/board-missions/board-stations";
+
+const SEND_JOB_EXAMPLE_CONFIRMATION_TO_CLIENT_URL =
+  "/v1/erp-service/board-missions/send-job-example-confirmation-to-client";
 const UPDATE_BOARD_MISSIONS_CURRENT_STATION_URL =
   "/v1/erp-service/board-missions/update-board-missions-current-station";
 const ADD_NEW_PRODUCTION_GROUP_URL =
@@ -176,6 +179,19 @@ const getBoardMissionsActions: ICallAndSetData = async (
     EHttpMethod.GET,
     GET_BOARD_MISSIONS_STATIONS_URL +
       `?boardMissionId=${data.boardMissionId}&productType=${data.productType}`,
+    callBack
+  );
+};
+
+const sendJobExampleConfirmationToClientApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { boardMissionId: string; productType: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    SEND_JOB_EXAMPLE_CONFIRMATION_TO_CLIENT_URL + `?boardMissionId=${data.boardMissionId}`,
     callBack
   );
 };
@@ -710,5 +726,6 @@ export {
   updateBoardMissionsActionDoneWithMaterialsApi,
   tryMoveBoardMissionToDoneApi,
   updateJobDueDateApi,
-  deleteJobFileApi
+    deleteJobFileApi,
+  sendJobExampleConfirmationToClientApi
 };

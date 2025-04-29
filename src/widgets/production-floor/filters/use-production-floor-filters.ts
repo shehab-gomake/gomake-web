@@ -5,14 +5,20 @@ import {
   productionFloorTextSearchState,
   searchLoadingState,
 } from "@/widgets/production-floor/state/text-search";
-import { productionFloorFiltersState } from "@/widgets/production-floor/state/production-floor-filters";
+import {
+  productionFloorAbortControllerState,
+  productionFloorFiltersState
+} from "@/widgets/production-floor/state/production-floor-filters";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import {
   IFilterGroup,
   IProductionFloorFilter,
   IStation,
 } from "@/widgets/production-floor/interfaces/filters";
-import { getPrintHouseActions, setBoardFiltersApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import {
+  getPrintHouseActions,
+  setBoardFiltersApi,
+} from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { boardsMissionsState } from "@/widgets/production-floor/state/boards";
 import {
@@ -26,21 +32,23 @@ import { productionFloorPathsState } from "@/widgets/production-floor/state/prod
 import { useTranslation } from "react-i18next";
 import { selectedChipIdsState } from "../state/text-search";
 import {
-  deleteStationFilterByGroupIdApi,  duplicateStationFilterByGroupIdApi,  getStationFilterByGroupIdApi,
+  deleteStationFilterByGroupIdApi,
+  duplicateStationFilterByGroupIdApi,
+  getStationFilterByGroupIdApi,
   getStationFilterGroupByIdApi,
   updateStationFilterGroupApi,
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
-import {filterGroupsState, selectedGroupIdState} from "../state/filter-group";
+import { filterGroupsState, selectedGroupIdState } from "../state/filter-group";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
-import {useProductionFloorData} from "@/widgets/production-floor/use-production-floor-data";
+import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employees-api";
-import { Source } from "./select/actions-select/use-actions-list";
 import { actionsListState } from "../state/actions-list";
-import {selectedAgentsState} from "@/store/agents-state";
+import { selectedAgentsState } from "@/store/agents-state";
 
 interface onStationsChangeProps {
   stations: IStation[];
   groupId?: string | null;
+  view:EProductionFloorView,
 }
 
 interface IUseProductionFloorFiltersProps {
@@ -58,7 +66,7 @@ interface ISelectedGroup {
 
 const useProductionFloorFilters = ({
   getStationFilterGroups,
-  connectionId
+  connectionId,
 }: IUseProductionFloorFiltersProps) => {
   const [filtersState, setFiltersState] = useRecoilState(
     productionFloorFiltersState
@@ -102,21 +110,30 @@ const useProductionFloorFilters = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const groups = filtersState?.groups;
   const [selectedChips, setSelectedChips] = useState<string[]>([]);
-  const selectedAgents = useRecoilValue(selectedAgentsState);
+  // const selectedAgents = useRecoilValue(selectedAgentsState);
+
   const view = useRecoilValue(productionFloorViewState);
   const [selectedChipIds, setSelectedChipIds] =
     useRecoilState(selectedChipIdsState);
-  const router = useRouter();
-  const setFilters = async (filters: IProductionFloorFilter) => {
+  const [abortController, setAbortController] = useRecoilState(productionFloorAbortControllerState);
 
-    if(view === EProductionFloorView.FILTER_GROUPS ) {
+  const router = useRouter();
+  const setFilters = async (filters: IProductionFloorFilter,selectedView:EProductionFloorView) => {
+
+    if(selectedView === EProductionFloorView.FILTER_GROUPS ) {
+      setFiltersState(filters);
       getDataByGroups(connectionId,filters).then();
       return;
     }
+    if (abortController) {
+      abortController.abort();
+    }
+    const newRequestAbortController = new AbortController();
+    setAbortController(newRequestAbortController);
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-        
+
         const backendFiltersStations = res?.data?.filter?.stations || [];
         const mergedStations = filters?.stations?.map((station) => {
           const correspondingBackendFilter = backendFiltersStations.find(
@@ -150,7 +167,7 @@ const useProductionFloorFilters = ({
         alertFaultUpdate();
       }
     };
-    await setBoardFiltersApi(callApi, callBack, filters);
+    await setBoardFiltersApi(callApi, callBack, filters,true,newRequestAbortController);
   };
 
   const onTagsChange = async (tag: string) => {
@@ -159,7 +176,7 @@ const useProductionFloorFilters = ({
       automatedTags: filtersState?.automatedTags?.includes(tag)
         ? filtersState.automatedTags.filter((t) => t !== tag)
         : [...filtersState.automatedTags, tag],
-    });
+    },view);
   };
 
   const onSelectDeliveryTimeDates = async (fromDate: Date, toDate: Date) => {
@@ -167,7 +184,7 @@ const useProductionFloorFilters = ({
       ...filtersState,
       fromDeliveryTime: fromDate,
       toDeliveryTime: toDate,
-    });
+    },view);
   };
 
   const onSelectCreateDates = async (fromDate: Date, toDate: Date) => {
@@ -175,7 +192,7 @@ const useProductionFloorFilters = ({
       ...filtersState,
       fromCreateDate: fromDate,
       toCreateDate: toDate,
-    });
+    },view);
   };
 
   const handleGroupsFilterChange = (groupId, value, valueId) => {
@@ -194,7 +211,7 @@ const useProductionFloorFilters = ({
                 valueId,
               },
             ],
-    }).then(() => {
+    },view).then(() => {
       setView(EProductionFloorView.TABLE);
       // push("/production-floor").then();
       push("/production-floor?view=table").then();
@@ -206,7 +223,7 @@ const useProductionFloorFilters = ({
       ...filtersState,
       groups: null,
       groupsHistory: null,
-    });
+    },view);
   };
 
   const hasGroupsFilters = useMemo(
@@ -234,18 +251,19 @@ const useProductionFloorFilters = ({
     setFilters({
       ...filtersState,
       groups: groups,
-    }).then();
+    },view).then();
   };
 
   const onStationsChange = ({
     stations,
     groupId = null,
+    view
   }: onStationsChangeProps) => {
     setFilters({
       ...filtersState,
       stations,
       groupId,
-    });
+    },view);
   };
 
   const getColorByMachineId = (machineId) => {
@@ -271,7 +289,6 @@ const useProductionFloorFilters = ({
   const handleCloseMenu = () => {
     setAnchorElMenu(null);
   };
-
 
   const handleChipClick = (card: { label: string; machineId: string }) => {
     const { label, machineId } = card;
@@ -303,46 +320,54 @@ const useProductionFloorFilters = ({
   const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
     selectedGroupIdState
   );
-  const [selectedGroup, setSelectedGroup] = useState<ISelectedGroup | null>(null);
+  const [selectedGroup, setSelectedGroup] = useState<ISelectedGroup | null>(
+    null
+  );
   const [openModalDuplicateGroup, setOpenModalDuplicateGroup] = useState(false);
   const [openModalEditGroup, setOpenModalEditGroup] = useState(false);
   const onClickOpenModalDuplicateGroup = () => {
     setOpenModalDuplicateGroup(true);
-  }
+  };
   const onClickCloseModalDuplicateGroup = () => {
     setOpenModalDuplicateGroup(false);
-  }
+  };
   const onClickOpenModalEditGroup = () => {
     setOpenModalEditGroup(true);
-  }
+  };
   const onClickCloseModalEditGroup = () => {
     setOpenModalEditGroup(false);
-  }
+  };
   const handleSelectGroup = (groupId: string) => {
+    let selectedView = EProductionFloorView.TABLE;
     if (selectedGroupId === groupId) {
       setSelectedGroupId(null);
-      onStationsChange({ stations: [], groupId: null });
+      onStationsChange({ stations: [], groupId: null ,view: view });
     } else {
-      if(selectedGroupId === "all" && groupId !== "all") {
-        const viewName = EProductionFloorView[EProductionFloorView.TABLE].toLowerCase();
+      if (selectedGroupId === "all" && groupId !== "all") {
+        const viewName =
+          EProductionFloorView[EProductionFloorView.TABLE].toLowerCase();
         router.push(`/production-floor?view=${viewName}`, undefined, {
           shallow: true,
         });
-        setData([])
+        setData([]);
       }
-      if(groupId === "all"){
-        const viewName = EProductionFloorView[EProductionFloorView.FILTER_GROUPS].toLowerCase();
+      if (groupId === "all") {
+        const viewName =
+          EProductionFloorView[
+            EProductionFloorView.FILTER_GROUPS
+          ].toLowerCase();
         router.push(`/production-floor?view=${viewName}`, undefined, {
           shallow: true,
         });
-        setData([])
+        setData([]);
+        selectedView = EProductionFloorView.TABLE;
       }
       setSelectedGroupId(groupId);
-      getStationFilterGroupById(groupId);
+      getStationFilterGroupById(groupId,selectedView).then();
     }
   };
 
-  const getStationFilterGroupById = async (id) => {
+  const getStationFilterGroupById = async (id,selectedView:EProductionFloorView) => {
     if(id === "all"){
       setData([])
       await getDataByGroups(connectionId,filters,true)
@@ -350,7 +375,7 @@ const useProductionFloorFilters = ({
     }
     const callBack = (res) => {
       if (res.success) {
-        onStationsChange({ stations: res?.data?.stations, groupId: id });
+        onStationsChange({ stations: res?.data?.stations, groupId: id ,view:selectedView});
       }
     };
     await getStationFilterByGroupIdApi(callApi, callBack, {
@@ -363,7 +388,7 @@ const useProductionFloorFilters = ({
       if (res.success) {
         getStationFilterGroups();
         if (id === selectedGroupId) {
-          onStationsChange({ stations: [], groupId: null });
+          onStationsChange({ stations: [], groupId: null ,view });
           setSelectedGroupId(null);
         }
       }
@@ -399,75 +424,78 @@ const useProductionFloorFilters = ({
     };
     getAllUsersEmployeesApi(callApi, callBackFunction).then();
   };
+
   useEffect(() => {
     getAllUsers();
   }, []);
+
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-const handleSelectAllUsers = (event: React.ChangeEvent<HTMLInputElement>) => {
-  if (event.target.checked) {
-    setSelectedUsers(users.map(user => user.id));
-  } else {
-    setSelectedUsers([]);
-  }
-};
-
-const handleUserSelect = (userId: string) => {
-  setSelectedUsers(prev => {
-    if (prev.includes(userId)) {
-      return prev.filter(id => id !== userId);
+  const handleSelectAllUsers = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.checked) {
+      setSelectedUsers(users.map((user) => user.id));
     } else {
-      return [...prev, userId];
-    }
-  });
-};
-const duplicateStationFilterByGroupId = async () => {
-  const callBack = (res) => {
-    if (res.success) {
-      alertSuccessUpdate();
-      onClickCloseModalDuplicateGroup()
-      handleCloseMenu();
+      setSelectedUsers([]);
     }
   };
-  await duplicateStationFilterByGroupIdApi(callApi, callBack, {
-    id: selectedGroup?.id,
-    selectedUsers,
-  }).then();
-};
 
-const getStationFilterByIdGroup = async (id) => {
-  const callBack = (res) => {
-    if (res.success) {
-      setSelectedGroup((prev) => ({
-        ...prev,
-        stations: res?.data?.stations
-      }))
-    }
+  const handleUserSelect = (userId: string) => {
+    setSelectedUsers((prev) => {
+      if (prev.includes(userId)) {
+        return prev.filter((id) => id !== userId);
+      } else {
+        return [...prev, userId];
+      }
+    });
   };
-  await getStationFilterGroupByIdApi(callApi, callBack, {
-    id: id,
-  }).then();
-};
+  const duplicateStationFilterByGroupId = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        alertSuccessUpdate();
+        onClickCloseModalDuplicateGroup();
+        handleCloseMenu();
+      }
+    };
+    await duplicateStationFilterByGroupIdApi(callApi, callBack, {
+      id: selectedGroup?.id,
+      selectedUsers,
+    }).then();
+  };
 
-useEffect(() => {
-  if(selectedGroupId && openModalEditGroup){
-    getStationFilterByIdGroup(selectedGroup?.id)
-  }
-}, [selectedGroupId,openModalEditGroup])
-const [actions, setActions] = useRecoilState(actionsListState);
-const getActions = async () => {
-  const callBack = (res) => {
-    if (res.success) {
-      setActions(res?.data);
-    }
+  const getStationFilterByIdGroup = async (id) => {
+    const callBack = (res) => {
+      if (res.success) {
+        setSelectedGroup((prev) => ({
+          ...prev,
+          stations: res?.data?.stations,
+        }));
+      }
+    };
+    await getStationFilterGroupByIdApi(callApi, callBack, {
+      id: id,
+    }).then();
   };
-  await getPrintHouseActions(callApi, callBack,false );
-};
-  const handleAgentChange = () => {
-   // const selectedAgents = selectedAgentsState;
+
+  useEffect(() => {
+    if (selectedGroupId && openModalEditGroup) {
+      getStationFilterByIdGroup(selectedGroup?.id);
+    }
+  }, [selectedGroupId, openModalEditGroup]);
+
+  const [actions, setActions] = useRecoilState(actionsListState);
+  const getActions = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setActions(res?.data);
+      }
+    };
+    await getPrintHouseActions(callApi, callBack, false);
+  };
+
+  const handleAgentChange = (selectedAgents) => {
     setFilters({
       ...filtersState,
       agentIds:selectedAgents,
-    });
+    },view);
   }
 useEffect(() => {
   getActions();
@@ -527,7 +555,7 @@ useEffect(() => {
     openMenu,
     handleClickMenu,
     handleCloseMenu,
-    selectedGroup, 
+    selectedGroup,
     setSelectedGroup,
     openModalDuplicateGroup,
     onClickOpenModalDuplicateGroup,
@@ -541,7 +569,7 @@ useEffect(() => {
     onClickOpenModalEditGroup,
     onClickCloseModalEditGroup,
     actions,
-    handleAgentChange
+    handleAgentChange,
   };
 };
 

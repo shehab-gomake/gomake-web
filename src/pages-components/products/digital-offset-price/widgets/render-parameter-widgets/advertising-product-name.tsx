@@ -15,9 +15,8 @@ const AdvertisingProductNameParameterWidget = ({
   connectionId,
   getProductById,
   getAllMaterial,
-  newDieCutSelect
+  newDieCutSelect,
 }: any) => {
-
   const {
     defaultObject,
     openModal,
@@ -36,7 +35,7 @@ const AdvertisingProductNameParameterWidget = ({
     subProducts,
     createNewTemplateEndPoint,
     isView,
-    setIsRenderData
+    setIsRenderData,
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect })
 
   return (
@@ -80,7 +79,8 @@ const AdvertisingProductNameParameterWidget = ({
             subSection?.type,
             index,
             parameter?.actionIndex,
-            parameter?.code
+            parameter?.code,
+            value
           );
         }}
         getOptionLabel={(option: any) => option.updateName}

@@ -7,8 +7,7 @@ import { SearchInputComponent } from "@/components/form-inputs/search-input-comp
 import { ReChooseIcon } from "@/icons";
 import { GalleryModalMapping } from "./gallery-modal-mapping";
 import { Skeleton } from "@mui/material";
-import { useCallback, useState } from "react";
-import { getPrintHouseMaterialsByMaterialKey } from "@/services/hooks/get-print-house-materials-by-key";
+import { useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { createDieCutFromTemplateMakerApi } from "@/services/api-service/materials/materials-endpoints";
 import { useUserPermission } from "@/hooks/use-permission";

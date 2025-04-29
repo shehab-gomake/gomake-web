@@ -38,6 +38,7 @@ export interface IBoardMissions {
   numberOfJobsInOrder?: number | string;
   description?: string;
   sectionName?: string;
+  isNeedExample?: boolean;
 }
 
 export interface IBoardMissionsDetails {

@@ -195,7 +195,8 @@ export const checkIfDieCutOrDieKissCutExists = (
           (param) =>
             param.parameterCode === "DieCut" ||
             param.parameterCode === "DieKissCut" ||
-            param.parameterCode === "DieStamp"
+            param.parameterCode === "DieStamp" ||
+            param.parameterCode === "DieCutter"
         );
         if (dieCutParam) {
           return true;

@@ -6,8 +6,8 @@ import { ArrowDownNewIcon, SettingNewIcon } from "@/icons";
 import { GoMakeMenu } from "@/components";
 import { MenuItem } from "@mui/material";
 import { useChartsWidget } from "./use-charts-widget";
-import {BarChartComponent} from "@/components/gomake-charts/bar-chart";
-import {PieChartComponent} from "@/components/gomake-charts/pie-chart";
+import { BarChartComponent } from "@/components/gomake-charts/bar-chart";
+import { PieChartComponent } from "@/components/gomake-charts/pie-chart";
 import SalesLineChart from "@/widgets/monitoring-dashboard-widget/dashboard-charts/components/sales-line-chart";
 import AddCostModal from "@/widgets/monitoring-dashboard-widget/dashboard-charts/components/add-cost-modal";
 
@@ -102,33 +102,14 @@ const ChartsWidget = ({
         <Skeleton width={"66%"} height={"100%"} variant="rectangular" />
       )}
       <div style={classes.piesContainer}>
-        {productTypeChartData?.length > 0 ? (
-          <BarChartComponent
-            chartData={productTypeChartData}
-            chartTitle={t("products.profits.exceptions.productType")}
-          />
-        ) : (
-          <Skeleton
-            variant="rectangular"
-            width={300}
-            height={300}
-            style={{ marginBottom: 16 }}
-          />
-        )}
-
-        {agentChartData?.length > 0 ? (
-          <PieChartComponent
-            chartData={agentChartData}
-            chartTitle={t("dashboard.agents")}
-          />
-        ) : (
-          <Skeleton
-            variant="rectangular"
-            width={300}
-            height={300}
-            style={{ marginBottom: 16 }}
-          />
-        )}
+        <BarChartComponent
+          chartData={productTypeChartData}
+          chartTitle={t("products.profits.exceptions.productType")}
+        />
+        <PieChartComponent
+          chartData={agentChartData}
+          chartTitle={t("dashboard.agents")}
+        />
       </div>
       <AddCostModal
         open={isModalOpen}

@@ -22,11 +22,14 @@ import { TableRowComponent } from "@/widgets/production-floor/table-view/status-
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
-import { useCallback } from "react";
-import { ThreeOptionsModal } from "@/components";
+import { useCallback, useState } from "react";
+import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { ModalType } from "@/enums";
 import { useMediaQuery } from "@mui/material";
+import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
 interface IProps {
   status: IProductionStatus;
@@ -64,9 +67,11 @@ const StatusTableComponent = ({
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
     selectedMission,
-    tryMoveBoardMissionsToDone, 
+    tryMoveBoardMissionsToDone,
     updateJobDueDate
   } = useProductionFloorData();
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
 
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -80,10 +85,15 @@ const StatusTableComponent = ({
           return;
         }
         if (item.board.statusId !== status.id) {
-          updateStatus(
-            item.selectedIds.length > 0 ? item.selectedIds : [item.board],
-            status.id
-          ).then();
+          if (status.key === "Approval required" && item.board.isNeedExample) {
+            handleOpenModal(status.id, item.selectedIds.length > 0 ? item.selectedIds : [item.board], item.board.id)
+          } else {
+            updateStatus(
+              item.selectedIds.length > 0 ? item.selectedIds : [item.board],
+              status.id
+            ).then();
+          }
+
         }
       },
       collect: (monitor) => ({
@@ -132,6 +142,7 @@ const StatusTableComponent = ({
       "7%",
       "9%",
       "9%",
+      CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && "9%",
       "23%",
       "12%",
       "12%",
@@ -246,6 +257,16 @@ const StatusTableComponent = ({
         onClose={onClosePrintDeliverTicketModal}
         boardMissionId={selectedMission?.id}
         quantity={selectedMission?.quantity}
+      />
+      <GoMakeDeleteModal
+        title={t("sales.quote.simpleApproveMail")}
+        yesBtn={t("modal.yes")}
+        modalType={ModalType.WARNING}
+        subTitle={" "}
+        openModal={openSimpleApproveModal}
+        onClose={handleCloseModal}
+        onClickDelete={handleConfirm}
+        onClickCancel={handleCloseModal}
       />
     </Stack>
   );

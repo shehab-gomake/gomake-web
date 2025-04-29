@@ -6,6 +6,7 @@ export const productionFloorFiltersState = atom<IProductionFloorFilter>({
   default: {
     automatedTags: [],
     stations: [],
+    isFirstLoading: true,
   } as IProductionFloorFilter,
 });
 
@@ -15,4 +16,8 @@ export const productionFilterSelectedStatusesState = selector<string[]>({
     const filters = get(productionFloorFiltersState);
     return filters?.statusIds ? filters?.statusIds : [];
   },
+});
+export const productionFloorAbortControllerState = atom<AbortController>({
+  key: "productionFloorAbortControllerState",
+  default: new AbortController()
 });
