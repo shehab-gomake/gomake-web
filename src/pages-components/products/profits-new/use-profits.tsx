@@ -736,6 +736,10 @@ const useNewProfits = () => {
         actionExpections: [],
         packageUnit: actionProfitByActionId?.packageUnit,
         isOutSource: router.query.isOutSource ? true : false,
+        exceptionId:
+          selectedPricingTableItems?.index == 0
+            ? null
+            : selectedPricingTableItems?.id,
       };
       if (router.query.productId) {
         requestBody.productId = router.query.productId;
@@ -768,9 +772,12 @@ const useNewProfits = () => {
     ]
   );
   const [minimumValue, setMinimumValue] = useState(0);
+  console.log("minimumValue", selectedPricingTableItems)
   useEffect(() => {
-    setMinimumValue(actionProfitByActionId?.minPrice);
-  }, [actionProfitByActionId]);
+    setMinimumValue(selectedPricingTableItems?.minPrice);
+
+
+  }, [selectedPricingTableItems]);
   const [isUpdateMinimumValue, setIsUpdateMinimumValue] = useState(null);
   const onBlurMinimumValue = async () => {
     updateMinPriceForAction(minimumValue);

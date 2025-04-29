@@ -171,6 +171,7 @@ const useStyle = () => {
         ...FONT_FAMILY.Lexend(400, 14),
         color: "#F135A3",
         borderBottom: "none",
+        border: "none",
       },
       chartContainer: {
         maxHeight: 300,
