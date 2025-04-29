@@ -160,7 +160,7 @@ const TableRowComponent = ({
 
   const { updateStatus, updateBoardMissionsOrder, t, onClickPrintJob } =
     useProductionFloorData();
-  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const { CheckPreferenceValue , GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
   const onSelectBoardMissions = (id: string, checked: boolean) => {
     setSelectedIds(
       checked
@@ -268,7 +268,8 @@ const TableRowComponent = ({
                 cursor: "pointer",
                 textDecoration: "none",
                 color: "#000000",
-                fontWeight: "bolder"
+                  fontWeight:"bolder",
+                  fontSize:GetProductionFontSizeFromPreferences(),
               }}
             >
               {boardMission?.productType ? boardMission?.sectionName ? boardMission?.sectionName + " / " : boardMission?.productType + " / " : null}
@@ -298,38 +299,38 @@ const TableRowComponent = ({
           >
             <div />
             <div />
-            <div onClick={onClickOpenDatePicker}>
-              <DateTimeProductionFloorComponent
-                dateString={convertUtcToLocalIsoString(boardMission.dueDate?.toString())}
-              />
-            </div>
+              <div  onClick={onClickOpenDatePicker}>
+                  <DateTimeProductionFloorComponent
+                      dateString={convertUtcToLocalIsoString(boardMission.dueDate?.toString())}
+                  />
+              </div>
             {/* {DateHourFormatterShort(
               convertUtcToLocalIsoString(boardMission.boardMissionCreatedDate?.toString())
             )} */}
-            <div style={{ visibility: "hidden" }}>
-              <LocalizationProvider
-                dateAdapter={AdapterMoment}
-                adapterLocale="en-gb"
-              >
-                <div >
-                  <DateField
-                    label={""}
-                    date={boardMission.dueDate}
-                    handleChange={(newDate) => {
-                      //setSelectDate(newDate);
-                      //setActiveClickAway(true);
-                      onUpdateJobDueDate(boardMission.id, newDate);
-                    }}
-                    isEditable={true}
-                    withTime={true}
-                    inputWidth={"1px"}
-                    //format={"DD/MM HH:mm"}
-                    openPicker={openDatePicker}
-                    onClose={() => setOpenDatePicker(false)}
-                  />
-                </div>
-              </LocalizationProvider>
-            </div>
+             <div style={{visibility: "hidden"}}>
+                 <LocalizationProvider
+                     dateAdapter={AdapterMoment}
+                     adapterLocale="en-gb"
+                 >
+                     <div >
+                         <DateField
+                             label={""}
+                             date={convertUtcToLocalIsoString(boardMission.dueDate?.toString())}
+                             handleChange={(newDate) => {
+                                 //setSelectDate(newDate);
+                                 //setActiveClickAway(true);
+                                 onUpdateJobDueDate(boardMission.id, newDate);
+                             }}
+                             isEditable={true}
+                             withTime={true}
+                             inputWidth={"1px"}
+                             //format={"DD/MM HH:mm"}
+                             openPicker={openDatePicker}
+                             onClose={()=>setOpenDatePicker(false)}
+                         />
+                     </div>
+                 </LocalizationProvider>
+             </div>
             <div
               style={{
                 display: "flex",
@@ -368,49 +369,57 @@ const TableRowComponent = ({
             width: "20px",
             cursor: "pointer",
             backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              fontSize:GetProductionFontSizeFromPreferences(),
           }}
           onClick={() => onClickClient(boardMission?.clientId)}
         >
           {getTruncatedLabel(boardMission?.clientName, 15)}
 
         </SecondaryTableCell>
-        {
-          CheckPreferenceValue(
-            EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR
-          ) && <SecondaryTableCell
-            align={"center"}
-            style={{
-              width: "15px",
-              cursor: "pointer",
-              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-            }}
-          >
-            {getTruncatedLabel(boardMission?.agentName, 15)}
-          </SecondaryTableCell>
-        }
+          {
+              CheckPreferenceValue(
+                  EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR
+              ) && <SecondaryTableCell
+                  align={"center"}
+                  style={{
+                      width: "15px",
+                      cursor: "pointer",
+                      backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+                      fontSize:GetProductionFontSizeFromPreferences(),
+                  }}
+              >
+                  {getTruncatedLabel(boardMission?.agentName, 15)}
+              </SecondaryTableCell>
+          }
 
-        <SecondaryTableCell
-          align={"center"}
-          style={{
-            padding: "0px 10px",
-            backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-          }}
-        >
-          <ClickableLabelComponent
-            label={getTruncatedLabel(boardMission?.productName, 18)}
-            id={boardMission.id}
-            textColor={boardMission?.productionFloorJobColor}
-            t={t}
-            key={boardMission.id}
-          />
-        </SecondaryTableCell>
-
-        <SecondaryTableCell
-          align={"center"}
-          style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
-        >
-          <DescreptionWidget desciption={boardMission.description} />
-        </SecondaryTableCell>
+          {
+              CheckPreferenceValue(EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR) && (<SecondaryTableCell
+                  align={"center"}
+                  style={{
+                      padding: "0px 10px",
+                      backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+                  }}
+              >
+                  <ClickableLabelComponent
+                      label={getTruncatedLabel(boardMission?.productName, 18)}
+                      id={boardMission.id}
+                      textColor={boardMission?.productionFloorJobColor}
+                      t={t}
+                      key={boardMission.id}
+                  />
+              </SecondaryTableCell>)
+          }
+          {
+              CheckPreferenceValue(EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR) && (
+                  <SecondaryTableCell
+                      align={"center"}
+                      style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
+                  >
+                      <DescreptionWidget desciption={boardMission.description} />
+                  </SecondaryTableCell>
+              )
+          }
+        
         <SecondaryTableCell
           align={"center"}
           style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}

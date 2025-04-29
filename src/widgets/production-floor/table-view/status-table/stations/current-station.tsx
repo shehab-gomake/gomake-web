@@ -7,6 +7,7 @@ import { UpArrowIcon } from "../table-row/more-circle/icons/up-arrow";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useStations } from "./use-stations";
 import { getTruncatedLabel } from "@/utils/get-truncated-text";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
 
 interface IProps extends ICurrentStation {
   boardMissionId: string;
@@ -22,7 +23,7 @@ const CurrentStationComponent = ({
   productType,
   id,
 }: IProps) => {
-
+  const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
   const { classes } = useStyle({ textColor });
   const {
     handleClick,
@@ -51,6 +52,7 @@ const CurrentStationComponent = ({
           ...FONT_FAMILY.Lexend(500, 15),
           color: "#000000",
           lineHeight: "15px",
+          fontSize:GetProductionFontSizeFromPreferences(),
         }}>{machineName ? getTruncatedLabel(machineName, 25) : getTruncatedLabel(actionName, 25)}</span>
         {anchorEl ? (
           <UpArrowIcon color={"#475467"} width={14} height={14} />
@@ -79,6 +81,7 @@ const CurrentStationComponent = ({
           ?.filter((s) => s.id !== id)
           ?.map((station) => (
             <MenuItem
+                style={{fontSize:GetProductionFontSizeFromPreferences()}}
               onClick={() =>
                 onUpdateCurrentStation(boardMissionId, station.id, productType)
               }

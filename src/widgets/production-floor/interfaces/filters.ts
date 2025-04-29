@@ -15,6 +15,7 @@ export interface IProductionFloorFilter {
   groupsHistory: IFilterGroup[];
   groupId: string;
   agentIds?: string[];
+  isFirstLoading?: boolean;
 }
 
 export interface IStation {
