@@ -3,7 +3,10 @@ import { CurrentStationComponent } from "@/widgets/production-floor/table-view/s
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useDrag, useDrop } from "react-dnd";
 import { useRecoilState } from "recoil";
-import {boardsMissionsState, selectedBoardsMissionsState} from "@/widgets/production-floor/state/boards";
+import {
+  boardsMissionsState,
+  selectedBoardsMissionsState,
+} from "@/widgets/production-floor/state/boards";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -26,18 +29,19 @@ import { getTruncatedLabel } from "@/utils/get-truncated-text";
 import { CheckboxCheckedIcon } from "@/icons/checked-icon";
 import { CheckboxIcon } from "@/icons/checkbox-icon";
 import { DateTimeProductionFloorComponent } from "@/widgets/production-floor/date-comp/date-componenet";
-import { DescreptionWidget } from "@/widgets/production-floor/descreption-widget/descreption-widget";
+import { DescriptionWidget } from "@/widgets/production-floor/description-widget/descreption-widget";
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
 import { ApprovalFileStatusComponent } from "./approval-file-status-component";
 import { ExpandIcon } from "@/icons/expand-icon";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import { DateHourFormatterShort } from "@/utils/date-formatters";
-import {AdapterMoment} from "@mui/x-date-pickers/AdapterMoment";
-import {DateField} from "@/components/date-picker/date-filed";
-import {LocalizationProvider} from "@mui/x-date-pickers/LocalizationProvider";
-import {useGomakeAxios} from "@/hooks";
-import {EPreferences} from "@/enums/prefernces";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DateField } from "@/components/date-picker/date-filed";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { useGomakeAxios } from "@/hooks";
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { ProductionFloorNote } from "../board-note/production-floor-note";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -49,7 +53,7 @@ interface IProps {
   isMobileScreen: boolean;
   isRTL?: boolean;
   isUrgentWork?: boolean;
-  onUpdateJobDueDate?: (boardMissionId:string,dueDate:string) => void;
+  onUpdateJobDueDate?: (boardMissionId: string, dueDate: string) => void;
 }
 
 enum EDropArea {
@@ -67,8 +71,8 @@ const TableRowComponent = ({
   index,
   isMobileScreen,
   isRTL,
-  isUrgentWork, 
-  onUpdateJobDueDate
+  isUrgentWork,
+  onUpdateJobDueDate,
 }: IProps) => {
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
@@ -153,23 +157,31 @@ const TableRowComponent = ({
     [boardMission]
   );
 
-  const { updateStatus, updateBoardMissionsOrder, t, onClickPrintJob,updateNotes } =
-    useProductionFloorData();
-  const { CheckPreferenceValue , GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
+  const {
+    updateStatus,
+    updateBoardMissionsOrder,
+    t,
+    onClickPrintJob,
+    updateNotes,
+  } = useProductionFloorData();
+
+  const { CheckPreferenceValue, GetProductionFontSizeFromPreferences } =
+    usePrintHousePreferences();
+
   const onSelectBoardMissions = (id: string, checked: boolean) => {
     setSelectedIds(
       checked
         ? [...selectedIds, boardMission]
         : selectedIds.filter(
-          (selectedBoard) =>
-            selectedBoard.id !== id &&
-            selectedBoard.productType === boardMission.productType
-        )
+            (selectedBoard) =>
+              selectedBoard.id !== id &&
+              selectedBoard.productType === boardMission.productType
+          )
     );
   };
   const onClickOpenDatePicker = () => {
-      setOpenDatePicker(true);
-  }
+    setOpenDatePicker(true);
+  };
   drag(drop(ref));
 
   return (
@@ -262,11 +274,15 @@ const TableRowComponent = ({
                 cursor: "pointer",
                 textDecoration: "none",
                 color: "#000000",
-                  fontWeight:"bolder",
-                  fontSize:GetProductionFontSizeFromPreferences(),
+                fontWeight: "bolder",
+                fontSize: GetProductionFontSizeFromPreferences(),
               }}
             >
-              {boardMission?.productType ? boardMission?.sectionName ? boardMission?.sectionName + " / " : boardMission?.productType + " / " : null}
+              {boardMission?.productType
+                ? boardMission?.sectionName
+                  ? boardMission?.sectionName + " / "
+                  : boardMission?.productType + " / "
+                : null}
               {`${boardMission?.boardMissionNumber}`}
               <br />
               {`${boardMission?.orderNumber}`}
@@ -278,8 +294,11 @@ const TableRowComponent = ({
         <SecondaryTableCell
           align={"center"}
           style={{
-            backgroundColor: boardMission.jobDeliveryTimeAlertColor ? boardMission.jobDeliveryTimeAlertColor : index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-              
+            backgroundColor: boardMission.jobDeliveryTimeAlertColor
+              ? boardMission.jobDeliveryTimeAlertColor
+              : index % 2 === 0
+              ? "#FFFFFF"
+              : "#F9F9F9",
           }}
         >
           <div
@@ -288,43 +307,46 @@ const TableRowComponent = ({
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
-              
             }}
           >
             <div />
             <div />
-              <div  onClick={onClickOpenDatePicker}>
-                  <DateTimeProductionFloorComponent
-                      dateString={convertUtcToLocalIsoString(boardMission.dueDate?.toString())}
-                  />
-              </div>
+            <div onClick={onClickOpenDatePicker}>
+              <DateTimeProductionFloorComponent
+                dateString={convertUtcToLocalIsoString(
+                  boardMission.dueDate?.toString()
+                )}
+              />
+            </div>
             {/* {DateHourFormatterShort(
               convertUtcToLocalIsoString(boardMission.boardMissionCreatedDate?.toString())
             )} */}
-             <div style={{visibility: "hidden"}}>
-                 <LocalizationProvider
-                     dateAdapter={AdapterMoment}
-                     adapterLocale="en-gb"
-                 >
-                     <div >
-                         <DateField
-                             label={""}
-                             date={convertUtcToLocalIsoString(boardMission.dueDate?.toString())}
-                             handleChange={(newDate) => {
-                                 //setSelectDate(newDate);
-                                 //setActiveClickAway(true);
-                                 onUpdateJobDueDate(boardMission.id, newDate);
-                             }}
-                             isEditable={true}
-                             withTime={true}
-                             inputWidth={"1px"}
-                             //format={"DD/MM HH:mm"}
-                             openPicker={openDatePicker}
-                             onClose={()=>setOpenDatePicker(false)}
-                         />
-                     </div>
-                 </LocalizationProvider>
-             </div>
+            <div style={{ visibility: "hidden" }}>
+              <LocalizationProvider
+                dateAdapter={AdapterMoment}
+                adapterLocale="en-gb"
+              >
+                <div>
+                  <DateField
+                    label={""}
+                    date={convertUtcToLocalIsoString(
+                      boardMission.dueDate?.toString()
+                    )}
+                    handleChange={(newDate) => {
+                      //setSelectDate(newDate);
+                      //setActiveClickAway(true);
+                      onUpdateJobDueDate(boardMission.id, newDate);
+                    }}
+                    isEditable={true}
+                    withTime={true}
+                    inputWidth={"1px"}
+                    //format={"DD/MM HH:mm"}
+                    openPicker={openDatePicker}
+                    onClose={() => setOpenDatePicker(false)}
+                  />
+                </div>
+              </LocalizationProvider>
+            </div>
             <div
               style={{
                 display: "flex",
@@ -363,64 +385,79 @@ const TableRowComponent = ({
             width: "20px",
             cursor: "pointer",
             backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-              fontSize:GetProductionFontSizeFromPreferences(),
+            fontSize: GetProductionFontSizeFromPreferences(),
           }}
           onClick={() => onClickClient(boardMission?.clientId)}
         >
           {getTruncatedLabel(boardMission?.clientName, 15)}
-
         </SecondaryTableCell>
-          {
-              CheckPreferenceValue(
-                  EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR
-              ) && <SecondaryTableCell
-                  align={"center"}
-                  style={{
-                      width: "15px",
-                      cursor: "pointer",
-                      backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-                      fontSize:GetProductionFontSizeFromPreferences(),
-                  }}
-              >
-                  {getTruncatedLabel(boardMission?.agentName, 15)}
-              </SecondaryTableCell>
-          }
 
-          {
-              CheckPreferenceValue(EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR) && (<SecondaryTableCell
-                  align={"center"}
-                  style={{
-                      padding: "0px 10px",
-                      backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-                  }}
-              >
-                  <ClickableLabelComponent
-                      label={getTruncatedLabel(boardMission?.productName, 18)}
-                      id={boardMission.id}
-                      textColor={boardMission?.productionFloorJobColor}
-                      t={t}
-                      key={boardMission.id}
-                  />
-              </SecondaryTableCell>)
-          }
-          {
-              CheckPreferenceValue(EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR) && (
-                  <SecondaryTableCell
-                      align={"center"}
-                      style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
-                  >
-                      <DescreptionWidget desciption={boardMission.description} />
-                  </SecondaryTableCell>
-              )
-          }
-          {
-              CheckPreferenceValue(EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR) && <SecondaryTableCell
-                  align={"center"}
-                  style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",width:"100px" }}
-              >
-                  <textarea  style={{border:"unset",height:"50px",width:'100%',textAlign:"center"}} onChange={(e)=>updateNotes(boardMission?.id,boardMission?.productType,e.target.value)} value={boardMission?.noteColumn}/>
-              </SecondaryTableCell>
-          }
+        {CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && (
+          <SecondaryTableCell
+            align={"center"}
+            style={{
+              width: "15px",
+              cursor: "pointer",
+              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              fontSize: GetProductionFontSizeFromPreferences(),
+            }}
+          >
+            {getTruncatedLabel(boardMission?.agentName, 15)}
+          </SecondaryTableCell>
+        )}
+
+        {CheckPreferenceValue(
+          EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR
+        ) && (
+          <SecondaryTableCell
+            align={"center"}
+            style={{
+              padding: "0px 10px",
+              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+            }}
+          >
+            <ClickableLabelComponent
+              label={getTruncatedLabel(boardMission?.productName, 18)}
+              id={boardMission.id}
+              textColor={boardMission?.productionFloorJobColor}
+              t={t}
+              key={boardMission.id}
+            />
+          </SecondaryTableCell>
+        )}
+
+        {CheckPreferenceValue(
+          EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR
+        ) && (
+          <SecondaryTableCell
+            align={"center"}
+            style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
+          >
+            <DescriptionWidget description={boardMission.description} />
+          </SecondaryTableCell>
+        )}
+        {/* !here */}
+
+        {CheckPreferenceValue(
+          EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR
+        ) && (
+          <SecondaryTableCell
+            align="center"
+            style={{
+              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              width: "140px",
+              padding: "8px",
+            }}
+          >
+            <ProductionFloorNote
+              value={boardMission?.noteColumn || ""}
+              onSave={(val) =>
+                updateNotes(boardMission?.id, boardMission?.productType, val)
+              }
+            />
+          </SecondaryTableCell>
+        )}
+
         <SecondaryTableCell
           align={"center"}
           style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
