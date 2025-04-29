@@ -5,7 +5,7 @@ import {
   updateBoardsMissionsOrderApi,
   updateBoardsMissionsStatusApi,
   tryMoveBoardMissionToDoneApi,
-  updateJobDueDateApi,
+  updateJobDueDateApi, updateProductionFloorNotesApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useRecoilState, useRecoilValue,useSetRecoilState } from "recoil";
 import {
@@ -432,6 +432,14 @@ const useProductionFloorData = () => {
       dueDate: utcDueDate,
     }).then();
   };
+  const updateNotes = (boardMissionId,productType,notes) => {
+    const callBack = () => {};
+    updateProductionFloorNotesApi(callApi, callBack, {
+      boardMissionId: boardMissionId,
+      productType: productType,
+      notes:notes,
+    }).then();
+  }
   return {
     t,
     RTL,
@@ -457,6 +465,7 @@ const useProductionFloorData = () => {
     setSelectedGroupId,
     handleOpenQRScanner,
     updateJobDueDate,
+    updateNotes
   };
 };
 

@@ -153,7 +153,7 @@ const TableRowComponent = ({
     [boardMission]
   );
 
-  const { updateStatus, updateBoardMissionsOrder, t, onClickPrintJob } =
+  const { updateStatus, updateBoardMissionsOrder, t, onClickPrintJob,updateNotes } =
     useProductionFloorData();
   const { CheckPreferenceValue , GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
   const onSelectBoardMissions = (id: string, checked: boolean) => {
@@ -413,7 +413,14 @@ const TableRowComponent = ({
                   </SecondaryTableCell>
               )
           }
-        
+          {
+              CheckPreferenceValue(EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR) && <SecondaryTableCell
+                  align={"center"}
+                  style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",width:"100px" }}
+              >
+                  <textarea  style={{border:"unset",height:"50px",width:'100%',textAlign:"center"}} onChange={(e)=>updateNotes(boardMission?.id,boardMission?.productType,e.target.value)} value={boardMission?.noteColumn}/>
+              </SecondaryTableCell>
+          }
         <SecondaryTableCell
           align={"center"}
           style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}

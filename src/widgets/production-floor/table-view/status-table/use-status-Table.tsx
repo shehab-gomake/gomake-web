@@ -73,6 +73,7 @@ const useStatusTable = () => {
       // t("home.headers.jobName"),
       CheckPreferenceValue(EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR) &&  t("sales.quote.productName"),
       CheckPreferenceValue(EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR) && t("sales.documentDeliveries.description"),
+      CheckPreferenceValue(EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR) && t("sales.documentDeliveries.notes"),
       t("productionFloor.status"),
       t("productionFloor.currentStation"),
       t("productionFloor.nextStation"),
