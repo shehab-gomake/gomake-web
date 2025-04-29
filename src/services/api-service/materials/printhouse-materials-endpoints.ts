@@ -61,7 +61,9 @@ const getPrintHouseMaterialCategoryDataApi: ICallAndSetData = async (
     pageSize: number;
     isActive: boolean;
     customFiltersKeyValueList: IMaterialTableFilteringValue[];
-  }
+  },
+  lock: boolean,
+  abortController: AbortController
 ) => {
   return await getSetApiData(
     callApi,
@@ -69,7 +71,8 @@ const getPrintHouseMaterialCategoryDataApi: ICallAndSetData = async (
     GET_MATERIAL_CATEGORY_DATA_URL,
     setState,
     material,
-    true
+    lock,
+    abortController
   );
 };
 const updatePrintHouseMaterialPropApi: ICallAndSetData = async (

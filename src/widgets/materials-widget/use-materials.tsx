@@ -57,6 +57,7 @@ const useMaterials = (isAdmin: boolean) => {
   const { materialType, materialCategory } = query;
   const [selectedTableRow, setSelectedTableRow] =
     useState<IMaterialCategoryRow>();
+  const [requestAbortController, setRequestAbortController] = useState<AbortController | null>(null);
 
   const [materialHeaders, setMaterialHeaders] =
     useRecoilState<
@@ -246,9 +247,9 @@ const useMaterials = (isAdmin: boolean) => {
         materialCategoryData.map((row) =>
           materialsIds.includes(row.id)
             ? {
-                ...row,
-                checked: !checked,
-              }
+              ...row,
+              checked: !checked,
+            }
             : { ...row, checked: false }
         )
       );
@@ -407,6 +408,9 @@ const useMaterials = (isAdmin: boolean) => {
     materialCategory: string
   ) => {
     resetMaterialCategoryData();
+    const newRequestAbortController = new AbortController();
+    setRequestAbortController(newRequestAbortController);
+
     const callBack = (res) => {
       if (res.success) {
         const supplier = res?.data[0];
@@ -440,7 +444,10 @@ const useMaterials = (isAdmin: boolean) => {
     await getMaterialSuppliersApi(callApi, callBack, {
       key: materialType,
       categoryName: materialCategory,
-    });
+    },
+      true,
+      newRequestAbortController
+    );
   };
 
   const setMachinesState = useSetRecoilState<[]>(materialsMachinesState);
