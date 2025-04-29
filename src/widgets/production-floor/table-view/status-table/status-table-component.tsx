@@ -70,10 +70,14 @@ const StatusTableComponent = ({
     onOpenPrintDeliverTicketModal,
     selectedMission,
     tryMoveBoardMissionsToDone,
-    updateJobDueDate
+    updateJobDueDate,
   } = useProductionFloorData();
-  const { CheckPreferenceValue } = usePrintHousePreferences();
-  const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
+  const {
+    openSimpleApproveModal,
+    handleOpenModal,
+    handleCloseModal,
+    handleConfirm,
+  } = useSimpleApproveModal(updateStatus);
 
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -88,14 +92,17 @@ const StatusTableComponent = ({
         }
         if (item.board.statusId !== status.id) {
           if (status.key === "Approval required" && item.board.isNeedExample) {
-            handleOpenModal(status.id, item.selectedIds.length > 0 ? item.selectedIds : [item.board], item.board.id)
+            handleOpenModal(
+              status.id,
+              item.selectedIds.length > 0 ? item.selectedIds : [item.board],
+              item.board.id
+            );
           } else {
             updateStatus(
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               status.id
             ).then();
           }
-
         }
       },
       collect: (monitor) => ({
