@@ -26,6 +26,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
   const subProducts = useRecoilValue<any>(subProductsParametersState);
   const materialsEnumsValues = useRecoilValue(materialsCategoriesState);
   const [selectedShape, setSelectedShape] = useRecoilState<any>(selectedShapeState);
+
   const [materialData, setMaterialData] =
     useRecoilState<any>(materialBtnDataState);
   const [materialDataFilter, setMaterialDataFilter] = useState("");
@@ -37,7 +38,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
 
   const dieCutParameterForSettings = findParameterByCode(template, "DieCut")
   const dieKissCutParameterForSettings = findParameterByCode(template, "DieKissCut")
-
+  const dieStampParameterForSettings = findParameterByCode(template, selectParameterButton?.parameter?.materialPath[0] === "DieStamp" ? "Enhancementtype" : "Shape")
   const isDiesParameter = dieCutParameterForSettings || dieKissCutParameterForSettings
   const filteredMaterialData = !isParameterSettings
     ? materialData?.data?.filter(item => {
@@ -107,8 +108,14 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
     const shapeId = shapeParameter && shapeParameter.valueIds && shapeParameter.valueIds.length ? shapeParameter.valueIds[0] : "";
     let shapeCode = "";
     if (shapeId) {
-      const value = shapeParameter?.valuesConfigs.find(x => x.id === shapeId)
-      shapeCode = value?.code;
+      if (shapeParameter?.valuesConfigs && shapeParameter?.valuesConfigs?.length > 0) {
+        const value = shapeParameter?.valuesConfigs.find(x => x.id === shapeId)
+        shapeCode = value?.code;
+      }
+      else {
+        const value = dieStampParameterForSettings?.valuesConfigs.find(x => x.id === shapeId)
+        shapeCode = value?.code;
+      }
     }
     const reqObj = {
       key: selectParameterButton?.parameter?.materialPath[0],
