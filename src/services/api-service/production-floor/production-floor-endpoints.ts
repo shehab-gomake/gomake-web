@@ -82,7 +82,7 @@ const DELETE_JOB_FILE_UR =
   "/v1/erp-service/board-missions/delete-orderitem-file";
 
 const UPDATE_PRODUCTION_FLOOR_NOTE_URL =
-  "/v1/erp-service/board-missions/update-production-floddor-note";
+  "/v1/erp-service/board-missions/update-production-floor-note";
 
 const getProductionFloorData: ICallAndSetData = async (
   callApi,

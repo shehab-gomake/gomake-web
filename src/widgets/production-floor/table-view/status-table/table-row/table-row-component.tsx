@@ -451,8 +451,14 @@ const TableRowComponent = ({
           >
             <ProductionFloorNote
               value={boardMission?.noteColumn || ""}
-              onSave={(val) =>
-                updateNotes(boardMission?.id, boardMission?.productType, val)
+              onSave={(val, reset, closeEditing) =>
+                updateNotes(
+                  boardMission?.id,
+                  boardMission?.productType,
+                  val,
+                  reset,
+                  closeEditing
+                )
               }
             />
           </SecondaryTableCell>

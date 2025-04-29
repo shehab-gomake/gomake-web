@@ -445,14 +445,20 @@ const useProductionFloorData = () => {
     }).then();
   };
 
-  // !here
-  const updateNotes = (boardMissionId, productType, notes) => {
+  const updateNotes = (
+    boardMissionId,
+    productType,
+    notes,
+    reset,
+    closeEditing
+  ) => {
     const callBack = (res) => {
       if (res.success) {
-        debugger;
-        alertSuccessUpdate();
+        // alertSuccessUpdate();
+        closeEditing();
       } else {
         alertFaultUpdate();
+        reset();
       }
     };
 
