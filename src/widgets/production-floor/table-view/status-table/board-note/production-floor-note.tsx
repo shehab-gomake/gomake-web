@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 
@@ -33,10 +33,10 @@ export const ProductionFloorNote = ({ value, onSave }: Props) => {
     <Box sx={{ position: "relative", width: "100%" }}>
       {!isEditing ? (
         <Box sx={classes.box} onClick={() => setIsEditing(true)}>
-          <span>{note || t("productionFloor.clickToAddNote")}</span>
-          {/* <Tooltip title={t("productionFloor.editNote")}> */}
+          <span style={classes.span}>
+            {note || t("productionFloor.clickToAddNote")}
+          </span>
           <EditIcon sx={classes.editIcon} />
-          {/* </Tooltip> */}
         </Box>
       ) : (
         <Box>

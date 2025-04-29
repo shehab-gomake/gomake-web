@@ -16,6 +16,7 @@ const useStyle = ({ note }) => {
         outline: "none" as "none",
         backgroundColor: "#fff",
       },
+
       box: {
         border: "1px solid #D1D1D1",
         borderRadius: 6,
@@ -25,13 +26,23 @@ const useStyle = ({ note }) => {
         color: note ? "#000" : "#999",
         cursor: "pointer",
         minHeight: "40px",
-        maxHeight: "80px", // LIMIT HEIGHT
-        overflow: "hidden", // HIDE OVERFLOW
+        maxHeight: "60px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: "4px",
+        wordBreak: "break-word",
+        flexWrap: "nowrap",
+        overflow: "hidden",
         textOverflow: "ellipsis",
-        display: "-webkit-box",
-        WebkitLineClamp: 2, // LIMIT TO 2 LINES
-        WebkitBoxOrient: "vertical",
-        wordBreak: "break-word", // BREAK LONG WORDS
+        width: "100%",
+        maxWidth: "100%",
+      },
+      span: {
+        width: "140px",
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
       },
       iconsBox: {
         display: "flex",

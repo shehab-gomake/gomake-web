@@ -436,8 +436,6 @@ const TableRowComponent = ({
             <DescriptionWidget description={boardMission.description} />
           </SecondaryTableCell>
         )}
-        {/* !here */}
-
         {CheckPreferenceValue(
           EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR
         ) && (
@@ -450,6 +448,7 @@ const TableRowComponent = ({
             }}
           >
             <ProductionFloorNote
+              key={boardMission.id}
               value={boardMission?.noteColumn || ""}
               onSave={(val, reset, closeEditing) =>
                 updateNotes(
