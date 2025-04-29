@@ -4,12 +4,14 @@ import {
   moveBoardMissionToDoneApi,
   updateBoardsMissionsOrderApi,
   updateBoardsMissionsStatusApi,
-  tryMoveBoardMissionToDoneApi, updateJobDueDateApi,
+  tryMoveBoardMissionToDoneApi,
+  updateJobDueDateApi,
+  updateProductionFloorNotesApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   productionFloorAbortControllerState,
-  productionFloorFiltersState
+  productionFloorFiltersState,
 } from "@/widgets/production-floor/state/production-floor-filters";
 import {
   boardsMissionsState,
@@ -34,9 +36,10 @@ import {
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
 import { useRouter } from "next/router";
-import {formatDate} from "tough-cookie";
+import { formatDate } from "tough-cookie";
 import moment from "moment";
-import {IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
+import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
+import { agentsState } from "@/store/agents-state";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -44,11 +47,15 @@ const useProductionFloorData = () => {
   const RTL = dir === "rtl";
   const { callApi } = useGomakeAxios();
   const { push } = useRouter();
-
+  const setAgents = useSetRecoilState(agentsState);
   const [data, setData] =
     useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
-  const [abortController, setAbortController] = useRecoilState(productionFloorAbortControllerState);
-  const [filtersState, setFilters] = useRecoilState(productionFloorFiltersState);
+  const [abortController, setAbortController] = useRecoilState(
+    productionFloorAbortControllerState
+  );
+  const [filtersState, setFilters] = useRecoilState(
+    productionFloorFiltersState
+  );
   const [, setTags] = useRecoilState(tagsState);
   const [, setUserGroups] = useRecoilState(userProductionFloorGroupsState);
   const [, setPath] = useRecoilState(productionFloorPathsState);
@@ -57,11 +64,12 @@ const useProductionFloorData = () => {
   const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
     selectedGroupIdState
   );
+
   const view = useRecoilValue(productionFloorViewState);
+
   const getData = async (connectionId?: string) => {
     if (view === EProductionFloorView.FILTER_GROUPS) {
-      debugger
-      getDataByGroups(connectionId,filtersState).then();
+      getDataByGroups(connectionId, filtersState).then();
       return;
     }
     const callBack = (res) => {
@@ -72,7 +80,14 @@ const useProductionFloorData = () => {
         setTags(res?.data?.automatedTagsFilter);
         setUserGroups(res?.data?.groups);
         setPath(res?.data?.path ? res?.data?.path : []);
-        //alertSuccessGetData();
+
+        const agentIdsFromServer = res?.data?.filter?.agentIds || [];
+        setAgents((prevAgents) =>
+          prevAgents.map((agent) => ({
+            ...agent,
+            checked: agentIdsFromServer.includes(agent.id),
+          }))
+        );
       }
     };
     if (abortController) {
@@ -84,17 +99,19 @@ const useProductionFloorData = () => {
       callApi,
       callBack,
       {
-        connectionId:connectionId,
+        connectionId: connectionId,
         // filters:filtersState,
       },
-      false, 
+      false,
       newRequestAbortController
     );
   };
+
   const getDataByGroups = async (
     connectionId?: string,
-    currentFilters?:IProductionFloorFilter,
-    clearData?: boolean
+    currentFilters?: IProductionFloorFilter,
+    clearData?: boolean,
+    isFirstLoad?: boolean
   ) => {
     if (clearData) {
       setData([]);
@@ -103,22 +120,51 @@ const useProductionFloorData = () => {
     if (abortController) {
       abortController.abort();
     }
+    if (!currentFilters) {
+      currentFilters = filtersState;
+    }
     const newRequestAbortController = new AbortController();
     setAbortController(newRequestAbortController);
     const callBack = (res) => {
       if (res.success) {
         setData(res?.data?.boardMissionsCollections);
-        //setFilters(res?.data?.filter);
+        setFilters(res?.data?.filter);
+        const agentIdsFromServer = res?.data?.filter?.agentIds || [];
+        setAgents((prevAgents) =>
+          prevAgents.map((agent) => ({
+            ...agent,
+            checked: agentIdsFromServer.includes(agent.id),
+          }))
+        );
         setJobsStatuses(res?.data?.boardMissionStatuses);
         setSelectedGroupId("all");
         setTags(res?.data?.automatedTagsFilter);
         setUserGroups(res?.data?.groups);
         setPath(res?.data?.path ? res?.data?.path : []);
-        setFilterGroups(filterGroups.map(x=>x.id === "all" ? {...x,stuckCount:res?.data?.boradMisstionsStuckCount,inProcessCount:res?.data?.boradMisstionsNotStuckCount} : x))
+        if (filterGroups && filterGroups.length > 0) {
+          setFilterGroups(
+            filterGroups.map((x) =>
+              x.id === "all"
+                ? {
+                    ...x,
+                    stuckCount: res?.data?.boradMisstionsStuckCount,
+                    inProcessCount: res?.data?.boradMisstionsNotStuckCount,
+                  }
+                : x
+            )
+          );
+        }
+
         //alertSuccessGetData();
       }
     };
-    await getJobsByGroups(callApi, callBack, {connectionId:connectionId,filters:currentFilters}, false, newRequestAbortController);
+    await getJobsByGroups(
+      callApi,
+      callBack,
+      { connectionId: connectionId, filters: currentFilters },
+      false,
+      newRequestAbortController
+    );
   };
   const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
     const boardsIds = boards?.filter((b) => b.statusId !== statusId);
@@ -291,7 +337,7 @@ const useProductionFloorData = () => {
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: selectedMission.id,
       sendMessage,
-      productType: selectedMission.productType ?? ""
+      productType: selectedMission.productType ?? "",
     });
   };
 
@@ -348,12 +394,15 @@ const useProductionFloorData = () => {
             inProcessCount: group?.inProcessCount,
           })
         );
-        let inProcessSum = filterGroupsList.reduce((accumulator, currentValue) => {
-          return accumulator + (currentValue.inProcessCount ?? 0)
-        },0);
+        let inProcessSum = filterGroupsList.reduce(
+          (accumulator, currentValue) => {
+            return accumulator + (currentValue.inProcessCount ?? 0);
+          },
+          0
+        );
         let stuckSum = filterGroupsList.reduce((accumulator, currentValue) => {
-          return accumulator + (currentValue.stuckCount ?? 0)
-        },0);
+          return accumulator + (currentValue.stuckCount ?? 0);
+        }, 0);
         const allGroupViewFilter: IFilterGroupsList = {
           id: "all",
           name: t("productionFloor.allFilterGroupsViewName"),
@@ -370,24 +419,56 @@ const useProductionFloorData = () => {
   const handleOpenQRScanner = () => {
     push(`/qr-scanner`);
   };
-  const updateJobDueDate = (boardMisionId,dueDate) => {
-    let utcDueDate = new Date(dueDate).toUTCString()
+
+  const updateJobDueDate = (boardMisionId, dueDate) => {
+    let utcDueDate = new Date(dueDate).toUTCString();
     let mom = moment(dueDate);
-    let formattedDueDate = mom.utc().format("YYYY-MM-DD HH:mm:ss"); 
+    let formattedDueDate = mom.utc().format("YYYY-MM-DD HH:mm:ss");
     setData(
-        data.map(status=>
-            status.boardMissions.find(b=>b.id === boardMisionId) ?
-                {...status,boardMissions:status.boardMissions.map(bm=> bm.id === boardMisionId ? {...bm,dueDate:formattedDueDate} : bm)} : status
-        )
-    )
-    const callBack = ()=> {
-     
-    }
+      data.map((status) =>
+        status.boardMissions.find((b) => b.id === boardMisionId)
+          ? {
+              ...status,
+              boardMissions: status.boardMissions.map((bm) =>
+                bm.id === boardMisionId
+                  ? { ...bm, dueDate: formattedDueDate }
+                  : bm
+              ),
+            }
+          : status
+      )
+    );
+    const callBack = () => {};
     updateJobDueDateApi(callApi, callBack, {
       boardMissionId: boardMisionId,
       dueDate: utcDueDate,
     }).then();
-  }
+  };
+
+  const updateNotes = (
+    boardMissionId,
+    productType,
+    notes,
+    reset,
+    closeEditing
+  ) => {
+    const callBack = (res) => {
+      if (res.success) {
+        // alertSuccessUpdate();
+        closeEditing();
+      } else {
+        alertFaultUpdate();
+        reset();
+      }
+    };
+
+    updateProductionFloorNotesApi(callApi, callBack, {
+      boardMissionId: boardMissionId,
+      productType: productType,
+      note: notes,
+    }).then();
+  };
+
   return {
     t,
     RTL,
@@ -412,7 +493,8 @@ const useProductionFloorData = () => {
     getDataByGroups,
     setSelectedGroupId,
     handleOpenQRScanner,
-    updateJobDueDate
+    updateJobDueDate,
+    updateNotes,
   };
 };
 

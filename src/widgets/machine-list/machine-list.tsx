@@ -21,6 +21,7 @@ const MachineList = ({}: IMachineList) => {
     />
   );
 };
+
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
     elevation={0}
@@ -38,7 +39,7 @@ const StyledMenu = styled((props: MenuProps) => (
   "& .MuiPaper-root": {
     borderRadius: 6,
     width: "250px",
-    height: 500,
+    // height: 500,
     boxShadow:
       "rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px",
     "& .MuiMenu-list": {
@@ -54,4 +55,5 @@ const StyledMenu = styled((props: MenuProps) => (
     },
   },
 }));
+
 export { MachineList, StyledMenu };

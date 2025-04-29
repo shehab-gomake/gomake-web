@@ -81,6 +81,7 @@ import { useDocumentsTableSocketIo } from "@/hooks/socket-io/use-documents-table
 import { QuoteIfExistState } from "../quote-new/store/quote";
 import { userQuoteState } from "@/store/user-qoute-state";
 import { useClientTypesList } from "@/hooks/use-client-types";
+import { useModal } from "@/hooks/use-modal";
 
 interface Query {
   customerId?: string;
@@ -2729,6 +2730,26 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     }
   };
 
+  // Alert mail not verified modal
+  const alertNotVerifiedMailModal = useModal();
+  const [alertNotVerifiedModalState, setAlertModalState] = useState<{
+    message: string;
+    onConfirm?: () => void;
+  }>({
+    message: "",
+  });
+
+  const showAlertModal = ({
+    message,
+    onConfirm,
+  }: {
+    message: string;
+    onConfirm?: () => void;
+  }) => {
+    setAlertModalState({ message, onConfirm });
+    alertNotVerifiedMailModal.open();
+  };
+
   return {
     showCustomerModal,
     customerForEdit,
@@ -2899,6 +2920,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     deliveryOrderNumber,
     deliveryCustomerId,
     isSendOrderReadyToClient,
+    alertNotVerifiedMailModal,
+    alertNotVerifiedModalState,
+    showAlertModal,
   };
 };
 

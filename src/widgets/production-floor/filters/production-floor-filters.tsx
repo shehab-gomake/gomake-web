@@ -30,14 +30,14 @@ import { ModalType } from "@/enums";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { useRecoilState } from "recoil";
 import { filterGroupsState } from "@/widgets/production-floor/state/filter-group";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { ModalFilters } from "./modal-filters";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ModalEditGroup } from "./edit-group-modal";
-import {AgentsList} from "@/widgets/agents/agents-list";
-import {selectedAgentsState} from "@/store/agents-state";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
-import {EPreferences} from "@/enums/prefernces";
+import { AgentsList } from "@/widgets/agents/agents-list";
+import { selectedAgentsState } from "@/store/agents-state";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -140,7 +140,7 @@ const CustomGroupComponent = ({
   dir,
   isFromMenu,
   handleClickMenu,
-  setSelectedGroup
+  setSelectedGroup,
 }: CustomGroupsProps) => {
   return (
     <CustomGroup
@@ -307,12 +307,12 @@ const ProductionFloorFilters = ({
     openModalEditGroup,
     onClickOpenModalEditGroup,
     onClickCloseModalEditGroup,
-    handleAgentChange
+    handleAgentChange,
   } = useProductionFloorFilters({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
   });
-  
+
   useEffect(() => {
     const fetchMachinesColors = async () => {
       try {
@@ -427,7 +427,7 @@ const ProductionFloorFilters = ({
       setMissionsList(getMissionsList());
     }
   };
- 
+
   return (
     <Stack style={classes.headerFilterContainer}>
       <ClickAwayListener
@@ -462,9 +462,9 @@ const ProductionFloorFilters = ({
           )}
         </Stack>
       </ClickAwayListener>
-      {
-        CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && <AgentsList onClose={handleAgentChange}/>
-      }
+      {CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && (
+        <AgentsList onClickApply={handleAgentChange} applyButton={true} />
+      )}
       <GoMakeDatepicker
         value={deliveryDateFilter}
         onChange={onSelectDeliveryTimeDates}
@@ -552,24 +552,29 @@ const ProductionFloorFilters = ({
           minWidth: "unset",
         }}
       />
-      <GoMakeMenu handleClose={handleCloseMenu} open={openMenu} anchorEl={anchorElMenu}>
-        {CheckPermission(Permissions.IS_CAN_SHARE_GROUP) &&
+      <GoMakeMenu
+        handleClose={handleCloseMenu}
+        open={openMenu}
+        anchorEl={anchorElMenu}
+      >
+        {CheckPermission(Permissions.IS_CAN_SHARE_GROUP) && (
           <MenuItem onClick={onClickOpenModalDuplicateGroup}>
             <div>{t("productionFloor.copyToUsers")}</div>
           </MenuItem>
-        }
+        )}
         <MenuItem onClick={onClickOpenModalEditGroup}>
           <div>{t("navigationButtons.edit")}</div>
         </MenuItem>
 
-        <MenuItem onClick={(event) => {
-          event.stopPropagation();
-          handleClearClick(selectedGroup?.id);
-          handleCloseMenu();
-        }}>
+        <MenuItem
+          onClick={(event) => {
+            event.stopPropagation();
+            handleClearClick(selectedGroup?.id);
+            handleCloseMenu();
+          }}
+        >
           <div>{t("navigationButtons.delete")}</div>
         </MenuItem>
-
       </GoMakeMenu>
       <ModalFilters
         openModalDuplicateGroup={openModalDuplicateGroup}
@@ -590,7 +595,6 @@ const ProductionFloorFilters = ({
         actions={actions}
         getStationFilterGroups={getStationFilterGroups}
       />
-
     </Stack>
   );
 };

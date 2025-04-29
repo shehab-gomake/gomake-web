@@ -17,8 +17,7 @@ const useProductionFloorSocketIO = (view: EProductionFloorView) => {
         socket.on(`UpdateBoardMissionsStation-${profile.id}`, () => {
             getStationFilterGroups().then();
             if (view === EProductionFloorView.FILTER_GROUPS) {
-                debugger
-                getDataByGroups(connectionId,filters).then();
+                getDataByGroups(connectionId,null).then();
                 return;
             }
             getData(socket.id).then();

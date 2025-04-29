@@ -8,6 +8,7 @@ import { ResetColorIcon } from "../table-view/status-table/table-row/more-circle
 import { toRgba } from "@/utils/helpers";
 import { useGomakeAxios } from "@/hooks";
 import { resetProductionFloorJobColorApi, updateProductionFloorJobColorApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
 
 interface ITaskCategoryLabelProps {
     id: string;
@@ -20,6 +21,7 @@ interface ITaskCategoryLabelProps {
 const ClickableLabelComponent = ({ label, t, key, textColor, id }: ITaskCategoryLabelProps) => {
     const { primaryColor } = useGomakeTheme();
     const { callApi } = useGomakeAxios();
+    const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [color, setColor] = useState(textColor || primaryColor(500));
     const [initialColor, setInitialColor] = useState(color); // New state to track initial color
@@ -91,6 +93,7 @@ const ClickableLabelComponent = ({ label, t, key, textColor, id }: ITaskCategory
                     textAlign: 'center',
                     display: 'inline-block',
                     cursor: "pointer",
+                    fontSize:GetProductionFontSizeFromPreferences(),
                 }}
             >
                 {label}
