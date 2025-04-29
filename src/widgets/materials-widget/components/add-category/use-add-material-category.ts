@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
 import {
   addPrintHouseMaterialCategoryApi,
   duplicatePrintHouseMaterialDisplayNameApi,
-  updatePrintHouseMaterialDisplayNameApi,
+  updatePrintHouseMaterialCategoryNameApi,
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import {
   addMaterialCategoryApi,
@@ -132,14 +132,15 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
         setOpenModal(false);
         setFlagState(false);
         setAttributeValues({});
+        setNewCategory("")
       } else {
         alertFaultAdded();
       }
     };
-    await updatePrintHouseMaterialDisplayNameApi(callApi, callBack, {
+    await updatePrintHouseMaterialCategoryNameApi(callApi, callBack, {
       materialTypeKey: materialType.toString(),
       categoryKey: selectedCategoryModal?.categoryKey,
-      displayName: newCategory,
+      newCategoryKey: newCategory,
       defaultAttributeValues,
     });
   };
