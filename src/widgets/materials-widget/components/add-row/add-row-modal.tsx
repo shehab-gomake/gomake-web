@@ -78,6 +78,29 @@ const AddRowModal = (props: IAddRowModalProps) => {
   const onChangeInputs = (key, value) => {
     setRowData({ ...rowData, [key]: value as string });
   };
+  const validateRequiredFields = (headers: any[], rowData: Record<string, any>) => {
+    let filterheaders = headers?.filter(
+      (header) => header.key !== "price Unit / ton"
+    );
+    const missingFields: string[] = [];
+    // Check each header
+    filterheaders.forEach(header => {
+      // If field is required and either doesn't exist in rowData or is empty
+      if (header.isRequired &&
+        (!rowData.hasOwnProperty(header.key) ||
+          rowData[header.key] === null ||
+          rowData[header.key] === undefined ||
+          rowData[header.key] === '')) {
+        missingFields.push(header.value);
+      }
+    });
+
+    return {
+      isValid: missingFields.length === 0,
+      missingFields
+    };
+  }
+  const validateRequiredFieldsResult = validateRequiredFields(materialHeaders, rowData);
   return (
     <GoMakeModal
       insideStyle={classes.insideStyle}
