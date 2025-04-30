@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
-import { setupStepsConfig, Step } from "./data";
+import { getSetupStepsConfig, Step } from "./data";
 import { Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useRecoilValue } from "recoil";
+import { isUsPrintHouseState } from "@/store/print-house-profile";
 
 export const StyledCheckboxItem = ({
   label,
@@ -151,6 +153,9 @@ export const renderOptions = (
 
 const useSetupSteps = () => {
   const { t } = useTranslation();
+  const isUs = useRecoilValue<any>(isUsPrintHouseState);
+  const setupStepsConfig = useMemo(() => getSetupStepsConfig(isUs), [isUs]);
+
   const [selectedMethods, setSelectedMethods] = useState<string[]>([]);
   const [selectedDigitalOffsetActions, setSelectedDigitalOffsetActions] =
     useState<string[]>([]);
@@ -352,6 +357,8 @@ const useSetupSteps = () => {
     setManualWidth,
     manualHeight,
     setManualHeight,
+    isUs,
+    setupStepsConfig,
   };
 };
 

@@ -158,7 +158,7 @@ export interface SetupStepConfig {
   options?: string[];
 }
 
-export const setupStepsConfig: SetupStepConfig[] = [
+export const getSetupStepsConfig = (isUs: boolean): SetupStepConfig[] => [
   {
     type: "methods",
     label: "Select Printing Methods",
@@ -190,9 +190,13 @@ export const setupStepsConfig: SetupStepConfig[] = [
   },
   {
     type: "material-digital-offset",
-    label: "Select Material Size (Digital/Offset)",
+    // label: "Select Material Size (Digital/Offset)",
+    label: "Select Paper/Sheets Sizes (Digital/Offset)",
+
     dependsOn: ["Digital Printing", "Offset Printing"],
-    options: ["33X48.8", "50X70", "70X100"],
+    options: isUs
+      ? ["12X18", "20.813X29.5", "29.5X41.626"]
+      : ["33X48.8", "50X70", "70X100"],
   },
   {
     type: "finishing-roll",

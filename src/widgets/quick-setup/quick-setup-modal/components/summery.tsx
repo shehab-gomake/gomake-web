@@ -56,11 +56,13 @@ export const SummarySection = ({
         "Finishing Actions (Digital/Offset):",
         selectedDigitalOffsetActions
       )}
-      {renderList("Book Finishing Actions:", selectedBookFinishingActions)}
+      {renderList(
+        "Book Finishing Actions (Digital/Offset):",
+        selectedBookFinishingActions
+      )}
       {renderList("Roll Finishing Actions:", selectedRollActions)}
       {renderList("Wide Printer Actions:", selectedWidePrinterActions)}
       {renderList("DTF & Sublimation Actions:", selectedDTFActions)}
-      {renderList("Packing Methods:", selectedPacking)}
 
       {renderList("Material Sizes (Digital/Offset):", materialDigitalOffset)}
       {materialRollMaxWidth && (
@@ -85,6 +87,7 @@ export const SummarySection = ({
           </Typography>
         </Box>
       )}
+      {renderList("Packing Methods:", selectedPacking)}
     </>
   );
 };

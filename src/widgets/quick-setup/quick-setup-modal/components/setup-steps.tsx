@@ -3,7 +3,6 @@ import { renderOptions, useSetupSteps } from "./use-setup-steps";
 import { Box, TextField, Typography } from "@mui/material";
 import { SummarySection } from "./summery";
 import { PrimaryButton } from "@/components/button/primary-button";
-import { setupStepsConfig } from "./data";
 import { useStyle } from "../style";
 
 export const SetupSteps = () => {
@@ -43,6 +42,8 @@ export const SetupSteps = () => {
     setManualWidth,
     manualHeight,
     setManualHeight,
+    isUs,
+    setupStepsConfig,
   } = useSetupSteps();
 
   const stepConfig = setupStepsConfig.find((s) => s.type === currentStep.type);
@@ -187,7 +188,7 @@ export const SetupSteps = () => {
                             },
                           }}
                           type="number"
-                          label="Width (cm)"
+                          label={t(`quickSetup.${isUs ? "widthUs" : "width"}`)}
                           value={manualWidth}
                           onChange={(e) => setManualWidth(e.target.value)}
                           style={{ width: "140px" }}
@@ -199,7 +200,9 @@ export const SetupSteps = () => {
                             },
                           }}
                           type="number"
-                          label="Height (cm)"
+                          label={t(
+                            `quickSetup.${isUs ? "heightUs" : "height"}`
+                          )}
                           value={manualHeight}
                           onChange={(e) => setManualHeight(e.target.value)}
                           style={{ width: "140px" }}
@@ -239,7 +242,9 @@ export const SetupSteps = () => {
                       }}
                       fullWidth
                       type="number"
-                      label="Max Width (cm)"
+                      label={t(
+                        `quickSetup.${isUs ? "maxWidthUs" : "maxWidth"}`
+                      )}
                       value={materialRollMaxWidth}
                       onChange={(e) => setMaterialRollMaxWidth(e.target.value)}
                     />
@@ -275,7 +280,9 @@ export const SetupSteps = () => {
                             },
                           }}
                           type="number"
-                          label="Max Width (cm)"
+                          label={t(
+                            `quickSetup.${isUs ? "maxWidthUs" : "maxWidth"}`
+                          )}
                           value={materialWideMaxWidth}
                           onChange={(e) =>
                             setMaterialWideMaxWidth(e.target.value)
@@ -289,7 +296,9 @@ export const SetupSteps = () => {
                             },
                           }}
                           type="number"
-                          label="Max Length (cm)"
+                          label={t(
+                            `quickSetup.${isUs ? "maxLengthUs" : "maxLength"}`
+                          )}
                           value={materialWideMaxLength}
                           onChange={(e) =>
                             setMaterialWideMaxLength(e.target.value)

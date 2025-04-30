@@ -9,7 +9,10 @@ import { userTypeState } from "@/store/user-type";
 import { userProfileState } from "@/store/user-profile";
 import { useTranslation } from "react-i18next";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { printHouseProfile } from "@/store/print-house-profile";
+import {
+  isUsPrintHouseState,
+  printHouseProfile,
+} from "@/store/print-house-profile";
 import { priceChangePercentsState } from "@/store/min-max-price-change-percents";
 import { printHousePreferencesState } from "@/store/print-house-preferences";
 import { versionState } from "@/store/version";
@@ -34,6 +37,7 @@ const useCustomer = (
   const setPrintHousePreferences = useSetRecoilState<any>(
     printHousePreferencesState
   );
+  const setIsUsPrintHouse = useSetRecoilState<any>(isUsPrintHouseState);
   const setVersionState = useSetRecoilState(versionState);
 
   const setShowSetupMenu = useSetRecoilState(setupGuideOpenState);
@@ -63,6 +67,7 @@ const useCustomer = (
       setUserType({ type: "user" });
       setUserProfile(validate?.data?.data?.customer);
       setPrintHouseProfile(user.printHouseProfile);
+      setIsUsPrintHouse(user.printHouseProfile?.country === "US");
       setPrintHousePreferences(user?.printHouseProfile?.preferences);
       //setSystemCurrency(user.systemCurrency)
       setSystemCurrency(user.printHouseProfile.systemCurrency);
