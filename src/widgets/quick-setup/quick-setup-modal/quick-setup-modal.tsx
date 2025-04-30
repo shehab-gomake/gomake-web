@@ -3,8 +3,13 @@ import { setupGuideOpenState } from "@/store/setup-guide-state";
 import { SetupSteps } from "./components/setup-steps";
 import { Dialog, DialogContent, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+import { ModalControls } from "@/hooks/use-modal";
 
-const SetupModal = ({ ActionsModal }) => {
+interface SetupModalProps {
+  ActionsModal: ModalControls;
+}
+
+const SetupModal = ({ ActionsModal }: SetupModalProps) => {
   const isOpen = useRecoilValue(setupGuideOpenState);
 
   if (!isOpen) return null;

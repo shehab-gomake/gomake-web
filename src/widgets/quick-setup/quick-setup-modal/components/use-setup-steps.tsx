@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Step } from "./data";
+import { setupStepsConfig, Step } from "./data";
 
 const useSetupSteps = () => {
   const [selectedMethods, setSelectedMethods] = useState<string[]>([]);
@@ -25,32 +25,6 @@ const useSetupSteps = () => {
     selectedMethods.includes("Flexo Printing");
   const hasWidePrinter = selectedMethods.includes("Wide Printer");
   const hasDTF = selectedMethods.includes("DTF & Sublimation");
-
-  const steps: Step[] = useMemo(() => {
-    if (selectedMethods.length === 0) return [{ type: "methods" }];
-    const newSteps: Step[] = [{ type: "methods" }];
-
-    if (hasDigitalOrOffset) {
-      newSteps.push({ type: "finishing-digital-offset" });
-      newSteps.push({ type: "book-finishing" });
-    }
-    if (hasRollPrinting) {
-      newSteps.push({ type: "finishing-roll" });
-    }
-    if (hasWidePrinter) {
-      newSteps.push({ type: "finishing-wide" });
-    }
-    if (hasDTF) {
-      newSteps.push({ type: "finishing-dtf" });
-    }
-
-    newSteps.push({ type: "packing" });
-    newSteps.push({ type: "summary" });
-
-    return newSteps;
-  }, [selectedMethods]);
-
-  const currentStep = steps[stepIndex];
 
   const goNextStep = () => {
     setStepIndex((prev) => Math.min(prev + 1, steps.length - 1));
@@ -115,6 +89,86 @@ const useSetupSteps = () => {
     });
   };
 
+  // const stepsOld: Step[] = useMemo(() => {
+  //   if (selectedMethods.length === 0) return [{ type: "methods" }];
+  //   const newSteps: Step[] = [{ type: "methods" }];
+
+  //   if (hasDigitalOrOffset) {
+  //     newSteps.push({ type: "finishing-digital-offset" });
+  //     newSteps.push({ type: "book-finishing" });
+  //   }
+  //   if (hasRollPrinting) {
+  //     newSteps.push({ type: "finishing-roll" });
+  //   }
+  //   if (hasWidePrinter) {
+  //     newSteps.push({ type: "finishing-wide" });
+  //   }
+  //   if (hasDTF) {
+  //     newSteps.push({ type: "finishing-dtf" });
+  //   }
+
+  //   newSteps.push({ type: "packing" });
+  //   newSteps.push({ type: "summary" });
+
+  //   return newSteps;
+  // }, [selectedMethods]);
+
+  const steps: Step[] = useMemo(() => {
+    return setupStepsConfig
+      .filter((step) => {
+        if (!step.dependsOn) return true;
+        return step.dependsOn.some((m) => selectedMethods.includes(m));
+      })
+      .map((s) => ({ type: s.type }));
+  }, [selectedMethods]);
+
+  const currentStep = steps[stepIndex];
+
+  const onSave = () => {
+    const finishingMachines: Record<string, string[]> = {};
+
+    if (selectedMethods.includes("Digital Printing")) {
+      finishingMachines["Digital Printing"] = selectedDigitalOffsetActions;
+    }
+
+    if (selectedMethods.includes("Offset Printing")) {
+      finishingMachines["Offset Printing"] = selectedDigitalOffsetActions;
+    }
+
+    if (
+      selectedMethods.includes("Roll Digital Printing") ||
+      selectedMethods.includes("Roll Offset Printing") ||
+      selectedMethods.includes("Flexo Printing")
+    ) {
+      if (selectedRollActions.length > 0) {
+        finishingMachines["Roll Printing"] = selectedRollActions;
+      }
+    }
+
+    if (
+      selectedMethods.includes("Wide Printer") &&
+      selectedWidePrinterActions.length > 0
+    ) {
+      finishingMachines["Wide Printer"] = selectedWidePrinterActions;
+    }
+
+    if (
+      selectedMethods.includes("DTF & Sublimation") &&
+      selectedDTFActions.length > 0
+    ) {
+      finishingMachines["DTF & Sublimation"] = selectedDTFActions;
+    }
+
+    const result = {
+      printingMethods: selectedMethods,
+      finishingMachines,
+      bookFinishing: selectedBookFinishingActions,
+      packingMethods: selectedPacking,
+    };
+
+    console.log("FINAL RESULT:", result);
+  };
+
   return {
     selectedMethods,
     selectedDigitalOffsetActions,
@@ -138,6 +192,7 @@ const useSetupSteps = () => {
     goNextStep,
     goPreviousStep,
     hasOffsetPrinting,
+    onSave,
   };
 };
 

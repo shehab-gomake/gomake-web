@@ -16,9 +16,14 @@ import { useStyle } from "./style";
 import CloseFullscreenRoundedIcon from "@mui/icons-material/CloseFullscreenRounded";
 import OpenInFullRoundedIcon from "@mui/icons-material/OpenInFullRounded";
 import { useSetupGuideMenu } from "./use-quick-setup-menu";
+import { ModalControls } from "@/hooks/use-modal";
 
-export const SetupGuideMenu = ({ ActionsModal }) => {
-  const classes = useStyle();
+interface SetupGuideMenuProps {
+  ActionsModal: ModalControls;
+}
+
+export const SetupGuideMenu = ({ ActionsModal }: SetupGuideMenuProps) => {
+  const { classes } = useStyle();
   const {
     t,
     isOpen,

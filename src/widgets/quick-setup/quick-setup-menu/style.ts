@@ -52,6 +52,8 @@ const useStyle = () => {
     };
   }, []);
 
-  return classes;
+  return {
+    classes,
+  };
 };
 export { useStyle };

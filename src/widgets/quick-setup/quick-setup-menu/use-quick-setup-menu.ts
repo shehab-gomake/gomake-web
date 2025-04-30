@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 const useSetupGuideMenu = () => {
   const { t } = useTranslation();
   const isOpen = useRecoilValue(setupGuideOpenState);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [openVerifyBusiness, setOpenVerifyBusiness] = useState(false);
 
   const handleToggleVerifyBusiness = () => {
