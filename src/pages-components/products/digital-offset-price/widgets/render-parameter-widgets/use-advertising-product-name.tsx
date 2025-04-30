@@ -24,6 +24,8 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const [newCategory, setNewCategory] = useState("");
   const [isView, setIsView] = useState(false);
   const [isRenderData, setIsRenderData] = useState(true)
+  const [isViewInfoAfterGenerate, setIsViewInfoAfterGenerate] = useState(false)
+  const [newDataGenerated, setNewDataGenerated] = useState<any>(null)
 
   useEffect(() => {
     if (isRenderData) {
@@ -138,11 +140,48 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
           {
             valueId: "code",
             value: newDieCutSelect.rowData.code.value
+          },
+          {
+            valueId: "shape",
+            value: newDieCutSelect.rowData.shape.value
+          },
+          {
+            valueId: "type",
+            value: newDieCutSelect.rowData.type.value
+          },
+          {
+            valueId: "unitWidth",
+            value: newDieCutSelect.rowData.unitWidth.value
+          },
+          {
+            valueId: "unitLength",
+            value: newDieCutSelect.rowData.unitLength.value
+          },
+          {
+            valueId: "finalUnitWidth",
+            value: newDieCutSelect.rowData.finalUnitWidth.value
+          },
+          {
+            valueId: "finalUnitLength",
+            value: newDieCutSelect.rowData.finalUnitLength.value
+          },
+          {
+            valueId: "finalUnitHeight",
+            value: newDieCutSelect.rowData.finalUnitHeight.value
+          },
+          {
+            valueId: "columnsAmount",
+            value: newDieCutSelect.rowData.columnsAmount.value
+          },
+          {
+            valueId: "linesAmount",
+            value: newDieCutSelect.rowData.linesAmount.value
           }
         ],
         currency: newDieCutSelect.rowData.currency.value
       };
       setSearchResult((prev: any) => {
+        console.log("formattedData", { formattedData, prev })
         return [formattedData, ...prev,] // Add the new item to the data list
       });
       setIsRenderData(false)
@@ -167,6 +206,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       sheetsColor: sheetColor
     }
     const callBack = (res) => {
+      console.log("res", res)
       if (res.success && res.data && res.data.data) {
         getAllMaterial().then((materials) => {
           getProductById(materials);
@@ -202,16 +242,53 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
               {
                 valueId: "code",
                 value: res.data.data.rowData.code.value
+              },
+              {
+                valueId: "shape",
+                value: res.data.data.rowData.shape.value
+              },
+              {
+                valueId: "type",
+                value: res.data.data.rowData.type.value
+              },
+              {
+                valueId: "unitWidth",
+                value: res?.data?.data?.rowData?.unitWidth?.value
+              },
+              {
+                valueId: "unitLength",
+                value: res?.data?.data?.rowData?.unitLength?.value
+              },
+              {
+                valueId: "finalUnitWidth",
+                value: res?.data?.data?.rowData?.finalUnitWidth?.value
+              },
+              {
+                valueId: "finalUnitLength",
+                value: res?.data?.data?.rowData?.finalUnitLength?.value
+              },
+              {
+                valueId: "finalUnitHeight",
+                value: res?.data?.data?.rowData?.finalUnitHeight?.value
+              },
+              {
+                valueId: "columnsAmount",
+                value: res?.data?.data?.rowData?.columnsAmount?.value
+              },
+              {
+                valueId: "linesAmount",
+                value: res?.data?.data?.rowData?.linesAmount?.value
               }
             ],
-            currency: res.data.data.rowData.currency.value
           };
           setSearchResult((prev: any) => {
             return [formattedData, ...prev,] // Add the new item to the data list
           });
-          setOpenGenerateModal(false)
+          // setOpenGenerateModal(false)
           setIsView(false)
           setIsRenderData(false)
+          setIsViewInfoAfterGenerate(true)
+          setNewDataGenerated(res.data.data)
         }
 
       } else {
@@ -261,9 +338,9 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
         requiredParameterCodes.includes(param.parameterCode)
       )
     );
-
+    console.log("foundParameters", foundParameters)
     const parameterInfo = foundParameters.map(param =>
-      `${param.parameterName}: ${param.values[0]}${param.unitKey ? ` ${param.unitKey}` : ''}`
+      `${param.parameterName}: ${param.values[0]}${param.defaultUnit ? ` ${param.defaultUnit}` : ''}`
     );
 
     return {
@@ -292,6 +369,10 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     isView,
     setIsView,
     setIsRenderData,
+    isViewInfoAfterGenerate,
+    setIsViewInfoAfterGenerate,
+    newDataGenerated,
+    setSubProducts
   };
 };
 
