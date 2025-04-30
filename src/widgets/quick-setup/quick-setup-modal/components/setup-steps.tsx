@@ -9,6 +9,8 @@ export const SetupSteps = () => {
   const { classes } = useStyle();
   const {
     t,
+    dir,
+    isRtl,
     selectedMethods,
     selectedDigitalOffsetActions,
     selectedBookFinishingActions,

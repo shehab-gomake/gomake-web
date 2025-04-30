@@ -4,6 +4,7 @@ import { SetupSteps } from "./components/setup-steps";
 import { Dialog, DialogContent, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { ModalControls } from "@/hooks/use-modal";
+import { useTranslation } from "react-i18next";
 
 interface SetupModalProps {
   ActionsModal: ModalControls;
@@ -11,6 +12,9 @@ interface SetupModalProps {
 
 const SetupModal = ({ ActionsModal }: SetupModalProps) => {
   const isOpen = useRecoilValue(setupGuideOpenState);
+  const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
 
   if (!isOpen) return null;
 
@@ -30,7 +34,7 @@ const SetupModal = ({ ActionsModal }: SetupModalProps) => {
           sx={{
             position: "absolute",
             top: 8,
-            right: 8,
+            ...(isRTL ? { left: 8 } : { right: 8 }),
             zIndex: 1,
             color: "grey.600",
           }}

@@ -1,25 +1,14 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useMemo } from "react";
 
-const useStyle = () => {
-  const { primaryColor } = useGomakeTheme();
+const useStyle = (isRtl: boolean) => {
+  const { primaryColor, theme } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
-      mainContainerOld: {
-        position: "fixed",
-        bottom: 20,
-        right: 20,
-        width: 300,
-        borderRadius: 3,
-        boxShadow: 8,
-        p: 2,
-        zIndex: 1300,
-      },
       mainContainer: {
         position: "fixed",
         bottom: 24,
-        right: 24,
-        // width: 320,
+        [isRtl ? "left" : "right"]: 24,
         width: 280,
         borderRadius: "16px",
         boxShadow: "0px 2px 10px rgba(0, 0, 0, 0.1)",
@@ -50,7 +39,7 @@ const useStyle = () => {
         },
       },
     };
-  }, []);
+  }, [theme, isRtl]);
 
   return {
     classes,

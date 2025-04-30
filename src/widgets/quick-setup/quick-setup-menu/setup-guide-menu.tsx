@@ -23,9 +23,9 @@ interface SetupGuideMenuProps {
 }
 
 export const SetupGuideMenu = ({ ActionsModal }: SetupGuideMenuProps) => {
-  const { classes } = useStyle();
   const {
     t,
+    isRtl,
     isOpen,
     isExpanded,
     openVerifyBusiness,
@@ -33,6 +33,7 @@ export const SetupGuideMenu = ({ ActionsModal }: SetupGuideMenuProps) => {
     toggleExpand,
     handleToggleVerifyBusiness,
   } = useSetupGuideMenu();
+  const { classes } = useStyle(isRtl);
 
   if (!isOpen) return null;
 

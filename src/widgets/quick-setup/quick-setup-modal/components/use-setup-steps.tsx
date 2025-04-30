@@ -153,6 +153,9 @@ export const renderOptions = (
 
 const useSetupSteps = () => {
   const { t } = useTranslation();
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRtl = dir === "rtl";
+
   const isUs = useRecoilValue<any>(isUsPrintHouseState);
   const setupStepsConfig = useMemo(() => getSetupStepsConfig(isUs), [isUs]);
 
@@ -320,6 +323,8 @@ const useSetupSteps = () => {
 
   return {
     t,
+    dir,
+    isRtl,
     selectedMethods,
     selectedDigitalOffsetActions,
     selectedBookFinishingActions,
