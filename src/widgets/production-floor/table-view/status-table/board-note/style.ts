@@ -39,7 +39,7 @@ const useStyle = ({ note }) => {
         maxWidth: "100%",
       },
       span: {
-        width: "140px",
+        width: "100%",
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",
