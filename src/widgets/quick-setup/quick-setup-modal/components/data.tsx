@@ -2,23 +2,12 @@ export type Step =
   | { type: "methods" }
   | { type: "finishing-digital-offset" }
   | { type: "book-finishing" }
-  | { type: "finishing-roll" }
-  | { type: "finishing-wide" }
-  | { type: "finishing-dtf" }
-  | { type: "packing" }
-  | { type: "summary" };
-
-export type StepNew =
-  | { type: "methods" }
-  | { type: "finishing-digital-offset" }
-  | { type: "book-finishing" }
   | { type: "material-digital-offset" }
   | { type: "finishing-roll" }
   | { type: "material-roll" }
   | { type: "finishing-wide" }
   | { type: "material-wide" }
   | { type: "finishing-dtf" }
-  | { type: "material-dtf" }
   | { type: "packing" }
   | { type: "summary" };
 
@@ -200,6 +189,12 @@ export const setupStepsConfig: SetupStepConfig[] = [
     options: bookFinishingActions,
   },
   {
+    type: "material-digital-offset",
+    label: "Select Material Size (Digital/Offset)",
+    dependsOn: ["Digital Printing", "Offset Printing"],
+    options: ["33X48.8", "50X70", "70X100"],
+  },
+  {
     type: "finishing-roll",
     label: "Select Roll Finishing Actions",
     dependsOn: [
@@ -210,10 +205,34 @@ export const setupStepsConfig: SetupStepConfig[] = [
     options: finishingActionsRollPrinting,
   },
   {
+    type: "material-roll",
+    label: "Enter Max Roll Width",
+    dependsOn: [
+      "Roll Digital Printing",
+      "Roll Offset Printing",
+      "Flexo Printing",
+    ],
+  },
+  {
     type: "finishing-wide",
     label: "Select Wide Printer Actions",
     dependsOn: ["Wide Printer"],
     options: finishingActionsWidePrinter,
+  },
+  {
+    type: "material-wide",
+    label: "Select Wide Printer Materials and Size",
+    dependsOn: ["Wide Printer"],
+    options: [
+      "Kappa",
+      "Aluminum Bond",
+      "Magnet",
+      "PVC",
+      "Perspex",
+      "Banner",
+      "Vinyl",
+      "synthetic Paper",
+    ],
   },
   {
     type: "finishing-dtf",

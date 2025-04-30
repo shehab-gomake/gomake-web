@@ -1,73 +1,15 @@
 import { Dispatch, SetStateAction, useMemo } from "react";
-import { useSetupSteps } from "./use-setup-steps";
-import { Box, Typography, useTheme } from "@mui/material";
+import { renderOptions, useSetupSteps } from "./use-setup-steps";
+import { Box, TextField, Typography } from "@mui/material";
 import { SummarySection } from "./summery";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { setupStepsConfig } from "./data";
 import { useStyle } from "../style";
 
-const StyledCheckboxItem = ({
-  label,
-  checked,
-  onClick,
-}: {
-  label: string;
-  checked: boolean;
-  onClick: () => void;
-}) => {
-  const theme = useTheme();
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "10px 16px",
-        borderRadius: "12px",
-        fontSize: "14px",
-        fontWeight: 500,
-        border: checked ? "1px solid #2E3092" : "1px solid #E0E0E0",
-        backgroundColor: checked ? "#EFF0FF" : "#F9FAFB",
-        color: checked ? "#2E3092" : "#333",
-        cursor: "pointer",
-        transition: "all 0.2s ease-in-out",
-        "&:hover": {
-          borderColor: "#2E3092",
-        },
-      }}
-    >
-      {label}
-    </Box>
-  );
-};
-
-const renderOptions = (
-  options: string[],
-  selected: string[],
-  toggle: (item: string) => void
-) => (
-  <Box
-    sx={{
-      display: "flex",
-      flexWrap: "wrap",
-      gap: 2,
-    }}
-  >
-    {options.map((item) => (
-      <StyledCheckboxItem
-        key={item}
-        label={item}
-        checked={selected.includes(item)}
-        onClick={() => toggle(item)}
-      />
-    ))}
-  </Box>
-);
-
 export const SetupSteps = () => {
   const { classes } = useStyle();
   const {
+    t,
     selectedMethods,
     selectedDigitalOffsetActions,
     selectedBookFinishingActions,
@@ -87,6 +29,20 @@ export const SetupSteps = () => {
     setStepIndex,
     handleMethodToggle,
     onSave,
+    materialDigitalOffset,
+    setMaterialDigitalOffset,
+    materialRollMaxWidth,
+    setMaterialRollMaxWidth,
+    materialWide,
+    setMaterialWide,
+    materialWideMaxWidth,
+    setMaterialWideMaxWidth,
+    materialWideMaxLength,
+    setMaterialWideMaxLength,
+    manualWidth,
+    setManualWidth,
+    manualHeight,
+    setManualHeight,
   } = useSetupSteps();
 
   const stepConfig = setupStepsConfig.find((s) => s.type === currentStep.type);
@@ -173,19 +129,190 @@ export const SetupSteps = () => {
             selectedWidePrinterActions={selectedWidePrinterActions}
             selectedDTFActions={selectedDTFActions}
             selectedPacking={selectedPacking}
+            materialDigitalOffset={materialDigitalOffset}
+            materialRollMaxWidth={materialRollMaxWidth}
+            materialWide={materialWide}
+            materialWideMaxWidth={materialWideMaxWidth}
+            materialWideMaxLength={materialWideMaxLength}
           />
         ) : (
           <>
             <Typography variant="h5" fontWeight="bold" mb={3}>
               {stepConfig?.label}
             </Typography>
-            {renderOptions(
-              stepConfig?.type === "methods"
-                ? stepConfig.options!
-                : displayedOptions,
-              stepConfig?.type === "methods" ? selectedMethods : selectedArray,
-              stepConfig?.type === "methods" ? handleMethodToggle : handleToggle
-            )}
+            {(() => {
+              switch (currentStep.type) {
+                case "material-digital-offset":
+                  return (
+                    <>
+                      {/* Render preset + custom selections */}
+                      {renderOptions(
+                        Array.from(
+                          new Set([
+                            ...(stepConfig?.options ?? []),
+                            ...materialDigitalOffset,
+                          ])
+                        ),
+                        materialDigitalOffset,
+                        (item) => {
+                          setMaterialDigitalOffset((prev) =>
+                            prev.includes(item)
+                              ? prev.filter((i) => i !== item)
+                              : [...prev, item]
+                          );
+                        },
+                        (item) => {
+                          setMaterialDigitalOffset((prev) =>
+                            prev.filter((i) => i !== item)
+                          );
+                        },
+                        (item) => {
+                          return !(stepConfig?.options ?? []).includes(item);
+                        }
+                      )}
+                      {/* Manual input for custom size */}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 2,
+                          mt: 3,
+                          flexWrap: "wrap",
+                          alignItems: "center",
+                        }}
+                      >
+                        <TextField
+                          sx={{
+                            "& label.Mui-focused": {
+                              color: "#2E3092",
+                            },
+                          }}
+                          type="number"
+                          label="Width (cm)"
+                          value={manualWidth}
+                          onChange={(e) => setManualWidth(e.target.value)}
+                          style={{ width: "140px" }}
+                        />
+                        <TextField
+                          sx={{
+                            "& label.Mui-focused": {
+                              color: "#2E3092",
+                            },
+                          }}
+                          type="number"
+                          label="Height (cm)"
+                          value={manualHeight}
+                          onChange={(e) => setManualHeight(e.target.value)}
+                          style={{ width: "140px" }}
+                        />
+                        <PrimaryButton
+                          style={{ width: "fit-content" }}
+                          // variant="outlined"
+                          onClick={() => {
+                            const customSize = `${manualWidth}X${manualHeight}`;
+                            if (
+                              manualWidth &&
+                              manualHeight &&
+                              !materialDigitalOffset.includes(customSize)
+                            ) {
+                              setMaterialDigitalOffset((prev) => [
+                                ...prev,
+                                customSize,
+                              ]);
+                              setManualWidth("");
+                              setManualHeight("");
+                            }
+                          }}
+                        >
+                          Add custom size
+                        </PrimaryButton>
+                      </Box>
+                    </>
+                  );
+
+                case "material-roll":
+                  return (
+                    <TextField
+                      sx={{
+                        "& label.Mui-focused": {
+                          color: "#2E3092",
+                        },
+                      }}
+                      fullWidth
+                      type="number"
+                      label="Max Width (cm)"
+                      value={materialRollMaxWidth}
+                      onChange={(e) => setMaterialRollMaxWidth(e.target.value)}
+                    />
+                  );
+
+                case "material-wide":
+                  return (
+                    <>
+                      {renderOptions(
+                        stepConfig?.options ?? [],
+                        materialWide,
+                        (item) => {
+                          setMaterialWide((prev) =>
+                            prev.includes(item)
+                              ? prev.filter((i) => i !== item)
+                              : [...prev, item]
+                          );
+                        }
+                      )}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 2,
+                          mt: 3,
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        <TextField
+                          sx={{
+                            mt: 2,
+                            "& label.Mui-focused": {
+                              color: "#2E3092",
+                            },
+                          }}
+                          type="number"
+                          label="Max Width (cm)"
+                          value={materialWideMaxWidth}
+                          onChange={(e) =>
+                            setMaterialWideMaxWidth(e.target.value)
+                          }
+                        />
+                        <TextField
+                          sx={{
+                            mt: 2,
+                            "& label.Mui-focused": {
+                              color: "#2E3092",
+                            },
+                          }}
+                          type="number"
+                          label="Max Length (cm)"
+                          value={materialWideMaxLength}
+                          onChange={(e) =>
+                            setMaterialWideMaxLength(e.target.value)
+                          }
+                        />
+                      </Box>
+                    </>
+                  );
+
+                default:
+                  return renderOptions(
+                    stepConfig?.type === "methods"
+                      ? stepConfig.options!
+                      : displayedOptions,
+                    stepConfig?.type === "methods"
+                      ? selectedMethods
+                      : selectedArray,
+                    stepConfig?.type === "methods"
+                      ? handleMethodToggle
+                      : handleToggle
+                  );
+              }
+            })()}
           </>
         )}
       </Box>
@@ -193,7 +320,7 @@ export const SetupSteps = () => {
       <Box
         sx={{
           padding: 2,
-          // borderTop: "1px solid #e0e0e0",
+          borderTop: "1px solid #e0e0e0",
           display: "flex",
           justifyContent:
             currentStep.type === "summary" ? "flex-end" : "space-between",

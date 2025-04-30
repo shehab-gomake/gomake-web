@@ -1,7 +1,156 @@
 import { useMemo, useState } from "react";
 import { setupStepsConfig, Step } from "./data";
+import { Box } from "@mui/material";
+import { useTranslation } from "react-i18next";
+
+export const StyledCheckboxItem = ({
+  label,
+  checked,
+  onClick,
+}: {
+  label: string;
+  checked: boolean;
+  onClick: () => void;
+}) => {
+  return (
+    <Box
+      onClick={onClick}
+      sx={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "10px 16px",
+        borderRadius: "12px",
+        fontSize: "14px",
+        fontWeight: 500,
+        border: checked ? "1px solid #2E3092" : "1px solid #E0E0E0",
+        backgroundColor: checked ? "#EFF0FF" : "#F9FAFB",
+        color: checked ? "#2E3092" : "#333",
+        cursor: "pointer",
+        transition: "all 0.2s ease-in-out",
+        "&:hover": {
+          borderColor: "#2E3092",
+        },
+      }}
+    >
+      {label}
+    </Box>
+  );
+};
+
+export const StyledSelectableChip = ({
+  label,
+  checked,
+  onClick,
+  onRemove,
+}: {
+  label: string;
+  checked: boolean;
+  onClick: () => void;
+  onRemove?: () => void;
+}) => {
+  return (
+    <Box
+      sx={{
+        display: "inline-flex",
+        alignItems: "center",
+        padding: "10px 16px",
+        borderRadius: "12px",
+        fontSize: "14px",
+        fontWeight: 500,
+        border: checked ? "1px solid #2E3092" : "1px solid #E0E0E0",
+        backgroundColor: checked ? "#EFF0FF" : "#F9FAFB",
+        color: checked ? "#2E3092" : "#333",
+        cursor: "pointer",
+        transition: "all 0.2s ease-in-out",
+        "&:hover": {
+          borderColor: "#2E3092",
+        },
+        position: "relative",
+        pr: onRemove ? "28px" : undefined,
+      }}
+      onClick={onClick}
+    >
+      {label}
+      {onRemove && (
+        <Box
+          sx={{
+            pr: "4px", //!here fix
+            position: "absolute",
+            top: "4px",
+            right: "4px",
+            fontSize: "12px",
+            cursor: "pointer",
+            color: "#999",
+            "&:hover": {
+              color: "#000",
+            },
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+        >
+          ✕
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+export const renderOptionsOld = (
+  options: string[],
+  selected: string[],
+  toggle: (item: string) => void
+) => (
+  <Box
+    sx={{
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 2,
+    }}
+  >
+    {options.map((item) => (
+      <StyledCheckboxItem
+        key={item}
+        label={item}
+        checked={selected.includes(item)}
+        onClick={() => toggle(item)}
+      />
+    ))}
+  </Box>
+);
+
+export const renderOptions = (
+  options: string[],
+  selected: string[],
+  toggle: (item: string) => void,
+  remove?: (item: string) => void,
+  isCustom?: (item: string) => boolean // 👈 NEW
+) => (
+  <Box
+    sx={{
+      display: "flex",
+      flexWrap: "wrap",
+      gap: 2,
+    }}
+  >
+    {options.map((item) => (
+      <StyledSelectableChip
+        key={item}
+        label={item}
+        checked={selected.includes(item)}
+        onClick={() => toggle(item)}
+        onRemove={
+          remove && isCustom?.(item) ? () => remove(item) : undefined // 👈 Don't pass if not custom
+        }
+      />
+    ))}
+  </Box>
+);
 
 const useSetupSteps = () => {
+  const { t } = useTranslation();
   const [selectedMethods, setSelectedMethods] = useState<string[]>([]);
   const [selectedDigitalOffsetActions, setSelectedDigitalOffsetActions] =
     useState<string[]>([]);
@@ -14,17 +163,11 @@ const useSetupSteps = () => {
   const [selectedDTFActions, setSelectedDTFActions] = useState<string[]>([]);
   const [selectedPacking, setSelectedPacking] = useState<string[]>([]);
   const [stepIndex, setStepIndex] = useState(0);
-
-  const hasDigitalOrOffset =
-    selectedMethods.includes("Digital Printing") ||
-    selectedMethods.includes("Offset Printing");
   const hasOffsetPrinting = selectedMethods.includes("Offset Printing");
   const hasRollPrinting =
     selectedMethods.includes("Roll Digital Printing") ||
     selectedMethods.includes("Roll Offset Printing") ||
     selectedMethods.includes("Flexo Printing");
-  const hasWidePrinter = selectedMethods.includes("Wide Printer");
-  const hasDTF = selectedMethods.includes("DTF & Sublimation");
 
   const goNextStep = () => {
     setStepIndex((prev) => Math.min(prev + 1, steps.length - 1));
@@ -43,12 +186,13 @@ const useSetupSteps = () => {
         updated = [...prev, method];
       }
 
-      // Check if Wide Printer was removed
       if (!updated.includes("Wide Printer")) {
         setSelectedWidePrinterActions([]);
+        setMaterialWide([]);
+        setMaterialWideMaxWidth("");
+        setMaterialWideMaxLength("");
       }
 
-      // Check if Roll Printing methods were removed
       if (
         !(
           updated.includes("Roll Digital Printing") ||
@@ -57,14 +201,13 @@ const useSetupSteps = () => {
         )
       ) {
         setSelectedRollActions([]);
+        setMaterialRollMaxWidth("");
       }
 
-      // Check if DTF was removed
       if (!updated.includes("DTF & Sublimation")) {
         setSelectedDTFActions([]);
       }
 
-      // Check if Digital or Offset removed
       if (
         !(
           updated.includes("Digital Printing") ||
@@ -73,8 +216,9 @@ const useSetupSteps = () => {
       ) {
         setSelectedDigitalOffsetActions([]);
         setSelectedBookFinishingActions([]);
+        setMaterialDigitalOffset([]);
       } else {
-        // If only Digital Printing is left, remove "Plate Processor" from selectedDigitalOffsetActions
+        // Special case: only Digital remains
         if (
           updated.includes("Digital Printing") &&
           !updated.includes("Offset Printing")
@@ -88,30 +232,6 @@ const useSetupSteps = () => {
       return updated;
     });
   };
-
-  // const stepsOld: Step[] = useMemo(() => {
-  //   if (selectedMethods.length === 0) return [{ type: "methods" }];
-  //   const newSteps: Step[] = [{ type: "methods" }];
-
-  //   if (hasDigitalOrOffset) {
-  //     newSteps.push({ type: "finishing-digital-offset" });
-  //     newSteps.push({ type: "book-finishing" });
-  //   }
-  //   if (hasRollPrinting) {
-  //     newSteps.push({ type: "finishing-roll" });
-  //   }
-  //   if (hasWidePrinter) {
-  //     newSteps.push({ type: "finishing-wide" });
-  //   }
-  //   if (hasDTF) {
-  //     newSteps.push({ type: "finishing-dtf" });
-  //   }
-
-  //   newSteps.push({ type: "packing" });
-  //   newSteps.push({ type: "summary" });
-
-  //   return newSteps;
-  // }, [selectedMethods]);
 
   const steps: Step[] = useMemo(() => {
     return setupStepsConfig
@@ -135,11 +255,7 @@ const useSetupSteps = () => {
       finishingMachines["Offset Printing"] = selectedDigitalOffsetActions;
     }
 
-    if (
-      selectedMethods.includes("Roll Digital Printing") ||
-      selectedMethods.includes("Roll Offset Printing") ||
-      selectedMethods.includes("Flexo Printing")
-    ) {
+    if (hasRollPrinting) {
       if (selectedRollActions.length > 0) {
         finishingMachines["Roll Printing"] = selectedRollActions;
       }
@@ -161,15 +277,44 @@ const useSetupSteps = () => {
 
     const result = {
       printingMethods: selectedMethods,
-      finishingMachines,
+      finishingMachines: {
+        "Digital Printing": selectedDigitalOffsetActions,
+        "Offset Printing": selectedDigitalOffsetActions,
+        "Roll Printing": selectedRollActions,
+        "Wide Printer": selectedWidePrinterActions,
+        "DTF & Sublimation": selectedDTFActions,
+      },
       bookFinishing: selectedBookFinishingActions,
       packingMethods: selectedPacking,
+      materials: {
+        "Digital/Offset": materialDigitalOffset,
+        Roll: {
+          maxWidth: materialRollMaxWidth,
+        },
+        "Wide Printer": {
+          types: materialWide,
+          maxWidth: materialWideMaxWidth,
+          maxLength: materialWideMaxLength,
+        },
+      },
     };
-
     console.log("FINAL RESULT:", result);
   };
 
+  const [materialDigitalOffset, setMaterialDigitalOffset] = useState<string[]>(
+    []
+  );
+  const [materialRollMaxWidth, setMaterialRollMaxWidth] = useState<string>(""); // or number
+  const [materialWide, setMaterialWide] = useState<string[]>([]);
+  const [materialWideMaxWidth, setMaterialWideMaxWidth] = useState<string>("");
+  const [materialWideMaxLength, setMaterialWideMaxLength] =
+    useState<string>("");
+
+  const [manualWidth, setManualWidth] = useState("");
+  const [manualHeight, setManualHeight] = useState("");
+
   return {
+    t,
     selectedMethods,
     selectedDigitalOffsetActions,
     selectedBookFinishingActions,
@@ -193,6 +338,20 @@ const useSetupSteps = () => {
     goPreviousStep,
     hasOffsetPrinting,
     onSave,
+    materialDigitalOffset,
+    setMaterialDigitalOffset,
+    materialRollMaxWidth,
+    setMaterialRollMaxWidth,
+    materialWide,
+    setMaterialWide,
+    materialWideMaxWidth,
+    setMaterialWideMaxWidth,
+    materialWideMaxLength,
+    setMaterialWideMaxLength,
+    manualWidth,
+    setManualWidth,
+    manualHeight,
+    setManualHeight,
   };
 };
 

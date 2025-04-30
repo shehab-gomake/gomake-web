@@ -9,6 +9,11 @@ interface Props {
   selectedWidePrinterActions: string[];
   selectedDTFActions: string[];
   selectedPacking: string[];
+  materialDigitalOffset: string[];
+  materialRollMaxWidth: string;
+  materialWide: string[];
+  materialWideMaxWidth: string;
+  materialWideMaxLength: string;
 }
 
 export const SummarySection = ({
@@ -19,6 +24,12 @@ export const SummarySection = ({
   selectedWidePrinterActions,
   selectedDTFActions,
   selectedPacking,
+
+  materialDigitalOffset,
+  materialRollMaxWidth,
+  materialWide,
+  materialWideMaxWidth,
+  materialWideMaxLength,
 }: Props) => {
   const renderList = (title: string, items: string[]) =>
     items.length > 0 && (
@@ -50,6 +61,30 @@ export const SummarySection = ({
       {renderList("Wide Printer Actions:", selectedWidePrinterActions)}
       {renderList("DTF & Sublimation Actions:", selectedDTFActions)}
       {renderList("Packing Methods:", selectedPacking)}
+
+      {renderList("Material Sizes (Digital/Offset):", materialDigitalOffset)}
+      {materialRollMaxWidth && (
+        <Box mb={2}>
+          <Typography fontSize="18px" fontWeight="600">
+            Roll Material Max Width:
+          </Typography>
+          <Typography>{materialRollMaxWidth} cm</Typography>
+        </Box>
+      )}
+      {renderList("Wide Printer Materials:", materialWide)}
+      {(materialWideMaxWidth || materialWideMaxLength) && (
+        <Box mb={2}>
+          <Typography fontSize="18px" fontWeight="600">
+            Wide Printer Max Dimensions:
+          </Typography>
+          <Typography>
+            {materialWideMaxWidth ? `Width: ${materialWideMaxWidth} cm` : ""}
+            {materialWideMaxLength
+              ? `, Length: ${materialWideMaxLength} cm`
+              : ""}
+          </Typography>
+        </Box>
+      )}
     </>
   );
 };
