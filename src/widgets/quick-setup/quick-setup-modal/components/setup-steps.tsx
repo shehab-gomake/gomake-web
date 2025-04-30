@@ -153,7 +153,6 @@ export const SetupSteps = () => {
     stepIndex,
     steps,
     currentStep,
-    setSelectedMethods,
     setSelectedDigitalOffsetActions,
     setSelectedBookFinishingActions,
     setSelectedRollActions,

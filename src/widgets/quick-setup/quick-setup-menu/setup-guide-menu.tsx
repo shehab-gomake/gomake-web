@@ -17,7 +17,7 @@ import CloseFullscreenRoundedIcon from "@mui/icons-material/CloseFullscreenRound
 import OpenInFullRoundedIcon from "@mui/icons-material/OpenInFullRounded";
 import { useSetupGuideMenu } from "./use-quick-setup-menu";
 
-export const SetupGuideMenu = () => {
+export const SetupGuideMenu = ({ ActionsModal }) => {
   const classes = useStyle();
   const {
     t,
@@ -64,6 +64,7 @@ export const SetupGuideMenu = () => {
             {/* Step 1 */}
             <ListItem button sx={{ borderRadius: "8px", mb: 1 }}>
               <ListItemText
+                onClick={() => ActionsModal.open()}
                 primary="Set up products"
                 primaryTypographyProps={{ color: "#333333", fontSize: "14px" }}
               />

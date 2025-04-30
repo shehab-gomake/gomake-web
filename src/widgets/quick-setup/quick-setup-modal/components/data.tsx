@@ -90,3 +90,144 @@ export const packingMethods = [
   "Package Tying Machine",
   "Cartoon Packaging Machine",
 ];
+
+export const setupStepsConfigOld = {
+  steps: [
+    {
+      type: "methods",
+      label: "Select Printing Methods",
+      options: [
+        "Digital Printing",
+        "Offset Printing",
+        "Roll Digital Printing",
+        "Roll Offset Printing",
+        "Flexo Printing",
+        "Wide Printer",
+        "DTF & Sublimation",
+      ],
+    },
+    {
+      type: "finishing-digital-offset",
+      label: "Select Finishing Actions (Digital/Offset)",
+      options: {
+        dependsOn: ["Digital Printing", "Offset Printing"],
+        values: ["Cutting", "Laminating", "Plate Processor", "Folding"],
+        filterIf: {
+          notIncludes: "Offset Printing",
+          exclude: ["Plate Processor"],
+        },
+      },
+    },
+    {
+      type: "book-finishing",
+      label: "Select Book Finishing Actions",
+      dependsOn: ["Digital Printing", "Offset Printing"],
+      options: ["Perfect Binding", "Saddle Stitching", "Hardcover Binding"],
+    },
+    {
+      type: "finishing-roll",
+      label: "Select Roll Finishing Actions",
+      dependsOn: [
+        "Roll Digital Printing",
+        "Roll Offset Printing",
+        "Flexo Printing",
+      ],
+      options: ["Slitting", "Rewinding", "Varnishing"],
+    },
+    {
+      type: "finishing-wide",
+      label: "Select Wide Printer Actions",
+      dependsOn: ["Wide Printer"],
+      options: ["Trimming", "Mounting"],
+    },
+    {
+      type: "finishing-dtf",
+      label: "Select DTF & Sublimation Actions",
+      dependsOn: ["DTF & Sublimation"],
+      options: ["Heat Press", "Powder Coating"],
+    },
+    {
+      type: "packing",
+      label: "Select Packing Methods",
+      options: ["Boxing", "Shrink Wrap", "Palletizing"],
+    },
+    {
+      type: "summary",
+      label: "Review Your Selections",
+    },
+  ],
+};
+
+export interface SetupStepConfig {
+  type: Step["type"];
+  label: string;
+  dependsOn?: string[]; // Which selectedMethods must be selected
+  filter?: {
+    condition: (selectedMethods: string[]) => boolean;
+    exclude: string[];
+  };
+  options?: string[];
+}
+
+export const setupStepsConfig: SetupStepConfig[] = [
+  {
+    type: "methods",
+    label: "Select Printing Methods",
+    options: [
+      "Digital Printing",
+      "Offset Printing",
+      "Roll Digital Printing",
+      "Roll Offset Printing",
+      "Flexo Printing",
+      "Wide Printer",
+      "DTF & Sublimation",
+    ],
+  },
+  {
+    type: "finishing-digital-offset",
+    label: "Select Finishing Actions (Digital/Offset)",
+    dependsOn: ["Digital Printing", "Offset Printing"],
+    options: finishingActionsDigitalOffset,
+    filter: {
+      condition: (selected) => !selected.includes("Offset Printing"),
+      exclude: ["Plate Processor"],
+    },
+  },
+  {
+    type: "book-finishing",
+    label: "Select Book Finishing Actions",
+    dependsOn: ["Digital Printing", "Offset Printing"],
+    options: bookFinishingActions,
+  },
+  {
+    type: "finishing-roll",
+    label: "Select Roll Finishing Actions",
+    dependsOn: [
+      "Roll Digital Printing",
+      "Roll Offset Printing",
+      "Flexo Printing",
+    ],
+    options: finishingActionsRollPrinting,
+  },
+  {
+    type: "finishing-wide",
+    label: "Select Wide Printer Actions",
+    dependsOn: ["Wide Printer"],
+    options: finishingActionsWidePrinter,
+  },
+  {
+    type: "finishing-dtf",
+    label: "Select DTF & Sublimation Actions",
+    dependsOn: ["DTF & Sublimation"],
+    options: finishingActionsDTF,
+  },
+  {
+    type: "packing",
+    label: "Select Packing Methods",
+    options: packingMethods,
+  },
+  {
+    type: "summary",
+    label: "Review Summary",
+  },
+];
