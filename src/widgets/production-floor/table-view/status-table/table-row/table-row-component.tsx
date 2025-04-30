@@ -443,7 +443,6 @@ const TableRowComponent = ({
             align="center"
             style={{
               backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-              width: "140px",
               padding: "8px",
             }}
           >
@@ -481,7 +480,7 @@ const TableRowComponent = ({
             {...boardMission.currentStation}
             boardMissionId={boardMission.id}
             status={status}
-            textColor={boardMission?.productionFloorJobColor}
+            textColor={boardMission?.currentStationColor}
           />
         </SecondaryTableCell>
         <SecondaryTableCell
