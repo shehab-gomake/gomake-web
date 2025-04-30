@@ -80,73 +80,6 @@ export const packingMethods = [
   "Cartoon Packaging Machine",
 ];
 
-export const setupStepsConfigOld = {
-  steps: [
-    {
-      type: "methods",
-      label: "Select Printing Methods",
-      options: [
-        "Digital Printing",
-        "Offset Printing",
-        "Roll Digital Printing",
-        "Roll Offset Printing",
-        "Flexo Printing",
-        "Wide Printer",
-        "DTF & Sublimation",
-      ],
-    },
-    {
-      type: "finishing-digital-offset",
-      label: "Select Finishing Actions (Digital/Offset)",
-      options: {
-        dependsOn: ["Digital Printing", "Offset Printing"],
-        values: ["Cutting", "Laminating", "Plate Processor", "Folding"],
-        filterIf: {
-          notIncludes: "Offset Printing",
-          exclude: ["Plate Processor"],
-        },
-      },
-    },
-    {
-      type: "book-finishing",
-      label: "Select Book Finishing Actions",
-      dependsOn: ["Digital Printing", "Offset Printing"],
-      options: ["Perfect Binding", "Saddle Stitching", "Hardcover Binding"],
-    },
-    {
-      type: "finishing-roll",
-      label: "Select Roll Finishing Actions",
-      dependsOn: [
-        "Roll Digital Printing",
-        "Roll Offset Printing",
-        "Flexo Printing",
-      ],
-      options: ["Slitting", "Rewinding", "Varnishing"],
-    },
-    {
-      type: "finishing-wide",
-      label: "Select Wide Printer Actions",
-      dependsOn: ["Wide Printer"],
-      options: ["Trimming", "Mounting"],
-    },
-    {
-      type: "finishing-dtf",
-      label: "Select DTF & Sublimation Actions",
-      dependsOn: ["DTF & Sublimation"],
-      options: ["Heat Press", "Powder Coating"],
-    },
-    {
-      type: "packing",
-      label: "Select Packing Methods",
-      options: ["Boxing", "Shrink Wrap", "Palletizing"],
-    },
-    {
-      type: "summary",
-      label: "Review Your Selections",
-    },
-  ],
-};
-
 export interface SetupStepConfig {
   type: Step["type"];
   label: string;
@@ -161,7 +94,7 @@ export interface SetupStepConfig {
 export const getSetupStepsConfig = (isUs: boolean): SetupStepConfig[] => [
   {
     type: "methods",
-    label: "Select Printing Methods",
+    label: "select_printing_methods",
     options: [
       "Digital Printing",
       "Offset Printing",
@@ -174,7 +107,7 @@ export const getSetupStepsConfig = (isUs: boolean): SetupStepConfig[] => [
   },
   {
     type: "finishing-digital-offset",
-    label: "Select Finishing Actions (Digital/Offset)",
+    label: "select_finishing_actions_digital_offset",
     dependsOn: ["Digital Printing", "Offset Printing"],
     options: finishingActionsDigitalOffset,
     filter: {
@@ -184,15 +117,13 @@ export const getSetupStepsConfig = (isUs: boolean): SetupStepConfig[] => [
   },
   {
     type: "book-finishing",
-    label: "Select Book Finishing Actions",
+    label: "select_book_finishing_actions",
     dependsOn: ["Digital Printing", "Offset Printing"],
     options: bookFinishingActions,
   },
   {
     type: "material-digital-offset",
-    // label: "Select Material Size (Digital/Offset)",
-    label: "Select Paper/Sheets Sizes (Digital/Offset)",
-
+    label: "select_paper_sheets_sizes_digital_offset",
     dependsOn: ["Digital Printing", "Offset Printing"],
     options: isUs
       ? ["12X18", "20.813X29.5", "29.5X41.626"]
@@ -200,7 +131,7 @@ export const getSetupStepsConfig = (isUs: boolean): SetupStepConfig[] => [
   },
   {
     type: "finishing-roll",
-    label: "Select Roll Finishing Actions",
+    label: "select_roll_finishing_actions",
     dependsOn: [
       "Roll Digital Printing",
       "Roll Offset Printing",
@@ -210,7 +141,7 @@ export const getSetupStepsConfig = (isUs: boolean): SetupStepConfig[] => [
   },
   {
     type: "material-roll",
-    label: "Enter Max Roll Width",
+    label: "enter_max_roll_width",
     dependsOn: [
       "Roll Digital Printing",
       "Roll Offset Printing",
@@ -219,13 +150,13 @@ export const getSetupStepsConfig = (isUs: boolean): SetupStepConfig[] => [
   },
   {
     type: "finishing-wide",
-    label: "Select Wide Printer Actions",
+    label: "select_wide_printer_actions",
     dependsOn: ["Wide Printer"],
     options: finishingActionsWidePrinter,
   },
   {
     type: "material-wide",
-    label: "Select Wide Printer Materials and Size",
+    label: "select_wide_printer_materials_and_size",
     dependsOn: ["Wide Printer"],
     options: [
       "Kappa",
@@ -240,17 +171,17 @@ export const getSetupStepsConfig = (isUs: boolean): SetupStepConfig[] => [
   },
   {
     type: "finishing-dtf",
-    label: "Select DTF & Sublimation Actions",
+    label: "select_dtf_sublimation_actions",
     dependsOn: ["DTF & Sublimation"],
     options: finishingActionsDTF,
   },
   {
     type: "packing",
-    label: "Select Packing Methods",
+    label: "select_packing_methods",
     options: packingMethods,
   },
   {
     type: "summary",
-    label: "Review Summary",
+    label: "review_summary",
   },
 ];

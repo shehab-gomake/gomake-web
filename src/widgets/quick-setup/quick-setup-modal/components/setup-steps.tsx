@@ -97,7 +97,9 @@ export const SetupSteps = () => {
       onClick={() => setStepIndex(stepIndex + 1)}
       disabled={currentStep.type === "methods" && selectedMethods.length === 0}
     >
-      {stepIndex === steps.length - 1 ? "Finish" : "Next"}
+      {stepIndex === steps.length - 1
+        ? t(`quickSetup.finish`)
+        : t(`quickSetup.next`)}
     </PrimaryButton>
   );
 
@@ -107,7 +109,7 @@ export const SetupSteps = () => {
       variant="text"
       onClick={() => setStepIndex(stepIndex - 1)}
     >
-      Back
+      {t(`quickSetup.back`)}
     </PrimaryButton>
   );
 
@@ -139,7 +141,7 @@ export const SetupSteps = () => {
         ) : (
           <>
             <Typography variant="h5" fontWeight="bold" mb={3}>
-              {stepConfig?.label}
+              {t(`quickSetup.${stepConfig?.label}`)}
             </Typography>
             {(() => {
               switch (currentStep.type) {
@@ -226,7 +228,7 @@ export const SetupSteps = () => {
                             }
                           }}
                         >
-                          Add custom size
+                          {t(`quickSetup.add_custom_size`)}
                         </PrimaryButton>
                       </Box>
                     </>
@@ -240,7 +242,6 @@ export const SetupSteps = () => {
                           color: "#2E3092",
                         },
                       }}
-                      fullWidth
                       type="number"
                       label={t(
                         `quickSetup.${isUs ? "maxWidthUs" : "maxWidth"}`
@@ -339,7 +340,7 @@ export const SetupSteps = () => {
         {currentStep.type === "summary" ? (
           <>
             <PrimaryButton onClick={() => setStepIndex(0)}>
-              Start Over
+              {t(`quickSetup.start_over`)}
             </PrimaryButton>
             <PrimaryButton
               variant="contained"
@@ -347,7 +348,7 @@ export const SetupSteps = () => {
               sx={{ ml: 2 }}
               onClick={onSave}
             >
-              Save
+              {t(`quickSetup.save`)}
             </PrimaryButton>
           </>
         ) : (

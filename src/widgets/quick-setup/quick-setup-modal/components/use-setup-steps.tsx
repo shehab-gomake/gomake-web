@@ -77,7 +77,7 @@ export const StyledSelectableChip = ({
       {onRemove && (
         <Box
           sx={{
-            pr: "4px", //!here fix
+            pr: "4px",
             position: "absolute",
             top: "4px",
             right: "4px",
@@ -282,14 +282,14 @@ const useSetupSteps = () => {
 
     const result = {
       printingMethods: selectedMethods,
-      finishingMachines: {
+      finishingActions: {
         "Digital Printing": selectedDigitalOffsetActions,
         "Offset Printing": selectedDigitalOffsetActions,
         "Roll Printing": selectedRollActions,
         "Wide Printer": selectedWidePrinterActions,
         "DTF & Sublimation": selectedDTFActions,
       },
-      bookFinishing: selectedBookFinishingActions,
+      bookFinishingActions: selectedBookFinishingActions,
       packingMethods: selectedPacking,
       materials: {
         "Digital/Offset": materialDigitalOffset,

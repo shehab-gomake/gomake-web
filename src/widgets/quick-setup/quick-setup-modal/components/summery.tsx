@@ -1,5 +1,5 @@
-// components/SummarySection.tsx
 import { Box, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   selectedMethods: string[];
@@ -24,18 +24,19 @@ export const SummarySection = ({
   selectedWidePrinterActions,
   selectedDTFActions,
   selectedPacking,
-
   materialDigitalOffset,
   materialRollMaxWidth,
   materialWide,
   materialWideMaxWidth,
   materialWideMaxLength,
 }: Props) => {
-  const renderList = (title: string, items: string[]) =>
+  const { t } = useTranslation();
+
+  const renderList = (labelKey: string, items: string[]) =>
     items.length > 0 && (
       <Box mb={2}>
         <Typography fontSize="18px" fontWeight="600">
-          {title}
+          {t(labelKey)}
         </Typography>
         <ul>
           {items.map((item) => (
@@ -48,46 +49,71 @@ export const SummarySection = ({
   return (
     <>
       <Typography variant="h5" fontWeight="bold" mb={3}>
-        Summary
+        {t("quickSetup.summary.summary")}
       </Typography>
 
-      {renderList("Printing Methods:", selectedMethods)}
+      {renderList("quickSetup.summary.printing_methods", selectedMethods)}
       {renderList(
-        "Finishing Actions (Digital/Offset):",
+        "quickSetup.summary.finishing_actions_digital_offset",
         selectedDigitalOffsetActions
       )}
       {renderList(
-        "Book Finishing Actions (Digital/Offset):",
+        "quickSetup.summary.book_finishing_actions_digital_offset",
         selectedBookFinishingActions
       )}
-      {renderList("Roll Finishing Actions:", selectedRollActions)}
-      {renderList("Wide Printer Actions:", selectedWidePrinterActions)}
-      {renderList("DTF & Sublimation Actions:", selectedDTFActions)}
+      {renderList(
+        "quickSetup.summary.roll_finishing_actions",
+        selectedRollActions
+      )}
+      {renderList(
+        "quickSetup.summary.wide_printer_actions",
+        selectedWidePrinterActions
+      )}
+      {renderList(
+        "quickSetup.summary.dtf_sublimation_actions",
+        selectedDTFActions
+      )}
+      {renderList(
+        "quickSetup.summary.material_sizes_digital_offset",
+        materialDigitalOffset
+      )}
 
-      {renderList("Material Sizes (Digital/Offset):", materialDigitalOffset)}
       {materialRollMaxWidth && (
         <Box mb={2}>
           <Typography fontSize="18px" fontWeight="600">
-            Roll Material Max Width:
+            {t("quickSetup.summary.roll_material_max_width")}
           </Typography>
-          <Typography>{materialRollMaxWidth} cm</Typography>
+          <Typography>
+            {t("quickSetup.summary.width_value_cm", {
+              value: materialRollMaxWidth,
+            })}
+          </Typography>
         </Box>
       )}
-      {renderList("Wide Printer Materials:", materialWide)}
+
+      {renderList("quickSetup.summary.wide_printer_materials", materialWide)}
+
       {(materialWideMaxWidth || materialWideMaxLength) && (
         <Box mb={2}>
           <Typography fontSize="18px" fontWeight="600">
-            Wide Printer Max Dimensions:
+            {t("quickSetup.summary.wide_printer_max_dimensions")}
           </Typography>
           <Typography>
-            {materialWideMaxWidth ? `Width: ${materialWideMaxWidth} cm` : ""}
+            {materialWideMaxWidth
+              ? t("quickSetup.summary.width_value_cm", {
+                  value: materialWideMaxWidth,
+                })
+              : ""}
             {materialWideMaxLength
-              ? `, Length: ${materialWideMaxLength} cm`
+              ? `, ${t("quickSetup.summary.length_value_cm", {
+                  value: materialWideMaxLength,
+                })}`
               : ""}
           </Typography>
         </Box>
       )}
-      {renderList("Packing Methods:", selectedPacking)}
+
+      {renderList("quickSetup.summary.packing_methods", selectedPacking)}
     </>
   );
 };
