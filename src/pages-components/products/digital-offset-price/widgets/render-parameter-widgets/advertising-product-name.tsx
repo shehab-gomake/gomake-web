@@ -17,6 +17,7 @@ const AdvertisingProductNameParameterWidget = ({
   getAllMaterial,
   newDieCutSelect,
 }: any) => {
+  console.log("parameter", parameter)
   const {
     defaultObject,
     openModal,
@@ -36,11 +37,15 @@ const AdvertisingProductNameParameterWidget = ({
     createNewTemplateEndPoint,
     isView,
     setIsRenderData,
+    isViewInfoAfterGenerate,
+    setIsViewInfoAfterGenerate,
+    newDataGenerated,
+    setSubProducts
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect })
+  console.log("searchResult", searchResult)
 
   return (
     <div style={clasess.advertisingProductNameMain}>
-
       <GoMakeAutoComplate
         options={
           parameter?.code === "DiecutType"
@@ -67,7 +72,9 @@ const AdvertisingProductNameParameterWidget = ({
         style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
         placeholder={parameter?.name}
         onChange={(e: any, value: any) => {
-          setIsRenderData(true)
+          if (parameter?.code === "DiecutType") {
+            setIsRenderData(true)
+          }
           onChangeSubProductsForPrice(
             parameter?.id,
             subSection?.id,
@@ -199,20 +206,109 @@ const AdvertisingProductNameParameterWidget = ({
         insideStyle={{ width: 500, height: !isView ? "fit-content" : 500, padding: 20 }}
         withClose={isView ? false : true}
       >
-        {!isView && <Stack gap={"5px"} justifyContent={'flex-start'} margin={'auto'}>
+        <>
+          {isViewInfoAfterGenerate &&
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10 }}>
+              <h3>
+                {t("products.offsetPrice.admin.generatedNewDieCut!")}
+              </h3>
+              <div>
+                <h4>
+                  {newDataGenerated?.rowData?.name?.value}
+                </h4>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}>
+                  <img src={newDataGenerated?.rowData?.image?.value} alt="newDataGenerated" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                </div>
+              </div>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", width: "100%" }}>
+                <GomakePrimaryButton
+                  style={{ width: "fit-content", height: 40, minWidth: 150 }}
+                  onClick={() => {
+                    console.log("newDataGenerated?.rowData", newDataGenerated?.rowData)
+                    onChangeSubProductsForPrice(
+                      parameter?.id,
+                      subSection?.id,
+                      section?.id,
+                      parameter?.parameterType,
+                      parameter?.name,
+                      parameter?.actionId,
+                      { valueIds: newDataGenerated?.rowData?.name?.value, values: newDataGenerated?.rowData?.name?.value },
+                      subSection?.type,
+                      index,
+                      parameter?.actionIndex,
+                      parameter?.code,
+                    );
+                    setSubProducts(prevSubProducts => {
+                      return prevSubProducts.map(subProduct => {
+                        return {
+                          ...subProduct,
+                          parameters: [
+                            ...subProduct.parameters.filter(parameter => parameter.parameterCode !== "DieCut"),
+                            {
+                              "parameterId": "f81d5faf-7c4b-40cd-a178-98d79d61c326",
+                              "parameterName": "Choose Die-Cut",
+                              "actionId": null,
+                              "parameterType": 4,
+                              "isQuantityParameter": false,
+                              "values": [newDataGenerated?.rowData?.name?.value],
+                              "valueIds": [newDataGenerated?.rowData?.name?.value],
+                              "sectionId": section?.id,
+                              "subSectionId": subSection?.id,
+                              "actionIndex": parameter?.actionIndex,
+                              "parameterCode": "DieCut",
+                              "valuesConfigs": [],
+                              "unitKey": null,
+                              "defaultUnit": null,
+                              "factor": null,
+                              "unitType": 0,
+                              "isGeneralInfoInProductionFloor": true
+                            }
+                          ]
+                        };
+                      });
+                    });
+                    // onChangeSubProductsForPrice(
+                    //   "f81d5faf-7c4b-40cd-a178-98d79d61c326",
+                    //   subSection?.id,
+                    //   section?.id,
+                    //   4,
+                    //   "Choose Die-Cut",
+                    //   parameter?.actionId,
+                    //   { valueIds: newDataGenerated?.rowData?.name?.value, values: newDataGenerated?.rowData?.name?.value },
+                    //   subSection?.type,
+                    //   index,
+                    //   parameter?.actionIndex,
+                    //   "DieCut",
+                    // );
+                    setIsViewInfoAfterGenerate(false)
+                    setOpenGenerateModal(false)
+
+                  }}
+                >{
+                    t("products.offsetPrice.admin.ok")
+                  }
+                </GomakePrimaryButton>
+              </div>
+            </div>
+          }
+        </>
+        {!isView && !isViewInfoAfterGenerate && <Stack gap={"5px"} justifyContent={'flex-start'} margin={'auto'}>
           <h3>
-            GoMake will automatically generate a new die-cut!
+            {t("products.offsetPrice.admin.generateNewDieCut!")}
 
           </h3>
           {viewRequiredParameters(subProducts).parameterInfo.map((item: any) => {
             return <div>{item}</div>
           })}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-            <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={createNewTemplateEndPoint}>Generate</GomakePrimaryButton>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+              <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={createNewTemplateEndPoint}>{t("products.offsetPrice.admin.generate")}</GomakePrimaryButton>
+            </div>
           </div>
 
         </Stack>}
-        {isView && <div style={{
+        {isView && !isViewInfoAfterGenerate && <div style={{
           position: "absolute",
           top: 0,
           left: 0,
