@@ -5,9 +5,9 @@ import { useRecoilValue } from "recoil";
 import { isUsPrintHouseState } from "@/store/print-house-profile";
 import { getSetupStepsConfig, Step } from "./workflowStepsConfig";
 import { savePrintHouseProductsSetupFormApi } from "@/services/api-service/admin-service/PrintHouses-controller";
-import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { useCustomer, useGomakeAxios, useSnackBar } from "@/hooks";
 import { ProductsSetupData } from "../../interfaces";
-import { ModalControls } from "@/hooks/use-modal";
+import { ModalControls, useModal } from "@/hooks/use-modal";
 
 export const StyledSelectableChip = ({
   label,
@@ -110,58 +110,47 @@ const useSetupSteps = (
   const dir: "rtl" | "ltr" = t("direction");
   const isRtl = dir === "rtl";
   const { alertFaultUpdate } = useSnackBar();
-
+  const confirmSetupProducts = useModal();
+  const { getPrintHouseSetupSteps } = useCustomer();
   const isUs = useRecoilValue<any>(isUsPrintHouseState);
+
   const setupStepsConfig = useMemo(() => getSetupStepsConfig(isUs), [isUs]);
   const [stepIndex, setStepIndex] = useState(0);
-
   const [manualWidth, setManualWidth] = useState("");
   const [manualHeight, setManualHeight] = useState("");
-
   const [selectedMethods, setSelectedMethods] = useState<string[]>(
     initialData?.printingMethods || []
   );
-
   const [selectedDigitalOffsetActions, setSelectedDigitalOffsetActions] =
     useState<string[]>(
       initialData?.finishingActions?.digital_offset_printing || []
     );
-
   const [selectedBookFinishingActions, setSelectedBookFinishingActions] =
     useState<string[]>(initialData?.bookFinishingActions || []);
-
   const [selectedRollActions, setSelectedRollActions] = useState<string[]>(
     initialData?.finishingActions?.roll_printing || []
   );
-
   const [selectedWidePrinterActions, setSelectedWidePrinterActions] = useState<
     string[]
   >(initialData?.finishingActions?.wide_printer || []);
-
   const [selectedDTFActions, setSelectedDTFActions] = useState<string[]>(
     initialData?.finishingActions?.dtf_sublimation || []
   );
-
   const [selectedPacking, setSelectedPacking] = useState<string[]>(
     initialData?.packingMethods || []
   );
-
   const [materialDigitalOffset, setMaterialDigitalOffset] = useState<string[]>(
     initialData?.materials?.digital_offset || []
   );
-
   const [materialRollMaxWidth, setMaterialRollMaxWidth] = useState<string>(
     initialData?.materials?.roll?.maxWidth || ""
   );
-
   const [materialWide, setMaterialWide] = useState<string[]>(
     initialData?.materials?.wide_printer?.types || []
   );
-
   const [materialWideMaxWidth, setMaterialWideMaxWidth] = useState<string>(
     initialData?.materials?.wide_printer?.maxWidth || ""
   );
-
   const [materialWideMaxLength, setMaterialWideMaxLength] = useState<string>(
     initialData?.materials?.wide_printer?.maxLength || ""
   );
@@ -237,6 +226,7 @@ const useSetupSteps = (
     const callBack = (res) => {
       if (res.success) {
         ActionsModal.close();
+        getPrintHouseSetupSteps(); //!here
       } else {
         alertFaultUpdate();
       }
@@ -362,6 +352,7 @@ const useSetupSteps = (
     setManualHeight,
     isUs,
     setupStepsConfig,
+    confirmSetupProducts,
   };
 };
 

@@ -1,11 +1,13 @@
 import { Dispatch, SetStateAction, useMemo } from "react";
 import { renderOptions, useSetupSteps } from "./use-setup-steps";
-import { Box, TextField, Typography } from "@mui/material";
+import { Box, Stack, TextField, Typography } from "@mui/material";
 import { SummarySection } from "./summery";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "../style";
 import { ProductsSetupData } from "../../interfaces";
 import { ModalControls } from "@/hooks/use-modal";
+import { GoMakeAlertModal, GoMakeDeleteModal } from "@/components";
+import { ModalType } from "@/enums";
 
 interface SetupStepsProps {
   initialSetupData: ProductsSetupData;
@@ -19,6 +21,7 @@ export const SetupSteps = ({
   const { classes } = useStyle();
   const {
     t,
+    confirmSetupProducts,
     selectedMethods,
     selectedDigitalOffsetActions,
     selectedBookFinishingActions,
@@ -339,12 +342,11 @@ export const SetupSteps = ({
       {/* Sticky Footer */}
       <Box
         sx={{
-          padding: 2,
-          // borderTop: "1px solid #e0e0e0",
+          padding: 1,
           display: "flex",
-          justifyContent:
-            currentStep.type === "summary" ? "flex-end" : "space-between",
           backgroundColor: "#fff",
+          justifyContent:
+            currentStep.type === "methods" ? "flex-end" : "space-between",
         }}
       >
         {currentStep.type === "summary" ? (
@@ -352,22 +354,22 @@ export const SetupSteps = ({
             <PrimaryButton onClick={() => setStepIndex(0)}>
               {t(`quickSetup.start_over`)}
             </PrimaryButton>
-
-            <PrimaryButton
-              variant="outlined"
-              style={{ width: 90 }}
-              onClick={() => onSave(true)} // Confirm action
-            >
-              {t("modal.confirm")}
-            </PrimaryButton>
-            <PrimaryButton
-              variant="contained"
-              style={{ width: 90 }}
-              sx={{ ml: 2 }}
-              onClick={() => onSave()}
-            >
-              {t(`quickSetup.save`)}
-            </PrimaryButton>
+            <Stack direction={"row"} gap={"8px"}>
+              <PrimaryButton
+                variant="outlined"
+                style={{ width: 90 }}
+                onClick={() => onSave()}
+              >
+                {t(`quickSetup.save`)}
+              </PrimaryButton>
+              <PrimaryButton
+                variant="contained"
+                style={{ width: 90 }}
+                onClick={confirmSetupProducts.open}
+              >
+                {t("modal.confirm")}
+              </PrimaryButton>
+            </Stack>
           </>
         ) : (
           <>
@@ -376,6 +378,16 @@ export const SetupSteps = ({
           </>
         )}
       </Box>
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("quickSetup.confirmProductSetupTitle")}
+        subTitle={t("quickSetup.confirmProductSetupSubTitle")}
+        yesBtn={t("modal.confirm")}
+        cancelBtn={t("modal.cancel")}
+        openModal={confirmSetupProducts.isOpen}
+        onClose={confirmSetupProducts.close}
+        onClickDelete={() => onSave(true)}
+      />
     </Box>
   );
 };

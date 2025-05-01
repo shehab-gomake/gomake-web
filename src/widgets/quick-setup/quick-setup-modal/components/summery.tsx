@@ -84,7 +84,6 @@ export const SummarySection = ({
         materialDigitalOffset,
         false
       )}
-
       {materialRollMaxWidth && (
         <Box mb={2}>
           <Typography fontSize="18px" fontWeight="600">

@@ -92,7 +92,7 @@ export const SetupGuideMenu = ({ handleOpenModal }: SetupGuideMenuProps) => {
               }}
             >
               <ListItemText
-                primary="Set up products"
+                primary="Set up products" //!here
                 primaryTypographyProps={{ color: "#333333", fontSize: "14px" }}
               />
               {renderStepStatusIcon(productsSetupStatus)}
