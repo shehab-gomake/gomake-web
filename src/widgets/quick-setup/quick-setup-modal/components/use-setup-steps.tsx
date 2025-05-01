@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { isUsPrintHouseState } from "@/store/print-house-profile";
 import { getSetupStepsConfig, Step } from "./workflowStepsConfig";
-import { savePrintHouseProductsSetupFormApi } from "@/services/api-service/admin-service/PrintHouses-controller";
+import { savePrintHouseProductsSetupFormApi } from "@/services/api-service/admin-service/print-houses-controller";
 import { useCustomer, useGomakeAxios, useSnackBar } from "@/hooks";
 import { ProductsSetupData } from "../../interfaces";
 import { ModalControls, useModal } from "@/hooks/use-modal";

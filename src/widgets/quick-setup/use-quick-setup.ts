@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useModal } from "@/hooks/use-modal";
 import { useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { getPrintHouseProductsSetupFormApi } from "@/services/api-service/admin-service/PrintHouses-controller";
+import { getPrintHouseProductsSetupFormApi } from "@/services/api-service/admin-service/print-houses-controller";
 import { ProductsSetupData } from "./interfaces";
 
 const useQuickSetup = () => {

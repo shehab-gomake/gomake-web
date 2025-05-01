@@ -17,7 +17,7 @@ import { priceChangePercentsState } from "@/store/min-max-price-change-percents"
 import { printHousePreferencesState } from "@/store/print-house-preferences";
 import { versionState } from "@/store/version";
 import { setupGuideOpenState } from "@/store/setup-guide-state";
-import { getPrintHouseSetupStepsApi } from "@/services/api-service/admin-service/PrintHouses-controller";
+import { getPrintHouseSetupStepsApi } from "@/services/api-service/admin-service/print-houses-controller";
 import {
   printHouseSetupStepsState,
   SetupStepItem,
