@@ -26,7 +26,6 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const [isRenderData, setIsRenderData] = useState(true)
   const [isViewInfoAfterGenerate, setIsViewInfoAfterGenerate] = useState(false)
   const [newDataGenerated, setNewDataGenerated] = useState<any>(null)
-
   useEffect(() => {
     if (isRenderData) {
       setSearchResult(parameter?.valuesConfigs)
@@ -181,7 +180,6 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
         currency: newDieCutSelect.rowData.currency.value
       };
       setSearchResult((prev: any) => {
-        console.log("formattedData", { formattedData, prev })
         return [formattedData, ...prev,] // Add the new item to the data list
       });
       setIsRenderData(false)
@@ -206,7 +204,6 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       sheetsColor: sheetColor
     }
     const callBack = (res) => {
-      console.log("res", res)
       if (res.success && res.data && res.data.data) {
         getAllMaterial().then((materials) => {
           getProductById(materials);
@@ -338,7 +335,6 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
         requiredParameterCodes.includes(param.parameterCode)
       )
     );
-    console.log("foundParameters", foundParameters)
     const parameterInfo = foundParameters.map(param =>
       `${param.parameterName}: ${param.values[0]}${param.defaultUnit ? ` ${param.defaultUnit}` : ''}`
     );
