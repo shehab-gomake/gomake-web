@@ -3,11 +3,15 @@ import { SetupModal } from "./quick-setup-modal/quick-setup-modal";
 import { useQuickSetup } from "./use-quick-setup";
 
 const SetupSection = () => {
-  const { ActionsModal } = useQuickSetup();
+  const { ActionsModal, handleOpenModal, initialSetupData } = useQuickSetup();
+
   return (
     <>
-      <SetupGuideMenu ActionsModal={ActionsModal} />
-      <SetupModal ActionsModal={ActionsModal} />
+      <SetupGuideMenu handleOpenModal={handleOpenModal} />
+      <SetupModal
+        ActionsModal={ActionsModal}
+        initialSetupData={initialSetupData}
+      />
     </>
   );
 };

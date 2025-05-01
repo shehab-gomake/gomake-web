@@ -5,12 +5,14 @@ import { Dialog, DialogContent, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { ModalControls } from "@/hooks/use-modal";
 import { useTranslation } from "react-i18next";
+import { ProductsSetupData } from "../interfaces";
 
 interface SetupModalProps {
   ActionsModal: ModalControls;
+  initialSetupData: ProductsSetupData;
 }
 
-const SetupModal = ({ ActionsModal }: SetupModalProps) => {
+const SetupModal = ({ ActionsModal, initialSetupData }: SetupModalProps) => {
   const isOpen = useRecoilValue(setupGuideOpenState);
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -41,7 +43,10 @@ const SetupModal = ({ ActionsModal }: SetupModalProps) => {
         >
           <CloseIcon />
         </IconButton>
-        <SetupSteps />
+        <SetupSteps
+          initialSetupData={initialSetupData}
+          ActionsModal={ActionsModal}
+        />
       </DialogContent>
     </Dialog>
   );

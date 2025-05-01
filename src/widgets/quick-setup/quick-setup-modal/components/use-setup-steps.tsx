@@ -4,6 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { isUsPrintHouseState } from "@/store/print-house-profile";
 import { getSetupStepsConfig, Step } from "./workflowStepsConfig";
+import { savePrintHouseProductsSetupFormApi } from "@/services/api-service/admin-service/PrintHouses-controller";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
+import { ProductsSetupData } from "../../interfaces";
+import { ModalControls } from "@/hooks/use-modal";
 
 export const StyledSelectableChip = ({
   label,
@@ -97,25 +101,70 @@ export const renderOptions = (
   </Box>
 );
 
-const useSetupSteps = () => {
+const useSetupSteps = (
+  initialData: ProductsSetupData,
+  ActionsModal: ModalControls
+) => {
   const { t } = useTranslation();
+  const { callApi } = useGomakeAxios();
   const dir: "rtl" | "ltr" = t("direction");
   const isRtl = dir === "rtl";
+  const { alertFaultUpdate } = useSnackBar();
+
   const isUs = useRecoilValue<any>(isUsPrintHouseState);
   const setupStepsConfig = useMemo(() => getSetupStepsConfig(isUs), [isUs]);
+  const [stepIndex, setStepIndex] = useState(0);
 
-  const [selectedMethods, setSelectedMethods] = useState<string[]>([]);
+  const [manualWidth, setManualWidth] = useState("");
+  const [manualHeight, setManualHeight] = useState("");
+
+  const [selectedMethods, setSelectedMethods] = useState<string[]>(
+    initialData?.printingMethods || []
+  );
+
   const [selectedDigitalOffsetActions, setSelectedDigitalOffsetActions] =
-    useState<string[]>([]);
+    useState<string[]>(
+      initialData?.finishingActions?.digital_offset_printing || []
+    );
+
   const [selectedBookFinishingActions, setSelectedBookFinishingActions] =
-    useState<string[]>([]);
-  const [selectedRollActions, setSelectedRollActions] = useState<string[]>([]);
+    useState<string[]>(initialData?.bookFinishingActions || []);
+
+  const [selectedRollActions, setSelectedRollActions] = useState<string[]>(
+    initialData?.finishingActions?.roll_printing || []
+  );
+
   const [selectedWidePrinterActions, setSelectedWidePrinterActions] = useState<
     string[]
-  >([]);
-  const [selectedDTFActions, setSelectedDTFActions] = useState<string[]>([]);
-  const [selectedPacking, setSelectedPacking] = useState<string[]>([]);
-  const [stepIndex, setStepIndex] = useState(0);
+  >(initialData?.finishingActions?.wide_printer || []);
+
+  const [selectedDTFActions, setSelectedDTFActions] = useState<string[]>(
+    initialData?.finishingActions?.dtf_sublimation || []
+  );
+
+  const [selectedPacking, setSelectedPacking] = useState<string[]>(
+    initialData?.packingMethods || []
+  );
+
+  const [materialDigitalOffset, setMaterialDigitalOffset] = useState<string[]>(
+    initialData?.materials?.digital_offset || []
+  );
+
+  const [materialRollMaxWidth, setMaterialRollMaxWidth] = useState<string>(
+    initialData?.materials?.roll?.maxWidth || ""
+  );
+
+  const [materialWide, setMaterialWide] = useState<string[]>(
+    initialData?.materials?.wide_printer?.types || []
+  );
+
+  const [materialWideMaxWidth, setMaterialWideMaxWidth] = useState<string>(
+    initialData?.materials?.wide_printer?.maxWidth || ""
+  );
+
+  const [materialWideMaxLength, setMaterialWideMaxLength] = useState<string>(
+    initialData?.materials?.wide_printer?.maxLength || ""
+  );
 
   const hasOffsetPrinting = selectedMethods.includes("offset_printing");
   const hasRollPrinting =
@@ -184,7 +233,41 @@ const useSetupSteps = () => {
 
   const currentStep = steps[stepIndex];
 
-  const onSave = () => {
+  const savePrintHouseProductsSetupForm = async (data) => {
+    const callBack = (res) => {
+      if (res.success) {
+        ActionsModal.close();
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await savePrintHouseProductsSetupFormApi(callApi, callBack, data);
+  };
+
+  const removeEmptyFields = (obj: any): any => {
+    if (Array.isArray(obj)) {
+      return obj.filter((item) => item != null && item !== "");
+    } else if (typeof obj === "object" && obj !== null) {
+      return Object.entries(obj)
+        .filter(
+          ([_, value]) =>
+            value != null &&
+            value !== "" &&
+            !(Array.isArray(value) && value.length === 0) &&
+            !(
+              typeof value === "object" &&
+              Object.keys(removeEmptyFields(value)).length === 0
+            )
+        )
+        .reduce((acc, [key, value]) => {
+          acc[key] = removeEmptyFields(value);
+          return acc;
+        }, {} as any);
+    }
+    return obj;
+  };
+
+  const onSave = (isConfirmed = false) => {
     const finishingMachines: Record<string, string[]> = {};
 
     if (
@@ -213,7 +296,7 @@ const useSetupSteps = () => {
       finishingMachines["dtf_sublimation"] = selectedDTFActions;
     }
 
-    const result = {
+    const rawData = {
       printingMethods: selectedMethods,
       finishingActions: finishingMachines,
       bookFinishingActions: selectedBookFinishingActions,
@@ -231,20 +314,12 @@ const useSetupSteps = () => {
       packingMethods: selectedPacking,
     };
 
-    console.log("FINAL RESULT:", result);
+    const cleanedData = removeEmptyFields(rawData);
+    savePrintHouseProductsSetupForm({
+      isConfirmed,
+      submissionData: cleanedData,
+    });
   };
-
-  const [materialDigitalOffset, setMaterialDigitalOffset] = useState<string[]>(
-    []
-  );
-  const [materialRollMaxWidth, setMaterialRollMaxWidth] = useState<string>(""); // or number
-  const [materialWide, setMaterialWide] = useState<string[]>([]);
-  const [materialWideMaxWidth, setMaterialWideMaxWidth] = useState<string>("");
-  const [materialWideMaxLength, setMaterialWideMaxLength] =
-    useState<string>("");
-
-  const [manualWidth, setManualWidth] = useState("");
-  const [manualHeight, setManualHeight] = useState("");
 
   return {
     t,

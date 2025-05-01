@@ -17,12 +17,21 @@ import { priceChangePercentsState } from "@/store/min-max-price-change-percents"
 import { printHousePreferencesState } from "@/store/print-house-preferences";
 import { versionState } from "@/store/version";
 import { setupGuideOpenState } from "@/store/setup-guide-state";
+import { getPrintHouseSetupStepsApi } from "@/services/api-service/admin-service/PrintHouses-controller";
+import {
+  printHouseSetupStepsState,
+  SetupStepItem,
+} from "@/store/print-house-setup-state-state";
 
 const useCustomer = (
   permissionEnumValue?: Permissions,
   allowAnonymous?: boolean
 ) => {
   const { callApi } = useGomakeAxios();
+  const setPrintHouseSetupSteps = useSetRecoilState<SetupStepItem[]>(
+    printHouseSetupStepsState
+  );
+
   const [user, setUser] = useRecoilState<any>(userState);
   const setSystemCurrency = useSetRecoilState<any>(systemCurrencyState);
   const setSystemVAT = useSetRecoilState<number>(systemVATState);
@@ -39,7 +48,6 @@ const useCustomer = (
   );
   const setIsUsPrintHouse = useSetRecoilState<any>(isUsPrintHouseState);
   const setVersionState = useSetRecoilState(versionState);
-
   const setShowSetupMenu = useSetRecoilState(setupGuideOpenState);
 
   const { i18n } = useTranslation();
@@ -172,6 +180,16 @@ const useCustomer = (
     [permissions]
   );
 
+  const getPrintHouseSetupSteps = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setPrintHouseSetupSteps(res?.data);
+      }
+    };
+
+    await getPrintHouseSetupStepsApi(callApi, callBack);
+  };
+
   return {
     adminsAutoComplate,
     user,
@@ -182,6 +200,7 @@ const useCustomer = (
     setPermissions,
     validate,
     isLanguageUpdated,
+    getPrintHouseSetupSteps,
   };
 };
 

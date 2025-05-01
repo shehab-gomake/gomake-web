@@ -10,6 +10,7 @@ import {
   Button,
   Checkbox,
   Divider,
+  ListItemButton,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useStyle } from "./style";
@@ -17,12 +18,13 @@ import CloseFullscreenRoundedIcon from "@mui/icons-material/CloseFullscreenRound
 import OpenInFullRoundedIcon from "@mui/icons-material/OpenInFullRounded";
 import { useSetupGuideMenu } from "./use-quick-setup-menu";
 import { ModalControls } from "@/hooks/use-modal";
+import { StepStatus } from "@/store/print-house-setup-state-state";
 
 interface SetupGuideMenuProps {
-  ActionsModal: ModalControls;
+  handleOpenModal: () => void;
 }
 
-export const SetupGuideMenu = ({ ActionsModal }: SetupGuideMenuProps) => {
+export const SetupGuideMenu = ({ handleOpenModal }: SetupGuideMenuProps) => {
   const {
     t,
     isRtl,
@@ -32,6 +34,9 @@ export const SetupGuideMenu = ({ ActionsModal }: SetupGuideMenuProps) => {
     progressValue,
     toggleExpand,
     handleToggleVerifyBusiness,
+
+    productsSetupStatus,
+    renderStepStatusIcon,
   } = useSetupGuideMenu();
   const { classes } = useStyle(isRtl);
 
@@ -68,13 +73,30 @@ export const SetupGuideMenu = ({ ActionsModal }: SetupGuideMenuProps) => {
           {/* FULL menu */}
           <List dense disablePadding>
             {/* Step 1 */}
-            <ListItem button sx={{ borderRadius: "8px", mb: 1 }}>
+            <ListItemButton
+              onClick={
+                productsSetupStatus !== StepStatus.DONE
+                  ? handleOpenModal
+                  : undefined
+              }
+              sx={{
+                borderRadius: "8px",
+                mb: 1,
+                cursor:
+                  productsSetupStatus === StepStatus.DONE
+                    ? "default"
+                    : "pointer",
+                pointerEvents:
+                  productsSetupStatus === StepStatus.DONE ? "none" : "auto",
+                opacity: 1,
+              }}
+            >
               <ListItemText
-                onClick={() => ActionsModal.open()}
                 primary="Set up products"
                 primaryTypographyProps={{ color: "#333333", fontSize: "14px" }}
               />
-            </ListItem>
+              {renderStepStatusIcon(productsSetupStatus)}
+            </ListItemButton>
 
             {/* Step 2 */}
             <ListItem button sx={{ borderRadius: "8px", mb: 1 }}>
@@ -82,6 +104,7 @@ export const SetupGuideMenu = ({ ActionsModal }: SetupGuideMenuProps) => {
                 primary="Test Connect"
                 primaryTypographyProps={{ color: "#333333", fontSize: "14px" }}
               />
+              {renderStepStatusIcon(0)}
             </ListItem>
 
             {/* Step 3 - expandable */}

@@ -32,7 +32,11 @@ export const SummarySection = ({
 }: Props) => {
   const { t } = useTranslation();
 
-  const renderList = (labelKey: string, items: string[]) =>
+  const renderList = (
+    labelKey: string,
+    items: string[],
+    withTran: boolean = true
+  ) =>
     items.length > 0 && (
       <Box mb={2}>
         <Typography fontSize="18px" fontWeight="600">
@@ -40,7 +44,9 @@ export const SummarySection = ({
         </Typography>
         <ul>
           {items.map((item) => (
-            <li key={item}>{t(`quickSetup.options.${item}`)}</li>
+            <li key={item}>
+              {withTran ? t(`quickSetup.options.${item}`) : item}
+            </li>
           ))}
         </ul>
       </Box>
@@ -75,7 +81,8 @@ export const SummarySection = ({
       )}
       {renderList(
         "quickSetup.summary.material_sizes_digital_offset",
-        materialDigitalOffset
+        materialDigitalOffset,
+        false
       )}
 
       {materialRollMaxWidth && (

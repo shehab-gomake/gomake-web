@@ -4,8 +4,18 @@ import { Box, TextField, Typography } from "@mui/material";
 import { SummarySection } from "./summery";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "../style";
+import { ProductsSetupData } from "../../interfaces";
+import { ModalControls } from "@/hooks/use-modal";
 
-export const SetupSteps = () => {
+interface SetupStepsProps {
+  initialSetupData: ProductsSetupData;
+  ActionsModal: ModalControls;
+}
+
+export const SetupSteps = ({
+  initialSetupData,
+  ActionsModal,
+}: SetupStepsProps) => {
   const { classes } = useStyle();
   const {
     t,
@@ -44,7 +54,7 @@ export const SetupSteps = () => {
     setManualHeight,
     isUs,
     setupStepsConfig,
-  } = useSetupSteps();
+  } = useSetupSteps(initialSetupData, ActionsModal);
 
   const stepConfig = setupStepsConfig.find((s) => s.type === currentStep.type);
 
@@ -342,11 +352,19 @@ export const SetupSteps = () => {
             <PrimaryButton onClick={() => setStepIndex(0)}>
               {t(`quickSetup.start_over`)}
             </PrimaryButton>
+
+            <PrimaryButton
+              variant="outlined"
+              style={{ width: 90 }}
+              onClick={() => onSave(true)} // Confirm action
+            >
+              {t("modal.confirm")}
+            </PrimaryButton>
             <PrimaryButton
               variant="contained"
               style={{ width: 90 }}
               sx={{ ml: 2 }}
-              onClick={onSave}
+              onClick={() => onSave()}
             >
               {t(`quickSetup.save`)}
             </PrimaryButton>
