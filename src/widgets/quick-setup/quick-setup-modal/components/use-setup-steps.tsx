@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
-import { getSetupStepsConfig, Step } from "./data";
 import { Box } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { isUsPrintHouseState } from "@/store/print-house-profile";
+import { getSetupStepsConfig, Step } from "./workflowStepsConfig";
 
 export const StyledSelectableChip = ({
   label,
