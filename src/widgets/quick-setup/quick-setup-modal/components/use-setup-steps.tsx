@@ -147,7 +147,7 @@ const useSetupSteps = () => {
         setMaterialRollMaxWidth("");
       }
 
-      if (!updated.includes("dtf_and_sublimation")) {
+      if (!updated.includes("dtf_sublimation")) {
         setSelectedDTFActions([]);
       }
 
@@ -187,12 +187,12 @@ const useSetupSteps = () => {
   const onSave = () => {
     const finishingMachines: Record<string, string[]> = {};
 
-    if (selectedMethods.includes("digital_printing")) {
-      finishingMachines["digital_printing"] = selectedDigitalOffsetActions;
-    }
-
-    if (selectedMethods.includes("offset_printing")) {
-      finishingMachines["offset_printing"] = selectedDigitalOffsetActions;
+    if (
+      selectedMethods.includes("digital_printing") ||
+      selectedMethods.includes("offset_printing")
+    ) {
+      finishingMachines["digital_offset_printing"] =
+        selectedDigitalOffsetActions;
     }
 
     if (hasRollPrinting && selectedRollActions.length > 0) {
@@ -206,8 +206,9 @@ const useSetupSteps = () => {
       finishingMachines["wide_printer"] = selectedWidePrinterActions;
     }
 
+    debugger;
     if (
-      selectedMethods.includes("dtf_and_sublimation") &&
+      selectedMethods.includes("dtf_sublimation") &&
       selectedDTFActions.length > 0
     ) {
       finishingMachines["dtf_sublimation"] = selectedDTFActions;
