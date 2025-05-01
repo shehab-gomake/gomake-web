@@ -206,7 +206,6 @@ const useSetupSteps = () => {
       finishingMachines["wide_printer"] = selectedWidePrinterActions;
     }
 
-    debugger;
     if (
       selectedMethods.includes("dtf_sublimation") &&
       selectedDTFActions.length > 0
