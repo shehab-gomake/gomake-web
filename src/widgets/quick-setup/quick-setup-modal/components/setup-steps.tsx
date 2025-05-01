@@ -9,8 +9,6 @@ export const SetupSteps = () => {
   const { classes } = useStyle();
   const {
     t,
-    dir,
-    isRtl,
     selectedMethods,
     selectedDigitalOffsetActions,
     selectedBookFinishingActions,
@@ -68,7 +66,6 @@ export const SetupSteps = () => {
         return [[], () => {}];
     }
   };
-
   const [selectedArray, setSelectedArray] = getSelectedAndSetter(
     currentStep.type
   ) as [string[], Dispatch<SetStateAction<string[]>>];
@@ -152,6 +149,7 @@ export const SetupSteps = () => {
                     <>
                       {/* Render preset + custom selections */}
                       {renderOptions(
+                        t,
                         Array.from(
                           new Set([
                             ...(stepConfig?.options ?? []),
@@ -213,7 +211,6 @@ export const SetupSteps = () => {
                         />
                         <PrimaryButton
                           style={{ width: "fit-content" }}
-                          // variant="outlined"
                           onClick={() => {
                             const customSize = `${manualWidth}X${manualHeight}`;
                             if (
@@ -252,11 +249,12 @@ export const SetupSteps = () => {
                       onChange={(e) => setMaterialRollMaxWidth(e.target.value)}
                     />
                   );
-
                 case "material-wide":
                   return (
                     <>
                       {renderOptions(
+                        t,
+
                         stepConfig?.options ?? [],
                         materialWide,
                         (item) => {
@@ -310,9 +308,9 @@ export const SetupSteps = () => {
                       </Box>
                     </>
                   );
-
                 default:
                   return renderOptions(
+                    t,
                     stepConfig?.type === "methods"
                       ? stepConfig.options!
                       : displayedOptions,
@@ -332,7 +330,7 @@ export const SetupSteps = () => {
       <Box
         sx={{
           padding: 2,
-          borderTop: "1px solid #e0e0e0",
+          // borderTop: "1px solid #e0e0e0",
           display: "flex",
           justifyContent:
             currentStep.type === "summary" ? "flex-end" : "space-between",

@@ -11,75 +11,6 @@ export type Step =
   | { type: "packing" }
   | { type: "summary" };
 
-// Actions for each category
-
-export const finishingActionsDigitalOffset = [
-  "CNC (Digital Diecut)",
-  "Guillotine",
-  "Diecut Analog",
-  "Punching/Drilling",
-  "Rounding Corners",
-  "Folding",
-  "Pasting Blocks",
-  "Scoring & Perforation",
-  "Folding and Gluing",
-  "Digital Foil",
-  "Foil/Impose Stamp",
-  "Digital Selective Lamination",
-  "Encapsulation",
-  "Manual Sewing",
-  "Side Coloring",
-  "Card Cutting",
-  "Embroidery",
-  "Cartoon Cups",
-  "Linkage",
-  "Plate Processor", // we'll hide dynamically if needed
-];
-
-export const bookFinishingActions = [
-  "Booklet",
-  "Perfect Binding",
-  "Books Sewing",
-  "Spiral",
-  "Manual Stapler Machine",
-  "Hardcover Cover",
-  "Three Knife Trimmer",
-  "Collector",
-];
-
-export const finishingActionsRollPrinting = [
-  "CNC",
-  "Die Cut",
-  "Foil/Impose Stamp",
-  "Imposr",
-  "Selective",
-  "Roll Sheeter Machine",
-];
-
-export const finishingActionsWidePrinter = [
-  "CNC",
-  "Manual Cutting",
-  "Manual Peeling Stickers",
-  "Ring Eyelet Punching Machine",
-  "Linkage Machine",
-  "PVC Bending",
-  "Letter Sides Bending Machine",
-  "Light Boxes & Letter Assembly",
-  "Cold Lamination",
-];
-
-export const finishingActionsDTF = [
-  "Silk Mesh Processor",
-  "Silk Printer",
-  "Press Machine",
-];
-
-export const packingMethods = [
-  "Shrink Packaging Machine",
-  "Package Tying Machine",
-  "Cartoon Packaging Machine",
-];
-
 export interface SetupStepConfig {
   type: Step["type"];
   label: string;
@@ -91,51 +22,129 @@ export interface SetupStepConfig {
   options?: string[];
 }
 
+// Printing Methods
+export const printingMethods = [
+  "digital_printing",
+  "offset_printing",
+  "roll_digital_printing",
+  "roll_offset_printing",
+  "flexo_printing",
+  "wide_printer",
+  "dtf_sublimation",
+];
+
+// Actions for each category
+
+// Digital Printing / Offset printing
+export const finishingActionsDigitalOffset = [
+  "cnc_digital_diecut",
+  "guillotine",
+  "diecut_analog",
+  "punching_drilling",
+  "rounding_corners",
+  "folding",
+  "pasting_blocks",
+  "scoring_and_perforation",
+  "folding_and_gluing",
+  "digital_foil",
+  "foil_embossing_stamp",
+  "digital_selective_lamination",
+  "encapsulation",
+  "manual_sewing",
+  "side_coloring",
+  "card_cutting",
+  "embroidery",
+  "cartoon_cups",
+  "linkage",
+  "plate_processor",
+];
+
+export const bookFinishingActions = [
+  "booklet",
+  "perfect_binding",
+  "books_sewing",
+  "spiral",
+  "manual_stapler",
+  "hardcover_cover",
+  "three_knife_trimmer",
+  "collector",
+];
+
+// Roll digital printing / Roll offset printing /Flexo printing
+export const finishingActionsRollPrinting = [
+  "cnc",
+  "die_cut",
+  "lamination",
+  "varnish",
+  "embossing",
+  "selective",
+  "roll_sheeter",
+];
+
+// Wide printer
+export const finishingActionsWidePrinter = [
+  "cnc",
+  "manual_cutting",
+  "stickers_peeling",
+  "ring_eyelet_punching",
+  "linkage",
+  "pvc_bending",
+  "letter_sides_bending",
+  "light_boxes_and_letter_assembly",
+  "cold_lamination",
+];
+
+// DTF & Sublimation
+export const finishingActionsDTF = [
+  "silk_mesh_processor",
+  "silk_printer",
+  "press_machine",
+];
+
+// Packing Methods
+export const packingMethods = [
+  "shrink_packaging",
+  "tying_packaging",
+  "cartoon_packaging",
+];
+
 export const getSetupStepsConfig = (isUs: boolean): SetupStepConfig[] => [
   {
     type: "methods",
     label: "select_printing_methods",
-    options: [
-      "Digital Printing",
-      "Offset Printing",
-      "Roll Digital Printing",
-      "Roll Offset Printing",
-      "Flexo Printing",
-      "Wide Printer",
-      "DTF & Sublimation",
-    ],
+    options: printingMethods,
   },
   {
     type: "finishing-digital-offset",
     label: "select_finishing_actions_digital_offset",
-    dependsOn: ["Digital Printing", "Offset Printing"],
+    dependsOn: ["digital_printing", "offset_printing"],
     options: finishingActionsDigitalOffset,
     filter: {
-      condition: (selected) => !selected.includes("Offset Printing"),
-      exclude: ["Plate Processor"],
+      condition: (selected) => !selected.includes("offset_printing"),
+      exclude: ["plate_processor"],
     },
   },
   {
     type: "book-finishing",
     label: "select_book_finishing_actions",
-    dependsOn: ["Digital Printing", "Offset Printing"],
+    dependsOn: ["digital_printing", "offset_printing"],
     options: bookFinishingActions,
   },
   {
     type: "material-digital-offset",
     label: "select_paper_sheets_sizes_digital_offset",
-    dependsOn: ["Digital Printing", "Offset Printing"],
+    dependsOn: ["digital_printing", "offset_printing"],
     options: isUs
-      ? ["12X18", "20.813X29.5", "29.5X41.626"]
-      : ["33X48.8", "50X70", "70X100"],
+      ? ["12x18", "20813x295", "295x41626"]
+      : ["33x488", "50x70", "70x100"],
   },
   {
     type: "finishing-roll",
     label: "select_roll_finishing_actions",
     dependsOn: [
-      "Roll Digital Printing",
-      "Roll Offset Printing",
-      "Flexo Printing",
+      "roll_digital_printing",
+      "roll_offset_printing",
+      "flexo_printing",
     ],
     options: finishingActionsRollPrinting,
   },
@@ -143,36 +152,36 @@ export const getSetupStepsConfig = (isUs: boolean): SetupStepConfig[] => [
     type: "material-roll",
     label: "enter_max_roll_width",
     dependsOn: [
-      "Roll Digital Printing",
-      "Roll Offset Printing",
-      "Flexo Printing",
+      "roll_digital_printing",
+      "roll_offset_printing",
+      "flexo_printing",
     ],
   },
   {
     type: "finishing-wide",
     label: "select_wide_printer_actions",
-    dependsOn: ["Wide Printer"],
+    dependsOn: ["wide_printer"],
     options: finishingActionsWidePrinter,
   },
   {
     type: "material-wide",
     label: "select_wide_printer_materials_and_size",
-    dependsOn: ["Wide Printer"],
+    dependsOn: ["wide_printer"],
     options: [
-      "Kappa",
-      "Aluminum Bond",
-      "Magnet",
-      "PVC",
-      "Perspex",
-      "Banner",
-      "Vinyl",
-      "synthetic Paper",
+      "kappa",
+      "aluminum_bond",
+      "magnet",
+      "pvc",
+      "perspex",
+      "banner",
+      "vinyl",
+      "synthetic_paper",
     ],
   },
   {
     type: "finishing-dtf",
     label: "select_dtf_sublimation_actions",
-    dependsOn: ["DTF & Sublimation"],
+    dependsOn: ["dtf_sublimation"],
     options: finishingActionsDTF,
   },
   {

@@ -40,7 +40,7 @@ export const SummarySection = ({
         </Typography>
         <ul>
           {items.map((item) => (
-            <li key={item}>{item}</li>
+            <li key={item}>{t(`quickSetup.options.${item}`)}</li>
           ))}
         </ul>
       </Box>

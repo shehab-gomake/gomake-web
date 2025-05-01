@@ -5,41 +5,6 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { isUsPrintHouseState } from "@/store/print-house-profile";
 
-export const StyledCheckboxItem = ({
-  label,
-  checked,
-  onClick,
-}: {
-  label: string;
-  checked: boolean;
-  onClick: () => void;
-}) => {
-  return (
-    <Box
-      onClick={onClick}
-      sx={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "10px 16px",
-        borderRadius: "12px",
-        fontSize: "14px",
-        fontWeight: 500,
-        border: checked ? "1px solid #2E3092" : "1px solid #E0E0E0",
-        backgroundColor: checked ? "#EFF0FF" : "#F9FAFB",
-        color: checked ? "#2E3092" : "#333",
-        cursor: "pointer",
-        transition: "all 0.2s ease-in-out",
-        "&:hover": {
-          borderColor: "#2E3092",
-        },
-      }}
-    >
-      {label}
-    </Box>
-  );
-};
-
 export const StyledSelectableChip = ({
   label,
   checked,
@@ -54,6 +19,7 @@ export const StyledSelectableChip = ({
   return (
     <Box
       sx={{
+        userSelect: "none",
         display: "inline-flex",
         alignItems: "center",
         padding: "10px 16px",
@@ -100,30 +66,8 @@ export const StyledSelectableChip = ({
   );
 };
 
-export const renderOptionsOld = (
-  options: string[],
-  selected: string[],
-  toggle: (item: string) => void
-) => (
-  <Box
-    sx={{
-      display: "flex",
-      flexWrap: "wrap",
-      gap: 2,
-    }}
-  >
-    {options.map((item) => (
-      <StyledCheckboxItem
-        key={item}
-        label={item}
-        checked={selected.includes(item)}
-        onClick={() => toggle(item)}
-      />
-    ))}
-  </Box>
-);
-
 export const renderOptions = (
+  t: (key: string) => string,
   options: string[],
   selected: string[],
   toggle: (item: string) => void,
@@ -137,17 +81,19 @@ export const renderOptions = (
       gap: 2,
     }}
   >
-    {options.map((item) => (
-      <StyledSelectableChip
-        key={item}
-        label={item}
-        checked={selected.includes(item)}
-        onClick={() => toggle(item)}
-        onRemove={
-          remove && isCustom?.(item) ? () => remove(item) : undefined // 👈 Don't pass if not custom
-        }
-      />
-    ))}
+    {options.map((item) => {
+      const label = isCustom?.(item) ? item : t(`quickSetup.options.${item}`);
+
+      return (
+        <StyledSelectableChip
+          key={item}
+          label={label}
+          checked={selected.includes(item)}
+          onClick={() => toggle(item)}
+          onRemove={remove && isCustom?.(item) ? () => remove(item) : undefined}
+        />
+      );
+    })}
   </Box>
 );
 
@@ -155,7 +101,6 @@ const useSetupSteps = () => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRtl = dir === "rtl";
-
   const isUs = useRecoilValue<any>(isUsPrintHouseState);
   const setupStepsConfig = useMemo(() => getSetupStepsConfig(isUs), [isUs]);
 
@@ -171,30 +116,20 @@ const useSetupSteps = () => {
   const [selectedDTFActions, setSelectedDTFActions] = useState<string[]>([]);
   const [selectedPacking, setSelectedPacking] = useState<string[]>([]);
   const [stepIndex, setStepIndex] = useState(0);
-  const hasOffsetPrinting = selectedMethods.includes("Offset Printing");
+
+  const hasOffsetPrinting = selectedMethods.includes("offset_printing");
   const hasRollPrinting =
-    selectedMethods.includes("Roll Digital Printing") ||
-    selectedMethods.includes("Roll Offset Printing") ||
-    selectedMethods.includes("Flexo Printing");
-
-  const goNextStep = () => {
-    setStepIndex((prev) => Math.min(prev + 1, steps.length - 1));
-  };
-
-  const goPreviousStep = () => {
-    setStepIndex((prev) => Math.max(prev - 1, 0));
-  };
+    selectedMethods.includes("roll_digital_printing") ||
+    selectedMethods.includes("roll_offset_printing") ||
+    selectedMethods.includes("flexo_printing");
 
   const handleMethodToggle = (method: string) => {
     setSelectedMethods((prev) => {
-      let updated: string[];
-      if (prev.includes(method)) {
-        updated = prev.filter((m) => m !== method);
-      } else {
-        updated = [...prev, method];
-      }
+      const updated = prev.includes(method)
+        ? prev.filter((m) => m !== method)
+        : [...prev, method];
 
-      if (!updated.includes("Wide Printer")) {
+      if (!updated.includes("wide_printer")) {
         setSelectedWidePrinterActions([]);
         setMaterialWide([]);
         setMaterialWideMaxWidth("");
@@ -203,36 +138,33 @@ const useSetupSteps = () => {
 
       if (
         !(
-          updated.includes("Roll Digital Printing") ||
-          updated.includes("Roll Offset Printing") ||
-          updated.includes("Flexo Printing")
+          updated.includes("roll_digital_printing") ||
+          updated.includes("roll_offset_printing") ||
+          updated.includes("flexo_printing")
         )
       ) {
         setSelectedRollActions([]);
         setMaterialRollMaxWidth("");
       }
 
-      if (!updated.includes("DTF & Sublimation")) {
+      if (!updated.includes("dtf_and_sublimation")) {
         setSelectedDTFActions([]);
       }
 
       if (
-        !(
-          updated.includes("Digital Printing") ||
-          updated.includes("Offset Printing")
-        )
+        !updated.includes("digital_printing") &&
+        !updated.includes("offset_printing")
       ) {
         setSelectedDigitalOffsetActions([]);
         setSelectedBookFinishingActions([]);
         setMaterialDigitalOffset([]);
       } else {
-        // Special case: only Digital remains
         if (
-          updated.includes("Digital Printing") &&
-          !updated.includes("Offset Printing")
+          updated.includes("digital_printing") &&
+          !updated.includes("offset_printing")
         ) {
           setSelectedDigitalOffsetActions((prev) =>
-            prev.filter((a) => a !== "Plate Processor")
+            prev.filter((a) => a !== "plate_processor")
           );
         }
       }
@@ -255,57 +187,50 @@ const useSetupSteps = () => {
   const onSave = () => {
     const finishingMachines: Record<string, string[]> = {};
 
-    if (selectedMethods.includes("Digital Printing")) {
-      finishingMachines["Digital Printing"] = selectedDigitalOffsetActions;
+    if (selectedMethods.includes("digital_printing")) {
+      finishingMachines["digital_printing"] = selectedDigitalOffsetActions;
     }
 
-    if (selectedMethods.includes("Offset Printing")) {
-      finishingMachines["Offset Printing"] = selectedDigitalOffsetActions;
+    if (selectedMethods.includes("offset_printing")) {
+      finishingMachines["offset_printing"] = selectedDigitalOffsetActions;
     }
 
-    if (hasRollPrinting) {
-      if (selectedRollActions.length > 0) {
-        finishingMachines["Roll Printing"] = selectedRollActions;
-      }
+    if (hasRollPrinting && selectedRollActions.length > 0) {
+      finishingMachines["roll_printing"] = selectedRollActions;
     }
 
     if (
-      selectedMethods.includes("Wide Printer") &&
+      selectedMethods.includes("wide_printer") &&
       selectedWidePrinterActions.length > 0
     ) {
-      finishingMachines["Wide Printer"] = selectedWidePrinterActions;
+      finishingMachines["wide_printer"] = selectedWidePrinterActions;
     }
 
     if (
-      selectedMethods.includes("DTF & Sublimation") &&
+      selectedMethods.includes("dtf_and_sublimation") &&
       selectedDTFActions.length > 0
     ) {
-      finishingMachines["DTF & Sublimation"] = selectedDTFActions;
+      finishingMachines["dtf_sublimation"] = selectedDTFActions;
     }
 
     const result = {
       printingMethods: selectedMethods,
-      finishingActions: {
-        "Digital Printing": selectedDigitalOffsetActions,
-        "Offset Printing": selectedDigitalOffsetActions,
-        "Roll Printing": selectedRollActions,
-        "Wide Printer": selectedWidePrinterActions,
-        "DTF & Sublimation": selectedDTFActions,
-      },
+      finishingActions: finishingMachines,
       bookFinishingActions: selectedBookFinishingActions,
-      packingMethods: selectedPacking,
       materials: {
-        "Digital/Offset": materialDigitalOffset,
-        Roll: {
+        digital_offset: materialDigitalOffset,
+        roll: {
           maxWidth: materialRollMaxWidth,
         },
-        "Wide Printer": {
+        wide_printer: {
           types: materialWide,
           maxWidth: materialWideMaxWidth,
           maxLength: materialWideMaxLength,
         },
       },
+      packingMethods: selectedPacking,
     };
+
     console.log("FINAL RESULT:", result);
   };
 
@@ -344,8 +269,6 @@ const useSetupSteps = () => {
     setSelectedPacking,
     setStepIndex,
     handleMethodToggle,
-    goNextStep,
-    goPreviousStep,
     hasOffsetPrinting,
     onSave,
     materialDigitalOffset,
