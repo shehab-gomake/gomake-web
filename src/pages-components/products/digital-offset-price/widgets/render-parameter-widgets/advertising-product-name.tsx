@@ -17,6 +17,9 @@ const AdvertisingProductNameParameterWidget = ({
   getAllMaterial,
   newDieCutSelect,
 }: any) => {
+  const selectedDieCutType = temp.find((item: any) => item.parameterCode === "DiecutType")
+  const selectedDieCutTypeValue = selectedDieCutType?.valuesConfigs?.find((item: any) => item.id === selectedDieCutType?.valueIds[0])
+
   const {
     defaultObject,
     openModal,
@@ -200,16 +203,16 @@ const AdvertisingProductNameParameterWidget = ({
       <GoMakeModal
         open={openGenerateModal}
         onClose={() => isView ? null : setOpenGenerateModal(false)}
-        modalTitle={" "}
-        insideStyle={{ width: 500, height: !isView ? "fit-content" : 500, padding: 20 }}
+        insideStyle={{ width: 750, height: !isView ? "fit-content" : 500, padding: 20 }}
         withClose={isView ? false : true}
+        modalTitle={
+          isViewInfoAfterGenerate ? t("products.offsetPrice.admin.generatedNewDieCut!")
+            : !isView && !isViewInfoAfterGenerate ? t("products.offsetPrice.admin.generateNewDieCut!") : ""
+        }
       >
         <>
           {isViewInfoAfterGenerate &&
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10 }}>
-              <h3>
-                {t("products.offsetPrice.admin.generatedNewDieCut!")}
-              </h3>
               <div>
                 <h4>
                   {newDataGenerated?.rowData?.name?.value}
@@ -278,13 +281,34 @@ const AdvertisingProductNameParameterWidget = ({
           }
         </>
         {!isView && !isViewInfoAfterGenerate && <Stack gap={"5px"} justifyContent={'flex-start'} margin={'auto'}>
-          <h3>
-            {t("products.offsetPrice.admin.generateNewDieCut!")}
-
-          </h3>
-          {viewRequiredParameters(subProducts).parameterInfo.map((item: any) => {
-            return <div>{item}</div>
-          })}
+          <div style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "flex-start",
+            justifyContent: "flex-start",
+            width: "100%",
+            height: "100%",
+            gap: 50
+          }}>
+            {selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value && <img
+              src={selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value}
+              alt="parameter"
+              style={{ width: 280, height: 280, objectFit: "contain" }}
+            />
+            }
+            <div style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              justifyContent: "flex-start",
+              marginTop: 22,
+              gap: 20
+            }}>
+              {viewRequiredParameters(subProducts).parameterInfo.map((item: any) => {
+                return <div>{item}</div>
+              })}
+            </div>
+          </div>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>

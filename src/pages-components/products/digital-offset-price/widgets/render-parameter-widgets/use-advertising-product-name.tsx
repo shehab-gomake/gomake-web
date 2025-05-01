@@ -92,9 +92,9 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       "DieUnitWidth",
       "DieUnitLength",
       "DieUnitHeight",
-      "SheetWeight",
-      "Sheetcategory",
-      "SheetColor",
+      // "SheetWeight",
+      // "Sheetcategory",
+      // "SheetColor",
     ];
 
     for (const product of subProducts) {
@@ -193,15 +193,17 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     const sheetWeight = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "SheetWeight")?.values[0];
     const sheetcategory = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Sheetcategory")?.values[0];
     const sheetColor = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "SheetColor")?.values[0];
-    const reqObj = {
+    const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.unitKey;
 
+    const reqObj = {
       dieCutCategory: category,
       unitWidth: Number(unitWidth),
       unitLength: Number(unitLength),
       unitHeight: Number(unitHeight),
       sheetsWeight: sheetWeight,
       sheetsCategory: sheetcategory,
-      sheetsColor: sheetColor
+      sheetsColor: sheetColor,
+      unit: unit
     }
     const callBack = (res) => {
       if (res.success && res.data && res.data.data) {
@@ -275,13 +277,24 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
               {
                 valueId: "linesAmount",
                 value: res?.data?.data?.rowData?.linesAmount?.value
-              }
+              },
+              {
+                valueId: "cuttingLineLength",
+                value: res?.data?.data?.rowData?.cuttingLineLength?.value
+              },
+              {
+                valueId: "scoringLineLength",
+                value: res?.data?.data?.rowData?.scoringLineLength?.value
+              },
+              {
+                valueId: "perforationLineLength",
+                value: res?.data?.data?.rowData?.perforationLineLength?.value
+              },
             ],
           };
           setSearchResult((prev: any) => {
             return [formattedData, ...prev,] // Add the new item to the data list
           });
-          // setOpenGenerateModal(false)
           setIsView(false)
           setIsRenderData(false)
           setIsViewInfoAfterGenerate(true)
@@ -290,6 +303,8 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
 
       } else {
         alertFault(t("products.offsetPrice.admin.errorAddingTemplate"))
+        setIsView(false)
+        setIsViewInfoAfterGenerate(false)
       }
     };
     await createDieCutFromTemplateMakerApi(callApi, callBack, reqObj);
