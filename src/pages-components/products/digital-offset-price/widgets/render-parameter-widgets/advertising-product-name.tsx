@@ -17,7 +17,6 @@ const AdvertisingProductNameParameterWidget = ({
   getAllMaterial,
   newDieCutSelect,
 }: any) => {
-  console.log("parameter", parameter)
   const {
     defaultObject,
     openModal,
@@ -42,7 +41,6 @@ const AdvertisingProductNameParameterWidget = ({
     newDataGenerated,
     setSubProducts
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect })
-  console.log("searchResult", searchResult)
 
   return (
     <div style={clasess.advertisingProductNameMain}>
@@ -224,7 +222,6 @@ const AdvertisingProductNameParameterWidget = ({
                 <GomakePrimaryButton
                   style={{ width: "fit-content", height: 40, minWidth: 150 }}
                   onClick={() => {
-                    console.log("newDataGenerated?.rowData", newDataGenerated?.rowData)
                     onChangeSubProductsForPrice(
                       parameter?.id,
                       subSection?.id,
@@ -232,7 +229,7 @@ const AdvertisingProductNameParameterWidget = ({
                       parameter?.parameterType,
                       parameter?.name,
                       parameter?.actionId,
-                      { valueIds: newDataGenerated?.rowData?.name?.value, values: newDataGenerated?.rowData?.name?.value },
+                      { valueIds: newDataGenerated?.id, values: newDataGenerated?.rowData?.name?.value },
                       subSection?.type,
                       index,
                       parameter?.actionIndex,
@@ -251,7 +248,7 @@ const AdvertisingProductNameParameterWidget = ({
                               "parameterType": 4,
                               "isQuantityParameter": false,
                               "values": [newDataGenerated?.rowData?.name?.value],
-                              "valueIds": [newDataGenerated?.rowData?.name?.value],
+                              "valueIds": [newDataGenerated?.id],
                               "sectionId": section?.id,
                               "subSectionId": subSection?.id,
                               "actionIndex": parameter?.actionIndex,
@@ -267,19 +264,7 @@ const AdvertisingProductNameParameterWidget = ({
                         };
                       });
                     });
-                    // onChangeSubProductsForPrice(
-                    //   "f81d5faf-7c4b-40cd-a178-98d79d61c326",
-                    //   subSection?.id,
-                    //   section?.id,
-                    //   4,
-                    //   "Choose Die-Cut",
-                    //   parameter?.actionId,
-                    //   { valueIds: newDataGenerated?.rowData?.name?.value, values: newDataGenerated?.rowData?.name?.value },
-                    //   subSection?.type,
-                    //   index,
-                    //   parameter?.actionIndex,
-                    //   "DieCut",
-                    // );
+
                     setIsViewInfoAfterGenerate(false)
                     setOpenGenerateModal(false)
 
