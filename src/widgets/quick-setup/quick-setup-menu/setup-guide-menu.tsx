@@ -111,7 +111,7 @@ export const SetupGuideMenu = ({ handleOpenModal }: SetupGuideMenuProps) => {
               }}
             >
               <ListItemText
-                primary="Set up products" //!here
+                primary={t("quickSetup.setUpProducts")}
                 primaryTypographyProps={classes.listItemText}
               />
               {renderStepStatusIcon(productsSetupStatus)}
