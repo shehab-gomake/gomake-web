@@ -11,14 +11,15 @@ import {
   Checkbox,
   Divider,
   ListItemButton,
+  IconButton,
+  CircularProgress,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useStyle } from "./style";
-import CloseFullscreenRoundedIcon from "@mui/icons-material/CloseFullscreenRounded";
-import OpenInFullRoundedIcon from "@mui/icons-material/OpenInFullRounded";
 import { useSetupGuideMenu } from "./use-quick-setup-menu";
 import { ModalControls } from "@/hooks/use-modal";
 import { StepStatus } from "@/store/print-house-setup-state-state";
+import { CloseMenu, ExpandMenu, ShrinkMenu } from "./components/icons";
 
 interface SetupGuideMenuProps {
   handleOpenModal: () => void;
@@ -34,34 +35,53 @@ export const SetupGuideMenu = ({ handleOpenModal }: SetupGuideMenuProps) => {
     progressValue,
     toggleExpand,
     handleToggleVerifyBusiness,
-
     productsSetupStatus,
     renderStepStatusIcon,
+    setShowGuideMenu,
+    showGuideMenuState,
   } = useSetupGuideMenu();
   const { classes } = useStyle(isRtl);
 
   if (!isOpen) return null;
 
-  return (
-    <Card sx={classes.mainContainer}>
+  return showGuideMenuState ? (
+    <Card
+      sx={{
+        ...classes.mainContainer,
+        fontFamily: "Inter, Roboto, sans-serif",
+        WebkitFontSmoothing: "antialiased",
+        MozOsxFontSmoothing: "grayscale",
+      }}
+    >
       <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={2}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 1,
+        }}
       >
-        <Typography variant="subtitle1" fontWeight="bold" color="#333333">
+        <Typography
+          variant="subtitle1"
+          fontWeight="600"
+          sx={{ color: "#000", fontSize: "14px" }}
+        >
           {t("quickSetup.setupGuide")}
         </Typography>
-        <Box onClick={toggleExpand} sx={{ cursor: "pointer" }}>
-          {isExpanded ? (
-            <CloseFullscreenRoundedIcon fontSize="small" />
-          ) : (
-            <OpenInFullRoundedIcon fontSize="small" />
-          )}
+
+        <Box gap={1}>
+          <IconButton onClick={toggleExpand} sx={{ p: 0.5, color: "#999" }}>
+            {isExpanded ? <ShrinkMenu /> : <ExpandMenu />}
+          </IconButton>
+          <IconButton
+            onClick={() => setShowGuideMenu(false)}
+            sx={{ p: 0.5, color: "#999" }}
+          >
+            <CloseMenu />
+          </IconButton>
         </Box>
       </Box>
-      <Box mb={3}>
+      <Box mb={2}>
         <LinearProgress
           variant="determinate"
           value={progressValue}
@@ -81,7 +101,6 @@ export const SetupGuideMenu = ({ handleOpenModal }: SetupGuideMenuProps) => {
               }
               sx={{
                 borderRadius: "8px",
-                mb: 1,
                 cursor:
                   productsSetupStatus === StepStatus.DONE
                     ? "default"
@@ -93,16 +112,16 @@ export const SetupGuideMenu = ({ handleOpenModal }: SetupGuideMenuProps) => {
             >
               <ListItemText
                 primary="Set up products" //!here
-                primaryTypographyProps={{ color: "#333333", fontSize: "14px" }}
+                primaryTypographyProps={classes.listItemText}
               />
               {renderStepStatusIcon(productsSetupStatus)}
             </ListItemButton>
 
             {/* Step 2 */}
-            <ListItem button sx={{ borderRadius: "8px", mb: 1 }}>
+            <ListItem button sx={{ borderRadius: "8px" }}>
               <ListItemText
                 primary="Test Connect"
-                primaryTypographyProps={{ color: "#333333", fontSize: "14px" }}
+                primaryTypographyProps={classes.listItemText}
               />
               {renderStepStatusIcon(0)}
             </ListItem>
@@ -111,53 +130,63 @@ export const SetupGuideMenu = ({ handleOpenModal }: SetupGuideMenuProps) => {
             <ListItem
               button
               onClick={handleToggleVerifyBusiness}
-              sx={{ borderRadius: "8px", mb: 1 }}
+              sx={{ borderRadius: "8px" }}
             >
               <ListItemText
                 primary="Verify your business"
-                primaryTypographyProps={{ color: "#333333", fontSize: "14px" }}
+                primaryTypographyProps={classes.listItemText}
               />
               {openVerifyBusiness ? <ExpandLess /> : <ExpandMore />}
             </ListItem>
 
             <Collapse in={openVerifyBusiness} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding sx={{ pl: 4 }}>
-                <ListItem sx={{ pl: 0 }}>
+              <List component="div" disablePadding sx={{ pl: 3 }}>
+                <ListItem disablePadding>
                   <Checkbox size="small" sx={classes.checkBox} />
                   <ListItemText
                     primary="Verify your email"
-                    primaryTypographyProps={{
-                      fontSize: "13px",
-                      color: "#333333",
-                    }}
+                    primaryTypographyProps={classes.listSubItemText}
                   />
                 </ListItem>
-                <ListItem sx={{ pl: 0 }}>
+                <ListItem disablePadding>
                   <Checkbox size="small" sx={classes.checkBox} />
                   <ListItemText
                     primary="Complete your profile"
-                    primaryTypographyProps={{
-                      fontSize: "13px",
-                      color: "#333333",
-                    }}
+                    primaryTypographyProps={classes.listSubItemText}
                   />
                 </ListItem>
               </List>
             </Collapse>
           </List>
 
-          <Divider sx={{ my: 3 }} />
+          <Divider sx={{ my: 2 }} />
           <Button variant="contained" fullWidth sx={classes.btnStyle}>
             GO LIVE
           </Button>
         </>
       ) : (
         <>
-          <Typography variant="body2" color="textSecondary">
+          <Typography
+            variant="body2"
+            sx={{ color: "#6B6B6B", fontSize: "13px", mt: 1 }}
+          >
             Next: Create a recurring product
           </Typography>
         </>
       )}
     </Card>
+  ) : (
+    <Box sx={classes.secondGuide} onClick={() => setShowGuideMenu(true)}>
+      <Typography sx={{ fontSize: "14px", fontWeight: 500 }}>
+        {t("quickSetup.setupGuide")}
+      </Typography>
+      <CircularProgress
+        variant="determinate"
+        value={progressValue}
+        size={20}
+        thickness={7}
+        sx={classes.circularProgress}
+      />
+    </Box>
   );
 };

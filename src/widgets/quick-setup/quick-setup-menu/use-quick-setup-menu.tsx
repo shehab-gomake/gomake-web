@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { setupGuideOpenState } from "@/store/setup-guide-state";
 import { useTranslation } from "react-i18next";
@@ -12,15 +12,30 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import DonutLargeRoundedIcon from "@mui/icons-material/DonutLargeRounded";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { getItem, setItem } from "@/services/storage-data";
 
 const useSetupGuideMenu = () => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRtl = dir === "rtl";
   const isOpen = useRecoilValue(setupGuideOpenState);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const [openVerifyBusiness, setOpenVerifyBusiness] = useState(false);
   const { primaryColor } = useGomakeTheme();
+  const [showGuideMenuState, setShowGuideMenuState] = useState(true);
+
+  useEffect(() => {
+    const saved = getItem("gomake_showGuideMenu");
+    if (saved === "false") {
+      setShowGuideMenuState(false);
+    }
+  }, []);
+
+  const setShowGuideMenu = (value: boolean) => {
+    setItem("gomake_showGuideMenu", value);
+    setShowGuideMenuState(value);
+  };
+
   const printHouseSetupSteps = useRecoilValue<SetupStepItem[]>(
     printHouseSetupStepsState
   );
@@ -86,6 +101,8 @@ const useSetupGuideMenu = () => {
     printHouseSetupSteps,
     productsSetupStatus,
     renderStepStatusIcon,
+    setShowGuideMenu,
+    showGuideMenuState,
   };
 };
 
