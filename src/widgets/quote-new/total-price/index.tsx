@@ -162,7 +162,11 @@ const TotalPriceComp = ({
           </div>
         </div>
 
-        {CheckPreferenceValue(EPreferences.HIDE_VAT_FROM_DOCUMENTS) ? (
+        {(
+          isQuoteConfirmation
+            ? quoteItems?.hideVatInSystem
+            : CheckPreferenceValue(EPreferences.HIDE_VAT_FROM_DOCUMENTS)
+        ) ? (
           <>
             <div style={{ ...classes.evenRowContainer, width: "13%" }}>
               {t("sales.quote.totalAfterDiscount")}
@@ -194,7 +198,9 @@ const TotalPriceComp = ({
           </>
         )}
       </div>
-      {!CheckPreferenceValue(EPreferences.HIDE_VAT_FROM_DOCUMENTS) && (
+      {!(isQuoteConfirmation
+        ? quoteItems?.hideVatInSystem
+        : CheckPreferenceValue(EPreferences.HIDE_VAT_FROM_DOCUMENTS)) && (
         <div style={classes.firstRowForFooterContainer}>
           <div
             style={{
