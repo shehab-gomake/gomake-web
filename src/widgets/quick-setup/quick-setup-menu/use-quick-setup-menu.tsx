@@ -13,6 +13,10 @@ import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import DonutLargeRoundedIcon from "@mui/icons-material/DonutLargeRounded";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { getItem, setItem } from "@/services/storage-data";
+import RadioButtonUncheckedRoundedIcon from "@mui/icons-material/RadioButtonUncheckedRounded";
+import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
+import RadioButtonCheckedRoundedIcon from "@mui/icons-material/RadioButtonCheckedRounded";
+import { Checkbox } from "@mui/material";
 
 const useSetupGuideMenu = () => {
   const { t } = useTranslation();
@@ -79,6 +83,51 @@ const useSetupGuideMenu = () => {
       case StepStatus.NOT_YET:
       default:
         return <RadioButtonUncheckedIcon fontSize="small" color="disabled" />;
+    }
+  };
+
+  const renderStepStatusIconNew = (status?: StepStatus) => {
+    switch (status) {
+      case StepStatus.DONE:
+        return (
+          <Checkbox
+            size="small"
+            checked
+            checkedIcon={<CheckCircleRoundedIcon />}
+            sx={{
+              p: 0,
+              color: primaryColor(400),
+              "&.Mui-checked": {
+                color: primaryColor(400),
+              },
+            }}
+          />
+        );
+      case StepStatus.IN_PROGRESS:
+        return (
+          <Checkbox
+            size="small"
+            checked
+            checkedIcon={<RadioButtonCheckedRoundedIcon />}
+            sx={{
+              p: 0,
+              color: primaryColor(400),
+              "&.Mui-checked": {
+                color: primaryColor(400),
+              },
+            }}
+          />
+        );
+      case StepStatus.NOT_YET:
+      default:
+        return (
+          <Checkbox
+            size="small"
+            checked={false}
+            icon={<RadioButtonUncheckedRoundedIcon />}
+            sx={{ p: 0, color: "#ccc" }}
+          />
+        );
     }
   };
 

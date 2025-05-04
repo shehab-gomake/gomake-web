@@ -12,7 +12,8 @@ const SetupSection = () => {
     ResetPasswordModalControl,
   } = useQuickSetup();
 
-  useQuickSetupSocketIo();
+  //!here
+  const {} = useQuickSetupSocketIo();
 
   return (
     <>

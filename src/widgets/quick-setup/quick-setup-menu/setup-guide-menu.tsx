@@ -142,6 +142,7 @@ export const SetupGuideMenu = ({
               </ListItemButton>
             ))}
           </List>
+
           <Divider sx={{ my: 2 }} />
           <Button variant="contained" fullWidth sx={classes.btnStyle}>
             GO LIVE
@@ -152,9 +153,9 @@ export const SetupGuideMenu = ({
           <Typography
             variant="body2"
             sx={{ color: "#6B6B6B", fontSize: "13px", mt: 1 }}
-          >
-            Next: Reset Your Password
-          </Typography>
+          >{`Next : ${
+            steps?.find((step) => step?.status !== StepStatus.DONE)?.label
+          }`}</Typography>
         </>
       )}
     </Card>

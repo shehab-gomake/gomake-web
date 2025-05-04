@@ -29,6 +29,8 @@ const useQuickSetupSocketIo = () => {
       socket.disconnect();
     };
   }, [printHouse?.id]);
+
+  return {};
 };
 
 export { useQuickSetupSocketIo };
