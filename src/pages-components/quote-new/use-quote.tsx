@@ -379,8 +379,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-      ? t("products.profits.details")
-      : null,
+        ? t("products.profits.details")
+        : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -415,7 +415,7 @@ const useQuoteNew = ({
         DocumentType: docType,
         Date: {
           documentId: quoteItemValue?.id,
-          dueDate: selectDate,
+          dueDate: new Date(selectDate).toUTCString(),
         },
       });
     }
@@ -1226,7 +1226,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-          res?.data?.succ === false
+            res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
