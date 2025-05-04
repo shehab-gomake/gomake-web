@@ -4044,6 +4044,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     dieCut: any
   ) => {
 
+
     let copySubProducts = cloneDeep(subProducts);
     const targetSubProduct = copySubProducts.find(
       (item) => item.type === subSectionType
@@ -4633,7 +4634,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         }
         if (dieCut) {
-          if (subSectionParameter.code === "DieCutter") {
+          if ((subSectionParameter.code === "DieCutter" || subSectionParameter.code === "DieCut") && dieCut?.additionalAttribute?.length > 0) {
             const getValue = (id) => {
               const item = dieCut.additionalAttribute.find(attr => attr.valueId === id);
               return item ? item.value + "" : "";
@@ -4704,7 +4705,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
             });
           }
-          if (subSectionParameter.code === "DieCut") {
+          if ((subSectionParameter.code === "DieCutter" || subSectionParameter.code === "DieCut") && dieCut?.rowData) {
             let dieUnitWidth = dieCut.rowData.dieUnitWidth.value + "";
             let dieUnitLength = dieCut.rowData.dieUnitLength.value + "";
             let finalUnitWidth = dieCut.rowData.finalUnitWidth.value + "";

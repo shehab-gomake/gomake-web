@@ -175,7 +175,19 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
           {
             valueId: "linesAmount",
             value: newDieCutSelect.rowData.linesAmount.value
-          }
+          },
+          {
+            valueId: "cuttingLineLength",
+            value: newDieCutSelect.rowData.cuttingLineLength.value
+          },
+          {
+            valueId: "scoringLineLength",
+            value: newDieCutSelect.rowData.scoringLineLength.value
+          },
+          {
+            valueId: "perforationLineLength",
+            value: newDieCutSelect.rowData.perforationLineLength.value
+          },
         ],
         currency: newDieCutSelect.rowData.currency.value
       };
@@ -313,7 +325,6 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const createNewTemplate = () => {
     const result = checkRequiredParameters(subProducts);
     if (result) {
-      // createNewTemplateEndPoint()
       setOpenGenerateModal(true)
     } else {
       const errorMessage = t("products.offsetPrice.admin.errorMakerTemplate1")
