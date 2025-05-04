@@ -14,7 +14,9 @@ import { SettingsIcon } from "@/icons/settings";
 import { DuplicateMaterial, PercentageMaterial } from "@/icons";
 import { useCopyAction } from "./use-copy-action";
 import { EPricingBy, ETransition } from "../../enums/profites-enum";
-import { useEffect } from "react";
+import { ChangeEvent, useEffect } from "react";
+import { InputUpdatedValues } from "@/widgets/quote-new/input-updated-values";
+import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
 
 const PricingList = ({
   tableHeaders,
@@ -46,6 +48,11 @@ const PricingList = ({
   updatePricingByForActionPackage,
   actionProfitByActionId,
   getProfitsPricingTables,
+  minimumValue,
+  isUpdateMinimumValue,
+  onBlurMinimumValue,
+  setIsUpdateMinimumValue,
+  onInputChangeMinimumValue,
 }: PricingListProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -102,6 +109,14 @@ const PricingList = ({
           >
             <SettingsIcon stroke={"#000000"} width={24} height={24} />
           </IconButton>
+          <GoMakeTextInput
+            value={minimumValue === 0 ? "" : minimumValue}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              onInputChangeMinimumValue(e.target.value)}
+            onBlur={() => onBlurMinimumValue()}
+            style={classes.autoCompleteStyleContainer}
+            placeholder="minimum price"
+          />
           {router?.query?.isOutSource && (
             <div style={classes.autoCompleteContainer}>
               <GoMakeAutoComplate
