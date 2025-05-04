@@ -56,7 +56,6 @@ export const ResetPasswordModal = ({
       if (res.success) {
         handleCloseModal();
         alertSuccessUpdate();
-        // getPrintHouseSetupSteps(); //!here
       } else {
         alertFaultUpdate();
       }

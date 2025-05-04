@@ -113,6 +113,7 @@ export const SetupGuideMenu = ({
       </Box>
       {isExpanded ? (
         <>
+          {/* FULL menu */}
           <List dense disablePadding>
             {steps.map(({ key, label, onClick, status }) => (
               <ListItemButton

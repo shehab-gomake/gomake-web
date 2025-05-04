@@ -19,7 +19,7 @@ const useGomakeAuth = (permissionEnumValue, allowAnonymous?: boolean) => {
     setCanAccessvalue(canAccess);
     setIsAuth(canAccess);
 
-    await getPrintHouseSetupSteps(); //!here
+    await getPrintHouseSetupSteps();
   }, [setIsAuth]);
 
   useEffect(() => {

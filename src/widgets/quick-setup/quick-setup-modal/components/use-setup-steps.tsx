@@ -5,7 +5,7 @@ import { useRecoilValue } from "recoil";
 import { isUsPrintHouseState } from "@/store/print-house-profile";
 import { getSetupStepsConfig, Step } from "./workflowStepsConfig";
 import { savePrintHouseProductsSetupFormApi } from "@/services/api-service/quick-setup-menu/set-up-products-api";
-import { useCustomer, useGomakeAxios, useSnackBar } from "@/hooks";
+import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { ProductsSetupData } from "../../interfaces";
 import { ModalControls, useModal } from "@/hooks/use-modal";
 
@@ -111,9 +111,7 @@ const useSetupSteps = (
   const isRtl = dir === "rtl";
   const { alertFaultUpdate } = useSnackBar();
   const confirmSetupProducts = useModal();
-  const { getPrintHouseSetupSteps } = useCustomer();
   const isUs = useRecoilValue<any>(isUsPrintHouseState);
-
   const setupStepsConfig = useMemo(() => getSetupStepsConfig(isUs), [isUs]);
   const [stepIndex, setStepIndex] = useState(0);
   const [manualWidth, setManualWidth] = useState("");
@@ -226,7 +224,6 @@ const useSetupSteps = (
     const callBack = (res) => {
       if (res.success) {
         ActionsModal.close();
-        getPrintHouseSetupSteps(); //!here
       } else {
         alertFaultUpdate();
       }
