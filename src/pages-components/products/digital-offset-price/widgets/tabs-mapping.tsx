@@ -210,7 +210,8 @@ const TabsMappingWidget = ({
                 outline: 'none',
                 fontSize: 'inherit',
                 color: 'inherit',
-                width: '100%'
+                width: '100%',
+                minWidth: 200
               }}
             />
           ) : (
