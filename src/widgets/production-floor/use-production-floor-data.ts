@@ -34,6 +34,7 @@ import { useRouter } from "next/router";
 import {formatDate} from "tough-cookie";
 import moment from "moment";
 import {IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
+import { CurrentStationOrderingEnum } from "@/enums/parameter-type-enums";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -54,6 +55,7 @@ const useProductionFloorData = () => {
   const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
     selectedGroupIdState
   );
+  const [stationOrdering, setStationOrdering] = useState(CurrentStationOrderingEnum.NONE);
   const view = useRecoilValue(productionFloorViewState);
   const getData = async (connectionId?: string) => {
     if (view === EProductionFloorView.FILTER_GROUPS) {
@@ -82,6 +84,7 @@ const useProductionFloorData = () => {
       {
         connectionId:connectionId,
         filters:filtersState,
+        
       },
       false,
       abortController

@@ -37,6 +37,7 @@ import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employ
 import { Source } from "./select/actions-select/use-actions-list";
 import { actionsListState } from "../state/actions-list";
 import {selectedAgentsState} from "@/store/agents-state";
+import { CurrentStationOrderingEnum } from "@/enums/parameter-type-enums";
 
 interface onStationsChangeProps {
   stations: IStation[];
@@ -152,7 +153,10 @@ const useProductionFloorFilters = ({
         alertFaultUpdate();
       }
     };
-    await setBoardFiltersApi(callApi, callBack, filters);
+    await setBoardFiltersApi(callApi, callBack, {
+      stationOrdering:CurrentStationOrderingEnum.NONE,
+      ...filters
+    });
   };
 
   const onTagsChange = async (tag: string) => {
@@ -467,7 +471,6 @@ const getActions = async () => {
   await getPrintHouseActions(callApi, callBack, );
 };
   const handleAgentChange = () => {
-   // const selectedAgents = selectedAgentsState;
     setFilters({
       ...filtersState,
       agentIds:selectedAgents,

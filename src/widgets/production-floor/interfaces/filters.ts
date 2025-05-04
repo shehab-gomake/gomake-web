@@ -1,3 +1,5 @@
+import { CurrentStationOrderingEnum } from "@/enums";
+
 export interface IProductionFloorFilter {
   userId?: string;
   stations: IStation[];
@@ -15,6 +17,7 @@ export interface IProductionFloorFilter {
   groupsHistory: IFilterGroup[];
   groupId: string;
   agentIds?: string[];
+  stationOrdering?: CurrentStationOrderingEnum;
 }
 
 export interface IStation {

@@ -27,7 +27,7 @@ import { productionFloorTextSearchState } from "@/widgets/production-floor/state
 import { useCallback, useState } from "react";
 import { ThreeOptionsModal } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
-import { ModalType } from "@/enums";
+import { CurrentStationOrderingEnum, ModalType } from "@/enums";
 import { useMediaQuery } from "@mui/material";
 
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
@@ -56,13 +56,13 @@ const StatusTableComponent = ({
   const [filtersState, setFiltersState] = useRecoilState(productionFloorFiltersState);
   const [sortConfig, setSortConfig] = useState<{
     key: string;
-    direction: "asc" | "desc";
-  }>({ key: "", direction: "asc" });
+    direction: CurrentStationOrderingEnum;
+  }>({ key: "", direction: CurrentStationOrderingEnum.NONE });
 
-  const reSortingCurrentStation = async (direction: "asc" | "desc") => {
+  const reSortingCurrentStation = async (direction: CurrentStationOrderingEnum) => {
     await setFilters({
       ...filtersState,
-      currentStation: direction
+      stationOrdering: direction
     });
   };
   const hasUrgentOrApproval = allBoardMissions?.some(board =>
@@ -210,14 +210,20 @@ const StatusTableComponent = ({
                           }}
                           key={"statusTable" + status.id + index}
                           align={"center"}
-                          sx={{
-                            '& .sort-icon': {
-                              opacity: 0
-                            },
-                            '&:hover .sort-icon': {
-                              opacity: 1
-                            }
-                          }}
+                          sx={
+                            header === t("productionFloor.currentStation")
+                              ? (
+                                sortConfig.direction === CurrentStationOrderingEnum.NONE
+                                  ? {
+                                    '& .sort-icon': { opacity: 0 },
+                                    '&:hover .sort-icon': { opacity: 1 }
+                                  }
+                                  : {
+                                    '& .sort-icon': { opacity: 1 }
+                                  }
+                              )
+                              : undefined
+                          }
                         >
                           <div
                             style={{
@@ -236,13 +242,13 @@ const StatusTableComponent = ({
                                 onClick={() => {
                                   setSortConfig({
                                     key: t("productionFloor.currentStation"),
-                                    direction: sortConfig.direction === "asc" ? "desc" : "asc"
+                                    direction: sortConfig.direction === CurrentStationOrderingEnum.NONE ? CurrentStationOrderingEnum.ASC : CurrentStationOrderingEnum.NONE
                                   })
-                                  reSortingCurrentStation(sortConfig.direction === "asc" ? "desc" : "asc")
+                                  reSortingCurrentStation(sortConfig.direction === CurrentStationOrderingEnum.NONE ? CurrentStationOrderingEnum.ASC : CurrentStationOrderingEnum.NONE)
                                 }}>
-                                {sortConfig.direction === "asc"
-                                  ? <ArrowUpward sx={{ fontSize: "18px" }} />
-                                  : <ArrowDownward sx={{ fontSize: "18px" }} />
+                                {
+                                  <ArrowUpward sx={{ fontSize: "18px" }} />
+
                                 }
                               </IconButton>
                             )}

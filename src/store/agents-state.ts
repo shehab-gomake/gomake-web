@@ -1,3 +1,4 @@
+import { CurrentStationOrderingEnum } from "@/enums";
 import {atom, selector} from "recoil";
 const agentsState = atom<{id: string; name: string; code: string; checked: boolean;}[]>({
     key: 'agentsState', // unique ID (with respect to other atoms/selectors)
@@ -10,4 +11,8 @@ const selectedAgentsState = selector<string[]>({
         return agents.filter(agent => agent.checked).map(agent=> agent.id);
     },
 });
-export {agentsState,selectedAgentsState}
+const currentStationOrderingState = atom<CurrentStationOrderingEnum>({
+    key: 'currentStationOrderingState',
+    default: CurrentStationOrderingEnum.NONE,
+});
+export {agentsState,selectedAgentsState,currentStationOrderingState}

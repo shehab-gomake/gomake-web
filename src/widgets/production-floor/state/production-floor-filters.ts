@@ -1,11 +1,13 @@
 import { atom, selector } from "recoil";
 import { IProductionFloorFilter } from "../interfaces/filters";
+import { CurrentStationOrderingEnum } from "@/enums";
 
 export const productionFloorFiltersState = atom<IProductionFloorFilter>({
   key: "productionFloorFiltersState",
   default: {
     automatedTags: [],
     stations: [],
+    stationOrdering: CurrentStationOrderingEnum.ASC
   } as IProductionFloorFilter,
 });
 
