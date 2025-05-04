@@ -4657,7 +4657,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         }
         if (dieCut) {
-          console.log("dieCut", dieCut)
           if ((subSectionParameter.code === "DieCutter" || subSectionParameter.code === "DieCut") && dieCut?.additionalAttribute?.length > 0) {
             const getValue = (id) => {
               const item = dieCut.additionalAttribute.find(attr => attr.valueId === id);

@@ -396,7 +396,10 @@ const AdvertisingProductNameParameterWidget = ({
                   </GomakePrimaryButton>
                   <GomakePrimaryButton
                     style={{ width: "fit-content", height: 40, background: "#FF69B4" }}
-                    onClick={createNewTemplate}>
+                    onClick={() => {
+                      createNewTemplate()
+                      setIsOpenDieCutModal(false)
+                    }}>
                     {t("products.offsetPrice.admin.generateNewDieCut")}
                   </GomakePrimaryButton>
                 </>
