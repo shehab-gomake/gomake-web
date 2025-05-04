@@ -890,11 +890,13 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         maxWidth: 300,
         minWidth: 300,
         border: "none",
+        width: "100%",
       },
       requiredAdvertisingProductCategoryAutoComplete: {
         height: 40,
         maxWidth: 300,
         borderBottom: "1px solid red",
+        width: "100%",
       },
       advertisingProductCategorySearch: {
         position: "absolute" as "absolute",
