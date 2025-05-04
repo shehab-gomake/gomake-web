@@ -35,7 +35,14 @@ const ProfitLeftSideWidget = ({
   updatePackageUnitQuantity,
   updatePricingByForActionPackage,
   actionProfitByActionId,
-  getProfitsPricingTables
+  getProfitsPricingTables,
+  minimumValue,
+  isUpdateMinimumValue,
+  onBlurMinimumValue,
+  setIsUpdateMinimumValue,
+  onInputChangeMinimumValue,
+
+
 }: ProfitLeftSideProps) => {
   const { clasess } = useStyle();
   return (
@@ -71,6 +78,11 @@ const ProfitLeftSideWidget = ({
         updatePricingByForActionPackage={updatePricingByForActionPackage}
         actionProfitByActionId={actionProfitByActionId}
         getProfitsPricingTables={getProfitsPricingTables}
+        minimumValue={minimumValue}
+        isUpdateMinimumValue={isUpdateMinimumValue}
+        onBlurMinimumValue={onBlurMinimumValue}
+        setIsUpdateMinimumValue={setIsUpdateMinimumValue}
+        onInputChangeMinimumValue={onInputChangeMinimumValue}
       />
       <AddStepModal
         openModal={openAddStepModal}
