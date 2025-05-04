@@ -35,6 +35,7 @@ export interface IBoardMissions {
   showGraphicsApprovalAlert: 0 | 1 | 2;
   isUrgentWork: boolean;
   productionFloorJobColor?: string;
+  currentStationColor?: string;
   numberOfJobsInOrder?: number | string;
   description?: string;
   sectionName?: string;

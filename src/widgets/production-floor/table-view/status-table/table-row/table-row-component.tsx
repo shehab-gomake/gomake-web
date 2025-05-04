@@ -461,7 +461,6 @@ const TableRowComponent = ({
             align="center"
             style={{
               backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-              width: "140px",
               padding: "8px",
             }}
           >
@@ -502,7 +501,7 @@ const TableRowComponent = ({
         </SecondaryTableCell>
         <SecondaryTableCell
           align={"center"}
-          style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
+          style={{ backgroundColor: boardMission?.currentStationColor ? boardMission?.currentStationColor : index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
         >
           <CurrentStationComponent
             {...boardMission.currentStation}

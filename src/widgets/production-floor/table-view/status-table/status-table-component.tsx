@@ -159,8 +159,8 @@ const StatusTableComponent = ({
       ) && "15%", // Description
       CheckPreferenceValue(
         EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR
-      ) && "1%", // Notes
-      "12%", // Status
+      ) && "13%", // Notes
+      "11%", // Status
       "15%", // Current station
       "12%", // Next station
       "2%", // More
