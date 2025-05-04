@@ -44,7 +44,6 @@ const AdvertisingProductNameParameterWidget = ({
     newDataGenerated,
     setSubProducts
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect })
-  console.log("newDataGenerated", newDataGenerated)
   return (
     <div style={clasess.advertisingProductNameMain}>
       <GoMakeAutoComplate
