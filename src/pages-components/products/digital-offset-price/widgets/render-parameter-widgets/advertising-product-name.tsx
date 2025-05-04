@@ -44,7 +44,7 @@ const AdvertisingProductNameParameterWidget = ({
     newDataGenerated,
     setSubProducts
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect })
-
+  console.log("newDataGenerated", newDataGenerated)
   return (
     <div style={clasess.advertisingProductNameMain}>
       <GoMakeAutoComplate
@@ -213,12 +213,24 @@ const AdvertisingProductNameParameterWidget = ({
         <>
           {isViewInfoAfterGenerate &&
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10 }}>
-              <div>
-                <h4>
-                  {newDataGenerated?.rowData?.name?.value}
-                </h4>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}>
+              <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", width: "100%", height: "100%", gap: 50 }}>
+
+                <div style={{ width: "60%", }}>
                   <img src={newDataGenerated?.rowData?.image?.value} alt="newDataGenerated" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10 }}>
+                  <h4>
+                    Name:{newDataGenerated?.rowData?.name?.value}
+                  </h4>
+                  <h4>
+                    {t("products.offsetPrice.admin.cuttingLineLength")}:{newDataGenerated?.rowData?.cuttingLineLength?.value}
+                  </h4>
+                  <h4>
+                    {t("products.offsetPrice.admin.scoringLineLength")}:{newDataGenerated?.rowData?.scoringLineLength?.value}
+                  </h4>
+                  <h4>
+                    {t("products.offsetPrice.admin.perforationLineLength")}:{newDataGenerated?.rowData?.perforationLineLength?.value}
+                  </h4>
                 </div>
               </div>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", width: "100%" }}>
@@ -284,7 +296,7 @@ const AdvertisingProductNameParameterWidget = ({
           <div style={{
             display: "flex",
             flexDirection: "row",
-            alignItems: "flex-start",
+            alignItems: "center",
             justifyContent: "flex-start",
             width: "100%",
             height: "100%",
