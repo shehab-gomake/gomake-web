@@ -117,7 +117,6 @@ const PriceListPageWidget = ({ widgetType, isMobileScreen = false }) => {
   const visibleSections = productTemplate?.sections?.filter(
     (section) => !section.isHidden
   );
-  console.log("visibleSections", visibleSections)
   const dir: "rtl" | "ltr" = t("direction");
   const theme = createTheme({
     direction: dir,
