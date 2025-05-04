@@ -79,6 +79,7 @@ const TotalPriceComp = ({
 
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
+  const CurrencyUnit = getCurrencyUnitText(quoteItems?.currency);
 
   return (
     <div style={classes.tableFooterContainer}>
@@ -94,17 +95,9 @@ const TotalPriceComp = ({
           }}
         >
           {isRTL ? (
-            <>
-              {quoteItems?.totalPrice +
-                " " +
-                getCurrencyUnitText(quoteItems?.currency)}
-            </>
+            <>{quoteItems?.totalPrice + " " + CurrencyUnit}</>
           ) : (
-            <>
-              {getCurrencyUnitText(quoteItems?.currency) +
-                " " +
-                quoteItems?.totalPrice}
-            </>
+            <>{CurrencyUnit + " " + quoteItems?.totalPrice}</>
           )}
         </div>
         <div style={{ ...classes.evenRowContainer, width: "13%" }}>
@@ -125,7 +118,7 @@ const TotalPriceComp = ({
             %
             {isQuoteConfirmation ? (
               quoteItems?.discountAmount != 0 &&
-              `(-${quoteItems?.discountAmount + " " + quoteItems?.currency})`
+              `(-${quoteItems?.discountAmount + " " + CurrencyUnit})`
             ) : (
               <div
                 style={{
@@ -146,7 +139,7 @@ const TotalPriceComp = ({
                   setIsUpdate={
                     !isQuoteConfirmation && setIsUpdateDiscountAmount
                   }
-                  sign={" " + quoteItems?.currency}
+                  sign={" " + CurrencyUnit}
                   speicalStyle={{
                     ...FONT_FAMILY.Inter(400, 14),
                   }}
@@ -182,17 +175,9 @@ const TotalPriceComp = ({
             </div>
             <div style={{ ...classes.oddRowContainer, width: "23%" }}>
               {isRTL ? (
-                <>
-                  {quoteItems?.totalVAT +
-                    " " +
-                    getCurrencyUnitText(quoteItems?.currency)}
-                </>
+                <>{quoteItems?.totalVAT + " " + CurrencyUnit}</>
               ) : (
-                <>
-                  {getCurrencyUnitText(quoteItems?.currency) +
-                    " " +
-                    quoteItems?.totalVAT}
-                </>
+                <>{CurrencyUnit + " " + quoteItems?.totalVAT}</>
               )}
             </div>
           </>
@@ -220,7 +205,7 @@ const TotalPriceComp = ({
             }}
           >
             <div style={classes.cellTextInputStyle}>
-              {!isRTL && getCurrencyUnitText(quoteItems?.currency)}
+              {!isRTL && CurrencyUnit}
               <InputUpdatedValues
                 value={quoteItems?.totalPayment}
                 onBlur={onBlurTotalPayment}
@@ -240,7 +225,7 @@ const TotalPriceComp = ({
                   gap: 0,
                 }}
               />
-              {isRTL && getCurrencyUnitText(quoteItems?.currency)}
+              {isRTL && CurrencyUnit}
             </div>
           </div>
         </div>
