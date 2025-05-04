@@ -10,6 +10,8 @@ import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useRecoilValue } from "recoil";
 import { quoteItemState } from "@/store";
 import { DocumentCalculationType } from "@/enums";
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
 const TotalPriceComp = ({
   documentType,
@@ -21,6 +23,8 @@ const TotalPriceComp = ({
   const router = useRouter();
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+
   const [isUpdateTotalPayment, setIsUpdateTotalPayment] = useState(null);
   const { getCurrencyUnitText } = useQuoteGetData();
   const [isConfirmation, setIsConfirmation] = useState(null);
@@ -116,6 +120,7 @@ const TotalPriceComp = ({
                 isQuoteConfirmation ? setIsConfirmation : setIsUpdateDiscount
               }
               onInputChange={(e) => onInputDiscount(e)}
+              width={"150px"}
             />
             %
             {isQuoteConfirmation ? (
@@ -149,75 +154,91 @@ const TotalPriceComp = ({
                     gap: 0,
                   }}
                   onInputChange={(e) => onInputDiscountAmount(e)}
-                  width={"150px"}
+                  width={"120px"}
                 />
                 )
               </div>
             )}
           </div>
         </div>
-        <div style={{ ...classes.evenRowContainer, width: "13%" }}>
-          {`${t("sales.quote.vat")} (${Number(quoteItems?.vat) * 100}%)`}
-        </div>
-        <div style={{ ...classes.oddRowContainer, width: "23%" }}>
-          {isRTL ? (
-            <>
-              {quoteItems?.totalVAT +
-                " " +
-                getCurrencyUnitText(quoteItems?.currency)}
-            </>
-          ) : (
-            <>
-              {getCurrencyUnitText(quoteItems?.currency) +
-                " " +
-                quoteItems?.totalVAT}
-            </>
-          )}
-        </div>
+
+        {CheckPreferenceValue(EPreferences.HIDE_VAT_FROM_DOCUMENTS) ? (
+          <>
+            <div style={{ ...classes.evenRowContainer, width: "13%" }}>
+              {t("sales.quote.totalAfterDiscount")}
+            </div>
+            <div style={{ ...classes.oddRowContainer, width: "23%" }}>
+              {quoteItems?.totalPriceAfterDiscount}
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={{ ...classes.evenRowContainer, width: "13%" }}>
+              {`${t("sales.quote.vat")} (${Number(quoteItems?.vat) * 100}%)`}
+            </div>
+            <div style={{ ...classes.oddRowContainer, width: "23%" }}>
+              {isRTL ? (
+                <>
+                  {quoteItems?.totalVAT +
+                    " " +
+                    getCurrencyUnitText(quoteItems?.currency)}
+                </>
+              ) : (
+                <>
+                  {getCurrencyUnitText(quoteItems?.currency) +
+                    " " +
+                    quoteItems?.totalVAT}
+                </>
+              )}
+            </div>
+          </>
+        )}
       </div>
-      <div style={classes.firstRowForFooterContainer}>
-        <div
-          style={{
-            ...classes.evenRowContainer,
-            width: "13%",
-            borderBottomLeftRadius: 6,
-            borderBottomRightRadius: 6,
-          }}
-        >
-          {t("sales.quote.totalPrice")}
-        </div>
-        <div
-          style={{
-            ...classes.oddRowContainer,
-            width: "87%",
-            padding: isRTL ? "12px" : "12px 24px",
-          }}
-        >
-          <div style={classes.cellTextInputStyle}>
-            {!isRTL && getCurrencyUnitText(quoteItems?.currency)}
-            <InputUpdatedValues
-              value={quoteItems?.totalPayment}
-              onBlur={onBlurTotalPayment}
-              isUpdate={canUpdateDiscount && isUpdateTotalPayment}
-              setIsUpdate={
-                isQuoteConfirmation
-                  ? setIsConfirmation
-                  : setIsUpdateTotalPayment
-              }
-              onInputChange={(e) => onInputTotalPayment(e)}
-              speicalStyle={{
-                color: "#F135A3",
-                ...FONT_FAMILY.Inter(700, 18),
-                padding: 0,
-              }}
-              inputMainContainerStyle={{
-                gap: 0,
-              }}
-            />
-            {isRTL && getCurrencyUnitText(quoteItems?.currency)}
+      {!CheckPreferenceValue(EPreferences.HIDE_VAT_FROM_DOCUMENTS) && (
+        <div style={classes.firstRowForFooterContainer}>
+          <div
+            style={{
+              ...classes.evenRowContainer,
+              width: "13%",
+              borderBottomLeftRadius: 6,
+              borderBottomRightRadius: 6,
+            }}
+          >
+            {t("sales.quote.totalPrice")}
+          </div>
+          <div
+            style={{
+              ...classes.oddRowContainer,
+              width: "87%",
+              padding: isRTL ? "12px" : "12px 24px",
+            }}
+          >
+            <div style={classes.cellTextInputStyle}>
+              {!isRTL && getCurrencyUnitText(quoteItems?.currency)}
+              <InputUpdatedValues
+                value={quoteItems?.totalPayment}
+                onBlur={onBlurTotalPayment}
+                isUpdate={canUpdateDiscount && isUpdateTotalPayment}
+                setIsUpdate={
+                  isQuoteConfirmation
+                    ? setIsConfirmation
+                    : setIsUpdateTotalPayment
+                }
+                onInputChange={(e) => onInputTotalPayment(e)}
+                speicalStyle={{
+                  color: "#F135A3",
+                  ...FONT_FAMILY.Inter(700, 18),
+                  padding: 0,
+                }}
+                inputMainContainerStyle={{
+                  gap: 0,
+                }}
+              />
+              {isRTL && getCurrencyUnitText(quoteItems?.currency)}
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
