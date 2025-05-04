@@ -18,29 +18,53 @@ import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useStyle } from "./style";
 import { useSetupGuideMenu } from "./use-quick-setup-menu";
 import { ModalControls } from "@/hooks/use-modal";
-import { StepStatus } from "@/store/print-house-setup-state-state";
+import { SetupStep, StepStatus } from "@/store/print-house-setup-state-state";
 import { CloseMenu, ExpandMenu, ShrinkMenu } from "./components/icons";
 
 interface SetupGuideMenuProps {
   handleOpenModal: () => void;
+  handleOpenResetPassword: () => void;
 }
 
-export const SetupGuideMenu = ({ handleOpenModal }: SetupGuideMenuProps) => {
+export const SetupGuideMenu = ({
+  handleOpenModal,
+  handleOpenResetPassword,
+}: SetupGuideMenuProps) => {
   const {
     t,
     isRtl,
     isOpen,
     isExpanded,
-    openVerifyBusiness,
     progressValue,
     toggleExpand,
-    handleToggleVerifyBusiness,
     productsSetupStatus,
     renderStepStatusIcon,
     setShowGuideMenu,
     showGuideMenuState,
+    resetPasswordStatus,
   } = useSetupGuideMenu();
   const { classes } = useStyle(isRtl);
+
+  const steps = [
+    {
+      key: SetupStep.RESET_PASSWORD,
+      label: t("quickSetup.resetButton"),
+      onClick: handleOpenResetPassword,
+      status: resetPasswordStatus,
+    },
+    {
+      key: SetupStep.PRODUCTS_SETUPS,
+      label: t("quickSetup.setUpProducts"),
+      onClick:
+        productsSetupStatus !== StepStatus.DONE ? handleOpenModal : undefined,
+      status: productsSetupStatus,
+    },
+    {
+      key: "connectStripe",
+      label: t("Connect to stripe"),
+      status: StepStatus.NOT_YET,
+    },
+  ];
 
   if (!isOpen) return null;
 
@@ -68,7 +92,6 @@ export const SetupGuideMenu = ({ handleOpenModal }: SetupGuideMenuProps) => {
         >
           {t("quickSetup.setupGuide")}
         </Typography>
-
         <Box gap={1}>
           <IconButton onClick={toggleExpand} sx={{ p: 0.5, color: "#999" }}>
             {isExpanded ? <ShrinkMenu /> : <ExpandMenu />}
@@ -90,75 +113,34 @@ export const SetupGuideMenu = ({ handleOpenModal }: SetupGuideMenuProps) => {
       </Box>
       {isExpanded ? (
         <>
-          {/* FULL menu */}
           <List dense disablePadding>
-            {/* Step 1 */}
-            <ListItemButton
-              onClick={
-                productsSetupStatus !== StepStatus.DONE
-                  ? handleOpenModal
-                  : undefined
-              }
-              sx={{
-                borderRadius: "8px",
-                cursor:
-                  productsSetupStatus === StepStatus.DONE
-                    ? "default"
-                    : "pointer",
-                pointerEvents:
-                  productsSetupStatus === StepStatus.DONE ? "none" : "auto",
-                opacity: 1,
-              }}
-            >
-              <ListItemText
-                primary={t("quickSetup.setUpProducts")}
-                primaryTypographyProps={classes.listItemText}
-              />
-              {renderStepStatusIcon(productsSetupStatus)}
-            </ListItemButton>
-
-            {/* Step 2 */}
-            <ListItem button sx={{ borderRadius: "8px" }}>
-              <ListItemText
-                primary="Test Connect"
-                primaryTypographyProps={classes.listItemText}
-              />
-              {renderStepStatusIcon(0)}
-            </ListItem>
-
-            {/* Step 3 - expandable */}
-            <ListItem
-              button
-              onClick={handleToggleVerifyBusiness}
-              sx={{ borderRadius: "8px" }}
-            >
-              <ListItemText
-                primary="Verify your business"
-                primaryTypographyProps={classes.listItemText}
-              />
-              {openVerifyBusiness ? <ExpandLess /> : <ExpandMore />}
-            </ListItem>
-
-            <Collapse in={openVerifyBusiness} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding sx={{ pl: 3 }}>
-                <ListItem disablePadding>
-                  <Checkbox size="small" sx={classes.checkBox} />
-                  <ListItemText
-                    primary="Verify your email"
-                    primaryTypographyProps={classes.listSubItemText}
-                  />
-                </ListItem>
-                <ListItem disablePadding>
-                  <Checkbox size="small" sx={classes.checkBox} />
-                  <ListItemText
-                    primary="Complete your profile"
-                    primaryTypographyProps={classes.listSubItemText}
-                  />
-                </ListItem>
-              </List>
-            </Collapse>
+            {steps.map(({ key, label, onClick, status }) => (
+              <ListItemButton
+                key={key}
+                onClick={onClick}
+                sx={{
+                  borderRadius: "8px",
+                  cursor:
+                    status === StepStatus.DONE &&
+                    key !== SetupStep.RESET_PASSWORD
+                      ? "default"
+                      : "pointer",
+                  pointerEvents:
+                    status === StepStatus.DONE &&
+                    key !== SetupStep.RESET_PASSWORD
+                      ? "none"
+                      : "auto",
+                  opacity: 1,
+                }}
+              >
+                <ListItemText
+                  primary={label}
+                  primaryTypographyProps={classes.listItemText}
+                />
+                {renderStepStatusIcon(status)}
+              </ListItemButton>
+            ))}
           </List>
-
           <Divider sx={{ my: 2 }} />
           <Button variant="contained" fullWidth sx={classes.btnStyle}>
             GO LIVE
@@ -170,7 +152,7 @@ export const SetupGuideMenu = ({ handleOpenModal }: SetupGuideMenuProps) => {
             variant="body2"
             sx={{ color: "#6B6B6B", fontSize: "13px", mt: 1 }}
           >
-            Next: Create a recurring product
+            Next: Reset Your Password
           </Typography>
         </>
       )}

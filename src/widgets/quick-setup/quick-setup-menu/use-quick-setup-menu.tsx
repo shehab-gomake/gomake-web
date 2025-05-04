@@ -57,17 +57,12 @@ const useSetupGuideMenu = () => {
   const progressValue =
     totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
 
-  const steps = [
-    {
-      title: "Set up products",
-      status: printHouseSetupSteps?.find(
-        (step) => step?.step === SetupStep.PRODUCTS_SETUPS
-      )?.status,
-    },
-  ];
-
   const productsSetupStatus = printHouseSetupSteps?.find(
     (step) => step?.step === SetupStep.PRODUCTS_SETUPS
+  )?.status;
+
+  const resetPasswordStatus = printHouseSetupSteps?.find(
+    (step) => step?.step === SetupStep.RESET_PASSWORD
   )?.status;
 
   const renderStepStatusIcon = (status?: StepStatus) => {
@@ -103,6 +98,7 @@ const useSetupGuideMenu = () => {
     renderStepStatusIcon,
     setShowGuideMenu,
     showGuideMenuState,
+    resetPasswordStatus,
   };
 };
 

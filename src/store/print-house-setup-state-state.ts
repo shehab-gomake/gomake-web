@@ -6,7 +6,8 @@ export interface SetupStepItem {
 }
 
 export enum SetupStep {
-  PRODUCTS_SETUPS = 1,
+  RESET_PASSWORD,
+  PRODUCTS_SETUPS,
 }
 
 export enum StepStatus {
