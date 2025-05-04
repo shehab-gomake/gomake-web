@@ -26,11 +26,10 @@ export const ResetPasswordModal = ({
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
-
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const [error, setError] = useState("");
+  const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +48,7 @@ export const ResetPasswordModal = ({
     modalControl.close();
     setNewPassword("");
     setConfirmPassword("");
+    setError("");
   };
 
   const resetPassword = async (newPassword) => {
