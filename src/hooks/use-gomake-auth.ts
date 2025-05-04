@@ -3,13 +3,14 @@ import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useCustomer } from "./use-customer";
 
-const useGomakeAuth = (permissionEnumValue,allowAnonymous?:boolean) => {
-
-  const { user, validate, isLanguageUpdated } = useCustomer(permissionEnumValue,allowAnonymous);
+const useGomakeAuth = (permissionEnumValue, allowAnonymous?: boolean) => {
+  const { user, validate, isLanguageUpdated, getPrintHouseSetupSteps } =
+    useCustomer(permissionEnumValue, allowAnonymous);
   const [, setCanAccessvalue] = useRecoilState(canAccessState);
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
+
   const check = useCallback(async () => {
-    if(allowAnonymous){
+    if (allowAnonymous) {
       setCanAccessvalue(true);
       setIsAuth(true);
       return;
@@ -17,6 +18,8 @@ const useGomakeAuth = (permissionEnumValue,allowAnonymous?:boolean) => {
     const canAccess = await validate();
     setCanAccessvalue(canAccess);
     setIsAuth(canAccess);
+
+    await getPrintHouseSetupSteps();
   }, [setIsAuth]);
 
   useEffect(() => {
