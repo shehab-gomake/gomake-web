@@ -325,7 +325,6 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const createNewTemplate = () => {
     const result = checkRequiredParameters(subProducts);
     if (result) {
-      // createNewTemplateEndPoint()
       setOpenGenerateModal(true)
     } else {
       const errorMessage = t("products.offsetPrice.admin.errorMakerTemplate1")

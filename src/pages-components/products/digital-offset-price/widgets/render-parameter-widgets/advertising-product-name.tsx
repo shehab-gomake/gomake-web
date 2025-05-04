@@ -266,6 +266,7 @@ const AdvertisingProductNameParameterWidget = ({
                       index,
                       parameter?.actionIndex,
                       parameter?.code,
+                      newDataGenerated
                     );
                     setSubProducts(prevSubProducts => {
                       return prevSubProducts.map(subProduct => {
@@ -372,7 +373,7 @@ const AdvertisingProductNameParameterWidget = ({
         insideStyle={{ width: 850, height: "fit-content", padding: 20 }}
         modalTitle={parameter?.name}
       >
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10, marginTop: 25 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10, marginTop: 25, }}>
           <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between", width: "100%", height: "100%", }}>
             <div>
               <SearchInput
@@ -411,7 +412,7 @@ const AdvertisingProductNameParameterWidget = ({
             </div>
 
           </div>
-          <div>
+          <div style={{ overflow: "scroll", maxHeight: 800 }}>
             {(parameter?.code === "DiecutType" || parameter?.code === "DieCutter") &&
               <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
                 {parameter?.valuesConfigs?.filter(value => {
@@ -439,7 +440,7 @@ const AdvertisingProductNameParameterWidget = ({
                       }}
                       onClick={() => {
                         setSelectedCardId(item.id);
-                        setSelectedCardData(item); // Track the selected card's data
+                        setSelectedCardData(item);
                       }}
                       onDoubleClick={() => {
                         setIsRenderData(true);
@@ -468,7 +469,6 @@ const AdvertisingProductNameParameterWidget = ({
                         />
                       )}
                       <div style={{ fontWeight: 500, textAlign: "center" }}>{name}</div>
-                      {/* <div style={{ fontWeight: 500, textAlign: "center" }}>{code}</div> */}
                     </div>
                   );
                 })}
@@ -496,7 +496,7 @@ const AdvertisingProductNameParameterWidget = ({
                 );
               }
               setIsOpenDieCutModal(false);
-            }}>{t("datepicker.choose")}</GomakePrimaryButton>
+            }}>{t("pricingWidget.selecte")}</GomakePrimaryButton>
           </div>}
         </div>
       </GoMakeModal>
