@@ -11,7 +11,7 @@ import {
   ThreeOptionsModal,
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
@@ -132,6 +132,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     newOrderIdToPrintJobsState
   );
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
+  const [openPrintNodeModal, setOpenPrintNodeModal] = useState(false);
+    const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
   useEffect(() => {
     if (
       router.isReady &&
@@ -144,6 +146,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         orderId: newOrderId,
         connectionId: connectionId,
       }).then();
+      setOpenPrintNodeModal(!!(isPrintHouseUsePrintNode && newOrderId));
+      setPrintNodeOrderId(newOrderId);
       setNewOrderId("");
     }
   }, [newOrderId]);
@@ -522,9 +526,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         title={t("boardMissions.printOrderJobsModalTitle")}
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
-        openModal={!!newOrderId && isPrintHouseUsePrintNode}
-        onClose={() => setNewOrderId("")}
-        onClickDelete={() => printOrderJobsUsingPrintNode(newOrderId)}
+        openModal={openPrintNodeModal}
+        onClose={() => setOpenPrintNodeModal(false)}
+        onClickDelete={() => printOrderJobsUsingPrintNode(printNodeOrderId)}
         cancelBtn={t("modal.cancel")}
       />
       <PrintPackingSlipModal

@@ -32,6 +32,8 @@ import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { getAllUsersCanApproveQuoteApi } from "@/services/api-service/users/users-api";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -40,6 +42,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const router = useRouter();
   const { push } = useRouter();
   const { CheckDocumentPermission, CheckPermission } = useUserPermission();
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const {
@@ -88,6 +92,14 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const open = Boolean(anchorEl);
 
   const onClickOpenOrderNowModal = () => {
+    if (
+      CheckPreferenceValue(EPreferences.ADDRESSES_REQUIRED_FOR_ORDER) &&
+      quoteItemValue?.documentBillingAddresses?.length === 0
+    ) {
+      alertFault("alerts.missingBillingAddress");
+      return;
+    }
+
     if (!isSelectedAtLeastOne) {
       alertFault("reports.pleaseSelectOneItem");
       return;
