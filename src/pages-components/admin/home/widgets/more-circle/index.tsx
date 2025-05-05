@@ -7,10 +7,10 @@ import { useStyle } from "./style";
 interface IProps {
   document?: any;
   documentType?: any;
-  onClickDuplicate?: ()=>void;
-  onClickLoggers?:()=>void;
+  onClickDuplicate?: () => void;
+  onClickLoggers?: () => void;
 }
-const MoreMenuWidget = ({ document, documentType ,onClickDuplicate , onClickLoggers}: IProps) => {
+const MoreMenuWidget = ({ document, documentType, onClickDuplicate, onClickLoggers }: IProps) => {
   const { classes } = useStyle();
   const { open, anchorEl, menuList, handleClose, handleClick } = useMoreCircle();
   return (
