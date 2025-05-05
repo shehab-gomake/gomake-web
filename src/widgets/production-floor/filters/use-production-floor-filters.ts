@@ -536,6 +536,7 @@ useEffect(() => {
     getActions();
   }
 }, [isFetching]);
+};
 
   return {
     t,
@@ -607,7 +608,6 @@ useEffect(() => {
     actions,
     handleAgentChange,
   };
-};
 };
 
 export { useProductionFloorFilters }
