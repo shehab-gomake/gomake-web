@@ -8,7 +8,7 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { DashboardFilters } from "./filters";
 import { ChartsWidget } from "@/widgets/monitoring-dashboard-widget/dashboard-charts/charts-widget";
 import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
-import NorthRoundedIcon from "@mui/icons-material/NorthRounded";
+
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
   const {
