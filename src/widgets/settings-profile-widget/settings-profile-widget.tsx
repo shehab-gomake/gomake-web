@@ -1,6 +1,5 @@
 import { useTranslation } from "react-i18next";
 import { useEmployee } from "@/widgets/settings-users/users/use-employee";
-import { UserProfile } from "@/widgets/settings-profile-widget/components/profiles/user-profile";
 import { CompanyProfileComponent } from "@/widgets/settings-profile-widget/components/profiles/company-profile";
 import { ITab } from "@/components/tabs/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
@@ -29,7 +28,6 @@ const SettingsProfileWidget = () => {
   }, []);
 
   const tabs: ITab[] = [
-    { title: t("profileSettings.profileTab"), component: <UserProfile /> },
     CheckPermission(Permissions.SHOW_PROFILE_COMPANY) && {
       title: t("profileSettings.companyProfile"),
       component: (

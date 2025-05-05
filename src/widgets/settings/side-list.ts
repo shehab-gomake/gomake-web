@@ -19,13 +19,23 @@ import { BudgetIcon } from "@/icons";
 import { PriceProfitWidge } from "../price-profit-widge";
 import { PreferencesIcon } from "@/components/icons/preferences-icons";
 import { SettingsPreferencesWidget } from "../settings-preferences/preferences";
+import { SettingsMyProfileWidget } from "../settings-profile-widget/settings-my-profile-widget";
+import { CompanyProfileIcon } from "@/components/icons/company-profile";
+
 export const list: IListItem[] = [
   {
-    component: SettingsProfileWidget,
+    component: SettingsMyProfileWidget,
     text: "settings.profile",
-    value: "1",
+    value: "4",
     icon: ProfileIcon,
     path: "profile",
+  },
+  {
+    component: SettingsProfileWidget,
+    text: "profileSettings.companyProfile",
+    value: "1",
+    icon: CompanyProfileIcon,
+    path: "company-profile",
     dataTour: "settingsProfile",
   },
   {
