@@ -36,10 +36,9 @@ import {
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
 import { useRouter } from "next/router";
-import { formatDate } from "tough-cookie";
+import { agentsState, currentStationOrderingState } from "@/store/agents-state";
 import moment from "moment";
-import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
-import { agentsState } from "@/store/agents-state";
+import {IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -65,6 +64,7 @@ const useProductionFloorData = () => {
     selectedGroupIdState
   );
 
+  const [stationOrdering, setStationOrdering] = useRecoilState(currentStationOrderingState);
   const view = useRecoilValue(productionFloorViewState);
 
   const getData = async (connectionId?: string) => {
@@ -73,9 +73,11 @@ const useProductionFloorData = () => {
       return;
     }
     const callBack = (res) => {
+
       if (res.success) {
         setData(res?.data?.boardMissionsCollections);
         setFilters(res?.data?.filter);
+        setStationOrdering(res?.data?.filter?.currentStationOrdering)
         setSelectedGroupId(res?.data?.filter?.groupId);
         setTags(res?.data?.automatedTagsFilter);
         setUserGroups(res?.data?.groups);
