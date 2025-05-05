@@ -184,15 +184,6 @@ const ProfitRightSideWidget = ({
                     })}
                 </AccordionTable>
             </div>
-            <div data-tour={'profitStep4'} style={{ width: '100%' }}>
-                <MinimumWidget
-                    minimumValue={minimumValue}
-                    isUpdateMinimumValue={isUpdateMinimumValue}
-                    onBlurMinimumValue={onBlurMinimumValue}
-                    setIsUpdateMinimumValue={setIsUpdateMinimumValue}
-                    onInputChangeMinimumValue={onInputChangeMinimumValue}
-                />
-            </div>
             <PricingTableMenu
                 handleClose={handleClosePricingTables}
                 open={openPricingTables}
