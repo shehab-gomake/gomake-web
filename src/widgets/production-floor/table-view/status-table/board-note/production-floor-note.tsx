@@ -5,6 +5,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Box, IconButton } from "@mui/material";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
 
 interface Props {
   value: string;
@@ -16,6 +17,7 @@ export const ProductionFloorNote = ({ value, onSave }: Props) => {
   const [note, setNote] = useState(value);
   const { classes } = useStyle({ note });
   const { t } = useTranslation();
+  const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
 
   useEffect(() => {
     setNote(value);
@@ -33,7 +35,7 @@ export const ProductionFloorNote = ({ value, onSave }: Props) => {
     <Box sx={{ position: "relative", width: "100%" }}>
       {!isEditing ? (
         <Box sx={classes.box} onClick={() => setIsEditing(true)}>
-          <span style={classes.span}>
+          <span style={{...classes.span,fontSize:GetProductionFontSizeFromPreferences()}}>
             {note || t("productionFloor.clickToAddNote")}
           </span>
           <EditIcon sx={classes.editIcon} />
@@ -44,7 +46,7 @@ export const ProductionFloorNote = ({ value, onSave }: Props) => {
             value={note}
             onChange={(e) => setNote(e.target.value)}
             autoFocus
-            style={classes.textArea}
+            style={{...classes.textArea,fontSize:GetProductionFontSizeFromPreferences()}}
           />
           <Box sx={classes.iconsBox}>
             <IconButton size="small" onClick={handleSave}>
