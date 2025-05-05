@@ -7,7 +7,6 @@ export const productionFloorFiltersState = atom<IProductionFloorFilter>({
   default: {
     automatedTags: [],
     stations: [],
-    stationOrdering: CurrentStationOrderingEnum.ASC
   } as IProductionFloorFilter,
 });
 

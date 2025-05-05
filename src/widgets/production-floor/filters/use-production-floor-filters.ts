@@ -154,7 +154,6 @@ const useProductionFloorFilters = ({
       }
     };
     await setBoardFiltersApi(callApi, callBack, {
-      stationOrdering:CurrentStationOrderingEnum.NONE,
       ...filters
     });
   };

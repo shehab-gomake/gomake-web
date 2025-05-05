@@ -24,7 +24,7 @@ import { TableRowComponent } from "@/widgets/production-floor/table-view/status-
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ThreeOptionsModal } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { CurrentStationOrderingEnum, ModalType } from "@/enums";
@@ -32,6 +32,7 @@ import { useMediaQuery } from "@mui/material";
 
 import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
 import { productionFloorFiltersState } from "../../state/production-floor-filters";
+import { currentStationOrderingState } from "@/store/agents-state";
 
 interface IProps {
   status: IProductionStatus;
@@ -62,7 +63,7 @@ const StatusTableComponent = ({
   const reSortingCurrentStation = async (direction: CurrentStationOrderingEnum) => {
     await setFilters({
       ...filtersState,
-      stationOrdering: direction
+      currentStationOrdering: direction
     });
   };
   const hasUrgentOrApproval = allBoardMissions?.some(board =>
@@ -86,6 +87,8 @@ const StatusTableComponent = ({
     tryMoveBoardMissionsToDone,
     updateJobDueDate
   } = useProductionFloorData();
+
+  const [currentStationOrdering, setCurrentStationOrdering] = useRecoilState(currentStationOrderingState);
 
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -190,7 +193,6 @@ const StatusTableComponent = ({
                 <TableHead style={{ backgroundColor: status.backgroundColor }}>
                   <SecondaryTableRow>
                     {tableHeaders(status.id)?.map((header, index) => {
-                      console.log("header", header)
                       return (
                         <SecondaryTableCell
                           style={{
@@ -213,7 +215,7 @@ const StatusTableComponent = ({
                           sx={
                             header === t("productionFloor.currentStation")
                               ? (
-                                sortConfig.direction === CurrentStationOrderingEnum.NONE
+                                currentStationOrdering === CurrentStationOrderingEnum.NONE
                                   ? {
                                     '& .sort-icon': { opacity: 0 },
                                     '&:hover .sort-icon': { opacity: 1 }
@@ -242,9 +244,10 @@ const StatusTableComponent = ({
                                 onClick={() => {
                                   setSortConfig({
                                     key: t("productionFloor.currentStation"),
-                                    direction: sortConfig.direction === CurrentStationOrderingEnum.NONE ? CurrentStationOrderingEnum.ASC : CurrentStationOrderingEnum.NONE
+                                    direction: currentStationOrdering === CurrentStationOrderingEnum.NONE ? CurrentStationOrderingEnum.ASC : CurrentStationOrderingEnum.NONE
                                   })
-                                  reSortingCurrentStation(sortConfig.direction === CurrentStationOrderingEnum.NONE ? CurrentStationOrderingEnum.ASC : CurrentStationOrderingEnum.NONE)
+                                  setCurrentStationOrdering(currentStationOrdering === CurrentStationOrderingEnum.NONE ? CurrentStationOrderingEnum.ASC : CurrentStationOrderingEnum.NONE)
+                                  reSortingCurrentStation(currentStationOrdering === CurrentStationOrderingEnum.NONE ? CurrentStationOrderingEnum.ASC : CurrentStationOrderingEnum.NONE)
                                 }}>
                                 {
                                   <ArrowUpward sx={{ fontSize: "18px" }} />
