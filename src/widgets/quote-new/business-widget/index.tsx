@@ -327,7 +327,7 @@ const BusinessNewWidget = ({
                             values?.documentDeliveryAddresses[0]?.floor
                           }`,
                         values?.documentDeliveryAddresses[0]?.zipCode &&
-                          `${t("customers.modal.postalCode")}: ${
+                          `${t("customers.modal.zipCode")}: ${
                             values?.documentDeliveryAddresses[0]?.zipCode
                           }`,
                         values?.documentDeliveryAddresses[0]?.postbox &&
@@ -408,7 +408,7 @@ const BusinessNewWidget = ({
                             values?.documentBillingAddresses[0]?.floor
                           }`,
                         values?.documentBillingAddresses[0]?.zipCode &&
-                          `${t("customers.modal.postalCode")}: ${
+                          `${t("customers.modal.zipCode")}: ${
                             values?.documentBillingAddresses[0]?.zipCode
                           }`,
                         values?.documentBillingAddresses[0]?.postbox &&

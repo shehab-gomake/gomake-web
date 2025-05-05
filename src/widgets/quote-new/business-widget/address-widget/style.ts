@@ -16,10 +16,10 @@ const useStyle = () => {
       stackStyle: {
         display: "flex",
         width: "330px",
-        gap: "13px",
+        gap: "15px",
         height: " 340px",
         overflow: "scroll",
-        marginBottom: "5px",
+        margin: "10px 0px",
       },
       saveBtn: {
         width: "331px",
