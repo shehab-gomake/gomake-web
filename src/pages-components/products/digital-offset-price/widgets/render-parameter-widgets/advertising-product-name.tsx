@@ -27,7 +27,7 @@ const AdvertisingProductNameParameterWidget = ({
   const [selectedCardId, setSelectedCardId] = useState(null);
   const [selectedCardData, setSelectedCardData] = useState<any>(null);
   const [searchValue, setSearchValue] = useState("");
-
+  console.log("selectedCardData", selectedCardData)
   const {
     defaultObject,
     openModal,
@@ -422,6 +422,7 @@ const AdvertisingProductNameParameterWidget = ({
                   return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
                     === null && value?.materialValueIds[0]?.valueId === null);
                 })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)?.filter((value) => value.updateName.toLowerCase().includes(searchValue.toLowerCase()))?.map((item: any) => {
+                  const categoryImage = item.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
                   const image = item.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
                   const name = item.updateName || item.additionalAttribute?.find(attr => attr.valueId === 'name')?.value;
                   const isSelected = selectedCardId === item.id;
@@ -466,7 +467,7 @@ const AdvertisingProductNameParameterWidget = ({
                     >
                       {(
                         <img
-                          src={image}
+                          src={parameter?.code === "DiecutType" ? categoryImage : image}
                           alt={name}
                           style={{ width: 200, height: 200, objectFit: "contain", marginBottom: 8 }}
                         />
