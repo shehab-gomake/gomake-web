@@ -1,19 +1,20 @@
-import { useTranslation } from "react-i18next";
-import { useEmployee } from "@/widgets/settings-users/users/use-employee";
+import { useRouter } from "next/router";
+import { useMemo, useEffect } from "react";
 import { ITab } from "@/components/tabs/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
-import { useEffect } from "react";
-import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { CompanyBasicInfoComponent } from "./components/tabs-components/company-basic-info-component";
-import { CompanyAddressComponent } from "./components/tabs-components/company-address-component";
 import { CompanyWorkingDaysComponent } from "./components/tabs-components/company-working-days-component";
+import { CompanyAddressComponent } from "./components/tabs-components/company-address-component";
 import { CompanyFinancialComponent } from "./components/tabs-components/company-financial-component";
 import { CompanyCommunicationComponent } from "./components/tabs-components/company-communication-component";
-import { CompanyProfileComponent } from "./components/profiles/company-profile";
+import { useCompanyProfile } from "@/hooks/use-company-profile";
+import { useTranslation } from "react-i18next";
 
 const SettingsCompanyProfileWidget = () => {
   const { t } = useTranslation();
-  const {} = useEmployee();
+  const router = useRouter();
+  const tabQuery = router.query.tab as string;
+
   const {
     getCurrenciesApi,
     getProfile,
@@ -29,37 +30,66 @@ const SettingsCompanyProfileWidget = () => {
     });
   }, []);
 
-  const tabs: ITab[] = [
-    {
-      title: t("profileSettings.company"),
-      component: <CompanyBasicInfoComponent />,
-    },
-    {
-      title: t("profileSettings.hours"),
-      component: <CompanyWorkingDaysComponent />,
-    },
-    {
-      title: t("customers.modal.addresses"),
-      component: <CompanyAddressComponent />,
-    },
-    {
-      title: t("profileSettings.financial"),
-      component: (
-        <CompanyFinancialComponent
-          taxLoginInfo={taxLoginInfo}
-          printHouseTaxLogout={printHouseTaxLogout}
-        />
-      ),
-    },
-    {
-      title: t("profileSettings.smsAndEmails"),
-      component: <CompanyCommunicationComponent />,
-    },
-  ];
+  const tabs: ITab[] = useMemo(
+    () => [
+      {
+        title: t("profileSettings.company"),
+        component: <CompanyBasicInfoComponent />,
+        id: "company",
+      },
+      {
+        title: t("profileSettings.hours"),
+        component: <CompanyWorkingDaysComponent />,
+        id: "hours",
+      },
+      {
+        title: t("customers.modal.addresses"),
+        component: <CompanyAddressComponent />,
+        id: "addresses",
+      },
+      {
+        title: t("profileSettings.financial"),
+        component: (
+          <CompanyFinancialComponent
+            taxLoginInfo={taxLoginInfo}
+            printHouseTaxLogout={printHouseTaxLogout}
+          />
+        ),
+        id: "financial",
+      },
+      {
+        title: t("profileSettings.smsAndEmails"),
+        component: <CompanyCommunicationComponent />,
+        id: "communication",
+      },
+    ],
+    [t, taxLoginInfo, printHouseTaxLogout]
+  );
+
+  const tabIndex = useMemo(() => {
+    const foundIndex = tabs.findIndex((tab) => tab.id === tabQuery);
+    return foundIndex >= 0 ? foundIndex : 0;
+  }, [tabQuery, tabs]);
+
+  const handleTabChange = (index: number) => {
+    const selectedTab = tabs[index];
+    router.replace(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, tab: selectedTab.id },
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
 
   return (
-    <div data-tour={"profileSettings"}>
-      <PrimaryTabsComponent tabs={tabs} />
+    <div data-tour="profileSettings">
+      <PrimaryTabsComponent
+        tabs={tabs}
+        selectedTabIndex={tabIndex}
+        onSelectTab={handleTabChange}
+      />
     </div>
   );
 };
