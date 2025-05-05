@@ -17,4 +17,5 @@ export interface ITabsProps {
 export interface ITab {
   title: string;
   component?: JSX.Element;
+  id?: string;
 }
