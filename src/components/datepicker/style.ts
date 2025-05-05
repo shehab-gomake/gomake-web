@@ -16,7 +16,7 @@ const useStyle = () => {
         display: "flex",
         alignItems: "center" as "center",
         justifyContent: "center" as "center",
-        gap: "4px",
+        gap: "8px",
         textTransform: "none" as "none",
       },
       datepickerContainer: {
