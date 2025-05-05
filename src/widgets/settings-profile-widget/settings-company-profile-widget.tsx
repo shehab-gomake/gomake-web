@@ -1,12 +1,16 @@
 import { useTranslation } from "react-i18next";
 import { useEmployee } from "@/widgets/settings-users/users/use-employee";
-import { CompanyProfileComponent } from "@/widgets/settings-profile-widget/components/profiles/company-profile";
 import { ITab } from "@/components/tabs/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
 import { useEffect } from "react";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
+import { CompanyBasicInfoComponent } from "./components/tabs-components/company-basic-info-component";
+import { CompanyAddressComponent } from "./components/tabs-components/company-address-component";
+import { CompanyWorkingDaysComponent } from "./components/tabs-components/company-working-days-component";
+import { CompanyFinancialComponent } from "./components/tabs-components/company-financial-component";
+import { CompanyCommunicationComponent } from "./components/tabs-components/company-communication-component";
+import { CompanyProfileComponent } from "./components/profiles/company-profile";
 
-//!here
 const SettingsCompanyProfileWidget = () => {
   const { t } = useTranslation();
   const {} = useEmployee();
@@ -28,28 +32,28 @@ const SettingsCompanyProfileWidget = () => {
   const tabs: ITab[] = [
     {
       title: t("profileSettings.company"),
+      component: <CompanyBasicInfoComponent />,
+    },
+    {
+      title: t("profileSettings.hours"),
+      component: <CompanyWorkingDaysComponent />,
+    },
+    {
+      title: t("customers.modal.addresses"),
+      component: <CompanyAddressComponent />,
+    },
+    {
+      title: t("profileSettings.financial"),
       component: (
-        <CompanyProfileComponent
+        <CompanyFinancialComponent
           taxLoginInfo={taxLoginInfo}
           printHouseTaxLogout={printHouseTaxLogout}
         />
       ),
     },
     {
-      title: t("profileSettings.hours"),
-      component: <div>soon...</div>,
-    },
-    {
-      title: t("customers.modal.addresses"),
-      component: <div>soon...</div>,
-    },
-    {
-      title: t("profileSettings.financial"),
-      component: <div>soon...</div>,
-    },
-    {
       title: t("profileSettings.smsAndEmails"),
-      component: <div>soon...</div>,
+      component: <CompanyCommunicationComponent />,
     },
   ];
 

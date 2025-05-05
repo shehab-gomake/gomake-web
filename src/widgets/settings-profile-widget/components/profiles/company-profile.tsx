@@ -167,6 +167,7 @@ const CompanyProfileComponent = ({
           />
         </div>
       </Stack>
+
       <Stack direction={"column"} gap={"32px"} paddingTop={"44px"}>
         {formSections.map((section) => {
           return (
@@ -255,6 +256,7 @@ const CompanyProfileComponent = ({
           );
         })}
       </Stack>
+
       <div
         style={{
           position: "sticky",
@@ -269,6 +271,7 @@ const CompanyProfileComponent = ({
           </SecondaryButton>
         </PermissionCheck>
       </div>
+
       <GoMakeDeleteModal
         openModal={alertLogOutModal.isOpen}
         modalType={ModalType.WARNING}

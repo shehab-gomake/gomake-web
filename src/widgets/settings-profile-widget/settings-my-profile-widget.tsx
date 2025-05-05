@@ -4,22 +4,13 @@ import { HeaderTitle } from "../header-title";
 import { useStyle } from "./style";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 import { useEffect } from "react";
-import { useEmployee } from "../settings-users/users/use-employee";
 
 const SettingsMyProfileWidget = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
-
-  const {} = useEmployee();
-  const {
-    getCurrenciesApi,
-    getProfile,
-    checkPrintHouseTaxLogin,
-    printHouseTaxLogout,
-  } = useCompanyProfile();
+  const { getCurrenciesApi, getProfile } = useCompanyProfile();
 
   useEffect(() => {
-    checkPrintHouseTaxLogin();
     getCurrenciesApi().then(() => {
       getProfile();
     });
