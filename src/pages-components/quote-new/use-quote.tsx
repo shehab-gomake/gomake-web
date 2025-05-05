@@ -1706,7 +1706,7 @@ const useQuoteNew = ({
   const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
 
   const handleSaveBtnClickForDocument = async () => {
-    // const validationError = validateDocument(quoteItemValue);
+    // const validationError = validateDocument(quoteItemValue,t);
     // if (validationError) {
     //   alertFault(validationError);
     //   return;
