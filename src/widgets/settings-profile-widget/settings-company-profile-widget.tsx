@@ -3,14 +3,12 @@ import { useEmployee } from "@/widgets/settings-users/users/use-employee";
 import { CompanyProfileComponent } from "@/widgets/settings-profile-widget/components/profiles/company-profile";
 import { ITab } from "@/components/tabs/interface";
 import { PrimaryTabsComponent } from "@/components/tabs/primary-tabs";
-import { Permissions } from "@/components/CheckPermission/enum";
-import { useUserPermission } from "@/hooks/use-permission";
 import { useEffect } from "react";
 import { useCompanyProfile } from "@/hooks/use-company-profile";
 
-const SettingsProfileWidget = () => {
+//!here
+const SettingsCompanyProfileWidget = () => {
   const { t } = useTranslation();
-  const { CheckPermission } = useUserPermission();
   const {} = useEmployee();
   const {
     getCurrenciesApi,
@@ -28,14 +26,30 @@ const SettingsProfileWidget = () => {
   }, []);
 
   const tabs: ITab[] = [
-    CheckPermission(Permissions.SHOW_PROFILE_COMPANY) && {
-      title: t("profileSettings.companyProfile"),
+    {
+      title: t("profileSettings.company"),
       component: (
         <CompanyProfileComponent
           taxLoginInfo={taxLoginInfo}
           printHouseTaxLogout={printHouseTaxLogout}
         />
       ),
+    },
+    {
+      title: t("profileSettings.hours"),
+      component: <div>soon...</div>,
+    },
+    {
+      title: t("customers.modal.addresses"),
+      component: <div>soon...</div>,
+    },
+    {
+      title: t("profileSettings.financial"),
+      component: <div>soon...</div>,
+    },
+    {
+      title: t("profileSettings.smsAndEmails"),
+      component: <div>soon...</div>,
     },
   ];
 
@@ -46,4 +60,4 @@ const SettingsProfileWidget = () => {
   );
 };
 
-export { SettingsProfileWidget };
+export { SettingsCompanyProfileWidget };

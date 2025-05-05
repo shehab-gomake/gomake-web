@@ -8,7 +8,7 @@ import { PeopleIcon } from "@/components/icons/people-icon";
 import { DollarCircleIcon } from "@/components/icons/dollar-circle-icon";
 import { SettingsUsersWidget } from "@/widgets/settings-users/settings-users-widget";
 import { EditProductWidget } from "../products-settings-widget/widget/edit-product";
-import { SettingsProfileWidget } from "@/widgets/settings-profile-widget/settings-profile-widget";
+import { SettingsCompanyProfileWidget } from "@/widgets/settings-profile-widget/settings-company-profile-widget";
 import { SettingsMailingWidget } from "../settings-mailing/settings-mailing-widget";
 import { SettingsDocumentingWidget } from "../settings-documenting/settings-documenting-widget";
 import { TranslationsWidget } from "../translation-widget/translation-widget";
@@ -31,12 +31,13 @@ export const list: IListItem[] = [
     path: "profile",
   },
   {
-    component: SettingsProfileWidget,
+    component: SettingsCompanyProfileWidget,
     text: "profileSettings.companyProfile",
     value: "1",
     icon: CompanyProfileIcon,
     path: "company-profile",
     dataTour: "settingsProfile",
+    permission: Permissions.SHOW_PROFILE_COMPANY,
   },
   {
     component: PriceProfitWidge,

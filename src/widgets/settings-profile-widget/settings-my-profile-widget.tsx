@@ -2,26 +2,28 @@ import { useTranslation } from "react-i18next";
 import { UserProfile } from "@/widgets/settings-profile-widget/components/profiles/user-profile";
 import { HeaderTitle } from "../header-title";
 import { useStyle } from "./style";
+import { useCompanyProfile } from "@/hooks/use-company-profile";
+import { useEffect } from "react";
+import { useEmployee } from "../settings-users/users/use-employee";
 
 const SettingsMyProfileWidget = () => {
   const { t } = useTranslation();
   const { classes } = useStyle();
 
-  // const {} = useEmployee();
-  // const {
-  //   getCurrenciesApi,
-  //   getProfile,
-  //   checkPrintHouseTaxLogin,
-  //   taxLoginInfo,
-  //   printHouseTaxLogout,
-  // } = useCompanyProfile();
+  const {} = useEmployee();
+  const {
+    getCurrenciesApi,
+    getProfile,
+    checkPrintHouseTaxLogin,
+    printHouseTaxLogout,
+  } = useCompanyProfile();
 
-  // useEffect(() => {
-  //   checkPrintHouseTaxLogin();
-  //   getCurrenciesApi().then(() => {
-  //     getProfile();
-  //   });
-  // }, []);
+  useEffect(() => {
+    checkPrintHouseTaxLogin();
+    getCurrenciesApi().then(() => {
+      getProfile();
+    });
+  }, []);
 
   return (
     <div style={classes.mainContainer}>

@@ -56,6 +56,7 @@ const CompanyProfileComponent = ({
     updatePinPadState,
     alertLogOutModal,
   } = useCompanyProfile();
+
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
 
   const changeState = (key, value) => {
@@ -79,9 +80,9 @@ const CompanyProfileComponent = ({
       title: "profileSettings.dayOfWork",
       component: (
         <WorkingDaysComponent
-          days={profile.businessDays.days}
-          startTime={profile.businessDays.startTime}
-          endTime={profile.businessDays.endTime}
+          days={profile?.businessDays?.days}
+          startTime={profile?.businessDays?.startTime}
+          endTime={profile?.businessDays?.endTime}
           onTimeChange={onWorkingTimeChange}
           onToggleDay={onToggleWorkingDays}
         />
