@@ -41,6 +41,7 @@ const useAddRuleModal = ({
   isQuoteWidge,
   filterData,
   openModal,
+  getProductHotFolderRules
 }) => {
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
@@ -345,7 +346,6 @@ const useAddRuleModal = ({
           : ""
         : "";
       const conditionLabel = condition?.condition?.id ?? "";
-      console.log(conditionLabel)
       const statement2Label = condition.statement2?.label ?? "";
       let text = "";
 
@@ -538,29 +538,6 @@ const useAddRuleModal = ({
           }
           return condition;
         }),
-        // exceptionConditionProperties: rules.map((item) => {
-        //   return {
-        //     statementId:
-        //       item.category.id === "Property output" ||
-        //       item.category.id === "Property input"
-        //         ? item.statement2.id
-        //         : typeof item?.statement === "object"
-        //         ? item?.statement?.id
-        //         : item.statement,
-        //     statementValue:
-        //       item.category.id === "Property output" ||
-        //       item.category.id === "Property input"
-        //         ? typeof item?.statement === "object"
-        //           ? item?.statement?.id
-        //           : item.statement
-        //         : item.statement2.id,
-        //     operator: item.condition.id,
-        //     conditionBetweenStatements: item.linkCondition
-        //       ? item.linkCondition.id
-        //       : "",
-        //     statementCategory: EStatementCategory[item.category.id],
-        //   };
-        // }),
         successEvent: propertieValue,
         expression: expression,
       }
@@ -686,6 +663,52 @@ const useAddRuleModal = ({
     ];
   }, []);
 
+
+  const createForHotFolderWidget = useCallback(async () => {
+    const requestBody: any = {
+      hotFolderPath: propertieValue,
+      expression: expression,
+      exceptionConditionProperties: rules.map((item) => {
+        return {
+          statementId: getStatementId(item),
+          statementValue: item?.category?.id === "MATERIALTYPE" ? item.statement2.enumCode : item.statement2.id,
+          operator: item.condition.id,
+          conditionBetweenStatements: item.linkCondition
+            ? item.linkCondition.id
+            : "",
+          statementCategory: EStatementCategory[item.category.id],
+        };
+      }),
+    };
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/printhouse-config/products/add-product-hot-folder-rule`,
+      {
+        productId: router?.query?.id,
+        ...requestBody
+      }
+    );
+
+    if (res?.success) {
+      alertSuccessAdded();
+      onCloseModal();
+      getProductHotFolderRules();
+    } else {
+      alertFaultAdded();
+    }
+  }, [
+    router,
+    typeExceptionSelected,
+    selectedPricingBy,
+    selectedPricingTableItems,
+    expression,
+    actionProfitByActionId,
+    additionalProfit,
+    EStatementCategory,
+    rules,
+    isDefaultException,
+  ]);
+
   return {
     rules,
     deleteRule,
@@ -732,7 +755,8 @@ const useAddRuleModal = ({
     toDate,
     isFetching,
     getConditionText,
-    setAdditionType
+    setAdditionType,
+    createForHotFolderWidget
   };
 };
 

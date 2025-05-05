@@ -40,8 +40,15 @@ const RESET_PRINT_HOUSE_PRICE_URL =
 const GET_PROFITS_PROFILE_PDF_URL =
   "/v1/printhouse-config/profit-profile-products/get-profits-profile-pdf";
 
-const GET_PRODUCT_SIZES_URL =
-  "/v1/printhouse-config/products/get-product-sizes";
+const GET_PRODUCT_SIZES_URL = "/v1/printhouse-config/products/get-product-sizes";
+
+const GET_PRODUCT_HOT_FOLDER_RULES_URL = "/v1/printhouse-config/products/get-product-hot-folder-rules";
+
+const REORDER_PRODUCT_HOT_FOLDER_PROFIT_RULES_URL = "/v1/printhouse-config/products/reorder-product-hot-folder-profit-rules"
+
+const DELETE_PRODUCT_HOT_FOLDER_RULE_URL = "/v1/printhouse-config/products/delete-product-hot-folder-rule";
+
+const COPY_PRODUCT_HOT_FOLDER_RULES_URL = "/v1/printhouse-config/products/copy-product-hot-folder-rules"
 
 const RE_CALCULATE_PRICE_URL =
   "/v1/printhouse-config/products/calculate-products";
@@ -361,6 +368,20 @@ const copyActionsToProductsApi: ICallAndSetData = async (
     data
   );
 };
+
+const copyProductHotFolderRulesApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    COPY_PRODUCT_HOT_FOLDER_RULES_URL,
+    setState,
+    data
+  );
+};
 const deleteActionFromProductApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -370,6 +391,20 @@ const deleteActionFromProductApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.DELETE,
     `${DELETE_ACTION_FROM_PRODUCT_URL}?productId=${data?.productId}&actionId=${data?.actionId}`,
+    setState,
+    data
+  );
+};
+
+const deleteProductHotFolderRuleApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.DELETE,
+    `${DELETE_PRODUCT_HOT_FOLDER_RULE_URL}?productId=${data?.productId}&productHotFolderRuleId=${data?.productHotFolderRuleId}`,
     setState,
     data
   );
@@ -411,6 +446,16 @@ const getProductSizesApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
+const getProductHotFolderRulesApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_PRODUCT_HOT_FOLDER_RULES_URL,
+    setState,
+    data
+  );
+};
+
 const updateProductParametersValuesExternalValuesApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -420,6 +465,20 @@ const updateProductParametersValuesExternalValuesApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.POST,
     UPDATE_PRODUCT_PARAMETERS_VALUES_EXTERNAL_VALUES_URL,
+    setState,
+    data
+  );
+};
+
+const reOrderProductHotFolderProfitRulesApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    REORDER_PRODUCT_HOT_FOLDER_PROFIT_RULES_URL,
     setState,
     data
   );
@@ -453,4 +512,8 @@ export {
   reCalculatePriceApi,
   updateProductParametersValuesExternalValuesApi,
   copyActionsToProductsApi,
+  getProductHotFolderRulesApi,
+  deleteProductHotFolderRuleApi,
+  reOrderProductHotFolderProfitRulesApi,
+  copyProductHotFolderRulesApi
 };

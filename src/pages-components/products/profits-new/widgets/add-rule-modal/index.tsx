@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { AddPlusIcon } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useAddRuleModal } from "./use-add-rule-modal";
-import { EPricingBy, ETypeException, EValueType } from "../../enums/profites-enum";
+import { ETypeException, EValueType } from "../../enums/profites-enum";
 import { useEffect, useState } from "react";
 import { selectedOutputsProps, selectedParametersProps } from "../../interface";
 import { EAdditionType, EParameterTypes } from "@/enums";
@@ -33,6 +33,8 @@ const AddRuleModal = ({
   isQuoteWidge = false,
   filterData,
   onCreate,
+  isHotFolderWidget,
+  getProductHotFolderRules
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -60,6 +62,7 @@ const AddRuleModal = ({
     handleChange,
     addRule,
     createForQuoteWidget,
+    createForHotFolderWidget,
     setRules,
     initialRule,
     openScheduleModal,
@@ -90,6 +93,7 @@ const AddRuleModal = ({
     isQuoteWidge,
     filterData,
     openModal,
+    getProductHotFolderRules
   });
 
   const [selectedCategories, setSelectedCategories] = useState<any>("");
@@ -413,6 +417,25 @@ const AddRuleModal = ({
       </div>
     );
   };
+  const _renderInptsForHotFolder = () => {
+    return (
+      <div style={clasess.inputsForQuotesContainer}>
+        <div>
+          <div style={clasess.selectTypeStyle}>
+            {t("products.profits.exceptions.folderName")}
+          </div>
+          <GomakeTextInput
+            placeholder={t("products.profits.exceptions.enterFolderName")}
+            onChange={(e) => {
+              setPropertieValue(e.target.value);
+            }}
+          />
+        </div>
+
+      </div>
+    );
+  };
+
 
   return (
     <>
@@ -1019,6 +1042,8 @@ const AddRuleModal = ({
           {isPropertiesWidge && _renderInptsForProperties()}
           {isQuoteWidge && _renderInptsForQuotes()}
 
+          {isHotFolderWidget && _renderInptsForHotFolder()}
+
           <div style={clasess.btnContainer}>
             {isQuoteWidge && (
               <GomakePrimaryButton
@@ -1042,7 +1067,11 @@ const AddRuleModal = ({
                     createProperties();
                   } else if (isQuoteWidge) {
                     createForQuoteWidget();
-                  } else {
+                  }
+                  else if (isHotFolderWidget) {
+                    createForHotFolderWidget();
+                  }
+                  else {
                     create();
                   }
                 }
