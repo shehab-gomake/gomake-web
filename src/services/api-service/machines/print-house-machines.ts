@@ -11,6 +11,10 @@ const GET_ALL_PRINT_HOUSE_MACHINES_URL = '/v1/machines/get-all'
 const GET_CONNECTED_MACHINES_URL = '/v1/machines/get-connected-machines/'
 const UPDATE_CONNECTED_MACHINES_URL = '/v1/machines/update-connected-machines/'
 const GET_CATEGORY_MACHINES_LIST_URL = '/v1/machines-list/category/'
+
+const GET_PRINT_HOUSE_MACHINE_CATEGORIES_URL = '/v1/machines/get-print-house-machine-categories'
+const TOGGLE_PRINT_HOUSE_MACHINE_CATEGORY_URL = '/v1/machines/toggle-print-house-machine-category'
+
 const printHouseAddNewMachine: ICallAndSetData = async (callApi, setState, machine) => {
     return await getSetApiData(callApi, EHttpMethod.POST, PRINT_HOUSE_ADD_MACHINE_URL, setState, machine);
 };
@@ -38,6 +42,13 @@ const updateMachineConnectedMachines: ICallAndSetData = async (callApi, setState
 const getCategoryMachinesList: ICallAndSetData = async (callApi, setState, data) => {
     return await getSetApiData(callApi, EHttpMethod.GET, GET_CATEGORY_MACHINES_LIST_URL + data, setState);
 };
+const togglePrintHouseMachineCategory: ICallAndSetData = async (callApi, setState, data) => {
+    return await getSetApiData(callApi, EHttpMethod.PUT, TOGGLE_PRINT_HOUSE_MACHINE_CATEGORY_URL, setState, data);
+};
+const getPrintHouseMachineCategories: ICallAndSetData = async (callApi, setState) => {
+    return await getSetApiData(callApi, EHttpMethod.GET, GET_PRINT_HOUSE_MACHINE_CATEGORIES_URL, setState);
+};
+
 
 export {
     printHouseAddNewMachine,
@@ -48,5 +59,7 @@ export {
     getAllPrintHouseMachines,
     getMachineConnectedMachines,
     updateMachineConnectedMachines,
-    getCategoryMachinesList
+    getCategoryMachinesList,
+    togglePrintHouseMachineCategory,
+    getPrintHouseMachineCategories
 };
