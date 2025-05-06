@@ -1073,6 +1073,48 @@ const useStyle = ({ isMobileScreen }: IProps) => {
         height: 65,
         backgroundColor: "#FFF",
       },
+      advertisingProductNameAutoComplete: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-end",
+        width: "100%"
+      },
+      modalStyle: { 
+        width: 400, 
+        height: "fit-content", 
+        padding: 20 
+      },
+     
+      modalContent: { display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10 },
+      modalContentImage:{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", width: "100%", height: "100%", gap: 50 },
+      modalContentImageItem: { width: "60%"},
+      modalContentDataItem:{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10 },
+      modalContentButton: { display: "flex", alignItems: "center", justifyContent: "flex-end", width: "100%" },
+      modalContentButtonItem: { width: "fit-content", height: 40, minWidth: 150 },
+      modalContentImageItem2: { width: 280, height: 280, objectFit: "contain" },
+      modalContentDataItem2: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        justifyContent: "flex-start",
+        marginTop: 22,
+        gap: 20
+      },
+      modalContentButton2: { display: "flex", alignItems: "center", justifyContent: "space-between" },
+      modalContentButtonItem2:{ display: "flex", alignItems: "center", justifyContent: "flex-end" },
+      modalContentIcon: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "rgba(0, 0, 0, 0.3)",
+        borderRadius: 14,
+      }
     };
   }, [i18next.language, t, direction, screenWidth, isMobileScreen]);
   return {

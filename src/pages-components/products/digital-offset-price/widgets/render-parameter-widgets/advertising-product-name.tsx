@@ -5,9 +5,7 @@ import { SecondaryButton } from "@/components/button/secondary-button";
 import { useAdvertisingProductName } from "./use-advertising-product-name";
 import { TestIcon } from "@/icons/test-icon";
 import OpenWithIcon from '@mui/icons-material/OpenWith';
-import { useState } from "react";
 import { SearchInput } from "@/components/containers/search-input";
-import { backgroundClip } from "html2canvas/dist/types/css/property-descriptors/background-clip";
 const AdvertisingProductNameParameterWidget = ({
   parameter,
   clasess,
@@ -21,13 +19,7 @@ const AdvertisingProductNameParameterWidget = ({
   getAllMaterial,
   newDieCutSelect,
 }: any) => {
-  const selectedDieCutType = temp.find((item: any) => item.parameterCode === "DiecutType")
-  const selectedDieCutTypeValue = selectedDieCutType?.valuesConfigs?.find((item: any) => item.id === selectedDieCutType?.valueIds[0])
-  const [isOpenDieCutModal, setIsOpenDieCutModal] = useState(false)
-  const [selectedCardId, setSelectedCardId] = useState(null);
-  const [selectedCardData, setSelectedCardData] = useState<any>(null);
-  const [searchValue, setSearchValue] = useState("");
-  console.log("selectedCardData", selectedCardData)
+
   const {
     defaultObject,
     openModal,
@@ -50,11 +42,20 @@ const AdvertisingProductNameParameterWidget = ({
     isViewInfoAfterGenerate,
     setIsViewInfoAfterGenerate,
     newDataGenerated,
-    setSubProducts
-  } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect })
+    setSubProducts,
+    isOpenDieCutModal,
+    setIsOpenDieCutModal,
+    selectedCardId,
+    selectedCardData,
+    searchValue,
+    setSearchValue,
+    selectedDieCutTypeValue,
+    setSelectedCardId,
+    setSelectedCardData
+  } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp })
   return (
     <div style={clasess.advertisingProductNameMain}>
-      <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", width: "100%" }}>
+      <div style={clasess.advertisingProductNameAutoComplete}>
         <GoMakeAutoComplate
           options={
             parameter?.code === "DiecutType"
@@ -107,6 +108,9 @@ const AdvertisingProductNameParameterWidget = ({
           renderOption={(props, option) => {
             const image = option.additionalAttribute?.find(
               (attr) => attr.valueId === 'image'
+            )?.value;
+            const categoryImage = option.additionalAttribute?.find(
+              (attr) => attr.valueId === 'categoryImage'
             )?.value;
 
             // Special handling for DiecutType's first item
@@ -165,9 +169,9 @@ const AdvertisingProductNameParameterWidget = ({
             // Regular rendering for other items
             return (
               <li {...props}>
-                {image ? (
+                {(image || categoryImage) ? (
                   <img
-                    src={image}
+                    src={parameter?.code === "DiecutType" ? categoryImage : image}
                     alt={option.updateName}
                     style={{ width: '40px', height: '40px', margin: '10px', objectFit: 'contain' }}
                   />
@@ -196,7 +200,7 @@ const AdvertisingProductNameParameterWidget = ({
         open={openModal}
         onClose={() => setOpenModal(false)}
         modalTitle={t("materials.buttons.addNew")}
-        insideStyle={{ width: 400, height: "fit-content", padding: 20 }}
+        insideStyle={clasess.modalStyle}
       >
         <Stack gap={5} justifyContent={'flex-start'} height={'100%'} width={'90%'} margin={'auto'} marginTop={"20px"}>
           <GomakeTextInput
@@ -229,13 +233,13 @@ const AdvertisingProductNameParameterWidget = ({
       >
         <>
           {isViewInfoAfterGenerate &&
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10 }}>
-              <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-start", width: "100%", height: "100%", gap: 50 }}>
+            <div style={clasess.modalContent}>
+              <div style={clasess.modalContentImage}>
 
-                <div style={{ width: "60%", }}>
+                <div style={clasess.modalContentImageItem}>
                   <img src={newDataGenerated?.rowData?.image?.value} alt="newDataGenerated" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10 }}>
+                <div style={clasess.modalContentDataItem}>
                   <h4>
                     Name:{newDataGenerated?.rowData?.name?.value}
                   </h4>
@@ -250,9 +254,9 @@ const AdvertisingProductNameParameterWidget = ({
                   </h4>
                 </div>
               </div>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", width: "100%" }}>
+              <div style={clasess.modalContentButton}>
                 <GomakePrimaryButton
-                  style={{ width: "fit-content", height: 40, minWidth: 150 }}
+                  style={clasess.modalContentButtonItem}
                   onClick={() => {
                     onChangeSubProductsForPrice(
                       parameter?.id,
@@ -311,54 +315,28 @@ const AdvertisingProductNameParameterWidget = ({
           }
         </>
         {!isView && !isViewInfoAfterGenerate && <Stack gap={"5px"} justifyContent={'flex-start'} margin={'auto'}>
-          <div style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "flex-start",
-            width: "100%",
-            height: "100%",
-            gap: 50
-          }}>
+          <div style={clasess.modalContentImage}>
             {selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value && <img
               src={selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value}
               alt="parameter"
-              style={{ width: 280, height: 280, objectFit: "contain" }}
+              style={clasess.modalContentImageItem2}
             />
             }
-            <div style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              justifyContent: "flex-start",
-              marginTop: 22,
-              gap: 20
-            }}>
+            <div style={clasess.modalContentDataItem2}>
               {viewRequiredParameters(subProducts).parameterInfo.map((item: any) => {
                 return <div>{item}</div>
               })}
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={clasess.modalContentButton2}>
             <h4>{t("products.offsetPrice.admin.numberCanBeGenerated")}: 12</h4>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
+            <div style={clasess.modalContentButtonItem2}>
               <GomakePrimaryButton sx={{ width: "fit-content", height: 40 }} onClick={createNewTemplateEndPoint}>{t("products.offsetPrice.admin.generate")}</GomakePrimaryButton>
             </div>
           </div>
 
         </Stack>}
-        {isView && !isViewInfoAfterGenerate && <div style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.3)",
-          borderRadius: 14,
-        }}>
+        {isView && !isViewInfoAfterGenerate && <div style={clasess.modalContentIcon}>
           <TestIcon />
         </div>}
       </GoMakeModal>
@@ -386,9 +364,9 @@ const AdvertisingProductNameParameterWidget = ({
             <div>
               {
                 parameter?.code === "DieCutter" &&
-                <>
+                <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-end", gap: 15 }}>
                   <GomakePrimaryButton
-                    sx={{ width: "fit-content", height: 40, marginRight: "10px" }}
+                    sx={{ width: "fit-content", height: 40, }}
                     onClick={() => {
                       window.open(`/materials/${parameter?.materialPath[0]}?materialCategory=${category}&connectionID=${connectionId}`, "_blank");
                     }}
@@ -402,7 +380,7 @@ const AdvertisingProductNameParameterWidget = ({
                     }}>
                     {t("products.offsetPrice.admin.generateNewDieCut")}
                   </GomakePrimaryButton>
-                </>
+                </div>
 
               }
               {

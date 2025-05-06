@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
 
@@ -6,9 +6,8 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { subProductsParametersState } from "@/store/general-parameters-state";
 import { addPrintHouseMaterialCategoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { createDieCutFromTemplateMakerApi, getMaterialCategoryByMaterialKeyApi } from "@/services/api-service/materials/materials-endpoints";
-import { getPrintHouseMaterialsByMaterialKey } from "@/services/hooks/get-print-house-materials-by-key";
 
-const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, newDieCutSelect }) => {
+const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp }) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
@@ -17,6 +16,17 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const [openGenerateModal, setOpenGenerateModal] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [searchResult, setSearchResult] = useState(parameter?.valuesConfigs);
+
+  const selectedDieCutType = temp.find((item: any) => item.parameterCode === "DiecutType")
+  const selectedDieCutter = temp.find((item: any) => item.parameterCode === "DieCutter")
+  const selectedDieCutTypeValue = selectedDieCutType?.valuesConfigs?.find((item: any) => item.id === selectedDieCutType?.valueIds[0])
+  const selectedDieCutterValue = selectedDieCutter?.valuesConfigs?.find((item: any) => item.id === selectedDieCutter?.valueIds[0])
+  const [isOpenDieCutModal, setIsOpenDieCutModal] = useState(false)
+  const [selectedCardId, setSelectedCardId] = useState(null);
+  const [selectedCardData, setSelectedCardData] = useState<any>(null);
+  const [searchValue, setSearchValue] = useState("");
+
+
 
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
@@ -370,6 +380,21 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       isComplete: foundParameters.length === requiredParameterCodes.length
     };
   };
+
+  useEffect(() => {
+    if (parameter?.code === "DiecutType") {
+      if (selectedDieCutTypeValue) {
+        setSelectedCardId(selectedDieCutTypeValue.id)
+        setSelectedCardData(selectedDieCutTypeValue)
+      }
+    }
+    else if (parameter?.code === "DieCutter") {
+      if (selectedDieCutterValue) {
+        setSelectedCardId(selectedDieCutterValue.id)
+        setSelectedCardData(selectedDieCutterValue)
+      }
+    }
+  }, [selectedDieCutTypeValue, selectedDieCutterValue])
   return {
     defaultObject,
     openModal,
@@ -394,7 +419,16 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     isViewInfoAfterGenerate,
     setIsViewInfoAfterGenerate,
     newDataGenerated,
-    setSubProducts
+    setSubProducts,
+    isOpenDieCutModal,
+    setIsOpenDieCutModal,
+    selectedCardId,
+    selectedCardData,
+    searchValue,
+    setSearchValue,
+    selectedDieCutTypeValue,
+    setSelectedCardId,
+    setSelectedCardData
   };
 };
 
