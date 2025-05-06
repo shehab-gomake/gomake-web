@@ -26,6 +26,7 @@ const QuoteForPriceTable = ({
   headerHeight,
   changedocumentItems,
   getCalculateQuoteItem,
+  getCalculateQuoteConfirmationItem,
   onClickDuplicateWithDifferentQTY,
   onClickQuickDuplicate,
   onClickDeleteQouteItem,
@@ -170,6 +171,9 @@ const QuoteForPriceTable = ({
                     headerHeight={headerHeight}
                     changedocumentItems={changedocumentItems}
                     getCalculateQuoteItem={getCalculateQuoteItem}
+                    getCalculateQuoteConfirmationItem={
+                      getCalculateQuoteConfirmationItem
+                    }
                     onClickDuplicateWithDifferentQTY={
                       onClickDuplicateWithDifferentQTY
                     }
