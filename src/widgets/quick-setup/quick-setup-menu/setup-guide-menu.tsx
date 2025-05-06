@@ -4,11 +4,9 @@ import {
   Typography,
   LinearProgress,
   List,
-  ListItem,
   ListItemText,
   Collapse,
   Button,
-  Checkbox,
   Divider,
   ListItemButton,
   IconButton,
@@ -20,7 +18,6 @@ import { useSetupGuideMenu } from "./use-quick-setup-menu";
 import { SetupStep, StepStatus } from "@/store/print-house-setup-state-state";
 import { CloseMenu, ExpandMenu, ShrinkMenu } from "../compoennets/icons";
 import { useEffect } from "react";
-import { getItem } from "@/services/storage-data";
 
 interface SetupGuideMenuProps {
   handleOpenModal: () => void;
@@ -87,12 +84,17 @@ export const SetupGuideMenu = ({
                 primaryTypographyProps={{
                   fontWeight: 600,
                   fontSize: "14px",
+                  textAlign: isRtl ? ("right" as "right") : ("left" as "left"),
                 }}
               />
               {isGroupExpanded ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={isGroupExpanded} timeout="auto" unmountOnExit>
-              <List disablePadding component="div" sx={{ pl: 2 }}>
+              <List
+                disablePadding
+                component="div"
+                sx={{ [isRtl ? "pr" : "pl"]: 2 }}
+              >
                 {renderSteps(step.children)}
               </List>
             </Collapse>
@@ -181,7 +183,7 @@ export const SetupGuideMenu = ({
           </List>
           <Divider sx={{ my: 2 }} />
           <Button variant="contained" fullWidth sx={classes.btnStyle}>
-            I'm Ready
+            {t("quickSetup.ready")}
           </Button>
         </>
       ) : (
