@@ -706,10 +706,10 @@ const useAddRuleModal = ({
       }),
     };
     const callBack = (res) => {
-      console.log("res", res)
       if (res?.success) {
         alertSuccessAdded();
         onCloseModal();
+        setRules([initialRule]);
         getProductHotFolderRules();
       }
       else {
@@ -724,7 +724,6 @@ const useAddRuleModal = ({
             alertFault(t(`${res?.msg}`));
           }
         }
-        // alertFault(t(`${res?.msg} ---> ${res?.errors?.message}`));
       }
 
     }
