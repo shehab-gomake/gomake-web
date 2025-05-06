@@ -4,11 +4,9 @@ import {
   Typography,
   LinearProgress,
   List,
-  ListItem,
   ListItemText,
   Collapse,
   Button,
-  Checkbox,
   Divider,
   ListItemButton,
   IconButton,
@@ -20,7 +18,6 @@ import { useSetupGuideMenu } from "./use-quick-setup-menu";
 import { SetupStep, StepStatus } from "@/store/print-house-setup-state-state";
 import { CloseMenu, ExpandMenu, ShrinkMenu } from "../compoennets/icons";
 import { useEffect } from "react";
-import { getItem } from "@/services/storage-data";
 
 interface SetupGuideMenuProps {
   handleOpenModal: () => void;
