@@ -18,6 +18,14 @@ import { useState } from "react";
 import { convertTimeToDate } from "@/widgets/employees-working-hours-widgets/use-working-hours";
 import { useModal } from "./use-modal";
 
+const countryList = require("country-list");
+const allCountries = countryList.getNames();
+const allCountryCodes = countryList.getCodes();
+export const countriesWithCodes = allCountries.map((country, index) => ({
+  text: country,
+  value: allCountryCodes[index],
+}));
+
 const useCompanyProfile = () => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
@@ -29,14 +37,6 @@ const useCompanyProfile = () => {
   );
   const [currencies, setCurrencies] =
     useRecoilState<{ label: string; value: string }[]>(currenciesState);
-
-  const countryList = require("country-list");
-  const allCountries = countryList.getNames();
-  const allCountryCodes = countryList.getCodes();
-  const countriesWithCodes = allCountries.map((country, index) => ({
-    text: country,
-    value: allCountryCodes[index],
-  }));
 
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
   const getProfile = async () => {

@@ -40,6 +40,7 @@ export interface IBoardMissions {
   description?: string;
   sectionName?: string;
   noteColumn?: string;
+  isNeedExample?: boolean;
 }
 
 export interface IBoardMissionsDetails {

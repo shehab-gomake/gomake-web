@@ -1,20 +1,17 @@
 import React from "react";
-
 import { Divider, IconButton } from "@mui/material";
 import SyncIcon from "@mui/icons-material/Sync";
 import { Check } from "@mui/icons-material";
-
 import { GoMakeMenu, SecondSwitch } from "@/components";
 import { DotIcon } from "@/icons";
-
 import { AutoCompleteUpdatedValue } from "../auto-complete-updated";
 import { AutomaticDiscountMenu } from "../automatic-discount-menu";
 import { useSttingsQuoteMenu } from "./use-setting-quote-menu";
 import { InputUpdatedValues } from "../input-updated-values";
 import { TableSortingMenu } from "../table-sorting-menu";
-
 import { useStyle } from "./style";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { EPreferences } from "@/enums/prefernces";
 
 const SettingQuoteMenu = ({
   handleClose,
@@ -58,6 +55,7 @@ const SettingQuoteMenu = ({
     _renderSortingBy,
     setExchangeRate,
     t,
+    CheckPreferenceValue,
   } = useSttingsQuoteMenu({ updateDocumentPreference });
 
   return (
@@ -165,7 +163,8 @@ const SettingQuoteMenu = ({
               onChange={(e, value) => updateCurrency(value?.value)}
             />
           </div>
-          {documentType !== DOCUMENT_TYPE.invoice &&
+          {!CheckPreferenceValue(EPreferences.HIDE_VAT_FROM_DOCUMENTS) &&
+            documentType !== DOCUMENT_TYPE.invoice &&
             documentType !== DOCUMENT_TYPE.deliveryNote &&
             documentType !== DOCUMENT_TYPE.invoiceRefund &&
             documentType !== DOCUMENT_TYPE.deliveryNoteRefund && (

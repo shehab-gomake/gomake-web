@@ -54,6 +54,7 @@ import {
   updateExchangeRateApi,
   updateOccasionalClientNameApi,
   updatePurchaseNumberApi,
+  updateQuoteItemQuantityApi,
 } from "@/services/api-service/generic-doc/documents-api";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useRouter } from "next/router";
@@ -79,6 +80,7 @@ import { validateDocument } from "@/utils/validators";
 import { EnumVATStatus } from "@/enums/accounting-enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
+import { printHouseProfile } from "@/store/print-house-profile";
 
 export enum MessageType {
   Email = 0,
@@ -119,7 +121,10 @@ const useQuoteNew = ({
   const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
-  const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+  const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(
+    quoteConfirmationState
+  );
+
   const [openReceiptCreationModal, setOpenReceiptCreationModal] =
     useRecoilState(openReceiptCreationModalState);
 
@@ -211,7 +216,7 @@ const useQuoteNew = ({
   const [amountValue, setAmountValue] = useState();
   const [openDeleteItemModal, setOpenDeleteItemModal] = useState(false);
   const [documentItems, setPriceListItems] = useState<any>([]);
-  const [quoteItems, setquoteItems] = useState<any>([]);
+  const [quoteItems, setQuoteItems] = useState<any>([]);
   const [anchorElCancelBtn, setAnchorElCancelBtn] =
     useState<null | HTMLElement>(null);
   const [anchorElSendBtn, setAnchorElSendBtn] = useState<null | HTMLElement>(
@@ -1122,6 +1127,27 @@ const useQuoteNew = ({
     }
   };
 
+  const getCalculateQuoteConfirmationItem = async (
+    printHouseId: string,
+    ItemId: string,
+    quantity?: number
+  ) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        setQuoteConfirm(res?.data);
+      } else {
+        alertFaultUpdate();
+        getQuote();
+      }
+    };
+    await updateQuoteItemQuantityApi(callApi, callBack, {
+      printHouseId,
+      ItemId,
+      quantity,
+    });
+  };
+
   const onCloseDuplicateWithDifferentQTY = () => {
     setOpenDuplicateWithDifferentQTYModal(false);
   };
@@ -1390,7 +1416,7 @@ const useQuoteNew = ({
 
   const changeQuoteItems = useCallback(
     (filedName: string, value: any) => {
-      setquoteItems((prev) => {
+      setQuoteItems((prev) => {
         return {
           ...prev,
           [filedName]: value,
@@ -1706,7 +1732,7 @@ const useQuoteNew = ({
   const setLoadingWithShadow = useSetRecoilState(loadingWithShadowState);
 
   const handleSaveBtnClickForDocument = async () => {
-    // const validationError = validateDocument(quoteItemValue);
+    // const validationError = validateDocument(quoteItemValue,t);
     // if (validationError) {
     //   alertFault(validationError);
     //   return;
@@ -1891,12 +1917,12 @@ const useQuoteNew = ({
   useEffect(() => {
     const source = isQuoteConfirmation ? quoteConfirm : quoteItemValue;
 
-    setPriceListItems(quoteItemValue?.documentItems);
-    setquoteItems(quoteItemValue);
+    setPriceListItems(source?.documentItems || []);
+    setQuoteItems(source);
     setItems(source?.documentContacts);
     setCreationDate(source?.creationDate);
     setTaxDate(source?.taxDate);
-    setClientName(quoteItemValue?.occasionalClientName);
+    setClientName(source?.occasionalClientName);
 
     if (!isQuote) {
       setSelectDate(source?.dueDate);
@@ -2343,6 +2369,7 @@ const useQuoteNew = ({
     onBlurContactName,
     onBlurContactEmail,
     getCalculateQuoteItem,
+    getCalculateQuoteConfirmationItem,
     onClickDuplicateWithDifferentQTY,
     duplicateQuoteItemWithAnotherQuantity,
     onClickDeleteQouteItem,

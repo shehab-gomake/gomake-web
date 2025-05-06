@@ -28,6 +28,7 @@ const TableCellData = ({
   onChangeRowCheckBox,
   unit,
 }: IRowData) => {
+  console.log("value", { value, type })
   const { updateCellData, machinesOptions, clientsOptions, } = useTableCellData(isAdmin);
   const machinesCategories = useRecoilValue(machineCategoriesState);
   const parameterCategories = useRecoilValue<any>(materialsParametersState);
@@ -53,10 +54,11 @@ const TableCellData = ({
   };
 
   switch (type) {
+
     case EDataTypeEnum.BOOLEAN:
       return (
         <>
-          <SecondSwitch checked={value} onChange={toggleIsActive} />
+          <SecondSwitch checked={(value === "false" || value === "") ? false : true} onChange={toggleIsActive} />
           <GoMakeDeleteModal
             modalType={ModalType.EDIT}
             openModal={openDeleteTableRowModal}

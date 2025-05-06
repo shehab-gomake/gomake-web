@@ -194,6 +194,7 @@ const QuoteNewPageWidget = ({
     onBlurContactName,
     onBlurContactEmail,
     getCalculateQuoteItem,
+    getCalculateQuoteConfirmationItem,
     onClickDuplicateWithDifferentQTY,
     duplicateQuoteItemWithAnotherQuantity,
     onClickDeleteQouteItem,
@@ -731,22 +732,26 @@ const QuoteNewPageWidget = ({
             >
               {!isReceipt && (
                 <QuoteForPriceTable
-                  documentItems={
-                    isQuoteConfirmation
-                      ? quoteConfirm?.documentItems
-                      : documentItems
-                  }
+                  // documentItems={
+                  //   isQuoteConfirmation
+                  //     ? quoteConfirm?.documentItems
+                  //     : documentItems
+                  // }
+                  documentItems={documentItems}
                   tableHeaders={tableHeaders}
                   columnWidths={columnWidths}
                   headerHeight={headerHeight}
                   changedocumentItems={changedocumentItems}
                   getCalculateQuoteItem={getCalculateQuoteItem}
+                  getCalculateQuoteConfirmationItem={
+                    getCalculateQuoteConfirmationItem
+                  }
                   onClickDuplicateWithDifferentQTY={
                     onClickDuplicateWithDifferentQTY
                   }
                   onClickQuickDuplicate={onClickQuickDuplicate}
                   onClickDeleteQouteItem={onClickDeleteQouteItem}
-                  quoteItems={isQuoteConfirmation ? quoteConfirm : quoteItems}
+                  quoteItems={quoteItems}
                   changeQuoteItems={changeQuoteItems}
                   getCalculateQuote={getCalculateQuote}
                   changedocumentItemsChild={changedocumentItemsChild}

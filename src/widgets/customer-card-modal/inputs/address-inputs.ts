@@ -3,21 +3,11 @@ import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget
 const addressInputs1 = (
   t,
   state: any,
-  cities?: any[],
-  filteredCityStreets?: any[]
+  isUs: boolean,
+  countriesWithCodes: any[],
+  usStates: any[]
 ) => {
-  return [
-    {
-      name: "addressId",
-      label: "customers.modal.addressId",
-      type: "text",
-      placeholder: "customers.modal.addressId",
-      required: true,
-      parameterKey: "address1",
-      options: [],
-      value: state?.address1,
-      isValid: true,
-    },
+  const commonFields = [
     {
       name: "addressType",
       label: "sales.cart.addressType",
@@ -37,33 +27,101 @@ const addressInputs1 = (
       ],
       value: state?.type,
     },
+  ];
+
+  const defaultSwitch = {
+    name: "default",
+    label: "customers.modal.default",
+    type: "switch",
+    placeholder: "customers.modal.default",
+    required: false,
+    parameterKey: "isDefault",
+    options: [],
+    value: !!state?.isDefault,
+    isValid: true,
+  };
+
+  const usFields = [
+    {
+      name: "country",
+      label: "customers.modal.country",
+      type: "select",
+      placeholder: "customers.modal.country",
+      required: false,
+      parameterKey: "country",
+      options: countriesWithCodes,
+      value: state?.country,
+    },
+    {
+      name: "address2",
+      label: "customers.modal.address2",
+      type: "text",
+      placeholder: "customers.modal.address2",
+      required: false,
+      parameterKey: "address2",
+      options: [],
+      value: state?.address2,
+    },
+    {
+      name: "address3",
+      label: "customers.modal.address3",
+      type: "text",
+      placeholder: "customers.modal.address3",
+      required: false,
+      parameterKey: "address3",
+      options: [],
+      value: state?.address3,
+    },
+    {
+      name: "city",
+      label: "sales.quote.city",
+      type: "text",
+      placeholder: "sales.quote.city",
+      required: true,
+      parameterKey: "city",
+      options: [],
+      value: state?.city,
+    },
+    state?.country === "US" && {
+      name: "state",
+      label: "customers.modal.state",
+      type: "select",
+      placeholder: "customers.modal.state",
+      required: false,
+      parameterKey: "state",
+      options: usStates.map(({ name }) => ({ text: name, value: name })),
+      value: state?.state,
+    },
+    {
+      name: "zipCode",
+      label: "customers.modal.zipCode",
+      type: "text",
+      placeholder: "customers.modal.zipCode",
+      required: false,
+      parameterKey: "zipCode",
+      options: [],
+      value: state?.zipCode,
+    },
+  ].filter(Boolean); // removes false (non-US state field if not US)
+
+  const standardFields = [
     {
       name: "city",
       label: "customers.modal.city",
-      //type: "select",
       type: "text",
       placeholder: "customers.modal.city",
-      required: false,
+      required: true,
       parameterKey: "city",
-      // options: cities.map((city) => ({
-      //   value: city.Name,
-      //   text: city.Name,
-      // })),
       options: [],
       value: state?.city,
     },
     {
       name: "street",
       label: "customers.modal.street",
-      // type: "select",
       type: "text",
       placeholder: "customers.modal.street",
       required: false,
       parameterKey: "street",
-      // options: filteredCityStreets.map((street) => ({
-      //   value: street.name,
-      //   text: street.name,
-      // })),
       options: [],
       value: state?.street,
       isValid: true,
@@ -113,10 +171,10 @@ const addressInputs1 = (
       isValid: true,
     },
     {
-      name: "postalCode",
-      label: "customers.modal.postalCode",
+      name: "zipCode",
+      label: "customers.modal.zipCode",
       type: "text",
-      placeholder: "customers.modal.postalCode",
+      placeholder: "customers.modal.zipCode",
       required: false,
       parameterKey: "zipCode",
       options: [],
@@ -135,10 +193,10 @@ const addressInputs1 = (
       isValid: true,
     },
     {
-      name: "country",
-      label: "customers.modal.country",
+      name: "county",
+      label: "customers.modal.county",
       type: "text",
-      placeholder: "customers.modal.country",
+      placeholder: "customers.modal.county",
       required: false,
       parameterKey: "county",
       options: [],
@@ -156,17 +214,12 @@ const addressInputs1 = (
       value: state?.notes,
       isValid: true,
     },
-    {
-      name: "default",
-      label: "customers.modal.default",
-      type: "switch",
-      placeholder: "customers.modal.default",
-      required: false,
-      parameterKey: "isDefault",
-      options: [],
-      value: !!state?.isDefault,
-      isValid: true,
-    },
+  ];
+
+  return [
+    ...commonFields,
+    ...(isUs ? usFields : standardFields),
+    defaultSwitch,
   ];
 };
 
