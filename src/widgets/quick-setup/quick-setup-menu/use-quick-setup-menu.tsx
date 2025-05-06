@@ -106,21 +106,6 @@ const useSetupGuideMenu = ({
     printHouseSetupSteps.find((s) => s.step === step)?.status ??
     StepStatus.NOT_YET;
 
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
-    {}
-  );
-
-  const toggleGroup = (groupKey: string) => {
-    setExpandedGroups((prev) => {
-      const updated = {
-        ...prev,
-        [groupKey]: !prev[groupKey],
-      };
-      localStorage.setItem("gomake_expandedGroups", JSON.stringify(updated));
-      return updated;
-    });
-  };
-
   const steps = [
     {
       key: SetupStep.RESET_PASSWORD,
@@ -212,6 +197,33 @@ const useSetupGuideMenu = ({
     items.flatMap((item) =>
       "children" in item ? [item.key, ...getAllGroupKeys(item.children)] : []
     );
+
+  // const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+  //   {}
+  // );
+
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    () => {
+      const stored = getItem("gomake_expandedGroups", true);
+      if (stored) return stored;
+
+      return getAllGroupKeys(steps).reduce((acc, key) => {
+        acc[key] = false;
+        return acc;
+      }, {} as Record<string, boolean>);
+    }
+  );
+
+  const toggleGroup = (groupKey: string) => {
+    setExpandedGroups((prev) => {
+      const updated = {
+        ...prev,
+        [groupKey]: !prev[groupKey],
+      };
+      localStorage.setItem("gomake_expandedGroups", JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   const findNextStepLabel = (items: any[]): string | null => {
     for (const item of items) {
