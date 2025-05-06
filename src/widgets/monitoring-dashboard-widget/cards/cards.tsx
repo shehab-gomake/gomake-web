@@ -41,7 +41,7 @@ const Cards = ({
     {
       labelTranslationKey: "profitMargin",
       value: data.profitMargin,
-      unit: "%",
+      unit: currUnit,
     },
     {
       labelTranslationKey: "successRate",
