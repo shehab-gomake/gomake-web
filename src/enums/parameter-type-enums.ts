@@ -34,3 +34,10 @@ export enum CpaFileType
     Payments,
     Deposits,
 }
+
+export enum  CurrentStationOrderingEnum
+        {
+            NONE = 0,
+            ASC,
+            DESC
+        }

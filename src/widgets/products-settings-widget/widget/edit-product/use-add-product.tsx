@@ -7,7 +7,7 @@ import { GraphicIcon, PrameterIcon, PricingIcon, SettingIcon } from "@/widgets";
 import { ESourceView } from "@/enums/products";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useUserPermission } from "@/hooks/use-permission";
-
+import WhatshotIcon from '@mui/icons-material/Whatshot';
 const useAddProduct = () => {
   const { callApi } = useGomakeAxios();
   const router = useRouter();
@@ -48,6 +48,9 @@ const useAddProduct = () => {
   const onClickWorkFlowsTab = () => {
     setActiveTab(t("pricingWidget.workFlow"));
   };
+  const onClickHotFolderTab = () => {
+    setActiveTab(t("pricingWidget.hotFolder"));
+  };
   useEffect(() => {
     if (router.query.isParameter)
       setActiveTab(t("products.addProduct.admin.parameters"));
@@ -74,6 +77,13 @@ const useAddProduct = () => {
       activeIcon: <PricingIcon stroke="#ED028C" />,
       onclick: () => onClickWorkFlowsTab,
       permission: CheckPermission(Permissions.ADD_WORK_FLOW_TO_PRODUCT),
+    },
+    {
+      name: t("pricingWidget.hotFolder"),
+      icon: <WhatshotIcon style={{ color: "#1C1D58" }} />,
+      activeIcon: <WhatshotIcon style={{ color: "#ED028C" }} />,
+      onclick: () => onClickHotFolderTab,
+      permission: CheckPermission(Permissions.ADD_HOT_FOLDER_TO_PRODUCT),
     },
     // {
     //   name: t("products.addProduct.admin.graphic"),

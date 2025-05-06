@@ -74,6 +74,7 @@ export enum Permissions {
   SHOW_PRICING_PROFILE = "ShowPricingProfile",
   SHOW_PREFERENCES = "ShowPreferences",
   ADD_WORK_FLOW_TO_PRODUCT = "AddWorkFlowToProduct",
+  ADD_HOT_FOLDER_TO_PRODUCT = "AddHotFolderToProduct",
   SHOW_CPA_CODE = "showCpaCode",
   SHOW_GROUPS = "showGroups",
 

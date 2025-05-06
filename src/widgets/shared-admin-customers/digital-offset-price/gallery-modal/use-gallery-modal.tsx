@@ -29,7 +29,6 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
 
   const [materialData, setMaterialData] =
     useRecoilState<any>(materialBtnDataState);
-
   const [materialDataFilter, setMaterialDataFilter] = useState("");
   const [materialType, setMaterialType] = useState<any>({});
   const [isShowStraightKnife, setIsShowStraightKnife] = useState(false)

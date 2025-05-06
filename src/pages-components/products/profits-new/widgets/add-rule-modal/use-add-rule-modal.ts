@@ -28,6 +28,7 @@ import { getALLMachinesApi } from "@/services/api-service/machines/print-house-m
 import { machineCategoriesState } from "@/store/machine-categories";
 import { actionEmployeesState } from "@/store/action-employees-state";
 import { endOfToday, startOfYear } from "date-fns";
+import { addProductHotFolderRuleApi } from "@/services/api-service/products/product-endpoints";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -41,6 +42,7 @@ const useAddRuleModal = ({
   isQuoteWidge,
   filterData,
   openModal,
+  getProductHotFolderRules
 }) => {
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
@@ -196,7 +198,7 @@ const useAddRuleModal = ({
       { label: "Machine", id: EGroupByEnum.Machine },
     ];
   }, []);
-  const { alertSuccessAdded, alertFaultAdded, setSnackbarStateValue } =
+  const { alertSuccessAdded, alertFaultAdded, setSnackbarStateValue, alertFault } =
     useSnackBar();
   const router = useRouter();
 
@@ -345,7 +347,6 @@ const useAddRuleModal = ({
           : ""
         : "";
       const conditionLabel = condition?.condition?.id ?? "";
-      console.log(conditionLabel)
       const statement2Label = condition.statement2?.label ?? "";
       let text = "";
 
@@ -538,29 +539,6 @@ const useAddRuleModal = ({
           }
           return condition;
         }),
-        // exceptionConditionProperties: rules.map((item) => {
-        //   return {
-        //     statementId:
-        //       item.category.id === "Property output" ||
-        //       item.category.id === "Property input"
-        //         ? item.statement2.id
-        //         : typeof item?.statement === "object"
-        //         ? item?.statement?.id
-        //         : item.statement,
-        //     statementValue:
-        //       item.category.id === "Property output" ||
-        //       item.category.id === "Property input"
-        //         ? typeof item?.statement === "object"
-        //           ? item?.statement?.id
-        //           : item.statement
-        //         : item.statement2.id,
-        //     operator: item.condition.id,
-        //     conditionBetweenStatements: item.linkCondition
-        //       ? item.linkCondition.id
-        //       : "",
-        //     statementCategory: EStatementCategory[item.category.id],
-        //   };
-        // }),
         successEvent: propertieValue,
         expression: expression,
       }
@@ -686,6 +664,75 @@ const useAddRuleModal = ({
     ];
   }, []);
 
+  const createForHotFolderWidget = async () => {
+    // Validation: check required fields
+    if (!propertieValue || !expression || !rules.length) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("properties.fillAllFields"),
+        type: "error",
+      });
+      return;
+    }
+    // Validate each rule
+    const isValidRules = rules.every((rule) => {
+      const hasCategory = rule.category && rule.category.id;
+      const hasCondition = rule.condition && rule.condition.id;
+      const hasStatement2 = rule.statement2 && (rule.statement2.id || rule.statement2.enumCode);
+      return hasCategory && hasCondition && hasStatement2;
+    });
+    if (!isValidRules) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("properties.fillAllFields"),
+        type: "error",
+      });
+      return;
+    }
+
+    const requestBody: any = {
+      hotFolderPath: propertieValue,
+      expression: expression,
+      exceptionConditionProperties: rules.map((item) => {
+        return {
+          statementId: getStatementId(item),
+          statementValue: item?.category?.id === "MATERIALTYPE" ? item.statement2.enumCode : item.statement2.id,
+          operator: item.condition.id,
+          conditionBetweenStatements: item.linkCondition
+            ? item.linkCondition.id
+            : "",
+          statementCategory: EStatementCategory[item.category.id],
+        };
+      }),
+    };
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessAdded();
+        onCloseModal();
+        setRules([initialRule]);
+        getProductHotFolderRules();
+      }
+      else {
+        if(!res?.msg || res?.msg == ""){
+          alertFaultAdded();
+        }
+        else{
+          if(res?.errors?.message){
+            alertFault(t(`${res?.msg} ---> ${res?.errors?.message}`));
+          }
+          else{
+            alertFault(t(`${res?.msg}`));
+          }
+        }
+      }
+
+    }
+    await addProductHotFolderRuleApi(callApi, callBack, {
+      productId: router?.query?.id,
+      ...requestBody
+    });
+  }
+
   return {
     rules,
     deleteRule,
@@ -732,7 +779,8 @@ const useAddRuleModal = ({
     toDate,
     isFetching,
     getConditionText,
-    setAdditionType
+    setAdditionType,
+    createForHotFolderWidget
   };
 };
 

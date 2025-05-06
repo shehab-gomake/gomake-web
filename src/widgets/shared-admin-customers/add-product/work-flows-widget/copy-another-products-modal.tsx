@@ -9,10 +9,10 @@ import { useStyle } from "./style";
 import { UpdateTypes } from "../parameters/widgets/section-mapping";
 import { CircleCheckbox } from "@/components/check-box/circle-check-box";
 import { useState } from "react";
-import { copyActionsToProductsApi } from "@/services/api-service/products/product-endpoints";
+import { copyActionsToProductsApi, copyProductHotFolderRulesApi } from "@/services/api-service/products/product-endpoints";
 import { useRouter } from "next/router";
 import { useGomakeAxios } from "@/hooks";
-const CopyAnotherProductsModal = ({ openModal, onClose }) => {
+const CopyAnotherProductsModal = ({ openModal, onClose, isHotFolderWidget }: any) => {
   const { t } = useTranslation();
   const { clasess } = useStyle();
   const router = useRouter();
@@ -29,6 +29,19 @@ const CopyAnotherProductsModal = ({ openModal, onClose }) => {
     await copyActionsToProductsApi(callApi, callBack, {
       productId: productId,
       updateType: selectedUpdateType,
+    });
+  }
+
+  const copyProductHotFolderRules = async () => {
+    const productId = Array.isArray(router.query.id) ? router.query.id[0] : router.query.id;
+    const callBack = (res) => {
+      if (res.success) {
+        onClose()
+      }
+    }
+    await copyProductHotFolderRulesApi(callApi, callBack, {
+      productId: productId,
+      duplicateType: selectedUpdateType,
     });
   }
   return (
@@ -81,7 +94,7 @@ const CopyAnotherProductsModal = ({ openModal, onClose }) => {
               borderRadius: "8px",
               height: "44px",
             }}
-            onClick={copyActionsToProducts}
+            onClick={isHotFolderWidget ? copyProductHotFolderRules : copyActionsToProducts}
           >
             {t("sales.quote.duplicate")}
           </GomakePrimaryButton>

@@ -1,8 +1,8 @@
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { ICallAndSetData } from "@/services/api-service/interface";
-import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
-
+import {IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
+import { CurrentStationOrderingEnum } from "@/enums";
 const GET_PRODUCTION_FLOOR_DATA_URL = "/v1/erp-service/board-missions";
 const UPDATE_WORK_JOB_STATUS_URL =
   "/v1/erp-service/board-missions/update-board-missions-status";
@@ -14,6 +14,9 @@ const GET_BOARDS_MISSIONS_BY_ID_URL =
   "/v1/erp-service/board-missions/board-missions-data/";
 const GET_BOARD_MISSIONS_STATIONS_URL =
   "/v1/erp-service/board-missions/board-stations";
+
+const SEND_JOB_EXAMPLE_CONFIRMATION_TO_CLIENT_URL =
+  "/v1/erp-service/board-missions/send-job-example-confirmation-to-client";
 const UPDATE_BOARD_MISSIONS_CURRENT_STATION_URL =
   "/v1/erp-service/board-missions/update-board-missions-current-station";
 const ADD_NEW_PRODUCTION_GROUP_URL =
@@ -179,6 +182,19 @@ const getBoardMissionsActions: ICallAndSetData = async (
     EHttpMethod.GET,
     GET_BOARD_MISSIONS_STATIONS_URL +
       `?boardMissionId=${data.boardMissionId}&productType=${data.productType}`,
+    callBack
+  );
+};
+
+const sendJobExampleConfirmationToClientApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: { boardMissionId: string; productType: string }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    SEND_JOB_EXAMPLE_CONFIRMATION_TO_CLIENT_URL + `?boardMissionId=${data.boardMissionId}`,
     callBack
   );
 };
@@ -733,4 +749,5 @@ export {
   updateJobDueDateApi,
   deleteJobFileApi,
   updateProductionFloorNotesApi,
+  sendJobExampleConfirmationToClientApi
 };

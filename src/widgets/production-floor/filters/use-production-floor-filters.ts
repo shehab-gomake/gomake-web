@@ -45,6 +45,7 @@ import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employ
 import { actionsListState } from "../state/actions-list";
 import { selectedAgentsState } from "@/store/agents-state";
 import moment from "moment";
+import { CurrentStationOrderingEnum } from "@/enums/parameter-type-enums";
 
 interface onStationsChangeProps {
   stations: IStation[];
@@ -55,6 +56,7 @@ interface onStationsChangeProps {
 interface IUseProductionFloorFiltersProps {
   getStationFilterGroups?: any;
   connectionId: string;
+  isFetching?: boolean;
 }
 
 interface ISelectedGroup {
@@ -68,6 +70,7 @@ interface ISelectedGroup {
 const useProductionFloorFilters = ({
   getStationFilterGroups,
   connectionId,
+  isFetching =true
 }: IUseProductionFloorFiltersProps) => {
   const [filtersState, setFiltersState] = useRecoilState(
     productionFloorFiltersState
@@ -443,9 +446,10 @@ const useProductionFloorFilters = ({
   };
 
   useEffect(() => {
-    getAllUsers();
-  }, []);
-
+    if(isFetching){
+      getAllUsers();
+    }
+  }, [isFetching]);
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const handleSelectAllUsers = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -492,22 +496,20 @@ const useProductionFloorFilters = ({
     }).then();
   };
 
-  useEffect(() => {
-    if (selectedGroupId && openModalEditGroup) {
-      getStationFilterByIdGroup(selectedGroup?.id);
+useEffect(() => {
+  if(selectedGroupId && openModalEditGroup && isFetching){
+    getStationFilterByIdGroup(selectedGroup?.id)
+  }
+}, [selectedGroupId,openModalEditGroup,isFetching])
+const [actions, setActions] = useRecoilState(actionsListState);
+const getActions = async () => {
+  const callBack = (res) => {
+    if (res.success) {
+      setActions(res?.data);
     }
-  }, [selectedGroupId, openModalEditGroup]);
-
-  const [actions, setActions] = useRecoilState(actionsListState);
-  const getActions = async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        setActions(res?.data);
-      }
-    };
-    await getPrintHouseActions(callApi, callBack, false);
   };
-
+  await getPrintHouseActions(callApi, callBack, false);
+};
   const handleAgentChange = (selectedAgents) => {
     setFilters({
       ...filtersState,
@@ -515,8 +517,10 @@ const useProductionFloorFilters = ({
     },view);
   }
 useEffect(() => {
-  getActions();
-}, []);
+  if(isFetching){
+    getActions();
+  }
+}, [isFetching]);
 
   return {
     t,
