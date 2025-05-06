@@ -6,8 +6,18 @@ export interface SetupStepItem {
 }
 
 export enum SetupStep {
+  WELCOME_MESSAGE = 0,
   RESET_PASSWORD,
   PRODUCTS_SETUPS,
+  COMPANY_PROFILE_LOGO,
+  COMPANY_PROFILE_HOURS,
+  COMPANY_PROFILE_STRIPE,
+  COMPANY_PROFILE_ADDRESSES,
+  COMPANY_PROFILE_MAILING,
+  CONTACTS_CLIENTS,
+  CONTACTS_SUPPLIERS,
+  HELP_CENTER_KNOWLEDGE_BASE,
+  HELP_CENTER_CUSTOMER_SERVICE,
 }
 
 export enum StepStatus {
@@ -19,4 +29,14 @@ export enum StepStatus {
 export const printHouseSetupStepsState = atom<SetupStepItem[]>({
   key: "printHouseSetupStepsState",
   default: [],
+});
+
+export const printHouseWelcomeModalState = atom<boolean>({
+  key: "printHouseWelcomeModalState",
+  default: false,
+});
+
+export const setupGuideExpandedState = atom<boolean>({
+  key: "setupGuideExpandedState",
+  default: false,
 });

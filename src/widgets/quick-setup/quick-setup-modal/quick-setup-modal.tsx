@@ -5,7 +5,7 @@ import { Dialog, DialogContent, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { ModalControls } from "@/hooks/use-modal";
 import { useTranslation } from "react-i18next";
-import { ProductsSetupData } from "../interfaces";
+import { ProductsSetupData } from "../compoennets/interfaces";
 
 interface SetupModalProps {
   ActionsModal: ModalControls;

@@ -6,6 +6,7 @@ import { useCustomer } from "./use-customer";
 const useGomakeAuth = (permissionEnumValue, allowAnonymous?: boolean) => {
   const { user, validate, isLanguageUpdated, getPrintHouseSetupSteps } =
     useCustomer(permissionEnumValue, allowAnonymous);
+
   const [, setCanAccessvalue] = useRecoilState(canAccessState);
   const [isAuth, setIsAuth] = useState<boolean | null>(null);
 

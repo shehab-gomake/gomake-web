@@ -17,18 +17,24 @@ import {
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useStyle } from "./style";
 import { useSetupGuideMenu } from "./use-quick-setup-menu";
-import { ModalControls } from "@/hooks/use-modal";
 import { SetupStep, StepStatus } from "@/store/print-house-setup-state-state";
-import { CloseMenu, ExpandMenu, ShrinkMenu } from "./components/icons";
+import { CloseMenu, ExpandMenu, ShrinkMenu } from "../compoennets/icons";
+import { useEffect } from "react";
+import { getItem } from "@/services/storage-data";
 
 interface SetupGuideMenuProps {
   handleOpenModal: () => void;
   handleOpenResetPassword: () => void;
+  updatePrintHouseSetupSteps: (
+    step: SetupStep,
+    status?: StepStatus
+  ) => Promise<void>;
 }
 
 export const SetupGuideMenu = ({
   handleOpenModal,
   handleOpenResetPassword,
+  updatePrintHouseSetupSteps,
 }: SetupGuideMenuProps) => {
   const {
     t,
@@ -37,34 +43,91 @@ export const SetupGuideMenu = ({
     isExpanded,
     progressValue,
     toggleExpand,
-    productsSetupStatus,
     renderStepStatusIcon,
     setShowGuideMenu,
     showGuideMenuState,
-    resetPasswordStatus,
-  } = useSetupGuideMenu();
+    steps,
+    toggleGroup,
+    expandedGroups,
+    setExpandedGroups,
+    getAllGroupKeys,
+    findNextStepLabel,
+  } = useSetupGuideMenu({
+    handleOpenModal,
+    handleOpenResetPassword,
+    updatePrintHouseSetupSteps,
+  });
   const { classes } = useStyle(isRtl);
 
-  const steps = [
-    {
-      key: SetupStep.RESET_PASSWORD,
-      label: t("quickSetup.resetButton"),
-      onClick: handleOpenResetPassword,
-      status: resetPasswordStatus,
-    },
-    {
-      key: SetupStep.PRODUCTS_SETUPS,
-      label: t("quickSetup.setUpProducts"),
-      onClick:
-        productsSetupStatus !== StepStatus.DONE ? handleOpenModal : undefined,
-      status: productsSetupStatus,
-    },
-    {
-      key: "connectStripe",
-      label: t("Connect to stripe"),
-      status: StepStatus.NOT_YET,
-    },
-  ];
+  useEffect(() => {
+    const stored = localStorage.getItem("gomake_expandedGroups");
+    if (stored) {
+      setExpandedGroups(JSON.parse(stored));
+    } else {
+      const initialGroups = getAllGroupKeys(steps).reduce((acc, key) => {
+        acc[key] = false;
+        return acc;
+      }, {} as Record<string, boolean>);
+      setExpandedGroups(initialGroups);
+    }
+  }, []);
+
+  const renderSteps = (stepList) =>
+    stepList.map((step) => {
+      const isGroup = "children" in step;
+
+      if (isGroup) {
+        const isGroupExpanded = expandedGroups[step.key] ?? true;
+
+        return (
+          <Box key={step.key}>
+            <ListItemButton onClick={() => toggleGroup(step.key)}>
+              <ListItemText
+                primary={step.label}
+                primaryTypographyProps={{
+                  fontWeight: 600,
+                  fontSize: "14px",
+                }}
+              />
+              {isGroupExpanded ? <ExpandLess /> : <ExpandMore />}
+            </ListItemButton>
+            <Collapse in={isGroupExpanded} timeout="auto" unmountOnExit>
+              <List disablePadding component="div" sx={{ pl: 2 }}>
+                {renderSteps(step.children)}
+              </List>
+            </Collapse>
+          </Box>
+        );
+      }
+
+      // Single step (leaf)
+      return (
+        <ListItemButton
+          key={step.key}
+          onClick={step.onClick}
+          sx={{
+            borderRadius: "8px",
+            cursor:
+              step.status === StepStatus.DONE &&
+              step.key !== SetupStep.RESET_PASSWORD
+                ? "default"
+                : "pointer",
+            pointerEvents:
+              step.status === StepStatus.DONE &&
+              step.key !== SetupStep.RESET_PASSWORD
+                ? "none"
+                : "auto",
+            py: "2px",
+          }}
+        >
+          <ListItemText
+            primary={step.label}
+            primaryTypographyProps={classes.listItemText}
+          />
+          {renderStepStatusIcon(step.status)}
+        </ListItemButton>
+      );
+    });
 
   if (!isOpen) return null;
 
@@ -113,39 +176,12 @@ export const SetupGuideMenu = ({
       </Box>
       {isExpanded ? (
         <>
-          {/* FULL menu */}
           <List dense disablePadding>
-            {steps.map(({ key, label, onClick, status }) => (
-              <ListItemButton
-                key={key}
-                onClick={onClick}
-                sx={{
-                  borderRadius: "8px",
-                  cursor:
-                    status === StepStatus.DONE &&
-                    key !== SetupStep.RESET_PASSWORD
-                      ? "default"
-                      : "pointer",
-                  pointerEvents:
-                    status === StepStatus.DONE &&
-                    key !== SetupStep.RESET_PASSWORD
-                      ? "none"
-                      : "auto",
-                  opacity: 1,
-                }}
-              >
-                <ListItemText
-                  primary={label}
-                  primaryTypographyProps={classes.listItemText}
-                />
-                {renderStepStatusIcon(status)}
-              </ListItemButton>
-            ))}
+            {renderSteps(steps)}
           </List>
-
           <Divider sx={{ my: 2 }} />
           <Button variant="contained" fullWidth sx={classes.btnStyle}>
-            GO LIVE
+            I'm Ready
           </Button>
         </>
       ) : (
@@ -153,9 +189,11 @@ export const SetupGuideMenu = ({
           <Typography
             variant="body2"
             sx={{ color: "#6B6B6B", fontSize: "13px", mt: 1 }}
-          >{`Next : ${
-            steps?.find((step) => step?.status !== StepStatus.DONE)?.label
-          }`}</Typography>
+          >
+            {`${t("sales.documentDeliveries.next")} : ${
+              findNextStepLabel(steps) || "-"
+            }`}
+          </Typography>
         </>
       )}
     </Card>

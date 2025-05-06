@@ -17,10 +17,13 @@ import { priceChangePercentsState } from "@/store/min-max-price-change-percents"
 import { printHousePreferencesState } from "@/store/print-house-preferences";
 import { versionState } from "@/store/version";
 import { setupGuideOpenState } from "@/store/setup-guide-state";
-import { getPrintHouseSetupStepsApi } from "@/services/api-service/quick-setup-menu/set-up-products-api";
+import { getPrintHouseSetupStepsApi } from "@/services/api-service/quick-setup-menu/set-up-api";
 import {
   printHouseSetupStepsState,
+  printHouseWelcomeModalState,
+  SetupStep,
   SetupStepItem,
+  StepStatus,
 } from "@/store/print-house-setup-state-state";
 
 const useCustomer = (
@@ -31,7 +34,9 @@ const useCustomer = (
   const setPrintHouseSetupSteps = useSetRecoilState<SetupStepItem[]>(
     printHouseSetupStepsState
   );
-
+  const setPrintHouseWelcomeModal = useSetRecoilState<boolean>(
+    printHouseWelcomeModalState
+  );
   const [user, setUser] = useRecoilState<any>(userState);
   const setSystemCurrency = useSetRecoilState<any>(systemCurrencyState);
   const setSystemVAT = useSetRecoilState<number>(systemVATState);
@@ -183,7 +188,15 @@ const useCustomer = (
   const getPrintHouseSetupSteps = async () => {
     const callBack = (res) => {
       if (res.success) {
-        setPrintHouseSetupSteps(res?.data);
+        const steps: SetupStepItem[] = res?.data;
+        setPrintHouseSetupSteps(steps);
+
+        const welcomeStep = steps.find(
+          (step) => step.step === SetupStep.WELCOME_MESSAGE
+        );
+        if (welcomeStep.status === StepStatus.NOT_YET) {
+          setPrintHouseWelcomeModal(true);
+        }
       }
     };
 

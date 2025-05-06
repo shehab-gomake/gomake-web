@@ -1,4 +1,5 @@
 import { ResetPasswordModal } from "./compoennets/reset-password-modal";
+import { WelcomeModal } from "./compoennets/welcome-modal";
 import { SetupGuideMenu } from "./quick-setup-menu/setup-guide-menu";
 import { SetupModal } from "./quick-setup-modal/quick-setup-modal";
 import { useQuickSetup } from "./use-quick-setup";
@@ -10,6 +11,7 @@ const SetupSection = () => {
     handleOpenModal,
     initialSetupData,
     ResetPasswordModalControl,
+    updatePrintHouseSetupSteps,
   } = useQuickSetup();
 
   const {} = useQuickSetupSocketIo();
@@ -19,12 +21,14 @@ const SetupSection = () => {
       <SetupGuideMenu
         handleOpenModal={handleOpenModal}
         handleOpenResetPassword={ResetPasswordModalControl.open}
+        updatePrintHouseSetupSteps={updatePrintHouseSetupSteps}
       />
       <SetupModal
         ActionsModal={ActionsModal}
         initialSetupData={initialSetupData}
       />
       <ResetPasswordModal modalControl={ResetPasswordModalControl} />
+      <WelcomeModal updatePrintHouseSetupSteps={updatePrintHouseSetupSteps} />
     </>
   );
 };

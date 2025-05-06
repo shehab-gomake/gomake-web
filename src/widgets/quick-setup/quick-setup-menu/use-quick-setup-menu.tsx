@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { setupGuideOpenState } from "@/store/setup-guide-state";
 import { useTranslation } from "react-i18next";
 import {
   printHouseSetupStepsState,
+  setupGuideExpandedState,
   SetupStep,
   SetupStepItem,
   StepStatus,
@@ -13,20 +14,22 @@ import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import DonutLargeRoundedIcon from "@mui/icons-material/DonutLargeRounded";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { getItem, setItem } from "@/services/storage-data";
-import RadioButtonUncheckedRoundedIcon from "@mui/icons-material/RadioButtonUncheckedRounded";
-import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
-import RadioButtonCheckedRoundedIcon from "@mui/icons-material/RadioButtonCheckedRounded";
-import { Checkbox } from "@mui/material";
+import { useGomakeRouter } from "@/hooks";
 
-const useSetupGuideMenu = () => {
+const useSetupGuideMenu = ({
+  handleOpenModal,
+  handleOpenResetPassword,
+  updatePrintHouseSetupSteps,
+}) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRtl = dir === "rtl";
   const isOpen = useRecoilValue(setupGuideOpenState);
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useRecoilState(setupGuideExpandedState);
   const [openVerifyBusiness, setOpenVerifyBusiness] = useState(false);
   const { primaryColor } = useGomakeTheme();
   const [showGuideMenuState, setShowGuideMenuState] = useState(true);
+  const { navigate } = useGomakeRouter();
 
   useEffect(() => {
     const saved = getItem("gomake_showGuideMenu");
@@ -40,6 +43,11 @@ const useSetupGuideMenu = () => {
     setShowGuideMenuState(value);
   };
 
+  useEffect(() => {
+    const savedExpand = getItem("gomake_setupGuideExpanded");
+    setIsExpanded(savedExpand === "true");
+  }, []);
+
   const printHouseSetupSteps = useRecoilValue<SetupStepItem[]>(
     printHouseSetupStepsState
   );
@@ -49,7 +57,11 @@ const useSetupGuideMenu = () => {
   };
 
   const toggleExpand = () => {
-    setIsExpanded((prev) => !prev);
+    setIsExpanded((prev) => {
+      const next = !prev;
+      setItem("gomake_setupGuideExpanded", String(next));
+      return next;
+    });
   };
 
   const totalSteps = printHouseSetupSteps.length;
@@ -86,49 +98,127 @@ const useSetupGuideMenu = () => {
     }
   };
 
-  const renderStepStatusIconNew = (status?: StepStatus) => {
-    switch (status) {
-      case StepStatus.DONE:
-        return (
-          <Checkbox
-            size="small"
-            checked
-            checkedIcon={<CheckCircleRoundedIcon />}
-            sx={{
-              p: 0,
-              color: primaryColor(400),
-              "&.Mui-checked": {
-                color: primaryColor(400),
-              },
-            }}
-          />
-        );
-      case StepStatus.IN_PROGRESS:
-        return (
-          <Checkbox
-            size="small"
-            checked
-            checkedIcon={<RadioButtonCheckedRoundedIcon />}
-            sx={{
-              p: 0,
-              color: primaryColor(400),
-              "&.Mui-checked": {
-                color: primaryColor(400),
-              },
-            }}
-          />
-        );
-      case StepStatus.NOT_YET:
-      default:
-        return (
-          <Checkbox
-            size="small"
-            checked={false}
-            icon={<RadioButtonUncheckedRoundedIcon />}
-            sx={{ p: 0, color: "#ccc" }}
-          />
-        );
+  const getStepStatus = (step: SetupStep): StepStatus =>
+    printHouseSetupSteps.find((s) => s.step === step)?.status ??
+    StepStatus.NOT_YET;
+
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {}
+  );
+
+  const toggleGroup = (groupKey: string) => {
+    setExpandedGroups((prev) => {
+      const updated = {
+        ...prev,
+        [groupKey]: !prev[groupKey],
+      };
+      localStorage.setItem("gomake_expandedGroups", JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const steps = [
+    {
+      key: SetupStep.RESET_PASSWORD,
+      label: t("quickSetup.steps.resetButton"),
+      onClick: handleOpenResetPassword,
+      status: resetPasswordStatus,
+    },
+    {
+      key: SetupStep.PRODUCTS_SETUPS,
+      label: t("quickSetup.steps.setUpProducts"),
+      onClick:
+        productsSetupStatus !== StepStatus.DONE ? handleOpenModal : undefined,
+      status: productsSetupStatus,
+    },
+    {
+      key: "company_profile",
+      label: t("quickSetup.steps.companyProfile"),
+      children: [
+        {
+          key: SetupStep.COMPANY_PROFILE_LOGO,
+          label: t("quickSetup.steps.logo"),
+          status: getStepStatus(SetupStep.COMPANY_PROFILE_LOGO),
+          onClick: () => {
+            updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_LOGO);
+            navigate("/settings/company-profile?tab=company");
+          },
+        },
+        {
+          key: SetupStep.COMPANY_PROFILE_HOURS,
+          label: t("quickSetup.steps.hours"),
+          status: getStepStatus(SetupStep.COMPANY_PROFILE_HOURS),
+          onClick: () => {
+            updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_HOURS);
+            navigate("/settings/company-profile?tab=hours");
+          },
+        },
+        {
+          key: SetupStep.COMPANY_PROFILE_STRIPE,
+          label: t("quickSetup.steps.stripe"),
+          status: getStepStatus(SetupStep.COMPANY_PROFILE_STRIPE),
+        },
+        {
+          key: SetupStep.COMPANY_PROFILE_ADDRESSES,
+          label: t("quickSetup.steps.addresses"),
+          status: getStepStatus(SetupStep.COMPANY_PROFILE_ADDRESSES),
+          onClick: () => {
+            updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_ADDRESSES);
+            navigate("/settings/company-profile?tab=addresses");
+          },
+        },
+        {
+          key: SetupStep.COMPANY_PROFILE_MAILING,
+          label: t("quickSetup.steps.mailing"),
+          status: getStepStatus(SetupStep.COMPANY_PROFILE_MAILING),
+          onClick: () => {
+            updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_MAILING);
+            navigate("/settings/company-profile?tab=communication");
+          },
+        },
+      ],
+    },
+    {
+      key: "contacts",
+      label: t("tabs.contacts"),
+      children: [
+        {
+          key: SetupStep.CONTACTS_CLIENTS,
+          label: t("tabs.customers"),
+          status: getStepStatus(SetupStep.CONTACTS_CLIENTS),
+          onClick: () => {
+            updatePrintHouseSetupSteps(SetupStep.CONTACTS_CLIENTS);
+            navigate("/customers");
+          },
+        },
+        {
+          key: SetupStep.CONTACTS_SUPPLIERS,
+          label: t("tabs.suppliers"),
+          status: getStepStatus(SetupStep.CONTACTS_SUPPLIERS),
+          onClick: () => {
+            updatePrintHouseSetupSteps(SetupStep.CONTACTS_SUPPLIERS),
+              navigate("/suppliers");
+          },
+        },
+      ],
+    },
+  ];
+
+  const getAllGroupKeys = (items: any[]): string[] =>
+    items.flatMap((item) =>
+      "children" in item ? [item.key, ...getAllGroupKeys(item.children)] : []
+    );
+
+  const findNextStepLabel = (items: any[]): string | null => {
+    for (const item of items) {
+      if ("children" in item) {
+        const childLabel = findNextStepLabel(item.children);
+        if (childLabel) return childLabel;
+      } else if (item.status !== StepStatus.DONE) {
+        return item.label;
+      }
     }
+    return null;
   };
 
   return {
@@ -148,6 +238,12 @@ const useSetupGuideMenu = () => {
     setShowGuideMenu,
     showGuideMenuState,
     resetPasswordStatus,
+    steps,
+    toggleGroup,
+    expandedGroups,
+    setExpandedGroups,
+    getAllGroupKeys,
+    findNextStepLabel,
   };
 };
 

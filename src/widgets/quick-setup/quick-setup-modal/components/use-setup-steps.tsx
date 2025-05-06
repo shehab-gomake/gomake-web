@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { isUsPrintHouseState } from "@/store/print-house-profile";
 import { getSetupStepsConfig, Step } from "./workflowStepsConfig";
-import { savePrintHouseProductsSetupFormApi } from "@/services/api-service/quick-setup-menu/set-up-products-api";
+import { savePrintHouseProductsSetupFormApi } from "@/services/api-service/quick-setup-menu/set-up-api";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { ProductsSetupData } from "../../interfaces";
+import { ProductsSetupData } from "../../compoennets/interfaces";
 import { ModalControls, useModal } from "@/hooks/use-modal";
 
 export const StyledSelectableChip = ({
