@@ -168,7 +168,7 @@ const useProductionFloorData = () => {
   };
   const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
     const boardsIds = boards?.filter((b) => b.statusId !== statusId);
-
+    
     const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
