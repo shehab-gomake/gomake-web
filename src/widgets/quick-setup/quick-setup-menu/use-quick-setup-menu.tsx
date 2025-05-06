@@ -129,7 +129,12 @@ const useSetupGuideMenu = ({
           label: t("quickSetup.steps.logo"),
           status: getStepStatus(SetupStep.COMPANY_PROFILE_LOGO),
           onClick: () => {
-            updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_LOGO);
+            if (
+              getStepStatus(SetupStep.COMPANY_PROFILE_LOGO) ===
+              StepStatus.NOT_YET
+            ) {
+              updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_LOGO);
+            }
             navigate("/settings/company-profile?tab=company");
           },
         },
@@ -138,7 +143,12 @@ const useSetupGuideMenu = ({
           label: t("quickSetup.steps.hours"),
           status: getStepStatus(SetupStep.COMPANY_PROFILE_HOURS),
           onClick: () => {
-            updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_HOURS);
+            if (
+              getStepStatus(SetupStep.COMPANY_PROFILE_HOURS) ===
+              StepStatus.NOT_YET
+            ) {
+              updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_HOURS);
+            }
             navigate("/settings/company-profile?tab=hours");
           },
         },
@@ -152,7 +162,12 @@ const useSetupGuideMenu = ({
           label: t("quickSetup.steps.addresses"),
           status: getStepStatus(SetupStep.COMPANY_PROFILE_ADDRESSES),
           onClick: () => {
-            updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_ADDRESSES);
+            if (
+              getStepStatus(SetupStep.COMPANY_PROFILE_ADDRESSES) ===
+              StepStatus.NOT_YET
+            ) {
+              updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_ADDRESSES);
+            }
             navigate("/settings/company-profile?tab=addresses");
           },
         },
@@ -161,7 +176,12 @@ const useSetupGuideMenu = ({
           label: t("quickSetup.steps.mailing"),
           status: getStepStatus(SetupStep.COMPANY_PROFILE_MAILING),
           onClick: () => {
-            updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_MAILING);
+            if (
+              getStepStatus(SetupStep.COMPANY_PROFILE_MAILING) ===
+              StepStatus.NOT_YET
+            ) {
+              updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_MAILING);
+            }
             navigate("/settings/company-profile?tab=communication");
           },
         },
@@ -176,7 +196,11 @@ const useSetupGuideMenu = ({
           label: t("tabs.customers"),
           status: getStepStatus(SetupStep.CONTACTS_CLIENTS),
           onClick: () => {
-            updatePrintHouseSetupSteps(SetupStep.CONTACTS_CLIENTS);
+            if (
+              getStepStatus(SetupStep.CONTACTS_CLIENTS) === StepStatus.NOT_YET
+            ) {
+              updatePrintHouseSetupSteps(SetupStep.CONTACTS_CLIENTS);
+            }
             navigate("/customers");
           },
         },
@@ -185,8 +209,12 @@ const useSetupGuideMenu = ({
           label: t("tabs.suppliers"),
           status: getStepStatus(SetupStep.CONTACTS_SUPPLIERS),
           onClick: () => {
-            updatePrintHouseSetupSteps(SetupStep.CONTACTS_SUPPLIERS),
-              navigate("/suppliers");
+            if (
+              getStepStatus(SetupStep.CONTACTS_SUPPLIERS) === StepStatus.NOT_YET
+            ) {
+              updatePrintHouseSetupSteps(SetupStep.CONTACTS_SUPPLIERS);
+            }
+            navigate("/suppliers");
           },
         },
       ],
