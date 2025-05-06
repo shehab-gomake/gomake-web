@@ -1,6 +1,6 @@
 const TestIcon = (props: any) => {
     return (
-        <svg width="1700" height="500" viewBox="0 0 1600 2000" xmlns="http://www.w3.org/2000/svg">
+        <svg width="350" height="350" viewBox="0 0 1600 2000" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <style type="text/css">{`
                     .cut path {

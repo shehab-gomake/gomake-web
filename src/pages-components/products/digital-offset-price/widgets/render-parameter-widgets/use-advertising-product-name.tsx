@@ -7,7 +7,7 @@ import { subProductsParametersState } from "@/store/general-parameters-state";
 import { addPrintHouseMaterialCategoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { createDieCutFromTemplateMakerApi, getMaterialCategoryByMaterialKeyApi } from "@/services/api-service/materials/materials-endpoints";
 
-const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, newDieCutSelect }) => {
+const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp }) => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
@@ -16,13 +16,26 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const [openGenerateModal, setOpenGenerateModal] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [searchResult, setSearchResult] = useState(parameter?.valuesConfigs);
+
+  const selectedDieCutType = temp.find((item: any) => item.parameterCode === "DiecutType")
+  const selectedDieCutter = temp.find((item: any) => item.parameterCode === "DieCutter")
+  const selectedDieCutTypeValue = selectedDieCutType?.valuesConfigs?.find((item: any) => item.id === selectedDieCutType?.valueIds[0])
+  const selectedDieCutterValue = selectedDieCutter?.valuesConfigs?.find((item: any) => item.id === selectedDieCutter?.valueIds[0])
+  const [isOpenDieCutModal, setIsOpenDieCutModal] = useState(false)
+  const [selectedCardId, setSelectedCardId] = useState(null);
+  const [selectedCardData, setSelectedCardData] = useState<any>(null);
+  const [searchValue, setSearchValue] = useState("");
+
+
+
   const defaultObject = parameter.valuesConfigs.find(
     (item) => item.isDefault === true
   );
   const [newCategory, setNewCategory] = useState("");
   const [isView, setIsView] = useState(false);
   const [isRenderData, setIsRenderData] = useState(true)
-
+  const [isViewInfoAfterGenerate, setIsViewInfoAfterGenerate] = useState(false)
+  const [newDataGenerated, setNewDataGenerated] = useState<any>(null)
   useEffect(() => {
     if (isRenderData) {
       setSearchResult(parameter?.valuesConfigs)
@@ -89,9 +102,9 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       "DieUnitWidth",
       "DieUnitLength",
       "DieUnitHeight",
-      "SheetWeight",
-      "Sheetcategory",
-      "SheetColor",
+      // "SheetWeight",
+      // "Sheetcategory",
+      // "SheetColor",
     ];
 
     for (const product of subProducts) {
@@ -136,7 +149,55 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
           {
             valueId: "code",
             value: newDieCutSelect.rowData.code.value
-          }
+          },
+          {
+            valueId: "shape",
+            value: newDieCutSelect.rowData.shape.value
+          },
+          {
+            valueId: "type",
+            value: newDieCutSelect.rowData.type.value
+          },
+          {
+            valueId: "unitWidth",
+            value: newDieCutSelect.rowData.unitWidth.value
+          },
+          {
+            valueId: "unitLength",
+            value: newDieCutSelect.rowData.unitLength.value
+          },
+          {
+            valueId: "finalUnitWidth",
+            value: newDieCutSelect.rowData.finalUnitWidth.value
+          },
+          {
+            valueId: "finalUnitLength",
+            value: newDieCutSelect.rowData.finalUnitLength.value
+          },
+          {
+            valueId: "finalUnitHeight",
+            value: newDieCutSelect.rowData.finalUnitHeight.value
+          },
+          {
+            valueId: "columnsAmount",
+            value: newDieCutSelect.rowData.columnsAmount.value
+          },
+          {
+            valueId: "linesAmount",
+            value: newDieCutSelect.rowData.linesAmount.value
+          },
+          {
+            valueId: "cuttingLineLength",
+            value: newDieCutSelect.rowData.cuttingLineLength.value
+          },
+          {
+            valueId: "scoringLineLength",
+            value: newDieCutSelect.rowData.scoringLineLength.value
+          },
+          {
+            valueId: "perforationLineLength",
+            value: newDieCutSelect.rowData.perforationLineLength.value
+          },
         ],
         currency: newDieCutSelect.rowData.currency.value
       };
@@ -154,15 +215,17 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     const sheetWeight = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "SheetWeight")?.values[0];
     const sheetcategory = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Sheetcategory")?.values[0];
     const sheetColor = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "SheetColor")?.values[0];
-    const reqObj = {
+    const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.unitKey;
 
+    const reqObj = {
       dieCutCategory: category,
       unitWidth: Number(unitWidth),
       unitLength: Number(unitLength),
       unitHeight: Number(unitHeight),
       sheetsWeight: sheetWeight,
       sheetsCategory: sheetcategory,
-      sheetsColor: sheetColor
+      sheetsColor: sheetColor,
+      unit: unit
     }
     const callBack = (res) => {
       if (res.success && res.data && res.data.data) {
@@ -200,20 +263,70 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
               {
                 valueId: "code",
                 value: res.data.data.rowData.code.value
-              }
+              },
+              {
+                valueId: "shape",
+                value: res.data.data.rowData.shape.value
+              },
+              {
+                valueId: "type",
+                value: res.data.data.rowData.type.value
+              },
+              {
+                valueId: "unitWidth",
+                value: res?.data?.data?.rowData?.unitWidth?.value
+              },
+              {
+                valueId: "unitLength",
+                value: res?.data?.data?.rowData?.unitLength?.value
+              },
+              {
+                valueId: "finalUnitWidth",
+                value: res?.data?.data?.rowData?.finalUnitWidth?.value
+              },
+              {
+                valueId: "finalUnitLength",
+                value: res?.data?.data?.rowData?.finalUnitLength?.value
+              },
+              {
+                valueId: "finalUnitHeight",
+                value: res?.data?.data?.rowData?.finalUnitHeight?.value
+              },
+              {
+                valueId: "columnsAmount",
+                value: res?.data?.data?.rowData?.columnsAmount?.value
+              },
+              {
+                valueId: "linesAmount",
+                value: res?.data?.data?.rowData?.linesAmount?.value
+              },
+              {
+                valueId: "cuttingLineLength",
+                value: res?.data?.data?.rowData?.cuttingLineLength?.value
+              },
+              {
+                valueId: "scoringLineLength",
+                value: res?.data?.data?.rowData?.scoringLineLength?.value
+              },
+              {
+                valueId: "perforationLineLength",
+                value: res?.data?.data?.rowData?.perforationLineLength?.value
+              },
             ],
-            currency: res.data.data.rowData.currency.value
           };
           setSearchResult((prev: any) => {
             return [formattedData, ...prev,] // Add the new item to the data list
           });
-          setOpenGenerateModal(false)
           setIsView(false)
           setIsRenderData(false)
+          setIsViewInfoAfterGenerate(true)
+          setNewDataGenerated(res.data.data)
         }
 
       } else {
         alertFault(t("products.offsetPrice.admin.errorAddingTemplate"))
+        setIsView(false)
+        setIsViewInfoAfterGenerate(false)
       }
     };
     await createDieCutFromTemplateMakerApi(callApi, callBack, reqObj);
@@ -222,7 +335,6 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const createNewTemplate = () => {
     const result = checkRequiredParameters(subProducts);
     if (result) {
-      // createNewTemplateEndPoint()
       setOpenGenerateModal(true)
     } else {
       const errorMessage = t("products.offsetPrice.admin.errorMakerTemplate1")
@@ -259,9 +371,8 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
         requiredParameterCodes.includes(param.parameterCode)
       )
     );
-
     const parameterInfo = foundParameters.map(param =>
-      `${param.parameterName}: ${param.values[0]}${param.unitKey ? ` ${param.unitKey}` : ''}`
+      `${param.parameterName}: ${param.values[0]}${param.defaultUnit ? ` ${param.defaultUnit}` : ''}`
     );
 
     return {
@@ -269,6 +380,21 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       isComplete: foundParameters.length === requiredParameterCodes.length
     };
   };
+
+  useEffect(() => {
+    if (parameter?.code === "DiecutType") {
+      if (selectedDieCutTypeValue) {
+        setSelectedCardId(selectedDieCutTypeValue.id)
+        setSelectedCardData(selectedDieCutTypeValue)
+      }
+    }
+    else if (parameter?.code === "DieCutter") {
+      if (selectedDieCutterValue) {
+        setSelectedCardId(selectedDieCutterValue.id)
+        setSelectedCardData(selectedDieCutterValue)
+      }
+    }
+  }, [selectedDieCutTypeValue, selectedDieCutterValue])
   return {
     defaultObject,
     openModal,
@@ -289,7 +415,20 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     createNewTemplateEndPoint,
     isView,
     setIsView,
-    setIsRenderData
+    setIsRenderData,
+    isViewInfoAfterGenerate,
+    setIsViewInfoAfterGenerate,
+    newDataGenerated,
+    setSubProducts,
+    isOpenDieCutModal,
+    setIsOpenDieCutModal,
+    selectedCardId,
+    selectedCardData,
+    searchValue,
+    setSearchValue,
+    selectedDieCutTypeValue,
+    setSelectedCardId,
+    setSelectedCardData
   };
 };
 
