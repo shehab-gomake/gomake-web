@@ -23,6 +23,7 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { isValidCustomer } from "@/utils/helpers";
 import { useUserPermission } from "@/hooks/use-permission";
 import { userProfileState } from "@/store/user-profile";
+import { printHouseCountryState } from "@/store/print-house-country";
 
 const useCustomerCard = ({
   t,
@@ -56,6 +57,8 @@ const useCustomerCard = ({
   const languagesOptions = useRecoilValue(languageOptionsState);
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const { CheckPermission } = useUserPermission();
+  const printHouseCountry = useRecoilValue<string>(printHouseCountryState);
+
   const customerTableHeaders = [
     t("customers.customerCode"),
     t("customers.name"),
@@ -382,9 +385,7 @@ const useCustomerCard = ({
     } else {
       var temp = [...addresses];
       const index = temp.length + 1;
-      // temp.push({ name: "", index: index });
-      temp.push({ index: index });
-
+      temp.push({ index: index, country: printHouseCountry });
       setAddresses(temp);
     }
   };
