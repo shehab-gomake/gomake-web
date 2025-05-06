@@ -15,6 +15,8 @@ import DonutLargeRoundedIcon from "@mui/icons-material/DonutLargeRounded";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { getItem, setItem } from "@/services/storage-data";
 import { useGomakeRouter } from "@/hooks";
+import OfflinePinIcon from "@mui/icons-material/OfflinePin";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const useSetupGuideMenu = ({
   handleOpenModal,
@@ -84,18 +86,22 @@ const useSetupGuideMenu = ({
   const renderStepStatusIcon = (status?: StepStatus) => {
     switch (status) {
       case StepStatus.DONE:
-        return <TaskAltRoundedIcon sx={{ fontSize: "18px" }} color="success" />;
+        return (
+          <CheckCircleIcon
+            sx={{ fontSize: "16px", color: primaryColor(300) }}
+          />
+        );
       case StepStatus.IN_PROGRESS:
         return (
           <DonutLargeRoundedIcon
-            sx={{ color: primaryColor(500), fontSize: "18px" }}
+            sx={{ color: primaryColor(500), fontSize: "16px" }}
           />
         );
       case StepStatus.NOT_YET:
       default:
         return (
           <RadioButtonUncheckedIcon
-            sx={{ fontSize: "18px" }}
+            sx={{ fontSize: "16px" }}
             color="disabled"
           />
         );
