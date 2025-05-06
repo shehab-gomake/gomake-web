@@ -84,17 +84,21 @@ const useSetupGuideMenu = ({
   const renderStepStatusIcon = (status?: StepStatus) => {
     switch (status) {
       case StepStatus.DONE:
-        return <TaskAltRoundedIcon fontSize="small" color="success" />;
+        return <TaskAltRoundedIcon sx={{ fontSize: "18px" }} color="success" />;
       case StepStatus.IN_PROGRESS:
         return (
           <DonutLargeRoundedIcon
-            fontSize="small"
-            sx={{ color: primaryColor(500) }}
+            sx={{ color: primaryColor(500), fontSize: "18px" }}
           />
         );
       case StepStatus.NOT_YET:
       default:
-        return <RadioButtonUncheckedIcon fontSize="small" color="disabled" />;
+        return (
+          <RadioButtonUncheckedIcon
+            sx={{ fontSize: "18px" }}
+            color="disabled"
+          />
+        );
     }
   };
 
