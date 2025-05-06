@@ -114,8 +114,13 @@ export const isValidCustomer = (
   }
 
   // Validate addresses
-  if (filteredAddresses?.some((address) => !address.address1)) {
-    missingFields.push("customers.modal.addressId");
+  // if (filteredAddresses?.some((address) => !address.address1)) {
+  //   missingFields.push("customers.modal.addressId");
+  // }
+
+  // Validate addresses
+  if (filteredAddresses?.some((address) => !address.city)) {
+    missingFields.push("customers.modal.city");
   }
 
   // Validate users' email addresses

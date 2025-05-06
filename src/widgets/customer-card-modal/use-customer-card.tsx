@@ -382,8 +382,9 @@ const useCustomerCard = ({
     } else {
       var temp = [...addresses];
       const index = temp.length + 1;
-      //  temp.push({ name: "", index: index, city: " ", street: " " });
-      temp.push({ name: "", index: index });
+      // temp.push({ name: "", index: index });
+      temp.push({ index: index });
+
       setAddresses(temp);
     }
   };
@@ -395,7 +396,6 @@ const useCustomerCard = ({
     }
     // else {
     //   const index = temp.length + 1;
-    //   // temp.push({ name: "", index: index, city: " ", street: " " });
     //   temp.push({ name: "", index: index });
     // }
     setAddresses(temp);
@@ -450,11 +450,6 @@ const useCustomerCard = ({
     if (customer && customer.users) {
       temp = [...customer.users];
     }
-
-    // else {
-    //   const index = temp.length + 1;
-    //   temp.push({ name: "", index: index });
-    // }
     setUsers(temp);
   };
 
