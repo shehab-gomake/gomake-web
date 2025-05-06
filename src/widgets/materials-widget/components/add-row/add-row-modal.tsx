@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { GoMakeModal } from "@/components";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   currenciesState,
@@ -26,11 +26,10 @@ interface IAddRowModalProps {
 const AddRowModal = (props: IAddRowModalProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
-  const [rowData, setRowData] = useState<any>({});
   const { alertFaultGetData, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
 
-  const { onAddCategoryRow } = useAddCategoryRow(props.isAdmin);
+  const { onAddCategoryRow, rowData, setRowData } = useAddCategoryRow(props.isAdmin);
   const currencies = useRecoilValue(currenciesState);
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
   const [clientsCategories, setClientsCategories] = useRecoilState<any>(
