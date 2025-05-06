@@ -8,18 +8,26 @@ import { currenciesState } from "@/widgets/materials-widget/state";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { EnumVATStatus } from "@/enums/accounting-enums";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
 const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
   const { t } = useTranslation();
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const { getCurrenciesApi } = useCompanyProfile();
   const [detailsView, setDetailsView] = useState(
     quoteStateValue?.isShowDetails
   );
   const [showPrices, setShowPrices] = useState(quoteStateValue?.isShowPrice);
-  const [showGraphics, setShowGraphics] = useState(quoteStateValue?.isShowGraphicsItems);
-  const [showDelivery, setShowDelivery] = useState(quoteStateValue?.isShowDeliveryItems);
-  const [hideItemDiscountColumn, setHideItemDiscountColumn] = useState(quoteStateValue?.hideItemDiscountColumn);
+  const [showGraphics, setShowGraphics] = useState(
+    quoteStateValue?.isShowGraphicsItems
+  );
+  const [showDelivery, setShowDelivery] = useState(
+    quoteStateValue?.isShowDeliveryItems
+  );
+  const [hideItemDiscountColumn, setHideItemDiscountColumn] = useState(
+    quoteStateValue?.hideItemDiscountColumn
+  );
 
   const currencies =
     useRecoilValue<{ label: string; value: string }[]>(currenciesState);
@@ -61,7 +69,6 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     quoteStateValue?.isShowDeliveryItems,
     quoteStateValue?.hideItemDiscountColumn,
   ]);
-
 
   useEffect(() => {
     setExchangeRate(quoteStateValue?.exchangeRate || "-");
@@ -203,6 +210,7 @@ const useSttingsQuoteMenu = ({ updateDocumentPreference }) => {
     _renderSortingBy,
     setExchangeRate,
     t,
+    CheckPreferenceValue,
   };
 };
 

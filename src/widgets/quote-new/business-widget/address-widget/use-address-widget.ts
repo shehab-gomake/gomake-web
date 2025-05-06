@@ -5,6 +5,8 @@ import { addressModalState, EAddressType, isNewAddress } from "./state";
 import { quoteItemState } from "@/store";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 
 interface useAddressWidgetProps {
   docType: DOCUMENT_TYPE;
@@ -20,6 +22,10 @@ const useAddressWidget = ({ docType, addressType }: useAddressWidgetProps) => {
     clientAddressValue,
     addressSelect,
   } = useQuoteGetData(docType);
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const isUsAddress = !!CheckPreferenceValue(
+    EPreferences.ADDRESSES_WITH_COUNTRY_AND_STATE
+  );
   const quoteStateValue = useRecoilValue<any>(quoteItemState);
   const [openModal, setOpenModal] = useRecoilState<boolean>(addressModalState);
 
@@ -39,20 +45,27 @@ const useAddressWidget = ({ docType, addressType }: useAddressWidgetProps) => {
   const [flag, setFlag] = useState<boolean>(false);
 
   const onChangeInputs = (key, value) => {
-    setAddressState({ ...addressState, [key]: value });
+    if (key === "country" && value !== "US") {
+      setAddressState({
+        ...addressState,
+        [key]: value,
+        state: "",
+      });
+    } else {
+      setAddressState({ ...addressState, [key]: value });
+    }
   };
 
   useEffect(() => {
     if (openModal) {
       getAllClientAddress();
-
       const addresses =
         addressType === EAddressType.BILLING
           ? quoteStateValue?.documentBillingAddresses
           : quoteStateValue?.documentDeliveryAddresses;
 
       if (addresses?.length > 0) {
-        const addressId = addresses[0]?.addressID;
+        const addressId = addresses[0]?.id;
         const city = addresses[0]?.city;
         setFlag(true);
         setSelectedAddress({ label: city, value: addressId });
@@ -67,12 +80,15 @@ const useAddressWidget = ({ docType, addressType }: useAddressWidgetProps) => {
       setAddressState({
         city: "",
         street: "",
-        addressId: "",
         apartment: "",
         entry: "",
         floor: "",
         postbox: "",
         zipCode: "",
+        country: null,
+        state: null,
+        address2: "",
+        address3: "",
         type: addressType,
       });
       setIsNewAddressState(true);
@@ -88,6 +104,7 @@ const useAddressWidget = ({ docType, addressType }: useAddressWidgetProps) => {
 
   return {
     t,
+    isUsAddress,
     onChangeInputs,
     addressState,
     openModal,
@@ -100,6 +117,7 @@ const useAddressWidget = ({ docType, addressType }: useAddressWidgetProps) => {
     onClickAddNewAddress,
     updateClientAddress,
     setSelectedAddress,
+    getAddressData,
   };
 };
 

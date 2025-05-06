@@ -6,9 +6,12 @@ import { fetchS3JsonContent } from "@/utils/S3Content";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { addressInputs1 } from "../../inputs/address-inputs";
-import { useCallback } from "react";
 import { Stack } from "@mui/material";
 import { EAddressType } from "@/widgets/quote-new/business-widget/address-widget/state";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
+import { countriesWithCodes } from "@/hooks/use-company-profile";
+import { usStates } from "@/utils/constants/us-states";
 
 interface IProps {
   address: {
@@ -20,7 +23,7 @@ interface IProps {
     entrance?: string;
     floor?: string;
     apartment?: string;
-    postalcode?: number;
+    zipCode?: number;
     po?: string;
     county?: string;
     remarks?: string;
@@ -36,6 +39,11 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
   const { classes } = useStyle();
   const [cities, setCities] = useState([]);
   const [cityStreets, setCityStreets] = useState([]);
+
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const isUsAddress = !!CheckPreferenceValue(
+    EPreferences.ADDRESSES_WITH_COUNTRY_AND_STATE
+  );
 
   // useEffect(() => {
   //   const fetchCities = async () => {
@@ -89,7 +97,13 @@ const AddressForm = ({ address, onDelete, setAddress }: IProps) => {
               />
             </div>
           ))} */}
-        {addressInputs1(t, address).map((item) => (
+        {addressInputs1(
+          t,
+          address,
+          isUsAddress,
+          countriesWithCodes,
+          usStates
+        ).map((item) => (
           <div style={{ marginBottom: 10 }}>
             <FormInput
               input={item as IInput}

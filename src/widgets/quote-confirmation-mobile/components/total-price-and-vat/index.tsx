@@ -1,4 +1,3 @@
-import React from "react";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { GomakeTextInput } from "@/components";
@@ -11,6 +10,17 @@ const TotalPriceAndVatContainer = () => {
   const { t } = useTranslation();
   const { getCurrencyUnitText } = useQuoteGetData();
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
+  const CurrencyUnit = getCurrencyUnitText(quoteConfirm?.currency);
+
+  const isVatHidden = quoteConfirm?.hideVatInSystem;
+
+  const headerLabel = isVatHidden
+    ? t("sales.quote.totalAfterDiscount")
+    : `${t("sales.quote.vat")} (${Number(quoteConfirm?.vat) * 100}%)`;
+
+  const value = isVatHidden
+    ? quoteConfirm?.totalPriceAfterDiscount
+    : quoteConfirm?.totalVAT;
 
   return (
     <div style={classes.mainContainer}>
@@ -24,11 +34,7 @@ const TotalPriceAndVatContainer = () => {
           <div style={classes.tableCell}>
             <GomakeTextInput
               style={classes.inputStyle}
-              value={
-                quoteConfirm?.totalPrice +
-                " " +
-                getCurrencyUnitText(quoteConfirm?.currency)
-              }
+              value={quoteConfirm?.totalPrice + " " + CurrencyUnit}
               disabled={true}
             />
           </div>
@@ -41,7 +47,10 @@ const TotalPriceAndVatContainer = () => {
             <GomakeTextInput
               style={classes.inputStyle}
               value={
-                quoteConfirm?.discount ? quoteConfirm?.discount + "%" : "0%"
+                (quoteConfirm?.discount ? quoteConfirm.discount + "%" : "0%") +
+                (quoteConfirm?.discountAmount != 0
+                  ? ` (-${quoteConfirm.discountAmount} ${CurrencyUnit})`
+                  : "")
               }
               disabled={true}
             />
@@ -49,37 +58,29 @@ const TotalPriceAndVatContainer = () => {
         </div>
         <div style={classes.thirdDiv}>
           <div style={classes.tableHeader}>
-            <h3 style={classes.headerStyle}>
-              {`${t("sales.quote.vat")} (${Number(quoteConfirm?.vat) * 100}%)`}
-            </h3>
+            <h3 style={classes.headerStyle}>{headerLabel}</h3>
           </div>
           <div style={classes.tableCell}>
             <GomakeTextInput
               style={classes.inputStyle}
-              value={
-                quoteConfirm?.totalVAT +
-                " " +
-                getCurrencyUnitText(quoteConfirm?.currency)
-              }
+              value={`${value} ${CurrencyUnit}`}
               disabled={true}
             />
           </div>
         </div>
-        <div style={classes.fourthDiv}>
-          <div style={classes.tableHeader}>
-            <h3 style={classes.headerStyle}>{t("sales.quote.totalPrice")}</h3>
+        {!isVatHidden && (
+          <div style={classes.fourthDiv}>
+            <div style={classes.tableHeader}>
+              <h3 style={classes.headerStyle}>{t("sales.quote.totalPrice")}</h3>
+            </div>
+            <div style={classes.tableCell}>
+              <GomakeTextInput
+                style={classes.inputPriceStyle}
+                value={quoteConfirm?.totalPayment + " " + CurrencyUnit}
+              />
+            </div>
           </div>
-          <div style={classes.tableCell}>
-            <GomakeTextInput
-              style={classes.inputPriceStyle}
-              value={
-                quoteConfirm?.totalPayment +
-                " " +
-                getCurrencyUnitText(quoteConfirm?.currency)
-              }
-            />
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

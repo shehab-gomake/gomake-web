@@ -32,6 +32,9 @@ const AddressModal = ({ isUpdate, documentType, addressType }: IProps) => {
     onClickAddNewAddress,
     updateClientAddress,
     setSelectedAddress,
+    isUsAddress,
+    getAddressData,
+    setAddressState,
   } = useAddressWidget({ docType: documentType, addressType });
 
   const buttonLabel = isUpdate ? t("sales.quote.save") : t("sales.quote.add");
@@ -54,6 +57,7 @@ const AddressModal = ({ isUpdate, documentType, addressType }: IProps) => {
       modalTitleStyle={classes.modalTitleStyle}
       openModal={openModal}
       onClose={() => {
+        setAddressState(getAddressData());
         setOpenModal(false);
       }}
       modalTitle={
@@ -67,14 +71,11 @@ const AddressModal = ({ isUpdate, documentType, addressType }: IProps) => {
         <div style={classes.fieldContainer}>
           <h3 style={classes.labelStyle}>{t("sales.quote.address")}</h3>
           <GoMakeAutoComplate
+            key={selectedAddress?.value || "New-ADDRESS"}
             disableClearable={true}
-            // options={addressSelect}
             options={addressSelect.filter(
               (address) => address.type === addressType || address.type === null
             )}
-            // options={addressSelect.filter(
-            //   (address) => address.type === addressType
-            // )}
             value={selectedAddress}
             style={classes.autoComplateStyle}
             placeholder={t("sales.quote.address")}
@@ -83,8 +84,11 @@ const AddressModal = ({ isUpdate, documentType, addressType }: IProps) => {
             }}
           />
         </div>
-        {addressInputs(addressState, isNewAddressState).map((item, index) => (
-          <Stack key={`address-input-${index}`} width={"330px"}>
+        {addressInputs(addressState, isUsAddress).map((item, index) => (
+          <Stack
+            key={`address-input-${index}-${selectedAddress?.value}`}
+            width={"330px"}
+          >
             <FormInput
               key={item?.name}
               input={item as IInput}
