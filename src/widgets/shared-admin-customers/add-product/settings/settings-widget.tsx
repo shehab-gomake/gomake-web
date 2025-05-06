@@ -200,7 +200,7 @@ const SettingsWidget = ({
         </div>
         <div style={clasess.itemOnFirstContainer}>
           <div style={clasess.labelTitleStyle}>
-            {t("products.addProduct.admin.productSKU")}
+            {t("products.addProduct.admin.productCode")}
             <span style={clasess.requierdInput}>*</span>
             <span onClick={onClickOpenProductSKU} style={clasess.plusInput}>
               +
@@ -211,7 +211,7 @@ const SettingsWidget = ({
               <GoMakeAutoComplate
                 key={defultProductSKU}
                 options={allProductSKU}
-                placeholder={t("products.addProduct.admin.productSKU")}
+                placeholder={t("products.addProduct.admin.productCode")}
                 style={clasess.dropDownListStyle}
                 getOptionLabel={(option: any) =>
                   `${option.name} - ${option.code}`
@@ -501,7 +501,7 @@ const SettingsWidget = ({
       )}
       <AddProductSkuModal
         openModal={isProductSKU}
-        modalTitle={t("products.addProduct.admin.modalProductSKU")}
+        modalTitle={t("products.addProduct.admin.modalProductCode")}
         onClose={onClickCloseProductSKU}
         onChangeStateProductSKU={onChangeStateProductSKU}
         createNewProductSKU={createNewProductSKU}

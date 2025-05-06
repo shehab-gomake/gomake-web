@@ -42,6 +42,7 @@ import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { SortIcon } from "@/icons/sort-icon";
 import { ModalType } from "@/enums";
 import { _renderDeliveryDate } from "@/utils/helpers";
+import { formatValueWithUnit } from "@/utils/is-currency";
 
 interface IMobileActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
@@ -820,13 +821,17 @@ const MobileActionContainerComponent = ({
                             )}
                           />
                           <span>
-                            {source === EWorkSource.OUT
-                              ? `(${calculateOutSourceProfitInMoney()} ${
-                                  totalPrice ? totalPrice.defaultUnit : ""
-                                })`
-                              : `(${calculateProfitInMoney()} ${
-                                  totalPrice ? totalPrice.defaultUnit : ""
-                                })`}
+                            {`(${
+                              source === EWorkSource.OUT
+                                ? formatValueWithUnit(
+                                    calculateOutSourceProfitInMoney(),
+                                    totalPrice?.defaultUnit
+                                  )
+                                : formatValueWithUnit(
+                                    calculateProfitInMoney(),
+                                    totalPrice?.defaultUnit
+                                  )
+                            })`}
                           </span>
                         </Stack>
                       )}
@@ -889,9 +894,10 @@ const MobileActionContainerComponent = ({
                                 )}
                               />
                               <span>
-                                {`(${calculateProfitInMoney()} ${
-                                  totalPrice ? totalPrice.defaultUnit : ""
-                                })`}
+                                {`(${formatValueWithUnit(
+                                  calculateProfitInMoney(),
+                                  totalPrice?.defaultUnit
+                                )})`}
                               </span>
                             </Stack>
                           </>

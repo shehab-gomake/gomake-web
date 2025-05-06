@@ -76,6 +76,9 @@ const useMaterialsActions = (isAdmin: boolean) => {
     if (action === null && updatedValue != "") {
       setUpdatedValue("")
     }
+    else if (action?.action === EMaterialsActions.CreatePurchaseOrder && updatedValue == "") {
+      setUpdatedValue("1")
+    }
   }, [action, updatedValue])
   const [currentCurrency, setCurrentCurrency] = useState<any>("");
   const [checkedPrice, setCheckedPrice] = useState(false);

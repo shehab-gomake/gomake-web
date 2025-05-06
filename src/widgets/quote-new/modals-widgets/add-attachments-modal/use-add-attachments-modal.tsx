@@ -8,6 +8,7 @@ import { uploadDocumentAttachmentApi } from "@/services/api-service/materials/ma
 import { WastebasketNew } from "@/icons/wastebasket-new";
 import { IconButton } from "@mui/material";
 import FileOpenIcon from '@mui/icons-material/FileOpen';
+import { loadingWithShadowState } from "@/store/loading-with-shadow";
 
 interface AttachmentPayload {
     documentId: string;
@@ -22,10 +23,12 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
     const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [selectedAttachment, setSelectedAttachment] = useState(null);
+    const [isLoading, setIsLoading] = useRecoilState(loadingWithShadowState);
     const onClickCloseDeleteModal = () => {
         setOpenDeleteModal(false);
     }
     const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        setIsLoading(true);
         const file = event.target.files?.[0];
         if (file) {
             const reader = new FileReader();
@@ -38,9 +41,22 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
                         return data + String.fromCharCode(byte);
                     }, '')
                 )}`;
+                const tempAttachment = {
+                    id: `temp-${Date.now()}`, // Temporary ID
+                    documentId: quoteItemValue?.id,
+                    documentType: documentType,
+                    fileName: file.name,
+                    base64Content: base64Content,
+                    fileUrl: URL.createObjectURL(file) // Create temporary URL for preview
+                };
 
+                setQuoteItemValue(prev => ({
+                    ...prev,
+                    attachments: [...(prev.attachments || []), tempAttachment]
+                }));
                 uploadDocumentAttachmentApi(callApi, () => {
                     getQuote();
+                    setTimeout(() => setIsLoading(false), 5000);
                 }, {
                     documentId: quoteItemValue?.id,
                     documentType: documentType,
@@ -99,6 +115,7 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
         selectedAttachment,
         quoteItemValue,
         openDeleteModal,
+        isLoading
     };
 };
 

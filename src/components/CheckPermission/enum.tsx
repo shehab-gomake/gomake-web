@@ -125,7 +125,8 @@ export enum Permissions {
   CAN_CLOSE_MANUALLY = "CanCloseManually",
   SHOW_DELIVERIES = "ShowDeliveries",
   CAN_OPEN_CLOSED_DOCUMENTS = "CanOpenClosedDocuments",
-
+  SHOW_SALES_DASHBOARD = "ShowSalesDashboard",
+  UPDATE_DOCUMENT_AGENT = "UpdateDocumentAgent",
   //purchase group
   SHOW_PURCHASE_ORDERS = "ShowPurchaseOrders",
   SHOW_PURCHASE_INVOICES = "ShowPurchaseInvoices",
@@ -135,6 +136,7 @@ export enum Permissions {
   SHOW_RECEIPTS = "ShowReceipts",
   SHOW_DEPOSITS = "ShowDeposits",
   SHOW_SUPPLIER_PAYMENTS = "ShowSupplierPayments",
+  CANCEL_RECEIPT = "CancelReceipt",
 
   //reports group
   SHOW_REPORTS = "ShowReports",

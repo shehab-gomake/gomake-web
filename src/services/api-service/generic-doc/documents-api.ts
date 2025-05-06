@@ -49,6 +49,8 @@ const ADD_DELIVERY_URL = "/v1/erp-service/documents/add-delivery";
 const CANCEL_DOCUMENT_URL = "/v1/erp-service/documents/cancel-document";
 const SEND_DOCUMENT_TO_CLIENT_URL =
   "/v1/erp-service/documents/send-document-to-client";
+const SEND_ORDER_READY_TO_CLIENT_URL =
+  "/v1/jobs-service/board-missions/send-order-ready-to-client";
 const SAVE_DOCUMENT_URL = "/v1/erp-service/documents/save-document";
 const ACCEPT_DOCUMENT_URL = "/v1/erp-service/documents/approved-by-manager";
 const REJECT_DOCUMENT_URL = "/v1/erp-service/documents/rejected-by-manager";
@@ -445,6 +447,21 @@ const sendDocumentToClientApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.POST,
     SEND_DOCUMENT_TO_CLIENT_URL,
+    setState,
+    data,
+    true
+  );
+};
+
+const sendOrderReadyToClientApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    SEND_ORDER_READY_TO_CLIENT_URL,
     setState,
     data,
     true
@@ -1265,4 +1282,5 @@ export {
   quickDuplicateApi,
   deleteDocumentAttachmentApi,
   getDocumentDeliveryDateApi,
+  sendOrderReadyToClientApi,
 };

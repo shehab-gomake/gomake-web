@@ -38,6 +38,7 @@ export type ProfitsPricingTables = {
   pricingBy: number;
   transitionType: number;
   additionType: number;
+  minPrice?: number;
 };
 
 export type ActionProfitRowChartData = {
@@ -48,6 +49,11 @@ export type ActionProfitRowChartData = {
 };
 
 export type PricingListProps = {
+  minimumValue: number;
+  isUpdateMinimumValue: number;
+  onBlurMinimumValue: () => void;
+  setIsUpdateMinimumValue: (value: any) => void;
+  onInputChangeMinimumValue: (type: any) => void;
   tableHeaders: string[];
   tableBodyList: any[];
   PricingBy: SelectedPricingByType[];
@@ -82,6 +88,7 @@ export type PricingListProps = {
   updatePricingByForActionPackage: (value: any) => void;
   actionProfitByActionId?: any;
   getProfitsPricingTables?: () => void;
+
 };
 export type PricingListTableProps = {
   tableHeaders: string[];
@@ -171,6 +178,11 @@ export type ProfitRightSideProps = {
 };
 
 export type ProfitLeftSideProps = {
+  minimumValue: number;
+  isUpdateMinimumValue: number;
+  onBlurMinimumValue: () => void;
+  setIsUpdateMinimumValue: (value: any) => void;
+  onInputChangeMinimumValue: (type: any) => void;
   tableHeaders: string[];
   actionProfitRowsList: any[];
   PricingBy: SelectedPricingByType[];

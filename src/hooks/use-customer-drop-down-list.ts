@@ -123,13 +123,13 @@ const useCustomerDropDownList = ({
     if (shouldRenderSuppliersOnMount) {
       getAllSupplierList();
     }
-  }, [shouldRenderSuppliersOnMount, getAllSupplierList]);
+  }, [shouldRenderSuppliersOnMount]);
 
   useEffect(() => {
     if (shouldRenderCustomersOnMount) {
       getAllCustomersCreateQuote();
     }
-  }, [shouldRenderCustomersOnMount, getAllCustomersCreateQuote]);
+  }, [shouldRenderCustomersOnMount]);
 
   return {
     customer,

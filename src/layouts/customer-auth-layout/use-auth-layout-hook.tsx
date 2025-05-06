@@ -21,6 +21,7 @@ import {
 import { ActionsIcon } from "@/icons/side-list-icons/actions";
 import { SettingsIcon } from "@/icons/side-list-icons/settings";
 import { CustomerServiceIcon } from "@/icons/side-list-icons/customer-service";
+import { DashboardIcon } from "@/icons/side-list-icons/dashboard";
 
 const useAuthLayoutHook = (
   permissionEnumValue?: Permissions,
@@ -133,6 +134,12 @@ const useAuthLayoutHook = (
             title: "tabs.deliveries",
             path: "/deliveries",
             Permission: Permissions.SHOW_DELIVERIES,
+          },
+          {
+            key: "dashboard",
+            title: "tabs.dashboard",
+            path: "/dashboard",
+            Permission: Permissions.SHOW_SALES_DASHBOARD,
           },
         ],
         icon: () => {

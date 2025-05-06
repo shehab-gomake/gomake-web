@@ -17,7 +17,7 @@ const BoardMissionsStationsComponent = ({
   const sortedStations = useMemo(
     () =>
       [...stations]
-        ?.sort((a, b) => b?.index - a?.index)
+        ?.sort((a, b) => b?.stationIndex - a?.stationIndex)
         ?.sort((a, b) => (b?.isDone && a?.isDone ? 0 : a.isDone ? 1 : -1)),
     [stations]
   );

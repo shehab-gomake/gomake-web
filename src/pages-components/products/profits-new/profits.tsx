@@ -183,6 +183,11 @@ const ProfitsNewPageWidget = () => {
               updatePricingByForActionPackage={updatePricingByForActionPackage}
               actionProfitByActionId={actionProfitByActionId}
               getProfitsPricingTables={getProfitsPricingTables}
+              minimumValue={minimumValue}
+              isUpdateMinimumValue={isUpdateMinimumValue}
+              onBlurMinimumValue={onBlurMinimumValue}
+              setIsUpdateMinimumValue={setIsUpdateMinimumValue}
+              onInputChangeMinimumValue={onInputChangeMinimumValue}
             />
           </div>
         ) : (

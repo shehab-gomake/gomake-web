@@ -16,6 +16,7 @@ const CHECk_PRINT_HOUSE_TAX_LOGIN = "/v1/print-houses/check-tax-login";
 const SAVE_PRINT_HOUSE_PAYMENT_DETAILS_URL =
   "/v1/print-houses/save-print-house-payment-details";
 const MAKE_PAYMENT_URL = "/v1/print-houses/make-payment";
+const PRINT_HOUSE_TAX_LOGOUT = "/v1/print-houses/tax-logout";
 
 const getCompanyProfile: ICallAndSetData = async (callApi, setState) => {
   return await getSetApiData(
@@ -164,6 +165,15 @@ const makePaymentApi: ICallAndSetData = async (callApi, setState, data) => {
   );
 };
 
+const printHouseTaxLogoutApi: ICallAndSetData = async (callApi, setState) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    PRINT_HOUSE_TAX_LOGOUT,
+    setState
+  );
+};
+
 export {
   getCompanyProfile,
   updateCompanyProfile,
@@ -178,4 +188,5 @@ export {
   checkPrintHouseTaxLoginApi,
   savePrintHousePaymentDetailsApi,
   makePaymentApi,
+  printHouseTaxLogoutApi,
 };

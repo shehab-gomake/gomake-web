@@ -30,19 +30,15 @@ import { ClientTypeModal } from "../client-types/components/add-edit-client-type
 import { PlusIcon } from "@/icons";
 
 interface IProps {
-  isValidCustomer?: any;
-  customerAction?: CUSTOMER_ACTIONS;
+  customerAction: CUSTOMER_ACTIONS;
   codeFlag?: boolean;
-  typeClient?: string;
+  typeClient: CLIENT_TYPE;
   getAllCustomers?: () => void;
   onCustomerAdd?: (value: any) => void;
   openModal?: boolean;
-  modalTitle?: string;
   onClose?: () => void;
   customer?: any;
   setCustomer?: (customer: any) => void;
-  showUpdateButton?: boolean;
-  showAddButton?: boolean;
   isgetAllCustomers?: boolean;
   isFromHomePage?: boolean;
   setOpenOfferModal?: any;
@@ -58,12 +54,10 @@ const CustomerCardWidget = ({
   getAllCustomers,
   onCustomerAdd,
   openModal,
-  modalTitle,
   onClose,
   customer,
   setCustomer,
-  showUpdateButton,
-  showAddButton,
+  customerAction,
   isgetAllCustomers = true,
   isFromHomePage = false,
   setOpenOfferModal,
@@ -74,6 +68,10 @@ const CustomerCardWidget = ({
 }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
+  const isCustomer = typeClient === CLIENT_TYPE.CUSTOMER;
+  const isSupplier = typeClient === CLIENT_TYPE.SUPPLIER;
+  const showUpdateButton = customerAction === CUSTOMER_ACTIONS.Edit;
+  const showAddButton = customerAction === CUSTOMER_ACTIONS.Add;
   const {
     customerTableHeaders,
     mapCustomerData,
@@ -287,7 +285,7 @@ const CustomerCardWidget = ({
       title: t("budget"),
       component: <BudgetTab state={customer} />,
     },
-    typeClient === CLIENT_TYPE.CUSTOMER && {
+    isCustomer && {
       title: t("customers.modal.gomakeUsers"),
       component: (
         <Stack direction={"column"} gap={"15px"}>
@@ -329,10 +327,22 @@ const CustomerCardWidget = ({
     }
   }, [customer?.currency, systemCurrency]);
 
+  const getModalTitle = () => {
+    if (isSupplier) {
+      return customerAction === CUSTOMER_ACTIONS.Edit
+        ? t("suppliers.editModalTitle")
+        : t("suppliers.addModalTitle");
+    }
+
+    return customerAction === CUSTOMER_ACTIONS.Edit
+      ? t("customers.modal.editTitle")
+      : t("customers.modal.addTitle");
+  };
+
   return (
     <GoMakeModal
       openModal={open}
-      modalTitle={t(modalTitle)}
+      modalTitle={getModalTitle()}
       onClose={handleClose}
       insideStyle={classes.insideStyle}
     >
@@ -349,7 +359,7 @@ const CustomerCardWidget = ({
         <div style={classes.mainContainerStyle}>
           <Stack direction={"row"}>
             <span style={classes.subTitleStyle}>
-              {typeClient == "C"
+              {isCustomer
                 ? t("customers.modal.customerInfo")
                 : t("suppliers.supplierInfo")}
             </span>
@@ -391,10 +401,10 @@ const CustomerCardWidget = ({
               </div>
               <div style={{ width: "180px" }}>
                 <GoMakeAutoComplate
-                  key={customer}
+                  key={customer?.clientTypeId || "default"}
                   options={clientTypesCategories}
                   placeholder={
-                    typeClient === "C"
+                    isCustomer
                       ? t("customers.modal.clientType")
                       : t("suppliers.supplierType")
                   }
@@ -425,7 +435,7 @@ const CustomerCardWidget = ({
                 </div>
                 <div style={{ width: "180px" }}>
                   <GoMakeAutoComplate
-                    key={customer}
+                    key={customer?.clientGroupId}
                     options={
                       clientGroupList.find(
                         (option: any) => option.groupName === inputValue
@@ -491,7 +501,7 @@ const CustomerCardWidget = ({
                 style={{ width: "fit-content" }}
                 onClick={handleAddCustomer}
               >
-                {typeClient == "C"
+                {isCustomer
                   ? t("customers.buttons.addCustomer")
                   : t("suppliers.buttons.addSupplier")}
               </SecondaryButton>
@@ -504,9 +514,7 @@ const CustomerCardWidget = ({
                 style={{ width: "fit-content" }}
                 onClick={handleEditCustomer}
               >
-                {typeClient == "C"
-                  ? t("customers.buttons.updateChanges")
-                  : t("suppliers.buttons.updateChanges")}
+                {t("customers.buttons.updateChanges")}
               </SecondaryButton>
             )}
           </PermissionCheck>
@@ -526,7 +534,7 @@ const CustomerCardWidget = ({
           openModal={isClientType}
           onClose={onClickCloseClientType}
           modalTitle={
-            typeClient === "C"
+            isCustomer
               ? t("customers.buttons.addClientType")
               : t("suppliers.addSupplierType")
           }

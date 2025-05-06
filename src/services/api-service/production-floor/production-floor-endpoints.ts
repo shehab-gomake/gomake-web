@@ -1,6 +1,7 @@
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { ICallAndSetData } from "@/services/api-service/interface";
+import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
 
 const GET_PRODUCTION_FLOOR_DATA_URL = "/v1/erp-service/board-missions";
 const UPDATE_WORK_JOB_STATUS_URL =
@@ -79,23 +80,29 @@ const UPDATE_BOARD_MISSIONS_ACTION_DONE_WITH_MATERIALS =
   "/v1/erp-service/board-missions-actions/move-to-done";
 const TRY_MOVE_BOARD_MISSION_TO_DONE_URL =
   "/v1/erp-service/board-missions/try-move-board-mission-to-done/";
-const UPDATE_DUE_DATE_URL =
-    "/v1/erp-service/board-missions/update-due-date";
+const UPDATE_DUE_DATE_URL = "/v1/erp-service/board-missions/update-due-date";
 const DELETE_JOB_FILE_UR =
-    "/v1/erp-service/board-missions/delete-orderitem-file";
+  "/v1/erp-service/board-missions/delete-orderitem-file";
+
+const UPDATE_PRODUCTION_FLOOR_NOTE_URL =
+  "/v1/erp-service/board-missions/update-production-floor-note";
+
 const getProductionFloorData: ICallAndSetData = async (
   callApi,
   setState,
-  connectionId: string,
+  data: {
+    connectionId: string;
+    filters?: IProductionFloorFilter;
+  },
   lock = false,
   abortController
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
-    GET_PRODUCTION_FLOOR_DATA_URL + "?connectionId=" + connectionId,
+    GET_PRODUCTION_FLOOR_DATA_URL + "?connectionId=" + data.connectionId,
     setState,
-    {},
+    data.filters,
     false,
     abortController
   );
@@ -396,7 +403,7 @@ const getAllBoardMissionsUploadingFiles: ICallAndSetData = async (
 const moveBoardMissionToDoneApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: { boardMissionId: string; sendMessage?: string }
+  data: { boardMissionId: string; sendMessage?: string; productType?: string }
 ) => {
   return await getSetApiData(
     callApi,
@@ -410,7 +417,7 @@ const moveBoardMissionToDoneApi: ICallAndSetData = async (
 const backToProcessApi: ICallAndSetData = async (
   callApi,
   setState,
-  data: { boardMissionId: string; sendMessage?: string }
+  data: { boardMissionId: string; sendMessage?: string; productType?: string }
 ) => {
   return await getSetApiData(
     callApi,
@@ -649,39 +656,57 @@ const tryMoveBoardMissionToDoneApi: ICallAndSetData = async (
   );
 };
 const updateJobDueDateApi: ICallAndSetData = async (
-    callApi,
-    callBack,
-    data: {
-      boardMissionId: string;
-      dueDate: string;
-    }
+  callApi,
+  callBack,
+  data: {
+    boardMissionId: string;
+    dueDate: string;
+  }
 ) => {
   return await getSetApiData(
-      callApi,
-      EHttpMethod.PUT,
-      UPDATE_DUE_DATE_URL,
-      callBack,
-      data
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_DUE_DATE_URL,
+    callBack,
+    data
   );
 };
 const deleteJobFileApi: ICallAndSetData = async (
-    callApi,
-    callBack,
-    data: {
-      orderItemId: string;
-      filename: string;
-      source: string;
-      productType: string;
-    }
+  callApi,
+  callBack,
+  data: {
+    orderItemId: string;
+    filename: string;
+    source: string;
+    productType: string;
+  }
 ) => {
   return await getSetApiData(
-      callApi,
-      EHttpMethod.POST,
-      DELETE_JOB_FILE_UR,
-      callBack,
-      data
+    callApi,
+    EHttpMethod.POST,
+    DELETE_JOB_FILE_UR,
+    callBack,
+    data
   );
 };
+const updateProductionFloorNotesApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data: {
+    boardMissionId: string;
+    productType: string;
+    note: string;
+  }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_PRODUCTION_FLOOR_NOTE_URL,
+    callBack,
+    data
+  );
+};
+
 export {
   boardMissionsUpdateActionEmployee,
   boardMissionsUpdateActionMachine,
@@ -722,6 +747,7 @@ export {
   updateBoardMissionsActionDoneWithMaterialsApi,
   tryMoveBoardMissionToDoneApi,
   updateJobDueDateApi,
-    deleteJobFileApi,
+  deleteJobFileApi,
+  updateProductionFloorNotesApi,
   sendJobExampleConfirmationToClientApi
 };

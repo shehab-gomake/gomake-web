@@ -11,7 +11,7 @@ const useCalculationSocketIO = () => {
   const [connectionId, setConnectionId] = useState<any>();
   const [signalRPricingResult, setSignalRPricingResult] = useState<any>();
   const [startCalculationData, setStartCalculationData] = useState<any>();
-
+  const [newDieCutSelect, setNewDieCutSelect] = useState<any>();
   const [signalRWorkFlows, setSignalRWorkFlows] =
       useState<ICalculationSignalRResult>();
   const [updatedSelectedWorkFlow, setUpdatedSelectedWorkFlow] =
@@ -47,9 +47,13 @@ const useCalculationSocketIO = () => {
     socket.on("calculationServerError", () => {
       //setCalculationServerErrorState(true);
     });
+    socket.on('updateDieCutSelect', (newData) => {
+      setNewDieCutSelect(newData)
+    });
     socket.on('connect', () => {
       setConnectionId(socket.id);
     });
+  
     return () => {
       console.log("Closing socket connection...");
       socket.disconnect();
@@ -65,6 +69,7 @@ const useCalculationSocketIO = () => {
     signalRPricingResult,
     calculationServerError,
     isCalculationFinished,
+    newDieCutSelect,
     setIsCalculationFinished,
   };
 };

@@ -31,6 +31,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { getAllUsersCanApproveQuoteApi } from "@/services/api-service/users/users-api";
 import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-state";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -38,7 +39,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { callApi } = useGomakeAxios();
   const router = useRouter();
   const { push } = useRouter();
-  const { CheckDocumentPermission } = useUserPermission();
+  const { CheckDocumentPermission, CheckPermission } = useUserPermission();
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
   const {
@@ -211,7 +212,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       }
     };
 
-    if (docType === DOCUMENT_TYPE.receipt) {
+    if (isReceipt) {
       if (withInvoices)
         await getReceiptInvoicesPdfApi(callApi, callBack, {
           receiptId: quoteItemValue?.id,
@@ -261,7 +262,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
         return item ? { ...item, sumApplied } : null;
       })
-      .filter(Boolean)
+      .filter(Boolean);
 
     const newReceiptItem = {
       ...quoteItemValue,
@@ -303,9 +304,13 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const isNewCreation = router?.query?.isNewCreation;
   const isInvoice = docType === DOCUMENT_TYPE.invoice;
+  const isDeliveryNote = docType === DOCUMENT_TYPE.deliveryNote;
   const isQuote = docType === DOCUMENT_TYPE.quote;
   const isOrder = docType === DOCUMENT_TYPE.order;
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
+  const isReceipt = docType === DOCUMENT_TYPE.receipt;
+
+  const canCancelReceipt = CheckPermission(Permissions.CANCEL_RECEIPT);
 
   const canEditDocument =
     quoteItemValue?.isEditable &&
@@ -385,8 +390,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         docType === DOCUMENT_TYPE.order
           ? navigate("/orders")
           : docType === DOCUMENT_TYPE.deliveryNote
-            ? navigate("/deliveryNotes")
-            : navigate("/invoices");
+          ? navigate("/deliveryNotes")
+          : navigate("/invoices");
       } else {
         alertFaultUpdate();
       }
@@ -440,7 +445,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   };
 
   const handleClickPrint = () => {
-    if (docType === DOCUMENT_TYPE.receipt) {
+    if (isReceipt) {
       onOpenExportReceiptPdfModal();
     } else onClickPrint();
   };
@@ -509,6 +514,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     onClickCloseOrderNowPreModal,
     handleOrderConfirmation,
     setOpenReceiptCreationModal,
+    isReceipt,
+    canCancelReceipt,
+    isDeliveryNote,
   };
 };
 

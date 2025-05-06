@@ -1,4 +1,5 @@
 import { FONT_FAMILY } from "@/utils/font-family";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
 
 const DateTimeProductionFloorComponent = ({
   dateString,
@@ -6,7 +7,7 @@ const DateTimeProductionFloorComponent = ({
   dateString: string;
 }) => {
   const date = new Date(dateString);
-
+  const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
   const time = date.toLocaleTimeString([], {
     hour: "2-digit",
     minute: "2-digit",
@@ -29,7 +30,8 @@ const DateTimeProductionFloorComponent = ({
         textAlign: "center",
         paddingLeft: 10,
         paddingRight: 10,
-          fontWeight:"bolder"
+        fontWeight:"bolder",
+        fontSize:GetProductionFontSizeFromPreferences(),
       }}
     >
       {formattedDate} <br /> {time}

@@ -375,8 +375,9 @@ const BoardMissionsStationActionItem = ({
           },
           currentBoardMissionActionId: currentActionId,
         });
-
-        setOpenPackagingModal(true);
+        if (isLastStation) {
+          setOpenPackagingModal(true);
+        }
       } else {
         alertFaultUpdate();
         setLoading(false);

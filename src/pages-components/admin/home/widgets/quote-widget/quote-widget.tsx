@@ -19,7 +19,7 @@ import {
 import Stack from "@mui/material/Stack";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card";
-import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import { ModalType } from "@/enums";
@@ -271,13 +271,11 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
       />
       <CustomerCardWidget
         customerAction={CUSTOMER_ACTIONS.Add}
+        typeClient={CLIENT_TYPE.CUSTOMER}
         codeFlag={false}
-        typeClient={"C"}
         onCustomerAdd={onCustomerAdd}
         openModal={openCustomerModal}
-        modalTitle={t("customers.modal.addTitle")}
         onClose={onCloseCustomerModal}
-        showAddButton={true}
         customer={customer}
         setCustomer={setCustomer}
         isFromHomePage={true}

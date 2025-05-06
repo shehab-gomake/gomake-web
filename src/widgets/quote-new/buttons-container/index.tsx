@@ -25,7 +25,6 @@ import { InvoiceCreationModal } from "../invoice-creation-modal";
 import { ModalType } from "@/enums";
 import { OrderNowPrePaymentModal } from "../total-price-and-vat/order-now-modal/order-now-pre-payment";
 import { validateDocument } from "@/utils/validators";
-import { DeleteIcon } from "@/components/icons/delete-icon";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -107,6 +106,9 @@ const ButtonsContainer = ({
     onClickCloseOrderNowPreModal,
     handleOrderConfirmation,
     setOpenReceiptCreationModal,
+    isReceipt,
+    canCancelReceipt,
+    isDeliveryNote,
   } = useButtonsContainer(documentType);
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
@@ -144,7 +146,7 @@ const ButtonsContainer = ({
   return (
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
-        {isNewCreation && documentType === DOCUMENT_TYPE.receipt && (
+        {isNewCreation && isReceipt && (
           <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
         )}
         {isInvoice && quoteItemValue?.isCanClose && (
@@ -206,18 +208,18 @@ const ButtonsContainer = ({
           </GomakePrimaryButton>
         )}
 
-        {canAddDelivery && canEditDocument && quoteItemValue?.isHaveDeliveryItem && (
-          <GomakePrimaryButton
-            leftIcon={
-              <WastebasketNew2 stroke={"#344054"} />
-            }
-            style={classes.btnContainer}
-            onClick={onClickOpenDeleteDeliveryModal}
-          >
-            {t("sales.quote.deleteDelivery")}
-          </GomakePrimaryButton>
-        )}
-        {(
+        {canAddDelivery &&
+          canEditDocument &&
+          quoteItemValue?.isHaveDeliveryItem && (
+            <GomakePrimaryButton
+              leftIcon={<WastebasketNew2 stroke={"#344054"} />}
+              style={classes.btnContainer}
+              onClick={onClickOpenDeleteDeliveryModal}
+            >
+              {t("sales.quote.deleteDelivery")}
+            </GomakePrimaryButton>
+          )}
+        {
           <GomakePrimaryButton
             leftIcon={
               quoteItemValue?.attachments?.length > 0 ? (
@@ -228,23 +230,21 @@ const ButtonsContainer = ({
             }
             style={classes.btnContainer}
             onClick={onClickOpenAddAttachmentsModal}
-
           >
             {quoteItemValue?.attachments?.length > 0
               ? t("sales.quote.editAttachments")
               : t("sales.quote.addAttachments")}
           </GomakePrimaryButton>
+        }
+        {isNewCreation && (isDeliveryNote || isInvoice) && (
+          <GomakePrimaryButton
+            leftIcon={<PlusIcon stroke={"#344054"} />}
+            style={classes.btnContainer}
+            onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.order)}
+          >
+            {t("sales.quote.copyFromOrder")}
+          </GomakePrimaryButton>
         )}
-        {isNewCreation &&
-          (documentType === DOCUMENT_TYPE.deliveryNote || isInvoice) && (
-            <GomakePrimaryButton
-              leftIcon={<PlusIcon stroke={"#344054"} />}
-              style={classes.btnContainer}
-              onClick={() => handleCopyFromDocumentClick(DOCUMENT_TYPE.order)}
-            >
-              {t("sales.quote.copyFromOrder")}
-            </GomakePrimaryButton>
-          )}
         {isNewCreation && isInvoice && (
           <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
@@ -303,7 +303,8 @@ const ButtonsContainer = ({
             {t("materials.buttons.cancel")}
           </GomakePrimaryButton>
         )}
-        {documentType === DOCUMENT_TYPE.receipt &&
+        {isReceipt &&
+          !!canCancelReceipt &&
           !isNewCreation &&
           quoteItemValue.status !== DELIVERY_NOTE_STATUSES.Canceled && (
             <GomakePrimaryButton
@@ -321,14 +322,14 @@ const ButtonsContainer = ({
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
             onClick={() => {
-              if (documentType !== DOCUMENT_TYPE.receipt) {
+              if (!isReceipt) {
                 const validationError = validateDocument(quoteItemValue);
                 if (validationError) {
                   alertFault(validationError);
                   return;
                 }
               }
-              if (documentType === DOCUMENT_TYPE.receipt) {
+              if (isReceipt) {
                 onClickCreateNewReceipt();
               } else if (isInvoice) {
                 if (

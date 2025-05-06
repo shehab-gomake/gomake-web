@@ -12,6 +12,7 @@ import {
 import { useState } from "react";
 import { ThreeOptionsModal } from "@/components";
 import { DeliveriesIcon } from "@/icons/side-list-icons/deliveries";
+import { FONT_FAMILY } from "@/utils/font-family";
 
 interface OtherOptionsSectionProps {
   quoteItemValue: any;
@@ -120,9 +121,24 @@ const OtherOptionsSection = ({
     } else onClickPrint();
   };
 
+  const [isHovering, setIsHovering] = useState(false);
+
   return (
     <Stack direction={"column"} gap={"10px"} width={"100%"}>
       <span style={classes.sectionTitle}>{t("sales.modals.otherOptions")}</span>
+      {!!quoteItemValue?.orderIdForDeliveryCreation && (
+        <Button
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+          sx={classes.delBtn}
+          onClick={onClickProceedToDelivery}
+          startIcon={
+            <DeliveriesIcon color={isHovering ? "#10B981" : "#10B981"} />
+          }
+        >
+          {t("sales.modals.proceedToDelivery")}
+        </Button>
+      )}
       <Button
         sx={classes.optionsButtons}
         onClick={handleClickPrint}
@@ -147,15 +163,6 @@ const OtherOptionsSection = ({
         {getCreateButtonText()}
       </Button>
 
-      {!!quoteItemValue?.orderIdForDeliveryCreation && (
-        <Button
-          sx={classes.optionsButtons}
-          onClick={onClickProceedToDelivery}
-          startIcon={<DeliveriesIcon />}
-        >
-          {t("sales.modals.proceedToDelivery")}
-        </Button>
-      )}
       <ThreeOptionsModal
         hideIcon
         title={t("sales.modals.printReceipt")}

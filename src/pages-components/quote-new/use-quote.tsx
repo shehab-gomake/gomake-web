@@ -78,6 +78,13 @@ import { ClientChangeSource } from "./store/quote";
 import { validateDocument } from "@/utils/validators";
 import { EnumVATStatus } from "@/enums/accounting-enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
+import { useModal } from "@/hooks/use-modal";
+
+export enum MessageType {
+  Email = 0,
+  SMS = 1,
+  Both = 2,
+}
 
 interface IQuoteProps {
   docType: DOCUMENT_TYPE;
@@ -99,6 +106,8 @@ const useQuoteNew = ({
     alertSuccessDelete,
     alertFaultDelete,
     alertFault,
+    alertSuccessSend,
+    alertFaultSend,
   } = useSnackBar();
   const systemVAT = useRecoilValue<number>(systemVATState);
 
@@ -370,8 +379,8 @@ const useQuoteNew = ({
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -947,8 +956,16 @@ const useQuoteNew = ({
     }
   };
 
+  const contactsListRef = useRef<HTMLDivElement>(null);
+
   const handleShowMore = () => {
-    setDisplayedItems(items.length);
+    setDisplayedItems(items.length); // or whatever logic you have
+    setTimeout(() => {
+      contactsListRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }, 100); // small timeout to allow the new items to render
   };
 
   const handleShowLess = () => {
@@ -1031,7 +1048,9 @@ const useQuoteNew = ({
                 : newQuoteItemValue?.exchangeRate,
             price: quoteItem?.price,
             discount: quoteItem?.discount,
-            isPrintHouseMaterialItem: quoteItem?.printHouseMaterialId ? true : false,
+            isPrintHouseMaterialItem: quoteItem?.printHouseMaterialId
+              ? true
+              : false,
             finalPrice: quoteItemEdit?.finalPrice,
             quantity: quoteItem?.quantity,
             roundPrices: newQuoteItemValue?.client?.roundPrices,
@@ -1207,7 +1226,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1470,89 +1489,120 @@ const useQuoteNew = ({
     });
   };
 
-  const onClickSendQuoteToClient = async (messageType: number) => {
+  const alertNotVerifiedMail = useModal();
+  const [alertNotVerifiedModalState, setAlertModalState] = useState<{
+    message: string;
+    onConfirm?: () => void;
+  }>({
+    message: "",
+  });
+
+  const showAlertModal = ({
+    message,
+    onConfirm,
+  }: {
+    message: string;
+    onConfirm?: () => void;
+  }) => {
+    setAlertModalState({ message, onConfirm });
+    alertNotVerifiedMail.open();
+  };
+
+  const onClickSendQuoteToClient = async (messageType: MessageType) => {
     if (!isSelectedAtLeastOne && docType === DOCUMENT_TYPE.quote) {
       alertFault("reports.pleaseSelectOneItem");
       return;
-    } else {
-      if (messageType === 1) {
-        let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
-          quoteItemValue?.documentContacts
-        );
-        if (checkPhones) {
-          const callBack = (res) => {
-            if (res?.success) {
-              alertSuccessAdded();
-              setOpenInvoiceCreationModal(false);
-            } else {
-              alertFaultAdded();
-            }
-          };
-          await sendDocumentToClientApi(callApi, callBack, {
-            documentType: docType,
-            document: {
-              documentId: quoteItemValue?.id,
-              messageType,
-            },
-          });
-        } else {
-          alertFault("sales.quote.phoneContectErrorMsg");
-        }
-      } else if (messageType === 0) {
-        let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(
-          quoteItemValue?.documentContacts
-        );
-        if (checkEmails) {
-          const callBack = (res) => {
-            if (res?.success) {
-              alertSuccessAdded();
-              setOpenInvoiceCreationModal(false);
-            } else {
-              alertFaultAdded();
-            }
-          };
-          await sendDocumentToClientApi(callApi, callBack, {
-            documentType: docType,
-            document: {
-              documentId: quoteItemValue?.id,
-              messageType,
-            },
-          });
-        } else {
-          alertFault("sales.quote.mailContectErrorMsg");
-        }
-      } else if (messageType === 2) {
-        let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
-          quoteItemValue?.documentContacts
-        );
-        let checkEmails = checkArrayNotEmptyOrEmailNotEmpty(
-          quoteItemValue?.documentContacts
-        );
-        if (!checkPhones) {
-          alertFault("sales.quote.phoneContectErrorMsg");
-          return;
-        }
-        if (!checkEmails) {
-          alertFault("sales.quote.mailContectErrorMsg");
-          return;
-        }
-        const callBack = (res) => {
-          if (res?.success) {
-            alertSuccessAdded();
-            setOpenInvoiceCreationModal(false);
-          } else {
-            alertFaultAdded();
-          }
-        };
-        await sendDocumentToClientApi(callApi, callBack, {
-          documentType: docType,
-          document: {
-            documentId: quoteItemValue?.id,
-            messageType,
-          },
-        });
-      }
     }
+
+    const checkContacts = () => {
+      const contacts = quoteItemValue?.documentContacts;
+      const phoneValid = checkArrayNotEmptyOrPhoneNotEmpty(contacts);
+      const emailValid = checkArrayNotEmptyOrEmailNotEmpty(contacts);
+
+      if (messageType === MessageType.SMS && !phoneValid) {
+        alertFault("sales.quote.phoneContectErrorMsg");
+        return false;
+      }
+      if (messageType === MessageType.Email && !emailValid) {
+        alertFault("sales.quote.mailContectErrorMsg");
+        return false;
+      }
+      if (messageType === MessageType.Both) {
+        if (!phoneValid) {
+          alertFault("sales.quote.phoneContectErrorMsg");
+          return false;
+        }
+        if (!emailValid) {
+          alertFault("sales.quote.mailContectErrorMsg");
+          return false;
+        }
+      }
+      return true;
+    };
+
+    if (!checkContacts()) return;
+
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessSend();
+        setOpenInvoiceCreationModal(false);
+      } else {
+        if (
+          (messageType === MessageType.Email ||
+            messageType === MessageType.Both) &&
+          res?.errors?.message
+        ) {
+          if (res.errors.message === "agent_not_verified") {
+            showAlertModal({
+              message: t("alerts.agentEmailNotVerified"),
+              onConfirm: async () => {
+                await resendFromPrintHouseMail(messageType);
+              },
+            });
+          } else if (res.errors.message === "printHouse_mail_not_verified") {
+            showAlertModal({
+              message: t("alerts.printHouseMailNotVerified"),
+            });
+          } else {
+            alertFaultSend();
+          }
+        }
+      }
+    };
+
+    await sendDocumentToClientApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+        messageType,
+      },
+    });
+  };
+
+  const resendFromPrintHouseMail = async (messageType: MessageType) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessSend();
+        setOpenInvoiceCreationModal(false);
+      } else {
+        if (res?.errors?.message === "printHouse_mail_not_verified") {
+          showAlertModal({
+            message: t("alerts.printHouseMailNotVerified"),
+          });
+        } else {
+          alertFaultSend();
+        }
+      }
+    };
+
+    await sendDocumentToClientApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+        messageType: messageType,
+        sendMailIfNotVerifiedAgent: true,
+      },
+    });
   };
 
   const onClickSendReceiptToClient = async (messageType: number) => {
@@ -2179,7 +2229,6 @@ const useQuoteNew = ({
     });
   };
 
-
   return {
     dateRef,
     taxDateRef,
@@ -2422,6 +2471,9 @@ const useQuoteNew = ({
     onClickCloseDeleteDeliveryModal,
     openDeleteDeliveryModal,
     onClickDeleteDelivery,
+    contactsListRef,
+    alertNotVerifiedMail,
+    alertNotVerifiedModalState,
   };
 };
 

@@ -2,10 +2,10 @@ export interface IProductionFloorFilter {
   userId?: string;
   stations: IStation[];
   employeeId?: string[];
-  fromCreateDate?: Date;
-  toCreateDate?: Date;
-  fromDeliveryTime?: Date;
-  toDeliveryTime?: Date;
+  fromCreateDate?: string;
+  toCreateDate?: string;
+  fromDeliveryTime?: string;
+  toDeliveryTime?: string;
   statusIds?: string[];
   automatedTags?: string[];
   employeeIds: null;
@@ -15,6 +15,7 @@ export interface IProductionFloorFilter {
   groupsHistory: IFilterGroup[];
   groupId: string;
   agentIds?: string[];
+  isFirstLoading?: boolean;
 }
 
 export interface IStation {

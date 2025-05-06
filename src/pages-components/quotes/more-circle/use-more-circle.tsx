@@ -33,17 +33,18 @@ import {
   openFileUploaderList,
   pinFileUploaderState,
 } from "@/store/file-uploader-state";
+import { MailIcon } from "./icons/mail";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
-  const isSendPaymentToClient = CheckPermission(
-    Permissions.SHOW_PRODUCTION_FLOOR
-  );
+
   const canCloseDocumentManually = CheckPermission(
     Permissions.CAN_CLOSE_MANUALLY
   );
+
+  const canCancelReceipt = CheckPermission(Permissions.CANCEL_RECEIPT);
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
   const [, setShowFileUploader] = useRecoilState(pinFileUploaderState);
@@ -157,6 +158,7 @@ const useMoreCircle = () => {
         (isDeliveryNote && isClosedDeliveryNote) ||
         (isInvoice && isClosedInvoice));
 
+    const isSendOrderReadyToClient = isOrder && quote?.productionStatus;
     return [
       {
         condition: !isPauseOrder && isQuote && isEditableDocument,
@@ -405,7 +407,9 @@ const useMoreCircle = () => {
             isOrder &&
             quote?.isCanClose &&
             !isCanceledOrder) ||
-            (isReceipt && quote?.status !== "Receipt.Canceled")) &&
+            (isReceipt &&
+              !!canCancelReceipt &&
+              quote?.status !== "Receipt.Canceled")) &&
           isEditableDocument,
         onClick: () =>
           isOrder
@@ -443,9 +447,14 @@ const useMoreCircle = () => {
       },
       {
         condition: true,
-        onClick: () => onClickSendPayment(quote, true),
-        icon: <PayIcon />,
-        name: t("sales.quote.sendToClient"),
+        onClick: () =>
+          onClickSendPayment(quote, true, !!isSendOrderReadyToClient),
+        icon: <MailIcon />,
+        name: t(
+          `sales.quote.${
+            isSendOrderReadyToClient ? "sendOrderReadyToClient" : "sendToClient"
+          }`
+        ),
       },
       {
         condition:

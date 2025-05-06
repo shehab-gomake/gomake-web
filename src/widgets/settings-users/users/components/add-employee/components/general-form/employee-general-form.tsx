@@ -22,6 +22,7 @@ import { FormInput } from "@/components/form-inputs/form-input";
 import { getAllActionsRequireEmployeeApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
 import {
+  Button,
   Checkbox,
   Stack,
   styled,
@@ -31,16 +32,21 @@ import {
 } from "@mui/material";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import NewReleasesOutlinedIcon from "@mui/icons-material/NewReleasesOutlined";
-import { ActionsListComponent } from "@/widgets/production-floor/filters/select/actions-select/action-list-select-component";
-import { Source } from "@/widgets/production-floor/filters/select/actions-select/use-actions-list";
 import { printNodeInputs } from "@/widgets/settings-users/users/components/add-employee/components/general-form/inputs/print-node-inputs";
 import { usePrintNodePrinters } from "@/hooks/use-print-node-printers";
 import { getAllSMSTemplatesListApi } from "@/services/api-service/mailing/mailing-api";
 import { allSMSTemplatesListState } from "@/store";
 import { userProfileState } from "@/store/user-profile";
+import { MissionsStationsModal } from "../missions-stations-form/missions-stations-modal";
+import { useModal } from "@/hooks/use-modal";
+import { usePrintHouseActionsList } from "@/hooks/use-print-house-actions";
+import { PenIcon } from "@/icons/pen-icon";
+import { productionFloorColorInputs } from "./inputs/production-floor-color-inputs";
 
 const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
   const { t } = useTranslation();
+  const manageStationsModal = useModal();
+  const { actions } = usePrintHouseActionsList();
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === "rtl";
   const { classes } = useStyle();
@@ -202,6 +208,7 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
           value: bin,
         }))
       ),
+      productionFloorColor: productionFloorColorInputs(state.employee),
     };
   }, [state, printers]);
 
@@ -336,15 +343,25 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
       </div>
       <div style={classes.subSection}>
         <h3 style={classes.subSectionHeader}>
-          {t("usersSettings.employeeActions")}
+          {t("usersSettings.employeeStations")}
         </h3>
         <h1 style={classes.subSectionActionHeader}>
-          {t("usersSettings.actions")}
+          {t("usersSettings.stations")}
         </h1>
+
         <div style={classes.inputsContainer}>
-          <ActionsListComponent
+          <Button
+            sx={classes.stationsButton}
+            onClick={manageStationsModal.open}
+            startIcon={<PenIcon />}
+          >
+            {t("usersSettings.manageStations")}
+          </Button>
+          <MissionsStationsModal
             onClickApply={(v) => updateEmployeeState("stationsFilter", v)}
-            source={Source.USERS}
+            openModal={manageStationsModal.isOpen}
+            onClickCloseModal={() => manageStationsModal.close()}
+            actions={actions}
           />
         </div>
       </div>
@@ -389,6 +406,21 @@ const EmployeeGeneralForm = ({ action }: { action: EmployeeActions }) => {
             placeholder={t("sales.quote.maxPrice")}
           />
         </Stack>
+      </div>
+
+      <div style={classes.subSection}>
+        <h3 style={classes.subSectionHeader}>
+          {t("machineAttributes.productionFloorColor")}
+        </h3>
+        <div style={classes.inputsContainer}>
+          {inputs().productionFloorColor.map((color) => (
+            <FormInput
+              key={color.parameterKey}
+              input={color as IInput}
+              changeState={updateEmployeeState}
+              error={false} />
+          ))}
+        </div>
       </div>
 
       {isPrintHouseUsePrintNode && (

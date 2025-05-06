@@ -22,10 +22,7 @@ interface IGoMakeDatepicker {
   placeholder?: string;
   reset?: boolean;
   style?: CSSProperties;
-  value?: {
-    fromDate: Date;
-    toDate: Date;
-  };
+  value?: any;
 }
 
 const GoMakeDatepicker = ({
@@ -74,9 +71,9 @@ const GoMakeDatepicker = ({
 
   useEffect(() => {
     if (value) {
-      if(value && value.fromDate && value.toDate){
-        let mom1 =  moment(value.fromDate);
-        let mom2 =  moment(value.toDate);
+      if (value && value.fromDate && value.toDate) {
+        let mom1 = moment(value.fromDate);
+        let mom2 = moment(value.toDate);
         setState({
           ...state,
           selection: {
@@ -85,7 +82,7 @@ const GoMakeDatepicker = ({
             startDate: mom2.toDate(),
           },
         });
-      }else{
+      } else {
         setState({
           ...state,
           selection: {
@@ -95,7 +92,7 @@ const GoMakeDatepicker = ({
           },
         });
       }
-      
+
     }
   }, [value]);
 

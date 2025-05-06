@@ -27,6 +27,8 @@ import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { ModalType } from "@/enums";
 import { useMediaQuery } from "@mui/material";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { EPreferences } from "@/enums/prefernces";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
@@ -49,11 +51,13 @@ const StatusTableComponent = ({
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const isMobileScreen = useMediaQuery("(max-width:768px)");
-  const hasUrgentOrApproval = allBoardMissions?.some(board =>
-    board.isUrgentWork ||
-    board.showGraphicsApprovalAlert === 1 ||
-    board.showGraphicsApprovalAlert === 0 ||
-    board.showGraphicsApprovalAlert === 2
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const hasUrgentOrApproval = allBoardMissions?.some(
+    (board) =>
+      board.isUrgentWork ||
+      board.showGraphicsApprovalAlert === 1 ||
+      board.showGraphicsApprovalAlert === 0 ||
+      board.showGraphicsApprovalAlert === 2
   );
   const {
     t,
@@ -68,7 +72,7 @@ const StatusTableComponent = ({
     onOpenPrintDeliverTicketModal,
     selectedMission,
     tryMoveBoardMissionsToDone,
-    updateJobDueDate
+    updateJobDueDate,
   } = useProductionFloorData();
   const { CheckPreferenceValue } = usePrintHousePreferences();
   const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
@@ -117,38 +121,45 @@ const StatusTableComponent = ({
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-        (board) =>
-          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-            search
-          ) ||
-          `${board?.clientName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          `${board?.productName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          board?.automatedTags?.some((tag) =>
-            `${tag.toLowerCase()}`.includes(search.toLowerCase())
-          ) ||
-          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-      )
+          (board) =>
+            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+              search
+            ) ||
+            `${board?.clientName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            `${board?.productName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            board?.automatedTags?.some((tag) =>
+              `${tag.toLowerCase()}`.includes(search.toLowerCase())
+            ) ||
+            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+        )
       : boards;
   }, [boards, search]);
 
   const getCustomWidth = (index: number) => {
     const widths = [
-      "3%",
-      "13%",
-      "7%",
-      "9%",
-      "9%",
-      CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && "9%",
-      "23%",
-      "12%",
-      "12%",
-      "12%",
-      "2%",
-    ];
+      "3%", //  checkBox
+      "13%", //  Job / Order
+      "7%", // Delivery Date
+      "9%", // Customer
+      CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && "9%", // Agent
+      CheckPreferenceValue(
+        EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR
+      ) && "8%", // Product name
+      CheckPreferenceValue(
+        EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR
+      ) && "15%", // Description
+      CheckPreferenceValue(
+        EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR
+      ) && "13%", // Notes
+      "11%", // Status
+      "15%", // Current station
+      "12%", // Next station
+      "2%", // More
+    ].filter(Boolean);
     return widths[index] || "auto";
   };
 
@@ -171,8 +182,9 @@ const StatusTableComponent = ({
           },
         }}
       >
-        {`${!status.isGroup ? t("productionStatuses." + status.name) : status.name
-          } (${getBoards().length})`}
+        {`${
+          !status.isGroup ? t("productionStatuses." + status.name) : status.name
+        } (${getBoards().length})`}
       </Button>
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
@@ -215,8 +227,6 @@ const StatusTableComponent = ({
                 </TableHead>
                 <TableBody>
                   {(() => {
-
-
                     return [...getBoards()]
                       ?.sort((a, b) => a.priority - b.priority)
                       ?.map((boardMission, index) => (

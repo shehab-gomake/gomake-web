@@ -6,11 +6,12 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
+  GoMakeModal,
   GomakePrimaryButton,
   ThreeOptionsModal,
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import { useEffect } from "react";
+import {useEffect, useState} from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
@@ -78,6 +79,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onCloseDuplicateModal,
     openMarkReadyModal,
     onCloseMarkReadyModal,
+    openMarkReadyModalForProductType,
+    onCloseMarkReadyModalForProductType,
     openReturnToProdModal,
     onCloseReturnToProdModal,
     onClickDuplicateMission,
@@ -120,6 +123,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     customerForEdit,
     setShowCustomerModal,
     setCustomerForEdit,
+    selectedMission,
   } = useBoardMissions({ isPurchaseJobs });
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -128,6 +132,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     newOrderIdToPrintJobsState
   );
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
+  const [openPrintNodeModal, setOpenPrintNodeModal] = useState(false);
+    const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
   useEffect(() => {
     if (
       router.isReady &&
@@ -140,6 +146,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         orderId: newOrderId,
         connectionId: connectionId,
       }).then();
+      setOpenPrintNodeModal(!!(isPrintHouseUsePrintNode && newOrderId));
+      setPrintNodeOrderId(newOrderId);
       setNewOrderId("");
     }
   }, [newOrderId]);
@@ -470,6 +478,18 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClickYes={() => onClickMoveBoardMissionToDone(true)}
         onClickNo={() => onClickMoveBoardMissionToDone(false)}
       />
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("boardMissions.markDoneModalTitle2", {
+          jobNumber: selectedMission?.number,
+          productType: selectedMission?.productTypeName,
+        })}
+        // subTitle={" "}
+        yesBtn={"modal.yes"}
+        openModal={openMarkReadyModalForProductType}
+        onClose={onCloseMarkReadyModalForProductType}
+        onClickDelete={() => onClickMoveBoardMissionToDone(false)}
+      />
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneFromPrintSlipModalTitle")}
@@ -482,11 +502,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClickNo={() => onOpenPackagesModal(missionItem)}
       />
       <GoMakeDeleteModal
-        hideIcon={true}
         modalType={ModalType.WARNING}
         title={t("boardMissions.unReadyModalTitle")}
-        subTitle={t("boardMissions.unReadyModalSubTitle")}
-        yesBtn={t("boardMissions.unReadyWitNotification")}
+        subTitle={" "}
+        yesBtn={t("modal.confirm")}
         cancelBtn={t("modal.cancel")}
         openModal={openReturnToProdModal}
         onClose={onCloseReturnToProdModal}
@@ -507,9 +526,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         title={t("boardMissions.printOrderJobsModalTitle")}
         subTitle={" "}
         yesBtn={t("sales.quote.print")}
-        openModal={!!newOrderId && isPrintHouseUsePrintNode}
-        onClose={() => setNewOrderId("")}
-        onClickDelete={() => printOrderJobsUsingPrintNode(newOrderId)}
+        openModal={openPrintNodeModal}
+        onClose={() => setOpenPrintNodeModal(false)}
+        onClickDelete={() => printOrderJobsUsingPrintNode(printNodeOrderId)}
         cancelBtn={t("modal.cancel")}
       />
       <PrintPackingSlipModal
@@ -529,11 +548,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         typeClient={CLIENT_TYPE.CUSTOMER}
         isgetAllCustomers={false}
         openModal={showCustomerModal}
-        modalTitle={t("customers.modal.editTitle")}
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
-        showUpdateButton={true}
       />
     </>
   );

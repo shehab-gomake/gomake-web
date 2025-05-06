@@ -18,6 +18,7 @@ const useStyle = () => {
         width: "50%",
         borderRadius: 5,
         height: "fit-content",
+        minHeight: "300px",
       },
       textInputStyle: {
         width: "100%",

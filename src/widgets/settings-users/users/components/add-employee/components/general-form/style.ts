@@ -34,6 +34,22 @@ const useStyle = () => {
         flexDirection: "column" as "column",
         gap: 18,
       },
+      stationsButton: {
+        "& .MuiButton-startIcon": {
+          margin: "0 5px",
+        },
+        ...FONT_FAMILY.Inter(600, 16),
+        width: "fit-content",
+        borderRadius: "8px",
+        height: "40px",
+        backgroundColor: "#FFFFFF",
+        color: "#344054",
+        border: "1px solid #D0D5DD",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        textTransform: "capitalize" as "capitalize",
+      },
     };
   }, [theme]);
   return {

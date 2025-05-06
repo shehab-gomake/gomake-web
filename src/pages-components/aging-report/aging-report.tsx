@@ -109,25 +109,18 @@ const AgingReportWidget = ({ clientType }: IProps) => {
           isDescOrder={isDescOrder}
         />
       )}
-
       {/* Add CustomerCardWidget */}
       <CustomerCardWidget
         customerAction={CUSTOMER_ACTIONS.Edit}
-        codeFlag={true}
         typeClient={
           isPurchaseReport ? CLIENT_TYPE.SUPPLIER : CLIENT_TYPE.CUSTOMER
         }
+        codeFlag={true}
         isgetAllCustomers={false}
         openModal={showCustomerModal}
-        modalTitle={
-          isPurchaseReport
-            ? t("suppliers.editModalTitle")
-            : t("customers.modal.editTitle")
-        }
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
-        showUpdateButton={true}
       />
     </div>
   );
