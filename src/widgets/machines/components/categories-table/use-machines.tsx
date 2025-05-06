@@ -22,14 +22,12 @@ import ToggleOffOutlinedIcon from "@mui/icons-material/ToggleOffOutlined";
 const useMachinesCategories = (isAdmin: boolean) => {
 
   const [filter, setFilter] = useState<string>("");
-  console.log("filter", filter)
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
   const { primaryColor } = useGomakeTheme();
   const categoriesList = useRecoilValue(machineCategoriesState);
   const { CheckPermission } = useUserPermission();
   const [printHouseMachineCategories, setPrintHouseMachineCategories] = useState<any[]>([]);
-  console.log("printHouseMachineCategories", printHouseMachineCategories)
   const categories = useCallback(() => {
     if (!!filter) {
       return categoriesList.filter((category) =>
@@ -154,7 +152,6 @@ const useMachinesCategories = (isAdmin: boolean) => {
         : t("navigationButtons.activate")}
     </PrimaryButton>,
   ]);
-  console.log("filteredCategories", filteredCategories())
   return {
     tableHeaders,
     tableRows,
