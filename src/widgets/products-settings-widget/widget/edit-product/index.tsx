@@ -9,6 +9,7 @@ import { useStyle } from "./style";
 import { WorkFlowsWidget } from "@/widgets/shared-admin-customers/add-product/work-flows-widget";
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { HotFolderWidget } from "@/widgets/shared-admin-customers/add-product/hot-folder-widget";
 
 const EditProductWidget = () => {
   const { clasess } = useStyle();
@@ -93,6 +94,10 @@ const EditProductWidget = () => {
         ) : activeTab === t("pricingWidget.workFlow") ? (
           <PermissionCheck userPermission={Permissions.ADD_WORK_FLOW_TO_PRODUCT}>
             <WorkFlowsWidget productState={productState} getProductById={getProductById} />
+          </PermissionCheck>
+        ) : activeTab === t("pricingWidget.hotFolder") ? (
+          <PermissionCheck userPermission={Permissions.ADD_HOT_FOLDER_TO_PRODUCT}>
+            <HotFolderWidget />
           </PermissionCheck>
         ) : (
           <GraphicWidget />
