@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { setupGuideOpenState } from "@/store/setup-guide-state";
 import { useTranslation } from "react-i18next";
 import {
   printHouseSetupStepsState,
+  setupGuideExpandedState,
   SetupStep,
   SetupStepItem,
   StepStatus,
@@ -15,12 +16,16 @@ import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { getItem, setItem } from "@/services/storage-data";
 import { useGomakeRouter } from "@/hooks";
 
-const useSetupGuideMenu = ({ handleOpenModal, handleOpenResetPassword }) => {
+const useSetupGuideMenu = ({
+  handleOpenModal,
+  handleOpenResetPassword,
+  updatePrintHouseSetupSteps,
+}) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const isRtl = dir === "rtl";
   const isOpen = useRecoilValue(setupGuideOpenState);
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useRecoilState(setupGuideExpandedState);
   const [openVerifyBusiness, setOpenVerifyBusiness] = useState(false);
   const { primaryColor } = useGomakeTheme();
   const [showGuideMenuState, setShowGuideMenuState] = useState(true);
@@ -38,6 +43,11 @@ const useSetupGuideMenu = ({ handleOpenModal, handleOpenResetPassword }) => {
     setShowGuideMenuState(value);
   };
 
+  useEffect(() => {
+    const savedExpand = getItem("gomake_setupGuideExpanded");
+    setIsExpanded(savedExpand === "true");
+  }, []);
+
   const printHouseSetupSteps = useRecoilValue<SetupStepItem[]>(
     printHouseSetupStepsState
   );
@@ -47,7 +57,11 @@ const useSetupGuideMenu = ({ handleOpenModal, handleOpenResetPassword }) => {
   };
 
   const toggleExpand = () => {
-    setIsExpanded((prev) => !prev);
+    setIsExpanded((prev) => {
+      const next = !prev;
+      setItem("gomake_setupGuideExpanded", String(next));
+      return next;
+    });
   };
 
   const totalSteps = printHouseSetupSteps.length;
@@ -91,12 +105,6 @@ const useSetupGuideMenu = ({ handleOpenModal, handleOpenResetPassword }) => {
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     {}
   );
-  // const toggleGroup = (groupKey: string) => {
-  //   setExpandedGroups((prev) => ({
-  //     ...prev,
-  //     [groupKey]: !prev[groupKey],
-  //   }));
-  // };
 
   const toggleGroup = (groupKey: string) => {
     setExpandedGroups((prev) => {
@@ -104,7 +112,7 @@ const useSetupGuideMenu = ({ handleOpenModal, handleOpenResetPassword }) => {
         ...prev,
         [groupKey]: !prev[groupKey],
       };
-      localStorage.setItem("gomake_expandedGroups", JSON.stringify(updated)); // 👈 save on toggle
+      localStorage.setItem("gomake_expandedGroups", JSON.stringify(updated));
       return updated;
     });
   };
@@ -131,13 +139,19 @@ const useSetupGuideMenu = ({ handleOpenModal, handleOpenResetPassword }) => {
           key: SetupStep.COMPANY_PROFILE_LOGO,
           label: t("quickSetup.steps.logo"),
           status: getStepStatus(SetupStep.COMPANY_PROFILE_LOGO),
-          onClick: () => navigate("/settings/company-profile?tab=company"),
+          onClick: () => {
+            updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_LOGO);
+            navigate("/settings/company-profile?tab=company");
+          },
         },
         {
           key: SetupStep.COMPANY_PROFILE_HOURS,
           label: t("quickSetup.steps.hours"),
           status: getStepStatus(SetupStep.COMPANY_PROFILE_HOURS),
-          onClick: () => navigate("/settings/company-profile?tab=hours"),
+          onClick: () => {
+            updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_HOURS);
+            navigate("/settings/company-profile?tab=hours");
+          },
         },
         {
           key: SetupStep.COMPANY_PROFILE_STRIPE,
@@ -148,14 +162,19 @@ const useSetupGuideMenu = ({ handleOpenModal, handleOpenResetPassword }) => {
           key: SetupStep.COMPANY_PROFILE_ADDRESSES,
           label: t("quickSetup.steps.addresses"),
           status: getStepStatus(SetupStep.COMPANY_PROFILE_ADDRESSES),
-          onClick: () => navigate("/settings/company-profile?tab=addresses"),
+          onClick: () => {
+            updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_ADDRESSES);
+            navigate("/settings/company-profile?tab=addresses");
+          },
         },
         {
           key: SetupStep.COMPANY_PROFILE_MAILING,
           label: t("quickSetup.steps.mailing"),
           status: getStepStatus(SetupStep.COMPANY_PROFILE_MAILING),
-          onClick: () =>
-            navigate("/settings/company-profile?tab=communication"),
+          onClick: () => {
+            updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_MAILING);
+            navigate("/settings/company-profile?tab=communication");
+          },
         },
       ],
     },
@@ -167,13 +186,19 @@ const useSetupGuideMenu = ({ handleOpenModal, handleOpenResetPassword }) => {
           key: SetupStep.CONTACTS_CLIENTS,
           label: t("tabs.customers"),
           status: getStepStatus(SetupStep.CONTACTS_CLIENTS),
-          onClick: () => navigate("/customers"),
+          onClick: () => {
+            updatePrintHouseSetupSteps(SetupStep.CONTACTS_CLIENTS);
+            navigate("/customers");
+          },
         },
         {
           key: SetupStep.CONTACTS_SUPPLIERS,
           label: t("tabs.suppliers"),
           status: getStepStatus(SetupStep.CONTACTS_SUPPLIERS),
-          onClick: () => navigate("/suppliers"),
+          onClick: () => {
+            updatePrintHouseSetupSteps(SetupStep.CONTACTS_SUPPLIERS),
+              navigate("/suppliers");
+          },
         },
       ],
     },

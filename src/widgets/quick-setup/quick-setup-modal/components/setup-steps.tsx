@@ -4,7 +4,7 @@ import { Box, Stack, TextField, Typography } from "@mui/material";
 import { SummarySection } from "./summery";
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "../style";
-import { ProductsSetupData } from "../../interfaces";
+import { ProductsSetupData } from "../../compoennets/interfaces";
 import { ModalControls } from "@/hooks/use-modal";
 import { GoMakeAlertModal, GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";

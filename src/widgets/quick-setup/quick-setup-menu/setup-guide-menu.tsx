@@ -18,17 +18,23 @@ import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { useStyle } from "./style";
 import { useSetupGuideMenu } from "./use-quick-setup-menu";
 import { SetupStep, StepStatus } from "@/store/print-house-setup-state-state";
-import { CloseMenu, ExpandMenu, ShrinkMenu } from "./components/icons";
+import { CloseMenu, ExpandMenu, ShrinkMenu } from "../compoennets/icons";
 import { useEffect } from "react";
+import { getItem } from "@/services/storage-data";
 
 interface SetupGuideMenuProps {
   handleOpenModal: () => void;
   handleOpenResetPassword: () => void;
+  updatePrintHouseSetupSteps: (
+    step: SetupStep,
+    status?: StepStatus
+  ) => Promise<void>;
 }
 
 export const SetupGuideMenu = ({
   handleOpenModal,
   handleOpenResetPassword,
+  updatePrintHouseSetupSteps,
 }: SetupGuideMenuProps) => {
   const {
     t,
@@ -46,7 +52,11 @@ export const SetupGuideMenu = ({
     setExpandedGroups,
     getAllGroupKeys,
     findNextStepLabel,
-  } = useSetupGuideMenu({ handleOpenModal, handleOpenResetPassword });
+  } = useSetupGuideMenu({
+    handleOpenModal,
+    handleOpenResetPassword,
+    updatePrintHouseSetupSteps,
+  });
   const { classes } = useStyle(isRtl);
 
   useEffect(() => {

@@ -13,11 +13,8 @@ import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-upload
 import { MobileHeaderWidget } from "./mobile-top-list/mobile-header-widget";
 import { useUploadingNewVersionSocketIo } from "@/hooks/socket-io/use-upload-new-version-socket-io";
 import { useMediaQuery } from "@mui/material";
-import { useEffect } from "react";
 import { useModal } from "@/hooks/use-modal";
 import { versionState } from "@/store/version";
-import { SetupGuideMenu } from "@/widgets/quick-setup/quick-setup-menu/setup-guide-menu";
-import { SetupModal } from "@/widgets/quick-setup/quick-setup-modal/quick-setup-modal";
 import { SetupSection } from "@/widgets/quick-setup";
 
 const CustomerAuthLayout = ({
@@ -32,7 +29,6 @@ const CustomerAuthLayout = ({
   const isMobileScreen = useMediaQuery("(max-width:768px)");
   const { openAlertModal, setOpenAlertModal } =
     useUploadingNewVersionSocketIo();
-
   const { canAccess } = useAuthLayoutHook(permissionEnumValue, allowAnonymous);
   const { classes } = useStyle({
     isHover: false,

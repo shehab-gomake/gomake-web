@@ -30,3 +30,13 @@ export const printHouseSetupStepsState = atom<SetupStepItem[]>({
   key: "printHouseSetupStepsState",
   default: [],
 });
+
+export const printHouseWelcomeModalState = atom<boolean>({
+  key: "printHouseWelcomeModalState",
+  default: false,
+});
+
+export const setupGuideExpandedState = atom<boolean>({
+  key: "setupGuideExpandedState",
+  default: false,
+});
