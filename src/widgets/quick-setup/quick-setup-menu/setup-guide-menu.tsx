@@ -87,7 +87,12 @@ export const SetupGuideMenu = ({
                   textAlign: isRtl ? ("right" as "right") : ("left" as "left"),
                 }}
               />
-              {isGroupExpanded ? <ExpandLess /> : <ExpandMore />}
+
+              {isGroupExpanded ? (
+                <ExpandLess sx={{ fontSize: "22px" }} />
+              ) : (
+                <ExpandMore sx={{ fontSize: "22px" }} />
+              )}
             </ListItemButton>
             <Collapse in={isGroupExpanded} timeout="auto" unmountOnExit>
               <List
