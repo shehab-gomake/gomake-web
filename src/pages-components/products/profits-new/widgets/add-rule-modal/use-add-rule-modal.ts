@@ -28,6 +28,7 @@ import { getALLMachinesApi } from "@/services/api-service/machines/print-house-m
 import { machineCategoriesState } from "@/store/machine-categories";
 import { actionEmployeesState } from "@/store/action-employees-state";
 import { endOfToday, startOfYear } from "date-fns";
+import { addProductHotFolderRuleApi } from "@/services/api-service/products/product-endpoints";
 
 const useAddRuleModal = ({
   typeExceptionSelected,
@@ -197,7 +198,7 @@ const useAddRuleModal = ({
       { label: "Machine", id: EGroupByEnum.Machine },
     ];
   }, []);
-  const { alertSuccessAdded, alertFaultAdded, setSnackbarStateValue } =
+  const { alertSuccessAdded, alertFaultAdded, setSnackbarStateValue, alertFault } =
     useSnackBar();
   const router = useRouter();
 
@@ -663,8 +664,32 @@ const useAddRuleModal = ({
     ];
   }, []);
 
+  const createForHotFolderWidget = async () => {
+    // Validation: check required fields
+    if (!propertieValue || !expression || !rules.length) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("properties.fillAllFields"),
+        type: "error",
+      });
+      return;
+    }
+    // Validate each rule
+    const isValidRules = rules.every((rule) => {
+      const hasCategory = rule.category && rule.category.id;
+      const hasCondition = rule.condition && rule.condition.id;
+      const hasStatement2 = rule.statement2 && (rule.statement2.id || rule.statement2.enumCode);
+      return hasCategory && hasCondition && hasStatement2;
+    });
+    if (!isValidRules) {
+      setSnackbarStateValue({
+        state: true,
+        message: t("properties.fillAllFields"),
+        type: "error",
+      });
+      return;
+    }
 
-  const createForHotFolderWidget = useCallback(async () => {
     const requestBody: any = {
       hotFolderPath: propertieValue,
       expression: expression,
@@ -680,34 +705,34 @@ const useAddRuleModal = ({
         };
       }),
     };
-    const res = await callApi(
-      EHttpMethod.POST,
-      `/v1/printhouse-config/products/add-product-hot-folder-rule`,
-      {
-        productId: router?.query?.id,
-        ...requestBody
+    const callBack = (res) => {
+      console.log("res", res)
+      if (res?.success) {
+        alertSuccessAdded();
+        onCloseModal();
+        getProductHotFolderRules();
       }
-    );
+      else {
+        if(!res?.msg || res?.msg == ""){
+          alertFaultAdded();
+        }
+        else{
+          if(res?.errors?.message){
+            alertFault(t(`${res?.msg} ---> ${res?.errors?.message}`));
+          }
+          else{
+            alertFault(t(`${res?.msg}`));
+          }
+        }
+        // alertFault(t(`${res?.msg} ---> ${res?.errors?.message}`));
+      }
 
-    if (res?.success) {
-      alertSuccessAdded();
-      onCloseModal();
-      getProductHotFolderRules();
-    } else {
-      alertFaultAdded();
     }
-  }, [
-    router,
-    typeExceptionSelected,
-    selectedPricingBy,
-    selectedPricingTableItems,
-    expression,
-    actionProfitByActionId,
-    additionalProfit,
-    EStatementCategory,
-    rules,
-    isDefaultException,
-  ]);
+    await addProductHotFolderRuleApi(callApi, callBack, {
+      productId: router?.query?.id,
+      ...requestBody
+    });
+  }
 
   return {
     rules,
