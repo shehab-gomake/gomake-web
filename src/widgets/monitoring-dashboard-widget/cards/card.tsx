@@ -8,7 +8,7 @@ import { formatValueWithUnit } from "@/utils/is-currency";
 
 export interface IDashboardCard {
   label: string;
-  value: number;
+  value: string | number;
   bgColor: string;
   children?: JSX.Element;
   progressValue?: number;

@@ -5,6 +5,7 @@ import {
   MenuItem,
   IconButton,
   Box,
+  Tooltip,
 } from "@mui/material";
 import { useState, useMemo } from "react";
 import { useRecoilState } from "recoil";
@@ -13,6 +14,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CloseIcon from "@mui/icons-material/Close";
 import { selectedDataTypeState } from "../states/selected-data-type";
 import { useStyle } from "./style";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 export enum CalculationDataTypeEnum {
   CalculatedOnly,
@@ -61,6 +63,23 @@ const FixedDataType = () => {
         <ListItemButton style={classes.listItemButton} onClick={handleClick}>
           <Box sx={classes.boxStyle}>
             <span style={classes.buttonLabel}>{selectedLabel}</span>
+
+            {selectedType !== null && (
+              <Tooltip
+                title={
+                  selectedType === CalculationDataTypeEnum.CalculatedOnly
+                    ? t("dashboard.calculatedOnlyDesc")
+                    : t("dashboard.estimatedOnlyDesc")
+                }
+                placement="top"
+                arrow
+              >
+                <IconButton size="small" style={{ padding: 2 }}>
+                  <InfoOutlinedIcon fontSize="small" />
+                </IconButton>
+              </Tooltip>
+            )}
+
             {selectedType !== null && (
               <IconButton
                 size="small"
@@ -71,10 +90,10 @@ const FixedDataType = () => {
               </IconButton>
             )}
           </Box>
+
           <KeyboardArrowDownIcon />
         </ListItemButton>
       </List>
-
       <Menu
         anchorEl={anchorEl}
         open={open}
