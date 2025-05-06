@@ -17,6 +17,8 @@ const Cards = ({
     "#9966FF",
     "#ff9f40",
     "#36a2eb",
+    "#c45850",
+    "#00c49f",
     "#ffce56",
   ];
 
@@ -35,6 +37,11 @@ const Cards = ({
       labelTranslationKey: "totalProfit",
       value: data.totalProfit,
       unit: currUnit,
+    },
+    {
+      labelTranslationKey: "profitMargin",
+      value: data.profitMargin,
+      unit: "%",
     },
     {
       labelTranslationKey: "successRate",

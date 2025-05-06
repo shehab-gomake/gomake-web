@@ -94,7 +94,6 @@ const FixedDataType = () => {
           <KeyboardArrowDownIcon />
         </ListItemButton>
       </List>
-
       <Menu
         anchorEl={anchorEl}
         open={open}
