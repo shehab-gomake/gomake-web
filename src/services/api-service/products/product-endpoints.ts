@@ -50,6 +50,8 @@ const DELETE_PRODUCT_HOT_FOLDER_RULE_URL = "/v1/printhouse-config/products/delet
 
 const COPY_PRODUCT_HOT_FOLDER_RULES_URL = "/v1/printhouse-config/products/copy-product-hot-folder-rules"
 
+const ADD_PRODUCT_HOT_FOLDER_RULE_URL = "/v1/printhouse-config/products/add-product-hot-folder-rule"
+
 const RE_CALCULATE_PRICE_URL =
   "/v1/printhouse-config/products/calculate-products";
 const ADD_ACTION_TO_PRODUCT_URL =
@@ -484,6 +486,20 @@ const reOrderProductHotFolderProfitRulesApi: ICallAndSetData = async (
   );
 };
 
+const addProductHotFolderRuleApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    ADD_PRODUCT_HOT_FOLDER_RULE_URL,
+    setState,
+    data
+  );
+};
+
 export {
   addProductProfitRuleApi,
   getProductProfitRulesApi,
@@ -515,5 +531,6 @@ export {
   getProductHotFolderRulesApi,
   deleteProductHotFolderRuleApi,
   reOrderProductHotFolderProfitRulesApi,
-  copyProductHotFolderRulesApi
+  copyProductHotFolderRulesApi,
+  addProductHotFolderRuleApi
 };

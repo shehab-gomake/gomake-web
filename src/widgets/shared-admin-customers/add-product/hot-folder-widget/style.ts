@@ -50,7 +50,8 @@ const useStyle = () => {
         boxShadow: "none",
         backgroundColor: "#FFF",
         color:"#344054",
-        ...FONT_FAMILY.Inter(500, 14)
+        ...FONT_FAMILY.Inter(500, 14),
+        cursor: "pointer",
       },
       copyToAnotherProductsButton: {
         width: "fit-content",
@@ -83,6 +84,13 @@ const useStyle = () => {
         alignItems: "center",
         textTransform: "capitalize" as "capitalize",
       },
+      noDataContainer: {
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }
     };
   }, [i18next.language, t]);
   return {

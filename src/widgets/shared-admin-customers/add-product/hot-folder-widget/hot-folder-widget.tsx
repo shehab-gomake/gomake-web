@@ -9,7 +9,7 @@ import { MoreCircleIcon } from "@/icons";
 import { useMenuModal } from "@/hooks";
 import { useModal } from "@/hooks/use-modal";
 import { ModalType } from "@/enums";
-import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, Draggable, } from "react-beautiful-dnd";
 import { CopyAnotherProductsModal } from "../work-flows-widget/copy-another-products-modal";
 
 const HotFolderWidget = () => {
@@ -97,13 +97,7 @@ const HotFolderWidget = () => {
           </div>
         ) : (
           <div
-            style={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
+            style={clasess.noDataContainer}
           >
             <Typography variant="h6" color="text.secondary">
               {" "}
