@@ -87,12 +87,17 @@ export const SetupGuideMenu = ({
                 primaryTypographyProps={{
                   fontWeight: 600,
                   fontSize: "14px",
+                  textAlign: isRtl ? ("right" as "right") : ("left" as "left"),
                 }}
               />
               {isGroupExpanded ? <ExpandLess /> : <ExpandMore />}
             </ListItemButton>
             <Collapse in={isGroupExpanded} timeout="auto" unmountOnExit>
-              <List disablePadding component="div" sx={{ pl: 2 }}>
+              <List
+                disablePadding
+                component="div"
+                sx={{ [isRtl ? "pr" : "pl"]: 2 }}
+              >
                 {renderSteps(step.children)}
               </List>
             </Collapse>
@@ -181,7 +186,7 @@ export const SetupGuideMenu = ({
           </List>
           <Divider sx={{ my: 2 }} />
           <Button variant="contained" fullWidth sx={classes.btnStyle}>
-            I'm Ready
+            {t("quickSetup.ready")}
           </Button>
         </>
       ) : (
