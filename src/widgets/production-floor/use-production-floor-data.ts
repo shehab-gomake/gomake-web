@@ -41,6 +41,7 @@ import moment from "moment";
 import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
 import { agentsState } from "@/store/agents-state";
 import { currentStationOrderingState } from "@/store/agents-state";
+import {CurrentStationOrderingEnum} from "@/enums";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -78,7 +79,11 @@ const useProductionFloorData = () => {
       if (res.success) {
         setData(res?.data?.boardMissionsCollections);
         setFilters(res?.data?.filter);
-        setStationOrdering(res?.data?.filter?.currentStationOrdering)
+        let currentStationOrdering = res?.data?.filter?.currentStationOrdering;
+        if(!currentStationOrdering){
+          currentStationOrdering = CurrentStationOrderingEnum.NONE;
+        }
+        setStationOrdering(currentStationOrdering)
         setSelectedGroupId(res?.data?.filter?.groupId);
         setTags(res?.data?.automatedTagsFilter);
         setUserGroups(res?.data?.groups);
