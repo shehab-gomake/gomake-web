@@ -27,7 +27,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const [rowData, setRowData] = useState<any>({});
-  const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const { alertFaultGetData, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
 
   const { onAddCategoryRow } = useAddCategoryRow(props.isAdmin);
@@ -137,7 +137,13 @@ const AddRowModal = (props: IAddRowModalProps) => {
         </Stack>
         <SecondaryButton
           variant="contained"
-          onClick={() => onAddCategoryRow(rowData)}
+          onClick={() => {
+            if (validateRequiredFieldsResult.isValid) {
+              onAddCategoryRow(rowData)
+            } else {
+              alertFault(`Cannot add until required parameters are filled: ${validateRequiredFieldsResult.missingFields.join(', ')}`)
+            }
+          }}
           style={classes.addBtnStyle}
         >
           {t("materials.buttons.add")}
