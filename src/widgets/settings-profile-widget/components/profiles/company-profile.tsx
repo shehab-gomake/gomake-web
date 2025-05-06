@@ -56,6 +56,7 @@ const CompanyProfileComponent = ({
     updatePinPadState,
     alertLogOutModal,
   } = useCompanyProfile();
+
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
 
   const changeState = (key, value) => {
@@ -79,9 +80,9 @@ const CompanyProfileComponent = ({
       title: "profileSettings.dayOfWork",
       component: (
         <WorkingDaysComponent
-          days={profile.businessDays.days}
-          startTime={profile.businessDays.startTime}
-          endTime={profile.businessDays.endTime}
+          days={profile?.businessDays?.days}
+          startTime={profile?.businessDays?.startTime}
+          endTime={profile?.businessDays?.endTime}
           onTimeChange={onWorkingTimeChange}
           onToggleDay={onToggleWorkingDays}
         />
@@ -166,6 +167,7 @@ const CompanyProfileComponent = ({
           />
         </div>
       </Stack>
+
       <Stack direction={"column"} gap={"32px"} paddingTop={"44px"}>
         {formSections.map((section) => {
           return (
@@ -254,6 +256,7 @@ const CompanyProfileComponent = ({
           );
         })}
       </Stack>
+
       <div
         style={{
           position: "sticky",
@@ -268,6 +271,7 @@ const CompanyProfileComponent = ({
           </SecondaryButton>
         </PermissionCheck>
       </div>
+
       <GoMakeDeleteModal
         openModal={alertLogOutModal.isOpen}
         modalType={ModalType.WARNING}

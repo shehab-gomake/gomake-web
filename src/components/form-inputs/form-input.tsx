@@ -33,6 +33,7 @@ const FormInput = ({
   checkWhatRenderArray,
   loading,
   keyItem,
+  hideLabel = false
 }: IFormInput) => {
   const [options, setOptions] = useState([]);
   const [selectedLabel, setSelectedLabel] = useState<string>(input.value);
@@ -226,7 +227,7 @@ const FormInput = ({
           }
           key={input.parameterKey}
         >
-          <div style={classes.inputLbl}>
+          {!hideLabel && <div style={classes.inputLbl}>
             {
               <Stack
                 direction={"row"}
@@ -237,17 +238,16 @@ const FormInput = ({
                 <span>{t(input.label)}</span>
                 {input.unit && (
                   <small>{`${t(
-                    `measurementUnits.${
-                      translateUnit && input.unit
-                        ? units[input.unit]?.imperialUnit
-                        : input.unit
+                    `measurementUnits.${translateUnit && input.unit
+                      ? units[input.unit]?.imperialUnit
+                      : input.unit
                     }`
                   )}`}</small>
                 )}
               </Stack>
             }
             {input.required && <span style={classes.required}>*</span>}
-          </div>
+          </div>}
           <div style={classes.inputs}>
             {input.type === "imageFile" ? (
               <GoMakeImageFiled
@@ -294,71 +294,71 @@ const FormInput = ({
                 renderOption={
                   input.multiple
                     ? (props: any, option: any) => {
-                        return (
-                          <Stack style={classes.multiSelectOption}>
-                            <div>
-                              <Checkbox
-                                onChange={(e, checked) => {
-                                  if (option.value === "all") {
-                                    if (checked) {
-                                      const allValues = options.map(
-                                        (o) => o.value
-                                      );
-                                      setValues(allValues);
-                                      setSelectedOptions(
-                                        options.map((o) => ({
-                                          label: o.label,
-                                          value: o.value,
-                                        }))
-                                      );
-                                      changeState(
-                                        input.parameterKey,
-                                        allValues
-                                      );
-                                    } else {
-                                      setValues([]);
-                                      setSelectedOptions([]);
-                                      changeState(input.parameterKey, []);
-                                    }
-                                  } else {
-                                    if (checked) {
-                                      setSelectedOptions((prevValues) => [
-                                        ...prevValues,
-                                        {
-                                          label: option.label,
-                                          value: option.value,
-                                        },
-                                      ]);
-                                    } else {
-                                      setSelectedOptions((prevValues) =>
-                                        prevValues.filter(
-                                          (item) => item.value !== option.value
-                                        )
-                                      );
-                                    }
-                                    handleSelectCheck(
+                      return (
+                        <Stack style={classes.multiSelectOption}>
+                          <div>
+                            <Checkbox
+                              onChange={(e, checked) => {
+                                if (option.value === "all") {
+                                  if (checked) {
+                                    const allValues = options.map(
+                                      (o) => o.value
+                                    );
+                                    setValues(allValues);
+                                    setSelectedOptions(
+                                      options.map((o) => ({
+                                        label: o.label,
+                                        value: o.value,
+                                      }))
+                                    );
+                                    changeState(
                                       input.parameterKey,
-                                      checked,
-                                      option
+                                      allValues
+                                    );
+                                  } else {
+                                    setValues([]);
+                                    setSelectedOptions([]);
+                                    changeState(input.parameterKey, []);
+                                  }
+                                } else {
+                                  if (checked) {
+                                    setSelectedOptions((prevValues) => [
+                                      ...prevValues,
+                                      {
+                                        label: option.label,
+                                        value: option.value,
+                                      },
+                                    ]);
+                                  } else {
+                                    setSelectedOptions((prevValues) =>
+                                      prevValues.filter(
+                                        (item) => item.value !== option.value
+                                      )
                                     );
                                   }
-                                }}
-                                icon={<CheckboxIcon />}
-                                checkedIcon={<CheckboxCheckedIcon />}
-                                checked={
-                                  option.value === "all"
-                                    ? values.length === options.length &&
-                                      options.length > 0
-                                    : values?.length > 0
+                                  handleSelectCheck(
+                                    input.parameterKey,
+                                    checked,
+                                    option
+                                  );
+                                }
+                              }}
+                              icon={<CheckboxIcon />}
+                              checkedIcon={<CheckboxCheckedIcon />}
+                              checked={
+                                option.value === "all"
+                                  ? values.length === options.length &&
+                                  options.length > 0
+                                  : values?.length > 0
                                     ? values?.includes(option?.value)
                                     : input?.value?.includes(option?.value)
-                                }
-                              />
-                            </div>
-                            <div>{option.label}</div>
-                          </Stack>
-                        );
-                      }
+                              }
+                            />
+                          </div>
+                          <div>{option.label}</div>
+                        </Stack>
+                      );
+                    }
                     : undefined
                 }
                 PaperComponent={(props: any) => (
@@ -428,7 +428,7 @@ const FormInput = ({
                 placeholder={t(input.placeholder)}
                 disabled={!!readonly}
                 value={input.value}
-                //value={translateUnit && input.unit ? (String(input.value).endsWith('.') ? convertUnitValue(input.unit, parseFloat(input.value)) + '.' : convertUnitValue(input.unit, parseFloat(input.value))) : input.value}
+              //value={translateUnit && input.unit ? (String(input.value).endsWith('.') ? convertUnitValue(input.unit, parseFloat(input.value)) + '.' : convertUnitValue(input.unit, parseFloat(input.value))) : input.value}
               />
             )}
           </div>

@@ -11,9 +11,10 @@ import {
   inActiveFilterState,
   isAllMaterialsCheckedState,
   materialCategoryDataState,
+  materialCategorySuppliersState,
   materialsTablePageState,
   materialTableFiltersState,
-  pagesCountState,
+  selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { EMaterialActiveFilter } from "./enums";
 import { getPrintHouseMaterialCategoryDataApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
@@ -22,6 +23,7 @@ import { useState } from "react";
 import { userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
+import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
 
 const useMaterialsCategories = (isAdmin: boolean) => {
   const [inActiveFilter, setInActiveFilter] = useRecoilState(inActiveFilterState);
@@ -44,7 +46,45 @@ const useMaterialsCategories = (isAdmin: boolean) => {
   );
   const user = useRecoilValue<any>(userState);
   const unitType = user?.printHouseProfile?.unitType || 0
+  const [requestAbortController, setRequestAbortController] = useState<AbortController | null>(null);
+  const setMaterialCategorySuppliers = useSetRecoilState(
+    materialCategorySuppliersState
+  );
+  const setDefaultSupplier = useSetRecoilState(selectedSupplierIdState);
+  const [supplierId, setSupplierId] = useRecoilState(selectedSupplierIdState);
+  const getPrintHouseMaterialCategorySuppliers = async (
+    materialType: string,
+    materialCategory: string
+  ) => {
+    // resetMaterialCategoryData();
 
+    const callBack = (res) => {
+      if (res.success) {
+        const supplier = res?.data[0];
+        setSupplierId(supplier?.id);
+
+        setMaterialCategorySuppliers(
+          res?.data?.map((supplier) => {
+            if (supplier.isDefault) {
+              setDefaultSupplier(supplier.id);
+            }
+            return {
+              isDefault: supplier.isDefault,
+              value: supplier.id,
+              label: supplier.name,
+              order: supplier?.order,
+            };
+          })
+        );
+      }
+    };
+    await getMaterialSuppliersApi(callApi, callBack, {
+      key: materialType,
+      categoryName: materialCategory,
+    },
+
+    );
+  };
   const getMaterialCategoryData = async (
     materialType: string,
     materialCategory: string,
@@ -53,6 +93,11 @@ const useMaterialsCategories = (isAdmin: boolean) => {
     pageNumber?: number,
     pageSize?: number
   ) => {
+    if (requestAbortController) {
+      requestAbortController.abort();
+    }
+    const newRequestAbortController = new AbortController();
+    setRequestAbortController(newRequestAbortController);
     const callBack = (res) => {
 
 
@@ -65,6 +110,12 @@ const useMaterialsCategories = (isAdmin: boolean) => {
         setMaterialTableFilters(filters);
         setInActiveFilter(res.data?.setInActiveFilter);
         setCategoryNumbering(res.data?.categoryNumbering);
+        if (supplierId === "" || supplierId === null || supplierId === undefined) {
+          getPrintHouseMaterialCategorySuppliers(
+            materialType?.toString(),
+            materialCategory?.toString()
+          ).then();
+        }
       } else {
         setMaterialCategoryData([]);
         setPagesCount(0);
@@ -106,16 +157,20 @@ const useMaterialsCategories = (isAdmin: boolean) => {
       await getPrintHouseMaterialCategoryDataApi(callApi, callBack, {
         materialKey: materialType,
         categoryKey: materialCategory,
-        supplierId,
+        supplierId: supplierId === "" ? null : supplierId,
         pageNumber,
         pageSize,
         isActive,
         customFiltersKeyValueList: convertedCustomFiltersKeyValueList,
-      }).catch((e) => {
+      },
+        false,
+        newRequestAbortController
+      ).catch((e) => {
         setMaterialCategoryData([]);
         setPagesCount(0);
         setMaterialTableFilters([]);
       });
+
     }
   };
 

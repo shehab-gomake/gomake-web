@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { FormInput } from "@/components/form-inputs/form-input";
 import { IInput } from "@/components/form-inputs/interfaces";
 import { GoMakeModal } from "@/components";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   currenciesState,
@@ -26,11 +26,10 @@ interface IAddRowModalProps {
 const AddRowModal = (props: IAddRowModalProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
-  const [rowData, setRowData] = useState<any>({});
-  const { alertFaultGetData, alertSuccessGetData } = useSnackBar();
+  const { alertFaultGetData, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
 
-  const { onAddCategoryRow } = useAddCategoryRow(props.isAdmin);
+  const { onAddCategoryRow, rowData, setRowData } = useAddCategoryRow(props.isAdmin);
   const currencies = useRecoilValue(currenciesState);
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
   const [clientsCategories, setClientsCategories] = useRecoilState<any>(
@@ -78,6 +77,29 @@ const AddRowModal = (props: IAddRowModalProps) => {
   const onChangeInputs = (key, value) => {
     setRowData({ ...rowData, [key]: value as string });
   };
+  const validateRequiredFields = (headers: any[], rowData: Record<string, any>) => {
+    let filterheaders = headers?.filter(
+      (header) => header.key !== "price Unit / ton"
+    );
+    const missingFields: string[] = [];
+    // Check each header
+    filterheaders.forEach(header => {
+      // If field is required and either doesn't exist in rowData or is empty
+      if (header.isRequired &&
+        (!rowData.hasOwnProperty(header.key) ||
+          rowData[header.key] === null ||
+          rowData[header.key] === undefined ||
+          rowData[header.key] === '')) {
+        missingFields.push(header.value);
+      }
+    });
+
+    return {
+      isValid: missingFields.length === 0,
+      missingFields
+    };
+  }
+  const validateRequiredFieldsResult = validateRequiredFields(materialHeaders, rowData);
   return (
     <GoMakeModal
       insideStyle={classes.insideStyle}
@@ -96,23 +118,31 @@ const AddRowModal = (props: IAddRowModalProps) => {
             currencies,
             machinesCategories,
             clientsCategories
-          ).map((item) => (
-            <Stack width={"47%"}>
-              <FormInput
-                input={item as IInput}
-                changeState={onChangeInputs}
-                error={false}
-                readonly={false}
-                checkWhatRenderArray={checkWhatRenderArray}
-                loading={item?.loading || false}
-                keyItem={"item"}
-              />
-            </Stack>
-          ))}
+          ).map((item) => {
+            return (
+              <Stack width={"47%"}>
+                <FormInput
+                  input={item as IInput}
+                  changeState={onChangeInputs}
+                  error={false}
+                  readonly={false}
+                  checkWhatRenderArray={checkWhatRenderArray}
+                  loading={item?.loading || false}
+                  keyItem={"item"}
+                />
+              </Stack>
+            )
+          })}
         </Stack>
         <SecondaryButton
           variant="contained"
-          onClick={() => onAddCategoryRow(rowData)}
+          onClick={() => {
+            if (validateRequiredFieldsResult.isValid) {
+              onAddCategoryRow(rowData)
+            } else {
+              alertFault(`Cannot add until required parameters are filled: ${validateRequiredFieldsResult.missingFields.join(', ')}`)
+            }
+          }}
           style={classes.addBtnStyle}
         >
           {t("materials.buttons.add")}

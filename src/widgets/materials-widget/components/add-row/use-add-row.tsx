@@ -8,11 +8,13 @@ import {
     deletePrintHouseMaterialCategoryRowApi
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { addMaterialCategoryRowApi, deleteMaterialCategoryRowApi } from "@/services/api-service/materials/materials-endpoints";
+import { useState } from "react";
 
 const useAddCategoryRow = (isAdmin: boolean) => {
     const { callApi } = useGomakeAxios();
     const { query } = useRouter();
     const { materialType, materialCategory, connectionID } = query;
+    const [rowData, setRowData] = useState<any>({});
     const { alertSuccessAdded, alertFaultAdded, alertSuccessDelete, alertFaultDelete } = useSnackBar();
     const supplierId = useRecoilValue(selectedSupplierIdState)
     const setOpenModal = useSetRecoilState<boolean>(openAddRowModalState);
@@ -30,6 +32,7 @@ const useAddCategoryRow = (isAdmin: boolean) => {
                 alertSuccessAdded();
                 setOpenModal(false);
                 getMaterialCategoryData(materialType?.toString(), materialCategory?.toString(), [], supplierId).then();
+                setRowData({})
             } else {
                 alertFaultAdded();
             }
@@ -69,7 +72,8 @@ const useAddCategoryRow = (isAdmin: boolean) => {
 
     return {
         onAddCategoryRow,
-        onDeleteCategoryRow
+        onDeleteCategoryRow,
+        rowData, setRowData
     }
 }
 

@@ -323,7 +323,7 @@ const ButtonsContainer = ({
             style={classes.btnThirdContainer}
             onClick={() => {
               if (!isReceipt) {
-                const validationError = validateDocument(quoteItemValue);
+                const validationError = validateDocument(quoteItemValue, t);
                 if (validationError) {
                   alertFault(validationError);
                   return;

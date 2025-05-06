@@ -379,25 +379,25 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
 
   const onClickAddNewAddress = useCallback(
     async (item: any, isUpdate: boolean, addressType: EAddressType) => {
-      if (!item?.addressId || !item?.city) {
+      if (!item?.city) {
         alertRequiredFields();
         return;
       }
+
+      const addressWithMetadata = Object.fromEntries(
+        Object.entries({
+          ...item,
+          type: addressType,
+          clientId: quoteItemValue?.customerID,
+        }).filter(
+          ([_, value]) => value !== undefined && value !== null && value !== ""
+        )
+      );
+
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/crm-service/customer/create-address`,
-        {
-          address1: item?.addressId,
-          street: item?.street,
-          city: item?.city,
-          entry: item?.entry,
-          type: addressType,
-          apartment: item?.apartment,
-          clientId: quoteItemValue?.customerID,
-          floor: item?.floor,
-          postbox: item?.postbox,
-          zipCode: item?.zipCode,
-        }
+        addressWithMetadata
       );
       if (res?.success) {
         alertSuccessAdded();
@@ -424,6 +424,13 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
       return;
     }
 
+    const addressWithMetadata = {
+      ...item,
+      type: addressType,
+      notes: item?.notes || "",
+      documentID: quoteItemValue?.id,
+    };
+
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       const addressArray =
@@ -435,19 +442,10 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         updatedQuoteItemValue[addressArray] = [];
       }
 
+      debugger;
       const newAddress = {
         id: uuidv4(),
-        addressID: item?.addressId,
-        street: item?.street,
-        city: item?.city,
-        entry: item?.entry,
-        type: addressType,
-        apartment: item?.apartment,
-        notes: "",
-        documentID: updatedQuoteItemValue?.id,
-        floor: item?.floor,
-        postbox: item?.postbox,
-        zipCode: item?.zipCode,
+        ...addressWithMetadata,
       };
 
       updatedQuoteItemValue[addressArray] = [
@@ -470,19 +468,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
 
       await addDocumentAddressApi(callApi, callBack, {
         documentType: docType,
-        address: {
-          addressID: item?.id,
-          street: item?.street,
-          city: item?.city,
-          entry: item?.entry,
-          type: addressType,
-          apartment: item?.apartment,
-          notes: item?.notes || "",
-          documentID: quoteItemValue?.id,
-          floor: item?.floor,
-          postbox: item?.postbox,
-          zipCode: item?.zipCode,
-        },
+        address: addressWithMetadata,
       });
     }
   };
@@ -503,17 +489,17 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
       const updatedAddresses = updatedQuoteItemValue[addressArray].map(
         (address) => {
           if (address.id === item.id) {
-            return {
-              ...address,
-              street: item.street,
-              city: item.city,
-              entry: item.entry,
-              apartment: item.apartment,
-              notes: item.notes || "",
-              floor: item?.floor,
-              postbox: item?.postbox,
-              zipCode: item?.zipCode,
-            };
+            const cleanedItem = Object.fromEntries(
+              Object.entries({
+                ...address,
+                ...item,
+                notes: item.notes || "",
+              }).filter(
+                ([_, value]) =>
+                  value !== null && value !== undefined && value !== ""
+              )
+            );
+            return cleanedItem;
           }
           return address;
         }
@@ -538,22 +524,21 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
           ? "documentBillingAddresses"
           : "documentDeliveryAddresses";
 
-      await updateDocumentAddressApi(callApi, callBack, {
-        documentType: docType,
-        address: {
+      const addressWithMetadata = Object.fromEntries(
+        Object.entries({
+          ...item,
           id: quoteItemValue?.[addressArray]?.[0]?.id,
           addressID: quoteItemValue?.[addressArray]?.[0]?.addressID,
-          street: item?.street,
-          city: item?.city,
-          entry: item?.entry,
-          apartment: item?.apartment,
-          notes: item?.notes || "",
-          documentID: quoteItemValue?.id,
           type: addressType,
-          floor: item?.floor,
-          postbox: item?.postbox,
-          zipCode: item?.zipCode,
-        },
+          documentID: quoteItemValue?.id,
+        }).filter(
+          ([_, value]) => value !== undefined && value !== null && value !== ""
+        )
+      );
+
+      await updateDocumentAddressApi(callApi, callBack, {
+        documentType: docType,
+        address: addressWithMetadata,
       });
     }
   };

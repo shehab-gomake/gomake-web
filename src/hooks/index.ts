@@ -13,3 +13,4 @@ export * from "./use-gomake-date-range";
 export * from "./use-gomake-machines";
 export * from "./signalr/use-quotes-signalr";
 export * from "./signalr/use-orders-signalr";
+export * from "./use-menu-modal";

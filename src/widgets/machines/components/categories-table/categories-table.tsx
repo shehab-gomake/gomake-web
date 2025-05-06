@@ -1,60 +1,31 @@
-import { useRecoilValue } from "recoil";
-import { machineCategoriesState } from "@/store/machine-categories";
-import { EditIcon } from "@/components/icons/edit-icon";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useStyle } from "@/widgets/machines/components/categories-table/style";
-import { useCallback, useState } from "react";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import AddIcon from "@mui/icons-material/Add";
 import { ICategoriesTableProps } from "./interface";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { PrimaryButton } from "@/components/button/primary-button";
+import { GoMakeMenu } from "@/components/menu/menu";
+import { useMachinesCategories } from "./use-machines";
 import { HeaderTitleWithSearch } from "@/widgets/header-title-with-search";
-import { useTranslation } from "react-i18next";
-import { PermissionCheck } from "@/components/CheckPermission/check-permission";
-import { Permissions } from "@/components/CheckPermission/enum";
-import { useUserPermission } from "@/hooks/use-permission";
-import { StepType } from "@reactour/tour";
-import { ECategoryId } from "@/widgets/machines/enums/category-id";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
+import { StepType } from "@reactour/tour";
+import { Filter2Icon } from "@/icons/filter2-icon";
+import { MenuItem } from "@mui/material";
 
 const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
-    const [filter, setFilter] = useState<string>("");
-    const { t } = useTranslation();
-    const { primaryColor } = useGomakeTheme();
-    const categoriesList = useRecoilValue(machineCategoriesState);
-    const { CheckPermission } = useUserPermission();
     const { classes } = useStyle();
-    const categories = useCallback(() => {
-        if (!!filter) {
-            return categoriesList.filter((category) =>
-                t(category.name).toLowerCase().includes(filter.toLowerCase())
-            );
-        }
-        return categoriesList;
-    }, [filter, categoriesList]);
-
-    const tableHeaders = [
-        t('machineAttributes.category'),
-        CheckPermission(Permissions.EDIT_MACHINE) ? t('machineAttributes.editMachine') : null,
-    ];
-    const tableRows = categories()?.map((category) => [
-        <>{t(category.name)}</>,
-        <PermissionCheck userPermission={Permissions.EDIT_MACHINE}>
-            <PrimaryButton
-                data-tour={category.id === ECategoryId.DIGITAL_PRINTING ? 'editDigitalPrinting' : undefined}
-                startIcon={<EditIcon color={primaryColor(500)} width={20} height={20} />}
-                href={
-                    isAdmin
-                        ? `/machines-admin/category/${category.id}`
-                        : `/machines/category/${category.id}`
-                }
-                variant={"text"}
-            >
-                {t('machineAttributes.edit')}
-            </PrimaryButton>
-        </PermissionCheck>,
-    ]);
+    const {
+        tableHeaders,
+        tableRows,
+        filterStatus,
+        filterStatusList,
+        open,
+        anchorEl,
+        handleClick,
+        handleClose,
+        setFilterStatus,
+        onFilterChange,
+        t,
+    } = useMachinesCategories(isAdmin);
 
     const machinesTableSteps: StepType[] = [
         {
@@ -72,7 +43,18 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
     const { } = useGoMakeTour(machinesTableSteps, []);
     return (
         <div style={classes.mainContainer}>
-            <HeaderTitleWithSearch title={t('machineAttributes.machines')} onChange={(e) => setFilter(e)} />
+            <HeaderTitleWithSearch
+                title={isAdmin ? t("tabs.materialsAdmin") : t("machineAttributes.machines")}
+                onChange={onFilterChange}
+                children={
+                    <div style={classes.childrenMaterialHedar}>
+                        <div style={classes.filterByStatus} onClick={handleClick}>
+                            <Filter2Icon /> {t("navigationButtons.filterByStatus")}:{" "}
+                            {filterStatus?.label}
+                        </div>
+                    </div>
+                }
+            />
             {!!isAdmin && (
                 <SecondaryButton
                     style={classes.addMachineBtn}
@@ -84,6 +66,27 @@ const CategoriesTable = ({ isAdmin }: ICategoriesTableProps) => {
             <div style={{ width: '100%' }} data-tour={'machinesTable'}>
                 <PrimaryTable stickyFirstCol={false} stickyHeader={false} rows={tableRows} headers={tableHeaders} />
             </div>
+
+            <GoMakeMenu
+                handleClose={handleClose}
+                open={open}
+                anchorEl={anchorEl}
+                style={classes.filterMenuContainer}
+            >
+                {filterStatusList.map((item) => (
+                    <MenuItem
+                        className="action-menu-item"
+                        style={classes.filterMenuItem}
+                        key={item.value}
+                        onClick={() => {
+                            setFilterStatus(item);
+                            handleClose();
+                        }}
+                    >
+                        {item.label}
+                    </MenuItem>
+                ))}
+            </GoMakeMenu>
         </div>
     );
 };

@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { getBoardsMissionsStations } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
 import { useEffect } from "react";
@@ -92,6 +92,9 @@ const useBoardMissionsStations = () => {
   };
 
   useEffect(() => {
+    if(!router.isReady){
+      return;
+    }
     if (!!boardMissionsId && step === "stations") {
       getStations().then();
     }
