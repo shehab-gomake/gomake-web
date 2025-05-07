@@ -36,6 +36,7 @@ export const materialHeadersState = atom<
 export const materialActionState = atom<
   {
     key: string;
+    text?: string;
     action: EMaterialsActions;
     icon: string;
     isUnderLine: boolean;
