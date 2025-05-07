@@ -28,7 +28,10 @@ const SetupSection = () => {
         initialSetupData={initialSetupData}
       />
       <ResetPasswordModal modalControl={ResetPasswordModalControl} />
-      <WelcomeModal updatePrintHouseSetupSteps={updatePrintHouseSetupSteps} />
+      <WelcomeModal
+        updatePrintHouseSetupSteps={updatePrintHouseSetupSteps}
+        handleOpenResetPassword={ResetPasswordModalControl.open}
+      />
     </>
   );
 };
