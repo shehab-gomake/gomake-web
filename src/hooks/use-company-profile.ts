@@ -17,6 +17,7 @@ import { currenciesState } from "@/widgets/materials-widget/state";
 import { useState } from "react";
 import { convertTimeToDate } from "@/widgets/employees-working-hours-widgets/use-working-hours";
 import { useModal } from "./use-modal";
+import { connectToStripeApi } from "@/services/api-service/print-houses/connect-to-stripe-api";
 
 const countryList = require("country-list");
 const allCountries = countryList.getNames();
@@ -104,6 +105,20 @@ const useCompanyProfile = () => {
     });
 
     return res.success;
+  };
+
+  const connectToStripe = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const url = res.data;
+        if (url) {
+          window.location.href = url;
+        } else {
+          console.error("Received an invalid URL from the API.");
+        }
+      }
+    };
+    await connectToStripeApi(callApi, callBack);
   };
 
   const daysOfWork = [
@@ -197,8 +212,6 @@ const useCompanyProfile = () => {
     });
   };
 
-  // !new
-
   return {
     t,
     getProfile,
@@ -220,6 +233,7 @@ const useCompanyProfile = () => {
     updatePinPadState,
     printHouseTaxLogout,
     alertLogOutModal,
+    connectToStripe,
   };
 };
 

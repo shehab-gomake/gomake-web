@@ -16,6 +16,7 @@ const SettingsCompanyProfileWidget = () => {
   const tabQuery = router.query.tab as string;
 
   const {
+    profile,
     getCurrenciesApi,
     getProfile,
     checkPrintHouseTaxLogin,
@@ -47,7 +48,7 @@ const SettingsCompanyProfileWidget = () => {
         component: <CompanyAddressComponent />,
         id: "addresses",
       },
-      {
+      profile?.isShowFinance && {
         title: t("profileSettings.financial"),
         component: (
           <CompanyFinancialComponent
@@ -64,10 +65,10 @@ const SettingsCompanyProfileWidget = () => {
       },
     ],
     [t, taxLoginInfo, printHouseTaxLogout]
-  );
+  ).filter(Boolean);
 
   const tabIndex = useMemo(() => {
-    const foundIndex = tabs.findIndex((tab) => tab.id === tabQuery);
+    const foundIndex = tabs.findIndex((tab) => tab?.id === tabQuery);
     return foundIndex >= 0 ? foundIndex : 0;
   }, [tabQuery, tabs]);
 
