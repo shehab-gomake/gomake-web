@@ -395,7 +395,11 @@ const ButtonsContainer = ({
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : "sales.quote.orderNowTitle"
+                  : `sales.quote.${
+                      quoteItemValue?.isUsedStripe
+                        ? "checkout"
+                        : "orderNowTitle"
+                    }`
               )}
             </GomakePrimaryButton>
           </>
@@ -405,6 +409,7 @@ const ButtonsContainer = ({
           onClose={onClickCloseOrderNowModal}
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
+          isUsedStripe={quoteItemValue?.isUsedStripe}
         />
         <ManagerApprovalModal
           openModal={openMangerApprovalModal}

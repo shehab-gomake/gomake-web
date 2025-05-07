@@ -152,7 +152,7 @@ const PrimaryTabsComponent = ({
         {children && <div>{children}</div>}
       </Stack>
       {tabs?.map((tab, index: number) =>
-        tab.component ? (
+        tab?.component ? (
           <CustomTabPanel key={"tabs" + index} value={value} index={index}>
             {tab.component}
             <div style={classes.tabStyle}>
