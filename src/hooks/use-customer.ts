@@ -9,17 +9,35 @@ import { userTypeState } from "@/store/user-type";
 import { userProfileState } from "@/store/user-profile";
 import { useTranslation } from "react-i18next";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { printHouseProfile } from "@/store/print-house-profile";
+import {
+  isUsPrintHouseState,
+  printHouseProfile,
+} from "@/store/print-house-profile";
 import { priceChangePercentsState } from "@/store/min-max-price-change-percents";
 import { printHousePreferencesState } from "@/store/print-house-preferences";
 import { versionState } from "@/store/version";
 import { printHouseCountryState } from "@/store/print-house-country";
+import { setupGuideOpenState } from "@/store/setup-guide-state";
+import { getPrintHouseSetupStepsApi } from "@/services/api-service/quick-setup-menu/set-up-api";
+import {
+  printHouseSetupStepsState,
+  printHouseWelcomeModalState,
+  SetupStep,
+  SetupStepItem,
+  StepStatus,
+} from "@/store/print-house-setup-state-state";
 
 const useCustomer = (
   permissionEnumValue?: Permissions,
   allowAnonymous?: boolean
 ) => {
   const { callApi } = useGomakeAxios();
+  const setPrintHouseSetupSteps = useSetRecoilState<SetupStepItem[]>(
+    printHouseSetupStepsState
+  );
+  const setPrintHouseWelcomeModal = useSetRecoilState<boolean>(
+    printHouseWelcomeModalState
+  );
   const [user, setUser] = useRecoilState<any>(userState);
   const setSystemCurrency = useSetRecoilState<any>(systemCurrencyState);
   const setSystemVAT = useSetRecoilState<number>(systemVATState);
@@ -36,7 +54,10 @@ const useCustomer = (
   const setPrintHousePreferences = useSetRecoilState<any>(
     printHousePreferencesState
   );
+  const setIsUsPrintHouse = useSetRecoilState<any>(isUsPrintHouseState);
   const setVersionState = useSetRecoilState(versionState);
+  const setShowSetupMenu = useSetRecoilState(setupGuideOpenState);
+
   const { i18n } = useTranslation();
   const logOut = useCallback(() => {
     setUser({});
@@ -64,11 +85,13 @@ const useCustomer = (
       setPrintHouseProfile(user.printHouseProfile);
       setPrintHouseCountry(user?.printHouseProfile?.country);
 
+      setIsUsPrintHouse(user.printHouseProfile?.country === "US");
       setPrintHousePreferences(user?.printHouseProfile?.preferences);
       //setSystemCurrency(user.systemCurrency)
       setSystemCurrency(user.printHouseProfile.systemCurrency);
       setSystemVAT(user.systemVat);
       //setVersionState(user.appVersion);
+      setShowSetupMenu(user?.showSetupMenu);
       const appVersion = user.appVersion;
       const userAppVersion = localStorage.getItem("appVersion");
       if (!userAppVersion) {
@@ -167,6 +190,24 @@ const useCustomer = (
     [permissions]
   );
 
+  const getPrintHouseSetupSteps = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        const steps: SetupStepItem[] = res?.data;
+        setPrintHouseSetupSteps(steps);
+
+        const welcomeStep = steps.find(
+          (step) => step.step === SetupStep.WELCOME_MESSAGE
+        );
+        if (welcomeStep.status === StepStatus.NOT_YET) {
+          setPrintHouseWelcomeModal(true);
+        }
+      }
+    };
+
+    await getPrintHouseSetupStepsApi(callApi, callBack);
+  };
+
   return {
     adminsAutoComplate,
     user,
@@ -177,6 +218,7 @@ const useCustomer = (
     setPermissions,
     validate,
     isLanguageUpdated,
+    getPrintHouseSetupSteps,
   };
 };
 

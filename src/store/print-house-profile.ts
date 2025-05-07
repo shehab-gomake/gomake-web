@@ -14,6 +14,11 @@ export const printHouseUsePrintNode = selector<boolean>({
   },
 });
 
+export const isUsPrintHouseState = atom<boolean>({
+  key: "isUsPrintHouseState",
+  default: false,
+});
+
 export interface IPrintHouseProfile {
   id: string;
   name: string;

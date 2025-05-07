@@ -72,7 +72,6 @@ const HomeTableWidget = ({
     },
   ].filter((tab) => tab.permission);
   const [selectedTab, setSelectedTab] = useState<number>(0);
-  console.log("selectedTab", selectedTab);
   const _renderSelectedTab = () => {
     return (
       <div

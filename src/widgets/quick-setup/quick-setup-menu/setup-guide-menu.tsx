@@ -1,0 +1,223 @@
+import {
+  Box,
+  Card,
+  Typography,
+  LinearProgress,
+  List,
+  ListItemText,
+  Collapse,
+  Button,
+  Divider,
+  ListItemButton,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { useStyle } from "./style";
+import { useSetupGuideMenu } from "./use-quick-setup-menu";
+import { SetupStep, StepStatus } from "@/store/print-house-setup-state-state";
+import { CloseMenu, ExpandMenu, ShrinkMenu } from "../compoennets/icons";
+import { useEffect } from "react";
+
+interface SetupGuideMenuProps {
+  handleOpenModal: () => void;
+  handleOpenResetPassword: () => void;
+  updatePrintHouseSetupSteps: (
+    step: SetupStep,
+    status?: StepStatus
+  ) => Promise<void>;
+}
+
+export const SetupGuideMenu = ({
+  handleOpenModal,
+  handleOpenResetPassword,
+  updatePrintHouseSetupSteps,
+}: SetupGuideMenuProps) => {
+  const {
+    t,
+    isRtl,
+    isOpen,
+    isExpanded,
+    progressValue,
+    toggleExpand,
+    renderStepStatusIcon,
+    setShowGuideMenu,
+    showGuideMenuState,
+    steps,
+    toggleGroup,
+    expandedGroups,
+    setExpandedGroups,
+    getAllGroupKeys,
+    findNextStepLabel,
+  } = useSetupGuideMenu({
+    handleOpenModal,
+    handleOpenResetPassword,
+    updatePrintHouseSetupSteps,
+  });
+  const { classes } = useStyle(isRtl);
+
+  useEffect(() => {
+    const stored = localStorage.getItem("gomake_expandedGroups");
+    if (stored) {
+      setExpandedGroups(JSON.parse(stored));
+    } else {
+      const initialGroups = getAllGroupKeys(steps).reduce((acc, key) => {
+        acc[key] = false;
+        return acc;
+      }, {} as Record<string, boolean>);
+      setExpandedGroups(initialGroups);
+    }
+  }, []);
+
+  const renderSteps = (stepList) =>
+    stepList.map((step) => {
+      const isGroup = "children" in step;
+
+      if (isGroup) {
+        const isGroupExpanded = expandedGroups[step.key] ?? true;
+
+        return (
+          <Box key={step.key}>
+            <ListItemButton onClick={() => toggleGroup(step.key)}>
+              <ListItemText
+                primary={step.label}
+                primaryTypographyProps={{
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  textAlign: isRtl ? ("right" as "right") : ("left" as "left"),
+                }}
+              />
+
+              {isGroupExpanded ? (
+                <ExpandLess sx={{ fontSize: "20px" }} />
+              ) : (
+                <ExpandMore sx={{ fontSize: "20px" }} />
+              )}
+            </ListItemButton>
+            <Collapse in={isGroupExpanded} timeout="auto" unmountOnExit>
+              <List
+                disablePadding
+                component="div"
+                // sx={{ [isRtl ? "pr" : "pl"]: 2 }}
+              >
+                {renderSteps(step.children)}
+              </List>
+            </Collapse>
+          </Box>
+        );
+      }
+
+      // Single step (leaf)
+      return (
+        <ListItemButton
+          key={step.key}
+          onClick={step.onClick}
+          sx={{
+            borderRadius: "8px",
+            cursor:
+              step.status === StepStatus.DONE &&
+              step.key !== SetupStep.RESET_PASSWORD
+                ? "default"
+                : "pointer",
+            pointerEvents:
+              step.status === StepStatus.DONE &&
+              step.key !== SetupStep.RESET_PASSWORD
+                ? "none"
+                : "auto",
+            py: "2px",
+          }}
+        >
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {renderStepStatusIcon(step.status)}
+            <ListItemText
+              primary={step.label}
+              primaryTypographyProps={classes.listItemText}
+            />
+          </Box>
+        </ListItemButton>
+      );
+    });
+
+  if (!isOpen) return null;
+
+  return showGuideMenuState ? (
+    <Card
+      sx={{
+        ...classes.mainContainer,
+        fontFamily: "Inter, Roboto, sans-serif",
+        WebkitFontSmoothing: "antialiased",
+        MozOsxFontSmoothing: "grayscale",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 1,
+        }}
+      >
+        <Typography
+          variant="subtitle1"
+          fontWeight="600"
+          sx={{ color: "#000", fontSize: "14px" }}
+        >
+          {t("quickSetup.setupGuide")}
+        </Typography>
+        <Box gap={1}>
+          <IconButton onClick={toggleExpand} sx={{ p: 0.5, color: "#999" }}>
+            {isExpanded ? <ShrinkMenu /> : <ExpandMenu />}
+          </IconButton>
+          <IconButton
+            onClick={() => setShowGuideMenu(false)}
+            sx={{ p: 0.5, color: "#999" }}
+          >
+            <CloseMenu />
+          </IconButton>
+        </Box>
+      </Box>
+      <Box mb={2}>
+        <LinearProgress
+          variant="determinate"
+          value={progressValue}
+          sx={classes.linearProgress}
+        />
+      </Box>
+      {isExpanded ? (
+        <>
+          <List dense disablePadding>
+            {renderSteps(steps)}
+          </List>
+          <Divider sx={{ my: 2 }} />
+          <Button variant="contained" fullWidth sx={classes.btnStyle}>
+            {t("quickSetup.ready")}
+          </Button>
+        </>
+      ) : (
+        <>
+          <Typography
+            variant="body2"
+            sx={{ color: "#6B6B6B", fontSize: "13px", mt: 1 }}
+          >
+            {`${t("sales.documentDeliveries.next")} : ${
+              findNextStepLabel(steps) || "-"
+            }`}
+          </Typography>
+        </>
+      )}
+    </Card>
+  ) : (
+    <Box sx={classes.secondGuide} onClick={() => setShowGuideMenu(true)}>
+      <Typography sx={{ fontSize: "14px", fontWeight: 500 }}>
+        {t("quickSetup.setupGuide")}
+      </Typography>
+      <CircularProgress
+        variant="determinate"
+        value={progressValue}
+        size={20}
+        thickness={7}
+        sx={classes.circularProgress}
+      />
+    </Box>
+  );
+};
