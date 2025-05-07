@@ -16,6 +16,7 @@ export interface IDashboardCard {
   status?: EStatus;
   productionTime?: number;
   unit?: string;
+  margin?: number;
 }
 
 const DashboardCard = ({
@@ -24,6 +25,7 @@ const DashboardCard = ({
   bgColor,
   children,
   unit,
+  margin,
 }: IDashboardCard) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -57,8 +59,18 @@ const DashboardCard = ({
         </div>
         <Stack gap={"4px"}>
           <span style={classes.label}>{t(`dashboard.${label}`)}</span>
-          <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
+          {/* <Stack direction={"row"} gap={"5px"} alignItems={"center"}>
             <div style={classes.value}>{formatValueWithUnit(value, unit)}</div>
+          </Stack> */}
+          <Stack gap={"2px"}>
+            <div style={classes.value}>{formatValueWithUnit(value, unit)}</div>
+            {label === "totalProfit" &&
+              margin !== undefined &&
+              margin !== null && (
+                <div style={classes.marginLabel}>
+                  {t("dashboard.profitMargin")}: {margin.toFixed(2)}%
+                </div>
+              )}
           </Stack>
         </Stack>
       </Stack>

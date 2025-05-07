@@ -36,6 +36,10 @@ const useStyle = () => {
         ...FONT_FAMILY.Inter(600, 14),
         color: primaryColor(900),
       },
+      marginLabel: {
+        ...FONT_FAMILY.Inter(600, 12),
+        color: grayColor(700),
+      },
       value: {
         ...FONT_FAMILY.Inter(600, 14),
         color: "#2E3092",
