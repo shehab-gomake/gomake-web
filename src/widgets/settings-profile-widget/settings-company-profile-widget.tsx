@@ -48,7 +48,7 @@ const SettingsCompanyProfileWidget = () => {
         component: <CompanyAddressComponent />,
         id: "addresses",
       },
-      profile?.isShowFinance && {
+      {
         title: t("profileSettings.financial"),
         component: (
           <CompanyFinancialComponent
@@ -65,7 +65,7 @@ const SettingsCompanyProfileWidget = () => {
       },
     ],
     [t, taxLoginInfo, printHouseTaxLogout]
-  ).filter(Boolean);
+  );
 
   const tabIndex = useMemo(() => {
     const foundIndex = tabs.findIndex((tab) => tab?.id === tabQuery);
