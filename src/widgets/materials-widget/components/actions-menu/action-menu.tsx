@@ -108,7 +108,7 @@ const ActionMenu = (props: IActionMenuProps) => {
                   {_renderIcons(action.icon)}
                 </div>
                 <div style={clasess.rowTextStyle}>
-                  {t("materialsActions." + action.key)}
+                  {t("materialsActions." + action.text)}
                 </div>
               </MenuItem>
               {action?.isUnderLine && <Divider />}
@@ -128,7 +128,7 @@ const ActionMenu = (props: IActionMenuProps) => {
           onClose={handleCloseModal}
           insideStyle={{ width: 500, height: "auto" }}
           openModal={action !== null}
-          modalTitle={t("materialsActions." + action?.key)}
+          modalTitle={t("materialsActions." + action?.text)}
         >
           <Stack
             gap={3}
@@ -276,7 +276,7 @@ const ActionMenu = (props: IActionMenuProps) => {
               sx={{ width: "100%" }}
               variant={"contained"}
             >
-              {action?.action === EMaterialsActions.CreatePurchaseOrder ? t("materialsActions." + action?.key) : t("profileSettings.update")}
+              {action?.action === EMaterialsActions.CreatePurchaseOrder ? t("materialsActions." + action?.text) : t("profileSettings.update")}
             </SecondaryButton>
           </Stack>
         </GoMakeModal>
