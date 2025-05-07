@@ -34,6 +34,7 @@ import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-s
 import { Permissions } from "@/components/CheckPermission/enum";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { debug } from "console";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -92,6 +93,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const open = Boolean(anchorEl);
 
   const onClickOpenOrderNowModal = () => {
+    if (quoteItemValue?.isUsedStripe && !quoteItemValue?.isConnectedToStripe) {
+      alertFault("alerts.stripNotConnected");
+      return;
+    }
+
     if (
       CheckPreferenceValue(EPreferences.ADDRESSES_REQUIRED_FOR_ORDER) &&
       quoteItemValue?.documentBillingAddresses?.length === 0
@@ -178,9 +184,18 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       if (res?.success) {
         alertSuccessUpdate();
         onClickCloseOrderNowModal();
-        if (isPrepaymentClient) {
+        if (quoteItemValue?.isUsedStripe) {
+          if (sendMessage) {
+            navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
+          } else {
+            if (res?.data?.paymentLink) {
+              window.open(res.data.paymentLink, "_self");
+            } else {
+              alertFaultGetData();
+            }
+          }
+        } else if (isPrepaymentClient) {
           navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
-          //navigate("/orders");
         } else {
           setShowPrintJobsModal(res.data.orderID);
           navigate(`/jobs?orderNumber=${res?.data?.number}`);
