@@ -444,7 +444,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
 
   const getJobStatus = (mission) => {
     if (mission?.isReady) {
-      return t("boardMissions.done");
+      return t("boardMissions.done") + (mission?.storage ? ` ${mission.storage}` : "");
     }
     if (mission?.boardMissionStatus && mission?.station) {
       const empName =
