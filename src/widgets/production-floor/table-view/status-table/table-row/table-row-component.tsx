@@ -42,6 +42,9 @@ import { useGomakeAxios } from "@/hooks";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ProductionFloorNote } from "../board-note/production-floor-note";
+import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
+import { GoMakeDeleteModal } from "@/components";
+import { ModalType } from "@/enums";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -98,7 +101,6 @@ const TableRowComponent = ({
     }),
     [selectedIds, canDrag]
   );
-
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "task",
@@ -111,7 +113,18 @@ const TableRowComponent = ({
           return;
         }
         if (boardMission.statusId !== item.board.statusId) {
-          updateStatus([item.board], boardMission.statusId).then();
+          if (
+            boardMission.statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" &&
+            boardMission.isNeedExample
+          ) {
+            handleOpenModal(
+              boardMission.statusId,
+              [boardMission],
+              boardMission.id
+            );
+          } else {
+            updateStatus([item.board], boardMission.statusId).then();
+          }
         }
         if (
           item.board.priority !== boardMission.priority &&
@@ -164,6 +177,7 @@ const TableRowComponent = ({
     onClickPrintJob,
     updateNotes,
   } = useProductionFloorData();
+  const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
 
   const { CheckPreferenceValue, GetProductionFontSizeFromPreferences } =
     usePrintHousePreferences();
@@ -173,10 +187,10 @@ const TableRowComponent = ({
       checked
         ? [...selectedIds, boardMission]
         : selectedIds.filter(
-            (selectedBoard) =>
-              selectedBoard.id !== id &&
-              selectedBoard.productType === boardMission.productType
-          )
+          (selectedBoard) =>
+            selectedBoard.id !== id &&
+            selectedBoard.productType === boardMission.productType
+        )
     );
   };
   const onClickOpenDatePicker = () => {
@@ -297,8 +311,8 @@ const TableRowComponent = ({
             backgroundColor: boardMission.jobDeliveryTimeAlertColor
               ? boardMission.jobDeliveryTimeAlertColor
               : index % 2 === 0
-              ? "#FFFFFF"
-              : "#F9F9F9",
+                ? "#FFFFFF"
+                : "#F9F9F9",
           }}
         >
           <div
@@ -409,58 +423,58 @@ const TableRowComponent = ({
         {CheckPreferenceValue(
           EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR
         ) && (
-          <SecondaryTableCell
-            align={"center"}
-            style={{
-              padding: "0px 10px",
-              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-            }}
-          >
-            <ClickableLabelComponent
-              label={getTruncatedLabel(boardMission?.productName, 18)}
-              id={boardMission.id}
-              textColor={boardMission?.productionFloorJobColor}
-              t={t}
-              key={boardMission.id}
-            />
-          </SecondaryTableCell>
-        )}
+            <SecondaryTableCell
+              align={"center"}
+              style={{
+                padding: "0px 10px",
+                backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              }}
+            >
+              <ClickableLabelComponent
+                label={getTruncatedLabel(boardMission?.productName, 18)}
+                id={boardMission.id}
+                textColor={boardMission?.productionFloorJobColor}
+                t={t}
+                key={boardMission.id}
+              />
+            </SecondaryTableCell>
+          )}
 
         {CheckPreferenceValue(
           EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR
         ) && (
-          <SecondaryTableCell
-            align={"center"}
-            style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
-          >
-            <DescriptionWidget description={boardMission.description} />
-          </SecondaryTableCell>
-        )}
+            <SecondaryTableCell
+              align={"center"}
+              style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
+            >
+              <DescriptionWidget description={boardMission.description} />
+            </SecondaryTableCell>
+          )}
         {CheckPreferenceValue(
           EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR
         ) && (
-          <SecondaryTableCell
-            align="center"
-            style={{
-              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-              padding: "8px",
-            }}
-          >
-            <ProductionFloorNote
-              key={boardMission.id}
-              value={boardMission?.noteColumn || ""}
-              onSave={(val, reset, closeEditing) =>
-                updateNotes(
-                  boardMission?.id,
-                  boardMission?.productType,
-                  val,
-                  reset,
-                  closeEditing
-                )
-              }
-            />
-          </SecondaryTableCell>
-        )}
+            <SecondaryTableCell
+              align="center"
+              style={{
+                backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+                padding: "8px",
+              }}
+            >
+              <ProductionFloorNote
+                key={boardMission.id}
+                value={boardMission?.noteColumn || ""}
+                onSave={(val, reset, closeEditing) =>
+                  updateNotes(
+                    boardMission?.id,
+                    boardMission?.productType,
+                    val,
+                    reset,
+                    closeEditing
+                  )
+                }
+              />
+            </SecondaryTableCell>
+          )}
 
         <SecondaryTableCell
           align={"center"}
@@ -469,7 +483,16 @@ const TableRowComponent = ({
           <BoardStatusComponent
             statusId={boardMission.statusId}
             id={boardMission.id}
-            onChange={(id, statusId) => updateStatus([boardMission], statusId)}
+            onChange={(id, statusId) => {
+              if (
+                statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" &&
+                boardMission.isNeedExample
+              ) {
+                handleOpenModal(statusId, [boardMission], boardMission.id);
+              } else {
+                updateStatus([boardMission], statusId);
+              }
+            }}
           />
         </SecondaryTableCell>
         <SecondaryTableCell
@@ -537,6 +560,17 @@ const TableRowComponent = ({
           }
         </TableCell>
       </TableRow>
+
+      <GoMakeDeleteModal
+        title={t("sales.quote.simpleApproveMail")}
+        yesBtn={t("modal.yes")}
+        modalType={ModalType.WARNING}
+        subTitle={" "}
+        openModal={openSimpleApproveModal}
+        onClose={handleCloseModal}
+        onClickDelete={handleConfirm}
+        onClickCancel={handleCloseModal}
+      />
     </>
   );
 };
