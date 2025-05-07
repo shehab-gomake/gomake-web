@@ -293,12 +293,18 @@ const useProductionFloorData = () => {
     setSelectedMission(boardMission);
     const callBack = (res) => {
       if (res.success) {
-        if (res.data) {
-          alertSuccessUpdate();
-          setOpenPackagesModal(true);
-        } else {
-          onOpenMarkReadyModal(boardMission.id);
+        if(boardMission.productType){
+          moveBoardMissionToDone(boardMission);
         }
+        else{
+          if (res.data) {
+            alertSuccessUpdate();
+            setOpenPackagesModal(true);
+          } else {
+            onOpenMarkReadyModal(boardMission.id);
+          }
+        }
+      
       } else {
         alertFaultUpdate();
       }
@@ -345,6 +351,23 @@ const useProductionFloorData = () => {
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: selectedMission.id,
       sendMessage,
+      productType: selectedMission.productType ?? "",
+    });
+  };
+
+  const moveBoardMissionToDone = async (selectedMission: any) => {
+    const callBack = (res) => {
+      setOpenMarkReadyModal(false);
+      if (res?.success) {
+        alertSuccessUpdate();
+        setOpenPackagesModal(true);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await moveBoardMissionToDoneApi(callApi, callBack, {
+      boardMissionId: selectedMission.id,
+      sendMessage:false,
       productType: selectedMission.productType ?? "",
     });
   };
