@@ -16,6 +16,7 @@ const SettingsCompanyProfileWidget = () => {
   const tabQuery = router.query.tab as string;
 
   const {
+    profile,
     getCurrenciesApi,
     getProfile,
     checkPrintHouseTaxLogin,
@@ -67,7 +68,7 @@ const SettingsCompanyProfileWidget = () => {
   );
 
   const tabIndex = useMemo(() => {
-    const foundIndex = tabs.findIndex((tab) => tab.id === tabQuery);
+    const foundIndex = tabs.findIndex((tab) => tab?.id === tabQuery);
     return foundIndex >= 0 ? foundIndex : 0;
   }, [tabQuery, tabs]);
 

@@ -13,9 +13,10 @@ import { FilesUploaderWidget } from "@/widgets/file-uploader-widget/files-upload
 import { MobileHeaderWidget } from "./mobile-top-list/mobile-header-widget";
 import { useUploadingNewVersionSocketIo } from "@/hooks/socket-io/use-upload-new-version-socket-io";
 import { useMediaQuery } from "@mui/material";
-import { useEffect } from "react";
 import { useModal } from "@/hooks/use-modal";
 import { versionState } from "@/store/version";
+import { SetupSection } from "@/widgets/quick-setup";
+import {printHouseProfile} from "@/store/print-house-profile";
 
 const CustomerAuthLayout = ({
   children,
@@ -29,7 +30,7 @@ const CustomerAuthLayout = ({
   const isMobileScreen = useMediaQuery("(max-width:768px)");
   const { openAlertModal, setOpenAlertModal } =
     useUploadingNewVersionSocketIo();
-
+  const profile = useRecoilValue(printHouseProfile);
   const { canAccess } = useAuthLayoutHook(permissionEnumValue, allowAnonymous);
   const { classes } = useStyle({
     isHover: false,
@@ -124,6 +125,8 @@ const CustomerAuthLayout = ({
             yesBtn="modal.reload"
             withCancelBtn={false}
           />
+
+          {profile && !profile.isShowOnBoardingMenu ? <SetupSection /> : <></>}
         </div>
       }
     </>

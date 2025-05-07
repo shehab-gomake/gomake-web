@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import {
+  GoMakeAutoComplate,
   GoMakeModal,
   GomakePrimaryButton,
   GomakeTextInput,
@@ -7,10 +8,9 @@ import {
 import { Stack } from "@mui/material";
 import { useStyle } from "@/pages-components/board-missions/style";
 import { FONT_FAMILY } from "@/utils/font-family";
-import { useRecoilState } from "recoil";
-import { boardMissionMaterialState } from "./states";
 import { MaterialStockUnit } from "@/widgets/materials-widget/enums";
 import { useIsMobile } from "@/hooks/use-responsive";
+import { useMaterialAndProductionTimeModal } from "./use-material-and-production-time-modal";
 
 interface IProps {
   openModal: boolean;
@@ -29,39 +29,21 @@ const MaterialsAndProductionTimeModalWidget = ({
   const { t } = useTranslation();
   const isMobile = useIsMobile();
 
-  const [state, setState] = useRecoilState<any>(boardMissionMaterialState);
-
-  const convertMinutesToSeconds = (minutes: number) => minutes * 60;
-  const convertSecondsToMinutes = (seconds: string | number) =>
-    Math.floor(Number(seconds) / 60);
-
-  const handleMaterialChange = (index: number, newValue: string) => {
-    setState((prevState) => ({
-      ...prevState,
-      materials: prevState?.materials.map((item, idx) =>
-        idx === index ? { ...item, currentValue: newValue } : item
-      ),
-    }));
-  };
-
-  const handleUpdate = (isSendingMessage?: boolean | null) => {
-    onUpdate(state, isSendingMessage);
-    onClose();
-  };
-
-  const handleProductionTimeChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const newValueInMinutes = parseInt(event.target.value, 10);
-
-    if (!isNaN(newValueInMinutes)) {
-      setState((prevState) => ({
-        ...prevState,
-        productionTime: convertMinutesToSeconds(newValueInMinutes), // Store in seconds
-      }));
-    }
-  };
-
+  const {
+    handleMaterialChange,
+    handleUpdate,
+    handleProductionTimeChange,
+    convertSecondsToMinutes,
+    state,
+    storageList,
+    inputValue,
+    setInputValue,
+    handleStorageChange,
+    addPrintHouseJobsStorage
+  } = useMaterialAndProductionTimeModal({ onUpdate, onClose })
+  const defaultValue = storageList?.find(
+    (option: any) => option?.storage === state?.storage
+  )
   return (
     <GoMakeModal
       openModal={openModal}
@@ -130,6 +112,44 @@ const MaterialsAndProductionTimeModalWidget = ({
             />
           </div>
 
+          <div style={{ width: "100%" }}>
+            <h3 style={classes.filterLabelStyle}>
+              {t("boardMissions.storage")}
+            </h3>
+            <GoMakeAutoComplate
+              options={
+                storageList.find(
+                  (option: any) => option.storage === inputValue
+                ) || inputValue === ""
+                  ? storageList
+                  : [
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
+              }
+              placeholder={t("boardMissions.selectStorage")}
+              key={defaultValue}
+              style={classes.textInputStyle}
+              getOptionLabel={(option: any) => option?.storage}
+              value={defaultValue}
+              onChange={(e: any, value: any) => {
+                if (value?.id === "new") {
+                  addPrintHouseJobsStorage(inputValue);
+                  setInputValue("");
+                } else {
+                  handleStorageChange(e, value);
+                  setInputValue("");
+                }
+              }}
+              onInputChange={(event: any, newInputValue: string) => {
+                setInputValue(newInputValue);
+              }}
+            />
+          </div>
+
           {/* Materials Mapping */}
           {state?.materials?.length > 0 && (
             <Stack direction="column" gap="10px">
@@ -143,9 +163,8 @@ const MaterialsAndProductionTimeModalWidget = ({
                 >
                   <div style={{ width: "50%" }}>
                     <h3 style={classes.filterLabelStyle}>
-                      {`${material?.materialKey} (${
-                        MaterialStockUnit[material?.unit]
-                      })`}
+                      {`${material?.materialKey} (${MaterialStockUnit[material?.unit]
+                        })`}
                     </h3>
                   </div>
 

@@ -1,3 +1,4 @@
+import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
@@ -35,6 +36,15 @@ const useStyle = () => {
       labelStyle: {
         color: "#333",
         fontWeight: 600,
+      },
+      showMoreButton: {
+        marginTop: 8,
+        color: "#2E3092",
+        background: "transparent",
+        border: "none",
+        cursor: "pointer",
+        ...FONT_FAMILY.Inter(500, 14),
+        textTransform: "none" as "none",
       },
     };
   }, []);

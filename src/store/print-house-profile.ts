@@ -14,6 +14,11 @@ export const printHouseUsePrintNode = selector<boolean>({
   },
 });
 
+export const isUsPrintHouseState = atom<boolean>({
+  key: "isUsPrintHouseState",
+  default: false,
+});
+
 export interface IPrintHouseProfile {
   id: string;
   name: string;
@@ -24,4 +29,5 @@ export interface IPrintHouseProfile {
   filesApiAddress?: string;
   allowedFeaturesId: string[];
   domain?: string;
+  isShowOnBoardingMenu?: boolean;
 }

@@ -381,7 +381,7 @@ const ProductionFloorFilters = ({
     <MenuItem
       key={option?.id}
       sx={classes.missionRowStyle}
-      onClick={() => handleClick(option?.id,option?.productType)}
+      onClick={() => handleClick(option?.id, option?.productType)}
     >
       <CustomWidthTooltip
         title={`${option?.boardMissionNumber}\\${option?.orderNumber} - ${option?.clientName}`}
@@ -408,7 +408,7 @@ const ProductionFloorFilters = ({
   };
 
   //!there is no productType
-  const handleMissionClick = (id,productType) => {
+  const handleMissionClick = (id, productType) => {
     push(`/production-floor?boardMissionsId=${id}&step=stations&productType=${productType}`).then(() => {
       setSearch("");
       setMissionsList([]);

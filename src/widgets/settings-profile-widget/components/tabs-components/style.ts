@@ -12,6 +12,18 @@ const useStyle = () => {
         display: "flex",
         flexDirection: "column" as "column",
       },
+      connectedBtn: {
+        display: "flex",
+        alignItems: "center",
+        gap: "4px",
+        color: "green",
+        fontWeight: 600,
+        marginTop: "8px",
+        alignSelf: "end",
+        backgroundColor: "#e6ffe6",
+        padding: "4px 8px",
+        borderRadius: "8px",
+      },
     };
   }, []);
   return {

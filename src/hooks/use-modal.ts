@@ -1,5 +1,7 @@
 import { useCallback, useState } from "react";
 
+export type ModalControls = ReturnType<typeof useModal>;
+
 export const useModal = (initialState = false) => {
   const [isOpen, setIsOpen] = useState(initialState);
 

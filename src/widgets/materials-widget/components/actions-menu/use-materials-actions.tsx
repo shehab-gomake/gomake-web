@@ -70,6 +70,7 @@ const useMaterialsActions = (isAdmin: boolean) => {
   const [action, setAction] = useRecoilState<{
     action: EMaterialsActions;
     key: string;
+    text?: string;
   } | null>(actionMenuState);
   const [updatedValue, setUpdatedValue] = useState<string>("");
   useEffect(() => {
