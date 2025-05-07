@@ -28,6 +28,9 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderDeliveryDate } from "@/utils/helpers";
 import { MobileActions } from "./components/action/mobile-action-component";
+import { ChartsCostsComponent } from "./components/charts-costs/charts-costs-component";
+
+
 
 const PricingWidget = ({
   workFlows,
@@ -90,7 +93,6 @@ const PricingWidget = ({
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
-
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack
@@ -127,7 +129,7 @@ const PricingWidget = ({
                   sx={classes.button}
                   variant={
                     view === EPricingViews.OTHERS_WORKFLOWS &&
-                    selectedTab?.productType === section.productType
+                      selectedTab?.productType === section.productType
                       ? "contained"
                       : "outlined"
                   }
@@ -223,10 +225,17 @@ const PricingWidget = ({
       </Stack>
 
       {selectedWorkFlow && (
-        <GeneralInformationComponent
-          details={selectedWorkFlow?.generalInformation}
-          details2={selectedWorkFlow?.generalInformationProductionFloor}
-        />
+        <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: "10px" }}>
+          <div style={{ width: "80%" }}>
+            <GeneralInformationComponent
+              details={selectedWorkFlow?.generalInformation}
+              details2={selectedWorkFlow?.generalInformationProductionFloor}
+            />
+          </div>
+          <div style={{ width: "20%", display: "flex", justifyContent: "center", alignItems: "center", padding: "10px" }}>
+            <ChartsCostsComponent selectedWorkFlow={selectedWorkFlow} />
+          </div>
+        </div>
       )}
       <Divider />
 

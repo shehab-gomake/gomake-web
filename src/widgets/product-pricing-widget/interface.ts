@@ -62,6 +62,9 @@ export interface ICalculatedWorkFlow {
   generalInformationProductionFloor?: any;
   isOutSourceWorkFlow?: boolean;
   deliveryDate?: string;
+  totalLaborCosts?: number;
+  totalMaterialCosts?: number;
+  totalOtherCosts?: number;
 }
 
 export interface IPrintActionType {
