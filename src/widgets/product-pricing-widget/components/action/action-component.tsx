@@ -766,9 +766,9 @@ const ActionContainerComponent = ({
                                 {materials[0]?.materialCategories[0]?.name
                                   ?.length > 20
                                   ? materials[0]?.materialCategories[0]?.name.slice(
-                                      0,
-                                      20
-                                    ) + "..."
+                                    0,
+                                    20
+                                  ) + "..."
                                   : materials[0]?.materialCategories[0]?.name}
                               </>
                             ) : (
@@ -954,17 +954,16 @@ const ActionContainerComponent = ({
                             )}
                           />
                           <span>
-                            {`(${
-                              source === EWorkSource.OUT
+                            {`(${source === EWorkSource.OUT
                                 ? formatValueWithUnit(
-                                    calculateOutSourceProfitInMoney(),
-                                    totalPrice?.defaultUnit
-                                  )
+                                  calculateOutSourceProfitInMoney(),
+                                  totalPrice?.defaultUnit
+                                )
                                 : formatValueWithUnit(
-                                    calculateProfitInMoney(),
-                                    totalPrice?.defaultUnit
-                                  )
-                            })`}
+                                  calculateProfitInMoney(),
+                                  totalPrice?.defaultUnit
+                                )
+                              })`}
                           </span>
                         </Stack>
                       )}
