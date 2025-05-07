@@ -42,7 +42,9 @@ import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employees-api";
 import { actionsListState } from "../state/actions-list";
+import { selectedAgentsState } from "@/store/agents-state";
 import moment from "moment";
+import { CurrentStationOrderingEnum } from "@/enums/parameter-type-enums";
 
 interface onStationsChangeProps {
   stations: IStation[];
@@ -493,50 +495,33 @@ const useProductionFloorFilters = ({
       id: id,
     }).then();
   };
-
-  useEffect(() => {
-    if (selectedGroupId && openModalEditGroup) {
-      getStationFilterByIdGroup(selectedGroup?.id);
-    }
-  }, [selectedGroupId, openModalEditGroup]);
-
   const [actions, setActions] = useRecoilState(actionsListState);
-  const getActions = async () => {
-    const callBack = (res) => {
-      if (res.success) {
-        setActions(res?.data);
-      }
-    };
-    await getPrintHouseActions(callApi, callBack, false);
-  };
 
   const handleAgentChange = (selectedAgents) => {
-useEffect(() => {
-  if(selectedGroupId && openModalEditGroup && isFetching){
-    getStationFilterByIdGroup(selectedGroup?.id)
-  }
-}, [selectedGroupId,openModalEditGroup,isFetching])
-const [actions, setActions] = useRecoilState(actionsListState);
-const getActions = async () => {
-  const callBack = (res) => {
-    if (res.success) {
-      setActions(res?.data);
-    }
-  };
-  await getPrintHouseActions(callApi, callBack, );
-};
-  const handleAgentChange = () => {
     setFilters({
       ...filtersState,
       agentIds:selectedAgents,
     },view);
   }
 useEffect(() => {
+  if(selectedGroupId && openModalEditGroup && isFetching){
+    getStationFilterByIdGroup(selectedGroup?.id)
+  }
+}, [selectedGroupId,openModalEditGroup,isFetching])
+
+const getActions = async () => {
+  const callBack = (res) => {
+    if (res.success) {
+      setActions(res?.data);
+    }
+  };
+  await getPrintHouseActions(callApi, callBack, false);
+};
+useEffect(() => {
   if(isFetching){
     getActions();
   }
 }, [isFetching]);
-};
 
   return {
     t,

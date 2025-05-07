@@ -16,6 +16,7 @@ import {
 import { priceChangePercentsState } from "@/store/min-max-price-change-percents";
 import { printHousePreferencesState } from "@/store/print-house-preferences";
 import { versionState } from "@/store/version";
+import { printHouseCountryState } from "@/store/print-house-country";
 import { setupGuideOpenState } from "@/store/setup-guide-state";
 import { getPrintHouseSetupStepsApi } from "@/services/api-service/quick-setup-menu/set-up-api";
 import {
@@ -42,6 +43,8 @@ const useCustomer = (
   const setSystemVAT = useSetRecoilState<number>(systemVATState);
   const setUserProfile = useSetRecoilState(userProfileState);
   const setPrintHouseProfile = useSetRecoilState(printHouseProfile);
+  const setPrintHouseCountry = useSetRecoilState(printHouseCountryState);
+
   const setPriceChangePercents = useSetRecoilState(priceChangePercentsState);
   const [isLanguageUpdated, setIsLanguageUpdated] = useState<boolean>(false);
   const setUserType = useSetRecoilState<any>(userTypeState);
@@ -80,6 +83,8 @@ const useCustomer = (
       setUserType({ type: "user" });
       setUserProfile(validate?.data?.data?.customer);
       setPrintHouseProfile(user.printHouseProfile);
+      setPrintHouseCountry(user?.printHouseProfile?.country);
+
       setIsUsPrintHouse(user.printHouseProfile?.country === "US");
       setPrintHousePreferences(user?.printHouseProfile?.preferences);
       //setSystemCurrency(user.systemCurrency)

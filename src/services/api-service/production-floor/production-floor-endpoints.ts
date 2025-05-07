@@ -3,7 +3,6 @@ import { EHttpMethod } from "@/services/api-service/enums";
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
 
-
 const GET_PRODUCTION_FLOOR_DATA_URL = "/v1/erp-service/board-missions";
 const UPDATE_WORK_JOB_STATUS_URL =
   "/v1/erp-service/board-missions/update-board-missions-status";
@@ -748,7 +747,7 @@ export {
   updateBoardMissionsActionDoneWithMaterialsApi,
   tryMoveBoardMissionToDoneApi,
   updateJobDueDateApi,
-    deleteJobFileApi,
-  sendJobExampleConfirmationToClientApi,
+  deleteJobFileApi,
   updateProductionFloorNotesApi,
+  sendJobExampleConfirmationToClientApi
 };

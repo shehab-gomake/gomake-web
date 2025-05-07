@@ -39,6 +39,8 @@ import { useRouter } from "next/router";
 import { agentsState, currentStationOrderingState } from "@/store/agents-state";
 import moment from "moment";
 import {IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
+import { formatDate } from "tough-cookie";
+import {CurrentStationOrderingEnum} from "@/enums";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -77,7 +79,11 @@ const useProductionFloorData = () => {
       if (res.success) {
         setData(res?.data?.boardMissionsCollections);
         setFilters(res?.data?.filter);
-        setStationOrdering(res?.data?.filter?.currentStationOrdering)
+        let currentStationOrdering = res?.data?.filter?.currentStationOrdering;
+        if(!currentStationOrdering){
+          currentStationOrdering = CurrentStationOrderingEnum.NONE;
+        }
+        setStationOrdering(currentStationOrdering)
         setSelectedGroupId(res?.data?.filter?.groupId);
         setTags(res?.data?.automatedTagsFilter);
         setUserGroups(res?.data?.groups);

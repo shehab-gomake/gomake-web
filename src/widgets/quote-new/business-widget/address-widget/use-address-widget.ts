@@ -7,6 +7,7 @@ import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
+import { printHouseCountryState } from "@/store/print-house-country";
 
 interface useAddressWidgetProps {
   docType: DOCUMENT_TYPE;
@@ -23,6 +24,8 @@ const useAddressWidget = ({ docType, addressType }: useAddressWidgetProps) => {
     addressSelect,
   } = useQuoteGetData(docType);
   const { CheckPreferenceValue } = usePrintHousePreferences();
+  const printHouseCountry = useRecoilValue<string>(printHouseCountryState);
+
   const isUsAddress = !!CheckPreferenceValue(
     EPreferences.ADDRESSES_WITH_COUNTRY_AND_STATE
   );
@@ -59,6 +62,7 @@ const useAddressWidget = ({ docType, addressType }: useAddressWidgetProps) => {
   useEffect(() => {
     if (openModal) {
       getAllClientAddress();
+
       const addresses =
         addressType === EAddressType.BILLING
           ? quoteStateValue?.documentBillingAddresses
@@ -70,10 +74,31 @@ const useAddressWidget = ({ docType, addressType }: useAddressWidgetProps) => {
         setFlag(true);
         setSelectedAddress({ label: city, value: addressId });
       } else {
-        setSelectedAddress(addressSelect[0]);
+        if (addressSelect.length > 0) {
+          const newAddress = {
+            ...addressSelect[0],
+            country: printHouseCountry,
+          };
+          setSelectedAddress(newAddress);
+          setAddressState({
+            city: "",
+            street: "",
+            apartment: "",
+            entry: "",
+            floor: "",
+            postbox: "",
+            zipCode: "",
+            country: printHouseCountry,
+            state: null,
+            address2: "",
+            address3: "",
+            type: addressType,
+          });
+          setIsNewAddressState(true);
+        }
       }
     }
-  }, [quoteStateValue?.customerID, openModal]);
+  }, [quoteStateValue?.customerID, openModal, addressSelect.length]);
 
   useEffect(() => {
     if (selectedAddress?.label === "add new address") {
@@ -85,7 +110,7 @@ const useAddressWidget = ({ docType, addressType }: useAddressWidgetProps) => {
         floor: "",
         postbox: "",
         zipCode: "",
-        country: null,
+        country: printHouseCountry,
         state: null,
         address2: "",
         address3: "",

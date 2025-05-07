@@ -361,6 +361,10 @@ const useMonitoringDashboard = () => {
     ]
   );
 
+  const [visibleAgentRows, setVisibleAgentRows] = useState<number>(10);
+  const [visibleProductRows, setVisibleProductRows] = useState<number>(10);
+  const [visibleClientRows, setVisibleClientRows] = useState<number>(10);
+
   return {
     t,
     dates,
@@ -389,6 +393,13 @@ const useMonitoringDashboard = () => {
     currUnit,
     selectedClient,
     selectedDataType,
+
+    visibleAgentRows,
+    setVisibleAgentRows,
+    visibleProductRows,
+    setVisibleProductRows,
+    visibleClientRows,
+    setVisibleClientRows,
   };
 };
 

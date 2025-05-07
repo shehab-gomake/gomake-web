@@ -89,16 +89,16 @@ export const SetupGuideMenu = ({
               />
 
               {isGroupExpanded ? (
-                <ExpandLess sx={{ fontSize: "22px" }} />
+                <ExpandLess sx={{ fontSize: "20px" }} />
               ) : (
-                <ExpandMore sx={{ fontSize: "22px" }} />
+                <ExpandMore sx={{ fontSize: "20px" }} />
               )}
             </ListItemButton>
             <Collapse in={isGroupExpanded} timeout="auto" unmountOnExit>
               <List
                 disablePadding
                 component="div"
-                sx={{ [isRtl ? "pr" : "pl"]: 2 }}
+                // sx={{ [isRtl ? "pr" : "pl"]: 2 }}
               >
                 {renderSteps(step.children)}
               </List>
@@ -127,11 +127,13 @@ export const SetupGuideMenu = ({
             py: "2px",
           }}
         >
-          <ListItemText
-            primary={step.label}
-            primaryTypographyProps={classes.listItemText}
-          />
-          {renderStepStatusIcon(step.status)}
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {renderStepStatusIcon(step.status)}
+            <ListItemText
+              primary={step.label}
+              primaryTypographyProps={classes.listItemText}
+            />
+          </Box>
         </ListItemButton>
       );
     });

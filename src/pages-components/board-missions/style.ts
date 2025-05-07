@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 import { useIsMobile } from "@/hooks/use-responsive";
+import { convertWidthToVW } from "@/utils/adapter";
 
 const useStyle = () => {
   const { theme, secondColor, errorColor, primaryColor } = useGomakeTheme();
@@ -176,6 +177,14 @@ const useStyle = () => {
       tableAtagStyle: {
         color: "inherit" as "inherit",
         textDecoration: "unset" as "unset",
+      },
+      dropDownListStyle: {
+        width: "100%",
+        borderRadius: 4,
+        height: 40,
+        backgroundColor: "#FFF",
+        border: "0px",
+        boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
     };
   }, [theme, isMobile]);

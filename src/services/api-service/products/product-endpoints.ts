@@ -474,20 +474,6 @@ const updateProductParametersValuesExternalValuesApi: ICallAndSetData = async (
   );
 };
 
-const updateProductSectionNameApi: ICallAndSetData = async (
-  callApi,
-  setState,
-  data
-) => {
-  return await getSetApiData(
-    callApi, 
-    EHttpMethod.PUT, 
-    UPDATE_SECTION_NAME_URL, 
-    setState, 
-    data
-  );
-};
-
 const reOrderProductHotFolderProfitRulesApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -512,6 +498,20 @@ const addProductHotFolderRuleApi: ICallAndSetData = async (
     EHttpMethod.POST,
     ADD_PRODUCT_HOT_FOLDER_RULE_URL,
     setState,
+    data
+  );
+};
+
+const updateProductSectionNameApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi, 
+    EHttpMethod.PUT, 
+    UPDATE_SECTION_NAME_URL, 
+    setState, 
     data
   );
 };

@@ -1,12 +1,13 @@
 import { useEffect } from "react";
-import { Skeleton } from "@mui/material";
+import { Box, Button, Skeleton } from "@mui/material";
 import Stack from "@mui/material/Stack";
 import { useStyle } from "./style";
 import { Cards } from "./cards/cards";
 import { useMonitoringDashboard } from "./use-monitoring-dashboard";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { DashboardFilters } from "./filters";
-import {ChartsWidget} from "@/widgets/monitoring-dashboard-widget/dashboard-charts/charts-widget";
+import { ChartsWidget } from "@/widgets/monitoring-dashboard-widget/dashboard-charts/charts-widget";
+import SouthRoundedIcon from "@mui/icons-material/SouthRounded";
 
 const MonitoringDashboardWidget = () => {
   const { classes } = useStyle();
@@ -30,6 +31,12 @@ const MonitoringDashboardWidget = () => {
     agentTableHeaders,
     filters,
     currUnit,
+    visibleAgentRows,
+    setVisibleAgentRows,
+    visibleProductRows,
+    setVisibleProductRows,
+    visibleClientRows,
+    setVisibleClientRows,
   } = useMonitoringDashboard();
 
   useEffect(() => {
@@ -47,18 +54,56 @@ const MonitoringDashboardWidget = () => {
     fetchAllData();
   }, [filters]);
 
-  const renderTableSection = (title: string, rows: any[], headers: any[]) => (
-    <div style={classes.subContainer}>
-      <h3 style={classes.labelStyle}>{t(title)}</h3>
-      <PrimaryTable
-        stickyFirstCol={false}
-        stickyHeader={false}
-        rows={rows}
-        headers={headers}
-        variant="RoundTable"
-      />
-    </div>
-  );
+  const renderTableSection = (
+    title: string,
+    rows: any[],
+    headers: any[],
+    visibleCount: number,
+    setVisibleCount: React.Dispatch<React.SetStateAction<number>>
+  ) => {
+    const hasMore = rows.length > visibleCount;
+
+    const handleToggle = () => {
+      if (hasMore) {
+        setVisibleCount((prev) => prev + 10);
+      } else {
+        setVisibleCount(10);
+      }
+    };
+
+    return (
+      <div style={classes.subContainer}>
+        <h3 style={classes.labelStyle}>{t(title)}</h3>
+        <PrimaryTable
+          stickyFirstCol={false}
+          stickyHeader={false}
+          rows={rows.slice(0, visibleCount)}
+          headers={headers}
+          variant="RoundTable"
+        />
+        {rows.length > 10 && (
+          <Button
+            onClick={handleToggle}
+            style={classes.showMoreButton}
+            endIcon={
+              <Box
+                component="span"
+                sx={{
+                  display: "inline-flex",
+                  transition: "transform 0.3s ease",
+                  transform: hasMore ? "rotate(0deg)" : "rotate(180deg)",
+                }}
+              >
+                <SouthRoundedIcon fontSize="small" />
+              </Box>
+            }
+          >
+            {t(hasMore ? "sales.quote.showMore" : "sales.quote.showLess")}
+          </Button>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div style={classes.container}>
@@ -93,19 +138,25 @@ const MonitoringDashboardWidget = () => {
         filters={filters}
       />
       {renderTableSection(
+        "dashboard.agentPerformanceTitle",
+        agentsRow,
+        agentTableHeaders,
+        visibleAgentRows,
+        setVisibleAgentRows
+      )}
+      {renderTableSection(
         "dashboard.productPerformanceTitle",
         productsRow,
-        productTableHeaders
+        productTableHeaders,
+        visibleProductRows,
+        setVisibleProductRows
       )}
       {renderTableSection(
         "dashboard.clientPerformanceTitle",
         clientsRow,
-        clientTableHeaders
-      )}
-      {renderTableSection(
-        "dashboard.agentPerformanceTitle",
-        agentsRow,
-        agentTableHeaders
+        clientTableHeaders,
+        visibleClientRows,
+        setVisibleClientRows
       )}
     </div>
   );

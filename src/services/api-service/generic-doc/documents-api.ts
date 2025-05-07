@@ -145,6 +145,9 @@ const DELETE_DOCUMENT_ATTACHMENT_URL =
 const GET_ALL_DOCUMENT_DELIVERY_DATE_URL =
   "/v1/erp-service/documents/get-document-delivery-date";
 
+const UPDATE_QUOTE_DOCUMENT_ITEM_QUANTITY_URL =
+  "/v1/erp-service/documents/update-quote-item-quantity";
+
 const getDocumentApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -524,6 +527,24 @@ const calculateDocumentItemApi: ICallAndSetData = async (
     callApi,
     EHttpMethod.GET,
     GET_CALCULATE_DOCUMENT_ITEM_URL,
+    setState,
+    data
+  );
+};
+
+const updateQuoteItemQuantityApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: {
+    printHouseId: string;
+    ItemId: string;
+    quantity: number;
+  }
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.PUT,
+    UPDATE_QUOTE_DOCUMENT_ITEM_QUANTITY_URL,
     setState,
     data
   );
@@ -1283,4 +1304,5 @@ export {
   deleteDocumentAttachmentApi,
   getDocumentDeliveryDateApi,
   sendOrderReadyToClientApi,
+  updateQuoteItemQuantityApi,
 };

@@ -3,10 +3,7 @@ import { CurrentStationComponent } from "@/widgets/production-floor/table-view/s
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useDrag, useDrop } from "react-dnd";
 import { useRecoilState } from "recoil";
-import {
-  boardsMissionsState,
-  selectedBoardsMissionsState,
-} from "@/widgets/production-floor/state/boards";
+import { selectedBoardsMissionsState, } from "@/widgets/production-floor/state/boards";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -34,14 +31,16 @@ import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp
 import { ApprovalFileStatusComponent } from "./approval-file-status-component";
 import { ExpandIcon } from "@/icons/expand-icon";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { DateField } from "@/components/date-picker/date-filed";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { EPreferences } from "@/enums/prefernces";
-import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums/tabs-icon-enums";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
+import { DateHourFormatterShort } from "@/utils/date-formatters";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { DateField } from "@/components/date-picker/date-filed";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { useGomakeAxios } from "@/hooks";
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ProductionFloorNote } from "../board-note/production-floor-note";
 
 interface IProps {
@@ -79,8 +78,8 @@ const TableRowComponent = ({
   const [selectedIds, setSelectedIds] = useRecoilState(
     selectedBoardsMissionsState
   );
-
   const { CheckPermission } = useUserPermission();
+  const { callApi } = useGomakeAxios();
   const canDrag =
     CheckPermission(Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR) &&
     !status.isGroup;
@@ -185,10 +184,10 @@ const TableRowComponent = ({
       checked
         ? [...selectedIds, boardMission]
         : selectedIds.filter(
-            (selectedBoard) =>
-              selectedBoard.id !== id &&
-              selectedBoard.productType === boardMission.productType
-          )
+          (selectedBoard) =>
+            selectedBoard.id !== id &&
+            selectedBoard.productType === boardMission.productType
+        )
     );
   };
   const onClickOpenDatePicker = () => {
@@ -315,8 +314,8 @@ const TableRowComponent = ({
             backgroundColor: boardMission.jobDeliveryTimeAlertColor
               ? boardMission.jobDeliveryTimeAlertColor
               : index % 2 === 0
-              ? "#FFFFFF"
-              : "#F9F9F9",
+                ? "#FFFFFF"
+                : "#F9F9F9",
           }}
         >
           <div
@@ -427,58 +426,58 @@ const TableRowComponent = ({
         {CheckPreferenceValue(
           EPreferences.SHOW_PRODUCT_NAME_COLUMN_IN_PRODUCTION_FLOOR
         ) && (
-          <SecondaryTableCell
-            align={"center"}
-            style={{
-              padding: "0px 10px",
-              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-            }}
-          >
-            <ClickableLabelComponent
-              label={getTruncatedLabel(boardMission?.productName, 18)}
-              id={boardMission.id}
-              textColor={boardMission?.productionFloorJobColor}
-              t={t}
-              key={boardMission.id}
-            />
-          </SecondaryTableCell>
-        )}
+            <SecondaryTableCell
+              align={"center"}
+              style={{
+                padding: "0px 10px",
+                backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+              }}
+            >
+              <ClickableLabelComponent
+                label={getTruncatedLabel(boardMission?.productName, 18)}
+                id={boardMission.id}
+                textColor={boardMission?.productionFloorJobColor}
+                t={t}
+                key={boardMission.id}
+              />
+            </SecondaryTableCell>
+          )}
 
         {CheckPreferenceValue(
           EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR
         ) && (
-          <SecondaryTableCell
-            align={"center"}
-            style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
-          >
-            <DescriptionWidget description={boardMission.description} />
-          </SecondaryTableCell>
-        )}
+            <SecondaryTableCell
+              align={"center"}
+              style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
+            >
+              <DescriptionWidget description={boardMission.description} />
+            </SecondaryTableCell>
+          )}
         {CheckPreferenceValue(
           EPreferences.SHOW_NOTES_COLUMN_IN_PRODUCTION_FLOOR
         ) && (
-          <SecondaryTableCell
-            align="center"
-            style={{
-              backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
-              padding: "8px",
-            }}
-          >
-            <ProductionFloorNote
-              key={boardMission.id}
-              value={boardMission?.noteColumn || ""}
-              onSave={(val, reset, closeEditing) =>
-                updateNotes(
-                  boardMission?.id,
-                  boardMission?.productType,
-                  val,
-                  reset,
-                  closeEditing
-                )
-              }
-            />
-          </SecondaryTableCell>
-        )}
+            <SecondaryTableCell
+              align="center"
+              style={{
+                backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9",
+                padding: "8px",
+              }}
+            >
+              <ProductionFloorNote
+                key={boardMission.id}
+                value={boardMission?.noteColumn || ""}
+                onSave={(val, reset, closeEditing) =>
+                  updateNotes(
+                    boardMission?.id,
+                    boardMission?.productType,
+                    val,
+                    reset,
+                    closeEditing
+                  )
+                }
+              />
+            </SecondaryTableCell>
+          )}
 
         <SecondaryTableCell
           align={"center"}
@@ -564,16 +563,6 @@ const TableRowComponent = ({
           }
         </TableCell>
       </TableRow>
-      <GoMakeDeleteModal
-        title={t("sales.quote.simpleApproveMail")}
-        yesBtn={t("modal.yes")}
-        modalType={ModalType.WARNING}
-        subTitle={" "}
-        openModal={openSimpleApproveModal}
-        onClose={handleCloseModal}
-        onClickDelete={handleConfirm}
-        onClickCancel={handleCloseModal}
-      />
     </>
   );
 };

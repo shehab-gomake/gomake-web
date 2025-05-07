@@ -72,6 +72,7 @@ interface IProps extends IBoardMissionsStation {
   isHideTimeAndDate?: boolean;
   supplierId?: string;
   isSubAction?: boolean;
+  storage?: string;
 }
 
 const BoardMissionsStationActionItem = ({
@@ -102,6 +103,7 @@ const BoardMissionsStationActionItem = ({
   productType,
   realProductionTime,
   isSubAction = false,
+  storage
 }: IProps) => {
   const isMobile = useIsMobile();
 
@@ -862,6 +864,11 @@ const BoardMissionsStationActionItem = ({
                       )}
                     </>
                   )}
+                  {
+                    storage && (
+                      <span style={classes.sectionTitle}>{t("boardMissions.storage")}: {storage}</span>
+                    )
+                  }
                 </Stack>
                 {/* Completed and Check */}
                 <PermissionCheck

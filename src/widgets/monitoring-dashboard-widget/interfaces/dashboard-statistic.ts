@@ -4,4 +4,5 @@ export interface IStatisticValue {
   totalProfit: number;
   successRate: number;
   totalActualCost: number | null;
+  profitMargin: number | null;
 }

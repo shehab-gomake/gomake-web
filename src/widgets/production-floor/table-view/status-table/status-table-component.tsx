@@ -24,8 +24,8 @@ import { TableRowComponent } from "@/widgets/production-floor/table-view/status-
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
+import { useCallback, useState } from "react";
 import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
-import { useCallback, useEffect, useState } from "react";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { CurrentStationOrderingEnum, ModalType } from "@/enums";
 import { useMediaQuery } from "@mui/material";
@@ -33,7 +33,7 @@ import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
-import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import { ArrowUpward, } from "@mui/icons-material";
 import { productionFloorFiltersState } from "../../state/production-floor-filters";
 import { currentStationOrderingState } from "@/store/agents-state";
 

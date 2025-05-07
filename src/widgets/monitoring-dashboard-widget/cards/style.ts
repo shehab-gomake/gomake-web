@@ -3,7 +3,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const useStyle = () => {
-  const { theme, primaryColor } = useGomakeTheme();
+  const { theme, primaryColor, grayColor } = useGomakeTheme();
   const classes = useMemo(() => {
     return {
       container: {
@@ -33,8 +33,12 @@ const useStyle = () => {
         borderColor: "#EAECF0",
       },
       label: {
-        ...FONT_FAMILY.Inter(600, 16),
+        ...FONT_FAMILY.Inter(600, 14),
         color: primaryColor(900),
+      },
+      marginLabel: {
+        ...FONT_FAMILY.Inter(600, 12),
+        color: grayColor(700),
       },
       value: {
         ...FONT_FAMILY.Inter(600, 14),
