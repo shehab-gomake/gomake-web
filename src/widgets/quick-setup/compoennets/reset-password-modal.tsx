@@ -15,6 +15,8 @@ import { useTranslation } from "react-i18next";
 import { setUserNewPasswordApi } from "@/services/api-service/quick-setup-menu/reset-password";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useStyle } from "./style";
+import { useSetRecoilState } from "recoil";
+import { setupGuideExpandedState } from "@/store/print-house-setup-state-state";
 
 interface ResetPasswordModalProps {
   modalControl: ModalControls;
@@ -30,6 +32,7 @@ export const ResetPasswordModal = ({
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
+  const setIsExpanded = useSetRecoilState(setupGuideExpandedState);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,6 +59,9 @@ export const ResetPasswordModal = ({
       if (res.success) {
         handleCloseModal();
         alertSuccessUpdate();
+        setTimeout(() => {
+          setIsExpanded(true);
+        }, 200);
       } else {
         alertFaultUpdate();
       }

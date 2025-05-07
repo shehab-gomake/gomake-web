@@ -2,7 +2,6 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { setItem } from "@/services/storage-data";
 import {
   printHouseWelcomeModalState,
-  setupGuideExpandedState,
   SetupStep,
   StepStatus,
 } from "@/store/print-house-setup-state-state";
@@ -17,6 +16,8 @@ import { useTranslation } from "react-i18next";
 import { useRecoilState, useSetRecoilState } from "recoil";
 
 interface WelcomeModalProps {
+  handleOpenResetPassword: () => void;
+
   updatePrintHouseSetupSteps: (
     step: SetupStep,
     status?: StepStatus
@@ -25,6 +26,7 @@ interface WelcomeModalProps {
 
 export const WelcomeModal = ({
   updatePrintHouseSetupSteps,
+  handleOpenResetPassword,
 }: WelcomeModalProps) => {
   const { t } = useTranslation();
   const [printHouseWelcomeModal, setPrintHouseWelcomeModal] =
@@ -34,11 +36,11 @@ export const WelcomeModal = ({
     setPrintHouseWelcomeModal(false);
   };
 
-  const setIsExpanded = useSetRecoilState(setupGuideExpandedState);
-
   const handleStart = () => {
     setPrintHouseWelcomeModal(false);
-    setIsExpanded(true);
+    setTimeout(() => {
+      handleOpenResetPassword();
+    }, 300);
     setItem("gomake_setupGuideExpanded", "true");
     updatePrintHouseSetupSteps(SetupStep.WELCOME_MESSAGE, StepStatus.DONE);
   };
