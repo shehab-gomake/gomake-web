@@ -234,6 +234,43 @@ const useSetupGuideMenu = ({
         },
       ],
     },
+
+    {
+      key: "help_center",
+      label: t("quickSetup.steps.helpCenter"),
+      children: [
+        {
+          key: SetupStep.HELP_CENTER_KNOWLEDGE_BASE,
+          label: t("quickSetup.steps.knowledgeBase"),
+          status: getStepStatus(SetupStep.HELP_CENTER_KNOWLEDGE_BASE),
+          onClick: () => {
+            if (
+              getStepStatus(SetupStep.HELP_CENTER_KNOWLEDGE_BASE) ===
+              StepStatus.NOT_YET
+            ) {
+              updatePrintHouseSetupSteps(SetupStep.HELP_CENTER_KNOWLEDGE_BASE);
+            }
+            window.open("https://gomake.document360.io", "_blank");
+          },
+        },
+        {
+          key: SetupStep.HELP_CENTER_CUSTOMER_SERVICE,
+          label: t("quickSetup.steps.customerService"),
+          status: getStepStatus(SetupStep.HELP_CENTER_CUSTOMER_SERVICE),
+          onClick: () => {
+            if (
+              getStepStatus(SetupStep.HELP_CENTER_CUSTOMER_SERVICE) ===
+              StepStatus.NOT_YET
+            ) {
+              updatePrintHouseSetupSteps(
+                SetupStep.HELP_CENTER_CUSTOMER_SERVICE
+              );
+            }
+            navigate("/customer-service");
+          },
+        },
+      ],
+    },
   ];
 
   const getAllGroupKeys = (items: any[]): string[] =>
