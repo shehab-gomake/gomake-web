@@ -53,16 +53,21 @@ const CompanyFinancialComponent = ({
   const { classes } = useStyle();
   return (
     <div style={classes.financialDiv} className="custom-scrollbar">
-      <FormInputsSectionComponent sectionTitle={t("profileSettings.financial")}>
-        {[...financialInputs].map((input: any) => (
-          <FormInput
-            key={input.parameterKey}
-            input={input}
-            changeState={changeState}
-            error={(input.required && !input.value) || !input.isValid}
-          />
-        ))}
-      </FormInputsSectionComponent>
+      {profile?.isShowFinance && (
+        <FormInputsSectionComponent
+          sectionTitle={t("profileSettings.financial")}
+        >
+          {[...financialInputs].map((input: any) => (
+            <FormInput
+              key={input.parameterKey}
+              input={input}
+              changeState={changeState}
+              error={(input.required && !input.value) || !input.isValid}
+            />
+          ))}
+        </FormInputsSectionComponent>
+      )}
+
       <FormInputsSectionComponent
         sectionTitle={t("profileSettings.creditCards")}
       >
@@ -113,51 +118,54 @@ const CompanyFinancialComponent = ({
           </FormInputsSectionComponent>
         )}
       {/* Tax Authority Section */}
-      <FormInputsSectionComponent
-        sectionTitle={t("profileSettings.taxAuthority")}
-      >
-        <Stack direction={"column"}>
-          <SecondaryButton
-            variant="outlined"
-            onClick={() => {
-              if (taxLoginInfo?.isLoggedIn) {
-                alertLogOutModal.open();
-              } else {
-                window.open(taxLoginInfo.loginUrl, "_blank");
-              }
-            }}
-            sx={{
-              color: !taxLoginInfo?.isLoggedIn ? "green" : "red",
-              borderColor: !taxLoginInfo?.isLoggedIn ? "green" : "red",
-              "&:hover": {
-                backgroundColor: !taxLoginInfo?.isLoggedIn
-                  ? "#e6ffe6"
-                  : "#ffe6e6",
-                borderColor: !taxLoginInfo?.isLoggedIn
-                  ? "darkgreen"
-                  : "darkred",
-              },
-            }}
-          >
-            {taxLoginInfo?.isLoggedIn
-              ? t("dashboard-widget.logout")
-              : t("login.login")}
-          </SecondaryButton>
-
-          {taxLoginInfo?.isLoggedIn && taxLoginInfo.lastLoginDate && (
-            <div
-              style={{
-                marginTop: "8px",
-                ...FONT_FAMILY.Inter(600, 13),
-                color: "#666",
+      {profile?.isShowFinance && (
+        <FormInputsSectionComponent
+          sectionTitle={t("profileSettings.taxAuthority")}
+        >
+          <Stack direction={"column"}>
+            <SecondaryButton
+              variant="outlined"
+              onClick={() => {
+                if (taxLoginInfo?.isLoggedIn) {
+                  alertLogOutModal.open();
+                } else {
+                  window.open(taxLoginInfo.loginUrl, "_blank");
+                }
+              }}
+              sx={{
+                color: !taxLoginInfo?.isLoggedIn ? "green" : "red",
+                borderColor: !taxLoginInfo?.isLoggedIn ? "green" : "red",
+                "&:hover": {
+                  backgroundColor: !taxLoginInfo?.isLoggedIn
+                    ? "#e6ffe6"
+                    : "#ffe6e6",
+                  borderColor: !taxLoginInfo?.isLoggedIn
+                    ? "darkgreen"
+                    : "darkred",
+                },
               }}
             >
-              {t("profileSettings.lastLoginDate")}:{" "}
-              {new Date(taxLoginInfo.lastLoginDate).toLocaleDateString()}
-            </div>
-          )}
-        </Stack>
-      </FormInputsSectionComponent>
+              {taxLoginInfo?.isLoggedIn
+                ? t("dashboard-widget.logout")
+                : t("login.login")}
+            </SecondaryButton>
+
+            {taxLoginInfo?.isLoggedIn && taxLoginInfo.lastLoginDate && (
+              <div
+                style={{
+                  marginTop: "8px",
+                  ...FONT_FAMILY.Inter(600, 13),
+                  color: "#666",
+                }}
+              >
+                {t("profileSettings.lastLoginDate")}:{" "}
+                {new Date(taxLoginInfo.lastLoginDate).toLocaleDateString()}
+              </div>
+            )}
+          </Stack>
+        </FormInputsSectionComponent>
+      )}
+
       <div
         style={{
           position: "sticky",
@@ -174,19 +182,21 @@ const CompanyFinancialComponent = ({
       </div>
 
       {/* Logout Modal */}
-      <GoMakeDeleteModal
-        openModal={alertLogOutModal.isOpen}
-        modalType={ModalType.WARNING}
-        title={t("dashboard-widget.logout")}
-        subTitle={t("modal.confirmLogout")}
-        yesBtn={t("dashboard-widget.logout")}
-        cancelBtn={t("modal.cancel")}
-        onClose={alertLogOutModal.close}
-        onClickDelete={() => {
-          printHouseTaxLogout();
-          alertLogOutModal.close();
-        }}
-      />
+      {profile?.isShowFinance && (
+        <GoMakeDeleteModal
+          openModal={alertLogOutModal.isOpen}
+          modalType={ModalType.WARNING}
+          title={t("dashboard-widget.logout")}
+          subTitle={t("modal.confirmLogout")}
+          yesBtn={t("dashboard-widget.logout")}
+          cancelBtn={t("modal.cancel")}
+          onClose={alertLogOutModal.close}
+          onClickDelete={() => {
+            printHouseTaxLogout();
+            alertLogOutModal.close();
+          }}
+        />
+      )}
     </div>
   );
 };
