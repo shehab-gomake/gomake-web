@@ -140,16 +140,16 @@ const useMachinesCategories = (isAdmin: boolean) => {
       }}
       startIcon={
         printHouseCategoryIds.includes(category.id) ? (
-          <ToggleOffOutlinedIcon sx={{ fontSize: 24 }} />
-        ) : (
           <ToggleOnOutlinedIcon sx={{ fontSize: 24 }} />
+        ) : (
+          <ToggleOffOutlinedIcon sx={{ fontSize: 24 }} />
         )
       }
       variant={"text"}
     >
       {printHouseCategoryIds.includes(category.id)
-        ? t("navigationButtons.deactivate")
-        : t("navigationButtons.activate")}
+        ? t("navigationButtons.activate")
+        : t("navigationButtons.deactivate")}
     </PrimaryButton>,
   ]);
   return {
