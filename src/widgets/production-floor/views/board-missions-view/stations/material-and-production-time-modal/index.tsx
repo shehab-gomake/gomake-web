@@ -44,8 +44,6 @@ const MaterialsAndProductionTimeModalWidget = ({
   const defaultValue = storageList?.find(
     (option: any) => option?.storage === state?.storage
   )
-  console.log("defaultValue", defaultValue)
-
   return (
     <GoMakeModal
       openModal={openModal}

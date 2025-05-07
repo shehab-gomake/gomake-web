@@ -10,7 +10,6 @@ const useMaterialAndProductionTimeModal = ({onUpdate,onClose}) => {
     const [state, setState] = useRecoilState<any>(boardMissionMaterialState);
     const [storageList,setStorageList] = useState([])
     const [inputValue,setInputValue] = useState("")
-    console.log("storageList",storageList)
   const convertMinutesToSeconds = (minutes: number) => minutes * 60;
   const convertSecondsToMinutes = (seconds: string | number) =>
     Math.floor(Number(seconds) / 60);
