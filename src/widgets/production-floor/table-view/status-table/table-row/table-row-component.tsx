@@ -483,7 +483,16 @@ const TableRowComponent = ({
           <BoardStatusComponent
             statusId={boardMission.statusId}
             id={boardMission.id}
-            onChange={(id, statusId) => updateStatus([boardMission], statusId)}
+            onChange={(id, statusId) => {
+              if (
+                statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" &&
+                boardMission.isNeedExample
+              ) {
+                handleOpenModal(statusId, [boardMission], boardMission.id);
+              } else {
+                updateStatus([boardMission], statusId);
+              }
+            }}
           />
         </SecondaryTableCell>
         <SecondaryTableCell
