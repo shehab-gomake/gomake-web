@@ -32,7 +32,7 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
         if (didDrop) {
           return;
         }
-        if (status.key === "Approval required" && !item.isNeedExample) {
+        if (status.key === "Approval required" && item.isNeedExample) {
           handleOpenModal(status.id, [item], item.id);
         } else {
           updateStatus([item], status.id).then();
