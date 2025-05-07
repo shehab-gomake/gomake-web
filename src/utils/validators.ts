@@ -1,8 +1,5 @@
 // Used for creating document
-export const validateDocument = (
-  quoteItemValue: any,
-  t: any
-): string | null => {
+export const validateDocument = (quoteItemValue: any): string | null => {
   if (
     !quoteItemValue?.documentItems ||
     quoteItemValue.documentItems.length === 0
@@ -11,7 +8,7 @@ export const validateDocument = (
   }
 
   const seenItems = new Set();
-  for (const [index, item] of quoteItemValue.documentItems.entries()) {
+  for (const item of quoteItemValue.documentItems) {
     const productCode = item.productCode || item.code;
 
     if (!productCode) {
@@ -26,12 +23,6 @@ export const validateDocument = (
       return "alerts.itemWithNegativeQuantity";
     }
 
-    if (item.maxQuantity != null && item.quantity > item.maxQuantity) {
-      return t("alerts.itemExceedsMaxQuantityWithIndex", {
-        max: item.maxQuantity,
-        index: index + 1,
-      });
-    }
     /*if (item.price == null || item.price === 0) {
       return "alerts.itemWithoutUnitPrice";
     }*/
@@ -47,7 +38,7 @@ export const validateDocument = (
     if (item.finalPrice < 0) {
       return "alerts.itemWithNegativeTotalPrice";
     }*/
-
+    
     const itemKey = item.sourceDocumentItemId
       ? `id-${item.sourceDocumentItemId}`
       : `code-${item.code}-price-${item.price}-qty-${item.quantity}`;
