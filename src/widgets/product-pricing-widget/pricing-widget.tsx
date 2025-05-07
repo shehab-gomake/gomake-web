@@ -93,7 +93,6 @@ const PricingWidget = ({
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
-  console.log("selectedWorkFlow", selectedWorkFlow);
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack
