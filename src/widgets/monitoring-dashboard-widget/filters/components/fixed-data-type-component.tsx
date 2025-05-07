@@ -32,6 +32,10 @@ const FixedDataType = () => {
   const options = useMemo(
     () => [
       {
+        label: "dashboard.allDataType",
+        value: null,
+      },
+      {
         label: "dashboard.calculatedOnly",
         value: CalculationDataTypeEnum.CalculatedOnly,
       },

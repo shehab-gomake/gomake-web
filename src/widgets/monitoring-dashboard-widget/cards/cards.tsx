@@ -24,7 +24,8 @@ const Cards = ({
 
   const cardData = [
     {
-      labelTranslationKey: "totalPrice",
+      // labelTranslationKey: "totalPrice",
+      labelTranslationKey: "totalSales",
       value: data?.totalPrice,
       unit: currUnit,
     },
@@ -37,12 +38,17 @@ const Cards = ({
       labelTranslationKey: "totalProfit",
       value: data.totalProfit,
       unit: currUnit,
+      margin: data?.totalPrice
+        ? ((data?.totalProfit / data.totalPrice) * 100).toFixed(2)
+        : 0,
     },
-    {
-      labelTranslationKey: "profitMargin",
-      value: data.profitMargin,
-      unit: currUnit,
-    },
+    // {
+    //   labelTranslationKey: "profitMargin",
+    //   value: data.totalPrice
+    //     ? ((data.totalProfit / data.totalPrice) * 100).toFixed(2)
+    //     : 0,
+    //   unit: "%",
+    // },
     {
       labelTranslationKey: "successRate",
       value: data.successRate,
@@ -68,6 +74,7 @@ const Cards = ({
                 value={item.value}
                 bgColor={colors[index % colors.length]}
                 unit={item?.unit}
+                margin={Number(item?.margin)}
               >
                 <GoMakeCurrency
                   color={colors[index % colors.length]}
