@@ -3,7 +3,10 @@ import { CurrentStationComponent } from "@/widgets/production-floor/table-view/s
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useDrag, useDrop } from "react-dnd";
 import { useRecoilState } from "recoil";
-import { selectedBoardsMissionsState, } from "@/widgets/production-floor/state/boards";
+import {
+  boardsMissionsState,
+  selectedBoardsMissionsState,
+} from "@/widgets/production-floor/state/boards";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -31,9 +34,6 @@ import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp
 import { ApprovalFileStatusComponent } from "./approval-file-status-component";
 import { ExpandIcon } from "@/icons/expand-icon";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
-import { GoMakeDeleteModal } from "@/components";
-import { ModalType } from "@/enums/tabs-icon-enums";
-import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 import { DateHourFormatterShort } from "@/utils/date-formatters";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DateField } from "@/components/date-picker/date-filed";
@@ -42,6 +42,9 @@ import { useGomakeAxios } from "@/hooks";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ProductionFloorNote } from "../board-note/production-floor-note";
+import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
+import { GoMakeDeleteModal } from "@/components";
+import { ModalType } from "@/enums";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -98,7 +101,6 @@ const TableRowComponent = ({
     }),
     [selectedIds, canDrag]
   );
-
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "task",
@@ -113,7 +115,7 @@ const TableRowComponent = ({
         if (boardMission.statusId !== item.board.statusId) {
           if (
             boardMission.statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" &&
-            !boardMission.isNeedExample
+            boardMission.isNeedExample
           ) {
             handleOpenModal(
               boardMission.statusId,
@@ -175,6 +177,7 @@ const TableRowComponent = ({
     onClickPrintJob,
     updateNotes,
   } = useProductionFloorData();
+  const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
 
   const { CheckPreferenceValue, GetProductionFontSizeFromPreferences } =
     usePrintHousePreferences();
@@ -194,12 +197,6 @@ const TableRowComponent = ({
     setOpenDatePicker(true);
   };
   drag(drop(ref));
-  const {
-    openSimpleApproveModal,
-    handleOpenModal,
-    handleCloseModal,
-    handleConfirm,
-  } = useSimpleApproveModal(updateStatus);
 
   return (
     <>
@@ -489,7 +486,7 @@ const TableRowComponent = ({
             onChange={(id, statusId) => {
               if (
                 statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" &&
-                !boardMission.isNeedExample
+                boardMission.isNeedExample
               ) {
                 handleOpenModal(statusId, [boardMission], boardMission.id);
               } else {
@@ -563,6 +560,7 @@ const TableRowComponent = ({
           }
         </TableCell>
       </TableRow>
+
       <GoMakeDeleteModal
         title={t("sales.quote.simpleApproveMail")}
         yesBtn={t("modal.yes")}
