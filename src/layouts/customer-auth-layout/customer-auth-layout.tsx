@@ -16,6 +16,7 @@ import { useMediaQuery } from "@mui/material";
 import { useModal } from "@/hooks/use-modal";
 import { versionState } from "@/store/version";
 import { SetupSection } from "@/widgets/quick-setup";
+import {printHouseProfile} from "@/store/print-house-profile";
 
 const CustomerAuthLayout = ({
   children,
@@ -29,6 +30,7 @@ const CustomerAuthLayout = ({
   const isMobileScreen = useMediaQuery("(max-width:768px)");
   const { openAlertModal, setOpenAlertModal } =
     useUploadingNewVersionSocketIo();
+  const profile = useRecoilValue(printHouseProfile);
   const { canAccess } = useAuthLayoutHook(permissionEnumValue, allowAnonymous);
   const { classes } = useStyle({
     isHover: false,
@@ -124,7 +126,7 @@ const CustomerAuthLayout = ({
             withCancelBtn={false}
           />
 
-          <SetupSection />
+          {profile && !profile.isSetupStepsFinished ? <SetupSection /> : <></>}
         </div>
       }
     </>

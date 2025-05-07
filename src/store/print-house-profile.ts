@@ -29,4 +29,5 @@ export interface IPrintHouseProfile {
   filesApiAddress?: string;
   allowedFeaturesId: string[];
   domain?: string;
+  isSetupStepsFinished?: boolean;
 }
