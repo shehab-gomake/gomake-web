@@ -5,7 +5,7 @@ import {maxSpeedInput} from "@/widgets/machines/utils/attributes/speed-inputs/ma
 const manualPeelingMachine = (state: Record<string, any>) => {
     return [
         ...setupTimeInput(state),
-        ...maxSpeedInput(state, EMeasurementUnits.MM_P_MIN),
+        ...maxSpeedInput(state, EMeasurementUnits.SQUARE_METER_P_MIN),
         {
             name: 'machineAttributes.speedByComplexity',
             parameterKey: 'speedByShapeComplexity',
