@@ -13,9 +13,13 @@ const companyCreditCardsInputs = (state: ICompanyProfile, t) => {
       value: CreditClearanceCompanies.YAAD_PAY,
       text: t("profileSettings.yaadPay"),
     },
+    {
+      value: CreditClearanceCompanies.Stripe,
+      text: t("profileSettings.stripe"),
+    },
   ];
 
-  return [
+  const baseInputs = [
     {
       name: "creditClearanceCompany",
       label: "profileSettings.clearanceCompany",
@@ -28,7 +32,11 @@ const companyCreditCardsInputs = (state: ICompanyProfile, t) => {
       isValid: true,
       readOnly: false,
     },
+  ];
 
+  const additionalInputs = (state?.creditClearanceCompany ===
+    CreditClearanceCompanies.Z_CREDIT ||
+    state?.creditClearanceCompany === CreditClearanceCompanies.YAAD_PAY) && [
     {
       name: "terminalNumber",
       label: "profileSettings.terminalNumber",
@@ -54,9 +62,18 @@ const companyCreditCardsInputs = (state: ICompanyProfile, t) => {
       isValid: !!state?.terminalPassword,
     },
   ];
+
+  return [...baseInputs, ...(additionalInputs || [])];
 };
 
 const pinPadsInputs = (state: ICompanyProfile) => {
+  if (
+    state?.creditClearanceCompany !== CreditClearanceCompanies.Z_CREDIT &&
+    state?.creditClearanceCompany !== CreditClearanceCompanies.YAAD_PAY
+  ) {
+    return [];
+  }
+
   return [
     {
       name: "",

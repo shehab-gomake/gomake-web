@@ -162,6 +162,15 @@ const useSetupGuideMenu = ({
           key: SetupStep.COMPANY_PROFILE_STRIPE,
           label: t("quickSetup.steps.stripe"),
           status: getStepStatus(SetupStep.COMPANY_PROFILE_STRIPE),
+          onClick: () => {
+            if (
+              getStepStatus(SetupStep.COMPANY_PROFILE_STRIPE) ===
+              StepStatus.NOT_YET
+            ) {
+              updatePrintHouseSetupSteps(SetupStep.COMPANY_PROFILE_STRIPE);
+            }
+            navigate("/settings/company-profile?tab=financial");
+          },
         },
         {
           key: SetupStep.COMPANY_PROFILE_ADDRESSES,

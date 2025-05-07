@@ -16,6 +16,8 @@ import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
 import { Stack } from "@mui/material";
 import { useStyle } from "./style";
+import { CreditClearanceCompanies } from "@/store/company-profile";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 interface IProps {
   taxLoginInfo: {
@@ -37,6 +39,7 @@ const CompanyFinancialComponent = ({
     updateProfileChanges,
     updatePinPadState,
     alertLogOutModal,
+    connectToStripe,
   } = useCompanyProfile();
 
   const changeState = (key: string, value: any) => {
@@ -71,23 +74,44 @@ const CompanyFinancialComponent = ({
             error={(input.required && !input.value) || !input.isValid}
           />
         ))}
-      </FormInputsSectionComponent>
-      {pinPads.length > 0 && (
-        <FormInputsSectionComponent>
-          {pinPads.map((pinPad) => (
-            <FormArrayInput
-              key={pinPad.parameterKey}
-              name={pinPad.name}
-              parameterKey={pinPad.parameterKey}
-              value={pinPad.value}
-              inputs={pinPad.inputs ?? []}
-              updateState={updatePinPadState}
-              isValid={true}
-              containerStyle={{ padding: "0px" }}
-            />
+
+        {profile?.creditClearanceCompany === CreditClearanceCompanies.Stripe &&
+          (profile?.isConnectedToStripe ? (
+            <div style={classes.connectedBtn}>
+              <CheckCircleIcon fontSize="small" />
+              {t("profileSettings.isConnect")}
+            </div>
+          ) : (
+            <SecondaryButton
+              variant="contained"
+              sx={{
+                width: "fit-content",
+                alignSelf: "end",
+              }}
+              onClick={connectToStripe}
+            >
+              {t("profileSettings.connectToStripe")}
+            </SecondaryButton>
           ))}
-        </FormInputsSectionComponent>
-      )}
+      </FormInputsSectionComponent>
+
+      {profile.creditClearanceCompany !== CreditClearanceCompanies.Stripe &&
+        pinPads.length > 0 && (
+          <FormInputsSectionComponent>
+            {pinPads.map((pinPad) => (
+              <FormArrayInput
+                key={pinPad.parameterKey}
+                name={pinPad.name}
+                parameterKey={pinPad.parameterKey}
+                value={pinPad.value}
+                inputs={pinPad.inputs ?? []}
+                updateState={updatePinPadState}
+                isValid={true}
+                containerStyle={{ padding: "0px" }}
+              />
+            ))}
+          </FormInputsSectionComponent>
+        )}
       {/* Tax Authority Section */}
       <FormInputsSectionComponent
         sectionTitle={t("profileSettings.taxAuthority")}

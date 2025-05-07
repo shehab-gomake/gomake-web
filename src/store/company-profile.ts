@@ -59,6 +59,8 @@ export interface ICompanyProfile {
   creditClearanceCompany?: CreditClearanceCompanies;
   terminalNumber?: string;
   terminalPassword?: string;
+  isShowFinance?: boolean;
+  isConnectedToStripe?: boolean;
   pinPads?: Array<{
     name: string;
     number: string;
@@ -68,4 +70,5 @@ export interface ICompanyProfile {
 export enum CreditClearanceCompanies {
   Z_CREDIT = 1,
   YAAD_PAY,
+  Stripe,
 }
