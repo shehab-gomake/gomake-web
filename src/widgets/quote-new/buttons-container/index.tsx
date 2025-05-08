@@ -397,7 +397,7 @@ const ButtonsContainer = ({
                   ? "sales.quote.managerApproval"
                   : `sales.quote.${
                       quoteItemValue?.isUsedStripe
-                        ? "checkout"
+                        ? "placeOrder"
                         : "orderNowTitle"
                     }`
               )}
@@ -410,6 +410,7 @@ const ButtonsContainer = ({
           confirmWithoutNotification={onClickConfirmWithoutNotification}
           confirmWithNotification={onClickConfirmWithNotification}
           isUsedStripe={quoteItemValue?.isUsedStripe}
+          isConnectedToStripe={quoteItemValue?.isConnectedToStripe}
         />
         <ManagerApprovalModal
           openModal={openMangerApprovalModal}

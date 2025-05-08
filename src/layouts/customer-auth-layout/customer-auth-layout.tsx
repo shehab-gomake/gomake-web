@@ -16,7 +16,7 @@ import { useMediaQuery } from "@mui/material";
 import { useModal } from "@/hooks/use-modal";
 import { versionState } from "@/store/version";
 import { SetupSection } from "@/widgets/quick-setup";
-import {printHouseProfile} from "@/store/print-house-profile";
+import { printHouseProfile } from "@/store/print-house-profile";
 
 const CustomerAuthLayout = ({
   children,
@@ -126,7 +126,7 @@ const CustomerAuthLayout = ({
             withCancelBtn={false}
           />
 
-          {profile && profile.isShowOnBoardingMenu ? <SetupSection /> : <></>}
+          {true ? <SetupSection /> : <></>}
         </div>
       }
     </>
