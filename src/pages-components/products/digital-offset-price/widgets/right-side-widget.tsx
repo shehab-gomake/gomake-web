@@ -129,7 +129,7 @@ const RightSideWidget = ({
             t.actionName === item.actionName &&
             t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
             t?.exception?.exceptionMessage ===
-              item?.exception?.exceptionMessage &&
+            item?.exception?.exceptionMessage &&
             JSON.parse(t.values || "[]")
               .sort()
               .join(",") === itemValuesSorted
@@ -390,7 +390,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-            calculationProgress.totalWorkFlowsCount && (
+          calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -417,11 +417,11 @@ const RightSideWidget = ({
                 price: roundPrice(
                   isNaN(
                     sliderCurrentProductItemValueTotalPrice /
-                      quantity?.values[0]
+                    quantity?.values[0]
                   )
                     ? 0
                     : (sliderCurrentProductItemValueTotalPrice || 0) /
-                        (quantity?.values[0] || 1)
+                    (quantity?.values[0] || 1)
                 ),
                 unitPrice: systemCurrency,
               })}
@@ -463,7 +463,7 @@ const RightSideWidget = ({
         )}
 
         {widgetType === EWidgetProductType.EDIT ||
-        widgetType === EWidgetProductType.DUPLICATE ? (
+          widgetType === EWidgetProductType.DUPLICATE ? (
           <div
             style={{
               display: "flex",
@@ -653,14 +653,18 @@ const RightSideWidget = ({
           {activeTab === t("quality.production") ? (
             <div style={clasess.productionStatus}>
               <div style={clasess.sampleTypeStyle}>
-                {t("products.offsetPrice.admin.sampleType")}
+                {t("products.offsetPrice.admin.proof")}
               </div>
               <div style={clasess.autoCompleteContainer}>
                 <GoMakeAutoComplate
                   key={sampleType}
-                  options={exampleTypeValues}
+                  options={exampleTypeValues.map(option => ({
+                    ...option,
+                    text: option.value === "Full" ? t("products.offsetPrice.admin.Physical") : t("products.offsetPrice.admin.Digital")
+                  }))
+                  }
                   getOptionLabel={(option: any) => option.text}
-                  placeholder={t("products.offsetPrice.admin.sampleType")}
+                  placeholder={t("products.offsetPrice.admin.proof")}
                   style={clasess.dropDownListStyle}
                   onChange={(e, value) => setSampleType(value)}
                   value={sampleType}
@@ -737,12 +741,11 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item.actionName ? item.actionName + ": " : ""}${
-                            item?.exception?.exceptionMessage || " "
-                          }${renderExceptionMessage(
-                            item?.exception?.exceptionKey,
-                            item?.exception?.values
-                          )}${renderValues(item?.exception?.values)}`}
+                          {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "
+                            }${renderExceptionMessage(
+                              item?.exception?.exceptionKey,
+                              item?.exception?.values
+                            )}${renderValues(item?.exception?.values)}`}
                         </div>
                       </div>
                     </div>
@@ -769,12 +772,11 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${
-                            item?.exceptionMessage || " "
-                          }${renderExceptionMessage(
-                            item?.exceptionKey,
-                            item?.values
-                          )}${renderValues(item?.values)}`}
+                          {`${item?.exceptionMessage || " "
+                            }${renderExceptionMessage(
+                              item?.exceptionKey,
+                              item?.values
+                            )}${renderValues(item?.values)}`}
                         </div>
                       </div>
                     </div>
