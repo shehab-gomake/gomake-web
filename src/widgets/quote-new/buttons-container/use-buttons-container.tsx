@@ -93,10 +93,10 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const open = Boolean(anchorEl);
 
   const onClickOpenOrderNowModal = () => {
-    if (quoteItemValue?.isUsedStripe && !quoteItemValue?.isConnectedToStripe) {
-      alertFault("alerts.stripNotConnected");
-      return;
-    }
+    // if (quoteItemValue?.isUsedStripe && !quoteItemValue?.isConnectedToStripe) {
+    //   alertFault("alerts.stripNotConnected");
+    //   return;
+    // }
 
     if (
       CheckPreferenceValue(EPreferences.ADDRESSES_REQUIRED_FOR_ORDER) &&
