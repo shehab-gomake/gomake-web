@@ -22,6 +22,7 @@ export interface IInput {
   disableClearable?: boolean;
   defaultInDocsTypes?: any;
   secondValue?: string;
+  isRequired?: boolean;
 }
 export interface IFormInput {
   input: IInput;
