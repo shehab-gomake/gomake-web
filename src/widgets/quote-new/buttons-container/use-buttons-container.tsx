@@ -34,7 +34,7 @@ import { newOrderIdToPrintJobsState } from "@/store/new-order-id-to-print-jobs-s
 import { Permissions } from "@/components/CheckPermission/enum";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
-import { debug } from "console";
+import { useModal } from "@/hooks/use-modal";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -58,6 +58,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     alertSuccessAdded,
     alertFaultGetData,
   } = useSnackBar();
+  const AlertAddCustomerModal = useModal();
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
@@ -97,6 +98,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     //   alertFault("alerts.stripNotConnected");
     //   return;
     // }
+
+    if (!quoteItemValue?.isHaveCustomers && !quoteItemValue?.client) {
+      AlertAddCustomerModal.open();
+      return;
+    }
 
     if (
       CheckPreferenceValue(EPreferences.ADDRESSES_REQUIRED_FOR_ORDER) &&
@@ -544,6 +550,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     isReceipt,
     canCancelReceipt,
     isDeliveryNote,
+    AlertAddCustomerModal,
   };
 };
 

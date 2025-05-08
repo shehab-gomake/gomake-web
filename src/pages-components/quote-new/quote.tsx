@@ -321,6 +321,7 @@ const QuoteNewPageWidget = ({
     contactsListRef,
     alertNotVerifiedMail,
     alertNotVerifiedModalState,
+    AddCustomerModal,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -689,6 +690,7 @@ const QuoteNewPageWidget = ({
                       ? CLIENT_TYPE.SUPPLIER
                       : CLIENT_TYPE.CUSTOMER
                   }
+                  AddCustomerModal={AddCustomerModal}
                 />
                 <ContactNewWidget
                   handleShowLess={handleShowLess}
@@ -823,6 +825,7 @@ const QuoteNewPageWidget = ({
                 onClickConfirmCreateDocument={onClickConfirmCreateDocument}
                 onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal}
                 onClickOpenDeleteDeliveryModal={onClickOpenDeleteDeliveryModal}
+                AddCustomerModal={AddCustomerModal}
               />
             </div>
           )}
