@@ -81,6 +81,8 @@ import { EnumVATStatus } from "@/enums/accounting-enums";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
 import { printHouseProfile } from "@/store/print-house-profile";
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
 export enum MessageType {
   Email = 0,
@@ -373,12 +375,13 @@ const useQuoteNew = ({
     setSelectedDocument(order);
     setOpenChangeProductionStatusModal(true);
   };
-
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   const tableHeaders = [
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
-    t("sales.quote.itemCode"),
-    t("products.profits.itemName"),
+    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && t("sales.quote.itemCode"),
+    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && t("products.profits.itemName"),
+    CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && t("products.profits.itemName"),
     isQuoteConfirmation
       ? quoteConfirm?.isShowDetails
         ? t("products.profits.details")
