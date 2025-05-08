@@ -102,3 +102,17 @@ export const calculatedPriceProductItemValueState = atom<number>({
   key: "calculatedPriceProductItemValueState",
   default: null,
 });
+
+export const openModalMachineState = atom<boolean>({
+  key: "openModalMachineState",
+  default: false,
+});
+export const openModalMaterialState = atom<boolean>({
+  key: "openModalMaterialState",
+  default: false,
+});
+export const attributesDataState = atom<any>({
+  key: "attributesDataState",
+  default: {},
+});
+

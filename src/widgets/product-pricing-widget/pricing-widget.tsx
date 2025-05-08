@@ -14,8 +14,8 @@ import { IPricingWidgetProps } from "@/widgets/product-pricing-widget/interface"
 import { PrimaryButton } from "@/components/button/primary-button";
 import { useStyle } from "@/widgets/product-pricing-widget/style";
 import { usePricingWidget } from "./use-pricing-widget";
-import { useRecoilValue } from "recoil";
-import { calculationResultState } from "./state";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { calculationResultState, openModalMachineState, openModalMaterialState } from "./state";
 import { useState } from "react";
 import ReadMoreIcon from "@mui/icons-material/ReadMore";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -29,6 +29,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { _renderDeliveryDate } from "@/utils/helpers";
 import { MobileActions } from "./components/action/mobile-action-component";
 import { ChartsCostsComponent } from "./components/charts-costs/charts-costs-component";
+import { useActionUpdateValues } from "./components/action/use-action-update-values";
 
 
 
@@ -93,6 +94,17 @@ const PricingWidget = ({
   const calculationResult = useRecoilValue(calculationResultState);
   const [selectedWorkFlowId, setSelectedWorkFlowId] = useState("");
   const [isUnderlined, setIsUnderlined] = useState(false);
+
+  const [openModalMachine, setOpenModalMachine] = useRecoilState(openModalMachineState);
+  const [openModalMaterial, setOpenModalMaterial] = useRecoilState(openModalMaterialState);
+  const onClickCloseModalMachine = () => {
+    setOpenModalMachine(false);
+  };
+  const onClickCloseModalMaterial = () => {
+    setOpenModalMaterial(false);
+  };
+
+  const { updateWorkFlowForMachine, updateWorkFlowForMaterials } = useActionUpdateValues();
   return (
     <Stack gap={"16px"} width={"100%"}>
       <Stack
@@ -240,7 +252,8 @@ const PricingWidget = ({
               alignItems: "flex-start",
               padding: "10px",
               alignSelf: "flex-start",
-              paddingTop: "0px"
+              paddingTop: "0px",
+              minWidth: 330
             }}>
               <ChartsCostsComponent selectedWorkFlow={selectedWorkFlow} />
             </div>
@@ -365,6 +378,26 @@ const PricingWidget = ({
           },
         ]}
         setSectionNames={setSectionNames}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.ADD}
+        insideStyle={classes.insideStyle}
+        openModal={openModalMachine}
+        onClose={onClickCloseModalMachine}
+        title={t("pricingWidget.machineMsg")}
+        hideIcon={true}
+        yesBtn={t("modal.confirm")}
+        onClickDelete={updateWorkFlowForMachine}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.ADD}
+        insideStyle={classes.insideStyle}
+        openModal={openModalMaterial}
+        onClose={onClickCloseModalMaterial}
+        title={t("pricingWidget.materialMsg")}
+        hideIcon={true}
+        yesBtn={t("modal.confirm")}
+        onClickDelete={updateWorkFlowForMaterials}
       />
     </Stack>
   );
