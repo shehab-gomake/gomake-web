@@ -48,6 +48,7 @@ const BusinessNewWidget = ({
   onBlurTitle,
   isUpdateDocumentTitle,
   setIsUpdateDocumentTitle,
+  clientType,
 }) => {
   const {
     t,
@@ -96,7 +97,9 @@ const BusinessNewWidget = ({
     isFetching,
     isPurchaseDocument,
     canUpdateAgent,
+    alertFault,
   } = useBusinessWidget({ values, documentType, onChangeSelectBusiness });
+
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
   const { classes } = useStyle({ isRTL });
@@ -121,11 +124,31 @@ const BusinessNewWidget = ({
     useState<EAddressType>();
 
   const openBillingModal = () => {
+    if (!values.client) {
+      alertFault(
+        `home.admin.${
+          clientType === CLIENT_TYPE.CUSTOMER
+            ? "pleaseSelectClient"
+            : "pleaseSelectSupplier"
+        }`
+      );
+      return;
+    }
     setSelectedAddressType(EAddressType.BILLING);
     setOpenModal(true);
   };
 
   const openDeliveryModal = () => {
+    if (!values.client) {
+      alertFault(
+        `home.admin.${
+          clientType === CLIENT_TYPE.CUSTOMER
+            ? "pleaseSelectClient"
+            : "pleaseSelectSupplier"
+        }`
+      );
+      return;
+    }
     setSelectedAddressType(EAddressType.DELIVERY);
     setOpenModal(true);
   };

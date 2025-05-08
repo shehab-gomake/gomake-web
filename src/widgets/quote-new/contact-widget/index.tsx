@@ -14,6 +14,8 @@ import { useRecoilState } from "recoil";
 import { useEffect, useRef, useState } from "react";
 import { updateDocumentContactsReorderApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
+import { useSnackBar } from "@/hooks";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 const ContactNewWidget = ({
   handleShowLess,
@@ -49,10 +51,12 @@ const ContactNewWidget = ({
   getAllClientContacts,
   onOpenNewContact,
   contactsListRef,
+  clientType,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
+  const { alertFault } = useSnackBar();
   const router = useRouter();
   const { CheckDocumentPermission } = useUserPermission();
   const [quoteItemValue, setQuoteItemValue] =
@@ -174,7 +178,20 @@ const ContactNewWidget = ({
           canEditDocumentContacts && (
             <div
               style={classes.addNewContactNameStyle}
-              onClick={() => setIsDisplayWidget(true)}
+              onClick={() => {
+                if (!quoteItemValue.client) {
+                  alertFault(
+                    `home.admin.${
+                      clientType === CLIENT_TYPE.CUSTOMER
+                        ? "pleaseSelectClient"
+                        : "pleaseSelectSupplier"
+                    }`
+                  );
+                  return;
+                } else {
+                  setIsDisplayWidget(true);
+                }
+              }}
             >
               <PlusNewIcon />
               <div style={classes.addNewContactNameTextStyle}>
