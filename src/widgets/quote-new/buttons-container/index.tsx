@@ -47,8 +47,7 @@ const ButtonsContainer = ({
   onClickConfirmCreateDocument,
   onClickOpenAddAttachmentsModal,
   onClickOpenDeleteDeliveryModal,
-
-  AddCustomerModal, //!here AddCustomerModal
+  AddCustomerModal,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -499,7 +498,6 @@ const ButtonsContainer = ({
           onClose={onClickCloseOrderNowPreModal}
           handleOrderConfirmation={handleOrderConfirmation}
         />
-        {/* !here */}
         <GoMakeDeleteModal
           modalType={ModalType.WARNING}
           title={t("sales.modals.noCustomersTitle")}
