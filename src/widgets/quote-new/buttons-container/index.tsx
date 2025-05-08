@@ -25,6 +25,8 @@ import { InvoiceCreationModal } from "../invoice-creation-modal";
 import { ModalType } from "@/enums";
 import { OrderNowPrePaymentModal } from "../total-price-and-vat/order-now-modal/order-now-pre-payment";
 import { validateDocument } from "@/utils/validators";
+import { CustomerCardWidget } from "@/widgets/customer-card-modal";
+import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -45,6 +47,7 @@ const ButtonsContainer = ({
   onClickConfirmCreateDocument,
   onClickOpenAddAttachmentsModal,
   onClickOpenDeleteDeliveryModal,
+  AddCustomerModal,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -109,7 +112,12 @@ const ButtonsContainer = ({
     isReceipt,
     canCancelReceipt,
     isDeliveryNote,
+    AlertAddCustomerModal,
+    // AddCustomerModal,
+    // customer,
+    // setCustomer,
   } = useButtonsContainer(documentType);
+
   const isShowSendButton =
     (quoteItemValue.isSendWhatsapp ||
       quoteItemValue.isSendWhatsappWeb ||
@@ -489,6 +497,15 @@ const ButtonsContainer = ({
           openModal={openOrderNowPrePaymentModal}
           onClose={onClickCloseOrderNowPreModal}
           handleOrderConfirmation={handleOrderConfirmation}
+        />
+        <GoMakeDeleteModal
+          modalType={ModalType.WARNING}
+          title={t("sales.modals.noCustomersTitle")}
+          subTitle={t("sales.modals.noCustomersSubTitle")}
+          yesBtn={t("customers.buttons.addCustomer")}
+          openModal={AlertAddCustomerModal.isOpen}
+          onClose={AlertAddCustomerModal.close}
+          onClickDelete={AddCustomerModal.open}
         />
       </div>
     </div>
