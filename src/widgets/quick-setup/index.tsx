@@ -1,3 +1,4 @@
+import { DemoVideoModal } from "./compoennets/demo-video-modal";
 import { ResetPasswordModal } from "./compoennets/reset-password-modal";
 import { WelcomeModal } from "./compoennets/welcome-modal";
 import { SetupGuideMenu } from "./quick-setup-menu/setup-guide-menu";
@@ -11,7 +12,11 @@ const SetupSection = () => {
     handleOpenModal,
     initialSetupData,
     ResetPasswordModalControl,
+    DemoVideoModalControl,
     updatePrintHouseSetupSteps,
+    handleOpenDemoVideo,
+    videoUrl,
+    setVideoUrl,
   } = useQuickSetup();
 
   const {} = useQuickSetupSocketIo();
@@ -22,6 +27,7 @@ const SetupSection = () => {
         handleOpenModal={handleOpenModal}
         handleOpenResetPassword={ResetPasswordModalControl.open}
         updatePrintHouseSetupSteps={updatePrintHouseSetupSteps}
+        handleOpenDemoVideo={handleOpenDemoVideo}
       />
       <SetupModal
         ActionsModal={ActionsModal}
@@ -31,6 +37,11 @@ const SetupSection = () => {
       <WelcomeModal
         updatePrintHouseSetupSteps={updatePrintHouseSetupSteps}
         handleOpenResetPassword={ResetPasswordModalControl.open}
+      />
+      <DemoVideoModal
+        modalControl={DemoVideoModalControl}
+        videoUrl={videoUrl}
+        setVideoUrl={setVideoUrl}
       />
     </>
   );

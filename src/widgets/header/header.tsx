@@ -268,7 +268,8 @@ const HeaderWidget = () => {
           <MenuItem
             style={classes.logoutContainer}
             onClick={() => {
-              setShowTourModal(true);
+              // setShowTourModal(true);
+              window.open("https://gomake.document360.io", "_blank");
             }}
           >
             <div style={classes.logoutContainer}>

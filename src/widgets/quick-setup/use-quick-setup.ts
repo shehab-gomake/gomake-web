@@ -14,6 +14,7 @@ const useQuickSetup = () => {
   const { callApi } = useGomakeAxios();
   const ActionsModal = useModal();
   const ResetPasswordModalControl = useModal();
+  const DemoVideoModalControl = useModal();
   const { alertFaultGetData } = useSnackBar();
   const [initialSetupData, setInitialSetupData] =
     useState<ProductsSetupData | null>(null);
@@ -50,6 +51,15 @@ const useQuickSetup = () => {
     await updatePrintHouseSetupStepsApi(callApi, () => {}, updatedStep);
   };
 
+  const [videoUrl, setVideoUrl] = useState(
+    "https://www.youtube.com/embed/G1wdiiUY98g"
+  );
+
+  const handleOpenDemoVideo = () => {
+    setVideoUrl("https://www.youtube.com/embed/G1wdiiUY98g");
+    DemoVideoModalControl.open();
+  };
+
   return {
     t,
     ActionsModal,
@@ -57,7 +67,11 @@ const useQuickSetup = () => {
     initialSetupData,
     setInitialSetupData,
     ResetPasswordModalControl,
+    DemoVideoModalControl,
     updatePrintHouseSetupSteps,
+    handleOpenDemoVideo,
+    videoUrl,
+    setVideoUrl,
   };
 };
 
