@@ -22,7 +22,7 @@ const FilesGroupComponent = ({
   filePath,
   graphicsFilePath,
   boardMissionId,
-  isComplexProduct, 
+  isComplexProduct,
   productType
 }: IUploadingFileGroup) => {
   const { primaryColor } = useGomakeTheme();
@@ -31,7 +31,7 @@ const FilesGroupComponent = ({
   const { handleFileUpload } = useUploadFiles(
     orderItemId,
     filePath,
-    graphicsFilePath, 
+    graphicsFilePath,
     isComplexProduct,
     productType
   );
@@ -144,7 +144,7 @@ const FilesGroupComponent = ({
         >
           <Stack direction={"row"} alignItems={"center"}>
             <h3 style={{ ...FONT_FAMILY.Inter(600, 14) }}>
-              {t("fileUploader.graphicsFiles")}
+              {t("fileUploader.originalFiles")}
             </h3>
             {graphicsFiles?.length > 0 && (
               <IconButton

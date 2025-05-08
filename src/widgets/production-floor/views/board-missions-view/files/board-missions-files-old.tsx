@@ -127,7 +127,7 @@ const BoardMissionsFiles = () => {
         gap={"15px"}
       >
         <h3 style={{ ...FONT_FAMILY.Inter(500, 18), color: primaryColor(500) }}>
-          {t("fileUploader.graphicsFiles")}
+          {t("fileUploader.originalFiles")}
         </h3>
         <Stack direction={"row"} gap={"20px"} flex={1} flexWrap={"wrap"}>
           {graphicsFiles

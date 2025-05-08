@@ -4,7 +4,10 @@ import {
   currentProductItemValueDraftId,
   currentProductItemValuePriceState,
   jobActionsState,
+  openModalMaterialState,
+  openModalMachineState,
   sliderCurrentProductItemValuePriceState,
+  attributesDataState,
 } from "@/widgets/product-pricing-widget/state";
 import { useEffect, useState } from "react";
 import {
@@ -39,9 +42,10 @@ const useActionUpdateValues = () => {
   const currentProductItemValue = useRecoilValue<any>(
     currentProductItemValueDraftId
   );
-  const [attributesData, setAttributesData] = useState<AttributesData>({});
-  const [openModalMachine, setOpenModalMachine] = useState(false);
-  const [openModalMaterial, setOpenModalMaterial] = useState(false);
+  const [attributesData, setAttributesData] = useRecoilState<AttributesData>(attributesDataState);
+  console.log("attributesData", attributesData);
+  const [openModalMachine, setOpenModalMachine] = useRecoilState(openModalMachineState);
+  const [openModalMaterial, setOpenModalMaterial] = useRecoilState(openModalMaterialState);
   const [currentCalculationSessionId, setCurrentCalculationSessionId] =
     useRecoilState<any>(currentCalculationSessionIdState);
   const [

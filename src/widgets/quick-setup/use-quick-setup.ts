@@ -52,14 +52,13 @@ const useQuickSetup = () => {
   };
 
   const [videoUrl, setVideoUrl] = useState(
-    "https://www.youtube.com/embed/G1wdiiUY98g"
+    "https://www.youtube.com/embed/mnRav10tl80"
   );
 
   const handleOpenDemoVideo = () => {
-    setVideoUrl("https://www.youtube.com/embed/G1wdiiUY98g");
+    setVideoUrl("https://www.youtube.com/embed/mnRav10tl80");
     DemoVideoModalControl.open();
   };
-
   return {
     t,
     ActionsModal,

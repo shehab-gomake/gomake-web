@@ -36,11 +36,10 @@ import {
   productionFloorViewState,
 } from "@/widgets/production-floor/state/production-floor-view";
 import { useRouter } from "next/router";
-import { formatDate } from "tough-cookie";
+import { agentsState, currentStationOrderingState } from "@/store/agents-state";
 import moment from "moment";
-import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
-import { agentsState } from "@/store/agents-state";
-import { currentStationOrderingState } from "@/store/agents-state";
+import {IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
+import { formatDate } from "tough-cookie";
 import {CurrentStationOrderingEnum} from "@/enums";
 
 const useProductionFloorData = () => {
@@ -66,6 +65,7 @@ const useProductionFloorData = () => {
   const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
     selectedGroupIdState
   );
+
   const [stationOrdering, setStationOrdering] = useRecoilState(currentStationOrderingState);
   const view = useRecoilValue(productionFloorViewState);
 
@@ -293,12 +293,18 @@ const useProductionFloorData = () => {
     setSelectedMission(boardMission);
     const callBack = (res) => {
       if (res.success) {
-        if (res.data) {
-          alertSuccessUpdate();
-          setOpenPackagesModal(true);
-        } else {
-          onOpenMarkReadyModal(boardMission.id);
+        if(boardMission.productType){
+          moveBoardMissionToDone(boardMission);
         }
+        else{
+          if (res.data) {
+            alertSuccessUpdate();
+            setOpenPackagesModal(true);
+          } else {
+            onOpenMarkReadyModal(boardMission.id);
+          }
+        }
+      
       } else {
         alertFaultUpdate();
       }
@@ -345,6 +351,23 @@ const useProductionFloorData = () => {
     await moveBoardMissionToDoneApi(callApi, callBack, {
       boardMissionId: selectedMission.id,
       sendMessage,
+      productType: selectedMission.productType ?? "",
+    });
+  };
+
+  const moveBoardMissionToDone = async (selectedMission: any) => {
+    const callBack = (res) => {
+      setOpenMarkReadyModal(false);
+      if (res?.success) {
+        alertSuccessUpdate();
+        setOpenPackagesModal(true);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await moveBoardMissionToDoneApi(callApi, callBack, {
+      boardMissionId: selectedMission.id,
+      sendMessage:false,
       productType: selectedMission.productType ?? "",
     });
   };
