@@ -99,7 +99,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     //   return;
     // }
 
-    if (!quoteItemValue?.isHaveCustomers) {
+    if (!quoteItemValue?.isHaveCustomers && !quoteItemValue?.client) {
       AlertAddCustomerModal.open();
       return;
     }
