@@ -226,24 +226,33 @@ const PricingWidget = ({
 
       {selectedWorkFlow && (
         <div style={{ width: "100%", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: "10px" }}>
-          <div style={{ width: "80%" }}>
+          <div style={{ flex:1}}>
             <GeneralInformationComponent
               details={selectedWorkFlow?.generalInformation}
               details2={selectedWorkFlow?.generalInformationProductionFloor}
             />
           </div>
-          <div style={{ width: "20%", display: "flex", justifyContent: "center", alignItems: "center", padding: "10px" }}>
-            <ChartsCostsComponent selectedWorkFlow={selectedWorkFlow} />
-          </div>
+          <PermissionCheck userPermission={Permissions.SHOW_COSTS_IN_CALCULATIONS}>
+            <div style={{
+              width: "20%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "10px"
+            }}>
+              <ChartsCostsComponent selectedWorkFlow={selectedWorkFlow}/>
+            </div>
+          </PermissionCheck>
+
         </div>
       )}
-      <Divider />
+      <Divider/>
 
       {selectedWorkFlow && view === EPricingViews.SELECTED_WORKFLOW && (
-        <div
-          data-tour={"actions-container"}
-          style={{
-            display: "flex",
+          <div
+              data-tour={"actions-container"}
+              style={{
+                display: "flex",
             flexWrap: "wrap",
             width: "100%",
           }}
