@@ -112,6 +112,7 @@ const useQuoteNew = ({
     alertFaultSend,
   } = useSnackBar();
   const systemVAT = useRecoilValue<number>(systemVATState);
+  const AddCustomerModal = useModal();
 
   const router = useRouter();
   const { callApi } = useGomakeAxios();
@@ -2501,6 +2502,7 @@ const useQuoteNew = ({
     contactsListRef,
     alertNotVerifiedMail,
     alertNotVerifiedModalState,
+    AddCustomerModal,
   };
 };
 

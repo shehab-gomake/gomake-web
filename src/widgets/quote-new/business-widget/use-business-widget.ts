@@ -77,6 +77,7 @@ const useBusinessWidget = ({
   const onBlurTaxNumber = async () => {
     setIsUpdateTaxNumber(null);
   };
+
   const onCustomerAdd = (customer) => {
     setOpenCustomerModal(false);
   };

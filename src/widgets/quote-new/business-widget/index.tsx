@@ -49,6 +49,7 @@ const BusinessNewWidget = ({
   isUpdateDocumentTitle,
   setIsUpdateDocumentTitle,
   clientType,
+  AddCustomerModal,
 }) => {
   const {
     t,
@@ -496,6 +497,7 @@ const BusinessNewWidget = ({
         />
       )}
       <CustomerCardWidget
+        key={`add-customer-card-1`}
         customerAction={CUSTOMER_ACTIONS.Add}
         typeClient={CLIENT_TYPE.CUSTOMER}
         codeFlag={false}
@@ -507,6 +509,20 @@ const BusinessNewWidget = ({
         onChangeSelectBusiness={onChangeSelectBusiness}
         isFromCartPage={true}
       />
+      <CustomerCardWidget
+        key={`add-customer-card-2`}
+        customerAction={CUSTOMER_ACTIONS.Add}
+        typeClient={CLIENT_TYPE.CUSTOMER}
+        codeFlag={false}
+        onCustomerAdd={onCustomerAdd}
+        openModal={AddCustomerModal.isOpen}
+        onClose={AddCustomerModal.close}
+        customer={customer}
+        setCustomer={setCustomer}
+        onChangeSelectBusiness={onChangeSelectBusiness}
+        isFromCartPage={true}
+      />
+
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         openModal={openChangeClientModal}
