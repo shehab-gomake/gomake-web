@@ -10,19 +10,19 @@ const OrderNowModal = ({
   confirmWithoutNotification,
   confirmWithNotification,
   isUsedStripe,
+  isConnectedToStripe,
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
+  const showBtn = !isUsedStripe || (isConnectedToStripe && isUsedStripe);
 
   const confirmWithNotificationText = t(
-    `sales.quote.${
-      isUsedStripe ? "SendPaymentLink" : "confirmWithNotification"
-    }`
+    `sales.quote.${isUsedStripe ? "checkout" : "confirmWithNotification"}`
   );
 
   const confirmWithoutNotificationText = t(
     `sales.quote.${
-      isUsedStripe ? "goToPaymentLink" : "confirmWithoutNotification"
+      isUsedStripe ? "continueWithoutCheckout" : "confirmWithoutNotification"
     }`
   );
 
@@ -61,17 +61,19 @@ const OrderNowModal = ({
               {t("sales.quote.cancel")}
             </GomakePrimaryButton>
             <GomakePrimaryButton
-              style={classes.secondBtn}
+              style={showBtn ? classes.secondBtn : classes.btnStyle}
               onClick={confirmWithoutNotification}
             >
               {confirmWithoutNotificationText}
             </GomakePrimaryButton>
-            <GomakePrimaryButton
-              style={classes.btnStyle}
-              onClick={confirmWithNotification}
-            >
-              {confirmWithNotificationText}
-            </GomakePrimaryButton>
+            {showBtn && (
+              <GomakePrimaryButton
+                style={classes.btnStyle}
+                onClick={confirmWithNotification}
+              >
+                {confirmWithNotificationText}
+              </GomakePrimaryButton>
+            )}
           </div>
         </div>
       </GoMakeModal>
