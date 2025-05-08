@@ -7,7 +7,7 @@ import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { addressModalState } from "./address-widget/state";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
-import { useCustomerDropDownList } from "@/hooks";
+import { useCustomerDropDownList, useSnackBar } from "@/hooks";
 import { Permissions } from "@/components/CheckPermission/enum";
 
 const useBusinessWidget = ({
@@ -17,6 +17,8 @@ const useBusinessWidget = ({
 }) => {
   const { t } = useTranslation();
   const router = useRouter();
+  const { alertFault } = useSnackBar();
+
   const [isConfirmation, setIsConfirmation] = useState();
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
 
@@ -220,6 +222,7 @@ const useBusinessWidget = ({
     isPurchaseDocument,
     isOutgoingPayments,
     canUpdateAgent,
+    alertFault,
   };
 };
 

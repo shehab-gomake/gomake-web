@@ -684,6 +684,11 @@ const QuoteNewPageWidget = ({
                   onBlurTitle={onBlurTitle}
                   isUpdateDocumentTitle={isUpdateDocumentTitle}
                   setIsUpdateDocumentTitle={setIsUpdateDocumentTitle}
+                  clientType={
+                    isPurchaseDocument
+                      ? CLIENT_TYPE.SUPPLIER
+                      : CLIENT_TYPE.CUSTOMER
+                  }
                 />
                 <ContactNewWidget
                   handleShowLess={handleShowLess}
@@ -719,6 +724,11 @@ const QuoteNewPageWidget = ({
                   getAllClientContacts={getAllClientContacts}
                   onOpenNewContact={onOpenNewContact}
                   contactsListRef={contactsListRef}
+                  clientType={
+                    isPurchaseDocument
+                      ? CLIENT_TYPE.SUPPLIER
+                      : CLIENT_TYPE.CUSTOMER
+                  }
                 />
               </div>
             </div>

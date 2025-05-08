@@ -2,7 +2,7 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { TextField, Box, Typography, InputAdornment } from "@mui/material";
 import moment from "moment";
 import { useTranslation } from "react-i18next";
-import {useEffect, useMemo, useState} from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSnackBar } from "@/hooks";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
@@ -34,7 +34,7 @@ const DateField: React.FC<IDateFieldProps> = ({
   format = "DD/MM/YYYY HH:mm",
   inputWidth = null,
   openPicker = false,
-  onClose = null, 
+  onClose = null,
   isHidden = false,
 }) => {
   const { t } = useTranslation();
@@ -42,14 +42,17 @@ const DateField: React.FC<IDateFieldProps> = ({
   const isRTL = dir === "rtl";
   const { alertFault } = useSnackBar();
   const [open, setOpen] = useState(openPicker);
-  useEffect(()=>{
-    setOpen(openPicker)
-  },[openPicker])
-  useEffect(()=>{
-    if(!open && onClose){
+
+  useEffect(() => {
+    setOpen(openPicker);
+  }, [openPicker]);
+
+  useEffect(() => {
+    if (!open && onClose) {
       onClose();
     }
-  },[open])
+  }, [open]);
+
   const handleDateChange = (newDate: any) => {
     const formattedDate = newDate
       ? withTime
@@ -98,25 +101,26 @@ const DateField: React.FC<IDateFieldProps> = ({
       ),
     [t, isEditable, preventOpenCondition, withTime]
   );
-  //inputWidth && {width:inputWidth}
+
   return (
     <Box
       ref={inputRef}
       sx={
-      inputWidth ? {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 0,
-        width: inputWidth,
-       
-      } : {
-        display: "flex",
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 0,
+        inputWidth
+          ? {
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 0,
+              width: inputWidth,
+            }
+          : {
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 0,
+            }
       }
-    }
     >
       <Typography
         variant="subtitle1"
@@ -136,11 +140,9 @@ const DateField: React.FC<IDateFieldProps> = ({
           slots={{
             textField: textFieldSlot,
           }}
-          sx={isHidden && {display:'none'}}
+          sx={isHidden && { display: "none" }}
           format={format}
           ampm={false}
-          
-          
         />
       ) : (
         <DatePicker

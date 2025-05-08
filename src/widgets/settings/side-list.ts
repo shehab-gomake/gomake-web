@@ -32,7 +32,7 @@ export const list: IListItem[] = [
   },
   {
     component: SettingsCompanyProfileWidget,
-    text: "profileSettings.companyProfile",
+    text: "profileSettings.businessProfile",
     value: "1",
     icon: CompanyProfileIcon,
     path: "company-profile",
