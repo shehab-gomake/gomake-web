@@ -22,6 +22,7 @@ const useSetupGuideMenu = ({
   handleOpenModal,
   handleOpenResetPassword,
   updatePrintHouseSetupSteps,
+  handleOpenDemoVideo,
 }) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
@@ -121,7 +122,7 @@ const useSetupGuideMenu = ({
     },
     {
       key: SetupStep.PRODUCTS_SETUPS,
-      label: t("quickSetup.steps.setUpProducts"),
+      label: t("quickSetup.steps.setUpProductsAndProduction"),
       onClick:
         productsSetupStatus !== StepStatus.DONE ? handleOpenModal : undefined,
       status: productsSetupStatus,
@@ -211,10 +212,11 @@ const useSetupGuideMenu = ({
           label: t("tabs.customers"),
           status: getStepStatus(SetupStep.CONTACTS_CLIENTS),
           onClick: () => {
-            if (
-              getStepStatus(SetupStep.CONTACTS_CLIENTS) === StepStatus.NOT_YET
-            ) {
-              updatePrintHouseSetupSteps(SetupStep.CONTACTS_CLIENTS);
+            if (getStepStatus(SetupStep.CONTACTS_CLIENTS) !== StepStatus.DONE) {
+              updatePrintHouseSetupSteps(
+                SetupStep.CONTACTS_CLIENTS,
+                StepStatus.DONE
+              );
             }
             navigate("/customers");
           },
@@ -225,30 +227,52 @@ const useSetupGuideMenu = ({
           status: getStepStatus(SetupStep.CONTACTS_SUPPLIERS),
           onClick: () => {
             if (
-              getStepStatus(SetupStep.CONTACTS_SUPPLIERS) === StepStatus.NOT_YET
+              getStepStatus(SetupStep.CONTACTS_SUPPLIERS) !== StepStatus.DONE
             ) {
-              updatePrintHouseSetupSteps(SetupStep.CONTACTS_SUPPLIERS);
+              updatePrintHouseSetupSteps(
+                SetupStep.CONTACTS_SUPPLIERS,
+                StepStatus.DONE
+              );
             }
             navigate("/suppliers");
           },
         },
       ],
     },
-
     {
       key: "help_center",
-      label: t("quickSetup.steps.helpCenter"),
+      label: t("quickSetup.steps.trainingAndTutorial"),
       children: [
         {
+          key: SetupStep.HELP_CENTER_BASIC_WALKTHROUGH,
+          label: t("quickSetup.steps.basicWalkthrough"),
+          status: getStepStatus(SetupStep.HELP_CENTER_BASIC_WALKTHROUGH),
+          onClick: () => {
+            if (
+              getStepStatus(SetupStep.HELP_CENTER_BASIC_WALKTHROUGH) !==
+              StepStatus.DONE
+            ) {
+              updatePrintHouseSetupSteps(
+                SetupStep.HELP_CENTER_BASIC_WALKTHROUGH,
+                StepStatus.DONE
+              );
+            }
+            handleOpenDemoVideo();
+          },
+        },
+        {
           key: SetupStep.HELP_CENTER_KNOWLEDGE_BASE,
-          label: t("quickSetup.steps.knowledgeBase"),
+          label: t("quickSetup.steps.helpCenter"),
           status: getStepStatus(SetupStep.HELP_CENTER_KNOWLEDGE_BASE),
           onClick: () => {
             if (
-              getStepStatus(SetupStep.HELP_CENTER_KNOWLEDGE_BASE) ===
-              StepStatus.NOT_YET
+              getStepStatus(SetupStep.HELP_CENTER_KNOWLEDGE_BASE) !==
+              StepStatus.DONE
             ) {
-              updatePrintHouseSetupSteps(SetupStep.HELP_CENTER_KNOWLEDGE_BASE);
+              updatePrintHouseSetupSteps(
+                SetupStep.HELP_CENTER_KNOWLEDGE_BASE,
+                StepStatus.DONE
+              );
             }
             window.open("https://gomake.document360.io", "_blank");
           },
@@ -259,11 +283,12 @@ const useSetupGuideMenu = ({
           status: getStepStatus(SetupStep.HELP_CENTER_CUSTOMER_SERVICE),
           onClick: () => {
             if (
-              getStepStatus(SetupStep.HELP_CENTER_CUSTOMER_SERVICE) ===
-              StepStatus.NOT_YET
+              getStepStatus(SetupStep.HELP_CENTER_CUSTOMER_SERVICE) !==
+              StepStatus.DONE
             ) {
               updatePrintHouseSetupSteps(
-                SetupStep.HELP_CENTER_CUSTOMER_SERVICE
+                SetupStep.HELP_CENTER_CUSTOMER_SERVICE,
+                StepStatus.DONE
               );
             }
             navigate("/customer-service");
@@ -277,10 +302,6 @@ const useSetupGuideMenu = ({
     items.flatMap((item) =>
       "children" in item ? [item.key, ...getAllGroupKeys(item.children)] : []
     );
-
-  // const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
-  //   {}
-  // );
 
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     () => {
@@ -317,6 +338,18 @@ const useSetupGuideMenu = ({
     return null;
   };
 
+  const findNextStep = (items: any[]): any | null => {
+    for (const item of items) {
+      if ("children" in item) {
+        const nextChild = findNextStep(item.children);
+        if (nextChild) return nextChild;
+      } else if (item.status !== StepStatus.DONE) {
+        return item;
+      }
+    }
+    return null;
+  };
+
   return {
     t,
     isOpen,
@@ -340,6 +373,7 @@ const useSetupGuideMenu = ({
     setExpandedGroups,
     getAllGroupKeys,
     findNextStepLabel,
+    findNextStep,
   };
 };
 

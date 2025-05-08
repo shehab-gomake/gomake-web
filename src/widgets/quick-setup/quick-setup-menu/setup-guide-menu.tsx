@@ -22,6 +22,7 @@ import { useEffect } from "react";
 interface SetupGuideMenuProps {
   handleOpenModal: () => void;
   handleOpenResetPassword: () => void;
+  handleOpenDemoVideo: () => void;
   updatePrintHouseSetupSteps: (
     step: SetupStep,
     status?: StepStatus
@@ -32,6 +33,7 @@ export const SetupGuideMenu = ({
   handleOpenModal,
   handleOpenResetPassword,
   updatePrintHouseSetupSteps,
+  handleOpenDemoVideo,
 }: SetupGuideMenuProps) => {
   const {
     t,
@@ -49,12 +51,15 @@ export const SetupGuideMenu = ({
     setExpandedGroups,
     getAllGroupKeys,
     findNextStepLabel,
+    findNextStep,
   } = useSetupGuideMenu({
     handleOpenModal,
     handleOpenResetPassword,
     updatePrintHouseSetupSteps,
+    handleOpenDemoVideo,
   });
   const { classes } = useStyle(isRtl);
+  const nextStep = findNextStep(steps);
 
   useEffect(() => {
     const stored = localStorage.getItem("gomake_expandedGroups");
@@ -95,11 +100,7 @@ export const SetupGuideMenu = ({
               )}
             </ListItemButton>
             <Collapse in={isGroupExpanded} timeout="auto" unmountOnExit>
-              <List
-                disablePadding
-                component="div"
-                // sx={{ [isRtl ? "pr" : "pl"]: 2 }}
-              >
+              <List disablePadding component="div">
                 {renderSteps(step.children)}
               </List>
             </Collapse>
@@ -116,12 +117,12 @@ export const SetupGuideMenu = ({
             borderRadius: "8px",
             cursor:
               step.status === StepStatus.DONE &&
-              step.key !== SetupStep.RESET_PASSWORD
+              step.key === SetupStep.PRODUCTS_SETUPS
                 ? "default"
                 : "pointer",
             pointerEvents:
               step.status === StepStatus.DONE &&
-              step.key !== SetupStep.RESET_PASSWORD
+              step.key === SetupStep.PRODUCTS_SETUPS
                 ? "none"
                 : "auto",
             py: "2px",
@@ -189,8 +190,18 @@ export const SetupGuideMenu = ({
             {renderSteps(steps)}
           </List>
           <Divider sx={{ my: 2 }} />
-          <Button variant="contained" fullWidth sx={classes.btnStyle}>
+          {/* <Button variant="contained" fullWidth sx={classes.btnStyle}>
             {t("quickSetup.ready")}
+          </Button> */}
+          <Button
+            variant="contained"
+            fullWidth
+            sx={classes.btnStyle}
+            onClick={() => nextStep?.onClick && nextStep.onClick()}
+          >
+            {nextStep
+              ? `${t("quickSetup.next")} : ${nextStep.label}`
+              : t("quickSetup.ready")}
           </Button>
         </>
       ) : (

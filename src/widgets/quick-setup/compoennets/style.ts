@@ -27,6 +27,11 @@ const useStyle = () => {
           color: "#2E3092",
         },
       },
+      videoFrame: {
+        width: "100%",
+        height: "400px",
+        border: "none",
+      },
     };
   }, [theme]);
 
