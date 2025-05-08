@@ -955,14 +955,14 @@ const ActionContainerComponent = ({
                           />
                           <span>
                             {`(${source === EWorkSource.OUT
-                                ? formatValueWithUnit(
-                                  calculateOutSourceProfitInMoney(),
-                                  totalPrice?.defaultUnit
-                                )
-                                : formatValueWithUnit(
-                                  calculateProfitInMoney(),
-                                  totalPrice?.defaultUnit
-                                )
+                              ? formatValueWithUnit(
+                                calculateOutSourceProfitInMoney(),
+                                totalPrice?.defaultUnit
+                              )
+                              : formatValueWithUnit(
+                                calculateProfitInMoney(),
+                                totalPrice?.defaultUnit
+                              )
                               })`}
                           </span>
                         </Stack>
@@ -1342,26 +1342,7 @@ const ActionContainerComponent = ({
                 isFromSetting={isFromSetting}
                 hideRelatedActions={hideRelatedActions}
               />
-              <GoMakeDeleteModal
-                modalType={ModalType.ADD}
-                insideStyle={classes.insideStyle}
-                openModal={openModalMachine}
-                onClose={onClickCloseModalMachine}
-                title={t("pricingWidget.machineMsg")}
-                hideIcon={true}
-                yesBtn={t("modal.confirm")}
-                onClickDelete={updateWorkFlowForMachine}
-              />
-              <GoMakeDeleteModal
-                modalType={ModalType.ADD}
-                insideStyle={classes.insideStyle}
-                openModal={openModalMaterial}
-                onClose={onClickCloseModalMaterial}
-                title={t("pricingWidget.materialMsg")}
-                hideIcon={true}
-                yesBtn={t("modal.confirm")}
-                onClickDelete={updateWorkFlowForMaterials}
-              />
+
             </Stack>
           </Fade>
         </>

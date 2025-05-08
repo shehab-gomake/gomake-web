@@ -50,11 +50,9 @@ const AddRowModal = (props: IAddRowModalProps) => {
     useRecoilValue<
       { key: string; value: string; inputType: number; values: any[] }[]
     >(materialHeadersState);
-
   const notebookTypesObj = materialHeaders?.find(
     (item) => item.key === "notebookTypes"
   );
-
   const getParameterValuesById = async (data: any) => {
     const callBack = (res) => {
       if (res.success) {

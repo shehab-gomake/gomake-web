@@ -64,7 +64,6 @@ const ChartsCostsComponent = ({ selectedWorkFlow }) => {
             }
           },
           tooltip: { enabled: true },
-
         },
         scales: {
           x: {
@@ -88,7 +87,6 @@ const ChartsCostsComponent = ({ selectedWorkFlow }) => {
         minHeight: 65,
         maxHeight: 65,
         minWidth: 305,
-        width: "100%",
       }}
     />
   );

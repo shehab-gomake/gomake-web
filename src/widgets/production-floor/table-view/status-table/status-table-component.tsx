@@ -24,8 +24,8 @@ import { TableRowComponent } from "@/widgets/production-floor/table-view/status-
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
-import { useCallback, useEffect, useState } from "react";
-import { GoMakeDeleteModal , ThreeOptionsModal } from "@/components";
+import { useCallback, useState } from "react";
+import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { CurrentStationOrderingEnum, ModalType } from "@/enums";
 import { useMediaQuery } from "@mui/material";
@@ -33,7 +33,7 @@ import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
-import { ArrowUpward, ArrowDownward } from "@mui/icons-material";
+import { ArrowUpward, } from "@mui/icons-material";
 import { productionFloorFiltersState } from "../../state/production-floor-filters";
 import { currentStationOrderingState } from "@/store/agents-state";
 
@@ -57,8 +57,8 @@ const StatusTableComponent = ({
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const isMobileScreen = useMediaQuery("(max-width:768px)");
-  const [filtersState, setFiltersState] = useRecoilState(productionFloorFiltersState);
   const { CheckPreferenceValue } = usePrintHousePreferences();
+  const [filtersState, setFiltersState] = useRecoilState(productionFloorFiltersState);
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: CurrentStationOrderingEnum;
@@ -89,9 +89,14 @@ const StatusTableComponent = ({
     onOpenPrintDeliverTicketModal,
     selectedMission,
     tryMoveBoardMissionsToDone,
-    updateJobDueDate
+    updateJobDueDate,
   } = useProductionFloorData();
-  const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
+  const {
+    openSimpleApproveModal,
+    handleOpenModal,
+    handleCloseModal,
+    handleConfirm,
+  } = useSimpleApproveModal(updateStatus);
 
   const [currentStationOrdering, setCurrentStationOrdering] = useRecoilState(currentStationOrderingState);
 
@@ -108,14 +113,17 @@ const StatusTableComponent = ({
         }
         if (item.board.statusId !== status.id) {
           if (status.key === "Approval required" && item.board.isNeedExample) {
-            handleOpenModal(status.id, item.selectedIds.length > 0 ? item.selectedIds : [item.board], item.board.id)
+            handleOpenModal(
+              status.id,
+              item.selectedIds.length > 0 ? item.selectedIds : [item.board],
+              item.board.id
+            );
           } else {
             updateStatus(
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               status.id
             ).then();
           }
-
         }
       },
       collect: (monitor) => ({
@@ -139,21 +147,21 @@ const StatusTableComponent = ({
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-          (board) =>
-            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-              search
-            ) ||
-            `${board?.clientName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            `${board?.productName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            board?.automatedTags?.some((tag) =>
-              `${tag.toLowerCase()}`.includes(search.toLowerCase())
-            ) ||
-            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-        )
+        (board) =>
+          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+            search
+          ) ||
+          `${board?.clientName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          `${board?.productName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          board?.automatedTags?.some((tag) =>
+            `${tag.toLowerCase()}`.includes(search.toLowerCase())
+          ) ||
+          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+      )
       : boards;
   }, [boards, search]);
 
@@ -200,9 +208,8 @@ const StatusTableComponent = ({
           },
         }}
       >
-        {`${
-          !status.isGroup ? t("productionStatuses." + status.name) : status.name
-        } (${getBoards().length})`}
+        {`${!status.isGroup ? t("productionStatuses." + status.name) : status.name
+          } (${getBoards().length})`}
       </Button>
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>

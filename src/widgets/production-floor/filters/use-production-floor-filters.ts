@@ -36,9 +36,8 @@ import {
   duplicateStationFilterByGroupIdApi,
   getStationFilterByGroupIdApi,
   getStationFilterGroupByIdApi,
-  updateStationFilterGroupApi,
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
-import { filterGroupsState, selectedGroupIdState } from "../state/filter-group";
+import {  selectedGroupIdState } from "../state/filter-group";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employees-api";
@@ -450,6 +449,7 @@ const useProductionFloorFilters = ({
       getAllUsers();
     }
   }, [isFetching]);
+  
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const handleSelectAllUsers = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -495,13 +495,20 @@ const useProductionFloorFilters = ({
       id: id,
     }).then();
   };
+  const [actions, setActions] = useRecoilState(actionsListState);
 
+  const handleAgentChange = (selectedAgents) => {
+    setFilters({
+      ...filtersState,
+      agentIds:selectedAgents,
+    },view);
+  }
 useEffect(() => {
   if(selectedGroupId && openModalEditGroup && isFetching){
     getStationFilterByIdGroup(selectedGroup?.id)
   }
 }, [selectedGroupId,openModalEditGroup,isFetching])
-const [actions, setActions] = useRecoilState(actionsListState);
+
 const getActions = async () => {
   const callBack = (res) => {
     if (res.success) {
@@ -510,12 +517,6 @@ const getActions = async () => {
   };
   await getPrintHouseActions(callApi, callBack, false);
 };
-  const handleAgentChange = (selectedAgents) => {
-    setFilters({
-      ...filtersState,
-      agentIds:selectedAgents,
-    },view);
-  }
 useEffect(() => {
   if(isFetching){
     getActions();
@@ -594,4 +595,4 @@ useEffect(() => {
   };
 };
 
-export { useProductionFloorFilters };
+export { useProductionFloorFilters }
