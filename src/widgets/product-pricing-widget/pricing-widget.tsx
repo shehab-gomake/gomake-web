@@ -240,7 +240,8 @@ const PricingWidget = ({
               alignItems: "flex-start",
               padding: "10px",
               alignSelf: "flex-start",
-              paddingTop: "0px"
+              paddingTop: "0px",
+              minWidth: 330
             }}>
               <ChartsCostsComponent selectedWorkFlow={selectedWorkFlow} />
             </div>

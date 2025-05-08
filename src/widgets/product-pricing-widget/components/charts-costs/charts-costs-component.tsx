@@ -30,19 +30,19 @@ const ChartsCostsComponent = ({ selectedWorkFlow }) => {
           {
             label: `Labor (${currency})`,
             data: [selectedWorkFlow.totalLaborCosts],
-            backgroundColor: '#97bf0d', // greenish
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
             stack: 'Stack 0',
           },
           {
             label: `Material (${currency})`,
             data: [selectedWorkFlow.totalMaterialCosts],
-            backgroundColor: '#d94f3a', // red
+            backgroundColor: 'rgba(255, 99, 132, 0.6)',
             stack: 'Stack 0',
           },
           {
             label: `Technical (${currency})`,
             data: [selectedWorkFlow.totalOtherCosts],
-            backgroundColor: '#3973b7', // blue
+            backgroundColor: 'rgba(75, 192, 192, 0.6)',
             stack: 'Stack 0',
           }
         ]
@@ -64,6 +64,7 @@ const ChartsCostsComponent = ({ selectedWorkFlow }) => {
             }
           },
           tooltip: { enabled: true },
+
         },
         scales: {
           x: {
@@ -86,6 +87,7 @@ const ChartsCostsComponent = ({ selectedWorkFlow }) => {
         height: 65,
         minHeight: 65,
         maxHeight: 65,
+        minWidth: 305,
         width: "100%",
       }}
     />
