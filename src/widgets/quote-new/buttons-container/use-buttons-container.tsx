@@ -185,7 +185,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         alertSuccessUpdate();
         onClickCloseOrderNowModal();
         if (quoteItemValue?.isUsedStripe) {
-          if (sendMessage) {
+          if (!sendMessage) {
             navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
           } else {
             if (res?.data?.paymentLink) {
