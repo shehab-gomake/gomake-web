@@ -12,7 +12,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const { callApi } = useGomakeAxios();
   const { alertSuccessAdded, alertFaultAdded, alertFault } = useSnackBar();
   const [subProducts, setSubProducts] = useRecoilState<any>(subProductsParametersState);
-  const category = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DiecutType")?.values[0];
+  const category = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DiecutType")?.valueIds[0];
   const [openGenerateModal, setOpenGenerateModal] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [searchResult, setSearchResult] = useState(parameter?.valuesConfigs);
@@ -208,6 +208,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     }
   }, [newDieCutSelect])
   const createNewTemplateEndPoint = async () => {
+    debugger;
     setIsView(true)
     const unitWidth = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.values[0];
     const unitLength = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitLength")?.values[0];
