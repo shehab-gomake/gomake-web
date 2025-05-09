@@ -240,7 +240,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
 
   /* Slider */
   const priceToUse = currentProductItemValueTotalPrice;
-    /*widgetType === EWidgetProductType.EDIT ||
+  /*widgetType === EWidgetProductType.EDIT ||
     widgetType === EWidgetProductType.DUPLICATE
       ? calculatedPriceProductItemValue
       : currentProductItemValueTotalPrice;*/
@@ -301,6 +301,7 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
     onSelectTab,
     errorColor,
     primaryColor,
+    priceChangePercents,
   };
 };
 
