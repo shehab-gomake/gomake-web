@@ -13,9 +13,10 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums";
-import { EAddressType } from "./address-widget/state";
+import { addressTypeState, EAddressType } from "./address-widget/state";
 import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
 import { ClientChangeSource } from "@/pages-components/quote-new/store/quote";
+import { useRecoilState } from "recoil";
 
 const BusinessNewWidget = ({
   values,
@@ -122,7 +123,7 @@ const BusinessNewWidget = ({
   }, [values?.title]);
 
   const [selectedAddressType, setSelectedAddressType] =
-    useState<EAddressType>();
+    useRecoilState<EAddressType>(addressTypeState);
 
   const openBillingModal = () => {
     if (!values.client) {
