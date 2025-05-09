@@ -1,7 +1,7 @@
 import { openReceiptCreationModalState, quoteItemState } from "@/store";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
 import {
   createOrderApi,
@@ -35,6 +35,11 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { useModal } from "@/hooks/use-modal";
+import {
+  addressModalState,
+  addressTypeState,
+  EAddressType,
+} from "../business-widget/address-widget/state";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -44,6 +49,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { push } = useRouter();
   const { CheckDocumentPermission, CheckPermission } = useUserPermission();
   const { CheckPreferenceValue } = usePrintHousePreferences();
+  const setOpenAddressModal = useSetRecoilState<boolean>(addressModalState);
+  const setSelectedAddressType =
+    useSetRecoilState<EAddressType>(addressTypeState);
 
   const [quoteItemValue, setQuoteItemValue] =
     useRecoilState<any>(quoteItemState);
@@ -104,11 +112,21 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       return;
     }
 
+    // Check if client is present and can create orders
+    if (!quoteItemValue?.client?.isCreateOrder) {
+      alertFault("home.admin.pleaseSelectClient");
+      return;
+    }
+
     if (
       CheckPreferenceValue(EPreferences.ADDRESSES_REQUIRED_FOR_ORDER) &&
       quoteItemValue?.documentBillingAddresses?.length === 0
     ) {
-      alertFault("alerts.missingBillingAddress");
+      // alertFault("alerts.missingBillingAddress");
+      setSelectedAddressType(EAddressType.BILLING);
+      setTimeout(() => {
+        setOpenAddressModal(true);
+      }, 0);
       return;
     }
 
@@ -131,12 +149,6 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const hasValidEmail = checkArrayNotEmptyOrEmailNotEmpty(
       quoteItemValue?.documentContacts || []
     );
-
-    // Check if client is present and can create orders
-    if (!quoteItemValue?.client?.isCreateOrder) {
-      alertFault("home.admin.pleaseSelectClient");
-      return;
-    }
 
     // Ensure phone or email is provided
     if (!hasValidPhone && !hasValidEmail) {
