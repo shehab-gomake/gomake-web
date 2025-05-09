@@ -226,6 +226,7 @@ const CustomerCardWidget = ({
           renderTableSearch={renderTableSearch}
           showTable={showTable}
           profileState={profileState}
+          customerAction={customerAction}
         />
       ),
     },
