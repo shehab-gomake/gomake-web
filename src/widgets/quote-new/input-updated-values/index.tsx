@@ -15,6 +15,7 @@ const InputUpdatedValues = ({
   onClickFlag,
   flag,
   sign,
+  isRightSign = false,
   inputMainContainerStyle,
   isTwoDigit = false,
   placeholder,
@@ -53,6 +54,7 @@ const InputUpdatedValues = ({
             className="customInput"
             onClick={handleClick}
           >
+            {isRightSign ? null : sign + " "}
             {placeholder
               ? placeholder
               : isTwoDigit
@@ -60,7 +62,7 @@ const InputUpdatedValues = ({
                   ? value.toFixed(2)
                   : value
                 : value}
-            {sign}
+            {isRightSign ? "  " + sign : null}
           </div>
         )}
       </div>

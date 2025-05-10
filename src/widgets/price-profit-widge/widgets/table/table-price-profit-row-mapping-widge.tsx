@@ -7,6 +7,9 @@ import { MoreIcon } from './icons/more-icon';
 import { GoMakeMenu } from '@/components/menu/menu';
 import { ReviewIcon } from './icons/review-icon';
 import { useTranslation } from 'react-i18next';
+import { useQuoteGetData } from '@/pages-components/quote-new/use-quote-get-data';
+import { systemCurrencyState } from '@/store/user';
+import { useRecoilValue } from 'recoil';
 
 const PriceProfitRowMappingTable = ({
   price,
@@ -25,6 +28,9 @@ const PriceProfitRowMappingTable = ({
   handleReviewCalculation
 }) => {
   const { classes } = useStyle()
+  const { getCurrencyUnitText } = useQuoteGetData();
+  const systemCurrency = useRecoilValue<any>(systemCurrencyState);
+  const CurrencyUnit = getCurrencyUnitText(systemCurrency);
 
   const isActive = activeCell?.index === index && activeCell?.idx === idx;
   const [anchorEl, setAnchorEl] = useState(null)
@@ -69,6 +75,8 @@ const PriceProfitRowMappingTable = ({
             onInputChange={(value) => {
               handlePriceChange(index, idx, value);
             }}
+            sign={CurrencyUnit}
+            isRightSign={systemCurrency === "USD" ? false : true}
           />
         )}
       </div>
