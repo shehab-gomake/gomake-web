@@ -94,6 +94,7 @@ const RowMappingWidget = ({
     index,
     printHouseId: quoteItems?.printHouseId,
   });
+
   const { CheckDocumentPermission } = useUserPermission();
   const { handleItemCheck } = useQuoteConfirmation();
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
@@ -145,7 +146,7 @@ const RowMappingWidget = ({
             <Checkbox
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
-              checked={item?.isChecked}
+              checked={!item?.isChecked}
               onChange={(checked) => handleItemCheck(checked, item.id)}
             />
             {parentIndex}

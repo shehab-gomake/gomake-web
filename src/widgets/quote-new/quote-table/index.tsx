@@ -67,7 +67,7 @@ const QuoteForPriceTable = ({
     [key: number]: boolean;
   }>(
     documentItems?.reduce((acc, _, index) => ({ ...acc, [index]: true }), {}) ||
-      {}
+    {}
   );
   // Function to toggle visibility of child items for a specific parent item
   const toggleChildVisibility = (parentIndex: number) => {

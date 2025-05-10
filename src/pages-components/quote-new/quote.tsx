@@ -839,6 +839,9 @@ const QuoteNewPageWidget = ({
         quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled && (
           <ButtonsConfirmContainer
             onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal}
+            isQuoteConfirmation={isQuoteConfirmation}
+            quoteConfirm={quoteConfirm}
+
           />
         )}
       <AddNewItemModal

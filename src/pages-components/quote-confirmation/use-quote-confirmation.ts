@@ -104,7 +104,7 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
     let quoteCopy = cloneDeep(quoteConfirm);
     if (quoteCopy?.documentItems) {
       const documentItems = quoteConfirm?.documentItems.map((x) =>
-        x.id === itemId ? { ...x, isChecked: e.target.checked } : x
+        x.id === itemId ? { ...x, isChecked: !e.target.checked } : x
       );
       quoteCopy = { ...quoteCopy, documentItems: documentItems };
     }
