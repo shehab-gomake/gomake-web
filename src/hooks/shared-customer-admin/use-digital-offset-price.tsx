@@ -4069,7 +4069,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const subSectionParameter = subSection.parameters.find(
         (param) => param.id === parameterId && param.actionIndex === actionIndex
       );
-      console.log("subSectionParameter", subSectionParameter);
       if (subSectionParameter) {
         subSectionParameter.isHidden = false;
       }
