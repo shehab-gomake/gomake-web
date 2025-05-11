@@ -53,31 +53,50 @@ const AdvertisingProductNameParameterWidget = ({
     setSelectedCardId,
     setSelectedCardData
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp })
+  const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
+  const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
+  const DieCutTypeOptions = [
+    { id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory"), isStatic: true },
+    ...parameter?.valuesConfigs?.filter(value => {
+      return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
+        === null && value?.materialValueIds[0]?.valueId === null);
+    })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
+  ]
+
+  const options = parameter?.valuesConfigs?.filter(value => {
+    return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+  })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
+
+  const DieCutterOptions = [
+    { id: "add_new", updateName: t("products.offsetPrice.admin.addNewDieCut"), type: "add", isStatic: true },
+    { id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate", isStatic: true },
+    ...searchResult?.filter(value => {
+      return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
+    })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
+  ]
+
+
+  const getOptions = () => {
+    const MyOptions = parameter?.code === "DiecutType"
+      ? DieCutTypeOptions
+      : parameter?.code === "DieCutter"
+        ? DieCutterOptions
+        : options;
+
+    // Add validation check
+    if (!MyOptions || !Array.isArray(MyOptions)) {
+      console.warn(`Invalid options for parameter code: ${parameter?.code}`);
+      return [];
+    }
+
+    return MyOptions;
+  };
+
   return (
     <div style={clasess.advertisingProductNameMain}>
       <div style={clasess.advertisingProductNameAutoComplete}>
         <GoMakeAutoComplate
-          options={
-            parameter?.code === "DiecutType"
-              ?
-              [{ id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory") },
-              ...parameter?.valuesConfigs?.filter(value => {
-                return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
-                  === null && value?.materialValueIds[0]?.valueId === null);
-              })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)]
-              :
-              parameter?.code === "DieCutter"
-                ? [
-                  { id: "add_new", updateName: t("products.offsetPrice.admin.addNewDieCut"), type: "add" },
-                  { id: "generate_new", updateName: t("products.offsetPrice.admin.generateNewDieCut"), type: "generate" },
-                  ...searchResult?.filter(value => {
-                    return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
-                  })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
-                ]
-                : parameter?.valuesConfigs?.filter(value => {
-                  return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path === null && value?.materialValueIds[0]?.valueId === null);
-                })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)
-          }
+          options={getOptions()}
           key={parameter?.valuesConfigs + temp[index]?.values}
           style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
           placeholder={parameter?.name}
@@ -272,35 +291,35 @@ const AdvertisingProductNameParameterWidget = ({
                       parameter?.code,
                       newDataGenerated
                     );
-                    setSubProducts(prevSubProducts => {
-                      return prevSubProducts.map(subProduct => {
-                        return {
-                          ...subProduct,
-                          parameters: [
-                            ...subProduct.parameters.filter(parameter => parameter.parameterCode !== "DieCut"),
-                            {
-                              "parameterId": "f81d5faf-7c4b-40cd-a178-98d79d61c326",
-                              "parameterName": "Choose Die-Cut",
-                              "actionId": null,
-                              "parameterType": 4,
-                              "isQuantityParameter": false,
-                              "values": [newDataGenerated?.rowData?.name?.value],
-                              "valueIds": [newDataGenerated?.id],
-                              "sectionId": section?.id,
-                              "subSectionId": subSection?.id,
-                              "actionIndex": parameter?.actionIndex,
-                              "parameterCode": "DieCut",
-                              "valuesConfigs": [],
-                              "unitKey": null,
-                              "defaultUnit": null,
-                              "factor": null,
-                              "unitType": 0,
-                              "isGeneralInfoInProductionFloor": true
-                            }
-                          ]
-                        };
-                      });
-                    });
+                    // setSubProducts(prevSubProducts => {
+                    //   return prevSubProducts.map(subProduct => {
+                    //     return {
+                    //       ...subProduct,
+                    //       parameters: [
+                    //         ...subProduct.parameters.filter(parameter => parameter.parameterCode !== "DieCut"),
+                    //         {
+                    //           "parameterId": "f81d5faf-7c4b-40cd-a178-98d79d61c326",
+                    //           "parameterName": "Choose Die-Cut",
+                    //           "actionId": null,
+                    //           "parameterType": 4,
+                    //           "isQuantityParameter": false,
+                    //           "values": [newDataGenerated?.rowData?.name?.value],
+                    //           "valueIds": [newDataGenerated?.id],
+                    //           "sectionId": section?.id,
+                    //           "subSectionId": subSection?.id,
+                    //           "actionIndex": parameter?.actionIndex,
+                    //           "parameterCode": "DieCut",
+                    //           "valuesConfigs": [],
+                    //           "unitKey": null,
+                    //           "defaultUnit": null,
+                    //           "factor": null,
+                    //           "unitType": 0,
+                    //           "isGeneralInfoInProductionFloor": true
+                    //         }
+                    //       ]
+                    //     };
+                    //   });
+                    // });
 
                     setIsViewInfoAfterGenerate(false)
                     setOpenGenerateModal(false)
@@ -316,9 +335,9 @@ const AdvertisingProductNameParameterWidget = ({
         </>
         {!isView && !isViewInfoAfterGenerate && <Stack gap={"5px"} justifyContent={'flex-start'} margin={'auto'}>
           <div style={clasess.modalContentImage}>
-            {selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value && <img
-              src={selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value}
-              alt="parameter"
+            {(image || categoryImage) && <img
+              src={categoryImage != "" ? categoryImage : image}
+              alt="parameter image"
               style={clasess.modalContentImageItem2}
             />
             }
@@ -348,7 +367,7 @@ const AdvertisingProductNameParameterWidget = ({
           setSelectedCardId(null)
           setSelectedCardData(null)
         }}
-        insideStyle={{ width: 850, height: "fit-content", padding: 20 }}
+        insideStyle={{ width: 1000, height: "fit-content", padding: 20 }}
         modalTitle={parameter?.name}
       >
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", justifyContent: "flex-start", gap: 10, marginTop: 25, }}>
@@ -393,13 +412,10 @@ const AdvertisingProductNameParameterWidget = ({
             </div>
 
           </div>
-          <div style={{ overflow: "scroll", maxHeight: 800 }}>
+          <div style={{ overflow: "scroll", maxHeight: 500 }}>
             {(parameter?.code === "DiecutType" || parameter?.code === "DieCutter") &&
               <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
-                {parameter?.valuesConfigs?.filter(value => {
-                  return !(value?.materialValueIds?.length === 1 && value?.materialValueIds[0]?.path
-                    === null && value?.materialValueIds[0]?.valueId === null);
-                })?.filter((value) => !value.isHidden)?.filter((value) => value.updateName)?.filter((value) => value.updateName.toLowerCase().includes(searchValue.toLowerCase()))?.map((item: any) => {
+                {getOptions()?.filter(option => !option.isStatic)?.filter((value) => value.updateName.toLowerCase().includes(searchValue.toLowerCase()))?.map((item: any) => {
                   const categoryImage = item.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
                   const image = item.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
                   const name = item.updateName || item.additionalAttribute?.find(attr => attr.valueId === 'name')?.value;
@@ -412,6 +428,7 @@ const AdvertisingProductNameParameterWidget = ({
                         borderRadius: 8,
                         padding: 12,
                         width: 220,
+                        height: 220,
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
@@ -447,7 +464,7 @@ const AdvertisingProductNameParameterWidget = ({
                         <img
                           src={parameter?.code === "DiecutType" ? categoryImage : image}
                           alt={name}
-                          style={{ width: 200, height: 200, objectFit: "contain", marginBottom: 8 }}
+                          style={{ width: 150, height: 150, objectFit: "contain", marginBottom: 8 }}
                         />
                       )}
                       <div style={{ fontWeight: 500, textAlign: "center" }}>{name}</div>
@@ -469,7 +486,7 @@ const AdvertisingProductNameParameterWidget = ({
                   parameter?.parameterType,
                   parameter?.name,
                   parameter?.actionId,
-                  { valueIds: selectedCardId, values: selectedCardData.updateName || selectedCardData.additionalAttribute?.find(attr => attr.valueId === 'name')?.value },
+                  { valueIds: selectedCardData?.id, values: selectedCardData.updateName || selectedCardData.additionalAttribute?.find(attr => attr.valueId === 'name')?.value },
                   subSection?.type,
                   index,
                   parameter?.actionIndex,
