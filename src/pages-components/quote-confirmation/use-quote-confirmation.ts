@@ -4,7 +4,7 @@ import {
   getDocumentByIdApi,
   updateDocumentCommentsConfirmationApi,
 } from "@/services/api-service/generic-doc/quote-confirmation-api";
-import { quoteConfirmationState } from "@/store/quote-item";
+import { fileItemsState, quoteConfirmationState } from "@/store/quote-item";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -39,7 +39,7 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
       if (res?.success) {
         const quote = res?.data;
         quote.documentItems = quote.documentItems.map((item) => {
-          item.isSelected = false;
+          item.isChecked = false;
           return item;
         });
         
@@ -86,17 +86,14 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
   };
 
   const calculateSelectedItems = async (quote) => {
-    const documentItemIds = quote?.documentItems
-      ?.filter((x) => x.isSelected)
-      ?.map((x) => x.id);
+    const documentItemIds = quote?.documentItems?.filter((x) => x.isChecked)?.map((x) => x.id);
     const callBack = (res) => {
       if (res?.success) {
         const newQuote = res?.data;
         newQuote.documentItems = newQuote.documentItems.map((item) => {
-          item.isSelected = documentItemIds.includes(item.id);
+          item.isChecked = documentItemIds.includes(item.id);
           return item;
         });
-        console.log("newQuote", newQuote);
         setQuoteConfirm(newQuote);
         alertSuccessUpdate();
       } else {
@@ -108,20 +105,54 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
       documentItemIds: documentItemIds,
     });
   };
-
+  const [fileItems, setFileItems] = useRecoilState(fileItemsState);
   const handleItemCheck = (e, itemId) => {
-    console.log("wwwwwwwwwwwwwwwwww", e.target.checked);
     let quoteCopy = cloneDeep(quoteConfirm);
     if (quoteCopy?.documentItems) {
       const documentItems = quoteConfirm?.documentItems.map((x) =>
-        x.id === itemId ? { ...x, isSelected: e.target.checked } : x
+        x.id === itemId ? { ...x, isChecked: e.target.checked } : x
       );
+      
       quoteCopy = { ...quoteCopy, documentItems: documentItems };
     }
-    console.log("quoteCopy", quoteCopy);
     setQuoteConfirm(quoteCopy);
     calculateSelectedItems(quoteCopy);
+  
+    // Add or remove item from fileItems based on checkbox state
+    if (e.target.checked) {
+      const selectedItem = quoteConfirm?.documentItems.find(item => item.id === itemId);
+      if (selectedItem) {
+        const existingItemIndex = fileItems.findIndex(item => item.id === itemId);
+        
+        if (existingItemIndex === -1) {
+          // Add new item if it doesn't exist
+          setFileItems([
+            ...fileItems,
+            {
+              id: selectedItem.id,
+              productName: selectedItem.productName,
+              files: null
+            }
+          ]);
+        }
+      }
+    } else {
+      // Remove item when unchecked
+      setFileItems(fileItems.filter(item => item.id !== itemId));
+    }
   };
+  // const handleItemCheck = (e, itemId) => {
+  //   let quoteCopy = cloneDeep(quoteConfirm);
+  //   if (quoteCopy?.documentItems) {
+  //     const documentItems = quoteConfirm?.documentItems.map((x) =>
+  //       x.id === itemId ? { ...x, isChecked: e.target.checked } : x
+  //     );
+
+  //     quoteCopy = { ...quoteCopy, documentItems: documentItems };
+  //   }
+  //   setQuoteConfirm(quoteCopy);
+  //   calculateSelectedItems(quoteCopy);
+  // };
 
   const documentsTitles = [
     {

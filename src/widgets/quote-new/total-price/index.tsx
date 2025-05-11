@@ -20,7 +20,6 @@ const TotalPriceComp = ({
   changeQuoteItems,
   isQuoteConfirmation = false,
 }) => {
-  console.log("quoteItems", quoteItems,)
   const router = useRouter();
   const { classes } = useStyle();
   const { t } = useTranslation();

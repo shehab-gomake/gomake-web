@@ -34,7 +34,7 @@ const AddAttachmentsModal = ({ openModal, onClose, documentType, getQuote, isQuo
         {
           isQuoteConfirmation ? <div>
             {quoteConfirm?.documentItems?.map((item: any, index: number) => (
-              !item.isChecked && (
+              item.isChecked && (
                 <div key={index} style={{ marginBottom: '20px' }}>
                   <h3 style={{ marginBottom: '10px' }}>{item.productName}</h3>
                   <input

@@ -52,7 +52,6 @@ const RowMappingWidget = ({
   setIsShowChilds,
   _renderIconcalculationStatus,
 }) => {
-  console.log("item", item);
   const router = useRouter();
   const { t } = useTranslation();
   const { classes } = useStyle({ headerHeight });
@@ -60,9 +59,6 @@ const RowMappingWidget = ({
   const [isSelected, setIsSelected] = useState(item?.isSelected);
   const { getCurrencyUnitText } = useQuoteGetData();
 
-  useEffect(() => {
-    setIsSelected(item?.isSelected);
-  }, [item]);
 
   const handleChangeSelectedItem = (checked, itemId) => {
     setIsSelected(checked);
@@ -149,7 +145,7 @@ const RowMappingWidget = ({
             <Checkbox
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
-              checked={isSelected}
+              checked={item?.isChecked}
               onChange={(checked) => handleItemCheck(checked, item.id)}
             />
             {parentIndex}

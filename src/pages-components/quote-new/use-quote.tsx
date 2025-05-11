@@ -1136,18 +1136,16 @@ const useQuoteNew = ({
     ItemId: string,
     quantity?: number,
   ) => {
-    let documentItemIds = [];
+    const documentItemIds = quoteConfirm?.documentItems?.filter((x) => x.isChecked)?.map((x) => x.id);
     const callBack = (res) => {
-      let data = quoteConfirm?.documentItems.map((item) => {
-        if (item.id === ItemId && item.isSelected) {
-          documentItemIds.push(item.id)
-        }
-        return item
-      })
-      console.log("documentsssssssssssssssssssssssssItemIds", { documentItemIds, data });
       if (res?.success) {
         alertSuccessUpdate();
-        setQuoteConfirm(res?.data);
+        const newQuote = res?.data;
+        newQuote.documentItems = newQuote.documentItems.map((item) => {
+          item.isChecked = documentItemIds.includes(item.id);
+          return item;
+        });
+        setQuoteConfirm(newQuote);
       } else {
         alertFaultUpdate();
         getQuote();

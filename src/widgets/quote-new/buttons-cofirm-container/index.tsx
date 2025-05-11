@@ -17,7 +17,7 @@ import { useSnackBar } from "@/hooks/use-snack-bar";
 const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfirmation, quoteConfirm }) => {
   const areAllItemsChecked = () => {
     if (!quoteConfirm?.documentItems?.length) return false;
-    return quoteConfirm.documentItems.every(item => item.isChecked === true);
+    return quoteConfirm.documentItems.every(item => item.isChecked === false);
   };
   const { alertFault } = useSnackBar();
   const { classes } = useStyle();
@@ -46,7 +46,6 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfir
     onClickCloseApproveSignatureModal,
   } = useButtonsConfirmContainer();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
-  console.log("quoteItemValue", isButtonClicked)
   return (
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>

@@ -327,7 +327,6 @@ const QuoteNewPageWidget = ({
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
-  console.log("quoteState", quoteState);
   if (documentType == DOCUMENT_TYPE.quote) {
     const { } = useQuotesSignalr({ getQuote });
   }

@@ -1,7 +1,7 @@
 import { deleteDocumentAttachmentApi } from "@/services/api-service/generic-doc/documents-api";
-import { useCallback, useState } from "react";
-import { fileItemsState, quoteItemState } from "@/store/quote-item";
-import { useRecoilState } from "recoil";
+import { useCallback, useEffect, useState } from "react";
+import { fileItemsState, quoteConfirmationState, quoteItemState } from "@/store/quote-item";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useTranslation } from "react-i18next";
 import { uploadDocumentAttachmentApi, uploadQuoteItemFileApi } from "@/services/api-service/materials/materials-endpoints";
@@ -21,6 +21,7 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
     const { t } = useTranslation();
     const { callApi } = useGomakeAxios();
     const [quoteItemValue, setQuoteItemValue] = useRecoilState<any>(quoteItemState);
+    const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
     const [selectedAttachment, setSelectedAttachment] = useState(null);
     const [isLoading, setIsLoading] = useRecoilState(loadingWithShadowState);
@@ -132,10 +133,15 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
                             const updatedItems = [...prevItems];
                             updatedItems[existingItemIndex] = {
                                 ...updatedItems[existingItemIndex],
-                                files: [...updatedItems[existingItemIndex].files, {
-                                    fileName: file.name,
-                                    url: res.data // Use the URL from the API response
-                                }]
+                                files: updatedItems[existingItemIndex].files
+                                    ? [...updatedItems[existingItemIndex].files, {
+                                        fileName: file.name,
+                                        url: res.data
+                                    }]
+                                    : [{
+                                        fileName: file.name,
+                                        url: res.data
+                                    }]
                             };
                             return updatedItems;
                         } else {
@@ -145,7 +151,7 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
                                 productName: item.productName,
                                 files: [{
                                     fileName: file.name,
-                                    url: res.data // Use the URL from the API response
+                                    url: res.data
                                 }]
                             }];
                         }
