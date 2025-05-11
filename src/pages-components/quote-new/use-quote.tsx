@@ -1134,9 +1134,17 @@ const useQuoteNew = ({
   const getCalculateQuoteConfirmationItem = async (
     printHouseId: string,
     ItemId: string,
-    quantity?: number
+    quantity?: number,
   ) => {
+    let documentItemIds = [];
     const callBack = (res) => {
+      let data = quoteConfirm?.documentItems.map((item) => {
+        if (item.id === ItemId && item.isSelected) {
+          documentItemIds.push(item.id)
+        }
+        return item
+      })
+      console.log("documentsssssssssssssssssssssssssItemIds", { documentItemIds, data });
       if (res?.success) {
         alertSuccessUpdate();
         setQuoteConfirm(res?.data);
@@ -1149,6 +1157,7 @@ const useQuoteNew = ({
       printHouseId,
       ItemId,
       quantity,
+      documentItemIds: documentItemIds,
     });
   };
 

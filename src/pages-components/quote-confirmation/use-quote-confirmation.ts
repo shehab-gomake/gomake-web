@@ -34,6 +34,7 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
   const { i18n } = useTranslation();
 
   const getQuoteConfirmation = async () => {
+    let documentItemIds = [];
     const callBack = (res) => {
       if (res?.success) {
         const quote = res?.data;
@@ -41,15 +42,22 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
           item.isSelected = false;
           return item;
         });
+        
+        // Add documentItemIds array to store selected item IDs
+        quote.documentItems.forEach((item) => {
+          if (item.isSelected) {
+            documentItemIds.push(item.id);
+          }
+        });
+
         quote.clientLang && i18n.changeLanguage(quote.clientLang);
         setQuoteConfirm(quote);
       } else {
         alertFaultUpdate();
       }
     };
-    await getDocumentByIdApi(callApi, callBack, { id: router?.query?.Id });
+    await getDocumentByIdApi(callApi, callBack, { id: router?.query?.Id,documentItemIds: documentItemIds });
   };
-
   const getTempUserToken = useCallback(async () => {
     const TokenRes: any = await callApi("GET", "/v1/auth/get-temp-user-token", {
       token: isPrePaymentPage ? router?.query?.recordId : router?.query?.Id,
