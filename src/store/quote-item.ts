@@ -15,3 +15,8 @@ export const openReceiptCreationModalState = atom<boolean>({
   key: "openReceiptCreationModalState",
   default: false,
 });
+
+export const fileItemsState = atom<any>({
+  key: "fileItemsState",
+  default: [],
+});

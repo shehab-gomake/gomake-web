@@ -12,8 +12,14 @@ import { ApproveSignatureModal } from "../total-price-and-vat/approve-signature-
 import { ModalType } from "@/enums";
 import { quoteItemState } from "@/store/quote-item";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { useSnackBar } from "@/hooks/use-snack-bar";
 
-const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal }) => {
+const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfirmation, quoteConfirm }) => {
+  const areAllItemsChecked = () => {
+    if (!quoteConfirm?.documentItems?.length) return false;
+    return quoteConfirm.documentItems.every(item => item.isChecked === false);
+  };
+  const { alertFault } = useSnackBar();
   const { classes } = useStyle();
   const { t } = useTranslation();
   const {
@@ -40,8 +46,6 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal }) => {
     onClickCloseApproveSignatureModal,
   } = useButtonsConfirmContainer();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
-
-  console.log("quoteItemValue", quoteItemValue);
   return (
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
@@ -72,7 +76,18 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal }) => {
         <SecondaryButton
           variant="contained"
           style={classes.btnStyle}
-          onClick={onClickOpenApproveModal}
+          onClick={() => {
+            if (isQuoteConfirmation) {
+              // Add the check here
+              if (areAllItemsChecked()) {
+                alertFault("reports.pleaseSelectOneItem");
+              } else {
+                onClickOpenApproveModal()
+              }
+            } else {
+              onClickOpenApproveModal()
+            }
+          }}
         >
           {t("sales.quote.approveOffer")}
         </SecondaryButton>

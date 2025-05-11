@@ -4,7 +4,7 @@ import {
   getDocumentByIdApi,
   updateDocumentCommentsConfirmationApi,
 } from "@/services/api-service/generic-doc/quote-confirmation-api";
-import { quoteConfirmationState } from "@/store/quote-item";
+import { fileItemsState, quoteConfirmationState } from "@/store/quote-item";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -34,22 +34,30 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
   const { i18n } = useTranslation();
 
   const getQuoteConfirmation = async () => {
+    let documentItemIds = [];
     const callBack = (res) => {
       if (res?.success) {
         const quote = res?.data;
         quote.documentItems = quote.documentItems.map((item) => {
-          item.isChecked = true;
+          item.isChecked = false;
           return item;
         });
+        
+        // Add documentItemIds array to store selected item IDs
+        quote.documentItems.forEach((item) => {
+          if (item.isSelected) {
+            documentItemIds.push(item.id);
+          }
+        });
+
         quote.clientLang && i18n.changeLanguage(quote.clientLang);
         setQuoteConfirm(quote);
       } else {
         alertFaultUpdate();
       }
     };
-    await getDocumentByIdApi(callApi, callBack, { id: router?.query?.Id });
+    await getDocumentByIdApi(callApi, callBack, { id: router?.query?.Id,documentItemIds: documentItemIds });
   };
-
   const getTempUserToken = useCallback(async () => {
     const TokenRes: any = await callApi("GET", "/v1/auth/get-temp-user-token", {
       token: isPrePaymentPage ? router?.query?.recordId : router?.query?.Id,
@@ -78,9 +86,7 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
   };
 
   const calculateSelectedItems = async (quote) => {
-    const documentItemIds = quote?.documentItems
-      ?.filter((x) => x.isChecked)
-      ?.map((x) => x.id);
+    const documentItemIds = quote?.documentItems?.filter((x) => x.isChecked)?.map((x) => x.id);
     const callBack = (res) => {
       if (res?.success) {
         const newQuote = res?.data;
@@ -99,18 +105,54 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
       documentItemIds: documentItemIds,
     });
   };
-
+  const [fileItems, setFileItems] = useRecoilState(fileItemsState);
   const handleItemCheck = (e, itemId) => {
     let quoteCopy = cloneDeep(quoteConfirm);
     if (quoteCopy?.documentItems) {
       const documentItems = quoteConfirm?.documentItems.map((x) =>
         x.id === itemId ? { ...x, isChecked: e.target.checked } : x
       );
+      
       quoteCopy = { ...quoteCopy, documentItems: documentItems };
     }
     setQuoteConfirm(quoteCopy);
     calculateSelectedItems(quoteCopy);
+  
+    // Add or remove item from fileItems based on checkbox state
+    if (e.target.checked) {
+      const selectedItem = quoteConfirm?.documentItems.find(item => item.id === itemId);
+      if (selectedItem) {
+        const existingItemIndex = fileItems.findIndex(item => item.id === itemId);
+        
+        if (existingItemIndex === -1) {
+          // Add new item if it doesn't exist
+          setFileItems([
+            ...fileItems,
+            {
+              id: selectedItem.id,
+              productName: selectedItem.productName,
+              files: null
+            }
+          ]);
+        }
+      }
+    } else {
+      // Remove item when unchecked
+      setFileItems(fileItems.filter(item => item.id !== itemId));
+    }
   };
+  // const handleItemCheck = (e, itemId) => {
+  //   let quoteCopy = cloneDeep(quoteConfirm);
+  //   if (quoteCopy?.documentItems) {
+  //     const documentItems = quoteConfirm?.documentItems.map((x) =>
+  //       x.id === itemId ? { ...x, isChecked: e.target.checked } : x
+  //     );
+
+  //     quoteCopy = { ...quoteCopy, documentItems: documentItems };
+  //   }
+  //   setQuoteConfirm(quoteCopy);
+  //   calculateSelectedItems(quoteCopy);
+  // };
 
   const documentsTitles = [
     {
