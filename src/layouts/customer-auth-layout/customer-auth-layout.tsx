@@ -126,7 +126,7 @@ const CustomerAuthLayout = ({
             withCancelBtn={false}
           />
 
-          {profile.isShowOnBoardingMenu ? <SetupSection /> : <></>}
+          {profile?.isShowOnBoardingMenu ? <SetupSection /> : <></>}
         </div>
       }
     </>

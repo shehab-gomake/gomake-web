@@ -6,8 +6,9 @@ interface IProps {
   label: string;
   onClick: () => void;
   style?: React.CSSProperties;
+  className?: string;
 }
-const AddButton = ({ label, onClick, style }: IProps) => {
+const AddButton = ({ label, onClick, style, className }: IProps) => {
   const { classes } = useStyle();
   return (
     <Button
@@ -15,6 +16,7 @@ const AddButton = ({ label, onClick, style }: IProps) => {
       startIcon={<AddBoxOutlinedIcon />}
       variant={"contained"}
       onClick={onClick}
+      className={className}
     >
       {label}
     </Button>
