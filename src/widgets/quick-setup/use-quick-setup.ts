@@ -7,13 +7,20 @@ import {
   updatePrintHouseSetupStepsApi,
 } from "@/services/api-service/quick-setup-menu/set-up-api";
 import { ProductsSetupData } from "./compoennets/interfaces";
-import { SetupStep, StepStatus } from "@/store/print-house-setup-state-state";
+import {
+  printHouseResetPasswordModalState,
+  SetupStep,
+  StepStatus,
+} from "@/store/print-house-setup-state-state";
+import { useRecoilState } from "recoil";
 
 const useQuickSetup = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const ActionsModal = useModal();
-  const ResetPasswordModalControl = useModal();
+  const [resetPasswordModal, setResetPasswordModal] = useRecoilState<boolean>(
+    printHouseResetPasswordModalState
+  );
   const DemoVideoModalControl = useModal();
   const { alertFaultGetData } = useSnackBar();
   const [initialSetupData, setInitialSetupData] =
@@ -59,18 +66,28 @@ const useQuickSetup = () => {
     setVideoUrl("https://www.youtube.com/embed/mnRav10tl80");
     DemoVideoModalControl.open();
   };
+
+  const onOpenResetModal = () => {
+    setResetPasswordModal(true);
+  };
+
+  const onCloseResetModal = () => {
+    setResetPasswordModal(false);
+  };
   return {
     t,
     ActionsModal,
     handleOpenModal,
     initialSetupData,
     setInitialSetupData,
-    ResetPasswordModalControl,
     DemoVideoModalControl,
     updatePrintHouseSetupSteps,
     handleOpenDemoVideo,
     videoUrl,
     setVideoUrl,
+    resetPasswordModal,
+    onOpenResetModal,
+    onCloseResetModal,
   };
 };
 

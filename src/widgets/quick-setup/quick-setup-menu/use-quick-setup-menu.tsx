@@ -209,13 +209,13 @@ const useSetupGuideMenu = ({
       children: [
         {
           key: SetupStep.CONTACTS_CLIENTS,
-          label: t("tabs.customers"),
+          label: t("quickSetup.steps.addCustomer"),
           status: getStepStatus(SetupStep.CONTACTS_CLIENTS),
           onClick: () => {
             if (getStepStatus(SetupStep.CONTACTS_CLIENTS) !== StepStatus.DONE) {
               updatePrintHouseSetupSteps(
                 SetupStep.CONTACTS_CLIENTS,
-                StepStatus.DONE
+                StepStatus.IN_PROGRESS
               );
             }
             navigate("/customers");
@@ -223,7 +223,7 @@ const useSetupGuideMenu = ({
         },
         {
           key: SetupStep.CONTACTS_SUPPLIERS,
-          label: t("tabs.suppliers"),
+          label: t("quickSetup.steps.addSupplier"),
           status: getStepStatus(SetupStep.CONTACTS_SUPPLIERS),
           onClick: () => {
             if (
@@ -231,7 +231,7 @@ const useSetupGuideMenu = ({
             ) {
               updatePrintHouseSetupSteps(
                 SetupStep.CONTACTS_SUPPLIERS,
-                StepStatus.DONE
+                StepStatus.IN_PROGRESS
               );
             }
             navigate("/suppliers");

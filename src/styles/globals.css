@@ -600,3 +600,18 @@ df-messenger {
 .MuiPopper-root {
   z-index: 999999 !important;
 }
+
+@keyframes shadowBreath {
+  0%,
+  100% {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  }
+  50% {
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.shadow-button {
+  animation: shadowBreath 2s infinite;
+  transition: box-shadow 0.3s;
+}

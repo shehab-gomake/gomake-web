@@ -15,15 +15,24 @@ import { useTranslation } from "react-i18next";
 import { setUserNewPasswordApi } from "@/services/api-service/quick-setup-menu/reset-password";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { useStyle } from "./style";
-import { useSetRecoilState } from "recoil";
-import { setupGuideExpandedState } from "@/store/print-house-setup-state-state";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import {
+  printHouseSetupStepsState,
+  printHouseWelcomeModalState,
+  setupGuideExpandedState,
+  SetupStep,
+  SetupStepItem,
+  StepStatus,
+} from "@/store/print-house-setup-state-state";
 
 interface ResetPasswordModalProps {
-  modalControl: ModalControls;
+  openModal: boolean;
+  onClose: () => void;
 }
 
 export const ResetPasswordModal = ({
-  modalControl,
+  openModal,
+  onClose,
 }: ResetPasswordModalProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -33,6 +42,12 @@ export const ResetPasswordModal = ({
   const [error, setError] = useState("");
   const { alertSuccessUpdate, alertFaultUpdate } = useSnackBar();
   const setIsExpanded = useSetRecoilState(setupGuideExpandedState);
+  const setPrintHouseWelcomeModal = useSetRecoilState<boolean>(
+    printHouseWelcomeModalState
+  );
+  const printHouseSetupSteps = useRecoilValue<SetupStepItem[]>(
+    printHouseSetupStepsState
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +63,7 @@ export const ResetPasswordModal = ({
   };
 
   const handleCloseModal = () => {
-    modalControl.close();
+    onClose();
     setNewPassword("");
     setConfirmPassword("");
     setError("");
@@ -59,6 +74,17 @@ export const ResetPasswordModal = ({
       if (res.success) {
         handleCloseModal();
         alertSuccessUpdate();
+
+        const welcomeStep = printHouseSetupSteps.find(
+          (step) => step.step === SetupStep.WELCOME_MESSAGE
+        );
+        if (welcomeStep.status === StepStatus.NOT_YET) {
+          setTimeout(() => {
+            setPrintHouseWelcomeModal(true);
+            //!here should update
+          }, 200);
+        }
+
         setTimeout(() => {
           setIsExpanded(true);
         }, 200);
@@ -70,7 +96,7 @@ export const ResetPasswordModal = ({
   };
 
   return (
-    <Modal open={modalControl.isOpen} onClose={modalControl.close}>
+    <Modal open={openModal} onClose={handleCloseModal}>
       <Box sx={classes.mainBox}>
         <Box sx={classes.headerBox}>
           <Typography variant="h6">
