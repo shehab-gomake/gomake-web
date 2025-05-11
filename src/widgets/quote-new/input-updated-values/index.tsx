@@ -54,15 +54,15 @@ const InputUpdatedValues = ({
             className="customInput"
             onClick={handleClick}
           >
-            {isRightSign ? null : sign + " "}
+            {isRightSign ? null : sign ? sign + " " : ""}
             {placeholder
               ? placeholder
               : isTwoDigit
-                ? typeof value === "number"
-                  ? value.toFixed(2)
-                  : value
-                : value}
-            {isRightSign ? "  " + sign : null}
+              ? typeof value === "number"
+                ? value.toFixed(2)
+                : value
+              : value}
+            {isRightSign ? (sign ? "  " + sign : "") : null}
           </div>
         )}
       </div>
