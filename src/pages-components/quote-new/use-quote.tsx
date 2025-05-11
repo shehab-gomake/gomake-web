@@ -424,7 +424,7 @@ const useQuoteNew = ({
         DocumentType: docType,
         Date: {
           documentId: quoteItemValue?.id,
-          dueDate: new Date(selectDate).toUTCString(),
+          dueDate: selectDate,
         },
       });
     }
