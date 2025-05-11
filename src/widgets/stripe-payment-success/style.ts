@@ -1,0 +1,49 @@
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { useMemo } from "react";
+
+const useStyle = () => {
+  const { theme } = useGomakeTheme();
+  const classes = useMemo(() => {
+    return {
+      mainBox: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        background: "linear-gradient(135deg, #2e3092, #ed028c)",
+      },
+      cardStyle: {
+        padding: "2.5rem",
+        maxWidth: "420px",
+        textAlign: "center",
+        boxShadow: 8,
+        borderRadius: "20px",
+        backgroundColor: "#d5d6e9",
+      },
+      title: {
+        fontWeight: "bold",
+        marginTop: 2,
+        color: "#2e3092",
+      },
+      subTitle: { marginTop: 1, color: "#2e3092", fontSize: "1.1rem" },
+      boxIcon: {
+        display: "flex",
+        justifyContent: "center",
+        gap: 2,
+        marginTop: 3,
+      },
+      homeBtn: {
+        borderColor: "#ed028c",
+        color: "#ed028c",
+        "&:hover": {
+          borderColor: "#2e3092",
+          color: "#2e3092",
+        },
+      },
+    };
+  }, [theme]);
+  return {
+    classes,
+  };
+};
+export { useStyle };
