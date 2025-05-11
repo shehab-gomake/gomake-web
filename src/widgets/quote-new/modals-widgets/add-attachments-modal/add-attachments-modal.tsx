@@ -4,6 +4,7 @@ import { PrimaryTable } from "@/components/tables/primary-table";
 import { ModalType } from "@/enums";
 import { useAddAttachmentsModal } from "./use-add-attachments-modal";
 import { GomakeLoadingWithShadow } from "@/widgets/loading-with-shadow/loading";
+import { useState } from "react";
 
 const AddAttachmentsModal = ({ openModal, onClose, documentType, getQuote, isQuoteConfirmation, quoteConfirm }) => {
   const { classes } = useStyle();
@@ -18,8 +19,10 @@ const AddAttachmentsModal = ({ openModal, onClose, documentType, getQuote, isQuo
     openDeleteModal,
     isLoading,
     handleFileUploadQuoteConfirmation,
-    getAttachmentsRowsQuoteConfirmation
+    getAttachmentsRowsQuoteConfirmation,
+    handleDeleteFileFromItems
   } = useAddAttachmentsModal({ getQuote, documentType });
+  const [isDragging, setIsDragging] = useState(false);
 
   return (
     <>
@@ -51,7 +54,40 @@ const AddAttachmentsModal = ({ openModal, onClose, documentType, getQuote, isQuo
                     {t("fileUploader.chooseFile")}
                   </GomakePrimaryButton>
                   {(
-                    <div style={classes.attachmentsContainer}>
+                    <div
+                      style={{
+                        ...classes.attachmentsContainer,
+                        border: isDragging ? '2px dashed #007bff' : 'none',
+                        backgroundColor: isDragging ? 'rgba(0, 123, 255, 0.1)' : 'transparent',
+                        transition: 'all 0.3s ease',
+                        padding: '10px',
+                        borderRadius: '4px',
+                      }}
+                      onDragEnter={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsDragging(true);
+                      }}
+                      onDragLeave={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsDragging(false);
+                      }}
+                      onDragOver={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsDragging(false);
+                        const files = e.dataTransfer.files;
+                        if (files.length > 0) {
+                          const event = { target: { files } } as any;
+                          handleFileUploadQuoteConfirmation(event, item);
+                        }
+                      }}
+                    >
                       <PrimaryTable
                         stickyFirstCol={false}
                         stickyHeader={true}
@@ -60,16 +96,16 @@ const AddAttachmentsModal = ({ openModal, onClose, documentType, getQuote, isQuo
                         headers={[t("fileUploader.fileName"), t("fileUploader.openFile"), t("fileUploader.deleteFile")]}
                         columnWidths={["70%", "15%", "15%"]}
                       />
-                      <GoMakeDeleteModal
-                        modalType={ModalType.DELETE}
-                        title={t("sales.quote.deleteAttachment")}
-                        yesBtn={t("sales.quote.yesBtn")}
-                        openModal={openDeleteModal}
-                        onClose={onClickCloseDeleteModal}
-                      // onClickDelete={() => handleDeleteAttachment(selectedAttachment, item.id)}
-                      />
                     </div>
                   )}
+                  <GoMakeDeleteModal
+                    modalType={ModalType.DELETE}
+                    title={t("sales.quote.deleteAttachment")}
+                    yesBtn={t("sales.quote.yesBtn")}
+                    openModal={openDeleteModal}
+                    onClose={onClickCloseDeleteModal}
+                    onClickDelete={() => handleDeleteFileFromItems(selectedAttachment.parentItem.id, selectedAttachment.fileName)}
+                  />
                 </div>
               )
             ))}

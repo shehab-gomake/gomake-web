@@ -20,3 +20,8 @@ export const fileItemsState = atom<any>({
   key: "fileItemsState",
   default: [],
 });
+
+export const requestAbortControllerState = atom<AbortController | null>({
+  key: "requestAbortControllerState",
+  default: null,
+});

@@ -209,10 +209,10 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
                     style={
                       _childsDocumentItemsMapping
                         ? {
-                            height: "100%",
-                            overflowY: "scroll",
-                            paddingRight: 5,
-                          }
+                          height: "100%",
+                          overflowY: "scroll",
+                          paddingRight: 5,
+                        }
                         : { height: 36, overflowY: "scroll", paddingRight: 5 }
                     }
                   >
@@ -247,7 +247,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
       }
     } catch (error) {
       if (error.name === "AbortError") {
-        console.log("Request aborted.");
+        return;
       } else {
         alertFaultGetData();
       }
@@ -404,13 +404,13 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         const result = await getAllClientAddress();
         isUpdate
           ? updateClientAddress(
-              result.find((item) => item.id === res.data.data.result),
-              addressType
-            )
+            result.find((item) => item.id === res.data.data.result),
+            addressType
+          )
           : onClickAddAddress(
-              result.find((item) => item.id === res.data.data.result),
-              addressType
-            );
+            result.find((item) => item.id === res.data.data.result),
+            addressType
+          );
       } else {
         alertFaultAdded();
       }
