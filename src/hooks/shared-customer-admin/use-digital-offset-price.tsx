@@ -4155,6 +4155,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
 
         if (subSectionParameter?.childsParameters) {
           subSectionParameter?.childsParameters.forEach((myparameter) => {
+            // debugger;
             let values = myparameter?.valuesConfigs?.filter(valueConfig =>
               data?.value?.values &&
               Object.values(data.value.values).includes(valueConfig.id)
@@ -4168,6 +4169,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 item?.actionIndex === myparameter?.actionIndex
               );
             });
+
             if (data?.value === null && data?.values === undefined) {
               subSectionParameter.childsParameters?.forEach((childParam) => {
                 temp = temp.filter(
@@ -4252,6 +4254,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
               }
             }
+            addRelatedParametersWithDefaultValues(
+              parameterId,
+              sectionId,
+              subSectionId,
+              temp,
+              productTemplateCopy,
+              actionIndex,
+              subSectionType
+            );
           });
         }
         if (subSectionParameter?.code === "Shape" && hasDieCutOrDieKissCut) {
