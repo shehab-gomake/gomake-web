@@ -18,7 +18,8 @@ const AddAttachmentsModal = ({ openModal, onClose, documentType, getQuote, isQuo
     openDeleteModal,
     isLoading,
     handleFileUploadQuoteConfirmation,
-    getAttachmentsRowsQuoteConfirmation
+    getAttachmentsRowsQuoteConfirmation,
+    handleDeleteFileFromItems
   } = useAddAttachmentsModal({ getQuote, documentType });
 
   return (
@@ -60,16 +61,17 @@ const AddAttachmentsModal = ({ openModal, onClose, documentType, getQuote, isQuo
                         headers={[t("fileUploader.fileName"), t("fileUploader.openFile"), t("fileUploader.deleteFile")]}
                         columnWidths={["70%", "15%", "15%"]}
                       />
-                      <GoMakeDeleteModal
-                        modalType={ModalType.DELETE}
-                        title={t("sales.quote.deleteAttachment")}
-                        yesBtn={t("sales.quote.yesBtn")}
-                        openModal={openDeleteModal}
-                        onClose={onClickCloseDeleteModal}
-                      // onClickDelete={() => handleDeleteAttachment(selectedAttachment, item.id)}
-                      />
+
                     </div>
                   )}
+                  <GoMakeDeleteModal
+                    modalType={ModalType.DELETE}
+                    title={t("sales.quote.deleteAttachment")}
+                    yesBtn={t("sales.quote.yesBtn")}
+                    openModal={openDeleteModal}
+                    onClose={onClickCloseDeleteModal}
+                    onClickDelete={() => handleDeleteFileFromItems(selectedAttachment.parentItem.id, selectedAttachment.fileName)}
+                  />
                 </div>
               )
             ))}

@@ -8,11 +8,12 @@ import { useStyle } from "./style";
 import { CheckboxCheckedIcon, CheckboxIcon } from "@/icons";
 import { Checkbox } from "@mui/material";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
-import { useRecoilValue } from "recoil";
-import { quoteConfirmationState } from "@/store";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { quoteConfirmationState, requestAbortControllerState } from "@/store";
 import { useTranslation } from "react-i18next";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 import { QUOTE_STATUSES } from "@/pages-components/quotes/enums";
+import { useState } from "react";
 
 interface IProps {
   key: string;

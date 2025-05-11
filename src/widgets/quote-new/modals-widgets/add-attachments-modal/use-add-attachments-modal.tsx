@@ -110,6 +110,8 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
         });
 
     };
+
+
     const handleFileUploadQuoteConfirmation = async (event: React.ChangeEvent<HTMLInputElement>, item) => {
         setIsLoading(true);
         const file = event.target.files?.[0];
@@ -197,7 +199,26 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
             </IconButton>,
         ]) || [];
     }, [fileItems]);
+    const handleDeleteFileFromItems = (itemId: string, fileName: string) => {
+        setFileItems(prevItems => {
+            return prevItems.map(item => {
+                if (item.id === itemId) {
+                    // If there are no files or files is null, return the item as is
+                    if (!item.files) return item;
 
+                    // Filter out the file
+                    const updatedFiles = item.files.filter(file => file.fileName !== fileName);
+
+                    // If no files left, set files to null
+                    return {
+                        ...item,
+                        files: updatedFiles.length > 0 ? updatedFiles : null
+                    };
+                }
+                return item;
+            });
+        });
+    };
     return {
         t,
         handleFileUpload,
@@ -210,7 +231,8 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
         openDeleteModal,
         isLoading,
         fileItems,
-        getAttachmentsRowsQuoteConfirmation
+        getAttachmentsRowsQuoteConfirmation,
+        handleDeleteFileFromItems
     };
 };
 

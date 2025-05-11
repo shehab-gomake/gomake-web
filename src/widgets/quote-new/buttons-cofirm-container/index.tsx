@@ -13,12 +13,10 @@ import { ModalType } from "@/enums";
 import { quoteItemState } from "@/store/quote-item";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useSnackBar } from "@/hooks/use-snack-bar";
+import { areAllItemsChecked } from "@/utils/helpers";
 
 const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfirmation, quoteConfirm }) => {
-  const areAllItemsChecked = () => {
-    if (!quoteConfirm?.documentItems?.length) return false;
-    return quoteConfirm.documentItems.every(item => item.isChecked === false);
-  };
+
   const { alertFault } = useSnackBar();
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -67,7 +65,18 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfir
           variant="outlined"
           startIcon={<AttachIcon />}
           style={classes.btnStyle}
-          onClick={onClickOpenAddAttachmentsModal}
+          onClick={() => {
+            if (isQuoteConfirmation) {
+              // Add the check here
+              if (areAllItemsChecked(quoteConfirm)) {
+                alertFault("reports.pleaseSelectOneItem");
+              } else {
+                onClickOpenAddAttachmentsModal()
+              }
+            } else {
+              onClickOpenAddAttachmentsModal()
+            }
+          }}
         >
           {quoteItemValue?.attachments?.length > 0
             ? t("sales.quote.editAttachments")
@@ -79,7 +88,7 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfir
           onClick={() => {
             if (isQuoteConfirmation) {
               // Add the check here
-              if (areAllItemsChecked()) {
+              if (areAllItemsChecked(quoteConfirm)) {
                 alertFault("reports.pleaseSelectOneItem");
               } else {
                 onClickOpenApproveModal()

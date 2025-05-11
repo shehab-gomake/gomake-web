@@ -4,7 +4,7 @@ import {
   getDocumentByIdApi,
   updateDocumentCommentsConfirmationApi,
 } from "@/services/api-service/generic-doc/quote-confirmation-api";
-import { fileItemsState, quoteConfirmationState } from "@/store/quote-item";
+import { fileItemsState, quoteConfirmationState, requestAbortControllerState } from "@/store/quote-item";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -13,6 +13,7 @@ import { getPrePaymentByIdApi } from "@/services/api-service/pay/pay-api";
 import { useTranslation } from "react-i18next";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-profile-api";
+import { useDebouncedCallback } from "use-debounce";
 
 interface IProps {
   documentType?: DOCUMENT_TYPE;
@@ -27,6 +28,7 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
   const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(
     quoteConfirmationState
   );
+  const [requestAbortController, setRequestAbortController] = useRecoilState<AbortController | null>(requestAbortControllerState);
 
   const [isPageNotFound, setIsPageNotFound] = useState(false); // Add state for page not found
 
@@ -84,9 +86,24 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
       documentType,
     });
   };
+ 
+  const [counter,setCounter] = useState(0);
 
-  const calculateSelectedItems = async (quote) => {
+  const calculateSelectedItems = useCallback(async (quote) => {
     const documentItemIds = quote?.documentItems?.filter((x) => x.isChecked)?.map((x) => x.id);
+    // Abort any existing request
+    if (requestAbortController) {
+      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+      requestAbortController.abort();
+    }
+    const newRequestAbortController = new AbortController();
+    if(setRequestAbortController){
+      setRequestAbortController(newRequestAbortController);
+    }
+  console.log("counter", counter);
+    setCounter(counter+1);
+
+    
     const callBack = (res) => {
       if (res?.success) {
         const newQuote = res?.data;
@@ -100,11 +117,26 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
         alertFaultUpdate();
       }
     };
-    await calculateSelectedItemsApi(callApi, callBack, {
-      quoteId: quote?.id,
-      documentItemIds: documentItemIds,
-    });
-  };
+  
+    try {
+      await calculateSelectedItemsApi(
+        callApi, 
+        callBack, 
+        {
+          quoteId: quote?.id,
+          documentItemIds: documentItemIds,
+        },
+        false,
+        newRequestAbortController
+      );
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('Request was aborted');
+        return;
+      }
+      throw error;
+    }
+  }, [requestAbortController]); 
   const [fileItems, setFileItems] = useRecoilState(fileItemsState);
   const handleItemCheck = (e, itemId) => {
     let quoteCopy = cloneDeep(quoteConfirm);

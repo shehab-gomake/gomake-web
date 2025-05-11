@@ -74,13 +74,16 @@ const updateDocumentCommentsConfirmationApi: ICallAndSetData = async (callApi, s
 };
 
 
-const calculateSelectedItemsApi: ICallAndSetData = async (callApi, setState, data) => {
+const calculateSelectedItemsApi: ICallAndSetData = async (callApi, setState, data, lock, requestAbortController) => {
+  console.log("requestAbortController", requestAbortController);
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
     CALCULATE_SELECTED_ITEMS_URL,
     setState,
-    data
+    data,
+    lock,
+    requestAbortController
   );
 };
 

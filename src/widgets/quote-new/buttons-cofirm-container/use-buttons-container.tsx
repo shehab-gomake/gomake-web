@@ -18,6 +18,7 @@ const useButtonsConfirmContainer = () => {
     const [rejectStatus, setRejectStatus] = useState<QuoteStatuses>();
     const [isButtonClicked, setIsButtonClicked] = useState(false);
     const fileItems = useRecoilValue(fileItemsState);
+    console.log("fileItems", fileItems);
     const { getQuoteConfirmation } = useQuoteConfirmation();
     const handleRejectBtnClick = (event: React.MouseEvent<HTMLElement>) => {
         setIsButtonClicked(true);
