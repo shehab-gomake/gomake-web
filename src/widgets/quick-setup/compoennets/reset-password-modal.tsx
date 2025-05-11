@@ -81,7 +81,6 @@ export const ResetPasswordModal = ({
         if (welcomeStep.status === StepStatus.NOT_YET) {
           setTimeout(() => {
             setPrintHouseWelcomeModal(true);
-            //!here should update
           }, 200);
         }
 

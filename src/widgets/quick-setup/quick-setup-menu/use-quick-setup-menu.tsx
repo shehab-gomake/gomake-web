@@ -248,6 +248,7 @@ const useSetupGuideMenu = ({
           label: t("quickSetup.steps.basicWalkthrough"),
           status: getStepStatus(SetupStep.HELP_CENTER_BASIC_WALKTHROUGH),
           onClick: () => {
+            handleOpenDemoVideo();
             if (
               getStepStatus(SetupStep.HELP_CENTER_BASIC_WALKTHROUGH) !==
               StepStatus.DONE
@@ -257,7 +258,6 @@ const useSetupGuideMenu = ({
                 StepStatus.DONE
               );
             }
-            handleOpenDemoVideo();
           },
         },
         {

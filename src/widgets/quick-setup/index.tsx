@@ -47,6 +47,7 @@ const SetupSection = () => {
         modalControl={DemoVideoModalControl}
         videoUrl={videoUrl}
         setVideoUrl={setVideoUrl}
+        updatePrintHouseSetupSteps={updatePrintHouseSetupSteps}
       />
     </>
   );
