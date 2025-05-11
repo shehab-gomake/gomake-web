@@ -93,14 +93,12 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
     const documentItemIds = quote?.documentItems?.filter((x) => x.isChecked)?.map((x) => x.id);
     // Abort any existing request
     if (requestAbortController) {
-      console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
       requestAbortController.abort();
     }
     const newRequestAbortController = new AbortController();
     if(setRequestAbortController){
       setRequestAbortController(newRequestAbortController);
     }
-  console.log("counter", counter);
     setCounter(counter+1);
 
     
@@ -131,7 +129,6 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
       );
     } catch (error) {
       if (error.name === 'AbortError') {
-        console.log('Request was aborted');
         return;
       }
       throw error;
