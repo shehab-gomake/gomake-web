@@ -102,9 +102,6 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       "DieUnitWidth",
       "DieUnitLength",
       "DieUnitHeight",
-      // "SheetWeight",
-      // "Sheetcategory",
-      // "SheetColor",
     ];
 
     for (const product of subProducts) {
@@ -208,7 +205,6 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     }
   }, [newDieCutSelect])
   const createNewTemplateEndPoint = async () => {
-    debugger;
     setIsView(true)
     const unitWidth = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.values[0];
     const unitLength = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitLength")?.values[0];
@@ -231,11 +227,11 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     const callBack = (res) => {
       if (res.success && res.data && res.data.data) {
         getAllMaterial().then((materials) => {
-          getProductById(materials);
+          // getProductById(materials);
         });
         if (parameter?.code === "DieCutter") {
           const formattedData = {
-            id: res.data.data.rowData.code.value,
+            id: res.data.data.id,
             activateAction: false,
             isDefault: false,
             isDeleted: false,
@@ -362,9 +358,6 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       "DieUnitWidth",
       "DieUnitLength",
       "DieUnitHeight",
-      "SheetWeight",
-      "SheetColor",
-      "Sheetcategory",
     ];
 
     const foundParameters = subProducts.flatMap(product =>

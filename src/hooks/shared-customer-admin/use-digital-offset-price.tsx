@@ -4606,6 +4606,79 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                   isGeneralInfoInProductionFloor:
                     param?.isGeneralInfoInProductionFloor,
                 });
+
+                if (param?.code === "DieCutter") {
+
+                  const getValue = (id) => {
+                    const item = dieCut.additionalAttribute.find(attr => attr.valueId === id);
+                    return item ? item.value + "" : "";
+                  };
+                  let dieUnitWidth = getValue("dieUnitWidth");
+                  let dieUnitLength = getValue("dieUnitLength");
+                  let finalUnitWidth = getValue("finalUnitWidth");
+                  let finalUnitLength = getValue("finalUnitLength");
+                  let finalUnitHeight = getValue("finalUnitHeight");
+                  const dieCutSizesParametersArray = [];
+                  dieCutSizesParametersArray.push({
+                    parameterCode: "Width",
+                    value: dieUnitWidth,
+                  });
+                  dieCutSizesParametersArray.push({
+                    parameterCode: "Height",
+                    value: dieUnitLength,
+                  });
+                  dieCutSizesParametersArray.push({
+                    parameterCode: "DieUnitWidth",
+                    value: finalUnitWidth,
+                  });
+                  dieCutSizesParametersArray.push({
+                    parameterCode: "DieUnitLength",
+                    value: finalUnitLength,
+                  });
+                  dieCutSizesParametersArray.push({
+                    parameterCode: "DieUnitHeight",
+                    value: finalUnitHeight,
+                  });
+                  dieCutSizesParametersArray.forEach((dieCutSizeParameter) => {
+                    let dieCutSizeSubProductParameter = temp.find(
+                      (x) => x.parameterCode == dieCutSizeParameter.parameterCode
+                    );
+                    if (dieCutSizeSubProductParameter) {
+                      dieCutSizeSubProductParameter.values = [
+                        dieCutSizeParameter.value,
+                      ];
+                      dieCutSizeSubProductParameter.isDisabled = true;
+                    } else {
+                      const subSectionParameter = subSection.parameters.find(
+                        (param) => param.code === dieCutSizeParameter.parameterCode
+                      );
+                      if (subSectionParameter) {
+                        temp.push({
+                          parameterId: subSectionParameter.id,
+                          sectionId: sectionId,
+                          subSectionId: subSectionId,
+                          ParameterType: ParameterType,
+                          isQuantityParameter:
+                            subSectionParameter?.isQuantityParameter,
+                          parameterName: subSectionParameter?.name,
+                          actionId: actionId,
+                          values: [dieCutSizeParameter.value],
+                          valueIds: [],
+                          actionIndex: subSectionParameter.actionIndex,
+                          parameterCode: subSectionParameter.code,
+                          valuesConfigs: subSectionParameter?.valuesConfigs,
+                          unitKey: subSectionParameter?.unitKey,
+                          defaultUnit: subSectionParameter?.defaultUnit,
+                          unitType: subSectionParameter?.unitType,
+                          factor: subSectionParameter?.factor,
+                          isDisabled: dieCutSizeParameter.value ? true : false,
+                          isGeneralInfoInProductionFloor:
+                            subSectionParameter?.isGeneralInfoInProductionFloor,
+                        });
+                      }
+                    }
+                  });
+                }
               }
             }
           });
@@ -4782,7 +4855,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                 }
               }
             });
-          } else if (subSectionParameter.code === "DieKissCut") {
+          }
+          else if (subSectionParameter.code === "DieKissCut") {
             let unitWidth = dieCut?.rowData?.unitWidth?.value + "";
             let unitLength = dieCut?.rowData?.unitLength?.value + "";
             const dieCutSizesParametersArray = [];
