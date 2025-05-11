@@ -62,6 +62,7 @@ import { UpdateDeliveryPriceModal } from "@/widgets/quote-new/modals-widgets/upd
 import { useModal } from "@/hooks/use-modal";
 import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import {convertUtcToLocalIsoString} from "@/components/date-time/date-time-component";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -610,9 +611,11 @@ const QuoteNewPageWidget = ({
                                 ? t("sales.quote.deliveryDate")
                                 : t("sales.quote.dateOfReference")
                             }
-                            date={selectDate}
+                            date={convertUtcToLocalIsoString(selectDate)}
                             handleChange={(newDate) => {
-                              setSelectDate(newDate);
+                              let mom = moment(newDate);
+                              let formattedDueDate = mom.utc().format("YYYY-MM-DD HH:mm:ss");
+                              setSelectDate(formattedDueDate);
                               setActiveClickAway(true);
                             }}
                             isEditable={quoteItemValue?.isEditable}

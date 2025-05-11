@@ -22,9 +22,9 @@ const LoginWidget = () => {
   });
 
   useEffect(() => {
+    localStorage.clear();
     setIsClient(true);
     getCompanyLogo().then();
-    localStorage.removeItem("auth-token");
   }, []);
 
   if (!isClient) return null;
