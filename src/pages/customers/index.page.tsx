@@ -26,6 +26,7 @@ import { ClientTypesList } from "@/widgets/client-types/client-types-list";
 import { AddButton } from "@/components/button/add-button";
 import { ClientTypeModal } from "@/widgets/client-types/components/add-edit-client-type-modal";
 import { ITab } from "@/components/tabs/interface";
+import { StepStatus } from "@/store/print-house-setup-state-state";
 
 export default function Customers() {
   const { t } = useTranslation();
@@ -79,6 +80,7 @@ export default function Customers() {
     setValue,
     openClientTypeModal,
     setOpenClientTypeModal,
+    addCustomerStep,
   } = useCustomers(CLIENT_TYPE.CUSTOMER, pageNumber, setPageNumber);
   const activeText = t("usersSettings.active");
   const inActiveText = t("usersSettings.active");
@@ -118,6 +120,7 @@ export default function Customers() {
           <AddCustomerButton
             onCustomerAdd={onCustomerAdd}
             typeClient={CLIENT_TYPE.CUSTOMER}
+            isEmpty={addCustomerStep?.status === StepStatus.IN_PROGRESS}
           />
         </PermissionCheck>
       );
