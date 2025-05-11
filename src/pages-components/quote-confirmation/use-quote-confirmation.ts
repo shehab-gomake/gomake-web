@@ -38,7 +38,7 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
       if (res?.success) {
         const quote = res?.data;
         quote.documentItems = quote.documentItems.map((item) => {
-          item.isChecked = true;
+          item.isSelected = false;
           return item;
         });
         quote.clientLang && i18n.changeLanguage(quote.clientLang);
@@ -79,15 +79,16 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
 
   const calculateSelectedItems = async (quote) => {
     const documentItemIds = quote?.documentItems
-      ?.filter((x) => x.isChecked)
+      ?.filter((x) => x.isSelected)
       ?.map((x) => x.id);
     const callBack = (res) => {
       if (res?.success) {
         const newQuote = res?.data;
         newQuote.documentItems = newQuote.documentItems.map((item) => {
-          item.isChecked = documentItemIds.includes(item.id);
+          item.isSelected = documentItemIds.includes(item.id);
           return item;
         });
+        console.log("newQuote", newQuote);
         setQuoteConfirm(newQuote);
         alertSuccessUpdate();
       } else {
@@ -101,13 +102,15 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
   };
 
   const handleItemCheck = (e, itemId) => {
+    console.log("wwwwwwwwwwwwwwwwww", e.target.checked);
     let quoteCopy = cloneDeep(quoteConfirm);
     if (quoteCopy?.documentItems) {
       const documentItems = quoteConfirm?.documentItems.map((x) =>
-        x.id === itemId ? { ...x, isChecked: !e.target.checked } : x
+        x.id === itemId ? { ...x, isSelected: e.target.checked } : x
       );
       quoteCopy = { ...quoteCopy, documentItems: documentItems };
     }
+    console.log("quoteCopy", quoteCopy);
     setQuoteConfirm(quoteCopy);
     calculateSelectedItems(quoteCopy);
   };

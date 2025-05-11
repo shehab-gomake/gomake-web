@@ -4,16 +4,14 @@ import { useStyle } from "./style";
 import {
   ArrowDownWithCircle,
   ArrowUpWithCircle,
-  CalculatingIcon,
   CheckboxCheckedIcon,
   CheckboxIcon,
-  NotCalculatingIcon,
 } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { CharacterDetails } from "./row-details/character-details";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 import { useRouter } from "next/router";
 import { MoreMenuWidget } from "../more-circle";
@@ -54,12 +52,17 @@ const RowMappingWidget = ({
   setIsShowChilds,
   _renderIconcalculationStatus,
 }) => {
+  console.log("item", item);
   const router = useRouter();
   const { t } = useTranslation();
   const { classes } = useStyle({ headerHeight });
   const [isConfirmation, setIsConfirmation] = useState(null);
   const [isSelected, setIsSelected] = useState(item?.isSelected);
   const { getCurrencyUnitText } = useQuoteGetData();
+
+  useEffect(() => {
+    setIsSelected(item?.isSelected);
+  }, [item]);
 
   const handleChangeSelectedItem = (checked, itemId) => {
     setIsSelected(checked);
@@ -146,7 +149,7 @@ const RowMappingWidget = ({
             <Checkbox
               icon={<CheckboxIcon />}
               checkedIcon={<CheckboxCheckedIcon />}
-              checked={!item?.isChecked}
+              checked={isSelected}
               onChange={(checked) => handleItemCheck(checked, item.id)}
             />
             {parentIndex}
