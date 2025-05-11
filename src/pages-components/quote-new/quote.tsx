@@ -327,6 +327,7 @@ const QuoteNewPageWidget = ({
     isQuoteConfirmation: isQuoteConfirmation,
     isPrePaymentPage: isPrePaymentPage,
   });
+  console.log("quoteState", quoteState);
   if (documentType == DOCUMENT_TYPE.quote) {
     const { } = useQuotesSignalr({ getQuote });
   }
@@ -1145,6 +1146,9 @@ const QuoteNewPageWidget = ({
         onClose={onCloseAddAttachmentsModal}
         documentType={documentType}
         getQuote={getQuote}
+        isQuoteConfirmation={isQuoteConfirmation}
+        quoteConfirm={quoteConfirm}
+
       />
       <GoMakeAlertModal
         openModal={alertNotVerifiedMail.isOpen}
