@@ -3,7 +3,7 @@ import { useRecoilState } from "recoil";
 import { useTranslation } from "react-i18next";
 
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { subProductsParametersState } from "@/store/general-parameters-state";
+import { lastOptionState, subProductsParametersState } from "@/store/general-parameters-state";
 import { addPrintHouseMaterialCategoryApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { createDieCutFromTemplateMakerApi, getMaterialCategoryByMaterialKeyApi } from "@/services/api-service/materials/materials-endpoints";
 
@@ -16,7 +16,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const [openGenerateModal, setOpenGenerateModal] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [searchResult, setSearchResult] = useState(parameter?.valuesConfigs);
-
+  const [lastOption, setLastOption] = useRecoilState(lastOptionState)
   const selectedDieCutType = temp.find((item: any) => item.parameterCode === "DiecutType")
   const selectedDieCutter = temp.find((item: any) => item.parameterCode === "DieCutter")
   const selectedDieCutTypeValue = selectedDieCutType?.valuesConfigs?.find((item: any) => item.id === selectedDieCutType?.valueIds[0])
@@ -37,10 +37,13 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const [isViewInfoAfterGenerate, setIsViewInfoAfterGenerate] = useState(false)
   const [newDataGenerated, setNewDataGenerated] = useState<any>(null)
   useEffect(() => {
-    if (isRenderData) {
+    if (lastOption) {
+      setSearchResult([lastOption, ...parameter?.valuesConfigs])
+    }
+    else {
       setSearchResult(parameter?.valuesConfigs)
     }
-  }, [parameter])
+  }, [parameter, isRenderData, lastOption])
 
   const onAddCategory = async () => {
     const callBack = (res) => {
@@ -201,6 +204,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       setSearchResult((prev: any) => {
         return [formattedData, ...prev,] // Add the new item to the data list
       });
+      setLastOption(formattedData)
       setIsRenderData(false)
     }
   }, [newDieCutSelect])
@@ -225,7 +229,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       unit: unit
     }
     const callBack = (res) => {
-      if (res.success && res.data && res.data.data) {
+      if (res?.isOkay) {
         getAllMaterial().then((materials) => {
           // getProductById(materials);
         });
@@ -314,14 +318,21 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
           setSearchResult((prev: any) => {
             return [formattedData, ...prev,] // Add the new item to the data list
           });
+          setLastOption(formattedData)
           setIsView(false)
           setIsRenderData(false)
+
           setIsViewInfoAfterGenerate(true)
           setNewDataGenerated(res.data.data)
         }
 
       } else {
-        alertFault(t("products.offsetPrice.admin.errorAddingTemplate"))
+        if (res?.resultMessage) {
+          alertFault(t(`${res?.resultMessage}`))
+        }
+        else {
+          alertFault(t("products.offsetPrice.admin.errorAddingTemplate"))
+        }
         setIsView(false)
         setIsViewInfoAfterGenerate(false)
       }
@@ -422,7 +433,8 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     setSearchValue,
     selectedDieCutTypeValue,
     setSelectedCardId,
-    setSelectedCardData
+    setSelectedCardData,
+    setLastOption
   };
 };
 
