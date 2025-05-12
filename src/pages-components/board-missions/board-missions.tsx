@@ -124,6 +124,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     setShowCustomerModal,
     setCustomerForEdit,
     selectedMission,
+    updateQuoteStatus,
+    onClickCloseModal,
+    openQuoteModal,
   } = useBoardMissions({ isPurchaseJobs });
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -537,6 +540,16 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
+      />
+
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("sales.quote.titleModal")}
+        subTitle={t("sales.quote.subTitleModal")}
+        yesBtn={t("sales.quote.changeStatus")}
+        openModal={openQuoteModal}
+        onClose={onClickCloseModal}
+        onClickDelete={updateQuoteStatus}
       />
     </>
   );

@@ -38,6 +38,10 @@ import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { GomakeTextInput } from "@/components";
 import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
+import { Stack } from "@mui/material";
+import { useRecoilValue } from "recoil";
+import { userQuoteState } from "@/store";
+import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
 
 type StatusOption = {
   label: string;
@@ -466,6 +470,44 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     return "";
   };
 
+  const updateQuoteStatus = async (quoteId?) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        navigate("/quote");
+      } else {
+        if (res?.statusCode === 85) {
+          alertFault(res?.message);
+        } else {
+          alertFaultUpdate();
+        }
+      }
+    };
+    await updateDocumentApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: quoteId ?? selectedQuote,
+      },
+    });
+  };
+
+  const [selectedQuote, setSelectedQuote] = useState<string>("");
+  const [openQuoteModal, setOpenQuoteModal] = useState(false);
+
+  const onClickCloseModal = () => {
+    setOpenQuoteModal(false);
+  };
+
+  const onClickOpenModal = (quoteId: string) => {
+    setSelectedQuote(quoteId);
+    setOpenModal(true);
+  };
+
+  const userQuoteIfExist = useRecoilValue<any>(userQuoteState);
+  const onClickEditQuote = (quoteId: string) => {
+    if (userQuoteIfExist) onClickOpenModal(quoteId);
+    else updateQuoteStatus(quoteId);
+  };
+
   const getAllBoardMissions = async (isClear: boolean = false) => {
     if (connectionId || true) {
       const callBack = (res) => {
@@ -510,12 +552,21 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                       : mission?.productType
                   }`
                 : mission?.number,
-              <a
-                style={classes.tableAtagStyle}
-                href={`/order?Id=${mission?.orderID}`}
-              >
-                {mission?.orderNumber}
-              </a>,
+              <Stack direction={"column"}>
+                {mission?.quoteNumber && (
+                  <a
+                  //  onClick={() => onClickEditQuote(mission?.quoteId)}
+                  >
+                    {mission?.quoteNumber}
+                  </a>
+                )}
+                <a
+                  style={classes.tableAtagStyle}
+                  href={`/order?Id=${mission?.orderID}`}
+                >
+                  {mission?.orderNumber}
+                </a>
+              </Stack>,
               mission?.outSourceType === null
                 ? `${t("boardMissions." + EWorkSource[0])}`
                 : `${t(
@@ -1308,6 +1359,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     customerForEdit,
     setShowCustomerModal,
     setCustomerForEdit,
+
+    updateQuoteStatus,
+    onClickCloseModal,
+    openQuoteModal,
   };
 };
 
