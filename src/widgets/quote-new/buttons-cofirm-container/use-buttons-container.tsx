@@ -1,6 +1,6 @@
-import { quoteConfirmationState } from "@/store";
+import { fileItemsState, quoteConfirmationState } from "@/store";
 import { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import { approveDocumentItemsApi, rejectDocumentApi, updateDocumentCommentsConfirmationApi } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { QuoteStatuses } from "../total-price-and-vat/enums";
@@ -17,6 +17,7 @@ const useButtonsConfirmContainer = () => {
     const [openRejectModal, setOpenRejectModal] = useState(false);
     const [rejectStatus, setRejectStatus] = useState<QuoteStatuses>();
     const [isButtonClicked, setIsButtonClicked] = useState(false);
+    const fileItems = useRecoilValue(fileItemsState);
     const { getQuoteConfirmation } = useQuoteConfirmation();
     const handleRejectBtnClick = (event: React.MouseEvent<HTMLElement>) => {
         setIsButtonClicked(true);
@@ -79,7 +80,6 @@ const useButtonsConfirmContainer = () => {
             alertFault("sales.quote.alertApprove");
             return;
         }
-
         const callBack = (res) => {
             if (res?.success) {
                 alertSuccessUpdate();
@@ -88,7 +88,11 @@ const useButtonsConfirmContainer = () => {
                 alertFaultUpdate();
             }
         }
-        await approveDocumentItemsApi(callApi, callBack, { docuementItemsIds: selectedItemIds, fileBase64: dataURL, signerName: signerName })
+        await approveDocumentItemsApi(callApi, callBack, {
+            docuementItems: fileItems,
+            fileBase64: dataURL,
+            signerName: signerName
+        })
     }
 
 

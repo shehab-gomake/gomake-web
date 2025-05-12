@@ -4,16 +4,14 @@ import { useStyle } from "./style";
 import {
   ArrowDownWithCircle,
   ArrowUpWithCircle,
-  CalculatingIcon,
   CheckboxCheckedIcon,
   CheckboxIcon,
-  NotCalculatingIcon,
 } from "@/icons";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { CharacterDetails } from "./row-details/character-details";
 import { InputUpdatedValues } from "../input-updated-values";
 import { useQuoteTable } from "./use-quote-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuoteConfirmation } from "@/pages-components/quote-confirmation/use-quote-confirmation";
 import { useRouter } from "next/router";
 import { MoreMenuWidget } from "../more-circle";
@@ -61,6 +59,7 @@ const RowMappingWidget = ({
   const [isSelected, setIsSelected] = useState(item?.isSelected);
   const { getCurrencyUnitText } = useQuoteGetData();
 
+
   const handleChangeSelectedItem = (checked, itemId) => {
     setIsSelected(checked);
     onChangeSelectedItemRowForQoute(checked, itemId);
@@ -94,6 +93,7 @@ const RowMappingWidget = ({
     index,
     printHouseId: quoteItems?.printHouseId,
   });
+
   const { CheckDocumentPermission } = useUserPermission();
   const { handleItemCheck } = useQuoteConfirmation();
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
