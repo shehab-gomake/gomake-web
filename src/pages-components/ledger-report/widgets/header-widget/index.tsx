@@ -8,6 +8,8 @@ import {
   useAgingReportHeader,
 } from "./use-header-widget";
 import { DateRangePicker } from "rsuite";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 const LedgerReportHeaderWidget = ({
   customer,
@@ -22,7 +24,6 @@ const LedgerReportHeaderWidget = ({
   customerId,
   isFetchingCustomers,
   isPurchaseReport,
-  supplierList,
 }: AgingReportHeaderWidgetProps) => {
   const { classes, t } = useAgingReportHeader();
   return (
@@ -34,26 +35,18 @@ const LedgerReportHeaderWidget = ({
               ? t("reports.supplier")
               : t("sales.quote.customer")}
           </h3>
-          <GoMakeAutoComplate
+          <ClientAutocomplete
             key={customer?.id}
+            clientType={
+              isPurchaseReport ? CLIENT_TYPE.SUPPLIER : CLIENT_TYPE.CUSTOMER
+            }
             getOptionLabel={(option: any) => `${option.name}`}
             style={classes.textInputStyle}
             onChange={handleCustomerChange}
             value={customer}
             loading={isFetchingCustomers}
-            defaultFiltering={isPurchaseReport ? true : false}
-            options={isPurchaseReport ? supplierList : renderOptions()}
-            onChangeTextField={(e) => {
-              if (isPurchaseReport) {
-                return;
-              }
-              checkWhatRenderArray(e);
-            }}
-            placeholder={t(
-              `sales.quote.${
-                isPurchaseReport ? "chooseSupplier" : "chooseCustomer"
-              }`
-            )}
+            options={renderOptions()}
+            onChangeTextField={checkWhatRenderArray}
           />
         </div>
       )}

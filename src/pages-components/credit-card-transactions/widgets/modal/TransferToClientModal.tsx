@@ -5,6 +5,7 @@ import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { Stack } from "@mui/material";
 import { useSnackBar } from "@/hooks";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
 interface ITransferToClient {
   onClickClosModal: () => void;
@@ -24,7 +25,7 @@ const TransferToClientModal = ({
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-  } = useCustomerDropDownList();
+  } = useCustomerDropDownList({});
 
   const handleConfirmClick = () => {
     if (customer != null) {
@@ -44,13 +45,11 @@ const TransferToClientModal = ({
     >
       <div style={classes.date2FilterContainer}>
         <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
-        <GoMakeAutoComplate
+        <ClientAutocomplete
           options={renderOptions()}
-          defaultFiltering={false}
           onChangeTextField={checkWhatRenderArray}
           getOptionLabel={(option: any) => `${option.name}`}
           style={classes.textInputStyle}
-          placeholder={t("sales.quote.chooseCustomer")}
           onChange={handleCustomerChange}
           value={customer}
           loading={isFetching}

@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { DateRangePicker } from "rsuite";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
 const CreditCardTransactionsReportHeaderWidget = ({
   customer,
@@ -38,14 +39,12 @@ const CreditCardTransactionsReportHeaderWidget = ({
       <div style={classes.filtersContainer}>
         <div style={classes.date2FilterContainer}>
           <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
-          <GoMakeAutoComplate
+          <ClientAutocomplete
             key={customer?.id}
             options={renderOptions()}
-            defaultFiltering={false}
             onChangeTextField={checkWhatRenderArray}
             getOptionLabel={(option: any) => `${option.name}`}
             style={classes.textInputStyle}
-            placeholder={t("sales.quote.chooseCustomer")}
             onChange={handleCustomerChange}
             value={customer}
             loading={isFetchingCustomers}

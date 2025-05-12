@@ -16,7 +16,7 @@ import { ETypeException } from "../../enums/profites-enum";
 import { ICallAndSetData } from "@/services/api-service/interface";
 import { getSetApiData } from "@/services/api-service/get-set-api-data";
 import { usePrintHouseMachines } from "@/widgets/properties/hooks/use-print-house-machines";
-import { CLIENT_TYPE_Id } from "@/pages/customers/enums";
+import { CLIENT_TYPE, CLIENT_TYPE_Id } from "@/pages/customers/enums";
 import { useTranslation } from "react-i18next";
 import { EGroupByEnum } from "@/enums";
 import { agentsCategoriesState } from "@/pages/customers/customer-states";
@@ -42,7 +42,7 @@ const useAddRuleModal = ({
   isQuoteWidge,
   filterData,
   openModal,
-  getProductHotFolderRules
+  getProductHotFolderRules,
 }) => {
   const GET_MATERIALS_TYPES_URL = "/v1/materials/getMaterialsTypes";
   const { callApi } = useGomakeAxios();
@@ -50,7 +50,6 @@ const useAddRuleModal = ({
   const [openScheduleModal, setOpenScheduleModal] = useState(false);
   const categoriesList = useRecoilValue(machineCategoriesState);
   const [additionType, setAdditionType] = useState<number>(null);
-  
 
   const onCloseScheduleModal = () => {
     setOpenScheduleModal(false);
@@ -61,8 +60,8 @@ const useAddRuleModal = ({
 
   const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList({
-      shouldRenderCustomersOnMount: openModal,
-      shouldRenderSuppliersOnMount: false,
+      clientType: CLIENT_TYPE.CUSTOMER,
+      shouldRenderOnMount: openModal,
     });
 
   const [propertieValue, setPropertieValue] = useState<any>();
@@ -76,7 +75,10 @@ const useAddRuleModal = ({
         label: t("products.profits.exceptions.machineTypeCategory"),
         id: "Machine category",
       },
-      { label: t("products.profits.exceptions.materialType"), id: "MATERIALTYPE" },
+      {
+        label: t("products.profits.exceptions.materialType"),
+        id: "MATERIALTYPE",
+      },
       { label: t("products.profits.exceptions.products"), id: "Products" },
       {
         label: t("products.profits.exceptions.productType"),
@@ -111,7 +113,7 @@ const useAddRuleModal = ({
     Agent: 8,
     Employee: 9,
     ProductType: 10,
-    MATERIALTYPE : 11,
+    MATERIALTYPE: 11,
   };
 
   const { Outputs } = useOutputs({ shouldRenderOutputsOnMount: openModal });
@@ -198,8 +200,12 @@ const useAddRuleModal = ({
       { label: "Machine", id: EGroupByEnum.Machine },
     ];
   }, []);
-  const { alertSuccessAdded, alertFaultAdded, setSnackbarStateValue, alertFault } =
-    useSnackBar();
+  const {
+    alertSuccessAdded,
+    alertFaultAdded,
+    setSnackbarStateValue,
+    alertFault,
+  } = useSnackBar();
   const router = useRouter();
 
   const initialRule = {
@@ -367,11 +373,19 @@ const useAddRuleModal = ({
       ) {
         const statementLabel = condition?.statement?.label ?? "";
         let translatedStatementLabel = statementLabel;
-        if(condition.statement2 && condition.statement2.type === 3 && statementLabel === "true"){
-          translatedStatementLabel = t('modal.yes');
+        if (
+          condition.statement2 &&
+          condition.statement2.type === 3 &&
+          statementLabel === "true"
+        ) {
+          translatedStatementLabel = t("modal.yes");
         }
-        if(condition.statement2 && condition.statement2.type === 3 && (!statementLabel ||  statementLabel === "false")){
-          translatedStatementLabel = t('modal.no');
+        if (
+          condition.statement2 &&
+          condition.statement2.type === 3 &&
+          (!statementLabel || statementLabel === "false")
+        ) {
+          translatedStatementLabel = t("modal.no");
         }
         text += `${statement2Label} ${conditionLabel}  ${translatedStatementLabel}`;
       } else if (
@@ -383,12 +397,20 @@ const useAddRuleModal = ({
       } else {
         const statementLabel = condition?.statement ?? "";
         if (statementLabel.length > 0) {
-          let translatedStatementLabel = statementLabel; 
-          if(condition.statement2 && condition.statement2.type === 3 && statementLabel === "true"){
-            translatedStatementLabel = t('modal.yes'); 
+          let translatedStatementLabel = statementLabel;
+          if (
+            condition.statement2 &&
+            condition.statement2.type === 3 &&
+            statementLabel === "true"
+          ) {
+            translatedStatementLabel = t("modal.yes");
           }
-          if(condition.statement2 && condition.statement2.type === 3 && (!statementLabel ||  statementLabel === "false")){
-            translatedStatementLabel = t('modal.no');
+          if (
+            condition.statement2 &&
+            condition.statement2.type === 3 &&
+            (!statementLabel || statementLabel === "false")
+          ) {
+            translatedStatementLabel = t("modal.no");
           }
           text += `${categoryLabel} ${statement2Label} ${conditionLabel} ${translatedStatementLabel}`;
         } else {
@@ -427,7 +449,11 @@ const useAddRuleModal = ({
   const getStatementId = (item) => {
     if (typeof item?.statement === "object") {
       //material input
-      if (item.statement2 && item.statement2.type === 5 || item.statement2 && item.statement2.type === 10 || item.statement2 && item.statement2.type === 11) {
+      if (
+        (item.statement2 && item.statement2.type === 5) ||
+        (item.statement2 && item.statement2.type === 10) ||
+        (item.statement2 && item.statement2.type === 11)
+      ) {
         return item?.statement?.code;
       }
       return item?.statement?.id || item?.statement?.value;
@@ -442,12 +468,15 @@ const useAddRuleModal = ({
       additionalProfit: additionalProfit,
       pricingBy: selectedPricingBy?.value,
       exceptionRule: expression,
-      additionType: additionType||0,
+      additionType: additionType || 0,
       exceptionConditionProperties: rules.map((item) => {
         return {
           statementId: getStatementId(item),
           // statementValue: item.statement2.id,
-          statementValue: item?.category?.id === "MATERIALTYPE" ? item.statement2.enumCode : item.statement2.id,
+          statementValue:
+            item?.category?.id === "MATERIALTYPE"
+              ? item.statement2.enumCode
+              : item.statement2.id,
           operator: item.condition.id,
           conditionBetweenStatements: item.linkCondition
             ? item.linkCondition.id
@@ -523,8 +552,7 @@ const useAddRuleModal = ({
         ruleName: expression,
         ruleConditionStatements: null,
         exceptionConditionProperties: rules.map((item) => {
-          
-          let condition =  {
+          let condition = {
             statementId: getStatementId(item),
             statementValue: item.statement2.id,
             operator: item.condition.id,
@@ -533,7 +561,10 @@ const useAddRuleModal = ({
               : "",
             statementCategory: EStatementCategory[item.category.id],
           };
-          if(item.category.id == "Property input" || item.category.id == "Property output"){
+          if (
+            item.category.id == "Property input" ||
+            item.category.id == "Property output"
+          ) {
             condition.statementId = item.statement2.id;
             condition.statementValue = getStatementId(item);
           }
@@ -678,7 +709,8 @@ const useAddRuleModal = ({
     const isValidRules = rules.every((rule) => {
       const hasCategory = rule.category && rule.category.id;
       const hasCondition = rule.condition && rule.condition.id;
-      const hasStatement2 = rule.statement2 && (rule.statement2.id || rule.statement2.enumCode);
+      const hasStatement2 =
+        rule.statement2 && (rule.statement2.id || rule.statement2.enumCode);
       return hasCategory && hasCondition && hasStatement2;
     });
     if (!isValidRules) {
@@ -696,7 +728,10 @@ const useAddRuleModal = ({
       exceptionConditionProperties: rules.map((item) => {
         return {
           statementId: getStatementId(item),
-          statementValue: item?.category?.id === "MATERIALTYPE" ? item.statement2.enumCode : item.statement2.id,
+          statementValue:
+            item?.category?.id === "MATERIALTYPE"
+              ? item.statement2.enumCode
+              : item.statement2.id,
           operator: item.condition.id,
           conditionBetweenStatements: item.linkCondition
             ? item.linkCondition.id
@@ -711,27 +746,23 @@ const useAddRuleModal = ({
         onCloseModal();
         setRules([initialRule]);
         getProductHotFolderRules();
-      }
-      else {
-        if(!res?.msg || res?.msg == ""){
+      } else {
+        if (!res?.msg || res?.msg == "") {
           alertFaultAdded();
-        }
-        else{
-          if(res?.errors?.message){
+        } else {
+          if (res?.errors?.message) {
             alertFault(t(`${res?.msg} ---> ${res?.errors?.message}`));
-          }
-          else{
+          } else {
             alertFault(t(`${res?.msg}`));
           }
         }
       }
-
-    }
+    };
     await addProductHotFolderRuleApi(callApi, callBack, {
       productId: router?.query?.id,
-      ...requestBody
+      ...requestBody,
     });
-  }
+  };
 
   return {
     rules,
@@ -780,7 +811,7 @@ const useAddRuleModal = ({
     isFetching,
     getConditionText,
     setAdditionType,
-    createForHotFolderWidget
+    createForHotFolderWidget,
   };
 };
 

@@ -16,6 +16,7 @@ import { ModalType } from "@/enums";
 import { addressTypeState, EAddressType } from "./address-widget/state";
 import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
 import { ClientChangeSource } from "@/pages-components/quote-new/store/quote";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { useRecoilState } from "recoil";
 
 const BusinessNewWidget = ({
@@ -158,13 +159,11 @@ const BusinessNewWidget = ({
   return (
     <>
       <div style={{ ...classes.businessContainerStyle, marginBottom: "10px" }}>
-        <AutoCompleteUpdatedValue
-          label={
-            isPurchaseDocument
-              ? t("sales.quote.supplierName")
-              : t("sales.quote.businessName")
+        <ClientAutocomplete
+          uiType="updated"
+          clientType={
+            isPurchaseDocument ? CLIENT_TYPE.SUPPLIER : CLIENT_TYPE.CUSTOMER
           }
-          defaultFiltering={isPurchaseDocument ? true : false}
           value={
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
@@ -184,13 +183,10 @@ const BusinessNewWidget = ({
           }
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => onClickOpenChangeClientModal(value)}
-          onChangeTextField={(e) => {
-            if (isPurchaseDocument) {
-              return;
-            }
-            checkWhatRenderArray(e);
-          }}
+          onChangeTextField={checkWhatRenderArray}
           isFetching={isFetching}
+          onChangeSelectBusiness={onChangeSelectBusiness}
+          isFromCartPage={true}
         />
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
           {!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote && (

@@ -442,7 +442,6 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         updatedQuoteItemValue[addressArray] = [];
       }
 
-      debugger;
       const newAddress = {
         id: uuidv4(),
         ...addressWithMetadata,
