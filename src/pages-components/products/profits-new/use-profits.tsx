@@ -25,9 +25,10 @@ import { getAndSetProfitsPricingTables } from "./services/get-profits-pricing-ta
 import { getAndSetCalculateCaseProfits } from "./services/get-calculate-case-profits";
 import { getAndSetProductProfitByProductId } from "./services/get-product-profit-by-product-id";
 import { useRecoilValue } from "recoil";
-import { systemCurrencyState } from "@/store";
+import { systemCurrencyState, userState } from "@/store";
 import { currencyUnitState } from "@/store/currency-units";
 import { EAdditionType } from "@/enums/document-type-enum";
+import { UNIT_TYPE } from "@/enums/tabs-icon-enums";
 const useNewProfits = () => {
   const {
     alertFaultUpdate,
@@ -40,6 +41,8 @@ const useNewProfits = () => {
   const { t } = useTranslation();
   const { callApi } = useGomakeAxios();
   const router = useRouter();
+  const user = useRecoilValue<any>(userState);
+  const unitType = user?.printHouseProfile?.unitType || 0
   const Transition = [
     {
       label: t("products.profits.pricingListWidget.linear"),
@@ -73,15 +76,15 @@ const useNewProfits = () => {
       value: EPricingBy.BEATS,
     },
     {
-      label: t("products.profits.pricingListWidget.meter"),
+      label: unitType === UNIT_TYPE.UNITS ? t("products.profits.pricingListWidget.meter") : t("products.profits.pricingListWidget.foot"),
       value: EPricingBy.METER,
     },
     {
-      label: "M^2",
+      label: unitType === UNIT_TYPE.UNITS ? t("products.profits.pricingListWidget.squareMeter") : t("products.profits.pricingListWidget.squareFoot"),
       value: EPricingBy.SQUARE_METER,
     },
     {
-      label: "M^3",
+      label: unitType === UNIT_TYPE.UNITS ? t("products.profits.pricingListWidget.cubicMeter") : t("products.profits.pricingListWidget.cubicFoot"),
       value: EPricingBy.CUBIC_METER,
     },
     {
