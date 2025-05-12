@@ -9,6 +9,8 @@ import {
 } from "./use-header-widget";
 import { DateRangePicker } from "rsuite";
 import { createGlobalStyle } from "styled-components";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 const SalesReportHeaderWidget = ({
   agent,
@@ -28,7 +30,6 @@ const SalesReportHeaderWidget = ({
   toDate,
   isFetchingCustomers,
   isPurchaseReport,
-  supplierList,
 }: SalesReportHeaderWidgetProps) => {
   const { classes, t } = useSalesReportHeader();
   const dir: "rtl" | "ltr" = t("direction");
@@ -71,26 +72,18 @@ const SalesReportHeaderWidget = ({
             ? t("reports.supplier")
             : t("productionFloor.customer")}
         </h3>
-        <GoMakeAutoComplate
+        <ClientAutocomplete
           key={customer?.id}
+          clientType={
+            isPurchaseReport ? CLIENT_TYPE.SUPPLIER : CLIENT_TYPE.CUSTOMER
+          }
           getOptionLabel={(option: any) => `${option.name}`}
           style={classes.textInputStyle}
           onChange={handleCustomerChange}
           value={customer}
           loading={isFetchingCustomers}
-          defaultFiltering={isPurchaseReport ? true : false}
-          options={isPurchaseReport ? supplierList : renderOptions()}
-          onChangeTextField={(e) => {
-            if (isPurchaseReport) {
-              return;
-            }
-            checkWhatRenderArray(e);
-          }}
-          placeholder={t(
-            `sales.quote.${
-              isPurchaseReport ? "chooseSupplier" : "chooseCustomer"
-            }`
-          )}
+          options={renderOptions()}
+          onChangeTextField={checkWhatRenderArray}
         />
       </div>
       <div style={classes.date2FilterContainer}>

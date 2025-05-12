@@ -170,7 +170,7 @@ const BoardMissionsStationActionItem = ({
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
 
-  const onClickBackToProcess = async (boardMissionsActionId: string) => {
+  const onClickBackToProcess = async (boardMissionsActionId: string, productType: string) => {
     setLoading(true);
     const callBack = (res) => {
       setLoading(false);
@@ -205,7 +205,7 @@ const BoardMissionsStationActionItem = ({
     };
     await cancelBoardMissionsActionDone(callApi, callBack, {
       boardMissionsActionId: boardMissionsActionId,
-      productType: boardMissions.productType,
+      productType: productType,
     });
   };
 
@@ -477,7 +477,7 @@ const BoardMissionsStationActionItem = ({
                           variant={"contained"}
                           onClick={(e) => {
                             e.stopPropagation();
-                            onClickBackToProcess(boardMissionActionId).then();
+                            onClickBackToProcess(boardMissionActionId, productType).then();
                           }}
                           style={{
                             padding: "5px 8px",
@@ -885,7 +885,7 @@ const BoardMissionsStationActionItem = ({
                           variant={"outlined"}
                           onClick={(e) => {
                             e.stopPropagation();
-                            onClickBackToProcess(boardMissionActionId).then();
+                            onClickBackToProcess(boardMissionActionId, productType).then();
                           }}
                           style={{
                             padding: "5px 8px",

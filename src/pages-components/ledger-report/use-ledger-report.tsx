@@ -31,11 +31,7 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-    supplierList,
-  } = useCustomerDropDownList({
-    shouldRenderCustomersOnMount: !isPurchaseReport,
-    shouldRenderSuppliersOnMount: isPurchaseReport,
-  });
+  } = useCustomerDropDownList({ clientType: clientType });
 
   const [clientContactsValue, setClientContactsValue] = useState<any>([]);
 
@@ -404,7 +400,6 @@ const useLedgerReport = ({ customerId, clientType }: IProps) => {
     isFetching,
     erpAccountsList,
     getErpAccountsList,
-    supplierList,
     isPurchaseReport,
   };
 };

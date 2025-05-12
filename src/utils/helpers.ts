@@ -394,3 +394,8 @@ export const initialFromDate = (key: string, defaultDate?: Date) => {
     ? defaultDate
     : startOfYear(new Date());
 };
+
+export const areAllItemsChecked = (quoteConfirm) => {
+  if (!quoteConfirm?.documentItems?.length) return false;
+  return quoteConfirm.documentItems.every(item => item.isChecked === false);
+};

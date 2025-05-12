@@ -30,14 +30,12 @@ const MultiSelectClientsInput = ({
 }: IProps) => {
   const { classes } = useStyle();
   const { updateCellData } = useTableCellData(isAdmin);
-  const {
-    renderOptions,
-    checkWhatRenderArray,
-  } = useCustomerDropDownList()
+  const { renderOptions, checkWhatRenderArray } = useCustomerDropDownList({});
   const { t } = useTranslation();
   const materialSuppliers = useRecoilValue(materialCategorySuppliersState);
   const isHaveMorethanMaterialSuppliers = materialSuppliers?.length > 1;
-  const [openDeleteTableRowModal, setOpenDeleteTableRowModal] = useState<boolean>(false);
+  const [openDeleteTableRowModal, setOpenDeleteTableRowModal] =
+    useState<boolean>(false);
   const onClickCloseDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(false);
   };
@@ -45,8 +43,8 @@ const MultiSelectClientsInput = ({
   const onClickOpenDeleteTableRowModal = () => {
     setOpenDeleteTableRowModal(true);
   };
-  const [selectedChecked, setChecked] = useState(false)
-  const [selectedOption, setOption] = useState<any>()
+  const [selectedChecked, setChecked] = useState(false);
+  const [selectedOption, setOption] = useState<any>();
   const clientsOptions = renderOptions().map((client) => ({
     value: client.id,
     label: `${client.name} - ${client.code}`,
@@ -66,7 +64,11 @@ const MultiSelectClientsInput = ({
   });
 
   const selectedLabels = values
-    ?.map((selected) => reorderedOptions?.find((opt) => opt?.value === selected.ID)?.label || selected.Name)
+    ?.map(
+      (selected) =>
+        reorderedOptions?.find((opt) => opt?.value === selected.ID)?.label ||
+        selected.Name
+    )
     .filter((label) => label !== null && label !== undefined);
 
   const handleSelectCheck = (
@@ -76,8 +78,7 @@ const MultiSelectClientsInput = ({
   ) => {
     if (isHaveMorethanMaterialSuppliers) {
       onClickOpenDeleteTableRowModal();
-    }
-    else {
+    } else {
       onChangeInputs(
         parameterKey,
         isChecked
@@ -85,12 +86,13 @@ const MultiSelectClientsInput = ({
           : values.filter((v) => v !== option?.value)
       );
     }
-
   };
 
   const transformValuesArray = (inputArray) => {
     return inputArray
-      .map((item) => (typeof item === 'object' && item !== null ? item.ID : item)) // Extract ID if item is an object
+      .map((item) =>
+        typeof item === "object" && item !== null ? item.ID : item
+      ) // Extract ID if item is an object
       .filter((id) => id !== undefined); // Filter out any undefined values
   };
 
@@ -98,9 +100,6 @@ const MultiSelectClientsInput = ({
     const values = transformValuesArray(value);
     await updateCellData(id, key, values);
   };
-
-
-
 
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
@@ -110,7 +109,9 @@ const MultiSelectClientsInput = ({
           ...classes.multiSelectStyle2,
           "& .MuiChip-deleteIcon": { display: "none" },
         }}
-        onChangeTextField={parameterKey === "clients" ? checkWhatRenderArray : undefined}
+        onChangeTextField={
+          parameterKey === "clients" ? checkWhatRenderArray : undefined
+        }
         value={selectedLabels}
         disableClearable={true}
         placeholder={placeHolder}
@@ -122,15 +123,13 @@ const MultiSelectClientsInput = ({
               <div>
                 <Checkbox
                   onChange={(e, checked) => {
-                    handleSelectCheck(parameterKey, checked, option)
-                    setOption(option)
-                    setChecked(checked)
-                  }
-
-                  }
+                    handleSelectCheck(parameterKey, checked, option);
+                    setOption(option);
+                    setChecked(checked);
+                  }}
                   icon={<CheckboxIcon />}
                   checkedIcon={<CheckboxCheckedIcon />}
-                  checked={values?.some(item => item.ID === option?.value)}
+                  checked={values?.some((item) => item.ID === option?.value)}
                 />
               </div>
               <div>{option.label}</div>

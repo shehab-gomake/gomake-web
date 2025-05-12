@@ -28,7 +28,7 @@ const useAdjustmentsModal = ({
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-  } = useCustomerDropDownList();
+  } = useCustomerDropDownList({});
   const { alertFaultUpdate, alertFaultDelete, alertFault, alertSuccess } =
     useSnackBar();
   const { callApi } = useGomakeAxios();

@@ -16,7 +16,7 @@ import { useTranslation } from "react-i18next";
 import { useRecoilState, useSetRecoilState } from "recoil";
 
 interface WelcomeModalProps {
-  handleOpenResetPassword: () => void;
+  handleOpenDemoVideo: () => void;
 
   updatePrintHouseSetupSteps: (
     step: SetupStep,
@@ -26,7 +26,7 @@ interface WelcomeModalProps {
 
 export const WelcomeModal = ({
   updatePrintHouseSetupSteps,
-  handleOpenResetPassword,
+  handleOpenDemoVideo,
 }: WelcomeModalProps) => {
   const { t } = useTranslation();
   const [printHouseWelcomeModal, setPrintHouseWelcomeModal] =
@@ -39,7 +39,7 @@ export const WelcomeModal = ({
   const handleStart = () => {
     setPrintHouseWelcomeModal(false);
     setTimeout(() => {
-      handleOpenResetPassword();
+      handleOpenDemoVideo();
     }, 300);
     setItem("gomake_setupGuideExpanded", "true");
     updatePrintHouseSetupSteps(SetupStep.WELCOME_MESSAGE, StepStatus.DONE);

@@ -33,7 +33,6 @@ const QuoteConfirmationPageWidget = ({
     getCompanyLogo,
     quoteConfirm,
   } = useQuoteConfirmation({ documentType, isPrePaymentPage });
-
   const { classes } = useStyle({ direction });
   const { t } = useTranslation();
   useEffect(() => {

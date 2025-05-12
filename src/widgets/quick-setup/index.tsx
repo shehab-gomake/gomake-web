@@ -11,12 +11,14 @@ const SetupSection = () => {
     ActionsModal,
     handleOpenModal,
     initialSetupData,
-    ResetPasswordModalControl,
     DemoVideoModalControl,
     updatePrintHouseSetupSteps,
     handleOpenDemoVideo,
     videoUrl,
     setVideoUrl,
+    resetPasswordModal,
+    onOpenResetModal,
+    onCloseResetModal,
   } = useQuickSetup();
 
   const {} = useQuickSetupSocketIo();
@@ -25,7 +27,7 @@ const SetupSection = () => {
     <>
       <SetupGuideMenu
         handleOpenModal={handleOpenModal}
-        handleOpenResetPassword={ResetPasswordModalControl.open}
+        handleOpenResetPassword={onOpenResetModal}
         updatePrintHouseSetupSteps={updatePrintHouseSetupSteps}
         handleOpenDemoVideo={handleOpenDemoVideo}
       />
@@ -33,15 +35,19 @@ const SetupSection = () => {
         ActionsModal={ActionsModal}
         initialSetupData={initialSetupData}
       />
-      <ResetPasswordModal modalControl={ResetPasswordModalControl} />
+      <ResetPasswordModal
+        openModal={resetPasswordModal}
+        onClose={onCloseResetModal}
+      />
       <WelcomeModal
         updatePrintHouseSetupSteps={updatePrintHouseSetupSteps}
-        handleOpenResetPassword={ResetPasswordModalControl.open}
+        handleOpenDemoVideo={DemoVideoModalControl.open}
       />
       <DemoVideoModal
         modalControl={DemoVideoModalControl}
         videoUrl={videoUrl}
         setVideoUrl={setVideoUrl}
+        updatePrintHouseSetupSteps={updatePrintHouseSetupSteps}
       />
     </>
   );

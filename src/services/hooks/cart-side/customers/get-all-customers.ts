@@ -15,4 +15,18 @@ const getAndSetAllCustomers = async (
   return returnResult(result, setState);
 };
 
-export { getAndSetAllCustomers };
+const getAndSetRecentCustomers = async (
+  callApi: ICallApi,
+  setState?: ISetState,
+  data?: any
+) => {
+  const result: any = await callApi(
+    "GET",
+    "/v1/crm-service/customer/get-recent-customers",
+    data,
+    false
+  );
+  return returnResult(result, setState);
+};
+
+export { getAndSetAllCustomers, getAndSetRecentCustomers };

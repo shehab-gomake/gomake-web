@@ -5,6 +5,11 @@ export const addressModalState = atom<boolean>({
   default: false,
 });
 
+export const addressTypeState = atom<EAddressType>({
+  key: "addressTypeState",
+  default: null,
+});
+
 export const isNewAddress = atom<boolean>({
   key: "isNewAddress",
   default: false,

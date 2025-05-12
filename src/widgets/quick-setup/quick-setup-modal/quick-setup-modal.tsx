@@ -1,11 +1,12 @@
 import { useRecoilValue } from "recoil";
 import { setupGuideOpenState } from "@/store/setup-guide-state";
-import { SetupSteps } from "./components/setup-steps";
 import { Dialog, DialogContent, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { ModalControls } from "@/hooks/use-modal";
 import { useTranslation } from "react-i18next";
 import { ProductsSetupData } from "../compoennets/interfaces";
+import { SetupSteps } from "./components/setup-steps";
+import { NewSetupSteps } from "./components/setup-steps-new";
 
 interface SetupModalProps {
   ActionsModal: ModalControls;
@@ -43,7 +44,7 @@ const SetupModal = ({ ActionsModal, initialSetupData }: SetupModalProps) => {
         >
           <CloseIcon />
         </IconButton>
-        <SetupSteps
+        <NewSetupSteps
           initialSetupData={initialSetupData}
           ActionsModal={ActionsModal}
         />

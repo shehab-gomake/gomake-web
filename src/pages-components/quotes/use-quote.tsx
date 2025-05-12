@@ -224,10 +224,12 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isPurchaseInvoiceRefund ||
     isSupplierPayments;
 
-  const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
+  const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList({
-      shouldRenderCustomersOnMount: !isPurchaseDocument && !isFromHomePage,
-      shouldRenderSuppliersOnMount: isPurchaseDocument,
+      clientType: isPurchaseDocument
+        ? CLIENT_TYPE.SUPPLIER
+        : CLIENT_TYPE.CUSTOMER,
+      shouldRenderOnMount: !isFromHomePage,
     });
 
   const handleDocumentNumberChange = (event) => {
@@ -2900,7 +2902,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     deliveryStatus,
     setDeliveryStatus,
     isPurchaseDocument,
-    supplierList,
     isSendToClient,
     setFromDate,
     setToDate,

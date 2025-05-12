@@ -21,6 +21,7 @@ import { DOCUMENT_TYPE } from "../quotes/enums";
 import { useClientContactsList } from "@/hooks/use-client-contacts";
 import { useDeliveryStatusButton } from "../quotes/widgets/delivery-status-button/use-delivery-status";
 import { ModalType } from "@/enums";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
 const DeliveriesPageWidget = () => {
   const { classes } = useStyle();
@@ -152,14 +153,12 @@ const DeliveriesPageWidget = () => {
                           <div style={classes.filterLabelStyle}>
                             {t("productionFloor.customer")}
                           </div>
-                          <GoMakeAutoComplate
+                          <ClientAutocomplete
                             key={customer?.id}
                             options={renderOptions() ? renderOptions() : []}
                             getOptionLabel={(option: any) => `${option.name}`}
-                            defaultFiltering={false}
                             onChangeTextField={checkWhatRenderArray}
                             style={classes.textInputStyle}
-                            placeholder={t("sales.quote.chooseCustomer")}
                             onChange={handleCustomerChange}
                             value={customer}
                             loading={isFetching}

@@ -3,6 +3,8 @@ import { useCreateNewTransaction } from "./use-create-transaction";
 import { useStyle } from "./style";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { DateFormatter } from "@/utils/date-formatters";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 interface CreateNewTransactionModalProps {
   openModal: boolean;
@@ -49,15 +51,12 @@ const CreateNewTransactionModal = ({
     dueDateRef,
     onChangeDescription,
     description,
-    supplierList,
   } = useCreateNewTransaction({ onCloseModal, isPurchaseReport });
 
   const getFromSelectedValue = () => {
     if (fromAccountType === "client") {
       return (
-        (isPurchaseReport ? supplierList : renderOptions())?.find(
-          (option) => option?.id === fromClientId
-        ) || null
+        renderOptions()?.find((option) => option?.id === fromClientId) || null
       );
     }
     return (
@@ -69,9 +68,7 @@ const CreateNewTransactionModal = ({
   const getToSelectedValue = () => {
     if (toAccountType === "client") {
       return (
-        (isPurchaseReport ? supplierList : renderOptions())?.find(
-          (option) => option?.id === toClientId
-        ) || null
+        renderOptions()?.find((option) => option?.id === toClientId) || null
       );
     }
     return (
@@ -129,45 +126,33 @@ const CreateNewTransactionModal = ({
                             )
                           : t("reports.selectAccountCode")}
                       </h3>
-                      <GoMakeAutoComplate
-                        key={fromAccountType}
-                        getOptionLabel={(option: any) => option?.name || ""}
-                        options={
-                          fromAccountType === "client"
-                            ? isPurchaseReport
-                              ? supplierList
-                              : renderOptions()
-                            : erpAccountsList
-                        }
-                        style={classes.textInputStyle}
-                        placeholder={
-                          fromAccountType === "client"
-                            ? t(
-                                `sales.quote.${
-                                  isPurchaseReport
-                                    ? "chooseSupplier"
-                                    : "chooseCustomer"
-                                }`
-                              )
-                            : t("reports.selectAccountCode")
-                        }
-                        value={getFromSelectedValue()}
-                        onChange={handleFromChange}
-                        onChangeTextField={(e) => {
-                          if (
-                            fromAccountType === "client" &&
-                            !isPurchaseReport
-                          ) {
-                            checkWhatRenderArray(e);
+                      {fromAccountType === "client" ? (
+                        <ClientAutocomplete
+                          key={fromAccountType}
+                          value={getFromSelectedValue()}
+                          clientType={
+                            isPurchaseReport
+                              ? CLIENT_TYPE.SUPPLIER
+                              : CLIENT_TYPE.CUSTOMER
                           }
-                          return;
-                        }}
-                        defaultFiltering={
-                          fromAccountType === "client" && !isPurchaseReport
-                            ? false
-                            : true
-                        }
-                      />
+                          options={renderOptions() ? renderOptions() : []}
+                          getOptionLabel={(option: any) => `${option.name}`}
+                          onChangeTextField={checkWhatRenderArray}
+                          style={classes.textInputStyle}
+                          onChange={handleFromChange}
+                          loading={isFetching}
+                        />
+                      ) : (
+                        <GoMakeAutoComplate
+                          key={fromAccountType}
+                          getOptionLabel={(option: any) => option?.name || ""}
+                          options={erpAccountsList}
+                          style={classes.textInputStyle}
+                          placeholder={t("reports.selectAccountCode")}
+                          value={getFromSelectedValue()}
+                          onChange={handleFromChange}
+                        />
+                      )}
                     </div>
                   )}
                 </div>
@@ -176,6 +161,7 @@ const CreateNewTransactionModal = ({
                     <h3 style={classes.filterLabelStyle}>
                       {t("reports.creditAccount")}
                     </h3>
+
                     <GoMakeAutoComplate
                       options={accountTypeOptions}
                       getOptionLabel={(option) => option.label}
@@ -200,42 +186,33 @@ const CreateNewTransactionModal = ({
                             )
                           : t("reports.selectAccountCode")}
                       </h3>
-                      <GoMakeAutoComplate
-                        key={toAccountType}
-                        options={
-                          toAccountType === "client"
-                            ? isPurchaseReport
-                              ? supplierList
-                              : renderOptions()
-                            : erpAccountsList
-                        }
-                        getOptionLabel={(option: any) => option.name}
-                        style={classes.textInputStyle}
-                        placeholder={
-                          toAccountType === "client"
-                            ? t(
-                                `sales.quote.${
-                                  isPurchaseReport
-                                    ? "chooseSupplier"
-                                    : "chooseCustomer"
-                                }`
-                              )
-                            : t("reports.selectAccountCode")
-                        }
-                        value={getToSelectedValue()}
-                        onChange={handleToChange}
-                        onChangeTextField={(e) => {
-                          if (toAccountType === "client" && !isPurchaseReport) {
-                            checkWhatRenderArray(e);
+                      {toAccountType === "client" ? (
+                        <ClientAutocomplete
+                          key={toAccountType}
+                          value={getFromSelectedValue()}
+                          clientType={
+                            isPurchaseReport
+                              ? CLIENT_TYPE.SUPPLIER
+                              : CLIENT_TYPE.CUSTOMER
                           }
-                          return;
-                        }}
-                        defaultFiltering={
-                          toAccountType === "client" && !isPurchaseReport
-                            ? false
-                            : true
-                        }
-                      />
+                          options={renderOptions() ? renderOptions() : []}
+                          getOptionLabel={(option: any) => `${option.name}`}
+                          onChangeTextField={checkWhatRenderArray}
+                          style={classes.textInputStyle}
+                          onChange={handleToChange}
+                          loading={isFetching}
+                        />
+                      ) : (
+                        <GoMakeAutoComplate
+                          key={toAccountType}
+                          options={erpAccountsList}
+                          getOptionLabel={(option: any) => option.name}
+                          style={classes.textInputStyle}
+                          placeholder={t("reports.selectAccountCode")}
+                          value={getToSelectedValue()}
+                          onChange={handleToChange}
+                        />
+                      )}
                     </div>
                   )}
                 </div>

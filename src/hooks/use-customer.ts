@@ -20,6 +20,7 @@ import { printHouseCountryState } from "@/store/print-house-country";
 import { setupGuideOpenState } from "@/store/setup-guide-state";
 import { getPrintHouseSetupStepsApi } from "@/services/api-service/quick-setup-menu/set-up-api";
 import {
+  printHouseResetPasswordModalState,
   printHouseSetupStepsState,
   printHouseWelcomeModalState,
   SetupStep,
@@ -37,6 +38,10 @@ const useCustomer = (
   );
   const setPrintHouseWelcomeModal = useSetRecoilState<boolean>(
     printHouseWelcomeModalState
+  );
+
+  const setResetPasswordModal = useSetRecoilState<boolean>(
+    printHouseResetPasswordModalState
   );
   const [user, setUser] = useRecoilState<any>(userState);
   const setSystemCurrency = useSetRecoilState<any>(systemCurrencyState);
@@ -196,11 +201,18 @@ const useCustomer = (
         const steps: SetupStepItem[] = res?.data;
         setPrintHouseSetupSteps(steps);
 
-        const welcomeStep = steps.find(
-          (step) => step.step === SetupStep.WELCOME_MESSAGE
+        // const welcomeStep = steps.find(
+        //   (step) => step.step === SetupStep.WELCOME_MESSAGE
+        // );
+        // if (welcomeStep.status === StepStatus.NOT_YET) {
+        //   setPrintHouseWelcomeModal(true);
+        // }
+
+        const resetPassStep = steps.find(
+          (step) => step.step === SetupStep.RESET_PASSWORD
         );
-        if (welcomeStep.status === StepStatus.NOT_YET) {
-          setPrintHouseWelcomeModal(true);
+        if (resetPassStep.status === StepStatus.NOT_YET) {
+          setResetPasswordModal(true);
         }
       }
     };

@@ -380,16 +380,19 @@ const useQuoteNew = ({
   const tableHeaders = [
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
-    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && t("sales.quote.itemCode"),
-    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && t("products.profits.itemName"),
-    CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && t("products.profits.itemName"),
+    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
+      t("sales.quote.itemCode"),
+    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
+      t("products.profits.itemName"),
+    CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
+      t("products.profits.itemName"),
     isQuoteConfirmation
       ? quoteConfirm?.isShowDetails
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1134,12 +1137,18 @@ const useQuoteNew = ({
   const getCalculateQuoteConfirmationItem = async (
     printHouseId: string,
     ItemId: string,
-    quantity?: number
+    quantity?: number,
   ) => {
+    const documentItemIds = quoteConfirm?.documentItems?.filter((x) => x.isChecked)?.map((x) => x.id);
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-        setQuoteConfirm(res?.data);
+        const newQuote = res?.data;
+        newQuote.documentItems = newQuote.documentItems.map((item) => {
+          item.isChecked = documentItemIds.includes(item.id);
+          return item;
+        });
+        setQuoteConfirm(newQuote);
       } else {
         alertFaultUpdate();
         getQuote();
@@ -1149,6 +1158,7 @@ const useQuoteNew = ({
       printHouseId,
       ItemId,
       quantity,
+      documentItemIds: documentItemIds,
     });
   };
 
@@ -1256,7 +1266,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {

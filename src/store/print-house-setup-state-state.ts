@@ -41,3 +41,8 @@ export const setupGuideExpandedState = atom<boolean>({
   key: "setupGuideExpandedState",
   default: false,
 });
+
+export const printHouseResetPasswordModalState = atom<boolean>({
+  key: "printHouseResetPasswordModalState",
+  default: false,
+});

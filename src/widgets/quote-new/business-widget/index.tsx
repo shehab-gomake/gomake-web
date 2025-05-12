@@ -13,9 +13,11 @@ import { PermissionCheck } from "@/components/CheckPermission/check-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { ModalType } from "@/enums";
-import { EAddressType } from "./address-widget/state";
+import { addressTypeState, EAddressType } from "./address-widget/state";
 import { fontWeight } from "html2canvas/dist/types/css/property-descriptors/font-weight";
 import { ClientChangeSource } from "@/pages-components/quote-new/store/quote";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { useRecoilState } from "recoil";
 
 const BusinessNewWidget = ({
   values,
@@ -122,7 +124,7 @@ const BusinessNewWidget = ({
   }, [values?.title]);
 
   const [selectedAddressType, setSelectedAddressType] =
-    useState<EAddressType>();
+    useRecoilState<EAddressType>(addressTypeState);
 
   const openBillingModal = () => {
     if (!values.client) {
@@ -157,13 +159,11 @@ const BusinessNewWidget = ({
   return (
     <>
       <div style={{ ...classes.businessContainerStyle, marginBottom: "10px" }}>
-        <AutoCompleteUpdatedValue
-          label={
-            isPurchaseDocument
-              ? t("sales.quote.supplierName")
-              : t("sales.quote.businessName")
+        <ClientAutocomplete
+          uiType="updated"
+          clientType={
+            isPurchaseDocument ? CLIENT_TYPE.SUPPLIER : CLIENT_TYPE.CUSTOMER
           }
-          defaultFiltering={isPurchaseDocument ? true : false}
           value={
             isQuoteConfirmation
               ? quoteConfirm?.client?.name
@@ -183,13 +183,10 @@ const BusinessNewWidget = ({
           }
           getOptionLabel={(item) => item.text}
           onChange={(e, value) => onClickOpenChangeClientModal(value)}
-          onChangeTextField={(e) => {
-            if (isPurchaseDocument) {
-              return;
-            }
-            checkWhatRenderArray(e);
-          }}
+          onChangeTextField={checkWhatRenderArray}
           isFetching={isFetching}
+          onChangeSelectBusiness={onChangeSelectBusiness}
+          isFromCartPage={true}
         />
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
           {!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote && (

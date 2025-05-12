@@ -539,6 +539,7 @@ const updateQuoteItemQuantityApi: ICallAndSetData = async (
     printHouseId: string;
     ItemId: string;
     quantity: number;
+    documentItemIds: string[];
   }
 ) => {
   return await getSetApiData(
