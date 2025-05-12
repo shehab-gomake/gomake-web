@@ -71,6 +71,7 @@ import {connectedMachinesStep} from "@/widgets/machines/utils/steps/connected-ma
 import {rollOffSetPrintingSteps} from "@/widgets/machines/utils/steps/roll-off-set-printing-steps";
 import {bookBlockMachineSteps} from "@/widgets/machines/utils/steps/book-block-machine-steps";
 import {deviceMakingMachineSteps} from "@/widgets/machines/utils/steps/device-making-machine-steps";
+import {uvCoatingVarnishMachineSteps} from "@/widgets/machines/utils/steps/uv-coating-varnish-machine-steps";
 
 const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:any): IStep[] => {
     let steps: IStep[];
@@ -272,6 +273,9 @@ const getSteps = (categoryId: ECategoryId, isAdmin: boolean , CheckPermission?:a
             break;
         case ECategoryId.DEVICE_MAKING_MACHINE:
             steps = deviceMakingMachineSteps;
+            break;
+        case ECategoryId.UV_COATING_VARNISH_MACHINE:
+            steps = uvCoatingVarnishMachineSteps;
             break;
         default:
             steps = [];

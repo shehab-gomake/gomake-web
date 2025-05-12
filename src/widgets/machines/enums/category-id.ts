@@ -65,4 +65,5 @@ export enum ECategoryId {
     ROLL_OFF_SET_PRINTING = '64',
     BOOK_BLOCK_MACHINE = '65',
     DEVICE_MAKING_MACHINE = '66',
+    UV_COATING_VARNISH_MACHINE = '67',
 }
