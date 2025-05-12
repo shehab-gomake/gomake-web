@@ -40,13 +40,6 @@ const AddSupplierModal = () => {
       clientType: CLIENT_TYPE.SUPPLIER,
     });
 
-  const renderSuppliersOptions = () => {
-    return renderOptions().map((supplier) => ({
-      value: supplier.id,
-      label: supplier.name,
-    }));
-  };
-
   return (
     <>
       <GoMakeModal
@@ -78,7 +71,7 @@ const AddSupplierModal = () => {
               key={newSupplier?.value}
               clientType={CLIENT_TYPE.SUPPLIER}
               onChange={onSelectSupplier}
-              options={renderSuppliersOptions()}
+              options={renderOptions() ? renderOptions() : []}
               placeholder={t("materials.sheetPaper.selectASupplier")}
               style={{ minWidth: "180px" }}
               value={newSupplier}
