@@ -44,7 +44,7 @@ const AddRowModal = (props: IAddRowModalProps) => {
 
   useEffect(() => {
     if (renderOptions()?.length > 0) setClientsCategories(renderOptions());
-  }, [renderOptions]);
+  }, []);
 
   const [openModal, setOpenModal] =
     useRecoilState<boolean>(openAddRowModalState);
