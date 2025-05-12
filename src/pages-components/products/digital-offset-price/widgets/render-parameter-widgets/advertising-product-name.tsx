@@ -45,7 +45,7 @@ const AdvertisingProductNameParameterWidget = ({
     isViewInfoAfterGenerate,
     setIsViewInfoAfterGenerate,
     newDataGenerated,
-    setSubProducts,
+    setLastOption,
     isOpenDieCutModal,
     setIsOpenDieCutModal,
     selectedCardId,
@@ -93,7 +93,7 @@ const AdvertisingProductNameParameterWidget = ({
     }
 
     return MyOptions;
-  }, [parameter, DieCutTypeOptions, DieCutterOptions, options]);
+  }, [parameter?.code, DieCutTypeOptions, DieCutterOptions, options]);
 
   const [selectedValue, setSelectedValue] = useState(
     index !== -1
@@ -120,6 +120,7 @@ const AdvertisingProductNameParameterWidget = ({
           style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
           placeholder={parameter?.name}
           onChange={(e: any, value: any) => {
+            setLastOption({})
             if (parameter?.code === "DiecutType") {
               setIsRenderData(true)
             }
