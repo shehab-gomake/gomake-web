@@ -2,18 +2,16 @@ import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   calculateSelectedItemsApi,
   getDocumentByIdApi,
-  updateDocumentCommentsConfirmationApi,
 } from "@/services/api-service/generic-doc/quote-confirmation-api";
 import { fileItemsState, quoteConfirmationState, requestAbortControllerState } from "@/store/quote-item";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback,  useState } from "react";
 import { useRecoilState } from "recoil";
 import cloneDeep from "lodash.clonedeep";
 import { getPrePaymentByIdApi } from "@/services/api-service/pay/pay-api";
 import { useTranslation } from "react-i18next";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-profile-api";
-import { useDebouncedCallback } from "use-debounce";
 
 interface IProps {
   documentType?: DOCUMENT_TYPE;
@@ -112,7 +110,7 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
         setQuoteConfirm(newQuote);
         alertSuccessUpdate();
       } else {
-        alertFaultUpdate();
+        // alertFaultUpdate();
       }
     };
   
