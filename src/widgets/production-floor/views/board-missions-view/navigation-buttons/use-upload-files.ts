@@ -151,7 +151,7 @@ const useUploadFiles = (orderItemId, filesPath, graphicsFilePath,isComplexProduc
         await setOrderItemFileStatus({
           orderItemId,
           filename: file?.name,
-          source: finalPath,
+          source: response.source,
           screenShot: response.screenShot,
           productType: !!productType ? productType.toString() : "",
           signalRConnectId: connectionId,
