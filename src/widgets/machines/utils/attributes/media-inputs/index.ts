@@ -179,6 +179,8 @@ const getCategoryMediaInputs = (categoryId: string, state: Record<string, any>) 
             return rollMediaSettings(state);
         case ECategoryId.DEVICE_MAKING_MACHINE:
             return creatingDiesMachine(state);
+        case ECategoryId.UV_COATING_VARNISH_MACHINE:
+            return ofssetPrinting(state);
         default:
             return []
     }
