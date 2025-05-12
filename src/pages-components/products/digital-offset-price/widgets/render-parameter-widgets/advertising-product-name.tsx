@@ -56,8 +56,11 @@ const AdvertisingProductNameParameterWidget = ({
     setSelectedCardId,
     setSelectedCardData
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp })
+  console.log("newDataGenerated", newDataGenerated)
   const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
   const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
+  const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.unitKey;
+
   const DieCutTypeOptions = [
     { id: "new", updateName: t("products.offsetPrice.admin.creatingNewCategory"), isStatic: true },
     ...parameter?.valuesConfigs?.filter(value => {
@@ -282,13 +285,13 @@ const AdvertisingProductNameParameterWidget = ({
                     Name:{newDataGenerated?.rowData?.name?.value}
                   </h4>
                   <h4>
-                    {t("products.offsetPrice.admin.cuttingLineLength")}:{newDataGenerated?.rowData?.cuttingLineLength?.value}
+                    {t("products.offsetPrice.admin.cuttingLineLength")}:{newDataGenerated?.rowData?.cuttingLineLength?.value} {unit}
                   </h4>
                   <h4>
-                    {t("products.offsetPrice.admin.scoringLineLength")}:{newDataGenerated?.rowData?.scoringLineLength?.value}
+                    {t("products.offsetPrice.admin.scoringLineLength")}:{newDataGenerated?.rowData?.scoringLineLength?.value} {unit}
                   </h4>
                   <h4>
-                    {t("products.offsetPrice.admin.perforationLineLength")}:{newDataGenerated?.rowData?.perforationLineLength?.value}
+                    {t("products.offsetPrice.admin.perforationLineLength")}:{newDataGenerated?.rowData?.perforationLineLength?.value} {unit}
                   </h4>
                 </div>
               </div>
