@@ -376,8 +376,10 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
         requiredParameterCodes.includes(param.parameterCode)
       )
     );
-    const parameterInfo = foundParameters.map(param =>
-      `${param.parameterName}: ${param.values[0]}${param.defaultUnit ? ` ${param.defaultUnit}` : ''}`
+    const parameterInfo = foundParameters.map(param => {
+      return `${param.parameterName}: ${param.values[0]}${param.unitKey ? ` ${param.unitKey}` : ''}`
+    }
+
     );
 
     return {
