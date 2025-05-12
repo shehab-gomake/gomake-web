@@ -14,8 +14,7 @@ const uvCoatingVarnishMachineSteps: IStep[] = [
     {label: 'basic',  component: BasicInputsComponent},
     {label: 'machineDimensions',  component: MachineDimensionsComponent},
     {label: 'media',  component: MediaSettingComponent},
-    {label: 'speed',  component: SpeedComponent},
-    {label: 'feedersStackers',  component: FeedersStackersComponent},
+    {label: 'speed',  component: SpeedComponent}
 ];
 
 export {uvCoatingVarnishMachineSteps};
