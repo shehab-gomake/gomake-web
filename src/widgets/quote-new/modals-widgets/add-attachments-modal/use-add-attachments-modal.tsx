@@ -29,7 +29,6 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
     const [selectedAttachment, setSelectedAttachment] = useState(null);
     const [isLoading, setIsLoading] = useRecoilState(loadingWithShadowState);
     const [fileItems, setFileItems] = useRecoilState(fileItemsState);
-    console.log("fileItems", fileItems)
 
     const onClickCloseDeleteModal = () => {
         setOpenDeleteModal(false);
@@ -213,7 +212,6 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
                     }
 
                     const res = response.data;
-                    console.log("resresresres", res)
                     setFileItems(prevItems => {
                         const existingItemIndex = prevItems.findIndex(i => i.id === item.id);
 

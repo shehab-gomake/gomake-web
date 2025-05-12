@@ -110,7 +110,7 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
         setQuoteConfirm(newQuote);
         alertSuccessUpdate();
       } else {
-        alertFaultUpdate();
+        // alertFaultUpdate();
       }
     };
   
