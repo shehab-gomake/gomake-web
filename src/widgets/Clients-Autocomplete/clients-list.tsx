@@ -42,17 +42,12 @@ export const ClientAutocomplete = ({
   const [customerOfAdd, setCustomerOfAdd] = useState<any>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
-  const { getRecentClients } = useCustomerDropDownList({
+  const { getAllClients } = useCustomerDropDownList({
     clientType,
     shouldRenderOnMount: false,
   });
   const handleOpenModal = () => setOpen(true);
   const handleCloseModal = () => setOpen(false);
-
-  // const getOptionLabel = (option: any) => {
-  //   if (option.isInfo) return option.name;
-  //   return props.getOptionLabel ? props.getOptionLabel(option) : option.name;
-  // };
 
   const handleTextFieldChange = (e: any) => {
     const value = e.target.value.trim();
@@ -110,7 +105,7 @@ export const ClientAutocomplete = ({
       onAddCustomer(newCustomer);
     }
     if (newCustomer?.id) {
-      getRecentClients();
+      getAllClients(newCustomer?.name);
     }
   };
 
