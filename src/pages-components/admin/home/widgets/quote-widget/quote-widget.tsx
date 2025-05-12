@@ -75,6 +75,7 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
     onSelectTab,
     listClient,
     onclickCreateNew,
+    onCustomerAddFromOption,
   } = useQuoteWidget();
 
   useEffect(() => {
@@ -125,7 +126,6 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
         <div style={classes.customerSectionStyle}>
           <div style={classes.autoComplateRowContainer}>
             <div data-tour="select-customer" style={{ width: "65%" }}>
-              {/* !here 1 */}
               <ClientAutocomplete
                 disableClearable={true}
                 options={renderOptions() ? renderOptions() : []}
@@ -143,6 +143,7 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
                     value
                   ).then();
                 }}
+                onAddCustomer={onCustomerAddFromOption}
               />
             </div>
             <div data-tour="select-type" style={{ width: "30%" }}>

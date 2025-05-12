@@ -185,6 +185,8 @@ const BusinessNewWidget = ({
           onChange={(e, value) => onClickOpenChangeClientModal(value)}
           onChangeTextField={checkWhatRenderArray}
           isFetching={isFetching}
+          onChangeSelectBusiness={onChangeSelectBusiness}
+          isFromCartPage={true}
         />
         <PermissionCheck userPermission={Permissions.ADD_CLIENT}>
           {!isQuoteConfirmation && documentType === DOCUMENT_TYPE.quote && (

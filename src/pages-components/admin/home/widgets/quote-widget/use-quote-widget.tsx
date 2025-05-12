@@ -213,6 +213,10 @@ const useQuoteWidget = () => {
     setOpenCustomerModal(false);
   };
 
+  const onCustomerAddFromOption = (customer) => {
+    handleClickToSelectedCustomer(userQuote?.client?.id, customer).then();
+  };
+
   const onClickAddCustomer = () => {
     setOpenCustomerModal(true);
   };
@@ -468,6 +472,7 @@ const useQuoteWidget = () => {
     listClient,
     navigate,
     onclickCreateNew,
+    onCustomerAddFromOption,
   };
 };
 
