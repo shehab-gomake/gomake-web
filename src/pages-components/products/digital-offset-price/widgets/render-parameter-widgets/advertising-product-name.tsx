@@ -56,7 +56,6 @@ const AdvertisingProductNameParameterWidget = ({
     setSelectedCardId,
     setSelectedCardData
   } = useAdvertisingProductName({ parameter, getProductById, getAllMaterial, newDieCutSelect, temp })
-  console.log("newDataGenerated", newDataGenerated)
   const categoryImage = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'categoryImage')?.value;
   const image = selectedDieCutTypeValue?.additionalAttribute?.find(attr => attr.valueId === 'image')?.value;
   const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.unitKey;
