@@ -17,7 +17,6 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
   const [openModal, setOpenModal] = useState(false);
   const [searchResult, setSearchResult] = useState(parameter?.valuesConfigs);
   const [lastOption, setLastOption] = useRecoilState(lastOptionState)
-  console.log("lastOption", lastOption)
   const selectedDieCutType = temp.find((item: any) => item.parameterCode === "DiecutType")
   const selectedDieCutter = temp.find((item: any) => item.parameterCode === "DieCutter")
   const selectedDieCutTypeValue = selectedDieCutType?.valuesConfigs?.find((item: any) => item.id === selectedDieCutType?.valueIds[0])
@@ -230,7 +229,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       unit: unit
     }
     const callBack = (res) => {
-      if (res.success && res.data && res.data.data) {
+      if (res?.isOkay) {
         getAllMaterial().then((materials) => {
           // getProductById(materials);
         });
@@ -328,7 +327,12 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
         }
 
       } else {
-        alertFault(t("products.offsetPrice.admin.errorAddingTemplate"))
+        if (res?.resultMessage) {
+          alertFault(t(`${res?.resultMessage}`))
+        }
+        else {
+          alertFault(t("products.offsetPrice.admin.errorAddingTemplate"))
+        }
         setIsView(false)
         setIsViewInfoAfterGenerate(false)
       }
