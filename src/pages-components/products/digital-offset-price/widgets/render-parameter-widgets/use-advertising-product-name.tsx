@@ -40,7 +40,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     if (isRenderData) {
       setSearchResult(parameter?.valuesConfigs)
     }
-  }, [parameter])
+  }, [parameter, isRenderData])
 
   const onAddCategory = async () => {
     const callBack = (res) => {

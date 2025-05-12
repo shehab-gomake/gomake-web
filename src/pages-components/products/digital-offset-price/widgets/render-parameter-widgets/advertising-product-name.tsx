@@ -6,6 +6,9 @@ import { useAdvertisingProductName } from "./use-advertising-product-name";
 import { TestIcon } from "@/icons/test-icon";
 import OpenWithIcon from '@mui/icons-material/OpenWith';
 import { SearchInput } from "@/components/containers/search-input";
+import { EParameterTypes } from "@/enums";
+import { useCallback, useEffect } from "react";
+import { useState } from "react";
 const AdvertisingProductNameParameterWidget = ({
   parameter,
   clasess,
@@ -76,7 +79,7 @@ const AdvertisingProductNameParameterWidget = ({
   ]
 
 
-  const getOptions = () => {
+  const getOptions = useCallback(() => {
     const MyOptions = parameter?.code === "DiecutType"
       ? DieCutTypeOptions
       : parameter?.code === "DieCutter"
@@ -90,14 +93,30 @@ const AdvertisingProductNameParameterWidget = ({
     }
 
     return MyOptions;
-  };
+  }, [parameter, DieCutTypeOptions, DieCutterOptions, options]);
+
+  const [selectedValue, setSelectedValue] = useState(
+    index !== -1
+      ? { updateName: temp[index].values }
+      : parameter.valuesConfigs.find((item) => item.isDefault)
+  );
+
+  useEffect(() => {
+    setSelectedValue(
+      (index !== -1 && temp[index]?.values) ? { updateName: temp[index].values } : undefined
+    );
+  }, [parameter, index,]);
 
   return (
     <div style={clasess.advertisingProductNameMain}>
       <div style={clasess.advertisingProductNameAutoComplete}>
         <GoMakeAutoComplate
           options={getOptions()}
-          key={parameter?.valuesConfigs + temp[index]?.values}
+          key={
+            parameter?.parameterType === EParameterTypes.MACHINES_SELECT ?
+              selectedValue :
+              index !== -1 && temp[index]?.values ? selectedValue
+                : undefined}
           style={parameter?.isRequired && !temp[index]?.values ? clasess.requiredAdvertisingProductCategoryAutoComplete : clasess.advertisingProductCategoryAutoComplete}
           placeholder={parameter?.name}
           onChange={(e: any, value: any) => {
@@ -120,10 +139,8 @@ const AdvertisingProductNameParameterWidget = ({
             );
           }}
           getOptionLabel={(option: any) => option.updateName}
-          defaultValue={
-            index !== -1 ? { updateName: temp[index].values } : defaultObject
-          }
           disabled={parameter?.isLock ? parameter?.isLock : false}
+          value={selectedValue} // Controlled value, reflecting the current state
           renderOption={(props, option) => {
             const image = option.additionalAttribute?.find(
               (attr) => attr.valueId === 'image'
@@ -204,6 +221,7 @@ const AdvertisingProductNameParameterWidget = ({
               </li>
             );
           }}
+
         />
         {
           (parameter?.code === "DiecutType" || parameter?.code === "DieCutter") &&
