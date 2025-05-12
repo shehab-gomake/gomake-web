@@ -60,7 +60,6 @@ const LedgerReportWidget = ({
     isFetching,
     erpAccountsList,
     getErpAccountsList,
-    supplierList,
     isPurchaseReport,
   } = useLedgerReport({ customerId, clientType });
 
@@ -99,7 +98,6 @@ const LedgerReportWidget = ({
         customerId={customerId}
         isFetchingCustomers={isFetching}
         isPurchaseReport={isPurchaseReport}
-        supplierList={supplierList}
       />
       <Divider />
       <LedgerReportButtonWidget

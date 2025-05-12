@@ -89,7 +89,7 @@ const useTransactionJournalReport = ({
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-  } = useCustomerDropDownList();
+  } = useCustomerDropDownList({});
 
   const onClickCloseCreateTransactionModal = () => {
     setIsCreateTransactionModal(false);

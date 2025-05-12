@@ -27,11 +27,7 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-    supplierList,
-  } = useCustomerDropDownList({
-    shouldRenderCustomersOnMount: !isPurchaseReport,
-    shouldRenderSuppliersOnMount: isPurchaseReport,
-  });
+  } = useCustomerDropDownList({ clientType });
 
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const [selectDate, setSelectDate] = useState<string>(
@@ -438,7 +434,6 @@ const useAgingReport = (clientType: CLIENT_TYPE) => {
     getAgingReportFilter,
     handleSortAgingReport,
     isDescOrder,
-    supplierList,
     isPurchaseReport,
   };
 };

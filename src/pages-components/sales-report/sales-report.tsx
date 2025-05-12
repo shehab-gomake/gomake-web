@@ -40,7 +40,6 @@ const SalesReportWidget = ({ clientType }: IProps) => {
     tableData,
     handleExportRows,
     onClickExportExcelReport,
-    supplierList,
     isPurchaseReport,
   } = useSalesReport(clientType);
 
@@ -71,7 +70,6 @@ const SalesReportWidget = ({ clientType }: IProps) => {
         toDate={toDate}
         isFetchingCustomers={isFetching}
         isPurchaseReport={isPurchaseReport}
-        supplierList={supplierList}
       />
       <Divider />
       <SalesReportButtonWidget

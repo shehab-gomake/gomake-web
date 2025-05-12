@@ -24,6 +24,7 @@ import { useClientTypesList } from "@/hooks/use-client-types";
 import { GoMakeTreeSelect } from "@/components/auto-complete/tree-select";
 import { ModalType } from "@/enums";
 import { useUserPermission } from "@/hooks/use-permission";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
 const QuoteWidget = ({ isMobileScreen = false }) => {
   const { classes } = useStyle();
@@ -72,7 +73,7 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
     isFetching,
     selectedTab,
     onSelectTab,
-    customersListCreateQuote,
+    listClient,
     onclickCreateNew,
   } = useQuoteWidget();
 
@@ -114,7 +115,7 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
         handleClickToSelectedCustomer(userQuote?.client?.id, options[0]);
       }
     }
-  }, [customersListCreateQuote]);
+  }, [listClient]);
 
   return (
     <div data-tour="quote-widget" style={classes.mainContainer}>
@@ -124,10 +125,10 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
         <div style={classes.customerSectionStyle}>
           <div style={classes.autoComplateRowContainer}>
             <div data-tour="select-customer" style={{ width: "65%" }}>
-              <GoMakeAutoComplate
+              {/* !here 1 */}
+              <ClientAutocomplete
                 disableClearable={true}
                 options={renderOptions() ? renderOptions() : []}
-                placeholder={t("home.admin.selectCustomer")}
                 style={classes.selectCustomerContainer}
                 getOptionLabel={(option: any) =>
                   option && option.name ? `${option.code} - ${option.name}` : ""
@@ -141,23 +142,6 @@ const QuoteWidget = ({ isMobileScreen = false }) => {
                     userQuote?.client?.id,
                     value
                   ).then();
-                }}
-                noOptionsText={t("home.admin.searchForCustomer")}
-                componentsProps={{
-                  paper: {
-                    sx: {
-                      "& .MuiAutocomplete-noOptions": {
-                        padding: "10px",
-                        color: "#2e3092",
-                        fontWeight: 400,
-                        fontSize: "14px",
-                        fontFamily: "Lexend",
-                        textAlign: "center",
-                        borderRadius: "6px",
-                        backgroundColor: "#f9f9f9",
-                      },
-                    },
-                  },
                 }}
               />
             </div>

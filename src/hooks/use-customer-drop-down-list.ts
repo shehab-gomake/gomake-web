@@ -1,39 +1,26 @@
 import {
   getAndSetAllCustomers,
   getAndSetClientContacts,
+  getAndSetRecentCustomers,
 } from "@/services/hooks";
 import { useCallback, useEffect, useState } from "react";
 import { useGomakeAxios } from "./use-gomake-axios";
 import { useDebouncedCallback } from "use-debounce";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
+import { useTranslation } from "react-i18next";
 
 interface UseCustomerDropDownListProps {
-  shouldRenderCustomersOnMount?: boolean;
-  shouldRenderSuppliersOnMount?: boolean;
+  clientType?: CLIENT_TYPE;
+  shouldRenderOnMount?: boolean;
 }
 
-// const useDebounce = (value: string, delay: number) => {
-//   const [debouncedValue, setDebouncedValue] = useState<string>(value);
-
-//   useEffect(() => {
-//     const handler = setTimeout(() => {
-//       setDebouncedValue(value);
-//     }, delay);
-
-//     return () => {
-//       clearTimeout(handler);
-//     };
-//   }, [value, delay]);
-
-//   return debouncedValue;
-// };
-
 const useCustomerDropDownList = ({
-  shouldRenderCustomersOnMount = true,
-  shouldRenderSuppliersOnMount = false,
-}: UseCustomerDropDownListProps = {}) => {
+  clientType = CLIENT_TYPE.CUSTOMER,
+  shouldRenderOnMount = true,
+}: UseCustomerDropDownListProps) => {
   const { callApi } = useGomakeAxios();
-  const [customersListCreateQuote, setCustomersListCreateQuote] = useState([]);
-  const [supplierList, setSupplierList] = useState([]);
+  const { t } = useTranslation();
+  const [listClient, setListClient] = useState([]);
   const [clientContactsValue, setClientContactsValue] = useState<any>([]);
   const [customer, setCustomer] = useState<{
     name: string;
@@ -41,71 +28,57 @@ const useCustomerDropDownList = ({
   } | null>();
 
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [isRecentSource, setIsRecentSource] = useState<boolean>(true);
 
   const renderOptions = () => {
-    return customersListCreateQuote;
+    const additionalOption = {
+      name: t("general.searchMore"),
+      id: "searchMore",
+      isInfo: true,
+    };
+    const additionalOption1 = {
+      name: `—— ${t("general.recentOptions")} ——`,
+      id: "recentOptions",
+      isInfo: true,
+    };
+    return isRecentSource
+      ? [additionalOption1, ...listClient, additionalOption]
+      : listClient;
   };
 
-  const getAllCustomersCreateQuote = useCallback(
+  const getAllClients = useCallback(
     async (SearchTerm?: string) => {
       if (SearchTerm) {
-        setIsFetching(true); // Start fetching only if SearchTerm is provided
+        setIsFetching(true);
       }
-
-      await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-        clientType: "C",
+      setIsRecentSource(false);
+      await getAndSetAllCustomers(callApi, setListClient, {
+        clientType,
         searchTerm: SearchTerm as string,
-        // onlyCreateOrderClients: false,
-        onlyCreateOrderClients: true,
       });
-      setIsFetching(false); // Finish fetching
+      setIsFetching(false);
     },
-    []
+    [clientType]
   );
 
-  const getAllCustomersCreateOrder = useCallback(
-    async (SearchTerm?: string) => {
-      if (SearchTerm) {
-        setIsFetching(true); // Start fetching only if SearchTerm is provided
-      }
-      await getAndSetAllCustomers(callApi, setCustomersListCreateQuote, {
-        clientType: "C",
-        searchTerm: SearchTerm as string,
-        onlyCreateOrderClients: true,
-      });
-      setIsFetching(false); // Finish fetching
-    },
-    []
-  );
-
-  const getAllSupplierList = useCallback(async (SearchTerm?: string) => {
-    if (SearchTerm) {
-      setIsFetching(true); // Start fetching only if SearchTerm is provided
-    }
-    await getAndSetAllCustomers(callApi, setSupplierList, {
-      clientType: "S",
-      searchTerm: SearchTerm as string,
-      onlyCreateOrderClients: false,
+  const getRecentClients = useCallback(async () => {
+    setIsRecentSource(true);
+    await getAndSetRecentCustomers(callApi, setListClient, {
+      ClientType: clientType,
     });
-    setIsFetching(false); // Finish fetching
-  }, []);
+  }, [clientType]);
 
-  const debouncedGetAllCustomersCreateOrder = useDebouncedCallback(
-    (value: string) => {
-      getAllCustomersCreateOrder(value);
-    },
-    1200
-  );
+  const debouncedGetAllClients = useDebouncedCallback((value: string) => {
+    getAllClients(value);
+  }, 1200);
 
   const checkWhatRenderArray = (e: any) => {
     const value = e.target.value.trim();
-
     if (value === "") {
-      // Clear debounced calls if input is cleared
-      debouncedGetAllCustomersCreateOrder.cancel();
-      getAllCustomersCreateQuote();
+      debouncedGetAllClients.cancel();
+      getRecentClients();
     } else {
-      debouncedGetAllCustomersCreateOrder(value);
+      debouncedGetAllClients(value);
     }
   };
 
@@ -114,35 +87,30 @@ const useCustomerDropDownList = ({
   };
 
   const getAllClientContacts = useCallback(async () => {
-    await getAndSetClientContacts(callApi, setClientContactsValue, {
-      ClientId: customer?.id,
-    });
+    if (customer?.id) {
+      await getAndSetClientContacts(callApi, setClientContactsValue, {
+        ClientId: customer.id,
+      });
+    }
   }, [customer]);
 
   useEffect(() => {
-    if (shouldRenderSuppliersOnMount) {
-      getAllSupplierList();
+    if (shouldRenderOnMount) {
+      getRecentClients();
     }
-  }, [shouldRenderSuppliersOnMount]);
-
-  useEffect(() => {
-    if (shouldRenderCustomersOnMount) {
-      getAllCustomersCreateQuote();
-    }
-  }, [shouldRenderCustomersOnMount]);
+  }, [shouldRenderOnMount, clientType]);
 
   return {
     customer,
-    getAllCustomersCreateQuote,
+    getAllClients,
     renderOptions,
     checkWhatRenderArray,
     handleCustomerChange,
     getAllClientContacts,
     setCustomer,
     clientContactsValue,
-    supplierList,
+    listClient,
     isFetching,
-    customersListCreateQuote,
   };
 };
 

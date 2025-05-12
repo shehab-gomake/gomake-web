@@ -28,7 +28,7 @@ const SingleSelectSearchDropdown = () => {
   const { t } = useTranslation();
 
   const { checkWhatRenderArray, isFetching, renderOptions } =
-    useCustomerDropDownList();
+    useCustomerDropDownList({});
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     setAnchorEl(event.currentTarget);

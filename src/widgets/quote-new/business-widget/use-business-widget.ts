@@ -9,6 +9,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import { useCustomerDropDownList, useSnackBar } from "@/hooks";
 import { Permissions } from "@/components/CheckPermission/enum";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 
 const useBusinessWidget = ({
   values,
@@ -28,11 +29,11 @@ const useBusinessWidget = ({
     documentType === DOCUMENT_TYPE.purchaseInvoiceRefund ||
     isOutgoingPayments;
 
-  const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
+  const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList({
-      // shouldRenderCustomersOnMount: !isPurchaseDocument,
-      shouldRenderCustomersOnMount: false,
-      shouldRenderSuppliersOnMount: isPurchaseDocument,
+      clientType: isPurchaseDocument
+        ? CLIENT_TYPE.SUPPLIER
+        : CLIENT_TYPE.SUPPLIER,
     });
 
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
@@ -89,13 +90,13 @@ const useBusinessWidget = ({
     setIsUpdateManuaLInvoiceNum(null);
   };
 
-  const mappedCustomers = renderOptions().map((customer) => ({
+  const mappedCustomers = renderOptions()?.map((customer) => ({
     text: customer?.name,
     id: customer?.id,
     ...customer,
   }));
 
-  const mappedSuppliers = supplierList?.map((supplier) => ({
+  const mappedSuppliers = renderOptions()?.map((supplier) => ({
     text: supplier?.name,
     id: supplier?.id,
     ...supplier,

@@ -27,11 +27,7 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-    supplierList,
-  } = useCustomerDropDownList({
-    shouldRenderCustomersOnMount: !isPurchaseReport,
-    shouldRenderSuppliersOnMount: isPurchaseReport,
-  });
+  } = useCustomerDropDownList({ clientType });
 
   const { agent, agentsCategories, handleAgentChange } = useAgentsList();
   const { reportsTypeList, documentType, handleDocumentTypeChange } =
@@ -370,7 +366,6 @@ const useSalesReport = (clientType: CLIENT_TYPE) => {
     handleExportRows,
     onClickExportExcelReport,
     isPurchaseReport,
-    supplierList,
   };
 };
 

@@ -15,6 +15,7 @@ import CollapsibleTable from "./widgets/collapse-table";
 import { CreateNewTransactionModal } from "../ledger-report/widgets/create-transaction-modal";
 import { AdjustmentsLedgerReportModal } from "../ledger-report/widgets/adjustments-modal";
 import { GoMakeAutoComplate } from "@/components";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
 interface TransactionJournalReportWidgetProps {
   reportType: EReportType;
@@ -120,14 +121,12 @@ const TransactionJournalReportWidget = ({
           }}
         >
           <h3 style={classes.filterLabelStyle}>{t("sales.quote.customer")}</h3>
-          <GoMakeAutoComplate
+          <ClientAutocomplete
             key={customer?.id}
             options={renderOptions()}
-            defaultFiltering={false}
             onChangeTextField={checkWhatRenderArray}
             getOptionLabel={(option: any) => `${option.name}`}
             style={classes.textInputStyle}
-            placeholder={t("sales.quote.chooseCustomer")}
             onChange={handleCustomerChange}
             value={customer}
             loading={isFetching}
