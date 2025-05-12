@@ -33,7 +33,7 @@ const useBusinessWidget = ({
     useCustomerDropDownList({
       clientType: isPurchaseDocument
         ? CLIENT_TYPE.SUPPLIER
-        : CLIENT_TYPE.SUPPLIER,
+        : CLIENT_TYPE.CUSTOMER,
     });
 
   const setOpenModal = useSetRecoilState<boolean>(addressModalState);
