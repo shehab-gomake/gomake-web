@@ -97,7 +97,7 @@ const BoardMissionsFiles = () => {
             ...FONT_FAMILY.Inter(500, 14),
           }}
         >
-          {t("fileUploader.graphics")}
+          {t("fileUploader.original")}
         </Button>
       </Stack>
 
