@@ -9,6 +9,9 @@ import { WastebasketNew } from "@/icons/wastebasket-new";
 import { IconButton } from "@mui/material";
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import { loadingWithShadowState } from "@/store/loading-with-shadow";
+import { getUserToken } from "@/services/storage-data";
+import axios from "axios";
+
 
 interface AttachmentPayload {
     documentId: string;
@@ -26,6 +29,7 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
     const [selectedAttachment, setSelectedAttachment] = useState(null);
     const [isLoading, setIsLoading] = useRecoilState(loadingWithShadowState);
     const [fileItems, setFileItems] = useRecoilState(fileItemsState);
+
     const onClickCloseDeleteModal = () => {
         setOpenDeleteModal(false);
     }
@@ -112,62 +116,138 @@ const useAddAttachmentsModal = ({ getQuote, documentType }) => {
     };
 
 
+    // const handleFileUploadQuoteConfirmation = async (event: React.ChangeEvent<HTMLInputElement>, item) => {
+    //     setIsLoading(true);
+    //     const uri = `${quoteConfirm?.filesApiAddress}/api/Files/UploadBase64`
+    //     console.log("uri", uri)
+    //     const file = event.target.files?.[0];
+    //     if (file) {
+    //         const reader = new FileReader();
+    //         reader.onload = (event) => {
+    //             const arrayBuffer = event.target.result;
+    //             const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+    //             // Convert data to a Base64 string with proper data URI format
+    //             const base64Content = `data:${file.type};base64,${btoa(
+    //                 new Uint8Array(data).reduce((data, byte) => {
+    //                     return data + String.fromCharCode(byte);
+    //                 }, '')
+    //             )}`;
+    //             const callBack = (res) => {
+    //                 setFileItems(prevItems => {
+    //                     const existingItemIndex = prevItems.findIndex(i => i.id === item.id);
+
+    //                     if (existingItemIndex >= 0) {
+    //                         // Update existing item
+    //                         const updatedItems = [...prevItems];
+    //                         updatedItems[existingItemIndex] = {
+    //                             ...updatedItems[existingItemIndex],
+    //                             files: updatedItems[existingItemIndex].files
+    //                                 ? [...updatedItems[existingItemIndex].files, {
+    //                                     fileName: file.name,
+    //                                     url: res.data
+    //                                 }]
+    //                                 : [{
+    //                                     fileName: file.name,
+    //                                     url: res.data
+    //                                 }]
+    //                         };
+    //                         return updatedItems;
+    //                     } else {
+    //                         // Add new item
+    //                         return [...prevItems, {
+    //                             id: item.id,
+    //                             productName: item.productName,
+    //                             files: [{
+    //                                 fileName: file.name,
+    //                                 url: res.data
+    //                             }]
+    //                         }];
+    //                     }
+    //                 });
+    //                 setIsLoading(false);
+    //             }
+    //             uploadQuoteItemFileApi(
+    //                 callApi,
+    //                 callBack,
+    //                 {
+    //                     documentId: quoteConfirm?.id,
+    //                     fileName: file.name,
+    //                     base64Content: base64Content,
+    //                     uri
+    //                 }
+    //             );
+    //         };
+    //         reader.readAsArrayBuffer(file);
+    //     }
+    // };
+
     const handleFileUploadQuoteConfirmation = async (event: React.ChangeEvent<HTMLInputElement>, item) => {
         setIsLoading(true);
+        // Use the filesApiAddress directly in the fetch call
         const file = event.target.files?.[0];
         if (file) {
             const reader = new FileReader();
-            reader.onload = (event) => {
+            reader.onload = async (event) => {
                 const arrayBuffer = event.target.result;
                 const data = new Uint8Array(arrayBuffer as ArrayBuffer);
-                // Convert data to a Base64 string with proper data URI format
                 const base64Content = `data:${file.type};base64,${btoa(
                     new Uint8Array(data).reduce((data, byte) => {
                         return data + String.fromCharCode(byte);
                     }, '')
                 )}`;
-                const callBack = (res) => {
+
+                try {
+                    const response = await axios.post(`${quoteConfirm?.filesApiAddress}/api/Files/UploadBase64`, {
+                        quoteItemId: quoteConfirm?.id,
+                        fileName: file.name,
+                        base64Content: base64Content
+                    }, {
+                        headers: {
+                            authorization: "Bearer " + getUserToken(),
+                        },
+                    });
+
+                    if (!response) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const res = response.data;
                     setFileItems(prevItems => {
                         const existingItemIndex = prevItems.findIndex(i => i.id === item.id);
 
                         if (existingItemIndex >= 0) {
-                            // Update existing item
                             const updatedItems = [...prevItems];
                             updatedItems[existingItemIndex] = {
                                 ...updatedItems[existingItemIndex],
                                 files: updatedItems[existingItemIndex].files
                                     ? [...updatedItems[existingItemIndex].files, {
                                         fileName: file.name,
-                                        url: res.data
+                                        screenShot: res.screenshotUrl,
+                                        url: res.fileUrl
                                     }]
                                     : [{
                                         fileName: file.name,
-                                        url: res.data
+                                        screenShot: res.screenshotUrl,
+                                        url: res.fileUrl
                                     }]
                             };
                             return updatedItems;
                         } else {
-                            // Add new item
                             return [...prevItems, {
                                 id: item.id,
                                 productName: item.productName,
                                 files: [{
                                     fileName: file.name,
-                                    url: res.data
+                                    screenShot: res.screenshotUrl,
+                                    url: res.fileUrl
                                 }]
                             }];
                         }
                     });
-                    setIsLoading(false);
+                } catch (error) {
+                    console.log("Upload failed:", error);
                 }
-                uploadQuoteItemFileApi(
-                    callApi,
-                    callBack,
-                    {
-                        fileName: file.name,
-                        base64Content: base64Content
-                    }
-                );
+                setIsLoading(false);
             };
             reader.readAsArrayBuffer(file);
         }

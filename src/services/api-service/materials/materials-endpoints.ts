@@ -384,12 +384,17 @@ const uploadQuoteItemFileApi: ICallAndSetData = async (
   callBack,
   data
 ) => {
+  console.log("data", data)
   return await getSetApiData(
     callApi,
     EHttpMethod.POST,
-    UPLOAD_QUOTE_ITEM_FILE,
+    data?.uri,
     callBack,
-    data
+    {
+      documentId: data?.documentId,
+      fileName: data?.fileName,
+      base64Content: data?.base64Content,
+    }
   );
 };
 
