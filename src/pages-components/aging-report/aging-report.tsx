@@ -47,7 +47,6 @@ const AgingReportWidget = ({ clientType }: IProps) => {
     tableHeader,
     handleSortAgingReport,
     isDescOrder,
-    supplierList,
     isPurchaseReport,
   } = useAgingReport(clientType);
 
@@ -85,7 +84,6 @@ const AgingReportWidget = ({ clientType }: IProps) => {
         fromDate={fromDate}
         toDate={toDate}
         isPurchaseReport={isPurchaseReport}
-        supplierList={supplierList}
       />
 
       <Divider />

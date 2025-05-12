@@ -11,7 +11,7 @@ import {
   ThreeOptionsModal,
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
@@ -38,6 +38,7 @@ import { createGlobalStyle } from "styled-components";
 import { addOrderBoardMissionsToFileUploaderApi } from "@/services/api-service/board-missions/board-missions-table";
 import { useGomakeAxios } from "@/hooks";
 import { fileUploaderConnectionIdState } from "@/store/file-uploader-state";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -105,7 +106,6 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     handleClose,
     open,
     anchorEl,
-    supplierList,
     orderStatuses,
     orderStatus,
     handleOrderStatusChange,
@@ -133,7 +133,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   );
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
   const [openPrintNodeModal, setOpenPrintNodeModal] = useState(false);
-    const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
+  const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
   useEffect(() => {
     if (
       router.isReady &&
@@ -213,35 +213,21 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                               ? t("reports.supplier")
                               : t("sales.quote.customer")}
                           </h3>
-                          <GoMakeAutoComplate
+                          <ClientAutocomplete
                             key={customer?.id}
-                            options={
+                            clientType={
                               isPurchaseJobs
-                                ? supplierList
-                                : renderOptions()
-                                ? renderOptions()
-                                : []
+                                ? CLIENT_TYPE.SUPPLIER
+                                : CLIENT_TYPE.CUSTOMER
                             }
-                            defaultFiltering={isPurchaseJobs ? true : false}
-                            onChangeTextField={(e) => {
-                              if (isPurchaseJobs) {
-                                return;
-                              }
-                              checkWhatRenderArray(e);
-                            }}
+                            options={renderOptions() ? renderOptions() : []}
+                            onChangeTextField={checkWhatRenderArray}
                             getOptionLabel={(option: any) => `${option.name}`}
                             style={classes.textInputStyle}
-                            placeholder={t(
-                              `sales.quote.${
-                                isPurchaseJobs
-                                  ? "chooseSupplier"
-                                  : "chooseCustomer"
-                              }`
-                            )}
                             onChange={handleCustomerChange}
                             value={customer}
                             withArrow={true}
-                            loading={isFetching} // Pass loading state here
+                            loading={isFetching}
                           />
                         </div>
                         <div style={classes.statusFilterContainer}>

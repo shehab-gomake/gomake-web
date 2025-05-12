@@ -21,5 +21,6 @@ export interface IBusinessWidget {
   isFetching?: boolean;
   defaultFiltering?: boolean;
   width?: any;
+  renderOption?: any;
   isRightSign?: boolean;
 }

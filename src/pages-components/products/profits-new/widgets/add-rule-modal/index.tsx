@@ -18,6 +18,7 @@ import { useRouter } from "next/router";
 import { DeleteMenuIcon } from "@/widgets/quote-new/more-circle/icons/delete-menu";
 import { ScheduleSendWidget } from "@/pages-components/quotes/widgets/schedule-send-widget/schedule-send-widget";
 import { DateRangePicker } from "rsuite";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
 const AddRuleModal = ({
   openModal,
@@ -34,7 +35,7 @@ const AddRuleModal = ({
   filterData,
   onCreate,
   isHotFolderWidget,
-  getProductHotFolderRules
+  getProductHotFolderRules,
 }: any) => {
   const { clasess } = useStyle();
   const { t } = useTranslation();
@@ -93,7 +94,7 @@ const AddRuleModal = ({
     isQuoteWidge,
     filterData,
     openModal,
-    getProductHotFolderRules
+    getProductHotFolderRules,
   });
 
   const [selectedCategories, setSelectedCategories] = useState<any>("");
@@ -117,7 +118,6 @@ const AddRuleModal = ({
     setSelectedParameters(selectedParameters);
   }, [selectedProperties, Outputs, parametersStateValue]);
   const _renderInptsForProperties = () => {
-
     if (selectedProperties?.ruleType === 0) {
       switch (selectedOutputs?.valueType) {
         case EValueType.MACHINE:
@@ -133,19 +133,19 @@ const AddRuleModal = ({
                 options={
                   router.query.actionId
                     ? machincesList?.machines?.map((value) => {
-                      return {
-                        ...value,
-                        label: value?.machineName,
-                        id: value.machineId,
-                      };
-                    })
+                        return {
+                          ...value,
+                          label: value?.machineName,
+                          id: value.machineId,
+                        };
+                      })
                     : allMachincesList?.map((value) => {
-                      return {
-                        ...value,
-                        label: `${value?.manufacturer} - ${value?.model}`,
-                        id: value.id,
-                      };
-                    })
+                        return {
+                          ...value,
+                          label: `${value?.manufacturer} - ${value?.model}`,
+                          id: value.id,
+                        };
+                      })
                 }
                 style={clasess.dropDownListContainer}
                 placeholder={t("products.profits.exceptions.selectMachine")}
@@ -431,11 +431,9 @@ const AddRuleModal = ({
             }}
           />
         </div>
-
       </div>
     );
   };
-
 
   return (
     <>
@@ -444,9 +442,9 @@ const AddRuleModal = ({
         modalTitle={
           isPropertiesWidge
             ? t("products.profits.exceptions.addNewRule") +
-            " (" +
-            selectedProperties?.propertyName +
-            ")"
+              " (" +
+              selectedProperties?.propertyName +
+              ")"
             : t("products.profits.exceptions.addNewRule")
         }
         onClose={() => {
@@ -587,19 +585,19 @@ const AddRuleModal = ({
                         options={
                           router.query.actionId
                             ? allMachincesList?.map((value) => {
-                              return {
-                                ...value,
-                                label: `${value?.manufacturer} - ${value?.model}`,
-                                id: value.id,
-                              };
-                            })
+                                return {
+                                  ...value,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
+                                  id: value.id,
+                                };
+                              })
                             : allMachincesList?.map((value) => {
-                              return {
-                                ...value,
-                                label: `${value?.manufacturer} - ${value?.model}`,
-                                id: value.id,
-                              };
-                            })
+                                return {
+                                  ...value,
+                                  label: `${value?.manufacturer} - ${value?.model}`,
+                                  id: value.id,
+                                };
+                              })
                         }
                         style={clasess.dropDownListContainer}
                         placeholder={t("properties.statment")}
@@ -616,7 +614,7 @@ const AddRuleModal = ({
                       <label style={clasess.inputLable}>
                         {t("properties.statment")}
                       </label>
-                      <GoMakeAutoComplate
+                      <ClientAutocomplete
                         options={renderOptions()?.map((value) => {
                           return {
                             ...value,
@@ -625,10 +623,8 @@ const AddRuleModal = ({
                           };
                         })}
                         getOptionLabel={(option: any) => `${option.name}`}
-                        defaultFiltering={false}
                         onChangeTextField={checkWhatRenderArray}
                         style={clasess.dropDownListContainer}
-                        placeholder={t("sales.quote.chooseCustomer")}
                         value={rule.statement2}
                         onChange={(e, value) => {
                           handleChange(index, "statement2", value);
@@ -653,19 +649,19 @@ const AddRuleModal = ({
                           options={
                             router.query.actionId
                               ? allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.manufacturer} - ${value?.model}`,
-                                  id: value.id,
-                                };
-                              })
+                                  return {
+                                    ...value,
+                                    label: `${value?.manufacturer} - ${value?.model}`,
+                                    id: value.id,
+                                  };
+                                })
                               : allMachincesList?.map((value) => {
-                                return {
-                                  ...value,
-                                  label: `${value?.manufacturer} - ${value?.model}`,
-                                  id: value.id,
-                                };
-                              })
+                                  return {
+                                    ...value,
+                                    label: `${value?.manufacturer} - ${value?.model}`,
+                                    id: value.id,
+                                  };
+                                })
                           }
                           style={clasess.dropDownListContainer}
                           placeholder={t("properties.statment")}
@@ -801,10 +797,10 @@ const AddRuleModal = ({
                   {rule.category?.id === "Property input" && (
                     <>
                       {rules[index]?.statement2?.type === 0 ||
-                        rules[index]?.statement2?.type === 5 ||
-                        rules[index]?.statement2?.type === 4 ||
-                        rules[index]?.statement2?.type === 10 ||
-                        rules[index]?.statement2?.type === 11 ? (
+                      rules[index]?.statement2?.type === 5 ||
+                      rules[index]?.statement2?.type === 4 ||
+                      rules[index]?.statement2?.type === 10 ||
+                      rules[index]?.statement2?.type === 11 ? (
                         <div>
                           <label style={clasess.inputLable}>
                             {t("properties.statment")}
@@ -987,9 +983,7 @@ const AddRuleModal = ({
                 </div>
                 <GomakeTextInput
                   type="number"
-                  placeholder={t(
-                    "products.profits.exceptions.addition"
-                  )}
+                  placeholder={t("products.profits.exceptions.addition")}
                   onChange={(e: any) => {
                     setAdditionalProfit(e.target.value);
                   }}
@@ -1007,9 +1001,18 @@ const AddRuleModal = ({
                 </div>
                 <GoMakeAutoComplate
                   options={[
-                    { label: t("products.profits.exceptions.percents"), value: EAdditionType.Percentage },
-                    { label: t("products.profits.exceptions.valuePerUnit"), value: EAdditionType.ValuePerUnit },
-                    { label: t("products.profits.exceptions.valuePerJob"), value: EAdditionType.ValuePerJob },
+                    {
+                      label: t("products.profits.exceptions.percents"),
+                      value: EAdditionType.Percentage,
+                    },
+                    {
+                      label: t("products.profits.exceptions.valuePerUnit"),
+                      value: EAdditionType.ValuePerUnit,
+                    },
+                    {
+                      label: t("products.profits.exceptions.valuePerJob"),
+                      value: EAdditionType.ValuePerJob,
+                    },
                   ]}
                   placeholder={t("products.profits.exceptions.additionType")}
                   style={clasess.autoComplateStyle}
@@ -1067,11 +1070,9 @@ const AddRuleModal = ({
                     createProperties();
                   } else if (isQuoteWidge) {
                     createForQuoteWidget();
-                  }
-                  else if (isHotFolderWidget) {
+                  } else if (isHotFolderWidget) {
                     createForHotFolderWidget();
-                  }
-                  else {
+                  } else {
                     create();
                   }
                 }
