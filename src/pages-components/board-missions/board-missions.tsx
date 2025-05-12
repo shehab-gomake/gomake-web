@@ -11,7 +11,7 @@ import {
   ThreeOptionsModal,
 } from "@/components";
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { GoMakeMultiSelect } from "@/components/auto-complete/multi-select";
 import { Stack } from "@mui/material";
 import { GoMakePagination } from "@/components/pagination/gomake-pagination";
@@ -124,6 +124,9 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     setShowCustomerModal,
     setCustomerForEdit,
     selectedMission,
+    updateQuoteStatus,
+    onClickCloseModal,
+    openQuoteModal,
   } = useBoardMissions({ isPurchaseJobs });
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
@@ -133,7 +136,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   );
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
   const [openPrintNodeModal, setOpenPrintNodeModal] = useState(false);
-    const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
+  const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
   useEffect(() => {
     if (
       router.isReady &&
@@ -551,6 +554,16 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
+      />
+
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("sales.quote.titleModal")}
+        subTitle={t("sales.quote.subTitleModal")}
+        yesBtn={t("sales.quote.changeStatus")}
+        openModal={openQuoteModal}
+        onClose={onClickCloseModal}
+        onClickDelete={updateQuoteStatus}
       />
     </>
   );
