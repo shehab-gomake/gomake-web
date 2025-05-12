@@ -4,6 +4,7 @@ import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { lazy, Suspense, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CustomerCardWidget } from "../customer-card-modal/customer-card";
+import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
 // import { CustomerCardWidget } from "../customer-card-modal";
 
 interface ClientAutocompleteProps {
@@ -27,7 +28,6 @@ interface ClientAutocompleteProps {
   onBlur?: () => void;
   disableClearable?: boolean;
   withArrow?: boolean;
-  typeClient?: CLIENT_TYPE;
   isFromCartPage?: boolean;
 }
 
@@ -42,23 +42,41 @@ export const ClientAutocomplete = ({
   const [customerOfAdd, setCustomerOfAdd] = useState<any>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
-
+  const { getRecentClients } = useCustomerDropDownList({
+    clientType,
+    shouldRenderOnMount: false,
+  });
   const handleOpenModal = () => setOpen(true);
   const handleCloseModal = () => setOpen(false);
 
-  const getOptionLabel = (option: any) => {
-    if (option.isInfo) return option.name;
-    return props.getOptionLabel ? props.getOptionLabel(option) : option.name;
-  };
+  // const getOptionLabel = (option: any) => {
+  //   if (option.isInfo) return option.name;
+  //   return props.getOptionLabel ? props.getOptionLabel(option) : option.name;
+  // };
 
-  // Handle text field changes
   const handleTextFieldChange = (e: any) => {
     const value = e.target.value.trim();
-    setSearchText(value); // Store the search text
+    setSearchText(value);
     props.onChangeTextField?.(e);
   };
 
-  // Options with "Add Customer" when no results
+  const handleChange = (event: any, value: any) => {
+    if (value?.id === "addClient") {
+      setCustomerOfAdd({ name: searchText });
+      handleOpenModal();
+    } else if (value?.id) {
+      setCustomerOfAdd(value);
+      props.onChange?.(event, value);
+    } else {
+      setCustomerOfAdd([]);
+      props.onChange?.(event, null);
+    }
+  };
+
+  const getOptionLabel = (option: any) => {
+    if (option?.id === "addClient") return ""; // Prevent display of "+ Add Customer" as selected value
+    return props.getOptionLabel ? props.getOptionLabel(option) : option.name;
+  };
   const mergedOptions = useMemo(() => {
     const addClientOption = {
       name: `+ ${
@@ -76,13 +94,23 @@ export const ClientAutocomplete = ({
     return props.options;
   }, [props.options, searchText, t]);
 
-  // Handle selection changes
-  const handleChange = (event: any, value: any) => {
-    if (value?.id === "addClient") {
-      setCustomerOfAdd({ name: searchText });
-      handleOpenModal();
-    } else {
-      props.onChange?.(event, value);
+  // const handleChange = (event: any, value: any) => {
+  //   if (value?.id === "addClient") {
+  //     setCustomerOfAdd({ name: searchText });
+  //     handleOpenModal();
+  //   } else {
+  //     props.onChange?.(event, value);
+  //   }
+  // };
+
+  const handleCustomerAdd = (newCustomer: any) => {
+    setCustomerOfAdd(newCustomer);
+    handleCloseModal();
+    if (onAddCustomer) {
+      onAddCustomer(newCustomer);
+    }
+    if (newCustomer?.id) {
+      getRecentClients();
     }
   };
 
@@ -106,13 +134,6 @@ export const ClientAutocomplete = ({
     return <li {...props}>{getOptionLabel(option)}</li>;
   };
 
-  const handleCustomerAdd = (newCustomer: any) => {
-    setCustomerOfAdd(newCustomer);
-    handleCloseModal();
-    if (onAddCustomer) {
-      onAddCustomer(newCustomer);
-    }
-  };
   return (
     <>
       {uiType === "updated" ? (

@@ -8,6 +8,8 @@ import { useGomakeAxios } from "./use-gomake-axios";
 import { useDebouncedCallback } from "use-debounce";
 import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { useTranslation } from "react-i18next";
+import { useRecoilState } from "recoil";
+import { clientListState } from "@/store/clients-list-state";
 
 interface UseCustomerDropDownListProps {
   clientType?: CLIENT_TYPE;
@@ -20,7 +22,8 @@ const useCustomerDropDownList = ({
 }: UseCustomerDropDownListProps) => {
   const { callApi } = useGomakeAxios();
   const { t } = useTranslation();
-  const [listClient, setListClient] = useState([]);
+  // const [listClient, setListClient] = useState([]);
+  const [listClient, setListClient] = useRecoilState(clientListState);
   const [clientContactsValue, setClientContactsValue] = useState<any>([]);
   const [customer, setCustomer] = useState<{
     name: string;
@@ -111,6 +114,7 @@ const useCustomerDropDownList = ({
     clientContactsValue,
     listClient,
     isFetching,
+    getRecentClients,
   };
 };
 
