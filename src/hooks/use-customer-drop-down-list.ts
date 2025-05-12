@@ -44,9 +44,26 @@ const useCustomerDropDownList = ({
       id: "recentOptions",
       isInfo: true,
     };
-    return isRecentSource
-      ? [additionalOption1, ...listClient, additionalOption]
-      : listClient;
+
+    const noOptions = {
+      name: `${
+        clientType === CLIENT_TYPE.CUSTOMER
+          ? t("general.addYourFirstCustomer")
+          : t("general.addYourFirstSupplier")
+      }`,
+      id: "addClient",
+      isInfo: true,
+    };
+
+    if (isRecentSource) {
+      if (listClient.length === 0) {
+        return [noOptions];
+        // return null;
+      }
+      return [additionalOption1, ...listClient, additionalOption];
+    }
+
+    return listClient;
   };
 
   const getAllClients = useCallback(
