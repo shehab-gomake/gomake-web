@@ -5,6 +5,7 @@ import { Stack } from "@mui/material";
 import { generalInputs, lastOrderInputs } from "../../inputs/general-inputs";
 import { useStyle } from "../../style";
 import { useEffect, useRef } from "react";
+import { CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 
 interface IProps {
   codeFlag: any;
@@ -17,6 +18,7 @@ interface IProps {
   renderTableSearch: any;
   showTable?: boolean;
   profileState?: any;
+  customerAction: CUSTOMER_ACTIONS;
 }
 
 const GeneralTab = ({
@@ -30,6 +32,7 @@ const GeneralTab = ({
   renderTableSearch,
   showTable,
   profileState,
+  customerAction,
 }: IProps) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -47,9 +50,21 @@ const GeneralTab = ({
 
   useEffect(() => {
     if (!customer?.clientLang && profileState?.systemLang) {
-      setCustomer((prev) => ({ ...prev, clientLang: profileState.systemLang }));
+      setCustomer((prev) => ({
+        ...prev,
+        clientLang: profileState.systemLang,
+      }));
     }
   }, [customer?.clientLang, profileState?.systemLang]);
+
+  useEffect(() => {
+    if (customerAction === CUSTOMER_ACTIONS.Add) {
+      setCustomer((prev) => ({
+        ...prev,
+        isActive: true,
+      }));
+    }
+  }, [customerAction]);
 
   return (
     <div style={classes.tabsContainer} ref={divRef}>

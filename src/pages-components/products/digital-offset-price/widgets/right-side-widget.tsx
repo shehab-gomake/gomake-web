@@ -104,6 +104,7 @@ const RightSideWidget = ({
     combinedData,
     handleProductChange,
     primaryColor,
+    priceChangePercents,
   } = useRightSideWidget({ includeVAT, widgetType });
   const setSubProducts = useSetRecoilState<any>(subProductsParametersState);
 
@@ -129,7 +130,7 @@ const RightSideWidget = ({
             t.actionName === item.actionName &&
             t?.exception?.exceptionKey === item?.exception?.exceptionKey &&
             t?.exception?.exceptionMessage ===
-            item?.exception?.exceptionMessage &&
+              item?.exception?.exceptionMessage &&
             JSON.parse(t.values || "[]")
               .sort()
               .join(",") === itemValuesSorted
@@ -334,10 +335,12 @@ const RightSideWidget = ({
                       const inputValue = Number(e.target.value);
                       if (maxIncrease && minDiscount) {
                         if (
-                          inputValue < minDiscount ||
+                          (priceChangePercents?.minPercent !== null &&
+                            priceChangePercents?.maxPercent !== null &&
+                            inputValue < minDiscount) ||
                           inputValue > maxIncrease
                         ) {
-                          alertFault("Value is out of the allowed range!");
+                          alertFault("alerts.outOfAllowed");
                           setSliderCurrentProductItemValueTotalPrice(
                             currentProductItemValueTotalPrice
                           ); // Reset to valid value
@@ -390,7 +393,7 @@ const RightSideWidget = ({
         {calculationProgress &&
           calculationProgress.currentWorkFlowsCount > 0 &&
           calculationProgress.currentWorkFlowsCount !==
-          calculationProgress.totalWorkFlowsCount && (
+            calculationProgress.totalWorkFlowsCount && (
             <div style={{ marginBottom: "15px" }}>
               <ProgressBar
                 bottomLeftText={t(
@@ -417,11 +420,11 @@ const RightSideWidget = ({
                 price: roundPrice(
                   isNaN(
                     sliderCurrentProductItemValueTotalPrice /
-                    quantity?.values[0]
+                      quantity?.values[0]
                   )
                     ? 0
                     : (sliderCurrentProductItemValueTotalPrice || 0) /
-                    (quantity?.values[0] || 1)
+                        (quantity?.values[0] || 1)
                 ),
                 unitPrice: systemCurrency,
               })}
@@ -463,7 +466,7 @@ const RightSideWidget = ({
         )}
 
         {widgetType === EWidgetProductType.EDIT ||
-          widgetType === EWidgetProductType.DUPLICATE ? (
+        widgetType === EWidgetProductType.DUPLICATE ? (
           <div
             style={{
               display: "flex",
@@ -514,44 +517,49 @@ const RightSideWidget = ({
           </div>
         ) : null}
         {/* Slider */}
-        <PermissionCheck userPermission={Permissions.UPDATE_CALCULATED_PRICE}>
-          {true && (
-            <Box sx={{ width: 300, textAlign: "center", margin: "20px auto" }}>
+        {priceChangePercents?.minPercent !== null &&
+          priceChangePercents?.maxPercent !== null && (
+            <PermissionCheck
+              userPermission={Permissions.UPDATE_CALCULATED_PRICE}
+            >
               <Box
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                sx={{ direction: direction }}
+                sx={{ width: 300, textAlign: "center", margin: "20px auto" }}
               >
-                <Typography sx={clasess.labelsStyle}>
-                  {!isRTL && systemCurrency}
-                  {Math.round(minDiscount)}
-                  {isRTL && systemCurrency}
-                </Typography>
-                <Typography sx={clasess.labelsStyle}>
-                  {!isRTL && systemCurrency}
-                  {Math.round(maxIncrease)}
-                  {isRTL && systemCurrency}
-                </Typography>
-              </Box>
-              <Slider
-                value={sliderCurrentProductItemValueTotalPrice}
-                onChange={handleSliderChange}
-                aria-label="Price Change Slider"
-                min={Math.round(Number(minDiscount))}
-                max={Math.round(Number(maxIncrease))}
-                step={1}
-                sx={{
-                  direction: direction,
-                  transform: isRtl ? "scaleX(-1)" : "none",
-                  "& .MuiSlider-track": {
+                <Box
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  sx={{ direction: direction }}
+                >
+                  <Typography sx={clasess.labelsStyle}>
+                    {!isRTL && systemCurrency}
+                    {Math.round(minDiscount)}
+                    {isRTL && systemCurrency}
+                  </Typography>
+                  <Typography sx={clasess.labelsStyle}>
+                    {!isRTL && systemCurrency}
+                    {Math.round(maxIncrease)}
+                    {isRTL && systemCurrency}
+                  </Typography>
+                </Box>
+                <Slider
+                  value={sliderCurrentProductItemValueTotalPrice}
+                  onChange={handleSliderChange}
+                  aria-label="Price Change Slider"
+                  min={Math.round(Number(minDiscount))}
+                  max={Math.round(Number(maxIncrease))}
+                  step={1}
+                  sx={{
                     direction: direction,
-                  },
-                }}
-              />
-            </Box>
+                    transform: isRtl ? "scaleX(-1)" : "none",
+                    "& .MuiSlider-track": {
+                      direction: direction,
+                    },
+                  }}
+                />
+              </Box>
+            </PermissionCheck>
           )}
-        </PermissionCheck>
         {/* Slider */}
         <Divider />
         {additionalProductItems?.length > 0 && (
@@ -658,11 +666,13 @@ const RightSideWidget = ({
               <div style={clasess.autoCompleteContainer}>
                 <GoMakeAutoComplate
                   key={sampleType}
-                  options={exampleTypeValues.map(option => ({
+                  options={exampleTypeValues.map((option) => ({
                     ...option,
-                    text: option.value === "Full" ? t("products.offsetPrice.admin.Physical") : t("products.offsetPrice.admin.Digital")
-                  }))
-                  }
+                    text:
+                      option.value === "Full"
+                        ? t("products.offsetPrice.admin.Physical")
+                        : t("products.offsetPrice.admin.Digital"),
+                  }))}
                   getOptionLabel={(option: any) => option.text}
                   placeholder={t("products.offsetPrice.admin.proof")}
                   style={clasess.dropDownListStyle}
@@ -741,11 +751,12 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item.actionName ? item.actionName + ": " : ""}${item?.exception?.exceptionMessage || " "
-                            }${renderExceptionMessage(
-                              item?.exception?.exceptionKey,
-                              item?.exception?.values
-                            )}${renderValues(item?.exception?.values)}`}
+                          {`${item.actionName ? item.actionName + ": " : ""}${
+                            item?.exception?.exceptionMessage || " "
+                          }${renderExceptionMessage(
+                            item?.exception?.exceptionKey,
+                            item?.exception?.values
+                          )}${renderValues(item?.exception?.values)}`}
                         </div>
                       </div>
                     </div>
@@ -772,11 +783,12 @@ const RightSideWidget = ({
                         }}
                       >
                         <div style={{ ...clasess.titleLogsTextStyle }}>
-                          {`${item?.exceptionMessage || " "
-                            }${renderExceptionMessage(
-                              item?.exceptionKey,
-                              item?.values
-                            )}${renderValues(item?.values)}`}
+                          {`${
+                            item?.exceptionMessage || " "
+                          }${renderExceptionMessage(
+                            item?.exceptionKey,
+                            item?.values
+                          )}${renderValues(item?.values)}`}
                         </div>
                       </div>
                     </div>

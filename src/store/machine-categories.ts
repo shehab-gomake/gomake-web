@@ -226,5 +226,10 @@ export const machineCategoriesState = atom<IMachineCategory[]>({
             name: 'machinesCategories.deviceMakingMachine',
             color: defaultTheme.success.dark["600"]
         },
+        {
+            id: ECategoryId.UV_COATING_VARNISH_MACHINE,
+            name: 'machinesCategories.uvCoatingVarnishMachine',
+            color: defaultTheme.success.dark["600"]
+        },
     ],
 });

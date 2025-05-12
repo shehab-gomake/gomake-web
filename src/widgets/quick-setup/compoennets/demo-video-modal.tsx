@@ -1,31 +1,60 @@
 import { ModalControls } from "@/hooks/use-modal";
 import { useTranslation } from "react-i18next";
-import { useStyle } from "./style";
 import { Modal, Box, IconButton, Typography, useTheme } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import {
+  printHouseSetupStepsState,
+  SetupStep,
+  SetupStepItem,
+  StepStatus,
+} from "@/store/print-house-setup-state-state";
+import { useEffect } from "react";
+import { useRecoilValue } from "recoil";
 // import { GomakeIcon } from "./icons";
 
 interface DemoVideoModalProps {
   modalControl: ModalControls;
   videoUrl: string;
   setVideoUrl: any;
+  updatePrintHouseSetupSteps: (
+    step: SetupStep,
+    status?: StepStatus
+  ) => Promise<void>;
 }
 
 export const DemoVideoModal = ({
   modalControl,
   videoUrl,
   setVideoUrl,
+  updatePrintHouseSetupSteps,
 }: DemoVideoModalProps) => {
-  const { classes } = useStyle();
   const { t } = useTranslation();
   const { primaryColor, secondColor } = useGomakeTheme();
   const theme = useTheme();
+  const printHouseSetupSteps = useRecoilValue<SetupStepItem[]>(
+    printHouseSetupStepsState
+  );
+  const basicWalkthroughStep = printHouseSetupSteps.find(
+    (step) => step.step === SetupStep.HELP_CENTER_BASIC_WALKTHROUGH
+  );
 
   const closeModal = () => {
     modalControl.close();
     setVideoUrl("");
   };
+
+  useEffect(() => {
+    if (
+      modalControl.isOpen &&
+      basicWalkthroughStep?.status !== StepStatus.DONE
+    ) {
+      updatePrintHouseSetupSteps(
+        SetupStep.HELP_CENTER_BASIC_WALKTHROUGH,
+        StepStatus.DONE
+      );
+    }
+  }, [modalControl.isOpen]);
 
   return (
     <Modal

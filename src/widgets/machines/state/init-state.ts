@@ -592,5 +592,10 @@ const initState: Record<string, Record<string, any>> = {
         price: {price: 0, currency: 0},
         attributes: {}
     },
+    [ECategoryId.UV_COATING_VARNISH_MACHINE]: {
+        category: ECategoryId.UV_COATING_VARNISH_MACHINE,
+        price: {price: 0, currency: 0},
+        attributes: {}
+    },
 }
 export {initState};

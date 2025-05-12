@@ -28,6 +28,11 @@ import { clearPhoneNumberPrefix } from "@/utils/helpers";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { useClientTypesList } from "@/hooks/use-client-types";
+import {
+  printHouseSetupStepsState,
+  SetupStep,
+  SetupStepItem,
+} from "@/store/print-house-setup-state-state";
 
 export interface IStatus {
   label: string;
@@ -333,6 +338,18 @@ const useCustomers = (
   const [value, setValue] = useState(0);
   const [openClientTypeModal, setOpenClientTypeModal] = useState(false);
 
+  const printHouseSetupSteps = useRecoilValue<SetupStepItem[]>(
+    printHouseSetupStepsState
+  );
+
+  const addCustomerStep = printHouseSetupSteps.find(
+    (step) => step.step === SetupStep.CONTACTS_CLIENTS
+  );
+
+  const addSupplierStep = printHouseSetupSteps.find(
+    (step) => step.step === SetupStep.CONTACTS_SUPPLIERS
+  );
+
   return {
     getAgentCategories,
     getClientTypesCategories,
@@ -383,6 +400,8 @@ const useCustomers = (
     setValue,
     openClientTypeModal,
     setOpenClientTypeModal,
+    addSupplierStep,
+    addCustomerStep,
   };
 };
 export { useCustomers };

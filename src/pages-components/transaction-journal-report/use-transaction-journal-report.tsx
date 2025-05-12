@@ -154,7 +154,7 @@ const useTransactionJournalReport = ({
             </div>,
             reportType === EReportType.DailyPayments
               ? data?.credit > 0
-                ? data?.credit?.toFixed(2)
+                ? `(${data?.credit?.toFixed(2)})`
                 : data?.debit?.toFixed(2)
               : data?.credit?.toFixed(2),
           ];
