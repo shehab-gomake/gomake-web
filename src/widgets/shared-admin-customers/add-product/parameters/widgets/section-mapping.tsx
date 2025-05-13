@@ -54,7 +54,7 @@ const SectionMappingWidget = ({
   getProductById
 }) => {
   const { t } = useTranslation();
-  const { alertFault } = useSnackBar();
+  const { alertFault, alertWarning } = useSnackBar();
   const router = useRouter();
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [selectedParameter, setSelectedParameter] = useState(null);
@@ -262,6 +262,10 @@ const SectionMappingWidget = ({
                         "required",
                         "notRequired",
                         () => {
+                          if (parameter?.isRequiredInTemplate) {
+                            alertWarning("products.parameters.isRequiredInTemplate");
+                            return;
+                          }
                           if (!doNotAskNextTime) {
                             handleOpenModal();
                           } else {

@@ -34,7 +34,7 @@ const useSnackBar = () => {
     }, 1000);
   };
 
-  const showAlert = (messageKey: string, type: "success" | "error") => {
+  const showAlert = (messageKey: string, type: "success" | "error" | "warning") => {
     setSnackbarStateValue({
       state: true,
       message: t(messageKey),
@@ -65,6 +65,7 @@ const useSnackBar = () => {
       showAlert("modal.getDataSuccessfully", "success"),
     alertFaultSend: () => showAlert("alerts.sendFailed", "error"),
     alertSuccessSend: () => showAlert("alerts.sendSuccessfully", "success"), //
+    alertWarning: (warningMessage: string) => showAlert(warningMessage, "warning"),
   };
 };
 export { useSnackBar };

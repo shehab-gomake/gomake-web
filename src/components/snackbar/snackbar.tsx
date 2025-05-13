@@ -18,6 +18,8 @@ const GoMakeSnackBar = () => {
     >
       {snackbarStateValue.type === "error" ? (
         <Alert severity="error">{snackbarStateValue.message}</Alert>
+      ) : snackbarStateValue.type === "warning" ? (
+        <Alert severity="warning">{snackbarStateValue.message}</Alert>
       ) : (
         <Alert severity="success">{snackbarStateValue.message}</Alert>
       )}
