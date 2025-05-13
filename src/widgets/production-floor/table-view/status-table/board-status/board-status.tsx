@@ -8,17 +8,18 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useTranslation } from "react-i18next";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@mui/icons-material";
 import { useIsMobile } from "@/hooks/use-responsive";
-import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
 interface IStatusBtnProps {
   id?: string;
   statusId: string;
-  onChange?: (id: string, statusId: string) => void;
+  onChange?: (id: string, statusId: string, productType: string) => void;
   isFromMissionView?: boolean;
   currentStation?: string;
   statusColorText?: string;
   statusColorBg?: string;
   statusText?: string;
+  productType?: string;
 }
 
 const BoardStatusComponent = ({
@@ -30,6 +31,7 @@ const BoardStatusComponent = ({
   statusColorText,
   statusColorBg,
   statusText,
+  productType
 }: IStatusBtnProps) => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
@@ -63,7 +65,7 @@ const BoardStatusComponent = ({
   };
 
   const onSelectNewStatus = (statusId: string) => {
-    onChange(id, statusId);
+    onChange(id, statusId, productType);
     handleClose();
   };
 
@@ -101,7 +103,7 @@ const BoardStatusComponent = ({
           boxShadow: "none",
           padding: "5px 10px",
           lineHeight: "16px",
-         
+
           ...FONT_FAMILY.Lexend(500, isMobile ? 11 : 13),
           "&:hover": {
             opacity: 0.7,
@@ -117,13 +119,13 @@ const BoardStatusComponent = ({
         }}
         disabled={!canChangeStatus}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "5px" ,   fontSize:GetProductionFontSizeFromPreferences(),}}>
+        <div style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: GetProductionFontSizeFromPreferences(), }}>
           <div style={{ width: "max-content" }}>
             {anchorEl
               ? t("customers.selectStatus")
               : isFromMissionView
-              ? `${statusText} / ${currentStation}`
-              : t("productionStatuses." + boardStatus()?.name)}
+                ? `${statusText} / ${currentStation}`
+                : t("productionStatuses." + boardStatus()?.name)}
           </div>
           {anchorEl ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
         </div>
@@ -150,8 +152,8 @@ const BoardStatusComponent = ({
               textTransform: "capitalize",
               justifyContent: "center",
               boxSizing: "border-box",
-              display: "flex", 
-              fontSize:GetProductionFontSizeFromPreferences(),
+              display: "flex",
+              fontSize: GetProductionFontSizeFromPreferences(),
               backgroundColor: status.backgroundColor,
               color: status.textColor,
               borderRadius: 0,
