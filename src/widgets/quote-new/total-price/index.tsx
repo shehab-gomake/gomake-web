@@ -80,7 +80,7 @@ const TotalPriceComp = ({
   const dir: "rtl" | "ltr" = t("direction");
   const isRTL = dir === "rtl";
   const CurrencyUnit = getCurrencyUnitText(quoteItems?.currency);
-
+  console.log("CurrencyUnit", CurrencyUnit)
   return (
     <div style={classes.tableFooterContainer}>
       <div style={classes.firstRowForFooterContainer}>
@@ -118,7 +118,12 @@ const TotalPriceComp = ({
             %
             {isQuoteConfirmation ? (
               quoteItems?.discountAmount != 0 &&
-              `(-${quoteItems?.discountAmount + " " + CurrencyUnit})`
+              <>
+                {
+                  isRTL ? `(-${quoteItems?.discountAmount + " " + CurrencyUnit})`
+                    : `(-${CurrencyUnit + " " + quoteItems?.discountAmount})`
+                }
+              </>
             ) : (
               <div
                 style={{
@@ -139,7 +144,8 @@ const TotalPriceComp = ({
                   setIsUpdate={
                     !isQuoteConfirmation && setIsUpdateDiscountAmount
                   }
-                  sign={" " + CurrencyUnit}
+                  sign={CurrencyUnit}
+                  isRightSign={!isRTL ? false : true}
                   speicalStyle={{
                     ...FONT_FAMILY.Inter(400, 14),
                   }}
@@ -165,7 +171,11 @@ const TotalPriceComp = ({
               {t("sales.quote.totalAfterDiscount")}
             </div>
             <div style={{ ...classes.oddRowContainer, width: "23%" }}>
-              {quoteItems?.totalPriceAfterDiscount}
+              {isRTL ? (
+                <>{quoteItems?.totalPriceAfterDiscount + " " + CurrencyUnit}</>
+              ) : (
+                <>{CurrencyUnit + " " + quoteItems?.totalPriceAfterDiscount}</>
+              )}
             </div>
           </>
         ) : (
