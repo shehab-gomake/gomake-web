@@ -228,7 +228,7 @@ const ButtonsContainer = ({
               {t("sales.quote.deleteDelivery")}
             </GomakePrimaryButton>
           )}
-        {
+        {/* {
           <GomakePrimaryButton
             leftIcon={
               quoteItemValue?.attachments?.length > 0 ? (
@@ -244,7 +244,7 @@ const ButtonsContainer = ({
               ? t("sales.quote.editAttachments")
               : t("sales.quote.addAttachments")}
           </GomakePrimaryButton>
-        }
+        } */}
         {isNewCreation && (isDeliveryNote || isInvoice) && (
           <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
@@ -404,11 +404,10 @@ const ButtonsContainer = ({
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : `sales.quote.${
-                      quoteItemValue?.isUsedStripe
-                        ? "placeOrder"
-                        : "orderNowTitle"
-                    }`
+                  : `sales.quote.${quoteItemValue?.isUsedStripe
+                    ? "placeOrder"
+                    : "orderNowTitle"
+                  }`
               )}
             </GomakePrimaryButton>
           </>
