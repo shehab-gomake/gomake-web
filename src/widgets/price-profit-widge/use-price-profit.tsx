@@ -15,6 +15,7 @@ import {
 } from "@/services/api-service/products/product-endpoints";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface PricingProfileSetting {
   id: string;
@@ -39,6 +40,7 @@ const usePriceProfit = () => {
   const [anchorElSetting, setAnchorElSetting] = useState<null | HTMLElement>(
     null
   );
+  const { t } = useTranslation();
   const open = Boolean(anchorEl);
   const openSetting = Boolean(anchorElSetting);
   const [anchorElPrint, setAnchorElPrint] = useState<null | HTMLElement>(null);
@@ -283,8 +285,8 @@ const usePriceProfit = () => {
         defaultValue: value?.valueId
           ? value?.valueId
           : value?.id
-          ? value?.id
-          : value,
+            ? value?.id
+            : value,
       });
     },
     [router]
@@ -432,7 +434,7 @@ const usePriceProfit = () => {
       isSelectedProducts: isSelected,
     });
   };
-  const {} = useDisplayProfitProfilesSignalr({ setProducts });
+  const { } = useDisplayProfitProfilesSignalr({ setProducts });
 
   const resetPrintHousePrice = useCallback(async () => {
     const productId = Array.isArray(router.query.productId)
@@ -513,6 +515,8 @@ const usePriceProfit = () => {
     handleCloseChartModal,
     handleOpenChartModal,
     openChartModal,
+    router,
+    t
   };
 };
 

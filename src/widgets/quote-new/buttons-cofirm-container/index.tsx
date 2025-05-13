@@ -78,9 +78,7 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfir
             }
           }}
         >
-          {quoteItemValue?.attachments?.length > 0
-            ? t("sales.quote.editAttachments")
-            : t("sales.quote.attachFiles")}
+          {t("sales.quote.attachFiles")}
         </SecondaryButton>
         <SecondaryButton
           variant="contained"

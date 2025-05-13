@@ -6,7 +6,7 @@ import {
   GomakePrimaryButton,
 } from "@/components";
 import { ArrowDownNewIcon, PrintIcon, SettingNewIcon } from "@/icons";
-import { Box, Button, MenuItem } from "@mui/material";
+import { Box, MenuItem } from "@mui/material";
 import { ReStoreIcon } from "../table/icons/restore-icon";
 import { ResetIcon } from "../table/icons/reser-icon";
 import { UpdatedPriceIcon2 } from "../table/icons/update-price-icon";
