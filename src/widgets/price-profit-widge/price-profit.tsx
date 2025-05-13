@@ -55,6 +55,8 @@ const PriceProfitWidge = () => {
     handleCloseChartModal,
     handleOpenChartModal,
     openChartModal,
+    router,
+    t
   } = usePriceProfit();
   return (
     <div style={classes.mainContainer}>
@@ -120,6 +122,13 @@ const PriceProfitWidge = () => {
             }
           />
         )}
+      {
+        !router?.query?.productId && (
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "50%", textAlign: "center", width: "100%" }}>
+            <h3>{t("priceProfit.pleaseSelectProduct")}</h3>
+          </div>
+        )
+      }
       <GoMakeModal
         openModal={openChartModal}
         onClose={handleCloseChartModal}
