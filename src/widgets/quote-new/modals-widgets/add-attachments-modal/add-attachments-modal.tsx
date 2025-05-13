@@ -51,10 +51,10 @@ const AddAttachmentsModal = ({ openModal, onClose, documentType, getQuote, isQuo
                         rows={getAttachmentsRowsQuoteConfirmation(item)}
                         headers={[
                           t("fileUploader.fileName"),
-                          t("fileUploader.openFile"),
+                          t("fileUploader.downloadFile"),
                           t("fileUploader.deleteFile"),
                         ]}
-                        columnWidths={["70%", "15%", "15%"]}
+                        columnWidths={["70%", "15%", "15%", "15%"]}
                       />
                       <div
                         onClick={() => document.getElementById(`file-upload-${index}`).click()}
@@ -154,7 +154,7 @@ const AddAttachmentsModal = ({ openModal, onClose, documentType, getQuote, isQuo
                     stickyHeader={true}
                     maxHeight={400}
                     rows={getAttachmentsRows()}
-                    headers={[t("fileUploader.fileName"), t("fileUploader.openFile"), t("fileUploader.deleteFile")]}
+                    headers={[t("fileUploader.fileName"), t("fileUploader.downloadFile"), t("fileUploader.deleteFile")]}
                     columnWidths={["70%", "15%", "15%"]}
                   />
 
