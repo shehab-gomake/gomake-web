@@ -17,8 +17,9 @@ const useStyle = () => {
       insideStyle: {
         width: "50%",
         borderRadius: 5,
-        height: "fit-content",
+        height: "600px",
         minHeight: "300px",
+        overflow: "scroll",
       },
       textInputStyle: {
         width: "100%",
@@ -54,7 +55,7 @@ const useStyle = () => {
         height: "36px",
       },
       attachmentsContainer: {
-        marginTop: "15px",
+        // marginTop: "15px",
       },
     };
   }, []);

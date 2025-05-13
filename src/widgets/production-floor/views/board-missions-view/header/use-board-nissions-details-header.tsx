@@ -45,7 +45,7 @@ const useBoardMissionsDetailsHeader = () => {
 
   // This condition ( boardsIds?.length && !boardsIds ) ensures that if we open the Board Mission from the Job or from the Search,
   // the `boardsIds` array will be undefined. To handle this scenario, we provide a fallback
-  const handleStatusChange = async (id: string, newStatusId: string) => {
+  const handleStatusChange = async (id: string, newStatusId: string, productType: string) => {
     setIsLoadingStatus(true);
     try {
       const newStatus = statuses.find((status) => status.id === newStatusId);
@@ -104,11 +104,13 @@ const useBoardMissionsDetailsHeader = () => {
       await updateBoardsMissionsStatusApi(callApi, callBack, {
         boardsIds:
           boardsIds?.length && !boardsIds
-            ? boardsIds.map((b) => ({
+            ? boardsIds.map((b) => {
+              return ({
                 BoardMissionId: b?.id,
                 productType: b?.productType,
-              }))
-            : [{ BoardMissionId: id, productType: "" }],
+              })
+            })
+            : [{ BoardMissionId: id, productType: productType ?? "" }],
         statusId: newStatusId,
       });
     } catch (error) {
