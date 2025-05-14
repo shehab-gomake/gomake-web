@@ -15,7 +15,6 @@ import { PrimaryButton } from "@/components/button/primary-button";
 import { GoMakeTextInput } from "@/components/text-input/go-make-text-input";
 import { GoMakeSelect } from "@/components/auto-complete/go-make-select";
 
-//!here modal
 const WhatsAppWebModal = ({
   openModal,
   onClose,

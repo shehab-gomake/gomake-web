@@ -51,21 +51,27 @@ const SendPaymentModal = ({
   } = useSendPaymentModal({ openPaymentModal, documentType });
   const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
-  const { openWhatsAppWebLink } = useWhatsAppWeb(); //!here 2
+  const { getWhatsWebUrl } = useWhatsAppWeb();
 
   const handleSendUsingWhatsAppWeb = () => {
-    const callBack = (res) => {
-      const selectedContact =
-        payState?.documentContacts &&
-        payState.documentContacts[payState?.selectedContactIndex];
-      openWhatsAppWebLink(res?.data, selectedContact?.contactPhone);
-    };
-    getWhatsAppMessageApi(callApi, callBack, {
-      documentId: payState?.documentId,
-      documentType: documentType,
-    });
+    getWhatsAppMessageApi(
+      callApi,
+      (res) => {
+        const selectedContact =
+          payState?.documentContacts &&
+          payState.documentContacts[payState?.selectedContactIndex];
 
-    //setOpenWatsAppModal(true)
+        const url = getWhatsWebUrl(res?.data, selectedContact?.contactPhone);
+
+        if (url) {
+          window.open(url, "_blank");
+        }
+      },
+      {
+        documentId: payState?.documentId,
+        documentType: documentType,
+      }
+    );
   };
 
   const onClickSendQuoteToClient = async (isSendOrderReadyToClient = false) => {

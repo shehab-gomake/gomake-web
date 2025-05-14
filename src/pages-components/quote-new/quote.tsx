@@ -913,7 +913,6 @@ const QuoteNewPageWidget = ({
         documentState={quoteItemValue}
         documentType={documentType}
       />
-      {/* !here */}
       <WhatsAppWebModal
         openModal={openWhatsAppModal}
         onClose={onClickCloseWhatsAppModal}

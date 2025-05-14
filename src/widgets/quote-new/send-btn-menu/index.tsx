@@ -57,9 +57,6 @@ const SendBtnMenu = ({
           {t("sales.quote.phone")}
         </MenuItem>
       )}
-
-      {/* !here menu button*/}
-
       {documentState.isSendWhatsappWeb && (
         <MenuItem
           onClick={() => {

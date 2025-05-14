@@ -118,7 +118,7 @@ const useQuoteNew = ({
 
   const router = useRouter();
   const { callApi } = useGomakeAxios();
-  const { openWhatsAppWebLink } = useWhatsAppWeb(); //!here 3
+  const { openWhatsAppWebLink } = useWhatsAppWeb();
   const { navigate } = useGomakeRouter();
   const { t } = useTranslation();
   const { getQuote, getAllClientContacts } = useQuoteGetData(docType);
@@ -2236,6 +2236,7 @@ const useQuoteNew = ({
   );
 
   const handleSendUsingWhatsAppWeb = () => {
+    debugger;
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
       quoteItemValue?.documentContacts
     );
@@ -2245,6 +2246,7 @@ const useQuoteNew = ({
     }
     const phoneNumber = quoteItemValue?.documentContacts[0].contactPhone;
     const callBack = (res) => {
+      debugger;
       openWhatsAppWebLink(res?.data, phoneNumber);
     };
     getWhatsAppMessageApi(callApi, callBack, {
