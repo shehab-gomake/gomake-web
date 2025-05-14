@@ -2119,7 +2119,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     : undefined;
 
   useEffect(() => {
-    const itemQuantity = quantity ? +quantity?.values[0] : 1;
+    const itemQuantity = quantity && quantity.values && quantity.values.length && quantity?.values[0] ? +quantity?.values[0] : 1;
     if (!isNaN(sliderCurrentProductItemValueTotalPrice) && itemQuantity) {
       const productItemValue = {
         signalRConnectionId: currentSignalRConnectionId,
@@ -3114,9 +3114,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       if (!myParameter) {
         return;
-      }
-      if(myParameter.code === "SpiralType"){
-        debugger
       }
       if (parameter.isHidden == true) {
 
@@ -4120,6 +4117,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const subSectionParameter = subSection.parameters.find(
         (param) => param.id === parameterId && param.actionIndex === actionIndex
       );
+      var valueConfig = subSectionParameter?.valuesConfigs?.find(x=>x.id === data.valueIds);
+      if(valueConfig && valueConfig.selectedParameterValues && valueConfig.selectedParameterValues.length > 0 && valueConfig.selectedParameterValues.some(x=>x.selectValuesCount > 0 && (x.valueIds == null || x.valueIds.length ==0 ))) {
+        onOpeneMultiParameterModal(
+            subSectionParameter,
+            subSection,
+            section,
+            subSection.parameters,
+            subSection.parameters
+        );
+      }
       if (subSectionParameter) {
         subSectionParameter.isHidden = false;
       }
@@ -5694,9 +5701,18 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const quantity = useMemo(() => {
     if (subProducts) {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
-      return generalParameters?.find(
-        (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+      let quantityParam = generalParameters?.find(
+          (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
       );
+      if(quantityParam == null){
+        quantityParam = {
+          values:["0"]
+        }
+      }
+      if(quantityParam && (quantityParam.values == null || quantityParam.values.length == 0)){
+        quantityParam.values = ["0"]
+      }
+      return quantityParam;
     }
   }, [subProducts]);
   const setQuantityParameter = useMemo(() => {
@@ -5785,7 +5801,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           unitPrice:
             +sliderCurrentProductItemValueTotalPrice / +quantity?.values[0], //!new
           finalPrice: +sliderCurrentProductItemValueTotalPrice, //!new
-          amount: quantity?.values[0],
+          amount: quantity && quantity.values && quantity.values.length && quantity?.values[0] ? quantity?.values[0] : 0 ,
           isNeedGraphics: false,
           isUrgentWork: urgentOrder,
           printingNotes,

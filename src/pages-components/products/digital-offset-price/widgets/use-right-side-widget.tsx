@@ -232,9 +232,18 @@ const useRightSideWidget = ({ includeVAT, widgetType }) => {
   const quantity = useMemo(() => {
     if (subProducts) {
       const generalParameters = subProducts.find((x) => !x.type)?.parameters;
-      return generalParameters?.find(
-        (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
+      let quantityParam = generalParameters?.find(
+          (item) => item?.parameterId === "4991945c-5e07-4773-8f11-2e3483b70b53"
       );
+      if(quantityParam == null){
+        quantityParam = {
+          values:["0"]
+        }
+      }
+      if(quantityParam && (quantityParam.values == null || quantityParam.values.length == 0)){
+        quantityParam.values = ["0"]
+      }
+      return quantityParam;
     }
   }, [subProducts]);
 
