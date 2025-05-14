@@ -51,7 +51,7 @@ const SendPaymentModal = ({
   } = useSendPaymentModal({ openPaymentModal, documentType });
   const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
-  const { openWhatsAppWebLink } = useWhatsAppWeb();
+  const { openWhatsAppWebLink } = useWhatsAppWeb(); //!here 2
 
   const handleSendUsingWhatsAppWeb = () => {
     const callBack = (res) => {

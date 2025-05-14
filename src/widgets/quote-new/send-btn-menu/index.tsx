@@ -11,7 +11,6 @@ const SendBtnMenu = ({
   onClickSendQuoteToClient,
   onClickOpenWhatsAppModal,
   documentState,
-  setIsWhatsAppWeb,
   documentType,
   onClickSendReceiptToClient,
 }) => {
@@ -58,26 +57,17 @@ const SendBtnMenu = ({
           {t("sales.quote.phone")}
         </MenuItem>
       )}
-      {documentState.isSendWhatsapp && (
-        <MenuItem
-          onClick={() => {
-            onClickOpenWhatsAppModal();
-            setIsWhatsAppWeb(false);
-            handleClose();
-          }}
-        >
-          {t("sales.quote.whatsApp")}
-        </MenuItem>
-      )}
+
+      {/* !here menu button*/}
+
       {documentState.isSendWhatsappWeb && (
         <MenuItem
           onClick={() => {
             onClickOpenWhatsAppModal();
-            setIsWhatsAppWeb(true);
             handleClose();
           }}
         >
-          {t("sales.quote.whatsAppWeb")}
+          {t("sales.quote.whatsApp")}
         </MenuItem>
       )}
     </GoMakeMenu>
