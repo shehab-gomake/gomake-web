@@ -555,7 +555,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               <Stack direction={"column"}>
                 {mission?.quoteNumber && (
                   <a
-                  //  onClick={() => onClickEditQuote(mission?.quoteId)}
+                    style={classes.tableAtagStyle}
+                    href={`/quotes?finalPatternSearch=${mission?.quoteNumber}`}
                   >
                     {mission?.quoteNumber}
                   </a>
