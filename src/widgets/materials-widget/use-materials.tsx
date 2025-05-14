@@ -51,7 +51,7 @@ import { SideLeftMenuWidget } from "./components/side-list-menu";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { useMaterialsCategories } from "./use-materials-categories";
 import { convertTitleUnits } from "@/utils/helpers";
-import { userState } from "@/store";
+import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 
 const useMaterials = (isAdmin: boolean) => {
@@ -150,8 +150,9 @@ const useMaterials = (isAdmin: boolean) => {
   const [selectedMaterialCategory, setSelectedMaterialCategory] =
     useState<any>();
   const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
-
+  const [isLoadingMaterials, setIsLoadingMaterials] = useRecoilState<boolean>(isLoadingMaterialsState);
   const onSelectCategory = (category: string) => {
+    setIsLoadingMaterials(true);
     setIsFirstTime(false);
     setSelectedMaterialCategory(category);
     if (category != materialCategory) {
@@ -417,16 +418,17 @@ const useMaterials = (isAdmin: boolean) => {
       if (res.success) {
         const supplier = res?.data[0];
         setSupplierId(supplier?.id);
-        if (isFirstTime && supplier?.id) {
-          getMaterialCategoryData(
-            materialType?.toString(),
-            materialCategory?.toString(),
-            materialFilter,
-            supplier?.id,
-            pageNumber,
-            14
-          ).then();
-        }
+        setIsLoadingMaterials(false);
+        // if (isFirstTime && supplier?.id) {
+        //   getMaterialCategoryData(
+        //     materialType?.toString(),
+        //     materialCategory?.toString(),
+        //     materialFilter,
+        //     supplier?.id,
+        //     pageNumber,
+        //     14
+        //   ).then();
+        // }
 
         setMaterialCategorySuppliers(
           res?.data?.map((supplier) => {
