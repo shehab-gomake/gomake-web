@@ -3115,9 +3115,6 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       if (!myParameter) {
         return;
       }
-      if(myParameter.code === "SpiralType"){
-        debugger
-      }
       if (parameter.isHidden == true) {
 
         const sectionCopy = productTemplate.sections.find(
@@ -4120,6 +4117,16 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       const subSectionParameter = subSection.parameters.find(
         (param) => param.id === parameterId && param.actionIndex === actionIndex
       );
+      var valueConfig = subSectionParameter?.valuesConfigs?.find(x=>x.id === data.valueIds);
+      if(valueConfig && valueConfig.selectedParameterValues && valueConfig.selectedParameterValues.length > 0 && valueConfig.selectedParameterValues.some(x=>x.selectValuesCount > 0 && (x.valueIds == null || x.valueIds.length ==0 ))) {
+        onOpeneMultiParameterModal(
+            subSectionParameter,
+            subSection,
+            section,
+            subSection.parameters,
+            subSection.parameters
+        );
+      }
       if (subSectionParameter) {
         subSectionParameter.isHidden = false;
       }
