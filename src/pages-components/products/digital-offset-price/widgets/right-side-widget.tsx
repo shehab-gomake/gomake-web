@@ -439,7 +439,7 @@ const RightSideWidget = ({
                   const newPriceIncludeVat = e.target.value;
                   setPriceIncludeVat(newPriceIncludeVat);
                   if (
-                    quantity?.values[0] &&
+                    quantity && quantity.values && quantity.values.length && quantity?.values[0] &&
                     newPriceIncludeVat !== "" &&
                     newPriceIncludeVat !== null &&
                     newPriceIncludeVat !== "0"
