@@ -39,6 +39,8 @@ import { addOrderBoardMissionsToFileUploaderApi } from "@/services/api-service/b
 import { useGomakeAxios } from "@/hooks";
 import { fileUploaderConnectionIdState } from "@/store/file-uploader-state";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import {usePrintHousePreferences} from "@/hooks/use-print-house-preferences";
+import {EPreferences} from "@/enums/prefernces";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -134,6 +136,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const isPrintHouseUsePrintNode = useRecoilValue(printHouseUsePrintNode);
   const [openPrintNodeModal, setOpenPrintNodeModal] = useState(false);
   const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
+  const { CheckPreferenceValue } = usePrintHousePreferences();
   useEffect(() => {
     if (
       router.isReady &&
@@ -146,7 +149,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         orderId: newOrderId,
         connectionId: connectionId,
       }).then();
-      setOpenPrintNodeModal(!!(isPrintHouseUsePrintNode && newOrderId));
+      
+      setOpenPrintNodeModal(!!(isPrintHouseUsePrintNode && newOrderId && !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS)));
       setPrintNodeOrderId(newOrderId);
       setNewOrderId("");
     }
