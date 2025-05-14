@@ -12,6 +12,7 @@ const DOWNLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/download-material-excel";
 const UPLOAD_MATERIAL_EXCEL_FILE = "/v1/materials/upload-material-excel-file";
 const UPDATE_MATERIALS_IMAGES = "/v1/materials/update-materials-images";
 const UPLOAD_DOCUMENT_ATTACHMENT = "/v1/erp-service/documents/upload-document-attachment"
+const UPLOAD_QUOTE_ITEM_FILE = "/v1/erp-service/document/upload-quote-item-file"
 const UPDATE_SUPPLIER_PRIORITY = "/v1/materials/update-supplier-priority";
 const GET_MATERIAL_CATEGORIES_URL = "/v1/materials/GetMaterialCategories";
 const GET_MATERIAL_CATEGORY_BY_MATERIAL_KEY_URL = "/v1/print-house-materials/get-print-house-material-mapped-by-material-key";
@@ -378,6 +379,25 @@ const uploadDocumentAttachmentApi: ICallAndSetData = async (
   );
 };
 
+const uploadQuoteItemFileApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  console.log("data", data)
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    data?.uri,
+    callBack,
+    {
+      documentId: data?.documentId,
+      fileName: data?.fileName,
+      base64Content: data?.base64Content,
+    }
+  );
+};
+
 export {
   getMaterialsTypesApi,
   getMaterialTableHeadersApi,
@@ -402,5 +422,6 @@ export {
   updateMaterialCategoryNumberingApi,
   updateSupplierPriorityApi,
   toggleMaterialTypeActiveApi,
-  uploadDocumentAttachmentApi
+  uploadDocumentAttachmentApi,
+  uploadQuoteItemFileApi
 };

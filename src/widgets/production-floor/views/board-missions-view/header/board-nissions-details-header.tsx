@@ -215,7 +215,6 @@ const BoardMissionsDetailsHeader = () => {
     timerLoading,
     sortedStations,
   } = useBoardMissionsDetailsHeader();
-
   const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
   const isLoadingTimer = isLoading || sortedStations?.length === 0;
 
@@ -407,6 +406,7 @@ const BoardMissionsDetailsHeader = () => {
                         statusText={t(
                           `productionStatuses.${boardMissionsDetails.boardMissionStatus?.name}`
                         )}
+                        productType={boardMissionsDetails?.productType}
                       />
                     )}
                   </Stack>

@@ -49,12 +49,8 @@ const useQuoteWidget = () => {
   const setQuoteNumber = useSetRecoilState<any>(QuoteNumberState);
   const [selectedTab, setSelectedTab] = useState<ETab>(ETab.PRODUCTS);
 
-  const {
-    renderOptions,
-    checkWhatRenderArray,
-    isFetching,
-    customersListCreateQuote,
-  } = useCustomerDropDownList({ shouldRenderCustomersOnMount: false });
+  const { renderOptions, checkWhatRenderArray, isFetching, listClient } =
+    useCustomerDropDownList({});
 
   const onClickOpenModal = (quoteId: any) => {
     setOpenModal(true);
@@ -215,6 +211,10 @@ const useQuoteWidget = () => {
   const onCustomerAdd = (customer) => {
     handleClickToSelectedCustomer(userQuote?.client?.id, customer).then();
     setOpenCustomerModal(false);
+  };
+
+  const onCustomerAddFromOption = (customer) => {
+    handleClickToSelectedCustomer(userQuote?.client?.id, customer).then();
   };
 
   const onClickAddCustomer = () => {
@@ -469,9 +469,10 @@ const useQuoteWidget = () => {
     selectedTab,
     setSelectedTab,
     onSelectTab,
-    customersListCreateQuote,
+    listClient,
     navigate,
     onclickCreateNew,
+    onCustomerAddFromOption,
   };
 };
 

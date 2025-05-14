@@ -60,7 +60,7 @@ const useDeliveries = () => {
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-  } = useCustomerDropDownList();
+  } = useCustomerDropDownList({});
 
   const { getAllShipmentTypes, shipmentTypes } = useQuoteGetData();
   const [deliveryTypeValue, setDeliveryTypeValue] = useState<{

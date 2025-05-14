@@ -19,7 +19,7 @@ import {
   setBoardMissionsFiltersApi,
 } from "@/services/api-service/board-missions/board-missions-table";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { DEFAULT_VALUES } from "@/pages/customers/enums";
+import { CLIENT_TYPE, DEFAULT_VALUES } from "@/pages/customers/enums";
 import { EWorkSource } from "@/widgets/product-pricing-widget/enums";
 import { useDebounce } from "@/utils/use-debounce";
 import { MoreMenuWidget } from "./widgets/more-circle";
@@ -119,16 +119,18 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const [pageNumber, setPageNumber] = useState(1);
   const [pagesCount, setPagesCount] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_VALUES.PageSize);
-
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
   const {
     customer,
-    supplierList,
     setCustomer,
     renderOptions,
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-  } = useCustomerDropDownList({ shouldRenderSuppliersOnMount: isPurchaseJobs });
+  } = useCustomerDropDownList({
+    clientType: isPurchaseJobs ? CLIENT_TYPE.SUPPLIER : CLIENT_TYPE.CUSTOMER,
+  });
 
   const { agent, setAgent, agentsCategories, handleAgentChange } =
     useAgentsList();
@@ -545,11 +547,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 {mission?.clientName}
               </div>,
               mission?.productType
-                ? `${mission?.number} / ${
-                    mission?.productTypeName
-                      ? mission?.productTypeName
-                      : mission?.productType
-                  }`
+                ? `${mission?.number} / ${mission?.productTypeName
+                  ? mission?.productTypeName
+                  : mission?.productType
+                }`
                 : mission?.number,
               <Stack direction={"column"}>
                 {mission?.quoteNumber && (
@@ -570,20 +571,26 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               mission?.outSourceType === null
                 ? `${t("boardMissions." + EWorkSource[0])}`
                 : `${t(
-                    "boardMissions." + EWorkSource[mission?.outSourceType]
-                  )}`,
+                  "boardMissions." + EWorkSource[mission?.outSourceType]
+                )}`,
               mission?.quantity,
               ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-                ? [mission?.cost + " " + getCurrencyUnitText(mission?.currency)]
+                ? [isRTL ? mission?.cost + " " + getCurrencyUnitText(mission?.currency) : getCurrencyUnitText(mission?.currency) + " " + mission?.cost]
                 : []),
               ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                 ? [
-                    mission?.price +
+                  [
+                    isRTL ?
+                      mission?.price +
                       (itemCalculatedPrice
                         ? ` (${itemCalculatedPrice})`
                         : " ") +
-                      getCurrencyUnitText(mission?.currency),
+                      getCurrencyUnitText(mission?.currency) : getCurrencyUnitText(mission?.currency) + " " + mission?.price +
+                      (itemCalculatedPrice
+                        ? ` (${itemCalculatedPrice})`
+                        : " ")
                   ]
+                ]
                 : []),
               mission?.jobName,
               mission?.numberOfBoardMissions,
@@ -722,11 +729,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             </div>,
             mission?.supplierName,
             mission?.productType
-              ? `${mission?.number} / ${
-                  mission?.productTypeName
-                    ? mission?.productTypeName
-                    : mission?.productType
-                }`
+              ? `${mission?.number} / ${mission?.productTypeName
+                ? mission?.productTypeName
+                : mission?.productType
+              }`
               : mission?.number,
             mission?.orderNumber,
             mission?.purchaseOrderNumber,
@@ -1344,7 +1350,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onOpenMarkReadyThenPrintModal,
     selectedMission,
     supplierId,
-    supplierList,
     orderStatuses,
     orderStatus,
     handleOrderStatusChange,

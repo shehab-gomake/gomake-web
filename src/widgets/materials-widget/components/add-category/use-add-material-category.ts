@@ -43,6 +43,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
   );
   const { getMaterialCategories } = useMaterials(isAdmin);
   const [newCategory, setNewCategory] = useState<string>(null);
+  const [newCategoryKey, setNewCategoryKey] = useState<string>(null);
   const [imgUrl, setImgUrl] = useState<any>("");
   const [selectedImgForAdded, setSelectedImgForAdded] = useState();
   const setActiveFilter = useSetRecoilState(activeFilterState);
@@ -60,6 +61,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
   useEffect(() => {
     if (selectedCategoryModal) {
       setNewCategory(selectedCategoryModal?.categoryName);
+      setNewCategoryKey(selectedCategoryModal?.categoryKey);
       setImgUrl(selectedCategoryModal?.imageURL);
     }
   }, [selectedCategoryModal]);
@@ -140,7 +142,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
     await updatePrintHouseMaterialCategoryNameApi(callApi, callBack, {
       materialTypeKey: materialType.toString(),
       categoryKey: selectedCategoryModal?.categoryKey,
-      newCategoryKey: newCategory,
+      newCategoryKey: newCategoryKey,
       defaultAttributeValues,
     });
   };

@@ -1,10 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  useAgentsList,
-  useCustomerDropDownList,
-  useGomakeAxios,
-  useSnackBar,
-} from "@/hooks";
+import { useEffect, useState } from "react";
+import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { DEFAULT_VALUES } from "@/pages/customers/enums";
 import {
@@ -14,7 +9,7 @@ import {
 } from "@/services/api-service/credit-card-transactions/credit-card-transaction-api";
 import { useTranslation } from "react-i18next";
 import { MoreMenuWidget } from "./widgets/more-circle";
-import { format, endOfToday, startOfYear } from "date-fns";
+import { format, endOfToday } from "date-fns";
 import { initialFromDate } from "@/utils/helpers";
 
 const useCreditCardTransactions = () => {
@@ -29,7 +24,7 @@ const useCreditCardTransactions = () => {
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-  } = useCustomerDropDownList();
+  } = useCustomerDropDownList({});
   const [resetDatePicker, setResetDatePicker] = useState<boolean>(false);
   const [allCreditCardTransaction, setAllCreditCardTransaction] =
     useState<any>();

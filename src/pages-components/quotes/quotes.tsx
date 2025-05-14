@@ -49,6 +49,7 @@ import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 import { useDeliveryStatusButton } from "./widgets/delivery-status-button/use-delivery-status";
 import { useClientContactsList } from "@/hooks/use-client-contacts";
 import { UpdateDeliveryStatusModal } from "./widgets/delivery-status-button/delivery-status-modal/delivery-status-modal";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -205,7 +206,6 @@ const QuotesListPageWidget = ({
     setDeliveryStatus,
     setFromDate,
     setToDate,
-    supplierList,
     isPurchaseDocument,
     isSendToClient,
     isReceipt,
@@ -421,35 +421,19 @@ const QuotesListPageWidget = ({
                                   ? t("reports.supplier")
                                   : t("productionFloor.customer")}
                               </div>
-                              <GoMakeAutoComplate
+                              <ClientAutocomplete
                                 key={customerId?.id}
-                                options={
+                                clientType={
                                   isPurchaseDocument
-                                    ? supplierList
-                                    : renderOptions()
-                                    ? renderOptions()
-                                    : []
+                                    ? CLIENT_TYPE.SUPPLIER
+                                    : CLIENT_TYPE.CUSTOMER
                                 }
+                                options={renderOptions() ? renderOptions() : []}
                                 getOptionLabel={(option: any) =>
                                   `${option.name}`
                                 }
-                                defaultFiltering={
-                                  isPurchaseDocument ? true : false
-                                }
-                                onChangeTextField={(e) => {
-                                  if (isPurchaseDocument) {
-                                    return;
-                                  }
-                                  checkWhatRenderArray(e);
-                                }}
+                                onChangeTextField={checkWhatRenderArray}
                                 style={classes.textInputStyle}
-                                placeholder={t(
-                                  `sales.quote.${
-                                    isPurchaseDocument
-                                      ? "chooseSupplier"
-                                      : "chooseCustomer"
-                                  }`
-                                )}
                                 onChange={(e: any, value: any) => {
                                   setCustomerId(value);
                                 }}

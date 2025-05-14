@@ -842,6 +842,9 @@ const QuoteNewPageWidget = ({
         quoteConfirm?.documentStatus !== QUOTE_STATUSES.Canceled && (
           <ButtonsConfirmContainer
             onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal}
+            isQuoteConfirmation={isQuoteConfirmation}
+            quoteConfirm={quoteConfirm}
+
           />
         )}
       <AddNewItemModal
@@ -1145,6 +1148,9 @@ const QuoteNewPageWidget = ({
         onClose={onCloseAddAttachmentsModal}
         documentType={documentType}
         getQuote={getQuote}
+        isQuoteConfirmation={isQuoteConfirmation}
+        quoteConfirm={quoteConfirm}
+
       />
       <GoMakeAlertModal
         openModal={alertNotVerifiedMail.isOpen}

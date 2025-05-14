@@ -15,6 +15,7 @@ import {
 import { CustomerCardWidget } from "@/widgets/customer-card-modal/customer-card";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useCustomerDropDownList } from "@/hooks/use-customer-drop-down-list";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 
 const AddSupplierModal = () => {
   const {
@@ -34,17 +35,10 @@ const AddSupplierModal = () => {
   const { materialCategories } = useMaterials(false);
   const { t } = useTranslation();
   const {} = useClientTypesList(true, CLIENT_TYPE_Id.SUPPLIER);
-  const { supplierList } = useCustomerDropDownList({
-    shouldRenderCustomersOnMount: false,
-    shouldRenderSuppliersOnMount: true,
-  });
-
-  const renderSuppliersOptions = () => {
-    return supplierList.map((supplier) => ({
-      value: supplier.id,
-      label: supplier.name,
-    }));
-  };
+  const { renderOptions, checkWhatRenderArray, isFetching } =
+    useCustomerDropDownList({
+      clientType: CLIENT_TYPE.SUPPLIER,
+    });
 
   return (
     <>
@@ -73,14 +67,19 @@ const AddSupplierModal = () => {
           margin={"auto"}
         >
           <Stack direction="row" alignItems="center" gap={1}>
-            <GoMakeAutoComplate
+            <ClientAutocomplete
               key={newSupplier?.value}
+              clientType={CLIENT_TYPE.SUPPLIER}
               onChange={onSelectSupplier}
-              options={renderSuppliersOptions()}
+              options={renderOptions() ? renderOptions() : []}
               placeholder={t("materials.sheetPaper.selectASupplier")}
               style={{ minWidth: "180px" }}
               value={newSupplier}
+              onChangeTextField={checkWhatRenderArray}
+              getOptionLabel={(option: any) => `${option.name}`}
+              loading={isFetching}
             />
+
             <Tooltip title={t("materials.sheetPaper.addNewSupplier")}>
               <IconButton onClick={onClickAddSupplier}>
                 <AddIcon sx={{ color: "#f50057" }} />

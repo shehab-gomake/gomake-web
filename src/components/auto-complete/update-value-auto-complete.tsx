@@ -26,6 +26,7 @@ interface IUpdateValueAutoCompleteProps {
   onChangeTextField?: any;
   loading?: boolean;
   defaultFiltering?: boolean;
+  renderOption?: any;
 }
 
 const UpdateValueAutoComplete = ({
@@ -36,6 +37,7 @@ const UpdateValueAutoComplete = ({
   onChangeTextField,
   loading = false,
   defaultFiltering = true,
+  renderOption,
 }: IUpdateValueAutoCompleteProps) => {
   const { secondColor } = useGomakeTheme();
   const { t } = useTranslation();
@@ -83,6 +85,7 @@ const UpdateValueAutoComplete = ({
             onChange={(e: any, value: any) => {
               onChange(e, value);
             }}
+            renderOption={renderOption}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -121,20 +124,22 @@ const UpdateValueAutoComplete = ({
             }
             style={{ height: 26 }}
             clearIcon={false}
-
-            PaperComponent={React.useCallback((props) => (
-              <Paper
-                ref={optionsListEl}
-                {...props}
-                elevation={1}
-                sx={{
-                  ...(props as any).sx,
-                  zIndex: 1500 // Ensure proper stacking
-                }}
-              >
-                {props.children}
-              </Paper>
-            ), [])}
+            PaperComponent={React.useCallback(
+              (props) => (
+                <Paper
+                  ref={optionsListEl}
+                  {...props}
+                  elevation={1}
+                  sx={{
+                    ...(props as any).sx,
+                    zIndex: 1500, // Ensure proper stacking
+                  }}
+                >
+                  {props.children}
+                </Paper>
+              ),
+              []
+            )}
             filterOptions={defaultFiltering ? undefined : (x) => x}
           />
         </Paper>
