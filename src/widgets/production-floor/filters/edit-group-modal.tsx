@@ -13,6 +13,7 @@ interface IModalFilters {
   selectedGroupId?: any;
   actions: IActionMachines[];
   getStationFilterGroups: () => void;
+  setFilters?: any;
 }
 const ScrollableDiv = styled.div`
     max-height: 35vh;
@@ -43,7 +44,7 @@ const ModalEditGroup = ({
   selectedGroupId,
   actions,
   getStationFilterGroups,
-  // updateStationFilterGroup
+  setFilters
 }: IModalFilters) => {
   const { classes } = useStyle()
   const { t } = useTranslation();
@@ -58,7 +59,7 @@ const ModalEditGroup = ({
     toggleCollapse,
     getList,
     updateStationFilterGroup
-  } = useEditGroupModal({ selectedGroupId, actions, getStationFilterGroups });
+  } = useEditGroupModal({ selectedGroupId, actions, getStationFilterGroups, setFilters });
 
   return (
     <GoMakeModal
