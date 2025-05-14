@@ -82,7 +82,18 @@ const AddRowModal = (props: IAddRowModalProps) => {
     rowData: Record<string, any>
   ) => {
     let filterheaders = headers?.filter(
-      (header) => header.key !== "price Unit / ton"
+      (header) => (header.key !== "price Unit / ton"
+        && header.key !== "price m^2 / Pack"
+        && header.key !== "price Roll / M^2"
+        && header.key !== "Price Staple / pack"
+        && header.key !== "price"
+        && header.key !== "Price Unit/pack"
+        && header.key !== "Price unit / per meter"
+        && header.key !== "Price Piercing / pack"
+        && header.key !== "CostPerRollPerSquareMeterPerTon"
+        && header.key !== "price unit / M^2"
+        && header.key !== "price unit/pack"
+      )
     );
     const missingFields: string[] = [];
     // Check each header
