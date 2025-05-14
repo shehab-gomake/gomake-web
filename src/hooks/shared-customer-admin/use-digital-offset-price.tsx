@@ -3087,13 +3087,14 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     const hasChildParams = parameter?.childsParameters?.length > 0;
     const isHidden = parameter.isHidden === true;
 
-
-
+   
     const relatedParametersfilterd = parameter?.relatedParameters?.filter(
       (relatedParameter) =>
         subSection.parameters.some((p) => p.id === relatedParameter.parameterId)
     );
     relatedParametersfilterd?.map((relatedParameter) => {
+     
+
       const subProduct = subProducts?.find((x) => x.type === subSection?.type);
       let actionIndex = parameter.actionIndex;
       if (actionIndex == null) {
@@ -3113,6 +3114,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       );
       if (!myParameter) {
         return;
+      }
+      if(myParameter.code === "SpiralType"){
+        debugger
       }
       if (parameter.isHidden == true) {
 
@@ -3137,6 +3141,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           });
         }
         if (param.isHidden == true) {
+          if(param.relatedParameters) {
+            for(let i = 0 ;i<param.relatedParameters.length;i++) {
+              let relatedParameterId = param.relatedParameters[i].parameterId;
+              let relatedParameter = subSectionCopy.parameters.find(x=>x.id === relatedParameterId);
+              if(relatedParameter) {
+                relatedParameter.isHidden = true;
+              }
+            }
+          }
           processRelatedParameters2(
             param,
             subSection,
@@ -3278,7 +3291,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             productTemplate,
             subProducts
           );
-        } else {
+        } 
+        else {
           const sectionCopy = productTemplate.sections.find(
             (x) => x.id === section.id
           );
@@ -3289,6 +3303,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             (x) => x.id === relatedParameter.parameterId
           );
           if (param.isHidden == true) {
+            if(param.relatedParameters) {
+              for(let i = 0 ;i<param.relatedParameters.length;i++) {
+                let relatedParameterId = param.relatedParameters[i].parameterId;
+                let relatedParameter = subSectionCopy.parameters.find(x=>x.id === relatedParameterId);
+                if(relatedParameter) {
+                  relatedParameter.isHidden = true;
+                }
+              }
+            }
             processRelatedParameters2(
               param,
               subSection,
@@ -3309,6 +3332,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             }
           });
           param.isHidden = true;
+          if(param.relatedParameters) {
+            for(let i = 0 ;i<param.relatedParameters.length;i++) {
+              let relatedParameterId = param.relatedParameters[i].parameterId;
+              let relatedParameter = subSectionCopy.parameters.find(x=>x.id === relatedParameterId);
+              if(relatedParameter) {
+                relatedParameter.isHidden = true;
+              }
+            }
+          }
           processRelatedParameters2(
             param,
             subSection,
@@ -3317,7 +3349,8 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             subProducts
           );
         }
-      } else {
+      } 
+      else {
         const valueInArray = relatedParameter.selectedValueIds?.find(
           (c) => c == parm?.values || (c == "false" && !parm?.values)
         );
@@ -3360,6 +3393,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
             (x) => x.id === relatedParameter.parameterId
           );
           if (param.isHidden == true) {
+            if(param.relatedParameters) {
+              for(let i = 0 ;i<param.relatedParameters.length;i++) {
+                let relatedParameterId = param.relatedParameters[i].parameterId;
+                let relatedParameter = subSectionCopy.parameters.find(x=>x.id === relatedParameterId);
+                if(relatedParameter) {
+                  relatedParameter.isHidden = true;
+                }
+              }
+            }
             processRelatedParameters2(
               param,
               subSection,
@@ -3379,6 +3421,15 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               };
             }
           });
+          if(param.relatedParameters) {
+            for(let i = 0 ;i<param.relatedParameters.length;i++) {
+              let relatedParameterId = param.relatedParameters[i].parameterId;
+              let relatedParameter = subSectionCopy.parameters.find(x=>x.id === relatedParameterId);
+              if(relatedParameter) {
+                relatedParameter.isHidden = true;
+              }
+            }
+          }
           param.isHidden = true;
           processRelatedParameters2(
             param,
