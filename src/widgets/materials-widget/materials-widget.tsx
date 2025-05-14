@@ -13,7 +13,7 @@ import {
   isDuplicateCategoryModalState,
   isEditCategoryModalState,
   openAddCategoryModalState,
-  openAddSupplierModalState,
+  openAddRowModalState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
@@ -44,7 +44,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     useMaterialsCategories(props.isAdmin);
   const pageSize = 14;
   const activeFilter = useRecoilValue(activeFilterState);
-  const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
+  const setOpenAddRowModal = useSetRecoilState(openAddRowModalState);
   const {
     openPriceModal,
     onClickClosePriceModal,
@@ -90,8 +90,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     toggleIsActive,
     selectedMaterialCategory,
     setSelectedMaterialCategory,
+    uploadExcelFile,
+    elementRef,
   } = useMaterials(props.isAdmin);
-
   const subCategory = materialCategories.find(
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
@@ -279,14 +280,18 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                 </Stack>
               ) : !props.isAdmin ? (
                 <div style={classes.noData}>
-                  {t("materials.sheetPaper.supplierAddedSheetYet")}
-                  <span
-                    style={classes.noDataSpan}
-                    onClick={() => {
-                      setOpenAddSupplierModal(true);
-                    }}
-                  >
-                    {t("materials.sheetPaper.pleaseAddNow")}
+                  No data for {materialCategory}
+                  <br />
+                  <span style={classes.noDataSpan} onClick={() => {
+                    setOpenAddRowModal(true);
+                  }}>
+                    {t("materials.sheetPaper.pleaseAddMaterial")} ,
+                  </span>
+                  <span>{"  "}</span>
+                  <span style={classes.noDataSpan} onClick={() => {
+                    elementRef.current.click();
+                  }}>
+                    {t("materials.sheetPaper.orUploadForExcel")}
                   </span>
                 </div>
               ) : (
@@ -358,6 +363,13 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           updateProfitProfileProductHidden(false)
         }}
       /> */}
+      <input
+        ref={elementRef}
+        onChange={uploadExcelFile}
+        type="file"
+        accept=".xlsx"
+        hidden={true}
+      />
     </div>
   );
 };

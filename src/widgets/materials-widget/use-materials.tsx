@@ -1,14 +1,16 @@
 import { useRouter } from "next/router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   deleteMaterialCategoryApi,
   getMaterialCategoriesApi,
   getMaterialTableHeadersApi,
+  uploadMaterialExcelFileApi,
 } from "@/services/api-service/materials/materials-endpoints";
 import {
   deletePrintHouseMaterialCategoryApi,
   getPrintHouseMaterialCategoriesApi,
+  uploadPrintHouseMaterialExcelFileApi,
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
@@ -402,7 +404,7 @@ const useMaterials = (isAdmin: boolean) => {
     };
     await getCurrencies(callApi, callBack);
   };
-
+  const elementRef = useRef(null);
   const getPrintHouseMaterialCategorySuppliers = async (
     materialType: string,
     materialCategory: string
@@ -463,6 +465,48 @@ const useMaterials = (isAdmin: boolean) => {
     });
   }, []);
 
+  const uploadExcelFile = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const arrayBuffer = event.target.result;
+        const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+        // Convert data to a Base64 string
+        var base64String = btoa(
+          new Uint8Array(data).reduce(function (data, byte) {
+            return data + String.fromCharCode(byte);
+          }, "")
+        );
+        let callBack = () => {
+          getMaterialCategories(materialType).then(x => {
+            getMaterialCategoryData(
+              materialType?.toString(),
+              materialCategory?.toString(),
+              [],
+              supplierId
+            ).then();
+          });
+
+        }
+        if (isAdmin) {
+          uploadMaterialExcelFileApi(callApi, callBack, {
+            key: materialType.toString(),
+            base64: base64String,
+          });
+        } else {
+          uploadPrintHouseMaterialExcelFileApi(callApi, callBack, {
+            key: materialType.toString(),
+            supplierId: supplierId,
+            base64: base64String,
+          });
+        }
+
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  };
+
   return {
     materialCategory,
     materialType,
@@ -496,6 +540,8 @@ const useMaterials = (isAdmin: boolean) => {
     toggleIsActive,
     selectedMaterialCategory,
     setSelectedMaterialCategory,
+    uploadExcelFile,
+    elementRef,
   };
 };
 
