@@ -21,7 +21,9 @@ const PRINT_ODER_JOBS_USING_PRINT_NODE_URL =
   "/v1/erp-service/board-missions-tables/print-order-jobs-using-print-node/";
 const SEARCH_JOBS_URL = "/v1/erp-service/board-missions/search-jobs";
 const ADD_ORDER_BOARD_MISSIONS_TO_FILE_UPLOADER_URL =
-    "/v1/erp-service/board-missions/add-order-to-file-uploader";
+  "/v1/erp-service/board-missions/add-order-to-file-uploader";
+const EXPORT_JOBS_TABLE_TO_EXCEL_URL =
+  "/v1/job-service/board-missions-tables/export-job-table-to-excel";
 
 const setBoardMissionsFiltersApi: ICallAndSetData = async (
   callApi,
@@ -145,18 +147,33 @@ const searchJobsApi: ICallAndSetData = async (
 };
 
 const addOrderBoardMissionsToFileUploaderApi: ICallAndSetData = async (
-    callApi,
-    setState,
-    data
+  callApi,
+  setState,
+  data
 ) => {
   return await getSetApiData(
-      callApi,
-      EHttpMethod.POST,
-      ADD_ORDER_BOARD_MISSIONS_TO_FILE_UPLOADER_URL,
-      setState,
-      data
+    callApi,
+    EHttpMethod.POST,
+    ADD_ORDER_BOARD_MISSIONS_TO_FILE_UPLOADER_URL,
+    setState,
+    data
   );
 };
+
+const exportJobTableToExcelApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data: BoardMissionFilters
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    EXPORT_JOBS_TABLE_TO_EXCEL_URL,
+    setState,
+    data
+  );
+};
+
 export {
   setBoardMissionsFiltersApi,
   getOrderSummeryPdfApi,
@@ -167,5 +184,6 @@ export {
   printJobUsingPrintNodeApi,
   printOrderJobUsingPrintNodeApi,
   searchJobsApi,
-  addOrderBoardMissionsToFileUploaderApi
+  addOrderBoardMissionsToFileUploaderApi,
+  exportJobTableToExcelApi,
 };
