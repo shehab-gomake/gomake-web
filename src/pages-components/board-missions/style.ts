@@ -100,7 +100,6 @@ const useStyle = () => {
       textInputForProductsStyle: {
         width: 350,
         border: "none",
-        height: 45,
       },
       clearBtnStyle: {
         height: 40,
