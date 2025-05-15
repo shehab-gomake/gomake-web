@@ -25,7 +25,7 @@ import { useProductionFloorData } from "@/widgets/production-floor/use-productio
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
 import { useCallback, useState } from "react";
-import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { CurrentStationOrderingEnum, ModalType } from "@/enums";
 import { useMediaQuery } from "@mui/material";
@@ -36,6 +36,7 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ArrowUpward, } from "@mui/icons-material";
 import { productionFloorFiltersState } from "../../state/production-floor-filters";
 import { currentStationOrderingState } from "@/store/agents-state";
+import { useStorageList } from "@/hooks/use-storage-list";
 
 interface IProps {
   status: IProductionStatus;
@@ -90,7 +91,18 @@ const StatusTableComponent = ({
     selectedMission,
     tryMoveBoardMissionsToDone,
     updateJobDueDate,
+    setSelectedMission
+
   } = useProductionFloorData();
+
+  const {
+    storageList,
+    inputValue,
+    defaultValue,
+    addPrintHouseJobsStorage,
+    handleStorageChange,
+    setInputValue
+  } = useStorageList({ selectedMission, setSelectedMission })
   const {
     openSimpleApproveModal,
     handleOpenModal,
@@ -323,7 +335,46 @@ const StatusTableComponent = ({
         onClose={onCloseMarkReadyModal}
         onClickYes={() => onClickMoveBoardMissionToDone(true)}
         onClickNo={() => onClickMoveBoardMissionToDone(false)}
-      />
+      >
+        <div style={{ width: "100%", minWidth: 300 }}>
+          <GoMakeAutoComplate
+            options={
+              storageList.find(
+                (option: any) => option.storage === inputValue
+              ) || inputValue === ""
+                ? storageList
+                : [
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
+            }
+            placeholder={t("boardMissions.selectStorage")}
+            key={defaultValue}
+            style={{
+              width: "100%",
+              border: "none",
+              height: 45,
+            }}
+            getOptionLabel={(option: any) => option?.storage}
+            value={defaultValue}
+            onChange={(e: any, value: any) => {
+              if (value?.id === "new") {
+                addPrintHouseJobsStorage(inputValue);
+                setInputValue("");
+              } else {
+                handleStorageChange(e, value);
+                setInputValue("");
+              }
+            }}
+            onInputChange={(event: any, newInputValue: string) => {
+              setInputValue(newInputValue);
+            }}
+          />
+        </div>
+      </ThreeOptionsModal>
       <PrintPackingSlipModalWidget
         openModal={openPackagesModal}
         onClose={onClosePrintDeliverTicketModal}

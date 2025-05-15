@@ -15,11 +15,14 @@ class ActionProvider {
             const socket = io(config.api_server);
             socket.on('chatbot-socket-io', (newData:string[]) => {
                 console.log("newData", newData)
-                const greetingMessage = createCustomMessage("helloo", 'bot', {loading: false});
-                this.setState(prev => ({
-                    ...prev,
-                    messages: [...prev.messages, greetingMessage],
-                }));
+                newData.forEach(str=>{
+                    const greetingMessage = createCustomMessage(str, 'bot', {loading: false});
+                    this.setState(prev => ({
+                        ...prev,
+                        messages: [...prev.messages, greetingMessage],
+                    }));
+                })
+                
             });
             socket.on('connect', () => {
                 resolve(socket.id);
