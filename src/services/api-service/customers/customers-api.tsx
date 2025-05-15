@@ -14,6 +14,8 @@ const IMPORT_CLIENT_URL = "/v1/crm-service/customer/import-client";
 const GET_ALL_SIMILAR_CUSTOMER_URL = "/v1/customers/search-similar-clients";
 const GET_CLIENT_CONTACTS_URL = "/v1/crm-service/customer/get-client-contacts";
 const GET_CLIENT_BALANCE_URL = "/v1/crm-service/customer/get-client-balance/";
+const VALIDATE_ADDRESS_URL =
+  "/v1/crm-service/customer/validate-address-with-google";
 
 const importClientApi: ICallAndSetData = async (callApi, setState, data) => {
   return await getSetApiData(
@@ -160,8 +162,28 @@ const getClientContactsApi: ICallAndSetData = async (
     data
   );
 };
-const getClientBalanceApi: ICallAndSetData = async (callApi, setState, data) => {
-  return await getSetApiData(callApi, EHttpMethod.GET, GET_CLIENT_BALANCE_URL + data, setState,);
+
+const getClientBalanceApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_CLIENT_BALANCE_URL + data,
+    setState
+  );
+};
+
+const validateAddressApi: ICallAndSetData = async (callApi, setState, data) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    VALIDATE_ADDRESS_URL,
+    setState,
+    data
+  );
 };
 
 export {
@@ -172,5 +194,6 @@ export {
   importClientApi,
   getAllSimilarCustomerApi,
   getClientContactsApi,
-    getClientBalanceApi
+  getClientBalanceApi,
+  validateAddressApi,
 };

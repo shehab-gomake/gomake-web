@@ -397,5 +397,25 @@ export const initialFromDate = (key: string, defaultDate?: Date) => {
 
 export const areAllItemsChecked = (quoteConfirm) => {
   if (!quoteConfirm?.documentItems?.length) return false;
-  return quoteConfirm.documentItems.every(item => item.isChecked === false);
+  return quoteConfirm.documentItems.every((item) => item.isChecked === false);
+};
+
+export const validateUsAddressFields = (
+  address: any
+): { isValid: boolean; missingFields: string[] } => {
+  const missingFields: string[] = [];
+
+  if (!address?.country) missingFields.push("customers.modal.country");
+  if (!address?.city) missingFields.push("sales.quote.city");
+  if (!address?.address2) missingFields.push("customers.modal.address2");
+  if (!address?.zipCode) missingFields.push("customers.modal.zipCode");
+
+  if (address?.country?.toLowerCase() === "us" && !address?.state) {
+    missingFields.push("customers.modal.state");
+  }
+
+  return {
+    isValid: missingFields.length === 0,
+    missingFields,
+  };
 };
