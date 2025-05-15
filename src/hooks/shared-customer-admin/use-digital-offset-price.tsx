@@ -5206,16 +5206,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (router?.query?.isFromChatbot) {
       await getAndSetChatBotProductId(
         callApi,
-        (data) => {
-          const updatedTemplate = updateIsHidden(data, subProducts);
+        (res) => {
+          const updatedTemplate = updateIsHidden(res?.data, subProducts);
           setDefaultProductTemplate(updatedTemplate);
-          initProduct(updatedTemplate, materials);
-          let checkParameter = validateParameters(subProducts);
-          if (checkParameter) {
-            setCanCalculation(true);
-          } else {
-            setCanCalculation(false);
-          }
+          initQuoteItemProduct(updatedTemplate, materials);
+          setdocumentItemByEdit(res?.data.docmentItem);
+          setCalculationResult({ ...calculationResult, tabs: res?.data?.tabs });
+          setProductItemValueByEdit(res?.data.productItemValue);
+          setValuesState(res?.data?.productItemValue?.workTypes);
+          setWorkTypes(res?.data?.productItemValue?.workTypes);
+          setMissionsListForEdit(res?.data?.missions);
+          setCalculatedPriceProductItemValue(res?.data?.calculatedPrice);
+          setSubProductsCopy([
+            {
+              parameters: res?.data?.productItemValue?.itemParmetersValues,
+              type: null,
+            }
+          ]);
+          //getSelectedWorkFlow(conn, false, res?.data?.productItemValue?.id);
         },
         {
           Id: router?.query?.productId,
