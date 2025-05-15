@@ -447,8 +447,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const getJobStatus = (mission) => {
     if (mission?.isReady) {
       return (
-        t("boardMissions.done") +
-        (mission?.storage ? ` ${mission.storage}` : "")
+        <>
+          <div>
+            {t("boardMissions.done")}
+          </div>
+          <div>
+            {mission?.storage ? ` ${mission.storage}` : ""}
+          </div>
+        </>
       );
     }
     if (mission?.boardMissionStatus && mission?.station) {
