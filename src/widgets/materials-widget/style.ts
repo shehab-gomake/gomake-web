@@ -44,6 +44,7 @@ const useStyle = () => {
         lineHeight: "17.5px",
         ...FONT_FAMILY.Lexend(500, 16),
         alignContent: "flex-end",
+        color: secondColor(500),
       },
       noDataSpan: {
         width: "100%",
@@ -56,6 +57,10 @@ const useStyle = () => {
         lineHeight: "17.5px",
         ...FONT_FAMILY.Lexend(500, 14),
         cursor: "pointer",
+      },
+      noDataButton: {
+        width: "fit-content",
+        height: 34,
       },
       clickableData: {
         padding: "0 10px",

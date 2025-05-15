@@ -53,6 +53,7 @@ import { useMaterialsCategories } from "./use-materials-categories";
 import { convertTitleUnits } from "@/utils/helpers";
 import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
+import { EMaterialActiveFilter } from "./enums";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -150,20 +151,20 @@ const useMaterials = (isAdmin: boolean) => {
   const [selectedMaterialCategory, setSelectedMaterialCategory] =
     useState<any>();
   const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
-  const [isLoadingMaterials, setIsLoadingMaterials] = useRecoilState<boolean>(isLoadingMaterialsState);
+  const setIsLoadingMaterials = useSetRecoilState<boolean>(isLoadingMaterialsState);
   const onSelectCategory = (category: string) => {
-    setIsLoadingMaterials(true);
     setIsFirstTime(false);
     setSelectedMaterialCategory(category);
     if (category != materialCategory) {
       setMaterialCategoryData([]);
+      setIsLoadingMaterials(true);
     }
     setSupplierId("");
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";
     push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
-    // setActiveFilter(EMaterialActiveFilter.ACTIVE);
+    setActiveFilter(EMaterialActiveFilter.ACTIVE);
     setIsAllMaterialsChecked(false);
     setMaterialFilter([]);
     setPageNumber(1);
@@ -373,8 +374,8 @@ const useMaterials = (isAdmin: boolean) => {
           />
         )),
         dataRow?.isActive
-          ? t("usersSettings.active")
-          : t("usersSettings.inactive"),
+          ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
+          : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
         <MaterialMenuWidget
           dataRow={dataRow}
           isAdmin={isAdmin}

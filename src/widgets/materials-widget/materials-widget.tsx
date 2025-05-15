@@ -24,7 +24,7 @@ import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
 import Pagination from "@mui/material/Pagination";
-import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
+import { GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
 import { Skeleton, Stack } from "@mui/material";
@@ -34,6 +34,7 @@ import { CreatePurchaseOrderModal } from "./components/create-purchase-order-mod
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { ModalType } from "@/enums";
 import { isLoadgingState, isLoadingMaterialsState } from "@/store";
+import { EMaterialActiveFilter } from "./enums";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -45,6 +46,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     useMaterialsCategories(props.isAdmin);
   const pageSize = 14;
   const activeFilter = useRecoilValue(activeFilterState);
+  console.log("activeFilter", activeFilter);
   const setOpenAddRowModal = useSetRecoilState(openAddRowModalState);
   const {
     openPriceModal,
@@ -287,19 +289,29 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
                       </Stack>
                     ) : !props.isAdmin ? (
                       <div style={classes.noData}>
-                        No data for {materialCategory}
+                        {
+                          activeFilter === EMaterialActiveFilter.INACTIVE ? <h4>
+                            {t("materials.sheetPaper.thereNoInactiveDataFor")} {materialCategory}
+                          </h4> :
+                            <h4>
+                              {t("materials.sheetPaper.noDataFor")} {materialCategory}
+                            </h4>
+                        }
+
                         <br />
-                        <span style={classes.noDataSpan} onClick={() => {
-                          setOpenAddRowModal(true);
-                        }}>
-                          {t("materials.sheetPaper.pleaseAddMaterial")} ,
-                        </span>
-                        <span>{"  "}</span>
-                        <span style={classes.noDataSpan} onClick={() => {
-                          elementRef.current.click();
-                        }}>
-                          {t("materials.sheetPaper.orUploadForExcel")}
-                        </span>
+                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: "10px" }}>
+                          <GomakePrimaryButton
+                            style={classes.noDataButton} onClick={() => {
+                              setOpenAddRowModal(true);
+                            }}>
+                            {t("materials.sheetPaper.addRowMaterial")}
+                          </GomakePrimaryButton>
+                          <GomakePrimaryButton style={classes.noDataButton} onClick={() => {
+                            elementRef.current.click();
+                          }}>
+                            {t("materials.sheetPaper.uploadForExcel")}
+                          </GomakePrimaryButton>
+                        </div>
                       </div>
                     ) : (
                       <></>
