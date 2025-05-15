@@ -1,9 +1,10 @@
-import {createChatBotMessage} from 'react-chatbot-kit';
+import {createChatBotMessage, createCustomMessage} from 'react-chatbot-kit';
 import {useTranslation} from "react-i18next";
 import IConfig from "react-chatbot-kit/src/interfaces/IConfig";
 import {getUserToken} from "@/services/storage-data";
 import config from "@/config";
 import {LoadingMsgComponent} from "@/components/chat-bot/loading-msg-component";
+import LinkMessageComponent from "@/components/chat-bot/link-msg-component";
 
 const useChatConfig = (userAvatar: () => JSX.Element, botAvatar: () => JSX.Element) => {
     const {t} = useTranslation();
@@ -11,7 +12,8 @@ const useChatConfig = (userAvatar: () => JSX.Element, botAvatar: () => JSX.Eleme
         botName: t('chatBot.chatTitle'),
         initialMessages: [createChatBotMessage(t(`chatBot.welcomeMsg`), {loading: true})],
         customMessages: {
-            loader: LoadingMsgComponent
+            loader: LoadingMsgComponent,
+            link: (props) => <LinkMessageComponent {...props} />,
         },
         customComponents: {
             userAvatar: userAvatar,
