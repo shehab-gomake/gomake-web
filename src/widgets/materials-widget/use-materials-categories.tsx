@@ -20,7 +20,7 @@ import { EMaterialActiveFilter } from "./enums";
 import { getPrintHouseMaterialCategoryDataApi } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { getMaterialCategoryDataApi } from "@/services/api-service/materials/materials-endpoints";
 import { useState } from "react";
-import { userState } from "@/store";
+import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
 import { convertValueToOriginalUnit } from "@/utils/helpers";
 import { getMaterialSuppliersApi } from "@/services/api-service/materials/materials-suppliers-endpoints";
@@ -85,6 +85,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
 
     );
   };
+  const setIsLoadingMaterials = useSetRecoilState(isLoadingMaterialsState);
   const getMaterialCategoryData = async (
     materialType: string,
     materialCategory: string,
@@ -93,14 +94,14 @@ const useMaterialsCategories = (isAdmin: boolean) => {
     pageNumber?: number,
     pageSize?: number
   ) => {
+    setIsLoadingMaterials(true);
     if (requestAbortController) {
       requestAbortController.abort();
     }
     const newRequestAbortController = new AbortController();
     setRequestAbortController(newRequestAbortController);
     const callBack = (res) => {
-
-
+      setIsLoadingMaterials(false);
       if (res.success) {
         setMaterialCategoryData(
           res.data?.result?.data?.map((row) => ({ ...row, checked: false }))
@@ -120,6 +121,7 @@ const useMaterialsCategories = (isAdmin: boolean) => {
         setMaterialCategoryData([]);
         setPagesCount(0);
         setMaterialTableFilters([]);
+        setIsLoadingMaterials(false);
       }
     };
     const convertedCustomFiltersKeyValueList = customFiltersKeyValueList.map(filter => {
