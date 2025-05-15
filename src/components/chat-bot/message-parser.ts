@@ -10,6 +10,8 @@ class MessageParser {
 
     async parse(message) {
         try {
+            let connectionId = await this.actionProvider.initSocketIo();
+            debugger
             this.actionProvider.addLoader();
             const response = await fetch(config.api_server + '/v1/erp-service/chat-bot/send-msg', {
                 method: 'POST',
@@ -17,7 +19,7 @@ class MessageParser {
                     'Content-Type': 'application/json',
                     ...(getUserToken() && {Authorization: "Bearer " + getUserToken()}),
                 },
-                body: JSON.stringify({text: message})
+                body: JSON.stringify({text: message,connectionId:connectionId}),
             });
 
             const result = await response.json();
