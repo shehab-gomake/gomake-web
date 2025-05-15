@@ -205,7 +205,6 @@ const useCustomerCard = ({
   const clientTypeId =
     typeClient === "C" ? CLIENT_TYPE_Id.CUSTOMER : CLIENT_TYPE_Id.SUPPLIER;
 
-  //!HERE ADD
   const handleAddCustomer = async () => {
     const filteredContacts = contacts?.filter(
       (contact) => !isNameIndexOnly(contact)
@@ -263,7 +262,6 @@ const useCustomerCard = ({
     }
   };
 
-  //!HERE EDIT
   const handleEditCustomer = () => {
     const filteredContacts = contacts?.filter(
       (contact) => !isNameIndexOnly(contact)
