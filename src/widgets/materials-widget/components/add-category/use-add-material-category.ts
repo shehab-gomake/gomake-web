@@ -27,7 +27,7 @@ import {
 
 const useAddMaterialCategory = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
-  const { query } = useRouter();
+  const { query,push } = useRouter();
   const { materialType } = query;
   const materialCategories = useRecoilValue(materialCategoriesState);
   const materialTypeTable = useRecoilValue(materialTypeTableState);
@@ -80,7 +80,10 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
       }));
 
       const callBack = (res) => {
+        console.log("res", res);
         if (res.success) {
+          const path = isAdmin ? "/materials-admin" : "/materials";
+          push(path + `/${materialType}?materialCategory=${newCategory}`);
           alertSuccessAdded();
           setActiveFilter(EMaterialActiveFilter.ALL);
           getMaterialCategories(materialType).then();
@@ -88,6 +91,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
           setFlagState(false);
           setAttributeValues({});
           setNewCategory("")
+         
         } else {
           if(res.statusCode ===102){
             alertFault("login.thisCategoryAlreadyExists")
@@ -150,11 +154,14 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
   const duplicatePrintHouseMaterialCategoryName = async () => {
     const callBack = (res) => {
       if (res.success) {
+        const path = isAdmin ? "/materials-admin" : "/materials";
+        push(path + `/${materialType}?materialCategory=${newCategory}`);
         alertSuccessAdded();
         setActiveFilter(EMaterialActiveFilter.ALL);
         getMaterialCategories(materialType).then();
         setOpenModal(false);
         setFlagState(false);
+        setNewCategory("")
       } else {
         alertFaultAdded();
       }

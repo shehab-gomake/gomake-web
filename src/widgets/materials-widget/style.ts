@@ -36,13 +36,15 @@ const useStyle = () => {
       },
       noData: {
         width: "100%",
-        alignItems: "center",
+        alignItems: "flex-end",
         backgroundColor: primaryColor(10),
         textAlign: "center" as "center",
         marginTop: 20,
-        height: 42,
+        height: 100,
         lineHeight: "17.5px",
-        ...FONT_FAMILY.Lexend(500, 14),
+        ...FONT_FAMILY.Lexend(500, 16),
+        alignContent: "flex-end",
+        color: secondColor(500),
       },
       noDataSpan: {
         width: "100%",
@@ -55,6 +57,10 @@ const useStyle = () => {
         lineHeight: "17.5px",
         ...FONT_FAMILY.Lexend(500, 14),
         cursor: "pointer",
+      },
+      noDataButton: {
+        width: "fit-content",
+        height: 34,
       },
       clickableData: {
         padding: "0 10px",
