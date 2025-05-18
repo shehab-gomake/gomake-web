@@ -38,7 +38,12 @@ import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { GomakeTextInput } from "@/components";
 import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
+import { Stack } from "@mui/material";
+import { useRecoilValue } from "recoil";
+import { userQuoteState } from "@/store";
+import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
 import { addPrintHouseJobsStorageApi, getAllPrintHouseJobsStorageApi } from "@/services/api-service/board-missions/jobs-storage";
+
 
 type StatusOption = {
   label: string;
@@ -195,9 +200,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-    t("boardMissions.costFromOrderItem"),
+      t("boardMissions.costFromOrderItem"),
     CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS) &&
-    t("boardMissions.priceFromOrderItem"),
+      t("boardMissions.priceFromOrderItem"),
     t("boardMissions.jobName"),
     t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
@@ -475,6 +480,44 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     return "";
   };
 
+  const updateQuoteStatus = async (quoteId?) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        navigate("/quote");
+      } else {
+        if (res?.statusCode === 85) {
+          alertFault(res?.message);
+        } else {
+          alertFaultUpdate();
+        }
+      }
+    };
+    await updateDocumentApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: quoteId ?? selectedQuote,
+      },
+    });
+  };
+
+  const [selectedQuote, setSelectedQuote] = useState<string>("");
+  const [openQuoteModal, setOpenQuoteModal] = useState(false);
+
+  const onClickCloseModal = () => {
+    setOpenQuoteModal(false);
+  };
+
+  const onClickOpenModal = (quoteId: string) => {
+    setSelectedQuote(quoteId);
+    setOpenModal(true);
+  };
+
+  const userQuoteIfExist = useRecoilValue<any>(userQuoteState);
+  const onClickEditQuote = (quoteId: string) => {
+    if (userQuoteIfExist) onClickOpenModal(quoteId);
+    else updateQuoteStatus(quoteId);
+  };
+
   const getAllBoardMissions = async (isClear: boolean = false) => {
     if (connectionId || true) {
       const callBack = (res) => {
@@ -483,7 +526,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           const mapData = _data.data?.map((mission: any) => {
             const itemCalculatedPrice =
               mission?.calculatedPrice &&
-                mission?.calculatedPrice != mission?.price
+              mission?.calculatedPrice != mission?.price
                 ? mission?.calculatedPrice
                 : 0;
             return [
@@ -518,12 +561,22 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                   : mission?.productType
                 }`
                 : mission?.number,
-              <a
-                style={classes.tableAtagStyle}
-                href={`/order?Id=${mission?.orderID}`}
-              >
-                {mission?.orderNumber}
-              </a>,
+              <Stack direction={"column"}>
+                {mission?.quoteNumber && (
+                  <a
+                    style={classes.tableAtagStyle}
+                    href={`/quotes?finalPatternSearch=${mission?.quoteNumber}`}
+                  >
+                    {mission?.quoteNumber}
+                  </a>
+                )}
+                <a
+                  style={classes.tableAtagStyle}
+                  href={`/order?Id=${mission?.orderID}`}
+                >
+                  {mission?.orderNumber}
+                </a>
+              </Stack>,
               mission?.outSourceType === null
                 ? `${t("boardMissions." + EWorkSource[0])}`
                 : `${t(
@@ -584,8 +637,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       const currentProductsIds = Array.isArray(router.query.productsIds)
         ? router.query.productsIds
         : router.query.productsIds
-          ? [router.query.productsIds]
-          : productIds;
+        ? [router.query.productsIds]
+        : productIds;
 
       const currentOrderStatus = router.query.orderStatus;
 
@@ -629,42 +682,42 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
           : undefined;
       const data = isClear
         ? {
-          productsIds: [],
-          pageNumber: pageNumber,
-          pageSize: pageSize,
-        }
+            productsIds: [],
+            pageNumber: pageNumber,
+            pageSize: pageSize,
+          }
         : {
-          clientId: router?.query?.clientId || customer?.id,
-          agentId: router?.query?.agentId || agent?.id,
-          search:
-            finalPatternSearch !== null &&
+            clientId: router?.query?.clientId || customer?.id,
+            agentId: router?.query?.agentId || agent?.id,
+            search:
+              finalPatternSearch !== null &&
               finalPatternSearch !== undefined &&
               finalPatternSearch !== ""
-              ? finalPatternSearch
-              : currentFinalPatternSearch,
-          fromDate:
-            currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
-          toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
-          fromDueDate:
-            currentFormattedFromDueDate ||
-            (fromDueDate && GetDateFormat(fromDueDate)),
-          toDueDate:
-            currentFormattedToDueDate ||
-            (toDueDate && GetDateFormat(toDueDate)),
+                ? finalPatternSearch
+                : currentFinalPatternSearch,
+            fromDate:
+              currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
+            toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
+            fromDueDate:
+              currentFormattedFromDueDate ||
+              (fromDueDate && GetDateFormat(fromDueDate)),
+            toDueDate:
+              currentFormattedToDueDate ||
+              (toDueDate && GetDateFormat(toDueDate)),
 
-          fromReadyDate:
-            currentFormattedFromReadyDate ||
-            (fromReadyDate && GetDateFormat(fromReadyDate)),
-          toReadyDate:
-            currentFormattedToReadyDate ||
-            (toReadyDate && GetDateFormat(toReadyDate)),
-          productsIds: currentProductsIds,
-          productionStatus: currentProductionStatus || status?.value,
-          orderStatus: currentOrderStatus || orderStatus?.value,
-          pageNumber: pageNumber || currentPageNumber,
-          pageSize: pageSize,
-          orderNumber: router?.query?.orderNumber,
-        };
+            fromReadyDate:
+              currentFormattedFromReadyDate ||
+              (fromReadyDate && GetDateFormat(fromReadyDate)),
+            toReadyDate:
+              currentFormattedToReadyDate ||
+              (toReadyDate && GetDateFormat(toReadyDate)),
+            productsIds: currentProductsIds,
+            productionStatus: currentProductionStatus || status?.value,
+            orderStatus: currentOrderStatus || orderStatus?.value,
+            pageNumber: pageNumber || currentPageNumber,
+            pageSize: pageSize,
+            orderNumber: router?.query?.orderNumber,
+          };
       await setBoardMissionsFiltersApi(callApi, callBack, data);
     }
   };
@@ -704,8 +757,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             mission?.isReady
               ? t("boardMissions.done")
               : mission?.boardMissionStatus && mission?.station
-                ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
-                : "",
+              ? `${mission.boardMissionStatus.name} / ${mission.station.actionName}`
+              : "",
             <MoreMenuWidget
               mission={mission}
               onClickDuplicate={onOpenDuplicateModal}
@@ -734,36 +787,36 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         callBack,
         isClear
           ? {
-            productsIds: [],
-            pageNumber: pageNumber,
-            pageSize: pageSize,
-          }
+              productsIds: [],
+              pageNumber: pageNumber,
+              pageSize: pageSize,
+            }
           : {
-            clientId: customer?.id,
-            agentId: agent?.id,
-            search:
-              finalPatternSearch !== null &&
+              clientId: customer?.id,
+              agentId: agent?.id,
+              search:
+                finalPatternSearch !== null &&
                 finalPatternSearch !== undefined &&
                 finalPatternSearch !== ""
-                ? finalPatternSearch
-                : currentFinalPatternSearch,
-            fromDate: fromDate && GetDateFormat(fromDate),
-            toDate: toDate && GetDateFormat(toDate),
+                  ? finalPatternSearch
+                  : currentFinalPatternSearch,
+              fromDate: fromDate && GetDateFormat(fromDate),
+              toDate: toDate && GetDateFormat(toDate),
 
-            fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
-            toDueDate: toDueDate && GetDateFormat(toDueDate),
+              fromDueDate: fromDueDate && GetDateFormat(fromDueDate),
+              toDueDate: toDueDate && GetDateFormat(toDueDate),
 
-            fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
-            toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
+              fromReadyDate: fromReadyDate && GetDateFormat(fromReadyDate),
+              toReadyDate: toReadyDate && GetDateFormat(toReadyDate),
 
-            productsIds: productIds,
-            productionStatus: status?.value,
-            orderStatus: orderStatus?.value,
-            pageNumber: currentPageNumber || pageNumber,
-            pageSize: pageSize,
-            supplierId: supplierId?.value,
-            isPurchaseJobs: true,
-          }
+              productsIds: productIds,
+              productionStatus: status?.value,
+              orderStatus: orderStatus?.value,
+              pageNumber: currentPageNumber || pageNumber,
+              pageSize: pageSize,
+              supplierId: supplierId?.value,
+              isPurchaseJobs: true,
+            }
       );
     }
   };
@@ -772,12 +825,16 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     const { targetOrderId, targetOrderNumber } = router?.query;
     if (targetOrderId)
       navigate(
-        `/products/duplicate?clientTypeId=${missionItem?.clientTypeId
-        }&customerId=${missionItem?.customerID
+        `/products/duplicate?clientTypeId=${
+          missionItem?.clientTypeId
+        }&customerId=${
+          missionItem?.customerID
         }&customerName=${encodeURIComponent(
           missionItem?.clientName || ""
-        )}&productId=${missionItem?.productID}&documentItemId=${missionItem?.orderItemId
-        }&documentType=${DOCUMENT_TYPE.order
+        )}&productId=${missionItem?.productID}&documentItemId=${
+          missionItem?.orderItemId
+        }&documentType=${
+          DOCUMENT_TYPE.order
         }&documentNumber=${targetOrderNumber}&documentId=${targetOrderId}&duplicateType=${duplicateType}`
       );
     else
@@ -1318,6 +1375,9 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     customerForEdit,
     setShowCustomerModal,
     setCustomerForEdit,
+    updateQuoteStatus,
+    onClickCloseModal,
+    openQuoteModal,
     setSelectedMission
   };
 };
