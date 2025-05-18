@@ -288,7 +288,6 @@ const BoardMissionsStationActionItem = ({
   const [openMaterialsModal, setOpenMaterialsModal] =
     useRecoilState<any>(materialModalState);
   const [activeStation, setActiveStation] = useState(null);
-
   const handleOpenModal = (station) => {
     setActiveStation(station);
     setOpenMaterialsModal(true);
@@ -324,7 +323,7 @@ const BoardMissionsStationActionItem = ({
     };
     await getBoardMissionActionMaterialsApi(callApi, callBack, {
       boardMissionsActionId: boardMissionsActionId,
-      productType: boardMissions.productType,
+      productType: productType
     });
   };
 
@@ -387,7 +386,7 @@ const BoardMissionsStationActionItem = ({
     };
     await updateBoardMissionsActionDoneWithMaterialsApi(callApi, callBack, {
       updatedState,
-      productType: boardMissions.productType,
+      productType: productType,
       isSendMessage: !!sendMSg,
     });
   };

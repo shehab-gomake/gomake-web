@@ -2,7 +2,7 @@ import { useState } from "react";
 
 const useQuoteTable = ({
   getCalculateQuoteItem,
-  changedocumentItemsChild,
+  changeDocumentItemsChild,
   item,
   index,
   parentIndex,
@@ -17,21 +17,21 @@ const useQuoteTable = ({
     setIsUpdateAmount(null);
   };
   const onInputChangeAmount = (e) => {
-    changedocumentItemsChild(parentIndex, childInex, "quantity", e);
+    changeDocumentItemsChild(parentIndex, childInex, "quantity", e);
   };
   const onBlurDiscount = async () => {
     getCalculateQuoteItem(item, 2, item.discount);
     setIsUpdateDiscount(null);
   };
   const onInputChangeDiscount = (e) => {
-    changedocumentItemsChild(parentIndex, childInex, "discount", e);
+    changeDocumentItemsChild(parentIndex, childInex, "discount", e);
   };
   const onBlurPrice = async () => {
     getCalculateQuoteItem(item, 1, item.price);
     setIsUpdatePrice(null);
   };
   const onInputChangePrice = (e) => {
-    changedocumentItemsChild(parentIndex, childInex, "price", e);
+    changeDocumentItemsChild(parentIndex, childInex, "price", e);
   };
 
   const onBlurFinalPrice = async () => {
@@ -39,7 +39,7 @@ const useQuoteTable = ({
     setIsUpdateFinalPrice(null);
   };
   const onInputChangeFinalPrice = (e) => {
-    changedocumentItemsChild(parentIndex, childInex, "finalPrice", e);
+    changeDocumentItemsChild(parentIndex, childInex, "finalPrice", e);
   };
   return {
     isUpdateAmount,

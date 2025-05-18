@@ -1405,7 +1405,7 @@ const useQuoteNew = ({
     }
   };
 
-  const changedocumentItems = (
+  const changeDocumentItems = (
     index: number,
     filedName: string,
     value: any
@@ -1418,7 +1418,7 @@ const useQuoteNew = ({
     setPriceListItems(temp);
   };
 
-  const changedocumentItemsChild = (
+  const changeDocumentItemsChild = (
     parentIndex: number,
     childInex: number,
     filedName: string,
@@ -2182,7 +2182,6 @@ const useQuoteNew = ({
     });
   };
 
-  const [isWhatsAppWeb, setIsWhatsAppWeb] = useState(true);
   const isShowSettingIcon = !(
     router.query.isNewCreation &&
     (isDeliveryNote || isInvoice)
@@ -2263,6 +2262,7 @@ const useQuoteNew = ({
   );
 
   const handleSendUsingWhatsAppWeb = () => {
+    debugger;
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
       quoteItemValue?.documentContacts
     );
@@ -2272,7 +2272,7 @@ const useQuoteNew = ({
     }
     const phoneNumber = quoteItemValue?.documentContacts[0].contactPhone;
     const callBack = (res) => {
-      //openWhatsAppWebLink(res?.data, phoneNumber, isWhatsAppWeb);
+      debugger;
       openWhatsAppWebLink(res?.data, phoneNumber);
     };
     getWhatsAppMessageApi(callApi, callBack, {
@@ -2364,8 +2364,8 @@ const useQuoteNew = ({
     handleSendBtnClose,
     setActiveClickAway,
     changeQuoteItems,
-    changedocumentItemsChild,
-    changedocumentItems,
+    changeDocumentItemsChild,
+    changeDocumentItems,
     getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,
@@ -2495,8 +2495,6 @@ const useQuoteNew = ({
     onBlurTitle,
     isUpdateDocumentTitle,
     setIsUpdateDocumentTitle,
-    isWhatsAppWeb,
-    setIsWhatsAppWeb,
     isShowSettingIcon,
     showVatListInSettingIconNew,
     isInvoice,

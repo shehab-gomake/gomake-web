@@ -241,10 +241,23 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setDocumentCloseNumber(event.target.value);
   };
 
-  const onClickOpenCloseOrderNotesModal = (order) => {
-    setOpenCloseOrderNotesModal(true);
+  const [closeModalSource, setCloseModalSource] = useState<
+    "closeAsInvoice" | "closeManually" | "closeAsDeliveryNote"
+  >(null);
+  const [onClickCloseOrderCallback, setOnClickCloseOrderCallback] = useState<
+    (() => void) | null
+  >(null);
+
+  const onClickOpenCloseOrderNotesModal = (
+    order,
+    source: "closeAsInvoice" | "closeManually" | "closeAsDeliveryNote",
+    onClickCloseOrder: () => void
+  ) => {
     setSelectedQuoteItemValue(order);
     setSelectedDocument(order);
+    setCloseModalSource(source);
+    setOnClickCloseOrderCallback(() => onClickCloseOrder);
+    setOpenCloseOrderNotesModal(true);
   };
   const onClickCloseCloseOrderNotesModal = () => {
     setOpenCloseOrderNotesModal(false);
@@ -2464,6 +2477,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenChangeProductionStatusModal(false);
     setIsMoveToReady(false);
   };
+
   const onClickOpenChangeProductionStatusModal = (order) => {
     setSelectedDocument(order);
     setOpenChangeProductionStatusModal(true);
@@ -3047,6 +3061,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertNotVerifiedMailModal,
     alertNotVerifiedModalState,
     showAlertModal,
+    onClickCloseOrderCallback,
     handleRemoveDraftBtnClick,
     removeDraftModal,
     onCloseOpenRemoveDraftModal,

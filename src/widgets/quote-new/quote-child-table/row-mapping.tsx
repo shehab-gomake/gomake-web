@@ -23,7 +23,7 @@ const RowMappingChildWidget = ({
   onClickDeleteQouteItem,
   parentIndex,
   childInex,
-  changedocumentItemsChild,
+  changeDocumentItemsChild,
   childList,
   documentType,
   isQuoteConfirmation = false,
@@ -31,9 +31,8 @@ const RowMappingChildWidget = ({
   onChangeSelectedItemRowForQoute,
   quoteItems,
   getQuote,
-  _renderIconcalculationStatus
+  _renderIconcalculationStatus,
 }: any) => {
-
   const { classes } = useStyle({ headerHeight });
   const {
     isUpdateAmount,
@@ -54,7 +53,7 @@ const RowMappingChildWidget = ({
     onInputChangeAmount,
   } = useQuoteTable({
     getCalculateQuoteItem,
-    changedocumentItemsChild,
+    changeDocumentItemsChild,
     item,
     index,
     parentIndex,
@@ -69,8 +68,13 @@ const RowMappingChildWidget = ({
     setIsSelected(checked);
     onChangeSelectedItemRowForQoute(checked, itemId);
   };
-  const canUpdatePrices = router.query.isNewCreation ? true :
-    (item?.isEditable && CheckDocumentPermission(documentType, DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES));
+  const canUpdatePrices = router.query.isNewCreation
+    ? true
+    : item?.isEditable &&
+      CheckDocumentPermission(
+        documentType,
+        DocumentPermission.UPDATE_DOCUMENT_ITEM_PRICES
+      );
 
   return (
     <TableRow
@@ -86,33 +90,37 @@ const RowMappingChildWidget = ({
           borderBottom: childList?.length - 1 !== childInex && "none",
         }}
       >
-        {
-          item?.isShowDuplicateWithSameJob && <>
+        {item?.isShowDuplicateWithSameJob && (
+          <>
             <div
               style={{
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "flex-start",
                 alignItems: "center",
-                position: 'relative'
+                position: "relative",
               }}
             >
-              <Divider orientation={'vertical'}
+              <Divider
+                orientation={"vertical"}
                 style={{
-                  width: '2px',
-                  height: childList?.length - 1 !== childInex ? '86px' : '43px',
+                  width: "2px",
+                  height: childList?.length - 1 !== childInex ? "86px" : "43px",
                   backgroundColor: "#99A9CA",
-                  position: 'absolute',
+                  position: "absolute",
                   top: -25,
-                }} />
-              <Divider orientation={'horizontal'}
+                }}
+              />
+              <Divider
+                orientation={"horizontal"}
                 style={{
-                  width: '15px',
-                  height: '2px',
-                  backgroundColor: '#99A9CA',
+                  width: "15px",
+                  height: "2px",
+                  backgroundColor: "#99A9CA",
                   marginRight: -10,
                   marginTop: 1,
-                }} />
+                }}
+              />
 
               <Checkbox
                 icon={<CheckboxIcon />}
@@ -125,11 +133,8 @@ const RowMappingChildWidget = ({
               {index}
             </div>
           </>
-        }
-        {
-          !item?.isShowDuplicateWithSameJob && index
-        }
-
+        )}
+        {!item?.isShowDuplicateWithSameJob && index}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -150,7 +155,9 @@ const RowMappingChildWidget = ({
           borderBottom: item?.childsDocumentItems && "none",
         }}
       >
-        {item?.productName === "Delivery" ? t("home.tabs.Delivery") : item?.productName}
+        {item?.productName === "Delivery"
+          ? t("home.tabs.Delivery")
+          : item?.productName}
       </PrimaryTableCell>
       <PrimaryTableCell
         style={{
@@ -177,7 +184,6 @@ const RowMappingChildWidget = ({
               workName={item?.workName}
             />
           </PrimaryTableCell>
-
         )}
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -188,13 +194,18 @@ const RowMappingChildWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
-            value={item.quantity}
-            onBlur={onBlurAmount}
-            isUpdate={canUpdatePrices && isUpdateAmount}
-            setIsUpdate={setIsUpdateAmount}
-            onInputChange={(e) => onInputChangeAmount(e)}
-          /> : "-"}
+          {item?.calculationStatus === null ||
+          item?.calculationStatus === ECalculationStatus.Done ? (
+            <InputUpdatedValues
+              value={item.quantity}
+              onBlur={onBlurAmount}
+              isUpdate={canUpdatePrices && isUpdateAmount}
+              setIsUpdate={setIsUpdateAmount}
+              onInputChange={(e) => onInputChangeAmount(e)}
+            />
+          ) : (
+            "-"
+          )}
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -205,14 +216,18 @@ const RowMappingChildWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ?
+          {item?.calculationStatus === null ||
+          item?.calculationStatus === ECalculationStatus.Done ? (
             <InputUpdatedValues
               value={item.price}
               onBlur={onBlurPrice}
               isUpdate={canUpdatePrices && isUpdatePrice}
               setIsUpdate={setIsUpdatePrice}
               onInputChange={(e) => onInputChangePrice(e)}
-            /> : "-"}
+            />
+          ) : (
+            "-"
+          )}
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -223,13 +238,18 @@ const RowMappingChildWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
-            value={item.discount ? item.discount : "0"}
-            onBlur={onBlurDiscount}
-            isUpdate={canUpdatePrices && isUpdateDiscount}
-            setIsUpdate={setIsUpdateDiscount}
-            onInputChange={(e) => onInputChangeDiscount(e)}
-          /> : "-"}
+          {item?.calculationStatus === null ||
+          item?.calculationStatus === ECalculationStatus.Done ? (
+            <InputUpdatedValues
+              value={item.discount ? item.discount : "0"}
+              onBlur={onBlurDiscount}
+              isUpdate={canUpdatePrices && isUpdateDiscount}
+              setIsUpdate={setIsUpdateDiscount}
+              onInputChange={(e) => onInputChangeDiscount(e)}
+            />
+          ) : (
+            "-"
+          )}
         </div>
       </PrimaryTableCell>
       <PrimaryTableCell
@@ -240,28 +260,34 @@ const RowMappingChildWidget = ({
         }}
       >
         <div style={classes.cellTextInputStyle}>
-          {(item?.calculationStatus === null || item?.calculationStatus === ECalculationStatus.Done) ? <InputUpdatedValues
-            value={item.finalPrice}
-            onBlur={onBlurFinalPrice}
-            isUpdate={canUpdatePrices && isUpdateFinalPrice}
-            setIsUpdate={setIsUpdateFinalPrice}
-            onInputChange={(e) => onInputChangeFinalPrice(e)}
-          /> :
-            _renderIconcalculationStatus(item?.calculationStatus)}
+          {item?.calculationStatus === null ||
+          item?.calculationStatus === ECalculationStatus.Done ? (
+            <InputUpdatedValues
+              value={item.finalPrice}
+              onBlur={onBlurFinalPrice}
+              isUpdate={canUpdatePrices && isUpdateFinalPrice}
+              setIsUpdate={setIsUpdateFinalPrice}
+              onInputChange={(e) => onInputChangeFinalPrice(e)}
+            />
+          ) : (
+            _renderIconcalculationStatus(item?.calculationStatus)
+          )}
         </div>
       </PrimaryTableCell>
-      {!isQuoteConfirmation && <PrimaryTableCell
-        style={{
-          width: columnWidths[7],
-          ...classes.cellContainerStyle,
-          borderBottom: childList?.length - 1 !== childInex && "none",
-        }}
-      >
-        <MoreMenuWidgetWithChilds
-          quoteItem={item}
-          onClickDeleteQouteItem={onClickDeleteQouteItem}
-        />
-      </PrimaryTableCell>}
+      {!isQuoteConfirmation && (
+        <PrimaryTableCell
+          style={{
+            width: columnWidths[7],
+            ...classes.cellContainerStyle,
+            borderBottom: childList?.length - 1 !== childInex && "none",
+          }}
+        >
+          <MoreMenuWidgetWithChilds
+            quoteItem={item}
+            onClickDeleteQouteItem={onClickDeleteQouteItem}
+          />
+        </PrimaryTableCell>
+      )}
     </TableRow>
   );
 };

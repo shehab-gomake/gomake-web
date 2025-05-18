@@ -19,6 +19,9 @@ const SEND_JOB_EXAMPLE_CONFIRMATION_TO_CLIENT_URL =
   "/v1/erp-service/board-missions/send-job-example-confirmation-to-client";
 const UPDATE_BOARD_MISSIONS_CURRENT_STATION_URL =
   "/v1/erp-service/board-missions/update-board-missions-current-station";
+
+const UPDATE_BOARD_MISSION_STUCK_REASON_URL =
+  "/v1/erp-service/board-missions/update-board-mission-stuck-reason";
 const ADD_NEW_PRODUCTION_GROUP_URL =
   "/v1/erp-service/board-missions-group/create-group";
 const DELETE_PRODUCTION_GROUP_URL =
@@ -137,6 +140,20 @@ const updateBoardMissionCurrentStationApi: ICallAndSetData = async (
       newStationId: data.stationId,
       productType: data.productType,
     }
+  );
+};
+
+const updateBoardMissionStuckReasonApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    UPDATE_BOARD_MISSION_STUCK_REASON_URL,
+    setState,
+    data
   );
 };
 
@@ -716,6 +733,7 @@ export {
   getBoardMissionsById,
   getBoardMissionsActions,
   updateBoardMissionCurrentStationApi,
+  updateBoardMissionStuckReasonApi,
   addNewBoardMissionsGroup,
   deleteBoardMissionsGroup,
   getPrintHouseActions,
