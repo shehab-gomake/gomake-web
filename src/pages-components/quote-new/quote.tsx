@@ -65,6 +65,7 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import CloseOrderNote from "../quotes/widgets/general/close-order-note";
 
+
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isQuoteConfirmation?: boolean;
@@ -276,8 +277,6 @@ const QuoteNewPageWidget = ({
     onBlurTitle,
     isUpdateDocumentTitle,
     setIsUpdateDocumentTitle,
-    isWhatsAppWeb,
-    setIsWhatsAppWeb,
     isShowSettingIcon,
     showVatListInSettingIconNew,
     isInvoice,
@@ -914,17 +913,14 @@ const QuoteNewPageWidget = ({
         onClickSendReceiptToClient={onClickSendReceiptToClient}
         onClickOpenWhatsAppModal={onClickOpenWhatsAppModal}
         documentState={quoteItemValue}
-        setIsWhatsAppWeb={setIsWhatsAppWeb}
         documentType={documentType}
       />
       <WhatsAppWebModal
         openModal={openWhatsAppModal}
         onClose={onClickCloseWhatsAppModal}
-        clientContactsValue={clientContactsValue}
         getWhatsAppMessage={getWhatsAppMessage}
         getWhatsAppMessageForReceipt={getWhatsAppMessageForReceipt}
         whatsappMassage={whatsappMassage}
-        isWhatsAppWeb={isWhatsAppWeb}
         documentType={documentType}
       />
       <SettingQuoteMenu
