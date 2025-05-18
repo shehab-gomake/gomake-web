@@ -1,3 +1,5 @@
+import { useSnackBar } from "@/hooks";
+import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -8,20 +10,56 @@ const useQuoteTable = ({
   item,
   index,
   printHouseId,
+  documentType,
 }) => {
   const { t } = useTranslation();
+  const { alertFault } = useSnackBar();
   const [isUpdateAmount, setIsUpdateAmount] = useState(null);
   const [isUpdateDiscount, setIsUpdateDiscount] = useState(null);
   const [isUpdatePrice, setIsUpdatePrice] = useState(null);
   const [isUpdateFinalPrice, setIsUpdateFinalPrice] = useState(null);
   const [isUpdateApproveAmount, setIsUpdateApproveAmount] = useState(null);
 
+  const isDeliveryNote =
+    documentType === DOCUMENT_TYPE.deliveryNote ||
+    documentType === DOCUMENT_TYPE.deliveryNoteRefund;
+  const isInvoice =
+    documentType === DOCUMENT_TYPE.invoice ||
+    documentType === DOCUMENT_TYPE.invoiceRefund;
+
   const onBlurApproveAmount = async () => {
     getCalculateQuoteConfirmationItem(printHouseId, item?.id, item?.quantity);
     setIsUpdateApproveAmount(null);
   };
 
+  const [originalQuantity] = useState(item.quantity);
   const onBlurAmount = async () => {
+    if (
+      (isDeliveryNote || isInvoice) &&
+      item.maxQuantity != null &&
+      item.quantity > item.maxQuantity
+    ) {
+      alertFault(
+        `${t("alerts.itemExceedsMaxQuantity", {
+          max: item.maxQuantity,
+        })}`
+      );
+
+      // Revert to valid quantity
+      changedocumentItems(index, "quantity", originalQuantity);
+
+      setTimeout(() => {
+        getCalculateQuoteItem(
+          { ...item, quantity: originalQuantity },
+          0,
+          originalQuantity
+        );
+      }, 0);
+
+      setIsUpdateAmount(null);
+      return;
+    }
+
     getCalculateQuoteItem(item, 0, item.quantity);
     setIsUpdateAmount(null);
   };
