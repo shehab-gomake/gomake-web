@@ -344,7 +344,9 @@ const useProductionFloorData = () => {
       setOpenMarkReadyModal(false);
       if (res?.success) {
         alertSuccessUpdate();
-        setOpenPackagesModal(true);
+        if(selectedMission.productType === "" || !selectedMission.productType){
+          setOpenPackagesModal(true);
+        }
         // handleRemoveBoardMission(selectedMissionId);
       } else {
         alertFaultUpdate();
@@ -363,7 +365,9 @@ const useProductionFloorData = () => {
       setOpenMarkReadyModal(false);
       if (res?.success) {
         alertSuccessUpdate();
-        setOpenPackagesModal(true);
+        if(selectedMission.productType === "" || !selectedMission.productType){
+          setOpenPackagesModal(true);
+        }
       } else {
         alertFaultUpdate();
       }
