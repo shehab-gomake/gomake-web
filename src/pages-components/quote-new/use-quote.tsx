@@ -1403,7 +1403,7 @@ const useQuoteNew = ({
     }
   };
 
-  const changedocumentItems = (
+  const changeDocumentItems = (
     index: number,
     filedName: string,
     value: any
@@ -1416,7 +1416,7 @@ const useQuoteNew = ({
     setPriceListItems(temp);
   };
 
-  const changedocumentItemsChild = (
+  const changeDocumentItemsChild = (
     parentIndex: number,
     childInex: number,
     filedName: string,
@@ -2338,8 +2338,8 @@ const useQuoteNew = ({
     handleSendBtnClose,
     setActiveClickAway,
     changeQuoteItems,
-    changedocumentItemsChild,
-    changedocumentItems,
+    changeDocumentItemsChild,
+    changeDocumentItems,
     getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,
