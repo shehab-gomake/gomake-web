@@ -151,9 +151,9 @@ const QuoteNewPageWidget = ({
     handleCancelBtnClose,
     handleSendBtnClick,
     handleSendBtnClose,
-    changedocumentItems,
+    changeDocumentItems,
     changeQuoteItems,
-    changedocumentItemsChild,
+    changeDocumentItemsChild,
     getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,
@@ -758,7 +758,7 @@ const QuoteNewPageWidget = ({
                   tableHeaders={tableHeaders}
                   columnWidths={columnWidths}
                   headerHeight={headerHeight}
-                  changedocumentItems={changedocumentItems}
+                  changeDocumentItems={changeDocumentItems}
                   getCalculateQuoteItem={getCalculateQuoteItem}
                   getCalculateQuoteConfirmationItem={
                     getCalculateQuoteConfirmationItem
@@ -771,7 +771,7 @@ const QuoteNewPageWidget = ({
                   quoteItems={quoteItems}
                   changeQuoteItems={changeQuoteItems}
                   getCalculateQuote={getCalculateQuote}
-                  changedocumentItemsChild={changedocumentItemsChild}
+                  changeDocumentItemsChild={changeDocumentItemsChild}
                   documentType={documentType}
                   getQuote={getQuote}
                   isQuoteConfirmation={isQuoteConfirmation}
