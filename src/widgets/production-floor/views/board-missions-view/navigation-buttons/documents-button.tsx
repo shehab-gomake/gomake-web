@@ -131,7 +131,9 @@ const DocumentsButton = ({ isMobile = false }) => {
   const onClickMoveBoardMissionToDone = async (sendMessage: boolean) => {
     const callBack = (res) => {
       setOpenMarkReadyModal(false);
-      setOpenPackagesModal(true);
+      if (boardMissions.productType === "" || !boardMissions.productType) {
+        setOpenPackagesModal(true);
+      }
       if (res?.success) {
         alertSuccessUpdate();
       } else {
