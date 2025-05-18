@@ -24,7 +24,7 @@ const QuoteForPriceTable = ({
   columnWidths,
   tableHeaders,
   headerHeight,
-  changedocumentItems,
+  changeDocumentItems,
   getCalculateQuoteItem,
   getCalculateQuoteConfirmationItem,
   onClickDuplicateWithDifferentQTY,
@@ -33,7 +33,7 @@ const QuoteForPriceTable = ({
   quoteItems,
   changeQuoteItems,
   getCalculateQuote,
-  changedocumentItemsChild,
+  changeDocumentItemsChild,
   documentType,
   getQuote,
   isQuoteConfirmation = false,
@@ -67,7 +67,7 @@ const QuoteForPriceTable = ({
     [key: number]: boolean;
   }>(
     documentItems?.reduce((acc, _, index) => ({ ...acc, [index]: true }), {}) ||
-    {}
+      {}
   );
   // Function to toggle visibility of child items for a specific parent item
   const toggleChildVisibility = (parentIndex: number) => {
@@ -169,7 +169,7 @@ const QuoteForPriceTable = ({
                     parentIndex={parentIndex}
                     columnWidths={adjustedColumnWidths}
                     headerHeight={headerHeight}
-                    changedocumentItems={changedocumentItems}
+                    changeDocumentItems={changeDocumentItems}
                     getCalculateQuoteItem={getCalculateQuoteItem}
                     getCalculateQuoteConfirmationItem={
                       getCalculateQuoteConfirmationItem
@@ -206,7 +206,7 @@ const QuoteForPriceTable = ({
                             headerHeight={headerHeight}
                             parentIndex={index}
                             childInex={childIndex}
-                            changedocumentItemsChild={changedocumentItemsChild}
+                            changeDocumentItemsChild={changeDocumentItemsChild}
                             onClickDeleteQouteItem={onClickDeleteQouteItem}
                             getCalculateQuoteItem={getCalculateQuoteItem}
                             childList={item?.childsDocumentItems}

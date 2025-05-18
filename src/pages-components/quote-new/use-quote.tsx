@@ -1137,9 +1137,11 @@ const useQuoteNew = ({
   const getCalculateQuoteConfirmationItem = async (
     printHouseId: string,
     ItemId: string,
-    quantity?: number,
+    quantity?: number
   ) => {
-    const documentItemIds = quoteConfirm?.documentItems?.filter((x) => x.isChecked)?.map((x) => x.id);
+    const documentItemIds = quoteConfirm?.documentItems
+      ?.filter((x) => x.isChecked)
+      ?.map((x) => x.id);
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1401,7 +1403,7 @@ const useQuoteNew = ({
     }
   };
 
-  const changedocumentItems = (
+  const changeDocumentItems = (
     index: number,
     filedName: string,
     value: any
@@ -1414,7 +1416,7 @@ const useQuoteNew = ({
     setPriceListItems(temp);
   };
 
-  const changedocumentItemsChild = (
+  const changeDocumentItemsChild = (
     parentIndex: number,
     childInex: number,
     filedName: string,
@@ -2336,8 +2338,8 @@ const useQuoteNew = ({
     handleSendBtnClose,
     setActiveClickAway,
     changeQuoteItems,
-    changedocumentItemsChild,
-    changedocumentItems,
+    changeDocumentItemsChild,
+    changeDocumentItems,
     getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,

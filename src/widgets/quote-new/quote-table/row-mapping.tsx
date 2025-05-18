@@ -35,7 +35,7 @@ const RowMappingWidget = ({
   index,
   columnWidths,
   headerHeight,
-  changedocumentItems,
+  changeDocumentItems,
   getCalculateQuoteItem,
   getCalculateQuoteConfirmationItem,
   onClickDuplicateWithDifferentQTY,
@@ -87,7 +87,7 @@ const RowMappingWidget = ({
   } = useQuoteTable({
     getCalculateQuoteItem,
     getCalculateQuoteConfirmationItem,
-    changedocumentItems,
+    changeDocumentItems,
     item,
     index,
     printHouseId: quoteItems?.printHouseId,

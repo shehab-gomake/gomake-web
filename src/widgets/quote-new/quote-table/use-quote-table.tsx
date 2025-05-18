@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 const useQuoteTable = ({
   getCalculateQuoteItem,
   getCalculateQuoteConfirmationItem,
-  changedocumentItems,
+  changeDocumentItems,
   item,
   index,
   printHouseId,
@@ -46,7 +46,7 @@ const useQuoteTable = ({
       );
 
       // Revert to valid quantity
-      changedocumentItems(index, "quantity", originalQuantity);
+      changeDocumentItems(index, "quantity", originalQuantity);
 
       setTimeout(() => {
         getCalculateQuoteItem(
@@ -65,7 +65,7 @@ const useQuoteTable = ({
   };
 
   const onInputChangeAmount = (e) => {
-    changedocumentItems(index, "quantity", e);
+    changeDocumentItems(index, "quantity", e);
   };
 
   const onBlurDiscount = async () => {
@@ -74,14 +74,14 @@ const useQuoteTable = ({
   };
 
   const onInputChangeDiscount = (e) => {
-    changedocumentItems(index, "discount", e);
+    changeDocumentItems(index, "discount", e);
   };
   const onBlurPrice = async () => {
     getCalculateQuoteItem(item, 1, item.price);
     setIsUpdatePrice(null);
   };
   const onInputChangePrice = (e) => {
-    changedocumentItems(index, "price", e);
+    changeDocumentItems(index, "price", e);
   };
 
   const onBlurFinalPrice = async () => {
@@ -89,7 +89,7 @@ const useQuoteTable = ({
     setIsUpdateFinalPrice(null);
   };
   const onInputChangeFinalPrice = (e) => {
-    changedocumentItems(index, "finalPrice", e);
+    changeDocumentItems(index, "finalPrice", e);
   };
 
   return {
