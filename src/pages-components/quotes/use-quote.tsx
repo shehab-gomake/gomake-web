@@ -245,6 +245,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
   const [onClickCloseOrderCallback, setOnClickCloseOrderCallback] = useState<
     (() => void) | null
   >(null);
+
   const onClickOpenCloseOrderNotesModal = (
     order,
     source: "closeAsInvoice" | "closeManually" | "closeAsDeliveryNote",

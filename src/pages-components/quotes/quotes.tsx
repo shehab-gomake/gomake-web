@@ -901,7 +901,6 @@ const QuotesListPageWidget = ({
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
       />
-      {/* !here used */}
       <CloseOrderNotesModal
         onClose={onClickCloseCloseOrderNotesModal}
         openModal={openCloseOrderNotesModal}

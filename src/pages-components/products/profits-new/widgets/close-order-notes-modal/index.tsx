@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { GoMakeModal, GomakePrimaryButton } from "@/components";
 import { useStyle } from "./style";
 
-//!here close modal
 const CloseOrderNotesModal = ({
   openModal,
   onClose,
@@ -12,31 +11,31 @@ const CloseOrderNotesModal = ({
   openModal: boolean;
   onClose: () => void;
   quoteItemValue: any;
-  onClickCloseOrder?: any;
+  onClickCloseOrder: any;
 }) => {
   const { t } = useTranslation();
-  const { clasess } = useStyle();
+  const { classes } = useStyle();
   return (
     <>
       <GoMakeModal
         openModal={openModal}
-        modalTitle={`Close Order Notes`}
+        modalTitle={t("sales.modals.closeOrderNotes")}
         onClose={onClose}
-        insideStyle={clasess.insideStyle}
+        insideStyle={classes.insideStyle}
       >
         <>
-          <div style={clasess.noteTextStyle}>
+          <div style={classes.noteTextStyle}>
             {t("modal.clientClosingMessage")} {quoteItemValue?.closeOrderNotes}
           </div>
 
           <GomakePrimaryButton
-            style={clasess.btnThirdContainer}
+            style={classes.btnThirdContainer}
             onClick={() => {
               onClickCloseOrder();
               onClose();
             }}
           >
-            {t("modal.close")} {t("sales.quote.order")}
+            {t("sales.modals.closeOrder")}
           </GomakePrimaryButton>
         </>
       </GoMakeModal>
