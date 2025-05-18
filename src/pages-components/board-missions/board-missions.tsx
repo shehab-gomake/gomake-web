@@ -41,6 +41,7 @@ import { fileUploaderConnectionIdState } from "@/store/file-uploader-state";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
+import { useStorageList } from "@/hooks/use-storage-list";
 import { ExcelMenu } from "../quotes/widgets/excel-menu/excel-menu";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
@@ -127,8 +128,21 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     setShowCustomerModal,
     setCustomerForEdit,
     selectedMission,
+    updateQuoteStatus,
+    onClickCloseModal,
+    openQuoteModal,
+    setSelectedMission,
     ExportJobsTableToExcel,
   } = useBoardMissions({ isPurchaseJobs });
+
+  const {
+    storageList,
+    inputValue,
+    defaultValue,
+    addPrintHouseJobsStorage,
+    handleStorageChange,
+    setInputValue
+  } = useStorageList({ selectedMission, setSelectedMission })
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
@@ -146,7 +160,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       newOrderId &&
       connectionId
     ) {
-      const callBack = (res) => {};
+      const callBack = (res) => { };
       addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
         orderId: newOrderId,
         connectionId: connectionId,
@@ -394,55 +408,55 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               !isPurchaseJobs
                 ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                   ? [
-                      "7%",
-                      "7%",
-                      "6%",
-                      "6%",
-                      "7%",
-                      "7%",
-                      "8%",
-                      "7%",
-                      "4%",
-                      "6%",
-                      "12%",
-                      "7%",
-                      "7%",
-                      "13%",
-                      "3%",
-                    ]
-                  : [
-                      "7%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "7%",
-                      "8%",
-                      "7%",
-                      "18%",
-                      "7%",
-                      "15%",
-                      "7%",
-                      "3%",
-                    ]
-                : [
                     "7%",
-                    "5%",
-                    "6%",
                     "7%",
                     "6%",
+                    "6%",
                     "7%",
-                    "11%",
+                    "7%",
                     "8%",
-                    "6%",
-                    "8%",
-                    "5%",
-                    "5%",
-                    "7%",
                     "7%",
                     "4%",
-                    "2%",
+                    "6%",
+                    "12%",
+                    "7%",
+                    "7%",
+                    "13%",
+                    "3%",
                   ]
+                  : [
+                    "7%",
+                    "7%",
+                    "7%",
+                    "7%",
+                    "7%",
+                    "7%",
+                    "8%",
+                    "7%",
+                    "18%",
+                    "7%",
+                    "15%",
+                    "7%",
+                    "3%",
+                  ]
+                : [
+                  "7%",
+                  "5%",
+                  "6%",
+                  "7%",
+                  "6%",
+                  "7%",
+                  "11%",
+                  "8%",
+                  "6%",
+                  "8%",
+                  "5%",
+                  "5%",
+                  "7%",
+                  "7%",
+                  "4%",
+                  "2%",
+                ]
             }
           />
         </div>
@@ -489,19 +503,88 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClose={onCloseMarkReadyModal}
         onClickYes={() => onClickMoveBoardMissionToDone(true)}
         onClickNo={() => onClickMoveBoardMissionToDone(false)}
-      />
+      >
+        <div style={{ width: "100%", minWidth: 300 }}>
+          <GoMakeAutoComplate
+            options={
+              storageList.find(
+                (option: any) => option.storage === inputValue
+              ) || inputValue === ""
+                ? storageList
+                : [
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
+            }
+            placeholder={t("boardMissions.selectStorage")}
+            key={defaultValue}
+            style={classes.textInputStyle}
+            getOptionLabel={(option: any) => option?.storage}
+            value={defaultValue}
+            onChange={(e: any, value: any) => {
+              if (value?.id === "new") {
+                addPrintHouseJobsStorage(inputValue);
+                setInputValue("");
+              } else {
+                handleStorageChange(e, value);
+                setInputValue("");
+              }
+            }}
+            onInputChange={(event: any, newInputValue: string) => {
+              setInputValue(newInputValue);
+            }}
+          />
+        </div>
+      </ThreeOptionsModal>
       <GoMakeDeleteModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneModalTitle2", {
           jobNumber: selectedMission?.number,
           productType: selectedMission?.productTypeName,
         })}
-        // subTitle={" "}
         yesBtn={"modal.yes"}
         openModal={openMarkReadyModalForProductType}
         onClose={onCloseMarkReadyModalForProductType}
         onClickDelete={() => onClickMoveBoardMissionToDone(false)}
-      />
+      >
+        <div style={{ width: "100%", minWidth: 300 }}>
+          <GoMakeAutoComplate
+            options={
+              storageList.find(
+                (option: any) => option.storage === inputValue
+              ) || inputValue === ""
+                ? storageList
+                : [
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
+            }
+            placeholder={t("boardMissions.selectStorage")}
+            key={defaultValue}
+            style={classes.textInputStyle}
+            getOptionLabel={(option: any) => option?.storage}
+            value={defaultValue}
+            onChange={(e: any, value: any) => {
+              if (value?.id === "new") {
+                addPrintHouseJobsStorage(inputValue);
+                setInputValue("");
+              } else {
+                handleStorageChange(e, value);
+                setInputValue("");
+              }
+            }}
+            onInputChange={(event: any, newInputValue: string) => {
+              setInputValue(newInputValue);
+            }}
+          />
+        </div>
+      </GoMakeDeleteModal>
       <ThreeOptionsModal
         modalType={ModalType.WARNING}
         title={t("boardMissions.markDoneFromPrintSlipModalTitle")}
@@ -563,6 +646,16 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClose={() => setShowCustomerModal(false)}
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
+      />
+
+      <GoMakeDeleteModal
+        modalType={ModalType.WARNING}
+        title={t("sales.quote.titleModal")}
+        subTitle={t("sales.quote.subTitleModal")}
+        yesBtn={t("sales.quote.changeStatus")}
+        openModal={openQuoteModal}
+        onClose={onClickCloseModal}
+        onClickDelete={updateQuoteStatus}
       />
     </>
   );

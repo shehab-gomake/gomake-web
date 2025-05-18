@@ -43,7 +43,7 @@ import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ProductionFloorNote } from "../board-note/production-floor-note";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeDeleteModal, GomakeTextInput } from "@/components";
 import { ModalType } from "@/enums";
 
 interface IProps {
@@ -122,6 +122,9 @@ const TableRowComponent = ({
               [boardMission],
               boardMission.id
             );
+          }
+          else if (boardMission.statusId === "56dd1e80-7436-462c-82e9-cf8a90afd614") {
+            handleOpenStuckModal(boardMission.statusId, [boardMission], boardMission.id, boardMission.productType);
           } else {
             updateStatus([item.board], boardMission.statusId).then();
           }
@@ -177,7 +180,18 @@ const TableRowComponent = ({
     onClickPrintJob,
     updateNotes,
   } = useProductionFloorData();
-  const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
+  const {
+    openSimpleApproveModal,
+    handleOpenModal,
+    handleCloseModal,
+    handleConfirm,
+    openSimpleStuckModal,
+    handleOpenStuckModal,
+    handleCloseStuckModal,
+    stuckReason,
+    setStuckReason,
+    onUpdateStuckReason
+  } = useSimpleApproveModal(updateStatus);
 
   const { CheckPreferenceValue, GetProductionFontSizeFromPreferences } =
     usePrintHousePreferences();
@@ -484,12 +498,17 @@ const TableRowComponent = ({
             statusId={boardMission.statusId}
             id={boardMission.id}
             onChange={(id, statusId) => {
+              console.log("statusId", statusId);
               if (
                 statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" &&
                 boardMission.isNeedExample
               ) {
                 handleOpenModal(statusId, [boardMission], boardMission.id);
-              } else {
+              }
+              else if (statusId === "56dd1e80-7436-462c-82e9-cf8a90afd614") {
+                handleOpenStuckModal(statusId, [boardMission], boardMission.id, boardMission.productType);
+              }
+              else {
                 updateStatus([boardMission], statusId);
               }
             }}
@@ -571,6 +590,22 @@ const TableRowComponent = ({
         onClickDelete={handleConfirm}
         onClickCancel={handleCloseModal}
       />
+      <GoMakeDeleteModal
+        title={t("sales.quote.stuckReasonTitleModal")}
+        yesBtn={t("modal.yes")}
+        modalType={ModalType.WARNING}
+        subTitle={" "}
+        openModal={openSimpleStuckModal}
+        onClose={handleCloseStuckModal}
+        onClickDelete={() => onUpdateStuckReason(stuckReason)}
+      >
+        <GomakeTextInput
+          placeholder={t("sales.quote.stuckReason")}
+          value={stuckReason}
+          onChange={(e) => setStuckReason(e.target.value)}
+          style={{ height: 40, width: "100%", minWidth: "300px" }}
+        />
+      </GoMakeDeleteModal>
     </>
   );
 };

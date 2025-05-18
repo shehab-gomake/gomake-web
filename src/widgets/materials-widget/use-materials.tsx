@@ -1,14 +1,16 @@
 import { useRouter } from "next/router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   deleteMaterialCategoryApi,
   getMaterialCategoriesApi,
   getMaterialTableHeadersApi,
+  uploadMaterialExcelFileApi,
 } from "@/services/api-service/materials/materials-endpoints";
 import {
   deletePrintHouseMaterialCategoryApi,
   getPrintHouseMaterialCategoriesApi,
+  uploadPrintHouseMaterialExcelFileApi,
 } from "@/services/api-service/materials/printhouse-materials-endpoints";
 import { IMaterialCategoryRow } from "@/widgets/materials-widget/interface";
 import { TableCellData } from "@/widgets/materials-widget/components/table-cell-data/table-cell";
@@ -49,8 +51,9 @@ import { SideLeftMenuWidget } from "./components/side-list-menu";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { useMaterialsCategories } from "./use-materials-categories";
 import { convertTitleUnits } from "@/utils/helpers";
-import { userState } from "@/store";
+import { isLoadingMaterialsState, userState } from "@/store";
 import { UNIT_TYPE } from "@/enums";
+import { EMaterialActiveFilter } from "./enums";
 
 const useMaterials = (isAdmin: boolean) => {
   const { query, push, replace } = useRouter();
@@ -148,19 +151,20 @@ const useMaterials = (isAdmin: boolean) => {
   const [selectedMaterialCategory, setSelectedMaterialCategory] =
     useState<any>();
   const [isFirstTime, setIsFirstTime] = useState<boolean>(true);
-
+  const setIsLoadingMaterials = useSetRecoilState<boolean>(isLoadingMaterialsState);
   const onSelectCategory = (category: string) => {
     setIsFirstTime(false);
     setSelectedMaterialCategory(category);
     if (category != materialCategory) {
       setMaterialCategoryData([]);
+      setIsLoadingMaterials(true);
     }
     setSupplierId("");
     setDefaultSupplier("");
     const path = isAdmin ? "/materials-admin" : "/materials";
     push(path + `/${materialType}?materialCategory=${category}`);
     setFlagState(false);
-    // setActiveFilter(EMaterialActiveFilter.ACTIVE);
+    setActiveFilter(EMaterialActiveFilter.ACTIVE);
     setIsAllMaterialsChecked(false);
     setMaterialFilter([]);
     setPageNumber(1);
@@ -370,8 +374,8 @@ const useMaterials = (isAdmin: boolean) => {
           />
         )),
         dataRow?.isActive
-          ? t("usersSettings.active")
-          : t("usersSettings.inactive"),
+          ? <span style={{ color: "green" }}>{t("usersSettings.active")}</span>
+          : <span style={{ color: "red" }}>{t("usersSettings.inactive")}</span>,
         <MaterialMenuWidget
           dataRow={dataRow}
           isAdmin={isAdmin}
@@ -402,7 +406,7 @@ const useMaterials = (isAdmin: boolean) => {
     };
     await getCurrencies(callApi, callBack);
   };
-
+  const elementRef = useRef(null);
   const getPrintHouseMaterialCategorySuppliers = async (
     materialType: string,
     materialCategory: string
@@ -415,16 +419,17 @@ const useMaterials = (isAdmin: boolean) => {
       if (res.success) {
         const supplier = res?.data[0];
         setSupplierId(supplier?.id);
-        if (isFirstTime && supplier?.id) {
-          getMaterialCategoryData(
-            materialType?.toString(),
-            materialCategory?.toString(),
-            materialFilter,
-            supplier?.id,
-            pageNumber,
-            14
-          ).then();
-        }
+        setIsLoadingMaterials(false);
+        // if (isFirstTime && supplier?.id) {
+        //   getMaterialCategoryData(
+        //     materialType?.toString(),
+        //     materialCategory?.toString(),
+        //     materialFilter,
+        //     supplier?.id,
+        //     pageNumber,
+        //     14
+        //   ).then();
+        // }
 
         setMaterialCategorySuppliers(
           res?.data?.map((supplier) => {
@@ -463,6 +468,48 @@ const useMaterials = (isAdmin: boolean) => {
     });
   }, []);
 
+  const uploadExcelFile = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const arrayBuffer = event.target.result;
+        const data = new Uint8Array(arrayBuffer as ArrayBuffer);
+        // Convert data to a Base64 string
+        var base64String = btoa(
+          new Uint8Array(data).reduce(function (data, byte) {
+            return data + String.fromCharCode(byte);
+          }, "")
+        );
+        let callBack = () => {
+          getMaterialCategories(materialType).then(x => {
+            getMaterialCategoryData(
+              materialType?.toString(),
+              materialCategory?.toString(),
+              [],
+              supplierId
+            ).then();
+          });
+
+        }
+        if (isAdmin) {
+          uploadMaterialExcelFileApi(callApi, callBack, {
+            key: materialType.toString(),
+            base64: base64String,
+          });
+        } else {
+          uploadPrintHouseMaterialExcelFileApi(callApi, callBack, {
+            key: materialType.toString(),
+            supplierId: supplierId,
+            base64: base64String,
+          });
+        }
+
+      };
+      reader.readAsArrayBuffer(file);
+    }
+  };
+
   return {
     materialCategory,
     materialType,
@@ -496,6 +543,8 @@ const useMaterials = (isAdmin: boolean) => {
     toggleIsActive,
     selectedMaterialCategory,
     setSelectedMaterialCategory,
+    uploadExcelFile,
+    elementRef,
   };
 };
 

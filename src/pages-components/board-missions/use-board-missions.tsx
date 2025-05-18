@@ -39,6 +39,12 @@ import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { GomakeTextInput } from "@/components";
 import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
+import { Stack } from "@mui/material";
+import { useRecoilValue } from "recoil";
+import { userQuoteState } from "@/store";
+import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
+import { addPrintHouseJobsStorageApi, getAllPrintHouseJobsStorageApi } from "@/services/api-service/board-missions/jobs-storage";
+
 
 type StatusOption = {
   label: string;
@@ -132,6 +138,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     useAgentsList();
   const router = useRouter();
   const [selectedMission, setSelectedMission] = useState<any>({});
+  console.log("selectedMission", selectedMission)
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
@@ -447,8 +454,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const getJobStatus = (mission) => {
     if (mission?.isReady) {
       return (
-        t("boardMissions.done") +
-        (mission?.storage ? ` ${mission.storage}` : "")
+        <>
+          <div>
+            {t("boardMissions.done")}
+          </div>
+          <div>
+            {mission?.storage ? ` ${mission.storage}` : ""}
+          </div>
+        </>
       );
     }
     if (mission?.boardMissionStatus && mission?.station) {
@@ -465,6 +478,44 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
       )} \n\r ${mission.station.actionName}`;
     }
     return "";
+  };
+
+  const updateQuoteStatus = async (quoteId?) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        navigate("/quote");
+      } else {
+        if (res?.statusCode === 85) {
+          alertFault(res?.message);
+        } else {
+          alertFaultUpdate();
+        }
+      }
+    };
+    await updateDocumentApi(callApi, callBack, {
+      documentType: 0,
+      document: {
+        documentId: quoteId ?? selectedQuote,
+      },
+    });
+  };
+
+  const [selectedQuote, setSelectedQuote] = useState<string>("");
+  const [openQuoteModal, setOpenQuoteModal] = useState(false);
+
+  const onClickCloseModal = () => {
+    setOpenQuoteModal(false);
+  };
+
+  const onClickOpenModal = (quoteId: string) => {
+    setSelectedQuote(quoteId);
+    setOpenModal(true);
+  };
+
+  const userQuoteIfExist = useRecoilValue<any>(userQuoteState);
+  const onClickEditQuote = (quoteId: string) => {
+    if (userQuoteIfExist) onClickOpenModal(quoteId);
+    else updateQuoteStatus(quoteId);
   };
 
   const getAllBoardMissions = async (isClear: boolean = false) => {
@@ -511,12 +562,22 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                       : mission?.productType
                   }`
                 : mission?.number,
-              <a
-                style={classes.tableAtagStyle}
-                href={`/order?Id=${mission?.orderID}`}
-              >
-                {mission?.orderNumber}
-              </a>,
+              <Stack direction={"column"}>
+                {mission?.quoteNumber && (
+                  <a
+                    style={classes.tableAtagStyle}
+                    href={`/quotes?finalPatternSearch=${mission?.quoteNumber}`}
+                  >
+                    {mission?.quoteNumber}
+                  </a>
+                )}
+                <a
+                  style={classes.tableAtagStyle}
+                  href={`/order?Id=${mission?.orderID}`}
+                >
+                  {mission?.orderNumber}
+                </a>
+              </Stack>,
               mission?.outSourceType === null
                 ? `${t("boardMissions." + EWorkSource[0])}`
                 : `${t(
@@ -1072,6 +1133,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         boardMissionId: selectedMission?.id,
         sendMessage,
         productType: selectedMission?.productType ?? "",
+        storage: selectedMission?.storage ?? ""
       });
     }
   };
@@ -1428,6 +1490,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     customerForEdit,
     setShowCustomerModal,
     setCustomerForEdit,
+    updateQuoteStatus,
+    onClickCloseModal,
+    openQuoteModal,
+    setSelectedMission,
     ExportJobsTableToExcel,
   };
 };
