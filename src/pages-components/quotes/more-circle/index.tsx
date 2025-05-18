@@ -26,6 +26,7 @@ const MoreMenuWidget = ({
   onClickStartProduction,
   onClickReopenDocument,
   onClickEditQuote,
+  onClickOpenRemoveDraftModal,
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -52,6 +53,7 @@ const MoreMenuWidget = ({
     onClickStartProduction,
     onClickReopenDocument,
     onClickEditQuote,
+    onClickOpenRemoveDraftModal,
   });
 
   return (

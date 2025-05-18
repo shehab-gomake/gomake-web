@@ -43,6 +43,7 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { ExcelMenu } from "../quotes/widgets/excel-menu/excel-menu";
 import { useStorageList } from "@/hooks/use-storage-list";
+import { ExcelMenu } from "../quotes/widgets/excel-menu/excel-menu";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
@@ -131,8 +132,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     updateQuoteStatus,
     onClickCloseModal,
     openQuoteModal,
+    setSelectedMission,
     ExportJobsTableToExcel,
-    setSelectedMission
   } = useBoardMissions({ isPurchaseJobs });
 
   const {
@@ -229,12 +230,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                       {Object.keys(router.query).filter(
                         (key) => key !== "pageNumber"
                       ).length > 0 && (
-                          <div
-                            style={{ position: "absolute", top: -5, right: -1 }}
-                          >
-                            <DotIcon />
-                          </div>
-                        )}
+                        <div
+                          style={{ position: "absolute", top: -5, right: -1 }}
+                        >
+                          <DotIcon />
+                        </div>
+                      )}
                     </IconButton>
                     <GoMakeMenu
                       handleClose={handleClose}

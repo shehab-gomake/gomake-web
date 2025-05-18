@@ -65,6 +65,7 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import CloseOrderNote from "../quotes/widgets/general/close-order-note";
 
+
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isQuoteConfirmation?: boolean;
@@ -322,6 +323,7 @@ const QuoteNewPageWidget = ({
     alertNotVerifiedMail,
     alertNotVerifiedModalState,
     AddCustomerModal,
+    handleSaveDraftBtnClick,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -830,6 +832,7 @@ const QuoteNewPageWidget = ({
                 onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal}
                 onClickOpenDeleteDeliveryModal={onClickOpenDeleteDeliveryModal}
                 AddCustomerModal={AddCustomerModal}
+                handleSaveDraftBtnClick={handleSaveDraftBtnClick}
               />
             </div>
           )}
