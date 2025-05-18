@@ -11,6 +11,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PStatus } from "./widgets/enums";
 import {
+  exportJobTableToExcelApi,
   getAllPurchaseJobsApi,
   getDeliveryTickerPdfApi,
   getOrderSummeryPdfApi,
@@ -75,7 +76,6 @@ interface Query {
 const useBoardMissions = ({ isPurchaseJobs }) => {
   const { CheckPermission } = useUserPermission();
   const { getCurrencyUnitText } = useQuoteGetData();
-
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
@@ -556,10 +556,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 {mission?.clientName}
               </div>,
               mission?.productType
-                ? `${mission?.number} / ${mission?.productTypeName
-                  ? mission?.productTypeName
-                  : mission?.productType
-                }`
+                ? `${mission?.number} / ${
+                    mission?.productTypeName
+                      ? mission?.productTypeName
+                      : mission?.productType
+                  }`
                 : mission?.number,
               <Stack direction={"column"}>
                 {mission?.quoteNumber && (
@@ -580,26 +581,37 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               mission?.outSourceType === null
                 ? `${t("boardMissions." + EWorkSource[0])}`
                 : `${t(
-                  "boardMissions." + EWorkSource[mission?.outSourceType]
-                )}`,
+                    "boardMissions." + EWorkSource[mission?.outSourceType]
+                  )}`,
               mission?.quantity,
               ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-                ? [isRTL ? mission?.cost + " " + getCurrencyUnitText(mission?.currency) : getCurrencyUnitText(mission?.currency) + " " + mission?.cost]
+                ? [
+                    isRTL
+                      ? mission?.cost +
+                        " " +
+                        getCurrencyUnitText(mission?.currency)
+                      : getCurrencyUnitText(mission?.currency) +
+                        " " +
+                        mission?.cost,
+                  ]
                 : []),
               ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                 ? [
-                  [
-                    isRTL ?
-                      mission?.price +
-                      (itemCalculatedPrice
-                        ? ` (${itemCalculatedPrice})`
-                        : " ") +
-                      getCurrencyUnitText(mission?.currency) : getCurrencyUnitText(mission?.currency) + " " + mission?.price +
-                      (itemCalculatedPrice
-                        ? ` (${itemCalculatedPrice})`
-                        : " ")
+                    [
+                      isRTL
+                        ? mission?.price +
+                          (itemCalculatedPrice
+                            ? ` (${itemCalculatedPrice})`
+                            : " ") +
+                          getCurrencyUnitText(mission?.currency)
+                        : getCurrencyUnitText(mission?.currency) +
+                          " " +
+                          mission?.price +
+                          (itemCalculatedPrice
+                            ? ` (${itemCalculatedPrice})`
+                            : " "),
+                    ],
                   ]
-                ]
                 : []),
               mission?.jobName,
               mission?.numberOfBoardMissions,
@@ -680,6 +692,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         typeof currentToReadyDate === "string"
           ? GetDateFormat(new Date(currentToReadyDate))
           : undefined;
+
       const data = isClear
         ? {
             productsIds: [],
@@ -738,10 +751,11 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
             </div>,
             mission?.supplierName,
             mission?.productType
-              ? `${mission?.number} / ${mission?.productTypeName
-                ? mission?.productTypeName
-                : mission?.productType
-              }`
+              ? `${mission?.number} / ${
+                  mission?.productTypeName
+                    ? mission?.productTypeName
+                    : mission?.productType
+                }`
               : mission?.number,
             mission?.orderNumber,
             mission?.purchaseOrderNumber,
@@ -1287,6 +1301,107 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     }
   }, [debouncePatternSearch]);
 
+  const ExportJobsTableToExcel = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const downloadLink = document.createElement("a");
+        if (typeof res.data === "string") {
+          downloadLink.href = res.data;
+        } else {
+          const link = URL.createObjectURL(res.data);
+          downloadLink.href = link;
+        }
+        downloadLink.download = "table.xlsx";
+        downloadLink.click();
+      } else {
+      }
+    };
+
+    const currentFinalPatternSearch = router.query.finalPatternSearch;
+    const currentPageNumber = router.query.pageNumber;
+    const currentProductionStatus = router.query.productionStatus;
+    const currentProductsIds = Array.isArray(router.query.productsIds)
+      ? router.query.productsIds
+      : router.query.productsIds
+      ? [router.query.productsIds]
+      : productIds;
+
+    const currentOrderStatus = router.query.orderStatus;
+
+    const currentFromDate = router.query.fromDate;
+    const currentToDate = router.query.toDate;
+
+    const currentFromDueDate = router.query.fromDueDate;
+    const currentToDueDate = router.query.toDueDate;
+
+    const currentFromReadyDate = router.query.fromReadyDate;
+    const currentToReadyDate = router.query.toReadyDate;
+
+    const currentFormattedFromDate =
+      typeof currentFromDate === "string"
+        ? GetDateFormat(new Date(currentFromDate))
+        : undefined;
+
+    const currentFormattedToDate =
+      typeof currentToDate === "string"
+        ? GetDateFormat(new Date(currentToDate))
+        : undefined;
+
+    const currentFormattedFromDueDate =
+      typeof currentFromDueDate === "string"
+        ? GetDateFormat(new Date(currentFromDueDate))
+        : undefined;
+
+    const currentFormattedToDueDate =
+      typeof currentToDueDate === "string"
+        ? GetDateFormat(new Date(currentToDueDate))
+        : undefined;
+
+    const currentFormattedFromReadyDate =
+      typeof currentFromReadyDate === "string"
+        ? GetDateFormat(new Date(currentFromReadyDate))
+        : undefined;
+
+    const currentFormattedToReadyDate =
+      typeof currentToReadyDate === "string"
+        ? GetDateFormat(new Date(currentToReadyDate))
+        : undefined;
+
+    const data = {
+      clientId: router?.query?.clientId || customer?.id,
+      agentId: router?.query?.agentId || agent?.id,
+      search:
+        finalPatternSearch !== null &&
+        finalPatternSearch !== undefined &&
+        finalPatternSearch !== ""
+          ? finalPatternSearch
+          : currentFinalPatternSearch,
+      fromDate:
+        currentFormattedFromDate || (fromDate && GetDateFormat(fromDate)),
+      toDate: currentFormattedToDate || (toDate && GetDateFormat(toDate)),
+      fromDueDate:
+        currentFormattedFromDueDate ||
+        (fromDueDate && GetDateFormat(fromDueDate)),
+      toDueDate:
+        currentFormattedToDueDate || (toDueDate && GetDateFormat(toDueDate)),
+
+      fromReadyDate:
+        currentFormattedFromReadyDate ||
+        (fromReadyDate && GetDateFormat(fromReadyDate)),
+      toReadyDate:
+        currentFormattedToReadyDate ||
+        (toReadyDate && GetDateFormat(toReadyDate)),
+      productsIds: currentProductsIds,
+      productionStatus: currentProductionStatus || status?.value,
+      orderStatus: currentOrderStatus || orderStatus?.value,
+      pageNumber: pageNumber || currentPageNumber,
+      pageSize: pageSize,
+      orderNumber: router?.query?.orderNumber,
+    };
+
+    await exportJobTableToExcelApi(callApi, callBack, data);
+  };
+
   return {
     tableHeader,
     tableHeaderForPurchaseJobs,
@@ -1378,7 +1493,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     updateQuoteStatus,
     onClickCloseModal,
     openQuoteModal,
-    setSelectedMission
+    setSelectedMission,
+    ExportJobsTableToExcel,
   };
 };
 
