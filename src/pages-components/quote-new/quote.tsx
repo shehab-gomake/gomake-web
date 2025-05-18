@@ -63,6 +63,8 @@ import { useModal } from "@/hooks/use-modal";
 import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-attachments-modal/add-attachments-modal";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
+import CloseOrderNote from "../quotes/widgets/general/close-order-note";
+
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -275,8 +277,6 @@ const QuoteNewPageWidget = ({
     onBlurTitle,
     isUpdateDocumentTitle,
     setIsUpdateDocumentTitle,
-    isWhatsAppWeb,
-    setIsWhatsAppWeb,
     isShowSettingIcon,
     showVatListInSettingIconNew,
     isInvoice,
@@ -913,17 +913,14 @@ const QuoteNewPageWidget = ({
         onClickSendReceiptToClient={onClickSendReceiptToClient}
         onClickOpenWhatsAppModal={onClickOpenWhatsAppModal}
         documentState={quoteItemValue}
-        setIsWhatsAppWeb={setIsWhatsAppWeb}
         documentType={documentType}
       />
       <WhatsAppWebModal
         openModal={openWhatsAppModal}
         onClose={onClickCloseWhatsAppModal}
-        clientContactsValue={clientContactsValue}
         getWhatsAppMessage={getWhatsAppMessage}
         getWhatsAppMessageForReceipt={getWhatsAppMessageForReceipt}
         whatsappMassage={whatsappMassage}
-        isWhatsAppWeb={isWhatsAppWeb}
         documentType={documentType}
       />
       <SettingQuoteMenu
@@ -1056,18 +1053,21 @@ const QuoteNewPageWidget = ({
               }
         }
       >
-        <div
-          style={{
-            ...classes.inputLbl,
-            color: isMoveToReady ? "black" : "#475467",
-          }}
-        >
-          <PrimaryCheckbox
-            checked={isMoveToReady}
-            onChange={handleCheckboxChange}
-          />
-          {t("sales.moveToReadyAndCloseOrder")}
-        </div>
+        <Stack alignItems={"center"}>
+          <div
+            style={{
+              ...classes.inputLbl,
+              color: isMoveToReady ? "black" : "#475467",
+            }}
+          >
+            <PrimaryCheckbox
+              checked={isMoveToReady}
+              onChange={handleCheckboxChange}
+            />
+            {t("sales.moveToReadyAndCloseOrder")}
+          </div>
+          <CloseOrderNote note={selectedDocument?.closeOrderNotes} />
+        </Stack>
       </GoMakeDeleteModal>
       <NewItemNotesModal
         openModal={openNewItemNotesModal}

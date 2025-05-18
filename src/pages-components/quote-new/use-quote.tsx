@@ -2156,7 +2156,6 @@ const useQuoteNew = ({
     });
   };
 
-  const [isWhatsAppWeb, setIsWhatsAppWeb] = useState(true);
   const isShowSettingIcon = !(
     router.query.isNewCreation &&
     (isDeliveryNote || isInvoice)
@@ -2237,6 +2236,7 @@ const useQuoteNew = ({
   );
 
   const handleSendUsingWhatsAppWeb = () => {
+    debugger;
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
       quoteItemValue?.documentContacts
     );
@@ -2246,7 +2246,7 @@ const useQuoteNew = ({
     }
     const phoneNumber = quoteItemValue?.documentContacts[0].contactPhone;
     const callBack = (res) => {
-      //openWhatsAppWebLink(res?.data, phoneNumber, isWhatsAppWeb);
+      debugger;
       openWhatsAppWebLink(res?.data, phoneNumber);
     };
     getWhatsAppMessageApi(callApi, callBack, {
@@ -2469,8 +2469,6 @@ const useQuoteNew = ({
     onBlurTitle,
     isUpdateDocumentTitle,
     setIsUpdateDocumentTitle,
-    isWhatsAppWeb,
-    setIsWhatsAppWeb,
     isShowSettingIcon,
     showVatListInSettingIconNew,
     isInvoice,

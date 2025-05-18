@@ -57,8 +57,9 @@ const ChartsCostsComponent = ({ selectedWorkFlow }) => {
             labels: {
               boxWidth: 10,
               boxHeight: 10,
+              color: "#000",
               font: {
-                size: 10,
+                size: 11,
               }
 
             }

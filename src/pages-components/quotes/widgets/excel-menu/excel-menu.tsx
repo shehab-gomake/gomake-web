@@ -7,7 +7,7 @@ import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 
 interface ExcelMenuProps {
-  onGenerateReportClick: () => void;
+  onGenerateReportClick?: () => void;
   onExportTableClick?: () => void;
 }
 
@@ -49,19 +49,20 @@ const ExcelMenu = ({
             : { vertical: "top", horizontal: "right" }
         }
       >
-        <PermissionCheck userPermission={Permissions.GENERATE_REPORT}>
-          <MenuItem
-            onClick={() => {
-              handleMenuClose();
-              onGenerateReportClick();
-            }}
-          >
-            <div style={classes.rowTextStyle}>
-              {t("sales.list.generateReport")}
-            </div>
-          </MenuItem>
-        </PermissionCheck>
-
+        {onGenerateReportClick && (
+          <PermissionCheck userPermission={Permissions.GENERATE_REPORT}>
+            <MenuItem
+              onClick={() => {
+                handleMenuClose();
+                onGenerateReportClick();
+              }}
+            >
+              <div style={classes.rowTextStyle}>
+                {t("sales.list.generateReport")}
+              </div>
+            </MenuItem>
+          </PermissionCheck>
+        )}
         <MenuItem
           onClick={() => {
             handleMenuClose();
