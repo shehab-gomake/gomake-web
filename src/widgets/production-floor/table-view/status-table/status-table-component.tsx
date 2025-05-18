@@ -25,7 +25,7 @@ import { useProductionFloorData } from "@/widgets/production-floor/use-productio
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
 import { useCallback, useState } from "react";
-import { GoMakeAutoComplate, GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
+import { GoMakeAutoComplate, GoMakeDeleteModal, GomakeTextInput, ThreeOptionsModal } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { CurrentStationOrderingEnum, ModalType } from "@/enums";
 import { useMediaQuery } from "@mui/material";
@@ -108,6 +108,12 @@ const StatusTableComponent = ({
     handleOpenModal,
     handleCloseModal,
     handleConfirm,
+    openSimpleStuckModal,
+    handleOpenStuckModal,
+    handleCloseStuckModal,
+    stuckReason,
+    setStuckReason,
+    onUpdateStuckReason
   } = useSimpleApproveModal(updateStatus);
 
   const [currentStationOrdering, setCurrentStationOrdering] = useRecoilState(currentStationOrderingState);
@@ -129,6 +135,13 @@ const StatusTableComponent = ({
               status.id,
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               item.board.id
+            );
+          } else if (status.key === "Stuck") {
+            handleOpenStuckModal(
+              status.id,
+              item.selectedIds.length > 0 ? item.selectedIds : [item.board],
+              item.board.id,
+              item.board.productType
             );
           } else {
             updateStatus(
@@ -391,6 +404,22 @@ const StatusTableComponent = ({
         onClickDelete={handleConfirm}
         onClickCancel={handleCloseModal}
       />
+      <GoMakeDeleteModal
+        title={t("sales.quote.stuckReasonTitleModal")}
+        yesBtn={t("modal.yes")}
+        modalType={ModalType.WARNING}
+        subTitle={" "}
+        openModal={openSimpleStuckModal}
+        onClose={handleCloseStuckModal}
+        onClickDelete={() => onUpdateStuckReason(stuckReason)}
+      >
+        <GomakeTextInput
+          placeholder={t("sales.quote.stuckReason")}
+          value={stuckReason}
+          onChange={(e) => setStuckReason(e.target.value)}
+          style={{ height: 40, width: "100%", minWidth: "300px" }}
+        />
+      </GoMakeDeleteModal>
     </Stack>
   );
 };
