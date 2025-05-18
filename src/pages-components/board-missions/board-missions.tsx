@@ -43,7 +43,6 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
 import { ExcelMenu } from "../quotes/widgets/excel-menu/excel-menu";
 import { useStorageList } from "@/hooks/use-storage-list";
-import { ExcelMenu } from "../quotes/widgets/excel-menu/excel-menu";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
