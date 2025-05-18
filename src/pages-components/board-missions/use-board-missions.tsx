@@ -42,6 +42,8 @@ import { Stack } from "@mui/material";
 import { useRecoilValue } from "recoil";
 import { userQuoteState } from "@/store";
 import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
+import { addPrintHouseJobsStorageApi, getAllPrintHouseJobsStorageApi } from "@/services/api-service/board-missions/jobs-storage";
+
 
 type StatusOption = {
   label: string;
@@ -136,6 +138,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     useAgentsList();
   const router = useRouter();
   const [selectedMission, setSelectedMission] = useState<any>({});
+  console.log("selectedMission", selectedMission)
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
@@ -451,8 +454,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const getJobStatus = (mission) => {
     if (mission?.isReady) {
       return (
-        t("boardMissions.done") +
-        (mission?.storage ? ` ${mission.storage}` : "")
+        <>
+          <div>
+            {t("boardMissions.done")}
+          </div>
+          <div>
+            {mission?.storage ? ` ${mission.storage}` : ""}
+          </div>
+        </>
       );
     }
     if (mission?.boardMissionStatus && mission?.station) {
@@ -1110,6 +1119,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
         boardMissionId: selectedMission?.id,
         sendMessage,
         productType: selectedMission?.productType ?? "",
+        storage: selectedMission?.storage ?? ""
       });
     }
   };
@@ -1365,10 +1375,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     customerForEdit,
     setShowCustomerModal,
     setCustomerForEdit,
-
     updateQuoteStatus,
     onClickCloseModal,
     openQuoteModal,
+    setSelectedMission
   };
 };
 

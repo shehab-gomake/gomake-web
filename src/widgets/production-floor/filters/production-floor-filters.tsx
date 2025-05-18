@@ -308,6 +308,7 @@ const ProductionFloorFilters = ({
     onClickOpenModalEditGroup,
     onClickCloseModalEditGroup,
     handleAgentChange,
+    setFilters
   } = useProductionFloorFilters({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
@@ -594,6 +595,7 @@ const ProductionFloorFilters = ({
         selectedGroupId={selectedGroup}
         actions={actions}
         getStationFilterGroups={getStationFilterGroups}
+        setFilters={setFilters}
       />
     </Stack>
   );

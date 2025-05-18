@@ -5,8 +5,11 @@ import { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { useRef } from "react";
 import { IActionMachines } from "../state/actions-list";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { productionFloorFiltersState } from "../state/production-floor-filters";
+import { productionFloorViewState } from "../state/production-floor-view";
 
-const useEditGroupModal = ({ selectedGroupId, actions, getStationFilterGroups }) => {
+const useEditGroupModal = ({ selectedGroupId, actions, getStationFilterGroups, setFilters }) => {
   const { callApi } = useGomakeAxios();
   const { alertSuccessUpdate } = useSnackBar();
   const actionsListRef = useRef<IActionMachines[]>([]);
@@ -17,7 +20,7 @@ const useEditGroupModal = ({ selectedGroupId, actions, getStationFilterGroups })
     {}
   );
   const [actionsList, setActionsList] = useState<IActionMachines[]>([]);
-
+  const view = useRecoilValue(productionFloorViewState);
   useEffect(() => {
     if (actionsList?.length > 0) {
       const data = actionsList
@@ -141,12 +144,17 @@ const useEditGroupModal = ({ selectedGroupId, actions, getStationFilterGroups })
     );
   }, [selectedGroupId, actions]);
 
-
+  const [filtersState, setFiltersState] = useRecoilState(productionFloorFiltersState);
   const updateStationFilterGroup = async (stations) => {
     const callBack = (res) => {
       if (res.success) {
         alertSuccessUpdate();
         getStationFilterGroups();
+        setFilters({
+          ...filtersState,
+          stations,
+          groupId: selectedGroupId?.id,
+        }, view);
       }
     };
     await updateStationFilterGroupApi(callApi, callBack, {

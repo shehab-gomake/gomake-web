@@ -8,7 +8,7 @@ import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "../../state/text-search";
 import { useCallback, } from "react";
 import { useStyle } from "../kanban-card/style";
-import { GoMakeDeleteModal } from "@/components";
+import { GoMakeDeleteModal, GomakeTextInput } from "@/components";
 import { ModalType } from "@/enums";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 
@@ -23,7 +23,18 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
   const { classes } = useStyle();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const { updateStatus, t, RTL } = useProductionFloorData();
-  const { openSimpleApproveModal, handleOpenModal, handleCloseModal, handleConfirm } = useSimpleApproveModal(updateStatus);
+  const {
+    openSimpleApproveModal,
+    handleOpenModal,
+    handleCloseModal,
+    handleConfirm,
+    openSimpleStuckModal,
+    handleOpenStuckModal,
+    handleCloseStuckModal,
+    stuckReason,
+    setStuckReason,
+    onUpdateStuckReason
+  } = useSimpleApproveModal(updateStatus);
   const [{ isOver }, drop] = useDrop(
     () => ({
       accept: "task",
@@ -33,8 +44,13 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
           return;
         }
         if (status.key === "Approval required" && item.isNeedExample) {
+
           handleOpenModal(status.id, [item], item.id);
-        } else {
+        }
+        else if (status.key === "Stuck") {
+          handleOpenStuckModal(status.id, [item], item.id, item.productType);
+        }
+        else {
           updateStatus([item], status.id).then();
         }
       },
@@ -133,6 +149,22 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
         onClickDelete={handleConfirm}
         onClickCancel={handleCloseModal}
       />
+      <GoMakeDeleteModal
+        title={t("sales.quote.stuckReasonTitleModal")}
+        yesBtn={t("modal.yes")}
+        modalType={ModalType.WARNING}
+        subTitle={" "}
+        openModal={openSimpleStuckModal}
+        onClose={handleCloseStuckModal}
+        onClickDelete={() => onUpdateStuckReason(stuckReason)}
+      >
+        <GomakeTextInput
+          placeholder={t("sales.quote.stuckReason")}
+          value={stuckReason}
+          onChange={(e) => setStuckReason(e.target.value)}
+          style={{ height: 40, width: "100%", minWidth: "300px" }}
+        />
+      </GoMakeDeleteModal>
     </Stack>
   );
 }

@@ -22,7 +22,7 @@ const useAddMaterialSupplier = () => {
     value: string;
     isDefault: boolean;
   } | null>(null);
-
+  console.log("newSupplier", newSupplier)
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const [openModal, setOpenModal] = useRecoilState(openAddSupplierModalState);
   const setSelectedSupplier = useSetRecoilState(selectedSupplierIdState);
@@ -43,7 +43,7 @@ const useAddMaterialSupplier = () => {
         setOpenModal(false);
         setNewSupplier(null);
         setMaterialSuppliers([...materialSuppliers, newSupplier]);
-        setSelectedSupplier(newSupplier.value);
+        setSelectedSupplier(newSupplier.id);
         setActiveFilter(EMaterialActiveFilter.ALL);
         materialCategories.find(
           (category) => category.categoryKey === materialCategory
@@ -58,7 +58,7 @@ const useAddMaterialSupplier = () => {
       await addMaterialSupplier(callApi, callBack, {
         materialTypeKey: materialType.toString(),
         categoryKey: materialCategory.toString(),
-        supplierId: newSupplier.value,
+        supplierId: newSupplier.id,
       });
     }
   };

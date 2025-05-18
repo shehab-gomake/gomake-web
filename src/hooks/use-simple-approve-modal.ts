@@ -1,16 +1,21 @@
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { useState } from "react";
 import { useGomakeAxios } from "./use-gomake-axios";
-import { sendJobExampleConfirmationToClientApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { sendJobExampleConfirmationToClientApi, updateBoardMissionStuckReasonApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { useSnackBar } from "./use-snack-bar";
 
 export const useSimpleApproveModal = (updateStatus: (boards: IBoardMissions[], statusId: string) => void) => {
   const { callApi } = useGomakeAxios();
   const [openSimpleApproveModal, setOpenSimpleApproveModal] = useState<boolean>(false);
+  const [openSimpleStuckModal, setOpenStuckModal] = useState<boolean>(false);
   const [statusId, setStatusId] = useState<string>("");
   const [boardsIdsList, setBoardsIdsList] = useState<IBoardMissions[]>([]);
   const [boardMissionId, setBoardMissionId] = useState<string>("");
-
-  const handleOpenModal = (newStatusId: string, boards: IBoardMissions[], boardMissionId?: string) => {
+  const [productType, setProductType] = useState<string>("");
+  const [stuckReason, setStuckReason] = useState<string>("");
+  const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
+  
+  const handleOpenModal = (newStatusId: string, boards: IBoardMissions[], boardMissionId?: string, productType?: string) => {
     setStatusId(newStatusId);
     setBoardsIdsList(boards);
     setBoardMissionId(boardMissionId);
@@ -19,6 +24,18 @@ export const useSimpleApproveModal = (updateStatus: (boards: IBoardMissions[], s
 
   const handleCloseModal = () => {
     setOpenSimpleApproveModal(false);
+    updateStatus(boardsIdsList, statusId);
+  };
+  const handleOpenStuckModal = (newStatusId: string, boards: IBoardMissions[], boardMissionId?: string, productType?: string) => {
+    setStatusId(newStatusId);
+    setBoardsIdsList(boards);
+    setBoardMissionId(boardMissionId);
+    setProductType(productType);
+    setOpenStuckModal(true);
+  };
+  const handleCloseStuckModal = () => {
+    setOpenStuckModal(false);
+    setStuckReason("");
     updateStatus(boardsIdsList, statusId);
   };
 
@@ -36,10 +53,29 @@ export const useSimpleApproveModal = (updateStatus: (boards: IBoardMissions[], s
       boardMissionId,
     });
   };
+
+  const onUpdateStuckReason = async (
+    stuckReason: string,
+  ) => {
+    await updateBoardMissionStuckReasonApi(
+      callApi,
+      (res) => {
+        if (res?.success) {
+        }
+      },
+      { boardMissionId, stuckReason, productType }
+    );
+  };
   return {
     openSimpleApproveModal,
     handleOpenModal,
     handleCloseModal,
     handleConfirm,
+    openSimpleStuckModal,
+    handleOpenStuckModal,
+    handleCloseStuckModal,
+    stuckReason,
+    setStuckReason,
+    onUpdateStuckReason
   };
 };
