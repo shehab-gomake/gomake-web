@@ -48,6 +48,7 @@ const ButtonsContainer = ({
   onClickOpenAddAttachmentsModal,
   onClickOpenDeleteDeliveryModal,
   AddCustomerModal,
+  handleSaveDraftBtnClick,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -116,6 +117,7 @@ const ButtonsContainer = ({
     // AddCustomerModal,
     // customer,
     // setCustomer,
+    isPurchaseInvoice,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -326,6 +328,14 @@ const ButtonsContainer = ({
               {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           )}
+        {isNewCreation && (isPurchaseInvoice || isInvoice) && (
+          <GomakePrimaryButton
+            style={classes.btnSaveDraft}
+            onClick={handleSaveDraftBtnClick}
+          >
+            {t("sales.cart.saveDraft")}
+          </GomakePrimaryButton>
+        )}
         {isNewCreation && (
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
@@ -403,10 +413,11 @@ const ButtonsContainer = ({
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : `sales.quote.${quoteItemValue?.isUsedStripe
-                    ? "placeOrder"
-                    : "orderNowTitle"
-                  }`
+                  : `sales.quote.${
+                      quoteItemValue?.isUsedStripe
+                        ? "placeOrder"
+                        : "orderNowTitle"
+                    }`
               )}
             </GomakePrimaryButton>
           </>

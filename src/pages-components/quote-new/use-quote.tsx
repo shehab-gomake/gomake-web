@@ -38,7 +38,9 @@ import {
   moveOrderToReadyApi,
   refreshExchangeRateApi,
   rejectDocumentApi,
+  removeDraftDocumentApi,
   saveDocumentApi,
+  saveDraftDocumentApi,
   sendDocumentToClientApi,
   sendReceiptToClientApi,
   sortDocumentItemsApi,
@@ -1137,9 +1139,11 @@ const useQuoteNew = ({
   const getCalculateQuoteConfirmationItem = async (
     printHouseId: string,
     ItemId: string,
-    quantity?: number,
+    quantity?: number
   ) => {
-    const documentItemIds = quoteConfirm?.documentItems?.filter((x) => x.isChecked)?.map((x) => x.id);
+    const documentItemIds = quoteConfirm?.documentItems
+      ?.filter((x) => x.isChecked)
+      ?.map((x) => x.id);
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
@@ -1691,6 +1695,30 @@ const useQuoteNew = ({
         alertFault("sales.quote.mailContectErrorMsg");
       }
     }
+  };
+
+  const handleSaveDraftBtnClick = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const path = isInvoice ? `/invoices` : `/purchaseInvoices`;
+        navigate(path);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await saveDraftDocumentApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        ...quoteItemValue,
+        creationDate: creationDate,
+        taxDate: taxDate,
+        dueDate: selectDate,
+        ...(router?.query?.budgetId ? { budgetID: router.query.budgetId } : {}),
+        exchangeRate:
+          quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
+        isOpenRelatedDocuments: isOpenRelatedDocuments,
+      },
+    });
   };
 
   const handleSaveBtnClick = async () => {
@@ -2516,6 +2544,7 @@ const useQuoteNew = ({
     alertNotVerifiedMail,
     alertNotVerifiedModalState,
     AddCustomerModal,
+    handleSaveDraftBtnClick,
   };
 };
 

@@ -39,11 +39,9 @@ const useMoreCircle = () => {
   const { user } = useCustomer();
   const { navigate } = useGomakeRouter();
   const { CheckPermission } = useUserPermission();
-
   const canCloseDocumentManually = CheckPermission(
     Permissions.CAN_CLOSE_MANUALLY
   );
-
   const canCancelReceipt = CheckPermission(Permissions.CANCEL_RECEIPT);
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [, setOpenFileUploader] = useRecoilState(openFileUploaderList);
@@ -52,6 +50,7 @@ const useMoreCircle = () => {
   const setIsSelectedCLoseAsDeliveryNote = useSetRecoilState(
     isSelectedCLoseAsDeliveryNoteState
   );
+
   const getMenuList = ({
     t,
     quote,
@@ -74,6 +73,7 @@ const useMoreCircle = () => {
     onClickStartProduction,
     onClickReopenDocument,
     onClickEditQuote,
+    onClickOpenRemoveDraftModal,
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
@@ -130,6 +130,7 @@ const useMoreCircle = () => {
     const isPurchaseInvoice = documentType === DOCUMENT_TYPE.purchaseInvoice;
     const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
     const isReceipt = documentType === DOCUMENT_TYPE.receipt;
+
     const isClosedOrder = isOrder && quote?.statusTitleText === "Order.Closed";
     const isPauseOrder = quote?.statusTitleText === "Order.Paused";
     const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
@@ -159,6 +160,37 @@ const useMoreCircle = () => {
         (isInvoice && isClosedInvoice));
 
     const isSendOrderReadyToClient = isOrder && quote?.productionStatus;
+
+    if ((isInvoice || isPurchaseInvoice) && quote?.isDraft) {
+      const documentId = quote?.id;
+      const href = isInvoice
+        ? `/invoice?isNewCreation=true&draftInvoiceId=${documentId}`
+        : `/purchaseInvoice?isNewCreation=true&draftPurchaseInvoiceId=${documentId}`;
+
+      return [
+        {
+          condition: true,
+          onClick: () => navigate(href),
+          icon: <EditingIcon />,
+          name: t("sales.quote.edit"),
+          isLink: true,
+          href,
+        },
+        {
+          condition: true,
+          onClick: () => onClickOpenRemoveDraftModal(quote),
+          icon: <TickCancelIcon />,
+          name: t("navigationButtons.delete"),
+        },
+        {
+          condition: true,
+          onClick: () => onClickPdf(quote?.id),
+          icon: <PDFIcon />,
+          name: t("sales.quote.pdf"),
+        },
+      ];
+    }
+
     return [
       {
         condition: !isPauseOrder && isQuote && isEditableDocument,

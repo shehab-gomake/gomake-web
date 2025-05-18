@@ -149,6 +149,13 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
             documentId: router.query.documentId,
           }),
           ...(router?.query.budgetId && { budgetId: router.query.budgetId }),
+
+          ...(router?.query.draftInvoiceId && {
+            documentId: router.query.draftInvoiceId,
+          }),
+          ...(router?.query.draftPurchaseInvoiceId && {
+            documentId: router.query.draftPurchaseInvoiceId,
+          }),
         };
 
         const res = await callApi(
@@ -209,10 +216,10 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
                     style={
                       _childsDocumentItemsMapping
                         ? {
-                          height: "100%",
-                          overflowY: "scroll",
-                          paddingRight: 5,
-                        }
+                            height: "100%",
+                            overflowY: "scroll",
+                            paddingRight: 5,
+                          }
                         : { height: 36, overflowY: "scroll", paddingRight: 5 }
                     }
                   >
@@ -404,13 +411,13 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         const result = await getAllClientAddress();
         isUpdate
           ? updateClientAddress(
-            result.find((item) => item.id === res.data.data.result),
-            addressType
-          )
+              result.find((item) => item.id === res.data.data.result),
+              addressType
+            )
           : onClickAddAddress(
-            result.find((item) => item.id === res.data.data.result),
-            addressType
-          );
+              result.find((item) => item.id === res.data.data.result),
+              addressType
+            );
       } else {
         alertFaultAdded();
       }
