@@ -50,6 +50,7 @@ import { useDeliveryStatusButton } from "./widgets/delivery-status-button/use-de
 import { useClientContactsList } from "@/hooks/use-client-contacts";
 import { UpdateDeliveryStatusModal } from "./widgets/delivery-status-button/delivery-status-modal/delivery-status-modal";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import CloseOrderNote from "./widgets/general/close-order-note";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -148,6 +149,7 @@ const QuotesListPageWidget = ({
     isCanceledState,
     openCloseOrderNotesModal,
     onClickCloseCloseOrderNotesModal,
+    onClickCloseOrderCallback,
     selectedQuoteItemValue,
     paymentModalTitle,
     openPaymentModal,
@@ -899,12 +901,12 @@ const QuotesListPageWidget = ({
         customer={customerForEdit}
         setCustomer={setCustomerForEdit}
       />
+      {/* !here used */}
       <CloseOrderNotesModal
         onClose={onClickCloseCloseOrderNotesModal}
         openModal={openCloseOrderNotesModal}
         quoteItemValue={selectedQuoteItemValue}
-        onClickCloseOrder={() => onClickOpenCloseOrderModal(selectedDocument)}
-        documentType={documentType}
+        onClickCloseOrder={onClickCloseOrderCallback}
       />
       <SendPaymentModal
         openPaymentModal={openPaymentModal}
@@ -996,18 +998,22 @@ const QuotesListPageWidget = ({
               }
         }
       >
-        <div
-          style={{
-            ...classes.inputLbl,
-            color: isMoveToReady ? "black" : "#475467",
-          }}
-        >
-          <PrimaryCheckbox
-            checked={isMoveToReady}
-            onChange={handleCheckboxChange}
-          />
-          {t("sales.moveToReadyAndCloseOrder")}
-        </div>
+        <Stack alignItems={"center"}>
+          <div
+            style={{
+              ...classes.inputLbl,
+              color: isMoveToReady ? "black" : "#475467",
+            }}
+          >
+            <PrimaryCheckbox
+              checked={isMoveToReady}
+              onChange={handleCheckboxChange}
+            />
+            {t("sales.moveToReadyAndCloseOrder")}
+          </div>
+
+          <CloseOrderNote note={selectedDocument?.closeOrderNotes} />
+        </Stack>
       </GoMakeDeleteModal>
       <ThreeOptionsModal
         title={t("payment.cancelReceipt")}
