@@ -5227,16 +5227,24 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (router?.query?.isFromChatbot) {
       await getAndSetChatBotProductId(
         callApi,
-        (data) => {
-          const updatedTemplate = updateIsHidden(data, subProducts);
+        (res) => {
+          const updatedTemplate = updateIsHidden(res, subProducts);
           setDefaultProductTemplate(updatedTemplate);
-          initProduct(updatedTemplate, materials);
-          let checkParameter = validateParameters(subProducts);
-          if (checkParameter) {
-            setCanCalculation(true);
-          } else {
-            setCanCalculation(false);
-          }
+          initQuoteItemProduct(updatedTemplate, materials);
+          setdocumentItemByEdit(res?.docmentItem);
+          setCalculationResult({ ...calculationResult, tabs: res?.tabs });
+          setProductItemValueByEdit(res?.productItemValue);
+          setValuesState(res?.productItemValue?.workTypes);
+          setWorkTypes(res?.productItemValue?.workTypes);
+          setMissionsListForEdit(res?.missions);
+          setCalculatedPriceProductItemValue(res?.calculatedPrice);
+          setSubProductsCopy([
+            {
+              parameters: res?.productItemValue?.itemParmetersValues,
+              type: null,
+            }
+          ]);
+          //getSelectedWorkFlow(conn, false, res?.data?.productItemValue?.id);
         },
         {
           Id: router?.query?.productId,
@@ -5328,19 +5336,19 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     ) {
       const quoteItemSubProducts = [];
       setCurrentProductItemValueTotalPrice(
-        quoteItemProduct.docmentItem.finalPrice
+        quoteItemProduct.docmentItem?.finalPrice 
       );
       setSliderCurrentProductItemValueTotalPrice(
-        quoteItemProduct.docmentItem.finalPrice
+        quoteItemProduct.docmentItem?.finalPrice
       ); //!new
       setLastProductItemValueTotalPrice(
-        quoteItemProduct.docmentItem.finalPrice
+        quoteItemProduct.docmentItem?.finalPrice
       );
       setCurrentProductItemValue(quoteItemProduct.productItemValue);
       setCurrentProductItemValueDraftId(
         quoteItemProduct.productItemValueDraftId
       );
-      setUrgentOrder(quoteItemProduct.docmentItem.isUrgentWork);
+      setUrgentOrder(quoteItemProduct.docmentItem?.isUrgentWork);
       setCurrentCalculationSessionId(quoteItemProduct.productItemValueDraftId);
       setWorkFlows(quoteItemProduct.productItemValue.workFlows);
       setJobActions(quoteItemProduct.productItemValue.actions);

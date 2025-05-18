@@ -4,10 +4,15 @@ import i18next from "i18next";
 import { useTranslation } from "react-i18next";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { convertWidthToVW, leftRightAdapter } from "@/utils/adapter";
+import {
+  adaptMarginLeft,
+  convertWidthToVW,
+  leftRightAdapter,
+} from "@/utils/adapter";
 
 const useStyle = () => {
   const { t } = useTranslation();
+  const dir = t("direction");
   const { theme, secondColor, errorColor, successColor, primaryColor } =
     useGomakeTheme();
   const classes = useMemo(() => {
@@ -208,6 +213,7 @@ const useStyle = () => {
         display: "flex",
         alignItems: "center",
         width: "max-content",
+        ...adaptMarginLeft(dir, 8),
       },
     };
   }, [i18next.language, t, theme]);

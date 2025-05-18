@@ -276,7 +276,17 @@ const useMoreCircle = () => {
           isEditableDocument,
         onClick: () => {
           if (quote?.productionStatus) {
-            navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`);
+            if (quote?.closeOrderNotes?.trim()) {
+              onClickOpenCloseOrderNotesModal(
+                quote,
+                "closeAsDeliveryNote",
+                () =>
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${quote?.id}`
+                  )
+              );
+            } else
+              navigate(`/deliveryNote?isNewCreation=true&orderId=${quote?.id}`);
           } else {
             onClickOpenChangeProductionStatusModal(quote);
             setIsSelectedCLoseAsDeliveryNote(true);
@@ -284,7 +294,7 @@ const useMoreCircle = () => {
         },
         icon: <TickIcon />,
         name: t("sales.quote.closeAsDeliveryNote"),
-        isLink: quote?.productionStatus,
+        isLink: quote?.productionStatus && !quote?.closeOrderNotes?.trim(),
         href: `/deliveryNote?isNewCreation=true&orderId=${quote?.id}`,
       },
       {
@@ -298,7 +308,12 @@ const useMoreCircle = () => {
         onClick: () => {
           if (isOrder) {
             if (quote?.productionStatus) {
-              navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`);
+              if (quote?.closeOrderNotes?.trim()) {
+                onClickOpenCloseOrderNotesModal(quote, "closeAsInvoice", () =>
+                  navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`)
+                );
+              } else
+                navigate(`/invoice?isNewCreation=true&orderId=${quote?.id}`);
             } else {
               onClickOpenChangeProductionStatusModal(quote);
               setIsSelectedCLoseAsDeliveryNote(false);
@@ -309,7 +324,9 @@ const useMoreCircle = () => {
         },
         icon: <TickIcon />,
         name: t("sales.quote.closeAsInvoice"),
-        isLink: isOrder ? quote?.productionStatus : true,
+        isLink: isOrder
+          ? quote?.productionStatus && !quote?.closeOrderNotes?.trim()
+          : true,
         href: isOrder
           ? `/invoice?isNewCreation=true&orderId=${quote?.id}`
           : `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`,
@@ -377,7 +394,9 @@ const useMoreCircle = () => {
           canCloseDocumentManually,
         onClick: () =>
           quote?.closeOrderNotes && quote?.closeOrderNotes.trim() !== ""
-            ? onClickOpenCloseOrderNotesModal(quote)
+            ? onClickOpenCloseOrderNotesModal(quote, "closeManually", () =>
+                onClickOpenCloseOrderModal(quote)
+              )
             : onClickOpenCloseOrderModal(quote),
         icon: <LockIcon />,
         name: t("sales.quote.close"),

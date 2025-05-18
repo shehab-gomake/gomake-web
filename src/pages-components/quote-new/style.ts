@@ -1,9 +1,13 @@
 import { useGomakeTheme } from "@/hooks/use-gomake-thme";
+import { adaptMarginLeft } from "@/utils/adapter";
 import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const useStyle = (isQuoteConfirmation) => {
-  const { secondColor, grayColor, primaryColor, theme } = useGomakeTheme();
+  const { secondColor, grayColor, theme } = useGomakeTheme();
+  const { t } = useTranslation();
+  const dir = t("direction");
   const classes = useMemo(() => {
     return {
       mainContainer: {
@@ -168,6 +172,7 @@ const useStyle = (isQuoteConfirmation) => {
         display: "flex",
         alignItems: "center",
         width: "max-content",
+        ...adaptMarginLeft(dir, 8),
       },
     };
   }, [isQuoteConfirmation, theme]);
