@@ -13,15 +13,24 @@ class ActionProvider {
     async initSocketIo(){
         return  new Promise((resolve, reject) => {
             const socket = io(config.api_server);
-            socket.on('chatbot-socket-io', (newData:string[]) => {
+            socket.on('chatbot-socket-io', (newData:any) => {
                 console.log("newData", newData)
-                newData.forEach(str=>{
-                    const greetingMessage = createCustomMessage(str, 'bot', {loading: false});
+                let message = newData.message;
+                let calculationUrl = newData.calculationUrl;
+                const greetingMessage = createCustomMessage(message, 'bot', {loading: false});
+                this.setState(prev => ({
+                    ...prev,
+                    messages: [...prev.messages, greetingMessage],
+                }));
+                if(calculationUrl){
+                    const linkMsg = createCustomMessage("",
+                        "link",{loading:false,payload:{ url: calculationUrl, label: "show summery " },}
+                    );
                     this.setState(prev => ({
                         ...prev,
-                        messages: [...prev.messages, greetingMessage],
+                        messages: [...prev.messages, linkMsg],
                     }));
-                })
+                }
                 
             });
             socket.on('connect', () => {
