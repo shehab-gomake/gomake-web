@@ -136,14 +136,14 @@ const StatusTableComponent = ({
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               item.board.id
             );
-          } else if (status.key === "Stuck") {
+          }/* else if (status.key === "Stuck") {
             handleOpenStuckModal(
               status.id,
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               item.board.id,
               item.board.productType
             );
-          } else {
+          }*/ else {
             updateStatus(
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               status.id
