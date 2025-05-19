@@ -38,7 +38,9 @@ import {
   moveOrderToReadyApi,
   refreshExchangeRateApi,
   rejectDocumentApi,
+  removeDraftDocumentApi,
   saveDocumentApi,
+  saveDraftDocumentApi,
   sendDocumentToClientApi,
   sendReceiptToClientApi,
   sortDocumentItemsApi,
@@ -1695,6 +1697,30 @@ const useQuoteNew = ({
     }
   };
 
+  const handleSaveDraftBtnClick = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const path = isInvoice ? `/invoices` : `/purchaseInvoices`;
+        navigate(path);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await saveDraftDocumentApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        ...quoteItemValue,
+        creationDate: creationDate,
+        taxDate: taxDate,
+        dueDate: selectDate,
+        ...(router?.query?.budgetId ? { budgetID: router.query.budgetId } : {}),
+        exchangeRate:
+          quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
+        isOpenRelatedDocuments: isOpenRelatedDocuments,
+      },
+    });
+  };
+
   const handleSaveBtnClick = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -2516,6 +2542,7 @@ const useQuoteNew = ({
     alertNotVerifiedMail,
     alertNotVerifiedModalState,
     AddCustomerModal,
+    handleSaveDraftBtnClick,
   };
 };
 

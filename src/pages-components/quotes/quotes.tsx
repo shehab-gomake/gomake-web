@@ -228,6 +228,9 @@ const QuotesListPageWidget = ({
     alertNotVerifiedMailModal,
     alertNotVerifiedModalState,
     showAlertModal,
+    handleRemoveDraftBtnClick,
+    removeDraftModal,
+    onCloseOpenRemoveDraftModal,
   } = useQuotes(documentType, isFromHomePage);
   const {
     openDeliveryModal,
@@ -1096,6 +1099,12 @@ const QuotesListPageWidget = ({
         openModal={openDeleteModal}
         onClose={onCloseDeleteModal}
         onClickDelete={() => removeDocumentDeliveryItem(selectedItem)}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
+        openModal={removeDraftModal.isOpen}
+        onClose={onCloseOpenRemoveDraftModal}
+        onClickDelete={handleRemoveDraftBtnClick}
       />
     </>
   );

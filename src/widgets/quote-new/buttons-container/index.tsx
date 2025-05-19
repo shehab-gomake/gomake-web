@@ -47,6 +47,7 @@ const ButtonsContainer = ({
   onClickOpenAddAttachmentsModal,
   onClickOpenDeleteDeliveryModal,
   AddCustomerModal,
+  handleSaveDraftBtnClick,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -115,7 +116,7 @@ const ButtonsContainer = ({
     // AddCustomerModal,
     // customer,
     // setCustomer,
-
+    isPurchaseInvoice,
     onClickCloseCloseOrderNotesModal,
     onClickOpenCloseOrderNotesModal,
     openCloseOrderNotesModal,
@@ -330,6 +331,14 @@ const ButtonsContainer = ({
               {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           )}
+        {isNewCreation && (isPurchaseInvoice || isInvoice) && (
+          <GomakePrimaryButton
+            style={classes.btnSaveDraft}
+            onClick={handleSaveDraftBtnClick}
+          >
+            {t("sales.cart.saveDraft")}
+          </GomakePrimaryButton>
+        )}
         {isNewCreation && (
           <GomakePrimaryButton
             style={classes.btnThirdContainer}

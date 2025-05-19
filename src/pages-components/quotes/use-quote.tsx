@@ -34,6 +34,7 @@ import {
   OpenCanceledDocumentApi,
   OpenDocumentApi,
   pauseOrdResumeOrderApi,
+  removeDraftDocumentApi,
   startOrderProductionApi,
   updateDocumentApi,
 } from "@/services/api-service/generic-doc/documents-api";
@@ -113,6 +114,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertFaultGetData,
     alertSuccessUpdate,
     alertFault,
+    alertFaultDelete,
   } = useSnackBar();
   const router = useRouter();
   const documentPath =
@@ -508,7 +510,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     " " +
                     quote?.totalPrice,
                 quote?.notes,
-                _renderStatus(docType, quote, t, navigate),
+                isInvoice && quote?.isDraft
+                  ? t("sales.quote.draft")
+                  : _renderStatus(docType, quote, t, navigate),
                 <MoreMenuWidget
                   quote={quote}
                   documentType={docType}
@@ -519,6 +523,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     onClickOpenChangeProductionStatusModal
                   }
                   onClickSendPayment={onClickSendPayment}
+                  onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
                 />,
               ];
             } else if (isQuote) {
@@ -715,7 +720,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 ) : (
                   <div>—</div>
                 ),
-                _renderStatus(docType, quote, t, navigate),
+                isInvoice && quote?.isDraft
+                  ? t("sales.quote.draft")
+                  : _renderStatus(docType, quote, t, navigate),
                 <MoreMenuWidget
                   quote={quote}
                   documentType={docType}
@@ -732,6 +739,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   }
                   onClickSendPayment={onClickSendPayment}
                   onClickReopenDocument={onClickOpenReopenDocumentModal}
+                  onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
                 />,
               ];
             }
@@ -1018,7 +1026,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   " " +
                   quote?.totalPrice,
               quote?.notes,
-              _renderStatus(docType, quote, t, navigate),
+              quote?.isDraft
+                ? t("sales.quote.draft")
+                : _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -1029,6 +1039,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenChangeProductionStatusModal
                 }
                 onClickSendPayment={onClickSendPayment}
+                onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
               />,
             ];
           } else if (isQuote) {
@@ -1209,7 +1220,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ) : (
                 <div>—</div>
               ),
-              _renderStatus(docType, quote, t, navigate),
+              quote?.isDraft && isInvoice
+                ? t("sales.quote.draft")
+                : _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -1226,6 +1239,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
                 onClickSendPayment={onClickSendPayment}
                 onClickReopenDocument={onClickOpenReopenDocumentModal}
+                onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
               />,
             ];
           }
@@ -2043,6 +2057,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             value: ReceiptAccountingStatus.CANCELED,
           },
         ]
+      : isInvoice || isPurchaseInvoice
+      ? [
+          { label: t("sales.quote.open"), value: AStatus.OPEN },
+          {
+            label: t("sales.quote.partialClosed"),
+            value: AStatus.PARTIAL_CLOSED,
+          },
+          { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+          { label: t("sales.quote.draft"), value: AStatus.DRAFT },
+        ]
       : [
           { label: t("sales.quote.open"), value: AStatus.OPEN },
           {
@@ -2839,6 +2863,32 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertNotVerifiedMailModal.open();
   };
 
+  const removeDraftModal = useModal();
+
+  const onClickOpenRemoveDraftModal = (document) => {
+    setSelectedDocument(document);
+    removeDraftModal.open();
+  };
+
+  const onCloseOpenRemoveDraftModal = () => {
+    setSelectedDocument({});
+    removeDraftModal.close();
+  };
+
+  const handleRemoveDraftBtnClick = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        getAllQuotes();
+      } else {
+        alertFaultDelete();
+      }
+    };
+    await removeDraftDocumentApi(callApi, callBack, {
+      documentType: docType,
+      documentId: selectedDocument?.id,
+    });
+  };
+
   return {
     showCustomerModal,
     customerForEdit,
@@ -3012,6 +3062,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertNotVerifiedModalState,
     showAlertModal,
     onClickCloseOrderCallback,
+    handleRemoveDraftBtnClick,
+    removeDraftModal,
+    onCloseOpenRemoveDraftModal,
   };
 };
 

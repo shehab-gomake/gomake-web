@@ -323,6 +323,7 @@ const QuoteNewPageWidget = ({
     alertNotVerifiedMail,
     alertNotVerifiedModalState,
     AddCustomerModal,
+    handleSaveDraftBtnClick,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -831,6 +832,7 @@ const QuoteNewPageWidget = ({
                 onClickOpenAddAttachmentsModal={onOpenAddAttachmentsModal}
                 onClickOpenDeleteDeliveryModal={onClickOpenDeleteDeliveryModal}
                 AddCustomerModal={AddCustomerModal}
+                handleSaveDraftBtnClick={handleSaveDraftBtnClick}
               />
             </div>
           )}
