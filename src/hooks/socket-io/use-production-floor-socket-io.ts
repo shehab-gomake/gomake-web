@@ -20,6 +20,10 @@ const useProductionFloorSocketIO = (view: EProductionFloorView) => {
                 getDataByGroups(connectionId,null).then();
                 return;
             }
+            if (view === EProductionFloorView.DONE_JOBS) {
+                // getData(socket.id).then();
+                return;
+            }
             getData(socket.id).then();
         });
         socket.on("connect", () => {

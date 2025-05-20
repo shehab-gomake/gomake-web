@@ -42,9 +42,7 @@ import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employees-api";
 import { actionsListState } from "../state/actions-list";
-import { selectedAgentsState } from "@/store/agents-state";
 import moment from "moment";
-import { CurrentStationOrderingEnum } from "@/enums/parameter-type-enums";
 
 interface onStationsChangeProps {
   stations: IStation[];
@@ -69,7 +67,7 @@ interface ISelectedGroup {
 const useProductionFloorFilters = ({
   getStationFilterGroups,
   connectionId,
-  isFetching =true
+  isFetching =true,
 }: IUseProductionFloorFiltersProps) => {
   const [filtersState, setFiltersState] = useRecoilState(
     productionFloorFiltersState
@@ -80,7 +78,7 @@ const useProductionFloorFilters = ({
   const setTags = useSetRecoilState(tagsState);
   const { callApi } = useGomakeAxios();
   const [data, setData] = useRecoilState(boardsMissionsState);
-  const { getDataByGroups } = useProductionFloorData();
+  const { getDataByGroups, getAllBoardMissions,getAllData ,searchInputFilterRef} = useProductionFloorData();
 
   const setView = useSetRecoilState(productionFloorViewState);
   const { push } = useRouter();
@@ -126,6 +124,10 @@ const useProductionFloorFilters = ({
     if(selectedView === EProductionFloorView.FILTER_GROUPS ) {
       setFiltersState(filters);
       getDataByGroups(connectionId,filters).then();
+      return;
+    }
+    if(selectedView === EProductionFloorView.DONE_JOBS) {
+      getAllBoardMissions().then();
       return;
     }
     if (abortController) {
@@ -362,7 +364,7 @@ const useProductionFloorFilters = ({
       setSelectedGroupId(null);
       onStationsChange({ stations: [], groupId: null ,view: view });
     } else {
-      if (selectedGroupId === "all" && groupId !== "all") {
+      if ((selectedGroupId === "all" || selectedGroupId === "doneJobs") && (groupId !== "all" && groupId !== "doneJobs")) {
         const viewName =
           EProductionFloorView[EProductionFloorView.TABLE].toLowerCase();
         router.push(`/production-floor?view=${viewName}`, undefined, {
@@ -381,6 +383,17 @@ const useProductionFloorFilters = ({
         setData([]);
         selectedView = EProductionFloorView.TABLE;
       }
+      if (groupId === "doneJobs") {
+        const viewName =
+          EProductionFloorView[
+            EProductionFloorView.DONE_JOBS
+          ].toLowerCase();
+        router.push(`/production-floor?view=${viewName}`, undefined, {  
+          shallow: true,
+        });
+        setData([]);
+        selectedView = EProductionFloorView.DONE_JOBS;
+      }
       setSelectedGroupId(groupId);
       getStationFilterGroupById(groupId,selectedView).then();
     }
@@ -390,6 +403,11 @@ const useProductionFloorFilters = ({
     if(id === "all"){
       setData([])
       await getDataByGroups(connectionId,filters,true)
+      return;
+    }
+    if(id === "doneJobs"){
+      setData([])
+      await getAllBoardMissions()
       return;
     }
     const callBack = (res) => {
@@ -592,6 +610,9 @@ useEffect(() => {
     onClickCloseModalEditGroup,
     actions,
     handleAgentChange,
+    view,
+    getAllData,
+    searchInputFilterRef
   };
 };
 

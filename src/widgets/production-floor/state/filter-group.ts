@@ -19,3 +19,42 @@ export const filterGroupsState = atom<IFilterGroupsList[]>({
   key: "filterGroupsState",
   default: []
 });
+
+export const allBoardMissionsState = atom<any[]>({
+  key: "allBoardMissionsState",
+  default: []
+});
+
+export const pageNumberState = atom<number>({ 
+  key: "pageNumberState",
+  default: 1
+});
+
+export const pageSizeState = atom<number>({ 
+  key: "pageSizeState",
+  default: 10
+});
+
+export const pagesCountState = atom<number>({ 
+  key: "pagesCountState",
+  default: 0
+});
+
+export const finalPatternSearchState = atom<string>({
+  key: "finalPatternSearchState",
+  default: ""
+});
+
+export const patternSearchState = atom<any>({
+  key: "patternSearchState",
+  default: null
+});
+
+
+
+
+
+
+
+
+

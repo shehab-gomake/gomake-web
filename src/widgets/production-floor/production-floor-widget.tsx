@@ -50,6 +50,9 @@ const ProductionFloorWidget = () => {
     if (view === EProductionFloorView.FILTER_GROUPS) {
       setSelectedGroupId("all");
     }
+    if (view === EProductionFloorView.DONE_JOBS) {
+      setSelectedGroupId("doneJobs");
+    }
   }, [view]);
 
   useEffect(() => {
@@ -105,6 +108,7 @@ const ProductionFloorWidget = () => {
           getStationFilterGroups={getStationFilterGroups}
           connectionId={connectionId}
           isMobile={isMobile}
+          view={view}
         />
       )}
       <Stack overflow={"auto"} maxHeight={"100%"}>

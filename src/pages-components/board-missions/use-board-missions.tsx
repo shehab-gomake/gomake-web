@@ -46,6 +46,7 @@ import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-
 import { addPrintHouseJobsStorageApi, getAllPrintHouseJobsStorageApi } from "@/services/api-service/board-missions/jobs-storage";
 
 
+
 type StatusOption = {
   label: string;
   value: ORDER_STATUSES;
@@ -138,7 +139,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     useAgentsList();
   const router = useRouter();
   const [selectedMission, setSelectedMission] = useState<any>({});
-  console.log("selectedMission", selectedMission)
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
