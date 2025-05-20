@@ -25,6 +25,7 @@ import {
   checkArrayNotEmptyOrEmailNotEmpty,
   checkArrayNotEmptyOrPhoneNotEmpty,
   isAtLeastOneSelected,
+  validateUsAddressFields,
 } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { useUserPermission } from "@/hooks/use-permission";
@@ -40,6 +41,7 @@ import {
   addressTypeState,
   EAddressType,
 } from "../business-widget/address-widget/state";
+import { validateAddressApi } from "@/services/api-service/customers/customers-api";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -70,6 +72,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
+  const CheckoutOptionModal = useModal(); //!here
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openCancelReceiptModal, setOpenCancelReceiptModal] = useState(false);
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
@@ -101,12 +104,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
   const open = Boolean(anchorEl);
 
-  const onClickOpenOrderNowModal = () => {
-    // if (quoteItemValue?.isUsedStripe && !quoteItemValue?.isConnectedToStripe) {
-    //   alertFault("alerts.stripNotConnected");
-    //   return;
-    // }
+  const validateAddress = async (addressWithMetadata) => {
+    return await validateAddressApi(callApi, () => {}, addressWithMetadata);
+  };
 
+  const onClickOpenOrderNowModal = async () => {
     if (!quoteItemValue?.isHaveCustomers && !quoteItemValue?.client) {
       AlertAddCustomerModal.open();
       return;
@@ -128,6 +130,42 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         setOpenAddressModal(true);
       }, 0);
       return;
+    }
+
+    // Validate required fields (for US addresses) and validate address
+    if (
+      CheckPreferenceValue(EPreferences.ADDRESSES_REQUIRED_FOR_ORDER) &&
+      quoteItemValue?.isUsedStripe
+    ) {
+      const billingAddress = quoteItemValue.documentBillingAddresses?.[0];
+
+      if (billingAddress) {
+        const { isValid, missingFields } =
+          validateUsAddressFields(billingAddress);
+        if (!isValid) {
+          const translatedFields = missingFields
+            .map((fieldKey) => t(fieldKey))
+            .join(", ");
+          alertFault(`${t("modal.RequiredFields")}: ${translatedFields}`);
+          setSelectedAddressType(EAddressType.BILLING);
+          setTimeout(() => {
+            setOpenAddressModal(true);
+          }, 0);
+          return;
+        }
+
+        const validateRes = await validateAddress(billingAddress);
+        if (!validateRes?.success || validateRes?.data?.ErrorMessage) {
+          alertFault(
+            validateRes?.data?.ErrorMessage || "Address validation failed."
+          );
+          setSelectedAddressType(EAddressType.BILLING);
+          setTimeout(() => {
+            setOpenAddressModal(true);
+          }, 0);
+          return;
+        }
+      }
     }
 
     if (!isSelectedAtLeastOne) {
@@ -196,17 +234,21 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const handleOrderConfirmation = async (
     sendMessage: boolean,
     isPrepaymentClient: boolean = false,
-    totalPrePaymentAmount: number = 0
+    totalPrePaymentAmount: number = 0,
+    isStripeCash: boolean = false
   ) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         onClickCloseOrderNowModal();
+
         if (quoteItemValue?.isUsedStripe) {
           if (!sendMessage) {
             navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
           } else {
-            if (res?.data?.paymentLink) {
+            if (isStripeCash) {
+              navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
+            } else if (res?.data?.paymentLink) {
               window.open(res.data.paymentLink, "_self");
             } else {
               alertFaultGetData();
@@ -226,6 +268,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const requestBody = {
       quoteId: quoteItemValue?.id,
       sendMessage,
+      ...(sendMessage && { isStripeCash }),
       ...(isPrepaymentClient && { totalPrePaymentAmount }),
     };
 
@@ -234,7 +277,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const onClickConfirmWithoutNotification = () =>
     handleOrderConfirmation(false);
-  const onClickConfirmWithNotification = () => handleOrderConfirmation(true);
+  const onClickConfirmWithNotification = (isStripeCash: boolean) =>
+    handleOrderConfirmation(true, false, 0, isStripeCash);
 
   const onClickPrint = async (withInvoices?: boolean) => {
     const downloadPdf = (url) => {
@@ -354,6 +398,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const isOrder = docType === DOCUMENT_TYPE.order;
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
+  const isPurchaseInvoice = docType === DOCUMENT_TYPE.purchaseInvoice;
 
   const canCancelReceipt = CheckPermission(Permissions.CANCEL_RECEIPT);
 
@@ -495,6 +540,21 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     } else onClickPrint();
   };
 
+  const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] =
+    useState(false);
+  const [onClickCloseOrderCallback, setOnClickCloseOrderCallback] = useState<
+    (() => void) | null
+  >(null);
+
+  const onClickOpenCloseOrderNotesModal = (onClickCloseOrder: () => void) => {
+    setOnClickCloseOrderCallback(() => onClickCloseOrder);
+    setOpenCloseOrderNotesModal(true);
+  };
+
+  const onClickCloseCloseOrderNotesModal = () => {
+    setOpenCloseOrderNotesModal(false);
+  };
+
   return {
     openOrderNowModal,
     onClickConfirmWithoutNotification,
@@ -563,6 +623,13 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     canCancelReceipt,
     isDeliveryNote,
     AlertAddCustomerModal,
+    isPurchaseInvoice,
+    CheckoutOptionModal,
+    onClickCloseCloseOrderNotesModal,
+    onClickOpenCloseOrderNotesModal,
+    openCloseOrderNotesModal,
+    setOpenCloseOrderNotesModal,
+    onClickCloseOrderCallback,
   };
 };
 

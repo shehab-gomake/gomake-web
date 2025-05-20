@@ -14,6 +14,7 @@ interface ICloseMenuProps {
   documentType: DOCUMENT_TYPE;
   onClickClose: (id: string) => void;
   onClickOpenChangeProductionStatusModal?: any;
+  onClickOpenCloseOrderNotesModal?: any;
 }
 
 const CloseBtnMenu = ({
@@ -24,27 +25,42 @@ const CloseBtnMenu = ({
   documentType,
   onClickClose,
   onClickOpenChangeProductionStatusModal,
+  onClickOpenCloseOrderNotesModal,
 }: ICloseMenuProps) => {
   const { t } = useTranslation();
   const { navigate } = useGomakeRouter();
   const setIsSelectedCLoseAsDeliveryNote = useSetRecoilState(
     isSelectedCLoseAsDeliveryNoteState
   );
+
   const getMenuOptions = () => {
     switch (documentType) {
       case DOCUMENT_TYPE.order:
         return [
           {
             label: t("sales.quote.close"),
-            action: () => onClickClose(documentState?.id),
+            action: () => {
+              if (documentState?.closeOrderNotes?.trim()) {
+                onClickOpenCloseOrderNotesModal(() =>
+                  onClickClose(documentState?.id)
+                );
+              } else onClickClose(documentState?.id);
+            },
           },
           {
             label: t("sales.quote.closeAsDeliveryNote"),
             action: () => {
               if (documentState?.productionStatus) {
-                navigate(
-                  `/deliveryNote?isNewCreation=true&orderId=${documentState?.id}`
-                );
+                if (documentState?.closeOrderNotes?.trim()) {
+                  onClickOpenCloseOrderNotesModal(() =>
+                    navigate(
+                      `/deliveryNote?isNewCreation=true&orderId=${documentState?.id}`
+                    )
+                  );
+                } else
+                  navigate(
+                    `/deliveryNote?isNewCreation=true&orderId=${documentState?.id}`
+                  );
               } else {
                 onClickOpenChangeProductionStatusModal(documentState);
                 setIsSelectedCLoseAsDeliveryNote(true);
@@ -55,9 +71,16 @@ const CloseBtnMenu = ({
             label: t("sales.quote.closeAsInvoice"),
             action: () => {
               if (documentState?.productionStatus) {
-                navigate(
-                  `/invoice?isNewCreation=true&orderId=${documentState?.id}`
-                );
+                if (documentState?.closeOrderNotes?.trim()) {
+                  onClickOpenCloseOrderNotesModal(() =>
+                    navigate(
+                      `/invoice?isNewCreation=true&orderId=${documentState?.id}`
+                    )
+                  );
+                } else
+                  navigate(
+                    `/invoice?isNewCreation=true&orderId=${documentState?.id}`
+                  );
               } else {
                 onClickOpenChangeProductionStatusModal(documentState);
                 setIsSelectedCLoseAsDeliveryNote(false);

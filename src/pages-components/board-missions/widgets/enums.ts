@@ -7,6 +7,7 @@ export enum AStatus {
   OPEN = 0,
   PARTIAL_CLOSED = 1,
   CLOSED = 2,
+  DRAFT = 3,
 }
 
 export enum ReceiptAccountingStatus {
