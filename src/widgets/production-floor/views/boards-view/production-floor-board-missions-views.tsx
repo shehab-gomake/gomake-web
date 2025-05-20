@@ -24,7 +24,6 @@ const ProductionFloorBoardMissionsViews = ({
   const [filter] = useRecoilState(productionFloorFiltersState);
   const { t } = useTranslation();
   const { classes } = useStyle();
-
   useEffect(() => {
     if (!!connectionId) {
       setLoading(true);
@@ -40,11 +39,11 @@ const ProductionFloorBoardMissionsViews = ({
             <Skeleton variant="rounded" width={"100%"} height={60} />
           ))}
         </Stack>
-      ) : filter?.stations?.length === 0 ? (
+      ) : filter?.stations?.length === 0 && view !== EProductionFloorView.DONE_JOBS ? (
         <span style={classes.noStationSelected}>
           {t("productionFloor.noStationsSelected")}
         </span>
-      ) : view === EProductionFloorView.TABLE || view === EProductionFloorView.FILTER_GROUPS ? (
+      ) : view === EProductionFloorView.TABLE || view === EProductionFloorView.FILTER_GROUPS || view === EProductionFloorView.DONE_JOBS ? (
         <ProductionFloorTableView connectionId={connectionId} />
       ) : view === EProductionFloorView.KANBAN ? (
         <ProductionFloorKanbanBoard />

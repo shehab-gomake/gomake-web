@@ -17,7 +17,6 @@ import { useProductionFloorFilters } from "@/widgets/production-floor/filters/us
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { filtersInputs } from "@/widgets/production-floor/filters/filters-inputs";
-import { SelectComponent } from "@/widgets/production-floor/filters/select/select-component";
 import { styled } from "@mui/system";
 import { toRgba } from "@/utils/helpers";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -29,15 +28,16 @@ import { GoMakeDeleteModal, GoMakeMenu } from "@/components";
 import { ModalType } from "@/enums";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { useRecoilState } from "recoil";
-import { filterGroupsState } from "@/widgets/production-floor/state/filter-group";
+import { filterGroupsState, patternSearchState } from "@/widgets/production-floor/state/filter-group";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { ModalFilters } from "./modal-filters";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ModalEditGroup } from "./edit-group-modal";
 import { AgentsList } from "@/widgets/agents/agents-list";
-import { selectedAgentsState } from "@/store/agents-state";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
+import { EProductionFloorView } from "../state/production-floor-view";
+import { useDebounce } from "@/utils/use-debounce";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -250,6 +250,7 @@ const ProductionFloorFilters = ({
   getStationFilterGroups,
   connectionId,
   isMobile,
+  view
 }) => {
   const { classes } = useStyle();
   const { push } = useRouter();
@@ -308,7 +309,9 @@ const ProductionFloorFilters = ({
     onClickOpenModalEditGroup,
     onClickCloseModalEditGroup,
     handleAgentChange,
-    setFilters
+    setFilters,
+    searchInputFilterRef,
+    getAllData,
   } = useProductionFloorFilters({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
@@ -429,6 +432,23 @@ const ProductionFloorFilters = ({
     }
   };
 
+  const [patternSearch, setPatternSearch] = useRecoilState<any>(patternSearchState);
+  const debouncedPatternSearch = useDebounce(patternSearch, 500);
+
+  const onChangeMissionsSearch = (value: string) => {
+    setPatternSearch(value);
+  };
+
+  useEffect(() => {
+    if (debouncedPatternSearch && debouncedPatternSearch.trim() !== "") {
+      getAllData(1, 10, debouncedPatternSearch);
+    }
+    else {
+      getAllData(1, 10);
+    }
+  }, [debouncedPatternSearch]);
+
+
   return (
     <Stack style={classes.headerFilterContainer}>
       <ClickAwayListener
@@ -444,7 +464,18 @@ const ProductionFloorFilters = ({
       >
         <Stack>
           <div ref={searchInputRef}>
-            <SearchInputComponent
+            {view === EProductionFloorView.DONE_JOBS && <SearchInputComponent
+              bgColor={"#F8F8F8"}
+              onChange={onChangeMissionsSearch}
+              value={patternSearch}
+              inputRef={searchInputFilterRef}
+              filtersButton={
+                isSearchLoading && (
+                  <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
+                )
+              }
+            />}
+            {view !== EProductionFloorView.DONE_JOBS && <SearchInputComponent
               bgColor={"#F8F8F8"}
               value={search}
               onChange={handleSearchChange}
@@ -453,9 +484,9 @@ const ProductionFloorFilters = ({
                   <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
                 )
               }
-            />
+            />}
           </div>
-          {getMissionsList().length !== 0 && isListOpen && (
+          {getMissionsList().length !== 0 && isListOpen && view !== EProductionFloorView.DONE_JOBS && (
             <SearchMissionList
               missionsList={getMissionsList()}
               handleMissionClick={handleMissionClick}
@@ -463,19 +494,21 @@ const ProductionFloorFilters = ({
           )}
         </Stack>
       </ClickAwayListener>
-      {CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && (
+      {CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && view !== EProductionFloorView.DONE_JOBS && (
         <AgentsList onClickApply={handleAgentChange} applyButton={true} />
       )}
-      <GoMakeDatepicker
+      {view !== EProductionFloorView.DONE_JOBS && <GoMakeDatepicker
         value={deliveryDateFilter}
         onChange={onSelectDeliveryTimeDates}
         placeholder={t("sales.quote.deliveryDate")}
       />
-      <GoMakeDatepicker
+      }
+      {view !== EProductionFloorView.DONE_JOBS && <GoMakeDatepicker
         value={createDateFilter}
         onChange={onSelectCreateDates}
         placeholder={t("productionFloor.createTime")}
       />
+      }
       <Box ref={scrollContainerRef} sx={classes.filtersCardBox}>
         {visibleFilterGroups?.map((group, index) => (
           <CustomGroupComponent
@@ -595,7 +628,7 @@ const ProductionFloorFilters = ({
         selectedGroupId={selectedGroup}
         actions={actions}
         getStationFilterGroups={getStationFilterGroups}
-        setFilters={setFilters}
+        setFilters
       />
     </Stack>
   );

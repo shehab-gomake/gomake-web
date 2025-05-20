@@ -38,7 +38,6 @@ import { useQuoteGetData } from "../quote-new/use-quote-get-data";
 import { getAndSetCustomerById } from "@/services/api-service/customers/customers-api";
 import { GomakeTextInput } from "@/components";
 import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
-import { addPrintHouseJobsStorageApi, getAllPrintHouseJobsStorageApi } from "@/services/api-service/board-missions/jobs-storage";
 
 type StatusOption = {
   label: string;
@@ -133,7 +132,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     useAgentsList();
   const router = useRouter();
   const [selectedMission, setSelectedMission] = useState<any>({});
-  console.log("selectedMission", selectedMission)
   const handlePageSizeChange = (event) => {
     setPageNumber(1);
     setPageSize(event.target.value);
