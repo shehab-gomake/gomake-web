@@ -507,7 +507,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
             options={
-              storageList.find(
+              storageList?.find(
                 (option: any) => option.storage === inputValue
               ) || inputValue === ""
                 ? storageList
@@ -553,7 +553,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
             options={
-              storageList.find(
+              storageList?.find(
                 (option: any) => option.storage === inputValue
               ) || inputValue === ""
                 ? storageList

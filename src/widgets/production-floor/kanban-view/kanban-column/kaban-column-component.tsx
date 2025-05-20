@@ -47,9 +47,9 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
 
           handleOpenModal(status.id, [item], item.id);
         }
-        else if (status.key === "Stuck") {
+        /*else if (status.key === "Stuck") {
           handleOpenStuckModal(status.id, [item], item.id, item.productType);
-        }
+        }*/
         else {
           updateStatus([item], status.id).then();
         }
