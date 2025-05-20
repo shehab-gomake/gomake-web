@@ -41,3 +41,8 @@ export const getDataAbortController = atom<AbortController>({
   default: null,
   key: "getDataAbortControllerState",
 });
+
+export const storageListState = atom<any[]>({
+  default: null,
+  key: "storageListState",
+});
