@@ -126,10 +126,10 @@ const useProductionFloorFilters = ({
       getDataByGroups(connectionId,filters).then();
       return;
     }
-    if(selectedView === EProductionFloorView.DONE_JOBS) {
-      getAllBoardMissions().then();
-      return;
-    }
+    // if(selectedView === EProductionFloorView.DONE_JOBS) {
+    //   getAllBoardMissions().then();
+    //   return;
+    // }
     if (abortController) {
       abortController.abort();
     }
@@ -400,16 +400,17 @@ const useProductionFloorFilters = ({
   };
 
   const getStationFilterGroupById = async (id,selectedView:EProductionFloorView) => {
+    console.log("id",id)
     if(id === "all"){
       setData([])
       await getDataByGroups(connectionId,filters,true)
       return;
     }
-    if(id === "doneJobs"){
-      setData([])
-      await getAllBoardMissions()
-      return;
-    }
+    // if(id === "doneJobs"){
+    //   setData([])
+    //   await getAllBoardMissions()
+    //   return;
+    // }
     const callBack = (res) => {
       if (res.success) {
         onStationsChange({ stations: res?.data?.stations, groupId: id ,view:selectedView});
