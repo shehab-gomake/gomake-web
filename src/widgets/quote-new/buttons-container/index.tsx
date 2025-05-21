@@ -121,6 +121,7 @@ const ButtonsContainer = ({
     onClickOpenCloseOrderNotesModal,
     openCloseOrderNotesModal,
     onClickCloseOrderCallback,
+    CheckoutOptionModal,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -432,6 +433,7 @@ const ButtonsContainer = ({
           confirmWithNotification={onClickConfirmWithNotification}
           isUsedStripe={quoteItemValue?.isUsedStripe}
           isConnectedToStripe={quoteItemValue?.isConnectedToStripe}
+          CheckoutOptionModal={CheckoutOptionModal}
         />
         <ManagerApprovalModal
           openModal={openMangerApprovalModal}

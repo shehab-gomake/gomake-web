@@ -72,6 +72,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
+  const CheckoutOptionModal = useModal(); //!here
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openCancelReceiptModal, setOpenCancelReceiptModal] = useState(false);
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
@@ -233,17 +234,21 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const handleOrderConfirmation = async (
     sendMessage: boolean,
     isPrepaymentClient: boolean = false,
-    totalPrePaymentAmount: number = 0
+    totalPrePaymentAmount: number = 0,
+    isStripeCash: boolean = false
   ) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
         onClickCloseOrderNowModal();
+
         if (quoteItemValue?.isUsedStripe) {
           if (!sendMessage) {
             navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
           } else {
-            if (res?.data?.paymentLink) {
+            if (isStripeCash) {
+              navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
+            } else if (res?.data?.paymentLink) {
               window.open(res.data.paymentLink, "_self");
             } else {
               alertFaultGetData();
@@ -263,6 +268,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const requestBody = {
       quoteId: quoteItemValue?.id,
       sendMessage,
+      ...(sendMessage && { isStripeCash }),
       ...(isPrepaymentClient && { totalPrePaymentAmount }),
     };
 
@@ -271,7 +277,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const onClickConfirmWithoutNotification = () =>
     handleOrderConfirmation(false);
-  const onClickConfirmWithNotification = () => handleOrderConfirmation(true);
+  const onClickConfirmWithNotification = (isStripeCash: boolean) =>
+    handleOrderConfirmation(true, false, 0, isStripeCash);
 
   const onClickPrint = async (withInvoices?: boolean) => {
     const downloadPdf = (url) => {
@@ -622,6 +629,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     openCloseOrderNotesModal,
     setOpenCloseOrderNotesModal,
     onClickCloseOrderCallback,
+    CheckoutOptionModal
   };
 };
 
