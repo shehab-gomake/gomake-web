@@ -56,7 +56,7 @@ const useStyle = () => {
       },
       btnSaveDraft: {
         boxShadow: "0px 1px 2px 0px #1018280D",
-        backgroundColor: "#8283be",
+        backgroundColor: "#F135A3",
         color: "#FFFFFF",
         ...FONT_FAMILY.Inter(400, 14),
         height: 40,
