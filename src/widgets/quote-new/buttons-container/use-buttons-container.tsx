@@ -25,6 +25,7 @@ import {
   checkArrayNotEmptyOrEmailNotEmpty,
   checkArrayNotEmptyOrPhoneNotEmpty,
   isAtLeastOneSelected,
+  validateUsAddressFields,
 } from "@/utils/helpers";
 import { useRouter } from "next/router";
 import { useUserPermission } from "@/hooks/use-permission";
@@ -40,6 +41,7 @@ import {
   addressTypeState,
   EAddressType,
 } from "../business-widget/address-widget/state";
+import { validateAddressApi } from "@/services/api-service/customers/customers-api";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -101,12 +103,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>();
   const open = Boolean(anchorEl);
 
-  const onClickOpenOrderNowModal = () => {
-    // if (quoteItemValue?.isUsedStripe && !quoteItemValue?.isConnectedToStripe) {
-    //   alertFault("alerts.stripNotConnected");
-    //   return;
-    // }
+  const validateAddress = async (addressWithMetadata) => {
+    return await validateAddressApi(callApi, () => {}, addressWithMetadata);
+  };
 
+  const onClickOpenOrderNowModal = async () => {
     if (!quoteItemValue?.isHaveCustomers && !quoteItemValue?.client) {
       AlertAddCustomerModal.open();
       return;
@@ -128,6 +129,42 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         setOpenAddressModal(true);
       }, 0);
       return;
+    }
+
+    // Validate required fields (for US addresses) and validate address
+    if (
+      CheckPreferenceValue(EPreferences.ADDRESSES_REQUIRED_FOR_ORDER) &&
+      quoteItemValue?.isUsedStripe
+    ) {
+      const billingAddress = quoteItemValue.documentBillingAddresses?.[0];
+
+      if (billingAddress) {
+        const { isValid, missingFields } =
+          validateUsAddressFields(billingAddress);
+        if (!isValid) {
+          const translatedFields = missingFields
+            .map((fieldKey) => t(fieldKey))
+            .join(", ");
+          alertFault(`${t("modal.RequiredFields")}: ${translatedFields}`);
+          setSelectedAddressType(EAddressType.BILLING);
+          setTimeout(() => {
+            setOpenAddressModal(true);
+          }, 0);
+          return;
+        }
+
+        const validateRes = await validateAddress(billingAddress);
+        if (!validateRes?.success || validateRes?.data?.ErrorMessage) {
+          alertFault(
+            validateRes?.data?.ErrorMessage || "Address validation failed."
+          );
+          setSelectedAddressType(EAddressType.BILLING);
+          setTimeout(() => {
+            setOpenAddressModal(true);
+          }, 0);
+          return;
+        }
+      }
     }
 
     if (!isSelectedAtLeastOne) {
