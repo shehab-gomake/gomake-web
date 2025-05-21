@@ -76,6 +76,7 @@ const TransactionJournalReportWidget = ({
     clientPaymentsList,
     setClientPaymentsList,
     onClickExportAccountingReportExcel,
+    onClickExportJournalExcelReport,
     erpAccountsList,
     getErpAccountsList,
     onClickDownloadMovingFiles,
@@ -160,6 +161,7 @@ const TransactionJournalReportWidget = ({
         onClickCreateNewTransaction={onClickOpenCreateTransactionModal}
         onClickOpenAdjustmentsModal={onClickOpenAdjustmentsModal}
         onClickExportAccountingReportExcel={onClickExportAccountingReportExcel}
+        onClickExportJournalExcelReport={onClickExportJournalExcelReport}
         onClickDownloadMovingFiles={onClickDownloadMovingFiles}
         reportType={reportType}
       />

@@ -160,6 +160,13 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
             documentId: router.query.documentId,
           }),
           ...(router?.query.budgetId && { budgetId: router.query.budgetId }),
+
+          ...(router?.query.draftInvoiceId && {
+            documentId: router.query.draftInvoiceId,
+          }),
+          ...(router?.query.draftPurchaseInvoiceId && {
+            documentId: router.query.draftPurchaseInvoiceId,
+          }),
         };
 
         const res = await callApi(
@@ -387,7 +394,6 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   //     });
   //   }
   // };
-
   const validateAddress = async (addressWithMetadata) => {
     return await validateAddressApi(callApi, () => {}, addressWithMetadata);
   };

@@ -391,6 +391,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const isOrder = docType === DOCUMENT_TYPE.order;
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
+  const isPurchaseInvoice = docType === DOCUMENT_TYPE.purchaseInvoice;
 
   const canCancelReceipt = CheckPermission(Permissions.CANCEL_RECEIPT);
 
@@ -532,6 +533,21 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     } else onClickPrint();
   };
 
+  const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] =
+    useState(false);
+  const [onClickCloseOrderCallback, setOnClickCloseOrderCallback] = useState<
+    (() => void) | null
+  >(null);
+
+  const onClickOpenCloseOrderNotesModal = (onClickCloseOrder: () => void) => {
+    setOnClickCloseOrderCallback(() => onClickCloseOrder);
+    setOpenCloseOrderNotesModal(true);
+  };
+
+  const onClickCloseCloseOrderNotesModal = () => {
+    setOpenCloseOrderNotesModal(false);
+  };
+
   return {
     openOrderNowModal,
     onClickConfirmWithoutNotification,
@@ -600,6 +616,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     canCancelReceipt,
     isDeliveryNote,
     AlertAddCustomerModal,
+    isPurchaseInvoice,
+    onClickCloseCloseOrderNotesModal,
+    onClickOpenCloseOrderNotesModal,
+    openCloseOrderNotesModal,
+    setOpenCloseOrderNotesModal,
+    onClickCloseOrderCallback,
   };
 };
 

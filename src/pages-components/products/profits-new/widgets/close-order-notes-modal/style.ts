@@ -2,16 +2,16 @@ import { FONT_FAMILY } from "@/utils/font-family";
 import { useMemo } from "react";
 
 const useStyle = () => {
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       insideStyle: {
         width: "30%",
         borderRadius: 5,
         height: "25%",
       },
-      noteTextStyle:{
-        ...FONT_FAMILY.Lexend(700,16),
-        marginTop: 25
+      noteTextStyle: {
+        ...FONT_FAMILY.Lexend(700, 16),
+        marginTop: 25,
       },
       btnThirdContainer: {
         border: "1px solid #2E3092",
@@ -23,12 +23,12 @@ const useStyle = () => {
         width: "fit-content",
         padding: "10px",
         borderRadius: 8,
-        marginTop:55
+        marginTop: 55,
       },
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };

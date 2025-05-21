@@ -6,14 +6,14 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useStyle } from "@/widgets/materials-widget/style";
 import { FiltersActionsBar } from "@/widgets/materials-widget/components/filters/filters-actions-bar";
-import { useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   activeFilterState,
   flagState,
   isDuplicateCategoryModalState,
   isEditCategoryModalState,
   openAddCategoryModalState,
-  openAddSupplierModalState,
+  openAddRowModalState,
   selectedSupplierIdState,
 } from "@/widgets/materials-widget/state";
 import { AddSupplierModal } from "@/widgets/materials-widget/components/add-supplier/add-supplier-modal";
@@ -24,15 +24,17 @@ import { AddCategoryModal } from "./components/add-category/add-category-modal";
 import { AddRowModal } from "./components/add-row/add-row-modal";
 import { useMaterialsCategories } from "./use-materials-categories";
 import Pagination from "@mui/material/Pagination";
-import { GoMakeDeleteModal, ThreeOptionsModal } from "@/components";
+import { GoMakeDeleteModal, GomakePrimaryButton, ThreeOptionsModal } from "@/components";
 import { StepType } from "@reactour/tour";
 import { useGoMakeTour } from "@/hooks/use-go-make-tour";
-import { Stack } from "@mui/material";
+import { Skeleton, Stack } from "@mui/material";
 import { useAllProductsDropDownList } from "@/hooks/use-products-drop-down-list";
 import { UpdatedNumburingModal } from "./components/updated-numbering/updated-numbering-modal";
 import { CreatePurchaseOrderModal } from "./components/create-purchase-order-modal/create-purchase-order-modal";
 import { useTableCellData } from "./components/table-cell-data/use-table-cell-data";
 import { ModalType } from "@/enums";
+import { isLoadgingState, isLoadingMaterialsState } from "@/store";
+import { EMaterialActiveFilter } from "./enums";
 interface IMaterialsWidgetProps {
   isAdmin: boolean;
 }
@@ -44,7 +46,8 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     useMaterialsCategories(props.isAdmin);
   const pageSize = 14;
   const activeFilter = useRecoilValue(activeFilterState);
-  const setOpenAddSupplierModal = useSetRecoilState(openAddSupplierModalState);
+  console.log("activeFilter", activeFilter);
+  const setOpenAddRowModal = useSetRecoilState(openAddRowModalState);
   const {
     openPriceModal,
     onClickClosePriceModal,
@@ -90,8 +93,9 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
     toggleIsActive,
     selectedMaterialCategory,
     setSelectedMaterialCategory,
+    uploadExcelFile,
+    elementRef,
   } = useMaterials(props.isAdmin);
-
   const subCategory = materialCategories.find(
     (category) => category.categoryKey === materialCategory?.toString()
   )?.categoryName;
@@ -187,7 +191,7 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
       materialCategory?.toString()
     ).then();
   }, [materialCategory]);
-
+  const isLoadingMaterials = useRecoilValue(isLoadingMaterialsState);
   useEffect(() => {
     if (!!materialType && !!materialCategory) {
       if (props.isAdmin) {
@@ -252,58 +256,82 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
         side={Side()}
         subHeader={""}
       >
-        {materialCategory && (
-          <Stack
-            justifyContent={"space-between"}
-            gap={2}
-            display={"flex"}
-            height={"100%"}
-          >
-            <div>
-              {materialCategoryData.length > 0 ? (
-                <Stack display={"grid"}>
-                  <PrimaryTable
-                    rows={tableRowsNew}
-                    headers={tableHeadersNew()}
-                  />
+        {
+          isLoadingMaterials ?
+            <>
+              <Skeleton variant="rectangular" height={700} />
+
+            </> : <>
+              {materialCategory && (
+                <Stack
+                  justifyContent={"space-between"}
+                  gap={2}
+                  display={"flex"}
+                  height={"100%"}
+                >
+                  <div>
+                    {materialCategoryData.length > 0 ? (
+                      <Stack display={"grid"}>
+                        <PrimaryTable
+                          rows={tableRowsNew}
+                          headers={tableHeadersNew()}
+                        />
+                      </Stack>
+                    ) : flag &&
+                      materialCategories.find(
+                        (category) => category.categoryKey === materialCategory
+                      ).isDeletable ? (
+                      <Stack display={"grid"}>
+                        <PrimaryTable
+                          rows={tableRowsNew}
+                          headers={tableHeadersNew()}
+                        />
+                      </Stack>
+                    ) : !props.isAdmin ? (
+                      <div style={classes.noData}>
+                        {
+                          activeFilter === EMaterialActiveFilter.INACTIVE ? <h4>
+                            {t("materials.sheetPaper.thereNoInactiveDataFor")} {materialCategory}
+                          </h4> :
+                            <h4>
+                              {t("materials.sheetPaper.noDataFor")} {materialCategory}
+                            </h4>
+                        }
+
+                        <br />
+                        <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center", gap: "10px" }}>
+                          <GomakePrimaryButton
+                            style={classes.noDataButton} onClick={() => {
+                              setOpenAddRowModal(true);
+                            }}>
+                            {t("materials.sheetPaper.addRowMaterial")}
+                          </GomakePrimaryButton>
+                          <GomakePrimaryButton style={classes.noDataButton} onClick={() => {
+                            elementRef.current.click();
+                          }}>
+                            {t("materials.sheetPaper.uploadForExcel")}
+                          </GomakePrimaryButton>
+                        </div>
+                      </div>
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+
+                  <div style={{ marginBottom: "5px" }}>
+                    <Pagination
+                      count={pagesCount}
+                      variant="outlined"
+                      color="primary"
+                      page={pageNumber}
+                      onChange={(event, value) => setPageNumber(value)}
+                    />
+                  </div>
                 </Stack>
-              ) : flag &&
-                materialCategories.find(
-                  (category) => category.categoryKey === materialCategory
-                ).isDeletable ? (
-                <Stack display={"grid"}>
-                  <PrimaryTable
-                    rows={tableRowsNew}
-                    headers={tableHeadersNew()}
-                  />
-                </Stack>
-              ) : !props.isAdmin ? (
-                <div style={classes.noData}>
-                  {t("materials.sheetPaper.supplierAddedSheetYet")}
-                  <span
-                    style={classes.noDataSpan}
-                    onClick={() => {
-                      setOpenAddSupplierModal(true);
-                    }}
-                  >
-                    {t("materials.sheetPaper.pleaseAddNow")}
-                  </span>
-                </div>
-              ) : (
-                <></>
               )}
-            </div>
-            <div style={{ marginBottom: "5px" }}>
-              <Pagination
-                count={pagesCount}
-                variant="outlined"
-                color="primary"
-                page={pageNumber}
-                onChange={(event, value) => setPageNumber(value)}
-              />
-            </div>
-          </Stack>
-        )}
+            </>
+        }
+
       </SideBarContainer>
       <AddSupplierModal />
       <AddCategoryModal isAdmin={props.isAdmin} />
@@ -358,6 +386,13 @@ const MaterialsWidget = (props: IMaterialsWidgetProps) => {
           updateProfitProfileProductHidden(false)
         }}
       /> */}
+      <input
+        ref={elementRef}
+        onChange={uploadExcelFile}
+        type="file"
+        accept=".xlsx"
+        hidden={true}
+      />
     </div>
   );
 };

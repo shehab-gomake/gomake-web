@@ -100,7 +100,6 @@ const useStyle = () => {
       textInputForProductsStyle: {
         width: 350,
         border: "none",
-        height: 45,
       },
       clearBtnStyle: {
         height: 40,
@@ -186,6 +185,13 @@ const useStyle = () => {
         border: "0px",
         boxShadow: "0px 1px 2px 0px rgba(0, 0, 0, 0.08)",
       },
+      storageContainer: {
+        width: "100%",
+        borderRadius: 4,
+        height: 40,
+        backgroundColor: "#FFF",
+        border: "0px",
+      }
     };
   }, [theme, isMobile]);
   return {
