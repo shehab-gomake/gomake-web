@@ -4,7 +4,7 @@ import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = ({ isUnderLine }) => {
   const { grayColor } = useGomakeTheme();
-  const clasess = useMemo(() => {
+  const classes = useMemo(() => {
     return {
       inputMainContainer: {
         display: "flex",
@@ -32,7 +32,7 @@ const useStyle = ({ isUnderLine }) => {
     };
   }, []);
   return {
-    clasess,
+    classes,
   };
 };
 export { useStyle };
