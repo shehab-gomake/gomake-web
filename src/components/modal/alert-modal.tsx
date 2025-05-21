@@ -1,8 +1,6 @@
-import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { Modal } from "@mui/material";
-import { WarningModalIcon, Wastebasket } from "@/icons";
-import { GomakePrimaryButton } from "../button";
+import { WarningModalIcon } from "@/icons";
 import { useStyle } from "./style";
 import { PrimaryButton } from "../button/primary-button";
 
@@ -37,12 +35,13 @@ const GoMakeAlertModal = ({
           <div style={classes.title}>{title}</div>
           <div style={classes.subTitle}> {t(subTitle)}</div>
           <div style={classes.btnsContainer}>
-            <GomakePrimaryButton
-              style={classes.confermBtn}
+            <PrimaryButton
+              variant="contained"
+              style={classes.cancelBtn}
               onClick={onClickConfirm}
             >
               {t(yesBtn)}
-            </GomakePrimaryButton>
+            </PrimaryButton>
             {withCancelBtn && (
               <PrimaryButton
                 style={classes.cancelBtn}
