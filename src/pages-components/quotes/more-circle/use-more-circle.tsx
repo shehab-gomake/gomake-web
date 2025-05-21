@@ -34,6 +34,7 @@ import {
   pinFileUploaderState,
 } from "@/store/file-uploader-state";
 import { MailIcon } from "./icons/mail";
+import { DeleteIcon } from "./icons/delete";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -179,7 +180,7 @@ const useMoreCircle = () => {
         {
           condition: true,
           onClick: () => onClickOpenRemoveDraftModal(quote),
-          icon: <TickCancelIcon />,
+          icon: <DeleteIcon />,
           name: t("navigationButtons.delete"),
         },
         {
