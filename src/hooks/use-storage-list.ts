@@ -6,10 +6,11 @@ import { useState } from "react"
 import {useRecoilState} from "recoil";
 import {storageListState} from "@/widgets/production-floor/state/boards";
 
-const useStorageList = ({selectedMission,setSelectedMission}) => {
+const useStorageList = () => {
     const { callApi } = useGomakeAxios();
     const [storageList, setStorageList] = useRecoilState(storageListState)
   const [inputValue, setInputValue] = useState("")
+  const [selectedMission, setSelectedMission] = useState<any>({});
   const getAllPrintHouseJobsStorage = async () => {
     const callBack = (res) => {
       if (res.success) {
@@ -50,7 +51,9 @@ const useStorageList = ({selectedMission,setSelectedMission}) => {
         defaultValue,
         addPrintHouseJobsStorage,
         handleStorageChange,
-        setInputValue
+        setInputValue,
+        selectedMission,
+        setSelectedMission
     }
 }
 

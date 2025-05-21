@@ -49,6 +49,16 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
   const {
+    storageList,
+    inputValue,
+    defaultValue,
+    addPrintHouseJobsStorage,
+    handleStorageChange,
+    setInputValue,
+    selectedMission,
+    setSelectedMission
+  } = useStorageList()
+  const {
     tableHeader,
     tableHeaderForPurchaseJobs,
     renderOptions,
@@ -127,22 +137,13 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     customerForEdit,
     setShowCustomerModal,
     setCustomerForEdit,
-    selectedMission,
     updateQuoteStatus,
     onClickCloseModal,
     openQuoteModal,
-    setSelectedMission,
     ExportJobsTableToExcel,
-  } = useBoardMissions({ isPurchaseJobs });
+  } = useBoardMissions({ isPurchaseJobs, selectedMission, setSelectedMission });
 
-  const {
-    storageList,
-    inputValue,
-    defaultValue,
-    addPrintHouseJobsStorage,
-    handleStorageChange,
-    setInputValue
-  } = useStorageList({ selectedMission, setSelectedMission })
+
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
@@ -229,12 +230,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
                       {Object.keys(router.query).filter(
                         (key) => key !== "pageNumber"
                       ).length > 0 && (
-                        <div
-                          style={{ position: "absolute", top: -5, right: -1 }}
-                        >
-                          <DotIcon />
-                        </div>
-                      )}
+                          <div
+                            style={{ position: "absolute", top: -5, right: -1 }}
+                          >
+                            <DotIcon />
+                          </div>
+                        )}
                     </IconButton>
                     <GoMakeMenu
                       handleClose={handleClose}
