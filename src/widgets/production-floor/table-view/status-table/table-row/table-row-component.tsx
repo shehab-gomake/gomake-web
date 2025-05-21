@@ -179,7 +179,7 @@ const TableRowComponent = ({
     t,
     onClickPrintJob,
     updateNotes,
-  } = useProductionFloorData();
+  } = useProductionFloorData({});
   const {
     openSimpleApproveModal,
     handleOpenModal,

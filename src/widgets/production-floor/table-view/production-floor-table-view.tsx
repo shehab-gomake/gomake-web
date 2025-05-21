@@ -8,6 +8,7 @@ import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { useTranslation } from "react-i18next";
 import { useProductionFloorFilters } from "../filters/use-production-floor-filters";
+import { useStorageList } from "@/hooks/use-storage-list";
 
 const ProductionFloorTableView = ({ connectionId }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
@@ -75,6 +76,17 @@ const ProductionFloorTableView = ({ connectionId }) => {
     return () => clearTimeout(delayFetch);
   }, [search]);
 
+  const {
+    storageList,
+    inputValue,
+    defaultValue,
+    addPrintHouseJobsStorage,
+    handleStorageChange,
+    setInputValue,
+    selectedMission,
+    setSelectedMission
+  } = useStorageList()
+
   return (
     <Stack gap={"20px"}>
       {filteredDataByMachine.map((statusBoards, index) => {
@@ -89,6 +101,14 @@ const ProductionFloorTableView = ({ connectionId }) => {
             onClickClient={getCustomerForEdit}
             allBoardMissions={allBoardMissions}
             setFilters={setFilters}
+            storageList={storageList}
+            inputValue={inputValue}
+            defaultValue={defaultValue}
+            addPrintHouseJobsStorage={addPrintHouseJobsStorage}
+            handleStorageChange={handleStorageChange}
+            setInputValue={setInputValue}
+            selectedMission={selectedMission}
+            setSelectedMission={setSelectedMission}
           />
         );
       })}

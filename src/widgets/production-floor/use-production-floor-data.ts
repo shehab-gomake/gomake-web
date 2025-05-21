@@ -23,7 +23,7 @@ import { productionFloorPathsState } from "@/widgets/production-floor/state/prod
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { useTranslation } from "react-i18next";
 import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 import { IFilterGroupsList } from "./interfaces/borad-missions-filter-groups";
 import {
@@ -39,12 +39,9 @@ import { useRouter } from "next/router";
 import { agentsState, currentStationOrderingState } from "@/store/agents-state";
 import moment from "moment";
 import {IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
-import { formatDate } from "tough-cookie";
 import {CurrentStationOrderingEnum} from "@/enums";
-import { addPrintHouseJobsStorageApi } from "@/services/api-service/board-missions/jobs-storage";
-import { getAllPrintHouseJobsStorageApi } from "@/services/api-service/board-missions/jobs-storage";
 
-const useProductionFloorData = () => {
+const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === "rtl";
@@ -405,7 +402,6 @@ const useProductionFloorData = () => {
     });
   };
 
-  const [selectedMission, setSelectedMission] = useState<any>({});
   const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
 
   const onOpenPrintDeliverTicketModal = (mission) => {

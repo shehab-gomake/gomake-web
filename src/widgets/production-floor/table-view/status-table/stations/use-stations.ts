@@ -19,7 +19,7 @@ const useStations = () => {
   const open = Boolean(anchorEl);
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
-  const { getData } = useProductionFloorData();
+  const { getData } = useProductionFloorData({});
   const { CheckPermission } = useUserPermission();
   const canMoveStation = CheckPermission(
     Permissions.EDIT_BOARD_MISSION_IN_PRODUCTION_FLOOR
