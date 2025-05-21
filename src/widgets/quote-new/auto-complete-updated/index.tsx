@@ -16,6 +16,7 @@ const AutoCompleteUpdatedValue = ({
   onChangeTextField,
   isFetching,
   defaultFiltering,
+  renderOption,
 }: IBusinessWidget) => {
   const { clasess } = useStyle({ isUnderLine });
   const [updateValue, setUpdateValue] = useState();
@@ -38,6 +39,7 @@ const AutoCompleteUpdatedValue = ({
             onChangeTextField={onChangeTextField}
             loading={isFetching}
             defaultFiltering={defaultFiltering}
+            renderOption={renderOption}
           />
         ) : (
           <div

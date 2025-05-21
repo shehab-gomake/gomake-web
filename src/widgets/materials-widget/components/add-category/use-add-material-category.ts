@@ -27,7 +27,7 @@ import {
 
 const useAddMaterialCategory = (isAdmin: boolean) => {
   const { callApi } = useGomakeAxios();
-  const { query } = useRouter();
+  const { query,push } = useRouter();
   const { materialType } = query;
   const materialCategories = useRecoilValue(materialCategoriesState);
   const materialTypeTable = useRecoilValue(materialTypeTableState);
@@ -43,6 +43,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
   );
   const { getMaterialCategories } = useMaterials(isAdmin);
   const [newCategory, setNewCategory] = useState<string>(null);
+  const [newCategoryKey, setNewCategoryKey] = useState<string>(null);
   const [imgUrl, setImgUrl] = useState<any>("");
   const [selectedImgForAdded, setSelectedImgForAdded] = useState();
   const setActiveFilter = useSetRecoilState(activeFilterState);
@@ -60,6 +61,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
   useEffect(() => {
     if (selectedCategoryModal) {
       setNewCategory(selectedCategoryModal?.categoryName);
+      setNewCategoryKey(selectedCategoryModal?.categoryKey);
       setImgUrl(selectedCategoryModal?.imageURL);
     }
   }, [selectedCategoryModal]);
@@ -78,7 +80,10 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
       }));
 
       const callBack = (res) => {
+        console.log("res", res);
         if (res.success) {
+          const path = isAdmin ? "/materials-admin" : "/materials";
+          push(path + `/${materialType}?materialCategory=${newCategory}`);
           alertSuccessAdded();
           setActiveFilter(EMaterialActiveFilter.ALL);
           getMaterialCategories(materialType).then();
@@ -86,6 +91,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
           setFlagState(false);
           setAttributeValues({});
           setNewCategory("")
+         
         } else {
           if(res.statusCode ===102){
             alertFault("login.thisCategoryAlreadyExists")
@@ -140,7 +146,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
     await updatePrintHouseMaterialCategoryNameApi(callApi, callBack, {
       materialTypeKey: materialType.toString(),
       categoryKey: selectedCategoryModal?.categoryKey,
-      newCategoryKey: newCategory,
+      newCategoryKey: newCategoryKey,
       defaultAttributeValues,
     });
   };
@@ -148,11 +154,14 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
   const duplicatePrintHouseMaterialCategoryName = async () => {
     const callBack = (res) => {
       if (res.success) {
+        const path = isAdmin ? "/materials-admin" : "/materials";
+        push(path + `/${materialType}?materialCategory=${newCategory}`);
         alertSuccessAdded();
         setActiveFilter(EMaterialActiveFilter.ALL);
         getMaterialCategories(materialType).then();
         setOpenModal(false);
         setFlagState(false);
+        setNewCategory("")
       } else {
         alertFaultAdded();
       }

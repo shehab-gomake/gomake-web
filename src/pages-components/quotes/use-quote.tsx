@@ -34,6 +34,7 @@ import {
   OpenCanceledDocumentApi,
   OpenDocumentApi,
   pauseOrdResumeOrderApi,
+  removeDraftDocumentApi,
   startOrderProductionApi,
   updateDocumentApi,
 } from "@/services/api-service/generic-doc/documents-api";
@@ -113,6 +114,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertFaultGetData,
     alertSuccessUpdate,
     alertFault,
+    alertFaultDelete,
   } = useSnackBar();
   const router = useRouter();
   const documentPath =
@@ -205,6 +207,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isSelectedCLoseAsDeliveryNoteState
   );
 
+  const dir: "rtl" | "ltr" = t("direction");
+  const isRTL = dir === "rtl";
+
   const isQuote = docType === DOCUMENT_TYPE.quote;
   const isOrder = docType === DOCUMENT_TYPE.order;
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
@@ -224,20 +229,35 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     isPurchaseInvoiceRefund ||
     isSupplierPayments;
 
-  const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
+  const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList({
-      shouldRenderCustomersOnMount: !isPurchaseDocument && !isFromHomePage,
-      shouldRenderSuppliersOnMount: isPurchaseDocument,
+      clientType: isPurchaseDocument
+        ? CLIENT_TYPE.SUPPLIER
+        : CLIENT_TYPE.CUSTOMER,
+      shouldRenderOnMount: !isFromHomePage,
     });
 
   const handleDocumentNumberChange = (event) => {
     setDocumentCloseNumber(event.target.value);
   };
 
-  const onClickOpenCloseOrderNotesModal = (order) => {
-    setOpenCloseOrderNotesModal(true);
+  const [closeModalSource, setCloseModalSource] = useState<
+    "closeAsInvoice" | "closeManually" | "closeAsDeliveryNote"
+  >(null);
+  const [onClickCloseOrderCallback, setOnClickCloseOrderCallback] = useState<
+    (() => void) | null
+  >(null);
+
+  const onClickOpenCloseOrderNotesModal = (
+    order,
+    source: "closeAsInvoice" | "closeManually" | "closeAsDeliveryNote",
+    onClickCloseOrder: () => void
+  ) => {
     setSelectedQuoteItemValue(order);
     setSelectedDocument(order);
+    setCloseModalSource(source);
+    setOnClickCloseOrderCallback(() => onClickCloseOrder);
+    setOpenCloseOrderNotesModal(true);
   };
   const onClickCloseCloseOrderNotesModal = () => {
     setOpenCloseOrderNotesModal(false);
@@ -445,7 +465,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   {quote?.clientName}
                 </div>,
                 quote?.itemsNumber,
-                quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+                isRTL
+                  ? quote?.totalPrice +
+                    " " +
+                    getCurrencyUnitText(quote?.currency)
+                  : getCurrencyUnitText(quote?.currency) +
+                    " " +
+                    quote?.totalPrice,
                 quote?.notes,
                 _renderStatus(docType, quote, t, navigate),
                 <MoreMenuWidget
@@ -476,9 +502,17 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   {quote?.customerName}
                 </div>,
                 quote?.itemsNumber,
-                quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+                isRTL
+                  ? quote?.totalPrice +
+                    " " +
+                    getCurrencyUnitText(quote?.currency)
+                  : getCurrencyUnitText(quote?.currency) +
+                    " " +
+                    quote?.totalPrice,
                 quote?.notes,
-                _renderStatus(docType, quote, t, navigate),
+                isInvoice && quote?.isDraft
+                  ? t("sales.quote.draft")
+                  : _renderStatus(docType, quote, t, navigate),
                 <MoreMenuWidget
                   quote={quote}
                   documentType={docType}
@@ -489,6 +523,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     onClickOpenChangeProductionStatusModal
                   }
                   onClickSendPayment={onClickSendPayment}
+                  onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
                 />,
               ];
             } else if (isQuote) {
@@ -503,7 +538,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 quote?.agentName,
                 quote?.number,
                 quote?.worksNames,
-                quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+                isRTL
+                  ? quote?.totalPrice +
+                    " " +
+                    getCurrencyUnitText(quote?.currency)
+                  : getCurrencyUnitText(quote?.currency) +
+                    " " +
+                    quote?.totalPrice,
                 quote?.notes,
                 _renderStatus(docType, quote, t, navigate),
                 <MoreMenuWidget
@@ -539,9 +580,21 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               );
 
               const statusPayment = `${
-                quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
+                isRTL
+                  ? quote?.sumApplied +
+                    " " +
+                    getCurrencyUnitText(quote?.currency)
+                  : getCurrencyUnitText(quote?.currency) +
+                    " " +
+                    quote?.sumApplied
               }/${
-                quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+                isRTL
+                  ? quote?.totalPrice +
+                    " " +
+                    getCurrencyUnitText(quote?.currency)
+                  : getCurrencyUnitText(quote?.currency) +
+                    " " +
+                    quote?.totalPrice
               }`;
 
               return [
@@ -573,9 +626,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 quote?.worksNames,
                 isOrdersTracking
                   ? statusPayment
-                  : quote?.totalPrice +
+                  : isRTL
+                  ? quote?.totalPrice +
                     " " +
-                    getCurrencyUnitText(quote?.currency),
+                    getCurrencyUnitText(quote?.currency)
+                  : getCurrencyUnitText(quote?.currency) +
+                    " " +
+                    quote?.totalPrice,
                 quote?.notes,
                 <ClickableStatusButton
                   id={quote?.id}
@@ -645,7 +702,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   );
                 }),
                 quote?.worksNames,
-                quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+                isRTL
+                  ? quote?.totalPrice +
+                    " " +
+                    getCurrencyUnitText(quote?.currency)
+                  : getCurrencyUnitText(quote?.currency) +
+                    " " +
+                    quote?.totalPrice,
                 quote?.notes,
 
                 isInvoice || isDeliveryNote ? (
@@ -657,7 +720,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 ) : (
                   <div>—</div>
                 ),
-                _renderStatus(docType, quote, t, navigate),
+                isInvoice && quote?.isDraft
+                  ? t("sales.quote.draft")
+                  : _renderStatus(docType, quote, t, navigate),
                 <MoreMenuWidget
                   quote={quote}
                   documentType={docType}
@@ -674,6 +739,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   }
                   onClickSendPayment={onClickSendPayment}
                   onClickReopenDocument={onClickOpenReopenDocumentModal}
+                  onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
                 />,
               ];
             }
@@ -690,7 +756,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             quote?.agentName,
             quote?.number,
             _renderPaymentType(quote?.paymentType),
-            quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+            isRTL
+              ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+              : getCurrencyUnitText(quote?.currency) + " " + quote?.totalPrice,
             quote?.notes,
             t(`documentStatus.${quote?.status}`),
             <MoreMenuWidget
@@ -917,7 +985,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 {quote?.clientName}
               </div>,
               quote?.itemsNumber,
-              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              isRTL
+                ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+                : getCurrencyUnitText(quote?.currency) +
+                  " " +
+                  quote?.totalPrice,
               quote?.notes,
               _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
@@ -948,9 +1020,15 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 {quote?.customerName}
               </div>,
               quote?.itemsNumber,
-              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              isRTL
+                ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+                : getCurrencyUnitText(quote?.currency) +
+                  " " +
+                  quote?.totalPrice,
               quote?.notes,
-              _renderStatus(docType, quote, t, navigate),
+              quote?.isDraft
+                ? t("sales.quote.draft")
+                : _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -961,6 +1039,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenChangeProductionStatusModal
                 }
                 onClickSendPayment={onClickSendPayment}
+                onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
               />,
             ];
           } else if (isQuote) {
@@ -975,7 +1054,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.agentName,
               quote?.number,
               quote?.worksNames,
-              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              isRTL
+                ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+                : getCurrencyUnitText(quote?.currency) +
+                  " " +
+                  quote?.totalPrice,
               quote?.notes,
               _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
@@ -1011,9 +1094,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             );
 
             const statusPayment = `${
-              quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
+              isRTL
+                ? quote?.sumApplied + " " + getCurrencyUnitText(quote?.currency)
+                : getCurrencyUnitText(quote?.currency) + " " + quote?.sumApplied
             }/${
-              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+              isRTL
+                ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+                : getCurrencyUnitText(quote?.currency) + " " + quote?.totalPrice
             }`;
             return [
               formatCustomDateTime(quote?.createdDate),
@@ -1044,9 +1131,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               quote?.worksNames,
               isOrdersTracking
                 ? statusPayment
-                : quote?.totalPrice +
+                : isRTL
+                ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+                : getCurrencyUnitText(quote?.currency) +
                   " " +
-                  getCurrencyUnitText(quote?.currency),
+                  quote?.totalPrice,
               quote?.notes,
               <ClickableStatusButton
                 id={quote?.id}
@@ -1116,7 +1205,11 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 );
               }),
               quote?.worksNames,
-              quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+              isRTL
+                ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+                : getCurrencyUnitText(quote?.currency) +
+                  " " +
+                  quote?.totalPrice,
               quote?.notes,
               isInvoice || isDeliveryNote ? (
                 <ClickableStatusButton
@@ -1127,7 +1220,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ) : (
                 <div>—</div>
               ),
-              _renderStatus(docType, quote, t, navigate),
+              quote?.isDraft && isInvoice
+                ? t("sales.quote.draft")
+                : _renderStatus(docType, quote, t, navigate),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -1144,6 +1239,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
                 onClickSendPayment={onClickSendPayment}
                 onClickReopenDocument={onClickOpenReopenDocumentModal}
+                onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
               />,
             ];
           }
@@ -1159,7 +1255,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
           quote?.agentName,
           quote?.number,
           _renderPaymentType(quote?.paymentType),
-          quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency),
+          isRTL
+            ? quote?.totalPrice + " " + getCurrencyUnitText(quote?.currency)
+            : getCurrencyUnitText(quote?.currency) + " " + quote?.totalPrice,
           quote?.notes,
           t(`documentStatus.${quote?.status}`),
           <MoreMenuWidget
@@ -1603,9 +1701,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             isReceipt
               ? document?.creationDate?.split("T")[0]
               : formatCustomDateTime(document?.createdDate),
-            document?.totalPrice +
-              " " +
-              getCurrencyUnitText(document?.currency),
+            isRTL
+              ? document?.totalPrice +
+                " " +
+                getCurrencyUnitText(document?.currency)
+              : getCurrencyUnitText(document?.currency) +
+                " " +
+                document?.totalPrice,
             <div style={{ display: "flex", justifyContent: "center" }}>
               <h2
                 style={
@@ -1954,6 +2056,16 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
             label: t("sales.quote.canceled"),
             value: ReceiptAccountingStatus.CANCELED,
           },
+        ]
+      : isInvoice || isPurchaseInvoice
+      ? [
+          { label: t("sales.quote.open"), value: AStatus.OPEN },
+          {
+            label: t("sales.quote.partialClosed"),
+            value: AStatus.PARTIAL_CLOSED,
+          },
+          { label: t("sales.quote.closed"), value: AStatus.CLOSED },
+          { label: t("sales.quote.draft"), value: AStatus.DRAFT },
         ]
       : [
           { label: t("sales.quote.open"), value: AStatus.OPEN },
@@ -2365,6 +2477,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenChangeProductionStatusModal(false);
     setIsMoveToReady(false);
   };
+
   const onClickOpenChangeProductionStatusModal = (order) => {
     setSelectedDocument(order);
     setOpenChangeProductionStatusModal(true);
@@ -2750,6 +2863,32 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertNotVerifiedMailModal.open();
   };
 
+  const removeDraftModal = useModal();
+
+  const onClickOpenRemoveDraftModal = (document) => {
+    setSelectedDocument(document);
+    removeDraftModal.open();
+  };
+
+  const onCloseOpenRemoveDraftModal = () => {
+    setSelectedDocument({});
+    removeDraftModal.close();
+  };
+
+  const handleRemoveDraftBtnClick = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        getAllQuotes();
+      } else {
+        alertFaultDelete();
+      }
+    };
+    await removeDraftDocumentApi(callApi, callBack, {
+      documentType: docType,
+      documentId: selectedDocument?.id,
+    });
+  };
+
   return {
     showCustomerModal,
     customerForEdit,
@@ -2900,7 +3039,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     deliveryStatus,
     setDeliveryStatus,
     isPurchaseDocument,
-    supplierList,
     isSendToClient,
     setFromDate,
     setToDate,
@@ -2923,6 +3061,10 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertNotVerifiedMailModal,
     alertNotVerifiedModalState,
     showAlertModal,
+    onClickCloseOrderCallback,
+    handleRemoveDraftBtnClick,
+    removeDraftModal,
+    onCloseOpenRemoveDraftModal,
   };
 };
 

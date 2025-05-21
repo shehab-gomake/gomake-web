@@ -1,12 +1,13 @@
-import {styled} from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
-import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import { useGomakeTheme } from "@/hooks/use-gomake-thme";
 
 const SearchInput = styled(TextField)(() => {
-    const {primaryColor} = useGomakeTheme()
+    const { primaryColor } = useGomakeTheme()
     return {
         width: "100%",
         input: {
+
             backgroundColor: "#F8F8F8",
             boxSizing: "border-box",
             borderRadius: 0,
@@ -20,7 +21,13 @@ const SearchInput = styled(TextField)(() => {
             alignItems: "center",
             width: "100%",
             color: primaryColor(500),
-            padding: 12
+            padding: 12,
+            "&::placeholder": {
+                fontWeight: 500,
+                color: "#000",
+                fontStyle: "normal",
+                fontFamily: "Lexend",
+            },
         },
 
         "& .MuiOutlinedInput-root": {
@@ -38,8 +45,9 @@ const SearchInput = styled(TextField)(() => {
                 borderRadius: 0,
                 width: "100%",
             },
+
         },
     }
 });
 
-export {SearchInput}
+export { SearchInput }

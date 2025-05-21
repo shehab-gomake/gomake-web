@@ -29,7 +29,9 @@ const AddRowModal = (props: IAddRowModalProps) => {
   const { alertFaultGetData, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
 
-  const { onAddCategoryRow, rowData, setRowData } = useAddCategoryRow(props.isAdmin);
+  const { onAddCategoryRow, rowData, setRowData } = useAddCategoryRow(
+    props.isAdmin
+  );
   const currencies = useRecoilValue(currenciesState);
   const machinesCategories = useRecoilValue<any>(materialsMachinesState);
   const [clientsCategories, setClientsCategories] = useRecoilState<any>(
@@ -38,11 +40,11 @@ const AddRowModal = (props: IAddRowModalProps) => {
   const [, setParameterCategories] = useRecoilState(materialsParametersState);
 
   const { renderOptions, checkWhatRenderArray, isFetching } =
-    useCustomerDropDownList();
+    useCustomerDropDownList({});
 
   useEffect(() => {
     if (renderOptions()?.length > 0) setClientsCategories(renderOptions());
-  }, [renderOptions]);
+  }, []);
 
   const [openModal, setOpenModal] =
     useRecoilState<boolean>(openAddRowModalState);
@@ -75,29 +77,48 @@ const AddRowModal = (props: IAddRowModalProps) => {
   const onChangeInputs = (key, value) => {
     setRowData({ ...rowData, [key]: value as string });
   };
-  const validateRequiredFields = (headers: any[], rowData: Record<string, any>) => {
+  const validateRequiredFields = (
+    headers: any[],
+    rowData: Record<string, any>
+  ) => {
     let filterheaders = headers?.filter(
-      (header) => header.key !== "price Unit / ton"
+      (header) => (header.key !== "price Unit / ton"
+        && header.key !== "price m^2 / Pack"
+        && header.key !== "price Roll / M^2"
+        && header.key !== "Price Staple / pack"
+        && header.key !== "price"
+        && header.key !== "Price Unit/pack"
+        && header.key !== "Price unit / per meter"
+        && header.key !== "Price Piercing / pack"
+        && header.key !== "CostPerRollPerSquareMeterPerTon"
+        && header.key !== "price unit / M^2"
+        && header.key !== "price unit/pack"
+      )
     );
     const missingFields: string[] = [];
     // Check each header
-    filterheaders.forEach(header => {
+    filterheaders.forEach((header) => {
       // If field is required and either doesn't exist in rowData or is empty
-      if (header.isRequired &&
+      if (
+        header.isRequired &&
         (!rowData.hasOwnProperty(header.key) ||
           rowData[header.key] === null ||
           rowData[header.key] === undefined ||
-          rowData[header.key] === '')) {
+          rowData[header.key] === "")
+      ) {
         missingFields.push(header.value);
       }
     });
 
     return {
       isValid: missingFields.length === 0,
-      missingFields
+      missingFields,
     };
-  }
-  const validateRequiredFieldsResult = validateRequiredFields(materialHeaders, rowData);
+  };
+  const validateRequiredFieldsResult = validateRequiredFields(
+    materialHeaders,
+    rowData
+  );
   return (
     <GoMakeModal
       insideStyle={classes.insideStyle}
@@ -129,16 +150,20 @@ const AddRowModal = (props: IAddRowModalProps) => {
                   keyItem={"item"}
                 />
               </Stack>
-            )
+            );
           })}
         </Stack>
         <SecondaryButton
           variant="contained"
           onClick={() => {
             if (validateRequiredFieldsResult.isValid) {
-              onAddCategoryRow(rowData)
+              onAddCategoryRow(rowData);
             } else {
-              alertFault(`Cannot add until required parameters are filled: ${validateRequiredFieldsResult.missingFields.join(', ')}`)
+              alertFault(
+                `Cannot add until required parameters are filled: ${validateRequiredFieldsResult.missingFields.join(
+                  ", "
+                )}`
+              );
             }
           }}
           style={classes.addBtnStyle}

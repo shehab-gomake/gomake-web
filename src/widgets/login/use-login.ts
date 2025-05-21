@@ -35,9 +35,12 @@ const useGomakeLogin = () => {
       setErrors({ username: false, password: true });
       setErrorMsg(t("login.passwordIsRequired"));
     } else {
+      const offsetMinutes = (new Date().getTimezoneOffset() * -1)
+      const offsetHours = offsetMinutes / 60;
       const result = await callApi("POST", "/v1/auth/login-customer", {
         userPrincipalName: state.username,
         password: state.password,
+        timeZoneOffset: offsetHours,
       });
       if (result?.data?.data?.customer?.token) {
         updateTokenStorage(result?.data?.data?.customer?.token);

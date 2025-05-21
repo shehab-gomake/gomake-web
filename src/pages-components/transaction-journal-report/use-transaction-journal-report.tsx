@@ -89,7 +89,7 @@ const useTransactionJournalReport = ({
     checkWhatRenderArray,
     handleCustomerChange,
     isFetching,
-  } = useCustomerDropDownList();
+  } = useCustomerDropDownList({});
 
   const onClickCloseCreateTransactionModal = () => {
     setIsCreateTransactionModal(false);
@@ -599,6 +599,50 @@ const useTransactionJournalReport = ({
     }
   }, [reportType, filterState, pageNumber, pageSize]);
 
+  const onClickExportJournalExcelReport = useCallback(async () => {
+    if (!fromDate || !toDate) {
+      alertFault("alerts.pleaseEnsureDatesSelected");
+      return;
+    }
+    const formattedStartDate = format(fromDate, "yyyy-MM-dd");
+    const formattedEndDate = format(toDate, "yyyy-MM-dd");
+
+    const res = await callApi(
+      EHttpMethod.POST,
+      `/v1/erp-service/reports/export-transaction-journal-report-to-excel`,
+      {
+        startDate: formattedStartDate,
+        endDate: formattedEndDate,
+        documentsType:
+          reportType === EReportType.DailyPayments
+            ? DocumentsTypeReportList.Payments
+            : documentType?.id,
+        cardType: isPurchaseReport
+          ? CLIENT_TYPE.SUPPLIER
+          : CLIENT_TYPE.CUSTOMER,
+      },
+      true,
+      null
+    );
+
+    if (res?.success) {
+      const base64Data = res?.data?.data?.data?.base64Excel;
+      const contentType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      const linkSource = `data:${contentType};base64,${base64Data}`;
+      const downloadLink = document.createElement("a");
+      downloadLink.href = linkSource;
+      downloadLink.download = isPurchaseReport
+        ? "PaymentReport.xlsx"
+        : "ReceiptsReport.xlsx";
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+    } else {
+      alertFaultGetData();
+    }
+  }, [fromDate, toDate, documentType, reportType]);
+
   const [erpAccountsList, setErpAccountsList] = useState([]);
 
   const getErpAccountsList = useCallback(async () => {
@@ -688,6 +732,7 @@ const useTransactionJournalReport = ({
     erpAccountsList,
     getErpAccountsList,
     onClickDownloadMovingFiles,
+    onClickExportJournalExcelReport,
   };
 };
 

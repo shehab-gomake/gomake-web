@@ -262,7 +262,6 @@ const useCustomerCard = ({
     }
   };
 
-  // edit customer button
   const handleEditCustomer = () => {
     const filteredContacts = contacts?.filter(
       (contact) => !isNameIndexOnly(contact)

@@ -25,8 +25,7 @@ import { InvoiceCreationModal } from "../invoice-creation-modal";
 import { ModalType } from "@/enums";
 import { OrderNowPrePaymentModal } from "../total-price-and-vat/order-now-modal/order-now-pre-payment";
 import { validateDocument } from "@/utils/validators";
-import { CustomerCardWidget } from "@/widgets/customer-card-modal";
-import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
+import { CloseOrderNotesModal } from "@/pages-components/products/profits-new/widgets/close-order-notes-modal";
 
 const ButtonsContainer = ({
   openSendBtn,
@@ -48,6 +47,7 @@ const ButtonsContainer = ({
   onClickOpenAddAttachmentsModal,
   onClickOpenDeleteDeliveryModal,
   AddCustomerModal,
+  handleSaveDraftBtnClick,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -116,6 +116,11 @@ const ButtonsContainer = ({
     // AddCustomerModal,
     // customer,
     // setCustomer,
+    isPurchaseInvoice,
+    onClickCloseCloseOrderNotesModal,
+    onClickOpenCloseOrderNotesModal,
+    openCloseOrderNotesModal,
+    onClickCloseOrderCallback,
     CheckoutOptionModal,
   } = useButtonsContainer(documentType);
 
@@ -228,7 +233,7 @@ const ButtonsContainer = ({
               {t("sales.quote.deleteDelivery")}
             </GomakePrimaryButton>
           )}
-        {
+        {/* {
           <GomakePrimaryButton
             leftIcon={
               quoteItemValue?.attachments?.length > 0 ? (
@@ -244,7 +249,7 @@ const ButtonsContainer = ({
               ? t("sales.quote.editAttachments")
               : t("sales.quote.addAttachments")}
           </GomakePrimaryButton>
-        }
+        } */}
         {isNewCreation && (isDeliveryNote || isInvoice) && (
           <GomakePrimaryButton
             leftIcon={<PlusIcon stroke={"#344054"} />}
@@ -327,6 +332,14 @@ const ButtonsContainer = ({
               {t("materials.buttons.cancel")}
             </GomakePrimaryButton>
           )}
+        {isNewCreation && (isPurchaseInvoice || isInvoice) && (
+          <GomakePrimaryButton
+            style={classes.btnSaveDraft}
+            onClick={handleSaveDraftBtnClick}
+          >
+            {t("sales.cart.saveDraft")}
+          </GomakePrimaryButton>
+        )}
         {isNewCreation && (
           <GomakePrimaryButton
             style={classes.btnThirdContainer}
@@ -466,6 +479,7 @@ const ButtonsContainer = ({
           onClickOpenChangeProductionStatusModal={
             onClickOpenChangeProductionStatusModal
           }
+          onClickOpenCloseOrderNotesModal={onClickOpenCloseOrderNotesModal}
         />
         <ManuallyCloseModal
           documentType={documentType}
@@ -508,6 +522,12 @@ const ButtonsContainer = ({
           openModal={AlertAddCustomerModal.isOpen}
           onClose={AlertAddCustomerModal.close}
           onClickDelete={AddCustomerModal.open}
+        />
+        <CloseOrderNotesModal
+          onClose={onClickCloseCloseOrderNotesModal}
+          openModal={openCloseOrderNotesModal}
+          quoteItemValue={quoteItemValue}
+          onClickCloseOrder={onClickCloseOrderCallback}
         />
       </div>
     </div>

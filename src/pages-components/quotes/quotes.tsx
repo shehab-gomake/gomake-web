@@ -49,6 +49,8 @@ import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
 import { useDeliveryStatusButton } from "./widgets/delivery-status-button/use-delivery-status";
 import { useClientContactsList } from "@/hooks/use-client-contacts";
 import { UpdateDeliveryStatusModal } from "./widgets/delivery-status-button/delivery-status-modal/delivery-status-modal";
+import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import CloseOrderNote from "./widgets/general/close-order-note";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -147,6 +149,7 @@ const QuotesListPageWidget = ({
     isCanceledState,
     openCloseOrderNotesModal,
     onClickCloseCloseOrderNotesModal,
+    onClickCloseOrderCallback,
     selectedQuoteItemValue,
     paymentModalTitle,
     openPaymentModal,
@@ -205,7 +208,6 @@ const QuotesListPageWidget = ({
     setDeliveryStatus,
     setFromDate,
     setToDate,
-    supplierList,
     isPurchaseDocument,
     isSendToClient,
     isReceipt,
@@ -226,6 +228,9 @@ const QuotesListPageWidget = ({
     alertNotVerifiedMailModal,
     alertNotVerifiedModalState,
     showAlertModal,
+    handleRemoveDraftBtnClick,
+    removeDraftModal,
+    onCloseOpenRemoveDraftModal,
   } = useQuotes(documentType, isFromHomePage);
   const {
     openDeliveryModal,
@@ -421,35 +426,19 @@ const QuotesListPageWidget = ({
                                   ? t("reports.supplier")
                                   : t("productionFloor.customer")}
                               </div>
-                              <GoMakeAutoComplate
+                              <ClientAutocomplete
                                 key={customerId?.id}
-                                options={
+                                clientType={
                                   isPurchaseDocument
-                                    ? supplierList
-                                    : renderOptions()
-                                    ? renderOptions()
-                                    : []
+                                    ? CLIENT_TYPE.SUPPLIER
+                                    : CLIENT_TYPE.CUSTOMER
                                 }
+                                options={renderOptions() ? renderOptions() : []}
                                 getOptionLabel={(option: any) =>
                                   `${option.name}`
                                 }
-                                defaultFiltering={
-                                  isPurchaseDocument ? true : false
-                                }
-                                onChangeTextField={(e) => {
-                                  if (isPurchaseDocument) {
-                                    return;
-                                  }
-                                  checkWhatRenderArray(e);
-                                }}
+                                onChangeTextField={checkWhatRenderArray}
                                 style={classes.textInputStyle}
-                                placeholder={t(
-                                  `sales.quote.${
-                                    isPurchaseDocument
-                                      ? "chooseSupplier"
-                                      : "chooseCustomer"
-                                  }`
-                                )}
                                 onChange={(e: any, value: any) => {
                                   setCustomerId(value);
                                 }}
@@ -919,8 +908,7 @@ const QuotesListPageWidget = ({
         onClose={onClickCloseCloseOrderNotesModal}
         openModal={openCloseOrderNotesModal}
         quoteItemValue={selectedQuoteItemValue}
-        onClickCloseOrder={() => onClickOpenCloseOrderModal(selectedDocument)}
-        documentType={documentType}
+        onClickCloseOrder={onClickCloseOrderCallback}
       />
       <SendPaymentModal
         openPaymentModal={openPaymentModal}
@@ -1012,18 +1000,22 @@ const QuotesListPageWidget = ({
               }
         }
       >
-        <div
-          style={{
-            ...classes.inputLbl,
-            color: isMoveToReady ? "black" : "#475467",
-          }}
-        >
-          <PrimaryCheckbox
-            checked={isMoveToReady}
-            onChange={handleCheckboxChange}
-          />
-          {t("sales.moveToReadyAndCloseOrder")}
-        </div>
+        <Stack alignItems={"center"}>
+          <div
+            style={{
+              ...classes.inputLbl,
+              color: isMoveToReady ? "black" : "#475467",
+            }}
+          >
+            <PrimaryCheckbox
+              checked={isMoveToReady}
+              onChange={handleCheckboxChange}
+            />
+            {t("sales.moveToReadyAndCloseOrder")}
+          </div>
+
+          <CloseOrderNote note={selectedDocument?.closeOrderNotes} />
+        </Stack>
       </GoMakeDeleteModal>
       <ThreeOptionsModal
         title={t("payment.cancelReceipt")}
@@ -1107,6 +1099,12 @@ const QuotesListPageWidget = ({
         openModal={openDeleteModal}
         onClose={onCloseDeleteModal}
         onClickDelete={() => removeDocumentDeliveryItem(selectedItem)}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.DELETE}
+        openModal={removeDraftModal.isOpen}
+        onClose={onCloseOpenRemoveDraftModal}
+        onClickDelete={handleRemoveDraftBtnClick}
       />
     </>
   );

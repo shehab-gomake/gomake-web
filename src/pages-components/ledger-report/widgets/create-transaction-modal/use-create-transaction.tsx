@@ -1,4 +1,5 @@
 import { useCustomerDropDownList, useGomakeAxios, useSnackBar } from "@/hooks";
+import { CLIENT_TYPE } from "@/pages/customers/enums";
 import { EHttpMethod } from "@/services/api-service/enums";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,13 +17,12 @@ const useCreateNewTransaction = ({ onCloseModal, isPurchaseReport }) => {
   const { callApi } = useGomakeAxios();
   const { alertFaultAdded, alertSuccessAdded, alertRequiredFields } =
     useSnackBar();
-  // const { renderOptions, checkWhatRenderArray, isFetching } =
-  //   useCustomerDropDownList();
 
-  const { renderOptions, checkWhatRenderArray, isFetching, supplierList } =
+  const { renderOptions, checkWhatRenderArray, isFetching } =
     useCustomerDropDownList({
-      shouldRenderCustomersOnMount: !isPurchaseReport,
-      shouldRenderSuppliersOnMount: isPurchaseReport,
+      clientType: isPurchaseReport
+        ? CLIENT_TYPE.SUPPLIER
+        : CLIENT_TYPE.CUSTOMER,
     });
 
   const accountTypeList: { id: number; name: string }[] = [
@@ -231,7 +231,6 @@ const useCreateNewTransaction = ({ onCloseModal, isPurchaseReport }) => {
     handleFromTypeChange,
     onChangeDescription,
     description,
-    supplierList,
   };
 };
 

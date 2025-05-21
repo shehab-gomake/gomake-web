@@ -23,7 +23,7 @@ import { productionFloorPathsState } from "@/widgets/production-floor/state/prod
 import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
 import { useTranslation } from "react-i18next";
 import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getBoardMissionPDF } from "@/services/api-service/generic-doc/documents-api";
 import { IFilterGroupsList } from "./interfaces/borad-missions-filter-groups";
 import {
@@ -41,6 +41,8 @@ import moment from "moment";
 import {IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
 import { formatDate } from "tough-cookie";
 import {CurrentStationOrderingEnum} from "@/enums";
+import { addPrintHouseJobsStorageApi } from "@/services/api-service/board-missions/jobs-storage";
+import { getAllPrintHouseJobsStorageApi } from "@/services/api-service/board-missions/jobs-storage";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -342,7 +344,9 @@ const useProductionFloorData = () => {
       setOpenMarkReadyModal(false);
       if (res?.success) {
         alertSuccessUpdate();
-        setOpenPackagesModal(true);
+        if(selectedMission.productType === "" || !selectedMission.productType){
+          setOpenPackagesModal(true);
+        }
         // handleRemoveBoardMission(selectedMissionId);
       } else {
         alertFaultUpdate();
@@ -352,6 +356,7 @@ const useProductionFloorData = () => {
       boardMissionId: selectedMission.id,
       sendMessage,
       productType: selectedMission.productType ?? "",
+      storage: selectedMission.storage ?? "",
     });
   };
 
@@ -360,7 +365,9 @@ const useProductionFloorData = () => {
       setOpenMarkReadyModal(false);
       if (res?.success) {
         alertSuccessUpdate();
-        setOpenPackagesModal(true);
+        if(selectedMission.productType === "" || !selectedMission.productType){
+          setOpenPackagesModal(true);
+        }
       } else {
         alertFaultUpdate();
       }
@@ -369,6 +376,7 @@ const useProductionFloorData = () => {
       boardMissionId: selectedMission.id,
       sendMessage:false,
       productType: selectedMission.productType ?? "",
+      storage: selectedMission.storage ?? "",
     });
   };
 
@@ -499,6 +507,7 @@ const useProductionFloorData = () => {
       note: notes,
     }).then();
   };
+ 
 
   return {
     t,
@@ -526,6 +535,8 @@ const useProductionFloorData = () => {
     handleOpenQRScanner,
     updateJobDueDate,
     updateNotes,
+    setSelectedMission
+   
   };
 };
 

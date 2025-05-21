@@ -147,6 +147,10 @@ const GET_ALL_DOCUMENT_DELIVERY_DATE_URL =
 
 const UPDATE_QUOTE_DOCUMENT_ITEM_QUANTITY_URL =
   "/v1/erp-service/documents/update-quote-item-quantity";
+const SAVE_DRAFT_DOCUMENT_URL =
+  "/v1/erp-service/documents/create-draft-document";
+const REMOVE_DRAFT_DOCUMENT_URL =
+  "/v1/erp-service/documents/remove-draft-document";
 
 const getDocumentApi: ICallAndSetData = async (
   callApi,
@@ -539,6 +543,7 @@ const updateQuoteItemQuantityApi: ICallAndSetData = async (
     printHouseId: string;
     ItemId: string;
     quantity: number;
+    documentItemIds: string[];
   }
 ) => {
   return await getSetApiData(
@@ -1224,6 +1229,34 @@ const getDocumentDeliveryDateApi: ICallAndSetData = async (
   );
 };
 
+const saveDraftDocumentApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    SAVE_DRAFT_DOCUMENT_URL,
+    setState,
+    data
+  );
+};
+
+const removeDraftDocumentApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.DELETE,
+    REMOVE_DRAFT_DOCUMENT_URL,
+    setState,
+    data
+  );
+};
+
 export {
   getDocumentApi,
   getAllDocumentsApi,
@@ -1305,4 +1338,6 @@ export {
   getDocumentDeliveryDateApi,
   sendOrderReadyToClientApi,
   updateQuoteItemQuantityApi,
+  saveDraftDocumentApi,
+  removeDraftDocumentApi,
 };

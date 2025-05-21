@@ -32,9 +32,15 @@ import {
   getReceiptByIdApi,
 } from "@/services/api-service/generic-doc/receipts-api";
 import { getAllShipmentTypesApi } from "@/services/api-service/shipmentTypes/shipment-type-api";
+import { EPreferences } from "@/enums/prefernces";
+import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { validateAddressApi } from "@/services/api-service/customers/customers-api";
+import { validateUsAddressFields } from "@/utils/helpers";
+import { useTranslation } from "react-i18next";
 
 const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   const { callApi } = useGomakeAxios();
+  const { t } = useTranslation();
   const router = useRouter();
   const {
     alertSuccessUpdate,
@@ -42,7 +48,12 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
     alertFaultAdded,
     alertFaultGetData,
     alertRequiredFields,
+    alertFault,
   } = useSnackBar();
+  const { CheckPreferenceValue } = usePrintHousePreferences();
+  const isUsAddress = !!CheckPreferenceValue(
+    EPreferences.ADDRESSES_WITH_COUNTRY_AND_STATE
+  );
   const [clientAddressValue, setClientAddressValue] =
     useRecoilState<any>(clientAddressState);
   const setClientContactsValue =
@@ -149,6 +160,13 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
             documentId: router.query.documentId,
           }),
           ...(router?.query.budgetId && { budgetId: router.query.budgetId }),
+
+          ...(router?.query.draftInvoiceId && {
+            documentId: router.query.draftInvoiceId,
+          }),
+          ...(router?.query.draftPurchaseInvoiceId && {
+            documentId: router.query.draftPurchaseInvoiceId,
+          }),
         };
 
         const res = await callApi(
@@ -247,7 +265,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
       }
     } catch (error) {
       if (error.name === "AbortError") {
-        console.log("Request aborted.");
+        return;
       } else {
         alertFaultGetData();
       }
@@ -376,47 +394,9 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   //     });
   //   }
   // };
-
-  const onClickAddNewAddress = useCallback(
-    async (item: any, isUpdate: boolean, addressType: EAddressType) => {
-      if (!item?.city) {
-        alertRequiredFields();
-        return;
-      }
-
-      const addressWithMetadata = Object.fromEntries(
-        Object.entries({
-          ...item,
-          type: addressType,
-          clientId: quoteItemValue?.customerID,
-        }).filter(
-          ([_, value]) => value !== undefined && value !== null && value !== ""
-        )
-      );
-
-      const res = await callApi(
-        EHttpMethod.POST,
-        `/v1/crm-service/customer/create-address`,
-        addressWithMetadata
-      );
-      if (res?.success) {
-        alertSuccessAdded();
-        const result = await getAllClientAddress();
-        isUpdate
-          ? updateClientAddress(
-              result.find((item) => item.id === res.data.data.result),
-              addressType
-            )
-          : onClickAddAddress(
-              result.find((item) => item.id === res.data.data.result),
-              addressType
-            );
-      } else {
-        alertFaultAdded();
-      }
-    },
-    [quoteItemValue, router]
-  );
+  const validateAddress = async (addressWithMetadata) => {
+    return await validateAddressApi(callApi, () => {}, addressWithMetadata);
+  };
 
   const onClickAddAddress = async (item: any, addressType: EAddressType) => {
     if (!item?.city) {
@@ -442,7 +422,6 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
         updatedQuoteItemValue[addressArray] = [];
       }
 
-      debugger;
       const newAddress = {
         id: uuidv4(),
         ...addressWithMetadata,
@@ -473,19 +452,114 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
     }
   };
 
+  const onClickAddNewAddress = useCallback(
+    async (item: any, isUpdate: boolean, addressType: EAddressType) => {
+      if (!item?.city && !isUsAddress) {
+        alertFault(`${t("modal.RequiredFields")}: ${t("sales.quote.city")}`);
+        return;
+      }
+
+      const addressWithMetadata = Object.fromEntries(
+        Object.entries({
+          ...item,
+          type: addressType,
+          clientId: quoteItemValue?.customerID,
+        }).filter(
+          ([_, value]) => value !== undefined && value !== null && value !== ""
+        )
+      );
+
+      // Validate required fields (for US addresses)
+      if (isUsAddress) {
+        const { isValid, missingFields } =
+          validateUsAddressFields(addressWithMetadata);
+        if (!isValid) {
+          const translatedFields = missingFields
+            .map((fieldKey) => t(fieldKey))
+            .join(", ");
+
+          alertFault(`${t("modal.RequiredFields")}: ${translatedFields}`);
+          return;
+        }
+
+        const validateRes = await validateAddress(addressWithMetadata);
+        if (!validateRes?.success || validateRes?.data?.ErrorMessage) {
+          alertFault(
+            validateRes?.data?.ErrorMessage || "Address validation failed."
+          );
+          return;
+        }
+      }
+
+      const res = await callApi(
+        EHttpMethod.POST,
+        `/v1/crm-service/customer/create-address`,
+        addressWithMetadata
+      );
+
+      if (res?.success) {
+        alertSuccessAdded();
+        const result = await getAllClientAddress();
+        const addedAddress = result.find(
+          (item) => item.id === res.data.data.result
+        );
+
+        isUpdate
+          ? updateClientAddress(addedAddress, addressType)
+          : onClickAddAddress(addedAddress, addressType);
+      } else {
+        alertFaultAdded();
+      }
+    },
+    [quoteItemValue, router]
+  );
+
   const updateClientAddress = async (item: any, addressType: EAddressType) => {
-    if (!item?.city) {
-      alertRequiredFields();
+    if (!item?.city && !isUsAddress) {
+      alertFault(`${t("modal.RequiredFields")}: ${t("sales.quote.city")}`);
       return;
     }
 
+    const addressArray =
+      addressType === EAddressType.BILLING
+        ? "documentBillingAddresses"
+        : "documentDeliveryAddresses";
+
+    const addressWithMetadata = Object.fromEntries(
+      Object.entries({
+        ...item,
+        id: quoteItemValue?.[addressArray]?.[0]?.id,
+        addressID: quoteItemValue?.[addressArray]?.[0]?.addressID,
+        type: addressType,
+        documentID: quoteItemValue?.id,
+      }).filter(
+        ([_, value]) => value !== undefined && value !== null && value !== ""
+      )
+    );
+
+    // Validate required fields (for US addresses)
+    if (isUsAddress) {
+      const { isValid, missingFields } =
+        validateUsAddressFields(addressWithMetadata);
+      if (!isValid) {
+        const translatedFields = missingFields
+          .map((fieldKey) => t(fieldKey))
+          .join(", ");
+        alertFault(`${t("modal.RequiredFields")}: ${translatedFields}`);
+        return;
+      }
+
+      const validateRes = await validateAddress(addressWithMetadata);
+
+      if (!validateRes?.success || validateRes?.data?.ErrorMessage) {
+        alertFault(
+          validateRes?.data?.ErrorMessage || t("errors.addressValidationFailed")
+        );
+        return;
+      }
+    }
     if (router.query.isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
-      const addressArray =
-        addressType === EAddressType.BILLING
-          ? "documentBillingAddresses"
-          : "documentDeliveryAddresses";
-
       const updatedAddresses = updatedQuoteItemValue[addressArray].map(
         (address) => {
           if (address.id === item.id) {

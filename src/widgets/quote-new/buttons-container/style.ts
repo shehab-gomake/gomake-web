@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import { FONT_FAMILY } from "@/utils/font-family";
 
 const useStyle = () => {
-
   const classes = useMemo(() => {
     return {
       writeCommentContainer: {
@@ -55,6 +54,16 @@ const useStyle = () => {
         padding: "10px",
         borderRadius: 8,
       },
+      btnSaveDraft: {
+        boxShadow: "0px 1px 2px 0px #1018280D",
+        backgroundColor: "#8283be",
+        color: "#FFFFFF",
+        ...FONT_FAMILY.Inter(400, 14),
+        height: 40,
+        width: "fit-content",
+        padding: "10px",
+        borderRadius: 8,
+      },
       btnOrderNowContainer: {
         border: "1px solid #F135A3",
         boxShadow: "0px 1px 2px 0px #1018280D",
@@ -69,21 +78,20 @@ const useStyle = () => {
       insideStyle: {
         width: "800px",
         height: 680,
-
       },
       statusLabel: {
         color: "#344054",
         ...FONT_FAMILY.Lexend(500, 14),
-        width: '100%',
-        textTransform: 'capitalize',
-        justifyContent: 'center',
-        boxSizing: 'border-box',
-        display: 'flex',
+        width: "100%",
+        textTransform: "capitalize",
+        justifyContent: "center",
+        boxSizing: "border-box",
+        display: "flex",
         backgroundColor: "FFFFFF",
-        '&:hover': {
-          color: '#FFF',
-          backgroundColor: "#344054"
-        }
+        "&:hover": {
+          color: "#FFF",
+          backgroundColor: "#344054",
+        },
       },
       testStyle: {
         display: "flex",
@@ -91,7 +99,7 @@ const useStyle = () => {
         justifyContent: "space-between",
       },
       borderRadius: {
-        borderRadius: '4px'
+        borderRadius: "4px",
       },
       boxStyle: {
         display: "flex",
@@ -102,18 +110,18 @@ const useStyle = () => {
       saveBtn: {
         display: "flex",
         alignSelf: "flex-start",
-        width: "100%"
+        width: "100%",
       },
       firstSection: {
         minHeight: "65%",
-       // height: "65%",
-        overflow: "hidden" as "hidden"
+        // height: "65%",
+        overflow: "hidden" as "hidden",
       },
       iconStyle: {
         width: 62,
         height: 62,
-        color: "#a1a2cd"
-      }
+        color: "#a1a2cd",
+      },
     };
   }, []);
 

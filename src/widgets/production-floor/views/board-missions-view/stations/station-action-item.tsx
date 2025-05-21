@@ -170,7 +170,7 @@ const BoardMissionsStationActionItem = ({
       parameter?.htmlElementType === HtmlElementType.TABLE
   );
 
-  const onClickBackToProcess = async (boardMissionsActionId: string) => {
+  const onClickBackToProcess = async (boardMissionsActionId: string, productType: string) => {
     setLoading(true);
     const callBack = (res) => {
       setLoading(false);
@@ -205,7 +205,7 @@ const BoardMissionsStationActionItem = ({
     };
     await cancelBoardMissionsActionDone(callApi, callBack, {
       boardMissionsActionId: boardMissionsActionId,
-      productType: boardMissions.productType,
+      productType: productType,
     });
   };
 
@@ -288,7 +288,6 @@ const BoardMissionsStationActionItem = ({
   const [openMaterialsModal, setOpenMaterialsModal] =
     useRecoilState<any>(materialModalState);
   const [activeStation, setActiveStation] = useState(null);
-
   const handleOpenModal = (station) => {
     setActiveStation(station);
     setOpenMaterialsModal(true);
@@ -324,7 +323,7 @@ const BoardMissionsStationActionItem = ({
     };
     await getBoardMissionActionMaterialsApi(callApi, callBack, {
       boardMissionsActionId: boardMissionsActionId,
-      productType: boardMissions.productType,
+      productType: productType
     });
   };
 
@@ -387,7 +386,7 @@ const BoardMissionsStationActionItem = ({
     };
     await updateBoardMissionsActionDoneWithMaterialsApi(callApi, callBack, {
       updatedState,
-      productType: boardMissions.productType,
+      productType: productType,
       isSendMessage: !!sendMSg,
     });
   };
@@ -477,7 +476,7 @@ const BoardMissionsStationActionItem = ({
                           variant={"contained"}
                           onClick={(e) => {
                             e.stopPropagation();
-                            onClickBackToProcess(boardMissionActionId).then();
+                            onClickBackToProcess(boardMissionActionId, productType).then();
                           }}
                           style={{
                             padding: "5px 8px",
@@ -885,7 +884,7 @@ const BoardMissionsStationActionItem = ({
                           variant={"outlined"}
                           onClick={(e) => {
                             e.stopPropagation();
-                            onClickBackToProcess(boardMissionActionId).then();
+                            onClickBackToProcess(boardMissionActionId, productType).then();
                           }}
                           style={{
                             padding: "5px 8px",

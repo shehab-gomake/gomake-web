@@ -94,3 +94,9 @@ export const currentCalculationConnectionId = atom({
   key: "currentCalculationConnectionIdState",
   default: "",
 });
+
+export const lastOptionState = atom({
+  key: "lastOptionState",
+  default: {},
+});
+

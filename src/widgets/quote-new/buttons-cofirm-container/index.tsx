@@ -12,8 +12,12 @@ import { ApproveSignatureModal } from "../total-price-and-vat/approve-signature-
 import { ModalType } from "@/enums";
 import { quoteItemState } from "@/store/quote-item";
 import { useRecoilState, useRecoilValue } from "recoil";
+import { useSnackBar } from "@/hooks/use-snack-bar";
+import { areAllItemsChecked } from "@/utils/helpers";
 
-const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal }) => {
+const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal, isQuoteConfirmation, quoteConfirm }) => {
+
+  const { alertFault } = useSnackBar();
   const { classes } = useStyle();
   const { t } = useTranslation();
   const {
@@ -40,8 +44,6 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal }) => {
     onClickCloseApproveSignatureModal,
   } = useButtonsConfirmContainer();
   const quoteItemValue = useRecoilValue<any>(quoteItemState);
-
-  console.log("quoteItemValue", quoteItemValue);
   return (
     <div style={classes.writeCommentContainer}>
       <div style={classes.btnsContainer}>
@@ -63,16 +65,36 @@ const ButtonsConfirmContainer = ({ onClickOpenAddAttachmentsModal }) => {
           variant="outlined"
           startIcon={<AttachIcon />}
           style={classes.btnStyle}
-          onClick={onClickOpenAddAttachmentsModal}
+          onClick={() => {
+            if (isQuoteConfirmation) {
+              // Add the check here
+              if (areAllItemsChecked(quoteConfirm)) {
+                alertFault("reports.pleaseSelectOneItem");
+              } else {
+                onClickOpenAddAttachmentsModal()
+              }
+            } else {
+              onClickOpenAddAttachmentsModal()
+            }
+          }}
         >
-          {quoteItemValue?.attachments?.length > 0
-            ? t("sales.quote.editAttachments")
-            : t("sales.quote.attachFiles")}
+          {t("sales.quote.attachFiles")}
         </SecondaryButton>
         <SecondaryButton
           variant="contained"
           style={classes.btnStyle}
-          onClick={onClickOpenApproveModal}
+          onClick={() => {
+            if (isQuoteConfirmation) {
+              // Add the check here
+              if (areAllItemsChecked(quoteConfirm)) {
+                alertFault("reports.pleaseSelectOneItem");
+              } else {
+                onClickOpenApproveModal()
+              }
+            } else {
+              onClickOpenApproveModal()
+            }
+          }}
         >
           {t("sales.quote.approveOffer")}
         </SecondaryButton>

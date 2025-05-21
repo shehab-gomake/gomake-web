@@ -38,7 +38,9 @@ import {
   moveOrderToReadyApi,
   refreshExchangeRateApi,
   rejectDocumentApi,
+  removeDraftDocumentApi,
   saveDocumentApi,
+  saveDraftDocumentApi,
   sendDocumentToClientApi,
   sendReceiptToClientApi,
   sortDocumentItemsApi,
@@ -380,16 +382,19 @@ const useQuoteNew = ({
   const tableHeaders = [
     "#",
     isDeliveryNote || isInvoice ? t("products.profits.documentNumber") : null,
-    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && t("sales.quote.itemCode"),
-    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && t("products.profits.itemName"),
-    CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) && t("products.profits.itemName"),
+    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
+      t("sales.quote.itemCode"),
+    !CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
+      t("products.profits.itemName"),
+    CheckPreferenceValue(EPreferences.HIDE_ITEM_CODE_FROM_DOCUMENT_CART) &&
+      t("products.profits.itemName"),
     isQuoteConfirmation
       ? quoteConfirm?.isShowDetails
         ? t("products.profits.details")
         : null
       : quoteItemValue?.isShowDetails
-        ? t("products.profits.details")
-        : null,
+      ? t("products.profits.details")
+      : null,
     t("sales.quote.amount"),
     t("products.profits.pricingListWidget.unitPrice"),
     t("sales.quote.discount"),
@@ -1136,10 +1141,18 @@ const useQuoteNew = ({
     ItemId: string,
     quantity?: number
   ) => {
+    const documentItemIds = quoteConfirm?.documentItems
+      ?.filter((x) => x.isChecked)
+      ?.map((x) => x.id);
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-        setQuoteConfirm(res?.data);
+        const newQuote = res?.data;
+        newQuote.documentItems = newQuote.documentItems.map((item) => {
+          item.isChecked = documentItemIds.includes(item.id);
+          return item;
+        });
+        setQuoteConfirm(newQuote);
       } else {
         alertFaultUpdate();
         getQuote();
@@ -1149,6 +1162,7 @@ const useQuoteNew = ({
       printHouseId,
       ItemId,
       quantity,
+      documentItemIds: documentItemIds,
     });
   };
 
@@ -1256,7 +1270,7 @@ const useQuoteNew = ({
           alertSuccessDelete();
           onCloseDeleteItemModal();
           quoteItemValue?.documentItems?.length === 1 ||
-            res?.data?.succ === false
+          res?.data?.succ === false
             ? navigate("/home")
             : getQuote();
         } else {
@@ -1391,7 +1405,7 @@ const useQuoteNew = ({
     }
   };
 
-  const changedocumentItems = (
+  const changeDocumentItems = (
     index: number,
     filedName: string,
     value: any
@@ -1404,7 +1418,7 @@ const useQuoteNew = ({
     setPriceListItems(temp);
   };
 
-  const changedocumentItemsChild = (
+  const changeDocumentItemsChild = (
     parentIndex: number,
     childInex: number,
     filedName: string,
@@ -1681,6 +1695,30 @@ const useQuoteNew = ({
         alertFault("sales.quote.mailContectErrorMsg");
       }
     }
+  };
+
+  const handleSaveDraftBtnClick = async () => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const path = isInvoice ? `/invoices` : `/purchaseInvoices`;
+        navigate(path);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    await saveDraftDocumentApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        ...quoteItemValue,
+        creationDate: creationDate,
+        taxDate: taxDate,
+        dueDate: selectDate,
+        ...(router?.query?.budgetId ? { budgetID: router.query.budgetId } : {}),
+        exchangeRate:
+          quoteItemValue.exchangeRate === 0 ? 1 : quoteItemValue.exchangeRate,
+        isOpenRelatedDocuments: isOpenRelatedDocuments,
+      },
+    });
   };
 
   const handleSaveBtnClick = async () => {
@@ -2144,7 +2182,6 @@ const useQuoteNew = ({
     });
   };
 
-  const [isWhatsAppWeb, setIsWhatsAppWeb] = useState(true);
   const isShowSettingIcon = !(
     router.query.isNewCreation &&
     (isDeliveryNote || isInvoice)
@@ -2225,6 +2262,7 @@ const useQuoteNew = ({
   );
 
   const handleSendUsingWhatsAppWeb = () => {
+    debugger;
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
       quoteItemValue?.documentContacts
     );
@@ -2234,7 +2272,7 @@ const useQuoteNew = ({
     }
     const phoneNumber = quoteItemValue?.documentContacts[0].contactPhone;
     const callBack = (res) => {
-      //openWhatsAppWebLink(res?.data, phoneNumber, isWhatsAppWeb);
+      debugger;
       openWhatsAppWebLink(res?.data, phoneNumber);
     };
     getWhatsAppMessageApi(callApi, callBack, {
@@ -2326,8 +2364,8 @@ const useQuoteNew = ({
     handleSendBtnClose,
     setActiveClickAway,
     changeQuoteItems,
-    changedocumentItemsChild,
-    changedocumentItems,
+    changeDocumentItemsChild,
+    changeDocumentItems,
     getCalculateQuote,
     onCloseDeleteItemModal,
     deleteQuoteItem,
@@ -2457,8 +2495,6 @@ const useQuoteNew = ({
     onBlurTitle,
     isUpdateDocumentTitle,
     setIsUpdateDocumentTitle,
-    isWhatsAppWeb,
-    setIsWhatsAppWeb,
     isShowSettingIcon,
     showVatListInSettingIconNew,
     isInvoice,
@@ -2506,6 +2542,7 @@ const useQuoteNew = ({
     alertNotVerifiedMail,
     alertNotVerifiedModalState,
     AddCustomerModal,
+    handleSaveDraftBtnClick,
   };
 };
 
