@@ -8,11 +8,12 @@ import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { useTranslation } from "react-i18next";
 import { useProductionFloorFilters } from "../filters/use-production-floor-filters";
-import { EProductionFloorView } from "../state/production-floor-view";
-import { allBoardMissionsState, pageNumberState, pagesCountState, pageSizeState } from "../state/filter-group";
+import { useStorageList } from "@/hooks/use-storage-list";
+import { allBoardMissionsState, pagesCountState, pageSizeState, pageNumberState } from "../state/filter-group";
 import { PrimaryTable } from "@/components/tables/primary-table";
-import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 import { useRouter } from "next/router";
+import { EProductionFloorView } from "../state/production-floor-view";
+import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 
 const ProductionFloorTableView = ({ connectionId }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
@@ -34,6 +35,17 @@ const ProductionFloorTableView = ({ connectionId }) => {
   const [pageNumber, setPageNumber] = useRecoilState<number>(pageNumberState);
   const pagesCount = useRecoilValue<number>(pagesCountState);
   const [pageSize, setPageSize] = useRecoilState<number>(pageSizeState);
+
+  const {
+    storageList,
+    inputValue,
+    defaultValue,
+    addPrintHouseJobsStorage,
+    handleStorageChange,
+    setInputValue,
+    selectedMission,
+    setSelectedMission
+  } = useStorageList()
 
   const handlePageChange = (event, value) => {
     setPageNumber(value);
@@ -168,6 +180,14 @@ const ProductionFloorTableView = ({ connectionId }) => {
                   onClickClient={getCustomerForEdit}
                   allBoardMissions={allBoardMissions}
                   setFilters={setFilters}
+                  storageList={storageList}
+                  inputValue={inputValue}
+                  defaultValue={defaultValue}
+                  addPrintHouseJobsStorage={addPrintHouseJobsStorage}
+                  handleStorageChange={handleStorageChange}
+                  setInputValue={setInputValue}
+                  selectedMission={selectedMission}
+                  setSelectedMission={setSelectedMission}
                 />
               );
             })}

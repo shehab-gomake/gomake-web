@@ -40,14 +40,15 @@ import { agentsState, currentStationOrderingState } from "@/store/agents-state";
 import moment from "moment";
 import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
 import { CurrentStationOrderingEnum } from "@/enums";
-import { setBoardMissionsFiltersApi } from "@/services/api-service/board-missions/board-missions-table";
-import { EWorkSource } from "../product-pricing-widget/enums";
+import { useDebounce } from "@/utils/use-debounce";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
-import { Permissions } from "@/components/CheckPermission/enum";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { useDebounce } from "@/utils/use-debounce";
-const useProductionFloorData = () => {
+import { EWorkSource } from "../product-pricing-widget/enums";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { setBoardMissionsFiltersApi } from "@/services/api-service/board-missions/board-missions-table";
+
+const useProductionFloorData = (selectedMission?: any, setSelectedMission?: any) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === "rtl";
@@ -599,7 +600,6 @@ const useProductionFloorData = () => {
     });
   };
 
-  const [selectedMission, setSelectedMission] = useState<any>({});
   const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
 
   const onOpenPrintDeliverTicketModal = (mission) => {

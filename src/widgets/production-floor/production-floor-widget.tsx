@@ -40,7 +40,7 @@ const ProductionFloorWidget = () => {
     updateStatus,
     setSelectedGroupId,
     handleOpenQRScanner,
-  } = useProductionFloorData();
+  } = useProductionFloorData({});
 
   useEffect(() => {
     getStationFilterGroups();
