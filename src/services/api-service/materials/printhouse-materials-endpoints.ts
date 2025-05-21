@@ -181,7 +181,7 @@ const updatePrintHouseMaterialCategoryNameApi: ICallAndSetData = async (
   callApi,
   callBack,
   row: {
-    materialKey: string;
+    materialTypeKey: string;
     categoryKey: string;
     displayName: string;
     defaultAttributeValues: {
