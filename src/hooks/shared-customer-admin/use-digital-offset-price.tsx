@@ -3349,7 +3349,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       else {
         const valueInArray = relatedParameter.selectedValueIds?.find(
-          (c) => c == parm?.values || (c == "false" && !parm?.values)
+          (c) => c == parm?.valueIds || (c == "false" && !parm?.values)
         );
         if (
           (valueInArray && myParameter) ||
@@ -5336,7 +5336,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     ) {
       const quoteItemSubProducts = [];
       setCurrentProductItemValueTotalPrice(
-        quoteItemProduct.docmentItem?.finalPrice 
+        quoteItemProduct.docmentItem?.finalPrice
       );
       setSliderCurrentProductItemValueTotalPrice(
         quoteItemProduct.docmentItem?.finalPrice
