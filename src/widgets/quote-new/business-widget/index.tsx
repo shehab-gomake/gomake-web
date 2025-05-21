@@ -278,7 +278,6 @@ const BusinessNewWidget = ({
                 : t("sales.quote.purchaseNumber")
             }
             onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
-            // isUpdate={canEditDocument && isUpdatePurchaseNumber}
             isUpdate={canEditPurchaseNumber && isUpdatePurchaseNumber}
             setIsUpdate={
               isQuoteConfirmation
