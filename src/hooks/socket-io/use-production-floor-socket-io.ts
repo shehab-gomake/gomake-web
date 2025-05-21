@@ -11,7 +11,7 @@ const useProductionFloorSocketIO = (view: EProductionFloorView) => {
     const [connectionId, setConnectionId] = useState<any>();
     const profile = useRecoilValue(printHouseProfile);
     const filters = useRecoilValue(productionFloorFiltersState);
-    const {getData, getDataByGroups, getStationFilterGroups} = useProductionFloorData();
+    const {getData, getDataByGroups, getStationFilterGroups, getAllBoardMissions} = useProductionFloorData();
     useEffect(() => {
         const socket = io(config.api_server);
         socket.on(`UpdateBoardMissionsStation-${profile.id}`, () => {
@@ -21,7 +21,7 @@ const useProductionFloorSocketIO = (view: EProductionFloorView) => {
                 return;
             }
             if (view === EProductionFloorView.DONE_JOBS) {
-                // getData(socket.id).then();
+                getAllBoardMissions().then();
                 return;
             }
             getData(socket.id).then();

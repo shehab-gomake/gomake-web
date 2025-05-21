@@ -48,6 +48,7 @@ interface CustomGroupsProps {
   isFromMenu?: boolean;
   handleClickMenu?: (e: React.MouseEvent<HTMLElement>) => void;
   setSelectedGroup?: any;
+  isDoneJobs?: boolean;
 }
 
 const ScrollableDiv = styled("div")(({ theme }) => ({
@@ -141,6 +142,7 @@ const CustomGroupComponent = ({
   isFromMenu,
   handleClickMenu,
   setSelectedGroup,
+  isDoneJobs
 }: CustomGroupsProps) => {
   return (
     <CustomGroup
@@ -182,57 +184,58 @@ const CustomGroupComponent = ({
             {group?.name}
           </Typography>
         </Box>
-        {/* Second Box - Status Circles & Delete Icon */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexShrink: 0,
-            // gap: "6px",
-          }}
-        >
-          {
-            <Circle numColor="#E7D000" dir={dir}>
-              {group?.inProcessCount}
-            </Circle>
-          }
-          {
-            <Circle numColor="#D92D20" dir={dir}>
-              {group?.stuckCount}
-            </Circle>
-          }
-          {group.id !== "all" && (
-            <Circle
-              numColor={group?.color}
-              dir={dir}
-              sx={{
-                backgroundColor: "transparent",
-              }}
-            >
-              (
-              <IconButton
-                onClick={(e) => {
-                  handleClickMenu(e);
-                  setSelectedGroup(group);
-                }}
-                size="small"
-                style={{
-                  padding: "4px",
-                  cursor: "pointer",
+        {!isDoneJobs &&
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              flexShrink: 0,
+              // gap: "6px",
+            }}
+          >
+            {
+              <Circle numColor="#E7D000" dir={dir}>
+                {group?.inProcessCount}
+              </Circle>
+            }
+            {
+              <Circle numColor="#D92D20" dir={dir}>
+                {group?.stuckCount}
+              </Circle>
+            }
+            {group.id !== "all" && (
+              <Circle
+                numColor={group?.color}
+                dir={dir}
+                sx={{
+                  backgroundColor: "transparent",
                 }}
               >
-                <MoreVertIcon
-                  style={{
-                    cursor: "pointer",
-                    fontSize: "16px",
-                    color: isSelected ? "#FFF" : group?.color,
+                (
+                <IconButton
+                  onClick={(e) => {
+                    handleClickMenu(e);
+                    setSelectedGroup(group);
                   }}
-                />
-              </IconButton>
-              )
-            </Circle>
-          )}
-        </Box>
+                  size="small"
+                  style={{
+                    padding: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <MoreVertIcon
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "16px",
+                      color: isSelected ? "#FFF" : group?.color,
+                    }}
+                  />
+                </IconButton>
+                )
+              </Circle>
+            )}
+          </Box>
+        }
       </CardContent>
     </CustomGroup>
   );
@@ -316,7 +319,7 @@ const ProductionFloorFilters = ({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
   });
-
+  console.log("visibleFilterGroups", visibleFilterGroups)
   useEffect(() => {
     const fetchMachinesColors = async () => {
       try {
@@ -440,11 +443,13 @@ const ProductionFloorFilters = ({
   };
 
   useEffect(() => {
-    if (debouncedPatternSearch && debouncedPatternSearch.trim() !== "") {
-      getAllData(1, 10, debouncedPatternSearch);
-    }
-    else {
-      getAllData(1, 10);
+    if (view === EProductionFloorView.DONE_JOBS) {
+      if (debouncedPatternSearch && debouncedPatternSearch.trim() !== "") {
+        getAllData(1, 10, debouncedPatternSearch);
+      }
+      else {
+        getAllData(1, 10);
+      }
     }
   }, [debouncedPatternSearch]);
 
@@ -524,6 +529,7 @@ const ProductionFloorFilters = ({
             isFromMenu={false}
             handleClickMenu={handleClickMenu}
             setSelectedGroup={setSelectedGroup}
+            isDoneJobs={group?.id === "doneJobs"}
           />
         ))}
         {hiddenFilterGroups.length > 0 && (
@@ -567,6 +573,7 @@ const ProductionFloorFilters = ({
                     isFromMenu={true}
                     handleClickMenu={handleClickMenu}
                     setSelectedGroup={setSelectedGroup}
+                    isDoneJobs={group?.id === "doneJobs"}
                   />
                 ))}
               </Stack>
