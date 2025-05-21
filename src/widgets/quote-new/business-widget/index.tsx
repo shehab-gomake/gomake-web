@@ -245,6 +245,7 @@ const BusinessNewWidget = ({
             }
             getOptionLabel={(item) => item.text}
             onChange={(e, value) => updateAgent(value)}
+            showClearIcon={!!selectedAgent?.value}
           />
         )}
         {(isOrder || isQuote) && (
