@@ -1,5 +1,4 @@
 import { useRecoilValue } from "recoil";
-import { BusinessNewWidget } from "@/widgets/quote-new/business-widget";
 import { QuoteForPriceTable } from "@/widgets/quote-new/quote-table";
 import { HeaderTitle } from "@/widgets";
 import { quoteConfirmationState } from "@/store";
@@ -72,7 +71,6 @@ const DebtPaymentWidget = ({ documentType }: IProps) => {
                 />
               </div>
             </div>
-
             <div
               style={{
                 flex: 0.9,

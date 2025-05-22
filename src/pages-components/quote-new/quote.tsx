@@ -776,7 +776,6 @@ const QuoteNewPageWidget = ({
                   }
                 />
               )}
-              {/* !here we need */}
               {isPrePaymentPage && (
                 <>
                   <div style={classes.borderContainer} />

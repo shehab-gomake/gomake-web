@@ -12,7 +12,7 @@ const DebtRowMappingWidget = ({ item, index, headerHeight, parentIndex }) => {
   const { classes } = useStyle({ headerHeight });
   const { formatISODateTime } = useDateFormat();
   const columnWidths = ["10%", "22%"];
-  const { handleItemCheck } = useQuoteConfirmation();
+  const { handleDebtItemCheck } = useQuoteConfirmation();
 
   return (
     <TableRow
@@ -33,7 +33,7 @@ const DebtRowMappingWidget = ({ item, index, headerHeight, parentIndex }) => {
             icon={<CheckboxIcon />}
             checkedIcon={<CheckboxCheckedIcon />}
             checked={item?.isChecked}
-            onChange={(checked) => handleItemCheck(checked, item.id)}
+            onChange={(checked) => handleDebtItemCheck(checked, item.transId)}
           />
           {parentIndex}
         </div>

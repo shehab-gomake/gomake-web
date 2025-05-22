@@ -35,9 +35,13 @@ interface PaymentDetails {
 
 interface IProps {
   documentType?: DOCUMENT_TYPE;
+  isDebtPayments?: boolean;
 }
 
-const useCreditCardPaySection = ({ documentType }: IProps = {}) => {
+const useCreditCardPaySection = ({
+  documentType,
+  isDebtPayments = false,
+}: IProps = {}) => {
   const { t } = useTranslation();
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const { alertSuccess, alertFault, alertRequiredFields } = useSnackBar();
@@ -68,7 +72,12 @@ const useCreditCardPaySection = ({ documentType }: IProps = {}) => {
   ];
 
   const numberOfPayments = Array.from(
-    { length: quoteConfirm?.maxPayments ?? 13 },
+    {
+      length:
+        (isDebtPayments
+          ? quoteConfirm?.maxInstallments
+          : quoteConfirm?.maxPayments) ?? 13,
+    },
     (_, index) => ({
       label: index + 1,
       value: index + 1,

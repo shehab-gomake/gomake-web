@@ -84,7 +84,6 @@ const useQuoteConfirmation = ({
     return null;
   }, [router]);
 
-  //!here
   const getPrePaymentById = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -101,14 +100,20 @@ const useQuoteConfirmation = ({
     });
   };
 
-  //!here new
   const getDebtsPaymentById = async () => {
     const callBack = (res) => {
       if (res?.success) {
         const quote = res?.data;
+        const modifiedDebts =
+          quote.debtsToPay?.map((item) => ({
+            ...item,
+            isChecked: true,
+          })) || [];
+
         const modifiedQuote = {
           ...quote,
           id: quote.customerID || quote.id,
+          debtsToPay: modifiedDebts,
           documentContacts: [
             {
               email: quote.contactEmail,
@@ -179,7 +184,6 @@ const useQuoteConfirmation = ({
   );
   const [fileItems, setFileItems] = useRecoilState(fileItemsState);
 
-  //!here like this
   const handleItemCheck = (e, itemId) => {
     let quoteCopy = cloneDeep(quoteConfirm);
     if (quoteCopy?.documentItems) {
@@ -219,18 +223,20 @@ const useQuoteConfirmation = ({
       setFileItems(fileItems.filter((item) => item.id !== itemId));
     }
   };
-  // const handleItemCheck = (e, itemId) => {
-  //   let quoteCopy = cloneDeep(quoteConfirm);
-  //   if (quoteCopy?.documentItems) {
-  //     const documentItems = quoteConfirm?.documentItems.map((x) =>
-  //       x.id === itemId ? { ...x, isChecked: e.target.checked } : x
-  //     );
 
-  //     quoteCopy = { ...quoteCopy, documentItems: documentItems };
-  //   }
-  //   setQuoteConfirm(quoteCopy);
-  //   calculateSelectedItems(quoteCopy);
-  // };
+  const handleDebtItemCheck = (e, itemId) => {
+    const checked = e.target.checked;
+    const quoteCopy = cloneDeep(quoteConfirm);
+
+    if (quoteCopy?.debtsToPay) {
+      const updatedDebts = quoteCopy.debtsToPay.map((item) =>
+        item.transId === itemId ? { ...item, isChecked: checked } : item
+      );
+      quoteCopy.debtsToPay = updatedDebts;
+    }
+
+    setQuoteConfirm(quoteCopy);
+  };
 
   const documentsTitles = [
     {
@@ -290,6 +296,7 @@ const useQuoteConfirmation = ({
     companyLogo,
     getCompanyLogo,
     getDebtsPaymentById,
+    handleDebtItemCheck,
   };
 };
 

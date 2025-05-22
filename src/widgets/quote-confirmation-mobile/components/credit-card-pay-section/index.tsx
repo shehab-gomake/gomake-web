@@ -8,7 +8,6 @@ import { loadgingState } from "@/store/loading";
 import { useRecoilValue } from "recoil";
 
 //!here need update
-
 const CreditCardPaySection = ({
   isFromBigScreen = false,
   documentType,
@@ -31,14 +30,25 @@ const CreditCardPaySection = ({
     handleProceedCheckout,
     isPaymentSuccess,
   } = useCreditCardPaySection({ documentType, isDebtPayments });
-
   const loading = useRecoilValue(loadgingState);
 
+  // useEffect(() => {
+  //   if (quoteConfirm?.sumToPrepay) {
+  //     handleChangeInputs("transactionSum", quoteConfirm.sumToPrepay);
+  //   }
+  // }, [quoteConfirm]);
+
   useEffect(() => {
-    if (quoteConfirm?.sumToPrepay) {
-      handleChangeInputs("transactionSum", quoteConfirm.sumToPrepay);
+    if (quoteConfirm && isDebtPayments) {
+      const selectedTotal = quoteConfirm.debtsToPay
+        ?.filter((item) => item.isChecked)
+        ?.reduce((sum, item) => sum + Number(item.price || 0), 0);
+
+      handleChangeInputs("transactionSum", selectedTotal ?? 0);
+    } else if (quoteConfirm && !isDebtPayments) {
+      handleChangeInputs("transactionSum", quoteConfirm.sumToPrepay ?? 0);
     }
-  }, [quoteConfirm]);
+  }, [quoteConfirm, isDebtPayments]);
 
   return (
     <div style={classes.mainContainer}>
@@ -79,7 +89,6 @@ const CreditCardPaySection = ({
             value={paymentDetailsState?.holderID}
             onChange={(e) => handleChangeInputs("holderID", e.target.value)}
           />
-          {/* !here */}
           <input
             style={classes.creditSecondCardInputs}
             placeholder={t("sales.quote.total")}
@@ -124,9 +133,14 @@ const CreditCardPaySection = ({
             variant="contained"
             style={{
               ...classes.btnStyle,
-              opacity: loading ? 0.5 : 1,
+              opacity:
+                loading || Number(paymentDetailsState?.transactionSum) === 0
+                  ? 0.5
+                  : 1,
             }}
-            disabled={loading}
+            disabled={
+              loading || Number(paymentDetailsState?.transactionSum) === 0
+            }
           >
             {t("payment.proceedCheckout")}
           </PrimaryButton>
