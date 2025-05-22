@@ -174,7 +174,9 @@ const setBoardFiltersApi: ICallAndSetData = async (
 const getBoardMissionsById: ICallAndSetData = async (
   callApi,
   callBack,
-  { id, connectionId, productType }
+  { id, connectionId, productType },
+  lock = false,
+  abortController
 ) => {
   return await getSetApiData(
     callApi,
@@ -185,7 +187,10 @@ const getBoardMissionsById: ICallAndSetData = async (
       connectionId +
       "?productType=" +
       productType,
-    callBack
+    callBack,
+    {},
+    lock,
+    abortController
   );
 };
 
@@ -284,7 +289,9 @@ const getBoardsMissionsGroupsByID: ICallAndSetData = async (
 const getBoardsMissionsStations: ICallAndSetData = async (
   callApi,
   callBack,
-  data: { boardMissionsId: string; productType: string }
+  data: { boardMissionsId: string; productType: string },
+  lock = false,
+  abortController
 ) => {
   return await getSetApiData(
     callApi,
@@ -292,7 +299,10 @@ const getBoardsMissionsStations: ICallAndSetData = async (
     GET_BOARDS_MISSIONS_STATIONS_URL +
       data.boardMissionsId +
       (data.productType ? "?productType=" + data.productType : ""),
-    callBack
+    callBack,
+    {},
+    lock,
+    abortController
   );
 };
 
@@ -357,13 +367,18 @@ const boardMissionsDeleteNote: ICallAndSetData = async (
 const getAllBoardMissionsActivities: ICallAndSetData = async (
   callApi,
   callBack,
-  boardMissionsId: string
+  boardMissionsId: string,
+  lock = false,
+  abortController
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
     GET_BOARD_MISSIONS_ACTIVITIES_URL + boardMissionsId,
-    callBack
+    callBack,
+    {},
+    lock,
+    abortController
   );
 };
 
@@ -394,13 +409,18 @@ const saveUploadedFile: ICallAndSetData = async (callApi, callBack, data) => {
 const getAllBoardMissionsUploadedFiles: ICallAndSetData = async (
   callApi,
   callBack,
-  orderItemId: string
+  orderItemId: string,
+  lock = false,
+  abortController: AbortController
 ) => {
   return await getSetApiData(
     callApi,
     EHttpMethod.GET,
     GET_UPLOADED_FILES_URL + orderItemId,
-    callBack
+    callBack,
+    {},
+    lock,
+    abortController
   );
 };
 

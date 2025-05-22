@@ -57,7 +57,7 @@ const useBoardMissions = () => {
   );
   const isLoadingStations = stations?.length === 0;
   const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
-
+  const [abortController, setAbortController] = useState(null);
   const initStates = () => {
     resetDetails();
     resetProductDetails();
@@ -68,8 +68,16 @@ const useBoardMissions = () => {
     connectionId,
     productType: string
   ) => {
+    if (abortController) {
+      abortController.abort();
+    }
+    const newRequestAbortController = new AbortController();
+    setAbortController(newRequestAbortController);
     const callBack = async (res) => {
       if (res.success) {
+        if (res.data?.boardMissionId !== query.boardMissionsId) {
+          return;
+        }
         setBoardMissionsDetails(res.data);
       }
     };
@@ -77,7 +85,10 @@ const useBoardMissions = () => {
       id,
       connectionId,
       productType,
-    });
+    },
+      false,
+      newRequestAbortController
+    );
   };
 
   const onClickUploadFile = async () => {
