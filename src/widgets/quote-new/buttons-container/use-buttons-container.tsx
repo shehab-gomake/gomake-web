@@ -72,7 +72,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
-  const CheckoutOptionModal = useModal(); //!here
+  const CheckoutOptionModal = useModal();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openCancelReceiptModal, setOpenCancelReceiptModal] = useState(false);
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
@@ -629,7 +629,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     openCloseOrderNotesModal,
     setOpenCloseOrderNotesModal,
     onClickCloseOrderCallback,
-    CheckoutOptionModal
+    CheckoutOptionModal,
   };
 };
 

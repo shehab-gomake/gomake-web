@@ -323,6 +323,11 @@ const QuoteNewPageWidget = ({
     alertNotVerifiedModalState,
     AddCustomerModal,
     handleSaveDraftBtnClick,
+    alertExistPurchaseNumber,
+    pendingPurchaseNumber,
+    setPendingPurchaseNumber,
+    originalPurchaseNumber,
+    updatePurchaseNumber,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -1164,6 +1169,26 @@ const QuoteNewPageWidget = ({
         }}
         subTitle={alertNotVerifiedModalState.message}
         withCancelBtn={!!alertNotVerifiedModalState.onConfirm}
+      />
+      <GoMakeAlertModal
+        openModal={alertExistPurchaseNumber.isOpen}
+        onClose={() => {
+          alertExistPurchaseNumber.close();
+          setQuoteItemValue((prev) => ({
+            ...prev,
+            purchaseNumber: originalPurchaseNumber,
+          }));
+          setPendingPurchaseNumber(null);
+        }}
+        onClickConfirm={async () => {
+          alertExistPurchaseNumber.close();
+          if (pendingPurchaseNumber) {
+            await updatePurchaseNumber(pendingPurchaseNumber, true);
+            setPendingPurchaseNumber(null);
+          }
+        }}
+        subTitle={t("alerts.thisPurchaseNumberIsExist")}
+        yesBtn={t("alerts.UpdateAnyway")}
       />
     </>
   );
