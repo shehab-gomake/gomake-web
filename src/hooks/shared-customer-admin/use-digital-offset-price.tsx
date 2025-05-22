@@ -3405,7 +3405,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       }
       else {
         const valueInArray = relatedParameter.selectedValueIds?.find(
-          (c) => c == parm?.valueIds || (c == "false" && !parm?.values)
+          (c) => c == (parm?.ParameterType === 11 ? parm?.valueIds : parm?.values) || (c == "false" && !parm?.values)
         );
         if (
           (valueInArray && myParameter) ||
