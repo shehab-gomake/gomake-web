@@ -510,9 +510,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     " " +
                     quote?.totalPrice,
                 quote?.notes,
-                isInvoice && quote?.isDraft
-                  ? t("sales.quote.draft")
-                  : _renderStatus(docType, quote, t, navigate),
+                isInvoice && quote?.isDraft ? (
+                  <span style={{ color: "#e77676" }}>
+                    {t("sales.quote.draft")}
+                  </span>
+                ) : (
+                  _renderStatus(docType, quote, t, navigate)
+                ),
                 <MoreMenuWidget
                   quote={quote}
                   documentType={docType}
@@ -720,9 +724,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 ) : (
                   <div>—</div>
                 ),
-                isInvoice && quote?.isDraft
-                  ? t("sales.quote.draft")
-                  : _renderStatus(docType, quote, t, navigate),
+                isInvoice && quote?.isDraft ? (
+                  <span style={{ color: "#e77676" }}>
+                    {t("sales.quote.draft")}
+                  </span>
+                ) : (
+                  _renderStatus(docType, quote, t, navigate)
+                ),
                 <MoreMenuWidget
                   quote={quote}
                   documentType={docType}
@@ -1026,9 +1034,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   " " +
                   quote?.totalPrice,
               quote?.notes,
-              quote?.isDraft
-                ? t("sales.quote.draft")
-                : _renderStatus(docType, quote, t, navigate),
+              quote?.isDraft ? (
+                <span style={{ color: "#e77676" }}>
+                  {t("sales.quote.draft")}
+                </span>
+              ) : (
+                _renderStatus(docType, quote, t, navigate)
+              ),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
@@ -1220,9 +1232,13 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               ) : (
                 <div>—</div>
               ),
-              quote?.isDraft && isInvoice
-                ? t("sales.quote.draft")
-                : _renderStatus(docType, quote, t, navigate),
+              quote?.isDraft && isInvoice ? (
+                <span style={{ color: "#e77676" }}>
+                  {t("sales.quote.draft")}
+                </span>
+              ) : (
+                _renderStatus(docType, quote, t, navigate)
+              ),
               <MoreMenuWidget
                 quote={quote}
                 documentType={docType}
