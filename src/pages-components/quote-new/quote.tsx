@@ -65,7 +65,6 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import CloseOrderNote from "../quotes/widgets/general/close-order-note";
 
-
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isQuoteConfirmation?: boolean;
@@ -750,11 +749,6 @@ const QuoteNewPageWidget = ({
             >
               {!isReceipt && (
                 <QuoteForPriceTable
-                  // documentItems={
-                  //   isQuoteConfirmation
-                  //     ? quoteConfirm?.documentItems
-                  //     : documentItems
-                  // }
                   documentItems={documentItems}
                   tableHeaders={tableHeaders}
                   columnWidths={columnWidths}
@@ -782,6 +776,7 @@ const QuoteNewPageWidget = ({
                   }
                 />
               )}
+              {/* !here we need */}
               {isPrePaymentPage && (
                 <>
                   <div style={classes.borderContainer} />

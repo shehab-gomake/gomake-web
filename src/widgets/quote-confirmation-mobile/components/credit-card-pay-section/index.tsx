@@ -7,7 +7,13 @@ import { useEffect } from "react";
 import { loadgingState } from "@/store/loading";
 import { useRecoilValue } from "recoil";
 
-const CreditCardPaySection = ({ isFromBigScreen = false, documentType }) => {
+//!here need update
+
+const CreditCardPaySection = ({
+  isFromBigScreen = false,
+  documentType,
+  isDebtPayments = false,
+}) => {
   const customWidth = isFromBigScreen ? "70%" : "85%";
   const { classes } = useStyle({ isFromBigScreen, customWidth });
   const {
@@ -24,7 +30,8 @@ const CreditCardPaySection = ({ isFromBigScreen = false, documentType }) => {
     handleExpiryDateChange,
     handleProceedCheckout,
     isPaymentSuccess,
-  } = useCreditCardPaySection({ documentType });
+  } = useCreditCardPaySection({ documentType, isDebtPayments });
+
   const loading = useRecoilValue(loadgingState);
 
   useEffect(() => {
@@ -72,6 +79,7 @@ const CreditCardPaySection = ({ isFromBigScreen = false, documentType }) => {
             value={paymentDetailsState?.holderID}
             onChange={(e) => handleChangeInputs("holderID", e.target.value)}
           />
+          {/* !here */}
           <input
             style={classes.creditSecondCardInputs}
             placeholder={t("sales.quote.total")}

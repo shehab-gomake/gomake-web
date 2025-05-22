@@ -3,12 +3,19 @@ import {
   calculateSelectedItemsApi,
   getDocumentByIdApi,
 } from "@/services/api-service/generic-doc/quote-confirmation-api";
-import { fileItemsState, quoteConfirmationState, requestAbortControllerState } from "@/store/quote-item";
+import {
+  fileItemsState,
+  quoteConfirmationState,
+  requestAbortControllerState,
+} from "@/store/quote-item";
 import { useRouter } from "next/router";
-import { useCallback,  useState } from "react";
+import { useCallback, useState } from "react";
 import { useRecoilState } from "recoil";
 import cloneDeep from "lodash.clonedeep";
-import { getPrePaymentByIdApi } from "@/services/api-service/pay/pay-api";
+import {
+  getDebtsPaymentByIdApi,
+  getPrePaymentByIdApi,
+} from "@/services/api-service/pay/pay-api";
 import { useTranslation } from "react-i18next";
 import { DOCUMENT_TYPE } from "../quotes/enums";
 import { getCompanyLoginLogo } from "@/services/api-service/profiles/company-profile-api";
@@ -17,7 +24,10 @@ interface IProps {
   documentType?: DOCUMENT_TYPE;
   isPrePaymentPage?: boolean;
 }
-const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) => {
+const useQuoteConfirmation = ({
+  documentType,
+  isPrePaymentPage,
+}: IProps = {}) => {
   const router = useRouter();
   const { t } = useTranslation();
   const direction = t("direction");
@@ -26,7 +36,8 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
   const [quoteConfirm, setQuoteConfirm] = useRecoilState<any>(
     quoteConfirmationState
   );
-  const [requestAbortController, setRequestAbortController] = useRecoilState<AbortController | null>(requestAbortControllerState);
+  const [requestAbortController, setRequestAbortController] =
+    useRecoilState<AbortController | null>(requestAbortControllerState);
 
   const [isPageNotFound, setIsPageNotFound] = useState(false); // Add state for page not found
 
@@ -42,7 +53,7 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
           item.isChecked = false;
           return item;
         });
-        
+
         // Add documentItemIds array to store selected item IDs
         quote.documentItems.forEach((item) => {
           if (item.isSelected) {
@@ -56,8 +67,12 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
         alertFaultUpdate();
       }
     };
-    await getDocumentByIdApi(callApi, callBack, { id: router?.query?.Id,documentItemIds: documentItemIds });
+    await getDocumentByIdApi(callApi, callBack, {
+      id: router?.query?.Id,
+      documentItemIds: documentItemIds,
+    });
   };
+
   const getTempUserToken = useCallback(async () => {
     const TokenRes: any = await callApi("GET", "/v1/auth/get-temp-user-token", {
       token: isPrePaymentPage ? router?.query?.recordId : router?.query?.Id,
@@ -69,6 +84,7 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
     return null;
   }, [router]);
 
+  //!here
   const getPrePaymentById = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -84,73 +100,108 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
       documentType,
     });
   };
- 
-  const [counter,setCounter] = useState(0);
 
-  const calculateSelectedItems = useCallback(async (quote) => {
-    const documentItemIds = quote?.documentItems?.filter((x) => x.isChecked)?.map((x) => x.id);
-    // Abort any existing request
-    if (requestAbortController) {
-      requestAbortController.abort();
-    }
-    const newRequestAbortController = new AbortController();
-    if(setRequestAbortController){
-      setRequestAbortController(newRequestAbortController);
-    }
-    setCounter(counter+1);
-
-    
+  //!here new
+  const getDebtsPaymentById = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        const newQuote = res?.data;
-        newQuote.documentItems = newQuote.documentItems.map((item) => {
-          item.isChecked = documentItemIds.includes(item.id);
-          return item;
-        });
-        setQuoteConfirm(newQuote);
-        alertSuccessUpdate();
-      } else {
-        // alertFaultUpdate();
+        const quote = res?.data;
+        const modifiedQuote = {
+          ...quote,
+          id: quote.customerID || quote.id,
+          documentContacts: [
+            {
+              email: quote.contactEmail,
+              name: quote.contactName,
+              phone: quote.contactPhone,
+            },
+          ],
+        };
+        setQuoteConfirm(modifiedQuote);
+        quote.clientLang && i18n.changeLanguage(quote.clientLang); // !here
       }
     };
-  
-    try {
-      await calculateSelectedItemsApi(
-        callApi, 
-        callBack, 
-        {
-          quoteId: quote?.id,
-          documentItemIds: documentItemIds,
-        },
-        false,
-        newRequestAbortController
-      );
-    } catch (error) {
-      if (error.name === 'AbortError') {
-        return;
+    await getDebtsPaymentByIdApi(callApi, callBack, {
+      recordId: router?.query?.recordId,
+    });
+  };
+
+  const [counter, setCounter] = useState(0);
+
+  const calculateSelectedItems = useCallback(
+    async (quote) => {
+      const documentItemIds = quote?.documentItems
+        ?.filter((x) => x.isChecked)
+        ?.map((x) => x.id);
+      // Abort any existing request
+      if (requestAbortController) {
+        requestAbortController.abort();
       }
-      throw error;
-    }
-  }, [requestAbortController]); 
+      const newRequestAbortController = new AbortController();
+      if (setRequestAbortController) {
+        setRequestAbortController(newRequestAbortController);
+      }
+      setCounter(counter + 1);
+
+      const callBack = (res) => {
+        if (res?.success) {
+          const newQuote = res?.data;
+          newQuote.documentItems = newQuote.documentItems.map((item) => {
+            item.isChecked = documentItemIds.includes(item.id);
+            return item;
+          });
+          setQuoteConfirm(newQuote);
+          alertSuccessUpdate();
+        } else {
+          // alertFaultUpdate();
+        }
+      };
+
+      try {
+        await calculateSelectedItemsApi(
+          callApi,
+          callBack,
+          {
+            quoteId: quote?.id,
+            documentItemIds: documentItemIds,
+          },
+          false,
+          newRequestAbortController
+        );
+      } catch (error) {
+        if (error.name === "AbortError") {
+          return;
+        }
+        throw error;
+      }
+    },
+    [requestAbortController]
+  );
   const [fileItems, setFileItems] = useRecoilState(fileItemsState);
+
+  //!here like this
   const handleItemCheck = (e, itemId) => {
     let quoteCopy = cloneDeep(quoteConfirm);
     if (quoteCopy?.documentItems) {
       const documentItems = quoteConfirm?.documentItems.map((x) =>
         x.id === itemId ? { ...x, isChecked: e.target.checked } : x
       );
-      
+
       quoteCopy = { ...quoteCopy, documentItems: documentItems };
     }
     setQuoteConfirm(quoteCopy);
     calculateSelectedItems(quoteCopy);
-  
+
     // Add or remove item from fileItems based on checkbox state
     if (e.target.checked) {
-      const selectedItem = quoteConfirm?.documentItems.find(item => item.id === itemId);
+      const selectedItem = quoteConfirm?.documentItems.find(
+        (item) => item.id === itemId
+      );
       if (selectedItem) {
-        const existingItemIndex = fileItems.findIndex(item => item.id === itemId);
-        
+        const existingItemIndex = fileItems.findIndex(
+          (item) => item.id === itemId
+        );
+
         if (existingItemIndex === -1) {
           // Add new item if it doesn't exist
           setFileItems([
@@ -158,14 +209,14 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
             {
               id: selectedItem.id,
               productName: selectedItem.productName,
-              files: null
-            }
+              files: null,
+            },
           ]);
         }
       }
     } else {
       // Remove item when unchecked
-      setFileItems(fileItems.filter(item => item.id !== itemId));
+      setFileItems(fileItems.filter((item) => item.id !== itemId));
     }
   };
   // const handleItemCheck = (e, itemId) => {
@@ -238,6 +289,7 @@ const useQuoteConfirmation = ({ documentType, isPrePaymentPage }: IProps = {}) =
     router,
     companyLogo,
     getCompanyLogo,
+    getDebtsPaymentById,
   };
 };
 

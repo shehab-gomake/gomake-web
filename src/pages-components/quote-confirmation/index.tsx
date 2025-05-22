@@ -5,24 +5,32 @@ import { GoMakeIcon } from "@/components/icons/go-make-icon";
 import { QuoteNewPageWidget } from "../quote-new/quote";
 import { QuoteConfirmationMobileWidget } from "@/widgets/quote-confirmation-mobile";
 import { useQuoteConfirmation } from "./use-quote-confirmation";
-import { clearStorage, removeTempUserTokenStorage, updateTempUserTokenStorage } from "@/services/storage-data";
+import {
+  removeTempUserTokenStorage,
+  updateTempUserTokenStorage,
+} from "@/services/storage-data";
 import { FONT_FAMILY } from "@/utils/font-family";
 import PageNotFound from "@/pages/404.page";
 import { QuoteConfirmationMobileSkeltonWidget } from "@/widgets/quote-confirmation-mobile/components/quote-confirmation-mobile-skelton";
 import { useTranslation } from "react-i18next";
+import { DebtPaymentWidget } from "../debt-Payment";
 
 interface IProps {
   isPrePaymentPage?: boolean;
+  isDebtPayments?: boolean;
   documentType?: DOCUMENT_TYPE;
 }
 
 const QuoteConfirmationPageWidget = ({
   isPrePaymentPage = false,
+  isDebtPayments = false,
   documentType,
 }: IProps) => {
+  const { t } = useTranslation();
   const [isMobile, setIsMobile] = useState(false);
   const {
     getTempUserToken,
+    getDebtsPaymentById,
     getPrePaymentById,
     getQuoteConfirmation,
     documentTitle,
@@ -33,8 +41,9 @@ const QuoteConfirmationPageWidget = ({
     getCompanyLogo,
     quoteConfirm,
   } = useQuoteConfirmation({ documentType, isPrePaymentPage });
+
   const { classes } = useStyle({ direction });
-  const { t } = useTranslation();
+
   useEffect(() => {
     updateScreenWidth();
     window.addEventListener("resize", updateScreenWidth);
@@ -49,7 +58,17 @@ const QuoteConfirmationPageWidget = ({
 
   useEffect(() => {
     const handlePrePaymentPage = async () => {
-      if (isPrePaymentPage) {
+      if (isDebtPayments) {
+        removeTempUserTokenStorage();
+        try {
+          const userToken = await getTempUserToken();
+
+          if (userToken) {
+            updateTempUserTokenStorage(userToken);
+            await getDebtsPaymentById();
+          }
+        } catch (error) {}
+      } else if (isPrePaymentPage) {
         removeTempUserTokenStorage();
         try {
           const userToken = await getTempUserToken();
@@ -74,21 +93,24 @@ const QuoteConfirmationPageWidget = ({
     };
 
     handlePrePaymentPage();
-  }, [isPrePaymentPage, getTempUserToken]);
-
-  // if (isPageNotFound && isPrePaymentPage) {
-  //   return <PageNotFound hideBackToHomePageBtn={true} message={"this payment is closed"} />;
-  // }
+  }, [isPrePaymentPage, isDebtPayments, getTempUserToken]);
 
   useEffect(() => {
     getCompanyLogo().then();
   }, []);
 
+  // if (isPageNotFound && isPrePaymentPage) {
+  //   return <PageNotFound hideBackToHomePageBtn={true} message={"this payment is closed"} />;
+  // }
+
   return (
     <>
-      {isPageNotFound ?
-        <PageNotFound hideBackToHomePageBtn={true} message={"this payment is closed"} />
-        :
+      {isPageNotFound ? (
+        <PageNotFound
+          hideBackToHomePageBtn={true}
+          message={"This payment is closed"}
+        />
+      ) : (
         <div style={classes.firstContainer}>
           <div style={isMobile ? classes.iconMobileStyle : classes.iconStyle}>
             {companyLogo?.loginLogo && !isPrePaymentPage ? (
@@ -158,15 +180,23 @@ const QuoteConfirmationPageWidget = ({
             ) : (
               <QuoteConfirmationMobileSkeltonWidget />
             )
+          ) : isDebtPayments ? (
+            <DebtPaymentWidget
+              documentType={
+                isPrePaymentPage ? documentType : DOCUMENT_TYPE.quote
+              }
+            />
           ) : (
             <QuoteNewPageWidget
-              documentType={isPrePaymentPage ? documentType : DOCUMENT_TYPE.quote}
+              documentType={
+                isPrePaymentPage ? documentType : DOCUMENT_TYPE.quote
+              }
               isQuoteConfirmation={true}
               isPrePaymentPage={isPrePaymentPage}
             />
           )}
         </div>
-      }
+      )}
     </>
   );
 };
