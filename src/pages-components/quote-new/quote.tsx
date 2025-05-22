@@ -65,7 +65,6 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import CloseOrderNote from "../quotes/widgets/general/close-order-note";
 
-
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isQuoteConfirmation?: boolean;
@@ -600,7 +599,7 @@ const QuoteNewPageWidget = ({
                           quoteItemValue?.isEditable
                         }
                         inputRef={creationDateRef}
-                        preventOpenCondition={!quoteState.client}
+                        // preventOpenCondition={!quoteState.client}
                       />
                       {documentType !== DOCUMENT_TYPE.purchaseOrder &&
                         (isQuote && !selectDate ? (
@@ -623,7 +622,7 @@ const QuoteNewPageWidget = ({
                             }}
                             isEditable={quoteItemValue?.isEditable}
                             inputRef={dateRef}
-                            preventOpenCondition={!quoteState.client}
+                            // preventOpenCondition={!quoteState.client}
                             withTime={isOrder || isQuote}
                           />
                         ))}
@@ -638,7 +637,7 @@ const QuoteNewPageWidget = ({
                           }}
                           isEditable={quoteItemValue?.isEditable}
                           inputRef={taxDateRef}
-                          preventOpenCondition={!quoteState.client}
+                          // preventOpenCondition={!quoteState.client}
                         />
                       )}
                     </LocalizationProvider>
