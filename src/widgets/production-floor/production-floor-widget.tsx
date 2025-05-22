@@ -1,6 +1,6 @@
 import { Fab, IconButton, Stack } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   EProductionFloorView,
   productionFloorViewState,
@@ -24,6 +24,10 @@ import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-flo
 import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import { useIsMobile, useMobileHeight } from "@/hooks/use-responsive";
 import QRScannerFab from "../qr-scanner/qr-scanner-fab";
+import { boardMissionsFilesState } from "./views/board-missions-view/files/state";
+import { boardMissionsStationsState } from "./views/board-missions-view/stations/state";
+import { boardMissionsDetailsState } from "./state/boards";
+import { boardMissionsActivitiesState } from "./state/board-missions-activities";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -32,6 +36,11 @@ const ProductionFloorWidget = () => {
   const { groupsId, boardMissionsId, step, productType } = query;
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
+
+  // const setFiles = useSetRecoilState(boardMissionsFilesState);
+  // const setStations = useSetRecoilState(boardMissionsStationsState);
+  // const setBoardMissionsDetails = useSetRecoilState(boardMissionsDetailsState);
+  // const setActivities = useSetRecoilState(boardMissionsActivitiesState);
 
   const {
     filterGroups,
@@ -86,6 +95,19 @@ const ProductionFloorWidget = () => {
     }
   }, [query, setView]);
 
+  const onClose = () => {
+    {
+      const currentView = EProductionFloorView[view].toLowerCase();
+      push(`/production-floor?view=${currentView}`, undefined, {
+        shallow: true,
+      });
+      // setFiles([]);
+      // setStations([]);
+      // setBoardMissionsDetails(null);
+      // setActivities([]);
+    };
+  };
+
   return (
     <Stack
       padding={"0 20px"}
@@ -128,12 +150,7 @@ const ProductionFloorWidget = () => {
         sx={{ zIndex: 999999 }}
         open={!!boardMissionsId}
         anchor={"bottom"}
-        onClose={() => {
-          const currentView = EProductionFloorView[view].toLowerCase();
-          push(`/production-floor?view=${currentView}`, undefined, {
-            shallow: true,
-          });
-        }}
+        onClose={onClose}
       >
         <Stack
           paddingBottom={"10px"}
@@ -142,12 +159,7 @@ const ProductionFloorWidget = () => {
           height={`calc(${mobileHeight} - 50px)`}
         >
           <IconButton
-            onClick={() => {
-              const currentView = EProductionFloorView[view].toLowerCase();
-              push(`/production-floor?view=${currentView}`, undefined, {
-                shallow: true,
-              });
-            }}
+            onClick={onClose}
             sx={{
               width: "fit-content",
               height: "fit-content",

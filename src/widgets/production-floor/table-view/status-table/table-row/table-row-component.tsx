@@ -2,8 +2,9 @@ import { SecondaryTableCell } from "@/components/tables/secondary-table";
 import { CurrentStationComponent } from "@/widgets/production-floor/table-view/status-table/stations/current-station";
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useDrag, useDrop } from "react-dnd";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
+  boardMissionsDetailsState,
   boardsMissionsState,
   selectedBoardsMissionsState,
 } from "@/widgets/production-floor/state/boards";
@@ -45,6 +46,9 @@ import { ProductionFloorNote } from "../board-note/production-floor-note";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 import { GoMakeDeleteModal, GomakeTextInput } from "@/components";
 import { ModalType } from "@/enums";
+import { boardMissionsActivitiesState } from "@/widgets/production-floor/state/board-missions-activities";
+import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
+import { boardMissionsFilesState } from "@/widgets/production-floor/views/board-missions-view/files/state";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -212,6 +216,11 @@ const TableRowComponent = ({
   };
   drag(drop(ref));
 
+  const setFiles = useSetRecoilState(boardMissionsFilesState);
+  const setStations = useSetRecoilState(boardMissionsStationsState);
+  const setBoardMissionsDetails = useSetRecoilState(boardMissionsDetailsState);
+  const setActivities = useSetRecoilState(boardMissionsActivitiesState);
+
   return (
     <>
       <TableRow>
@@ -292,7 +301,11 @@ const TableRowComponent = ({
             onClick={() => {
               push(
                 `/production-floor?boardMissionsId=${boardMission?.id}&productType=${boardMission?.productType}&step=stations`
-              ).then();
+              );
+              setFiles([]);
+              setStations([]);
+              setBoardMissionsDetails(null);
+              setActivities([]);
             }}
           >
             <div />
@@ -498,7 +511,6 @@ const TableRowComponent = ({
             statusId={boardMission.statusId}
             id={boardMission.id}
             onChange={(id, statusId) => {
-              console.log("statusId", statusId);
               if (
                 statusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" &&
                 boardMission.isNeedExample

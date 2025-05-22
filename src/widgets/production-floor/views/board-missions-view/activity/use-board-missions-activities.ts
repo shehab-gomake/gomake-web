@@ -32,18 +32,26 @@ const useBoardMissionsActivities = () => {
     alertSuccessGetData,
     alertFaultGetData,
   } = useSnackBar();
+  const [abortController, setAbortController] = useState(null);
   const { boardMissionsId, step, productType } = query;
-
   const getAllActivities = async () => {
+    if (abortController) {
+      abortController.abort();
+    }
+    const newRequestAbortController = new AbortController();
+    setAbortController(newRequestAbortController);
     const callBack = (res) => {
       if (res.success) {
+        if(res?.data&& (res?.data[0]?.boardMissionId !== boardMissionsId)){
+          return;
+        }
         alertSuccessGetData();
         setActivities(res.data);
       } else {
         alertFaultGetData();
       }
     };
-    await getAllBoardMissionsActivities(callApi, callBack, boardMissionsId);
+    await getAllBoardMissionsActivities(callApi, callBack, boardMissionsId, false, newRequestAbortController);
   };
 
   const addComment = (comment: string) => {
