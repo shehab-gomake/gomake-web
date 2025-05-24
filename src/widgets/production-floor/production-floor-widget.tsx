@@ -25,7 +25,7 @@ import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import { useIsMobile, useMobileHeight } from "@/hooks/use-responsive";
 import QRScannerFab from "../qr-scanner/qr-scanner-fab";
 import { boardMissionsFilesState } from "./views/board-missions-view/files/state";
-import { boardMissionsStationsState } from "./views/board-missions-view/stations/state";
+import { abortControllerActivitiesState, abortControllerFilesState, abortControllerStationState, boardMissionsStationsState, getBoardMissionsByIdState } from "./views/board-missions-view/stations/state";
 import { boardMissionsDetailsState } from "./state/boards";
 import { boardMissionsActivitiesState } from "./state/board-missions-activities";
 
@@ -79,6 +79,10 @@ const ProductionFloorWidget = () => {
       closeConnection();
     };
   }, []);*/
+  const setAbortControllerStation = useSetRecoilState(abortControllerStationState);
+  const setAbortControllerFiles = useSetRecoilState(abortControllerFilesState);
+  const setAbortControllerActivities = useSetRecoilState(abortControllerActivitiesState);
+  const setAbortControllerDetails = useSetRecoilState(getBoardMissionsByIdState);
 
   useEffect(() => {
     const { view: viewQuery } = query;
@@ -97,10 +101,15 @@ const ProductionFloorWidget = () => {
 
   const onClose = () => {
     {
+      const newRequestAbortController = new AbortController();
       const currentView = EProductionFloorView[view].toLowerCase();
       push(`/production-floor?view=${currentView}`, undefined, {
         shallow: true,
       });
+      setAbortControllerStation(newRequestAbortController);
+      setAbortControllerFiles(newRequestAbortController);
+      setAbortControllerActivities(newRequestAbortController);
+      setAbortControllerDetails(newRequestAbortController);
       // setFiles([]);
       // setStations([]);
       // setBoardMissionsDetails(null);

@@ -6,13 +6,14 @@ import { boardMissionsFilesState } from "./state";
 import { boardMissionsDetailsState } from "@/widgets/production-floor/state/boards";
 import { FileTypeENUM } from "@/widgets/file-uploader-widget/interface";
 import { useRouter } from "next/router";
+import { abortControllerFilesState } from "../stations/state";
 
 const useBoardMissionsFiles = () => {
   const { callApi } = useGomakeAxios();
   const [files, setFiles] = useRecoilState(boardMissionsFilesState);
   const [boardMissions] = useRecoilState(boardMissionsDetailsState);
   const [activeTab, setActiveTab] = useState(FileTypeENUM.Printing);
-  const [abortController, setAbortController] = useState(null);
+  const [abortController, setAbortController] = useRecoilState(abortControllerFilesState);
   const router = useRouter();
   const { query } = router;
 
