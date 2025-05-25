@@ -7,7 +7,6 @@ import { useEffect } from "react";
 import { loadgingState } from "@/store/loading";
 import { useRecoilValue } from "recoil";
 
-//!here need update
 const CreditCardPaySection = ({
   isFromBigScreen = false,
   documentType,
@@ -122,7 +121,6 @@ const CreditCardPaySection = ({
                 />
               </div>
             )}
-          {/* !here */}
           <PrimaryButton
             onClick={handleProceedCheckout}
             variant="contained"

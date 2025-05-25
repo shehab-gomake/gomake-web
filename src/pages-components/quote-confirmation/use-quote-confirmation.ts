@@ -112,7 +112,7 @@ const useQuoteConfirmation = ({
 
         const modifiedQuote = {
           ...quote,
-          id: quote.customerID || quote.id,
+          id: quote.customerID || quote?.id,
           debtsToPay: modifiedDebts,
           documentContacts: [
             {
@@ -123,7 +123,7 @@ const useQuoteConfirmation = ({
           ],
         };
         setQuoteConfirm(modifiedQuote);
-        quote.clientLang && i18n.changeLanguage(quote.clientLang); // !here
+        quote.clientLang && i18n.changeLanguage(quote.clientLang);
       }
     };
     await getDebtsPaymentByIdApi(callApi, callBack, {

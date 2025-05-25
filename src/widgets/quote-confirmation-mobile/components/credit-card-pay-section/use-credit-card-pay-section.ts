@@ -4,7 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { usePaymentInputs } from "react-payment-inputs";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { createPaymentTransactionApi } from "@/services/api-service/pay/pay-api";
+import {
+  createDebitsPaymentTransactionApi,
+  createPaymentTransactionApi,
+} from "@/services/api-service/pay/pay-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 interface PaymentDetails {
@@ -122,13 +125,21 @@ const useCreditCardPaySection = ({
   };
 
   const handleChangeInputs = (key, value) => {
-    setPaymentDetails((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    setPaymentDetails((prev) => {
+      if (key === "transactionType" && value === 1) {
+        return {
+          ...prev,
+          [key]: value,
+          numberOfPayments: 1,
+        };
+      }
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
   };
 
-  //!here
   const handleProceedCheckout = async () => {
     const { expDate_MMYY, cvv, cardNumber } = paymentDetailsState;
     if (!expDate_MMYY || !cvv || !cardNumber) {
@@ -136,12 +147,16 @@ const useCreditCardPaySection = ({
       return;
     }
 
+    const selectedDebtsToPay =
+      quoteConfirm?.debtsToPay?.filter((item) => item.isChecked) || [];
+
     const finalPaymentDetailsState = {
       ...paymentDetailsState,
-      documentID: quoteConfirm?.id,
+      ...(!isDebtPayments && { documentID: quoteConfirm?.id }),
       documentType: documentType,
       paymentRequestId: quoteConfirm?.paymentRequestId,
       clientID: quoteConfirm?.customerID,
+      ...(isDebtPayments && { debtsItems: selectedDebtsToPay }),
     };
 
     const callBack = (res) => {
@@ -152,11 +167,20 @@ const useCreditCardPaySection = ({
         alertFault(t("prePayment.paymentFailed"));
       }
     };
-    await createPaymentTransactionApi(
-      callApi,
-      callBack,
-      finalPaymentDetailsState
-    );
+
+    if (isDebtPayments) {
+      await createDebitsPaymentTransactionApi(
+        callApi,
+        callBack,
+        finalPaymentDetailsState
+      );
+    } else {
+      await createPaymentTransactionApi(
+        callApi,
+        callBack,
+        finalPaymentDetailsState
+      );
+    }
   };
 
   return {

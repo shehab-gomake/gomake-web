@@ -10,7 +10,8 @@ const SEND_PRE_PAYMENT_TO_CLIENT_URL =
 const COPY_PRE_PAYMENT_LINK_URL = "/v1/erp-service/pay/copy-pre-payment-link";
 const CREATE_PAYMENT_TRANSACTION_URL =
   "/v1/erp-service/receipts/create-payment-transaction";
-
+const CREATE_DEBTS_PAYMENT_TRANSACTION_URL =
+  "/v1/erp-service/receipts/create-debts-payment-transaction";
 const GET_DEBTS_PAYMENT_BY_ID_URL =
   "/v1/erp-service/pay/get-debts-payment-by-id";
 
@@ -115,6 +116,23 @@ const getDebtsPaymentByIdApi: ICallAndSetData = async (
   );
 };
 
+const createDebitsPaymentTransactionApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    CREATE_DEBTS_PAYMENT_TRANSACTION_URL,
+    setState,
+    data,
+    true,
+    null,
+    true
+  );
+};
+
 export {
   sendDocumentToClientForPaymentApi,
   getDocumentContactApi,
@@ -123,4 +141,5 @@ export {
   CopyPrePaymentLinkApi,
   createPaymentTransactionApi,
   getDebtsPaymentByIdApi,
+  createDebitsPaymentTransactionApi,
 };
