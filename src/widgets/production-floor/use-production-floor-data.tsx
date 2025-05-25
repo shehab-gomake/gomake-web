@@ -68,7 +68,7 @@ const useProductionFloorData = () => {
   const [data, setData] =
     useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
   const [selectedMission, setSelectedMission] =
-      useRecoilState<IBoardMissions>(selectedMissionsState);
+      useRecoilState<any>(selectedMissionsState);
   const [abortController, setAbortController] = useRecoilState(
     productionFloorAbortControllerState
   );

@@ -47,7 +47,7 @@ export const storageListState = atom<any[]>({
   key: "storageListState",
 });
 
-export const selectedMissionsState = atom<IBoardMissions>({
+export const selectedMissionsState = atom<any>({
   key: "selectedMissionsState",
   default: null,
 });
