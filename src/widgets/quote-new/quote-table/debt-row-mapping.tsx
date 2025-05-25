@@ -12,7 +12,7 @@ const DebtRowMappingWidget = ({ item, index, headerHeight, parentIndex }) => {
   const { classes } = useStyle({ headerHeight });
   const { formatISODateTime } = useDateFormat();
   const columnWidths = ["10%", "22%"];
-  const { handleDebtItemCheck } = useQuoteConfirmation();
+  const { handleDebtItemCheck, quoteConfirm } = useQuoteConfirmation();
 
   return (
     <TableRow
@@ -29,12 +29,14 @@ const DebtRowMappingWidget = ({ item, index, headerHeight, parentIndex }) => {
         }}
       >
         <div style={classes.checkBoxContainer}>
-          <Checkbox
-            icon={<CheckboxIcon />}
-            checkedIcon={<CheckboxCheckedIcon />}
-            checked={item?.isChecked}
-            onChange={(checked) => handleDebtItemCheck(checked, item.transId)}
-          />
+          {quoteConfirm?.isCanSelectRows && (
+            <Checkbox
+              icon={<CheckboxIcon />}
+              checkedIcon={<CheckboxCheckedIcon />}
+              checked={item?.isChecked}
+              onChange={(checked) => handleDebtItemCheck(checked, item.transId)}
+            />
+          )}
           {parentIndex}
         </div>
       </PrimaryTableCell>

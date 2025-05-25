@@ -32,12 +32,6 @@ const CreditCardPaySection = ({
   } = useCreditCardPaySection({ documentType, isDebtPayments });
   const loading = useRecoilValue(loadgingState);
 
-  // useEffect(() => {
-  //   if (quoteConfirm?.sumToPrepay) {
-  //     handleChangeInputs("transactionSum", quoteConfirm.sumToPrepay);
-  //   }
-  // }, [quoteConfirm]);
-
   useEffect(() => {
     if (quoteConfirm && isDebtPayments) {
       const selectedTotal = quoteConfirm.debtsToPay
@@ -128,6 +122,7 @@ const CreditCardPaySection = ({
                 />
               </div>
             )}
+          {/* !here */}
           <PrimaryButton
             onClick={handleProceedCheckout}
             variant="contained"

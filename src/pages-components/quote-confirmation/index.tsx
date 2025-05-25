@@ -169,7 +169,7 @@ const QuoteConfirmationPageWidget = ({
               <GoMakeIcon />
             )}
           </div>
-          {isMobile ? (
+          {isMobile && !isDebtPayments ? (
             quoteConfirm?.id ? (
               <QuoteConfirmationMobileWidget
                 isMobile={isMobile}
@@ -182,6 +182,7 @@ const QuoteConfirmationPageWidget = ({
             )
           ) : isDebtPayments ? (
             <DebtPaymentWidget
+              isMobile={isMobile}
               documentType={
                 isPrePaymentPage ? documentType : DOCUMENT_TYPE.quote
               }

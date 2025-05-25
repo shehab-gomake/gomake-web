@@ -166,7 +166,7 @@ const QuoteForPriceTable = ({
                 <>
                   {isDebtPayments ? (
                     <DebtRowMappingWidget
-                      key={item.id}
+                      key={item?.transId}
                       item={item}
                       index={index}
                       parentIndex={parentIndex}

@@ -11,12 +11,15 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { DisabledContactMapping } from "@/widgets/quote-new/contact-widget/disabled-contact-mapping";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
+import { DebtPaymentMobileWidget } from "@/widgets/debt-payment-mobile-widget";
+import { QuoteConfirmationMobileSkeltonWidget } from "@/widgets/quote-confirmation-mobile/components/quote-confirmation-mobile-skelton";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
+  isMobile: boolean;
 }
 
-const DebtPaymentWidget = ({ documentType }: IProps) => {
+const DebtPaymentWidget = ({ documentType, isMobile = false }: IProps) => {
   const { t } = useTranslation();
   const { classes } = useStyle(true);
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
@@ -36,13 +39,21 @@ const DebtPaymentWidget = ({ documentType }: IProps) => {
 
   return (
     <>
-      {quoteConfirm?.id ? (
+      {!quoteConfirm?.client?.id ? (
+        isMobile ? (
+          <QuoteConfirmationMobileSkeltonWidget />
+        ) : (
+          <QuoteNewPageSkeletonWidget />
+        )
+      ) : isMobile ? (
+        <DebtPaymentMobileWidget />
+      ) : (
         <div data-tour={"quoteStep1"} style={classes.mainContainer}>
           <div style={classes.secondContainer}>
             <div style={{ paddingLeft: 20, paddingRight: 12 }}>
               <div style={classes.titleQuoteContainer}>
                 <HeaderTitle
-                  title={"Debt Payment Details"}
+                  title={t("sales.list.debtPaymentDetails")}
                   marginBottom={1}
                   marginTop={1}
                   color="rgba(241, 53, 163, 1)"
@@ -98,8 +109,6 @@ const DebtPaymentWidget = ({ documentType }: IProps) => {
             </div>
           </div>
         </div>
-      ) : (
-        <QuoteNewPageSkeletonWidget />
       )}
     </>
   );
