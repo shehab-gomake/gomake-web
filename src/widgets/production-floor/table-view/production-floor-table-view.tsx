@@ -8,6 +8,7 @@ import { CLIENT_TYPE, CUSTOMER_ACTIONS } from "@/pages/customers/enums";
 import { CustomerCardWidget } from "@/widgets/customer-card-modal";
 import { useTranslation } from "react-i18next";
 import { useProductionFloorFilters } from "../filters/use-production-floor-filters";
+import { useStorageList } from "@/hooks/use-storage-list";
 import { EProductionFloorView } from "../state/production-floor-view";
 import { allBoardMissionsState, pageNumberState, pagesCountState, pageSizeState } from "../state/filter-group";
 import { PrimaryTable } from "@/components/tables/primary-table";
@@ -97,6 +98,18 @@ const ProductionFloorTableView = ({ connectionId }) => {
     }, 1000);
     return () => clearTimeout(delayFetch);
   }, [search]);
+
+  const {
+    storageList,
+    inputValue,
+    defaultValue,
+    addPrintHouseJobsStorage,
+    handleStorageChange,
+    setInputValue,
+    selectedMission,
+    setSelectedMission
+  } = useStorageList()
+
   const tableHeader = [
     t("boardMissions.image"),
     t("boardMissions.creationDate"),
@@ -116,6 +129,7 @@ const ProductionFloorTableView = ({ connectionId }) => {
   const router = useRouter();
   return (
     <Stack gap={"20px"}>
+
       {
         view === EProductionFloorView.DONE_JOBS ? (
           <>
@@ -156,21 +170,29 @@ const ProductionFloorTableView = ({ connectionId }) => {
           </>
         ) :
           <>
-            {filteredDataByMachine.map((statusBoards, index) => {
-              const allBoardMissions = filteredDataByMachine.flatMap(
-                (board) => board.boardMissions
-              );
-              return (
-                <StatusTableComponent
-                  key={index}
-                  status={statusBoards?.boardMissionStatus?.boardMissionStatus}
-                  boards={statusBoards?.boardMissions}
-                  onClickClient={getCustomerForEdit}
-                  allBoardMissions={allBoardMissions}
-                  setFilters={setFilters}
-                />
-              );
-            })}
+              {filteredDataByMachine.map((statusBoards, index) => {
+                  const allBoardMissions = filteredDataByMachine.flatMap(
+                      (board) => board.boardMissions
+                  );
+                  return (
+                      <StatusTableComponent
+                          key={index}
+                          status={statusBoards?.boardMissionStatus?.boardMissionStatus}
+                          boards={statusBoards?.boardMissions}
+                          onClickClient={getCustomerForEdit}
+                          allBoardMissions={allBoardMissions}
+                          setFilters={setFilters}
+                          storageList={storageList}
+                          inputValue={inputValue}
+                          defaultValue={defaultValue}
+                          addPrintHouseJobsStorage={addPrintHouseJobsStorage}
+                          handleStorageChange={handleStorageChange}
+                          setInputValue={setInputValue}
+                          selectedMission={selectedMission}
+                          setSelectedMission={setSelectedMission}
+                      />
+                  );
+              })}
           </>
       }
 

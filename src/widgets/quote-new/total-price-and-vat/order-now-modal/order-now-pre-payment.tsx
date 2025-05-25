@@ -130,13 +130,17 @@ const OrderNowPrePaymentModal = ({
           <div style={classes.mainBtnContainer}>
             <GomakePrimaryButton
               style={classes.btnStyle}
-              onClick={() => handleOrderConfirmation(true, true, totalAmount)}
+              onClick={() =>
+                handleOrderConfirmation(true, true, totalAmount, false)
+              }
             >
               {t("sales.modals.withPaymentMessage")}
             </GomakePrimaryButton>
             <GomakePrimaryButton
               style={classes.secondBtn}
-              onClick={() => handleOrderConfirmation(false, true, totalAmount)}
+              onClick={() =>
+                handleOrderConfirmation(false, true, totalAmount, false)
+              }
             >
               {t("sales.modals.withoutPaymentMessage")}
             </GomakePrimaryButton>

@@ -48,6 +48,10 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { useDebounce } from "@/utils/use-debounce";
 const useProductionFloorData = () => {
+import {IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
+import {CurrentStationOrderingEnum} from "@/enums";
+
+const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === "rtl";
@@ -599,7 +603,6 @@ const useProductionFloorData = () => {
     });
   };
 
-  const [selectedMission, setSelectedMission] = useState<any>({});
   const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
 
   const onOpenPrintDeliverTicketModal = (mission) => {

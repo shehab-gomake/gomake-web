@@ -72,7 +72,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const [selectedTabIndex, setSelectedTabIndex] = useState<number>(0);
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [openOrderNowModal, setOpenOrderNowModal] = useState(false);
-  const CheckoutOptionModal = useModal(); //!here
+  const CheckoutOptionModal = useModal();
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openCancelReceiptModal, setOpenCancelReceiptModal] = useState(false);
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
@@ -268,7 +268,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     const requestBody = {
       quoteId: quoteItemValue?.id,
       sendMessage,
-      ...(sendMessage && { isStripeCash }),
+      ...(sendMessage && quoteItemValue?.isUsedStripe && { isStripeCash }),
       ...(isPrepaymentClient && { totalPrePaymentAmount }),
     };
 
@@ -278,7 +278,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const onClickConfirmWithoutNotification = () =>
     handleOrderConfirmation(false);
   const onClickConfirmWithNotification = (isStripeCash: boolean) =>
-    handleOrderConfirmation(true, false, 0, isStripeCash);
+    handleOrderConfirmation(true, false, 0, !!isStripeCash);
 
   const onClickPrint = async (withInvoices?: boolean) => {
     const downloadPdf = (url) => {

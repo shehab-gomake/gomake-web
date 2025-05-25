@@ -21,7 +21,6 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useDrop } from "react-dnd";
 import { TableRowComponent } from "@/widgets/production-floor/table-view/status-table/table-row/table-row-component";
-import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
 import { useCallback, useState } from "react";
@@ -36,7 +35,7 @@ import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ArrowUpward, } from "@mui/icons-material";
 import { productionFloorFiltersState } from "../../state/production-floor-filters";
 import { currentStationOrderingState } from "@/store/agents-state";
-import { useStorageList } from "@/hooks/use-storage-list";
+import { useProductionFloorData } from "../../use-production-floor-data";
 
 interface IProps {
   status: IProductionStatus;
@@ -45,6 +44,14 @@ interface IProps {
   onClickClient?: (clientId: any) => void;
   allBoardMissions?: IBoardMissions[];
   setFilters?: any
+  storageList?: any
+  inputValue?: any
+  defaultValue?: any
+  addPrintHouseJobsStorage?: any
+  handleStorageChange?: any
+  setInputValue?: any
+  selectedMission?: any
+  setSelectedMission?: any
 }
 
 const StatusTableComponent = ({
@@ -53,7 +60,15 @@ const StatusTableComponent = ({
   count,
   allBoardMissions,
   onClickClient,
-  setFilters
+  setFilters,
+  storageList,
+  inputValue,
+  defaultValue,
+  addPrintHouseJobsStorage,
+  handleStorageChange,
+  setInputValue,
+  selectedMission,
+  setSelectedMission
 }: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
@@ -88,21 +103,12 @@ const StatusTableComponent = ({
     openPackagesModal,
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
-    selectedMission,
     tryMoveBoardMissionsToDone,
     updateJobDueDate,
-    setSelectedMission
 
-  } = useProductionFloorData();
+  } = useProductionFloorData({ selectedMission, setSelectedMission });
 
-  const {
-    storageList,
-    inputValue,
-    defaultValue,
-    addPrintHouseJobsStorage,
-    handleStorageChange,
-    setInputValue
-  } = useStorageList({ selectedMission, setSelectedMission })
+
   const {
     openSimpleApproveModal,
     handleOpenModal,
@@ -136,14 +142,14 @@ const StatusTableComponent = ({
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               item.board.id
             );
-          } else if (status.key === "Stuck") {
+          }/* else if (status.key === "Stuck") {
             handleOpenStuckModal(
               status.id,
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               item.board.id,
               item.board.productType
             );
-          } else {
+          }*/ else {
             updateStatus(
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               status.id
@@ -352,7 +358,7 @@ const StatusTableComponent = ({
         <div style={{ width: "100%", minWidth: 300 }}>
           <GoMakeAutoComplate
             options={
-              storageList.find(
+              storageList?.find(
                 (option: any) => option.storage === inputValue
               ) || inputValue === ""
                 ? storageList

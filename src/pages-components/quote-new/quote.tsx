@@ -65,7 +65,6 @@ import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import CloseOrderNote from "../quotes/widgets/general/close-order-note";
 
-
 interface IProps {
   documentType: DOCUMENT_TYPE;
   isQuoteConfirmation?: boolean;
@@ -324,6 +323,11 @@ const QuoteNewPageWidget = ({
     alertNotVerifiedModalState,
     AddCustomerModal,
     handleSaveDraftBtnClick,
+    alertExistPurchaseNumber,
+    pendingPurchaseNumber,
+    setPendingPurchaseNumber,
+    originalPurchaseNumber,
+    updatePurchaseNumber,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -600,7 +604,7 @@ const QuoteNewPageWidget = ({
                           quoteItemValue?.isEditable
                         }
                         inputRef={creationDateRef}
-                        preventOpenCondition={!quoteState.client}
+                        // preventOpenCondition={!quoteState.client}
                       />
                       {documentType !== DOCUMENT_TYPE.purchaseOrder &&
                         (isQuote && !selectDate ? (
@@ -623,7 +627,7 @@ const QuoteNewPageWidget = ({
                             }}
                             isEditable={quoteItemValue?.isEditable}
                             inputRef={dateRef}
-                            preventOpenCondition={!quoteState.client}
+                            // preventOpenCondition={!quoteState.client}
                             withTime={isOrder || isQuote}
                           />
                         ))}
@@ -638,7 +642,7 @@ const QuoteNewPageWidget = ({
                           }}
                           isEditable={quoteItemValue?.isEditable}
                           inputRef={taxDateRef}
-                          preventOpenCondition={!quoteState.client}
+                          // preventOpenCondition={!quoteState.client}
                         />
                       )}
                     </LocalizationProvider>
@@ -1165,6 +1169,26 @@ const QuoteNewPageWidget = ({
         }}
         subTitle={alertNotVerifiedModalState.message}
         withCancelBtn={!!alertNotVerifiedModalState.onConfirm}
+      />
+      <GoMakeAlertModal
+        openModal={alertExistPurchaseNumber.isOpen}
+        onClose={() => {
+          alertExistPurchaseNumber.close();
+          setQuoteItemValue((prev) => ({
+            ...prev,
+            purchaseNumber: originalPurchaseNumber,
+          }));
+          setPendingPurchaseNumber(null);
+        }}
+        onClickConfirm={async () => {
+          alertExistPurchaseNumber.close();
+          if (pendingPurchaseNumber) {
+            await updatePurchaseNumber(pendingPurchaseNumber, true);
+            setPendingPurchaseNumber(null);
+          }
+        }}
+        subTitle={t("alerts.thisPurchaseNumberIsExist")}
+        yesBtn={t("alerts.UpdateAnyway")}
       />
     </>
   );

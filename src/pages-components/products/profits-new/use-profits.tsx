@@ -505,7 +505,7 @@ const useNewProfits = () => {
         printingActionId: actionProfitByActionId?.printingActionId,
         pricingBy: data?.value,
         transitionType: selectedTransition?.value,
-        minPrice: actionProfitByActionId?.minPrice,
+        minPrice: Number(actionProfitByActionId?.minPrice),
         actionProfitRows: [],
         actionExpections: [],
         productId: router.query.productId,
@@ -548,7 +548,7 @@ const useNewProfits = () => {
         printingActionId: actionProfitByActionId?.printingActionId,
         pricingBy: data?.value,
         transitionType: 1,
-        minPrice: actionProfitByActionId?.minPrice,
+        minPrice: Number(actionProfitByActionId?.minPrice),
         actionProfitRows: [],
         actionExpections: [],
         productId: router.query.productId,
@@ -592,7 +592,7 @@ const useNewProfits = () => {
         printingActionId: actionProfitByActionId?.printingActionId,
         pricingBy: selectedPricingBy?.value,
         transitionType: data?.value,
-        minPrice: actionProfitByActionId?.minPrice,
+        minPrice: Number(actionProfitByActionId?.minPrice),
         actionProfitRows: [],
         actionExpections: [],
         isOutSource: router.query.isOutSource ? true : false,
@@ -734,7 +734,7 @@ const useNewProfits = () => {
         printingActionId: actionProfitByActionId?.printingActionId,
         pricingBy: selectedPricingBy?.value,
         transitionType: selectedTransition?.value,
-        minPrice: data,
+        minPrice: Number(data),
         actionProfitRows: [],
         actionExpections: [],
         packageUnit: actionProfitByActionId?.packageUnit,
@@ -775,7 +775,6 @@ const useNewProfits = () => {
     ]
   );
   const [minimumValue, setMinimumValue] = useState(0);
-  console.log("minimumValue", selectedPricingTableItems)
   useEffect(() => {
     setMinimumValue(selectedPricingTableItems?.minPrice);
 

@@ -118,7 +118,7 @@ const MaterialsAndProductionTimeModalWidget = ({
             </h3>
             <GoMakeAutoComplate
               options={
-                storageList.find(
+                storageList?.find(
                   (option: any) => option.storage === inputValue
                 ) || inputValue === ""
                   ? storageList

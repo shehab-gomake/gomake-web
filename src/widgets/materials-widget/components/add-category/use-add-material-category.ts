@@ -52,7 +52,6 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
   const [attributeValues, setAttributeValues] = useState<Record<string, any>>(
     {}
   );
-
   const additionalAttributes =
     selectedCategoryModal?.additionalAttributes ??
     materialCategories?.[0]?.additionalAttributes ??
@@ -146,7 +145,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
     await updatePrintHouseMaterialCategoryNameApi(callApi, callBack, {
       materialTypeKey: materialType.toString(),
       categoryKey: selectedCategoryModal?.categoryKey,
-      newCategoryKey: newCategoryKey,
+      displayName: newCategory,
       defaultAttributeValues,
     });
   };

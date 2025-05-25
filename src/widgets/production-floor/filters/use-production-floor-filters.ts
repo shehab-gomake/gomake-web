@@ -78,7 +78,7 @@ const useProductionFloorFilters = ({
   const setTags = useSetRecoilState(tagsState);
   const { callApi } = useGomakeAxios();
   const [data, setData] = useRecoilState(boardsMissionsState);
-  const { getDataByGroups, getAllBoardMissions,getAllData ,searchInputFilterRef} = useProductionFloorData();
+  const { getDataByGroups, getAllBoardMissions,getAllData ,searchInputFilterRef} = = useProductionFloorData({});
 
   const setView = useSetRecoilState(productionFloorViewState);
   const { push } = useRouter();

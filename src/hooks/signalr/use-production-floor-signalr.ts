@@ -23,7 +23,7 @@ const useProductionFloorSignalr = () => {
   const setActivities = useSetRecoilState(boardMissionsActivitiesState);
   const [, setIsReady] = useRecoilState(isReadyBoardMissionsState);
   const [, setFiles] = useRecoilState(boardMissionsFilesState);
-  const { getData } = useProductionFloorData();
+  const { getData } = useProductionFloorData({});
   const setSubWorkFlows = useSetRecoilState(boardMissionsSubWorkFlowsState);
   const { data, connectionId, connection, closeConnection } = useGoMakeSignalr<
     any[]

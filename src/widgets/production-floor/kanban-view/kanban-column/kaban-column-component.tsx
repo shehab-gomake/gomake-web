@@ -22,7 +22,7 @@ interface IProps {
 function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
   const { classes } = useStyle();
   const [search] = useRecoilState(productionFloorTextSearchState);
-  const { updateStatus, t, RTL } = useProductionFloorData();
+  const { updateStatus, t, RTL } = useProductionFloorData({});
   const {
     openSimpleApproveModal,
     handleOpenModal,
@@ -47,9 +47,9 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
 
           handleOpenModal(status.id, [item], item.id);
         }
-        else if (status.key === "Stuck") {
+        /*else if (status.key === "Stuck") {
           handleOpenStuckModal(status.id, [item], item.id, item.productType);
-        }
+        }*/
         else {
           updateStatus([item], status.id).then();
         }
