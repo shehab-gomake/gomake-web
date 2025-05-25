@@ -511,7 +511,9 @@ const useProductionFloorData = (
   };
 
   const tryMoveBoardMissionsToDone = async (boardMission) => {
-    setSelectedMission(boardMission);
+    if(setSelectedMission){
+      setSelectedMission(boardMission);
+    }
     const callBack = (res) => {
       if (res.success) {
         if (boardMission.productType) {
@@ -631,13 +633,18 @@ const useProductionFloorData = (
   const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
 
   const onOpenPrintDeliverTicketModal = (mission) => {
-    setSelectedMission(mission);
+    if(setSelectedMission){
+      setSelectedMission(mission);
+    }
     setOpenPackagesModal(true);
   };
 
   const onClosePrintDeliverTicketModal = () => {
     handleRemoveBoardMission(selectedMission.id);
-    setSelectedMission({});
+    if(setSelectedMission){
+      setSelectedMission({});
+    }
+   
     setOpenPackagesModal(false);
   };
 
