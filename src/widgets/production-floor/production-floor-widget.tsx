@@ -46,7 +46,7 @@ const ProductionFloorWidget = () => {
     setFilterGroups,
     getStationFilterGroups,
     setSelectedGroupId,
-  } = useProductionFloorData({});
+  } = useProductionFloorData();
 
   useEffect(() => {
     getStationFilterGroups();

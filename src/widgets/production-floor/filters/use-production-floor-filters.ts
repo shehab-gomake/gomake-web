@@ -83,7 +83,7 @@ const useProductionFloorFilters = ({
     getAllBoardMissions,
     getAllData,
     searchInputFilterRef,
-  } = useProductionFloorData({});
+  } = useProductionFloorData();
 
   const setView = useSetRecoilState(productionFloorViewState);
   const { push } = useRouter();

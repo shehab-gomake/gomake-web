@@ -19,7 +19,7 @@ const ProductionFloorBoardMissionsViews = ({
   connectionId: string;
 }) => {
   const [view] = useRecoilState(productionFloorViewState);
-  const { getData } = useProductionFloorData({});
+  const { getData } = useProductionFloorData();
   const [loading, setLoading] = useState<boolean>(false);
   const [filter] = useRecoilState(productionFloorFiltersState);
   const { t } = useTranslation();
