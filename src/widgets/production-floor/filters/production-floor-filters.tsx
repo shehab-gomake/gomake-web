@@ -17,7 +17,6 @@ import { useProductionFloorFilters } from "@/widgets/production-floor/filters/us
 import { SearchInputComponent } from "@/components/form-inputs/search-input-component";
 import { GoMakeDatepicker } from "@/components/date-picker/date-picker-component";
 import { filtersInputs } from "@/widgets/production-floor/filters/filters-inputs";
-import { SelectComponent } from "@/widgets/production-floor/filters/select/select-component";
 import { styled } from "@mui/system";
 import { toRgba } from "@/utils/helpers";
 import { FONT_FAMILY } from "@/utils/font-family";
@@ -29,15 +28,16 @@ import { GoMakeDeleteModal, GoMakeMenu } from "@/components";
 import { ModalType } from "@/enums";
 import { Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { useRecoilState } from "recoil";
-import { filterGroupsState } from "@/widgets/production-floor/state/filter-group";
+import { filterGroupsState, patternSearchState } from "@/widgets/production-floor/state/filter-group";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { ModalFilters } from "./modal-filters";
 import { useUserPermission } from "@/hooks/use-permission";
 import { ModalEditGroup } from "./edit-group-modal";
 import { AgentsList } from "@/widgets/agents/agents-list";
-import { selectedAgentsState } from "@/store/agents-state";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
+import { EProductionFloorView } from "../state/production-floor-view";
+import { useDebounce } from "@/utils/use-debounce";
 
 interface CustomGroupsProps {
   dir?: string;
@@ -48,6 +48,7 @@ interface CustomGroupsProps {
   isFromMenu?: boolean;
   handleClickMenu?: (e: React.MouseEvent<HTMLElement>) => void;
   setSelectedGroup?: any;
+  isDoneJobs?: boolean;
 }
 
 const ScrollableDiv = styled("div")(({ theme }) => ({
@@ -141,6 +142,7 @@ const CustomGroupComponent = ({
   isFromMenu,
   handleClickMenu,
   setSelectedGroup,
+  isDoneJobs
 }: CustomGroupsProps) => {
   return (
     <CustomGroup
@@ -182,57 +184,58 @@ const CustomGroupComponent = ({
             {group?.name}
           </Typography>
         </Box>
-        {/* Second Box - Status Circles & Delete Icon */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexShrink: 0,
-            // gap: "6px",
-          }}
-        >
-          {
-            <Circle numColor="#E7D000" dir={dir}>
-              {group?.inProcessCount}
-            </Circle>
-          }
-          {
-            <Circle numColor="#D92D20" dir={dir}>
-              {group?.stuckCount}
-            </Circle>
-          }
-          {group.id !== "all" && (
-            <Circle
-              numColor={group?.color}
-              dir={dir}
-              sx={{
-                backgroundColor: "transparent",
-              }}
-            >
-              (
-              <IconButton
-                onClick={(e) => {
-                  handleClickMenu(e);
-                  setSelectedGroup(group);
-                }}
-                size="small"
-                style={{
-                  padding: "4px",
-                  cursor: "pointer",
+        {!isDoneJobs &&
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              flexShrink: 0,
+              // gap: "6px",
+            }}
+          >
+            {
+              <Circle numColor="#E7D000" dir={dir}>
+                {group?.inProcessCount}
+              </Circle>
+            }
+            {
+              <Circle numColor="#D92D20" dir={dir}>
+                {group?.stuckCount}
+              </Circle>
+            }
+            {group.id !== "all" && (
+              <Circle
+                numColor={group?.color}
+                dir={dir}
+                sx={{
+                  backgroundColor: "transparent",
                 }}
               >
-                <MoreVertIcon
-                  style={{
-                    cursor: "pointer",
-                    fontSize: "16px",
-                    color: isSelected ? "#FFF" : group?.color,
+                (
+                <IconButton
+                  onClick={(e) => {
+                    handleClickMenu(e);
+                    setSelectedGroup(group);
                   }}
-                />
-              </IconButton>
-              )
-            </Circle>
-          )}
-        </Box>
+                  size="small"
+                  style={{
+                    padding: "4px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <MoreVertIcon
+                    style={{
+                      cursor: "pointer",
+                      fontSize: "16px",
+                      color: isSelected ? "#FFF" : group?.color,
+                    }}
+                  />
+                </IconButton>
+                )
+              </Circle>
+            )}
+          </Box>
+        }
       </CardContent>
     </CustomGroup>
   );
@@ -250,6 +253,7 @@ const ProductionFloorFilters = ({
   getStationFilterGroups,
   connectionId,
   isMobile,
+  view
 }) => {
   const { classes } = useStyle();
   const { push } = useRouter();
@@ -308,12 +312,14 @@ const ProductionFloorFilters = ({
     onClickOpenModalEditGroup,
     onClickCloseModalEditGroup,
     handleAgentChange,
-    setFilters
+    setFilters,
+    searchInputFilterRef,
+    getAllData,
   } = useProductionFloorFilters({
     getStationFilterGroups: getStationFilterGroups,
     connectionId: connectionId,
   });
-
+  console.log("visibleFilterGroups", visibleFilterGroups)
   useEffect(() => {
     const fetchMachinesColors = async () => {
       try {
@@ -429,6 +435,25 @@ const ProductionFloorFilters = ({
     }
   };
 
+  const [patternSearch, setPatternSearch] = useRecoilState<any>(patternSearchState);
+  const debouncedPatternSearch = useDebounce(patternSearch, 500);
+
+  const onChangeMissionsSearch = (value: string) => {
+    setPatternSearch(value);
+  };
+
+  useEffect(() => {
+    if (view === EProductionFloorView.DONE_JOBS) {
+      if (debouncedPatternSearch && debouncedPatternSearch.trim() !== "") {
+        getAllData(1, 10, debouncedPatternSearch);
+      }
+      else {
+        getAllData(1, 10);
+      }
+    }
+  }, [debouncedPatternSearch]);
+
+
   return (
     <Stack style={classes.headerFilterContainer}>
       <ClickAwayListener
@@ -444,7 +469,18 @@ const ProductionFloorFilters = ({
       >
         <Stack>
           <div ref={searchInputRef}>
-            <SearchInputComponent
+            {view === EProductionFloorView.DONE_JOBS && <SearchInputComponent
+              bgColor={"#F8F8F8"}
+              onChange={onChangeMissionsSearch}
+              value={patternSearch}
+              inputRef={searchInputFilterRef}
+              filtersButton={
+                isSearchLoading && (
+                  <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
+                )
+              }
+            />}
+            {view !== EProductionFloorView.DONE_JOBS && <SearchInputComponent
               bgColor={"#F8F8F8"}
               value={search}
               onChange={handleSearchChange}
@@ -453,9 +489,9 @@ const ProductionFloorFilters = ({
                   <CircularProgress color="inherit" size={20} sx={{ ml: 2 }} />
                 )
               }
-            />
+            />}
           </div>
-          {getMissionsList().length !== 0 && isListOpen && (
+          {getMissionsList().length !== 0 && isListOpen && view !== EProductionFloorView.DONE_JOBS && (
             <SearchMissionList
               missionsList={getMissionsList()}
               handleMissionClick={handleMissionClick}
@@ -463,19 +499,21 @@ const ProductionFloorFilters = ({
           )}
         </Stack>
       </ClickAwayListener>
-      {CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && (
+      {CheckPreferenceValue(EPreferences.SHOW_AGENT_IN_PRODUCTION_FLOOR) && view !== EProductionFloorView.DONE_JOBS && (
         <AgentsList onClickApply={handleAgentChange} applyButton={true} />
       )}
-      <GoMakeDatepicker
+      {view !== EProductionFloorView.DONE_JOBS && <GoMakeDatepicker
         value={deliveryDateFilter}
         onChange={onSelectDeliveryTimeDates}
         placeholder={t("sales.quote.deliveryDate")}
       />
-      <GoMakeDatepicker
+      }
+      {view !== EProductionFloorView.DONE_JOBS && <GoMakeDatepicker
         value={createDateFilter}
         onChange={onSelectCreateDates}
         placeholder={t("productionFloor.createTime")}
       />
+      }
       <Box ref={scrollContainerRef} sx={classes.filtersCardBox}>
         {visibleFilterGroups?.map((group, index) => (
           <CustomGroupComponent
@@ -491,6 +529,7 @@ const ProductionFloorFilters = ({
             isFromMenu={false}
             handleClickMenu={handleClickMenu}
             setSelectedGroup={setSelectedGroup}
+            isDoneJobs={group?.id === "doneJobs"}
           />
         ))}
         {hiddenFilterGroups.length > 0 && (
@@ -534,6 +573,7 @@ const ProductionFloorFilters = ({
                     isFromMenu={true}
                     handleClickMenu={handleClickMenu}
                     setSelectedGroup={setSelectedGroup}
+                    isDoneJobs={group?.id === "doneJobs"}
                   />
                 ))}
               </Stack>
@@ -595,7 +635,7 @@ const ProductionFloorFilters = ({
         selectedGroupId={selectedGroup}
         actions={actions}
         getStationFilterGroups={getStationFilterGroups}
-        setFilters={setFilters}
+        setFilters
       />
     </Stack>
   );

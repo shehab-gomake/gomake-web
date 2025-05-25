@@ -394,6 +394,7 @@ const useQuoteGetData = (docType?: DOCUMENT_TYPE) => {
   //     });
   //   }
   // };
+
   const validateAddress = async (addressWithMetadata) => {
     return await validateAddressApi(callApi, () => {}, addressWithMetadata);
   };

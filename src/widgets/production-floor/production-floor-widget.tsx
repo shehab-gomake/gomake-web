@@ -1,4 +1,4 @@
-import { Fab, IconButton, Stack } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
 import { useRecoilState } from "recoil";
 import {
@@ -21,7 +21,6 @@ import { TimelineWidget } from "@/widgets/production-floor/views/gantt-view/gant
 import { PermissionCheck } from "@/components/CheckPermission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-floor-socket-io";
-import QrCodeScannerIcon from "@mui/icons-material/QrCodeScanner";
 import { useIsMobile, useMobileHeight } from "@/hooks/use-responsive";
 import QRScannerFab from "../qr-scanner/qr-scanner-fab";
 
@@ -37,9 +36,7 @@ const ProductionFloorWidget = () => {
     filterGroups,
     setFilterGroups,
     getStationFilterGroups,
-    updateStatus,
     setSelectedGroupId,
-    handleOpenQRScanner,
   } = useProductionFloorData({});
 
   useEffect(() => {
@@ -105,6 +102,7 @@ const ProductionFloorWidget = () => {
           getStationFilterGroups={getStationFilterGroups}
           connectionId={connectionId}
           isMobile={isMobile}
+          view={view}
         />
       )}
       <Stack overflow={"auto"} maxHeight={"100%"}>

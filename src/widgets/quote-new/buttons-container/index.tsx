@@ -117,11 +117,11 @@ const ButtonsContainer = ({
     // customer,
     // setCustomer,
     isPurchaseInvoice,
+    CheckoutOptionModal,
     onClickCloseCloseOrderNotesModal,
     onClickOpenCloseOrderNotesModal,
     openCloseOrderNotesModal,
     onClickCloseOrderCallback,
-    CheckoutOptionModal,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =

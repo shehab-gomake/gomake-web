@@ -624,12 +624,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     isDeliveryNote,
     AlertAddCustomerModal,
     isPurchaseInvoice,
+    CheckoutOptionModal,
     onClickCloseCloseOrderNotesModal,
     onClickOpenCloseOrderNotesModal,
     openCloseOrderNotesModal,
     setOpenCloseOrderNotesModal,
     onClickCloseOrderCallback,
-    CheckoutOptionModal,
   };
 };
 
