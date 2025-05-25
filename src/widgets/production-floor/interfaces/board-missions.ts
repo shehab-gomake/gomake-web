@@ -41,6 +41,8 @@ export interface IBoardMissions {
   sectionName?: string;
   isNeedExample?: boolean;
   noteColumn?: string;
+  quantity?: number;
+  storage?: string;
 }
 
 export interface IBoardMissionsDetails {
