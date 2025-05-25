@@ -30,7 +30,16 @@ import {
   getAllBoardMissionStationFilterGroupsApi,
   getJobsByGroups,
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
-import { allBoardMissionsState, filterGroupsState, pageSizeState, pageNumberState, selectedGroupIdState, pagesCountState, finalPatternSearchState, patternSearchState } from "./state/filter-group";
+import {
+  allBoardMissionsState,
+  filterGroupsState,
+  pageSizeState,
+  pageNumberState,
+  selectedGroupIdState,
+  pagesCountState,
+  finalPatternSearchState,
+  patternSearchState,
+} from "./state/filter-group";
 import {
   EProductionFloorView,
   productionFloorViewState,
@@ -47,16 +56,16 @@ import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data
 import { Permissions } from "@/components/CheckPermission/enum";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { useDebounce } from "@/utils/use-debounce";
-const useProductionFloorData = () => {
-import {IProductionFloorFilter} from "@/widgets/production-floor/interfaces/filters";
-import {CurrentStationOrderingEnum} from "@/enums";
 
-const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) => {
+const useProductionFloorData = (
+  selectedMission?: any,
+  setSelectedMission?: any
+) => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === "rtl";
   const { callApi } = useGomakeAxios();
-  const { push, } = useRouter();
+  const { push } = useRouter();
   const router = useRouter();
   const setAgents = useSetRecoilState(agentsState);
   const [data, setData] =
@@ -73,7 +82,9 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
   const setJobsStatuses = useSetRecoilState(jobsStatusesState);
   const setStationOrdering = useSetRecoilState(currentStationOrderingState);
   const { alertFaultUpdate, alertSuccessUpdate } = useSnackBar();
-  const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(selectedGroupIdState);
+  const [selectedGroupId, setSelectedGroupId] = useRecoilState<string | null>(
+    selectedGroupIdState
+  );
   const view = useRecoilValue(productionFloorViewState);
 
   const getData = async (connectionId?: string) => {
@@ -86,7 +97,6 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
       return;
     }
     const callBack = (res) => {
-
       if (res.success) {
         setData(res?.data?.boardMissionsCollections);
         setFilters(res?.data?.filter);
@@ -94,7 +104,7 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
         if (!currentStationOrdering) {
           currentStationOrdering = CurrentStationOrderingEnum.NONE;
         }
-        setStationOrdering(currentStationOrdering)
+        setStationOrdering(currentStationOrdering);
         setSelectedGroupId(res?.data?.filter?.groupId);
         setTags(res?.data?.automatedTagsFilter);
         setUserGroups(res?.data?.groups);
@@ -164,10 +174,10 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
             filterGroups.map((x) =>
               x.id === "all"
                 ? {
-                  ...x,
-                  stuckCount: res?.data?.boradMisstionsStuckCount,
-                  inProcessCount: res?.data?.boradMisstionsNotStuckCount,
-                }
+                    ...x,
+                    stuckCount: res?.data?.boradMisstionsStuckCount,
+                    inProcessCount: res?.data?.boradMisstionsNotStuckCount,
+                  }
                 : x
             )
           );
@@ -188,11 +198,14 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
   const { formatISODateTime } = useDateFormat();
   const setAllBoardMissions = useSetRecoilState<any[]>(allBoardMissionsState);
   const setPagesCount = useSetRecoilState<number>(pagesCountState);
-  const setFinalPatternSearch = useSetRecoilState<string>(finalPatternSearchState);
+  const setFinalPatternSearch = useSetRecoilState<string>(
+    finalPatternSearchState
+  );
 
   const pageNumber = useRecoilValue<number>(pageNumberState);
   const pageSize = useRecoilValue<number>(pageSizeState);
-  const [patternSearch, setPatternSearch] = useRecoilState<any>(patternSearchState);
+  const [patternSearch, setPatternSearch] =
+    useRecoilState<any>(patternSearchState);
   const searchInputFilterRef = useRef(null);
 
   const debouncePatternSearch = useDebounce(patternSearch, 1000);
@@ -238,26 +251,26 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
     if (mission?.isReady) {
       return (
         <>
-          <div>
-            {t("boardMissions.done")}
-          </div>
-          <div>
-            {mission?.storage ? ` ${mission.storage}` : ""}
-          </div>
+          <div>{t("boardMissions.done")}</div>
+          <div>{mission?.storage ? ` ${mission.storage}` : ""}</div>
         </>
       );
     }
     return "";
   };
 
-  const getAllBoardMissions = async (pageNumberInput?: number, pageSizeInput?: number, patternSearchInput?: string) => {
+  const getAllBoardMissions = async (
+    pageNumberInput?: number,
+    pageSizeInput?: number,
+    patternSearchInput?: string
+  ) => {
     const callBack = (res) => {
       if (res?.success) {
         const _data = res?.data;
         const mapData = _data.data?.map((mission: any) => {
           const itemCalculatedPrice =
             mission?.calculatedPrice &&
-              mission?.calculatedPrice != mission?.price
+            mission?.calculatedPrice != mission?.price
               ? mission?.calculatedPrice
               : 0;
           return [
@@ -280,45 +293,49 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
             </a>,
             formatISODateTime(mission?.createdDate),
             formatISODateTime(mission?.dueDate),
-            <div
-              style={{ cursor: "pointer" }}
-            >
-              {mission?.clientName}
-            </div>,
+            <div style={{ cursor: "pointer" }}>{mission?.clientName}</div>,
             mission?.productType
-              ? `${mission?.number} / ${mission?.productTypeName
-                ? mission?.productTypeName
-                : mission?.productType
-              }`
+              ? `${mission?.number} / ${
+                  mission?.productTypeName
+                    ? mission?.productTypeName
+                    : mission?.productType
+                }`
               : mission?.number,
-            <a
-              href={`/order?Id=${mission?.orderID}`}
-            >
+            <a href={`/order?Id=${mission?.orderID}`}>
               {mission?.orderNumber}
             </a>,
             mission?.outSourceType === null
               ? `${t("boardMissions." + EWorkSource[0])}`
-              : `${t(
-                "boardMissions." + EWorkSource[mission?.outSourceType]
-              )}`,
+              : `${t("boardMissions." + EWorkSource[mission?.outSourceType])}`,
             mission?.quantity,
             ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-              ? [RTL ? mission?.cost + " " + getCurrencyUnitText(mission?.currency) : getCurrencyUnitText(mission?.currency) + " " + mission?.cost]
+              ? [
+                  RTL
+                    ? mission?.cost +
+                      " " +
+                      getCurrencyUnitText(mission?.currency)
+                    : getCurrencyUnitText(mission?.currency) +
+                      " " +
+                      mission?.cost,
+                ]
               : []),
             ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
               ? [
-                [
-                  RTL ?
-                    mission?.price +
-                    (itemCalculatedPrice
-                      ? ` (${itemCalculatedPrice})`
-                      : " ") +
-                    getCurrencyUnitText(mission?.currency) : getCurrencyUnitText(mission?.currency) + " " + mission?.price +
-                    (itemCalculatedPrice
-                      ? ` (${itemCalculatedPrice})`
-                      : " ")
+                  [
+                    RTL
+                      ? mission?.price +
+                        (itemCalculatedPrice
+                          ? ` (${itemCalculatedPrice})`
+                          : " ") +
+                        getCurrencyUnitText(mission?.currency)
+                      : getCurrencyUnitText(mission?.currency) +
+                        " " +
+                        mission?.price +
+                        (itemCalculatedPrice
+                          ? ` (${itemCalculatedPrice})`
+                          : " "),
+                  ],
                 ]
-              ]
               : []),
             mission?.jobName,
             mission?.numberOfBoardMissions,
@@ -348,7 +365,6 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
       }
     };
 
-
     const data = {
       fromDate: null,
       toDate: null,
@@ -363,16 +379,19 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
       search:
         patternSearchInput !== null &&
         patternSearchInput !== undefined &&
-        patternSearchInput !== ""
-        && patternSearchInput
-    }
+        patternSearchInput !== "" &&
+        patternSearchInput,
+    };
     await setBoardMissionsFiltersApi(callApi, callBack, data);
   };
 
-  const getAllData = async (pageNumber: number, pageSize: number, patternSearchInput?: string) => {
+  const getAllData = async (
+    pageNumber: number,
+    pageSize: number,
+    patternSearchInput?: string
+  ) => {
     return await getAllBoardMissions(pageNumber, pageSize, patternSearchInput);
   };
-
 
   const updateStatus = async (boards: IBoardMissions[], statusId: string) => {
     const boardsIds = boards?.filter((b) => b.statusId !== statusId);
@@ -457,20 +476,20 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
           data.map((s) =>
             s.boardMissionStatus.boardMissionStatus.id === payload.statusId
               ? {
-                ...s,
-                boardMissions: s.boardMissions?.map((board) => {
-                  const match = updatedBoards?.find(
-                    (updatedBoard) => updatedBoard.id === board.id
-                  );
-                  if (match) {
-                    return {
-                      ...board,
-                      priority: match.priority,
-                    };
-                  }
-                  return board;
-                }),
-              }
+                  ...s,
+                  boardMissions: s.boardMissions?.map((board) => {
+                    const match = updatedBoards?.find(
+                      (updatedBoard) => updatedBoard.id === board.id
+                    );
+                    if (match) {
+                      return {
+                        ...board,
+                        priority: match.priority,
+                      };
+                    }
+                    return board;
+                  }),
+                }
               : s
           )
         );
@@ -495,8 +514,7 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
       if (res.success) {
         if (boardMission.productType) {
           moveBoardMissionToDone(boardMission);
-        }
-        else {
+        } else {
           if (res.data) {
             alertSuccessUpdate();
             setOpenPackagesModal(true);
@@ -504,7 +522,6 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
             onOpenMarkReadyModal(boardMission.id);
           }
         }
-
       } else {
         alertFaultUpdate();
       }
@@ -542,7 +559,10 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
       setOpenMarkReadyModal(false);
       if (res?.success) {
         alertSuccessUpdate();
-        if (selectedMission.productType === "" || !selectedMission.productType) {
+        if (
+          selectedMission.productType === "" ||
+          !selectedMission.productType
+        ) {
           setOpenPackagesModal(true);
         }
         // handleRemoveBoardMission(selectedMissionId);
@@ -563,7 +583,10 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
       setOpenMarkReadyModal(false);
       if (res?.success) {
         alertSuccessUpdate();
-        if (selectedMission.productType === "" || !selectedMission.productType) {
+        if (
+          selectedMission.productType === "" ||
+          !selectedMission.productType
+        ) {
           setOpenPackagesModal(true);
         }
       } else {
@@ -654,7 +677,11 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
           // inProcessCount: 10,
         };
 
-        setFilterGroups([doneJobsFilter, allGroupViewFilter, ...filterGroupsList]);
+        setFilterGroups([
+          doneJobsFilter,
+          allGroupViewFilter,
+          ...filterGroupsList,
+        ]);
       }
     };
     await getAllBoardMissionStationFilterGroupsApi(callApi, callBack).then();
@@ -672,17 +699,17 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
       data.map((status) =>
         status.boardMissions.find((b) => b.id === boardMisionId)
           ? {
-            ...status,
-            boardMissions: status.boardMissions.map((bm) =>
-              bm.id === boardMisionId
-                ? { ...bm, dueDate: formattedDueDate }
-                : bm
-            ),
-          }
+              ...status,
+              boardMissions: status.boardMissions.map((bm) =>
+                bm.id === boardMisionId
+                  ? { ...bm, dueDate: formattedDueDate }
+                  : bm
+              ),
+            }
           : status
       )
     );
-    const callBack = () => { };
+    const callBack = () => {};
     updateJobDueDateApi(callApi, callBack, {
       boardMissionId: boardMisionId,
       dueDate: utcDueDate,
@@ -713,7 +740,6 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
     }).then();
   };
 
-
   return {
     t,
     RTL,
@@ -743,9 +769,8 @@ const useProductionFloorData = (selectedMission?:any, setSelectedMission?:any) =
     updateNotes,
     setSelectedMission,
     getAllData,
-    searchInputFilterRef
+    searchInputFilterRef,
   };
 };
 
 export { useProductionFloorData };
-
