@@ -12,7 +12,7 @@ const useStorageList = () => {
     const [storageList, setStorageList] = useRecoilState(storageListState)
   const [inputValue, setInputValue] = useState("")
     const [selectedMission, setSelectedMission] =
-        useRecoilState<IBoardMissions>(selectedMissionsState);
+        useRecoilState<any>(selectedMissionsState);
   //const [selectedMission, setSelectedMission] = useState<any>({});
   const getAllPrintHouseJobsStorage = async () => {
     const callBack = (res) => {

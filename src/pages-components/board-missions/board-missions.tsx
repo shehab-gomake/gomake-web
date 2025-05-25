@@ -54,9 +54,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     defaultValue,
     addPrintHouseJobsStorage,
     handleStorageChange,
-    setInputValue,
-    selectedMission,
-    setSelectedMission,
+    setInputValue
   } = useStorageList();
   const {
     tableHeader,
@@ -141,7 +139,8 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onClickCloseModal,
     openQuoteModal,
     ExportJobsTableToExcel,
-  } = useBoardMissions({ isPurchaseJobs, selectedMission, setSelectedMission });
+    selectedMission
+  } = useBoardMissions({ isPurchaseJobs });
 
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
