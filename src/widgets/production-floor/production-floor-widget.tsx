@@ -1,6 +1,6 @@
 import { IconButton, Stack } from "@mui/material";
 import { ProductionFloorHeader } from "@/widgets/production-floor/header/production-floor-header";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   EProductionFloorView,
   productionFloorViewState,
@@ -23,6 +23,10 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useProductionFloorSocketIO } from "@/hooks/socket-io/use-production-floor-socket-io";
 import { useIsMobile, useMobileHeight } from "@/hooks/use-responsive";
 import QRScannerFab from "../qr-scanner/qr-scanner-fab";
+import { boardMissionsFilesState } from "./views/board-missions-view/files/state";
+import { abortControllerActivitiesState, abortControllerFilesState, abortControllerStationState, boardMissionsStationsState, getBoardMissionsByIdState } from "./views/board-missions-view/stations/state";
+import { boardMissionsDetailsState } from "./state/boards";
+import { boardMissionsActivitiesState } from "./state/board-missions-activities";
 
 const ProductionFloorWidget = () => {
   const [view, setView] = useRecoilState(productionFloorViewState);
@@ -31,6 +35,11 @@ const ProductionFloorWidget = () => {
   const { groupsId, boardMissionsId, step, productType } = query;
   const isMobile = useIsMobile();
   const mobileHeight = useMobileHeight();
+
+  // const setFiles = useSetRecoilState(boardMissionsFilesState);
+  // const setStations = useSetRecoilState(boardMissionsStationsState);
+  // const setBoardMissionsDetails = useSetRecoilState(boardMissionsDetailsState);
+  // const setActivities = useSetRecoilState(boardMissionsActivitiesState);
 
   const {
     filterGroups,
@@ -67,6 +76,10 @@ const ProductionFloorWidget = () => {
       closeConnection();
     };
   }, []);*/
+  const setAbortControllerStation = useSetRecoilState(abortControllerStationState);
+  const setAbortControllerFiles = useSetRecoilState(abortControllerFilesState);
+  const setAbortControllerActivities = useSetRecoilState(abortControllerActivitiesState);
+  const setAbortControllerDetails = useSetRecoilState(getBoardMissionsByIdState);
 
   useEffect(() => {
     const { view: viewQuery } = query;
@@ -82,6 +95,24 @@ const ProductionFloorWidget = () => {
       }
     }
   }, [query, setView]);
+
+  const onClose = () => {
+    {
+      const newRequestAbortController = new AbortController();
+      const currentView = EProductionFloorView[view].toLowerCase();
+      push(`/production-floor?view=${currentView}`, undefined, {
+        shallow: true,
+      });
+      setAbortControllerStation(newRequestAbortController);
+      setAbortControllerFiles(newRequestAbortController);
+      setAbortControllerActivities(newRequestAbortController);
+      setAbortControllerDetails(newRequestAbortController);
+      // setFiles([]);
+      // setStations([]);
+      // setBoardMissionsDetails(null);
+      // setActivities([]);
+    };
+  };
 
   return (
     <Stack
@@ -126,12 +157,7 @@ const ProductionFloorWidget = () => {
         sx={{ zIndex: 999999 }}
         open={!!boardMissionsId}
         anchor={"bottom"}
-        onClose={() => {
-          const currentView = EProductionFloorView[view].toLowerCase();
-          push(`/production-floor?view=${currentView}`, undefined, {
-            shallow: true,
-          });
-        }}
+        onClose={onClose}
       >
         <Stack
           paddingBottom={"10px"}
@@ -140,12 +166,7 @@ const ProductionFloorWidget = () => {
           height={`calc(${mobileHeight} - 50px)`}
         >
           <IconButton
-            onClick={() => {
-              const currentView = EProductionFloorView[view].toLowerCase();
-              push(`/production-floor?view=${currentView}`, undefined, {
-                shallow: true,
-              });
-            }}
+            onClick={onClose}
             sx={{
               width: "fit-content",
               height: "fit-content",

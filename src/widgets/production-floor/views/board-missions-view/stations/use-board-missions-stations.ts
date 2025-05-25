@@ -1,9 +1,10 @@
 import router, { useRouter } from "next/router";
 import { getBoardsMissionsStations } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import {
+  abortControllerStationState,
   boardMissionsStationsState,
   boardMissionsSubWorkFlowsState,
   isOrderCompletedState,
@@ -58,12 +59,20 @@ const useBoardMissionsStations = () => {
   );
 
   const resetProductDetails = useResetRecoilState(productionFloorSectionsState);
-
+  const [abortControllerStation, setAbortControllerStation] = useRecoilState(abortControllerStationState);
   const getStations = async () => {
+    if (abortControllerStation) {
+      abortControllerStation.abort();
+    }
+    const newRequestAbortController = new AbortController();
+    setAbortControllerStation(newRequestAbortController);
     initGeneralInformation();
     initProductionInformation();
     const callBack = (res) => {
       if (res?.success) {
+       if (res.data?.boardMissionId !== query.boardMissionsId) {
+          return;
+        }
         setStations(res?.data?.workFlow?.actions);
         setSubWorkFlows(res?.data?.workFlow?.subWorkFlows);
         setInformation(res?.data?.generalInformations);
@@ -80,7 +89,10 @@ const useBoardMissionsStations = () => {
     await getBoardsMissionsStations(callApi, callBack, {
       boardMissionsId: boardMissionsId,
       productType: productType ? productType : "",
-    });
+    },
+      false,
+      newRequestAbortController
+    );
   };
 
   const onClickAllJob = () => {

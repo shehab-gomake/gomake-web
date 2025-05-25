@@ -16,7 +16,7 @@ import { useStyle } from "./style";
 import { Skeleton } from "@mui/material";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { useBoardMissionsNotes } from "./stations/notes/use-board-missions-notes";
-import { relatedOrderItemsComponentState } from "./stations/state";
+import { getBoardMissionsByIdState, relatedOrderItemsComponentState } from "./stations/state";
 import { useIsMobile } from "@/hooks/use-responsive";
 
 const useBoardMissions = () => {
@@ -57,7 +57,7 @@ const useBoardMissions = () => {
   );
   const isLoadingStations = stations?.length === 0;
   const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
-
+  const [abortControllergetBoardMissionsById, setAbortControllergetBoardMissionsById] = useRecoilState(getBoardMissionsByIdState);
   const initStates = () => {
     resetDetails();
     resetProductDetails();
@@ -68,8 +68,16 @@ const useBoardMissions = () => {
     connectionId,
     productType: string
   ) => {
+    if (abortControllergetBoardMissionsById) {
+      abortControllergetBoardMissionsById.abort();
+    }
+    const newRequestAbortController = new AbortController();
+    setAbortControllergetBoardMissionsById(newRequestAbortController);
     const callBack = async (res) => {
       if (res.success) {
+        if (res.data?.boardMissionId !== query.boardMissionsId) {
+          return;
+        }
         setBoardMissionsDetails(res.data);
       }
     };
@@ -77,7 +85,10 @@ const useBoardMissions = () => {
       id,
       connectionId,
       productType,
-    });
+    },
+      false,
+      newRequestAbortController
+    );
   };
 
   const onClickUploadFile = async () => {
