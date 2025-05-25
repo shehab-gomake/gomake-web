@@ -55,8 +55,6 @@ interface IProps {
   addPrintHouseJobsStorage?: any;
   handleStorageChange?: any;
   setInputValue?: any;
-  selectedMission?: any;
-  setSelectedMission?: any;
 }
 
 const StatusTableComponent = ({
@@ -71,9 +69,7 @@ const StatusTableComponent = ({
   defaultValue,
   addPrintHouseJobsStorage,
   handleStorageChange,
-  setInputValue,
-  selectedMission,
-  setSelectedMission,
+  setInputValue
 }: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
@@ -115,7 +111,8 @@ const StatusTableComponent = ({
     onOpenPrintDeliverTicketModal,
     tryMoveBoardMissionsToDone,
     updateJobDueDate,
-  } = useProductionFloorData({ selectedMission, setSelectedMission });
+    selectedMission
+  } = useProductionFloorData();
 
   const {
     openSimpleApproveModal,

@@ -15,7 +15,7 @@ import {
 } from "@/widgets/production-floor/state/production-floor-filters";
 import {
   boardsMissionsState,
-  jobsStatusesState,
+  jobsStatusesState, selectedMissionsState,
 } from "@/widgets/production-floor/state/boards";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import { userProductionFloorGroupsState } from "@/widgets/production-floor/state/production-floor-groups-state";
@@ -57,10 +57,7 @@ import { Permissions } from "@/components/CheckPermission/enum";
 import { useDateFormat } from "@/hooks/use-date-format";
 import { useDebounce } from "@/utils/use-debounce";
 
-const useProductionFloorData = (
-  selectedMission?: any,
-  setSelectedMission?: any
-) => {
+const useProductionFloorData = () => {
   const { t } = useTranslation();
   const dir: "rtl" | "ltr" = t("direction");
   const RTL = dir === "rtl";
@@ -70,6 +67,8 @@ const useProductionFloorData = (
   const setAgents = useSetRecoilState(agentsState);
   const [data, setData] =
     useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
+  const [selectedMission, setSelectedMission] =
+      useRecoilState<IBoardMissions>(selectedMissionsState);
   const [abortController, setAbortController] = useRecoilState(
     productionFloorAbortControllerState
   );
@@ -511,6 +510,7 @@ const useProductionFloorData = (
   };
 
   const tryMoveBoardMissionsToDone = async (boardMission) => {
+    debugger
     setSelectedMission(boardMission);
     const callBack = (res) => {
       if (res.success) {
@@ -637,7 +637,7 @@ const useProductionFloorData = (
 
   const onClosePrintDeliverTicketModal = () => {
     handleRemoveBoardMission(selectedMission.id);
-    setSelectedMission({});
+    setSelectedMission(null);
     setOpenPackagesModal(false);
   };
 

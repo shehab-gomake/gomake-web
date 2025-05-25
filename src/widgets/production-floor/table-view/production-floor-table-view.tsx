@@ -114,8 +114,6 @@ const ProductionFloorTableView = ({ connectionId }) => {
     addPrintHouseJobsStorage,
     handleStorageChange,
     setInputValue,
-    selectedMission,
-    setSelectedMission,
   } = useStorageList();
 
   const tableHeader = [
@@ -196,8 +194,6 @@ const ProductionFloorTableView = ({ connectionId }) => {
                 addPrintHouseJobsStorage={addPrintHouseJobsStorage}
                 handleStorageChange={handleStorageChange}
                 setInputValue={setInputValue}
-                selectedMission={selectedMission}
-                setSelectedMission={setSelectedMission}
               />
             );
           })}

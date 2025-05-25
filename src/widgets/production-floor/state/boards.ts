@@ -46,3 +46,8 @@ export const storageListState = atom<any[]>({
   default: null,
   key: "storageListState",
 });
+
+export const selectedMissionsState = atom<IBoardMissions>({
+  key: "selectedMissionsState",
+  default: null,
+});
