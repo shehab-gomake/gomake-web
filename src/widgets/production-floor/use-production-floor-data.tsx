@@ -92,10 +92,12 @@ const useProductionFloorData = (
       getDataByGroups(connectionId, filtersState).then();
       return;
     }
+
     if (view === EProductionFloorView.DONE_JOBS) {
       getAllBoardMissions();
       return;
     }
+
     const callBack = (res) => {
       if (res.success) {
         setData(res?.data?.boardMissionsCollections);
@@ -308,37 +310,37 @@ const useProductionFloorData = (
               ? `${t("boardMissions." + EWorkSource[0])}`
               : `${t("boardMissions." + EWorkSource[mission?.outSourceType])}`,
             mission?.quantity,
-            ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-              ? [
-                  RTL
-                    ? mission?.cost +
-                      " " +
-                      getCurrencyUnitText(mission?.currency)
-                    : getCurrencyUnitText(mission?.currency) +
-                      " " +
-                      mission?.cost,
-                ]
-              : []),
-            ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
-              ? [
-                  [
-                    RTL
-                      ? mission?.price +
-                        (itemCalculatedPrice
-                          ? ` (${itemCalculatedPrice})`
-                          : " ") +
-                        getCurrencyUnitText(mission?.currency)
-                      : getCurrencyUnitText(mission?.currency) +
-                        " " +
-                        mission?.price +
-                        (itemCalculatedPrice
-                          ? ` (${itemCalculatedPrice})`
-                          : " "),
-                  ],
-                ]
-              : []),
+            // ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
+            //   ? [
+            //       RTL
+            //         ? mission?.cost +
+            //           " " +
+            //           getCurrencyUnitText(mission?.currency)
+            //         : getCurrencyUnitText(mission?.currency) +
+            //           " " +
+            //           mission?.cost,
+            //     ]
+            //   : []),
+            // ...(CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
+            //   ? [
+            //       [
+            //         RTL
+            //           ? mission?.price +
+            //             (itemCalculatedPrice
+            //               ? ` (${itemCalculatedPrice})`
+            //               : " ") +
+            //             getCurrencyUnitText(mission?.currency)
+            //           : getCurrencyUnitText(mission?.currency) +
+            //             " " +
+            //             mission?.price +
+            //             (itemCalculatedPrice
+            //               ? ` (${itemCalculatedPrice})`
+            //               : " "),
+            //       ],
+            //     ]
+            //   : []),
             mission?.jobName,
-            mission?.numberOfBoardMissions,
+            // mission?.numberOfBoardMissions,
             mission?.productName,
             <div style={{ whiteSpace: "break-spaces" }}>
               {getJobStatus(mission)}
@@ -669,19 +671,8 @@ const useProductionFloorData = (
           stuckCount: stuckSum,
           inProcessCount: inProcessSum,
         };
-        const doneJobsFilter: IFilterGroupsList = {
-          id: "doneJobs",
-          name: t("productionFloor.doneJobs"),
-          color: "#7355de",
-          // stuckCount: 10,
-          // inProcessCount: 10,
-        };
 
-        setFilterGroups([
-          doneJobsFilter,
-          allGroupViewFilter,
-          ...filterGroupsList,
-        ]);
+        setFilterGroups([allGroupViewFilter, ...filterGroupsList]);
       }
     };
     await getAllBoardMissionStationFilterGroupsApi(callApi, callBack).then();

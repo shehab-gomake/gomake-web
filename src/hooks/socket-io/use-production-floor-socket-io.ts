@@ -16,7 +16,8 @@ const useProductionFloorSocketIO = (view: EProductionFloorView) => {
     getDataByGroups,
     getStationFilterGroups,
     getAllBoardMissions,
-  } = useProductionFloorData();
+  } = useProductionFloorData({});
+
   useEffect(() => {
     const socket = io(config.api_server);
     socket.on(`UpdateBoardMissionsStation-${profile.id}`, () => {
@@ -34,6 +35,7 @@ const useProductionFloorSocketIO = (view: EProductionFloorView) => {
     socket.on("connect", () => {
       setConnectionId(socket.id);
     });
+
     return () => {
       console.log("Closing socket connection...");
       socket.disconnect();

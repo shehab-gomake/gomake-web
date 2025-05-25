@@ -20,6 +20,7 @@ import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
 import HourglassEmptyRoundedIcon from "@mui/icons-material/HourglassEmptyRounded";
 import { useIsMobile } from "@/hooks/use-responsive";
+import { DoneJobsIcon } from "./components/icons/done-jobs";
 
 const ProductionFloorHeader = ({
   filterGroups,
@@ -124,6 +125,15 @@ const ProductionFloorHeader = ({
         )}
         <SelectGroup />
         <ButtonGroup dir={"ltr"}>
+          <PrimaryButton
+            style={{ width: "40px", height: "40px", padding: 0 }}
+            variant={
+              view === EProductionFloorView.DONE_JOBS ? "contained" : "outlined"
+            }
+            onClick={() => updateViewInUrl(EProductionFloorView.DONE_JOBS)}
+          >
+            <DoneJobsIcon />
+          </PrimaryButton>
           {CheckPermission(Permissions.SHOW_PRODUCTION_TIME_LINE) && (
             <PrimaryButton
               style={{ width: "40px", height: "40px", padding: 0 }}
@@ -145,6 +155,7 @@ const ProductionFloorHeader = ({
           >
             <AvTimerIcon />
           </PrimaryButton>
+
           <PrimaryButton
             style={{ width: "20px", height: "40px", padding: 0 }}
             variant={
