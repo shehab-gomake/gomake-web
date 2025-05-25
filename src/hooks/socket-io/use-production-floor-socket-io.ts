@@ -16,7 +16,7 @@ const useProductionFloorSocketIO = (view: EProductionFloorView) => {
     getDataByGroups,
     getStationFilterGroups,
     getAllBoardMissions,
-  } = useProductionFloorData({});
+  } = useProductionFloorData();
 
   useEffect(() => {
     const socket = io(config.api_server);
