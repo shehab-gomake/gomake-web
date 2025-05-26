@@ -335,6 +335,11 @@ const RightSideWidget = ({
                       const inputValue = Number(e.target.value);
                       if (maxIncrease && minDiscount) {
                         if (
+                          priceChangePercents?.minPercent === null &&
+                          priceChangePercents?.maxPercent === null
+                        )
+                          return;
+                        if (
                           (priceChangePercents?.minPercent !== null &&
                             priceChangePercents?.maxPercent !== null &&
                             inputValue < minDiscount) ||
@@ -416,15 +421,27 @@ const RightSideWidget = ({
           <>
             <div style={clasess.orderContainer}>
               {t("products.offsetPrice.admin.orderToral", {
-                prieceNum: quantity && quantity.values && quantity.values.length && quantity?.values[0],
+                prieceNum:
+                  quantity &&
+                  quantity.values &&
+                  quantity.values.length &&
+                  quantity?.values[0],
                 price: roundPrice(
                   isNaN(
                     sliderCurrentProductItemValueTotalPrice /
-                      (quantity && quantity.values && quantity.values.length && quantity?.values[0] || 1)
+                      ((quantity &&
+                        quantity.values &&
+                        quantity.values.length &&
+                        quantity?.values[0]) ||
+                        1)
                   )
                     ? 0
                     : (sliderCurrentProductItemValueTotalPrice || 0) /
-                        (quantity && quantity.values && quantity.values.length && quantity?.values[0] || 1)
+                        ((quantity &&
+                          quantity.values &&
+                          quantity.values.length &&
+                          quantity?.values[0]) ||
+                          1)
                 ),
                 unitPrice: systemCurrency,
               })}
@@ -439,7 +456,10 @@ const RightSideWidget = ({
                   const newPriceIncludeVat = e.target.value;
                   setPriceIncludeVat(newPriceIncludeVat);
                   if (
-                    quantity && quantity.values && quantity.values.length && quantity?.values[0] &&
+                    quantity &&
+                    quantity.values &&
+                    quantity.values.length &&
+                    quantity?.values[0] &&
                     newPriceIncludeVat !== "" &&
                     newPriceIncludeVat !== null &&
                     newPriceIncludeVat !== "0"
