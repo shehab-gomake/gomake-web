@@ -238,7 +238,6 @@ const useQuoteNew = ({
   const openNewSttingMenuForVat = Boolean(anchorElSettingMenuForVat);
   const isQuote = docType === DOCUMENT_TYPE.quote;
   const isOrder = docType === DOCUMENT_TYPE.order;
-
   const isDeliveryNote =
     docType === DOCUMENT_TYPE.deliveryNote ||
     docType === DOCUMENT_TYPE.deliveryNoteRefund;
@@ -246,6 +245,8 @@ const useQuoteNew = ({
     docType === DOCUMENT_TYPE.invoice ||
     docType === DOCUMENT_TYPE.invoiceRefund;
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
+  const isNewCreation = router.query.isNewCreation === "true";
+
   const [openWhatsAppModal, setOpenWatsAppModal] = useState(false);
   const [isSelectedAtLeastOne, setIsSelectedAtLeastOne] = useState(null);
   const [openNewItemNotesModal, setOpenNewItemNotesModal] = useState(false);
@@ -407,7 +408,7 @@ const useQuoteNew = ({
   const headerHeight = "44px";
 
   const updateDueDate = async () => {
-    if (router.query.isNewCreation) {
+    if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       updatedQuoteItemValue.dueDate = selectDate;
       updatedQuoteItemValue.taxDate = taxDate;
@@ -446,7 +447,7 @@ const useQuoteNew = ({
   };
 
   const updateOccasionalClientName = async (value) => {
-    if (router.query.isNewCreation) {
+    if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       updatedQuoteItemValue.occasionalClientName = value;
       setQuoteItemValue(updatedQuoteItemValue);
@@ -515,7 +516,7 @@ const useQuoteNew = ({
   }, []);
 
   const updateAgent = async (item: any) => {
-    if (router.query.isNewCreation) {
+    if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       updatedQuoteItemValue.agentId = item.value;
       updatedQuoteItemValue.agent = {
@@ -584,18 +585,58 @@ const useQuoteNew = ({
       if (res?.success) {
         alertSuccessUpdate();
         setIsUpdateCurrency(null);
-        getQuote();
+        if (!isNewCreation) getQuote();
       } else {
         alertFaultUpdate();
       }
     };
-    await updateDocumentCurrencyApi(callApi, callBack, {
-      documentType: docType,
-      document: {
-        documentId: quoteItemValue?.id,
-        currency: currency,
-      },
-    });
+
+    const callBackIsNewReceipt = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        setIsUpdateCurrency(null);
+        const updatedQuoteItemValue = { ...quoteItemValue };
+        updatedQuoteItemValue.currency = currency;
+        setQuoteItemValue(updatedQuoteItemValue);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+
+    if (isReceipt && isNewCreation) {
+      await getClientPaymentItemsApi(
+        callApi,
+        callBackIsNewReceipt,
+        {
+          clientId: quoteItemValue?.customerID,
+          documentNumber: router?.query?.documentNumber,
+          currency: currency,
+        },
+        false
+      );
+    } else if ((isInvoice || isDeliveryNote) && isNewCreation) {
+      const updatedQuoteItemValue = { ...quoteItemValue };
+      updatedQuoteItemValue.currency = currency;
+      setQuoteItemValue(updatedQuoteItemValue);
+      setIsUpdateCurrency(null);
+
+      if (
+        !quoteItemValue?.documentItems ||
+        quoteItemValue.documentItems.length === 0
+      ) {
+        return; // Skip the API call
+      }
+
+      getCalculateQuoteItem(updatedQuoteItemValue, 1, quoteItemValue.price);
+    } else {
+      await updateDocumentCurrencyApi(callApi, callBack, {
+        documentType: docType,
+        document: {
+          documentId: quoteItemValue?.id,
+          currency: currency,
+        },
+      });
+    }
   };
 
   const changeVatValueForVatStatus = (vatStatus: number) => {
@@ -610,7 +651,7 @@ const useQuoteNew = ({
   };
 
   const updateVatStatus = async (vatStatus: number) => {
-    if (router.query.isNewCreation) {
+    if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       updatedQuoteItemValue.vatStatus = vatStatus;
       updatedQuoteItemValue.vat = changeVatValueForVatStatus(vatStatus);
@@ -643,7 +684,7 @@ const useQuoteNew = ({
   };
 
   const updateDocumentTitle = async (value: string) => {
-    if (router.query.isNewCreation) {
+    if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       updatedQuoteItemValue.title = value;
       setQuoteItemValue(updatedQuoteItemValue);
@@ -874,7 +915,7 @@ const useQuoteNew = ({
   };
 
   const onClickAddNewContact = async () => {
-    if (router.query.isNewCreation) {
+    if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       if (!Array.isArray(updatedQuoteItemValue.documentContacts)) {
         updatedQuoteItemValue.documentContacts = [];
@@ -917,7 +958,7 @@ const useQuoteNew = ({
   };
 
   const updateClientContact = async (item: any) => {
-    if (router.query.isNewCreation) {
+    if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       const updatedContacts = updatedQuoteItemValue.documentContacts.map(
         (contact: any) => {
@@ -957,7 +998,7 @@ const useQuoteNew = ({
   };
 
   const onClickDeleteContact = async (item: any) => {
-    if (router.query.isNewCreation) {
+    if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
       const updatedContacts = updatedQuoteItemValue.documentContacts.filter(
         (contact: any) => {
@@ -1058,7 +1099,7 @@ const useQuoteNew = ({
     data: number,
     newUpdatedQuoteItemValue?: any
   ) => {
-    if (router.query.isNewCreation) {
+    if (isNewCreation) {
       const newQuoteItemValue = newUpdatedQuoteItemValue ?? quoteItemValue;
       const quoteItemEdit = newQuoteItemValue.documentItems.find(
         (item) => item.id === quoteItem.id
@@ -1094,6 +1135,7 @@ const useQuoteNew = ({
             },
             data: data,
             calculationType: calculationType,
+            currency: newQuoteItemValue?.currency,
           },
         },
         false
@@ -1229,7 +1271,7 @@ const useQuoteNew = ({
   };
 
   const deleteQuoteItem = async () => {
-    if (router.query.isNewCreation) {
+    if (isNewCreation) {
       const updatedDocumentItems = quoteItemValue.documentItems.filter(
         (item) => item.id !== quoteItemId
       );
@@ -1359,7 +1401,7 @@ const useQuoteNew = ({
   };
 
   const getCalculateQuote = async (calculationType: number, data: number) => {
-    if (router.query.isNewCreation) {
+    if (isNewCreation) {
       const res = await callApi(
         EHttpMethod.POST,
         `/v1/erp-service/documents/calculate-document-new`,
@@ -1832,7 +1874,7 @@ const useQuoteNew = ({
         ? "documentBillingAddresses"
         : "documentDeliveryAddresses";
 
-    if (router.query.isNewCreation) {
+    if (isNewCreation) {
       const updatedQuoteItemValue = { ...quoteItemValue };
 
       // Remove the address with the matching ID
@@ -1890,7 +1932,7 @@ const useQuoteNew = ({
 
       if (taxDateRef.current && !taxDateRef.current.contains(event.target)) {
         if (activeClickAwayForTaxDate) {
-          if (router.query.isNewCreation) {
+          if (isNewCreation) {
             const updatedQuoteItemValue = { ...quoteItemValue };
             updatedQuoteItemValue.dueDate = selectDate;
             updatedQuoteItemValue.taxDate = taxDate;
@@ -2195,12 +2237,11 @@ const useQuoteNew = ({
     });
   };
 
-  const isShowSettingIcon = !(
-    router.query.isNewCreation &&
-    (isDeliveryNote || isInvoice)
-  );
+  const isShowSettingIcon =
+    !(isNewCreation && (isDeliveryNote || isInvoice)) && quoteItemValue.client;
+
   const showVatListInSettingIconNew =
-    router.query.isNewCreation && (isDeliveryNote || isInvoice);
+    isNewCreation && (isDeliveryNote || isInvoice) && quoteItemValue.client;
 
   const moveOrderToReady = async () => {
     const callBack = (res) => {
