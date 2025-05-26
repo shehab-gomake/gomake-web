@@ -1647,7 +1647,9 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
               }
             }
             if (parameter.materialPath && parameter.materialPath.length > 0) {
-              
+              if(parameter.name === "Rings Radius"){
+                debugger
+              }
               if (parameter.materialPath.length == 1) {
                 const materialData = materials?.find((x) =>
                   compareStrings(x.pathName, parameter.materialPath[0])
@@ -1768,11 +1770,13 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
                     const prevParameter =  subSection.parameters.find(p=>p.materialPath && p.materialPath.join("") === searchPath  )
                     if(prevParameter && prevParameter.valuesConfigs && prevParameter.valuesConfigs.length > 0) {
                       let value = prevParameter.valuesConfigs.find(x=>x.isDefault);
-                      if(!value && prevParameter.valuesConfigs.length == 1 ) {
+                      if(!value && prevParameter.valuesConfigs.length == 1 && prevParameter.isRequired) {
                         value = prevParameter.valuesConfigs[0]
                       }
                       if(value){
                         materialData = materialData?.find(x=>x.valueId == value.id)?.data;
+                      }else{
+                        materialData = null;
                       }
                     }
                 }
