@@ -635,7 +635,7 @@ const ProductionFloorFilters = ({
         selectedGroupId={selectedGroup}
         actions={actions}
         getStationFilterGroups={getStationFilterGroups}
-        setFilters
+        setFilters={setFilters}
       />
     </Stack>
   );
