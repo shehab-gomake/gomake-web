@@ -73,6 +73,8 @@ const useMaterialsCategories = (isAdmin: boolean) => {
               value: supplier.id,
               label: supplier.name,
               order: supplier?.order,
+              name: supplier?.name,
+              id: supplier?.id,
             };
           })
         );
