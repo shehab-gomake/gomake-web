@@ -64,6 +64,7 @@ import { AddAttachmentsModal } from "@/widgets/quote-new/modals-widgets/add-atta
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
 import CloseOrderNote from "../quotes/widgets/general/close-order-note";
+import { SettingMenuIcon } from "@/icons/setting-menu ";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -554,7 +555,7 @@ const QuoteNewPageWidget = ({
                         style={{ marginRight: 4 }}
                         onClick={handleSettingMenuClick}
                       >
-                        <SettingNewIcon />
+                        <SettingMenuIcon />
                       </IconButton>
                     )}
                     {showVatListInSettingIconNew && (
@@ -562,7 +563,7 @@ const QuoteNewPageWidget = ({
                         style={{ marginRight: 4 }}
                         onClick={handleSettingMenuClickForVat}
                       >
-                        <SettingNewIcon />
+                        <SettingMenuIcon />
                       </IconButton>
                     )}
                   </div>
@@ -924,6 +925,7 @@ const QuoteNewPageWidget = ({
         whatsappMassage={whatsappMassage}
         documentType={documentType}
       />
+
       <SettingQuoteMenu
         handleClose={handleSettingMenuClose}
         open={openSettingMenu}
@@ -953,6 +955,11 @@ const QuoteNewPageWidget = ({
         setIsUpdateVatStatus={setIsUpdateVatStatus}
         isUpdateVatStatus={isUpdateVatStatus}
         updateVatStatus={updateVatStatus}
+        onBlurCurrency={onBlurCurrency}
+        setIsUpdateCurrency={setIsUpdateCurrency}
+        isUpdateCurrency={isUpdateCurrency}
+        updateCurrency={updateCurrency}
+        quoteStateValue={quoteItemValue}
       />
       <CancelBtnMenu
         handleClose={handleCancelBtnClose}
