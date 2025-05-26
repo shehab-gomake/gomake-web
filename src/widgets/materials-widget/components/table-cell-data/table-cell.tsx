@@ -58,7 +58,7 @@ const TableCellData = ({
     case EDataTypeEnum.BOOLEAN:
       return (
         <>
-          <SecondSwitch checked={(value === "false" || value === "") ? false : true} onChange={toggleIsActive} />
+          <SecondSwitch checked={(!value || value === "false" || value === "") ? false : true} onChange={toggleIsActive} />
           <GoMakeDeleteModal
             modalType={ModalType.EDIT}
             openModal={openDeleteTableRowModal}

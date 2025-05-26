@@ -10,10 +10,10 @@ import { useTranslation } from "react-i18next";
 import { useProductionFloorFilters } from "../filters/use-production-floor-filters";
 import { useStorageList } from "@/hooks/use-storage-list";
 import { allBoardMissionsState, pagesCountState, pageSizeState, pageNumberState } from "../state/filter-group";
+import { GoMakePagination } from "@/components/pagination/gomake-pagination";
+import { EProductionFloorView } from "../state/production-floor-view";
 import { PrimaryTable } from "@/components/tables/primary-table";
 import { useRouter } from "next/router";
-import { EProductionFloorView } from "../state/production-floor-view";
-import { GoMakePagination } from "@/components/pagination/gomake-pagination";
 
 const ProductionFloorTableView = ({ connectionId }) => {
   const selectedChipId = useRecoilValue(selectedChipIdsState);
@@ -30,7 +30,10 @@ const ProductionFloorTableView = ({ connectionId }) => {
   } = useProductionFloorTable();
   const { t } = useTranslation();
 
-  const { setFilters, view, getAllData } = useProductionFloorFilters({ connectionId: connectionId, isFetching: false });
+  const { setFilters, view, getAllData } = useProductionFloorFilters({
+    connectionId: connectionId,
+    isFetching: false,
+  });
   const allBoardMissions = useRecoilValue<any[]>(allBoardMissionsState);
   const [pageNumber, setPageNumber] = useRecoilState<number>(pageNumberState);
   const pagesCount = useRecoilValue<number>(pagesCountState);
@@ -109,6 +112,7 @@ const ProductionFloorTableView = ({ connectionId }) => {
     }, 1000);
     return () => clearTimeout(delayFetch);
   }, [search]);
+
   const tableHeader = [
     t("boardMissions.image"),
     t("boardMissions.creationDate"),
@@ -118,14 +122,18 @@ const ProductionFloorTableView = ({ connectionId }) => {
     t("mailingSettings.orderNumber"),
     t("boardMissions.outSourceType"),
     t("boardMissions.quantity"),
-    t("boardMissions.costFromOrderItem"),
-    t("boardMissions.priceFromOrderItem"),
+    // t("boardMissions.costFromOrderItem"),
+    // t("boardMissions.priceFromOrderItem"),
     t("boardMissions.jobName"),
-    t("boardMissions.numberOfBoardMissionsInOrder"),
+    // t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
     t("boardMissions.currentBoardMissionStatus"),
   ].filter(Boolean);
+
   const router = useRouter();
+
+
+
   return (
     <Stack gap={"20px"}>
       {
@@ -186,8 +194,6 @@ const ProductionFloorTableView = ({ connectionId }) => {
                   addPrintHouseJobsStorage={addPrintHouseJobsStorage}
                   handleStorageChange={handleStorageChange}
                   setInputValue={setInputValue}
-                  selectedMission={selectedMission}
-                  setSelectedMission={setSelectedMission}
                 />
               );
             })}

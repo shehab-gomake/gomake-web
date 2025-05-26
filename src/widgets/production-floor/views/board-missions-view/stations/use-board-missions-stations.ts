@@ -4,6 +4,7 @@ import { useGomakeAxios } from "@/hooks";
 import { useEffect, useState } from "react";
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from "recoil";
 import {
+  abortControllerStationState,
   boardMissionsStationsState,
   boardMissionsSubWorkFlowsState,
   isOrderCompletedState,
@@ -58,13 +59,13 @@ const useBoardMissionsStations = () => {
   );
 
   const resetProductDetails = useResetRecoilState(productionFloorSectionsState);
-  const [abortController, setAbortController] = useState(null);
+  const [abortControllerStation, setAbortControllerStation] = useRecoilState(abortControllerStationState);
   const getStations = async () => {
-    if (abortController) {
-      abortController.abort();
+    if (abortControllerStation) {
+      abortControllerStation.abort();
     }
     const newRequestAbortController = new AbortController();
-    setAbortController(newRequestAbortController);
+    setAbortControllerStation(newRequestAbortController);
     initGeneralInformation();
     initProductionInformation();
     const callBack = (res) => {

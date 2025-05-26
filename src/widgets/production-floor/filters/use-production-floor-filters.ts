@@ -7,7 +7,7 @@ import {
 } from "@/widgets/production-floor/state/text-search";
 import {
   productionFloorAbortControllerState,
-  productionFloorFiltersState
+  productionFloorFiltersState,
 } from "@/widgets/production-floor/state/production-floor-filters";
 import { tagsState } from "@/widgets/production-floor/state/tags";
 import {
@@ -37,7 +37,7 @@ import {
   getStationFilterByGroupIdApi,
   getStationFilterGroupByIdApi,
 } from "@/services/api-service/board-missions/board-mission-station-filter-groups";
-import {  selectedGroupIdState } from "../state/filter-group";
+import { selectedGroupIdState } from "../state/filter-group";
 import { IFilterGroupsList } from "../interfaces/borad-missions-filter-groups";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { getAllUsersEmployeesApi } from "@/services/api-service/customers/employees-api";
@@ -47,7 +47,7 @@ import moment from "moment";
 interface onStationsChangeProps {
   stations: IStation[];
   groupId?: string | null;
-  view:EProductionFloorView,
+  view: EProductionFloorView;
 }
 
 interface IUseProductionFloorFiltersProps {
@@ -67,7 +67,7 @@ interface ISelectedGroup {
 const useProductionFloorFilters = ({
   getStationFilterGroups,
   connectionId,
-  isFetching =true,
+  isFetching = true,
 }: IUseProductionFloorFiltersProps) => {
   const [filtersState, setFiltersState] = useRecoilState(
     productionFloorFiltersState
@@ -79,6 +79,7 @@ const useProductionFloorFilters = ({
   const { callApi } = useGomakeAxios();
   const [data, setData] = useRecoilState(boardsMissionsState);
   const { getDataByGroups, getAllBoardMissions,getAllData ,searchInputFilterRef} = useProductionFloorData();
+
 
   const setView = useSetRecoilState(productionFloorViewState);
   const { push } = useRouter();
@@ -116,14 +117,18 @@ const useProductionFloorFilters = ({
   const view = useRecoilValue(productionFloorViewState);
   const [selectedChipIds, setSelectedChipIds] =
     useRecoilState(selectedChipIdsState);
-  const [abortController, setAbortController] = useRecoilState(productionFloorAbortControllerState);
+  const [abortController, setAbortController] = useRecoilState(
+    productionFloorAbortControllerState
+  );
 
   const router = useRouter();
-  const setFilters = async (filters: IProductionFloorFilter,selectedView:EProductionFloorView) => {
-
-    if(selectedView === EProductionFloorView.FILTER_GROUPS ) {
+  const setFilters = async (
+    filters: IProductionFloorFilter,
+    selectedView: EProductionFloorView
+  ) => {
+    if (selectedView === EProductionFloorView.FILTER_GROUPS) {
       setFiltersState(filters);
-      getDataByGroups(connectionId,filters).then();
+      getDataByGroups(connectionId, filters).then();
       return;
     }
     // if(selectedView === EProductionFloorView.DONE_JOBS) {
@@ -172,67 +177,85 @@ const useProductionFloorFilters = ({
         alertFaultUpdate();
       }
     };
-    await setBoardFiltersApi(callApi, callBack, filters,true,newRequestAbortController);
+    await setBoardFiltersApi(
+      callApi,
+      callBack,
+      filters,
+      true,
+      newRequestAbortController
+    );
   };
 
   const onTagsChange = async (tag: string) => {
-    await setFilters({
-      ...filtersState,
-      automatedTags: filtersState?.automatedTags?.includes(tag)
-        ? filtersState.automatedTags.filter((t) => t !== tag)
-        : [...filtersState.automatedTags, tag],
-    },view);
+    await setFilters(
+      {
+        ...filtersState,
+        automatedTags: filtersState?.automatedTags?.includes(tag)
+          ? filtersState.automatedTags.filter((t) => t !== tag)
+          : [...filtersState.automatedTags, tag],
+      },
+      view
+    );
   };
 
   const onSelectDeliveryTimeDates = async (fromDate: Date, toDate: Date) => {
-    let fromDateMom:string =  null;
-    let toDateMom:string = null;
-    if(fromDate){
+    let fromDateMom: string = null;
+    let toDateMom: string = null;
+    if (fromDate) {
       fromDateMom = moment(fromDate).format("YYYY-MM-DD HH:mm:ss");
     }
-    if(toDate){
+    if (toDate) {
       toDateMom = moment(toDate).format("YYYY-MM-DD HH:mm:ss");
     }
-    await setFilters({
-      ...filtersState,
-      fromDeliveryTime: fromDateMom,
-      toDeliveryTime: toDateMom,
-    },view);
+    await setFilters(
+      {
+        ...filtersState,
+        fromDeliveryTime: fromDateMom,
+        toDeliveryTime: toDateMom,
+      },
+      view
+    );
   };
 
   const onSelectCreateDates = async (fromDate: Date, toDate: Date) => {
-    let fromDateMom:string =  null;
-    let toDateMom:string = null;
-    if(fromDate){
+    let fromDateMom: string = null;
+    let toDateMom: string = null;
+    if (fromDate) {
       fromDateMom = moment(fromDate).format("YYYY-MM-DD HH:mm:ss");
     }
-    if(toDate){
+    if (toDate) {
       toDateMom = moment(toDate).format("YYYY-MM-DD HH:mm:ss");
     }
-    await setFilters({
-      ...filtersState,
-      fromCreateDate: fromDateMom,
-      toCreateDate: toDateMom,
-    },view);
+    await setFilters(
+      {
+        ...filtersState,
+        fromCreateDate: fromDateMom,
+        toCreateDate: toDateMom,
+      },
+      view
+    );
   };
 
   const handleGroupsFilterChange = (groupId, value, valueId) => {
-    setFilters({
-      ...filtersState,
-      groupsHistory: filtersState.groupsHistory
-        ? filtersState.groupsHistory.concat({ groupId, value, valueId })
-        : [{ groupId, value, valueId }],
-      groups:
-        filtersState.groups?.length > 0
-          ? [...filtersState?.groups, { groupId, value, valueId }]
-          : [
-              {
-                groupId,
-                value,
-                valueId,
-              },
-            ],
-    },view).then(() => {
+    setFilters(
+      {
+        ...filtersState,
+        groupsHistory: filtersState.groupsHistory
+          ? filtersState.groupsHistory.concat({ groupId, value, valueId })
+          : [{ groupId, value, valueId }],
+        groups:
+          filtersState.groups?.length > 0
+            ? [...filtersState?.groups, { groupId, value, valueId }]
+            : [
+                {
+                  groupId,
+                  value,
+                  valueId,
+                },
+              ],
+      },
+      view
+    ).then(() => {
       setView(EProductionFloorView.TABLE);
       // push("/production-floor").then();
       push("/production-floor?view=table").then();
@@ -240,11 +263,14 @@ const useProductionFloorFilters = ({
   };
 
   const initGroupsFilters = async () => {
-    await setFilters({
-      ...filtersState,
-      groups: null,
-      groupsHistory: null,
-    },view);
+    await setFilters(
+      {
+        ...filtersState,
+        groups: null,
+        groupsHistory: null,
+      },
+      view
+    );
   };
 
   const hasGroupsFilters = useMemo(
@@ -269,22 +295,28 @@ const useProductionFloorFilters = ({
   );
 
   const setGroupFromPath = (groups: IFilterGroup[]) => {
-    setFilters({
-      ...filtersState,
-      groups: groups,
-    },view).then();
+    setFilters(
+      {
+        ...filtersState,
+        groups: groups,
+      },
+      view
+    ).then();
   };
 
   const onStationsChange = ({
     stations,
     groupId = null,
-    view
+    view,
   }: onStationsChangeProps) => {
-    setFilters({
-      ...filtersState,
-      stations,
-      groupId,
-    },view);
+    setFilters(
+      {
+        ...filtersState,
+        stations,
+        groupId,
+      },
+      view
+    );
   };
 
   const getColorByMachineId = (machineId) => {
@@ -362,9 +394,13 @@ const useProductionFloorFilters = ({
     let selectedView = EProductionFloorView.TABLE;
     if (selectedGroupId === groupId) {
       setSelectedGroupId(null);
-      onStationsChange({ stations: [], groupId: null ,view: view });
+      onStationsChange({ stations: [], groupId: null, view: view });
     } else {
-      if ((selectedGroupId === "all" || selectedGroupId === "doneJobs") && (groupId !== "all" && groupId !== "doneJobs")) {
+      if (
+        (selectedGroupId === "all" || selectedGroupId === "doneJobs") &&
+        groupId !== "all" &&
+        groupId !== "doneJobs"
+      ) {
         const viewName =
           EProductionFloorView[EProductionFloorView.TABLE].toLowerCase();
         router.push(`/production-floor?view=${viewName}`, undefined, {
@@ -385,25 +421,26 @@ const useProductionFloorFilters = ({
       }
       if (groupId === "doneJobs") {
         const viewName =
-          EProductionFloorView[
-            EProductionFloorView.DONE_JOBS
-          ].toLowerCase();
-        router.push(`/production-floor?view=${viewName}`, undefined, {  
+          EProductionFloorView[EProductionFloorView.DONE_JOBS].toLowerCase();
+        router.push(`/production-floor?view=${viewName}`, undefined, {
           shallow: true,
         });
         setData([]);
         selectedView = EProductionFloorView.DONE_JOBS;
       }
       setSelectedGroupId(groupId);
-      getStationFilterGroupById(groupId,selectedView).then();
+      getStationFilterGroupById(groupId, selectedView).then();
     }
   };
 
-  const getStationFilterGroupById = async (id,selectedView:EProductionFloorView) => {
-    console.log("id",id)
-    if(id === "all"){
-      setData([])
-      await getDataByGroups(connectionId,filters,true)
+  const getStationFilterGroupById = async (
+    id,
+    selectedView: EProductionFloorView
+  ) => {
+    console.log("id", id);
+    if (id === "all") {
+      setData([]);
+      await getDataByGroups(connectionId, filters, true);
       return;
     }
     // if(id === "doneJobs"){
@@ -413,7 +450,11 @@ const useProductionFloorFilters = ({
     // }
     const callBack = (res) => {
       if (res.success) {
-        onStationsChange({ stations: res?.data?.stations, groupId: id ,view:selectedView});
+        onStationsChange({
+          stations: res?.data?.stations,
+          groupId: id,
+          view: selectedView,
+        });
       }
     };
     await getStationFilterByGroupIdApi(callApi, callBack, {
@@ -426,7 +467,7 @@ const useProductionFloorFilters = ({
       if (res.success) {
         getStationFilterGroups();
         if (id === selectedGroupId) {
-          onStationsChange({ stations: [], groupId: null ,view });
+          onStationsChange({ stations: [], groupId: null, view });
           setSelectedGroupId(null);
         }
       }
@@ -464,11 +505,11 @@ const useProductionFloorFilters = ({
   };
 
   useEffect(() => {
-    if(isFetching){
+    if (isFetching) {
       getAllUsers();
     }
   }, [isFetching]);
-  
+
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const handleSelectAllUsers = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -517,30 +558,33 @@ const useProductionFloorFilters = ({
   const [actions, setActions] = useRecoilState(actionsListState);
 
   const handleAgentChange = (selectedAgents) => {
-    setFilters({
-      ...filtersState,
-      agentIds:selectedAgents,
-    },view);
-  }
-useEffect(() => {
-  if(selectedGroupId && openModalEditGroup && isFetching){
-    getStationFilterByIdGroup(selectedGroup?.id)
-  }
-}, [selectedGroupId,openModalEditGroup,isFetching])
-
-const getActions = async () => {
-  const callBack = (res) => {
-    if (res.success) {
-      setActions(res?.data);
-    }
+    setFilters(
+      {
+        ...filtersState,
+        agentIds: selectedAgents,
+      },
+      view
+    );
   };
-  await getPrintHouseActions(callApi, callBack, false);
-};
-useEffect(() => {
-  if(isFetching){
-    getActions();
-  }
-}, [isFetching]);
+  useEffect(() => {
+    if (selectedGroupId && openModalEditGroup && isFetching) {
+      getStationFilterByIdGroup(selectedGroup?.id);
+    }
+  }, [selectedGroupId, openModalEditGroup, isFetching]);
+
+  const getActions = async () => {
+    const callBack = (res) => {
+      if (res.success) {
+        setActions(res?.data);
+      }
+    };
+    await getPrintHouseActions(callApi, callBack, false);
+  };
+  useEffect(() => {
+    if (isFetching) {
+      getActions();
+    }
+  }, [isFetching]);
 
   return {
     t,
@@ -613,8 +657,8 @@ useEffect(() => {
     handleAgentChange,
     view,
     getAllData,
-    searchInputFilterRef
+    searchInputFilterRef,
   };
 };
 
-export { useProductionFloorFilters }
+export { useProductionFloorFilters };

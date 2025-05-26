@@ -40,9 +40,11 @@ import { getAndSetCustomerById } from "@/services/api-service/customers/customer
 import { GomakeTextInput } from "@/components";
 import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
 import { Stack } from "@mui/material";
-import { useRecoilValue } from "recoil";
+import {useRecoilState, useRecoilValue} from "recoil";
 import { userQuoteState } from "@/store";
 import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
+import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missions";
+import {selectedMissionsState} from "@/widgets/production-floor/state/boards";
 
 
 
@@ -73,12 +75,14 @@ interface Query {
   productsIds?: string[];
 }
 
-const useBoardMissions = ({ isPurchaseJobs, selectedMission, setSelectedMission }) => {
+const useBoardMissions = ({ isPurchaseJobs }) => {
   const { CheckPermission } = useUserPermission();
   const { getCurrencyUnitText } = useQuoteGetData();
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
+  const [selectedMission, setSelectedMission] =
+      useRecoilState<any>(selectedMissionsState);
   const {
     alertFault,
     alertFaultGetData,
@@ -915,7 +919,7 @@ const useBoardMissions = ({ isPurchaseJobs, selectedMission, setSelectedMission 
     setOpenMarkReadyModalForProductType,
   ] = useState<boolean>(false);
   const onCloseMarkReadyModal = () => {
-    setSelectedMission({});
+    setSelectedMission(null);
     setOpenMarkReadyModal(false);
   };
   const onOpenMarkReadyModal = (mission) => {
@@ -927,7 +931,7 @@ const useBoardMissions = ({ isPurchaseJobs, selectedMission, setSelectedMission 
     setOpenMarkReadyModalForProductType(true);
   };
   const onCloseMarkReadyModalForProductType = () => {
-    setSelectedMission({});
+    setSelectedMission(null);
     setOpenMarkReadyModalForProductType(false);
   };
 
@@ -943,7 +947,7 @@ const useBoardMissions = ({ isPurchaseJobs, selectedMission, setSelectedMission 
   const [openReturnToProdModal, setOpenReturnToProdModalModal] =
     useState<boolean>(false);
   const onCloseReturnToProdModal = () => {
-    setSelectedMission({});
+    setSelectedMission(null);
     setOpenReturnToProdModalModal(false);
   };
   const onOpenReturnToProdModal = (mission) => {
@@ -1485,6 +1489,7 @@ const useBoardMissions = ({ isPurchaseJobs, selectedMission, setSelectedMission 
     onClickCloseModal,
     openQuoteModal,
     ExportJobsTableToExcel,
+    selectedMission
   };
 };
 

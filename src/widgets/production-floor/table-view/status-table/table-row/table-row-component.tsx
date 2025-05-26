@@ -79,7 +79,7 @@ const TableRowComponent = ({
   isMobileScreen,
   isRTL,
   isUrgentWork,
-  onUpdateJobDueDate,
+  onUpdateJobDueDate
 }: IProps) => {
   const { push } = useRouter();
   const [selectedIds, setSelectedIds] = useRecoilState(
@@ -183,7 +183,7 @@ const TableRowComponent = ({
     t,
     onClickPrintJob,
     updateNotes,
-  } = useProductionFloorData({});
+  } = useProductionFloorData();
   const {
     openSimpleApproveModal,
     handleOpenModal,

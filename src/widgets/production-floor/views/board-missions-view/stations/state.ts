@@ -47,3 +47,30 @@ export const productWorksTypesState = atom({
   key: "productWorksTypesState",
   default: [],
 });
+
+export const abortControllerStationState = atom({
+  key: "abortControllerStationState",
+  default: null,
+});
+
+export const abortControllerFilesState = atom({
+  key: "abortControllerFilesState",
+  default: null,
+});
+
+export const abortControllerActivitiesState = atom({
+  key: "abortControllerActivitiesState",
+  default: null,
+});
+
+export const getBoardMissionsByIdState = atom({
+  key: "getBoardMissionsByIdState",
+  default: null,
+});
+
+
+
+
+
+
+
