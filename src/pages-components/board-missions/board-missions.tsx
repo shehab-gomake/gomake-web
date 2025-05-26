@@ -41,13 +41,21 @@ import { fileUploaderConnectionIdState } from "@/store/file-uploader-state";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { EPreferences } from "@/enums/prefernces";
-import { useStorageList } from "@/hooks/use-storage-list";
 import { ExcelMenu } from "../quotes/widgets/excel-menu/excel-menu";
+import { useStorageList } from "@/hooks/use-storage-list";
 
 const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
   const { CheckPermission } = useUserPermission();
+  const {
+    storageList,
+    inputValue,
+    defaultValue,
+    addPrintHouseJobsStorage,
+    handleStorageChange,
+    setInputValue
+  } = useStorageList();
   const {
     tableHeader,
     tableHeaderForPurchaseJobs,
@@ -127,22 +135,13 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     customerForEdit,
     setShowCustomerModal,
     setCustomerForEdit,
-    selectedMission,
     updateQuoteStatus,
     onClickCloseModal,
     openQuoteModal,
-    setSelectedMission,
     ExportJobsTableToExcel,
+    selectedMission
   } = useBoardMissions({ isPurchaseJobs });
 
-  const {
-    storageList,
-    inputValue,
-    defaultValue,
-    addPrintHouseJobsStorage,
-    handleStorageChange,
-    setInputValue
-  } = useStorageList({ selectedMission, setSelectedMission })
   const { callApi } = useGomakeAxios();
   const [companyProfile] = useRecoilState(printHouseProfile);
   const [connectionId] = useRecoilState(fileUploaderConnectionIdState);
@@ -153,6 +152,7 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
   const [openPrintNodeModal, setOpenPrintNodeModal] = useState(false);
   const [printNodeOrderId, setPrintNodeOrderId] = useState(null);
   const { CheckPreferenceValue } = usePrintHousePreferences();
+
   useEffect(() => {
     if (
       router.isReady &&
@@ -160,23 +160,24 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
       newOrderId &&
       connectionId
     ) {
-      const callBack = (res) => { };
+      const callBack = (res) => {};
       addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
         orderId: newOrderId,
         connectionId: connectionId,
       }).then();
-
-      setOpenPrintNodeModal(
-        !!(
-          isPrintHouseUsePrintNode &&
-          newOrderId &&
-          !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS)
-        )
-      );
-      setPrintNodeOrderId(newOrderId);
-      setNewOrderId("");
     }
+
+    setOpenPrintNodeModal(
+      !!(
+        isPrintHouseUsePrintNode &&
+        newOrderId &&
+        !CheckPreferenceValue(EPreferences.USE_PRINTNODE_AFTER_PREPRESS)
+      )
+    );
+    setPrintNodeOrderId(newOrderId);
+    setNewOrderId("");
   }, [newOrderId]);
+
   useEffect(() => {
     getAllProducts();
   }, []);
@@ -408,55 +409,55 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               !isPurchaseJobs
                 ? CheckPermission(Permissions.SHOW_COSTS_IN_BOARD_MISSIONS)
                   ? [
+                      "7%",
+                      "7%",
+                      "6%",
+                      "6%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "4%",
+                      "6%",
+                      "12%",
+                      "7%",
+                      "7%",
+                      "13%",
+                      "3%",
+                    ]
+                  : [
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "7%",
+                      "8%",
+                      "7%",
+                      "18%",
+                      "7%",
+                      "15%",
+                      "7%",
+                      "3%",
+                    ]
+                : [
                     "7%",
+                    "5%",
+                    "6%",
                     "7%",
                     "6%",
-                    "6%",
                     "7%",
-                    "7%",
+                    "11%",
                     "8%",
+                    "6%",
+                    "8%",
+                    "5%",
+                    "5%",
+                    "7%",
                     "7%",
                     "4%",
-                    "6%",
-                    "12%",
-                    "7%",
-                    "7%",
-                    "13%",
-                    "3%",
+                    "2%",
                   ]
-                  : [
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "7%",
-                    "8%",
-                    "7%",
-                    "18%",
-                    "7%",
-                    "15%",
-                    "7%",
-                    "3%",
-                  ]
-                : [
-                  "7%",
-                  "5%",
-                  "6%",
-                  "7%",
-                  "6%",
-                  "7%",
-                  "11%",
-                  "8%",
-                  "6%",
-                  "8%",
-                  "5%",
-                  "5%",
-                  "7%",
-                  "7%",
-                  "4%",
-                  "2%",
-                ]
             }
           />
         </div>
@@ -512,12 +513,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -558,12 +559,12 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

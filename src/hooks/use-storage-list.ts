@@ -4,12 +4,16 @@ import { getAllPrintHouseJobsStorageApi } from "@/services/api-service/board-mis
 import { useGomakeAxios } from "./use-gomake-axios";
 import { useState } from "react"
 import {useRecoilState} from "recoil";
-import {storageListState} from "@/widgets/production-floor/state/boards";
+import {selectedMissionsState, storageListState} from "@/widgets/production-floor/state/boards";
+import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missions";
 
-const useStorageList = ({selectedMission,setSelectedMission}) => {
+const useStorageList = () => {
     const { callApi } = useGomakeAxios();
     const [storageList, setStorageList] = useRecoilState(storageListState)
   const [inputValue, setInputValue] = useState("")
+    const [selectedMission, setSelectedMission] =
+        useRecoilState<any>(selectedMissionsState);
+  //const [selectedMission, setSelectedMission] = useState<any>({});
   const getAllPrintHouseJobsStorage = async () => {
     const callBack = (res) => {
       if (res.success) {

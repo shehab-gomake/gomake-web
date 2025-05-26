@@ -23,4 +23,5 @@ export interface IBusinessWidget {
   width?: any;
   renderOption?: any;
   isRightSign?: boolean;
+  showClearIcon?: boolean;
 }

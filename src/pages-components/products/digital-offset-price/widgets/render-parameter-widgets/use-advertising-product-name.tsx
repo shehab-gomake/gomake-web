@@ -217,16 +217,18 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
     const sheetcategory = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "Sheetcategory")?.values[0];
     const sheetColor = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "SheetColor")?.values[0];
     const unit = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "DieUnitWidth")?.unitKey;
+    const lidHeight = subProducts.flatMap((item: any) => item.parameters).find((param: any) => param.parameterCode === "LidHeight")?.values[0];
 
     const reqObj = {
       dieCutCategory: category,
       unitWidth: Number(unitWidth),
       unitLength: Number(unitLength),
       unitHeight: Number(unitHeight),
+      lidHeight: lidHeight,
       sheetsWeight: sheetWeight,
       sheetsCategory: sheetcategory,
       sheetsColor: sheetColor,
-      unit: unit
+      unit: unit,
     }
     const callBack = (res) => {
       if (res?.isOkay) {
@@ -369,6 +371,7 @@ const useAdvertisingProductName = ({ parameter, getProductById, getAllMaterial, 
       "DieUnitWidth",
       "DieUnitLength",
       "DieUnitHeight",
+      "LidHeight"
     ];
 
     const foundParameters = subProducts.flatMap(product =>

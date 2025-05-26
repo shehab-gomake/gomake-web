@@ -117,6 +117,7 @@ const ButtonsContainer = ({
     // customer,
     // setCustomer,
     isPurchaseInvoice,
+    CheckoutOptionModal,
     onClickCloseCloseOrderNotesModal,
     onClickOpenCloseOrderNotesModal,
     openCloseOrderNotesModal,
@@ -432,6 +433,7 @@ const ButtonsContainer = ({
           confirmWithNotification={onClickConfirmWithNotification}
           isUsedStripe={quoteItemValue?.isUsedStripe}
           isConnectedToStripe={quoteItemValue?.isConnectedToStripe}
+          CheckoutOptionModal={CheckoutOptionModal}
         />
         <ManagerApprovalModal
           openModal={openMangerApprovalModal}

@@ -245,6 +245,7 @@ const BusinessNewWidget = ({
             }
             getOptionLabel={(item) => item.text}
             onChange={(e, value) => updateAgent(value)}
+            showClearIcon={!!selectedAgent?.value}
           />
         )}
         {(isOrder || isQuote) && (
@@ -278,7 +279,6 @@ const BusinessNewWidget = ({
                 : t("sales.quote.purchaseNumber")
             }
             onBlur={() => onBlurPurchaseNumber(purchaseNumber)}
-            // isUpdate={canEditDocument && isUpdatePurchaseNumber}
             isUpdate={canEditPurchaseNumber && isUpdatePurchaseNumber}
             setIsUpdate={
               isQuoteConfirmation

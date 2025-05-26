@@ -469,11 +469,6 @@ const useQuoteNew = ({
     }
   };
 
-  const onBlurPurchaseNumber = async (value) => {
-    updatePurchaseNumber(value);
-    setIsUpdatePurchaseNumber(null);
-  };
-
   const onBlurTitle = async (value) => {
     updateDocumentTitle(value);
     setIsUpdateDocumentTitle(null);
@@ -672,29 +667,47 @@ const useQuoteNew = ({
     }
   };
 
-  const updatePurchaseNumber = async (value: string) => {
-    if (router.query.isNewCreation) {
-      const updatedQuoteItemValue = { ...quoteItemValue };
-      updatedQuoteItemValue.purchaseNumber = value;
-      setQuoteItemValue(updatedQuoteItemValue);
-    } else {
-      const callBack = (res) => {
-        if (res?.success) {
+  const alertExistPurchaseNumber = useModal();
+
+  const [originalPurchaseNumber, setOriginalPurchaseNumber] = useState(null);
+  const [pendingPurchaseNumber, setPendingPurchaseNumber] = useState(null);
+
+  const onBlurPurchaseNumber = async (value) => {
+    await updatePurchaseNumber(value);
+    setIsUpdatePurchaseNumber(null);
+  };
+
+  const updatePurchaseNumber = async (value: string, forceUpdate = false) => {
+    const originalValue = Number(quoteItemValue?.purchaseNumber);
+
+    if (!forceUpdate) {
+      setOriginalPurchaseNumber(originalValue);
+      setPendingPurchaseNumber(value);
+    }
+
+    const callBack = (res) => {
+      if (res?.success) {
+        if (res?.data === false && !forceUpdate) {
+          alertExistPurchaseNumber.open();
+        } else {
           alertSuccessUpdate();
           setIsUpdatePurchaseNumber(null);
           getQuote();
-        } else {
-          alertFaultUpdate();
         }
-      };
-      await updatePurchaseNumberApi(callApi, callBack, {
-        documentType: docType,
-        document: {
-          documentId: quoteItemValue?.id,
-          purchaseNumber: value,
-        },
-      });
-    }
+      } else {
+        alertFaultUpdate();
+        setQuoteItemValue({ ...quoteItemValue, purchaseNumber: originalValue });
+      }
+    };
+
+    await updatePurchaseNumberApi(callApi, callBack, {
+      documentType: docType,
+      document: {
+        documentId: quoteItemValue?.id,
+        purchaseNumber: value,
+        ...(forceUpdate && { forceUpdate: true }),
+      },
+    });
   };
 
   useEffect(() => {
@@ -2543,6 +2556,12 @@ const useQuoteNew = ({
     alertNotVerifiedModalState,
     AddCustomerModal,
     handleSaveDraftBtnClick,
+    alertExistPurchaseNumber,
+    pendingPurchaseNumber,
+    setPendingPurchaseNumber,
+    originalPurchaseNumber,
+    setOriginalPurchaseNumber,
+    updatePurchaseNumber,
   };
 };
 

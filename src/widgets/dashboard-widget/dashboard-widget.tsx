@@ -1,28 +1,28 @@
-import {IBoardMissions, IDashboardStatistic, IDashboardWidget,} from "@/widgets/dashboard-widget/interfaces";
-import {useStyle} from "@/widgets/dashboard-widget/style";
-import {useCallback, useEffect, useState} from "react";
-import {Cards} from "@/widgets/dashboard-widget/cards/cards";
-import {IDateRange} from "@/shared/interfaces";
-import {BoardMissionsTable} from "@/widgets/dashboard-widget/table";
-import {useGomakeDateRange, useGomakeMachines} from "@/hooks";
-import {useBoardMissions} from "@/widgets/dashboard-widget/use-board-missions";
-import {useRecoilValue} from "recoil";
-import {DashboardActions} from "@/store";
-import {selectedAgentsState} from "@/store/agents-state";
-import {dashboardClientsState} from "@/widgets/dashboard-widget/clients/clients-state";
-import {useDashboardSignalr} from "@/hooks/signalr/use-dashboard-signalr";
-import {Skeleton} from "@mui/material";
-import {DashboardDates} from "@/widgets/dashboard-widget/dates";
+import { IBoardMissions, IDashboardStatistic, IDashboardWidget, } from "@/widgets/dashboard-widget/interfaces";
+import { useStyle } from "@/widgets/dashboard-widget/style";
+import { useCallback, useEffect, useState } from "react";
+import { Cards } from "@/widgets/dashboard-widget/cards/cards";
+import { IDateRange } from "@/shared/interfaces";
+import { BoardMissionsTable } from "@/widgets/dashboard-widget/table";
+import { useGomakeDateRange, useGomakeMachines } from "@/hooks";
+import { useBoardMissions } from "@/widgets/dashboard-widget/use-board-missions";
+import { useRecoilValue } from "recoil";
+import { DashboardActions } from "@/store";
+import { selectedAgentsState } from "@/store/agents-state";
+import { dashboardClientsState } from "@/widgets/dashboard-widget/clients/clients-state";
+import { useDashboardSignalr } from "@/hooks/signalr/use-dashboard-signalr";
+import { Skeleton } from "@mui/material";
+import { DashboardDates } from "@/widgets/dashboard-widget/dates";
 import Stack from "@mui/material/Stack";
 
-const DashboardWidget = ({}: IDashboardWidget) => {
-    const {machines, addMachineProgress, addEmployeeProgress, getCheckedMachines} = useGomakeMachines();
+const DashboardWidget = ({ }: IDashboardWidget) => {
+    const { machines, addMachineProgress, addEmployeeProgress, getCheckedMachines } = useGomakeMachines();
     const [tasksFilter, setTasksFilter] = useState<string>('');
     const selectedClients = useRecoilValue(dashboardClientsState);
-    const {classes} = useStyle();
-    const {dates, action} = useGomakeDateRange();
+    const { classes } = useStyle();
+    const { dates, action } = useGomakeDateRange();
     const selectedAgents = useRecoilValue(selectedAgentsState);
-    const {} = useDashboardSignalr(() => actions(action, dates));
+    const { } = useDashboardSignalr(() => actions(action, dates));
 
     const {
         getBoardsMissionsByDateRange,
@@ -110,30 +110,30 @@ const DashboardWidget = ({}: IDashboardWidget) => {
     return (
         <div style={classes.container}>
             {
-                statistics ? <Cards data={statistics ? statistics : {} as IDashboardStatistic}/> :
-                    <Stack style={{...classes.SkeletonCardsContainer}} gap={'15px'}>
+                statistics ? <Cards data={statistics ? statistics : {} as IDashboardStatistic} /> :
+                    <Stack style={{ ...classes.SkeletonCardsContainer }} gap={'15px'}>
                         <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
                             {
                                 new Array(6).fill(null).map(_ => <Skeleton variant="rectangular" width={215} height={80}
-                                                                           style={{borderRadius: 16}}/>)
+                                    style={{ borderRadius: 16 }} />)
                             }
                         </Stack>
                     </Stack>
             }
 
-            <DashboardDates handelSearchValueChange={handelSearchValueChange}/>
-            <Stack style={{height: '100%'}}>
+            <DashboardDates handelSearchValueChange={handelSearchValueChange} />
+            <Stack style={{ height: '100%' }}>
                 {
                     tasks()?.length > 0 ? <div>
-                            {usedMachines() && getFilteredBoardsMissions() &&
-                                <BoardMissionsTable boardsMissions={tasks()}
-                                                    usedMachines={usedMachines()}
-                                />}</div> :
+                        {usedMachines() && getFilteredBoardsMissions() &&
+                            <BoardMissionsTable boardsMissions={tasks()}
+                                usedMachines={usedMachines()}
+                            />}</div> :
                         <Skeleton
                             variant="rectangular"
                             width={"100%"}
                             height={400}
-                            style={{borderRadius: 16}}
+                            style={{ borderRadius: 16 }}
 
                         />
                 }
@@ -142,6 +142,6 @@ const DashboardWidget = ({}: IDashboardWidget) => {
         </div>
     );
 }
-export {DashboardWidget}
+export { DashboardWidget }
 
 

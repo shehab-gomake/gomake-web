@@ -21,11 +21,15 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useDrop } from "react-dnd";
 import { TableRowComponent } from "@/widgets/production-floor/table-view/status-table/table-row/table-row-component";
-import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useRecoilState } from "recoil";
 import { productionFloorTextSearchState } from "@/widgets/production-floor/state/text-search";
 import { useCallback, useState } from "react";
-import { GoMakeAutoComplate, GoMakeDeleteModal, GomakeTextInput, ThreeOptionsModal } from "@/components";
+import {
+  GoMakeAutoComplate,
+  GoMakeDeleteModal,
+  GomakeTextInput,
+  ThreeOptionsModal,
+} from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
 import { CurrentStationOrderingEnum, ModalType } from "@/enums";
 import { useMediaQuery } from "@mui/material";
@@ -33,10 +37,10 @@ import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
 import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 
-import { ArrowUpward, } from "@mui/icons-material";
+import { ArrowUpward } from "@mui/icons-material";
 import { productionFloorFiltersState } from "../../state/production-floor-filters";
 import { currentStationOrderingState } from "@/store/agents-state";
-import { useStorageList } from "@/hooks/use-storage-list";
+import { useProductionFloorData } from "../../use-production-floor-data";
 
 interface IProps {
   status: IProductionStatus;
@@ -44,7 +48,13 @@ interface IProps {
   count?: number;
   onClickClient?: (clientId: any) => void;
   allBoardMissions?: IBoardMissions[];
-  setFilters?: any
+  setFilters?: any;
+  storageList?: any;
+  inputValue?: any;
+  defaultValue?: any;
+  addPrintHouseJobsStorage?: any;
+  handleStorageChange?: any;
+  setInputValue?: any;
 }
 
 const StatusTableComponent = ({
@@ -53,29 +63,40 @@ const StatusTableComponent = ({
   count,
   allBoardMissions,
   onClickClient,
-  setFilters
+  setFilters,
+  storageList,
+  inputValue,
+  defaultValue,
+  addPrintHouseJobsStorage,
+  handleStorageChange,
+  setInputValue
 }: IProps) => {
   const { isOpen, onClickStatus, tableHeaders } = useStatusTable();
   const [search] = useRecoilState(productionFloorTextSearchState);
   const isMobileScreen = useMediaQuery("(max-width:768px)");
   const { CheckPreferenceValue } = usePrintHousePreferences();
-  const [filtersState, setFiltersState] = useRecoilState(productionFloorFiltersState);
+  const [filtersState, setFiltersState] = useRecoilState(
+    productionFloorFiltersState
+  );
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     direction: CurrentStationOrderingEnum;
   }>({ key: "", direction: CurrentStationOrderingEnum.NONE });
 
-  const reSortingCurrentStation = async (direction: CurrentStationOrderingEnum) => {
+  const reSortingCurrentStation = async (
+    direction: CurrentStationOrderingEnum
+  ) => {
     await setFilters({
       ...filtersState,
-      currentStationOrdering: direction
+      currentStationOrdering: direction,
     });
   };
-  const hasUrgentOrApproval = allBoardMissions?.some(board =>
-    board.isUrgentWork ||
-    board.showGraphicsApprovalAlert === 1 ||
-    board.showGraphicsApprovalAlert === 0 ||
-    board.showGraphicsApprovalAlert === 2
+  const hasUrgentOrApproval = allBoardMissions?.some(
+    (board) =>
+      board.isUrgentWork ||
+      board.showGraphicsApprovalAlert === 1 ||
+      board.showGraphicsApprovalAlert === 0 ||
+      board.showGraphicsApprovalAlert === 2
   );
   const {
     t,
@@ -88,21 +109,11 @@ const StatusTableComponent = ({
     openPackagesModal,
     onClosePrintDeliverTicketModal,
     onOpenPrintDeliverTicketModal,
-    selectedMission,
     tryMoveBoardMissionsToDone,
     updateJobDueDate,
-    setSelectedMission
-
+    selectedMission
   } = useProductionFloorData();
 
-  const {
-    storageList,
-    inputValue,
-    defaultValue,
-    addPrintHouseJobsStorage,
-    handleStorageChange,
-    setInputValue
-  } = useStorageList({ selectedMission, setSelectedMission })
   const {
     openSimpleApproveModal,
     handleOpenModal,
@@ -113,10 +124,12 @@ const StatusTableComponent = ({
     handleCloseStuckModal,
     stuckReason,
     setStuckReason,
-    onUpdateStuckReason
+    onUpdateStuckReason,
   } = useSimpleApproveModal(updateStatus);
 
-  const [currentStationOrdering, setCurrentStationOrdering] = useRecoilState(currentStationOrderingState);
+  const [currentStationOrdering, setCurrentStationOrdering] = useRecoilState(
+    currentStationOrderingState
+  );
 
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -136,7 +149,7 @@ const StatusTableComponent = ({
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
               item.board.id
             );
-          }/* else if (status.key === "Stuck") {
+          } /* else if (status.key === "Stuck") {
             handleOpenStuckModal(
               status.id,
               item.selectedIds.length > 0 ? item.selectedIds : [item.board],
@@ -172,21 +185,21 @@ const StatusTableComponent = ({
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-        (board) =>
-          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-            search
-          ) ||
-          `${board?.clientName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          `${board?.productName?.toLowerCase()}`.includes(
-            search.toLowerCase()
-          ) ||
-          board?.automatedTags?.some((tag) =>
-            `${tag.toLowerCase()}`.includes(search.toLowerCase())
-          ) ||
-          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-      )
+          (board) =>
+            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+              search
+            ) ||
+            `${board?.clientName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            `${board?.productName?.toLowerCase()}`.includes(
+              search.toLowerCase()
+            ) ||
+            board?.automatedTags?.some((tag) =>
+              `${tag.toLowerCase()}`.includes(search.toLowerCase())
+            ) ||
+            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+        )
       : boards;
   }, [boards, search]);
 
@@ -233,8 +246,9 @@ const StatusTableComponent = ({
           },
         }}
       >
-        {`${!status.isGroup ? t("productionStatuses." + status.name) : status.name
-          } (${getBoards().length})`}
+        {`${
+          !status.isGroup ? t("productionStatuses." + status.name) : status.name
+        } (${getBoards().length})`}
       </Button>
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
@@ -265,16 +279,15 @@ const StatusTableComponent = ({
                           align={"center"}
                           sx={
                             header === t("productionFloor.currentStation")
-                              ? (
-                                currentStationOrdering === CurrentStationOrderingEnum.NONE
-                                  ? {
-                                    '& .sort-icon': { opacity: 0 },
-                                    '&:hover .sort-icon': { opacity: 1 }
+                              ? currentStationOrdering ===
+                                CurrentStationOrderingEnum.NONE
+                                ? {
+                                    "& .sort-icon": { opacity: 0 },
+                                    "&:hover .sort-icon": { opacity: 1 },
                                   }
-                                  : {
-                                    '& .sort-icon': { opacity: 1 }
+                                : {
+                                    "& .sort-icon": { opacity: 1 },
                                   }
-                              )
                               : undefined
                           }
                         >
@@ -295,20 +308,32 @@ const StatusTableComponent = ({
                                 onClick={() => {
                                   setSortConfig({
                                     key: t("productionFloor.currentStation"),
-                                    direction: currentStationOrdering === CurrentStationOrderingEnum.NONE ? CurrentStationOrderingEnum.ASC : CurrentStationOrderingEnum.NONE
-                                  })
-                                  setCurrentStationOrdering(currentStationOrdering === CurrentStationOrderingEnum.NONE ? CurrentStationOrderingEnum.ASC : CurrentStationOrderingEnum.NONE)
-                                  reSortingCurrentStation(currentStationOrdering === CurrentStationOrderingEnum.NONE ? CurrentStationOrderingEnum.ASC : CurrentStationOrderingEnum.NONE)
-                                }}>
-                                {
-                                  <ArrowUpward sx={{ fontSize: "18px" }} />
-
-                                }
+                                    direction:
+                                      currentStationOrdering ===
+                                      CurrentStationOrderingEnum.NONE
+                                        ? CurrentStationOrderingEnum.ASC
+                                        : CurrentStationOrderingEnum.NONE,
+                                  });
+                                  setCurrentStationOrdering(
+                                    currentStationOrdering ===
+                                      CurrentStationOrderingEnum.NONE
+                                      ? CurrentStationOrderingEnum.ASC
+                                      : CurrentStationOrderingEnum.NONE
+                                  );
+                                  reSortingCurrentStation(
+                                    currentStationOrdering ===
+                                      CurrentStationOrderingEnum.NONE
+                                      ? CurrentStationOrderingEnum.ASC
+                                      : CurrentStationOrderingEnum.NONE
+                                  );
+                                }}
+                              >
+                                {<ArrowUpward sx={{ fontSize: "18px" }} />}
                               </IconButton>
                             )}
                           </div>
                         </SecondaryTableCell>
-                      )
+                      );
                     })}
                   </SecondaryTableRow>
                 </TableHead>
@@ -357,12 +382,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                  {
-                    storage: `Add "${inputValue}" as a new storage`,
-                    id: "new",
-                  },
-                  ...storageList,
-                ]
+                    {
+                      storage: `Add "${inputValue}" as a new storage`,
+                      id: "new",
+                    },
+                    ...storageList,
+                  ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}

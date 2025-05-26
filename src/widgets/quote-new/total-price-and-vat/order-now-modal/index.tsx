@@ -1,5 +1,9 @@
 import { useTranslation } from "react-i18next";
-import { GoMakeModal, GomakePrimaryButton } from "@/components";
+import {
+  GoMakeModal,
+  GomakePrimaryButton,
+  ThreeOptionsModal,
+} from "@/components";
 import { useStyle } from "./style";
 import { OrderNowIcon } from "./icons";
 import { Stack } from "@mui/material";
@@ -11,6 +15,7 @@ const OrderNowModal = ({
   confirmWithNotification,
   isUsedStripe,
   isConnectedToStripe,
+  CheckoutOptionModal,
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -60,16 +65,22 @@ const OrderNowModal = ({
             >
               {t("sales.quote.cancel")}
             </GomakePrimaryButton>
+
             <GomakePrimaryButton
               style={showBtn ? classes.secondBtn : classes.btnStyle}
               onClick={confirmWithoutNotification}
             >
               {confirmWithoutNotificationText}
             </GomakePrimaryButton>
+
             {showBtn && (
               <GomakePrimaryButton
                 style={classes.btnStyle}
-                onClick={confirmWithNotification}
+                onClick={
+                  isUsedStripe
+                    ? CheckoutOptionModal.open
+                    : confirmWithNotification
+                }
               >
                 {confirmWithNotificationText}
               </GomakePrimaryButton>
@@ -77,6 +88,18 @@ const OrderNowModal = ({
           </div>
         </div>
       </GoMakeModal>
+
+      <ThreeOptionsModal
+        hideIcon={true}
+        title={t("sales.modals.chooseCheckoutOption")}
+        subTitle={t("sales.modals.checkoutPrompt")}
+        yesBtn={"sales.modals.creditCard"}
+        noBtn={"sales.modals.cash"}
+        openModal={CheckoutOptionModal.isOpen}
+        onClose={CheckoutOptionModal.close}
+        onClickYes={() => confirmWithNotification(false)}
+        onClickNo={() => confirmWithNotification(true)}
+      />
     </>
   );
 };

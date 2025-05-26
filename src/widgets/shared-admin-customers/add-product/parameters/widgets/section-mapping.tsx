@@ -6,7 +6,7 @@ import {
   RequiredIcon,
   SettingIcon,
 } from "../../icons";
-import { IconButton, Stack, Tooltip } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { LockedIcon } from "../../icons/lock-icon";
 import { NotLockedIcon } from "../../icons/not-lock-icon";
 import { DetailIcon } from "../../icons/detail-icon";
@@ -19,7 +19,6 @@ import { useRecoilState } from "recoil";
 import { selectedUpdateTypeState } from "@/store/selected-update-type";
 import { doNotAskNextTimeState } from "@/store";
 import { EditIcon } from "../../icons/edit-icon";
-import { CircleCheckbox } from "@/components/check-box/circle-check-box";
 import { SecondSwitch } from "@/components";
 import { PlusIcon } from "@/icons";
 import { useRouter } from "next/router";
@@ -112,6 +111,24 @@ const SectionMappingWidget = ({
     if (!doNotAskNextTime) {
       setIsUpdateModalOpen(true);
     }
+  };
+
+  const hasDefaultValue = (parameter) => {
+    // Check for DROP_DOWN_LIST, SELECT_MATERIALS, or other specific types
+    if (parameter?.parameterType === EParameterTypes.DROP_DOWN_LIST ||
+      parameter?.parameterType === EParameterTypes.SELECT_MATERIALS) {
+      // Check valuesConfigs for default value
+      return parameter?.valuesConfigs?.some(config => config.isDefault === true);
+    }
+    // For other parameter types, check defaultValue
+    return !!parameter?.defaultValue;
+  };
+
+  const canUpdateVisibility = (parameter) => {
+    if (!parameter?.defaulValueIsRequiredBeforeHide) {
+      return true;
+    }
+    return hasDefaultValue(parameter);
   };
 
   const handleUpdate = (
@@ -241,6 +258,12 @@ const SectionMappingWidget = ({
                       "hidden",
                       "visible",
                       () => {
+                        if (parameter?.defaulValueIsRequiredBeforeHide) {
+                          if (!canUpdateVisibility(parameter)) {
+                            alertWarning("products.parameters.setDefaultValue");
+                            return;
+                          }
+                        }
                         if (!doNotAskNextTime) {
                           handleOpenModal();
                         } else {
