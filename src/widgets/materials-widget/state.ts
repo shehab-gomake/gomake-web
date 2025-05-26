@@ -87,7 +87,7 @@ export const selectedCategoryModalState = atom({
 });
 
 export const materialCategorySuppliersState = atom<
-  { value: string; label: string; isDefault: boolean; order?: number }[]
+  { value: string; label: string; isDefault: boolean; order?: number, name?: string, id?: string }[]
 >({
   key: "materialCategorySuppliersState",
   default: [],
