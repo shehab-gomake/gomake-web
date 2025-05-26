@@ -754,11 +754,6 @@ const QuoteNewPageWidget = ({
             >
               {!isReceipt && (
                 <QuoteForPriceTable
-                  // documentItems={
-                  //   isQuoteConfirmation
-                  //     ? quoteConfirm?.documentItems
-                  //     : documentItems
-                  // }
                   documentItems={documentItems}
                   tableHeaders={tableHeaders}
                   columnWidths={columnWidths}

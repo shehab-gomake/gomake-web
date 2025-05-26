@@ -18,6 +18,7 @@ import { NotCalculatingIcon } from "@/icons";
 import { ECalculationStatus } from "@/enums";
 import { CalculatingIcon } from "@/icons";
 import { useTranslation } from "react-i18next";
+import { DebtRowMappingWidget } from "./debt-row-mapping";
 
 const QuoteForPriceTable = ({
   documentItems,
@@ -39,7 +40,8 @@ const QuoteForPriceTable = ({
   isQuoteConfirmation = false,
   isPrePaymentPage,
   onChangeSelectedItemRowForQoute,
-}) => {
+  isDebtPayments = false,
+}: any) => {
   const { t } = useTranslation();
   let indexs = 0;
   const { classes } = useStyle({ headerHeight });
@@ -135,7 +137,7 @@ const QuoteForPriceTable = ({
         <Table stickyHeader={true}>
           <TableHead>
             <TableRow style={classes.tableRowStyle}>
-              {tableHeaders.map(
+              {tableHeaders?.map(
                 (header, index) =>
                   !(
                     isQuoteConfirmation && index === tableHeaders.length - 1
@@ -162,35 +164,48 @@ const QuoteForPriceTable = ({
               const parentIndex = indexs;
               return (
                 <>
-                  <RowMappingWidget
-                    key={item.id}
-                    item={item}
-                    index={index}
-                    parentIndex={parentIndex}
-                    columnWidths={adjustedColumnWidths}
-                    headerHeight={headerHeight}
-                    changeDocumentItems={changeDocumentItems}
-                    getCalculateQuoteItem={getCalculateQuoteItem}
-                    getCalculateQuoteConfirmationItem={
-                      getCalculateQuoteConfirmationItem
-                    }
-                    onClickDuplicateWithDifferentQTY={
-                      onClickDuplicateWithDifferentQTY
-                    }
-                    onClickQuickDuplicate={onClickQuickDuplicate}
-                    onClickDeleteQouteItem={onClickDeleteQouteItem}
-                    documentType={documentType}
-                    getQuote={getQuote}
-                    isQuoteConfirmation={isQuoteConfirmation}
-                    isPrePaymentPage={isPrePaymentPage}
-                    onChangeSelectedItemRowForQoute={
-                      onChangeSelectedItemRowForQoute
-                    }
-                    quoteItems={quoteItems}
-                    isShowChilds={visibleChilds[parentIndex]} // Access visibleChilds with correct parentIndex
-                    setIsShowChilds={() => toggleChildVisibility(parentIndex)}
-                    _renderIconcalculationStatus={_renderIconcalculationStatus}
-                  />
+                  {isDebtPayments ? (
+                    <DebtRowMappingWidget
+                      key={item?.transId}
+                      item={item}
+                      index={index}
+                      parentIndex={parentIndex}
+                      headerHeight={headerHeight}
+                    />
+                  ) : (
+                    <RowMappingWidget
+                      key={item.id}
+                      item={item}
+                      index={index}
+                      parentIndex={parentIndex}
+                      columnWidths={adjustedColumnWidths}
+                      headerHeight={headerHeight}
+                      changeDocumentItems={changeDocumentItems}
+                      getCalculateQuoteItem={getCalculateQuoteItem}
+                      getCalculateQuoteConfirmationItem={
+                        getCalculateQuoteConfirmationItem
+                      }
+                      onClickDuplicateWithDifferentQTY={
+                        onClickDuplicateWithDifferentQTY
+                      }
+                      onClickQuickDuplicate={onClickQuickDuplicate}
+                      onClickDeleteQouteItem={onClickDeleteQouteItem}
+                      documentType={documentType}
+                      getQuote={getQuote}
+                      isQuoteConfirmation={isQuoteConfirmation}
+                      isPrePaymentPage={isPrePaymentPage}
+                      onChangeSelectedItemRowForQoute={
+                        onChangeSelectedItemRowForQoute
+                      }
+                      quoteItems={quoteItems}
+                      isShowChilds={visibleChilds[parentIndex]} // Access visibleChilds with correct parentIndex
+                      setIsShowChilds={() => toggleChildVisibility(parentIndex)}
+                      _renderIconcalculationStatus={
+                        _renderIconcalculationStatus
+                      }
+                    />
+                  )}
+
                   {item?.childsDocumentItems &&
                     !visibleChilds[parentIndex] &&
                     item?.childsDocumentItems?.map(

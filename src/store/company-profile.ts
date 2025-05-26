@@ -65,6 +65,7 @@ export interface ICompanyProfile {
     name: string;
     number: string;
   }>;
+  paymentReminder?: number;
 }
 
 export enum CreditClearanceCompanies {
