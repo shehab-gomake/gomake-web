@@ -103,14 +103,14 @@ const useMessageTemplate = () => {
       if (data.success) {
         const tableRows = data.data?.map((template) => [
           types.find((option) => option.value == template.templateType)?.text ||
-          "Unknown",
+            "Unknown",
           template.title
             ? new DOMParser().parseFromString(template.title, "text/html").body
-              .textContent
+                .textContent
             : "",
           template.text
             ? new DOMParser().parseFromString(template.text, "text/html").body
-              .textContent
+                .textContent
             : "",
           <PdfUploadComponent
             onUpload={false}
@@ -126,7 +126,10 @@ const useMessageTemplate = () => {
       }
     };
     getAllSMSTemplatesApi(callApi, callBackFunction, {
-      SMSTemplatesGroupId: templateGroup?.id === "00000000-0000-0000-0000-0000000000000" ? null : templateGroup?.id,
+      SMSTemplatesGroupId:
+        templateGroup?.id === "00000000-0000-0000-0000-0000000000000"
+          ? null
+          : templateGroup?.id,
     }).then();
   };
 
@@ -184,7 +187,11 @@ const useMessageTemplate = () => {
         alertFaultUpdate();
       }
     };
-    if (templateGroup && templateGroup?.id && templateGroup?.id !== "00000000-0000-0000-0000-0000000000000") {
+    if (
+      templateGroup &&
+      templateGroup?.id &&
+      templateGroup?.id !== "00000000-0000-0000-0000-0000000000000"
+    ) {
       updatedSMSTemplate.smsTemplatesGroupId = templateGroup?.id;
     }
     await updateSMSTemplateApi(callApi, callBack, updatedSMSTemplate);
