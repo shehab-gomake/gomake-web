@@ -12,7 +12,7 @@ export enum ErpAccountType {
 
 export interface CheckData {
   dueDate: string;
-  checkNumber: string;
+  checkNumber: number;
   bankCode: string;
   branch: string;
   accountNum: string;
@@ -116,7 +116,7 @@ export const checksRowState = atom<CheckData[]>({
   default: [
     {
       dueDate: new Date().toISOString().split("T")[0],
-      checkNumber: "",
+      checkNumber: 0,
       bankCode: "",
       branch: "",
       accountNum: "",
@@ -218,7 +218,7 @@ export const prevStateState = atom<prevStateStateData>({
     checksReceipt: [
       {
         dueDate: new Date().toISOString().split("T")[0],
-        checkNumber: "",
+        checkNumber: 0,
         bankCode: "",
         branch: "",
         accountNum: "",
