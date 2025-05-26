@@ -46,8 +46,6 @@ const ProductionFloorTableView = ({ connectionId }) => {
     addPrintHouseJobsStorage,
     handleStorageChange,
     setInputValue,
-    selectedMission,
-    setSelectedMission
   } = useStorageList()
 
   const handlePageChange = (event, value) => {
