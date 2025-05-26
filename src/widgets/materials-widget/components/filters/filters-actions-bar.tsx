@@ -54,8 +54,9 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
     value: string;
     label: string;
     isDefault: boolean;
+    name?: string;
+    id?: string;
   } | null>({ value: "", label: "", isDefault: false });
-
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -128,7 +129,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
         materialSuppliers.find((s) => s.order === 1) || materialSuppliers[0];
 
       setSupplierName(firstSupplier);
-      onSelectSupplier(firstSupplier?.value);
+      onSelectSupplier(firstSupplier?.value || firstSupplier?.id);
     } else {
       setSupplierName(null);
       onSelectSupplier("");
@@ -167,16 +168,16 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             unitType === UNIT_TYPE.IMPERIAL ? convertTitleUnits(unit) : unit;
           const convertedValues = unit
             ? values.map((value) => {
-                if (value.includes("X")) {
-                  const [width, height] = value.split("X");
+              if (value.includes("X")) {
+                const [width, height] = value.split("X");
 
-                  const convertedWidth = convertValueToImperial(unit, width);
-                  const convertedHeight = convertValueToImperial(unit, height);
-                  return `${convertedWidth}X${convertedHeight}`;
-                } else {
-                  return convertValueToImperial(unit, value);
-                }
-              })
+                const convertedWidth = convertValueToImperial(unit, width);
+                const convertedHeight = convertValueToImperial(unit, height);
+                return `${convertedWidth}X${convertedHeight}`;
+              } else {
+                return convertValueToImperial(unit, value);
+              }
+            })
             : values;
           const convertedUnit =
             unitType === UNIT_TYPE.IMPERIAL ? convertedValues : values;
@@ -280,8 +281,8 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
             }}
           >
             <div style={{ ...FONT_FAMILY.Lexend(500, 16) }}>
-              {supplierName?.label
-                ? supplierName?.label
+              {supplierName?.name || supplierName?.label
+                ? supplierName?.name || supplierName?.label
                 : t("materials.sheetPaper.selectSupplier")}
             </div>
           </button>
@@ -303,8 +304,8 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
                     .sort((a, b) => a?.order - b?.order)
                     .map((item, index) => (
                       <Draggable
-                        key={item.value}
-                        draggableId={item.value}
+                        key={item.value || item.id}
+                        draggableId={item.value || item.id}
                         index={index}
                       >
                         {(provided) => (
@@ -314,7 +315,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
                             {...provided.dragHandleProps}
                             onClick={() => {
                               setSupplierName(item); //?new
-                              onSelectSupplier(item?.value);
+                              onSelectSupplier(item?.value || item?.id);
                               handleClose();
                             }}
                             style={{
@@ -325,7 +326,7 @@ const FiltersActionsBar = (props: FiltersActionsBarProps) => {
                             }}
                           >
                             <SortIcon />
-                            {item.label}
+                            {item.name || item.label}
                           </MenuItem>
                         )}
                       </Draggable>

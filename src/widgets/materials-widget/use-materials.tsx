@@ -420,16 +420,6 @@ const useMaterials = (isAdmin: boolean) => {
         const supplier = res?.data[0];
         setSupplierId(supplier?.id);
         setIsLoadingMaterials(false);
-        // if (isFirstTime && supplier?.id) {
-        //   getMaterialCategoryData(
-        //     materialType?.toString(),
-        //     materialCategory?.toString(),
-        //     materialFilter,
-        //     supplier?.id,
-        //     pageNumber,
-        //     14
-        //   ).then();
-        // }
 
         setMaterialCategorySuppliers(
           res?.data?.map((supplier) => {
@@ -441,6 +431,8 @@ const useMaterials = (isAdmin: boolean) => {
               value: supplier.id,
               label: supplier.name,
               order: supplier?.order,
+              name: supplier?.name,
+              id: supplier?.id,
             };
           })
         );
