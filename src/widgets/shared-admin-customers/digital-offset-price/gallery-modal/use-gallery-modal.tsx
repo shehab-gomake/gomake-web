@@ -245,7 +245,7 @@ const useGalleryModal = ({ onClose, onChangeSubProductsForPrice, setIsChargeForN
           selectedShape
         );
       }
-      setMaterialData([])
+      // setMaterialData([])
 
     }
     onClose();
