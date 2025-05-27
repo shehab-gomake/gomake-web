@@ -627,7 +627,12 @@ const useQuoteNew = ({
         return; // Skip the API call
       }
 
-      getCalculateQuoteItem(updatedQuoteItemValue, 1, quoteItemValue.price);
+      getCalculateQuoteItem(
+        updatedQuoteItemValue,
+        1,
+        quoteItemValue.price,
+        updatedQuoteItemValue
+      );
     } else {
       await updateDocumentCurrencyApi(callApi, callBack, {
         documentType: docType,
