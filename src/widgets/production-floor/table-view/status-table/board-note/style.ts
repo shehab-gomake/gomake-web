@@ -43,6 +43,7 @@ const useStyle = ({ note }) => {
         overflow: "hidden",
         textOverflow: "ellipsis",
         whiteSpace: "nowrap",
+        maxWidth: "180px",
       },
       iconsBox: {
         display: "flex",

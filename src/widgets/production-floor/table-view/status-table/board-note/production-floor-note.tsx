@@ -6,6 +6,7 @@ import { Box, IconButton } from "@mui/material";
 import { useStyle } from "./style";
 import { useTranslation } from "react-i18next";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
+import { adaptMarginRight, adaptPaddingLeft } from "@/utils/adapter";
 
 interface Props {
   value: string;
@@ -52,6 +53,8 @@ export const ProductionFloorNote = ({ value, onSave }: Props) => {
           <span
             style={{
               ...classes.span,
+              textAlign: isRTL ? "right" : "left",
+              ...adaptMarginRight(dir, 8),
               fontSize: GetProductionFontSizeFromPreferences(),
             }}
           >
