@@ -1,22 +1,23 @@
 import { atom } from "recoil";
 
 export interface StatePayment {
-    sendBySms: boolean;
-    sendByMail: boolean;
-    percentageOfTotal: number;
-    numberOfInstallments: number;
-    documentId?: string;
-    totalPayment: number;
-    maxPayments: number;
-    invoiceDate?: Date;
-    contactName: string;
-    contactPhone: string;
-    contactMail: string;
-    sendByWhatsapp: boolean;
-    documentContacts:any[];
-    selectedContactIndex: number;
-    currency:string;
-  }
+  sendBySms: boolean;
+  sendByMail: boolean;
+  percentageOfTotal: number;
+  numberOfInstallments: number;
+  documentId?: string;
+  totalPayment: number;
+  maxPayments: number;
+  invoiceDate?: Date;
+  contactName: string;
+  contactPhone: string;
+  contactMail: string;
+  sendByWhatsapp: boolean;
+  documentContacts: any[];
+  selectedContactIndex: number;
+  currency: string;
+  sendWithInvoices?: boolean;
+}
 
 export const initialState: StatePayment = {
   sendBySms: true,
@@ -28,10 +29,11 @@ export const initialState: StatePayment = {
   contactName: "",
   contactPhone: "",
   contactMail: "",
-  currency:"$",
+  currency: "$",
   sendByWhatsapp: true,
-  documentContacts:[],
-  selectedContactIndex: 0
+  documentContacts: [],
+  selectedContactIndex: 0,
+  sendWithInvoices: false,
 };
 
 export const sendPaymentState = atom<StatePayment>({

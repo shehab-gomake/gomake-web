@@ -1,5 +1,5 @@
 import Stack from "@mui/material/Stack";
-import { GoMakeModal } from "@/components";
+import { GoMakeModal, SecondSwitch } from "@/components";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useStyle } from "./style";
 import { PrimaryButton } from "@/components/button/primary-button";
@@ -52,6 +52,7 @@ const SendPaymentModal = ({
   const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
   const { getWhatsWebUrl } = useWhatsAppWeb();
+  const isReceipt = documentType === DOCUMENT_TYPE.receipt;
 
   const handleSendUsingWhatsAppWeb = () => {
     getWhatsAppMessageApi(
@@ -74,7 +75,10 @@ const SendPaymentModal = ({
     );
   };
 
-  const onClickSendQuoteToClient = async (isSendOrderReadyToClient = false) => {
+  const onClickSendQuoteToClient = async (
+    isSendOrderReadyToClient = false,
+    sendWithInvoices = false
+  ) => {
     const selectedContact =
       payState?.documentContacts &&
       payState.documentContacts[payState?.selectedContactIndex];
@@ -139,6 +143,10 @@ const SendPaymentModal = ({
 
     if (selectedContact?.contactMail) {
       documentData.contactEmail = selectedContact.contactMail;
+    }
+
+    if (isReceipt) {
+      documentData.sendWithInvoices = sendWithInvoices;
     }
 
     if (messageType !== null) {
@@ -281,7 +289,6 @@ const SendPaymentModal = ({
             ))}
         <Stack display="flex" flexWrap="wrap" direction="row" gap="10px">
           <div style={classes.inputLbl}>
-            {" "}
             <SecondaryCheckBox
               sx={{ padding: "2px" }}
               checked={payState?.sendBySms || false}
@@ -319,19 +326,58 @@ const SendPaymentModal = ({
           alignItems={"center"}
           justifyContent={"space-between"}
         >
-          <SecondaryButton
-            variant="contained"
-            onClick={
-              isSendToClient
-                ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
-                : handleSendPaymentPage
-            }
-            style={{ width: "50%", height: "35px", minWidth: "fit-content" }}
-          >
-            {isSendToClient
-              ? t("sales.quote.sendToClient")
-              : t("prePayment.sendPaymentPage")}
-          </SecondaryButton>
+          {!isReceipt && (
+            <SecondaryButton
+              variant="contained"
+              onClick={
+                isSendToClient
+                  ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
+                  : handleSendPaymentPage
+              }
+              style={{ width: "50%", height: "35px", minWidth: "fit-content" }}
+            >
+              {isSendToClient
+                ? t("sales.quote.sendToClient")
+                : t("prePayment.sendPaymentPage")}
+            </SecondaryButton>
+          )}
+
+          {isReceipt && (
+            <>
+              <SecondaryButton
+                variant="contained"
+                onClick={
+                  isSendToClient
+                    ? () =>
+                        onClickSendQuoteToClient(isSendOrderReadyToClient, true)
+                    : handleSendPaymentPage
+                }
+                style={{
+                  width: "50%",
+                  height: "35px",
+                  minWidth: "fit-content",
+                }}
+              >
+                {t("sales.modals.sendWithInvoices")}
+              </SecondaryButton>
+              <SecondaryButton
+                variant="outlined"
+                onClick={
+                  isSendToClient
+                    ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
+                    : handleSendPaymentPage
+                }
+                style={{
+                  width: "50%",
+                  height: "35px",
+                  minWidth: "fit-content",
+                }}
+              >
+                {t("sales.modals.sendWithoutInvoices")}
+              </SecondaryButton>
+            </>
+          )}
+
           {!isSendToClient && (
             <SecondaryButton
               variant="outlined"
