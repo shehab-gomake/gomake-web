@@ -186,7 +186,7 @@ const useAddMaterialCategory = (isAdmin: boolean) => {
     };
     await uploadPrintHouseMaterialApi(callApi, callBack, {
       materialTypeKey: materialType.toString(),
-      categoryKey: newCategory,
+      categoryKey: selectedCategoryModal?.categoryKey,
       imageBase64: data,
     });
   };
