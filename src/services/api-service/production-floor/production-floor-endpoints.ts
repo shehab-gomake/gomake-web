@@ -4,6 +4,8 @@ import { ICallAndSetData } from "@/services/api-service/interface";
 import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
 
 const GET_PRODUCTION_FLOOR_DATA_URL = "/v1/erp-service/board-missions";
+const GET_ALL_STUCK_JOBS_URL = "/v1/erp-service/board-missions/get-number-of-stuck-jobs";
+const GET_ALL_STUCK_JOBS_BY_AGENT_ID_URL = "/v1/erp-service/board-missions/get-number-of-stuck-jobs-by-agent-id";
 const UPDATE_WORK_JOB_STATUS_URL =
   "/v1/erp-service/board-missions/update-board-missions-status";
 const UPDATE_BOARD_MISSIONS_ORDER_URL =
@@ -110,6 +112,30 @@ const getProductionFloorData: ICallAndSetData = async (
     data.filters,
     false,
     abortController
+  );
+};
+
+const getAllStuckJobsApi: ICallAndSetData = async (
+  callApi,
+  setState,
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_STUCK_JOBS_URL,
+    setState,
+  );
+};
+
+const getAllStuckJobsByAgentIdApi: ICallAndSetData = async (
+  callApi,
+  setState,
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    GET_ALL_STUCK_JOBS_BY_AGENT_ID_URL,
+    setState
   );
 };
 
@@ -804,5 +830,7 @@ export {
   updateJobDueDateApi,
   deleteJobFileApi,
   updateProductionFloorNotesApi,
-  sendJobExampleConfirmationToClientApi
+  sendJobExampleConfirmationToClientApi,
+  getAllStuckJobsApi,
+  getAllStuckJobsByAgentIdApi
 };

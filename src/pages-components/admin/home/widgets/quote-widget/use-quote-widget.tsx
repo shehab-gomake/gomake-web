@@ -7,7 +7,7 @@ import {
 } from "@/hooks";
 import { getAndSetClientTypes } from "@/services/hooks";
 import { useTranslation } from "react-i18next";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import {
   QuoteIfExistState,
   QuoteNumberState,
@@ -25,6 +25,11 @@ import { prevSelectedClientState, ProductCategoryType } from "./states";
 import { getAllProductAndMaterialsApi } from "@/services/api-service/products/product-endpoints";
 import { addDocumentItemFromMaterialApi } from "@/services/api-service/materials/materials-endpoints";
 import { ETab } from "@/pages-components/admin/home/widgets/quote-widget/enums";
+import { EStatisticsLabels } from "@/pages-components/quotes/enums";
+import { Permissions } from "@/components/CheckPermission/enum";
+import { permissionsState } from "@/store/permissions";
+import { getAllStuckJobsApi, getAllStuckJobsByAgentIdApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { userState } from "@/store/user";
 
 const useQuoteWidget = () => {
   const { t } = useTranslation();
@@ -41,6 +46,7 @@ const useQuoteWidget = () => {
   const [previousClient, setPreviousClient] = useRecoilState<any>(
     prevSelectedClientState
   );
+  const permissions = useRecoilValue(permissionsState);
   const setQuoteIfExist = useSetRecoilState<any>(QuoteIfExistState);
   const setAllReports = useSetRecoilState<any>(homeReportsState);
   const [selectedProduct, setSelectedProduct] = useState<any>({});
@@ -135,6 +141,23 @@ const useQuoteWidget = () => {
     await getIfCartExistApi(callApi, callBack, { documentType: 0 });
   };
 
+  const getAllStuckJobs = async () => {
+    const callBack = (res) => {
+      setAllStuckJobs(res?.data);
+    };
+    await getAllStuckJobsApi(callApi, callBack);
+  };
+  const getAllStuckJobsByAgentId = async () => {
+    const callBack = (res) => {
+      setAllStuckJobs(res?.data);
+    };
+    await getAllStuckJobsByAgentIdApi(callApi, callBack,);
+  };
+  // useEffect(() => {
+  //   getAllStuckJobs();
+  //   getAllStuckJobsByAgentId();
+  // }, []);
+
   const onClickSaveQuote = async (quoteId) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -175,10 +198,31 @@ const useQuoteWidget = () => {
     }
   }, [callApi, userQuote]);
 
+  const [allStuckJobs, setAllStuckJobs] = useState(0);
+  const user = useRecoilValue<any>(userState);
+  console.log("user", user?.isAgent);
+  useEffect(() => {
+    if (permissions.includes(Permissions.SHOW_ALL_STUCK_JOBS_ANAYTICS)) {
+      getAllStuckJobs();
+    }
+    else {
+      if (user?.isAgent) {
+        getAllStuckJobsByAgentId();
+      }
+    }
+  }, [permissions]);
+
   const getAllReports = async () => {
     const callBack = (res) => {
       if (res?.success) {
-        setAllReports(res?.data);
+        if (!permissions.includes(Permissions.SHOW_ALL_STUCK_JOBS_ANAYTICS) && !user?.isAgent) {
+          setAllReports(res?.data);
+        } else {
+          setAllReports([...res?.data, {
+            key: EStatisticsLabels.STUCK_JOBS,
+            value: allStuckJobs
+          }]);
+        }
       }
     };
     await getAllReportsApi(callApi, callBack, {
@@ -193,7 +237,7 @@ const useQuoteWidget = () => {
 
   useEffect(() => {
     getAllReports();
-  }, [selectedClient, selectedProduct]);
+  }, [selectedClient, selectedProduct, allStuckJobs]);
 
   useEffect(() => {
     const isDisabled = checkVariables(
