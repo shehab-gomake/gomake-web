@@ -4,7 +4,10 @@ import { useTranslation } from "react-i18next";
 import { useRecoilValue } from "recoil";
 import { usePaymentInputs } from "react-payment-inputs";
 import { useGomakeAxios, useSnackBar } from "@/hooks";
-import { createPaymentTransactionApi } from "@/services/api-service/pay/pay-api";
+import {
+  createDebitsPaymentTransactionApi,
+  createPaymentTransactionApi,
+} from "@/services/api-service/pay/pay-api";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 
 interface PaymentDetails {
@@ -35,9 +38,13 @@ interface PaymentDetails {
 
 interface IProps {
   documentType?: DOCUMENT_TYPE;
+  isDebtPayments?: boolean;
 }
 
-const useCreditCardPaySection = ({ documentType }: IProps = {}) => {
+const useCreditCardPaySection = ({
+  documentType,
+  isDebtPayments = false,
+}: IProps = {}) => {
   const { t } = useTranslation();
   const quoteConfirm = useRecoilValue<any>(quoteConfirmationState);
   const { alertSuccess, alertFault, alertRequiredFields } = useSnackBar();
@@ -68,7 +75,12 @@ const useCreditCardPaySection = ({ documentType }: IProps = {}) => {
   ];
 
   const numberOfPayments = Array.from(
-    { length: quoteConfirm?.maxPayments ?? 13 },
+    {
+      length:
+        (isDebtPayments
+          ? quoteConfirm?.maxInstallments
+          : quoteConfirm?.maxPayments) ?? 13,
+    },
     (_, index) => ({
       label: index + 1,
       value: index + 1,
@@ -113,10 +125,19 @@ const useCreditCardPaySection = ({ documentType }: IProps = {}) => {
   };
 
   const handleChangeInputs = (key, value) => {
-    setPaymentDetails((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    setPaymentDetails((prev) => {
+      if (key === "transactionType" && value === 1) {
+        return {
+          ...prev,
+          [key]: value,
+          numberOfPayments: 1,
+        };
+      }
+      return {
+        ...prev,
+        [key]: value,
+      };
+    });
   };
 
   const handleProceedCheckout = async () => {
@@ -126,12 +147,16 @@ const useCreditCardPaySection = ({ documentType }: IProps = {}) => {
       return;
     }
 
+    const selectedDebtsToPay =
+      quoteConfirm?.debtsToPay?.filter((item) => item.isChecked) || [];
+
     const finalPaymentDetailsState = {
       ...paymentDetailsState,
-      documentID: quoteConfirm?.id,
+      ...(!isDebtPayments && { documentID: quoteConfirm?.id }),
       documentType: documentType,
       paymentRequestId: quoteConfirm?.paymentRequestId,
       clientID: quoteConfirm?.customerID,
+      ...(isDebtPayments && { debtsItems: selectedDebtsToPay }),
     };
 
     const callBack = (res) => {
@@ -142,11 +167,20 @@ const useCreditCardPaySection = ({ documentType }: IProps = {}) => {
         alertFault(t("prePayment.paymentFailed"));
       }
     };
-    await createPaymentTransactionApi(
-      callApi,
-      callBack,
-      finalPaymentDetailsState
-    );
+
+    if (isDebtPayments) {
+      await createDebitsPaymentTransactionApi(
+        callApi,
+        callBack,
+        finalPaymentDetailsState
+      );
+    } else {
+      await createPaymentTransactionApi(
+        callApi,
+        callBack,
+        finalPaymentDetailsState
+      );
+    }
   };
 
   return {

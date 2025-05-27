@@ -7,7 +7,11 @@ import { useEffect } from "react";
 import { loadgingState } from "@/store/loading";
 import { useRecoilValue } from "recoil";
 
-const CreditCardPaySection = ({ isFromBigScreen = false, documentType }) => {
+const CreditCardPaySection = ({
+  isFromBigScreen = false,
+  documentType,
+  isDebtPayments = false,
+}) => {
   const customWidth = isFromBigScreen ? "70%" : "85%";
   const { classes } = useStyle({ isFromBigScreen, customWidth });
   const {
@@ -24,14 +28,20 @@ const CreditCardPaySection = ({ isFromBigScreen = false, documentType }) => {
     handleExpiryDateChange,
     handleProceedCheckout,
     isPaymentSuccess,
-  } = useCreditCardPaySection({ documentType });
+  } = useCreditCardPaySection({ documentType, isDebtPayments });
   const loading = useRecoilValue(loadgingState);
 
   useEffect(() => {
-    if (quoteConfirm?.sumToPrepay) {
-      handleChangeInputs("transactionSum", quoteConfirm.sumToPrepay);
+    if (quoteConfirm && isDebtPayments) {
+      const selectedTotal = quoteConfirm.debtsToPay
+        ?.filter((item) => item.isChecked)
+        ?.reduce((sum, item) => sum + Number(item.price || 0), 0);
+
+      handleChangeInputs("transactionSum", selectedTotal ?? 0);
+    } else if (quoteConfirm && !isDebtPayments) {
+      handleChangeInputs("transactionSum", quoteConfirm.sumToPrepay ?? 0);
     }
-  }, [quoteConfirm]);
+  }, [quoteConfirm, isDebtPayments]);
 
   return (
     <div style={classes.mainContainer}>
@@ -116,9 +126,14 @@ const CreditCardPaySection = ({ isFromBigScreen = false, documentType }) => {
             variant="contained"
             style={{
               ...classes.btnStyle,
-              opacity: loading ? 0.5 : 1,
+              opacity:
+                loading || Number(paymentDetailsState?.transactionSum) === 0
+                  ? 0.5
+                  : 1,
             }}
-            disabled={loading}
+            disabled={
+              loading || Number(paymentDetailsState?.transactionSum) === 0
+            }
           >
             {t("payment.proceedCheckout")}
           </PrimaryButton>
