@@ -502,14 +502,19 @@ const useProductionFloorData = () => {
 
   const [, setSelectedMissionId] = useState<any>(null);
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+  const [openMarkReadyModalForHasJobs, setOpenMarkReadyModalForHasJobs] = useState<boolean>(false);
 
   const onCloseMarkReadyModal = () => {
     setSelectedMissionId(null);
     setOpenMarkReadyModal(false);
   };
 
+  const onCloseMarkReadyModalForHasJobs = () => {
+    setSelectedMissionId(null);
+    setOpenMarkReadyModalForHasJobs(false);
+  };
+
   const tryMoveBoardMissionsToDone = async (boardMission) => {
-    debugger
     setSelectedMission(boardMission);
     const callBack = (res) => {
       if (res.success) {
@@ -517,8 +522,9 @@ const useProductionFloorData = () => {
           moveBoardMissionToDone(boardMission);
         } else {
           if (res.data) {
-            alertSuccessUpdate();
-            setOpenPackagesModal(true);
+            onOpenMarkReadyModalForHasJobs(boardMission);
+            // alertSuccessUpdate();
+            // setOpenPackagesModal(true);
           } else {
             onOpenMarkReadyModal(boardMission.id);
           }
@@ -535,6 +541,15 @@ const useProductionFloorData = () => {
 
   const onOpenMarkReadyModal = (missionId) => {
     setOpenMarkReadyModal(true);
+  };
+
+  const onOpenMarkReadyModalForHasJobs = (missionId) => {
+    setSelectedMissionId(missionId);
+    setOpenMarkReadyModalForHasJobs(true);
+  };
+
+  const onClickMarkReadyModalForHasJobs = () => {
+    moveBoardMissionToDone(selectedMission);
   };
 
   const handleRemoveBoardMission = (boardMissionId) => {
@@ -582,6 +597,7 @@ const useProductionFloorData = () => {
   const moveBoardMissionToDone = async (selectedMission: any) => {
     const callBack = (res) => {
       setOpenMarkReadyModal(false);
+      setOpenMarkReadyModalForHasJobs(false);
       if (res?.success) {
         alertSuccessUpdate();
         if (
@@ -592,6 +608,7 @@ const useProductionFloorData = () => {
         }
       } else {
         alertFaultUpdate();
+
       }
     };
     await moveBoardMissionToDoneApi(callApi, callBack, {
@@ -740,6 +757,10 @@ const useProductionFloorData = () => {
     onCloseMarkReadyModal,
     onOpenMarkReadyModal,
     openMarkReadyModal,
+    onOpenMarkReadyModalForHasJobs,
+    openMarkReadyModalForHasJobs,
+    onClickMarkReadyModalForHasJobs,
+    onCloseMarkReadyModalForHasJobs,
     setOpenMarkReadyModal,
     onClickMoveBoardMissionToDone,
     onClickPrintJob,

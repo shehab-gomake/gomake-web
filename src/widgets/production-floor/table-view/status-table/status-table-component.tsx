@@ -111,7 +111,11 @@ const StatusTableComponent = ({
     onOpenPrintDeliverTicketModal,
     tryMoveBoardMissionsToDone,
     updateJobDueDate,
-    selectedMission
+    selectedMission,
+    onOpenMarkReadyModalForHasJobs,
+    openMarkReadyModalForHasJobs,
+    onCloseMarkReadyModalForHasJobs,
+    onClickMarkReadyModalForHasJobs,
   } = useProductionFloorData();
 
   const {
@@ -185,21 +189,21 @@ const StatusTableComponent = ({
   const getBoards = useCallback(() => {
     return !!search
       ? boards?.filter(
-          (board) =>
-            `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
-              search
-            ) ||
-            `${board?.clientName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            `${board?.productName?.toLowerCase()}`.includes(
-              search.toLowerCase()
-            ) ||
-            board?.automatedTags?.some((tag) =>
-              `${tag.toLowerCase()}`.includes(search.toLowerCase())
-            ) ||
-            `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
-        )
+        (board) =>
+          `${board?.boardMissionNumber}\\${board?.orderNumber}`.includes(
+            search
+          ) ||
+          `${board?.clientName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          `${board?.productName?.toLowerCase()}`.includes(
+            search.toLowerCase()
+          ) ||
+          board?.automatedTags?.some((tag) =>
+            `${tag.toLowerCase()}`.includes(search.toLowerCase())
+          ) ||
+          `${board?.jobName?.toLowerCase()}`.includes(search.toLowerCase())
+      )
       : boards;
   }, [boards, search]);
 
@@ -246,9 +250,8 @@ const StatusTableComponent = ({
           },
         }}
       >
-        {`${
-          !status.isGroup ? t("productionStatuses." + status.name) : status.name
-        } (${getBoards().length})`}
+        {`${!status.isGroup ? t("productionStatuses." + status.name) : status.name
+          } (${getBoards().length})`}
       </Button>
       {getBoards().length > 0 && (
         <Collapse in={isOpen}>
@@ -282,12 +285,12 @@ const StatusTableComponent = ({
                               ? currentStationOrdering ===
                                 CurrentStationOrderingEnum.NONE
                                 ? {
-                                    "& .sort-icon": { opacity: 0 },
-                                    "&:hover .sort-icon": { opacity: 1 },
-                                  }
+                                  "& .sort-icon": { opacity: 0 },
+                                  "&:hover .sort-icon": { opacity: 1 },
+                                }
                                 : {
-                                    "& .sort-icon": { opacity: 1 },
-                                  }
+                                  "& .sort-icon": { opacity: 1 },
+                                }
                               : undefined
                           }
                         >
@@ -310,7 +313,7 @@ const StatusTableComponent = ({
                                     key: t("productionFloor.currentStation"),
                                     direction:
                                       currentStationOrdering ===
-                                      CurrentStationOrderingEnum.NONE
+                                        CurrentStationOrderingEnum.NONE
                                         ? CurrentStationOrderingEnum.ASC
                                         : CurrentStationOrderingEnum.NONE,
                                   });
@@ -382,12 +385,12 @@ const StatusTableComponent = ({
               ) || inputValue === ""
                 ? storageList
                 : [
-                    {
-                      storage: `Add "${inputValue}" as a new storage`,
-                      id: "new",
-                    },
-                    ...storageList,
-                  ]
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
             }
             placeholder={t("boardMissions.selectStorage")}
             key={defaultValue}
@@ -429,6 +432,57 @@ const StatusTableComponent = ({
         onClickDelete={handleConfirm}
         onClickCancel={handleCloseModal}
       />
+
+      <GoMakeDeleteModal
+        title={t("boardMissions.unReadyWitNotification")}
+        yesBtn={t("modal.yes")}
+        modalType={ModalType.WARNING}
+        subTitle={" "}
+        openModal={openMarkReadyModalForHasJobs}
+        onClose={onCloseMarkReadyModalForHasJobs}
+        onClickDelete={onClickMarkReadyModalForHasJobs}
+        onClickCancel={onCloseMarkReadyModalForHasJobs}
+      >
+        <div style={{ width: "100%", minWidth: 300 }}>
+          <GoMakeAutoComplate
+            options={
+              storageList?.find(
+                (option: any) => option.storage === inputValue
+              ) || inputValue === ""
+                ? storageList
+                : [
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
+            }
+            placeholder={t("boardMissions.selectStorage")}
+            key={defaultValue}
+            style={{
+              width: "100%",
+              border: "none",
+              height: 45,
+            }}
+            getOptionLabel={(option: any) => option?.storage}
+            value={defaultValue}
+            onChange={(e: any, value: any) => {
+              if (value?.id === "new") {
+                addPrintHouseJobsStorage(inputValue);
+                setInputValue("");
+              } else {
+                handleStorageChange(e, value);
+                setInputValue("");
+              }
+            }}
+            onInputChange={(event: any, newInputValue: string) => {
+              setInputValue(newInputValue);
+            }}
+          />
+        </div>
+
+      </GoMakeDeleteModal>
       <GoMakeDeleteModal
         title={t("sales.quote.stuckReasonTitleModal")}
         yesBtn={t("modal.yes")}
