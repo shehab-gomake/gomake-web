@@ -22,6 +22,8 @@ const UPDATE_BOARD_MISSIONS_CURRENT_STATION_URL =
 
 const UPDATE_BOARD_MISSION_STUCK_REASON_URL =
   "/v1/erp-service/board-missions/update-board-mission-stuck-reason";
+const MOVE_BOARD_MISSION_STATUS_TO_WAITING_URL =
+  "/v1/erp-service/board-missions/move-board-mission-status-to-waiting";
 const ADD_NEW_PRODUCTION_GROUP_URL =
   "/v1/erp-service/board-missions-group/create-group";
 const DELETE_PRODUCTION_GROUP_URL =
@@ -205,6 +207,20 @@ const getBoardMissionsActions: ICallAndSetData = async (
     GET_BOARD_MISSIONS_STATIONS_URL +
       `?boardMissionId=${data.boardMissionId}&productType=${data.productType}`,
     callBack
+  );
+};
+
+const moveBoardMissionStatusToWaitingApi: ICallAndSetData = async (
+  callApi,
+  callBack,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.GET,
+    MOVE_BOARD_MISSION_STATUS_TO_WAITING_URL ,
+    callBack,
+    data
   );
 };
 
@@ -754,6 +770,7 @@ export {
   getBoardMissionsActions,
   updateBoardMissionCurrentStationApi,
   updateBoardMissionStuckReasonApi,
+  moveBoardMissionStatusToWaitingApi,
   addNewBoardMissionsGroup,
   deleteBoardMissionsGroup,
   getPrintHouseActions,

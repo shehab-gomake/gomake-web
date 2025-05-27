@@ -30,6 +30,7 @@ import { useStyle } from "./style";
 import { useRouter } from "next/router";
 import {
   backToProcessApi,
+  moveBoardMissionStatusToWaitingApi,
   moveBoardMissionToDoneApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { downloadPdf } from "@/utils/helpers";
@@ -40,11 +41,11 @@ import { getAndSetCustomerById } from "@/services/api-service/customers/customer
 import { GomakeTextInput } from "@/components";
 import { useJobsTableSocketIo } from "@/hooks/socket-io/use-jobs-table-socket-io";
 import { Stack } from "@mui/material";
-import {useRecoilState, useRecoilValue} from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { userQuoteState } from "@/store";
 import { updateDocumentApi } from "@/services/api-service/generic-doc/documents-api";
-import {IBoardMissions} from "@/widgets/production-floor/interfaces/board-missions";
-import {selectedMissionsState} from "@/widgets/production-floor/state/boards";
+import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-missions";
+import { selectedMissionsState } from "@/widgets/production-floor/state/boards";
 
 
 
@@ -81,8 +82,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
-  const [selectedMission, setSelectedMission] =
-      useRecoilState<any>(selectedMissionsState);
+  const [selectedMission, setSelectedMission] = useRecoilState<any>(selectedMissionsState);
   const {
     alertFault,
     alertFaultGetData,
@@ -626,6 +626,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 onOpenModal={onOpenModal}
                 onClickPrintPackagingSlip={onOpenPackagesModal}
                 onClickMarksAsDone={onOpenMarkReadyModal}
+                handleClickBackToProcess={handleClickBackToProcess}
                 onClickMarksAsDoneForProductType={
                   onOpenMarkReadyModalForProductType
                 }
@@ -779,6 +780,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               onOpenModal={onOpenModal}
               onClickPrintPackagingSlip={onOpenPackagesModal}
               onClickMarksAsDone={onOpenMarkReadyModal}
+              handleClickBackToProcess={handleClickBackToProcess}
               onClickMarksAsDoneForProductType={
                 onOpenMarkReadyModalForProductType
               }
@@ -1398,6 +1400,23 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     await exportJobTableToExcelApi(callApi, callBack, data);
   };
 
+  const handleClickBackToProcess = async (mission) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessUpdate();
+        getAllData(isPurchaseJobs, false);
+      } else {
+        alertFaultUpdate();
+      }
+    };
+    const params = {
+      boardMissionId: mission?.id,
+      ...(mission?.productType && { productType: mission.productType })
+    };
+    await moveBoardMissionStatusToWaitingApi(callApi, callBack, params);
+  };
+
+
   return {
     tableHeader,
     tableHeaderForPurchaseJobs,
@@ -1489,7 +1508,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     onClickCloseModal,
     openQuoteModal,
     ExportJobsTableToExcel,
-    selectedMission
+    selectedMission,
+    handleClickBackToProcess
   };
 };
 
