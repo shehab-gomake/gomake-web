@@ -14,3 +14,14 @@ export enum ReceiptAccountingStatus {
   OPEN = 0,
   CANCELED = 1,
 }
+
+
+export enum BoardMissionStatusForFilter 
+{
+    WAITING = 1,
+    URGENT,
+    IN_PROCESS,
+    STUCK,
+    APPROVAL_REQUIRED,
+    DONE,
+}
