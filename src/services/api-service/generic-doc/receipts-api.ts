@@ -15,6 +15,9 @@ const GET_ALL_CREDIT_TRANSACTIONS_URL =
 const GET_RECEIPT_INVOICES_PDF_URL =
   "/v1/erp-service/receipts/get-receipt-invoices-pdf";
 
+const PRINT_RECEIPT_CHECKS_URL =
+  "/v1/erp-service/receipts/print-receipt-checks";
+
 const getClientPaymentItemsApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -127,6 +130,19 @@ const getReceiptInvoicesPdfApi: ICallAndSetData = async (
   );
 };
 
+const printReceiptChecksApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    PRINT_RECEIPT_CHECKS_URL,
+    setState,
+    data
+  );
+};
 export {
   getClientPaymentItemsApi,
   getAllReceiptsApi,
@@ -137,4 +153,5 @@ export {
   getReceiptPdfApi,
   getAllCreditTransactionsApi,
   getReceiptInvoicesPdfApi,
+  printReceiptChecksApi,
 };
