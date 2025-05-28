@@ -49,6 +49,7 @@ import { ModalType } from "@/enums";
 import { boardMissionsActivitiesState } from "@/widgets/production-floor/state/board-missions-activities";
 import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { boardMissionsFilesState } from "@/widgets/production-floor/views/board-missions-view/files/state";
+import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reason/add-stuck-reason";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -220,6 +221,7 @@ const TableRowComponent = ({
   const setStations = useSetRecoilState(boardMissionsStationsState);
   const setBoardMissionsDetails = useSetRecoilState(boardMissionsDetailsState);
   const setActivities = useSetRecoilState(boardMissionsActivitiesState);
+
 
   return (
     <>
@@ -611,12 +613,7 @@ const TableRowComponent = ({
         onClose={handleCloseStuckModal}
         onClickDelete={() => onUpdateStuckReason(stuckReason)}
       >
-        <GomakeTextInput
-          placeholder={t("sales.quote.stuckReason")}
-          value={stuckReason}
-          onChange={(e) => setStuckReason(e.target.value)}
-          style={{ height: 40, width: "100%", minWidth: "300px" }}
-        />
+        <AddStuckReasonWidget stuckReason={stuckReason} setStuckReason={setStuckReason} />
       </GoMakeDeleteModal>
     </>
   );
