@@ -37,7 +37,8 @@ const useMoreCircle = ({
   onClickPrintPackagingSlip,
   onOpenModal,
   handleClickEdit,
-  onClickMarksAsDoneForProductType
+  onClickMarksAsDoneForProductType,
+  isDoneJobs
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -85,7 +86,7 @@ const useMoreCircle = ({
     await addBoardMissionsToFileUploaderApi(callApi, callBack, {
       boardMissionsId: mission?.id,
       connectionId: connectionId,
-      productType:mission?.productType,
+      productType: mission?.productType,
     });
   };
 
@@ -163,13 +164,13 @@ const useMoreCircle = ({
       onclick: () => onClickOrderSummeryPdf(mission?.id),
     },
     {
-      condition: true && isSendPaymentToClient,
+      condition: true && isSendPaymentToClient && !isDoneJobs,
       name: t("boardMissions.printProductionPdf"),
       icon: <PDFIcon />,
       onclick: () => GetPrintingTicketPDF(mission),
     },
     {
-      condition: true && isSendPaymentToClient,
+      condition: true && isSendPaymentToClient && !isDoneJobs,
       name: t("boardMissions.printPackagingSlip"),
       icon: <PackageIcon />,
       onclick:
@@ -178,7 +179,7 @@ const useMoreCircle = ({
           : () => onClickPrintPackagingSlip(mission),
     },
     {
-      condition: true,
+      condition: true && !isDoneJobs,
       name: t("home.duplicate"),
       icon: <DuplicateMenuIcon />,
       onclick: () => onClickDuplicate(mission),
