@@ -231,6 +231,15 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     setOpenCancelReceiptModal(false);
   };
 
+  //!here
+  const CheckoutModalOpen = useModal();
+  const [checkoutModalData, setCheckoutModalData] = useState<{
+    documentNumber: string;
+    clientId: string;
+    orderId: string;
+    orderNumber: string;
+  } | null>(null);
+
   const handleOrderConfirmation = async (
     sendMessage: boolean,
     isPrepaymentClient: boolean = false,
@@ -257,8 +266,20 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         } else if (isPrepaymentClient) {
           navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
         } else {
-          setShowPrintJobsModal(res.data.orderID);
-          navigate(`/jobs?orderNumber=${res?.data?.number}`);
+          if (res.data.isShowCheckOutModal) {
+            debugger;
+            setCheckoutModalData({
+              documentNumber: res.data.documentNumber,
+              clientId: res.data.clientId,
+              orderId: res.data.orderID,
+              orderNumber: res.data.number,
+            });
+
+            () => CheckoutModalOpen.open();
+          } else {
+            setShowPrintJobsModal(res.data.orderID);
+            navigate(`/jobs?orderNumber=${res?.data?.number}`);
+          }
         }
       } else {
         alertFaultUpdate();
@@ -630,6 +651,9 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     openCloseOrderNotesModal,
     setOpenCloseOrderNotesModal,
     onClickCloseOrderCallback,
+    checkoutModalData,
+    CheckoutModalOpen,
+    setShowPrintJobsModal,
   };
 };
 

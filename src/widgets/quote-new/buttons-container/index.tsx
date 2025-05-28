@@ -122,6 +122,9 @@ const ButtonsContainer = ({
     onClickOpenCloseOrderNotesModal,
     openCloseOrderNotesModal,
     onClickCloseOrderCallback,
+    checkoutModalData,
+    setShowPrintJobsModal,
+    CheckoutModalOpen,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -528,6 +531,34 @@ const ButtonsContainer = ({
           openModal={openCloseOrderNotesModal}
           quoteItemValue={quoteItemValue}
           onClickCloseOrder={onClickCloseOrderCallback}
+        />
+
+        {/* !here */}
+        <GoMakeDeleteModal
+          modalType={ModalType.SUCCESS}
+          style={{ width: "fit-content" }}
+          title={t("sales.modals.orderCheckoutTitle")}
+          subTitle={t("sales.modals.orderCheckoutSubTitle")}
+          yesBtn={t("sales.modals.proceedToPayment")}
+          cancelBtn={t("sales.modals.proceedWithoutPayment")}
+          openModal={CheckoutModalOpen.isOpen}
+          withClose={false}
+          onClose={() => {}}
+          onClickDelete={() => {
+            if (checkoutModalData) {
+              navigate(
+                `/receipt?isNewCreation=true&documentNumber=${checkoutModalData.documentNumber}&ClientId=${checkoutModalData.clientId}`
+              );
+              CheckoutModalOpen.close;
+            }
+          }}
+          onClickCancel={() => {
+            if (checkoutModalData) {
+              setShowPrintJobsModal(checkoutModalData.orderId);
+              navigate(`/jobs?orderNumber=${checkoutModalData.orderNumber}`);
+              CheckoutModalOpen.close;
+            }
+          }}
         />
       </div>
     </div>
