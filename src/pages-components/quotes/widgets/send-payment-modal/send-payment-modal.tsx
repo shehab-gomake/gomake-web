@@ -1,5 +1,5 @@
 import Stack from "@mui/material/Stack";
-import { GoMakeModal } from "@/components";
+import { GoMakeModal, SecondSwitch } from "@/components";
 import { SecondaryButton } from "@/components/button/secondary-button";
 import { useStyle } from "./style";
 import { PrimaryButton } from "@/components/button/primary-button";
@@ -51,30 +51,36 @@ const SendPaymentModal = ({
   } = useSendPaymentModal({ openPaymentModal, documentType });
   const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
-  const { getWhatsWebUrl } = useWhatsAppWeb();
+  const { getWhatsWebUrl, openWhatsAppWebLink } = useWhatsAppWeb();
+  const isReceipt = documentType === DOCUMENT_TYPE.receipt;
 
-  const handleSendUsingWhatsAppWeb = () => {
+  const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
     getWhatsAppMessageApi(
       callApi,
       (res) => {
         const selectedContact =
           payState?.documentContacts &&
           payState.documentContacts[payState?.selectedContactIndex];
-
-        const url = getWhatsWebUrl(res?.data, selectedContact?.contactPhone);
-
-        if (url) {
-          window.open(url, "_blank");
-        }
+        // const url = getWhatsWebUrl(res?.data, selectedContact?.contactPhone);
+        // if (url) {
+        //   window.open(url, "_blank");
+        // }
+        if (res.success)
+          openWhatsAppWebLink(res?.data, selectedContact?.contactPhone, true);
+        else alertFaultSend();
       },
       {
         documentId: payState?.documentId,
         documentType: documentType,
+        ...(isReceipt ? { sendWithInvoices } : {}),
       }
     );
   };
 
-  const onClickSendQuoteToClient = async (isSendOrderReadyToClient = false) => {
+  const onClickSendQuoteToClient = async (
+    isSendOrderReadyToClient = false,
+    sendWithInvoices = false
+  ) => {
     const selectedContact =
       payState?.documentContacts &&
       payState.documentContacts[payState?.selectedContactIndex];
@@ -89,8 +95,16 @@ const SendPaymentModal = ({
       messageType = MessageType.SMS;
     }
 
-    if (messageType === null) {
+    if (messageType === null && !payState?.sendByWhatsapp) {
       alertFault(t("alerts.checkAtLeastOne"));
+      return;
+    }
+
+    if (
+      (payState.sendBySms || payState.sendByWhatsapp) &&
+      !selectedContact?.contactPhone
+    ) {
+      alertFault(t("alerts.noPhoneNumber"));
       return;
     }
 
@@ -141,6 +155,10 @@ const SendPaymentModal = ({
       documentData.contactEmail = selectedContact.contactMail;
     }
 
+    if (isReceipt) {
+      documentData.sendWithInvoices = sendWithInvoices;
+    }
+
     if (messageType !== null) {
       if (isSendOrderReadyToClient) {
         await sendOrderReadyToClientApi(callApi, callBack, documentData);
@@ -153,7 +171,7 @@ const SendPaymentModal = ({
     }
 
     if (payState?.sendByWhatsapp) {
-      handleSendUsingWhatsAppWeb();
+      handleSendUsingWhatsAppWeb(sendWithInvoices);
     }
   };
 
@@ -281,7 +299,6 @@ const SendPaymentModal = ({
             ))}
         <Stack display="flex" flexWrap="wrap" direction="row" gap="10px">
           <div style={classes.inputLbl}>
-            {" "}
             <SecondaryCheckBox
               sx={{ padding: "2px" }}
               checked={payState?.sendBySms || false}
@@ -319,19 +336,58 @@ const SendPaymentModal = ({
           alignItems={"center"}
           justifyContent={"space-between"}
         >
-          <SecondaryButton
-            variant="contained"
-            onClick={
-              isSendToClient
-                ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
-                : handleSendPaymentPage
-            }
-            style={{ width: "50%", height: "35px", minWidth: "fit-content" }}
-          >
-            {isSendToClient
-              ? t("sales.quote.sendToClient")
-              : t("prePayment.sendPaymentPage")}
-          </SecondaryButton>
+          {!isReceipt && (
+            <SecondaryButton
+              variant="contained"
+              onClick={
+                isSendToClient
+                  ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
+                  : handleSendPaymentPage
+              }
+              style={{ width: "50%", height: "35px", minWidth: "fit-content" }}
+            >
+              {isSendToClient
+                ? t("sales.quote.sendToClient")
+                : t("prePayment.sendPaymentPage")}
+            </SecondaryButton>
+          )}
+
+          {isReceipt && (
+            <>
+              <SecondaryButton
+                variant="contained"
+                onClick={
+                  isSendToClient
+                    ? () =>
+                        onClickSendQuoteToClient(isSendOrderReadyToClient, true)
+                    : handleSendPaymentPage
+                }
+                style={{
+                  width: "50%",
+                  height: "35px",
+                  minWidth: "fit-content",
+                }}
+              >
+                {t("sales.modals.sendWithInvoices")}
+              </SecondaryButton>
+              <SecondaryButton
+                variant="outlined"
+                onClick={
+                  isSendToClient
+                    ? () => onClickSendQuoteToClient(isSendOrderReadyToClient)
+                    : handleSendPaymentPage
+                }
+                style={{
+                  width: "50%",
+                  height: "35px",
+                  minWidth: "fit-content",
+                }}
+              >
+                {t("sales.modals.sendWithoutInvoices")}
+              </SecondaryButton>
+            </>
+          )}
+
           {!isSendToClient && (
             <SecondaryButton
               variant="outlined"
