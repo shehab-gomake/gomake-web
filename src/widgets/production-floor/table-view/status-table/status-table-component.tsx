@@ -41,6 +41,7 @@ import { ArrowUpward } from "@mui/icons-material";
 import { productionFloorFiltersState } from "../../state/production-floor-filters";
 import { currentStationOrderingState } from "@/store/agents-state";
 import { useProductionFloorData } from "../../use-production-floor-data";
+import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
 
 interface IProps {
   status: IProductionStatus;
@@ -492,12 +493,7 @@ const StatusTableComponent = ({
         onClose={handleCloseStuckModal}
         onClickDelete={() => onUpdateStuckReason(stuckReason)}
       >
-        <GomakeTextInput
-          placeholder={t("sales.quote.stuckReason")}
-          value={stuckReason}
-          onChange={(e) => setStuckReason(e.target.value)}
-          style={{ height: 40, width: "100%", minWidth: "300px" }}
-        />
+        <AddStuckReasonWidget stuckReason={stuckReason} setStuckReason={setStuckReason} />
       </GoMakeDeleteModal>
     </Stack>
   );
