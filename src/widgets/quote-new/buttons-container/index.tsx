@@ -48,6 +48,8 @@ const ButtonsContainer = ({
   onClickOpenDeleteDeliveryModal,
   AddCustomerModal,
   handleSaveDraftBtnClick,
+  modalCallback,
+  receiptSendModal,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -490,6 +492,8 @@ const ButtonsContainer = ({
           documentCloseNumber={documentCloseNumber}
           onChange={handleDocumentNumberChange}
         />
+
+        {/* // !here need check case 2 */}
         <InvoiceCreationModal
           onClose={onClickCloseReceiptCreation}
           openModal={openReceiptCreationModal}
@@ -508,6 +512,24 @@ const ButtonsContainer = ({
           onClickYes={() => onClickPrint(true)}
           onClickNo={() => onClickPrint(false)}
         />
+        <ThreeOptionsModal
+          hideIcon
+          title={t("sales.quote.sendToClient")}
+          subTitle={t("sales.modals.includeInvoicesMessagePrompt")}
+          yesBtn={"sales.modals.withInvoices"}
+          noBtn={"sales.modals.withoutInvoices"}
+          openModal={receiptSendModal.isOpen}
+          onClose={() => receiptSendModal.close()}
+          onClickYes={() => {
+            modalCallback(true);
+            receiptSendModal.close();
+          }}
+          onClickNo={() => {
+            modalCallback(false);
+            receiptSendModal.close();
+          }}
+        />
+
         <OrderNowPrePaymentModal
           quoteItemValue={quoteItemValue}
           openModal={openOrderNowPrePaymentModal}

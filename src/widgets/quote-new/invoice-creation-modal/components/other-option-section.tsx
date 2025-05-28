@@ -64,6 +64,7 @@ const OtherOptionsSection = ({
         alertFaultGetData();
       }
     };
+    // !here need check case 1
     if (isReceipt) {
       if (withInvoices)
         await getReceiptInvoicesPdfApi(callApi, callBack, {

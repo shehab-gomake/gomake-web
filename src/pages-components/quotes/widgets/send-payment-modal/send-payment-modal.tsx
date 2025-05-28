@@ -54,7 +54,8 @@ const SendPaymentModal = ({
   const { getWhatsWebUrl } = useWhatsAppWeb();
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
 
-  const handleSendUsingWhatsAppWeb = () => {
+  //!here 4 done
+  const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
     getWhatsAppMessageApi(
       callApi,
       (res) => {
@@ -71,6 +72,7 @@ const SendPaymentModal = ({
       {
         documentId: payState?.documentId,
         documentType: documentType,
+        ...(isReceipt ? { sendWithInvoices } : {}),
       }
     );
   };
@@ -145,6 +147,7 @@ const SendPaymentModal = ({
       documentData.contactEmail = selectedContact.contactMail;
     }
 
+    //!here 3 done
     if (isReceipt) {
       documentData.sendWithInvoices = sendWithInvoices;
     }
@@ -161,7 +164,7 @@ const SendPaymentModal = ({
     }
 
     if (payState?.sendByWhatsapp) {
-      handleSendUsingWhatsAppWeb();
+      handleSendUsingWhatsAppWeb(sendWithInvoices);
     }
   };
 

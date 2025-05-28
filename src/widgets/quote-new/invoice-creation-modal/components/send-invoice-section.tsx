@@ -20,6 +20,7 @@ interface SendInvoiceSectionProps {
   docType: DOCUMENT_TYPE;
 }
 
+//!here weird!
 const SendInvoiceSection: React.FC<SendInvoiceSectionProps> = ({
   handleSendDocument,
   handleSendUsingWhatsAppWeb,

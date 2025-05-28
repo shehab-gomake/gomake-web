@@ -1,8 +1,14 @@
-const useWhatsAppWeb = () => {
-  const openWhatsAppWebLink = (whatsappMassage, phoneNumber, isWeb = true) => {
-    if (!whatsappMassage?.trim()) return;
+import { useSnackBar } from "@/hooks/use-snack-bar";
 
-    debugger;
+const useWhatsAppWeb = () => {
+  const { alertFault } = useSnackBar();
+
+  const openWhatsAppWebLink = (whatsappMassage, phoneNumber, isWeb = true) => {
+    if (!whatsappMassage?.trim()) {
+      alertFault("alerts.noTemplateFound");
+      return;
+    }
+
     const url = isWeb
       ? `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(
           whatsappMassage
