@@ -1,6 +1,5 @@
 import { useStatusTable } from "@/widgets/production-floor/table-view/status-table/use-status-Table";
 import {
-  Box,
   Collapse,
   IconButton,
   Paper,
@@ -27,7 +26,6 @@ import { useCallback, useState } from "react";
 import {
   GoMakeAutoComplate,
   GoMakeDeleteModal,
-  GomakeTextInput,
   ThreeOptionsModal,
 } from "@/components";
 import { PrintPackingSlipModalWidget } from "../../views/board-missions-view/navigation-buttons/print-packing-slip-modal-widget";
