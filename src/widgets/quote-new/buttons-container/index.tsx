@@ -48,6 +48,9 @@ const ButtonsContainer = ({
   onClickOpenDeleteDeliveryModal,
   AddCustomerModal,
   handleSaveDraftBtnClick,
+  modalCallback,
+  receiptSendModal,
+  openReceiptModal,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -495,6 +498,7 @@ const ButtonsContainer = ({
           docType={documentType}
           handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
           onClickSendDocumentToClient={onClickSendReceiptToClient}
+          openReceiptModal={openReceiptModal}
         />
         <ThreeOptionsModal
           hideIcon
@@ -507,6 +511,24 @@ const ButtonsContainer = ({
           onClickYes={() => onClickPrint(true)}
           onClickNo={() => onClickPrint(false)}
         />
+        <ThreeOptionsModal
+          hideIcon
+          title={t("sales.quote.sendToClient")}
+          subTitle={t("sales.modals.includeInvoicesMessagePrompt")}
+          yesBtn={"sales.modals.withInvoices"}
+          noBtn={"sales.modals.withoutInvoices"}
+          openModal={receiptSendModal.isOpen}
+          onClose={() => receiptSendModal.close()}
+          onClickYes={() => {
+            modalCallback(true);
+            receiptSendModal.close();
+          }}
+          onClickNo={() => {
+            modalCallback(false);
+            receiptSendModal.close();
+          }}
+        />
+
         <OrderNowPrePaymentModal
           quoteItemValue={quoteItemValue}
           openModal={openOrderNowPrePaymentModal}
