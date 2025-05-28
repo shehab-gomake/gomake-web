@@ -51,10 +51,9 @@ const SendPaymentModal = ({
   } = useSendPaymentModal({ openPaymentModal, documentType });
   const { alertFaultSend, alertSuccessSend, alertFault } = useSnackBar();
   const { callApi } = useGomakeAxios();
-  const { getWhatsWebUrl } = useWhatsAppWeb();
+  const { getWhatsWebUrl, openWhatsAppWebLink } = useWhatsAppWeb();
   const isReceipt = documentType === DOCUMENT_TYPE.receipt;
 
-  //!here 4 done
   const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
     getWhatsAppMessageApi(
       callApi,
@@ -62,12 +61,13 @@ const SendPaymentModal = ({
         const selectedContact =
           payState?.documentContacts &&
           payState.documentContacts[payState?.selectedContactIndex];
-
-        const url = getWhatsWebUrl(res?.data, selectedContact?.contactPhone);
-
-        if (url) {
-          window.open(url, "_blank");
-        }
+        // const url = getWhatsWebUrl(res?.data, selectedContact?.contactPhone);
+        // if (url) {
+        //   window.open(url, "_blank");
+        // }
+        if (res.success)
+          openWhatsAppWebLink(res?.data, selectedContact?.contactPhone, true);
+        else alertFaultSend();
       },
       {
         documentId: payState?.documentId,
@@ -95,8 +95,16 @@ const SendPaymentModal = ({
       messageType = MessageType.SMS;
     }
 
-    if (messageType === null) {
+    if (messageType === null && !payState?.sendByWhatsapp) {
       alertFault(t("alerts.checkAtLeastOne"));
+      return;
+    }
+
+    if (
+      (payState.sendBySms || payState.sendByWhatsapp) &&
+      !selectedContact?.contactPhone
+    ) {
+      alertFault(t("alerts.noPhoneNumber"));
       return;
     }
 
@@ -147,7 +155,6 @@ const SendPaymentModal = ({
       documentData.contactEmail = selectedContact.contactMail;
     }
 
-    //!here 3 done
     if (isReceipt) {
       documentData.sendWithInvoices = sendWithInvoices;
     }

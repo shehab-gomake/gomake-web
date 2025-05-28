@@ -2220,7 +2220,6 @@ const useQuoteNew = ({
     }
   };
 
-  //!here 2 from route
   const [sendWithInvoices, setSendWithInvoices] = useState<boolean>(false);
   const getWhatsAppMessageForReceipt = async () => {
     if (quoteItemValue?.id) {
