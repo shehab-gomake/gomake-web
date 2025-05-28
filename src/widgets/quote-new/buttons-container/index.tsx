@@ -125,6 +125,7 @@ const ButtonsContainer = ({
     onClickOpenCloseOrderNotesModal,
     openCloseOrderNotesModal,
     onClickCloseOrderCallback,
+    handleClickPrintChecks,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -310,6 +311,14 @@ const ButtonsContainer = ({
             onClick={handleClickPrint}
           >
             {t("sales.quote.print")}
+          </GomakePrimaryButton>
+        )}
+        {isReceipt && quoteItemValue.isShowPrintReceiptChecksButton && (
+          <GomakePrimaryButton
+            style={classes.btnSecondContainer}
+            onClick={handleClickPrintChecks}
+          >
+            {t("sales.cart.printChecks")}
           </GomakePrimaryButton>
         )}
         {(isQuote || (isOrder && quoteItemValue?.documentStatus !== 1)) && (

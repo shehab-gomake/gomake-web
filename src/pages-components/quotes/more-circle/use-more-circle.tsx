@@ -35,6 +35,8 @@ import {
 } from "@/store/file-uploader-state";
 import { MailIcon } from "./icons/mail";
 import { DeleteIcon } from "./icons/delete";
+import { printReceiptChecksApi } from "@/services/api-service/generic-doc/receipts-api";
+import { PrintPdfIcon } from "./icons/print-pdf";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -91,7 +93,7 @@ const useMoreCircle = () => {
 
     const { callApi } = useGomakeAxios();
     const { pathname } = useRouter();
-    const { alertFaultAdded } = useSnackBar();
+    const { alertFaultAdded, alertFaultGetData } = useSnackBar();
 
     const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
       const callBack = (res) => {
@@ -118,6 +120,32 @@ const useMoreCircle = () => {
       await addOrderBoardMissionsToFileUploaderApi(callApi, callBack, {
         orderId: orderId,
         connectionId: connectionId,
+      });
+    };
+
+    const handleClickPrintChecks = async (receiptId) => {
+      const downloadPdf = (url) => {
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.target = "_blank";
+        anchor.addEventListener("click", () => {
+          setTimeout(() => {
+            anchor.remove();
+          }, 100);
+        });
+        anchor.click();
+      };
+      const callBack = (res) => {
+        if (res?.success) {
+          const pdfLink = res.data;
+          downloadPdf(pdfLink);
+        } else {
+          alertFaultGetData();
+        }
+      };
+
+      await printReceiptChecksApi(callApi, callBack, {
+        receiptId,
       });
     };
 
@@ -244,6 +272,13 @@ const useMoreCircle = () => {
           onClickPdf(isReceipt || isSupplierPayments ? quote : quote?.id),
         icon: <PDFIcon />,
         name: t("sales.quote.pdf"),
+      },
+
+      {
+        condition: isReceipt && quote.isShowPrintReceiptChecksButton,
+        onClick: () => handleClickPrintChecks(quote?.id),
+        icon: <PrintPdfIcon />,
+        name: t("sales.cart.printChecks"),
       },
       {
         condition: !isPauseOrder && isOrder && !isCanceledOrder,
