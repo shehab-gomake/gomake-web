@@ -103,6 +103,7 @@ export enum Permissions {
   SHOW_EMPLOYEE_WORKING_HOURS = "ShowEmployeeWorkingHours",
   SHOW_PRODUCTION_TIME_LINE = "ShowProductionTimeLine",
   IS_CAN_SHARE_GROUP = "IsCanShareGroup",
+  SHOW_ALL_STUCK_JOBS_ANAYTICS = "ShowAllStuckJobsAnaytics",
 
   //board missions group
   SHOW_BOARD_MISSIONS = "IsCanShowBoardMissions",

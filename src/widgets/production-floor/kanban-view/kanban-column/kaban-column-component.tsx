@@ -11,6 +11,7 @@ import { useStyle } from "../kanban-card/style";
 import { GoMakeDeleteModal, GomakeTextInput } from "@/components";
 import { ModalType } from "@/enums";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
+import { AddStuckReasonWidget } from "../../add-stuck-reason/add-stuck-reason";
 
 interface IProps {
   status: IProductionStatus;
@@ -158,12 +159,7 @@ function KanbanColumnComponent({ status, boardsMissions, isMobile }: IProps) {
         onClose={handleCloseStuckModal}
         onClickDelete={() => onUpdateStuckReason(stuckReason)}
       >
-        <GomakeTextInput
-          placeholder={t("sales.quote.stuckReason")}
-          value={stuckReason}
-          onChange={(e) => setStuckReason(e.target.value)}
-          style={{ height: 40, width: "100%", minWidth: "300px" }}
-        />
+        <AddStuckReasonWidget stuckReason={stuckReason} setStuckReason={setStuckReason} />
       </GoMakeDeleteModal>
     </Stack>
   );

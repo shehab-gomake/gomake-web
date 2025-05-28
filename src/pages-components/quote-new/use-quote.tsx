@@ -292,12 +292,15 @@ const useQuoteNew = ({
     setIsSelectedAtLeastOne(data);
   }, [quoteItemValue]);
 
-  const onClickOpenWhatsAppModal = () => {
+  const onClickOpenWhatsAppModal = (includeInvoices = false) => {
+    setSendWithInvoices(includeInvoices);
     setOpenWatsAppModal(true);
   };
   const onClickCloseWhatsAppModal = () => {
+    setSendWithInvoices(false);
     setOpenWatsAppModal(false);
   };
+
   const handleSettingMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElSettingMenu(event.currentTarget);
   };
@@ -1709,8 +1712,22 @@ const useQuoteNew = ({
     });
   };
 
-  const onClickSendReceiptToClient = async (messageType: number) => {
-    if (messageType === 1) {
+  const receiptSendModal = useModal();
+  const [modalCallback, setModalCallback] = useState<
+    (includeInvoices: boolean) => void
+  >(() => () => {});
+
+  const openReceiptModal = (callback: (includeInvoices: boolean) => void) => {
+    receiptSendModal.open();
+    setModalCallback(() => callback);
+  };
+
+  const onClickSendReceiptToClient = async (
+    messageType: number,
+    sendWithInvoices: boolean = false
+  ) => {
+    debugger;
+    if (messageType === MessageType.SMS) {
       let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
         quoteItemValue?.documentContacts
       );
@@ -1727,6 +1744,7 @@ const useQuoteNew = ({
           document: {
             documentId: quoteItemValue?.id,
             messageType,
+            sendWithInvoices,
           },
         });
       } else {
@@ -1749,6 +1767,7 @@ const useQuoteNew = ({
           document: {
             documentId: quoteItemValue?.id,
             messageType,
+            sendWithInvoices,
           },
         });
       } else {
@@ -2206,6 +2225,7 @@ const useQuoteNew = ({
     }
   };
 
+  const [sendWithInvoices, setSendWithInvoices] = useState<boolean>(false);
   const getWhatsAppMessageForReceipt = async () => {
     if (quoteItemValue?.id) {
       const callBack = (res) => {
@@ -2217,6 +2237,7 @@ const useQuoteNew = ({
       };
       await getWhatsAppMessageForReceiptApi(callApi, callBack, {
         documentId: quoteItemValue?.id,
+        sendWithInvoices,
       });
     }
   };
@@ -2320,8 +2341,7 @@ const useQuoteNew = ({
     [docType, quoteItemValue, allClientActiveBudgets]
   );
 
-  const handleSendUsingWhatsAppWeb = () => {
-    debugger;
+  const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
       quoteItemValue?.documentContacts
     );
@@ -2331,16 +2351,15 @@ const useQuoteNew = ({
     }
     const phoneNumber = quoteItemValue?.documentContacts[0].contactPhone;
     const callBack = (res) => {
-      debugger;
       openWhatsAppWebLink(res?.data, phoneNumber);
     };
     getWhatsAppMessageApi(callApi, callBack, {
       documentId: quoteItemValue?.id,
       documentType: docType,
+      ...(isReceipt ? { sendWithInvoices } : {}),
     });
-
-    //setOpenWatsAppModal(true)
   };
+
   const onClickDeleteDelivery = async () => {
     const callBack = (res) => {
       if (res?.success) {
@@ -2608,6 +2627,9 @@ const useQuoteNew = ({
     originalPurchaseNumber,
     setOriginalPurchaseNumber,
     updatePurchaseNumber,
+    modalCallback,
+    openReceiptModal,
+    receiptSendModal,
   };
 };
 

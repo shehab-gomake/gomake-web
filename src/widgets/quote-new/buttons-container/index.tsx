@@ -48,6 +48,9 @@ const ButtonsContainer = ({
   onClickOpenDeleteDeliveryModal,
   AddCustomerModal,
   handleSaveDraftBtnClick,
+  modalCallback,
+  receiptSendModal,
+  openReceiptModal,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -117,11 +120,12 @@ const ButtonsContainer = ({
     // customer,
     // setCustomer,
     isPurchaseInvoice,
-    CheckoutOptionModal,
     onClickCloseCloseOrderNotesModal,
     onClickOpenCloseOrderNotesModal,
     openCloseOrderNotesModal,
     onClickCloseOrderCallback,
+    CheckoutOptionModal,
+    handleClickPrintChecks,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -309,6 +313,14 @@ const ButtonsContainer = ({
             {t("sales.quote.print")}
           </GomakePrimaryButton>
         )}
+        {isReceipt && quoteItemValue.isShowPrintReceiptChecksButton && (
+          <GomakePrimaryButton
+            style={classes.btnSecondContainer}
+            onClick={handleClickPrintChecks}
+          >
+            {t("sales.cart.printChecks")}
+          </GomakePrimaryButton>
+        )}
         {(isQuote || (isOrder && quoteItemValue?.documentStatus !== 1)) && (
           <GomakePrimaryButton
             style={classes.btnSecondContainer}
@@ -417,11 +429,10 @@ const ButtonsContainer = ({
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : `sales.quote.${
-                      quoteItemValue?.isUsedStripe
-                        ? "placeOrder"
-                        : "orderNowTitle"
-                    }`
+                  : `sales.quote.${quoteItemValue?.isUsedStripe
+                    ? "placeOrder"
+                    : "orderNowTitle"
+                  }`
               )}
             </GomakePrimaryButton>
           </>
@@ -496,6 +507,7 @@ const ButtonsContainer = ({
           docType={documentType}
           handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
           onClickSendDocumentToClient={onClickSendReceiptToClient}
+          openReceiptModal={openReceiptModal}
         />
         <ThreeOptionsModal
           hideIcon
@@ -508,6 +520,24 @@ const ButtonsContainer = ({
           onClickYes={() => onClickPrint(true)}
           onClickNo={() => onClickPrint(false)}
         />
+        <ThreeOptionsModal
+          hideIcon
+          title={t("sales.quote.sendToClient")}
+          subTitle={t("sales.modals.includeInvoicesMessagePrompt")}
+          yesBtn={"sales.modals.withInvoices"}
+          noBtn={"sales.modals.withoutInvoices"}
+          openModal={receiptSendModal.isOpen}
+          onClose={() => receiptSendModal.close()}
+          onClickYes={() => {
+            modalCallback(true);
+            receiptSendModal.close();
+          }}
+          onClickNo={() => {
+            modalCallback(false);
+            receiptSendModal.close();
+          }}
+        />
+
         <OrderNowPrePaymentModal
           quoteItemValue={quoteItemValue}
           openModal={openOrderNowPrePaymentModal}

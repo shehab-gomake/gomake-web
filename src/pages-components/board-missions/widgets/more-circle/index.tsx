@@ -15,6 +15,7 @@ interface IBoardMissionsProps {
   onClickPrintPackagingSlip?: (mission?: any) => void;
   onClickMarksAsDoneForProductType?: (mission?: any) => void;
   isDoneJobs?: boolean;
+  handleClickBackToProcess?: (mission?: any) => void;
 }
 const MoreMenuWidget = ({
   mission,
@@ -27,7 +28,8 @@ const MoreMenuWidget = ({
   onClickPrintPackagingSlip,
   onOpenModal,
   onClickMarksAsDoneForProductType,
-  isDoneJobs
+  isDoneJobs,
+  handleClickBackToProcess
 }: IBoardMissionsProps) => {
   const { classes } = useStyle();
 
@@ -46,7 +48,8 @@ const MoreMenuWidget = ({
     onClickPrintPackagingSlip,
     onOpenModal,
     handleClickEdit,
-    isDoneJobs
+    isDoneJobs,
+    handleClickBackToProcess
   });
 
   return (
