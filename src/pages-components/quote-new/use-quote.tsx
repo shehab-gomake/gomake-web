@@ -1717,11 +1717,11 @@ const useQuoteNew = ({
     setModalCallback(() => callback);
   };
 
-  //!here 1
   const onClickSendReceiptToClient = async (
     messageType: number,
     sendWithInvoices: boolean = false
   ) => {
+    debugger;
     if (messageType === MessageType.SMS) {
       let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
         quoteItemValue?.documentContacts
@@ -2336,7 +2336,7 @@ const useQuoteNew = ({
     [docType, quoteItemValue, allClientActiveBudgets]
   );
 
-  const handleSendUsingWhatsAppWeb = () => {
+  const handleSendUsingWhatsAppWeb = (sendWithInvoices = false) => {
     let checkPhones = checkArrayNotEmptyOrPhoneNotEmpty(
       quoteItemValue?.documentContacts
     );
@@ -2351,10 +2351,10 @@ const useQuoteNew = ({
     getWhatsAppMessageApi(callApi, callBack, {
       documentId: quoteItemValue?.id,
       documentType: docType,
+      ...(isReceipt ? { sendWithInvoices } : {}),
     });
-
-    //setOpenWatsAppModal(true)
   };
+
   const onClickDeleteDelivery = async () => {
     const callBack = (res) => {
       if (res?.success) {

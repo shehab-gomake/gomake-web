@@ -50,6 +50,7 @@ const ButtonsContainer = ({
   handleSaveDraftBtnClick,
   modalCallback,
   receiptSendModal,
+  openReceiptModal,
 }) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -492,14 +493,13 @@ const ButtonsContainer = ({
           documentCloseNumber={documentCloseNumber}
           onChange={handleDocumentNumberChange}
         />
-
-        {/* // !here need check case 2 */}
         <InvoiceCreationModal
           onClose={onClickCloseReceiptCreation}
           openModal={openReceiptCreationModal}
           docType={documentType}
           handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
           onClickSendDocumentToClient={onClickSendReceiptToClient}
+          openReceiptModal={openReceiptModal}
         />
         <ThreeOptionsModal
           hideIcon

@@ -7,6 +7,8 @@ import { useState } from "react";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
 import cloneDeep from "lodash/cloneDeep";
 import { PrimaryCheckbox } from "@/components/check-box/primary-check-box";
+import { MessageType } from "@/pages-components/quote-new/use-quote";
+import { PrimaryButton } from "@/components/button/primary-button";
 
 enum MessageTypes {
   EMAIL = "email",
@@ -15,16 +17,17 @@ enum MessageTypes {
 }
 
 interface SendInvoiceSectionProps {
-  handleSendDocument: (value) => void;
-  handleSendUsingWhatsAppWeb: () => void;
+  handleSendDocument: (value: any, value2?: any) => void;
+  handleSendUsingWhatsAppWeb: (includeInvoices?: boolean) => void;
   docType: DOCUMENT_TYPE;
+  openReceiptModal?: any;
 }
 
-//!here weird!
 const SendInvoiceSection: React.FC<SendInvoiceSectionProps> = ({
   handleSendDocument,
   handleSendUsingWhatsAppWeb,
   docType,
+  openReceiptModal,
 }) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -53,19 +56,39 @@ const SendInvoiceSection: React.FC<SendInvoiceSectionProps> = ({
     return false;
   };
 
+  const isReceipt = docType === DOCUMENT_TYPE.receipt;
+  const isEmailSelected = checkIfOptionSelected(MessageTypes.EMAIL);
+  const isPhoneSelected = checkIfOptionSelected(MessageTypes.PHONE);
+  const isWhatsAppSelected = checkIfOptionSelected(MessageTypes.WHATSAPP_WEB);
+
   const sendMessage = () => {
-    if (
-      checkIfOptionSelected(MessageTypes.EMAIL) &&
-      checkIfOptionSelected(MessageTypes.PHONE)
-    ) {
-      handleSendDocument(2);
-    } else if (checkIfOptionSelected(MessageTypes.EMAIL)) {
-      handleSendDocument(0);
-    } else if (checkIfOptionSelected(MessageTypes.PHONE)) {
-      handleSendDocument(1);
+    if (isWhatsAppSelected) {
+      if (isReceipt)
+        openReceiptModal((includeInvoices) => {
+          handleSendUsingWhatsAppWeb(includeInvoices);
+        });
+      else handleSendUsingWhatsAppWeb();
     }
-    if (checkIfOptionSelected(MessageTypes.WHATSAPP_WEB)) {
-      handleSendUsingWhatsAppWeb();
+    if (isReceipt && (isEmailSelected || isPhoneSelected)) {
+      // Use the receipt modal flow for receipts
+      openReceiptModal((includeInvoices) => {
+        if (isEmailSelected && isPhoneSelected) {
+          handleSendDocument(MessageType.Both, includeInvoices);
+        } else if (isEmailSelected) {
+          handleSendDocument(MessageType.Email, includeInvoices);
+        } else if (isPhoneSelected) {
+          handleSendDocument(MessageType.SMS, includeInvoices);
+        }
+      });
+    } else {
+      // For other document types
+      if (isEmailSelected && isPhoneSelected) {
+        handleSendDocument(MessageType.Both);
+      } else if (isEmailSelected) {
+        handleSendDocument(MessageType.Email);
+      } else if (isPhoneSelected) {
+        handleSendDocument(MessageType.SMS);
+      }
     }
   };
 
@@ -129,16 +152,18 @@ const SendInvoiceSection: React.FC<SendInvoiceSectionProps> = ({
           </span>
         </Stack>
       </Stack>
-      <GomakePrimaryButton
+      <PrimaryButton
+        variant="contained"
         style={{
           width: "100%",
           borderRadius: "8px",
           height: "40px",
         }}
         onClick={() => sendMessage()}
+        disabled={!isWhatsAppSelected && !isEmailSelected && !isPhoneSelected}
       >
         {t("sales.modals.send")}
-      </GomakePrimaryButton>
+      </PrimaryButton>
     </Stack>
   );
 };

@@ -838,6 +838,7 @@ const QuoteNewPageWidget = ({
                 handleSaveDraftBtnClick={handleSaveDraftBtnClick}
                 modalCallback={modalCallback}
                 receiptSendModal={receiptSendModal}
+                openReceiptModal={openReceiptModal}
               />
             </div>
           )}
@@ -931,7 +932,6 @@ const QuoteNewPageWidget = ({
         whatsappMassage={whatsappMassage}
         documentType={documentType}
       />
-
       <SettingQuoteMenu
         handleClose={handleSettingMenuClose}
         open={openSettingMenu}
