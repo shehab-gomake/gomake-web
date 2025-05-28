@@ -79,6 +79,18 @@ const companyFinancialInputs = (state: ICompanyProfile) => {
       machineInputType: "input",
       isValid: true,
     },
+    {
+      name: "checksSerialNumber",
+      label: "profileSettings.checksSerialNumber",
+      type: "number",
+      placeholder: "profileSettings.checksSerialNumber",
+      required: true,
+      parameterKey: "checksSerialNumber",
+      options: [],
+      value: state.checksSerialNumber,
+      machineInputType: "input",
+      isValid: true,
+    },
   ];
 };
 
