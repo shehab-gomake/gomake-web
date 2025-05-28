@@ -2001,7 +2001,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (!router?.isReady) {
       return;
     }
-    if (connectionId) {
+    if (connectionId && !currentSignalRConnectionId) {
       setCurrentSignalRConnectionId(connectionId);
       setCurrentProductItemValueTotalPrice(null);
       setSliderCurrentProductItemValueTotalPrice(null); //!new
