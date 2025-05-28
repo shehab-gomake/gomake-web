@@ -39,6 +39,7 @@ const useMoreCircle = ({
   onOpenModal,
   handleClickEdit,
   onClickMarksAsDoneForProductType,
+  isDoneJobs,
   handleClickBackToProcess
 }: any) => {
   console.log("mission", mission)
@@ -167,13 +168,13 @@ const useMoreCircle = ({
       onclick: () => onClickOrderSummeryPdf(mission?.id),
     },
     {
-      condition: true && isSendPaymentToClient,
+      condition: true && isSendPaymentToClient && !isDoneJobs,
       name: t("boardMissions.printProductionPdf"),
       icon: <PDFIcon />,
       onclick: () => GetPrintingTicketPDF(mission),
     },
     {
-      condition: true && isSendPaymentToClient,
+      condition: true && isSendPaymentToClient && !isDoneJobs,
       name: t("boardMissions.printPackagingSlip"),
       icon: <PackageIcon />,
       onclick:
@@ -182,7 +183,7 @@ const useMoreCircle = ({
           : () => onClickPrintPackagingSlip(mission),
     },
     {
-      condition: true,
+      condition: true && !isDoneJobs,
       name: t("home.duplicate"),
       icon: <DuplicateMenuIcon />,
       onclick: () => onClickDuplicate(mission),

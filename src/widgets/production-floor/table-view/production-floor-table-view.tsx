@@ -126,6 +126,7 @@ const ProductionFloorTableView = ({ connectionId }) => {
     // t("boardMissions.numberOfBoardMissionsInOrder"),
     t("boardMissions.productName"),
     t("boardMissions.currentBoardMissionStatus"),
+    t("properties.more"),
   ].filter(Boolean);
 
   const router = useRouter();

@@ -49,13 +49,14 @@ import { agentsState, currentStationOrderingState } from "@/store/agents-state";
 import moment from "moment";
 import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
 import { CurrentStationOrderingEnum } from "@/enums";
+import { getOrderSummeryPdfApi, getWorkMissionPdfApi, setBoardMissionsFiltersApi } from "@/services/api-service/board-missions/board-missions-table";
+import { EWorkSource } from "../product-pricing-widget/enums";
 import { useDebounce } from "@/utils/use-debounce";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { EWorkSource } from "../product-pricing-widget/enums";
+import { MoreMenuWidget } from "@/pages-components/board-missions/widgets/more-circle";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { setBoardMissionsFiltersApi } from "@/services/api-service/board-missions/board-missions-table";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -343,19 +344,20 @@ const useProductionFloorData = () => {
             <div style={{ whiteSpace: "break-spaces" }}>
               {getJobStatus(mission)}
             </div>,
-            // <MoreMenuWidget
-            //   mission={mission}
-            //   onClickDuplicate={onOpenDuplicateModal}
-            //   onOpenModal={onOpenModal}
-            //   onClickPrintPackagingSlip={onOpenPackagesModal}
-            //   onClickMarksAsDone={onOpenMarkReadyModal}
-            //   onClickMarksAsDoneForProductType={
-            //     onOpenMarkReadyModalForProductType
-            //   }
-            //   onClickReturnToProduction={onOpenReturnToProdModal}
-            //   onClickOrderSummeryPdf={onClickOrderSummeryPdf}
-            //   onClickWorkMissionPdf={onClickWorkMissionPdf}
-            // />,
+            <MoreMenuWidget
+              mission={mission}
+              isDoneJobs={true}
+              // onClickDuplicate={onOpenDuplicateModal}
+              // onOpenModal={onOpenModal}
+              // onClickPrintPackagingSlip={onOpenPackagesModal}
+              // onClickMarksAsDone={onOpenMarkReadyModal}
+              // onClickMarksAsDoneForProductType={
+              //   onOpenMarkReadyModalForProductType
+              // }
+              // onClickReturnToProduction={onOpenReturnToProdModal}
+              onClickOrderSummeryPdf={onClickOrderSummeryPdf}
+              onClickWorkMissionPdf={onClickWorkMissionPdf}
+            />,
           ];
         });
         setAllBoardMissions(mapData);
@@ -363,6 +365,37 @@ const useProductionFloorData = () => {
       } else {
         setAllBoardMissions([]);
       }
+    };
+
+    const onClickWorkMissionPdf = async (
+      boardMissionId: string,
+      actionId: string
+    ) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          const pdfLink = res.data;
+          window.open(pdfLink, "_blank");
+        } else {
+          // alertFaultGetData();
+        }
+      };
+      await getWorkMissionPdfApi(callApi, callBack, {
+        boardMissionId,
+        isPurchaseJobs: false,
+        actionId: actionId,
+      });
+    };
+
+    const onClickOrderSummeryPdf = async (boardMissionId: string) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          const pdfLink = res.data;
+          window.open(pdfLink, "_blank");
+        } else {
+          // alertFaultGetData();
+        }
+      };
+      await getOrderSummeryPdfApi(callApi, callBack, { boardMissionId });
     };
 
     const data = {
@@ -373,7 +406,7 @@ const useProductionFloorData = () => {
       fromReadyDate: null,
       toReadyDate: null,
       productsIds: [],
-      productionStatus: "3",
+      productionStatus: "6",
       pageNumber: pageNumberInput ?? pageNumber,
       pageSize: pageSizeInput ?? pageSize,
       search:
