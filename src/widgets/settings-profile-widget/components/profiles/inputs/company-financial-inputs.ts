@@ -84,7 +84,7 @@ const companyFinancialInputs = (state: ICompanyProfile) => {
       label: "profileSettings.checksSerialNumber",
       type: "number",
       placeholder: "profileSettings.checksSerialNumber",
-      required: true,
+      required: false,
       parameterKey: "checksSerialNumber",
       options: [],
       value: state.checksSerialNumber,
