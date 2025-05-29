@@ -8,7 +8,7 @@ import { useStyle } from "./style";
 import { PackageIcon } from "@/icons/package-icon";
 import { GetPrintingTicketPDFApi } from "@/services/api-service/generic-doc/documents-api";
 import { useGomakeAxios, useGomakeRouter, useSnackBar } from "@/hooks";
-import { PStatus } from "../enums";
+import { BoardMissionStatusForFilter } from "../enums";
 import { Permissions } from "@/components/CheckPermission/enum";
 import { DocumentPermission } from "@/components/CheckPermission/enum";
 import {
@@ -42,7 +42,6 @@ const useMoreCircle = ({
   isDoneJobs,
   handleClickBackToProcess
 }: any) => {
-  console.log("mission", mission)
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
@@ -178,7 +177,7 @@ const useMoreCircle = ({
       name: t("boardMissions.printPackagingSlip"),
       icon: <PackageIcon />,
       onclick:
-        mission?.status === PStatus.IN_PROCESS && !mission?.isReady
+        mission?.status !== BoardMissionStatusForFilter.DONE && !mission?.isReady
           ? () => onOpenModal(mission)
           : () => onClickPrintPackagingSlip(mission),
     },
@@ -198,7 +197,7 @@ const useMoreCircle = ({
     },
     {
       condition:
-        mission?.status === PStatus.IN_PROCESS && isSendPaymentToClient,
+        mission?.status !== BoardMissionStatusForFilter.DONE && isSendPaymentToClient,
       name: !mission?.isReady
         ? t("boardMissions.markAsReady")
         : t("boardMissions.markAsUnReady"),
@@ -209,12 +208,6 @@ const useMoreCircle = ({
       ),
       onclick: () => handleClickMarkAsReady(),
     },
-    // {
-    //   condition: mission?.status === PStatus.DONE,
-    //   name: "boardMissions.returnToProduction",
-    //   icon: <LockOpenOutlinedIcon style={classes.iconStyle} />,
-    //   onclick: () => onClickReturnToProduction(mission),
-    // },
     {
       condition: true && isSendPaymentToClient && isShowLogs,
       name: t("home.loggers"),
