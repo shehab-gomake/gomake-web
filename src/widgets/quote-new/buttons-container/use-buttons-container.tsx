@@ -42,6 +42,7 @@ import {
   EAddressType,
 } from "../business-widget/address-widget/state";
 import { validateAddressApi } from "@/services/api-service/customers/customers-api";
+import { createInvoiceFromOrderIdApi } from "@/services/api-service/generic-doc/invoices";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -231,11 +232,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     setOpenCancelReceiptModal(false);
   };
 
-  //!here
   const CheckoutModalOpen = useModal();
   const [checkoutModalData, setCheckoutModalData] = useState<{
-    documentNumber: string;
-    clientId: string;
     orderId: string;
     orderNumber: string;
   } | null>(null);
@@ -266,16 +264,13 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         } else if (isPrepaymentClient) {
           navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
         } else {
-          if (res.data.isShowCheckOutModal) {
-            debugger;
+          if (res.data.isShowCheckoutModal) {
             setCheckoutModalData({
-              documentNumber: res.data.documentNumber,
-              clientId: res.data.clientId,
               orderId: res.data.orderID,
               orderNumber: res.data.number,
             });
 
-            () => CheckoutModalOpen.open();
+            CheckoutModalOpen.open();
           } else {
             setShowPrintJobsModal(res.data.orderID);
             navigate(`/jobs?orderNumber=${res?.data?.number}`);
@@ -294,6 +289,21 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     };
 
     await createOrderApi(callApi, callBack, requestBody);
+  };
+
+  const handleProcessCheckout = async (orderId: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const DocumentNumber = res.data.docEntry;
+        const ClientId = res.data.client.id;
+        navigate(
+          `/receipt?isNewCreation=true&documentNumber=${DocumentNumber}&ClientId=${ClientId}`
+        );
+        CheckoutModalOpen.close();
+      }
+    };
+
+    await createInvoiceFromOrderIdApi(callApi, callBack, orderId);
   };
 
   const onClickConfirmWithoutNotification = () =>
@@ -654,6 +664,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     checkoutModalData,
     CheckoutModalOpen,
     setShowPrintJobsModal,
+    handleProcessCheckout,
+    router,
   };
 };
 
