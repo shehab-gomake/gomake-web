@@ -452,7 +452,7 @@ const useMoreCircle = () => {
       },
 
       {
-        condition: isPurchaseInvoice && quote?.isCanGetTaxConfirmationNumber,
+        condition: isInvoice && quote?.isCanGetTaxConfirmationNumber,
         onClick: () => handleGetTaxConfirmNo(quote?.id),
         icon: <TagIcon />,
         name: t("sales.quote.getTaxConfirmationNumber"),
