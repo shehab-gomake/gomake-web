@@ -5,6 +5,7 @@ import { RoundedCloseIcon } from '@/components/modal/icon/close';
 import { useTranslation } from 'react-i18next';
 import { CheckboxCheckedIcon, CheckboxIcon } from '@/icons';
 import { useGomakeTheme } from '@/hooks/use-gomake-thme';
+import { FONT_FAMILY } from '@/utils/font-family';
 
 const MissionModalWidget = ({ onClickCloseCurrentStationModal, missionsListForEdit, clasess, updateQuoteItem }) => {
   const { t } = useTranslation();
@@ -114,7 +115,14 @@ const MissionModalWidget = ({ onClickCloseCurrentStationModal, missionsListForEd
           {t("sales.quote.revertJopStation")}
         </GomakePrimaryButton>
         <GomakePrimaryButton
-          style={{ ...clasess.cancelBtn, backgroundColor: errorColor(500) }}
+          style={{
+            height: 35,
+            borderRadius: "10px",
+            ...FONT_FAMILY.Lexend(500, 12),
+            backgroundColor: "#FFF",
+            color: "#344054",
+            border: `1px solid #D0D5DD`,
+          }}
           onClick={onClickCloseCurrentStationModal}
         >
           {t("sales.quote.cancel")}
