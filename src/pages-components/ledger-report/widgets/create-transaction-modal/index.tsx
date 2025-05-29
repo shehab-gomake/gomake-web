@@ -189,7 +189,7 @@ const CreateNewTransactionModal = ({
                       {toAccountType === "client" ? (
                         <ClientAutocomplete
                           key={toAccountType}
-                          value={getFromSelectedValue()}
+                          value={getToSelectedValue()}
                           clientType={
                             isPurchaseReport
                               ? CLIENT_TYPE.SUPPLIER
