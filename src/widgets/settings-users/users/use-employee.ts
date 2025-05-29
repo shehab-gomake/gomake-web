@@ -122,7 +122,11 @@ const useEmployee = () => {
             setOpenVerificationModal(true);
           }
         } else {
-          alertFaultAdded();
+          if (data?.statusCode === 96) {
+            alertFault("alerts.mailAlreadyExists");
+          } else {
+            alertFaultAdded();
+          }
         }
       };
       await addNewEmployee(callApi, callback, employee);

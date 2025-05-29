@@ -13,8 +13,9 @@ interface InvoiceCreationModal {
   openModal: boolean;
   onClose: () => void;
   docType: any;
-  onClickSendDocumentToClient: (value) => void;
+  onClickSendDocumentToClient: (value: any, value2?: any) => void;
   handleSendUsingWhatsAppWeb: () => void;
+  openReceiptModal?: any;
 }
 
 const InvoiceCreationModal = ({
@@ -23,6 +24,7 @@ const InvoiceCreationModal = ({
   docType,
   onClickSendDocumentToClient,
   handleSendUsingWhatsAppWeb,
+  openReceiptModal,
 }: InvoiceCreationModal) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -64,6 +66,7 @@ const InvoiceCreationModal = ({
             handleSendDocument={onClickSendDocumentToClient}
             handleSendUsingWhatsAppWeb={handleSendUsingWhatsAppWeb}
             docType={docType}
+            openReceiptModal={openReceiptModal}
           />
           <OtherOptionsSection
             quoteItemValue={quoteItemValue}

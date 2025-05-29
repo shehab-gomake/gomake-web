@@ -53,6 +53,7 @@ export enum EStatisticsLabels {
   PENDING = "pending",
   ORDERS = "orders",
   CANCELED = "canceled",
+  STUCK_JOBS = "stuckJobs",
 }
 
 export enum LogActionType {

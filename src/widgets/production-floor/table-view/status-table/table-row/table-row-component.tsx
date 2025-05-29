@@ -3,11 +3,7 @@ import { CurrentStationComponent } from "@/widgets/production-floor/table-view/s
 import { BoardStatusComponent } from "@/widgets/production-floor/table-view/status-table/board-status/board-status";
 import { useDrag, useDrop } from "react-dnd";
 import { useRecoilState, useSetRecoilState } from "recoil";
-import {
-  boardMissionsDetailsState,
-  boardsMissionsState,
-  selectedBoardsMissionsState,
-} from "@/widgets/production-floor/state/boards";
+import { boardMissionsDetailsState, selectedBoardsMissionsState } from "@/widgets/production-floor/state/boards";
 import { useProductionFloorData } from "@/widgets/production-floor/use-production-floor-data";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
@@ -35,7 +31,6 @@ import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp
 import { ApprovalFileStatusComponent } from "./approval-file-status-component";
 import { ExpandIcon } from "@/icons/expand-icon";
 import { convertUtcToLocalIsoString } from "@/components/date-time/date-time-component";
-import { DateHourFormatterShort } from "@/utils/date-formatters";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { DateField } from "@/components/date-picker/date-filed";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -44,11 +39,12 @@ import { EPreferences } from "@/enums/prefernces";
 import { usePrintHousePreferences } from "@/hooks/use-print-house-preferences";
 import { ProductionFloorNote } from "../board-note/production-floor-note";
 import { useSimpleApproveModal } from "@/hooks/use-simple-approve-modal";
-import { GoMakeDeleteModal, GomakeTextInput } from "@/components";
+import { GoMakeDeleteModal } from "@/components";
 import { ModalType } from "@/enums";
 import { boardMissionsActivitiesState } from "@/widgets/production-floor/state/board-missions-activities";
 import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { boardMissionsFilesState } from "@/widgets/production-floor/views/board-missions-view/files/state";
+import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reason/add-stuck-reason";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -220,6 +216,7 @@ const TableRowComponent = ({
   const setStations = useSetRecoilState(boardMissionsStationsState);
   const setBoardMissionsDetails = useSetRecoilState(boardMissionsDetailsState);
   const setActivities = useSetRecoilState(boardMissionsActivitiesState);
+
 
   return (
     <>
@@ -611,12 +608,7 @@ const TableRowComponent = ({
         onClose={handleCloseStuckModal}
         onClickDelete={() => onUpdateStuckReason(stuckReason)}
       >
-        <GomakeTextInput
-          placeholder={t("sales.quote.stuckReason")}
-          value={stuckReason}
-          onChange={(e) => setStuckReason(e.target.value)}
-          style={{ height: 40, width: "100%", minWidth: "300px" }}
-        />
+        <AddStuckReasonWidget stuckReason={stuckReason} setStuckReason={setStuckReason} />
       </GoMakeDeleteModal>
     </>
   );

@@ -26,6 +26,7 @@ import { printHouseProfile } from "@/store/print-house-profile";
 import { EditIcon } from "@/icons";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import { moveBoardMissionStatusToWaitingApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const useMoreCircle = ({
   mission,
@@ -37,8 +38,11 @@ const useMoreCircle = ({
   onClickPrintPackagingSlip,
   onOpenModal,
   handleClickEdit,
-  onClickMarksAsDoneForProductType
+  onClickMarksAsDoneForProductType,
+  isDoneJobs,
+  handleClickBackToProcess
 }: any) => {
+  console.log("mission", mission)
   const { t } = useTranslation();
   const { classes } = useStyle();
   const { callApi } = useGomakeAxios();
@@ -85,7 +89,7 @@ const useMoreCircle = ({
     await addBoardMissionsToFileUploaderApi(callApi, callBack, {
       boardMissionsId: mission?.id,
       connectionId: connectionId,
-      productType:mission?.productType,
+      productType: mission?.productType,
     });
   };
 
@@ -100,6 +104,7 @@ const useMoreCircle = ({
       }
     }
   };
+
 
   const printJobUsingPrintNode = async (jobId: string) => {
     const callBack = (res) => {
@@ -163,13 +168,13 @@ const useMoreCircle = ({
       onclick: () => onClickOrderSummeryPdf(mission?.id),
     },
     {
-      condition: true && isSendPaymentToClient,
+      condition: true && isSendPaymentToClient && !isDoneJobs,
       name: t("boardMissions.printProductionPdf"),
       icon: <PDFIcon />,
       onclick: () => GetPrintingTicketPDF(mission),
     },
     {
-      condition: true && isSendPaymentToClient,
+      condition: true && isSendPaymentToClient && !isDoneJobs,
       name: t("boardMissions.printPackagingSlip"),
       icon: <PackageIcon />,
       onclick:
@@ -178,10 +183,18 @@ const useMoreCircle = ({
           : () => onClickPrintPackagingSlip(mission),
     },
     {
-      condition: true,
+      condition: true && !isDoneJobs,
       name: t("home.duplicate"),
       icon: <DuplicateMenuIcon />,
       onclick: () => onClickDuplicate(mission),
+    },
+    {
+      condition:
+        mission?.boardMissionStatus?.key
+        === "Stuck",
+      name: t("boardMissions.backToProcess"),
+      icon: <MarkAsUnReadyIcon />,
+      onclick: () => handleClickBackToProcess(mission),
     },
     {
       condition:

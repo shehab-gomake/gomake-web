@@ -10,6 +10,7 @@ import { IBoardMissions } from "@/widgets/production-floor/interfaces/board-miss
 import { useGomakeAxios, useSnackBar } from "@/hooks";
 import {
   toggleBoardMissionsActionTimer,
+  updateBoardMissionStuckReasonApi,
   updateBoardsMissionsStatusApi,
 } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { IStatusesBoardsMissions } from "@/widgets/production-floor/interfaces/production-floor-data-response";
@@ -31,7 +32,13 @@ const useBoardMissionsDetailsHeader = () => {
   const router = useRouter();
   const { pathname, query, push } = router;
   const [isLoadingStatus, setIsLoadingStatus] = useState(false);
-
+  const [openSimpleApproveModal, setOpenSimpleApproveModal] = useState<boolean>(false);
+  const [openSimpleStuckModal, setOpenStuckModal] = useState<boolean>(false);
+  const [stuckReason, setStuckReason] = useState<string>("");
+  const handleCloseStuckModal = () => {
+    setOpenStuckModal(false);
+    setStuckReason("");
+  }
   const onNavigateBoardMissions = (boardId: string, productType: string) => {
     push(
       {
@@ -46,6 +53,12 @@ const useBoardMissionsDetailsHeader = () => {
   // This condition ( boardsIds?.length && !boardsIds ) ensures that if we open the Board Mission from the Job or from the Search,
   // the `boardsIds` array will be undefined. To handle this scenario, we provide a fallback
   const handleStatusChange = async (id: string, newStatusId: string, productType: string) => {
+    // if(newStatusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && boardFromTable.isNeedExample){
+    //   handleOpenModal(newStatusId, [boardFromTable], id);
+    // }
+    // else if(newStatusId === "56dd1e80-7436-462c-82e9-cf8a90afd614"){
+    //   handleOpenStuckModal(newStatusId, [boardFromTable], id, productType);
+    // }
     setIsLoadingStatus(true);
     try {
       const newStatus = statuses.find((status) => status.id === newStatusId);
@@ -94,6 +107,14 @@ const useBoardMissionsDetailsHeader = () => {
                 }
               })
             );
+          }
+          console.log("newStatusId", newStatusId)
+
+          if (newStatusId === "79251980-1c2d-4b4f-9ab4-9ccb9cb9fb63" && boardFromTable.isNeedExample) {
+            setOpenSimpleApproveModal(true);
+          }
+          else if (newStatusId === "56dd1e80-7436-462c-82e9-cf8a90afd614") {
+            setOpenStuckModal(true);
           }
         } else {
           setIsLoadingStatus(false);
@@ -166,6 +187,21 @@ const useBoardMissionsDetailsHeader = () => {
     [stations]
   );
 
+  const onUpdateStuckReason = async (
+    stuckReason: string,
+    boardMissionId: string,
+    productType: string,
+  ) => {
+    await updateBoardMissionStuckReasonApi(
+      callApi,
+      (res) => {
+        if (res?.success) {
+        }
+      },
+      { boardMissionId, stuckReason, productType }
+    );
+  };
+
   return {
     boards,
     boardFromTable,
@@ -180,6 +216,12 @@ const useBoardMissionsDetailsHeader = () => {
     stations,
     setStations,
     sortedStations,
+    openSimpleApproveModal,
+    openSimpleStuckModal,
+    stuckReason,
+    setStuckReason,
+    handleCloseStuckModal,
+    onUpdateStuckReason
   };
 };
 

@@ -13,8 +13,10 @@ const SendBtnMenu = ({
   documentState,
   documentType,
   onClickSendReceiptToClient,
+  openReceiptModal,
 }) => {
   const { t } = useTranslation();
+  const isReceipt = documentType === DOCUMENT_TYPE.receipt;
 
   return (
     <GoMakeMenu
@@ -32,8 +34,11 @@ const SendBtnMenu = ({
       {documentState.isSendMails && (
         <MenuItem
           onClick={() => {
-            if (documentType === DOCUMENT_TYPE.receipt) {
-              onClickSendReceiptToClient(MessageType.Email);
+            if (isReceipt) {
+              openReceiptModal((includeInvoices) => {
+                onClickSendReceiptToClient(MessageType.Email, includeInvoices);
+                handleClose();
+              });
             } else {
               onClickSendQuoteToClient(MessageType.Email);
             }
@@ -46,8 +51,11 @@ const SendBtnMenu = ({
       {documentState.isSendSMS && (
         <MenuItem
           onClick={() => {
-            if (documentType === DOCUMENT_TYPE.receipt) {
-              onClickSendReceiptToClient(MessageType.SMS);
+            if (isReceipt) {
+              openReceiptModal((includeInvoices) => {
+                onClickSendReceiptToClient(MessageType.SMS, includeInvoices);
+                handleClose();
+              });
             } else {
               onClickSendQuoteToClient(MessageType.SMS);
             }
@@ -60,8 +68,15 @@ const SendBtnMenu = ({
       {documentState.isSendWhatsappWeb && (
         <MenuItem
           onClick={() => {
-            onClickOpenWhatsAppModal();
-            handleClose();
+            if (isReceipt) {
+              openReceiptModal((includeInvoices) => {
+                onClickOpenWhatsAppModal(includeInvoices);
+                handleClose();
+              });
+            } else {
+              onClickOpenWhatsAppModal();
+              handleClose();
+            }
           }}
         >
           {t("sales.quote.whatsApp")}
