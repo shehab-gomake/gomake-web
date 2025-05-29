@@ -1182,7 +1182,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onOpenDuplicateModal={onOpenDuplicateModal}
                 onClickStartProduction={onClickOpenStartProductionModal}
                 onClickReopenDocument={onClickOpenReopenDocumentModal}
-                handleGetTaxConfirmNo={handleGetTaxConfirmNo}
               />,
             ];
           } else {
@@ -1260,6 +1259,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickSendPayment={onClickSendPayment}
                 onClickReopenDocument={onClickOpenReopenDocumentModal}
                 onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
+                handleGetTaxConfirmNo={handleGetTaxConfirmNo}
               />,
             ];
           }
