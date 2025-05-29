@@ -4,7 +4,7 @@ import { useGomakeAxios } from "./use-gomake-axios";
 import { sendJobExampleConfirmationToClientApi, updateBoardMissionStuckReasonApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useSnackBar } from "./use-snack-bar";
 
-export const useSimpleApproveModal = (updateStatus: (boards: IBoardMissions[], statusId: string) => void) => {
+export const useSimpleApproveModal = (updateStatus:any) => {
   const { callApi } = useGomakeAxios();
   const [openSimpleApproveModal, setOpenSimpleApproveModal] = useState<boolean>(false);
   const [openSimpleStuckModal, setOpenStuckModal] = useState<boolean>(false);

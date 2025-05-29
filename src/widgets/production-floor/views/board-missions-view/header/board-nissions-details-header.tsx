@@ -28,6 +28,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { updateJobDueDateApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 import { useGomakeAxios } from "@/hooks";
 import moment from "moment/moment";
+import { GoMakeDeleteModal } from "@/components/modal-deleted/modal";
+import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reason/add-stuck-reason";
+import { ModalType } from "@/enums";
 
 const HeaderTitleComponent = ({ title }: { title?: string }) => {
   const { classes } = useStyle();
@@ -214,7 +217,15 @@ const BoardMissionsDetailsHeader = () => {
     onToggleTimer,
     timerLoading,
     sortedStations,
+    openSimpleApproveModal,
+    openSimpleStuckModal,
+    stuckReason,
+    setStuckReason,
+    handleCloseStuckModal,
+    onUpdateStuckReason,
+
   } = useBoardMissionsDetailsHeader();
+
   const isLoading = !boardMissionsDetails?.boardMissionId; // Check if boardMissionId exists
   const isLoadingTimer = isLoading || sortedStations?.length === 0;
 
@@ -393,7 +404,9 @@ const BoardMissionsDetailsHeader = () => {
                       <BoardStatusComponent
                         statusId={boardMissionsDetails.boardMissionStatus?.id}
                         id={boardMissionsDetails?.boardMissionId}
-                        onChange={handleStatusChange}
+                        onChange={(id, statusId, productType) => {
+                          handleStatusChange(id, statusId, productType);
+                        }}
                         isFromMissionView={true}
                         currentStation={boardMissionsDetails?.currentActionName}
                         statusColorBg={
@@ -560,6 +573,18 @@ const BoardMissionsDetailsHeader = () => {
               </PermissionCheck>
             </Stack>
           )}
+
+          <GoMakeDeleteModal
+            title={t("sales.quote.stuckReasonTitleModal")}
+            yesBtn={t("modal.yes")}
+            modalType={ModalType.WARNING}
+            subTitle={" "}
+            openModal={openSimpleStuckModal}
+            onClose={handleCloseStuckModal}
+            onClickDelete={() => onUpdateStuckReason(stuckReason, boardMissionsDetails?.boardMissionId, boardMissionsDetails.productType)}
+          >
+            <AddStuckReasonWidget stuckReason={stuckReason} setStuckReason={setStuckReason} />
+          </GoMakeDeleteModal>
         </>
       )}
     </>
