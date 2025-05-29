@@ -84,6 +84,7 @@ import { QuoteIfExistState } from "../quote-new/store/quote";
 import { userQuoteState } from "@/store/user-qoute-state";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
+import { getTaxConfirmationNumberApi } from "@/services/api-service/generic-doc/invoices";
 
 interface Query {
   customerId?: string;
@@ -116,6 +117,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     alertSuccessUpdate,
     alertFault,
     alertFaultDelete,
+    alertSuccessGetData,
   } = useSnackBar();
   const router = useRouter();
   const documentPath =
@@ -530,6 +532,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   }
                   onClickSendPayment={onClickSendPayment}
                   onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
+                  handleGetTaxConfirmNo={handleGetTaxConfirmNo}
                 />,
               ];
             } else if (isQuote) {
@@ -1054,6 +1057,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
                 onClickSendPayment={onClickSendPayment}
                 onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
+                handleGetTaxConfirmNo={handleGetTaxConfirmNo}
               />,
             ];
           } else if (isQuote) {
@@ -2903,6 +2907,17 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
       documentType: docType,
       documentId: selectedDocument?.id,
     });
+  };
+
+  const handleGetTaxConfirmNo = async (documentId: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        alertSuccessGetData();
+        getAllQuotes();
+      } else alertFaultGetData();
+    };
+
+    await getTaxConfirmationNumberApi(callApi, callBack, documentId);
   };
 
   return {

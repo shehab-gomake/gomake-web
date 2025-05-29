@@ -79,6 +79,7 @@ const useMoreCircle = () => {
     onClickReopenDocument,
     onClickEditQuote,
     onClickOpenRemoveDraftModal,
+    handleGetTaxConfirmNo,
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
@@ -150,15 +151,6 @@ const useMoreCircle = () => {
       await printReceiptChecksApi(callApi, callBack, {
         receiptId,
       });
-    };
-
-    const handleGetTaxConfirmNo = async (documentId: string) => {
-      const callBack = (res) => {
-        if (res?.success) alertSuccessGetData();
-        else alertFaultGetData();
-      };
-
-      await getTaxConfirmationNumberApi(callApi, callBack, documentId);
     };
 
     const isQuote = documentType === DOCUMENT_TYPE.quote;
