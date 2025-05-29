@@ -32,8 +32,8 @@ const getSetApiData = async (
   const res = {
     ...result,
     ..._data,
-    success: !!result.success,
-    data: result.success ? _data : _errors_data,
+    success: !!result?.success,
+    data: result?.success ? _data : _errors_data,
   };
   callBackFunction(res);
   return res;
