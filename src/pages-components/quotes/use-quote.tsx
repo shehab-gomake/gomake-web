@@ -532,7 +532,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   }
                   onClickSendPayment={onClickSendPayment}
                   onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
-                  handleGetTaxConfirmNo={handleGetTaxConfirmNo}
                 />,
               ];
             } else if (isQuote) {
@@ -751,6 +750,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickSendPayment={onClickSendPayment}
                   onClickReopenDocument={onClickOpenReopenDocumentModal}
                   onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
+                  handleGetTaxConfirmNo={handleGetTaxConfirmNo}
                 />,
               ];
             }
@@ -1057,7 +1057,6 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 }
                 onClickSendPayment={onClickSendPayment}
                 onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
-                handleGetTaxConfirmNo={handleGetTaxConfirmNo}
               />,
             ];
           } else if (isQuote) {
@@ -1260,6 +1259,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickSendPayment={onClickSendPayment}
                 onClickReopenDocument={onClickOpenReopenDocumentModal}
                 onClickOpenRemoveDraftModal={onClickOpenRemoveDraftModal}
+                handleGetTaxConfirmNo={handleGetTaxConfirmNo}
               />,
             ];
           }
