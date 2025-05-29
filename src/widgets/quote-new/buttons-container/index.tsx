@@ -10,6 +10,7 @@ import { useButtonsContainer } from "./use-buttons-container";
 import {
   DELIVERY_NOTE_STATUSES,
   DOCUMENT_TYPE,
+  PURCHASE_ORDER_STATUSES,
 } from "@/pages-components/quotes/enums";
 import { PaymentModal } from "./payment/payment-modal";
 import { PaymentBtn } from "./payment/payment-button";
@@ -124,6 +125,7 @@ const ButtonsContainer = ({
     onClickOpenCloseOrderNotesModal,
     openCloseOrderNotesModal,
     onClickCloseOrderCallback,
+    isPurchaseOrder,
     CheckoutOptionModal,
     handleClickPrintChecks,
     checkoutModalData,
@@ -326,7 +328,11 @@ const ButtonsContainer = ({
             {t("sales.cart.printChecks")}
           </GomakePrimaryButton>
         )}
-        {(isQuote || (isOrder && quoteItemValue?.documentStatus !== 1)) && (
+        {(isQuote ||
+          (isOrder && quoteItemValue?.documentStatus !== 1) ||
+          (isPurchaseOrder &&
+            quoteItemValue?.documentStatus !==
+              PURCHASE_ORDER_STATUSES.Canceled)) && (
           <GomakePrimaryButton
             style={classes.btnSecondContainer}
             onClick={handleCancelBtnClick}
@@ -412,7 +418,6 @@ const ButtonsContainer = ({
             {t("materials.buttons.reject")}
           </GomakePrimaryButton>
         )}
-
         {isQuote && (
           <>
             {!quoteItemValue?.isNeedApproval && (

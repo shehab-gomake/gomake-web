@@ -123,6 +123,24 @@ const CloseBtnMenu = ({
               ),
           },
         ];
+
+      case DOCUMENT_TYPE.purchaseOrder:
+        return [
+          {
+            label: t("sales.quote.close"),
+            action: () => {
+              onClickClose(documentState?.id);
+            },
+          },
+
+          {
+            label: t("sales.quote.closeAsPurchaseInvoice"),
+            action: () =>
+              navigate(
+                `/purchaseInvoice?isNewCreation=true&orderId=${documentState?.id}`
+              ),
+          },
+        ];
       default:
         return [];
     }

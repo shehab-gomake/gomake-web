@@ -4,7 +4,7 @@ import {
   useGomakeRouter,
   useSnackBar,
 } from "@/hooks";
-import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../enums";
+import { DOCUMENT_TYPE, QUOTE_STATUSES, StatusTitleText } from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
@@ -160,15 +160,20 @@ const useMoreCircle = () => {
     const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
     const isReceipt = documentType === DOCUMENT_TYPE.receipt;
 
-    const isClosedOrder = isOrder && quote?.statusTitleText === "Order.Closed";
-    const isPauseOrder = quote?.statusTitleText === "Order.Paused";
-    const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
+    const isClosedOrder =
+      isOrder && quote?.statusTitleText === StatusTitleText.OrderClosed;
+    const isPauseOrder = quote?.statusTitleText === StatusTitleText.OrderPaused;
+    const isCanceledOrder =
+      quote?.statusTitleText === StatusTitleText.OrderCanceled;
     const isClosedDeliveryNote =
-      quote?.statusTitleText === "DeliveryNote.Closed";
-    const isClosedInvoice = quote?.statusTitleText === "Invoice.Closed";
+      quote?.statusTitleText === StatusTitleText.DeliveryNoteClosed;
+    const isClosedInvoice =
+      quote?.statusTitleText === StatusTitleText.InvoiceClosed;
     const showNewDuplicate =
       isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
     const isOrdersTracking = pathname === "/ordersTracking";
+    const isCanceledPurchaseOrder =
+      quote?.statusTitleText === StatusTitleText.PurchaseOrderCanceled;
 
     const isShowLogs = CheckPermission(Permissions.SHOW_LOGS);
     const isSendPaymentToClient = CheckPermission(
@@ -442,7 +447,7 @@ const useMoreCircle = () => {
         href: `/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`,
       },
       {
-        condition: !isPauseOrder && isPurchaseOrder && quote?.isCanClose,
+        condition: isPurchaseOrder && quote?.isCanClose,
         onClick: () =>
           navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
@@ -469,6 +474,19 @@ const useMoreCircle = () => {
         icon: <LockIcon />,
         name: t("sales.quote.close"),
       },
+
+      {
+        condition:
+          isPurchaseOrder &&
+          quote?.isCanClose &&
+          !isCanceledPurchaseOrder &&
+          isEditableDocument &&
+          canCloseDocumentManually,
+        onClick: () => onClickOpenCloseOrderModal(quote),
+        icon: <LockIcon />,
+        name: t("sales.quote.close"),
+      },
+
       {
         condition:
           isCanReopenCanceledOrder ||
@@ -504,6 +522,13 @@ const useMoreCircle = () => {
             : quote?.creditCardTotal > 0
             ? onOpenCancelReceiptModalRefund(quote)
             : onOpenCancelReceiptModal(quote),
+        icon: <TickCancelIcon />,
+        name: t("sales.quote.cancel"),
+      },
+      {
+        condition:
+          isPurchaseOrder && !isCanceledPurchaseOrder && isEditableDocument,
+        onClick: () => onClickOpenIrrelevantModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },

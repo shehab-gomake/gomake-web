@@ -6,7 +6,12 @@ import {
 } from "@/hooks";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ApprovalStatus, LogActionType, QUOTE_STATUSES } from "./enums";
+import {
+  ApprovalStatus,
+  LogActionType,
+  QUOTE_STATUSES,
+  StatusTitleText,
+} from "./enums";
 import { MoreMenuWidget } from "./more-circle";
 import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useRecoilValue, useRecoilState } from "recoil";
@@ -479,6 +484,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                     onClickOpenChangeProductionStatusModal
                   }
                   onClickSendPayment={onClickSendPayment}
+                  onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+                  onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
                 />,
               ];
             } else if (isPurchaseInvoice || isPurchaseInvoiceRefund) {
@@ -1003,6 +1010,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenChangeProductionStatusModal
                 }
                 onClickSendPayment={onClickSendPayment}
+                onClickOpenCloseOrderModal={onClickOpenCloseOrderModal}
+                onClickOpenIrrelevantModal={onClickOpenIrrelevantModal}
               />,
             ];
           } else if (isPurchaseInvoice || isPurchaseInvoiceRefund) {
@@ -2302,7 +2311,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
         alertFaultUpdate();
       }
     };
-    if (document?.statusTitleText === "Order.Canceled") {
+    if (document?.statusTitleText === StatusTitleText.OrderCanceled) {
       await OpenCanceledDocumentApi(callApi, callBack, {
         documentType: docType,
         data: { documentId: document?.id },
