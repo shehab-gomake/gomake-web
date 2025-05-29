@@ -43,6 +43,7 @@ import {
   EAddressType,
 } from "../business-widget/address-widget/state";
 import { validateAddressApi } from "@/services/api-service/customers/customers-api";
+import { createInvoiceFromOrderIdApi } from "@/services/api-service/generic-doc/invoices";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -232,6 +233,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     setOpenCancelReceiptModal(false);
   };
 
+  const CheckoutModalOpen = useModal();
+  const [checkoutModalData, setCheckoutModalData] = useState<{
+    orderId: string;
+    orderNumber: string;
+  } | null>(null);
+
   const handleOrderConfirmation = async (
     sendMessage: boolean,
     isPrepaymentClient: boolean = false,
@@ -258,8 +265,17 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         } else if (isPrepaymentClient) {
           navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
         } else {
-          setShowPrintJobsModal(res.data.orderID);
-          navigate(`/jobs?orderNumber=${res?.data?.number}`);
+          if (res.data.isShowCheckoutModal) {
+            setCheckoutModalData({
+              orderId: res.data.orderID,
+              orderNumber: res.data.number,
+            });
+
+            CheckoutModalOpen.open();
+          } else {
+            setShowPrintJobsModal(res.data.orderID);
+            navigate(`/jobs?orderNumber=${res?.data?.number}`);
+          }
         }
       } else {
         alertFaultUpdate();
@@ -274,6 +290,21 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     };
 
     await createOrderApi(callApi, callBack, requestBody);
+  };
+
+  const handleProcessCheckout = async (orderId: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const DocumentNumber = res.data.docEntry;
+        const ClientId = res.data.client.id;
+        navigate(
+          `/receipt?isNewCreation=true&documentNumber=${DocumentNumber}&ClientId=${ClientId}`
+        );
+        CheckoutModalOpen.close();
+      }
+    };
+
+    await createInvoiceFromOrderIdApi(callApi, callBack, orderId);
   };
 
   const onClickConfirmWithoutNotification = () =>
@@ -658,6 +689,11 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     setOpenCloseOrderNotesModal,
     onClickCloseOrderCallback,
     handleClickPrintChecks,
+    checkoutModalData,
+    CheckoutModalOpen,
+    setShowPrintJobsModal,
+    handleProcessCheckout,
+    router,
   };
 };
 
