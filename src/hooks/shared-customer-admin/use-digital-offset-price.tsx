@@ -136,6 +136,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   const [subProducts, setSubProducts] = useRecoilState<any>(
     subProductsParametersState
   );
+  const [isMigratedFromOldSystem,setIsMigratedFromOldSystem] = useState(false)
   const [ignoreCalculatedWorkflows, setIgnoreCalculatedWorkflows] = useState(productTemplate?.ignoreCalculatedWorkflows);
   useEffect(() => {
     setIgnoreCalculatedWorkflows(productTemplate?.ignoreCalculatedWorkflows || false);
@@ -1483,7 +1484,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   }, [materialsEnumsValues, allMaterials, productTemplate]);
 
   useEffect(() => {
-    if (widgetType === EWidgetProductType.EDIT && productTemplate?.productItemValue && productTemplate?.productItemValue?.itemParmetersValues?.length > 0 && subProducts?.length == 0) {
+    if (widgetType === EWidgetProductType.EDIT && !isMigratedFromOldSystem && productTemplate?.productItemValue && productTemplate?.productItemValue?.itemParmetersValues?.length > 0 && subProducts?.length == 0) {
       setSubProducts((prev) => {
         return prev.map((subProduct) => {
           return {
@@ -2035,6 +2036,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
       setGraphicNotes("");
       setErrorMsg("");
       setProductTemplate([]);
+      setIsMigratedFromOldSystem(false);
       setupdatedProductTemplate(null);
       setDefaultProductTemplate([]);
       setSubProductsColorsModal([]);
@@ -5284,6 +5286,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
   ];
 
   const getProductById = async (materials) => {
+    setIsMigratedFromOldSystem(false);
     if (router?.query?.isFromChatbot) {
       await getAndSetChatBotProductId(
         callApi,
@@ -5356,6 +5359,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
     if (connectionId) {
       const conn = generateConnectionId(connectionId);
       setCurrentSignalRConnectionId(conn)
+      setIsMigratedFromOldSystem(false);
       const callBack = (res) => {
         if (res?.success) {
           const updatedTemplate = updateIsHidden(res?.data, subProducts);
@@ -5368,6 +5372,7 @@ const useDigitalOffsetPrice = ({ clasess, widgetType }) => {
           setWorkTypes(res?.data?.productItemValue?.workTypes);
           setMissionsListForEdit(res?.data?.missions);
           setCalculatedPriceProductItemValue(res?.data?.calculatedPrice);
+          setIsMigratedFromOldSystem(res?.data?.isMigratedFromOldSystem)
           setSubProductsCopy([
             {
               parameters: res?.data?.productItemValue?.itemParmetersValues,
