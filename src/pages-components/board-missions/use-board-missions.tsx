@@ -637,6 +637,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 onClickReturnToProduction={onOpenReturnToProdModal}
                 onClickOrderSummeryPdf={onClickOrderSummeryPdf}
                 onClickWorkMissionPdf={onClickWorkMissionPdf}
+                onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
               />,
             ];
           });
@@ -791,6 +792,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               onClickReturnToProduction={onOpenReturnToProdModal}
               onClickOrderSummeryPdf={onClickOrderSummeryPdf}
               onClickWorkMissionPdf={onClickWorkMissionPdf}
+              onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
             />,
           ]);
           setAllPurchaseJobs(mapData);
@@ -920,6 +922,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+  const [openMarkReadyModalForHasJobs, setOpenMarkReadyModalForHasJobs] = useState<boolean>(false);
+
   const [
     openMarkReadyModalForProductType,
     setOpenMarkReadyModalForProductType,
@@ -941,6 +945,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setOpenMarkReadyModalForProductType(false);
   };
 
+  const onOpenMarkReadyModalForHasJobs = (mission) => {
+    setSelectedMission(mission);
+    setOpenMarkReadyModalForHasJobs(true);
+  };
+  const onCloseMarkReadyModalForHasJobs = () => {
+    setSelectedMission(null);
+    setOpenMarkReadyModalForHasJobs(false);
+  };
   const [openMarkReadyThenPrintModal, setOpenMarkReadyThenPrintModal] =
     useState<boolean>(false);
   const onCloseMarkReadyThenPrintModal = () => {
@@ -1513,7 +1525,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     openQuoteModal,
     ExportJobsTableToExcel,
     selectedMission,
-    handleClickBackToProcess
+    handleClickBackToProcess,
+    onOpenMarkReadyModalForHasJobs,
+    onCloseMarkReadyModalForHasJobs,
+    openMarkReadyModalForHasJobs
   };
 };
 

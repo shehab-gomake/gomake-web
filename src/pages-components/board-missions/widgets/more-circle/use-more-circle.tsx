@@ -26,7 +26,7 @@ import { printHouseProfile } from "@/store/print-house-profile";
 import { EditIcon } from "@/icons";
 import { useUserPermission } from "@/hooks/use-permission";
 import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
-import { moveBoardMissionStatusToWaitingApi } from "@/services/api-service/production-floor/production-floor-endpoints";
+import { moveBoardMissionStatusToWaitingApi, tryMoveBoardMissionToDoneApi } from "@/services/api-service/production-floor/production-floor-endpoints";
 
 const useMoreCircle = ({
   mission,
@@ -40,7 +40,8 @@ const useMoreCircle = ({
   handleClickEdit,
   onClickMarksAsDoneForProductType,
   isDoneJobs,
-  handleClickBackToProcess
+  handleClickBackToProcess,
+  onOpenMarkReadyModalForHasJobs
 }: any) => {
   const { t } = useTranslation();
   const { classes } = useStyle();
@@ -96,12 +97,36 @@ const useMoreCircle = ({
     if (mission?.isReady) {
       onClickReturnToProduction(mission);
     } else {
-      if (mission?.productType === null || mission?.productType === "") {
-        onClickMarksAsDone(mission);
-      } else {
-        onClickMarksAsDoneForProductType(mission);
-      }
+      tryMoveBoardMissionsToDone(mission);
+      // if (mission?.productType === null || mission?.productType === "") {
+      //   onClickMarksAsDone(mission);
+      // } else {
+      //   onClickMarksAsDoneForProductType(mission);
+      // }
     }
+  };
+
+  const tryMoveBoardMissionsToDone = async (boardMission) => {
+    const callBack = (res) => {
+      if (res.success) {
+        if (boardMission.productType) {
+          // moveBoardMissionToDone(boardMission);
+          onClickMarksAsDoneForProductType(mission)
+        } else {
+          if (res.data) {
+            // onClickMarksAsDone(mission)
+            onOpenMarkReadyModalForHasJobs(boardMission);
+          } else {
+            onClickMarksAsDone(mission)
+            // onOpenMarkReadyModal(boardMission.id);
+          }
+        }
+      }
+    };
+
+    await tryMoveBoardMissionToDoneApi(callApi, callBack, {
+      boardMissionId: boardMission.id,
+    });
   };
 
 
