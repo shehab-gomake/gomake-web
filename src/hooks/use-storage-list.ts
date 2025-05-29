@@ -54,7 +54,9 @@ const useStorageList = () => {
         defaultValue,
         addPrintHouseJobsStorage,
         handleStorageChange,
-        setInputValue
+        setInputValue,
+        selectedMission,
+        setSelectedMission
     }
 }
 
