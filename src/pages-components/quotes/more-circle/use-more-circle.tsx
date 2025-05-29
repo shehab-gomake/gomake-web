@@ -38,6 +38,7 @@ import { DeleteIcon } from "./icons/delete";
 import { printReceiptChecksApi } from "@/services/api-service/generic-doc/receipts-api";
 import { PrintPdfIcon } from "./icons/print-pdf";
 import { TagIcon } from "@/icons/tag-icon";
+import { getTaxConfirmationNumberApi } from "@/services/api-service/generic-doc/invoices";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -94,7 +95,8 @@ const useMoreCircle = () => {
 
     const { callApi } = useGomakeAxios();
     const { pathname } = useRouter();
-    const { alertFaultAdded, alertFaultGetData } = useSnackBar();
+    const { alertFaultAdded, alertFaultGetData, alertSuccessGetData } =
+      useSnackBar();
 
     const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
       const callBack = (res) => {
@@ -148,6 +150,15 @@ const useMoreCircle = () => {
       await printReceiptChecksApi(callApi, callBack, {
         receiptId,
       });
+    };
+
+    const handleGetTaxConfirmNo = async (documentId: string) => {
+      const callBack = (res) => {
+        if (res?.success) alertSuccessGetData();
+        else alertFaultGetData();
+      };
+
+      await getTaxConfirmationNumberApi(callApi, callBack, documentId);
     };
 
     const isQuote = documentType === DOCUMENT_TYPE.quote;
@@ -444,10 +455,8 @@ const useMoreCircle = () => {
       },
 
       {
-        // condition: isPurchaseInvoice && quote?.isCanGetTaxConfirmationNumber,
-        condition: true,
-
-        onClick: () => alert("/Invoices/GetTaxConfirmationNumber"),
+        condition: isPurchaseInvoice && quote?.isCanGetTaxConfirmationNumber,
+        onClick: () => handleGetTaxConfirmNo(quote?.id),
         icon: <TagIcon />,
         name: t("sales.quote.getTaxConfirmationNumber"),
       },
