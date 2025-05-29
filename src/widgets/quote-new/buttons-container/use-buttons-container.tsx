@@ -9,7 +9,10 @@ import {
   manuallyCloseDocumentApi,
   sendQuoteApprovalToManagerApi,
 } from "@/services/api-service/generic-doc/documents-api";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import {
+  DOCUMENT_TYPE,
+  StatusTitleText,
+} from "@/pages-components/quotes/enums";
 import {
   cancelReceiptApi,
   createReceiptApi,
@@ -399,6 +402,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
   const isPurchaseInvoice = docType === DOCUMENT_TYPE.purchaseInvoice;
+  const isPurchaseOrder = docType === DOCUMENT_TYPE.purchaseOrder;
 
   const canCancelReceipt = CheckPermission(Permissions.CANCEL_RECEIPT);
 
@@ -468,20 +472,23 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const isShowCloseButton =
     quoteItemValue?.isCanClose &&
-    ((docType === DOCUMENT_TYPE.order &&
-      quoteItemValue?.statusTitleText !== "Order.Canceled") ||
-      docType === DOCUMENT_TYPE.invoice ||
-      docType === DOCUMENT_TYPE.deliveryNote);
+    ((isOrder &&
+      quoteItemValue?.statusTitleText !== StatusTitleText.OrderCanceled) ||
+      isInvoice ||
+      isDeliveryNote ||
+      isPurchaseOrder);
 
   const ManuallyCloseDocument = async (selectedDocumentId) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-        docType === DOCUMENT_TYPE.order
+        isOrder
           ? navigate("/orders")
-          : docType === DOCUMENT_TYPE.deliveryNote
+          : isDeliveryNote
           ? navigate("/deliveryNotes")
-          : navigate("/invoices");
+          : isInvoice
+          ? navigate("/invoices")
+          : navigate("/purchaseOrders");
       } else {
         alertFaultUpdate();
       }
@@ -630,6 +637,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     openCloseOrderNotesModal,
     setOpenCloseOrderNotesModal,
     onClickCloseOrderCallback,
+    isPurchaseOrder,
   };
 };
 
