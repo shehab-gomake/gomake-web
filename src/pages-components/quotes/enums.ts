@@ -100,8 +100,8 @@ export enum StatusTitleText {
   PurchaseOrderClosed = "PurchaseOrder.Closed",
   DeliveryNoteOpen = "DeliveryNote.Open",
   DeliveryNoteClosed = "DeliveryNote.Closed",
-  InvoiceClosed = "Invoice.Open",
-  InvoiceOpen = "Invoice.Closed",
+  InvoiceOpen = "Invoice.Open",
+  InvoiceClosed = "Invoice.Closed",
 }
 
 export enum PURCHASE_ORDER_STATUSES {
