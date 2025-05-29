@@ -49,13 +49,14 @@ import { agentsState, currentStationOrderingState } from "@/store/agents-state";
 import moment from "moment";
 import { IProductionFloorFilter } from "@/widgets/production-floor/interfaces/filters";
 import { CurrentStationOrderingEnum } from "@/enums";
-import { setBoardMissionsFiltersApi } from "@/services/api-service/board-missions/board-missions-table";
+import { getOrderSummeryPdfApi, getWorkMissionPdfApi, setBoardMissionsFiltersApi } from "@/services/api-service/board-missions/board-missions-table";
 import { EWorkSource } from "../product-pricing-widget/enums";
+import { useDebounce } from "@/utils/use-debounce";
 import { useUserPermission } from "@/hooks/use-permission";
 import { useQuoteGetData } from "@/pages-components/quote-new/use-quote-get-data";
-import { Permissions } from "@/components/CheckPermission/enum";
 import { useDateFormat } from "@/hooks/use-date-format";
-import { useDebounce } from "@/utils/use-debounce";
+import { MoreMenuWidget } from "@/pages-components/board-missions/widgets/more-circle";
+import { Permissions } from "@/components/CheckPermission/enum";
 
 const useProductionFloorData = () => {
   const { t } = useTranslation();
@@ -68,7 +69,7 @@ const useProductionFloorData = () => {
   const [data, setData] =
     useRecoilState<IStatusesBoardsMissions[]>(boardsMissionsState);
   const [selectedMission, setSelectedMission] =
-      useRecoilState<any>(selectedMissionsState);
+    useRecoilState<any>(selectedMissionsState);
   const [abortController, setAbortController] = useRecoilState(
     productionFloorAbortControllerState
   );
@@ -175,10 +176,10 @@ const useProductionFloorData = () => {
             filterGroups.map((x) =>
               x.id === "all"
                 ? {
-                    ...x,
-                    stuckCount: res?.data?.boradMisstionsStuckCount,
-                    inProcessCount: res?.data?.boradMisstionsNotStuckCount,
-                  }
+                  ...x,
+                  stuckCount: res?.data?.boradMisstionsStuckCount,
+                  inProcessCount: res?.data?.boradMisstionsNotStuckCount,
+                }
                 : x
             )
           );
@@ -271,7 +272,7 @@ const useProductionFloorData = () => {
         const mapData = _data.data?.map((mission: any) => {
           const itemCalculatedPrice =
             mission?.calculatedPrice &&
-            mission?.calculatedPrice != mission?.price
+              mission?.calculatedPrice != mission?.price
               ? mission?.calculatedPrice
               : 0;
           return [
@@ -296,11 +297,10 @@ const useProductionFloorData = () => {
             formatISODateTime(mission?.dueDate),
             <div style={{ cursor: "pointer" }}>{mission?.clientName}</div>,
             mission?.productType
-              ? `${mission?.number} / ${
-                  mission?.productTypeName
-                    ? mission?.productTypeName
-                    : mission?.productType
-                }`
+              ? `${mission?.number} / ${mission?.productTypeName
+                ? mission?.productTypeName
+                : mission?.productType
+              }`
               : mission?.number,
             <a href={`/order?Id=${mission?.orderID}`}>
               {mission?.orderNumber}
@@ -344,19 +344,20 @@ const useProductionFloorData = () => {
             <div style={{ whiteSpace: "break-spaces" }}>
               {getJobStatus(mission)}
             </div>,
-            // <MoreMenuWidget
-            //   mission={mission}
-            //   onClickDuplicate={onOpenDuplicateModal}
-            //   onOpenModal={onOpenModal}
-            //   onClickPrintPackagingSlip={onOpenPackagesModal}
-            //   onClickMarksAsDone={onOpenMarkReadyModal}
-            //   onClickMarksAsDoneForProductType={
-            //     onOpenMarkReadyModalForProductType
-            //   }
-            //   onClickReturnToProduction={onOpenReturnToProdModal}
-            //   onClickOrderSummeryPdf={onClickOrderSummeryPdf}
-            //   onClickWorkMissionPdf={onClickWorkMissionPdf}
-            // />,
+            <MoreMenuWidget
+              mission={mission}
+              isDoneJobs={true}
+              // onClickDuplicate={onOpenDuplicateModal}
+              // onOpenModal={onOpenModal}
+              // onClickPrintPackagingSlip={onOpenPackagesModal}
+              // onClickMarksAsDone={onOpenMarkReadyModal}
+              // onClickMarksAsDoneForProductType={
+              //   onOpenMarkReadyModalForProductType
+              // }
+              // onClickReturnToProduction={onOpenReturnToProdModal}
+              onClickOrderSummeryPdf={onClickOrderSummeryPdf}
+              onClickWorkMissionPdf={onClickWorkMissionPdf}
+            />,
           ];
         });
         setAllBoardMissions(mapData);
@@ -364,6 +365,37 @@ const useProductionFloorData = () => {
       } else {
         setAllBoardMissions([]);
       }
+    };
+
+    const onClickWorkMissionPdf = async (
+      boardMissionId: string,
+      actionId: string
+    ) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          const pdfLink = res.data;
+          window.open(pdfLink, "_blank");
+        } else {
+          // alertFaultGetData();
+        }
+      };
+      await getWorkMissionPdfApi(callApi, callBack, {
+        boardMissionId,
+        isPurchaseJobs: false,
+        actionId: actionId,
+      });
+    };
+
+    const onClickOrderSummeryPdf = async (boardMissionId: string) => {
+      const callBack = (res) => {
+        if (res?.success) {
+          const pdfLink = res.data;
+          window.open(pdfLink, "_blank");
+        } else {
+          // alertFaultGetData();
+        }
+      };
+      await getOrderSummeryPdfApi(callApi, callBack, { boardMissionId });
     };
 
     const data = {
@@ -374,7 +406,7 @@ const useProductionFloorData = () => {
       fromReadyDate: null,
       toReadyDate: null,
       productsIds: [],
-      productionStatus: "3",
+      productionStatus: "6",
       pageNumber: pageNumberInput ?? pageNumber,
       pageSize: pageSizeInput ?? pageSize,
       search:
@@ -477,20 +509,20 @@ const useProductionFloorData = () => {
           data.map((s) =>
             s.boardMissionStatus.boardMissionStatus.id === payload.statusId
               ? {
-                  ...s,
-                  boardMissions: s.boardMissions?.map((board) => {
-                    const match = updatedBoards?.find(
-                      (updatedBoard) => updatedBoard.id === board.id
-                    );
-                    if (match) {
-                      return {
-                        ...board,
-                        priority: match.priority,
-                      };
-                    }
-                    return board;
-                  }),
-                }
+                ...s,
+                boardMissions: s.boardMissions?.map((board) => {
+                  const match = updatedBoards?.find(
+                    (updatedBoard) => updatedBoard.id === board.id
+                  );
+                  if (match) {
+                    return {
+                      ...board,
+                      priority: match.priority,
+                    };
+                  }
+                  return board;
+                }),
+              }
               : s
           )
         );
@@ -503,14 +535,19 @@ const useProductionFloorData = () => {
 
   const [, setSelectedMissionId] = useState<any>(null);
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+  const [openMarkReadyModalForHasJobs, setOpenMarkReadyModalForHasJobs] = useState<boolean>(false);
 
   const onCloseMarkReadyModal = () => {
     setSelectedMissionId(null);
     setOpenMarkReadyModal(false);
   };
 
+  const onCloseMarkReadyModalForHasJobs = () => {
+    setSelectedMissionId(null);
+    setOpenMarkReadyModalForHasJobs(false);
+  };
+
   const tryMoveBoardMissionsToDone = async (boardMission) => {
-    debugger
     setSelectedMission(boardMission);
     const callBack = (res) => {
       if (res.success) {
@@ -518,8 +555,9 @@ const useProductionFloorData = () => {
           moveBoardMissionToDone(boardMission);
         } else {
           if (res.data) {
-            alertSuccessUpdate();
-            setOpenPackagesModal(true);
+            onOpenMarkReadyModalForHasJobs(boardMission);
+            // alertSuccessUpdate();
+            // setOpenPackagesModal(true);
           } else {
             onOpenMarkReadyModal(boardMission.id);
           }
@@ -536,6 +574,15 @@ const useProductionFloorData = () => {
 
   const onOpenMarkReadyModal = (missionId) => {
     setOpenMarkReadyModal(true);
+  };
+
+  const onOpenMarkReadyModalForHasJobs = (missionId) => {
+    setSelectedMissionId(missionId);
+    setOpenMarkReadyModalForHasJobs(true);
+  };
+
+  const onClickMarkReadyModalForHasJobs = () => {
+    moveBoardMissionToDone(selectedMission);
   };
 
   const handleRemoveBoardMission = (boardMissionId) => {
@@ -583,6 +630,7 @@ const useProductionFloorData = () => {
   const moveBoardMissionToDone = async (selectedMission: any) => {
     const callBack = (res) => {
       setOpenMarkReadyModal(false);
+      setOpenMarkReadyModalForHasJobs(false);
       if (res?.success) {
         alertSuccessUpdate();
         if (
@@ -593,6 +641,7 @@ const useProductionFloorData = () => {
         }
       } else {
         alertFaultUpdate();
+
       }
     };
     await moveBoardMissionToDoneApi(callApi, callBack, {
@@ -690,17 +739,17 @@ const useProductionFloorData = () => {
       data.map((status) =>
         status.boardMissions.find((b) => b.id === boardMisionId)
           ? {
-              ...status,
-              boardMissions: status.boardMissions.map((bm) =>
-                bm.id === boardMisionId
-                  ? { ...bm, dueDate: formattedDueDate }
-                  : bm
-              ),
-            }
+            ...status,
+            boardMissions: status.boardMissions.map((bm) =>
+              bm.id === boardMisionId
+                ? { ...bm, dueDate: formattedDueDate }
+                : bm
+            ),
+          }
           : status
       )
     );
-    const callBack = () => {};
+    const callBack = () => { };
     updateJobDueDateApi(callApi, callBack, {
       boardMissionId: boardMisionId,
       dueDate: utcDueDate,
@@ -741,6 +790,10 @@ const useProductionFloorData = () => {
     onCloseMarkReadyModal,
     onOpenMarkReadyModal,
     openMarkReadyModal,
+    onOpenMarkReadyModalForHasJobs,
+    openMarkReadyModalForHasJobs,
+    onClickMarkReadyModalForHasJobs,
+    onCloseMarkReadyModalForHasJobs,
     setOpenMarkReadyModal,
     onClickMoveBoardMissionToDone,
     onClickPrintJob,

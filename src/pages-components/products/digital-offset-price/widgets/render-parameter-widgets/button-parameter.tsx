@@ -21,7 +21,8 @@ const ButtonParameterWidget = ({
   isParameterSettings = false,
   allMaterials,
   template,
-  getProductById
+  getProductById,
+  isCreate
 }: any) => {
   let Comp;
   const [materialData, setMaterialData] = useRecoilState<any>(materialBtnDataState);
@@ -44,7 +45,6 @@ const ButtonParameterWidget = ({
   const dieKissCutParameterForSettings = findParameterByCode(template, "DieKissCut")
 
   const isDiesParameter = dieCutParameterForSettings || dieKissCutParameterForSettings
-
   const updatedProductParameteDefaultValue = useCallback(
     async (sectionId: string, subSectionId: string, parameter: any) => {
       const updatedValuesConfigs = isDiesParameter.valuesConfigs.map((config: any) => ({
@@ -361,18 +361,29 @@ const ButtonParameterWidget = ({
 
   }, [materialData, isSelectedShape, isParameterSettings]);
   useEffect(() => {
-    if (materialData?.length > 0 || !isSelectedShape) return;
+    if (!isCreate) {
+      // if (materialData?.length > 0 || !isSelectedShape) return;
 
-    const materialPath = parameter?.materialPath?.[0];
-    const materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
+      const materialPath = parameter?.materialPath?.[0];
+      const materialDataPath = allMaterials?.find((material) => material?.pathName === materialPath)?.data;
+      if (!materialDataPath) return;
 
-    if (!materialDataPath) return;
-    // const myDefaultShape = isSelectedShape?.find((config) => config?.isDefault)
-    const selectedShapeId = isParameterSettings ? isSelectedShape?.find((config) => config?.isDefault)?.id : isSelectedShape?.valueIds?.[0];
-    const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
-    const transformedShape: any = transformSelectedShape(selectedMaterial);
-    if (!transformedShape) return;
-    setSelectedShape(transformedShape);
+      // Create a new list containing just the data arrays from all objects
+      const allDataList = materialDataPath.reduce((acc, curr) => {
+        if (curr.data && curr.data.length > 0) {
+          acc.push(...curr.data);
+        }
+        return acc;
+      }, []);
+      const selectedShapeIdWhenEdit = allDataList.find((data) => data.id === isSelectedShape?.valueId);
+      // const myDefaultShape = isSelectedShape?.find((config) => config?.isDefault)
+      const selectedShapeId = isParameterSettings ? isSelectedShape?.find((config) => config?.isDefault)?.id : selectedShapeIdWhenEdit ?? isSelectedShape?.valueIds?.[0];
+      const selectedMaterial = materialDataPath?.find((material) => material.valueId === selectedShapeId);
+      const transformedShape: any = transformSelectedShape(selectedMaterial);
+      if (!transformedShape) return;
+      setSelectedShape(selectedShapeIdWhenEdit ?? transformedShape);
+    }
+
   }, [materialData, isParameterSettings, isSelectedShape, allMaterials]);
   const hasDieCutOrDieKissCut = checkIfDieCutOrDieKissCutExists(subProducts, isParameterSettings);
   if (parameter?.buttonAction === EButtonTypes.GALLERY_MODAL) {
@@ -412,16 +423,17 @@ const ButtonParameterWidget = ({
       );
     }
 
-    else if (isSelectedShape && selectedShape?.id !== undefined && hasDieCutOrDieKissCut) {
-
+    else if (isSelectedShape && selectedShape && hasDieCutOrDieKissCut) {
+      const image = selectedShape?.rowData?.image?.value || selectedShape?.additionalAttribute?.find((attribute) => attribute.valueId === "image")?.value
+      const name = selectedShape?.rowData?.name?.value || selectedShape?.additionalAttribute?.find((attribute) => attribute.valueId === "name")?.value
       Comp = (
         <div style={clasess?.btnSelectedStyle}>
           <img
-            src={selectedShape?.rowData?.image?.value || selectedShape?.additionalAttribute}
+            src={image}
             style={{ width: 24, height: 24 }}
           />
           <div style={clasess?.btnSelectedTextStyle}>
-            {selectedShape?.rowData?.name?.value}
+            {name}
           </div>
           <div
             style={clasess?.btnSelectedIconReChoose}

@@ -66,6 +66,7 @@ export interface ICompanyProfile {
     number: string;
   }>;
   paymentReminder?: number;
+  checksSerialNumber?: number;
 }
 
 export enum CreditClearanceCompanies {

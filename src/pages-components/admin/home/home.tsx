@@ -2,7 +2,7 @@ import { QuoteWidget } from "./widgets/quote-widget/quote-widget";
 import { useStyle } from "./style";
 import { HomeTableWidget } from "./widgets/home-table-widget/home-table-widget";
 import { useHome } from "./use-home";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CardsWidget } from "./widgets/cards-widget/cards-widget";
 import { Skeleton } from "@mui/material";
 import { useRecoilValue } from "recoil";
@@ -78,7 +78,7 @@ const HomePageComponentForAdmin = ({ isMobileScreen }) => {
     },
   ];
 
-  const {} = useGoMakeTour(homeSteps, []);
+  const { } = useGoMakeTour(homeSteps, []);
 
   useEffect(() => {
     setIsDisplay(flag);

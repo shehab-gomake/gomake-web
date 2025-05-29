@@ -15,6 +15,7 @@ import {
   createReceiptApi,
   getReceiptInvoicesPdfApi,
   getReceiptPdfApi,
+  printReceiptChecksApi,
 } from "@/services/api-service/generic-doc/receipts-api";
 import {
   allocatedSumsState,
@@ -571,6 +572,32 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     } else onClickPrint();
   };
 
+  const handleClickPrintChecks = async () => {
+    const downloadPdf = (url) => {
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.target = "_blank";
+      anchor.addEventListener("click", () => {
+        setTimeout(() => {
+          anchor.remove();
+        }, 100);
+      });
+      anchor.click();
+    };
+    const callBack = (res) => {
+      if (res?.success) {
+        const pdfLink = res.data;
+        downloadPdf(pdfLink);
+      } else {
+        alertFaultGetData();
+      }
+    };
+
+    await printReceiptChecksApi(callApi, callBack, {
+      receiptId: quoteItemValue?.id,
+    });
+  };
+
   const [openCloseOrderNotesModal, setOpenCloseOrderNotesModal] =
     useState(false);
   const [onClickCloseOrderCallback, setOnClickCloseOrderCallback] = useState<
@@ -661,6 +688,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     openCloseOrderNotesModal,
     setOpenCloseOrderNotesModal,
     onClickCloseOrderCallback,
+    handleClickPrintChecks,
     checkoutModalData,
     CheckoutModalOpen,
     setShowPrintJobsModal,
