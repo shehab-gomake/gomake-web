@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tooltip, IconButton, Checkbox } from '@mui/material';
 import { GomakePrimaryButton } from '@/components';
 import { RoundedCloseIcon } from '@/components/modal/icon/close';
@@ -10,6 +10,13 @@ const MissionModalWidget = ({ onClickCloseCurrentStationModal, missionsListForEd
   const { t } = useTranslation();
   const { primaryColor, errorColor } = useGomakeTheme();
   const [disabledBtns, setDisabledBtns] = useState(false)
+  const [currentStation, setCurrentStation] = useState()
+  useEffect(() => {
+    if (missionsListForEdit.length > 0) {
+      setCurrentStation(missionsListForEdit[0]?.station?.actionName)
+    }
+  }, [missionsListForEdit])
+  console.log("missionsListForEdit", missionsListForEdit)
   return (
     <>
       <div>
@@ -25,43 +32,60 @@ const MissionModalWidget = ({ onClickCloseCurrentStationModal, missionsListForEd
         </div>
       </div>
       <div style={clasess.mainContainerForMission}>
-        {missionsListForEdit?.map((mission, index) => (
-          <div
-            key={index}
-            style={clasess.missionItemContainer}
-          >
-            <div style={clasess.missionText1}>{mission?.number}</div> -
-            {mission?.productType && <>
-              <div style={clasess.missionText}>{mission?.productType}</div>:</>}
-            <div style={clasess.missionText}>{mission?.station?.actionName}</div>
-            {mission?.station?.employeeName && (
-              <div
-                style={clasess.missionText2}
-              >
-                | {mission?.station?.employeeName}
-              </div>
-            )}
-            {mission?.station?.machineName && (
-              <div
-                style={clasess.missionText2}
-              >
-                | {mission?.station?.machineName}
-              </div>
-            )}
-            <span style={clasess.deviderContainer}> | </span>
+        {missionsListForEdit?.map((mission, index) => {
+          console.log("mission", mission)
+          return (
             <div
-              style={{
-                background: mission?.boardMissionStatus?.backgroundColor,
-                color: mission?.boardMissionStatus?.textColor,
-                padding: 5,
-                width: "fit-content",
-                minWidth: 100,
-              }}
+              key={index}
+              style={clasess.missionItemContainer}
             >
-              {mission?.boardMissionStatus?.name}
+              <div style={clasess.missionText1}>{mission?.number}</div> -
+              {mission?.productType &&
+                <>
+                  <div style={clasess.missionText}>{mission?.productType}</div>:
+                </>
+              }
+              {
+                mission?.station?.actionName && (
+                  <div style={clasess.missionText}>{mission?.station?.actionName}</div>
+                )
+              }
+              {mission?.station?.employeeName && (
+                <div
+                  style={clasess.missionText2}
+                >
+                  | {mission?.station?.employeeName}
+                </div>
+              )}
+              {mission?.station?.machineName !== "" || mission?.station?.machineName !== "-" && (
+                <div
+                  style={clasess.missionText2}
+                >
+                  | {mission?.station?.machineName}
+                </div>
+              )}
+              {
+                mission?.boardMissionStatus?.name && (
+                  <>
+                    <span style={clasess.deviderContainer}> | </span>
+                    <div
+                      style={{
+                        background: mission?.boardMissionStatus?.backgroundColor,
+                        color: mission?.boardMissionStatus?.textColor,
+                        padding: 5,
+                        width: "fit-content",
+                        minWidth: 100,
+                      }}
+                    >
+                      {mission?.boardMissionStatus?.name}
+                    </div>
+                  </>
+                )
+              }
+
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
       <div style={clasess.checkboxModalContainer} onClick={() => setDisabledBtns(!disabledBtns)}>
         <Checkbox
@@ -70,7 +94,7 @@ const MissionModalWidget = ({ onClickCloseCurrentStationModal, missionsListForEd
           checkedIcon={<CheckboxCheckedIcon />}
           checked={disabledBtns}
         />
-        <div style={clasess.checkboxLabelStyle}>Yes, I have read it very carefully</div>
+        <div style={clasess.checkboxLabelStyle}>{t("sales.quote.missionLabelCheclbox")}</div>
       </div>
 
       <div style={clasess.btnsContainer}>
@@ -79,13 +103,21 @@ const MissionModalWidget = ({ onClickCloseCurrentStationModal, missionsListForEd
           onClick={() => updateQuoteItem(true)}
           disabled={!disabledBtns}
         >
-          {t("sales.quote.saveCurrentJopStation")}
+          {t("sales.quote.saveCurrentJopStation", {
+            stationName: currentStation
+          })}
         </GomakePrimaryButton>{" "}
         <GomakePrimaryButton
           style={{ ...clasess.cancelBtn, backgroundColor: disabledBtns ? errorColor(500) : "#B9363633" }}
           onClick={() => updateQuoteItem(false)}
           disabled={!disabledBtns}>
           {t("sales.quote.revertJopStation")}
+        </GomakePrimaryButton>
+        <GomakePrimaryButton
+          style={{ ...clasess.cancelBtn, backgroundColor: errorColor(500) }}
+          onClick={onClickCloseCurrentStationModal}
+        >
+          {t("sales.quote.cancel")}
         </GomakePrimaryButton>
       </div>
 
