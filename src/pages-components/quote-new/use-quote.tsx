@@ -727,6 +727,10 @@ const useQuoteNew = ({
   };
 
   const updatePurchaseNumber = async (value: string, forceUpdate = false) => {
+    if(isNewCreation){
+      setQuoteItemValue({ ...quoteItemValue, purchaseNumber: value });
+      return;
+    }
     const originalValue = Number(quoteItemValue?.purchaseNumber);
 
     if (!forceUpdate) {
