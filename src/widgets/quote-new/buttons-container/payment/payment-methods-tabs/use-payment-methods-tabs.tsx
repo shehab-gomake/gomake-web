@@ -1,5 +1,5 @@
 import { IconButton } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { MoreMenuWidget } from "../more-circle";
@@ -51,29 +51,65 @@ const usePaymentMethodsTabs = () => {
   const resetTotalTransfer = useResetRecoilState(totalTransferState);
   const resetTransferTabState = useResetRecoilState(transferTabState);
 
+  const checkNumberBase = useMemo(() => {
+    return isOutgoingPayments && quoteItemValue?.checksSerialNumber
+      ? quoteItemValue?.checksSerialNumber
+      : 0;
+  }, [isOutgoingPayments, quoteItemValue]);
+
+  useEffect(() => {
+    if (isOutgoingPayments && data.length === 1 && !data[0].checkNumber) {
+      const initialRow = {
+        ...data[0],
+        checkNumber: Number(checkNumberBase),
+      };
+      setData([initialRow]);
+    }
+  }, []);
+
   const addRow = () => {
-    const newRow = {
-      dueDate: new Date().toISOString().split("T")[0],
-      checkNumber: "",
-      bankCode: "",
-      branch: "",
-      accountNum: "",
-      checkSum: 0,
-    };
-    setData((prevData) => [...prevData, newRow]);
+    if (isOutgoingPayments) {
+      const lastRow = data[data.length - 1];
+      const newRow = {
+        ...lastRow,
+        checkNumber: Number(checkNumberBase) + data.length,
+      };
+      setData((prevData) => [...prevData, newRow]);
+    } else {
+      const newRow = {
+        dueDate: new Date().toISOString().split("T")[0],
+        checkNumber: 0,
+        bankCode: "",
+        branch: "",
+        accountNum: "",
+        checkSum: 0,
+      };
+      setData((prevData) => [...prevData, newRow]);
+    }
+  };
+
+  const duplicateRow = (index) => {
+    const rowToDuplicate = data[index];
+    if (isOutgoingPayments) {
+      const duplicatedRow = {
+        ...rowToDuplicate,
+        checkNumber: Number(checkNumberBase) + data.length,
+      };
+      setData((prevData) => [...prevData, duplicatedRow]);
+    } else {
+      setData((prevData) => [...prevData, { ...rowToDuplicate }]);
+    }
   };
 
   const deleteRow = (index) => {
     setData((prevData) => {
       const newData = prevData.filter((_, i) => i !== index);
-      return newData;
-    });
-  };
-
-  const duplicateRow = (index) => {
-    const rowToDuplicate = data[index];
-    setData((prevData) => {
-      const newData = [...prevData, { ...rowToDuplicate }];
+      if (isOutgoingPayments) {
+        return newData.map((row, idx) => ({
+          ...row,
+          checkNumber: Number(checkNumberBase) + idx,
+        }));
+      }
       return newData;
     });
   };
@@ -110,10 +146,11 @@ const usePaymentMethodsTabs = () => {
     />,
     <input
       style={{ width: "100px" }}
-      type="text"
+      type="number"
       value={row.checkNumber}
       placeholder={t("payment.checkNumber")}
       onChange={(e) => handleInputChange(index, "checkNumber", e.target.value)}
+      readOnly={!!isOutgoingPayments && quoteItemValue?.checksSerialNumber}
     />,
     <input
       style={{ width: "100px" }}

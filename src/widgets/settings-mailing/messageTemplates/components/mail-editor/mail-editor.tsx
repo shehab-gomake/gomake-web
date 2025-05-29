@@ -274,7 +274,7 @@ const EmailSettings = ({ onClickSave, onOpenDeleteModal }: IProps) => {
                   marginTop: "10px",
                   padding: "0px 5px",
                   ...FONT_FAMILY.Inter(600, 13),
-                  color: state.isSendGridVerificated ? "green" : "red",
+                  color: state.isSendGridVerificated ? "green" : "#f44336",
                 }}
               >
                 {state.isSendGridVerificated

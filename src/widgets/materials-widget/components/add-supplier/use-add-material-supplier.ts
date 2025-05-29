@@ -21,14 +21,15 @@ const useAddMaterialSupplier = () => {
     label: string;
     value: string;
     isDefault: boolean;
+    name?: string;
   } | null>(null);
-  console.log("newSupplier", newSupplier)
   const { alertSuccessAdded, alertFaultAdded } = useSnackBar();
   const [openModal, setOpenModal] = useRecoilState(openAddSupplierModalState);
   const setSelectedSupplier = useSetRecoilState(selectedSupplierIdState);
   const [materialSuppliers, setMaterialSuppliers] = useRecoilState(
     materialCategorySuppliersState
   );
+
   const setActiveFilter = useSetRecoilState(activeFilterState);
   const setFlagState = useSetRecoilState(flagState);
 

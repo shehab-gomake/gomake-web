@@ -329,6 +329,9 @@ const QuoteNewPageWidget = ({
     setPendingPurchaseNumber,
     originalPurchaseNumber,
     updatePurchaseNumber,
+    modalCallback,
+    openReceiptModal,
+    receiptSendModal,
   } = useQuoteNew({
     docType: documentType,
     isQuoteConfirmation: isQuoteConfirmation,
@@ -755,11 +758,6 @@ const QuoteNewPageWidget = ({
             >
               {!isReceipt && (
                 <QuoteForPriceTable
-                  // documentItems={
-                  //   isQuoteConfirmation
-                  //     ? quoteConfirm?.documentItems
-                  //     : documentItems
-                  // }
                   documentItems={documentItems}
                   tableHeaders={tableHeaders}
                   columnWidths={columnWidths}
@@ -838,6 +836,9 @@ const QuoteNewPageWidget = ({
                 onClickOpenDeleteDeliveryModal={onClickOpenDeleteDeliveryModal}
                 AddCustomerModal={AddCustomerModal}
                 handleSaveDraftBtnClick={handleSaveDraftBtnClick}
+                modalCallback={modalCallback}
+                receiptSendModal={receiptSendModal}
+                openReceiptModal={openReceiptModal}
               />
             </div>
           )}
@@ -921,6 +922,7 @@ const QuoteNewPageWidget = ({
         onClickOpenWhatsAppModal={onClickOpenWhatsAppModal}
         documentState={quoteItemValue}
         documentType={documentType}
+        openReceiptModal={openReceiptModal}
       />
       <WhatsAppWebModal
         openModal={openWhatsAppModal}
