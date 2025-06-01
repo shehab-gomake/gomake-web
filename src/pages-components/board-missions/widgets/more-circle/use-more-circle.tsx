@@ -221,8 +221,7 @@ const useMoreCircle = ({
       onclick: () => handleClickBackToProcess(mission),
     },
     {
-      condition:
-        mission?.status !== BoardMissionStatusForFilter.DONE && isSendPaymentToClient,
+      condition: isSendPaymentToClient,
       name: !mission?.isReady
         ? t("boardMissions.markAsReady")
         : t("boardMissions.markAsUnReady"),
