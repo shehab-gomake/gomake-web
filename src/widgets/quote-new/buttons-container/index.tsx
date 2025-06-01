@@ -10,6 +10,7 @@ import { useButtonsContainer } from "./use-buttons-container";
 import {
   DELIVERY_NOTE_STATUSES,
   DOCUMENT_TYPE,
+  PURCHASE_ORDER_STATUSES,
 } from "@/pages-components/quotes/enums";
 import { PaymentModal } from "./payment/payment-modal";
 import { PaymentBtn } from "./payment/payment-button";
@@ -124,8 +125,14 @@ const ButtonsContainer = ({
     onClickOpenCloseOrderNotesModal,
     openCloseOrderNotesModal,
     onClickCloseOrderCallback,
+    isPurchaseOrder,
     CheckoutOptionModal,
     handleClickPrintChecks,
+    checkoutModalData,
+    setShowPrintJobsModal,
+    CheckoutModalOpen,
+    handleProcessCheckout,
+    router,
   } = useButtonsContainer(documentType);
 
   const isShowSendButton =
@@ -167,12 +174,14 @@ const ButtonsContainer = ({
         {isNewCreation && isReceipt && (
           <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
         )}
-        {isInvoice && quoteItemValue?.isCanClose && (
+        {(isInvoice || isPurchaseInvoice) && quoteItemValue?.isCanClose && (
           <GomakePrimaryButton
             leftIcon={<CreditCardIcon color={"#344054"} />}
             onClick={() =>
               navigate(
-                `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.accountingNumber}&ClientId=${quoteItemValue?.customerID}`
+                isPurchaseInvoice
+                  ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quoteItemValue?.number}&ClientId=${quoteItemValue?.customerID}`
+                  : `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.accountingNumber}&ClientId=${quoteItemValue?.customerID}`
               )
             }
             style={classes.btnContainer}
@@ -321,7 +330,11 @@ const ButtonsContainer = ({
             {t("sales.cart.printChecks")}
           </GomakePrimaryButton>
         )}
-        {(isQuote || (isOrder && quoteItemValue?.documentStatus !== 1)) && (
+        {(isQuote ||
+          (isOrder && quoteItemValue?.documentStatus !== 1) ||
+          (isPurchaseOrder &&
+            quoteItemValue?.documentStatus !==
+              PURCHASE_ORDER_STATUSES.Canceled)) && (
           <GomakePrimaryButton
             style={classes.btnSecondContainer}
             onClick={handleCancelBtnClick}
@@ -407,7 +420,6 @@ const ButtonsContainer = ({
             {t("materials.buttons.reject")}
           </GomakePrimaryButton>
         )}
-
         {isQuote && (
           <>
             {!quoteItemValue?.isNeedApproval && (
@@ -429,10 +441,11 @@ const ButtonsContainer = ({
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : `sales.quote.${quoteItemValue?.isUsedStripe
-                    ? "placeOrder"
-                    : "orderNowTitle"
-                  }`
+                  : `sales.quote.${
+                      quoteItemValue?.isUsedStripe
+                        ? "placeOrder"
+                        : "orderNowTitle"
+                    }`
               )}
             </GomakePrimaryButton>
           </>
@@ -558,6 +571,31 @@ const ButtonsContainer = ({
           openModal={openCloseOrderNotesModal}
           quoteItemValue={quoteItemValue}
           onClickCloseOrder={onClickCloseOrderCallback}
+        />
+        <GoMakeDeleteModal
+          modalType={ModalType.SUCCESS}
+          style={{ width: "fit-content" }}
+          title={t("sales.modals.orderCheckoutTitle")}
+          subTitle={t("sales.modals.orderCheckoutSubTitle")}
+          yesBtn={t("sales.modals.proceedToPayment")}
+          cancelBtn={t("sales.modals.proceedWithoutPayment")}
+          openModal={CheckoutModalOpen.isOpen}
+          withClose={false}
+          onClose={() => {}}
+          onClickDelete={() => handleProcessCheckout(checkoutModalData.orderId)}
+          onClickCancel={() => {
+            if (checkoutModalData) {
+              setShowPrintJobsModal(checkoutModalData.orderId);
+              router.push(
+                `/jobs?orderNumber=${checkoutModalData.orderNumber}`,
+                undefined,
+                {
+                  shallow: true,
+                }
+              );
+              CheckoutModalOpen.close();
+            }
+          }}
         />
       </div>
     </div>

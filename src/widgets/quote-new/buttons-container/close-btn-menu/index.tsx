@@ -123,6 +123,34 @@ const CloseBtnMenu = ({
               ),
           },
         ];
+      case DOCUMENT_TYPE.purchaseOrder:
+        return [
+          {
+            label: t("sales.quote.close"),
+            action: () => {
+              onClickClose(documentState?.id);
+            },
+          },
+
+          {
+            label: t("sales.quote.closeAsPurchaseInvoice"),
+            action: () =>
+              navigate(
+                `/purchaseInvoice?isNewCreation=true&orderId=${documentState?.id}`
+              ),
+          },
+        ];
+      case DOCUMENT_TYPE.purchaseInvoice:
+        return [
+          {
+            label: t("sales.quote.closeAsPurchaseInvoiceRefund"),
+            action: () =>
+              navigate(
+                `/purchaseInvoiceRefund?isNewCreation=true&documentId=${documentState?.id}`
+              ),
+          },
+        ];
+
       default:
         return [];
     }

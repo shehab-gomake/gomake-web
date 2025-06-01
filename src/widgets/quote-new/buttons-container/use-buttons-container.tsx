@@ -9,7 +9,10 @@ import {
   manuallyCloseDocumentApi,
   sendQuoteApprovalToManagerApi,
 } from "@/services/api-service/generic-doc/documents-api";
-import { DOCUMENT_TYPE } from "@/pages-components/quotes/enums";
+import {
+  DOCUMENT_TYPE,
+  StatusTitleText,
+} from "@/pages-components/quotes/enums";
 import {
   cancelReceiptApi,
   createReceiptApi,
@@ -43,6 +46,7 @@ import {
   EAddressType,
 } from "../business-widget/address-widget/state";
 import { validateAddressApi } from "@/services/api-service/customers/customers-api";
+import { createInvoiceFromOrderIdApi } from "@/services/api-service/generic-doc/invoices";
 
 const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const { navigate } = useGomakeRouter();
@@ -232,6 +236,12 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     setOpenCancelReceiptModal(false);
   };
 
+  const CheckoutModalOpen = useModal();
+  const [checkoutModalData, setCheckoutModalData] = useState<{
+    orderId: string;
+    orderNumber: string;
+  } | null>(null);
+
   const handleOrderConfirmation = async (
     sendMessage: boolean,
     isPrepaymentClient: boolean = false,
@@ -258,8 +268,17 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
         } else if (isPrepaymentClient) {
           navigate(`/orders?finalPatternSearch=${res?.data?.number}`);
         } else {
-          setShowPrintJobsModal(res.data.orderID);
-          navigate(`/jobs?orderNumber=${res?.data?.number}`);
+          if (res.data.isShowCheckoutModal) {
+            setCheckoutModalData({
+              orderId: res.data.orderID,
+              orderNumber: res.data.number,
+            });
+
+            CheckoutModalOpen.open();
+          } else {
+            setShowPrintJobsModal(res.data.orderID);
+            navigate(`/jobs?orderNumber=${res?.data?.number}`);
+          }
         }
       } else {
         alertFaultUpdate();
@@ -274,6 +293,21 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     };
 
     await createOrderApi(callApi, callBack, requestBody);
+  };
+
+  const handleProcessCheckout = async (orderId: string) => {
+    const callBack = (res) => {
+      if (res?.success) {
+        const DocumentNumber = res.data.docEntry;
+        const ClientId = res.data.client.id;
+        navigate(
+          `/receipt?isNewCreation=true&documentNumber=${DocumentNumber}&ClientId=${ClientId}`
+        );
+        CheckoutModalOpen.close();
+      }
+    };
+
+    await createInvoiceFromOrderIdApi(callApi, callBack, orderId);
   };
 
   const onClickConfirmWithoutNotification = () =>
@@ -400,6 +434,7 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
   const isOutgoingPayments = router.query.isOutgoingPayments === "true";
   const isReceipt = docType === DOCUMENT_TYPE.receipt;
   const isPurchaseInvoice = docType === DOCUMENT_TYPE.purchaseInvoice;
+  const isPurchaseOrder = docType === DOCUMENT_TYPE.purchaseOrder;
 
   const canCancelReceipt = CheckPermission(Permissions.CANCEL_RECEIPT);
 
@@ -469,20 +504,24 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
 
   const isShowCloseButton =
     quoteItemValue?.isCanClose &&
-    ((docType === DOCUMENT_TYPE.order &&
-      quoteItemValue?.statusTitleText !== "Order.Canceled") ||
-      docType === DOCUMENT_TYPE.invoice ||
-      docType === DOCUMENT_TYPE.deliveryNote);
+    ((isOrder &&
+      quoteItemValue?.statusTitleText !== StatusTitleText.OrderCanceled) ||
+      isInvoice ||
+      isDeliveryNote ||
+      isPurchaseOrder ||
+      isPurchaseInvoice);
 
   const ManuallyCloseDocument = async (selectedDocumentId) => {
     const callBack = (res) => {
       if (res?.success) {
         alertSuccessUpdate();
-        docType === DOCUMENT_TYPE.order
+        isOrder
           ? navigate("/orders")
-          : docType === DOCUMENT_TYPE.deliveryNote
+          : isDeliveryNote
           ? navigate("/deliveryNotes")
-          : navigate("/invoices");
+          : isInvoice
+          ? navigate("/invoices")
+          : navigate("/purchaseOrders");
       } else {
         alertFaultUpdate();
       }
@@ -657,7 +696,13 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
     openCloseOrderNotesModal,
     setOpenCloseOrderNotesModal,
     onClickCloseOrderCallback,
+    isPurchaseOrder,
     handleClickPrintChecks,
+    checkoutModalData,
+    CheckoutModalOpen,
+    setShowPrintJobsModal,
+    handleProcessCheckout,
+    router,
   };
 };
 

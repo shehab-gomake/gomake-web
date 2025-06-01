@@ -9,7 +9,7 @@ import { useBoardMissionsSignalr } from "@/hooks/signalr/use-board-missions-sign
 import { getAllProductsForDropDownList } from "@/services/hooks";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BoardMissionStatusForFilter, PStatus } from "./widgets/enums";
+import { BoardMissionStatusForFilter } from "./widgets/enums";
 import {
   exportJobTableToExcelApi,
   getAllPurchaseJobsApi,
@@ -184,11 +184,6 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     { label: t("boardMissions.approvalRequired"), value: BoardMissionStatusForFilter.APPROVAL_REQUIRED },
     { label: t("boardMissions.done"), value: BoardMissionStatusForFilter.DONE },
   ];
-
-  // const productionStatuses = [
-  //   { label: t("boardMissions.inProduction"), value: PStatus.IN_PROCESS },
-  //   { label: t("boardMissions.done"), value: PStatus.DONE },
-  // ];
 
   const orderStatuses = [
     { label: t("boardMissions.open"), value: ORDER_STATUSES.Open },
@@ -642,6 +637,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
                 onClickReturnToProduction={onOpenReturnToProdModal}
                 onClickOrderSummeryPdf={onClickOrderSummeryPdf}
                 onClickWorkMissionPdf={onClickWorkMissionPdf}
+                onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
               />,
             ];
           });
@@ -796,6 +792,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
               onClickReturnToProduction={onOpenReturnToProdModal}
               onClickOrderSummeryPdf={onClickOrderSummeryPdf}
               onClickWorkMissionPdf={onClickWorkMissionPdf}
+              onOpenMarkReadyModalForHasJobs={onOpenMarkReadyModalForHasJobs}
             />,
           ]);
           setAllPurchaseJobs(mapData);
@@ -925,6 +922,8 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const [openMarkReadyModal, setOpenMarkReadyModal] = useState<boolean>(false);
+  const [openMarkReadyModalForHasJobs, setOpenMarkReadyModalForHasJobs] = useState<boolean>(false);
+
   const [
     openMarkReadyModalForProductType,
     setOpenMarkReadyModalForProductType,
@@ -946,6 +945,14 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     setOpenMarkReadyModalForProductType(false);
   };
 
+  const onOpenMarkReadyModalForHasJobs = (mission) => {
+    setSelectedMission(mission);
+    setOpenMarkReadyModalForHasJobs(true);
+  };
+  const onCloseMarkReadyModalForHasJobs = () => {
+    setSelectedMission(null);
+    setOpenMarkReadyModalForHasJobs(false);
+  };
   const [openMarkReadyThenPrintModal, setOpenMarkReadyThenPrintModal] =
     useState<boolean>(false);
   const onCloseMarkReadyThenPrintModal = () => {
@@ -1518,7 +1525,10 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
     openQuoteModal,
     ExportJobsTableToExcel,
     selectedMission,
-    handleClickBackToProcess
+    handleClickBackToProcess,
+    onOpenMarkReadyModalForHasJobs,
+    onCloseMarkReadyModalForHasJobs,
+    openMarkReadyModalForHasJobs
   };
 };
 

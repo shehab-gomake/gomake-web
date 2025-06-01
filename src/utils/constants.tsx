@@ -20,8 +20,8 @@ import {
   QUOTE_STATUSES,
 } from "@/pages-components/quotes/enums";
 import { ECalculationLogType } from "@/widgets/product-pricing-widget/enums";
-import { Button } from "@mui/material";
 import { t } from "i18next";
+import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 
 export const _renderActiveIcon = (icon) => {
   if (icon === ETabsIcon.PRINTING_DETAILS) {
@@ -366,8 +366,6 @@ export const findDefaultOption = (parameter) => {
   return null;
 };
 
-// /////////////////////// for  modals
-
 export const _renderIcon = (modalType: ModalType) => {
   if (modalType === ModalType.DELETE) {
     return <DeleteModalIcon />;
@@ -383,6 +381,11 @@ export const _renderIcon = (modalType: ModalType) => {
   }
   if (modalType === ModalType.WARNING) {
     return <WarningModalIcon />;
+  }
+  if (modalType === ModalType.SUCCESS) {
+    return (
+      <TaskAltRoundedIcon style={{ fontSize: "34px", color: "#344054" }} />
+    );
   }
 };
 
