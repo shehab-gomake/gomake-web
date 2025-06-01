@@ -27,6 +27,7 @@ const MoreMenuWidget = ({
   onClickReopenDocument,
   onClickEditQuote,
   onClickOpenRemoveDraftModal,
+  onClickOpenMoveOrderToReadyModal,
 }: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
@@ -54,6 +55,7 @@ const MoreMenuWidget = ({
     onClickReopenDocument,
     onClickEditQuote,
     onClickOpenRemoveDraftModal,
+    onClickOpenMoveOrderToReadyModal,
   });
 
   return (

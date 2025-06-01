@@ -16,7 +16,6 @@ import { JobsIcon } from "./icons/jobs";
 import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useStyle } from "@/pages-components/quotes/more-circle/style";
 import { useRouter } from "next/router";
 import { TrackingIcon } from "./icons/tracking";
 import { UnLockIcon } from "./icons/unlock";
@@ -37,6 +36,7 @@ import { MailIcon } from "./icons/mail";
 import { DeleteIcon } from "./icons/delete";
 import { printReceiptChecksApi } from "@/services/api-service/generic-doc/receipts-api";
 import { PrintPdfIcon } from "./icons/print-pdf";
+import AlarmOnRoundedIcon from "@mui/icons-material/AlarmOnRounded";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -77,6 +77,7 @@ const useMoreCircle = () => {
     onClickReopenDocument,
     onClickEditQuote,
     onClickOpenRemoveDraftModal,
+    onClickOpenMoveOrderToReadyModal,
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
@@ -399,6 +400,15 @@ const useMoreCircle = () => {
           ? `/invoice?isNewCreation=true&orderId=${quote?.id}`
           : `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`,
       },
+      {
+        condition: !isPauseOrder && isOrder && !quote?.productionStatus,
+        onClick: () => onClickOpenMoveOrderToReadyModal(quote),
+        icon: (
+          <AlarmOnRoundedIcon style={{ color: "#8283BE", fontSize: "20px" }} />
+        ),
+        name: t("sales.moveToReadyAndCloseOrder"),
+      },
+
       {
         condition:
           !isPauseOrder &&
