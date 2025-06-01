@@ -477,7 +477,8 @@ const useButtonsContainer = (docType: DOCUMENT_TYPE) => {
       quoteItemValue?.statusTitleText !== StatusTitleText.OrderCanceled) ||
       isInvoice ||
       isDeliveryNote ||
-      isPurchaseOrder);
+      isPurchaseOrder ||
+      isPurchaseInvoice);
 
   const ManuallyCloseDocument = async (selectedDocumentId) => {
     const callBack = (res) => {
