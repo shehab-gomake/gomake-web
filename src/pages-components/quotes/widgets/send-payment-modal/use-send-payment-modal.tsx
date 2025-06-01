@@ -179,6 +179,7 @@ const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
       sendBySms: payState.sendBySms,
       sendByWhatsapp: payState.sendByWhatsapp,
     };
+
     if (payState.totalPayment === 0) {
       alertFault(t("alerts.totalPaymentZero"));
       return;
@@ -187,7 +188,7 @@ const useSendPaymentModal = ({ openPaymentModal, documentType }) => {
       alertFault(t("alerts.noMail"));
       return;
     }
-    if (!emailRegex.test(contactMail)) {
+    if (!emailRegex.test(contactMail) && payState.sendByMail) {
       alertFault("customers.invalidEmail");
       return;
     }
