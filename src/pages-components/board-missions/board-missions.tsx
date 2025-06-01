@@ -139,7 +139,10 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
     onClickCloseModal,
     openQuoteModal,
     ExportJobsTableToExcel,
-    selectedMission
+    selectedMission,
+    onOpenMarkReadyModalForHasJobs,
+    onCloseMarkReadyModalForHasJobs,
+    openMarkReadyModalForHasJobs
   } = useBoardMissions({ isPurchaseJobs });
 
   const { callApi } = useGomakeAxios();
@@ -658,6 +661,56 @@ const BoardMissionsListWidget = ({ isPurchaseJobs = false }) => {
         onClose={onClickCloseModal}
         onClickDelete={updateQuoteStatus}
       />
+      <GoMakeDeleteModal
+        title={t("boardMissions.unReadyWitNotification")}
+        yesBtn={t("modal.yes")}
+        modalType={ModalType.WARNING}
+        subTitle={" "}
+        openModal={openMarkReadyModalForHasJobs}
+        onClose={onCloseMarkReadyModalForHasJobs}
+        onClickDelete={() => onClickMoveBoardMissionToDone(true)}
+        onClickCancel={onCloseMarkReadyModalForHasJobs}
+      >
+        <div style={{ width: "100%", minWidth: 300 }}>
+          <GoMakeAutoComplate
+            options={
+              storageList?.find(
+                (option: any) => option.storage === inputValue
+              ) || inputValue === ""
+                ? storageList
+                : [
+                  {
+                    storage: `Add "${inputValue}" as a new storage`,
+                    id: "new",
+                  },
+                  ...storageList,
+                ]
+            }
+            placeholder={t("boardMissions.selectStorage")}
+            key={defaultValue}
+            style={{
+              width: "100%",
+              border: "none",
+              height: 45,
+            }}
+            getOptionLabel={(option: any) => option?.storage}
+            value={defaultValue}
+            onChange={(e: any, value: any) => {
+              if (value?.id === "new") {
+                addPrintHouseJobsStorage(inputValue);
+                setInputValue("");
+              } else {
+                handleStorageChange(e, value);
+                setInputValue("");
+              }
+            }}
+            onInputChange={(event: any, newInputValue: string) => {
+              setInputValue(newInputValue);
+            }}
+          />
+        </div>
+
+      </GoMakeDeleteModal>
     </>
   );
 };
