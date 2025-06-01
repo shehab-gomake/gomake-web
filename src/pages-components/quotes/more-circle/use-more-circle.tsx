@@ -39,7 +39,6 @@ import { PrintPdfIcon } from "./icons/print-pdf";
 import { TagIcon } from "@/icons/tag-icon";
 import { getTaxConfirmationNumberApi } from "@/services/api-service/generic-doc/invoices";
 import AlarmOnRoundedIcon from "@mui/icons-material/AlarmOnRounded";
-import AlarmOnRoundedIcon from "@mui/icons-material/AlarmOnRounded";
 import { PackageIcon } from "@/icons/package-icon";
 
 const useMoreCircle = () => {
@@ -82,7 +81,6 @@ const useMoreCircle = () => {
     onClickEditQuote,
     onClickOpenRemoveDraftModal,
     handleGetTaxConfirmNo,
-    onClickOpenMoveOrderToReadyModal,
     onClickOpenMoveOrderToReadyModal,
     onOpenPackagesModal
   }) => {
