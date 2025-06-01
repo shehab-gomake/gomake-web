@@ -89,3 +89,30 @@ export enum ApprovalStatus {
   ApprovedByClient,
   RejectedByClient,
 }
+
+export enum StatusTitleText {
+  QuoteCreate = "Quote.Create",
+  OrderClosed = "Order.Closed",
+  OrderPaused = "Order.Paused",
+  OrderCanceled = "Order.Canceled",
+  PurchaseOrderOpen = "PurchaseOrder.Open",
+  PurchaseOrderCanceled = "PurchaseOrder.Canceled",
+  PurchaseOrderClosed = "PurchaseOrder.Closed",
+  DeliveryNoteOpen = "DeliveryNote.Open",
+  DeliveryNoteClosed = "DeliveryNote.Closed",
+  InvoiceOpen = "Invoice.Open",
+  InvoiceClosed = "Invoice.Closed",
+}
+
+export enum PURCHASE_ORDER_STATUSES {
+  Open = 0,
+  Canceled,
+  ClosedAsDeliveryNote,
+  ClosedAsInvoice,
+  PartiallyClosed,
+  ClosedByMultiDocuments,
+  WaitingForPayment,
+  Draft,
+  Closed,
+  ManualClose,
+}
