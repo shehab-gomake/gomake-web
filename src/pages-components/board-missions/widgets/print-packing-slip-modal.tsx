@@ -3,9 +3,18 @@ import { GoMakeModal, GomakeTextInput } from "@/components";
 import { Stack } from "@mui/material";
 import { useStyle } from "../style";
 import { SecondaryButton } from "@/components/button/secondary-button";
+import { FONT_FAMILY } from "@/utils/font-family";
 
-
-const PrintPackingSlipModal = ({ openPackagesModal, onClosePackagesModal, packageInputs, quantityOfPackages, quantityPerPackage, handleQuantityOfPackagesChange, handleQuantityPerPackageChange, onClickConfirm }: any) => {
+const PrintPackingSlipModal = ({
+  openPackagesModal,
+  onClosePackagesModal,
+  packageInputs,
+  quantityOfPackages,
+  quantityPerPackage,
+  handleQuantityOfPackagesChange,
+  handleQuantityPerPackageChange,
+  onClickConfirm,
+}: any) => {
   const { classes } = useStyle();
   const { t } = useTranslation();
 
@@ -16,11 +25,11 @@ const PrintPackingSlipModal = ({ openPackagesModal, onClosePackagesModal, packag
       modalTitle={t("boardMissions.packagesTitle")}
       insideStyle={classes.modalStyle}
       style={{ zIndex: 999999 }}
+      modalTitleStyle={{ ...FONT_FAMILY.Inter(500, 20), marginBottom: "10px" }}
     >
       <Stack direction={"column"} gap={"15px"}>
         <Stack direction={"column"} gap={"15px"}>
           <Stack direction={"row"} gap={"15px"}>
-
             <div style={{ width: "40%" }}>
               <h3 style={classes.filterLabelStyle}>
                 {t("boardMissions.quantityOfPackages")}
@@ -49,11 +58,14 @@ const PrintPackingSlipModal = ({ openPackagesModal, onClosePackagesModal, packag
           <div style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
             {packageInputs}
           </div>
-
         </Stack>
-        <Stack direction={"row"} gap={"15px"}>
-          <SecondaryButton variant={'contained'} onClick={onClickConfirm} >{t('modal.confirm')}</SecondaryButton>
-          <SecondaryButton variant={'outlined'} onClick={onClosePackagesModal} >{t('modal.cancel')}</SecondaryButton>
+        <Stack direction={"row"} gap={"15px"} justifyContent={"flex-end"}>
+          <SecondaryButton variant={"contained"} onClick={onClickConfirm}>
+            {t("modal.confirm")}
+          </SecondaryButton>
+          <SecondaryButton variant={"outlined"} onClick={onClosePackagesModal}>
+            {t("modal.cancel")}
+          </SecondaryButton>
         </Stack>
       </Stack>
     </GoMakeModal>
