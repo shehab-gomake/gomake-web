@@ -231,6 +231,8 @@ const QuotesListPageWidget = ({
     handleRemoveDraftBtnClick,
     removeDraftModal,
     onCloseOpenRemoveDraftModal,
+    MoveOrderToReady,
+    onClickCloseMoveOrderToReadyModal,
   } = useQuotes(documentType, isFromHomePage);
   const {
     openDeliveryModal,
@@ -1105,6 +1107,13 @@ const QuotesListPageWidget = ({
         openModal={removeDraftModal.isOpen}
         onClose={onCloseOpenRemoveDraftModal}
         onClickDelete={handleRemoveDraftBtnClick}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
+        title={t("sales.moveToReadyAndCloseOrder")}
+        openModal={MoveOrderToReady.isOpen}
+        onClose={onClickCloseMoveOrderToReadyModal}
+        onClickDelete={moveOrderToReady}
       />
     </>
   );
