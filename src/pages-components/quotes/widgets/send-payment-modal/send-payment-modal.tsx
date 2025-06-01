@@ -20,6 +20,7 @@ import {
 import { useGomakeAxios } from "@/hooks/use-gomake-axios";
 import { useWhatsAppWeb } from "@/pages-components/quote-new/use-whats-app-web";
 import { MessageType } from "@/pages-components/quote-new/use-quote";
+import { emailRegex } from "@/utils/regex";
 
 interface ISendPaymentProps {
   openPaymentModal?: any;
@@ -85,6 +86,11 @@ const SendPaymentModal = ({
       payState?.documentContacts &&
       payState.documentContacts[payState?.selectedContactIndex];
 
+    const contactPhone =
+      selectedContact?.contactPhone || payState.contactPhone || "";
+    const contactMail =
+      selectedContact?.contactMail || payState.contactMail || "";
+
     let messageType: MessageType | null = null;
 
     if (payState.sendByMail && payState.sendBySms) {
@@ -99,11 +105,15 @@ const SendPaymentModal = ({
       alertFault(t("alerts.checkAtLeastOne"));
       return;
     }
-
-    if (
-      (payState.sendBySms || payState.sendByWhatsapp) &&
-      !selectedContact?.contactPhone
-    ) {
+    if (payState.sendByMail && !contactMail) {
+      alertFault(t("alerts.noMail"));
+      return;
+    }
+    if (!emailRegex.test(contactMail) && payState.sendByMail) {
+      alertFault("customers.invalidEmail");
+      return;
+    }
+    if ((payState.sendBySms || payState.sendByWhatsapp) && !contactPhone) {
       alertFault(t("alerts.noPhoneNumber"));
       return;
     }
@@ -147,12 +157,12 @@ const SendPaymentModal = ({
       messageType,
     };
 
-    if (selectedContact?.contactPhone) {
-      documentData.contactPhone = selectedContact.contactPhone;
+    if (contactPhone) {
+      documentData.contactPhone = contactPhone;
     }
 
-    if (selectedContact?.contactMail) {
-      documentData.contactEmail = selectedContact.contactMail;
+    if (contactMail) {
+      documentData.contactEmail = contactMail;
     }
 
     if (isReceipt) {

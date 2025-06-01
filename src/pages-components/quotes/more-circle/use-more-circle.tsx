@@ -36,6 +36,9 @@ import { MailIcon } from "./icons/mail";
 import { DeleteIcon } from "./icons/delete";
 import { printReceiptChecksApi } from "@/services/api-service/generic-doc/receipts-api";
 import { PrintPdfIcon } from "./icons/print-pdf";
+import { TagIcon } from "@/icons/tag-icon";
+import { getTaxConfirmationNumberApi } from "@/services/api-service/generic-doc/invoices";
+import AlarmOnRoundedIcon from "@mui/icons-material/AlarmOnRounded";
 import AlarmOnRoundedIcon from "@mui/icons-material/AlarmOnRounded";
 import { PackageIcon } from "@/icons/package-icon";
 
@@ -78,8 +81,10 @@ const useMoreCircle = () => {
     onClickReopenDocument,
     onClickEditQuote,
     onClickOpenRemoveDraftModal,
+    handleGetTaxConfirmNo,
     onClickOpenMoveOrderToReadyModal,
-    onOpenPackagesModal,
+    onClickOpenMoveOrderToReadyModal,
+    onOpenPackagesModal
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
@@ -96,7 +101,8 @@ const useMoreCircle = () => {
 
     const { callApi } = useGomakeAxios();
     const { pathname } = useRouter();
-    const { alertFaultAdded, alertFaultGetData } = useSnackBar();
+    const { alertFaultAdded, alertFaultGetData, alertSuccessGetData } =
+      useSnackBar();
 
     const onClickGetOrderBoardMissionPDF = async (quoteItem) => {
       const callBack = (res) => {
@@ -457,6 +463,14 @@ const useMoreCircle = () => {
         isLink: true,
         href: `/purchaseInvoiceRefund?isNewCreation=true&documentId=${quote?.id}`,
       },
+
+      {
+        condition: isInvoice && quote?.isCanGetTaxConfirmationNumber,
+        onClick: () => handleGetTaxConfirmNo(quote?.id),
+        icon: <TagIcon />,
+        name: t("sales.quote.getTaxConfirmationNumber"),
+      },
+
       {
         condition: isPurchaseOrder && quote?.isCanClose,
         onClick: () =>
