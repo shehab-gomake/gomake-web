@@ -31,6 +31,9 @@ const useCardWidget = () => {
         if (cardKey === EStatisticsLabels.CANCELED) {
             return <DoDisturbAltIcon />;
         }
+        if (cardKey === EStatisticsLabels.STUCK_JOBS) {
+            return <HourglassTopIcon />;
+        }
     };
 
     const getCardColor = (cardKey: string) => {
@@ -52,6 +55,9 @@ const useCardWidget = () => {
         if (cardKey === EStatisticsLabels.CANCELED) {
             return neutralColor(300);
         }
+        if (cardKey === EStatisticsLabels.STUCK_JOBS) {
+            return errorColor(300);
+        }
     };
 
     const getCardLabel = (cardKey: string) => {
@@ -72,6 +78,9 @@ const useCardWidget = () => {
         }
         if (cardKey === EStatisticsLabels.CANCELED) {
             return "sales.quote.canceled";
+        }
+        if (cardKey === EStatisticsLabels.STUCK_JOBS) {
+            return "sales.quote.stuckJobs";
         }
     };
 

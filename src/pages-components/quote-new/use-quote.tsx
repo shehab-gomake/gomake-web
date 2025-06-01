@@ -632,7 +632,7 @@ const useQuoteNew = ({
 
       getCalculateQuoteItem(
         updatedQuoteItemValue,
-        1,
+        4,
         quoteItemValue.price,
         updatedQuoteItemValue
       );
@@ -727,6 +727,10 @@ const useQuoteNew = ({
   };
 
   const updatePurchaseNumber = async (value: string, forceUpdate = false) => {
+    if(isNewCreation){
+      setQuoteItemValue({ ...quoteItemValue, purchaseNumber: value });
+      return;
+    }
     const originalValue = Number(quoteItemValue?.purchaseNumber);
 
     if (!forceUpdate) {
@@ -1150,30 +1154,54 @@ const useQuoteNew = ({
       );
       if (res?.success) {
         const _data = res?.data?.data?.data;
-        const updatedQuoteItemValue = {
-          ...newQuoteItemValue,
-          discount: _data?.document?.discount,
-          discountAmount: _data?.document?.discountAmount,
-          totalPayment: _data?.document?.totalPayment,
-          totalPrice: _data?.document?.totalPrice,
-          totalPriceAfterDiscount: _data?.document?.totalPriceAfterDiscount,
-          totalVAT: _data?.document?.totalVAT,
-          vat: _data?.document?.vat,
-          documentItems: newQuoteItemValue.documentItems.map((documentItem) => {
-            if (documentItem.id === quoteItem.id) {
+        // if is request to change the currency in document in creation mode just multiple the prices with exchange rate
+        if(calculationType === 4){
+          let exchangeRate = _data.exchangeRate;
+          const updatedQuoteItemValue = {
+            ...newQuoteItemValue,
+            discount: _data?.document?.discount,
+            discountAmount: _data?.document?.discountAmount,
+            totalPayment: _data?.document?.totalPayment,
+            totalPrice: _data?.document?.totalPrice,
+            totalPriceAfterDiscount: _data?.document?.totalPriceAfterDiscount,
+            totalVAT: _data?.document?.totalVAT,
+            vat: _data?.document?.vat,
+            documentItems: newQuoteItemValue.documentItems.map((documentItem) => {
               return {
                 ...documentItem,
-                finalPrice: _data.finalPrice,
-                price: _data.price,
-                quantity: _data.quantity,
-                discount: _data.discount,
+                finalPrice: (documentItem.finalPrice * exchangeRate).toFixed(3),
+                price: (documentItem.price * exchangeRate).toFixed(3),
+                discount: (documentItem.discount * exchangeRate).toFixed(3),
               };
-            } else {
-              return documentItem;
-            }
-          }),
-        };
-        setQuoteItemValue(updatedQuoteItemValue);
+            }),
+          };
+          setQuoteItemValue(updatedQuoteItemValue);
+        }else{
+          const updatedQuoteItemValue = {
+            ...newQuoteItemValue,
+            discount: _data?.document?.discount,
+            discountAmount: _data?.document?.discountAmount,
+            totalPayment: _data?.document?.totalPayment,
+            totalPrice: _data?.document?.totalPrice,
+            totalPriceAfterDiscount: _data?.document?.totalPriceAfterDiscount,
+            totalVAT: _data?.document?.totalVAT,
+            vat: _data?.document?.vat,
+            documentItems: newQuoteItemValue.documentItems.map((documentItem) => {
+              if (documentItem.id === quoteItem.id) {
+                return {
+                  ...documentItem,
+                  finalPrice: _data.finalPrice,
+                  price: _data.price,
+                  quantity: _data.quantity,
+                  discount: _data.discount,
+                };
+              } else {
+                return documentItem;
+              }
+            }),
+          };
+          setQuoteItemValue(updatedQuoteItemValue);
+        }
       } else {
       }
     } else {

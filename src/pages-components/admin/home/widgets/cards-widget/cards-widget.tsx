@@ -9,7 +9,7 @@ const CardsWidget = () => {
     const { classes } = useStyle();
     const { t } = useTranslation();
     const allReports = useRecoilValue<any>(homeReportsState);
-
+    console.log(allReports, "allReports");
     const {
         getCardIcon,
         getCardColor,

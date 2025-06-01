@@ -120,11 +120,11 @@ const ButtonsContainer = ({
     // customer,
     // setCustomer,
     isPurchaseInvoice,
-    CheckoutOptionModal,
     onClickCloseCloseOrderNotesModal,
     onClickOpenCloseOrderNotesModal,
     openCloseOrderNotesModal,
     onClickCloseOrderCallback,
+    CheckoutOptionModal,
     handleClickPrintChecks,
   } = useButtonsContainer(documentType);
 
@@ -429,11 +429,10 @@ const ButtonsContainer = ({
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : `sales.quote.${
-                      quoteItemValue?.isUsedStripe
-                        ? "placeOrder"
-                        : "orderNowTitle"
-                    }`
+                  : `sales.quote.${quoteItemValue?.isUsedStripe
+                    ? "placeOrder"
+                    : "orderNowTitle"
+                  }`
               )}
             </GomakePrimaryButton>
           </>
