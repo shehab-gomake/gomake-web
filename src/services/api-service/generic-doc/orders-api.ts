@@ -4,7 +4,8 @@ import { ICallAndSetData } from "@/services/api-service/interface";
 
 const GET_PROFITS_CHART_DATA_URL =
   "/v1/erp-service/orders/get-profits-chart-data";
-
+const EXPORT_DELIVERY_TICKET_PDF_URL =
+  "/v1/erp-service/order/export-delivery-ticket-PDF";
 const getProfitsChartDataApi: ICallAndSetData = async (
   callApi,
   setState,
@@ -19,4 +20,18 @@ const getProfitsChartDataApi: ICallAndSetData = async (
   );
 };
 
-export { getProfitsChartDataApi };
+const exportDeliveryTicketPDFApi: ICallAndSetData = async (
+  callApi,
+  setState,
+  data
+) => {
+  return await getSetApiData(
+    callApi,
+    EHttpMethod.POST,
+    EXPORT_DELIVERY_TICKET_PDF_URL,
+    setState,
+    data
+  );
+};
+
+export { getProfitsChartDataApi, exportDeliveryTicketPDFApi };

@@ -85,6 +85,10 @@ import { userQuoteState } from "@/store/user-qoute-state";
 import { useClientTypesList } from "@/hooks/use-client-types";
 import { useModal } from "@/hooks/use-modal";
 import { getTaxConfirmationNumberApi } from "@/services/api-service/generic-doc/invoices";
+import { getDeliveryTickerPdfApi } from "@/services/api-service/board-missions/board-missions-table";
+import { GomakeTextInput } from "@/components";
+import { downloadPdf } from "@/utils/helpers";
+import { exportDeliveryTicketPDFApi } from "@/services/api-service/generic-doc/orders-api";
 
 interface Query {
   customerId?: string;
@@ -673,6 +677,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onClickOpenMoveOrderToReadyModal={
                     onClickOpenMoveOrderToReadyModal
                   }
+                  onOpenPackagesModal={onOpenPackagesModal}
                 />,
               ];
             } else {
@@ -1188,6 +1193,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenMoveOrderToReadyModal={
                   onClickOpenMoveOrderToReadyModal
                 }
+                onOpenPackagesModal={onOpenPackagesModal}
               />,
             ];
           } else {
@@ -1779,6 +1785,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
               onClickOpenMoveOrderToReadyModal={
                 onClickOpenMoveOrderToReadyModal
               }
+              onOpenPackagesModal={onOpenPackagesModal}
             />
           );
 
@@ -2289,6 +2296,140 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     MoveOrderToReady.close();
   };
 
+  const onClickPrintPackagingSlip = async () => {
+    debugger;
+    const lama = selectedDocument;
+    if (quantityPerPackage > selectedDocument?.totalOrderQuantity) {
+      alertFault("boardMissions.alertQuantity");
+      return;
+    }
+    const callBack = (res) => {
+      if (res?.success) {
+        const pdfLink = res.data;
+        downloadPdf(pdfLink);
+        onClosePackagesModal();
+      } else {
+        alertFaultGetData();
+      }
+    };
+    await exportDeliveryTicketPDFApi(callApi, callBack, {
+      orderId: selectedDocument?.id,
+      packageQuantities,
+    });
+  };
+
+  const [openPackagesModal, setOpenPackagesModal] = useState<boolean>(false);
+  const onOpenPackagesModal = (order: any) => {
+    setSelectedDocument(order);
+    setOpenPackagesModal(true);
+  };
+
+  const onClosePackagesModal = () => {
+    setSelectedDocument({});
+    setOpenPackagesModal(false);
+  };
+
+  useEffect(() => {
+    const total = selectedDocument?.totalOrderQuantity || 0;
+    setQuantityOfPackages(1);
+    setQuantityPerPackage(total);
+  }, [selectedDocument]);
+
+  const [quantityOfPackages, setQuantityOfPackages] = useState(1);
+  const [quantityPerPackage, setQuantityPerPackage] = useState(
+    selectedDocument?.totalOrderQuantity || 0
+  );
+
+  const handleQuantityOfPackagesChange = (event) => {
+    const newQuantityOfPackages = parseInt(event.target.value, 10);
+    const totalQuantity = selectedDocument?.totalOrderQuantity || 0;
+    const newQuantityPerPackage = Math.ceil(
+      totalQuantity / newQuantityOfPackages
+    );
+    setQuantityOfPackages(newQuantityOfPackages);
+    setQuantityPerPackage(newQuantityPerPackage);
+  };
+
+  const handleQuantityPerPackageChange = (event) => {
+    const newQuantityPerPackage = parseInt(event.target.value, 10);
+    const totalQuantity = selectedDocument?.totalOrderQuantity;
+    const newQuantityOfPackages = Math.ceil(
+      totalQuantity / newQuantityPerPackage
+    );
+    setQuantityPerPackage(newQuantityPerPackage);
+    setQuantityOfPackages(newQuantityOfPackages);
+  };
+
+  const [packageQuantities, setPackageQuantities] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (selectedDocument?.totalOrderQuantity && quantityPerPackage > 0) {
+      const totalQuantity = selectedDocument.totalOrderQuantity;
+      const fullPackages = Math.max(
+        0,
+        Math.floor(totalQuantity / quantityPerPackage)
+      );
+      const remainingQuantity = totalQuantity % quantityPerPackage;
+
+      let newPackageQuantities = Array(fullPackages).fill(quantityPerPackage);
+      if (remainingQuantity > 0) {
+        newPackageQuantities = [...newPackageQuantities, remainingQuantity];
+      }
+
+      setPackageQuantities(newPackageQuantities);
+    } else {
+      setPackageQuantities([]);
+    }
+  }, [selectedDocument, quantityPerPackage]);
+
+  const handlePackageQuantityChange = (index: number, newValue: number) => {
+    setPackageQuantities((prevQuantities) => {
+      const updatedQuantities = [...prevQuantities];
+      const totalQuantity = selectedDocument?.totalOrderQuantity || 0;
+
+      // Set the new value for the changed package
+      updatedQuantities[index] = newValue;
+
+      if (index === quantityOfPackages - 1) {
+        // If last package is changed, put remaining in first package
+        const sumOfOtherPackages = updatedQuantities
+          .slice(1)
+          .reduce((acc, val) => acc + val, 0);
+        updatedQuantities[0] = totalQuantity - sumOfOtherPackages;
+      } else {
+        // If any other package is changed, put remaining in last package
+        const sumOfOtherPackages = updatedQuantities
+          .slice(0, -1)
+          .reduce((acc, val) => acc + val, 0);
+        updatedQuantities[quantityOfPackages - 1] =
+          totalQuantity - sumOfOtherPackages;
+      }
+
+      return updatedQuantities;
+    });
+  };
+
+  const packageInputs = useMemo(() => {
+    if (!quantityOfPackages) return [];
+
+    return [...Array(quantityOfPackages)].map((_, index) => (
+      <div key={index} style={{ width: "30%" }}>
+        <h3 style={classes.packageLabelStyle}>
+          {`${t("boardMissions.package")} ${index + 1}`}
+        </h3>
+        <GomakeTextInput
+          type="number"
+          value={packageQuantities[index]}
+          onChange={(e) => {
+            const newValue = parseInt(e.target.value, 10);
+            handlePackageQuantityChange(index, newValue);
+          }}
+        />
+      </div>
+    ));
+  }, [quantityOfPackages, packageQuantities]);
+
+  /* hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee */
   const updateCancelQuote = async (quoteStatus: number) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -3119,6 +3260,14 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     onCloseOpenRemoveDraftModal,
     MoveOrderToReady,
     onClickCloseMoveOrderToReadyModal,
+    onClickPrintPackagingSlip,
+    handleQuantityPerPackageChange,
+    handleQuantityOfPackagesChange,
+    quantityPerPackage,
+    quantityOfPackages,
+    packageInputs,
+    onClosePackagesModal,
+    openPackagesModal
   };
 };
 

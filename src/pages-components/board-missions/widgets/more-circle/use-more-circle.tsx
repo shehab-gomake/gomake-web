@@ -128,8 +128,6 @@ const useMoreCircle = ({
       boardMissionId: boardMission.id,
     });
   };
-
-
   const printJobUsingPrintNode = async (jobId: string) => {
     const callBack = (res) => {
       if (res.success) {
@@ -156,8 +154,9 @@ const useMoreCircle = ({
       name: (
         <a
           style={classes.menuTitleStyle}
-          href={`/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
-            }&step=stations`}
+          href={`/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission?.productType}` : ""
+          }&step=stations`}
         >
           {t("boardMissions.viewTask")}
         </a>
@@ -165,7 +164,8 @@ const useMoreCircle = ({
       icon: <VisibilityOutlinedIcon style={classes.iconStyle} />,
       onclick: () =>
         navigate(
-          `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission?.productType}` : ""
+          `/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission?.productType}` : ""
           }&step=stations`
         ),
     },
@@ -213,9 +213,7 @@ const useMoreCircle = ({
       onclick: () => onClickDuplicate(mission),
     },
     {
-      condition:
-        mission?.boardMissionStatus?.key
-        === "Stuck",
+      condition: mission?.boardMissionStatus?.key === "Stuck",
       name: t("boardMissions.backToProcess"),
       icon: <MarkAsUnReadyIcon />,
       onclick: () => handleClickBackToProcess(mission),
@@ -238,7 +236,8 @@ const useMoreCircle = ({
       icon: <LoggerIcon />,
       onclick: () => {
         window.open(
-          `/production-floor?boardMissionsId=${mission?.id}${mission?.productType ? `&productType=${mission.productType}` : ""
+          `/production-floor?boardMissionsId=${mission?.id}${
+            mission?.productType ? `&productType=${mission.productType}` : ""
           }&step=stations`,
           "_blank"
         );
