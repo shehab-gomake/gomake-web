@@ -123,7 +123,6 @@ const CloseBtnMenu = ({
               ),
           },
         ];
-
       case DOCUMENT_TYPE.purchaseOrder:
         return [
           {
@@ -141,6 +140,17 @@ const CloseBtnMenu = ({
               ),
           },
         ];
+      case DOCUMENT_TYPE.purchaseInvoice:
+        return [
+          {
+            label: t("sales.quote.createPurchaseInvoiceRefund"),
+            action: () =>
+              navigate(
+                `/purchaseInvoiceRefund?isNewCreation=true&documentId=${documentState?.id}`
+              ),
+          },
+        ];
+
       default:
         return [];
     }

@@ -174,12 +174,14 @@ const ButtonsContainer = ({
         {isNewCreation && isReceipt && (
           <PaymentBtn handleOpenModal={onClickOpenPaymentModal} />
         )}
-        {isInvoice && quoteItemValue?.isCanClose && (
+        {(isInvoice || isPurchaseInvoice) && quoteItemValue?.isCanClose && (
           <GomakePrimaryButton
             leftIcon={<CreditCardIcon color={"#344054"} />}
             onClick={() =>
               navigate(
-                `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.accountingNumber}&ClientId=${quoteItemValue?.customerID}`
+                isPurchaseInvoice
+                  ? `/receipt?isOutgoingPayments=true&isNewCreation=true&documentNumber=${quoteItemValue?.number}&ClientId=${quoteItemValue?.customerID}`
+                  : `/receipt?isNewCreation=true&documentNumber=${quoteItemValue?.accountingNumber}&ClientId=${quoteItemValue?.customerID}`
               )
             }
             style={classes.btnContainer}
@@ -439,10 +441,11 @@ const ButtonsContainer = ({
               {t(
                 quoteItemValue?.isNeedApproval
                   ? "sales.quote.managerApproval"
-                  : `sales.quote.${quoteItemValue?.isUsedStripe
-                    ? "placeOrder"
-                    : "orderNowTitle"
-                  }`
+                  : `sales.quote.${
+                      quoteItemValue?.isUsedStripe
+                        ? "placeOrder"
+                        : "orderNowTitle"
+                    }`
               )}
             </GomakePrimaryButton>
           </>
