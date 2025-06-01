@@ -37,6 +37,7 @@ import { DeleteIcon } from "./icons/delete";
 import { printReceiptChecksApi } from "@/services/api-service/generic-doc/receipts-api";
 import { PrintPdfIcon } from "./icons/print-pdf";
 import AlarmOnRoundedIcon from "@mui/icons-material/AlarmOnRounded";
+import { PackageIcon } from "@/icons/package-icon";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -78,6 +79,7 @@ const useMoreCircle = () => {
     onClickEditQuote,
     onClickOpenRemoveDraftModal,
     onClickOpenMoveOrderToReadyModal,
+    onOpenPackagesModal,
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
@@ -282,7 +284,7 @@ const useMoreCircle = () => {
         name: t("sales.cart.printChecks"),
       },
       {
-        condition: !isPauseOrder && isOrder && !isCanceledOrder,
+        condition: !isPauseOrder && isOrder && !isCanceledOrder && quote?.jobs,
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <PDFIcon />,
         name: t("sales.quote.boardMissionsPdf"),
@@ -408,7 +410,6 @@ const useMoreCircle = () => {
         ),
         name: t("sales.moveToReadyAndCloseOrder"),
       },
-
       {
         condition:
           !isPauseOrder &&
@@ -584,6 +585,12 @@ const useMoreCircle = () => {
         onClick: () => addOrderBoardMissionsToFileUploader(quote?.id),
         icon: <PDFIcon />,
         name: t("fileUploader.uploadFile"),
+      },
+      {
+        condition: isOrder && quote?.jobs,
+        name: t("boardMissions.printPackagingSlip"),
+        icon: <PackageIcon />,
+        onClick: () => onOpenPackagesModal(quote),
       },
     ];
   };
