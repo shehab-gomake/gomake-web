@@ -67,6 +67,10 @@ const ActionsListComponent = ({
   const { CheckPermission } = useUserPermission();
   const [isAllSelected, setIsAllSelected] = useState(false);
 
+  useEffect(() => {
+    setIsAllSelected(actionsList.every(option => option.checked));
+  }, [actionsList]);
+
   const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
     setFilter(event.currentTarget.value);
   };
@@ -98,26 +102,31 @@ const ActionsListComponent = ({
 
   const handleSelectAll = () => {
     const allOptions = getList();
+    const areAllSelected = allOptions.every(option => option.checked);
+
     allOptions.forEach(option => {
-      // First select/deselect the station based on current state
-      onSelectStation(option.actionId, isAllSelected);
+      if (areAllSelected) {
+        onSelectStation(option.actionId, true);
+        // option.machines.forEach(machine => {
+        //   onSelectMachine(option.actionId, machine.machineId);
+        // });
+      }
+      else {
+        onSelectStation(option.actionId, false);
+        // option.machines.forEach(machine => {
+        //   onSelectMachine(option.actionId, machine.machineId);
+        // });
+      }
 
       // Then select/deselect all machines in that station
-      option.machines.forEach(machine => {
-        onSelectMachine(option.actionId, machine.machineId);
-      });
+
     });
-    setIsAllSelected(!isAllSelected);
+
+    setIsAllSelected(!areAllSelected);
   };
 
   // Add effect to update isAllSelected state based on actual selection state
-  useEffect(() => {
-    const allOptions = getList();
-    const allSelected = allOptions.length > 0 && allOptions.every(option =>
-      option.checked && option.machines.every(machine => machine.checked)
-    );
-    setIsAllSelected(allSelected);
-  }, [actionsList, filter]);
+
 
   const clonedChild =
     buttonElement &&
