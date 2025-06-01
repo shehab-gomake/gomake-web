@@ -4,6 +4,8 @@ import {
   ReactElement,
   useCallback,
   useRef,
+  useState,
+  useEffect,
 } from "react";
 import { Button, FormGroup, Paper } from "@mui/material";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
@@ -63,6 +65,7 @@ const ActionsListComponent = ({
   const { classes } = useStyle({ source });
   const buttonRef = useRef<HTMLButtonElement>(null);
   const { CheckPermission } = useUserPermission();
+  const [isAllSelected, setIsAllSelected] = useState(false);
 
   const handleFilterChange = (event: FormEvent<HTMLInputElement>) => {
     setFilter(event.currentTarget.value);
@@ -91,6 +94,29 @@ const ActionsListComponent = ({
         a.checked === b.checked ? 0 : !!a.checked ? -1 : 0
       )
       : [];
+  }, [actionsList, filter]);
+
+  const handleSelectAll = () => {
+    const allOptions = getList();
+    allOptions.forEach(option => {
+      // First select/deselect the station based on current state
+      onSelectStation(option.actionId, isAllSelected);
+
+      // Then select/deselect all machines in that station
+      option.machines.forEach(machine => {
+        onSelectMachine(option.actionId, machine.machineId);
+      });
+    });
+    setIsAllSelected(!isAllSelected);
+  };
+
+  // Add effect to update isAllSelected state based on actual selection state
+  useEffect(() => {
+    const allOptions = getList();
+    const allSelected = allOptions.length > 0 && allOptions.every(option =>
+      option.checked && option.machines.every(machine => machine.checked)
+    );
+    setIsAllSelected(allSelected);
   }, [actionsList, filter]);
 
   const clonedChild =
@@ -175,6 +201,17 @@ const ActionsListComponent = ({
                     value={filter}
                     onChange={handleFilterChange}
                   />
+                  <SecondaryButton
+                    style={{
+                      marginTop: "8px",
+                      width: "100%",
+                      fontSize: "12px",
+                      height: "32px"
+                    }}
+                    onClick={handleSelectAll}
+                  >
+                    {isAllSelected ? t("productionFloor.unselectAll") : t("productionFloor.selectAll")}
+                  </SecondaryButton>
                 </div>
                 <ScrollableDiv ref={scrollRef}>
                   {getList().map((option, index) => {
