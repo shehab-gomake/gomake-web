@@ -45,6 +45,7 @@ import { boardMissionsActivitiesState } from "@/widgets/production-floor/state/b
 import { boardMissionsStationsState } from "@/widgets/production-floor/views/board-missions-view/stations/state";
 import { boardMissionsFilesState } from "@/widgets/production-floor/views/board-missions-view/files/state";
 import { AddStuckReasonWidget } from "@/widgets/production-floor/add-stuck-reason/add-stuck-reason";
+import { CharacterDetails } from "@/widgets/quote-new/quote-table/row-details/character-details";
 
 interface IProps {
   boardMission: IBoardMissions;
@@ -468,10 +469,16 @@ const TableRowComponent = ({
           EPreferences.SHOW_DESCRIPTION_COLUMN_IN_PRODUCTION_FLOOR
         ) && (
             <SecondaryTableCell
-              align={"center"}
+              // align={"left"}
               style={{ backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F9F9F9" }}
             >
-              <DescriptionWidget description={boardMission.description} />
+              {/* <DescriptionWidget description={boardMission.description} /> */}
+              <CharacterDetails
+                details={boardMission.description}
+                canUpdate={false}
+
+
+              />
             </SecondaryTableCell>
           )}
         {CheckPreferenceValue(
