@@ -143,7 +143,7 @@ const CloseBtnMenu = ({
       case DOCUMENT_TYPE.purchaseInvoice:
         return [
           {
-            label: t("sales.quote.createPurchaseInvoiceRefund"),
+            label: t("sales.quote.closeAsPurchaseInvoiceRefund"),
             action: () =>
               navigate(
                 `/purchaseInvoiceRefund?isNewCreation=true&documentId=${documentState?.id}`
