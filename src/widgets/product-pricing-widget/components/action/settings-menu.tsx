@@ -39,7 +39,7 @@ const SettingsMenu = ({
     setOpenDeleteModal(true)
   }
   const onClickProfit = () => {
-    const uri = `/products/profits?actionId=${actionId}&actionName=${actionName}&signalRConnectionId=${currentSignalRConnectionId}`;
+    const uri = `/products/profits?actionId=${actionId}&actionName=${actionName}`;
     window.open(uri, "_blank");
     handleClose();
   };
