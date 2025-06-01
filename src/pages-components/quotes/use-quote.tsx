@@ -670,6 +670,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                   onOpenDuplicateModal={onOpenDuplicateModal}
                   onClickStartProduction={onClickOpenStartProductionModal}
                   onClickReopenDocument={onClickOpenReopenDocumentModal}
+                  onClickOpenMoveOrderToReadyModal={
+                    onClickOpenMoveOrderToReadyModal
+                  }
                 />,
               ];
             } else {
@@ -1182,6 +1185,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onOpenDuplicateModal={onOpenDuplicateModal}
                 onClickStartProduction={onClickOpenStartProductionModal}
                 onClickReopenDocument={onClickOpenReopenDocumentModal}
+                onClickOpenMoveOrderToReadyModal={
+                  onClickOpenMoveOrderToReadyModal
+                }
               />,
             ];
           } else {
@@ -1770,6 +1776,9 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
                 onClickOpenChangeProductionStatusModal
               }
               onClickReopenDocument={onClickOpenReopenDocumentModal}
+              onClickOpenMoveOrderToReadyModal={
+                onClickOpenMoveOrderToReadyModal
+              }
             />
           );
 
@@ -2269,6 +2278,17 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     setOpenDeliveryTimeCancelModal(false);
   };
 
+  const MoveOrderToReady = useModal();
+  const onClickOpenMoveOrderToReadyModal = (order) => {
+    setSelectedDocument(order);
+    MoveOrderToReady.open();
+  };
+
+  const onClickCloseMoveOrderToReadyModal = () => {
+    setSelectedDocument({});
+    MoveOrderToReady.close();
+  };
+
   const updateCancelQuote = async (quoteStatus: number) => {
     const callBack = (res) => {
       if (res?.success) {
@@ -2707,6 +2727,7 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     const callBack = (res) => {
       if (res?.success) {
         getAllQuotes();
+        if (isOrder) return;
         if (isSelectedCLoseAsDeliveryNote) {
           const path = `/deliveryNote?isNewCreation=true&orderId=${selectedDocument?.id}`;
           window.open(path, "_blank");
@@ -3096,6 +3117,8 @@ const useQuotes = (docType: DOCUMENT_TYPE, isFromHomePage) => {
     handleRemoveDraftBtnClick,
     removeDraftModal,
     onCloseOpenRemoveDraftModal,
+    MoveOrderToReady,
+    onClickCloseMoveOrderToReadyModal,
   };
 };
 
