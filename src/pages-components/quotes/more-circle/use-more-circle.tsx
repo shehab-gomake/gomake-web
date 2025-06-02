@@ -4,7 +4,7 @@ import {
   useGomakeRouter,
   useSnackBar,
 } from "@/hooks";
-import { DOCUMENT_TYPE, QUOTE_STATUSES } from "../enums";
+import { DOCUMENT_TYPE, QUOTE_STATUSES, StatusTitleText } from "../enums";
 import { LoggerIcon } from "@/pages-components/admin/home/widgets/more-circle/icons/logger";
 import { EditingIcon } from "./icons/editing";
 import { PDFIcon } from "./icons/pdf";
@@ -16,7 +16,6 @@ import { JobsIcon } from "./icons/jobs";
 import { LockIcon } from "./icons/lock";
 import { useUserPermission } from "@/hooks/use-permission";
 import { Permissions } from "@/components/CheckPermission/enum";
-import { useStyle } from "@/pages-components/quotes/more-circle/style";
 import { useRouter } from "next/router";
 import { TrackingIcon } from "./icons/tracking";
 import { UnLockIcon } from "./icons/unlock";
@@ -39,6 +38,8 @@ import { printReceiptChecksApi } from "@/services/api-service/generic-doc/receip
 import { PrintPdfIcon } from "./icons/print-pdf";
 import { TagIcon } from "@/icons/tag-icon";
 import { getTaxConfirmationNumberApi } from "@/services/api-service/generic-doc/invoices";
+import AlarmOnRoundedIcon from "@mui/icons-material/AlarmOnRounded";
+import { PackageIcon } from "@/icons/package-icon";
 
 const useMoreCircle = () => {
   const { user } = useCustomer();
@@ -80,6 +81,8 @@ const useMoreCircle = () => {
     onClickEditQuote,
     onClickOpenRemoveDraftModal,
     handleGetTaxConfirmNo,
+    onClickOpenMoveOrderToReadyModal,
+    onOpenPackagesModal
   }) => {
     const isEditableDocument = quote?.isEditable;
     const documentPath = DOCUMENT_TYPE[documentType];
@@ -164,15 +167,20 @@ const useMoreCircle = () => {
     const isPurchaseOrder = documentType === DOCUMENT_TYPE.purchaseOrder;
     const isReceipt = documentType === DOCUMENT_TYPE.receipt;
 
-    const isClosedOrder = isOrder && quote?.statusTitleText === "Order.Closed";
-    const isPauseOrder = quote?.statusTitleText === "Order.Paused";
-    const isCanceledOrder = quote?.statusTitleText === "Order.Canceled";
+    const isClosedOrder =
+      isOrder && quote?.statusTitleText === StatusTitleText.OrderClosed;
+    const isPauseOrder = quote?.statusTitleText === StatusTitleText.OrderPaused;
+    const isCanceledOrder =
+      quote?.statusTitleText === StatusTitleText.OrderCanceled;
     const isClosedDeliveryNote =
-      quote?.statusTitleText === "DeliveryNote.Closed";
-    const isClosedInvoice = quote?.statusTitleText === "Invoice.Closed";
+      quote?.statusTitleText === StatusTitleText.DeliveryNoteClosed;
+    const isClosedInvoice =
+      quote?.statusTitleText === StatusTitleText.InvoiceClosed;
     const showNewDuplicate =
       isDeliveryNote || isDeliveryNoteRefund || isInvoice || isInvoiceRefund;
     const isOrdersTracking = pathname === "/ordersTracking";
+    const isCanceledPurchaseOrder =
+      quote?.statusTitleText === StatusTitleText.PurchaseOrderCanceled;
 
     const isShowLogs = CheckPermission(Permissions.SHOW_LOGS);
     const isSendPaymentToClient = CheckPermission(
@@ -285,7 +293,7 @@ const useMoreCircle = () => {
         name: t("sales.cart.printChecks"),
       },
       {
-        condition: !isPauseOrder && isOrder && !isCanceledOrder,
+        condition: !isPauseOrder && isOrder && !isCanceledOrder && quote?.jobs,
         onClick: () => onClickGetOrderBoardMissionPDF(quote),
         icon: <PDFIcon />,
         name: t("sales.quote.boardMissionsPdf"),
@@ -404,6 +412,14 @@ const useMoreCircle = () => {
           : `/invoice?isNewCreation=true&deliveryNoteId=${quote?.id}`,
       },
       {
+        condition: !isPauseOrder && isOrder && !quote?.productionStatus,
+        onClick: () => onClickOpenMoveOrderToReadyModal(quote),
+        icon: (
+          <AlarmOnRoundedIcon style={{ color: "#8283BE", fontSize: "20px" }} />
+        ),
+        name: t("sales.moveToReadyAndCloseOrder"),
+      },
+      {
         condition:
           !isPauseOrder &&
           isOrder &&
@@ -454,7 +470,7 @@ const useMoreCircle = () => {
       },
 
       {
-        condition: !isPauseOrder && isPurchaseOrder && quote?.isCanClose,
+        condition: isPurchaseOrder && quote?.isCanClose,
         onClick: () =>
           navigate(`/purchaseInvoice?isNewCreation=true&orderId=${quote?.id}`),
         icon: <TickIcon />,
@@ -481,6 +497,19 @@ const useMoreCircle = () => {
         icon: <LockIcon />,
         name: t("sales.quote.close"),
       },
+
+      {
+        condition:
+          isPurchaseOrder &&
+          quote?.isCanClose &&
+          !isCanceledPurchaseOrder &&
+          isEditableDocument &&
+          canCloseDocumentManually,
+        onClick: () => onClickOpenCloseOrderModal(quote),
+        icon: <LockIcon />,
+        name: t("sales.quote.close"),
+      },
+
       {
         condition:
           isCanReopenCanceledOrder ||
@@ -516,6 +545,13 @@ const useMoreCircle = () => {
             : quote?.creditCardTotal > 0
             ? onOpenCancelReceiptModalRefund(quote)
             : onOpenCancelReceiptModal(quote),
+        icon: <TickCancelIcon />,
+        name: t("sales.quote.cancel"),
+      },
+      {
+        condition:
+          isPurchaseOrder && !isCanceledPurchaseOrder && isEditableDocument,
+        onClick: () => onClickOpenIrrelevantModal(quote),
         icon: <TickCancelIcon />,
         name: t("sales.quote.cancel"),
       },
@@ -586,6 +622,12 @@ const useMoreCircle = () => {
         onClick: () => addOrderBoardMissionsToFileUploader(quote?.id),
         icon: <PDFIcon />,
         name: t("fileUploader.uploadFile"),
+      },
+      {
+        condition: isOrder && quote?.jobs,
+        name: t("boardMissions.printPackagingSlip"),
+        icon: <PackageIcon />,
+        onClick: () => onOpenPackagesModal(quote),
       },
     ];
   };

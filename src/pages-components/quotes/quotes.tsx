@@ -51,6 +51,7 @@ import { useClientContactsList } from "@/hooks/use-client-contacts";
 import { UpdateDeliveryStatusModal } from "./widgets/delivery-status-button/delivery-status-modal/delivery-status-modal";
 import { ClientAutocomplete } from "@/widgets/Clients-Autocomplete/clients-list";
 import CloseOrderNote from "./widgets/general/close-order-note";
+import { PrintPackingSlipModal } from "../board-missions/widgets/print-packing-slip-modal";
 
 interface IProps {
   documentType: DOCUMENT_TYPE;
@@ -231,7 +232,18 @@ const QuotesListPageWidget = ({
     handleRemoveDraftBtnClick,
     removeDraftModal,
     onCloseOpenRemoveDraftModal,
+    MoveOrderToReady,
+    onClickCloseMoveOrderToReadyModal,
+    onClickPrintPackagingSlip,
+    handleQuantityPerPackageChange,
+    handleQuantityOfPackagesChange,
+    quantityPerPackage,
+    quantityOfPackages,
+    packageInputs,
+    onClosePackagesModal,
+    openPackagesModal,
   } = useQuotes(documentType, isFromHomePage);
+
   const {
     openDeliveryModal,
     onCloseDeliveryModal,
@@ -1105,6 +1117,23 @@ const QuotesListPageWidget = ({
         openModal={removeDraftModal.isOpen}
         onClose={onCloseOpenRemoveDraftModal}
         onClickDelete={handleRemoveDraftBtnClick}
+      />
+      <GoMakeDeleteModal
+        modalType={ModalType.EDIT}
+        title={t("sales.moveToReadyAndCloseOrder")}
+        openModal={MoveOrderToReady.isOpen}
+        onClose={onClickCloseMoveOrderToReadyModal}
+        onClickDelete={moveOrderToReady}
+      />
+      <PrintPackingSlipModal
+        openPackagesModal={openPackagesModal}
+        onClosePackagesModal={onClosePackagesModal}
+        packageInputs={packageInputs}
+        quantityOfPackages={quantityOfPackages}
+        quantityPerPackage={quantityPerPackage}
+        handleQuantityOfPackagesChange={handleQuantityOfPackagesChange}
+        handleQuantityPerPackageChange={handleQuantityPerPackageChange}
+        onClickConfirm={onClickPrintPackagingSlip}
       />
     </>
   );
