@@ -13,7 +13,7 @@ const MissionModalWidget = ({ onClickCloseCurrentStationModal, missionsListForEd
   const [disabledBtns, setDisabledBtns] = useState(false)
   const [currentStation, setCurrentStation] = useState()
   useEffect(() => {
-    if (missionsListForEdit.length > 0) {
+    if (missionsListForEdit && missionsListForEdit.length > 0) {
       setCurrentStation(missionsListForEdit[0]?.station?.actionName)
     }
   }, [missionsListForEdit])

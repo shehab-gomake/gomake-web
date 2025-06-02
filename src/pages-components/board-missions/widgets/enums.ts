@@ -24,4 +24,5 @@ export enum BoardMissionStatusForFilter
     STUCK,
     APPROVAL_REQUIRED,
     DONE,
+    NotReady
 }
