@@ -18,6 +18,8 @@ import { versionState } from "@/store/version";
 import { SetupSection } from "@/widgets/quick-setup";
 import { printHouseProfile } from "@/store/print-house-profile";
 import { tokenExpiredState } from "@/store/token-expired-modal";
+import { useGomakeRouter } from "@/hooks";
+
 
 const CustomerAuthLayout = ({
   children,
@@ -28,6 +30,7 @@ const CustomerAuthLayout = ({
   className,
   backgroundColor,
 }: IAuthLayout) => {
+  const { navigate } = useGomakeRouter();
   const isMobileScreen = useMediaQuery("(max-width:768px)");
   const { openAlertModal, setOpenAlertModal } =
     useUploadingNewVersionSocketIo();
@@ -134,7 +137,14 @@ const CustomerAuthLayout = ({
               onClose={() => setIsTokenExpired(false)}
               onClickConfirm={() => {
                 setIsTokenExpired(false);
-                window.open("/login", "_blank");
+                // window.open("/login", "_blank");
+                const currentPath =
+                  window.location.pathname + window.location.search;
+                const loginUrl =
+                  currentPath && currentPath !== "/"
+                    ? `/login?redirect=${encodeURIComponent(currentPath)}`
+                    : "/login";
+                navigate(loginUrl);
               }}
               subTitle="modal.alertTokenExpired"
               yesBtn="login.login"
