@@ -1,9 +1,9 @@
 import Stack from "@mui/material/Stack";
 import Divider from "@mui/material/Divider";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { IWorkFlowAction } from "@/widgets/product-pricing-widget/interface";
-import { useStyle } from "@/widgets/product-pricing-widget/style";
-import { Collapse, Fade, IconButton, Skeleton, Tooltip } from "@mui/material";
+import {useCallback, useEffect, useMemo, useState} from "react";
+import {IWorkFlowAction} from "@/widgets/product-pricing-widget/interface";
+import {useStyle} from "@/widgets/product-pricing-widget/style";
+import {Collapse, Fade, IconButton, Skeleton, Tooltip} from "@mui/material";
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -12,49 +12,38 @@ import {
   ParametersMapping,
   TextAreaActionsMapping,
 } from "@/widgets/product-pricing-widget/components/action/key-value-view";
-import { useGomakeTheme } from "@/hooks/use-gomake-thme";
-import { InOutSourceSelect } from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
-import {
-  EWorkSource,
-  HtmlElementType,
-  RuleType,
-} from "@/widgets/product-pricing-widget/enums";
-import { useActionUpdateValues } from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
-import { useRecoilState, useRecoilValue } from "recoil";
+import {useGomakeTheme} from "@/hooks/use-gomake-thme";
+import {InOutSourceSelect} from "@/widgets/product-pricing-widget/components/in-out-source-select/in-out-source-select";
+import {EWorkSource, HtmlElementType, RuleType,} from "@/widgets/product-pricing-widget/enums";
+import {useActionUpdateValues} from "@/widgets/product-pricing-widget/components/action/use-action-update-values";
+import {useRecoilState, useRecoilValue} from "recoil";
 import {
   currentProductItemValueState,
   outsourceSuppliersState,
   workFlowsState,
 } from "@/widgets/product-pricing-widget/state";
-import {
-  GoMakeAutoComplate,
-  GoMakeDeleteModal,
-  GomakePrimaryButton,
-} from "@/components";
+import {GoMakeAutoComplate, GomakePrimaryButton,} from "@/components";
 import Button from "@mui/material/Button";
-import { useTranslation } from "react-i18next";
-import { PrintImageComponent } from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
+import {useTranslation} from "react-i18next";
+import {PrintImageComponent} from "@/widgets/product-pricing-widget/components/print-image/print-image-component";
 import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
-import { SettingsIcon } from "@/icons/settings";
-import { SettingsMenu } from "./settings-menu";
-import { PermissionCheck } from "@/components/CheckPermission";
-import { Permissions } from "@/components/CheckPermission/enum";
-import { _renderIconLogs } from "@/utils/constants";
-import { TableOutPutComponent } from "../table-output/table-output-component";
-import { EWidgetProductType } from "@/pages-components/products/digital-offset-price/enums";
-import {
-  isActionEmployeeUpdatedState,
-  permissionsState,
-  userState,
-} from "@/store";
-import { Draggable } from "react-beautiful-dnd";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
-import { SortIcon } from "@/icons/sort-icon";
-import { ModalType } from "@/enums";
-import { _renderDeliveryDate } from "@/utils/helpers";
-import { ReChooseIcon } from "@/icons";
-import { ReloadPriceIcon } from "@/icons/reload-price";
-import { formatValueWithUnit } from "@/utils/is-currency";
+import {SettingsIcon} from "@/icons/settings";
+import {SettingsMenu} from "./settings-menu";
+import {PermissionCheck} from "@/components/CheckPermission";
+import {Permissions} from "@/components/CheckPermission/enum";
+import {_renderIconLogs} from "@/utils/constants";
+import {TableOutPutComponent} from "../table-output/table-output-component";
+import {EWidgetProductType} from "@/pages-components/products/digital-offset-price/enums";
+import {isActionEmployeeUpdatedState, permissionsState, userState,} from "@/store";
+import {DragDropContext, Draggable, Droppable} from "react-beautiful-dnd";
+import {SortIcon} from "@/icons/sort-icon";
+import {_renderDeliveryDate} from "@/utils/helpers";
+import {ReloadPriceIcon} from "@/icons/reload-price";
+import {formatValueWithUnit} from "@/utils/is-currency";
+import {ClientAutocomplete} from "@/widgets/Clients-Autocomplete/clients-list";
+import {useCustomerDropDownList} from "@/hooks";
+import {CLIENT_TYPE} from "@/pages/customers/enums";
+
 interface IActionContainerComponentProps extends IWorkFlowAction {
   delay?: number;
   workFlowId?: string;
@@ -276,6 +265,7 @@ const ActionContainerComponent = ({
     materialsList,
     foldOptions,
   } = useActionUpdateValues();
+  
   const suppliersState = useRecoilValue(outsourceSuppliersState);
   const [hideRelatedActions, setHideRelatedActions] = useState<boolean>(false);
   const [isActionEmployeeUpdated, setIsActionEmployeeUpdated] = useRecoilState(
@@ -421,10 +411,11 @@ const ActionContainerComponent = ({
   const [workFlows, setWorkFlows] = useRecoilState(workFlowsState);
 
   const handleSupplierChange = (e, value) => {
+    debugger
     if (isFromSetting) {
       updateProductAction({
         actionId,
-        value: value?.value,
+        value: value?.id,
         fieldName: "supplierid",
       });
     } else {
@@ -433,7 +424,7 @@ const ActionContainerComponent = ({
       );
       if (actionSelected) {
         // Create a new object with the updated supplierId
-        const updatedAction = { ...actionSelected, supplierId: value?.value };
+        const updatedAction = { ...actionSelected, supplierId: value?.id };
 
         setWorkFlows((prevWorkFlows) => {
           // Create a deep copy of the workFlows array
@@ -453,7 +444,7 @@ const ActionContainerComponent = ({
 
       updateActionData(
         id,
-        value?.value ?? null,
+        value?.id ?? null,
         "supplierId",
         productType
       ).then();
@@ -479,15 +470,19 @@ const ActionContainerComponent = ({
       : 0;
     return (totalPriceValues - totalCostValues).toFixed(2);
   };
-
-  const getSupplierId = useCallback(() => {
+  useEffect(()=> {
     if (supplierId) {
       const supplier = suppliers?.find((sup) => sup.value === supplierId);
-      return !!supplier ? supplier.label : "";
+      console.log("selected supplier", supplier);
+      if(supplier) {
+        setCustomer({
+          id:supplier.value,
+          name: supplier.label,
+        });
+      }
+      //return supplier;
     }
-    return "";
-  }, [supplierId, suppliers, suppliersState]);
-
+  },[supplierId, suppliers, suppliersState])
   useEffect(() => {
     if (foldOptionValueId) {
       const selectedFoldOptionName = foldOptions?.find(
@@ -499,7 +494,9 @@ const ActionContainerComponent = ({
     }
   }, [foldOptionValueId, foldOptions]);
   const permissions = useRecoilValue(permissionsState);
-
+  const {customer,
+    setCustomer, renderOptions, checkWhatRenderArray, isFetching, listClient } =
+      useCustomerDropDownList({clientType:CLIENT_TYPE.SUPPLIER});
   return (
     <>
       {selectedWorkFlowCalculatedIsLoaded ? (
@@ -547,7 +544,25 @@ const ActionContainerComponent = ({
                           flexItem
                           color={"#000"}
                         />
-                        <GoMakeAutoComplate
+                        <ClientAutocomplete
+                            key={customer?.id}
+                            //key={supplierId + suppliers}
+                            clientType={CLIENT_TYPE.SUPPLIER}
+                            disableClearable={true}
+                            options={renderOptions() ? renderOptions() : []}
+                            style={{ width: "200px" }}
+                            //style={classes.selectCustomerContainer}
+                            getOptionLabel={(option: any) =>
+                                option && option.name ? `${option.name}` : ""
+                            }
+                            defaultFiltering={false}
+                            onChangeTextField={checkWhatRenderArray}
+                            value={customer}
+                            loading={isFetching}
+                            onChange={handleSupplierChange}
+                            //onAddCustomer={onCustomerAddFromOption}
+                        />
+                        {/*<GoMakeAutoComplate
                           key={supplierId + suppliers}
                           placeholder={t("materials.sheetPaper.selectSupplier")}
                           value={getSupplierId()}
@@ -558,7 +573,7 @@ const ActionContainerComponent = ({
                             label: s.supplierName,
                           }))}
                           disableClearable={true}
-                        />
+                        />*/}
                       </Stack>
                     ) : (
                       isNeedMachine && (
