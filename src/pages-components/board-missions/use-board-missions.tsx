@@ -177,6 +177,7 @@ const useBoardMissions = ({ isPurchaseJobs }) => {
   };
 
   const productionStatuses = [
+    { label: t("boardMissions.NotReady"), value: BoardMissionStatusForFilter.NotReady },
     {
       label: t("boardMissions.waiting"),
       value: BoardMissionStatusForFilter.WAITING,
