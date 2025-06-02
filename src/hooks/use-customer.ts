@@ -145,7 +145,14 @@ const useCustomer = (
       return true;
     }
     clearStorage();
-    navigate("/login");
+    // navigate("/login");
+    const currentPath = window.location.pathname + window.location.search;
+    const loginUrl =
+      currentPath && currentPath !== "/"
+        ? `/login?redirect=${encodeURIComponent(currentPath)}`
+        : "/login";
+    navigate(loginUrl);
+
     return false;
   }, []);
 
