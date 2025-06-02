@@ -1,4 +1,4 @@
-import { Button, Menu, MenuItem } from "@mui/material";
+import { Button, Divider, Menu, MenuItem } from "@mui/material";
 import { ICurrentStation } from "@/widgets/production-floor/interfaces/current-station";
 import { useStyle } from "@/widgets/production-floor/table-view/style";
 import Stack from "@mui/material/Stack";
@@ -14,6 +14,7 @@ interface IProps extends ICurrentStation {
   status?: any;
   textColor?: string;
   onClickDone?: () => void;
+  employeesCategories?: any;
 }
 
 const CurrentStationComponent = ({
@@ -23,6 +24,7 @@ const CurrentStationComponent = ({
   actionName,
   productType,
   id,
+  employeesCategories,
   onClickDone,
 }: IProps) => {
   const { GetProductionFontSizeFromPreferences } = usePrintHousePreferences();
@@ -37,6 +39,7 @@ const CurrentStationComponent = ({
     onUpdateCurrentStation,
     canMoveStation,
   } = useStations();
+
 
   return (
     <Stack
@@ -74,6 +77,7 @@ const CurrentStationComponent = ({
               "0px 12px 16px -4px rgba(16, 24, 40, 0.08), 0px 4px 6px -2px rgba(16, 24, 40, 0.03)",
             color: "black",
             ...FONT_FAMILY.Inter(500, 14),
+            width: "10%",
           },
         }}
         anchorEl={anchorEl}
@@ -82,17 +86,23 @@ const CurrentStationComponent = ({
       >
         {boardMissionsStations
           ?.filter((s) => s.id !== id)
-          ?.map((station) => (
-            <MenuItem
-              style={{ fontSize: GetProductionFontSizeFromPreferences() }}
-              onClick={() =>
-                onUpdateCurrentStation(boardMissionId, station.id, productType)
-              }
-            >
-              {station.actionName}
-            </MenuItem>
+          ?.map((station) => {
+            const employee = employeesCategories?.find((e) => e.id === station.employeeId);
+            return (
+              <>
+                <MenuItem
+                  style={{ fontSize: GetProductionFontSizeFromPreferences() }}
+                  onClick={() =>
+                    onUpdateCurrentStation(boardMissionId, station.id, productType)
+                  }
+                >
+                  {station.actionName} {station.employeeId ? "(" + employee?.label + ")" : station?.machineId ? "(" + station?.machineName + ")" : ""}
+                </MenuItem>
+                <Divider />
+              </>
 
-          ))}
+            )
+          })}
         <MenuItem
           style={{ fontSize: GetProductionFontSizeFromPreferences() }}
           onClick={onClickDone}

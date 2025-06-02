@@ -13,6 +13,7 @@ export interface IBoardMissionStation {
     outUserId: string;
     statusId: string;
     actionName: string;
+    machineName?: string;
     isLastStation: boolean;
 }
 
